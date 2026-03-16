@@ -198,7 +198,7 @@ def _do_extract_model[T: BaseModel](
     if isinstance(result, expected):
         return result
     if _is_flext_result(result) and result.is_success:
-        payload: BaseModel = cast("BaseModel", result.value)
+        payload = result.value
         if isinstance(payload, expected):
             return payload
     if isinstance(result, list):
@@ -232,8 +232,7 @@ def _merge_test_dicts(
     )
     if mr.is_success:
         merged_value = mr.value
-        if isinstance(merged_value, Mapping):
-            return {str(k): _to_payload(v) for k, v in merged_value.items()}
+        return {str(k): _to_payload(v) for k, v in merged_value.items()}
     return dict(base.items())
 
 
@@ -504,7 +503,7 @@ class FlextTestsUtilities(FlextUtilities):
                         error_msg or f"Expected success but got failure: {result.error}"
                     )
                     raise AssertionError(msg)
-                return cast("TResult", result.value)
+                return result.value
 
             @staticmethod
             def assert_success_with_value[T](

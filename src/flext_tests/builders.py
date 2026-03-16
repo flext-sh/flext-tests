@@ -499,13 +499,12 @@ class FlextTestsBuilders:
                 mk = "user"
         result = tt.model(mk, **filtered)
         if isinstance(result, BaseModel):
-            return result
+             return result
         if u.Tests.is_flext_result(result):
-            if result.is_success:
-                rval: BaseModel = result.value
-                if isinstance(rval, BaseModel):
-                    return rval
-            return None
+             if result.is_success:
+                 rval: BaseModel = result.value
+                 return rval
+             return None
         return result if isinstance(result, (list, dict)) else None
 
     def _resolve(self, params: m.Tests.AddParams) -> t.Tests.object:

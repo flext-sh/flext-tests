@@ -48,7 +48,7 @@ _OBJECT_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.object])
 _SCALAR_PATH: tuple[type, ...] = (str, int, float, bool, datetime, Path)
 
 
-def _to_runtime_data(value: t.Tests.object) -> FlextRuntime.RuntimeData:
+def _to_runtime_data(value: t.Tests.object) -> t.RuntimeData:
     """Narrow t.Tests.Testobject to FlextRuntime.RuntimeData for normalize_to_general_value calls.
 
     Converts bytes to str and ensures the value is FlextRuntime.RuntimeData-compatible.
@@ -87,6 +87,12 @@ def _to_normalized_or_model(value: t.Tests.object) -> t.NormalizedValue | BaseMo
     if isinstance(value, (list, tuple)):
         return [_to_normalized_leaf(item) for item in value]
     return str(value)
+
+
+def _to_container_value(value: t.Tests.object) -> t.Container | BaseModel:
+    """Convert t.Tests.object to Container | BaseModel for ConfigMap values."""
+    runtime_data: t.RuntimeData = _to_runtime_data(value)
+    return FlextRuntime.normalize_to_container(runtime_data)
 
 
 def _to_normalized_leaf(value: t.Tests.object) -> t.NormalizedValue:
@@ -526,8 +532,8 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                         content_for_create = (
                             m.ConfigMap(
                                 root={
-                                    str(k): FlextRuntime.normalize_to_container(
-                                        _to_runtime_data(self._to_config_map_value(v))
+                                    str(k): _to_container_value(
+                                        self._to_config_map_value(v)
                                     )
                                     if v is None
                                     or type(v)
@@ -1244,14 +1250,14 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         filter_keys_set = set(keys) if keys is not None else None
         exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
         config_root1: dict[str, t.NormalizedValue | BaseModel] = {
-            str(k): FlextRuntime.normalize_to_container(
-                _to_runtime_data(self._to_config_map_value(self._to_payload_value(v)))
+            str(k): _to_container_value(
+                self._to_config_map_value(self._to_payload_value(v))
             )
             for k, v in dict1.items()
         }
         config_root2: dict[str, t.NormalizedValue | BaseModel] = {
-            str(k): FlextRuntime.normalize_to_container(
-                _to_runtime_data(self._to_config_map_value(self._to_payload_value(v)))
+            str(k): _to_container_value(
+                self._to_config_map_value(self._to_payload_value(v))
             )
             for k, v in dict2.items()
         }
@@ -1301,10 +1307,8 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             return value
         if self._is_mapping(value):
             coerce_root: dict[str, t.NormalizedValue | BaseModel] = {
-                str(key): FlextRuntime.normalize_to_container(
-                    _to_runtime_data(
-                        self._to_config_map_value(self._to_payload_value(item))
-                    )
+                str(key): _to_container_value(
+                    self._to_config_map_value(self._to_payload_value(item))
                 )
                 for key, item in value.items()
             }
@@ -1329,10 +1333,8 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             return value
         if self._is_mapping(value):
             read_root: dict[str, t.NormalizedValue | BaseModel] = {
-                str(key): FlextRuntime.normalize_to_container(
-                    _to_runtime_data(
-                        self._to_config_map_value(self._to_payload_value(item))
-                    )
+                str(key): _to_container_value(
+                    self._to_config_map_value(self._to_payload_value(item))
                 )
                 for key, item in value.items()
             }
@@ -1519,10 +1521,8 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                     )
                 if self._is_mapping(parsed_raw):
                     parse_root: dict[str, t.NormalizedValue | BaseModel] = {
-                        str(key): FlextRuntime.normalize_to_container(
-                            _to_runtime_data(
-                                self._to_config_map_value(self._to_payload_value(v))
-                            )
+                        str(key): _to_container_value(
+                            self._to_config_map_value(self._to_payload_value(v))
                         )
                         for key, v in parsed_raw.items()
                     }
@@ -1654,15 +1654,11 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         filter_keys_set = set(keys) if keys is not None else None
         exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
         left_root: dict[str, t.NormalizedValue | BaseModel] = {
-            str(k): FlextRuntime.normalize_to_container(
-                _to_runtime_data(self._to_config_map_value(self._to_payload_value(v)))
-            )
+            str(k): _to_container_value(self._to_config_map_value(self._to_payload_value(v)))
             for k, v in dict1.items()
         }
         right_root: dict[str, t.NormalizedValue | BaseModel] = {
-            str(k): FlextRuntime.normalize_to_container(
-                _to_runtime_data(self._to_config_map_value(self._to_payload_value(v)))
-            )
+            str(k): _to_container_value(self._to_config_map_value(self._to_payload_value(v)))
             for k, v in dict2.items()
         }
         left_result = u.transform(

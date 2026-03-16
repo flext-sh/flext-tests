@@ -91,16 +91,23 @@ def _to_test_payload(
     if isinstance(value, Mapping):
         try:
             mapping_value = _TEST_PAYLOAD_DICT_ADAPTER.validate_python(value)
-            return {key: _to_test_payload(item) for key, item in mapping_value.items()}
+            return cast(
+                "t.Tests.object",
+                {key: _to_test_payload(item) for key, item in mapping_value.items()},
+            )
         except ValidationError:
-            return cast("t.Tests.object", dict(value))
+             return cast(
+                 "t.Tests.object", dict(value)  # type: ignore[arg-type]
+             )
     if _is_non_string_sequence(value):
         try:
             sequence_value = _TEST_PAYLOAD_LIST_ADAPTER.validate_python(value)
             return [_to_test_payload(seq_item) for seq_item in sequence_value]
         except ValidationError:
-            return cast("t.Tests.object", list(value))
-    return cast("t.Tests.object", value)
+            return list(value)
+    if isinstance(value, (datetime, Path)):
+        return value
+    return str(value)
 
 
 def _to_normalized(value: t.Tests.object) -> t.NormalizedValue:
@@ -155,13 +162,22 @@ def _as_guard_input(
     if isinstance(value, Mapping):
         try:
             mapping_value = _GUARD_PAYLOAD_DICT_ADAPTER.validate_python(value)
-            return {key: _as_guard_input(item) for key, item in mapping_value.items()}
+            return cast(
+                "t.Tests.object",
+                {key: _as_guard_input(item) for key, item in mapping_value.items()},
+            )
         except ValidationError:
-            return cast("t.Tests.object", {str(k): v for k, v in value.items()})
+            result_dict: dict[str, t.Tests.object] = {}
+            for k, v in cast("Mapping[str, t.Tests.object]", value).items():
+                result_dict[str(k)] = v
+            return result_dict
     if _is_non_string_sequence(value):
         try:
             sequence_value = _GUARD_PAYLOAD_LIST_ADAPTER.validate_python(value)
-            return [_as_guard_input(seq_item) for seq_item in sequence_value]
+            return cast(
+                "t.Tests.object",
+                [_as_guard_input(seq_item) for seq_item in sequence_value],
+            )
         except ValidationError:
             return cast("t.Tests.object", list(value))
     return cast("t.Tests.object", value)

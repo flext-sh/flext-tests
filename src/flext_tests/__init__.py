@@ -40,7 +40,6 @@ if TYPE_CHECKING:
     from flext_tests.docker import FlextTestsDocker, tk
     from flext_tests.domains import FlextTestsDomains, td
     from flext_tests.factories import FlextTestsFactories, tt
-    from flext_tests.files import FlextTestsFiles, tf
     from flext_tests.matchers import FlextTestsMatchers, tm
     from flext_tests.models import FlextTestsModels, m
     from flext_tests.protocols import FlextTestsProtocols, p
@@ -54,7 +53,6 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "FlextTestsDocker": ("flext_tests.docker", "FlextTestsDocker"),
     "FlextTestsDomains": ("flext_tests.domains", "FlextTestsDomains"),
     "FlextTestsFactories": ("flext_tests.factories", "FlextTestsFactories"),
-    "FlextTestsFiles": ("flext_tests.files", "FlextTestsFiles"),
     "FlextTestsMatchers": ("flext_tests.matchers", "FlextTestsMatchers"),
     "FlextTestsModels": ("flext_tests.models", "FlextTestsModels"),
     "FlextTestsProtocols": ("flext_tests.protocols", "FlextTestsProtocols"),
@@ -83,7 +81,6 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "t": ("flext_tests.typings", "t"),
     "tb": ("flext_tests.builders", "tb"),
     "td": ("flext_tests.domains", "td"),
-    "tf": ("flext_tests.files", "tf"),
     "tk": ("flext_tests.docker", "tk"),
     "tm": ("flext_tests.matchers", "tm"),
     "tt": ("flext_tests.factories", "tt"),
@@ -98,7 +95,6 @@ __all__ = [
     "FlextTestsDocker",
     "FlextTestsDomains",
     "FlextTestsFactories",
-    "FlextTestsFiles",
     "FlextTestsMatchers",
     "FlextTestsModels",
     "FlextTestsProtocols",
@@ -121,7 +117,6 @@ __all__ = [
     "t",
     "tb",
     "td",
-    "tf",
     "tk",
     "tm",
     "tt",
