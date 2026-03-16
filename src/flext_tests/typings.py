@@ -176,11 +176,11 @@ class FlextTestsTypes(t):
                 | list[str | Mapping[str, FlextTestsTypes.Tests.Testobject]]
             )
             "Result type for file read operations with generic support."
-            type FormatLiteral = c.FormatLiteral
+            type FormatLiteral = c.Tests.Files.FormatLiteral
             "Literal type for file format specification in create/read operations."
-            type OperationLiteral = c.OperationLiteral
+            type OperationLiteral = c.Tests.Files.OperationLiteral
             "Literal type for batch operation specification."
-            type ErrorModeLiteral = c.ErrorModeLiteral
+            type ErrorModeLiteral = c.Tests.Files.ErrorModeLiteral
             "Error handling mode for batch operations.\n\n            - stop: Stop at first error\n            - skip: Skip failed operations, continue with remaining\n            - collect: Collect all errors, return BatchResult with failures\n            "
             type BatchFiles = (
                 Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject]
