@@ -974,7 +974,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_config_fields(
-                config: FlextSettings, expected_fields: m.ConfigMap
+                config: p.Settings, expected_fields: m.ConfigMap
             ) -> None:
                 """Assert config has expected field values.
 
