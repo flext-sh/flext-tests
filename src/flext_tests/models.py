@@ -1926,10 +1926,14 @@ class FlextTestsModels(
             """
 
             DICT_ADAPTER: ClassVar[TypeAdapter[dict[str, t.Tests.object]]] = (
-                TypeAdapter(dict[str, t.Tests.object])
+                TypeAdapter(
+                    dict[str, t.Tests.object],
+                    config=ConfigDict(arbitrary_types_allowed=True),
+                )
             )
             LIST_ADAPTER: ClassVar[TypeAdapter[list[t.Tests.object]]] = TypeAdapter(
-                list[t.Tests.object]
+                list[t.Tests.object],
+                config=ConfigDict(arbitrary_types_allowed=True),
             )
 
         class Chain[TResult](FlextModels.Value):

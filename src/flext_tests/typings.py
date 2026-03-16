@@ -14,8 +14,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal, TypeAliasType, TypeGuard
 
-from flext_core import FlextModels, FlextTypes, r
+from flext_core import FlextModels, FlextProtocols, FlextTypes, r
 from pydantic import BaseModel, InstanceOf
+
+p = FlextProtocols
 
 type _Testobject = (
     FlextTypes.Primitives

@@ -35,18 +35,20 @@ from flext_core import (
     FlextUtilities,
     r,
 )
-from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
+from pydantic import BaseModel, ConfigDict, RootModel, TypeAdapter, ValidationError
 
 from flext_tests import c, m, p, t
 
-_PAYLOAD_MAPPING_ADAPTER = TypeAdapter(dict[str, t.Tests.object])
+_ARBTYPES = ConfigDict(arbitrary_types_allowed=True)
+_PAYLOAD_MAPPING_ADAPTER = TypeAdapter(dict[str, t.Tests.object], config=_ARBTYPES)
 _PAYLOAD_SEQUENCE_ADAPTER: TypeAdapter[list[t.Tests.object]] = TypeAdapter(
-    list[t.Tests.object]
+    list[t.Tests.object], config=_ARBTYPES
 )
 
 
 def _to_scalar(
     value: BaseModel
+    | Exception
     | Mapping[str, t.Tests.object]
     | Path
     | Sequence[t.Tests.object]
@@ -55,6 +57,7 @@ def _to_scalar(
     | datetime
     | float
     | str
+    | t.Tests.object
     | None,
 ) -> t.Scalar:
     """Convert a value to ScalarValue for config overrides.
@@ -195,7 +198,7 @@ def _do_extract_model[T: BaseModel](
     if isinstance(result, expected):
         return result
     if _is_flext_result(result) and result.is_success:
-        payload: BaseModel = result.value
+        payload: BaseModel = cast("BaseModel", result.value)
         if isinstance(payload, expected):
             return payload
     if isinstance(result, list):
@@ -228,7 +231,9 @@ def _merge_test_dicts(
         strategy=strategy,
     )
     if mr.is_success:
-        return {str(k): _to_payload(v) for k, v in mr.value.items()}
+        merged_value = mr.value
+        if isinstance(merged_value, Mapping):
+            return {str(k): _to_payload(v) for k, v in merged_value.items()}
     return dict(base.items())
 
 
@@ -499,7 +504,7 @@ class FlextTestsUtilities(FlextUtilities):
                         error_msg or f"Expected success but got failure: {result.error}"
                     )
                     raise AssertionError(msg)
-                return result.value
+                return cast("TResult", result.value)
 
             @staticmethod
             def assert_success_with_value[T](
@@ -1067,7 +1072,7 @@ class FlextTestsUtilities(FlextUtilities):
                 assert result.is_success, (
                     f"Expected success for key '{key}', got: {result.error!r}"
                 )
-                actual = _to_payload(result.value)
+                actual = _to_payload(cast("t.Tests.object", result.value))
                 assert actual == expected_value, (
                     f"Expected {expected_value!r} for key '{key}', got {result.value!r}"
                 )
@@ -2042,7 +2047,7 @@ class FlextTestsUtilities(FlextUtilities):
                         )
                     actual = result.value
                     if callable(expected):
-                        actual_payload = _to_payload(actual)
+                        actual_payload = _to_payload(cast("t.Tests.object", actual))
                         if not expected(actual_payload):
                             return m.Tests.DeepMatchResult(
                                 path=path,
@@ -2052,7 +2057,7 @@ class FlextTestsUtilities(FlextUtilities):
                                 reason="Predicate failed",
                             )
                     elif actual != expected:
-                        actual_payload = _to_payload(actual)
+                        actual_payload = _to_payload(cast("t.Tests.object", actual))
                         return m.Tests.DeepMatchResult(
                             path=path,
                             expected=expected,
