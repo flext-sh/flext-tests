@@ -51,6 +51,7 @@ class FlextTestsTypes(t):
 
         type TestPayloadScalar = t.Primitives | None
         type Testobject = _Testobject
+        type object = _Testobject
         type FileContent = (
             str
             | bytes
@@ -114,13 +115,30 @@ class FlextTestsTypes(t):
             FLEXT patterns. All types use centralized definitions from flext_core.
             """
 
-            type ModelKind = c.ModelKind
+            type ModelKind = Literal[
+                "user",
+                "config",
+                "service",
+                "entity",
+                "value",
+                "command",
+                "query",
+                "event",
+            ]
             "Kind parameter for model() factory method."
-            type ResultKind = c.ResultKind
+            type ResultKind = Literal["ok", "fail", "from_value"]
             "Kind parameter for res() factory method."
-            type OpKind = c.OpKind
+            type OpKind = Literal[
+                "simple",
+                "add",
+                "format",
+                "error",
+                "type_error",
+                "result_ok",
+                "result_fail",
+            ]
             "Kind parameter for op() factory method."
-            type BatchKind = c.BatchKind
+            type BatchKind = Literal["user", "config", "service"]
             "Kind parameter for batch() factory method."
             type BatchPattern = Sequence[bool]
             "Pattern for batch result creation (True=success, False=failure)."
