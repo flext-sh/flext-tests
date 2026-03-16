@@ -638,7 +638,7 @@ class FlextTestsModels(
                 ),
             ]
             fmt: Annotated[
-                c.Tests.Files.FormatLiteral,
+                t.Tests.Files.FormatLiteral,
                 Field(
                     default="auto",
                     description="File format override.",
@@ -716,7 +716,7 @@ class FlextTestsModels(
                 ),
             ]
             fmt: Annotated[
-                c.Tests.Files.FormatLiteral,
+                t.Tests.Files.FormatLiteral,
                 Field(
                     default="auto",
                     description="Format override.",
@@ -882,7 +882,7 @@ class FlextTestsModels(
                 ),
             ]
             fmt: Annotated[
-                c.Tests.Files.FormatLiteral,
+                t.Tests.Files.FormatLiteral,
                 Field(
                     default="auto",
                     description="File format override.",
