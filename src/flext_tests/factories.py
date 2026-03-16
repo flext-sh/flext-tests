@@ -28,13 +28,13 @@ from pydantic import BaseModel, TypeAdapter, ValidationError
 
 from flext_tests import c, m, t, u
 
-_TEST_CONTAINER_LIST_ADAPTER: TypeAdapter[list[t.Tests.object]] = TypeAdapter(
-    list[t.Tests.object]
+_TEST_CONTAINER_LIST_ADAPTER: TypeAdapter[list[t.Tests.Testobject]] = TypeAdapter(
+    list[t.Tests.Testobject]
 )
-_TEST_CONTAINER_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.object])
+_TEST_CONTAINER_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject])
 
 
-def _to_payload_value(value: object) -> t.Tests.object:
+def _to_payload_value(value: object) -> t.Tests.Testobject:
     if value is None:
         return None
     if isinstance(value, str | int | float | bool | bytes | BaseModel):
@@ -48,7 +48,7 @@ def _to_payload_value(value: object) -> t.Tests.object:
     return str(value)
 
 
-def _to_merge_value(value: t.Tests.object) -> t.NormalizedValue:
+def _to_merge_value(value: t.Tests.Testobject) -> t.NormalizedValue:
     """Convert _Testobject to NormalizedValue for merge operations."""
     if value is None:
         return None
@@ -65,7 +65,7 @@ def _to_merge_value(value: t.Tests.object) -> t.NormalizedValue:
     return str(value)
 
 
-def _to_guard_input(value: t.Tests.object) -> t.Tests.object:
+def _to_guard_input(value: t.Tests.Testobject) -> t.Tests.Testobject:
     if value is None or isinstance(value, (*t.PRIMITIVES_TYPES, BaseModel)):
         return value
     if isinstance(value, Mapping):
@@ -76,7 +76,7 @@ def _to_guard_input(value: t.Tests.object) -> t.Tests.object:
         try:
             sequence_values = _TEST_CONTAINER_LIST_ADAPTER.validate_python(value)
         except ValidationError:
-            empty_sequence: list[t.Tests.object] = []
+            empty_sequence: list[t.Tests.Testobject] = []
             return empty_sequence
         return [_to_guard_input(_to_payload_value(item)) for item in sequence_values]
     return str(value)
@@ -228,11 +228,11 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
     @classmethod
     def dict_factory(
         cls,
-        source: Mapping[str, t.Tests.object]
-        | Callable[[], tuple[str, t.Tests.object]]
+        source: Mapping[str, t.Tests.Testobject]
+        | Callable[[], tuple[str, t.Tests.Testobject]]
         | t.Tests.Factory.ModelKind = "user",
         **kwargs: t.Tests.TestResultValue,
-    ) -> Mapping[str, t.Tests.object] | r[Mapping[str, t.Tests.object]]:
+    ) -> Mapping[str, t.Tests.Testobject] | r[Mapping[str, t.Tests.Testobject]]:
         """Create typed dict from source.
 
         This is the preferred way to create dicts of test data.
@@ -287,8 +287,10 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
                 **kwargs,
             })
         except (TypeError, ValueError, AttributeError) as exc:
-            return r[Mapping[str, t.Tests.object]].fail(f"Invalid parameters: {exc}")
-        result_dict: MutableMapping[str, t.Tests.object] = {}
+            return r[Mapping[str, t.Tests.Testobject]].fail(
+                f"Invalid parameters: {exc}"
+            )
+        result_dict: MutableMapping[str, t.Tests.Testobject] = {}
         if isinstance(params.source, str):
             model_kind: t.Tests.Factory.ModelKind = "user"
             match params.source:
@@ -316,7 +318,7 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
                 model_instance = cls._extract_model_instance(model_result)
                 if model_instance is None:
                     continue
-                value: t.Tests.object = model_instance
+                value: t.Tests.Testobject = model_instance
                 if params.value_factory:
                     value = params.value_factory(key)
                 result_dict[key] = value
@@ -340,7 +342,7 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
             for k, v in merge_mapping.items():
                 result_dict[str(k)] = v
         if params.as_result:
-            return r[Mapping[str, t.Tests.object]].ok(result_dict)
+            return r[Mapping[str, t.Tests.Testobject]].ok(result_dict)
         return result_dict
 
     @classmethod
@@ -389,7 +391,7 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
 
         """
         try:
-            validate_data: dict[str, t.Tests.object | type[T]] = {
+            validate_data: dict[str, t.Tests.Testobject | type[T]] = {
                 "type_": type_,
                 **kwargs,
             }
@@ -444,11 +446,11 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
     @classmethod
     def list(
         cls,
-        source: Sequence[t.Tests.object]
-        | Callable[[], t.Tests.object]
+        source: Sequence[t.Tests.Testobject]
+        | Callable[[], t.Tests.Testobject]
         | t.Tests.Factory.ModelKind = "user",
         **kwargs: t.Tests.TestResultValue,
-    ) -> builtins.list[t.Tests.object] | r[builtins.list[t.Tests.object]]:
+    ) -> builtins.list[t.Tests.Testobject] | r[builtins.list[t.Tests.Testobject]]:
         """Create typed list from source.
 
         This is the preferred way to create lists of test data.
@@ -498,9 +500,11 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
                 **kwargs,
             })
         except (TypeError, ValueError, AttributeError) as exc:
-            return r[builtins.list[t.Tests.object]].fail(f"Invalid parameters: {exc}")
-        items: builtins.list[t.Tests.object] = []
-        raw_items: builtins.list[t.Tests.object] = []
+            return r[builtins.list[t.Tests.Testobject]].fail(
+                f"Invalid parameters: {exc}"
+            )
+        items: builtins.list[t.Tests.Testobject] = []
+        raw_items: builtins.list[t.Tests.Testobject] = []
         if isinstance(params.source, str):
             model_kind_str = params.source
             kind_map: Mapping[str, t.Tests.Factory.ModelKind] = {
@@ -514,7 +518,7 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
                 "event": "event",
             }
             if model_kind_str not in kind_map:
-                return r[builtins.list[t.Tests.object]].fail(
+                return r[builtins.list[t.Tests.Testobject]].fail(
                     f"Invalid model kind: {model_kind_str}"
                 )
             model_kind = kind_map[model_kind_str]
@@ -523,13 +527,13 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
                 model_instance = cls._extract_model_instance(model_result)
                 if model_instance is None:
                     continue
-                raw_item: t.Tests.object = model_instance
+                raw_item: t.Tests.Testobject = model_instance
                 if params.transform:
                     raw_item = params.transform(raw_item)
                 if params.filter_ is None or params.filter_(raw_item):
                     raw_items.append(raw_item)
         elif callable(params.source):
-            source_callable: Callable[[], t.Tests.object] = params.source
+            source_callable: Callable[[], t.Tests.Testobject] = params.source
             for _ in range(params.count):
                 raw_item = source_callable()
                 if params.transform:
@@ -537,9 +541,9 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
                 if params.filter_ is None or params.filter_(raw_item):
                     raw_items.append(raw_item)
         else:
-            source_seq: Sequence[t.Tests.object] = params.source
+            source_seq: Sequence[t.Tests.Testobject] = params.source
             for source_item in source_seq:
-                final_item: t.Tests.object
+                final_item: t.Tests.Testobject
                 if params.transform:
                     final_item = params.transform(source_item)
                 else:
@@ -549,7 +553,7 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
         items.extend(raw_items)
         if params.unique and items:
             seen: set[int] = set()
-            unique_items: builtins.list[t.Tests.object] = []
+            unique_items: builtins.list[t.Tests.Testobject] = []
             for item in items:
                 item_hash = (
                     hash(item)
@@ -561,7 +565,7 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
                     unique_items.append(item)
             items = unique_items
         if params.as_result:
-            return r[builtins.list[t.Tests.object]].ok(items)
+            return r[builtins.list[t.Tests.Testobject]].ok(items)
         return items
 
     @classmethod
@@ -658,7 +662,7 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
                 msg = f"Factory returned unsupported type: {type(factory_result).__name__}"
                 raise TypeError(msg)
             if params.kind == "user":
-                user_data: MutableMapping[str, t.Tests.object] = {
+                user_data: MutableMapping[str, t.Tests.Testobject] = {
                     "id": params.model_id or u.Tests.Factory.generate_id(),
                     "name": params.name or c.Tests.Factory.DEFAULT_USER_NAME,
                     "email": params.email
@@ -668,7 +672,7 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
                     else c.Tests.Factory.DEFAULT_USER_ACTIVE,
                 }
                 if params.overrides:
-                    user_overrides: MutableMapping[str, t.Tests.object] = dict(
+                    user_overrides: MutableMapping[str, t.Tests.Testobject] = dict(
                         params.overrides.items()
                     )
                     merge_result = u.merge(
@@ -683,7 +687,7 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
                         }
                 return m.Tests.User.model_validate(user_data)
             if params.kind == "config":
-                config_data: MutableMapping[str, t.Tests.object] = {
+                config_data: MutableMapping[str, t.Tests.Testobject] = {
                     "service_type": params.service_type
                     or c.Tests.Factory.DEFAULT_SERVICE_TYPE,
                     "environment": params.environment
@@ -700,7 +704,7 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
                     else c.Tests.Factory.DEFAULT_MAX_RETRIES,
                 }
                 if params.overrides:
-                    config_overrides: MutableMapping[str, t.Tests.object] = dict(
+                    config_overrides: MutableMapping[str, t.Tests.Testobject] = dict(
                         params.overrides.items()
                     )
                     merge_result = u.merge(
@@ -733,7 +737,10 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
             if params.kind == "entity":
 
                 def _entity_factory(
-                    *, name: str, value: t.Tests.object, **kwargs: t.Tests.object
+                    *,
+                    name: str,
+                    value: t.Tests.Testobject,
+                    **kwargs: t.Tests.Testobject,
                 ) -> m.Tests.Entity:
                     _ = kwargs
                     return m.Tests.Entity(name=name, value=value)
@@ -936,9 +943,9 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
     def res(
         cls,
         kind: t.Tests.Factory.ResultKind = "ok",
-        value: t.Tests.object = None,
+        value: t.Tests.Testobject = None,
         **kwargs: t.Tests.TestResultValue,
-    ) -> r[t.Tests.object] | builtins.list[r[t.Tests.object]]:
+    ) -> r[t.Tests.Testobject] | builtins.list[r[t.Tests.Testobject]]:
         """Unified result factory - creates r with full customization.
 
         This is the preferred way to create test results. Use tt.res() instead of
@@ -983,11 +990,11 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
                 **kwargs,
             })
         except (TypeError, ValueError, AttributeError) as exc:
-            return r[t.Tests.object].fail(f"Invalid parameters: {exc}")
+            return r[t.Tests.Testobject].fail(f"Invalid parameters: {exc}")
         if params.mix_pattern is not None and (
             params.values is not None or params.errors is not None
         ):
-            result_list: builtins.list[r[t.Tests.object]] = []
+            result_list: builtins.list[r[t.Tests.Testobject]] = []
             val_idx = 0
             err_idx = 0
             for is_success in params.mix_pattern:
@@ -996,23 +1003,23 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
                         mix_val = params.values[val_idx]
                         if params.transform:
                             mix_val = params.transform(mix_val)
-                        result_list.append(r[t.Tests.object].ok(mix_val))
+                        result_list.append(r[t.Tests.Testobject].ok(mix_val))
                         val_idx += 1
                     elif params.value is not None:
-                        mix_val_single: t.Tests.object = params.value
+                        mix_val_single: t.Tests.Testobject = params.value
                         if params.transform:
                             mix_val_single = params.transform(mix_val_single)
-                        result_list.append(r[t.Tests.object].ok(mix_val_single))
+                        result_list.append(r[t.Tests.Testobject].ok(mix_val_single))
                 elif params.errors and err_idx < len(params.errors):
                     result_list.append(
-                        r[t.Tests.object].fail(
+                        r[t.Tests.Testobject].fail(
                             params.errors[err_idx], error_code=params.error_code
                         )
                     )
                     err_idx += 1
                 else:
                     result_list.append(
-                        r[t.Tests.object].fail(
+                        r[t.Tests.Testobject].fail(
                             params.error, error_code=params.error_code
                         )
                     )
@@ -1024,11 +1031,11 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
                     batch_val = (
                         params.transform(raw_val) if params.transform else raw_val
                     )
-                    result_list.append(r[t.Tests.object].ok(batch_val))
+                    result_list.append(r[t.Tests.Testobject].ok(batch_val))
             if params.errors:
                 for err in params.errors:
                     result_list.append(
-                        r[t.Tests.object].fail(err, error_code=params.error_code)
+                        r[t.Tests.Testobject].fail(err, error_code=params.error_code)
                     )
             if params.count > 1 and (not params.values) and (not params.errors):
                 for _ in range(params.count):
@@ -1036,37 +1043,39 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
                         error_msg = (
                             params.error_on_none or c.Tests.Factory.ERROR_VALUE_NONE
                         )
-                        result_list.append(r[t.Tests.object].fail(error_msg))
+                        result_list.append(r[t.Tests.Testobject].fail(error_msg))
                     else:
-                        count_val: t.Tests.object = params.value
+                        count_val: t.Tests.Testobject = params.value
                         if params.transform:
                             count_val = params.transform(count_val)
-                        result_list.append(r[t.Tests.object].ok(count_val))
+                        result_list.append(r[t.Tests.Testobject].ok(count_val))
             if result_list:
                 return result_list
             if params.value is not None:
                 empty_case_val = params.value
-                return [r[t.Tests.object].ok(empty_case_val)]
-            return [r[t.Tests.object].fail(params.error_on_none or params.error)]
+                return [r[t.Tests.Testobject].ok(empty_case_val)]
+            return [r[t.Tests.Testobject].fail(params.error_on_none or params.error)]
         if params.kind == "ok":
             if params.value is None:
-                return r[t.Tests.object].fail(
+                return r[t.Tests.Testobject].fail(
                     params.error_on_none or c.Tests.Factory.ERROR_VALUE_NONE
                 )
             ok_raw = params.value
             ok_transformed = params.transform(ok_raw) if params.transform else ok_raw
-            return r[t.Tests.object].ok(ok_transformed)
+            return r[t.Tests.Testobject].ok(ok_transformed)
         if params.kind == "fail":
-            return r[t.Tests.object].fail(params.error, error_code=params.error_code)
+            return r[t.Tests.Testobject].fail(
+                params.error, error_code=params.error_code
+            )
         if params.value is None:
-            return r[t.Tests.object].fail(
+            return r[t.Tests.Testobject].fail(
                 params.error_on_none or c.Tests.Factory.ERROR_VALUE_NONE
             )
         from_val_raw = params.value
         from_val_transformed = (
             params.transform(from_val_raw) if params.transform else from_val_raw
         )
-        return r[t.Tests.object].ok(from_val_transformed)
+        return r[t.Tests.Testobject].ok(from_val_transformed)
 
     @classmethod
     def results[TValue](
@@ -1178,13 +1187,13 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
             enabled: bool | None = None
             _overrides: MutableMapping[str, t.Tests.TestResultValue] | None = None
 
-            def __init__(self, **data: t.Tests.object) -> None:
-                override_fields: MutableMapping[str, t.Tests.object] = {}
-                name_value: t.Tests.object | None = None
-                amount_value: t.Tests.object | None = None
-                enabled_value: t.Tests.object | None = None
+            def __init__(self, **data: t.Tests.Testobject) -> None:
+                override_fields: MutableMapping[str, t.Tests.Testobject] = {}
+                name_value: t.Tests.Testobject | None = None
+                amount_value: t.Tests.Testobject | None = None
+                enabled_value: t.Tests.Testobject | None = None
                 for key, value in {**captured_overrides, **data}.items():
-                    gv: t.Tests.object = value
+                    gv: t.Tests.Testobject = value
                     if key == "name":
                         name_value = gv
                     elif key == "amount":
@@ -1310,14 +1319,16 @@ class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):
             User model instance
 
         """
-        user_data: MutableMapping[str, t.Tests.object] = {
+        user_data: MutableMapping[str, t.Tests.Testobject] = {
             "id": user_id or u.Tests.Factory.generate_id(),
             "name": name or c.Tests.Factory.DEFAULT_USER_NAME,
             "email": email
             or c.Tests.Factory.user_email(u.Tests.Factory.generate_short_id(8)),
             "active": c.Tests.Factory.DEFAULT_USER_ACTIVE,
         }
-        overrides_dict: MutableMapping[str, t.Tests.object] = dict(overrides.items())
+        overrides_dict: MutableMapping[str, t.Tests.Testobject] = dict(
+            overrides.items()
+        )
         merge_result = u.merge(
             {k: _to_merge_value(v) for k, v in user_data.items()},
             {k: _to_merge_value(v) for k, v in overrides_dict.items()},

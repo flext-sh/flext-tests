@@ -59,7 +59,7 @@ from collections.abc import Iterator, Mapping, MutableMapping, Sequence, Sized
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
-from typing import TypeGuard, cast, overload
+from typing import TypeIs, cast, overload
 
 from flext_core import r
 from flext_core._utilities.guards import FlextUtilitiesGuards
@@ -71,34 +71,32 @@ from flext_tests.utilities import FlextTestsUtilities
 _length_validate = FlextTestsUtilities.Tests.Length.validate
 _deep_match = FlextTestsUtilities.Tests.DeepMatch.match
 
-_TEST_PAYLOAD_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.object])
-_TEST_PAYLOAD_LIST_ADAPTER = TypeAdapter(list[t.Tests.object])
-_GUARD_PAYLOAD_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.object])
-_GUARD_PAYLOAD_LIST_ADAPTER = TypeAdapter(list[t.Tests.object])
+_TEST_PAYLOAD_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject])
+_TEST_PAYLOAD_LIST_ADAPTER = TypeAdapter(list[t.Tests.Testobject])
+_GUARD_PAYLOAD_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject])
+_GUARD_PAYLOAD_LIST_ADAPTER = TypeAdapter(list[t.Tests.Testobject])
 
 
 def _is_non_string_sequence(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.object | None,
-) -> TypeGuard[Sequence[t.Tests.object]]:
+    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
+) -> TypeIs[Sequence[t.Tests.Testobject]]:
     return isinstance(value, Sequence) and (not isinstance(value, str | bytes))
 
 
 def _to_test_payload(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.object | None,
-) -> t.Tests.object:
+    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
+) -> t.Tests.Testobject:
     if value is None or isinstance(value, (str, int, float, bool, bytes, BaseModel)):
         return value
     if isinstance(value, Mapping):
         try:
             mapping_value = _TEST_PAYLOAD_DICT_ADAPTER.validate_python(value)
             return cast(
-                "t.Tests.object",
+                "t.Tests.Testobject",
                 {key: _to_test_payload(item) for key, item in mapping_value.items()},
             )
         except ValidationError:
-             return cast(
-                 "t.Tests.object", dict(value)  # type: ignore[arg-type]
-             )
+            return {str(key): _to_test_payload(item) for key, item in value.items()}
     if _is_non_string_sequence(value):
         try:
             sequence_value = _TEST_PAYLOAD_LIST_ADAPTER.validate_python(value)
@@ -110,7 +108,7 @@ def _to_test_payload(
     return str(value)
 
 
-def _to_normalized(value: t.Tests.object) -> t.NormalizedValue:
+def _to_normalized(value: t.Tests.Testobject) -> t.NormalizedValue:
     """Convert _Testobject to pure NormalizedValue."""
     if value is None:
         return None
@@ -131,7 +129,7 @@ def _to_normalized(value: t.Tests.object) -> t.NormalizedValue:
     return str(value)
 
 
-def _to_extract_value(value: t.Tests.object) -> t.NormalizedValue | BaseModel:
+def _to_extract_value(value: t.Tests.Testobject) -> t.NormalizedValue | BaseModel:
     """Convert _Testobject to NormalizedValue | BaseModel for extract() calls."""
     if value is None:
         return None
@@ -153,8 +151,8 @@ def _to_extract_value(value: t.Tests.object) -> t.NormalizedValue | BaseModel:
 
 
 def _as_guard_input(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.object | None,
-) -> t.Tests.object:
+    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
+) -> t.Tests.Testobject:
     if isinstance(value, BaseModel | str | int | float | bool | Path):
         return value
     if value is None:
@@ -163,28 +161,28 @@ def _as_guard_input(
         try:
             mapping_value = _GUARD_PAYLOAD_DICT_ADAPTER.validate_python(value)
             return cast(
-                "t.Tests.object",
+                "t.Tests.Testobject",
                 {key: _as_guard_input(item) for key, item in mapping_value.items()},
             )
         except ValidationError:
-            result_dict: dict[str, t.Tests.object] = {}
-            for k, v in cast("Mapping[str, t.Tests.object]", value).items():
+            result_dict: dict[str, t.Tests.Testobject] = {}
+            for k, v in cast("Mapping[str, t.Tests.Testobject]", value).items():
                 result_dict[str(k)] = v
             return result_dict
     if _is_non_string_sequence(value):
         try:
             sequence_value = _GUARD_PAYLOAD_LIST_ADAPTER.validate_python(value)
             return cast(
-                "t.Tests.object",
+                "t.Tests.Testobject",
                 [_as_guard_input(seq_item) for seq_item in sequence_value],
             )
         except ValidationError:
-            return cast("t.Tests.object", list(value))
-    return cast("t.Tests.object", value)
+            return cast("t.Tests.Testobject", list(value))
+    return cast("t.Tests.Testobject", value)
 
 
 def _to_chk_value(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.object | None,
+    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
 ) -> t.NormalizedValue:
     """Convert a test value to NormalizedValue for use with u.chk()."""
     if value is None:
@@ -200,16 +198,16 @@ def _to_chk_value(
     if isinstance(value, datetime):
         return value
     if isinstance(value, Mapping):
-        typed_mapping = cast("Mapping[str, t.Tests.object]", value)
+        typed_mapping = cast("Mapping[str, t.Tests.Testobject]", value)
         return {str(k): _to_chk_value(v) for k, v in typed_mapping.items()}
     if isinstance(value, (list, tuple)):
-        typed_seq = cast("Sequence[t.Tests.object]", value)
+        typed_seq = cast("Sequence[t.Tests.Testobject]", value)
         return [_to_chk_value(item) for item in typed_seq]
     return str(value)
 
 
 def _check_has_lacks(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.object | None,
+    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
     has: t.Tests.Matcher.MatcherKwargValue | None,
     lacks: t.Tests.Matcher.MatcherKwargValue | None,
     msg: str | None,
@@ -476,7 +474,7 @@ class FlextTestsMatchers:
                     )
         if params.data is not None:
             actual_raw = result.error_data
-            actual_data: MutableMapping[str, t.Tests.object] = {}
+            actual_data: MutableMapping[str, t.Tests.Testobject] = {}
             if actual_raw is not None:
                 actual_data = {
                     str(k): _to_test_payload(v) for k, v in actual_raw.root.items()
@@ -506,12 +504,12 @@ class FlextTestsMatchers:
     @overload
     def ok[TResult](
         result: r[TResult], **kwargs: t.Tests.Matcher.MatcherKwargValue
-    ) -> TResult | t.Tests.object: ...
+    ) -> TResult | t.Tests.Testobject: ...
 
     @staticmethod
     def ok[TResult](
         result: r[TResult], **kwargs: t.Tests.Matcher.MatcherKwargValue
-    ) -> TResult | t.Tests.object:
+    ) -> TResult | t.Tests.Testobject:
         """Enhanced assertion for r success with optional value validation.
 
         Uses Pydantic 2 models for parameter validation and computation.
@@ -571,7 +569,7 @@ class FlextTestsMatchers:
         result_value: t.Tests.Matcher.MatcherKwargValue = cast(
             "t.Tests.Matcher.MatcherKwargValue", result.value
         )
-        extracted_payload: t.Tests.object | None = None
+        extracted_payload: t.Tests.Testobject | None = None
         if params.path is not None:
             if isinstance(params.path, str):
                 path_str: str = params.path
@@ -586,7 +584,7 @@ class FlextTestsMatchers:
             if isinstance(result_value, BaseModel):
                 extract_data = result_value
             else:
-                mapping_value = cast("Mapping[str, t.Tests.object]", result_value)
+                mapping_value = cast("Mapping[str, t.Tests.Testobject]", result_value)
                 try:
                     validated = _GUARD_PAYLOAD_DICT_ADAPTER.validate_python(
                         mapping_value
@@ -678,7 +676,7 @@ class FlextTestsMatchers:
                     params.msg
                     or f"Deep matching requires dict or model, got {type(result_value).__name__}"
                 )
-            deep_input: BaseModel | Mapping[str, t.Tests.object]
+            deep_input: BaseModel | Mapping[str, t.Tests.Testobject]
             if isinstance(result_value, BaseModel):
                 deep_input = result_value
             else:
@@ -718,7 +716,7 @@ class FlextTestsMatchers:
 
     @staticmethod
     @contextmanager
-    def scope(**kwargs: t.Tests.object) -> Iterator[m.Tests.TestScope]:
+    def scope(**kwargs: t.Tests.Testobject) -> Iterator[m.Tests.TestScope]:
         """Enhanced isolated test execution scope.
 
         Uses Pydantic 2 model (ScopeParams) for parameter validation and computation.
@@ -775,15 +773,15 @@ class FlextTestsMatchers:
                     Path(params.cwd) if u.is_type(params.cwd, "str") else params.cwd
                 )
                 os.chdir(cwd_path)
-            cfg: dict[str, t.Tests.object] = {}
+            cfg: dict[str, t.Tests.Testobject] = {}
             if params.config:
                 cfg = {str(key): value for key, value in params.config.items()}
-            container_dict: dict[str, t.Tests.object] = {
+            container_dict: dict[str, t.Tests.Testobject] = {
                 k: v
                 for k, v in (params.container or {}).items()
                 if t.Guards.is_general_value(v)
             }
-            context_map: dict[str, t.Tests.object] = {}
+            context_map: dict[str, t.Tests.Testobject] = {}
             if params.context:
                 context_map = {str(key): value for key, value in params.context.items()}
             yield m.Tests.TestScope.model_validate({
@@ -821,7 +819,7 @@ class FlextTestsMatchers:
 
     @staticmethod
     def that(
-        value: t.Tests.Matcher.MatcherKwargValue | t.Tests.object,
+        value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
         **kwargs: t.Tests.Matcher.MatcherKwargValue,
     ) -> None:
         r"""Super-powered universal value assertion - ALL validations in ONE method.
@@ -926,7 +924,7 @@ class FlextTestsMatchers:
             subject
         ):
             result_obj = subject
-            actual_value: t.Tests.object | str = ""
+            actual_value: t.Tests.Testobject | str = ""
             if params.ok is not None:
                 if params.ok and (not result_obj.is_success):
                     raise AssertionError(
@@ -1057,7 +1055,7 @@ class FlextTestsMatchers:
                 )
             )
         if isinstance(subject_payload, (list, tuple)):
-            seq_value: list[t.Tests.object] = []
+            seq_value: list[t.Tests.Testobject] = []
             try:
                 seq_value = _TEST_PAYLOAD_LIST_ADAPTER.validate_python(subject_payload)
             except ValidationError:
@@ -1086,7 +1084,7 @@ class FlextTestsMatchers:
                 if isinstance(params.all_, type):
 
                     def _all_match(
-                        check_type: type, seq: Sequence[t.Tests.object]
+                        check_type: type, seq: Sequence[t.Tests.Testobject]
                     ) -> bool:
                         return all(isinstance(x, check_type) for x in seq)
 
@@ -1145,7 +1143,7 @@ class FlextTestsMatchers:
                 elif callable(sorted_param):
                     user_key_fn = sorted_param
 
-                    def comparable_key(x: t.Tests.object) -> tuple[str, str]:
+                    def comparable_key(x: t.Tests.Testobject) -> tuple[str, str]:
                         """Wrap user key to return comparable tuple."""
                         result = user_key_fn(_to_test_payload(x))
                         type_name = type(result).__name__
@@ -1164,7 +1162,7 @@ class FlextTestsMatchers:
                         params.msg or "Sequence contains duplicate items"
                     )
         if isinstance(subject_payload, Mapping):
-            mapping_value: dict[str, t.Tests.object] = {}
+            mapping_value: dict[str, t.Tests.Testobject] = {}
             try:
                 mapping_value = _TEST_PAYLOAD_DICT_ADAPTER.validate_python(
                     subject_payload
@@ -1277,7 +1275,7 @@ class FlextTestsMatchers:
                     params.msg
                     or f"Deep matching requires dict or model, got {type(subject_payload).__name__}"
                 )
-            deep_value: BaseModel | Mapping[str, t.Tests.object]
+            deep_value: BaseModel | Mapping[str, t.Tests.Testobject]
             if isinstance(subject_payload, BaseModel):
                 deep_value = subject_payload
             else:

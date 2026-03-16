@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Mapping
-from enum import StrEnum
+from enum import StrEnum, unique
 from typing import Final, Literal
 
 from flext_core import FlextConstants, FlextModels
@@ -59,6 +59,7 @@ class FlextTestsConstants(FlextConstants):
             DEFAULT_HEALTH_CHECK_RETRIES: Final[int] = 10
             DEFAULT_STARTUP_WAIT_SECONDS: Final[int] = 5
 
+            @unique
             class ContainerStatus(StrEnum):
                 """Container status enumeration for test infrastructure."""
 
@@ -70,6 +71,7 @@ class FlextTestsConstants(FlextConstants):
                 STOPPING = "stopping"
                 RESTARTING = "restarting"
 
+            @unique
             class Operation(StrEnum):
                 """Docker operation types."""
 
@@ -82,9 +84,14 @@ class FlextTestsConstants(FlextConstants):
                 LOGS = "logs"
                 EXEC = "exec"
 
-            type OperationLiteral = Literal[
-                "start", "stop", "restart", "remove", "build", "pull", "logs", "exec"
-            ]
+            @unique
+            class OperationLiteral(StrEnum):
+                CREATE = "create"
+                READ = "read"
+                DELETE = "delete"
+                COMPARE = "compare"
+                INFO = "info"
+
             "Type-safe literal for Docker operations."
             type ContainerStatusLiteral = Literal[
                 "running",
@@ -311,9 +318,14 @@ class FlextTestsConstants(FlextConstants):
                 CSV = "csv"
                 UNKNOWN = "unknown"
 
-            type FormatLiteral = Literal[
-                "auto", "text", "bin", "json", "yaml", "csv", "unknown"
-            ]
+            @unique
+            class FormatLiteral(StrEnum):
+                JSON = "json"
+                YAML = "yaml"
+                CSV = "csv"
+                TXT = "txt"
+                MD = "md"
+                AUTO = "auto"
 
             class CompareMode(StrEnum):
                 """File comparison mode enumeration."""
@@ -348,7 +360,12 @@ class FlextTestsConstants(FlextConstants):
                 SKIP = "skip"
                 COLLECT = "collect"
 
-            type ErrorModeLiteral = Literal["stop", "skip", "collect"]
+            @unique
+            class ErrorModeLiteral(StrEnum):
+                STOP = "stop"
+                SKIP = "skip"
+                COLLECT = "collect"
+
             "Type-safe literal for error handling modes."
             EXT_TO_FMT: Final[Mapping[str, str]] = {
                 ".txt": "text",
@@ -539,7 +556,7 @@ class FlextTestsConstants(FlextConstants):
                 )
                 TYPE_001: Final[tuple[str, str]] = (
                     "CRITICAL",
-                    "# type: ignore comment",
+                    "type suppression comment",
                 )
                 TYPE_002: Final[tuple[str, str]] = ("CRITICAL", "Any type annotation")
                 TYPE_003: Final[tuple[str, str]] = ("MEDIUM", "Unapproved  usage")
@@ -799,6 +816,39 @@ class FlextTestsConstants(FlextConstants):
                         "registry": cls.REGISTRY,
                         "decorators": cls.DECORATORS,
                     }
+
+    @unique
+    class ModelKind(StrEnum):
+        USER = "user"
+        CONFIG = "config"
+        SERVICE = "service"
+        ENTITY = "entity"
+        VALUE = "value"
+        COMMAND = "command"
+        QUERY = "query"
+        EVENT = "event"
+
+    @unique
+    class ResultKind(StrEnum):
+        OK = "ok"
+        FAIL = "fail"
+        FROM_VALUE = "from_value"
+
+    @unique
+    class OpKind(StrEnum):
+        SIMPLE = "simple"
+        ADD = "add"
+        FORMAT = "format"
+        ERROR = "error"
+        TYPE_ERROR = "type_error"
+        RESULT_OK = "result_ok"
+        RESULT_FAIL = "result_fail"
+
+    @unique
+    class BatchKind(StrEnum):
+        USER = "user"
+        CONFIG = "config"
+        SERVICE = "service"
 
 
 c = FlextTestsConstants

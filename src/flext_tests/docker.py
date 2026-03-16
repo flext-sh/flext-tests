@@ -220,8 +220,8 @@ class FlextTestsDocker:
         try:
             client = self.get_client()
             container = client.containers.get(container_name)
-            ports_raw: Mapping[str, t.Tests.object] = TypeAdapter(
-                Mapping[str, t.Tests.object]
+            ports_raw: Mapping[str, t.Tests.Testobject] = TypeAdapter(
+                Mapping[str, t.Tests.Testobject]
             ).validate_python(container.ports)
             ports: dict[str, str] = {}
             for container_port, host_bindings in ports_raw.items():
@@ -352,10 +352,10 @@ class FlextTestsDocker:
         """Save dirty container state to persistent storage."""
         try:
             self._state_file.parent.mkdir(parents=True, exist_ok=True)
-            data: dict[str, t.Tests.object] = {
+            data: dict[str, t.Tests.Testobject] = {
                 "dirty_containers": list(self._dirty_containers)
             }
-            json_bytes = TypeAdapter(dict[str, t.Tests.object]).dump_json(data)
+            json_bytes = TypeAdapter(dict[str, t.Tests.Testobject]).dump_json(data)
             self._state_file.write_bytes(json_bytes)
         except (OSError, TypeError) as exc:
             self.logger.warning("Failed to save dirty state", error=str(exc))
