@@ -61,10 +61,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import TypeGuard, cast, overload
 
-from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
-
 from flext_core import r
 from flext_core._utilities.guards import FlextUtilitiesGuards
+from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
+
 from flext_tests import c, m, t, u
 from flext_tests.utilities import FlextTestsUtilities
 

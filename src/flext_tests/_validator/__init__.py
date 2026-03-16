@@ -18,20 +18,14 @@ from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 
 if TYPE_CHECKING:
     from flext_core.typings import FlextTypes
+
     from flext_tests._validator.bypass import FlextValidatorBypass
     from flext_tests._validator.imports import FlextValidatorImports
     from flext_tests._validator.layer import FlextValidatorLayer
-    from flext_tests._validator.models import (
-        FlextValidatorModels,
-        FlextValidatorModels as m,
-        vm,
-    )
+    from flext_tests._validator.models import FlextValidatorModels, vm
     from flext_tests._validator.settings import FlextValidatorSettings
     from flext_tests._validator.tests import FlextValidatorTests
-    from flext_tests._validator.types import (
-        FlextValidatorTypes,
-        FlextValidatorTypes as t,
-    )
+    from flext_tests._validator.types import FlextValidatorTypes
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "FlextValidatorBypass": ("flext_tests._validator.bypass", "FlextValidatorBypass"),
@@ -47,8 +41,6 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     ),
     "FlextValidatorTests": ("flext_tests._validator.tests", "FlextValidatorTests"),
     "FlextValidatorTypes": ("flext_tests._validator.types", "FlextValidatorTypes"),
-    "m": ("flext_tests._validator.models", "FlextValidatorModels"),
-    "t": ("flext_tests._validator.types", "FlextValidatorTypes"),
     "vm": ("flext_tests._validator.models", "vm"),
 }
 
@@ -60,8 +52,6 @@ __all__ = [
     "FlextValidatorSettings",
     "FlextValidatorTests",
     "FlextValidatorTypes",
-    "m",
-    "t",
     "vm",
 ]
 

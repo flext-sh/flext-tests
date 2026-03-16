@@ -14,8 +14,8 @@ import pytest
 from flext_core import r
 from pydantic import BaseModel as _BaseModel
 
-from tests import m, t
 from flext_tests import tt
+from tests import m, t
 from tests.test_utils import assertion_helpers
 
 

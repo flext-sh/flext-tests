@@ -27,10 +27,10 @@ from typing import ClassVar
 from docker import DockerClient as DockerSDKClient, from_env as docker_from_env
 from docker.errors import DockerException, NotFound
 from docker.models.containers import Container
+from flext_core import FlextLogger, r
 from pydantic import TypeAdapter, ValidationError
 from python_on_whales import DockerClient as WhalesDockerClient
 
-from flext_core import FlextLogger, r
 from flext_tests import c, m, t
 
 docker: WhalesDockerClient = WhalesDockerClient(client_type="docker")

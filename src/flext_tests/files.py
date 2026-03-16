@@ -28,11 +28,10 @@ from pathlib import Path
 from types import TracebackType
 from typing import ClassVar, Literal, Self, TypeGuard, TypeVar, overload
 
+from flext_core import FlextModelsContainers, FlextResult, FlextRuntime, r
 from pydantic import BaseModel, TypeAdapter, ValidationError
 from yaml import YAMLError, dump as yaml_dump, safe_load as yaml_safe_load
 
-from flext_core import FlextModelsContainers, FlextResult, FlextRuntime, r
-from flext_core.runtime import RuntimeData
 from flext_tests import c, m, s, t, u
 
 TModel = TypeVar("TModel", bound=BaseModel)
@@ -49,12 +48,12 @@ _OBJECT_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.object])
 _SCALAR_PATH: tuple[type, ...] = (str, int, float, bool, datetime, Path)
 
 
-def _to_runtime_data(value: t.Tests.object) -> RuntimeData:
-    """Narrow t.Tests.Testobject to RuntimeData for normalize_to_general_value calls.
+def _to_runtime_data(value: t.Tests.object) -> FlextRuntime.RuntimeData:
+    """Narrow t.Tests.Testobject to FlextRuntime.RuntimeData for normalize_to_general_value calls.
 
-    Converts bytes to str and ensures the value is RuntimeData-compatible.
-    The key difference between t.Tests.Testobject and RuntimeData is that t.Tests.Testobject
-    includes `bytes` which is not in RuntimeData.
+    Converts bytes to str and ensures the value is FlextRuntime.RuntimeData-compatible.
+    The key difference between t.Tests.Testobject and FlextRuntime.RuntimeData is that t.Tests.Testobject
+    includes `bytes` which is not in FlextRuntime.RuntimeData.
     """
     if value is None:
         return None

@@ -12,8 +12,8 @@ from typing import cast
 import pytest
 from flext_core import r
 
-from tests import c, m, t
 from flext_tests import tm
+from tests import c, m, t
 
 
 def _is_string(value: t.Tests.Testobject) -> bool:

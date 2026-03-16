@@ -13,8 +13,7 @@ from collections.abc import Mapping
 from enum import StrEnum
 from typing import Final, Literal
 
-from flext_core import FlextConstants
-from flext_core.models import FlextModels
+from flext_core import FlextConstants, FlextModels
 
 
 class FlextTestsConstants(FlextConstants):

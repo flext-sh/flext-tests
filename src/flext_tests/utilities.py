@@ -28,8 +28,6 @@ from pathlib import Path
 from re import Pattern
 from typing import Protocol, TypeGuard, cast, override
 
-from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
-
 from flext_core import (
     FlextContext,
     FlextRegistry,
@@ -37,6 +35,8 @@ from flext_core import (
     FlextUtilities,
     r,
 )
+from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
+
 from flext_tests import c, m, p, t
 
 _PAYLOAD_MAPPING_ADAPTER = TypeAdapter(dict[str, t.Tests.object])
