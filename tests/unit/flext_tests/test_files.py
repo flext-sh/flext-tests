@@ -14,10 +14,11 @@ from pathlib import Path
 
 import pytest
 import yaml
+from flext_core import r
 from pydantic import BaseModel
 
-from flext_core import r
-from flext_tests import m, tf
+from tests import m
+from flext_tests import tf
 from tests.test_utils import assertion_helpers
 
 

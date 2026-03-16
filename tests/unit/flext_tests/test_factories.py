@@ -11,10 +11,11 @@ from collections.abc import Mapping
 from typing import cast
 
 import pytest
+from flext_core import r
 from pydantic import BaseModel as _BaseModel
 
-from flext_core import r
-from flext_tests import m, t, tt
+from tests import m, t
+from flext_tests import tt
 from tests.test_utils import assertion_helpers
 
 
