@@ -14,7 +14,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal, TypeAliasType, TypeIs
 
-from flext_core import m, r, FlextTypes
+from flext_core import FlextTypes, m, r
 from pydantic import BaseModel, InstanceOf
 
 type _Testobject = (
@@ -292,6 +292,7 @@ class FlextTestsTypes(FlextTypes):
                 | set[_Testobject]
                 | Callable[..., _Testobject]
                 | Mapping[str, Callable[..., _Testobject] | _Testobject]
+                | Mapping[int, Callable[..., _Testobject] | _Testobject]
             )
             "Coerce an arbitrary object to t.Tests.Testobject.\n\n    Coercion rules:\n    - Scalars and bytes pass through\n    - BaseModel passes through\n    - None passes through\n    - Everything else becomes str()\n    "
             type LengthSpec = int | tuple[int, int]

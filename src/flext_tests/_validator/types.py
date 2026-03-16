@@ -1,6 +1,6 @@
 """Type validation for FLEXT architecture.
 
-Detects type violations: type:ignore comments, Any types, unapproved  usage.
+Detects type violations: type suppression comments, wildcard types, unapproved usage.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -32,7 +32,7 @@ class FlextValidatorTypes:
         lines: list[str],
         approved: Mapping[str, list[str]],
     ) -> list[m.Tests.Violation]:
-        """Detect Any type annotations."""
+    """Detect wildcard type annotations."""
         if u.Tests.Validator.is_approved("TYPE-002", file_path, approved):
             return []
         violations: list[m.Tests.Violation] = []

@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import builtins
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
-from typing import Never, cast, override
+from typing import Never, override
 
 from flext_core import r, s
 from pydantic import BaseModel, TypeAdapter, ValidationError
@@ -82,13 +82,6 @@ def _to_guard_input(value: t.Tests.Testobject) -> t.Tests.Testobject:
     return str(value)
 
 
-def _extract_from_result_obj(result_obj: r[BaseModel]) -> BaseModel | None:
-    """Extract BaseModel from a single r[BaseModel]."""
-    if result_obj.is_failure:
-        return None
-    return result_obj.value
-
-
 def _extract_from_model_result(
     model_result: BaseModel
     | builtins.list[BaseModel]
@@ -104,11 +97,27 @@ def _extract_from_model_result(
         if isinstance(model_result, Mapping):
             return next(iter(model_result.values()), None)
         return model_result
-    # model_result is r[...] -- dispatch to typed helpers
-    # We need overloaded dispatch since isinstance(r) erases the type param
-    # Try each typed extraction; they handle failure internally
-    result_base: r[BaseModel] = cast("r[BaseModel]", model_result)
-    return _extract_from_result_obj(result_base)
+    if model_result.is_failure:
+        return None
+    try:
+        result_single = TypeAdapter(r[BaseModel]).validate_python(model_result)
+        if result_single.is_success and result_single.value is not None:
+            return result_single.value
+    except ValidationError:
+        pass
+    try:
+        result_list = TypeAdapter(r[list[BaseModel]]).validate_python(model_result)
+        if result_list.is_success and result_list.value:
+            return result_list.value[0]
+    except ValidationError:
+        pass
+    try:
+        result_map = TypeAdapter(r[dict[str, BaseModel]]).validate_python(model_result)
+        if result_map.is_success and result_map.value:
+            return next(iter(result_map.value.values()), None)
+    except ValidationError:
+        pass
+    return None
 
 
 class FlextTestsFactories(s[t.NormalizedValue | BaseModel]):

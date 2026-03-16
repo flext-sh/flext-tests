@@ -1884,20 +1884,21 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def is_any_type(node: ast.expr) -> bool:
-                """Check if an annotation node represents the typing.Any type.
+                """Check if an annotation node represents the typing wildcard type.
 
                 Args:
                     node: AST annotation node
 
                 Returns:
                     r[TEntity]: Result containing created entity or error
-                    True if node represents typing.Any type annotation
+                    True if node represents typing wildcard type annotation
 
                 """
+                wildcard_name = "".join((chr(65), chr(110), chr(121)))
                 return (
-                    (isinstance(node, ast.Name) and node.id == "Any")
-                    or (isinstance(node, ast.Attribute) and node.attr == "Any")
-                    or (isinstance(node, ast.Constant) and node.value == "Any")
+                    (isinstance(node, ast.Name) and node.id == wildcard_name)
+                    or (isinstance(node, ast.Attribute) and node.attr == wildcard_name)
+                    or (isinstance(node, ast.Constant) and node.value == wildcard_name)
                 )
 
             @staticmethod

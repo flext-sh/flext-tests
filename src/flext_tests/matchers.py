@@ -109,7 +109,7 @@ def _to_test_payload(value: object) -> t.Tests.Testobject:
     if isinstance(value, type):
         return str(value)
     if isinstance(value, (set, frozenset)):
-        return str(value)
+        return "set"
     if value is None or isinstance(value, (str, int, float, bool, bytes, BaseModel)):
         return value
     if isinstance(value, Mapping):
@@ -175,7 +175,7 @@ def _as_guard_input(value: object) -> t.Tests.Testobject:
     if isinstance(value, type):
         return str(value)
     if isinstance(value, (set, frozenset)):
-        return str(value)
+        return "set"
     if isinstance(value, BaseModel | str | int | float | bool | Path):
         return value
     if value is None:
@@ -213,13 +213,15 @@ def _to_chk_value(value: object) -> t.NormalizedValue:
         try:
             mapping_value = _GUARD_PAYLOAD_DICT_ADAPTER.validate_python(value)
         except ValidationError:
-            return {}
+            empty_map: dict[str, t.NormalizedValue] = {}
+            return empty_map
         return {str(k): str(v) for k, v in mapping_value.items()}
     if isinstance(value, (list, tuple)):
         try:
             sequence_value = _GUARD_PAYLOAD_LIST_ADAPTER.validate_python(value)
         except ValidationError:
-            return []
+            empty_list: list[t.NormalizedValue] = []
+            return empty_list
         return [str(item) for item in sequence_value]
     return str(value)
 
@@ -720,14 +722,13 @@ class FlextTestsMatchers:
             result_payload = _to_test_payload(
                 current_raw if _is_matcher_input(current_raw) else str(current_raw)
             )
+        elif extracted_payload is not None:
+            result_payload = extracted_payload
         else:
-            if extracted_payload is not None:
-                result_payload = extracted_payload
-            else:
-                current_raw = result.value
-                result_payload = _to_test_payload(
-                    current_raw if _is_matcher_input(current_raw) else str(current_raw)
-                )
+            current_raw = result.value
+            result_payload = _to_test_payload(
+                current_raw if _is_matcher_input(current_raw) else str(current_raw)
+            )
         if params.where is not None and (not params.where(result_payload)):
             raise AssertionError(
                 params.msg
@@ -845,7 +846,7 @@ class FlextTestsMatchers:
 
     @staticmethod
     def that(
-        value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
+        value: object,
         **kwargs: t.Tests.Matcher.MatcherKwargValue,
     ) -> None:
         r"""Super-powered universal value assertion - ALL validations in ONE method.

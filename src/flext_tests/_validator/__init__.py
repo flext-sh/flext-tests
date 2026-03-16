@@ -25,7 +25,6 @@ if TYPE_CHECKING:
     from flext_tests._validator.models import FlextValidatorModels, vm
     from flext_tests._validator.settings import FlextValidatorSettings
     from flext_tests._validator.tests import FlextValidatorTests
-    from flext_tests._validator.types import FlextValidatorTypes
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "FlextValidatorBypass": ("flext_tests._validator.bypass", "FlextValidatorBypass"),
@@ -40,7 +39,6 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
         "FlextValidatorSettings",
     ),
     "FlextValidatorTests": ("flext_tests._validator.tests", "FlextValidatorTests"),
-    "FlextValidatorTypes": ("flext_tests._validator.types", "FlextValidatorTypes"),
     "vm": ("flext_tests._validator.models", "vm"),
 }
 
@@ -51,7 +49,6 @@ __all__ = [
     "FlextValidatorModels",
     "FlextValidatorSettings",
     "FlextValidatorTests",
-    "FlextValidatorTypes",
     "vm",
 ]
 

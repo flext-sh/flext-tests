@@ -47,23 +47,23 @@ from flext_tests import (
 class FlextTestsValidator(s[m.Tests.ScanResult]):
     """FLEXT Architecture Validator - detects code violations.
 
-    Provides methods to validate:
-    - imports: lazy imports, TYPE_CHECKING, ImportError handling
-    - types: type:ignore, Any types, unapproved
-    - tests: monkeypatch, mocks, @patch
-    - config: pyproject.toml deviations
-    - bypass: noqa, pragma, exception swallowing
-    - layer: cross-layer import violations
+        Provides methods to validate:
+        - imports: lazy imports, TYPE_CHECKING, ImportError handling
+    - types: type suppression, wildcard types, unapproved
+        - tests: monkeypatch, mocks, @patch
+        - config: pyproject.toml deviations
+        - bypass: noqa, pragma, exception swallowing
+        - layer: cross-layer import violations
 
-    Uses c.Validator for all rules, messages, and defaults.
+        Uses c.Validator for all rules, messages, and defaults.
 
-    Usage:
-        from flext_tests import tv
+        Usage:
+            from flext_tests import tv
 
-        result = tv.imports(Path("src"))
-        result = tv.types(Path("src"))
-        result = tv.validate_config(Path("pyproject.toml"))
-        result = tv.all(Path("src"))
+            result = tv.imports(Path("src"))
+            result = tv.types(Path("src"))
+            result = tv.validate_config(Path("pyproject.toml"))
+            result = tv.all(Path("src"))
     """
 
     Violation: ClassVar[type[m.Tests.Violation]] = m.Tests.Violation

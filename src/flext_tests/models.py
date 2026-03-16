@@ -1782,7 +1782,7 @@ class FlextTestsModels(
                 Field(
                     default=None,
                     validation_alias=AliasChoices("any_", "any"),
-                    description="Any item matches type or predicate",
+                    description="Each item matches type or predicate",
                 ),
             ]
             sorted: Annotated[

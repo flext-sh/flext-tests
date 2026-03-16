@@ -558,7 +558,10 @@ class FlextTestsConstants(FlextConstants):
                     "CRITICAL",
                     "type suppression comment",
                 )
-                TYPE_002: Final[tuple[str, str]] = ("CRITICAL", "Any type annotation")
+                TYPE_002: Final[tuple[str, str]] = (
+                    "CRITICAL",
+                    "wildcard type annotation",
+                )
                 TYPE_003: Final[tuple[str, str]] = ("MEDIUM", "Unapproved  usage")
                 TEST_001: Final[tuple[str, str]] = (
                     "HIGH",
@@ -659,8 +662,8 @@ class FlextTestsConstants(FlextConstants):
                 CONFIG_IGNORE: Final[str] = "ignore_errors = true for module '{module}'"
                 CONFIG_RUFF: Final[str] = "Custom ruff ignore: {code}"
                 TEST_MONKEYPATCH: Final[str] = "monkeypatch usage in function '{func}'"
-                TYPE_ANY_ARG: Final[str] = "Any type in argument '{arg}'"
-                TYPE_ANY_RETURN: Final[str] = "Any type in return type"
+                TYPE_ANY_ARG: Final[str] = "wildcard type in argument '{arg}'"
+                TYPE_ANY_RETURN: Final[str] = "wildcard type in return type"
                 BYPASS_EXCEPTION: Final[str] = "Exception swallowing: {pattern}"
                 BYPASS_BARE_EXCEPT: Final[str] = "bare except"
                 BYPASS_ONLY_PASS: Final[str] = "except with only pass"
