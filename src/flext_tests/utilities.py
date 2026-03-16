@@ -1050,12 +1050,12 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_context_get_success(
-                context: FlextContext, key: str, expected_value: t.Tests.object
+                context: p.Context, key: str, expected_value: t.Tests.object
             ) -> None:
                 """Assert context get returns expected value.
 
                 Args:
-                    context: FlextContext instance
+                    context: p.Context instance
                     key: Key to get
                     expected_value: Expected value
 
