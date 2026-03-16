@@ -14,9 +14,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal, TypeAliasType, TypeGuard
 
+from flext_core import FlextModels, FlextTypes, r
 from pydantic import BaseModel, InstanceOf
-
-from flext_core import FlextTypes, m, r
 
 type _Testobject = (
     FlextTypes.Primitives
@@ -59,15 +58,15 @@ class FlextTestsTypes(FlextTypes):
         )
         type ContainerPortMapping = Mapping[str, str]
         "Mapping of container port names to host port bindings."
-        type ContainerConfigMapping = m.ConfigMap
+        type ContainerConfigMapping = FlextModels.ConfigMap
         "Mapping for container configuration data with specific value types."
-        type DockerComposeServiceMapping = m.ConfigMap
+        type DockerComposeServiceMapping = FlextModels.ConfigMap
         "Mapping for docker-compose service configuration with specific types."
-        type ContainerStateMapping = m.ConfigMap
+        type ContainerStateMapping = FlextModels.ConfigMap
         "Mapping for container state information with specific value types."
-        type TestDataMapping = m.ConfigMap
+        type TestDataMapping = FlextModels.ConfigMap
         "Mapping for test data with specific value types."
-        type TestConfigMapping = m.ConfigMap
+        type TestConfigMapping = FlextModels.ConfigMap
         "Mapping for test configuration with specific value types."
         type object = _Testobject
         "Canonical payload value for test modules."
@@ -83,29 +82,29 @@ class FlextTestsTypes(FlextTypes):
             "Container labels mapping."
             type ContainerEnvironment = Sequence[str]
             "Container environment variables as sequence."
-            type ComposeFileConfig = m.ConfigMap
+            type ComposeFileConfig = FlextModels.ConfigMap
             "Docker compose file configuration structure with specific types."
             type VolumeMapping = Mapping[str, str]
             "Volume mappings (host_path -> container_path)."
-            type NetworkMapping = m.ConfigMap
+            type NetworkMapping = FlextModels.ConfigMap
             "Network configuration mapping with specific types."
             type ContainerHealthStatus = str
             "Container health status type (healthy, unhealthy, starting, none)."
             type ContainerHealthStatusLiteral = str
             "Type-safe literal for container health status."
-            type ContainerOperationResult = m.ConfigMap
+            type ContainerOperationResult = FlextModels.ConfigMap
             "Result type for container operations with specific fields."
 
         class Test:
             """Test-specific type definitions."""
 
-            type TestCaseData = m.ConfigMap
+            type TestCaseData = FlextModels.ConfigMap
             "Test case data structure with specific value types."
-            type TestFixtureData = m.ConfigMap
+            type TestFixtureData = FlextModels.ConfigMap
             "Test fixture data structure with specific value types."
             type TestAssertionResult = Mapping[str, str | bool | int | None]
             "Test assertion result structure."
-            type TestExecutionContext = m.ConfigMap
+            type TestExecutionContext = FlextModels.ConfigMap
             "Test execution context with specific metadata types."
 
         class Factory:
@@ -178,7 +177,7 @@ class FlextTestsTypes(FlextTypes):
             "Source type for dict() factory method."
             type GenericArgs = Sequence[FlextTestsTypes.Tests.Testobject]
             "Positional arguments for generic type instantiation."
-            type GenericKwargs = m.ConfigMap
+            type GenericKwargs = FlextModels.ConfigMap
             "Keyword arguments for generic type instantiation."
 
         class Files:
@@ -241,7 +240,7 @@ class FlextTestsTypes(FlextTypes):
                 | Mapping[str, FlextTestsTypes.Tests.Builders.BuildOutputValue]
             )
             "Type for build() output values, including r-wrapped results."
-            type BuilderMapping = m.ConfigMap
+            type BuilderMapping = FlextModels.ConfigMap
             "Type for builder mappings."
             type BuilderSequence = Sequence[FlextTestsTypes.Tests.Testobject]
             "Type for builder sequences."
@@ -340,7 +339,7 @@ class FlextTestsTypes(FlextTypes):
             'Attribute-value specification: single pair or mapping.\n\n            Used for attr_eq parameter that validates attribute values.\n\n            Examples:\n                attr_eq=("status", "active")                    # Single pair\n                attr_eq={"status": "active", "type": "user"}   # Multiple pairs\n            '
             type ErrorCodeSpec = str | Sequence[str]
             'Error code specification: single code or sequence.\n\n            Used for code/code_has parameters in tm.fail().\n\n            Examples:\n                code="VALIDATION"                    # Exact code\n                code_has=["VALID", "ERROR"]          # Contains codes\n            '
-            type ErrorDataSpec = m.ConfigMap
+            type ErrorDataSpec = FlextModels.ConfigMap
             'Error data specification: key-value pairs.\n\n            Used for data parameter in tm.fail() to validate error metadata.\n\n            Examples:\n                data={"field": "email", "reason": "invalid"}\n            '
             type CleanupSpec = Sequence[Callable[[], None]]
             "Cleanup specification: sequence of cleanup functions.\n\n            Used for cleanup parameter in tm.scope().\n\n            Examples:\n                cleanup=[lambda: resource.cleanup(), lambda: db.close()]\n            "
@@ -385,7 +384,7 @@ class FlextTestsTypes(FlextTypes):
         @staticmethod
         def is_configuration_mapping(
             value: FlextTestsTypes.Tests.Testobject,
-        ) -> TypeGuard[m.ConfigMap]:
+        ) -> TypeGuard[FlextModels.ConfigMap]:
             """Check if value is a ConfigurationMapping."""
             return isinstance(value, Mapping)
 

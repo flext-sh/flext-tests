@@ -13,7 +13,8 @@ from collections.abc import Mapping
 from enum import StrEnum
 from typing import Final, Literal
 
-from flext_core import FlextConstants, m
+from flext_core import FlextConstants
+from flext_core.models import FlextModels
 
 
 class FlextTestsConstants(FlextConstants):
@@ -42,8 +43,8 @@ class FlextTestsConstants(FlextConstants):
                 "mongodb",
                 "elasticsearch",
             )
-            SHARED_CONTAINERS: Final[Mapping[str, m.ConfigMap]] = {
-                "flext-oracle-db-test": m.ConfigMap(
+            SHARED_CONTAINERS: Final[Mapping[str, FlextModels.ConfigMap]] = {
+                "flext-oracle-db-test": FlextModels.ConfigMap(
                     root={
                         "compose_file": "docker/docker-compose.oracle-db.yml",
                         "service": "oracle-db",

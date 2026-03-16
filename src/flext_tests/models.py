@@ -15,6 +15,7 @@ from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from pathlib import Path
 from typing import Annotated, ClassVar, TypeAliasType, override
 
+from flext_core import FlextModels, FlextUtilities, r
 from pydantic import (
     AliasChoices,
     BaseModel,
@@ -26,7 +27,6 @@ from pydantic import (
     model_validator,
 )
 
-from flext_core import FlextModels, r, u
 from flext_tests import c, t
 
 
@@ -43,7 +43,7 @@ class FlextTestsModels(
         super().__init_subclass__(**kwargs)
         if cls.__module__.startswith("tests"):
             return
-        u.warn_once(
+        FlextUtilities.warn_once(
             f"subclass_{cls.__name__}",
             f"Subclassing FlextTestsModels in {cls.__name__} is deprecated. Use composition/containers.",
         )
