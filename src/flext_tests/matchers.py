@@ -86,6 +86,12 @@ def _is_non_string_sequence(
 def _to_test_payload(
     value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
 ) -> t.Tests.Testobject:
+    if isinstance(value, type):
+        return cast("t.Tests.Testobject", value)
+    if isinstance(value, tuple) and all(isinstance(item, type) for item in value):
+        return cast("t.Tests.Testobject", value)
+    if isinstance(value, (set, frozenset)):
+        return cast("t.Tests.Testobject", value)
     if value is None or isinstance(value, (str, int, float, bool, bytes, BaseModel)):
         return value
     if isinstance(value, Mapping):
@@ -153,6 +159,12 @@ def _to_extract_value(value: t.Tests.Testobject) -> t.NormalizedValue | BaseMode
 def _as_guard_input(
     value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
 ) -> t.Tests.Testobject:
+    if isinstance(value, type):
+        return cast("t.Tests.Testobject", value)
+    if isinstance(value, tuple) and all(isinstance(item, type) for item in value):
+        return cast("t.Tests.Testobject", value)
+    if isinstance(value, (set, frozenset)):
+        return cast("t.Tests.Testobject", value)
     if isinstance(value, BaseModel | str | int | float | bool | Path):
         return value
     if value is None:

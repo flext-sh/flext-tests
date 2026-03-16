@@ -14,10 +14,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal, TypeAliasType, TypeIs
 
-from flext_core import m, r, t
+from flext_core import m, r, FlextTypes
 from pydantic import BaseModel, InstanceOf
-
-from flext_tests import c
 
 type _Testobject = (
     t.Primitives
@@ -31,7 +29,7 @@ type _Testobject = (
 )
 
 
-class FlextTestsTypes(t):
+class FlextTestsTypes(FlextTypes):
     """Type system foundation for FLEXT tests - extends t.
 
     Architecture: Extends t with test-specific type aliases and definitions.
@@ -460,4 +458,5 @@ class FlextTestsTypes(t):
 
 
 t = FlextTestsTypes
+
 __all__ = ["FlextTestsTypes", "t"]
