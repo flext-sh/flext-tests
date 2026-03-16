@@ -26,7 +26,7 @@ from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from re import Pattern
-from typing import Protocol, TypeIs, cast, override
+from typing import Protocol, TypeIs, override
 
 from flext_core import (
     FlextContext,
@@ -77,6 +77,30 @@ def _to_scalar(
     return str(value)
 
 
+def _is_test_object(value: object) -> TypeIs[t.Tests.Testobject]:
+    if value is None:
+        return True
+    if isinstance(value, (str, int, float, bool, bytes, datetime, Path, BaseModel)):
+        return True
+    if isinstance(value, Mapping):
+        try:
+            _PAYLOAD_MAPPING_ADAPTER.validate_python(value)
+        except ValidationError:
+            return False
+        return True
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+        try:
+            _PAYLOAD_SEQUENCE_ADAPTER.validate_python(value)
+        except ValidationError:
+            return False
+        return True
+    return False
+
+
+def _is_test_object_root_model(value: object) -> TypeIs[RootModel[t.Tests.Testobject]]:
+    return isinstance(value, RootModel)
+
+
 def _to_payload(
     value: t.Tests.Testobject
     | RootModel[t.Tests.Testobject]
@@ -93,10 +117,8 @@ def _to_payload(
         object suitable for test assertions
 
     """
-    if isinstance(value, RootModel):
-        # isinstance erases generic type parameter; cast restores it
-        root_model = cast("RootModel[t.Tests.Testobject]", value)
-        return _to_payload(root_model.root)
+    if _is_test_object_root_model(value):
+        return _to_payload(value.root)
     if value is None or isinstance(
         value, (str, int, float, bool, bytes, datetime, Path, BaseModel)
     ):
@@ -1077,7 +1099,12 @@ class FlextTestsUtilities(FlextUtilities):
                 assert result.is_success, (
                     f"Expected success for key '{key}', got: {result.error!r}"
                 )
-                actual = _to_payload(cast("t.Tests.Testobject", result.value))
+                raw_value = result.value
+                actual = (
+                    _to_payload(raw_value)
+                    if _is_test_object(raw_value)
+                    else _to_payload(str(raw_value))
+                )
                 assert actual == expected_value, (
                     f"Expected {expected_value!r} for key '{key}', got {result.value!r}"
                 )
@@ -1449,9 +1476,8 @@ class FlextTestsUtilities(FlextUtilities):
                     raise ValueError(msg)
                 all_args = {**input_data, **kwargs}
                 result = op_method(**all_args)
-                if isinstance(result, RootModel):
-                    root_result = cast("RootModel[t.Tests.Testobject]", result)
-                    return _to_payload(root_result)
+                if _is_test_object_root_model(result):
+                    return _to_payload(result)
                 if isinstance(result, (BaseModel, Path)):
                     return _to_payload(result)
                 if isinstance(result, (str, int, float, bool, bytes, datetime)):
@@ -2058,7 +2084,11 @@ class FlextTestsUtilities(FlextUtilities):
                         )
                     actual = result.value
                     if callable(expected):
-                        actual_payload = _to_payload(cast("t.Tests.Testobject", actual))
+                        actual_payload = (
+                            _to_payload(actual)
+                            if _is_test_object(actual)
+                            else _to_payload(str(actual))
+                        )
                         if not expected(actual_payload):
                             return m.Tests.DeepMatchResult(
                                 path=path,
@@ -2068,7 +2098,11 @@ class FlextTestsUtilities(FlextUtilities):
                                 reason="Predicate failed",
                             )
                     elif actual != expected:
-                        actual_payload = _to_payload(cast("t.Tests.Testobject", actual))
+                        actual_payload = (
+                            _to_payload(actual)
+                            if _is_test_object(actual)
+                            else _to_payload(str(actual))
+                        )
                         return m.Tests.DeepMatchResult(
                             path=path,
                             expected=expected,

@@ -59,7 +59,7 @@ from collections.abc import Iterator, Mapping, MutableMapping, Sequence, Sized
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
-from typing import TypeIs, cast, overload
+from typing import TypeIs, overload
 
 from flext_core import r
 from flext_core._utilities.guards import FlextUtilitiesGuards
@@ -78,37 +78,52 @@ _GUARD_PAYLOAD_LIST_ADAPTER = TypeAdapter(list[t.Tests.Testobject])
 
 
 def _is_non_string_sequence(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
-) -> TypeIs[Sequence[t.Tests.Testobject]]:
-    return isinstance(value, Sequence) and (not isinstance(value, str | bytes))
+    value: object,
+) -> TypeIs[Sequence[object]]:
+    return isinstance(value, Sequence) and (
+        not isinstance(value, (str, bytes, bytearray))
+    )
 
 
-def _to_test_payload(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
-) -> t.Tests.Testobject:
+def _is_matcher_input(
+    value: object,
+) -> TypeIs[t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None]:
+    if value is None:
+        return True
+    if isinstance(value, (str, int, float, bool, bytes, datetime, Path, BaseModel)):
+        return True
     if isinstance(value, type):
-        return cast("t.Tests.Testobject", value)
-    if isinstance(value, tuple) and all(isinstance(item, type) for item in value):
-        return cast("t.Tests.Testobject", value)
+        return True
+    if isinstance(value, tuple):
+        return True
     if isinstance(value, (set, frozenset)):
-        return cast("t.Tests.Testobject", value)
+        return True
+    if isinstance(value, Mapping):
+        return True
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+        return True
+    return callable(value)
+
+
+def _to_test_payload(value: object) -> t.Tests.Testobject:
+    if isinstance(value, type):
+        return str(value)
+    if isinstance(value, (set, frozenset)):
+        return str(value)
     if value is None or isinstance(value, (str, int, float, bool, bytes, BaseModel)):
         return value
     if isinstance(value, Mapping):
         try:
             mapping_value = _TEST_PAYLOAD_DICT_ADAPTER.validate_python(value)
-            return cast(
-                "t.Tests.Testobject",
-                {key: _to_test_payload(item) for key, item in mapping_value.items()},
-            )
+            return {str(key): str(item) for key, item in mapping_value.items()}
         except ValidationError:
-            return {str(key): _to_test_payload(item) for key, item in value.items()}
+            return {}
     if _is_non_string_sequence(value):
         try:
             sequence_value = _TEST_PAYLOAD_LIST_ADAPTER.validate_python(value)
-            return [_to_test_payload(seq_item) for seq_item in sequence_value]
+            return [str(seq_item) for seq_item in sequence_value]
         except ValidationError:
-            return list(value)
+            return []
     if isinstance(value, (datetime, Path)):
         return value
     return str(value)
@@ -156,15 +171,11 @@ def _to_extract_value(value: t.Tests.Testobject) -> t.NormalizedValue | BaseMode
     return str(value)
 
 
-def _as_guard_input(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
-) -> t.Tests.Testobject:
+def _as_guard_input(value: object) -> t.Tests.Testobject:
     if isinstance(value, type):
-        return cast("t.Tests.Testobject", value)
-    if isinstance(value, tuple) and all(isinstance(item, type) for item in value):
-        return cast("t.Tests.Testobject", value)
+        return str(value)
     if isinstance(value, (set, frozenset)):
-        return cast("t.Tests.Testobject", value)
+        return str(value)
     if isinstance(value, BaseModel | str | int | float | bool | Path):
         return value
     if value is None:
@@ -172,30 +183,19 @@ def _as_guard_input(
     if isinstance(value, Mapping):
         try:
             mapping_value = _GUARD_PAYLOAD_DICT_ADAPTER.validate_python(value)
-            return cast(
-                "t.Tests.Testobject",
-                {key: _as_guard_input(item) for key, item in mapping_value.items()},
-            )
+            return {str(key): str(item) for key, item in mapping_value.items()}
         except ValidationError:
-            result_dict: dict[str, t.Tests.Testobject] = {}
-            for k, v in cast("Mapping[str, t.Tests.Testobject]", value).items():
-                result_dict[str(k)] = v
-            return result_dict
+            return {}
     if _is_non_string_sequence(value):
         try:
             sequence_value = _GUARD_PAYLOAD_LIST_ADAPTER.validate_python(value)
-            return cast(
-                "t.Tests.Testobject",
-                [_as_guard_input(seq_item) for seq_item in sequence_value],
-            )
+            return [str(seq_item) for seq_item in sequence_value]
         except ValidationError:
-            return cast("t.Tests.Testobject", list(value))
-    return cast("t.Tests.Testobject", value)
+            return []
+    return str(value)
 
 
-def _to_chk_value(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
-) -> t.NormalizedValue:
+def _to_chk_value(value: object) -> t.NormalizedValue:
     """Convert a test value to NormalizedValue for use with u.chk()."""
     if value is None:
         return None
@@ -210,11 +210,17 @@ def _to_chk_value(
     if isinstance(value, datetime):
         return value
     if isinstance(value, Mapping):
-        typed_mapping = cast("Mapping[str, t.Tests.Testobject]", value)
-        return {str(k): _to_chk_value(v) for k, v in typed_mapping.items()}
+        try:
+            mapping_value = _GUARD_PAYLOAD_DICT_ADAPTER.validate_python(value)
+        except ValidationError:
+            return {}
+        return {str(k): str(v) for k, v in mapping_value.items()}
     if isinstance(value, (list, tuple)):
-        typed_seq = cast("Sequence[t.Tests.Testobject]", value)
-        return [_to_chk_value(item) for item in typed_seq]
+        try:
+            sequence_value = _GUARD_PAYLOAD_LIST_ADAPTER.validate_python(value)
+        except ValidationError:
+            return []
+        return [str(item) for item in sequence_value]
     return str(value)
 
 
@@ -578,8 +584,9 @@ class FlextTestsMatchers:
             raise AssertionError(
                 params.msg or c.Tests.Matcher.ERR_OK_FAILED.format(error=result.error)
             )
-        result_value: t.Tests.Matcher.MatcherKwargValue = cast(
-            "t.Tests.Matcher.MatcherKwargValue", result.value
+        result_raw = result.value
+        result_value: t.Tests.Matcher.MatcherKwargValue = (
+            result_raw if _is_matcher_input(result_raw) else str(result_raw)
         )
         extracted_payload: t.Tests.Testobject | None = None
         if params.path is not None:
@@ -596,10 +603,9 @@ class FlextTestsMatchers:
             if isinstance(result_value, BaseModel):
                 extract_data = result_value
             else:
-                mapping_value = cast("Mapping[str, t.Tests.Testobject]", result_value)
                 try:
                     validated = _GUARD_PAYLOAD_DICT_ADAPTER.validate_python(
-                        mapping_value
+                        result_value
                     )
                     extract_data = {
                         str(k): _to_extract_value(v) for k, v in validated.items()
@@ -614,8 +620,11 @@ class FlextTestsMatchers:
                         path=path_str, error=extracted.error
                     )
                 )
+            extracted_raw = extracted.value
             extracted_payload = _to_test_payload(
-                cast("t.Tests.Matcher.MatcherKwargValue", extracted.value)
+                extracted_raw
+                if _is_matcher_input(extracted_raw)
+                else str(extracted_raw)
             )
             result_value = extracted_payload
         has_validation = (
@@ -707,13 +716,18 @@ class FlextTestsMatchers:
                     )
                 )
         if params.path is None:
+            current_raw = result.value
             result_payload = _to_test_payload(
-                cast("t.Tests.Matcher.MatcherKwargValue", result.value)
+                current_raw if _is_matcher_input(current_raw) else str(current_raw)
             )
         else:
-            result_payload = extracted_payload or _to_test_payload(
-                cast("t.Tests.Matcher.MatcherKwargValue", result.value)
-            )
+            if extracted_payload is not None:
+                result_payload = extracted_payload
+            else:
+                current_raw = result.value
+                result_payload = _to_test_payload(
+                    current_raw if _is_matcher_input(current_raw) else str(current_raw)
+                )
         if params.where is not None and (not params.where(result_payload)):
             raise AssertionError(
                 params.msg
