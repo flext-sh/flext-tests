@@ -86,6 +86,8 @@ class FlextTestsConstants(FlextConstants):
 
             @unique
             class OperationLiteral(StrEnum):
+                """Supported operation literals for test scenarios."""
+
                 CREATE = "create"
                 READ = "read"
                 DELETE = "delete"
@@ -320,6 +322,8 @@ class FlextTestsConstants(FlextConstants):
 
             @unique
             class FormatLiteral(StrEnum):
+                """Serialization format literals for test fixtures."""
+
                 JSON = "json"
                 YAML = "yaml"
                 CSV = "csv"
@@ -362,6 +366,8 @@ class FlextTestsConstants(FlextConstants):
 
             @unique
             class ErrorModeLiteral(StrEnum):
+                """Error handling mode literals for tests."""
+
                 STOP = "stop"
                 SKIP = "skip"
                 COLLECT = "collect"
@@ -822,6 +828,8 @@ class FlextTestsConstants(FlextConstants):
 
     @unique
     class ModelKind(StrEnum):
+        """Model kind literals for helper factories."""
+
         USER = "user"
         CONFIG = "config"
         SERVICE = "service"
@@ -833,12 +841,16 @@ class FlextTestsConstants(FlextConstants):
 
     @unique
     class ResultKind(StrEnum):
+        """Result kind literals for assertion helpers."""
+
         OK = "ok"
         FAIL = "fail"
         FROM_VALUE = "from_value"
 
     @unique
     class OpKind(StrEnum):
+        """Operation kind literals for utility adapters."""
+
         SIMPLE = "simple"
         ADD = "add"
         FORMAT = "format"
@@ -849,6 +861,8 @@ class FlextTestsConstants(FlextConstants):
 
     @unique
     class BatchKind(StrEnum):
+        """Batch entity kind literals for grouped fixtures."""
+
         USER = "user"
         CONFIG = "config"
         SERVICE = "service"
