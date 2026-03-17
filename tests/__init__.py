@@ -12,8 +12,8 @@ from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 if TYPE_CHECKING:
     from flext_core.typings import FlextTypes
 
-    from tests.conftest import c, m, p, t, tb, td, tf, tk, tm, tt, u
-    from tests.test_utils import AssertionHelpers, T, assertion_helpers
+    from .conftest import c, m, p, t, tb, td, tf, tk, tm, tt, u
+    from .test_utils import AssertionHelpers, T, assertion_helpers
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "AssertionHelpers": ("tests.test_utils", "AssertionHelpers"),
