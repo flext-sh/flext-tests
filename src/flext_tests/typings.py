@@ -24,6 +24,7 @@ type _Testobject = (
     | datetime
     | Path
     | BaseModel
+    | frozenset[str]
     | Sequence[_Testobject]
     | Mapping[str, _Testobject]
 )
@@ -408,7 +409,7 @@ class FlextTestsTypes(FlextTypes):
             value: FlextTestsTypes.Tests.Testobject,
         ) -> TypeIs[r[FlextTestsTypes.Tests.Testobject]]:
             """Check if value is a r."""
-            return r in type(value).__mro__
+            return isinstance(value, r)
 
         @staticmethod
         def is_general_value(
@@ -419,7 +420,7 @@ class FlextTestsTypes(FlextTypes):
                 return True
             if isinstance(value, (str, int, float, bool, bytes)):
                 return True
-            if BaseModel in type(value).__mro__:
+            if isinstance(value, BaseModel):
                 return True
             return isinstance(value, (list, dict))
 

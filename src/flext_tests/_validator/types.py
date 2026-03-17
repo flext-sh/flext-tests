@@ -32,7 +32,7 @@ class FlextValidatorTypes:
         lines: list[str],
         approved: Mapping[str, list[str]],
     ) -> list[m.Tests.Violation]:
-    """Detect wildcard type annotations."""
+        """Detect wildcard type annotations."""
         if u.Tests.Validator.is_approved("TYPE-002", file_path, approved):
             return []
         violations: list[m.Tests.Violation] = []

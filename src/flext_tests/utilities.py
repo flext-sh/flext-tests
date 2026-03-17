@@ -77,7 +77,7 @@ def _to_scalar(
     return str(value)
 
 
-def _is_test_object(value: object) -> TypeIs[t.Tests.Testobject]:
+def _is_test_object(value: t.Tests.Testobject) -> TypeIs[t.Tests.Testobject]:
     if value is None:
         return True
     if isinstance(value, (str, int, float, bool, bytes, datetime, Path, BaseModel)):
@@ -97,7 +97,9 @@ def _is_test_object(value: object) -> TypeIs[t.Tests.Testobject]:
     return False
 
 
-def _is_test_object_root_model(value: object) -> TypeIs[RootModel[t.Tests.Testobject]]:
+def _is_test_object_root_model(
+    value: t.Tests.Testobject | RootModel[t.Tests.Testobject],
+) -> TypeIs[RootModel[t.Tests.Testobject]]:
     return isinstance(value, RootModel)
 
 
@@ -117,7 +119,7 @@ def _to_payload(
         object suitable for test assertions
 
     """
-    if _is_test_object_root_model(value):
+    if isinstance(value, RootModel) and _is_test_object_root_model(value):
         return _to_payload(value.root)
     if value is None or isinstance(
         value, (str, int, float, bool, bytes, datetime, Path, BaseModel)
@@ -189,7 +191,7 @@ def _to_config_map_value(value: t.Tests.Testobject) -> t.NormalizedValue | BaseM
     return str(value)
 
 
-def _coerce_to_test_object(raw: object) -> t.Tests.Testobject:
+def _coerce_to_test_object(raw: t.Tests.Testobject) -> t.Tests.Testobject:
     """Coerce an arbitrary object to t.Tests.Testobject."""
     if isinstance(raw, (str, int, float, bool, bytes, BaseModel)):
         return raw
@@ -199,7 +201,7 @@ def _coerce_to_test_object(raw: object) -> t.Tests.Testobject:
 
 
 def _is_flext_result(
-    val: object,
+    val: r[BaseModel] | BaseModel | t.Tests.Testobject,
 ) -> TypeIs[r[BaseModel]]:
     """TypeGuard: narrow any object to r[BaseModel]."""
     return isinstance(val, r)
@@ -363,7 +365,7 @@ class FlextTestsUtilities(FlextUtilities):
             return {k: _to_normalized_value(v) for k, v in data.items()}
 
         @staticmethod
-        def coerce_to_test_object(raw: object) -> t.Tests.Testobject:
+        def coerce_to_test_object(raw: t.Tests.Testobject) -> t.Tests.Testobject:
             """Coerce an arbitrary object to t.Tests.Testobject.
 
             Delegates to module-level _coerce_to_test_object.
@@ -372,7 +374,7 @@ class FlextTestsUtilities(FlextUtilities):
 
         @staticmethod
         def is_flext_result(
-            val: object,
+            val: r[BaseModel] | BaseModel | t.Tests.Testobject,
         ) -> TypeIs[r[BaseModel]]:
             """TypeGuard: narrow any object to r[BaseModel].
 
@@ -1476,7 +1478,7 @@ class FlextTestsUtilities(FlextUtilities):
                     raise ValueError(msg)
                 all_args = {**input_data, **kwargs}
                 result = op_method(**all_args)
-                if _is_test_object_root_model(result):
+                if isinstance(result, RootModel) and _is_test_object_root_model(result):
                     return _to_payload(result)
                 if isinstance(result, (BaseModel, Path)):
                     return _to_payload(result)

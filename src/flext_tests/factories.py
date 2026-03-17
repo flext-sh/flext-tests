@@ -34,7 +34,7 @@ _TEST_CONTAINER_LIST_ADAPTER: TypeAdapter[list[t.Tests.Testobject]] = TypeAdapte
 _TEST_CONTAINER_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject])
 
 
-def _to_payload_value(value: object) -> t.Tests.Testobject:
+def _to_payload_value(value: t.Tests.Testobject) -> t.Tests.Testobject:
     if value is None:
         return None
     if isinstance(value, str | int | float | bool | bytes | BaseModel):

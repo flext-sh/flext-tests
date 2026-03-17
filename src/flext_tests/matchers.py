@@ -78,8 +78,8 @@ _GUARD_PAYLOAD_LIST_ADAPTER = TypeAdapter(list[t.Tests.Testobject])
 
 
 def _is_non_string_sequence(
-    value: object,
-) -> TypeIs[Sequence[object]]:
+    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
+) -> TypeIs[Sequence[t.Tests.Testobject]]:
     return isinstance(value, Sequence) and (
         not isinstance(value, (str, bytes, bytearray))
     )
@@ -105,25 +105,37 @@ def _is_matcher_input(
     return callable(value)
 
 
-def _to_test_payload(value: object) -> t.Tests.Testobject:
+def _to_test_payload(
+    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
+) -> t.Tests.Testobject:
     if isinstance(value, type):
         return str(value)
     if isinstance(value, (set, frozenset)):
-        return "set"
+        try:
+            typed_items = _TEST_PAYLOAD_LIST_ADAPTER.validate_python(value)
+            normalized_values: set[str] = {
+                item for item in typed_items if isinstance(item, str)
+            }
+            return frozenset(normalized_values)
+        except ValidationError:
+            return frozenset()
     if value is None or isinstance(value, (str, int, float, bool, bytes, BaseModel)):
         return value
     if isinstance(value, Mapping):
         try:
             mapping_value = _TEST_PAYLOAD_DICT_ADAPTER.validate_python(value)
-            return {str(key): str(item) for key, item in mapping_value.items()}
+            return {
+                str(key): _to_test_payload(item) for key, item in mapping_value.items()
+            }
         except ValidationError:
-            return {}
+            empty_map: dict[str, t.Tests.Testobject] = {}
+            return empty_map
     if _is_non_string_sequence(value):
         try:
             sequence_value = _TEST_PAYLOAD_LIST_ADAPTER.validate_python(value)
-            return [str(seq_item) for seq_item in sequence_value]
+            return [_to_test_payload(seq_item) for seq_item in sequence_value]
         except ValidationError:
-            return []
+            return list(value)
     if isinstance(value, (datetime, Path)):
         return value
     return str(value)
@@ -171,11 +183,20 @@ def _to_extract_value(value: t.Tests.Testobject) -> t.NormalizedValue | BaseMode
     return str(value)
 
 
-def _as_guard_input(value: object) -> t.Tests.Testobject:
+def _as_guard_input(
+    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
+) -> t.Tests.Testobject:
     if isinstance(value, type):
         return str(value)
     if isinstance(value, (set, frozenset)):
-        return "set"
+        try:
+            typed_items = _GUARD_PAYLOAD_LIST_ADAPTER.validate_python(value)
+            normalized_values: set[str] = {
+                item for item in typed_items if isinstance(item, str)
+            }
+            return frozenset(normalized_values)
+        except ValidationError:
+            return frozenset()
     if isinstance(value, BaseModel | str | int | float | bool | Path):
         return value
     if value is None:
@@ -183,19 +204,24 @@ def _as_guard_input(value: object) -> t.Tests.Testobject:
     if isinstance(value, Mapping):
         try:
             mapping_value = _GUARD_PAYLOAD_DICT_ADAPTER.validate_python(value)
-            return {str(key): str(item) for key, item in mapping_value.items()}
+            return {
+                str(key): _as_guard_input(item) for key, item in mapping_value.items()
+            }
         except ValidationError:
-            return {}
+            empty_map: dict[str, t.Tests.Testobject] = {}
+            return empty_map
     if _is_non_string_sequence(value):
         try:
             sequence_value = _GUARD_PAYLOAD_LIST_ADAPTER.validate_python(value)
-            return [str(seq_item) for seq_item in sequence_value]
+            return [_as_guard_input(seq_item) for seq_item in sequence_value]
         except ValidationError:
-            return []
-    return str(value)
+            return list(value)
+    return _to_test_payload(value)
 
 
-def _to_chk_value(value: object) -> t.NormalizedValue:
+def _to_chk_value(
+    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
+) -> t.NormalizedValue:
     """Convert a test value to NormalizedValue for use with u.chk()."""
     if value is None:
         return None
@@ -215,14 +241,14 @@ def _to_chk_value(value: object) -> t.NormalizedValue:
         except ValidationError:
             empty_map: dict[str, t.NormalizedValue] = {}
             return empty_map
-        return {str(k): str(v) for k, v in mapping_value.items()}
+        return {str(k): _to_chk_value(v) for k, v in mapping_value.items()}
     if isinstance(value, (list, tuple)):
         try:
             sequence_value = _GUARD_PAYLOAD_LIST_ADAPTER.validate_python(value)
         except ValidationError:
             empty_list: list[t.NormalizedValue] = []
             return empty_list
-        return [str(item) for item in sequence_value]
+        return [_to_chk_value(item) for item in sequence_value]
     return str(value)
 
 
@@ -846,7 +872,7 @@ class FlextTestsMatchers:
 
     @staticmethod
     def that(
-        value: object,
+        value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
         **kwargs: t.Tests.Matcher.MatcherKwargValue,
     ) -> None:
         r"""Super-powered universal value assertion - ALL validations in ONE method.
@@ -1233,7 +1259,7 @@ class FlextTestsMatchers:
                             or f"Key {key!r}: expected {expected_val!r}, got {mapping_value[key]!r}"
                         )
                 elif hasattr(params.kv, "keys") and hasattr(params.kv, "items"):
-                    mapping_kv: Mapping[str, object] = params.kv
+                    mapping_kv: Mapping[str, t.Tests.Testobject] = params.kv
                     for key, expected_obj in mapping_kv.items():
                         if key not in mapping_value:
                             raise AssertionError(

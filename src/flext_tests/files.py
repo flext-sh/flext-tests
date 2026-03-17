@@ -49,7 +49,7 @@ _SCALAR_PATH: tuple[type, ...] = (str, int, float, bool, datetime, Path)
 
 
 def _to_runtime_data(value: t.Tests.Testobject) -> t.RuntimeData:
-    """Narrow t.Tests.Testobject to FlextRuntime.RuntimeData for normalize_to_general_value calls.
+    """Narrow t.Tests.Testobject to FlextRuntime.RuntimeData for container normalization.
 
     Converts bytes to str and ensures the value is FlextRuntime.RuntimeData-compatible.
     The key difference between t.Tests.Testobject and FlextRuntime.RuntimeData is that t.Tests.Testobject
@@ -1449,8 +1449,11 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
     def _mapping_to_payload(
         self, mapping: Mapping[str, object]
     ) -> Mapping[str, t.Tests.Testobject]:
+        normalized_mapping: Mapping[str, t.Tests.Testobject] = (
+            _OBJECT_DICT_ADAPTER.validate_python(mapping)
+        )
         payload: dict[str, t.Tests.Testobject] = {}
-        for key, value in mapping.items():
+        for key, value in normalized_mapping.items():
             payload[str(key)] = self._to_payload_value(value)
         return payload
 

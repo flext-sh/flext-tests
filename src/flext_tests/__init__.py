@@ -33,6 +33,7 @@ if TYPE_CHECKING:
     from flext_tests._validator.models import FlextValidatorModels, vm
     from flext_tests._validator.settings import FlextValidatorSettings
     from flext_tests._validator.tests import FlextValidatorTests
+    from flext_tests._validator.types import FlextValidatorTypes
     from flext_tests.base import FlextTestsServiceBase, s
     from flext_tests.builders import FlextTestsBuilders, tb
     from flext_tests.constants import FlextTestsConstants, c
@@ -73,6 +74,7 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
         "FlextValidatorSettings",
     ),
     "FlextValidatorTests": ("flext_tests._validator.tests", "FlextValidatorTests"),
+    "FlextValidatorTypes": ("flext_tests._validator.types", "FlextValidatorTypes"),
     "_validator": ("flext_tests._validator", ""),
     "c": ("flext_tests.constants", "c"),
     "m": ("flext_tests.models", "m"),
@@ -110,6 +112,7 @@ __all__ = [
     "FlextValidatorModels",
     "FlextValidatorSettings",
     "FlextValidatorTests",
+    "FlextValidatorTypes",
     "_validator",
     "c",
     "m",
