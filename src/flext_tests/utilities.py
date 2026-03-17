@@ -66,7 +66,7 @@ def _to_scalar(
         value value to convert
 
     Returns:
-        ScalarValue (str | int | float | bool | datetime | None)
+        ScalarValue (t.Scalar | None)
 
     """
     if isinstance(value, (str, int, float, bool)):
@@ -256,7 +256,8 @@ def _merge_test_dicts(
     )
     if mr.is_success:
         merged_value = mr.value
-        return {str(k): _to_payload(v) for k, v in merged_value.items()}
+        if isinstance(merged_value, Mapping):
+            return {str(k): _to_payload(v) for k, v in merged_value.items()}
     return dict(base.items())
 
 
@@ -529,7 +530,8 @@ class FlextTestsUtilities(FlextUtilities):
                         error_msg or f"Expected success but got failure: {result.error}"
                     )
                     raise AssertionError(msg)
-                return result.value
+                value: TResult = result.value  # type: ignore[assignment]
+                return value
 
             @staticmethod
             def assert_success_with_value[T](
@@ -1102,11 +1104,24 @@ class FlextTestsUtilities(FlextUtilities):
                     f"Expected success for key '{key}', got: {result.error!r}"
                 )
                 raw_value = result.value
-                actual = (
-                    _to_payload(raw_value)
-                    if _is_test_object(raw_value)
-                    else _to_payload(str(raw_value))
-                )
+                if isinstance(
+                    raw_value,
+                    (
+                        str,
+                        int,
+                        float,
+                        bool,
+                        bytes,
+                        datetime,
+                        Path,
+                        BaseModel,
+                        Mapping,
+                        Sequence,
+                    ),
+                ):
+                    actual = _to_payload(raw_value)
+                else:
+                    actual = _to_payload(str(raw_value))
                 assert actual == expected_value, (
                     f"Expected {expected_value!r} for key '{key}', got {result.value!r}"
                 )
@@ -2089,7 +2104,21 @@ class FlextTestsUtilities(FlextUtilities):
                     if callable(expected):
                         actual_payload = (
                             _to_payload(actual)
-                            if _is_test_object(actual)
+                            if isinstance(
+                                actual,
+                                (
+                                    str,
+                                    int,
+                                    float,
+                                    bool,
+                                    bytes,
+                                    datetime,
+                                    Path,
+                                    BaseModel,
+                                    Mapping,
+                                    Sequence,
+                                ),
+                            )
                             else _to_payload(str(actual))
                         )
                         if not expected(actual_payload):
@@ -2103,7 +2132,21 @@ class FlextTestsUtilities(FlextUtilities):
                     elif actual != expected:
                         actual_payload = (
                             _to_payload(actual)
-                            if _is_test_object(actual)
+                            if isinstance(
+                                actual,
+                                (
+                                    str,
+                                    int,
+                                    float,
+                                    bool,
+                                    bytes,
+                                    datetime,
+                                    Path,
+                                    BaseModel,
+                                    Mapping,
+                                    Sequence,
+                                ),
+                            )
                             else _to_payload(str(actual))
                         )
                         return m.Tests.DeepMatchResult(

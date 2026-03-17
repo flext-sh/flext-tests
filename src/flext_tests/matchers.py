@@ -109,7 +109,7 @@ def _to_test_payload(
     value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
 ) -> t.Tests.Testobject:
     if isinstance(value, type):
-        return str(value)
+        return value
     if isinstance(value, (set, frozenset)):
         try:
             typed_items = _TEST_PAYLOAD_LIST_ADAPTER.validate_python(value)
@@ -187,7 +187,7 @@ def _as_guard_input(
     value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
 ) -> t.Tests.Testobject:
     if isinstance(value, type):
-        return str(value)
+        return value
     if isinstance(value, (set, frozenset)):
         try:
             typed_items = _GUARD_PAYLOAD_LIST_ADAPTER.validate_python(value)
@@ -197,7 +197,7 @@ def _as_guard_input(
             return frozenset(normalized_values)
         except ValidationError:
             return frozenset()
-    if isinstance(value, BaseModel | str | int | float | bool | Path):
+    if isinstance(value, (BaseModel, str, int, float, bool, Path)):
         return value
     if value is None:
         return None

@@ -37,7 +37,7 @@ _TEST_CONTAINER_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject])
 def _to_payload_value(value: t.Tests.Testobject) -> t.Tests.Testobject:
     if value is None:
         return None
-    if isinstance(value, str | int | float | bool | bytes | BaseModel):
+    if isinstance(value, t.Primitives | bytes | BaseModel):
         return value
     if isinstance(value, Mapping):
         mapping_value = _TEST_CONTAINER_DICT_ADAPTER.validate_python(value)

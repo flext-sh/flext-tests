@@ -24,6 +24,7 @@ type _Testobject = (
     | datetime
     | Path
     | BaseModel
+    | type
     | frozenset[str]
     | Sequence[_Testobject]
     | Mapping[str, _Testobject]
