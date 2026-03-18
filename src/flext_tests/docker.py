@@ -131,7 +131,7 @@ class FlextTestsDocker:
 
     @staticmethod
     def _normalize_bindings(
-        bindings: Sequence[Mapping[str, str]] | Mapping[str, str] | None,
+        bindings: t.Tests.Testobject | None,
     ) -> list[dict[str, str]]:
         try:
             return _HOST_BINDINGS_ADAPTER.validate_python(bindings)

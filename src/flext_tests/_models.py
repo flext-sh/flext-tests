@@ -6,7 +6,7 @@ from collections.abc import Mapping, Sequence
 from datetime import datetime
 from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict, RootModel, TypeAdapter
+from pydantic import BaseModel, ConfigDict, RootModel
 
 
 class FlextAutoConstants:
@@ -63,23 +63,23 @@ class _TestObject(
 FlextAutoTypes.Tests.Testobject = _TestObject
 
 
-class _TestContainerDictAdapter(RootModel[TypeAdapter(dict[str, t.Tests.Testobject])]):
+class _TestContainerDictAdapter(RootModel[dict[str, t.Tests.Testobject]]):
     pass
 
 
-class _ObjectDictAdapter(RootModel[TypeAdapter(dict[str, t.Tests.Testobject])]):
+class _ObjectDictAdapter(RootModel[dict[str, t.Tests.Testobject]]):
     pass
 
 
-class _TestPayloadDictAdapter(RootModel[TypeAdapter(dict[str, t.Tests.Testobject])]):
+class _TestPayloadDictAdapter(RootModel[dict[str, t.Tests.Testobject]]):
     pass
 
 
-class _GuardPayloadDictAdapter(RootModel[TypeAdapter(dict[str, t.Tests.Testobject])]):
+class _GuardPayloadDictAdapter(RootModel[dict[str, t.Tests.Testobject]]):
     pass
 
 
 class _PayloadMappingAdapter(
-    RootModel[TypeAdapter(dict[str, t.Tests.Testobject], config=_ARBTYPES)],
+    RootModel[dict[str, t.Tests.Testobject]],
 ):
     pass

@@ -1299,22 +1299,11 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
 
     def _coerce_file_content(
         self,
-        value: BaseModel
-        | FlextModelsContainers.ConfigMap
-        | FlextResult[BaseModel]
-        | FlextResult[FlextModelsContainers.ConfigMap]
+        value: t.Tests.Testobject
+        | FlextResult[t.Tests.Testobject]
         | FlextResult[Sequence[Sequence[str]]]
         | FlextResult[bytes]
         | FlextResult[str]
-        | Mapping[str, t.Tests.Testobject]
-        | Path
-        | Sequence[Sequence[str]]
-        | Sequence[t.Tests.Testobject]
-        | bool
-        | bytes
-        | datetime
-        | float
-        | str
         | None,
     ) -> str | bytes | m.ConfigMap | Sequence[Sequence[str]] | BaseModel:
         if isinstance(value, str | bytes):
