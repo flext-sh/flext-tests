@@ -468,7 +468,9 @@ class TestsFlextTestsFactoriesModel:
 
     def test_model_batch(self) -> None:
         """Test batch model creation."""
-        users = tt.model("user", count=5)
+        users_raw = tt.model("user", count=5)
+        assert isinstance(users_raw, list)
+        users: list[_BaseModel] = users_raw
         tm.that(isinstance(users, list), eq=True)
         tm.that(len(users) == 5, eq=True)
         tm.that(all(isinstance(user, m.Tests.User) for user in users), eq=True)
@@ -483,14 +485,17 @@ class TestsFlextTestsFactoriesModel:
 
     def test_model_as_dict(self) -> None:
         """Test model returned as dict."""
-        users_dict = tt.model("user", count=3, as_dict=True)
+        users_dict_raw = tt.model("user", count=3, as_dict=True)
+        assert isinstance(users_dict_raw, Mapping)
+        users_dict: Mapping[str, _BaseModel] = users_dict_raw
         tm.that(isinstance(users_dict, dict), eq=True)
         tm.that(len(users_dict) == 3, eq=True)
         tm.that(all(isinstance(v, m.Tests.User) for v in users_dict.values()), eq=True)
 
     def test_model_config(self) -> None:
         """Test config model creation."""
-        config = tt.model("config", environment="production")
+        config_raw = tt.model("config", environment="production")
+        config = TestFactoriesHelpers.extract_model(config_raw, m.Tests.Config)
         tm.that(isinstance(config, m.Tests.Config), eq=True)
         tm.that(config.environment == "production", eq=True)
 
@@ -503,13 +508,15 @@ class TestsFlextTestsFactoriesModel:
 
     def test_model_entity(self) -> None:
         """Test entity model creation."""
-        entity = tt.model("entity", name="Test Entity", value=42)
+        entity_raw = tt.model("entity", name="Test Entity", value=42)
+        entity = TestFactoriesHelpers.extract_model(entity_raw, m.Tests.Entity)
         tm.that(isinstance(entity, m.Tests.Entity), eq=True)
         tm.that(entity.name == "Test Entity", eq=True)
 
     def test_model_value_object(self) -> None:
         """Test value object model creation."""
-        value_obj = tt.model("value", data="test_data", value_count=3)
+        value_obj_raw = tt.model("value", data="test_data", value_count=3)
+        value_obj = TestFactoriesHelpers.extract_model(value_obj_raw, m.Tests.Value)
         tm.that(isinstance(value_obj, m.Tests.Value), eq=True)
         tm.that(value_obj.data == "test_data", eq=True)
 
@@ -866,7 +873,9 @@ class TestsFlextTestsFactoriesGeneric:
             def __init__(self, name: str) -> None:
                 self.name = name
 
-        obj = tt.generic(SimpleClass, kwargs={"name": "test"})
+        obj_raw = tt.generic(SimpleClass, kwargs={"name": "test"})
+        assert isinstance(obj_raw, SimpleClass)
+        obj: SimpleClass = obj_raw
         tm.that(isinstance(obj, SimpleClass), eq=True)
         tm.that(obj.name == "test", eq=True)
 
@@ -881,11 +890,13 @@ class TestsFlextTestsFactoriesGeneric:
 
         obj_result = tt.generic(ArgsClass, args=[1, 2], kwargs={"c": "custom"})
         if isinstance(obj_result, r):
-            obj = obj_result.value
+            obj_val = obj_result.value
         elif isinstance(obj_result, list):
-            obj = obj_result[0]
+            obj_val = obj_result[0]
         else:
-            obj = obj_result
+            obj_val = obj_result
+        assert isinstance(obj_val, ArgsClass)
+        obj: ArgsClass = obj_val
         tm.that(isinstance(obj, ArgsClass), eq=True)
         tm.that(obj.a == 1, eq=True)
         tm.that(obj.b == 2, eq=True)
@@ -898,7 +909,9 @@ class TestsFlextTestsFactoriesGeneric:
             def __init__(self, value: int) -> None:
                 self.value = value
 
-        objs = tt.generic(BatchClass, kwargs={"value": 42}, count=5)
+        objs_raw = tt.generic(BatchClass, kwargs={"value": 42}, count=5)
+        assert isinstance(objs_raw, list)
+        objs: list[BatchClass] = objs_raw
         tm.that(isinstance(objs, list), eq=True)
         tm.that(len(objs) == 5, eq=True)
         tm.that(all(isinstance(o, BatchClass) for o in objs), eq=True)
@@ -925,13 +938,15 @@ class TestsFlextTestsFactoriesGeneric:
             ),
         )
         if isinstance(obj_result, r):
-            obj = obj_result.value
+            obj_val2 = obj_result.value
         elif isinstance(obj_result, list):
-            obj = obj_result[0]
+            obj_val2 = obj_result[0]
         else:
-            obj = obj_result
-        tm.that(isinstance(obj, ValidatedClass), eq=True)
-        tm.that(obj.age == 25, eq=True)
+            obj_val2 = obj_result
+        assert isinstance(obj_val2, ValidatedClass)
+        obj2: ValidatedClass = obj_val2
+        tm.that(isinstance(obj2, ValidatedClass), eq=True)
+        tm.that(obj2.age == 25, eq=True)
         with pytest.raises(ValueError, match="Validation failed"):
             tt.generic(
                 ValidatedClass,
@@ -953,5 +968,7 @@ class TestsFlextTestsFactoriesGeneric:
         tm.that(isinstance(result, r), eq=True)
         typed_result = cast("r[ResultClass]", result)
         _ = assertion_helpers.assert_flext_result_success(typed_result)
-        tm.that(isinstance(result.value, ResultClass), eq=True)
-        tm.that(result.value.value == "test", eq=True)
+        assert isinstance(typed_result.value, ResultClass)
+        result_val: ResultClass = typed_result.value
+        tm.that(isinstance(result_val, ResultClass), eq=True)
+        tm.that(result_val.value == "test", eq=True)

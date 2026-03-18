@@ -226,7 +226,7 @@ class FlextTestsDocker:
             client = self.get_client()
             container = client.containers.get(container_name)
             ports_raw: Mapping[str, t.Tests.Testobject] = TypeAdapter(
-                Mapping[str, t.Tests.Testobject],
+                Mapping[str, t.Tests.TestobjectSerializable],
             ).validate_python(container.ports)
             ports: dict[str, str] = {}
             for container_port, host_bindings in ports_raw.items():

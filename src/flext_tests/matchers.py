@@ -1147,7 +1147,7 @@ class FlextTestsMatchers:
                 ),
             )
         if isinstance(subject_payload, (list, tuple)):
-            seq_value: list[t.Tests.Testobject] = []
+            seq_value: list[t.Tests.TestobjectSerializable] = []
             try:
                 seq_value = _TEST_PAYLOAD_LIST_ADAPTER.validate_python(subject_payload)
             except ValidationError:
@@ -1258,7 +1258,7 @@ class FlextTestsMatchers:
                         params.msg or "Sequence contains duplicate items",
                     )
         if isinstance(subject_payload, Mapping):
-            mapping_value: dict[str, t.Tests.Testobject] = {}
+            mapping_value: dict[str, t.Tests.TestobjectSerializable] = {}
             try:
                 mapping_value = _TEST_PAYLOAD_DICT_ADAPTER.validate_python(
                     subject_payload,

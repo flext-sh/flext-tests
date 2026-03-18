@@ -28,10 +28,12 @@ from pydantic import BaseModel, TypeAdapter, ValidationError
 
 from flext_tests import c, m, t, u
 
-_TEST_CONTAINER_LIST_ADAPTER: TypeAdapter[list[t.Tests.Testobject]] = TypeAdapter(
-    list[t.Tests.Testobject],
+_TEST_CONTAINER_LIST_ADAPTER: TypeAdapter[list[t.Tests.TestobjectSerializable]] = (
+    TypeAdapter(
+        list[t.Tests.TestobjectSerializable],
+    )
 )
-_TEST_CONTAINER_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject])
+_TEST_CONTAINER_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.TestobjectSerializable])
 
 
 def _to_payload_value(value: t.Tests.Testobject) -> t.Tests.Testobject:

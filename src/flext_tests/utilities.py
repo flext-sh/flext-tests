@@ -42,7 +42,7 @@ from flext_tests import c, m, p, t
 
 _ARBTYPES = ConfigDict(arbitrary_types_allowed=True)
 _PAYLOAD_MAPPING_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject], config=_ARBTYPES)
-_PAYLOAD_SEQUENCE_ADAPTER: TypeAdapter[list[t.Tests.Testobject]] = TypeAdapter(
+_PAYLOAD_SEQUENCE_ADAPTER = TypeAdapter(
     list[t.Tests.Testobject],
     config=_ARBTYPES,
 )
@@ -1075,7 +1075,7 @@ class FlextTestsUtilities(FlextUtilities):
             @staticmethod
             @contextmanager
             def env_vars_context(
-                env_vars: Mapping[str, t.Tests.Testobject],
+                env_vars: Mapping[str, t.Tests.TestobjectSerializable],
                 vars_to_clear: list[str] | None = None,
             ) -> Generator[None]:
                 """Context manager for temporary environment variable changes.
@@ -1372,7 +1372,7 @@ class FlextTestsUtilities(FlextUtilities):
             @staticmethod
             def execute_and_assert_operation_result(
                 operation: Callable[[], t.Tests.Testobject],
-                test_case: Mapping[str, t.Tests.Testobject],
+                test_case: Mapping[str, t.Tests.TestobjectSerializable],
             ) -> None:
                 """Execute operation and assert result.
 
@@ -1508,7 +1508,7 @@ class FlextTestsUtilities(FlextUtilities):
             @staticmethod
             def execute_domain_operation(
                 operation: str,
-                input_data: Mapping[str, t.Tests.Testobject],
+                input_data: Mapping[str, t.Tests.TestobjectSerializable],
                 **kwargs: t.Tests.Testobject,
             ) -> t.Tests.Testobject:
                 """Execute a domain utility operation.
@@ -1550,7 +1550,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def create_metadata_object(
-                attributes: Mapping[str, t.Tests.Testobject],
+                attributes: Mapping[str, t.Tests.TestobjectSerializable],
             ) -> MutableMapping[str, t.Tests.Testobject]:
                 """Create a metadata object for exceptions.
 

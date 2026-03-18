@@ -108,7 +108,8 @@ class FlextTestsBuilders:
             "batch",
             {"key": key, "scenarios": scenarios, **kwargs},
         )
-        self._data = self._data or {}
+        if not self._data:
+            self._data = dict[str, t.Tests.Testobject]()
         bd: list[t.Tests.Testobject] = []
         for sid, sd in params.scenarios:
             bd.append(
@@ -132,7 +133,8 @@ class FlextTestsBuilders:
     ):
         """Build the dataset with output type control."""
         params = self._v(m.Tests.BuildParams, "build", kwargs)
-        self._data = self._data or {}
+        if not self._data:
+            self._data = dict[str, t.Tests.Testobject]()
         data = self._to_results(dict(self._data))
         if params.filter_none:
             data = {k: v for k, v in data.items() if v is not None}
@@ -168,14 +170,16 @@ class FlextTestsBuilders:
 
     def copy_builder(self) -> Self:
         """Create independent copy of builder state."""
-        self._data = self._data or {}
+        if not self._data:
+            self._data = dict[str, t.Tests.Testobject]()
         new = type(self)()
         new._data = dict(self._data)
         return new
 
     def execute(self) -> r[t.Tests.Builders.BuilderDict]:
         """Execute service - builds and returns as r."""
-        self._data = self._data or {}
+        if not self._data:
+            self._data = dict[str, t.Tests.Testobject]()
         return r[t.Tests.Builders.BuilderDict].ok(dict(self._data))
 
     def fork(self, **updates: t.Tests.Testobject) -> Self:
@@ -206,7 +210,8 @@ class FlextTestsBuilders:
         as_type: type[T] | None = None,
     ) -> t.Tests.Builders.BuilderValue | T | None:
         """Get value from dot-separated path."""
-        self._data = self._data or {}
+        if not self._data:
+            self._data = dict[str, t.Tests.Testobject]()
         current: t.Tests.Builders.BuilderValue = self._data
         for part in path.split("."):
             if not isinstance(current, Mapping) or part not in current:
@@ -268,7 +273,8 @@ class FlextTestsBuilders:
         **kwargs: t.Tests.Testobject,
     ) -> Self:
         """Set value at nested path using dot notation."""
-        self._data = self._data or {}
+        if not self._data:
+            self._data = dict[str, t.Tests.Testobject]()
         fv: t.Tests.Builders.BuilderValue
         if kwargs:
             fv = (
@@ -295,7 +301,7 @@ class FlextTestsBuilders:
                 current[part] = {}
                 nv = current[part]
             if isinstance(nv, dict):
-                current = nv
+                current = nv  # type: ignore[assignment]
         current[parts[-1]] = fv
         return self
 
@@ -311,7 +317,8 @@ class FlextTestsBuilders:
                 error_code=params.error_code,
                 error_data=params.error_data,
             )
-        self._data = self._data or {}
+        if not self._data:
+            self._data = dict[str, t.Tests.Testobject]()
         data: t.Tests.Builders.BuilderDict = dict(self._data)
 
         def fail(msg: str) -> r[t.Tests.Testobject]:
@@ -434,7 +441,7 @@ class FlextTestsBuilders:
 
     @staticmethod
     def _flat(
-        data: t.Tests.Builders.BuilderDict,
+        data: Mapping[str, t.Tests.Testobject],
         parent_key: str = "",
         sep: str = ".",
     ) -> t.Tests.Builders.BuilderDict:
@@ -443,7 +450,7 @@ class FlextTestsBuilders:
         for k, v in data.items():
             nk = f"{parent_key}{sep}{k}" if parent_key else k
             items.extend(
-                FlextTestsBuilders._flat(v, nk, sep).items()
+                FlextTestsBuilders._flat(v, nk, sep).items()  # type: ignore[arg-type]
                 if isinstance(v, dict)
                 else [(nk, v)],
             )
@@ -604,7 +611,8 @@ class FlextTestsBuilders:
         resolved_value: t.Tests.Testobject,
     ) -> None:
         """Store resolved value into builder data, handling merge."""
-        self._data = self._data or {}
+        if not self._data:
+            self._data = dict[str, t.Tests.Testobject]()
         if params.merge and params.key in self._data:
             ex, rv = self._data[params.key], resolved_value
             if isinstance(ex, Mapping) and isinstance(rv, Mapping):

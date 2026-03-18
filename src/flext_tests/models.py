@@ -1975,13 +1975,15 @@ class FlextTestsModels(
             Access via m.Tests.Validate.* with flat aliases.
             """
 
-            DICT_ADAPTER: ClassVar[TypeAdapter[dict[str, t.Tests.Testobject]]] = (
-                TypeAdapter(
-                    dict[str, t.Tests.Testobject],
-                    config=ConfigDict(arbitrary_types_allowed=True),
-                )
+            DICT_ADAPTER: ClassVar[
+                TypeAdapter[dict[str, t.Tests.TestobjectSerializable]]
+            ] = TypeAdapter(
+                dict[str, t.Tests.Testobject],
+                config=ConfigDict(arbitrary_types_allowed=True),
             )
-            LIST_ADAPTER: ClassVar[TypeAdapter[list[t.Tests.Testobject]]] = TypeAdapter(
+            LIST_ADAPTER: ClassVar[
+                TypeAdapter[list[t.Tests.TestobjectSerializable]]
+            ] = TypeAdapter(
                 list[t.Tests.Testobject],
                 config=ConfigDict(arbitrary_types_allowed=True),
             )
@@ -1997,15 +1999,15 @@ class FlextTestsModels(
             __test__ = False
 
             config: Annotated[
-                Mapping[str, t.Tests.Testobject],
+                Mapping[str, t.Tests.TestobjectSerializable],
                 Field(default_factory=dict, description="Configuration dictionary"),
             ]
             container: Annotated[
-                Mapping[str, t.Tests.Testobject],
+                Mapping[str, t.Tests.TestobjectSerializable],
                 Field(default_factory=dict, description="Container/service mappings"),
             ]
             context: Annotated[
-                Mapping[str, t.Tests.Testobject],
+                Mapping[str, t.Tests.TestobjectSerializable],
                 Field(default_factory=dict, description="Context values"),
             ]
 

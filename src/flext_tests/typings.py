@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping, MutableMapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from datetime import datetime
 from pathlib import Path
 from typing import Literal, TypeAliasType, TypeIs
@@ -246,7 +246,7 @@ class FlextTestsTypes(FlextTypes):
 
             type BuilderValue = FlextTestsTypes.Tests.Testobject
             "Type for values stored in builder."
-            type BuilderDict = MutableMapping[str, FlextTestsTypes.Tests.Testobject]
+            type BuilderDict = dict[str, FlextTestsTypes.Tests.Testobject]
             "Type for builder internal data structure."
             type BuilderOutputDict = Mapping[
                 str,

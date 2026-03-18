@@ -58,7 +58,7 @@ class FlextValidatorSettings:
         overrides_raw: t.Tests.Testobject = mypy_config.get("overrides", [])
         if not isinstance(overrides_raw, list):
             return violations
-        overrides: list[t.Tests.Testobject] = overrides_raw
+        overrides: list[t.Tests.Testobject] = list(overrides_raw)
         for override in overrides:
             if not isinstance(override, dict):
                 continue
