@@ -910,11 +910,9 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             else:
                 empty_data: dict[str, t.Tests.Testobject] = {}
                 data = {"value": actual_content} if actual_content else empty_data
-            json_str = (
-                TypeAdapter(dict[str, t.Tests.Testobject])
-                .dump_json(data, indent=params.indent)
-                .decode()
-            )
+            json_str = _OBJECT_DICT_ADAPTER.dump_json(
+                data, indent=params.indent
+            ).decode()
             _ = file_path.write_text(json_str, encoding=params.enc)
         elif actual_fmt == c.Tests.Files.Format.YAML:
             if isinstance(actual_content, Mapping):
@@ -1196,7 +1194,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                 )
             elif actual_fmt == c.Tests.Files.Format.JSON:
                 text = params.path.read_text(encoding=params.enc)
-                parsed_json = TypeAdapter(dict[str, t.Tests.Testobject]).validate_json(
+                parsed_json = _OBJECT_DICT_ADAPTER.validate_json(
                     text.encode(),
                 )
                 content = self._coerce_read_content(parsed_json)
@@ -1533,13 +1531,11 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                                 dict[str, t.Tests.Testobject]
                                 | list[t.Tests.Testobject]
                                 | None
-                            ) = TypeAdapter(
-                                dict[str, t.Tests.Testobject],
-                            ).validate_json(text.encode())
+                            ) = _OBJECT_DICT_ADAPTER.validate_json(text.encode())
                         except ValidationError:
-                            parsed_raw = TypeAdapter(
-                                list[t.Tests.Testobject],
-                            ).validate_json(text.encode())
+                            parsed_raw = _OBJECT_LIST_ADAPTER.validate_json(
+                                text.encode()
+                            )
                     else:
                         parsed_raw = dict(m.ConfigMap(root={}).root)
                 else:
@@ -1720,7 +1716,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         try:
             match fmt:
                 case "json":
-                    adapter = TypeAdapter(dict[str, t.Tests.Testobject])
+                    adapter = _OBJECT_DICT_ADAPTER
                     dict1_raw = adapter.validate_json(content1.encode())
                     dict2_raw = adapter.validate_json(content2.encode())
                 case "yaml":
