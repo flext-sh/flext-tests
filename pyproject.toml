@@ -13,7 +13,7 @@ name = "flext-tests"
 version = "0.12.0-dev"
 description = "FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem"
 readme = "README.md"
-keywords = [ "flext", "testing", "test-infrastructure", "builders", "factories" ]
+keywords = [ "builders", "factories", "flext", "test-infrastructure", "testing" ]
 license = "MIT"
 maintainers = [ {email = "team@flext.sh", name = "FLEXT Team"} ]
 authors = [ {email = "team@flext.sh", name = "FLEXT Team"} ]
@@ -31,12 +31,11 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "flext-core",
-  "flext-infra",
   "factory-boy>=3.3.1",
   "faker>=37.4",
+  "flext-core",
+  "flext-infra",
   "hypothesis>=6.125",
-  "pytest>=8.4",
   "pytest-benchmark>=5.1",
   "pytest-clarity>=1.0.1",
   "pytest-cov>=6.2",
@@ -47,6 +46,7 @@ dependencies = [
   "pytest-sugar>=1",
   "pytest-timeout>=2.4",
   "pytest-xdist>=3.8",
+  "pytest>=8.4",
 ]
 # [MANAGED] consolidated development dependencies
 # [AUTO] merged from dev/docs/security/test/typings
@@ -70,7 +70,7 @@ packages = [
 # [CUSTOM] poetry path dependencies for local development
 [tool.poetry.group.dev.dependencies]
 flext-core = {path = "../flext-core", develop = true}
-flext-infra = {path = "../flext-core", develop = true, extras = []}
+flext-infra = {path = "../flext-core", develop = true, extras = [  ]}
 
 # [MANAGED] deptry
 [tool.deptry]
@@ -410,8 +410,8 @@ filterwarnings = [
 ]
 markers = [
   "core: core functionality tests",
-  "unit: unit tests",
   "integration: integration tests",
+  "unit: unit tests",
 ]
 minversion = "8.0"
 python_classes = [ "Test*" ]
