@@ -78,7 +78,7 @@ _GUARD_PAYLOAD_LIST_ADAPTER = TypeAdapter(list[t.Tests.TestobjectSerializable])
 
 
 def _is_non_string_sequence(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
+    value: object,
 ) -> TypeIs[Sequence[t.Tests.Testobject]]:
     return isinstance(value, Sequence) and (
         not isinstance(value, (str, bytes, bytearray))
@@ -87,7 +87,7 @@ def _is_non_string_sequence(
 
 def _is_matcher_input(
     value: object,
-) -> TypeIs[t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None]:
+) -> TypeIs[object]:
     if value is None:
         return True
     if isinstance(value, (str, int, float, bool, bytes, datetime, Path, BaseModel)):
@@ -106,7 +106,7 @@ def _is_matcher_input(
 
 
 def _to_test_payload(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
+    value: object,
 ) -> t.Tests.Testobject:
     if isinstance(value, type):
         return value
@@ -184,7 +184,7 @@ def _to_extract_value(value: t.Tests.Testobject) -> t.NormalizedValue | BaseMode
 
 
 def _as_guard_input(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
+    value: object,
 ) -> t.Tests.Testobject:
     if isinstance(value, type):
         return value
@@ -220,7 +220,7 @@ def _as_guard_input(
 
 
 def _to_chk_value(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
+    value: object,
 ) -> t.NormalizedValue:
     """Convert a test value to NormalizedValue for use with u.chk()."""
     if value is None:
@@ -253,9 +253,9 @@ def _to_chk_value(
 
 
 def _check_has_lacks(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
-    has: t.Tests.Matcher.MatcherKwargValue | None,
-    lacks: t.Tests.Matcher.MatcherKwargValue | None,
+    value: object,
+    has: object | None,
+    lacks: object | None,
     msg: str | None,
     *,
     as_str: bool = False,
@@ -575,13 +575,13 @@ class FlextTestsMatchers:
     @overload
     def ok[TResult](
         result: r[TResult],
-        **kwargs: t.Tests.Matcher.MatcherKwargValue,
+        **kwargs: object,
     ) -> TResult | t.Tests.Testobject: ...
 
     @staticmethod
     def ok[TResult](
         result: r[TResult],
-        **kwargs: t.Tests.Matcher.MatcherKwargValue,
+        **kwargs: object,
     ) -> TResult | t.Tests.Testobject:
         """Enhanced assertion for r success with optional value validation.
 
@@ -640,7 +640,7 @@ class FlextTestsMatchers:
                 params.msg or c.Tests.Matcher.ERR_OK_FAILED.format(error=result.error),
             )
         result_raw = result.value
-        result_value: t.Tests.Matcher.MatcherKwargValue = (
+        result_value: object = (
             result_raw if _is_matcher_input(result_raw) else str(result_raw)
         )
         extracted_payload: t.Tests.Testobject | None = None
@@ -907,8 +907,8 @@ class FlextTestsMatchers:
 
     @staticmethod
     def that(
-        value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject | None,
-        **kwargs: t.Tests.Matcher.MatcherKwargValue,
+        value: object,
+        **kwargs: object,
     ) -> None:
         r"""Super-powered universal value assertion - ALL validations in ONE method.
 
@@ -988,10 +988,12 @@ class FlextTestsMatchers:
             ValueError: If parameter validation fails (via Pydantic model)
 
         """
-        raw_eq = kwargs.get("eq") if "eq" in kwargs else None
-        raw_ne = kwargs.get("ne") if "ne" in kwargs else None
-        raw_has = kwargs.get("has") if "has" in kwargs else None
-        raw_contains = kwargs.get("contains") if "contains" in kwargs else None
+        raw_eq: object | None = kwargs.get("eq") if "eq" in kwargs else None
+        raw_ne: object | None = kwargs.get("ne") if "ne" in kwargs else None
+        raw_has: object | None = kwargs.get("has") if "has" in kwargs else None
+        raw_contains: object | None = (
+            kwargs.get("contains") if "contains" in kwargs else None
+        )
         try:
             params = m.Tests.ThatParams.model_validate(kwargs)
         except (TypeError, ValueError, AttributeError):
