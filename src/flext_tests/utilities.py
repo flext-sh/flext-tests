@@ -33,6 +33,7 @@ from flext_core import (
     FlextRegistry,
     FlextSettings,
     FlextUtilities,
+    m as core_m,
     r,
 )
 from pydantic import BaseModel, ConfigDict, RootModel, TypeAdapter, ValidationError
@@ -42,7 +43,8 @@ from flext_tests import c, m, p, t
 _ARBTYPES = ConfigDict(arbitrary_types_allowed=True)
 _PAYLOAD_MAPPING_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject], config=_ARBTYPES)
 _PAYLOAD_SEQUENCE_ADAPTER: TypeAdapter[list[t.Tests.Testobject]] = TypeAdapter(
-    list[t.Tests.Testobject], config=_ARBTYPES
+    list[t.Tests.Testobject],
+    config=_ARBTYPES,
 )
 
 
@@ -122,7 +124,8 @@ def _to_payload(
     if isinstance(value, RootModel) and _is_test_object_root_model(value):
         return _to_payload(value.root)
     if value is None or isinstance(
-        value, (str, int, float, bool, bytes, datetime, Path, BaseModel)
+        value,
+        (str, int, float, bool, bytes, datetime, Path, BaseModel),
     ):
         payload_value: t.Tests.Testobject = value
         return payload_value
@@ -267,7 +270,10 @@ def _entity_factory_for[T: BaseModel](
     """Build an _EntityFactory lambda for *cls* (DRY helper)."""
 
     def _factory(
-        *, name: str, value: t.Tests.Testobject, **_kw: t.Tests.Testobject
+        *,
+        name: str,
+        value: t.Tests.Testobject,
+        **_kw: t.Tests.Testobject,
     ) -> T:
         return cls.model_validate({"name": name, "value": value})
 
@@ -305,7 +311,8 @@ class FlextTestsUtilities(FlextUtilities):
 
         @staticmethod
         def validate_pipeline(
-            value: str, validators: list[Callable[[str], r[bool]]]
+            value: str,
+            validators: list[Callable[[str], r[bool]]],
         ) -> r[bool]:
             """Execute validation pipeline with multiple validators.
 
@@ -471,7 +478,8 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_failure_with_error[T](
-                result: r[T] | p.Result[T], expected_error: str | None = None
+                result: r[T] | p.Result[T],
+                expected_error: str | None = None,
             ) -> None:
                 """Assert result is failure and has expected error.
 
@@ -492,7 +500,8 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_result_failure_with_error[T](
-                result: r[T] | p.Result[T], expected_error: str
+                result: r[T] | p.Result[T],
+                expected_error: str,
             ) -> None:
                 """Assert result failure with error (compat alias).
 
@@ -505,12 +514,14 @@ class FlextTestsUtilities(FlextUtilities):
 
                 """
                 FlextTestsUtilities.Tests.Result.assert_failure_with_error(
-                    result, expected_error
+                    result,
+                    expected_error,
                 )
 
             @staticmethod
             def assert_success[TResult](
-                result: r[TResult] | p.Result[TResult], error_msg: str | None = None
+                result: r[TResult] | p.Result[TResult],
+                error_msg: str | None = None,
             ) -> TResult:
                 """Assert result is success and return unwrapped value.
 
@@ -535,7 +546,8 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_success_with_value[T](
-                result: r[T] | p.Result[T], expected_value: T
+                result: r[T] | p.Result[T],
+                expected_value: T,
             ) -> None:
                 """Assert result is success and has expected value.
 
@@ -586,7 +598,9 @@ class FlextTestsUtilities(FlextUtilities):
             @staticmethod
             @contextmanager
             def temporary_attribute(
-                target: BaseModel, attribute: str, value: t.Tests.Testobject
+                target: BaseModel,
+                attribute: str,
+                value: t.Tests.Testobject,
             ) -> Generator[None]:
                 """Temporarily set attribute on target object.
 
@@ -617,7 +631,8 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def add_operation(
-                a: t.Tests.Testobject, b: t.Tests.Testobject
+                a: t.Tests.Testobject,
+                b: t.Tests.Testobject,
             ) -> t.Tests.Testobject:
                 """Execute add operation for numeric or string values.
 
@@ -656,7 +671,9 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def create_result[T](
-                value: T | None = None, *, error: str | None = None
+                value: T | None = None,
+                *,
+                error: str | None = None,
             ) -> r[T]:
                 """Create r for tests.
 
@@ -707,7 +724,7 @@ class FlextTestsUtilities(FlextUtilities):
                 """
                 if validation_result.is_failure:
                     return r[t.Tests.Testobject].fail(
-                        validation_result.error or "Validation failed"
+                        validation_result.error or "Validation failed",
                     )
                 result_data: t.Tests.Testobject = {"result": "success"}
                 return r[t.Tests.Testobject].ok(result_data)
@@ -809,29 +826,35 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_failure_with_error[T](
-                result: r[T] | p.Result[T], expected_error: str | None = None
+                result: r[T] | p.Result[T],
+                expected_error: str | None = None,
             ) -> None:
                 """Delegate to Result.assert_failure_with_error."""
                 FlextTestsUtilities.Tests.Result.assert_failure_with_error(
-                    result, expected_error
+                    result,
+                    expected_error,
                 )
 
             @staticmethod
             def assert_result_failure_with_error[T](
-                result: r[T] | p.Result[T], expected_error: str
+                result: r[T] | p.Result[T],
+                expected_error: str,
             ) -> None:
                 """Delegate to Result.assert_result_failure_with_error."""
                 FlextTestsUtilities.Tests.Result.assert_result_failure_with_error(
-                    result, expected_error
+                    result,
+                    expected_error,
                 )
 
             @staticmethod
             def assert_success_with_value[T](
-                result: r[T] | p.Result[T], expected_value: T
+                result: r[T] | p.Result[T],
+                expected_value: T,
             ) -> None:
                 """Delegate to Result.assert_success_with_value."""
                 FlextTestsUtilities.Tests.Result.assert_success_with_value(
-                    result, expected_value
+                    result,
+                    expected_value,
                 )
 
             @staticmethod
@@ -884,14 +907,16 @@ class FlextTestsUtilities(FlextUtilities):
                     )
                 if first_failure_index is not None:
                     actual_first_failure = next(
-                        (i for i, res in enumerate(results) if res.is_failure), None
+                        (i for i, res in enumerate(results) if res.is_failure),
+                        None,
                     )
                     assert actual_first_failure == first_failure_index, (
                         f"Expected first failure at index {first_failure_index}, got {actual_first_failure}"
                     )
                 elif failures == 0:
                     actual_first_failure = next(
-                        (i for i, res in enumerate(results) if res.is_failure), None
+                        (i for i, res in enumerate(results) if res.is_failure),
+                        None,
                     )
                     assert actual_first_failure is None, (
                         f"Expected no failures but found first failure at index {actual_first_failure}"
@@ -939,7 +964,8 @@ class FlextTestsUtilities(FlextUtilities):
                     for i, error in enumerate(failure_errors):
                         error_code = codes[i] if i < len(codes) else None
                         result = r[t.Tests.Testobject].fail(
-                            error, error_code=error_code
+                            error,
+                            error_code=error_code,
                         )
                         cases.append((result, False, None, error))
                 return cases
@@ -1010,7 +1036,8 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_config_fields(
-                config: p.Settings, expected_fields: m.ConfigMap
+                config: p.Settings,
+                expected_fields: m.ConfigMap,
             ) -> None:
                 """Assert config has expected field values.
 
@@ -1086,7 +1113,9 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_context_get_success(
-                context: p.Context, key: str, expected_value: t.Tests.Testobject
+                context: p.Context,
+                key: str,
+                expected_value: t.Tests.Testobject,
             ) -> None:
                 """Assert context get returns expected value.
 
@@ -1293,7 +1322,10 @@ class FlextTestsUtilities(FlextUtilities):
                 """
                 cases: list[MutableMapping[str, t.Tests.Testobject]] = []
                 for desc, data, expected in zip(
-                    descriptions, input_data_list, expected_results, strict=True
+                    descriptions,
+                    input_data_list,
+                    expected_results,
+                    strict=True,
                 ):
                     th = FlextTestsUtilities.Tests.TestCaseHelpers
                     case = th.create_operation_test_case(
@@ -1382,7 +1414,10 @@ class FlextTestsUtilities(FlextUtilities):
                 entities: list[TEntity] = []
                 dh = FlextTestsUtilities.Tests.DomainHelpers
                 for name, value, remove_id in zip(
-                    names, values, ids_removal, strict=True
+                    names,
+                    values,
+                    ids_removal,
+                    strict=True,
                 ):
                     try:
                         entity = dh.create_test_entity_instance(
@@ -1394,7 +1429,7 @@ class FlextTestsUtilities(FlextUtilities):
                         entities.append(entity)
                     except (TypeError, ValueError, AttributeError, RuntimeError) as e:
                         return r[list[TEntity]].fail(
-                            f"Failed to create entity {name}: {e}"
+                            f"Failed to create entity {name}: {e}",
                         )
                 return r[list[TEntity]].ok(entities)
 
@@ -1426,7 +1461,9 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def create_test_value_object_instance[TValue](
-                data: str, count: int, value_class: _ValueFactory[TValue]
+                data: str,
+                count: int,
+                value_class: _ValueFactory[TValue],
             ) -> TValue:
                 """Create a test value object instance.
 
@@ -1461,7 +1498,9 @@ class FlextTestsUtilities(FlextUtilities):
                 """
                 return [
                     FlextTestsUtilities.Tests.DomainHelpers.create_test_value_object_instance(
-                        data=data, count=count, value_class=value_class
+                        data=data,
+                        count=count,
+                        value_class=value_class,
                     )
                     for data, count in zip(data_list, count_list, strict=True)
                 ]
@@ -1533,7 +1572,7 @@ class FlextTestsUtilities(FlextUtilities):
 
                 model_dump: Callable[[], MutableMapping[str, t.Tests.Testobject]] = (
                     staticmethod(
-                        lambda: (_ for _ in ()).throw(RuntimeError("Bad model_dump"))
+                        lambda: (_ for _ in ()).throw(RuntimeError("Bad model_dump")),
                     )
                 )
 
@@ -1612,11 +1651,13 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_result_failure[TResult](
-                result: r[TResult], expected_error: str | None = None
+                result: r[TResult],
+                expected_error: str | None = None,
             ) -> str:
                 """Delegate to Result.assert_failure."""
                 return FlextTestsUtilities.Tests.Result.assert_failure(
-                    result, expected_error
+                    result,
+                    expected_error,
                 )
 
             @staticmethod
@@ -1920,7 +1961,9 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def is_approved(
-                rule_id: str, file_path: Path, approved: Mapping[str, list[str]]
+                rule_id: str,
+                file_path: Path,
+                approved: Mapping[str, list[str]],
             ) -> bool:
                 """Check if file is approved for this rule.
 
@@ -2090,7 +2133,9 @@ class FlextTestsUtilities(FlextUtilities):
                     }
                 for path, expected in spec.items():
                     result = FlextUtilities.extract(
-                        source_obj, path, separator=path_sep
+                        source_obj,
+                        path,
+                        separator=path_sep,
                     )
                     if result.is_failure:
                         return m.Tests.DeepMatchResult(
@@ -2179,7 +2224,8 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def validate(
-                value: t.Tests.Testobject, spec: int | tuple[int, int]
+                value: t.Tests.Testobject,
+                spec: int | tuple[int, int],
             ) -> bool:
                 """Validate length against spec.
 
@@ -2207,9 +2253,14 @@ class FlextTestsUtilities(FlextUtilities):
                 except TypeError:
                     return False
                 if isinstance(spec, int):
-                    return FlextUtilities.chk(actual_len, eq=spec)
+                    return FlextUtilities.chk(
+                        actual_len, core_m.GuardCheckSpec(eq=spec)
+                    )
                 min_len, max_len = spec
-                return FlextUtilities.chk(actual_len, gte=min_len, lte=max_len)
+                return FlextUtilities.chk(
+                    actual_len,
+                    core_m.GuardCheckSpec(gte=min_len, lte=max_len),
+                )
 
 
 u = FlextTestsUtilities

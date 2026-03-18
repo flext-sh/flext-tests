@@ -59,7 +59,10 @@ class FlextTestsProtocols(FlextProtocols):
                     ...
 
                 def remove(
-                    self, *, force: bool = False, **kwargs: t.Tests.Testobject
+                    self,
+                    *,
+                    force: bool = False,
+                    **kwargs: t.Tests.Testobject,
                 ) -> None:
                     """Remove the container.
 
@@ -107,7 +110,8 @@ class FlextTestsProtocols(FlextProtocols):
                 """Protocol for container collection operations."""
 
                 def get(
-                    self, container_id: str
+                    self,
+                    container_id: str,
                 ) -> FlextTestsProtocols.Tests.Docker.Container:
                     """Get container by ID."""
                     ...
@@ -234,7 +238,8 @@ class FlextTestsProtocols(FlextProtocols):
                     ...
 
                 def get(
-                    self, network_id: str
+                    self,
+                    network_id: str,
                 ) -> FlextTestsProtocols.Tests.Docker.Network:
                     """Get network by ID."""
                     ...
@@ -292,7 +297,8 @@ class FlextTestsProtocols(FlextProtocols):
                     ...
 
                 def get(
-                    self, volume_id: str
+                    self,
+                    volume_id: str,
                 ) -> FlextTestsProtocols.Tests.Docker.Volume:
                     """Get volume by ID."""
                     ...
@@ -411,7 +417,9 @@ class FlextTestsProtocols(FlextProtocols):
                 """
 
                 def __call__(
-                    self, kind: str = ..., **kwargs: t.Tests.Testobject
+                    self,
+                    kind: str = ...,
+                    **kwargs: t.Tests.Testobject,
                 ) -> (
                     t.Tests.Testobject
                     | list[t.Tests.Testobject]
@@ -542,7 +550,9 @@ class FlextTestsProtocols(FlextProtocols):
                 """
 
                 def __call__[T](
-                    self, type_: type[T], **kwargs: t.Tests.Testobject
+                    self,
+                    type_: type[T],
+                    **kwargs: t.Tests.Testobject,
                 ) -> T | list[T] | r[T] | r[list[T]]:
                     """Create instance(s) of any type with full type safety.
 
@@ -650,7 +660,9 @@ class FlextTestsProtocols(FlextProtocols):
                     ...
 
                 def eq(
-                    self, expected: t.Tests.Testobject, msg: str | None = None
+                    self,
+                    expected: t.Tests.Testobject,
+                    msg: str | None = None,
                 ) -> Self:
                     """Assert value equals expected."""
                     ...
@@ -660,7 +672,9 @@ class FlextTestsProtocols(FlextProtocols):
                     ...
 
                 def fail(
-                    self, error: str | None = None, msg: str | None = None
+                    self,
+                    error: str | None = None,
+                    msg: str | None = None,
                 ) -> Self:
                     """Assert result is failure."""
                     ...
@@ -857,7 +871,8 @@ class FlextTestsProtocols(FlextProtocols):
                     ...
 
                 def build(
-                    self, **kwargs: t.Tests.Testobject
+                    self,
+                    **kwargs: t.Tests.Testobject,
                 ) -> (
                     Mapping[str, t.Tests.Testobject]
                     | BaseModel
@@ -948,7 +963,8 @@ class FlextTestsProtocols(FlextProtocols):
                     ...
 
                 def scenarios(
-                    self, *cases: tuple[str, Mapping[str, t.Tests.Testobject]]
+                    self,
+                    *cases: tuple[str, Mapping[str, t.Tests.Testobject]],
                 ) -> list[tuple[str, Mapping[str, t.Tests.Testobject]]]:
                     """Build pytest.mark.parametrize compatible scenarios.
 
@@ -984,7 +1000,8 @@ class FlextTestsProtocols(FlextProtocols):
                     ...
 
                 def to_result[T](
-                    self, **kwargs: t.Tests.Testobject
+                    self,
+                    **kwargs: t.Tests.Testobject,
                 ) -> (
                     r[T]
                     | r[Mapping[str, t.Tests.Testobject]]

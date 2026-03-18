@@ -39,7 +39,10 @@ class FlextTestsBuilders:
 
     @classmethod
     def _v[M: BaseModel](
-        cls, model: type[M], name: str, kw: dict[str, t.Tests.Testobject]
+        cls,
+        model: type[M],
+        name: str,
+        kw: dict[str, t.Tests.Testobject],
     ) -> M:
         try:
             return model.model_validate(kw)
@@ -88,7 +91,7 @@ class FlextTestsBuilders:
             and not params.validate_func(rv)
         ):
             raise ValueError(
-                f"Validation failed for key '{params.key}' with value: {rv}"
+                f"Validation failed for key '{params.key}' with value: {rv}",
             )
         self._store(params, rv)
         return self
@@ -111,7 +114,7 @@ class FlextTestsBuilders:
             bd.append(
                 {"_id": sid, "_result_ok": sd, "_is_result_marker": True}
                 if params.as_results
-                else sd
+                else sd,
             )
         if params.with_failures:
             for fid, fe in params.with_failures:
@@ -139,7 +142,7 @@ class FlextTestsBuilders:
                     k: u.Tests.to_payload(v)
                     for k, v in data.items()
                     if not isinstance(v, r)
-                })
+                }),
             )
         hooks: t.Tests.Builders.BuilderOutputDict = {str(k): v for k, v in data.items()}
         if params.validate_with is not None and not params.validate_with(hooks):
@@ -188,7 +191,11 @@ class FlextTestsBuilders:
     def get[T](self, path: str, default: T) -> t.Tests.Builders.BuilderValue | T: ...
     @overload
     def get[T](
-        self, path: str, default: T | None = None, *, as_type: type[T]
+        self,
+        path: str,
+        default: T | None = None,
+        *,
+        as_type: type[T],
     ) -> T | None: ...
 
     def get[T](
@@ -309,7 +316,9 @@ class FlextTestsBuilders:
 
         def fail(msg: str) -> r[t.Tests.Testobject]:
             return r[t.Tests.Testobject].fail(
-                msg, error_code=params.error_code, error_data=params.error_data
+                msg,
+                error_code=params.error_code,
+                error_data=params.error_data,
             )
 
         if params.validate_func is not None and not params.validate_func(data):
@@ -324,7 +333,7 @@ class FlextTestsBuilders:
         if params.as_cls is not None:
             try:
                 bv: t.Tests.Testobject = u.Tests.coerce_to_test_object(
-                    params.as_cls(*(params.cls_args or ()), **data)
+                    params.as_cls(*(params.cls_args or ()), **data),
                 )
                 return bv if params.unwrap else r[t.Tests.Testobject].ok(bv)
             except self._EXC as e:
@@ -344,7 +353,7 @@ class FlextTestsBuilders:
         if params.unwrap:
             if result.is_failure:
                 raise ValueError(
-                    params.unwrap_msg or f"Failed to unwrap result: {result.error}"
+                    params.unwrap_msg or f"Failed to unwrap result: {result.error}",
                 )
             return result.value
         return result
@@ -390,7 +399,10 @@ class FlextTestsBuilders:
     # -- Private helpers --
 
     def _config(
-        self, *, production: bool, debug: bool
+        self,
+        *,
+        production: bool,
+        debug: bool,
     ) -> t.Tests.Builders.BuilderValue:
         """Create configuration data via tt.model('config')."""
         env = (
@@ -422,7 +434,9 @@ class FlextTestsBuilders:
 
     @staticmethod
     def _flat(
-        data: t.Tests.Builders.BuilderDict, parent_key: str = "", sep: str = "."
+        data: t.Tests.Builders.BuilderDict,
+        parent_key: str = "",
+        sep: str = ".",
     ) -> t.Tests.Builders.BuilderDict:
         """Flatten nested dict using dot notation keys."""
         items: list[tuple[str, t.Tests.Builders.BuilderValue]] = []
@@ -431,7 +445,7 @@ class FlextTestsBuilders:
             items.extend(
                 FlextTestsBuilders._flat(v, nk, sep).items()
                 if isinstance(v, dict)
-                else [(nk, v)]
+                else [(nk, v)],
             )
         return dict(items)
 
@@ -539,7 +553,8 @@ class FlextTestsBuilders:
             return entries
         if params.factory is not None:
             return self._factory(
-                params.factory, params.count or c.Tests.Factory.DEFAULT_BATCH_COUNT
+                params.factory,
+                params.count or c.Tests.Factory.DEFAULT_BATCH_COUNT,
             )
         if params.model is not None:
             return self._model(params)
@@ -580,11 +595,13 @@ class FlextTestsBuilders:
             )
         args = params.cls_args or ()
         return u.Tests.to_payload(
-            cls_type.__call__(*args, **kw) if args or kw else cls_type.__call__()
+            cls_type.__call__(*args, **kw) if args or kw else cls_type.__call__(),
         )
 
     def _store(
-        self, params: m.Tests.AddParams, resolved_value: t.Tests.Testobject
+        self,
+        params: m.Tests.AddParams,
+        resolved_value: t.Tests.Testobject,
     ) -> None:
         """Store resolved value into builder data, handling merge."""
         self._data = self._data or {}
@@ -603,7 +620,8 @@ class FlextTestsBuilders:
         self._data[params.key] = resolved_value
 
     def _to_results(
-        self, data: t.Tests.Builders.BuilderDict
+        self,
+        data: t.Tests.Builders.BuilderDict,
     ) -> t.Tests.Builders.BuilderOutputDict:
         """Convert batch result markers to actual r objects."""
 
@@ -653,7 +671,8 @@ class FlextTestsBuilders:
 
             @staticmethod
             def batch_fail[T](
-                errors: Sequence[str], expected_type: type[T] | None = None
+                errors: Sequence[str],
+                expected_type: type[T] | None = None,
             ) -> list[r[T]]:
                 _ = expected_type
                 return tt.results(values=[], errors=list(errors))
@@ -722,7 +741,7 @@ class FlextTestsBuilders:
                         u.Tests.GenericHelpers.create_parametrized_cases(
                             success_values=list(success_values),
                             failure_errors=list(failure_errors),
-                        )
+                        ),
                     )
                 ]
 
@@ -753,11 +772,13 @@ class FlextTestsBuilders:
 
             @staticmethod
             def flatten(
-                nested: Mapping[str, t.Tests.Testobject], separator: str = "."
+                nested: Mapping[str, t.Tests.Testobject],
+                separator: str = ".",
             ) -> Mapping[str, t.Tests.Testobject]:
                 """Flatten nested dict — delegates to FlextTestsBuilders._flat."""
                 return FlextTestsBuilders._flat(
-                    {str(k): v for k, v in nested.items()}, sep=separator
+                    {str(k): v for k, v in nested.items()},
+                    sep=separator,
                 )
 
             @staticmethod
@@ -800,7 +821,7 @@ class FlextTestsBuilders:
                         names=list(names),
                         values=list(values),
                         entity_class=u.Tests.entity_factory_for(entity_class),
-                    )
+                    ),
                 )
 
             @staticmethod
@@ -816,7 +837,8 @@ class FlextTestsBuilders:
             @staticmethod
             def config(**overrides: t.Tests.Testobject) -> m.Tests.Config:
                 return u.Tests.extract_model(
-                    tt.model("config", **overrides), m.Tests.Config
+                    tt.model("config", **overrides),
+                    m.Tests.Config,
                 )
 
             @staticmethod
@@ -834,18 +856,22 @@ class FlextTestsBuilders:
             @staticmethod
             def service(**overrides: t.Tests.Testobject) -> m.Tests.Service:
                 return u.Tests.extract_model(
-                    tt.model("service", **overrides), m.Tests.Service
+                    tt.model("service", **overrides),
+                    m.Tests.Service,
                 )
 
             @staticmethod
             def user(**overrides: t.Tests.Testobject) -> m.Tests.User:
                 return u.Tests.extract_model(
-                    tt.model("user", **overrides), m.Tests.User
+                    tt.model("user", **overrides),
+                    m.Tests.User,
                 )
 
             @staticmethod
             def value_object[T: m.Tests.Value](
-                value_class: type[T], data: str = "", count: int = 1
+                value_class: type[T],
+                data: str = "",
+                count: int = 1,
             ) -> T:
                 return u.Tests.DomainHelpers.create_test_value_object_instance(
                     data=data,
@@ -858,7 +884,8 @@ class FlextTestsBuilders:
 
             @staticmethod
             def add() -> Callable[
-                [t.Tests.Testobject, t.Tests.Testobject], t.Tests.Testobject
+                [t.Tests.Testobject, t.Tests.Testobject],
+                t.Tests.Testobject,
             ]:
                 return u.Tests.Factory.add_operation
 

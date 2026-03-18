@@ -154,7 +154,8 @@ class FlextTestsDomains:
 
     @staticmethod
     def batch_users(
-        count: int = 5, **user_overrides: str | bool
+        count: int = 5,
+        **user_overrides: str | bool,
     ) -> list[MutableMapping[str, str | bool]]:
         """Create a batch of test users.
 
@@ -193,7 +194,9 @@ class FlextTestsDomains:
 
         """
         config_result = tt.model(
-            "config", service_type=service_type, environment=environment
+            "config",
+            service_type=service_type,
+            environment=environment,
         )
         base_config: MutableMapping[str, t.Tests.Testobject] = {
             "service_type": getattr(config_result, "service_type", service_type),
@@ -212,7 +215,8 @@ class FlextTestsDomains:
 
     @staticmethod
     def create_payload(
-        data_type: str = "user", **custom_fields: t.Tests.Testobject
+        data_type: str = "user",
+        **custom_fields: t.Tests.Testobject,
     ) -> MutableMapping[str, t.Tests.Testobject]:
         """Create test payload data.
 
@@ -251,7 +255,8 @@ class FlextTestsDomains:
 
     @staticmethod
     def create_service(
-        service_type: str = "api", **config: t.Tests.Testobject
+        service_type: str = "api",
+        **config: t.Tests.Testobject,
     ) -> MutableMapping[str, t.Tests.Testobject]:
         """Create test service configuration.
 
@@ -287,7 +292,9 @@ class FlextTestsDomains:
         last_name = str(overrides.get("last_name", "User"))
         email = str(overrides.get("email", "test@example.com"))
         user_model_result = tt.model(
-            "user", name=f"{first_name} {last_name}", email=email
+            "user",
+            name=f"{first_name} {last_name}",
+            email=email,
         )
         user: MutableMapping[str, str | bool] = {
             "id": getattr(user_model_result, "id", ""),

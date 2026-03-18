@@ -106,7 +106,7 @@ class FlextValidatorLayer:
                 validator_name=c.Tests.Validator.Defaults.VALIDATOR_LAYER,
                 files_scanned=len(files),
                 violations=violations,
-            )
+            ),
         )
 
 

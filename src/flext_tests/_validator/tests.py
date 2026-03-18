@@ -15,6 +15,7 @@ from pathlib import Path
 from flext_core import r
 
 from flext_tests import c, m, u
+from flext_tests._validator.models import vm
 
 
 class FlextValidatorTests:
@@ -55,7 +56,11 @@ class FlextValidatorTests:
                 and (node.func.id in mock_names)
             ):
                 violation = u.Tests.Validator.create_violation(
-                    file_path, node.lineno, "TEST-002", lines, f"{node.func.id}()"
+                    file_path,
+                    node.lineno,
+                    "TEST-002",
+                    lines,
+                    f"{node.func.id}()",
                 )
                 violations.append(violation)
         return violations
@@ -82,7 +87,7 @@ class FlextValidatorTests:
                             "TEST-001",
                             lines,
                             c.Tests.Validator.Messages.TEST_MONKEYPATCH.format(
-                                func=node.name
+                                func=node.name,
                             ),
                         )
                         violations.append(violation)
@@ -115,13 +120,17 @@ class FlextValidatorTests:
         violations: list[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if not isinstance(
-                node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+                node,
+                (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef),
             ):
                 continue
             for decorator in node.decorator_list:
                 if cls._is_patch_decorator(decorator):
                     violation = u.Tests.Validator.create_violation(
-                        file_path, decorator.lineno, "TEST-003", lines
+                        file_path,
+                        decorator.lineno,
+                        "TEST-003",
+                        lines,
                     )
                     violations.append(violation)
         return violations
@@ -150,7 +159,9 @@ class FlextValidatorTests:
 
     @classmethod
     def _scan_file(
-        cls, file_path: Path, approved: Mapping[str, list[str]]
+        cls,
+        file_path: Path,
+        approved: Mapping[str, list[str]],
     ) -> list[m.Tests.Violation]:
         """Scan a single file for test violations."""
         violations: list[m.Tests.Violation] = []
@@ -181,17 +192,11 @@ class FlextValidatorTests:
             r with ScanResult containing all violations found
 
         """
-        violations: list[m.Tests.Violation] = []
-        approved = approved_exceptions or {}
-        for file_path in files:
-            file_violations = cls._scan_file(file_path, approved)
-            violations.extend(file_violations)
-        return r[m.Tests.ScanResult].ok(
-            m.Tests.ScanResult.create(
-                validator_name=c.Tests.Validator.Defaults.VALIDATOR_TESTS,
-                files_scanned=len(files),
-                violations=violations,
-            )
+        return vm.ScanCommon.run_scan(
+            files=files,
+            approved_exceptions=approved_exceptions,
+            validator_name=c.Tests.Validator.Defaults.VALIDATOR_TESTS,
+            scan_file=cls._scan_file,
         )
 
 

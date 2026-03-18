@@ -53,7 +53,7 @@ class FlextValidatorSettings:
                     "CONFIG-001",
                     "ignore_errors = true",
                     "(global)",
-                )
+                ),
             )
         overrides_raw: t.Tests.Testobject = mypy_config.get("overrides", [])
         if not isinstance(overrides_raw, list):
@@ -66,12 +66,15 @@ class FlextValidatorSettings:
             module_raw = override_dict.get("module", "unknown")
             module: str = str(module_raw) if module_raw is not None else "unknown"
             is_approved = u.Tests.Validator.is_approved(
-                "CONFIG-001", file_path, approved
+                "CONFIG-001",
+                file_path,
+                approved,
             )
             ignore_errors_raw = override_dict.get("ignore_errors")
             if ignore_errors_raw is True and (not is_approved):
                 line_num = u.Tests.Validator.find_line_number(
-                    lines, f'module = "{module}"'
+                    lines,
+                    f'module = "{module}"',
                 )
                 violations.append(
                     cls._create_config_violation(
@@ -80,14 +83,15 @@ class FlextValidatorSettings:
                         "CONFIG-001",
                         f"ignore_errors = true (module: {module})",
                         c.Tests.Validator.Messages.CONFIG_IGNORE.format(module=module),
-                    )
+                    ),
                 )
         if (
             not u.Tests.Validator.is_approved("CONFIG-003", file_path, approved)
             and mypy_config.get("disallow_incomplete_defs") is False
         ):
             line_num = u.Tests.Validator.find_line_number(
-                lines, "disallow_incomplete_defs"
+                lines,
+                "disallow_incomplete_defs",
             )
             violations.append(
                 cls._create_config_violation(
@@ -95,7 +99,7 @@ class FlextValidatorSettings:
                     line_num,
                     "CONFIG-003",
                     "disallow_incomplete_defs = false",
-                )
+                ),
             )
         if (
             not u.Tests.Validator.is_approved("CONFIG-004", file_path, approved)
@@ -104,8 +108,11 @@ class FlextValidatorSettings:
             line_num = u.Tests.Validator.find_line_number(lines, "warn_return_any")
             violations.append(
                 cls._create_config_violation(
-                    file_path, line_num, "CONFIG-004", "warn_return_any = false"
-                )
+                    file_path,
+                    line_num,
+                    "CONFIG-004",
+                    "warn_return_any = false",
+                ),
             )
         return violations
 
@@ -133,8 +140,11 @@ class FlextValidatorSettings:
             line_num = u.Tests.Validator.find_line_number(lines, "reportPrivateUsage")
             violations.append(
                 cls._create_config_violation(
-                    file_path, line_num, "CONFIG-005", "reportPrivateUsage = false"
-                )
+                    file_path,
+                    line_num,
+                    "CONFIG-005",
+                    "reportPrivateUsage = false",
+                ),
             )
         return violations
 
@@ -176,9 +186,9 @@ class FlextValidatorSettings:
                             "CONFIG-002",
                             f'"{ignore_str}"',
                             c.Tests.Validator.Messages.CONFIG_RUFF.format(
-                                code=ignore_str
+                                code=ignore_str,
                             ),
-                        )
+                        ),
                     )
         return violations
 
@@ -205,7 +215,9 @@ class FlextValidatorSettings:
 
     @classmethod
     def _scan_file(
-        cls, file_path: Path, approved: Mapping[str, list[str]]
+        cls,
+        file_path: Path,
+        approved: Mapping[str, list[str]],
     ) -> list[m.Tests.Violation]:
         """Scan a single pyproject.toml for config violations."""
         violations: list[m.Tests.Violation] = []
@@ -248,7 +260,7 @@ class FlextValidatorSettings:
                 validator_name=c.Tests.Validator.Defaults.VALIDATOR_CONFIG,
                 files_scanned=len(files),
                 violations=violations,
-            )
+            ),
         )
 
     @classmethod

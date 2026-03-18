@@ -95,7 +95,9 @@ class FlextTestsDocker:
             return self._offline_containers
 
     def __init__(
-        self, workspace_root: Path | None = None, worker_id: str | None = None
+        self,
+        workspace_root: Path | None = None,
+        worker_id: str | None = None,
     ) -> None:
         """Initialize Docker client with dirty state tracking."""
         super().__init__()
@@ -212,7 +214,8 @@ class FlextTestsDocker:
                 self._client = docker_from_env()
             except (DockerException, OSError, TypeError, ValueError) as error:
                 self.logger.exception(
-                    "Failed to initialize Docker client", error=str(error)
+                    "Failed to initialize Docker client",
+                    error=str(error),
                 )
                 self._client = self._OfflineDockerClient()
         return self._client
@@ -223,7 +226,7 @@ class FlextTestsDocker:
             client = self.get_client()
             container = client.containers.get(container_name)
             ports_raw: Mapping[str, t.Tests.Testobject] = TypeAdapter(
-                Mapping[str, t.Tests.Testobject]
+                Mapping[str, t.Tests.Testobject],
             ).validate_python(container.ports)
             ports: dict[str, str] = {}
             for container_port, host_bindings in ports_raw.items():
@@ -243,11 +246,11 @@ class FlextTestsDocker:
                     ports=ports,
                     image=str(image_tags[0]) if image_tags else "",
                     container_id=container_id,
-                )
+                ),
             )
         except NotFound:
             return r[m.Tests.ContainerInfo].fail(
-                f"Container {container_name} not found"
+                f"Container {container_name} not found",
             )
         except (AttributeError, KeyError, TypeError, ValueError, RuntimeError) as exc:
             return r[m.Tests.ContainerInfo].fail(str(exc))
@@ -285,7 +288,9 @@ class FlextTestsDocker:
             return r[bool].fail(f"Failed to mark dirty: {exc}")
 
     def start_compose_stack(
-        self, compose_file: str, network_name: str | None = None
+        self,
+        compose_file: str,
+        network_name: str | None = None,
     ) -> r[str]:
         """Start a Docker Compose stack."""
         _ = network_name
@@ -328,7 +333,10 @@ class FlextTestsDocker:
                     pass
                 time.sleep(2)
             self.logger.warning(
-                "Port not ready", host=host, port=port, max_wait=max_wait
+                "Port not ready",
+                host=host,
+                port=port,
+                max_wait=max_wait,
             )
             return r[bool].ok(False)
         except OSError as exc:
@@ -340,7 +348,7 @@ class FlextTestsDocker:
             if self._state_file.exists():
                 state_text = self._state_file.read_text(encoding="utf-8")
                 state_raw: Mapping[str, Sequence[str]] = TypeAdapter(
-                    Mapping[str, Sequence[str]]
+                    Mapping[str, Sequence[str]],
                 ).validate_json(state_text)
                 dirty_raw = state_raw.get("dirty_containers", ())
                 self._dirty_containers = {
@@ -355,7 +363,7 @@ class FlextTestsDocker:
         try:
             self._state_file.parent.mkdir(parents=True, exist_ok=True)
             data: dict[str, t.Tests.Testobject] = {
-                "dirty_containers": list(self._dirty_containers)
+                "dirty_containers": list(self._dirty_containers),
             }
             json_bytes = TypeAdapter(dict[str, t.Tests.Testobject]).dump_json(data)
             self._state_file.write_bytes(json_bytes)

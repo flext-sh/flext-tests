@@ -157,7 +157,8 @@ class FlextTestsTypes(FlextTypes):
             type FactoryModelList = list[FlextTestsTypes.Tests.Factory.FactoryModel]
             "List of factory models."
             type FactoryModelDict = Mapping[
-                str, FlextTestsTypes.Tests.Factory.FactoryModel
+                str,
+                FlextTestsTypes.Tests.Factory.FactoryModel,
             ]
             "Dictionary of factory models keyed by string ID."
             type FactoryResult[T] = r[T]
@@ -261,7 +262,8 @@ class FlextTestsTypes(FlextTypes):
             type BuilderSequence = Sequence[FlextTestsTypes.Tests.Testobject]
             "Type for builder sequences."
             type ParametrizedCase = tuple[
-                str, Mapping[str, FlextTestsTypes.Tests.Testobject]
+                str,
+                Mapping[str, FlextTestsTypes.Tests.Testobject],
             ]
             "Type for parametrized test cases (test_id, data)."
             type TransformFunc = Callable[

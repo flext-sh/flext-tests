@@ -55,7 +55,7 @@ class _TestObject(
         | frozenset[str]
         | Sequence["_TestObject"]
         | Mapping[str, "_TestObject"]
-    ]
+    ],
 ):
     pass
 
@@ -80,6 +80,6 @@ class _GuardPayloadDictAdapter(RootModel[TypeAdapter(dict[str, t.Tests.Testobjec
 
 
 class _PayloadMappingAdapter(
-    RootModel[TypeAdapter(dict[str, t.Tests.Testobject], config=_ARBTYPES)]
+    RootModel[TypeAdapter(dict[str, t.Tests.Testobject], config=_ARBTYPES)],
 ):
     pass

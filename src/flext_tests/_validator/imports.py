@@ -16,6 +16,7 @@ from pathlib import Path
 from flext_core import r
 
 from flext_tests import c, m, u
+from flext_tests._validator.models import vm
 
 
 class FlextValidatorImports:
@@ -42,7 +43,11 @@ class FlextValidatorImports:
                 for alias in node.names:
                     if alias.name.split(".")[0] in tech_imports:
                         violation = u.Tests.Validator.create_violation(
-                            file_path, node.lineno, "IMPORT-005", lines, alias.name
+                            file_path,
+                            node.lineno,
+                            "IMPORT-005",
+                            lines,
+                            alias.name,
                         )
                         violations.append(violation)
             elif (
@@ -51,7 +56,11 @@ class FlextValidatorImports:
                 and (node.module.split(".")[0] in tech_imports)
             ):
                 violation = u.Tests.Validator.create_violation(
-                    file_path, node.lineno, "IMPORT-005", lines, node.module
+                    file_path,
+                    node.lineno,
+                    "IMPORT-005",
+                    lines,
+                    node.module,
                 )
                 violations.append(violation)
         return violations
@@ -80,7 +89,10 @@ class FlextValidatorImports:
                     or "ModuleNotFoundError" in handler_names
                 ):
                     violation = u.Tests.Validator.create_violation(
-                        file_path, node.lineno, "IMPORT-003", lines
+                        file_path,
+                        node.lineno,
+                        "IMPORT-003",
+                        lines,
                     )
                     violations.append(violation)
         return violations
@@ -101,10 +113,14 @@ class FlextValidatorImports:
             if isinstance(node, (ast.Import, ast.ImportFrom)):
                 parent = u.Tests.Validator.get_parent(tree, node)
                 if isinstance(
-                    parent, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+                    parent,
+                    (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef),
                 ):
                     violation = u.Tests.Validator.create_violation(
-                        file_path, node.lineno, "IMPORT-001", lines
+                        file_path,
+                        node.lineno,
+                        "IMPORT-001",
+                        lines,
                     )
                     violations.append(violation)
         return violations
@@ -177,7 +193,10 @@ class FlextValidatorImports:
                 parent = u.Tests.Validator.get_parent(tree, node)
                 if isinstance(parent, ast.Call):
                     violation = u.Tests.Validator.create_violation(
-                        file_path, node.lineno, "IMPORT-004", lines
+                        file_path,
+                        node.lineno,
+                        "IMPORT-004",
+                        lines,
                     )
                     violations.append(violation)
         return violations
@@ -205,7 +224,9 @@ class FlextValidatorImports:
 
     @classmethod
     def _scan_file(
-        cls, file_path: Path, approved: Mapping[str, list[str]]
+        cls,
+        file_path: Path,
+        approved: Mapping[str, list[str]],
     ) -> list[m.Tests.Violation]:
         """Scan a single file for import violations."""
         violations: list[m.Tests.Violation] = []
@@ -218,14 +239,14 @@ class FlextValidatorImports:
         violations.extend(cls._check_lazy_imports(file_path, tree, lines, approved))
         violations.extend(cls._check_type_checking(file_path, tree, lines, approved))
         violations.extend(
-            cls._check_import_error_handling(file_path, tree, lines, approved)
+            cls._check_import_error_handling(file_path, tree, lines, approved),
         )
         violations.extend(cls._check_sys_path(file_path, tree, lines, approved))
         violations.extend(
-            cls._check_direct_tech_imports(file_path, tree, lines, approved)
+            cls._check_direct_tech_imports(file_path, tree, lines, approved),
         )
         violations.extend(
-            cls._check_non_root_flext_imports(file_path, tree, lines, approved)
+            cls._check_non_root_flext_imports(file_path, tree, lines, approved),
         )
         return violations
 
@@ -245,17 +266,11 @@ class FlextValidatorImports:
             r with ScanResult containing all violations found
 
         """
-        violations: list[m.Tests.Violation] = []
-        approved = approved_exceptions or {}
-        for file_path in files:
-            file_violations = cls._scan_file(file_path, approved)
-            violations.extend(file_violations)
-        return r[m.Tests.ScanResult].ok(
-            m.Tests.ScanResult.create(
-                validator_name=c.Tests.Validator.Defaults.VALIDATOR_IMPORTS,
-                files_scanned=len(files),
-                violations=violations,
-            )
+        return vm.ScanCommon.run_scan(
+            files=files,
+            approved_exceptions=approved_exceptions,
+            validator_name=c.Tests.Validator.Defaults.VALIDATOR_IMPORTS,
+            scan_file=cls._scan_file,
         )
 
 

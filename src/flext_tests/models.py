@@ -148,10 +148,12 @@ class FlextTestsModels(
                 ),
             ]
             name: Annotated[
-                str | None, Field(default=None, description="Name override")
+                str | None,
+                Field(default=None, description="Name override"),
             ]
             email: Annotated[
-                str | None, Field(default=None, description="Email override")
+                str | None,
+                Field(default=None, description="Email override"),
             ]
             active: Annotated[
                 bool | None,
@@ -176,7 +178,8 @@ class FlextTestsModels(
                 ),
             ]
             debug: Annotated[
-                bool | None, Field(default=None, description="Debug override")
+                bool | None,
+                Field(default=None, description="Debug override"),
             ]
             log_level: Annotated[
                 str | None,
@@ -201,7 +204,8 @@ class FlextTestsModels(
             ]
             # Service-specific
             status: Annotated[
-                str | None, Field(default=None, description="Status override")
+                str | None,
+                Field(default=None, description="Status override"),
             ]
             # Entity-specific
             value: Annotated[
@@ -213,7 +217,8 @@ class FlextTestsModels(
             ]
             # Value-specific
             data: Annotated[
-                str | None, Field(default=None, description="Data override")
+                str | None,
+                Field(default=None, description="Data override"),
             ]
             value_count: Annotated[
                 int | None,
@@ -984,7 +989,8 @@ class FlextTestsModels(
                 ),
             ]
             failed: Annotated[
-                int, Field(ge=0, description="Number of failed operations")
+                int,
+                Field(ge=0, description="Number of failed operations"),
             ]
             total: Annotated[int, Field(ge=0, description="Total number of operations")]
             results: Annotated[
@@ -1074,14 +1080,16 @@ class FlextTestsModels(
             """Parameters for builder add operations."""
 
             key: Annotated[
-                str, Field(min_length=1, description="Key to store data under")
+                str,
+                Field(min_length=1, description="Key to store data under"),
             ]
             value: Annotated[
                 t.Tests.Testobject | None,
                 Field(default=None, description="Direct value to store"),
             ]
             factory: Annotated[
-                str | None, Field(default=None, description="Factory name to use")
+                str | None,
+                Field(default=None, description="Factory name to use"),
             ]
             count: Annotated[
                 int | None,
@@ -1114,7 +1122,9 @@ class FlextTestsModels(
             validate_func: Annotated[
                 t.Tests.Builders.ValidateFunc | None,
                 Field(
-                    default=None, alias="validate", description="Validation function"
+                    default=None,
+                    alias="validate",
+                    description="Validation function",
                 ),
             ]
             merge: Annotated[
@@ -1159,7 +1169,8 @@ class FlextTestsModels(
             results_ok: Annotated[
                 Sequence[t.Tests.Testobject] | None,
                 Field(
-                    default=None, description="Sequence of values to wrap in r[T].ok()"
+                    default=None,
+                    description="Sequence of values to wrap in r[T].ok()",
                 ),
             ]
             results_fail: Annotated[
@@ -1310,23 +1321,28 @@ class FlextTestsModels(
             as_list: Annotated[
                 bool,
                 Field(
-                    default=False, description="Return as list of (key, value) tuples"
+                    default=False,
+                    description="Return as list of (key, value) tuples",
                 ),
             ]
             keys_only: Annotated[
-                bool, Field(default=False, description="Return only keys as list")
+                bool,
+                Field(default=False, description="Return only keys as list"),
             ]
             values_only: Annotated[
-                bool, Field(default=False, description="Return only values as list")
+                bool,
+                Field(default=False, description="Return only values as list"),
             ]
             flatten: Annotated[
                 bool,
                 Field(
-                    default=False, description="Flatten nested dicts with dot notation"
+                    default=False,
+                    description="Flatten nested dicts with dot notation",
                 ),
             ]
             filter_none: Annotated[
-                bool, Field(default=False, description="Remove None values from result")
+                bool,
+                Field(default=False, description="Remove None values from result"),
             ]
             as_parametrized: Annotated[
                 bool,
@@ -1436,10 +1452,12 @@ class FlextTestsModels(
                 ),
             ]
             as_list_result: Annotated[
-                bool, Field(default=False, description="Return as r[list[T]]")
+                bool,
+                Field(default=False, description="Return as r[list[T]]"),
             ]
             as_dict_result: Annotated[
-                bool, Field(default=False, description="Return as r[Mapping[str, T]]")
+                bool,
+                Field(default=False, description="Return as r[Mapping[str, T]]"),
             ]
 
             @computed_field
@@ -1465,14 +1483,16 @@ class FlextTestsModels(
             """Parameters for batching builder scenarios."""
 
             key: Annotated[
-                str, Field(min_length=1, description="Key to store batch under")
+                str,
+                Field(min_length=1, description="Key to store batch under"),
             ]
             scenarios: Annotated[
                 Sequence[tuple[str, t.Tests.Testobject]],
                 Field(description="Sequence of (scenario_id, data) tuples"),
             ]
             as_results: Annotated[
-                bool, Field(default=False, description="Wrap each value in r[T].ok()")
+                bool,
+                Field(default=False, description="Wrap each value in r[T].ok()"),
             ]
             with_failures: Annotated[
                 Sequence[tuple[str, str]] | None,
@@ -1565,17 +1585,20 @@ class FlextTestsModels(
             ]
             none: Annotated[bool | None, Field(default=None, description="None check")]
             empty: Annotated[
-                bool | None, Field(default=None, description="Empty check")
+                bool | None,
+                Field(default=None, description="Empty check"),
             ]
             gt: Annotated[
-                float | int | None, Field(default=None, description="Greater than")
+                float | int | None,
+                Field(default=None, description="Greater than"),
             ]
             gte: Annotated[
                 float | int | None,
                 Field(default=None, description="Greater than or equal"),
             ]
             lt: Annotated[
-                float | int | None, Field(default=None, description="Less than")
+                float | int | None,
+                Field(default=None, description="Less than"),
             ]
             lte: Annotated[
                 float | int | None,
@@ -1590,13 +1613,16 @@ class FlextTestsModels(
                 Field(default=None, description="Unified non-containment check"),
             ]
             starts: Annotated[
-                str | None, Field(default=None, description="String starts with prefix")
+                str | None,
+                Field(default=None, description="String starts with prefix"),
             ]
             ends: Annotated[
-                str | None, Field(default=None, description="String ends with suffix")
+                str | None,
+                Field(default=None, description="String ends with suffix"),
             ]
             match: Annotated[
-                str | None, Field(default=None, description="Regex pattern")
+                str | None,
+                Field(default=None, description="Regex pattern"),
             ]
             len: Annotated[
                 t.Tests.Matcher.LengthSpec | None,
@@ -1609,7 +1635,8 @@ class FlextTestsModels(
             path: Annotated[
                 t.Tests.Matcher.PathSpec | None,
                 Field(
-                    default=None, description="Extract nested value via dot notation"
+                    default=None,
+                    description="Extract nested value via dot notation",
                 ),
             ]
             where: Annotated[
@@ -1617,7 +1644,8 @@ class FlextTestsModels(
                 Field(default=None, description="Custom predicate function"),
             ]
             msg: Annotated[
-                str | None, Field(default=None, description="Custom error message")
+                str | None,
+                Field(default=None, description="Custom error message"),
             ]
 
         class FailParams(FlextModels.Value):
@@ -1626,7 +1654,8 @@ class FlextTestsModels(
             model_config = ConfigDict(populate_by_name=True)
 
             msg: Annotated[
-                str | None, Field(default=None, description="Custom error message")
+                str | None,
+                Field(default=None, description="Custom error message"),
             ]
             has: Annotated[
                 t.Tests.Matcher.ExclusionSpec | None,
@@ -1645,16 +1674,20 @@ class FlextTestsModels(
                 ),
             ]
             starts: Annotated[
-                str | None, Field(default=None, description="Error starts with prefix")
+                str | None,
+                Field(default=None, description="Error starts with prefix"),
             ]
             ends: Annotated[
-                str | None, Field(default=None, description="Error ends with suffix")
+                str | None,
+                Field(default=None, description="Error ends with suffix"),
             ]
             match: Annotated[
-                str | None, Field(default=None, description="Error matches regex")
+                str | None,
+                Field(default=None, description="Error matches regex"),
             ]
             code: Annotated[
-                str | None, Field(default=None, description="Error code equals")
+                str | None,
+                Field(default=None, description="Error code equals"),
             ]
             code_has: Annotated[
                 t.Tests.Matcher.ErrorCodeSpec | None,
@@ -1671,7 +1704,8 @@ class FlextTestsModels(
             model_config = ConfigDict(populate_by_name=True)
 
             msg: Annotated[
-                str | None, Field(default=None, description="Custom error message")
+                str | None,
+                Field(default=None, description="Custom error message"),
             ]
             eq: Annotated[
                 t.Tests.Testobject | None,
@@ -1699,17 +1733,20 @@ class FlextTestsModels(
             ]
             none: Annotated[bool | None, Field(default=None, description="None check")]
             empty: Annotated[
-                bool | None, Field(default=None, description="Empty check")
+                bool | None,
+                Field(default=None, description="Empty check"),
             ]
             gt: Annotated[
-                float | int | None, Field(default=None, description="Greater than")
+                float | int | None,
+                Field(default=None, description="Greater than"),
             ]
             gte: Annotated[
                 float | int | None,
                 Field(default=None, description="Greater than or equal"),
             ]
             lt: Annotated[
-                float | int | None, Field(default=None, description="Less than")
+                float | int | None,
+                Field(default=None, description="Less than"),
             ]
             lte: Annotated[
                 float | int | None,
@@ -1724,17 +1761,20 @@ class FlextTestsModels(
                 ),
             ]
             length_gt: Annotated[
-                int | None, Field(default=None, description="Length greater than")
+                int | None,
+                Field(default=None, description="Length greater than"),
             ]
             length_gte: Annotated[
                 int | None,
                 Field(default=None, description="Length greater than or equal"),
             ]
             length_lt: Annotated[
-                int | None, Field(default=None, description="Length less than")
+                int | None,
+                Field(default=None, description="Length less than"),
             ]
             length_lte: Annotated[
-                int | None, Field(default=None, description="Length less than or equal")
+                int | None,
+                Field(default=None, description="Length less than or equal"),
             ]
             has: Annotated[
                 t.Tests.Matcher.ContainmentSpec | None,
@@ -1753,13 +1793,16 @@ class FlextTestsModels(
                 ),
             ]
             starts: Annotated[
-                str | None, Field(default=None, description="String starts with prefix")
+                str | None,
+                Field(default=None, description="String starts with prefix"),
             ]
             ends: Annotated[
-                str | None, Field(default=None, description="String ends with suffix")
+                str | None,
+                Field(default=None, description="String ends with suffix"),
             ]
             match: Annotated[
-                str | None, Field(default=None, description="Regex pattern")
+                str | None,
+                Field(default=None, description="Regex pattern"),
             ]
             first: Annotated[
                 t.Tests.Testobject | None,
@@ -1790,7 +1833,8 @@ class FlextTestsModels(
                 Field(default=None, description="Is sorted"),
             ]
             unique: Annotated[
-                bool | None, Field(default=None, description="All items unique")
+                bool | None,
+                Field(default=None, description="All items unique"),
             ]
             keys: Annotated[
                 t.Tests.Matcher.KeySpec | None,
@@ -1821,7 +1865,8 @@ class FlextTestsModels(
                 Field(default=None, description="Attribute equals"),
             ]
             ok: Annotated[
-                bool | None, Field(default=None, description="For r: assert success")
+                bool | None,
+                Field(default=None, description="For r: assert success"),
             ]
             error: Annotated[
                 str | Sequence[str] | None,
@@ -1906,7 +1951,8 @@ class FlextTestsModels(
             """Structured output for deep-match comparisons."""
 
             path: Annotated[
-                str, Field(description="Path where match occurred or failed")
+                str,
+                Field(description="Path where match occurred or failed"),
             ]
             expected: Annotated[
                 t.Tests.Matcher.ValueSpec,
@@ -1918,7 +1964,8 @@ class FlextTestsModels(
             ]
             matched: Annotated[bool, Field(description="Whether match succeeded")]
             reason: Annotated[
-                str, Field(default="", description="Reason for match failure")
+                str,
+                Field(default="", description="Reason for match failure"),
             ]
 
         class Validate:

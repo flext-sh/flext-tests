@@ -67,7 +67,9 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
 
     @classmethod
     def _discover_files(
-        cls, path: Path, exclude_patterns: list[str] | None = None
+        cls,
+        path: Path,
+        exclude_patterns: list[str] | None = None,
     ) -> list[Path]:
         """Discover Python files to scan.
 
@@ -138,7 +140,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         for name, result in validators:
             if result.is_failure:
                 return r[m.Tests.ScanResult].fail(
-                    f"Validator '{name}' failed: {result.error}"
+                    f"Validator '{name}' failed: {result.error}",
                 )
             scan_result = result.value
             all_violations.extend(scan_result.violations)
@@ -148,7 +150,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
                 validator_name="all",
                 files_scanned=total_files,
                 violations=all_violations,
-            )
+            ),
         )
 
     @classmethod

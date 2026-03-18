@@ -16,6 +16,7 @@ from pathlib import Path
 from flext_core import r
 
 from flext_tests import c, m, u
+from flext_tests._validator.models import vm
 
 
 class FlextValidatorBypass:
@@ -60,7 +61,10 @@ class FlextValidatorBypass:
 
     @classmethod
     def _check_noqa(
-        cls, file_path: Path, lines: list[str], approved: Mapping[str, list[str]]
+        cls,
+        file_path: Path,
+        lines: list[str],
+        approved: Mapping[str, list[str]],
     ) -> list[m.Tests.Violation]:
         """Detect # noqa comments."""
         if u.Tests.Validator.is_approved("BYPASS-001", file_path, approved):
@@ -71,18 +75,24 @@ class FlextValidatorBypass:
             is_real = u.Tests.Validator.is_real_comment(line, pattern)
             if pattern.search(line) and is_real:
                 violation = u.Tests.Validator.create_violation(
-                    file_path, i, "BYPASS-001", lines
+                    file_path,
+                    i,
+                    "BYPASS-001",
+                    lines,
                 )
                 violations.append(violation)
         return violations
 
     @classmethod
     def _check_pragma_no_cover(
-        cls, file_path: Path, lines: list[str], approved: Mapping[str, list[str]]
+        cls,
+        file_path: Path,
+        lines: list[str],
+        approved: Mapping[str, list[str]],
     ) -> list[m.Tests.Violation]:
         """Detect # pragma: no cover comments."""
         patterns = list(approved.get("BYPASS-002", [])) + list(
-            c.Tests.Validator.Approved.PRAGMA_PATTERNS
+            c.Tests.Validator.Approved.PRAGMA_PATTERNS,
         )
         file_str = str(file_path)
         if any(re.search(pattern, file_str) for pattern in patterns):
@@ -93,14 +103,19 @@ class FlextValidatorBypass:
             is_real = u.Tests.Validator.is_real_comment(line, pattern)
             if pattern.search(line) and is_real:
                 violation = u.Tests.Validator.create_violation(
-                    file_path, i, "BYPASS-002", lines
+                    file_path,
+                    i,
+                    "BYPASS-002",
+                    lines,
                 )
                 violations.append(violation)
         return violations
 
     @classmethod
     def _scan_file(
-        cls, file_path: Path, approved: Mapping[str, list[str]]
+        cls,
+        file_path: Path,
+        approved: Mapping[str, list[str]],
     ) -> list[m.Tests.Violation]:
         """Scan a single file for bypass violations."""
         violations: list[m.Tests.Violation] = []
@@ -116,7 +131,7 @@ class FlextValidatorBypass:
         except SyntaxError:
             return violations
         violations.extend(
-            cls._check_exception_swallowing(file_path, tree, lines, approved)
+            cls._check_exception_swallowing(file_path, tree, lines, approved),
         )
         return violations
 
@@ -136,17 +151,11 @@ class FlextValidatorBypass:
             r with ScanResult containing all violations found
 
         """
-        violations: list[m.Tests.Violation] = []
-        approved = approved_exceptions or {}
-        for file_path in files:
-            file_violations = cls._scan_file(file_path, approved)
-            violations.extend(file_violations)
-        return r[m.Tests.ScanResult].ok(
-            m.Tests.ScanResult.create(
-                validator_name=c.Tests.Validator.Defaults.VALIDATOR_BYPASS,
-                files_scanned=len(files),
-                violations=violations,
-            )
+        return vm.ScanCommon.run_scan(
+            files=files,
+            approved_exceptions=approved_exceptions,
+            validator_name=c.Tests.Validator.Defaults.VALIDATOR_BYPASS,
+            scan_file=cls._scan_file,
         )
 
 

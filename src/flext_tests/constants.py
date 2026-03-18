@@ -50,8 +50,8 @@ class FlextTestsConstants(FlextConstants):
                         "port": 1522,
                         "host": "localhost",
                         "container_name": "flext-oracle-db-test",
-                    }
-                )
+                    },
+                ),
             }
             DEFAULT_TIMEOUT_SECONDS: Final[int] = 30
             MAX_TIMEOUT_SECONDS: Final[int] = 300
@@ -353,7 +353,11 @@ class FlextTestsConstants(FlextConstants):
                 INFO = "info"
 
             type OperationLiteral = Literal[
-                "create", "read", "delete", "compare", "info"
+                "create",
+                "read",
+                "delete",
+                "compare",
+                "info",
             ]
             "Type-safe literal for file operations."
 
@@ -617,7 +621,8 @@ class FlextTestsConstants(FlextConstants):
 
                 @classmethod
                 def get(
-                    cls, rule_id: str
+                    cls,
+                    rule_id: str,
                 ) -> tuple[FlextTestsConstants.Tests.Validator.SeverityLiteral, str]:
                     """Get rule by ID string (e.g., 'IMPORT-001' -> IMPORT_001).
 
@@ -633,7 +638,8 @@ class FlextTestsConstants(FlextConstants):
                     """
                     attr_name = rule_id.replace("-", "_")
                     rule: tuple[
-                        FlextTestsConstants.Tests.Validator.SeverityLiteral, str
+                        FlextTestsConstants.Tests.Validator.SeverityLiteral,
+                        str,
                     ] = getattr(cls, attr_name)
                     return rule
 
