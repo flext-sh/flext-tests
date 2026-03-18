@@ -71,10 +71,10 @@ from flext_tests.utilities import FlextTestsUtilities
 _length_validate = FlextTestsUtilities.Tests.Length.validate
 _deep_match = FlextTestsUtilities.Tests.DeepMatch.match
 
-_TEST_PAYLOAD_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject])
-_TEST_PAYLOAD_LIST_ADAPTER = TypeAdapter(list[t.Tests.Testobject])
-_GUARD_PAYLOAD_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject])
-_GUARD_PAYLOAD_LIST_ADAPTER = TypeAdapter(list[t.Tests.Testobject])
+_TEST_PAYLOAD_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.TestobjectSerializable])
+_TEST_PAYLOAD_LIST_ADAPTER = TypeAdapter(list[t.Tests.TestobjectSerializable])
+_GUARD_PAYLOAD_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.TestobjectSerializable])
+_GUARD_PAYLOAD_LIST_ADAPTER = TypeAdapter(list[t.Tests.TestobjectSerializable])
 
 
 def _is_non_string_sequence(

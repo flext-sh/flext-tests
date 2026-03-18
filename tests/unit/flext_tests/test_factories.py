@@ -23,45 +23,57 @@ class TestFactoriesHelpers:
     """Shared aliases and helpers for factory tests."""
 
     @staticmethod
-    def extract_model(
+    def extract_model[T: _BaseModel](
         result: _BaseModel
         | list[_BaseModel]
         | Mapping[str, _BaseModel]
         | r[_BaseModel]
         | r[list[_BaseModel]]
         | r[Mapping[str, _BaseModel]],
-    ) -> _BaseModel:
+        model_type: type[T],
+    ) -> T:
         """Extract BaseModel from union type returned by tt.model().
 
         Args:
             result: Union type from tt.model()
+            model_type: Expected concrete model type for type narrowing.
 
         Returns:
-            BaseModel instance
+            Instance of the requested model type T.
 
         Raises:
             AssertionError: If result is not a single BaseModel
 
         """
+        extracted: _BaseModel
         if isinstance(result, r):
             typed_r = cast(
                 "r[_BaseModel | list[_BaseModel] | Mapping[str, _BaseModel]]", result
             )
             unwrapped = typed_r.value
             if isinstance(unwrapped, _BaseModel):
-                return unwrapped
-            if isinstance(unwrapped, list) and unwrapped:
-                return unwrapped[0]
-            if isinstance(unwrapped, Mapping):
+                extracted = unwrapped
+            elif isinstance(unwrapped, list) and unwrapped:
+                extracted = unwrapped[0]
+            elif isinstance(unwrapped, Mapping):
                 first_value = next(iter(unwrapped.values()), None)
                 if isinstance(first_value, _BaseModel):
-                    return first_value
-            msg = f"Expected BaseModel, got {type(unwrapped)}"
+                    extracted = first_value
+                else:
+                    msg = f"Expected BaseModel, got {type(unwrapped)}"
+                    raise AssertionError(msg)
+            else:
+                msg = f"Expected BaseModel, got {type(unwrapped)}"
+                raise AssertionError(msg)
+        elif isinstance(result, _BaseModel):
+            extracted = result
+        else:
+            msg = f"Expected BaseModel, got {type(result)}"
             raise AssertionError(msg)
-        if isinstance(result, _BaseModel):
-            return result
-        msg = f"Expected BaseModel, got {type(result)}"
-        raise AssertionError(msg)
+        if not isinstance(extracted, model_type):
+            msg = f"Expected {model_type.__name__}, got {type(extracted).__name__}"
+            raise AssertionError(msg)
+        return extracted
 
     @staticmethod
     def as_single_payload_result(
@@ -166,7 +178,7 @@ class TestFlextTestsFactoriesModernAPI:
     def test_model_user_default(self) -> None:
         """Test tt.model('user') with default parameters."""
         user_result = tt.model("user")
-        user = TestFactoriesHelpers.extract_model(user_result)
+        user = TestFactoriesHelpers.extract_model(user_result, m.Tests.User)
         tm.that(isinstance(user, m.Tests.User), eq=True)
         tm.that(user.id is not None, eq=True)
         tm.that(user.name == "Test User", eq=True)
@@ -181,7 +193,7 @@ class TestFlextTestsFactoriesModernAPI:
             name="Custom User",
             email="custom@test.com",
         )
-        user = TestFactoriesHelpers.extract_model(user_result)
+        user = TestFactoriesHelpers.extract_model(user_result, m.Tests.User)
         tm.that(isinstance(user, m.Tests.User), eq=True)
         tm.that(user.id == "custom-123", eq=True)
         tm.that(user.name == "Custom User", eq=True)
@@ -190,7 +202,7 @@ class TestFlextTestsFactoriesModernAPI:
     def test_model_user_with_overrides(self) -> None:
         """Test tt.model('user') with overrides."""
         user_result = tt.model("user", name="Base User", active=False)
-        user = TestFactoriesHelpers.extract_model(user_result)
+        user = TestFactoriesHelpers.extract_model(user_result, m.Tests.User)
         tm.that(isinstance(user, m.Tests.User), eq=True)
         tm.that(user.name == "Base User", eq=True)
         tm.that(user.active is False, eq=True)
@@ -198,7 +210,7 @@ class TestFlextTestsFactoriesModernAPI:
     def test_model_config_default(self) -> None:
         """Test tt.model('config') with default parameters."""
         config_result = tt.model("config")
-        config = TestFactoriesHelpers.extract_model(config_result)
+        config = TestFactoriesHelpers.extract_model(config_result, m.Tests.Config)
         tm.that(isinstance(config, m.Tests.Config), eq=True)
         tm.that(config.service_type == "api", eq=True)
         tm.that(config.environment == "test", eq=True)
@@ -213,7 +225,7 @@ class TestFlextTestsFactoriesModernAPI:
             debug=False,
             timeout=60,
         )
-        config = TestFactoriesHelpers.extract_model(config_result)
+        config = TestFactoriesHelpers.extract_model(config_result, m.Tests.Config)
         tm.that(isinstance(config, m.Tests.Config), eq=True)
         tm.that(config.service_type == "database", eq=True)
         tm.that(config.environment == "production", eq=True)
@@ -223,7 +235,7 @@ class TestFlextTestsFactoriesModernAPI:
     def test_model_config_with_overrides(self) -> None:
         """Test tt.model('config') with overrides."""
         config_result = tt.model("config", log_level="INFO", max_retries=5)
-        config = TestFactoriesHelpers.extract_model(config_result)
+        config = TestFactoriesHelpers.extract_model(config_result, m.Tests.Config)
         tm.that(isinstance(config, m.Tests.Config), eq=True)
         tm.that(config.log_level == "INFO", eq=True)
         tm.that(config.max_retries == 5, eq=True)
@@ -231,7 +243,7 @@ class TestFlextTestsFactoriesModernAPI:
     def test_model_service_default(self) -> None:
         """Test tt.model('service') with default parameters."""
         service_result = tt.model("service")
-        service = TestFactoriesHelpers.extract_model(service_result)
+        service = TestFactoriesHelpers.extract_model(service_result, m.Tests.Service)
         tm.that(isinstance(service, m.Tests.Service), eq=True)
         tm.that(service.id is not None, eq=True)
         tm.that(service.type == "api", eq=True)
@@ -246,7 +258,7 @@ class TestFlextTestsFactoriesModernAPI:
             model_id="custom-123",
             name="Custom Service",
         )
-        service = TestFactoriesHelpers.extract_model(service_result)
+        service = TestFactoriesHelpers.extract_model(service_result, m.Tests.Service)
         tm.that(isinstance(service, m.Tests.Service), eq=True)
         tm.that(service.id == "custom-123", eq=True)
         tm.that(service.type == "database", eq=True)
@@ -255,7 +267,7 @@ class TestFlextTestsFactoriesModernAPI:
     def test_model_service_with_overrides(self) -> None:
         """Test tt.model('service') with overrides."""
         service_result = tt.model("service", status="inactive")
-        service = TestFactoriesHelpers.extract_model(service_result)
+        service = TestFactoriesHelpers.extract_model(service_result, m.Tests.Service)
         tm.that(isinstance(service, m.Tests.Service), eq=True)
         tm.that(service.status == "inactive", eq=True)
 
@@ -439,7 +451,7 @@ class TestsFlextTestsFactoriesModel:
     def test_model_user_default(self) -> None:
         """Test user model creation with defaults."""
         user_result = tt.model("user")
-        user = TestFactoriesHelpers.extract_model(user_result)
+        user = TestFactoriesHelpers.extract_model(user_result, m.Tests.User)
         tm.that(isinstance(user, m.Tests.User), eq=True)
         tm.that(user.id is not None, eq=True)
         tm.that(user.name == "Test User", eq=True)
@@ -449,7 +461,7 @@ class TestsFlextTestsFactoriesModel:
     def test_model_user_custom(self) -> None:
         """Test user model creation with custom parameters."""
         user_result = tt.model("user", name="Custom User", email="custom@test.com")
-        user = TestFactoriesHelpers.extract_model(user_result)
+        user = TestFactoriesHelpers.extract_model(user_result, m.Tests.User)
         tm.that(isinstance(user, m.Tests.User), eq=True)
         tm.that(user.name == "Custom User", eq=True)
         tm.that(user.email == "custom@test.com", eq=True)
@@ -485,7 +497,7 @@ class TestsFlextTestsFactoriesModel:
     def test_model_service(self) -> None:
         """Test service model creation."""
         service_result = tt.model("service", service_type="database")
-        service = TestFactoriesHelpers.extract_model(service_result)
+        service = TestFactoriesHelpers.extract_model(service_result, m.Tests.Service)
         tm.that(isinstance(service, m.Tests.Service), eq=True)
         tm.that(service.type == "database", eq=True)
 
@@ -523,7 +535,7 @@ class TestsFlextTestsFactoriesModel:
                 transform_user,
             ),
         )
-        user = TestFactoriesHelpers.extract_model(user_result)
+        user = TestFactoriesHelpers.extract_model(user_result, m.Tests.User)
         tm.that(isinstance(user, m.Tests.User), eq=True)
         tm.that(user.name == "Transformed", eq=True)
 
@@ -543,7 +555,7 @@ class TestsFlextTestsFactoriesModel:
                 validate_active_user,
             ),
         )
-        user = TestFactoriesHelpers.extract_model(user_result)
+        user = TestFactoriesHelpers.extract_model(user_result, m.Tests.User)
         tm.that(isinstance(user, m.Tests.User), eq=True)
         tm.that(user.active is True, eq=True)
         result_raw = tt.model(

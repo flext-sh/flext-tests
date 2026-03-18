@@ -14,10 +14,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal, TypeAliasType, TypeIs
 
-from flext_core import FlextTypes, m, r
+from flext_core import FlextProtocols, FlextTypes, m, r
 from pydantic import BaseModel, InstanceOf
 
-type _Testobject = (
+p = FlextProtocols
+
+type _TestobjectSerializable = (
     t.Primitives
     | None
     | bytes
@@ -26,6 +28,15 @@ type _Testobject = (
     | BaseModel
     | type
     | frozenset[str]
+    | Sequence[_TestobjectSerializable]
+    | Mapping[str, _TestobjectSerializable]
+)
+
+type _Testobject = (
+    _TestobjectSerializable
+    | Exception
+    | p.Logger
+    | p.Container
     | Sequence[_Testobject]
     | Mapping[str, _Testobject]
 )
@@ -51,6 +62,7 @@ class FlextTestsTypes(FlextTypes):
 
         type TestPayloadScalar = t.Primitives | None
         type Testobject = _Testobject
+        type TestobjectSerializable = _TestobjectSerializable
         type object = _Testobject
         type FileContent = (
             str
