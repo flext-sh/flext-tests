@@ -35,19 +35,6 @@ class FlextTestsModels(
 ):
     """Test models extending FlextModels with test-specific factory models."""
 
-    def __init_subclass__(
-        cls,
-        **kwargs: Mapping[str, object],
-    ) -> None:
-        """Warn when FlextTestsModels is subclassed directly."""
-        super().__init_subclass__(**kwargs)
-        if cls.__module__.startswith("tests"):
-            return
-        FlextUtilities.warn_once(
-            f"subclass_{cls.__name__}",
-            f"Subclassing FlextTestsModels in {cls.__name__} is deprecated. Use composition/containers.",
-        )
-
     class Tests:
         """Test-specific models namespace."""
 
