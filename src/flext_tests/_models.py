@@ -46,7 +46,6 @@ class _TestObject(
         | int
         | float
         | bool
-        | None
         | bytes
         | datetime
         | Path
@@ -55,6 +54,7 @@ class _TestObject(
         | frozenset[str]
         | Sequence["_TestObject"]
         | Mapping[str, "_TestObject"]
+        | None
     ],
 ):
     pass

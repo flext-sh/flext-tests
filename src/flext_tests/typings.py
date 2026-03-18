@@ -309,6 +309,7 @@ class FlextTestsTypes(FlextTypes):
                 | Callable[..., _Testobject]
                 | Mapping[str, Callable[..., _Testobject] | _Testobject]
                 | Mapping[int, Callable[..., _Testobject] | _Testobject]
+                | object
             )
             "Coerce an arbitrary object to t.Tests.Testobject.\n\n    Coercion rules:\n    - Scalars and bytes pass through\n    - BaseModel passes through\n    - None passes through\n    - Everything else becomes str()\n    "
             type LengthSpec = int | tuple[int, int]
