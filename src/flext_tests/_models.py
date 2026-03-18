@@ -61,25 +61,3 @@ class _TestObject(
 
 
 FlextAutoTypes.Tests.Testobject = _TestObject
-
-
-class _TestContainerDictAdapter(RootModel[dict[str, t.Tests.Testobject]]):
-    pass
-
-
-class _ObjectDictAdapter(RootModel[dict[str, t.Tests.Testobject]]):
-    pass
-
-
-class _TestPayloadDictAdapter(RootModel[dict[str, t.Tests.Testobject]]):
-    pass
-
-
-class _GuardPayloadDictAdapter(RootModel[dict[str, t.Tests.Testobject]]):
-    pass
-
-
-class _PayloadMappingAdapter(
-    RootModel[dict[str, t.Tests.Testobject]],
-):
-    pass

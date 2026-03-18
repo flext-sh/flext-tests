@@ -543,17 +543,24 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                                         self._to_config_map_value(v),
                                     )
                                     if v is None
-                                    or type(v)
-                                    in {str, int, float, bool, bytes, list, tuple, dict}
-                                    or (
-                                        hasattr(type(v), "__mro__")
-                                        and BaseModel in type(v).__mro__
+                                    or isinstance(
+                                        v,
+                                        (
+                                            str,
+                                            int,
+                                            float,
+                                            bool,
+                                            bytes,
+                                            list,
+                                            tuple,
+                                            dict,
+                                            BaseModel,
+                                            Mapping,
+                                        ),
                                     )
-                                    or (hasattr(v, "keys") and hasattr(v, "items"))
                                     or (
-                                        hasattr(v, "__len__")
-                                        and hasattr(v, "__getitem__")
-                                        and (type(v) not in {str, bytes})
+                                        isinstance(v, Sequence)
+                                        and not isinstance(v, (str, bytes))
                                     )
                                     else str(v)
                                     for k, v in content.items()
