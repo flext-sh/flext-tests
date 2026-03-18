@@ -21,7 +21,6 @@ import pytest
 from docker import DockerClient
 from flext_core import r
 
-from flext_tests import FlextTestsDocker
 from tests import c
 from tests.test_utils import assertion_helpers
 

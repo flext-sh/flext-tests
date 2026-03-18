@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import operator
 
-from flext_tests import FlextTestsDomains
 from tests import u
 
 
