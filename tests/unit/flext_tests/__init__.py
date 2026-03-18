@@ -39,6 +39,18 @@ if TYPE_CHECKING:
         TestsFlextTestsFactoriesRes,
         TestUser,
     )
+    from .test_files import (
+        TestAssertExists,
+        TestBatchOperations,
+        TestCreateInStatic,
+        TestFileInfo,
+        TestFileInfoFromModels,
+        TestFileInfoFromModels as m,
+        TestFlextTestsFiles,
+        TestFlextTestsFilesNewApi,
+        TestInfoWithContentMeta,
+        TestShortAlias,
+    )
     from .test_matchers import TestFlextTestsMatchers
     from .test_utilities import (
         TestFlextTestsUtilitiesFactory,
@@ -49,15 +61,23 @@ if TYPE_CHECKING:
     )
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
+    "TestAssertExists": ("tests.unit.flext_tests.test_files", "TestAssertExists"),
+    "TestBatchOperations": ("tests.unit.flext_tests.test_files", "TestBatchOperations"),
     "TestConfig": ("tests.unit.flext_tests.test_factories", "TestConfig"),
     "TestContainerInfo": ("tests.unit.flext_tests.test_docker", "TestContainerInfo"),
     "TestContainerStatus": (
         "tests.unit.flext_tests.test_docker",
         "TestContainerStatus",
     ),
+    "TestCreateInStatic": ("tests.unit.flext_tests.test_files", "TestCreateInStatic"),
     "TestFactoriesHelpers": (
         "tests.unit.flext_tests.test_factories",
         "TestFactoriesHelpers",
+    ),
+    "TestFileInfo": ("tests.unit.flext_tests.test_files", "TestFileInfo"),
+    "TestFileInfoFromModels": (
+        "tests.unit.flext_tests.test_files",
+        "TestFileInfoFromModels",
     ),
     "TestFlextTestsBuilders": (
         "tests.unit.flext_tests.test_builders",
@@ -83,6 +103,11 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
         "tests.unit.flext_tests.test_factories",
         "TestFlextTestsFactoriesModernAPI",
     ),
+    "TestFlextTestsFiles": ("tests.unit.flext_tests.test_files", "TestFlextTestsFiles"),
+    "TestFlextTestsFilesNewApi": (
+        "tests.unit.flext_tests.test_files",
+        "TestFlextTestsFilesNewApi",
+    ),
     "TestFlextTestsMatchers": (
         "tests.unit.flext_tests.test_matchers",
         "TestFlextTestsMatchers",
@@ -103,7 +128,12 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
         "tests.unit.flext_tests.test_utilities",
         "TestFlextTestsUtilitiesTestContext",
     ),
+    "TestInfoWithContentMeta": (
+        "tests.unit.flext_tests.test_files",
+        "TestInfoWithContentMeta",
+    ),
     "TestService": ("tests.unit.flext_tests.test_factories", "TestService"),
+    "TestShortAlias": ("tests.unit.flext_tests.test_files", "TestShortAlias"),
     "TestUser": ("tests.unit.flext_tests.test_factories", "TestUser"),
     "TestsFlextTestsFactoriesDict": (
         "tests.unit.flext_tests.test_factories",
@@ -125,33 +155,44 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
         "tests.unit.flext_tests.test_factories",
         "TestsFlextTestsFactoriesRes",
     ),
+    "m": ("tests.unit.flext_tests.test_files", "TestFileInfoFromModels"),
     "r": ("tests.unit.flext_tests.test_utilities", "TestFlextTestsUtilitiesResult"),
     "s": ("tests.unit.flext_tests.test_factories", "TestService"),
 }
 
 __all__ = [
+    "TestAssertExists",
+    "TestBatchOperations",
     "TestConfig",
     "TestContainerInfo",
     "TestContainerStatus",
+    "TestCreateInStatic",
     "TestFactoriesHelpers",
+    "TestFileInfo",
+    "TestFileInfoFromModels",
     "TestFlextTestsBuilders",
     "TestFlextTestsDocker",
     "TestFlextTestsDockerWorkerId",
     "TestFlextTestsDockerWorkspaceRoot",
     "TestFlextTestsDomains",
     "TestFlextTestsFactoriesModernAPI",
+    "TestFlextTestsFiles",
+    "TestFlextTestsFilesNewApi",
     "TestFlextTestsMatchers",
     "TestFlextTestsUtilitiesFactory",
     "TestFlextTestsUtilitiesResult",
     "TestFlextTestsUtilitiesResultCompat",
     "TestFlextTestsUtilitiesTestContext",
+    "TestInfoWithContentMeta",
     "TestService",
+    "TestShortAlias",
     "TestUser",
     "TestsFlextTestsFactoriesDict",
     "TestsFlextTestsFactoriesGeneric",
     "TestsFlextTestsFactoriesList",
     "TestsFlextTestsFactoriesModel",
     "TestsFlextTestsFactoriesRes",
+    "m",
     "r",
     "s",
 ]

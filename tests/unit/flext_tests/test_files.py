@@ -480,20 +480,21 @@ class TestFlextTestsFilesNewApi:
 
     def test_read_nonexistent_file(self, tmp_path: Path) -> None:
         """Test read() returns failure for non-existent file."""
-         manager = tf(base_dir=tmp_path)
-         path = tmp_path / "nonexistent.txt"
-         result = manager.read(path)
-         _ = assertion_helpers.assert_flext_result_failure(result)
-         tm.that(result.error is not None, eq=True)
-         if result.error is None:
-             raise TypeError("Expected error to be not None")
-         tm.that(
-             (
-                 "not found" in result.error.lower()
-                 or "not exist" in result.error.lower()
-             ),
-             eq=True,
-         )
+        manager = tf(base_dir=tmp_path)
+        path = tmp_path / "nonexistent.txt"
+        result = manager.read(path)
+        _ = assertion_helpers.assert_flext_result_failure(result)
+        tm.that(result.error is not None, eq=True)
+        if result.error is None:
+            error_msg = "Expected error to be not None"
+            raise TypeError(error_msg)
+        tm.that(
+            (
+                "not found" in result.error.lower()
+                or "not exist" in result.error.lower()
+            ),
+            eq=True,
+        )
 
     def test_read_explicit_format(self, tmp_path: Path) -> None:
         """Test read() with explicit format override."""
@@ -639,7 +640,7 @@ class TestFlextTestsFilesNewApi:
         result = manager.info(path, compute_hash=True)
         _ = assertion_helpers.assert_flext_result_success(result)
         info = result.value
-        tm.that(info.sha256 is not None, eq=True)
+        assert info.sha256 is not None
         tm.that(len(info.sha256) == 64, eq=True)
 
     def test_info_format_detection(self, tmp_path: Path) -> None:
@@ -783,14 +784,15 @@ class TestInfoWithContentMeta:
             m.ConfigMap(root={"key1": "value1", "key2": "value2"}),
             "config.json",
         )
-         result = manager.info(path, parse_content=True)
-         _ = assertion_helpers.assert_flext_result_success(result)
-         info = result.value
-         tm.that(info.content_meta is not None, eq=True)
-         if info.content_meta is None:
-             raise TypeError("Expected content_meta to be not None")
-         tm.that(info.content_meta.key_count == 2, eq=True)
-         tm.that(info.content_meta.item_count is None, eq=True)
+        result = manager.info(path, parse_content=True)
+        _ = assertion_helpers.assert_flext_result_success(result)
+        info = result.value
+        tm.that(info.content_meta is not None, eq=True)
+        if info.content_meta is None:
+            error_msg = "Expected content_meta to be not None"
+            raise TypeError(error_msg)
+        tm.that(info.content_meta.key_count == 2, eq=True)
+        tm.that(info.content_meta.item_count is None, eq=True)
 
     def test_info_parse_content_json_list(self, tmp_path: Path) -> None:
         """Test info() with parse_content=True for JSON list."""
@@ -801,7 +803,7 @@ class TestInfoWithContentMeta:
         result = manager.info(path, parse_content=True)
         _ = assertion_helpers.assert_flext_result_success(result)
         info = result.value
-        tm.that(info.content_meta is not None, eq=True)
+        assert info.content_meta is not None
         tm.that(info.content_meta.key_count is None, eq=True)
         tm.that(info.content_meta.item_count == 5, eq=True)
 
@@ -812,7 +814,7 @@ class TestInfoWithContentMeta:
         result = manager.info(path, parse_content=True)
         _ = assertion_helpers.assert_flext_result_success(result)
         info = result.value
-        tm.that(info.content_meta is not None, eq=True)
+        assert info.content_meta is not None
         tm.that(info.content_meta.key_count == 3, eq=True)
 
     def test_info_parse_content_csv(self, tmp_path: Path) -> None:
@@ -824,7 +826,7 @@ class TestInfoWithContentMeta:
         result = manager.info(path, parse_content=True, detect_fmt=True)
         _ = assertion_helpers.assert_flext_result_success(result)
         info = result.value
-        tm.that(info.content_meta is not None, eq=True)
+        assert info.content_meta is not None
         tm.that(info.content_meta.row_count == 3, eq=True)
         tm.that(info.content_meta.column_count == 3, eq=True)
 
@@ -843,7 +845,7 @@ class TestInfoWithContentMeta:
         result = manager.info(path, validate_model=SimpleModel)
         _ = assertion_helpers.assert_flext_result_success(result)
         info = result.value
-        tm.that(info.content_meta is not None, eq=True)
+        assert info.content_meta is not None
         tm.that(info.content_meta.model_valid is True, eq=True)
         tm.that(info.content_meta.model_name == "SimpleModel", eq=True)
 
@@ -861,7 +863,7 @@ class TestInfoWithContentMeta:
         result = manager.info(path, validate_model=StrictModel)
         _ = assertion_helpers.assert_flext_result_success(result)
         info = result.value
-        tm.that(info.content_meta is not None, eq=True)
+        assert info.content_meta is not None
         tm.that(info.content_meta.model_valid is False, eq=True)
         tm.that(info.content_meta.model_name == "StrictModel", eq=True)
 
