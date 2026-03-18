@@ -29,7 +29,7 @@ from types import TracebackType
 from typing import ClassVar, Literal, Self, TypeIs, TypeVar, overload
 
 from flext_core import FlextModelsContainers, FlextResult, FlextRuntime, r
-from pydantic import BaseModel, TypeAdapter, ValidationError
+from pydantic import BaseModel, ConfigDict, TypeAdapter, ValidationError
 from yaml import YAMLError, dump as yaml_dump, safe_load as yaml_safe_load
 
 from flext_tests import c, m, s, t, u
@@ -41,8 +41,14 @@ _OperationLiteral = Literal["create", "read", "delete"]
 _ErrorModeLiteral = Literal["stop", "skip", "collect"]
 TestsFileContent = t.Tests.FileContent
 _YAMLError = YAMLError
-_OBJECT_LIST_ADAPTER = TypeAdapter(list[t.Tests.Testobject])
-_OBJECT_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject])
+_OBJECT_LIST_ADAPTER = TypeAdapter(
+    list[t.Tests.Testobject],
+    config=ConfigDict(arbitrary_types_allowed=True),
+)
+_OBJECT_DICT_ADAPTER = TypeAdapter(
+    dict[str, t.Tests.Testobject],
+    config=ConfigDict(arbitrary_types_allowed=True),
+)
 
 
 _SCALAR_PATH: tuple[type, ...] = (str, int, float, bool, datetime, Path)
