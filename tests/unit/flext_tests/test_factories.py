@@ -14,7 +14,7 @@ import pytest
 from flext_core import r
 from pydantic import BaseModel as _BaseModel
 
-from flext_tests import tt
+from flext_tests import tm, tt
 from tests import m, t
 from tests.test_utils import assertion_helpers
 
@@ -92,10 +92,10 @@ class TestUser:
             name="Test User",
             email="test@example.com",
         )
-        assert user.id == "test-123"
-        assert user.name == "Test User"
-        assert user.email == "test@example.com"
-        assert user.active is True
+        tm.that(user.id == "test-123", eq=True)
+        tm.that(user.name == "Test User", eq=True)
+        tm.that(user.email == "test@example.com", eq=True)
+        tm.that(user.active is True, eq=True)
 
     def test_user_creation_with_active(self) -> None:
         """Test User model creation with active flag."""
@@ -105,7 +105,7 @@ class TestUser:
             email="test@example.com",
             active=False,
         )
-        assert user.active is False
+        tm.that(user.active is False, eq=True)
 
 
 class TestConfig:
@@ -114,12 +114,12 @@ class TestConfig:
     def test_config_creation_default(self) -> None:
         """Test Config model creation with defaults."""
         config = m.Tests.Config()
-        assert config.service_type == "api"
-        assert config.environment == "test"
-        assert config.debug is True
-        assert config.log_level == "DEBUG"
-        assert config.timeout == 30
-        assert config.max_retries == 3
+        tm.that(config.service_type == "api", eq=True)
+        tm.that(config.environment == "test", eq=True)
+        tm.that(config.debug is True, eq=True)
+        tm.that(config.log_level == "DEBUG", eq=True)
+        tm.that(config.timeout == 30, eq=True)
+        tm.that(config.max_retries == 3, eq=True)
 
     def test_config_creation_custom(self) -> None:
         """Test Config model creation with custom values."""
@@ -129,10 +129,10 @@ class TestConfig:
             debug=False,
             timeout=60,
         )
-        assert config.service_type == "database"
-        assert config.environment == "production"
-        assert config.debug is False
-        assert config.timeout == 60
+        tm.that(config.service_type == "database", eq=True)
+        tm.that(config.environment == "production", eq=True)
+        tm.that(config.debug is False, eq=True)
+        tm.that(config.timeout == 60, eq=True)
 
 
 class TestService:
@@ -141,10 +141,10 @@ class TestService:
     def test_service_creation_minimal(self) -> None:
         """Test Service model creation with minimal fields."""
         service = m.Tests.Service(id="test-123")
-        assert service.id == "test-123"
-        assert service.type == "api"
-        assert service.name == ""
-        assert service.status == "active"
+        tm.that(service.id == "test-123", eq=True)
+        tm.that(service.type == "api", eq=True)
+        tm.that(service.name == "", eq=True)
+        tm.that(service.status == "active", eq=True)
 
     def test_service_creation_complete(self) -> None:
         """Test Service model creation with all fields."""
@@ -154,24 +154,24 @@ class TestService:
             name="Database Service",
             status="inactive",
         )
-        assert service.id == "test-123"
-        assert service.type == "database"
-        assert service.name == "Database Service"
-        assert service.status == "inactive"
+        tm.that(service.id == "test-123", eq=True)
+        tm.that(service.type == "database", eq=True)
+        tm.that(service.name == "Database Service", eq=True)
+        tm.that(service.status == "inactive", eq=True)
 
 
 class TestFlextTestsFactoriesModernAPI:
-    """Test suite for FlextTestsFactories using modern API (tt.model, tt.op, tt.svc)."""
+    """Test suite for tt using modern API (tt.model, tt.op, tt.svc)."""
 
     def test_model_user_default(self) -> None:
         """Test tt.model('user') with default parameters."""
         user_result = tt.model("user")
         user = TestFactoriesHelpers.extract_model(user_result)
-        assert isinstance(user, m.Tests.User)
-        assert user.id is not None
-        assert user.name == "Test User"
-        assert "@example.com" in user.email
-        assert user.active is True
+        tm.that(isinstance(user, m.Tests.User), eq=True)
+        tm.that(user.id is not None, eq=True)
+        tm.that(user.name == "Test User", eq=True)
+        tm.that("@example.com" in user.email, eq=True)
+        tm.that(user.active is True, eq=True)
 
     def test_model_user_custom(self) -> None:
         """Test tt.model('user') with custom parameters."""
@@ -182,27 +182,27 @@ class TestFlextTestsFactoriesModernAPI:
             email="custom@test.com",
         )
         user = TestFactoriesHelpers.extract_model(user_result)
-        assert isinstance(user, m.Tests.User)
-        assert user.id == "custom-123"
-        assert user.name == "Custom User"
-        assert user.email == "custom@test.com"
+        tm.that(isinstance(user, m.Tests.User), eq=True)
+        tm.that(user.id == "custom-123", eq=True)
+        tm.that(user.name == "Custom User", eq=True)
+        tm.that(user.email == "custom@test.com", eq=True)
 
     def test_model_user_with_overrides(self) -> None:
         """Test tt.model('user') with overrides."""
         user_result = tt.model("user", name="Base User", active=False)
         user = TestFactoriesHelpers.extract_model(user_result)
-        assert isinstance(user, m.Tests.User)
-        assert user.name == "Base User"
-        assert user.active is False
+        tm.that(isinstance(user, m.Tests.User), eq=True)
+        tm.that(user.name == "Base User", eq=True)
+        tm.that(user.active is False, eq=True)
 
     def test_model_config_default(self) -> None:
         """Test tt.model('config') with default parameters."""
         config_result = tt.model("config")
         config = TestFactoriesHelpers.extract_model(config_result)
-        assert isinstance(config, m.Tests.Config)
-        assert config.service_type == "api"
-        assert config.environment == "test"
-        assert config.debug is True
+        tm.that(isinstance(config, m.Tests.Config), eq=True)
+        tm.that(config.service_type == "api", eq=True)
+        tm.that(config.environment == "test", eq=True)
+        tm.that(config.debug is True, eq=True)
 
     def test_model_config_custom(self) -> None:
         """Test tt.model('config') with custom parameters."""
@@ -214,29 +214,29 @@ class TestFlextTestsFactoriesModernAPI:
             timeout=60,
         )
         config = TestFactoriesHelpers.extract_model(config_result)
-        assert isinstance(config, m.Tests.Config)
-        assert config.service_type == "database"
-        assert config.environment == "production"
-        assert config.debug is False
-        assert config.timeout == 60
+        tm.that(isinstance(config, m.Tests.Config), eq=True)
+        tm.that(config.service_type == "database", eq=True)
+        tm.that(config.environment == "production", eq=True)
+        tm.that(config.debug is False, eq=True)
+        tm.that(config.timeout == 60, eq=True)
 
     def test_model_config_with_overrides(self) -> None:
         """Test tt.model('config') with overrides."""
         config_result = tt.model("config", log_level="INFO", max_retries=5)
         config = TestFactoriesHelpers.extract_model(config_result)
-        assert isinstance(config, m.Tests.Config)
-        assert config.log_level == "INFO"
-        assert config.max_retries == 5
+        tm.that(isinstance(config, m.Tests.Config), eq=True)
+        tm.that(config.log_level == "INFO", eq=True)
+        tm.that(config.max_retries == 5, eq=True)
 
     def test_model_service_default(self) -> None:
         """Test tt.model('service') with default parameters."""
         service_result = tt.model("service")
         service = TestFactoriesHelpers.extract_model(service_result)
-        assert isinstance(service, m.Tests.Service)
-        assert service.id is not None
-        assert service.type == "api"
-        assert "Test api Service" in service.name
-        assert service.status == "active"
+        tm.that(isinstance(service, m.Tests.Service), eq=True)
+        tm.that(service.id is not None, eq=True)
+        tm.that(service.type == "api", eq=True)
+        tm.that("Test api Service" in service.name, eq=True)
+        tm.that(service.status == "active", eq=True)
 
     def test_model_service_custom(self) -> None:
         """Test tt.model('service') with custom parameters."""
@@ -247,17 +247,17 @@ class TestFlextTestsFactoriesModernAPI:
             name="Custom Service",
         )
         service = TestFactoriesHelpers.extract_model(service_result)
-        assert isinstance(service, m.Tests.Service)
-        assert service.id == "custom-123"
-        assert service.type == "database"
-        assert service.name == "Custom Service"
+        tm.that(isinstance(service, m.Tests.Service), eq=True)
+        tm.that(service.id == "custom-123", eq=True)
+        tm.that(service.type == "database", eq=True)
+        tm.that(service.name == "Custom Service", eq=True)
 
     def test_model_service_with_overrides(self) -> None:
         """Test tt.model('service') with overrides."""
         service_result = tt.model("service", status="inactive")
         service = TestFactoriesHelpers.extract_model(service_result)
-        assert isinstance(service, m.Tests.Service)
-        assert service.status == "inactive"
+        tm.that(isinstance(service, m.Tests.Service), eq=True)
+        tm.that(service.status == "inactive", eq=True)
 
     def test_batch_users_default(self) -> None:
         """Test tt.batch('user') with default count."""
@@ -266,53 +266,53 @@ class TestFlextTestsFactoriesModernAPI:
         users_typed: list[m.Tests.User] = [
             u for u in users if isinstance(u, m.Tests.User)
         ]
-        assert len(users_typed) == 5
-        assert all(isinstance(user, m.Tests.User) for user in users_typed)
-        assert users_typed[0].name == "User 0"
-        assert users_typed[1].name == "User 1"
+        tm.that(len(users_typed) == 5, eq=True)
+        tm.that(all(isinstance(user, m.Tests.User) for user in users_typed), eq=True)
+        tm.that(users_typed[0].name == "User 0", eq=True)
+        tm.that(users_typed[1].name == "User 1", eq=True)
 
     def test_batch_users_custom_count(self) -> None:
         """Test tt.batch('user') with custom count."""
         users_result = tt.batch("user", count=3)
-        assert isinstance(users_result, list)
+        tm.that(isinstance(users_result, list), eq=True)
         users: list[m.Tests.User] = [
             u for u in users_result if isinstance(u, m.Tests.User)
         ]
-        assert len(users) == 3
-        assert all(isinstance(user, m.Tests.User) for user in users)
+        tm.that(len(users) == 3, eq=True)
+        tm.that(all(isinstance(user, m.Tests.User) for user in users), eq=True)
 
     def test_op_simple(self) -> None:
         """Test tt.op('simple') operation."""
         operation = tt.op("simple")
-        assert callable(operation)
+        tm.that(callable(operation), eq=True)
         result = operation()
-        assert result == "success"
+        tm.that(result == "success", eq=True)
 
     def test_op_add(self) -> None:
         """Test tt.op('add') operation."""
         operation = tt.op("add")
-        assert callable(operation)
+        tm.that(callable(operation), eq=True)
         result = operation(2, 3)
-        assert result == 5
+        tm.that(result == 5, eq=True)
 
     def test_op_format(self) -> None:
         """Test tt.op('format') operation."""
         operation = tt.op("format")
-        assert callable(operation)
+        tm.that(callable(operation), eq=True)
         result = operation("name", value=20)
-        assert result == "name: 20"
+        tm.that(result == "name: 20", eq=True)
 
     def test_op_error(self) -> None:
         """Test tt.op('error') operation."""
         operation = tt.op("error", error_message="Custom error")
-        assert callable(operation)
+        tm.that(callable(operation), eq=True)
         with pytest.raises(ValueError, match="Custom error"):
             operation()
 
     def test_op_type_error(self) -> None:
         """Test tt.op('type_error') operation."""
         operation = tt.op("type_error", error_message="Type mismatch")
-        assert callable(operation)
+        tm.that(callable(operation), eq=True)
         with pytest.raises(TypeError, match="Type mismatch"):
             operation()
 
@@ -320,12 +320,12 @@ class TestFlextTestsFactoriesModernAPI:
         """Test tt.svc() with default type."""
         service_class = tt.svc()
         service = service_class()
-        assert service.name is None
-        assert service.amount is None
-        assert service.enabled is None
+        tm.that(service.name is None, eq=True)
+        tm.that(service.amount is None, eq=True)
+        tm.that(service.enabled is None, eq=True)
         result = service.execute()
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert result.value == {"service_type": "test"}
+        tm.that(result.value == {"service_type": "test"}, eq=True)
 
     def test_svc_user(self) -> None:
         """Test tt.svc('user') with 'user' type."""
@@ -333,8 +333,8 @@ class TestFlextTestsFactoriesModernAPI:
         service = service_class()
         result = service.execute()
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert "user_id" in result.value
-        assert result.value["user_id"] == "test_123"
+        tm.that("user_id" in result.value, eq=True)
+        tm.that(result.value["user_id"] == "test_123", eq=True)
 
     def test_svc_user_with_default(self) -> None:
         """Test tt.svc('user') with 'user' type and default flag."""
@@ -342,7 +342,7 @@ class TestFlextTestsFactoriesModernAPI:
         service = service_class()
         result = service.execute()
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert result.value["user_id"] == "default_123"
+        tm.that(result.value["user_id"] == "default_123", eq=True)
 
     def test_svc_complex_valid(self) -> None:
         """Test tt.svc('complex') with valid data."""
@@ -350,7 +350,7 @@ class TestFlextTestsFactoriesModernAPI:
         service = service_class(name="Test", amount=100, enabled=True)
         result = service.execute()
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert result.value == {"result": "success"}
+        tm.that(result.value == {"result": "success"}, eq=True)
 
     def test_svc_complex_empty_name(self) -> None:
         """Test tt.svc('complex') with empty name."""
@@ -358,7 +358,7 @@ class TestFlextTestsFactoriesModernAPI:
         service = service_class(name="")
         result = service.execute()
         _ = assertion_helpers.assert_flext_result_failure(result)
-        assert "Name is required" in result.error
+        tm.that("Name is required" in result.error, eq=True)
 
     def test_svc_complex_negative_amount(self) -> None:
         """Test tt.svc('complex') with negative amount."""
@@ -366,7 +366,7 @@ class TestFlextTestsFactoriesModernAPI:
         service = service_class(amount=-10)
         result = service.execute()
         _ = assertion_helpers.assert_flext_result_failure(result)
-        assert "Amount must be non-negative" in result.error
+        tm.that("Amount must be non-negative" in result.error, eq=True)
 
     def test_svc_complex_disabled_with_amount(self) -> None:
         """Test tt.svc('complex') disabled with amount."""
@@ -374,7 +374,7 @@ class TestFlextTestsFactoriesModernAPI:
         service = service_class(enabled=False, amount=100)
         result = service.execute()
         _ = assertion_helpers.assert_flext_result_failure(result)
-        assert "Cannot have amount when disabled" in result.error
+        tm.that("Cannot have amount when disabled" in result.error, eq=True)
 
     def test_svc_validate_business_rules_complex_valid(self) -> None:
         """Test validate_business_rules for complex service with valid data."""
@@ -382,7 +382,7 @@ class TestFlextTestsFactoriesModernAPI:
         service = service_class(name="Test", amount=100, enabled=True)
         result = service.validate_business_rules()
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert result.value is True
+        tm.that(result.value is True, eq=True)
 
     def test_svc_validate_business_rules_complex_invalid(self) -> None:
         """Test validate_business_rules for complex service with invalid data."""
@@ -390,7 +390,7 @@ class TestFlextTestsFactoriesModernAPI:
         service = service_class(name="")
         result = service.validate_business_rules()
         _ = assertion_helpers.assert_flext_result_failure(result)
-        assert "Name is required" in result.error
+        tm.that("Name is required" in result.error, eq=True)
 
     def test_svc_validate_config_complex_valid(self) -> None:
         """Test validate_config for complex service with valid data."""
@@ -398,7 +398,7 @@ class TestFlextTestsFactoriesModernAPI:
         service = service_class(name="Test", amount=100)
         result = service.validate_config()
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert result.value is True
+        tm.that(result.value is True, eq=True)
 
     def test_svc_validate_config_name_too_long(self) -> None:
         """Test validate_config for complex service with name too long."""
@@ -407,7 +407,7 @@ class TestFlextTestsFactoriesModernAPI:
         service = service_class(name=long_name)
         result = service.validate_config()
         _ = assertion_helpers.assert_flext_result_failure(result)
-        assert "Name too long" in result.error
+        tm.that("Name too long" in result.error, eq=True)
 
     def test_svc_validate_config_amount_too_large(self) -> None:
         """Test validate_config for complex service with amount too large."""
@@ -415,7 +415,7 @@ class TestFlextTestsFactoriesModernAPI:
         service = service_class(amount=1001)
         result = service.validate_config()
         _ = assertion_helpers.assert_flext_result_failure(result)
-        assert "Value too large" in result.error
+        tm.that("Value too large" in result.error, eq=True)
 
     def test_svc_validate_config_non_complex(self) -> None:
         """Test validate_config for non-complex service."""
@@ -423,14 +423,14 @@ class TestFlextTestsFactoriesModernAPI:
         service = service_class()
         result = service.validate_config()
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert result.value is True
+        tm.that(result.value is True, eq=True)
 
     def test_svc_validate_business_rules_non_complex(self) -> None:
         """Test validate_business_rules for non-complex service."""
         service_class = tt.svc("test")
         service = service_class()
         result = service.validate_business_rules()
-        assert isinstance(result, r)
+        tm.that(isinstance(result, r), eq=True)
 
 
 class TestsFlextTestsFactoriesModel:
@@ -440,66 +440,66 @@ class TestsFlextTestsFactoriesModel:
         """Test user model creation with defaults."""
         user_result = tt.model("user")
         user = TestFactoriesHelpers.extract_model(user_result)
-        assert isinstance(user, m.Tests.User)
-        assert user.id is not None
-        assert user.name == "Test User"
-        assert "@example.com" in user.email
-        assert user.active is True
+        tm.that(isinstance(user, m.Tests.User), eq=True)
+        tm.that(user.id is not None, eq=True)
+        tm.that(user.name == "Test User", eq=True)
+        tm.that("@example.com" in user.email, eq=True)
+        tm.that(user.active is True, eq=True)
 
     def test_model_user_custom(self) -> None:
         """Test user model creation with custom parameters."""
         user_result = tt.model("user", name="Custom User", email="custom@test.com")
         user = TestFactoriesHelpers.extract_model(user_result)
-        assert isinstance(user, m.Tests.User)
-        assert user.name == "Custom User"
-        assert user.email == "custom@test.com"
+        tm.that(isinstance(user, m.Tests.User), eq=True)
+        tm.that(user.name == "Custom User", eq=True)
+        tm.that(user.email == "custom@test.com", eq=True)
 
     def test_model_batch(self) -> None:
         """Test batch model creation."""
         users = tt.model("user", count=5)
-        assert isinstance(users, list)
-        assert len(users) == 5
-        assert all(isinstance(user, m.Tests.User) for user in users)
+        tm.that(isinstance(users, list), eq=True)
+        tm.that(len(users) == 5, eq=True)
+        tm.that(all(isinstance(user, m.Tests.User) for user in users), eq=True)
 
     def test_model_as_result(self) -> None:
         """Test model wrapped in r."""
         result = tt.model("user", as_result=True)
-        assert isinstance(result, r)
+        tm.that(isinstance(result, r), eq=True)
         typed_result = cast("r[_BaseModel]", result)
         _ = assertion_helpers.assert_flext_result_success(typed_result)
-        assert isinstance(typed_result.value, m.Tests.User)
+        tm.that(isinstance(typed_result.value, m.Tests.User), eq=True)
 
     def test_model_as_dict(self) -> None:
         """Test model returned as dict."""
         users_dict = tt.model("user", count=3, as_dict=True)
-        assert isinstance(users_dict, dict)
-        assert len(users_dict) == 3
-        assert all(isinstance(v, m.Tests.User) for v in users_dict.values())
+        tm.that(isinstance(users_dict, dict), eq=True)
+        tm.that(len(users_dict) == 3, eq=True)
+        tm.that(all(isinstance(v, m.Tests.User) for v in users_dict.values()), eq=True)
 
     def test_model_config(self) -> None:
         """Test config model creation."""
         config = tt.model("config", environment="production")
-        assert isinstance(config, m.Tests.Config)
-        assert config.environment == "production"
+        tm.that(isinstance(config, m.Tests.Config), eq=True)
+        tm.that(config.environment == "production", eq=True)
 
     def test_model_service(self) -> None:
         """Test service model creation."""
         service_result = tt.model("service", service_type="database")
         service = TestFactoriesHelpers.extract_model(service_result)
-        assert isinstance(service, m.Tests.Service)
-        assert service.type == "database"
+        tm.that(isinstance(service, m.Tests.Service), eq=True)
+        tm.that(service.type == "database", eq=True)
 
     def test_model_entity(self) -> None:
         """Test entity model creation."""
         entity = tt.model("entity", name="Test Entity", value=42)
-        assert isinstance(entity, m.Tests.Entity)
-        assert entity.name == "Test Entity"
+        tm.that(isinstance(entity, m.Tests.Entity), eq=True)
+        tm.that(entity.name == "Test Entity", eq=True)
 
     def test_model_value_object(self) -> None:
         """Test value object model creation."""
         value_obj = tt.model("value", data="test_data", value_count=3)
-        assert isinstance(value_obj, m.Tests.Value)
-        assert value_obj.data == "test_data"
+        tm.that(isinstance(value_obj, m.Tests.Value), eq=True)
+        tm.that(value_obj.data == "test_data", eq=True)
 
     def test_model_with_transform(self) -> None:
         """Test model creation with transform function."""
@@ -524,8 +524,8 @@ class TestsFlextTestsFactoriesModel:
             ),
         )
         user = TestFactoriesHelpers.extract_model(user_result)
-        assert isinstance(user, m.Tests.User)
-        assert user.name == "Transformed"
+        tm.that(isinstance(user, m.Tests.User), eq=True)
+        tm.that(user.name == "Transformed", eq=True)
 
     def test_model_with_validate(self) -> None:
         """Test model creation with validation."""
@@ -544,8 +544,8 @@ class TestsFlextTestsFactoriesModel:
             ),
         )
         user = TestFactoriesHelpers.extract_model(user_result)
-        assert isinstance(user, m.Tests.User)
-        assert user.active is True
+        tm.that(isinstance(user, m.Tests.User), eq=True)
+        tm.that(user.active is True, eq=True)
         result_raw = tt.model(
             "user",
             active=False,
@@ -563,8 +563,8 @@ class TestsFlextTestsFactoriesModel:
         else:
             msg = f"Expected r[BaseModel], got {type(result_raw)}"
             raise AssertionError(msg)
-        assert isinstance(result_typed, r)
-        assert result_typed.is_failure
+        tm.that(isinstance(result_typed, r), eq=True)
+        tm.that(result_typed.is_failure, eq=True)
 
 
 class TestsFlextTestsFactoriesRes:
@@ -577,24 +577,24 @@ class TestsFlextTestsFactoriesRes:
             "r[int]",
             TestFactoriesHelpers.as_single_payload_result(result_raw),
         )
-        assert isinstance(result, r)
+        tm.that(isinstance(result, r), eq=True)
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert result.value == 42
+        tm.that(result.value == 42, eq=True)
 
     def test_res_fail(self) -> None:
         """Test failed result creation."""
         result_raw = tt.res("fail", error="Error message")
         result = TestFactoriesHelpers.as_single_payload_result(result_raw)
-        assert isinstance(result, r)
+        tm.that(isinstance(result, r), eq=True)
         _ = assertion_helpers.assert_flext_result_failure(result)
-        assert result.error == "Error message"
+        tm.that(result.error == "Error message", eq=True)
 
     def test_res_fail_with_code(self) -> None:
         """Test failed result creation with error code."""
         result_raw = tt.res("fail", error="Error message", error_code="ERR001")
         result = TestFactoriesHelpers.as_single_payload_result(result_raw)
         _ = assertion_helpers.assert_flext_result_failure(result)
-        assert result.error == "Error message"
+        tm.that(result.error == "Error message", eq=True)
 
     def test_res_from_value_success(self) -> None:
         """Test from_value with non-None value."""
@@ -604,7 +604,7 @@ class TestsFlextTestsFactoriesRes:
             TestFactoriesHelpers.as_single_payload_result(result_raw),
         )
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert result.value == 42
+        tm.that(result.value == 42, eq=True)
 
     def test_res_from_value_none(self) -> None:
         """Test from_value with None value."""
@@ -612,7 +612,7 @@ class TestsFlextTestsFactoriesRes:
         result = TestFactoriesHelpers.as_single_payload_result(result_raw)
         _ = assertion_helpers.assert_flext_result_failure(result)
         error_msg = result.error or ""
-        assert "required" in error_msg.lower()
+        tm.that("required" in error_msg.lower(), eq=True)
 
     def test_res_batch_values(self) -> None:
         """Test batch result creation from values."""
@@ -621,18 +621,18 @@ class TestsFlextTestsFactoriesRes:
             "list[r[int]]",
             results_raw if isinstance(results_raw, list) else [results_raw],
         )
-        assert isinstance(results, list)
-        assert len(results) == 3
-        assert all(result.is_success for result in results)
-        assert [result.value for result in results] == [1, 2, 3]
+        tm.that(isinstance(results, list), eq=True)
+        tm.that(len(results) == 3, eq=True)
+        tm.that(all(result.is_success for result in results), eq=True)
+        tm.that([result.value for result in results] == [1, 2, 3], eq=True)
 
     def test_res_batch_errors(self) -> None:
         """Test batch result creation from errors."""
         results_raw = tt.res("fail", errors=["err1", "err2"])
         results = results_raw if isinstance(results_raw, list) else [results_raw]
-        assert isinstance(results, list)
-        assert len(results) == 2
-        assert all(result.is_failure for result in results)
+        tm.that(isinstance(results, list), eq=True)
+        tm.that(len(results) == 2, eq=True)
+        tm.that(all(result.is_failure for result in results), eq=True)
 
     def test_res_mix_pattern(self) -> None:
         """Test batch result creation with mix pattern."""
@@ -646,11 +646,11 @@ class TestsFlextTestsFactoriesRes:
             "list[r[int]]",
             results_raw if isinstance(results_raw, list) else [results_raw],
         )
-        assert len(results) == 4
-        assert results[0].is_success and results[0].value == 1
-        assert results[1].is_failure
-        assert results[2].is_success and results[2].value == 2
-        assert results[3].is_failure
+        tm.that(len(results) == 4, eq=True)
+        tm.that(results[0].is_success and results[0].value == 1, eq=True)
+        tm.that(results[1].is_failure, eq=True)
+        tm.that(results[2].is_success and results[2].value == 2, eq=True)
+        tm.that(results[3].is_failure, eq=True)
 
     def test_res_with_transform(self) -> None:
         """Test result creation with transform function."""
@@ -674,7 +674,7 @@ class TestsFlextTestsFactoriesRes:
             TestFactoriesHelpers.as_single_payload_result(result_raw),
         )
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert result.value == 10
+        tm.that(result.value == 10, eq=True)
 
 
 class TestsFlextTestsFactoriesList:
@@ -687,9 +687,9 @@ class TestsFlextTestsFactoriesList:
             "list[m.Tests.User]",
             TestFactoriesHelpers.as_payload_list(users_raw),
         )
-        assert isinstance(users, list)
-        assert len(users) == 3
-        assert all(isinstance(u, m.Tests.User) for u in users)
+        tm.that(isinstance(users, list), eq=True)
+        tm.that(len(users) == 3, eq=True)
+        tm.that(all(isinstance(u, m.Tests.User) for u in users), eq=True)
 
     def test_list_from_callable(self) -> None:
         """Test list creation from callable factory."""
@@ -698,7 +698,7 @@ class TestsFlextTestsFactoriesList:
             "list[int]",
             TestFactoriesHelpers.as_payload_list(numbers_raw),
         )
-        assert numbers == [42, 42, 42, 42, 42]
+        tm.that(numbers == [42, 42, 42, 42, 42], eq=True)
 
     def test_list_from_sequence(self) -> None:
         """Test list creation from sequence."""
@@ -720,7 +720,7 @@ class TestsFlextTestsFactoriesList:
             "list[int]",
             TestFactoriesHelpers.as_payload_list(doubled_raw),
         )
-        assert doubled == [2, 4, 6]
+        tm.that(doubled == [2, 4, 6], eq=True)
 
     def test_list_with_filter(self) -> None:
         """Test list creation with filter."""
@@ -741,7 +741,7 @@ class TestsFlextTestsFactoriesList:
             "list[int]",
             TestFactoriesHelpers.as_payload_list(evens_raw),
         )
-        assert evens == [2, 4]
+        tm.that(evens == [2, 4], eq=True)
 
     def test_list_with_unique(self) -> None:
         """Test list creation with uniqueness."""
@@ -750,17 +750,17 @@ class TestsFlextTestsFactoriesList:
             "list[int]",
             TestFactoriesHelpers.as_payload_list(items_raw),
         )
-        assert len(items) == 3
-        assert set(items) == {1, 2, 3}
+        tm.that(len(items) == 3, eq=True)
+        tm.that(set(items) == {1, 2, 3}, eq=True)
 
     def test_list_as_result(self) -> None:
         """Test list creation wrapped in result."""
         result_raw = tt.list("user", count=3, as_result=True)
-        assert isinstance(result_raw, r)
+        tm.that(isinstance(result_raw, r), eq=True)
         result = cast("r[list[m.Tests.User]]", result_raw)
-        assert isinstance(result, r)
+        tm.that(isinstance(result, r), eq=True)
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert len(result.value) == 3
+        tm.that(len(result.value) == 3, eq=True)
 
 
 class TestsFlextTestsFactoriesDict:
@@ -773,9 +773,9 @@ class TestsFlextTestsFactoriesDict:
             "dict[str, m.Tests.User]",
             TestFactoriesHelpers.as_payload_mapping(users_raw),
         )
-        assert isinstance(users, dict)
-        assert len(users) == 3
-        assert all(isinstance(u, m.Tests.User) for u in users.values())
+        tm.that(isinstance(users, dict), eq=True)
+        tm.that(len(users) == 3, eq=True)
+        tm.that(all(isinstance(u, m.Tests.User) for u in users.values()), eq=True)
 
     def test_dict_with_key_factory(self) -> None:
         """Test dict creation with key factory."""
@@ -798,7 +798,7 @@ class TestsFlextTestsFactoriesDict:
             "dict[str, m.Tests.User]",
             TestFactoriesHelpers.as_payload_mapping(users_raw),
         )
-        assert set(users.keys()) == {"user_0", "user_1", "user_2"}
+        tm.that(set(users.keys()) == {"user_0", "user_1", "user_2"}, eq=True)
 
     def test_dict_with_value_factory(self) -> None:
         """Test dict creation with value factory."""
@@ -822,7 +822,7 @@ class TestsFlextTestsFactoriesDict:
             "dict[str, m.Tests.User]",
             TestFactoriesHelpers.as_payload_mapping(users_raw),
         )
-        assert len(users) == 2
+        tm.that(len(users) == 2, eq=True)
 
     def test_dict_from_mapping(self) -> None:
         """Test dict creation from existing mapping."""
@@ -832,16 +832,16 @@ class TestsFlextTestsFactoriesDict:
             "dict[str, int]",
             TestFactoriesHelpers.as_payload_mapping(merged_raw),
         )
-        assert merged == {"a": 1, "b": 2, "c": 3}
+        tm.that(merged == {"a": 1, "b": 2, "c": 3}, eq=True)
 
     def test_dict_as_result(self) -> None:
         """Test dict creation wrapped in result."""
         result_raw = tt.dict_factory("user", count=3, as_result=True)
-        assert isinstance(result_raw, r)
+        tm.that(isinstance(result_raw, r), eq=True)
         result = cast("r[dict[str, m.Tests.User]]", result_raw)
-        assert isinstance(result, r)
+        tm.that(isinstance(result, r), eq=True)
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert len(result.value) == 3
+        tm.that(len(result.value) == 3, eq=True)
 
 
 class TestsFlextTestsFactoriesGeneric:
@@ -855,8 +855,8 @@ class TestsFlextTestsFactoriesGeneric:
                 self.name = name
 
         obj = tt.generic(SimpleClass, kwargs={"name": "test"})
-        assert isinstance(obj, SimpleClass)
-        assert obj.name == "test"
+        tm.that(isinstance(obj, SimpleClass), eq=True)
+        tm.that(obj.name == "test", eq=True)
 
     def test_generic_with_args(self) -> None:
         """Test generic type instantiation with positional args."""
@@ -874,10 +874,10 @@ class TestsFlextTestsFactoriesGeneric:
             obj = obj_result[0]
         else:
             obj = obj_result
-        assert isinstance(obj, ArgsClass)
-        assert obj.a == 1
-        assert obj.b == 2
-        assert obj.c == "custom"
+        tm.that(isinstance(obj, ArgsClass), eq=True)
+        tm.that(obj.a == 1, eq=True)
+        tm.that(obj.b == 2, eq=True)
+        tm.that(obj.c == "custom", eq=True)
 
     def test_generic_batch(self) -> None:
         """Test batch generic type instantiation."""
@@ -887,10 +887,10 @@ class TestsFlextTestsFactoriesGeneric:
                 self.value = value
 
         objs = tt.generic(BatchClass, kwargs={"value": 42}, count=5)
-        assert isinstance(objs, list)
-        assert len(objs) == 5
-        assert all(isinstance(o, BatchClass) for o in objs)
-        assert all(o.value == 42 for o in objs)
+        tm.that(isinstance(objs, list), eq=True)
+        tm.that(len(objs) == 5, eq=True)
+        tm.that(all(isinstance(o, BatchClass) for o in objs), eq=True)
+        tm.that(all(o.value == 42 for o in objs), eq=True)
 
     def test_generic_with_validate(self) -> None:
         """Test generic type instantiation with validation."""
@@ -918,8 +918,8 @@ class TestsFlextTestsFactoriesGeneric:
             obj = obj_result[0]
         else:
             obj = obj_result
-        assert isinstance(obj, ValidatedClass)
-        assert obj.age == 25
+        tm.that(isinstance(obj, ValidatedClass), eq=True)
+        tm.that(obj.age == 25, eq=True)
         with pytest.raises(ValueError, match="Validation failed"):
             tt.generic(
                 ValidatedClass,
@@ -938,8 +938,8 @@ class TestsFlextTestsFactoriesGeneric:
                 self.value = value
 
         result = tt.generic(ResultClass, kwargs={"value": "test"}, as_result=True)
-        assert isinstance(result, r)
+        tm.that(isinstance(result, r), eq=True)
         typed_result = cast("r[ResultClass]", result)
         _ = assertion_helpers.assert_flext_result_success(typed_result)
-        assert isinstance(result.value, ResultClass)
-        assert result.value.value == "test"
+        tm.that(isinstance(result.value, ResultClass), eq=True)
+        tm.that(result.value.value == "test", eq=True)

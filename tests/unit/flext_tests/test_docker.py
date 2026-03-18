@@ -21,6 +21,7 @@ import pytest
 from docker import DockerClient
 from flext_core import r
 
+from flext_tests import tm
 from tests import c
 from tests.test_utils import assertion_helpers
 
@@ -30,90 +31,90 @@ class TestContainerStatus:
 
     def test_container_status_values(self) -> None:
         """Test c.Tests.Docker.ContainerStatus enum values."""
-        assert c.Tests.Docker.ContainerStatus.RUNNING.value == "running"
-        assert c.Tests.Docker.ContainerStatus.STOPPED.value == "stopped"
-        assert c.Tests.Docker.ContainerStatus.NOT_FOUND.value == "not_found"
-        assert c.Tests.Docker.ContainerStatus.ERROR.value == "error"
+        tm.that(c.Tests.Docker.ContainerStatus.RUNNING.value == "running", eq=True)
+        tm.that(c.Tests.Docker.ContainerStatus.STOPPED.value == "stopped", eq=True)
+        tm.that(c.Tests.Docker.ContainerStatus.NOT_FOUND.value == "not_found", eq=True)
+        tm.that(c.Tests.Docker.ContainerStatus.ERROR.value == "error", eq=True)
 
 
 class TestContainerInfo:
-    """Test suite for FlextTestsDocker.ContainerInfo model."""
+    """Test suite for tk.ContainerInfo model."""
 
     def test_container_info_creation(self) -> None:
-        """Test FlextTestsDocker.ContainerInfo creation with required fields."""
-        info = FlextTestsDocker.ContainerInfo(
+        """Test tk.ContainerInfo creation with required fields."""
+        info = tk.ContainerInfo(
             name="test_container",
             status=c.Tests.Docker.ContainerStatus.RUNNING,
             ports={"8080/tcp": "8080"},
             image="nginx:latest",
         )
-        assert info.name == "test_container"
-        assert info.status == c.Tests.Docker.ContainerStatus.RUNNING.value
-        assert info.ports == {"8080/tcp": "8080"}
-        assert info.image == "nginx:latest"
-        assert not info.container_id
+        tm.that(info.name == "test_container", eq=True)
+        tm.that(info.status == c.Tests.Docker.ContainerStatus.RUNNING.value, eq=True)
+        tm.that(info.ports == {"8080/tcp": "8080"}, eq=True)
+        tm.that(info.image == "nginx:latest", eq=True)
+        tm.that(not info.container_id, eq=True)
 
     def test_container_info_with_container_id(self) -> None:
-        """Test FlextTestsDocker.ContainerInfo with container_id."""
-        info = FlextTestsDocker.ContainerInfo(
+        """Test tk.ContainerInfo with container_id."""
+        info = tk.ContainerInfo(
             name="test_container",
             status=c.Tests.Docker.ContainerStatus.RUNNING,
             ports={},
             image="nginx:latest",
             container_id="abc123",
         )
-        assert info.container_id == "abc123"
+        tm.that(info.container_id == "abc123", eq=True)
 
 
 class TestFlextTestsDocker:
-    """Test suite for FlextTestsDocker class."""
+    """Test suite for tk class."""
 
     @pytest.fixture
-    def docker_manager(self, tmp_path: Path) -> FlextTestsDocker:
-        """Create a FlextTestsDocker instance for testing."""
+    def docker_manager(self, tmp_path: Path) -> tk:
+        """Create a tk instance for testing."""
         fixtures_dir = Path(__file__).parent.parent.parent / "fixtures"
-        manager = FlextTestsDocker(workspace_root=fixtures_dir)
+        manager = tk(workspace_root=fixtures_dir)
         manager._state_file = tmp_path / "test_docker_state.json"
         manager._dirty_containers.clear()
         return manager
 
-    def test_init(self, docker_manager: FlextTestsDocker) -> None:
-        """Test FlextTestsDocker initialization."""
-        assert isinstance(docker_manager, FlextTestsDocker)
-        assert docker_manager.workspace_root is not None
-        assert isinstance(docker_manager._dirty_containers, set)
+    def test_init(self, docker_manager: tk) -> None:
+        """Test tk initialization."""
+        tm.that(isinstance(docker_manager, tk), eq=True)
+        tm.that(docker_manager.workspace_root is not None, eq=True)
+        tm.that(isinstance(docker_manager._dirty_containers, set), eq=True)
 
     def test_get_client_initialization(self) -> None:
         """Test Docker client lazy initialization."""
-        manager = FlextTestsDocker()
+        manager = tk()
         manager._dirty_containers.clear()
         manager._client = None
         client = manager.get_client()
-        assert client is not None
-        assert manager._client is not None
-        assert isinstance(client, DockerClient)
+        tm.that(client is not None, eq=True)
+        tm.that(manager._client is not None, eq=True)
+        tm.that(isinstance(client, DockerClient), eq=True)
 
     def test_get_client_cached(self) -> None:
         """Test Docker client caching."""
-        manager = FlextTestsDocker()
+        manager = tk()
         manager._dirty_containers.clear()
         manager._client = None
         client1 = manager.get_client()
         client2 = manager.get_client()
-        assert client1 is client2
+        tm.that(client1 is client2, eq=True)
 
     def test_load_dirty_state_file_not_exists(
         self,
-        docker_manager: FlextTestsDocker,
+        docker_manager: tk,
     ) -> None:
         """Test loading dirty state when file doesn't exist."""
         docker_manager._state_file = Path("/tmp/nonexistent_state.json")
         docker_manager._load_dirty_state()
-        assert docker_manager._dirty_containers == set()
+        tm.that(docker_manager._dirty_containers == set(), eq=True)
 
     def test_load_dirty_state_file_exists(
         self,
-        docker_manager: FlextTestsDocker,
+        docker_manager: tk,
     ) -> None:
         """Test loading dirty state from existing file."""
         test_data = {"dirty_containers": ["container1", "container2"]}
@@ -128,14 +129,14 @@ class TestFlextTestsDocker:
         try:
             docker_manager._state_file = temp_file
             docker_manager._load_dirty_state()
-            assert "container1" in docker_manager._dirty_containers
-            assert "container2" in docker_manager._dirty_containers
+            tm.that("container1" in docker_manager._dirty_containers, eq=True)
+            tm.that("container2" in docker_manager._dirty_containers, eq=True)
         finally:
             temp_file.unlink()
 
     def test_save_dirty_state(
         self,
-        docker_manager: FlextTestsDocker,
+        docker_manager: tk,
         tmp_path: Path,
     ) -> None:
         """Test saving dirty state to file.
@@ -147,97 +148,97 @@ class TestFlextTestsDocker:
         4. File can be read back correctly
         """
         docker_manager._dirty_containers = {"test_container"}
-        assert docker_manager._state_file.parent == tmp_path
-        assert docker_manager._state_file.name == "test_docker_state.json"
+        tm.that(docker_manager._state_file.parent == tmp_path, eq=True)
+        tm.that(docker_manager._state_file.name == "test_docker_state.json", eq=True)
         docker_manager._save_dirty_state()
-        assert docker_manager._state_file.exists()
+        tm.that(docker_manager._state_file.exists(), eq=True)
         with docker_manager._state_file.open("r") as f:
             data = json.load(f)
-        assert "dirty_containers" in data
-        assert isinstance(data["dirty_containers"], list)
-        assert "test_container" in data["dirty_containers"]
-        assert len(data["dirty_containers"]) == 1
+        tm.that("dirty_containers" in data, eq=True)
+        tm.that(isinstance(data["dirty_containers"], list), eq=True)
+        tm.that("test_container" in data["dirty_containers"], eq=True)
+        tm.that(len(data["dirty_containers"]) == 1, eq=True)
 
-    def test_mark_container_dirty(self, docker_manager: FlextTestsDocker) -> None:
+    def test_mark_container_dirty(self, docker_manager: tk) -> None:
         """Test marking container as dirty."""
         result = docker_manager.mark_container_dirty("test_container")
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert "test_container" in docker_manager._dirty_containers
+        tm.that("test_container" in docker_manager._dirty_containers, eq=True)
 
-    def test_mark_container_clean(self, docker_manager: FlextTestsDocker) -> None:
+    def test_mark_container_clean(self, docker_manager: tk) -> None:
         """Test marking container as clean."""
         docker_manager._dirty_containers.add("test_container")
         result = docker_manager.mark_container_clean("test_container")
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert "test_container" not in docker_manager._dirty_containers
+        tm.that("test_container" not in docker_manager._dirty_containers, eq=True)
 
-    def test_is_container_dirty(self, docker_manager: FlextTestsDocker) -> None:
+    def test_is_container_dirty(self, docker_manager: tk) -> None:
         """Test checking if container is dirty."""
         docker_manager._dirty_containers.add("dirty_container")
-        assert docker_manager.is_container_dirty("dirty_container")
-        assert not docker_manager.is_container_dirty("clean_container")
+        tm.that(docker_manager.is_container_dirty("dirty_container"), eq=True)
+        tm.that(not docker_manager.is_container_dirty("clean_container"), eq=True)
 
-    def test_get_dirty_containers(self, docker_manager: FlextTestsDocker) -> None:
+    def test_get_dirty_containers(self, docker_manager: tk) -> None:
         """Test getting list of dirty containers."""
         docker_manager._dirty_containers = {"container1", "container2"}
         dirty = docker_manager.get_dirty_containers()
-        assert len(dirty) == 2
-        assert "container1" in dirty
-        assert "container2" in dirty
+        tm.that(len(dirty) == 2, eq=True)
+        tm.that("container1" in dirty, eq=True)
+        tm.that("container2" in dirty, eq=True)
 
     def test_shared_containers_attribute(self) -> None:
         """Test SHARED_CONTAINERS class attribute."""
-        assert FlextTestsDocker.SHARED_CONTAINERS is not None
-        assert isinstance(FlextTestsDocker.SHARED_CONTAINERS, dict)
+        tm.that(tk.SHARED_CONTAINERS is not None, eq=True)
+        tm.that(isinstance(tk.SHARED_CONTAINERS, dict), eq=True)
 
-    def test_shared_containers_property(self, docker_manager: FlextTestsDocker) -> None:
+    def test_shared_containers_property(self, docker_manager: tk) -> None:
         """Test shared_containers property."""
         containers = docker_manager.shared_containers
-        assert containers is not None
-        assert isinstance(containers, dict)
+        tm.that(containers is not None, eq=True)
+        tm.that(isinstance(containers, dict), eq=True)
 
     def test_compose_up_returns_flext_result(
         self,
-        docker_manager: FlextTestsDocker,
+        docker_manager: tk,
     ) -> None:
         """Test compose_up returns r."""
         result = docker_manager.compose_up("docker-compose.yml")
-        assert isinstance(result, r)
+        tm.that(isinstance(result, r), eq=True)
 
     def test_compose_down_returns_flext_result(
         self,
-        docker_manager: FlextTestsDocker,
+        docker_manager: tk,
     ) -> None:
         """Test compose_down returns r."""
         result = docker_manager.compose_down("docker-compose.yml")
-        assert isinstance(result, r)
+        tm.that(isinstance(result, r), eq=True)
 
     def test_start_existing_container_not_found(
         self,
-        docker_manager: FlextTestsDocker,
+        docker_manager: tk,
     ) -> None:
         """Test starting non-existent container."""
         result = docker_manager.start_existing_container("nonexistent_container")
         _ = assertion_helpers.assert_flext_result_failure(result)
-        assert "not found" in str(result.error).lower()
+        tm.that("not found" in str(result.error).lower(), eq=True)
 
     def test_get_container_info_not_found(
         self,
-        docker_manager: FlextTestsDocker,
+        docker_manager: tk,
     ) -> None:
         """Test getting info for non-existent container."""
         result = docker_manager.get_container_info("nonexistent_container")
         _ = assertion_helpers.assert_flext_result_failure(result)
-        assert "not found" in str(result.error).lower()
+        tm.that("not found" in str(result.error).lower(), eq=True)
 
-    def test_get_container_status_alias(self, docker_manager: FlextTestsDocker) -> None:
+    def test_get_container_status_alias(self, docker_manager: tk) -> None:
         """Test get_container_status is alias for get_container_info."""
         result = docker_manager.get_container_status("nonexistent")
         _ = assertion_helpers.assert_flext_result_failure(result)
 
     def test_wait_for_port_ready_immediate(
         self,
-        docker_manager: FlextTestsDocker,
+        docker_manager: tk,
     ) -> None:
         """Test wait_for_port_ready returns quickly for unavailable port."""
         result = docker_manager.wait_for_port_ready(
@@ -246,25 +247,25 @@ class TestFlextTestsDocker:
             max_wait=1,
         )
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert result.value is False
+        tm.that(result.value is False, eq=True)
 
     def test_start_compose_stack_returns_result(
         self,
-        docker_manager: FlextTestsDocker,
+        docker_manager: tk,
     ) -> None:
         """Test start_compose_stack returns r."""
         result = docker_manager.start_compose_stack("docker-compose.yml")
-        assert isinstance(result, r)
+        tm.that(isinstance(result, r), eq=True)
 
     def test_cleanup_dirty_containers_empty(
         self,
-        docker_manager: FlextTestsDocker,
+        docker_manager: tk,
     ) -> None:
         """Test cleanup with no dirty containers."""
         docker_manager._dirty_containers.clear()
         result = docker_manager.cleanup_dirty_containers()
         _ = assertion_helpers.assert_flext_result_success(result)
-        assert result.value == []
+        tm.that(result.value == [], eq=True)
 
 
 class TestFlextTestsDockerWorkerId:
@@ -272,21 +273,21 @@ class TestFlextTestsDockerWorkerId:
 
     def test_default_worker_id(self) -> None:
         """Test default worker_id is 'master'."""
-        manager = FlextTestsDocker()
+        manager = tk()
         manager._dirty_containers.clear()
-        assert manager.worker_id == "master"
+        tm.that(manager.worker_id == "master", eq=True)
 
     def test_custom_worker_id(self) -> None:
         """Test custom worker_id."""
-        manager = FlextTestsDocker(worker_id="worker_1")
+        manager = tk(worker_id="worker_1")
         manager._dirty_containers.clear()
-        assert manager.worker_id == "worker_1"
+        tm.that(manager.worker_id == "worker_1", eq=True)
 
     def test_state_file_includes_worker_id(self) -> None:
         """Test state file path includes worker_id."""
-        manager = FlextTestsDocker(worker_id="test_worker")
+        manager = tk(worker_id="test_worker")
         manager._dirty_containers.clear()
-        assert "test_worker" in str(manager._state_file)
+        tm.that("test_worker" in str(manager._state_file), eq=True)
 
 
 class TestFlextTestsDockerWorkspaceRoot:
@@ -294,12 +295,12 @@ class TestFlextTestsDockerWorkspaceRoot:
 
     def test_default_workspace_root(self) -> None:
         """Test default workspace_root is cwd."""
-        manager = FlextTestsDocker()
+        manager = tk()
         manager._dirty_containers.clear()
-        assert manager.workspace_root == Path.cwd()
+        tm.that(manager.workspace_root == Path.cwd(), eq=True)
 
     def test_custom_workspace_root(self, tmp_path: Path) -> None:
         """Test custom workspace_root."""
-        manager = FlextTestsDocker(workspace_root=tmp_path)
+        manager = tk(workspace_root=tmp_path)
         manager._dirty_containers.clear()
-        assert manager.workspace_root == tmp_path
+        tm.that(manager.workspace_root == tmp_path, eq=True)

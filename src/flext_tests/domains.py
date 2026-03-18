@@ -56,6 +56,73 @@ class FlextTestsDomains:
             return self
 
     @staticmethod
+    def build_dbt_project_config(
+        *,
+        name: str,
+        version: str,
+        profile: str,
+        model_config: Mapping[str, t.Tests.Testobject],
+        variables: Mapping[str, t.Tests.Testobject],
+    ) -> dict[str, t.Tests.Testobject]:
+        """Create a shared dbt project configuration structure."""
+        return {
+            "name": name,
+            "version": version,
+            "profile": profile,
+            "model-paths": ["models"],
+            "analysis-paths": ["analyses"],
+            "test-paths": ["tests"],
+            "seed-paths": ["seeds"],
+            "macro-paths": ["macros"],
+            "snapshot-paths": ["snapshots"],
+            "docs-paths": ["docs"],
+            "asset-paths": ["assets"],
+            "target-path": "target",
+            "clean-targets": ["target", "dbt_packages"],
+            "require-dbt-version": ">=1.8.0",
+            "model_config": dict(model_config.items()),
+            "vars": dict(variables.items()),
+        }
+
+    @staticmethod
+    def default_handler_case_specs() -> list[dict[str, t.Tests.Testobject]]:
+        """Create shared handler test-case specs for service-base tests."""
+        return [
+            {
+                "handler_id": "success_command",
+                "handler_type": "COMMAND",
+                "expected_result": "Handled: test",
+                "description": "Command handler success",
+            },
+            {
+                "handler_id": "success_query",
+                "handler_type": "QUERY",
+                "expected_result": "Handled: query",
+                "description": "Query handler success",
+            },
+            {
+                "handler_id": "success_event",
+                "handler_type": "EVENT",
+                "expected_result": "Handled: event",
+                "description": "Event handler success",
+            },
+            {
+                "handler_id": "fail_command",
+                "handler_type": "COMMAND",
+                "should_fail": True,
+                "error_message": "Command failed",
+                "description": "Command handler failure",
+            },
+            {
+                "handler_id": "fail_query",
+                "handler_type": "QUERY",
+                "should_fail": True,
+                "error_message": "Query failed",
+                "description": "Query handler failure",
+            },
+        ]
+
+    @staticmethod
     def api_response_data(
         status: str = "success",
         *,
