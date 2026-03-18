@@ -480,18 +480,20 @@ class TestFlextTestsFilesNewApi:
 
     def test_read_nonexistent_file(self, tmp_path: Path) -> None:
         """Test read() returns failure for non-existent file."""
-        manager = tf(base_dir=tmp_path)
-        path = tmp_path / "nonexistent.txt"
-        result = manager.read(path)
-        _ = assertion_helpers.assert_flext_result_failure(result)
-        tm.that(result.error is not None, eq=True)
-        tm.that(
-            (
-                "not found" in result.error.lower()
-                or "not exist" in result.error.lower()
-            ),
-            eq=True,
-        )
+         manager = tf(base_dir=tmp_path)
+         path = tmp_path / "nonexistent.txt"
+         result = manager.read(path)
+         _ = assertion_helpers.assert_flext_result_failure(result)
+         tm.that(result.error is not None, eq=True)
+         if result.error is None:
+             raise TypeError("Expected error to be not None")
+         tm.that(
+             (
+                 "not found" in result.error.lower()
+                 or "not exist" in result.error.lower()
+             ),
+             eq=True,
+         )
 
     def test_read_explicit_format(self, tmp_path: Path) -> None:
         """Test read() with explicit format override."""
@@ -781,12 +783,14 @@ class TestInfoWithContentMeta:
             m.ConfigMap(root={"key1": "value1", "key2": "value2"}),
             "config.json",
         )
-        result = manager.info(path, parse_content=True)
-        _ = assertion_helpers.assert_flext_result_success(result)
-        info = result.value
-        tm.that(info.content_meta is not None, eq=True)
-        tm.that(info.content_meta.key_count == 2, eq=True)
-        tm.that(info.content_meta.item_count is None, eq=True)
+         result = manager.info(path, parse_content=True)
+         _ = assertion_helpers.assert_flext_result_success(result)
+         info = result.value
+         tm.that(info.content_meta is not None, eq=True)
+         if info.content_meta is None:
+             raise TypeError("Expected content_meta to be not None")
+         tm.that(info.content_meta.key_count == 2, eq=True)
+         tm.that(info.content_meta.item_count is None, eq=True)
 
     def test_info_parse_content_json_list(self, tmp_path: Path) -> None:
         """Test info() with parse_content=True for JSON list."""

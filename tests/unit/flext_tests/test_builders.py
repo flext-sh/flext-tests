@@ -214,6 +214,8 @@ class TestFlextTestsBuilders:
 
         def _double_item(item: t.Tests.object) -> t.Tests.object:
             tm.that(isinstance(item, int), eq=True)
+            if not isinstance(item, int):
+                raise TypeError(f"Expected int, got {type(item)}")
             return item * 2
 
         builder = tb()
@@ -366,7 +368,10 @@ class TestFlextTestsBuilders:
             data: t.Tests.Builders.BuilderOutputDict,
         ) -> t.Tests.object:
             tm.that(isinstance(data["x"], int), eq=True)
-            return data["x"] * 2
+            x_val = data["x"]
+            if not isinstance(x_val, int):
+                raise TypeError(f"Expected int, got {type(x_val)}")
+            return x_val * 2
 
         builder = tb()
         builder.add("x", 1)

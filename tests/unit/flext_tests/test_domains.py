@@ -60,6 +60,8 @@ class TestFlextTestsDomains:
         tm.that("user_id" in payload, eq=True)
         amount = payload["amount"]
         tm.that(isinstance(amount, float), eq=True)
+        if not isinstance(amount, float):
+            raise TypeError(f"Expected float, got {type(amount)}")
         tm.that(abs(amount - 99.99) < 1e-9, eq=True)
         tm.that(payload["currency"] == "USD", eq=True)
         tm.that(payload["status"] == "pending", eq=True)
