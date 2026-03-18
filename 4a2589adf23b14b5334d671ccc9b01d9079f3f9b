@@ -1,0 +1,27 @@
+tests/unit/flext_tests/test_domains.py
+  6e2b7a45ea83c32c 63-64
+tests/unit/flext_tests/test_builders.py
+  6e2b7a45ea83c32c 217-218,371-374
+tests/unit/flext_tests/test_files.py
+  6e2b7a45ea83c32c 488-489,790-791
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.15",
+  "base_commit_sha": "4a2589adf23b14b5334d671ccc9b01d9079f3f9b",
+  "prompts": {
+    "6e2b7a45ea83c32c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2fdcebe6fffeKK6kzEKfhogTH3",
+        "model": "anthropic/claude-haiku-4-5"
+      },
+      "human_author": "FLEXT Bot <team@flext.sh>",
+      "messages": [],
+      "total_additions": 30,
+      "total_deletions": 19,
+      "accepted_lines": 12,
+      "overriden_lines": 0
+    }
+  }
+}
