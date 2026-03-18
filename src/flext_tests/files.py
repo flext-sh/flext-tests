@@ -990,18 +990,18 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             result = tf().info(path)
             if result.is_success:
                 info = result.value
-                print(f"Size: {info.size_human}")
-                print(f"Format: {info.fmt}")
+                logger.info(f"Size: {info.size_human}")
+                logger.info(f"Format: {info.fmt}")
 
             # With content parsing
             result = tf().info(path, parse_content=True)
             if result.is_success and result.value.content_meta:
-                print(f"Keys: {result.value.content_meta.key_count}")
+                logger.info(f"Keys: {result.value.content_meta.key_count}")
 
             # With model validation
             result = tf().info(path, validate_model=UserModel)
             if result.is_success and result.value.content_meta:
-                print(f"Valid: {result.value.content_meta.model_valid}")
+                logger.info(f"Valid: {result.value.content_meta.model_valid}")
 
         """
         try:
