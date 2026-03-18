@@ -362,10 +362,10 @@ class FlextTestsDocker:
         """Save dirty container state to persistent storage."""
         try:
             self._state_file.parent.mkdir(parents=True, exist_ok=True)
-            data: dict[str, t.Tests.Testobject] = {
+            data: dict[str, list[str]] = {
                 "dirty_containers": list(self._dirty_containers),
             }
-            json_bytes = TypeAdapter(dict[str, t.Tests.Testobject]).dump_json(data)
+            json_bytes = TypeAdapter(dict[str, list[str]]).dump_json(data)
             self._state_file.write_bytes(json_bytes)
         except (OSError, TypeError) as exc:
             self.logger.warning("Failed to save dirty state", error=str(exc))
