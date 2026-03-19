@@ -24,11 +24,7 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 
 if TYPE_CHECKING:
-    from flext_core.decorators import d
-    from flext_core.exceptions import e
-    from flext_core.handlers import h
-    from flext_core.mixins import x
-    from flext_core.result import r
+    from flext_core import d, e, h, r, x
     from flext_core.typings import FlextTypes
 
     from flext_tests import _validator
@@ -38,7 +34,10 @@ if TYPE_CHECKING:
     from flext_tests._validator.models import FlextValidatorModels, vm
     from flext_tests._validator.settings import FlextValidatorSettings
     from flext_tests._validator.tests import FlextValidatorTests
-    from flext_tests._validator.types import FlextValidatorTypes
+    from flext_tests._validator.types import (
+        FlextValidatorTypes,
+        FlextValidatorTypes as t,
+    )
     from flext_tests.base import FlextTestsServiceBase, s
     from flext_tests.builders import FlextTestsBuilders, tb
     from flext_tests.constants import FlextTestsConstants, c
@@ -49,7 +48,7 @@ if TYPE_CHECKING:
     from flext_tests.matchers import FlextTestsMatchers, tm
     from flext_tests.models import FlextTestsModels, m
     from flext_tests.protocols import FlextTestsProtocols, p
-    from flext_tests.typings import FlextTestsTypes, t
+    from flext_tests.typings import FlextTestsTypes
     from flext_tests.utilities import FlextTestsUtilities, u
     from flext_tests.validator import FlextTestsValidator, tv
 
@@ -82,14 +81,14 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "FlextValidatorTypes": ("flext_tests._validator.types", "FlextValidatorTypes"),
     "_validator": ("flext_tests._validator", ""),
     "c": ("flext_tests.constants", "c"),
-    "d": ("flext_core.decorators", "d"),
-    "e": ("flext_core.exceptions", "e"),
-    "h": ("flext_core.handlers", "h"),
+    "d": ("flext_core", "d"),
+    "e": ("flext_core", "e"),
+    "h": ("flext_core", "h"),
     "m": ("flext_tests.models", "m"),
     "p": ("flext_tests.protocols", "p"),
-    "r": ("flext_core.result", "r"),
+    "r": ("flext_core", "r"),
     "s": ("flext_tests.base", "s"),
-    "t": ("flext_tests.typings", "t"),
+    "t": ("flext_tests._validator.types", "FlextValidatorTypes"),
     "tb": ("flext_tests.builders", "tb"),
     "td": ("flext_tests.domains", "td"),
     "tf": ("flext_tests.files", "tf"),
@@ -99,7 +98,7 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "tv": ("flext_tests.validator", "tv"),
     "u": ("flext_tests.utilities", "u"),
     "vm": ("flext_tests._validator.models", "vm"),
-    "x": ("flext_core.mixins", "x"),
+    "x": ("flext_core", "x"),
 }
 
 __all__ = [
