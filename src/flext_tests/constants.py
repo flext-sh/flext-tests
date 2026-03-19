@@ -53,7 +53,7 @@ class FlextTestsConstants(FlextConstants):
                     },
                 ),
             }
-            DEFAULT_TIMEOUT_SECONDS: Final[int] = 30
+            DEFAULT_TIMEOUT_SECONDS: Final[int] = FlextConstants.Network.DEFAULT_TIMEOUT
             MAX_TIMEOUT_SECONDS: Final[int] = 300
             DEFAULT_HEALTH_CHECK_INTERVAL: Final[int] = 2
             DEFAULT_HEALTH_CHECK_RETRIES: Final[int] = 10
@@ -240,8 +240,8 @@ class FlextTestsConstants(FlextConstants):
             DEFAULT_ENVIRONMENT: Final[str] = "test"
             DEFAULT_DEBUG: Final[bool] = True
             DEFAULT_LOG_LEVEL: Final[str] = "DEBUG"
-            DEFAULT_TIMEOUT: Final[int] = 30
-            DEFAULT_MAX_RETRIES: Final[int] = 3
+            DEFAULT_TIMEOUT: Final[int] = FlextConstants.Network.DEFAULT_TIMEOUT
+            DEFAULT_MAX_RETRIES: Final[int] = FlextConstants.DEFAULT_MAX_RETRY_ATTEMPTS
             DEFAULT_SERVICE_STATUS: Final[str] = "active"
             DEFAULT_SERVICE_NAME_TEMPLATE: Final[str] = "Test {type} Service"
             DEFAULT_ENTITY_NAME: Final[str] = "test_entity"
@@ -341,7 +341,7 @@ class FlextTestsConstants(FlextConstants):
 
             type CompareModeLiteral = Literal["content", "size", "hash", "lines"]
             DEFAULT_BATCH_SIZE: Final[int] = 100
-            BATCH_TIMEOUT_SECONDS: Final[int] = 30
+            BATCH_TIMEOUT_SECONDS: Final[int] = FlextConstants.Network.DEFAULT_TIMEOUT
 
             class Operation(StrEnum):
                 """File operation types for batch operations."""
@@ -395,7 +395,7 @@ class FlextTestsConstants(FlextConstants):
             DEFAULT_BINARY_FILENAME: Final[str] = "binary_data.bin"
             DEFAULT_EMPTY_FILENAME: Final[str] = "empty.txt"
             DEFAULT_CONFIG_FILENAME: Final[str] = "config.json"
-            DEFAULT_ENCODING: Final[str] = "utf-8"
+            DEFAULT_ENCODING: Final[str] = FlextConstants.ENCODING
             DEFAULT_BINARY_ENCODING: Final[str] = "binary"
             DEFAULT_JSON_INDENT: Final[int] = 2
             DEFAULT_CSV_DELIMITER: Final[str] = ","
