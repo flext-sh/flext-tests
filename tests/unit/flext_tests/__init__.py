@@ -31,7 +31,6 @@ if TYPE_CHECKING:
         TestFactoriesHelpers,
         TestFlextTestsFactoriesModernAPI,
         TestService,
-        TestService as s,
         TestsFlextTestsFactoriesDict,
         TestsFlextTestsFactoriesGeneric,
         TestsFlextTestsFactoriesList,
@@ -45,7 +44,6 @@ if TYPE_CHECKING:
         TestCreateInStatic,
         TestFileInfo,
         TestFileInfoFromModels,
-        TestFileInfoFromModels as m,
         TestFlextTestsFiles,
         TestFlextTestsFilesNewApi,
         TestInfoWithContentMeta,
@@ -55,7 +53,6 @@ if TYPE_CHECKING:
     from .test_utilities import (
         TestFlextTestsUtilitiesFactory,
         TestFlextTestsUtilitiesResult,
-        TestFlextTestsUtilitiesResult as r,
         TestFlextTestsUtilitiesResultCompat,
         TestFlextTestsUtilitiesTestContext,
     )
@@ -155,9 +152,6 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
         "tests.unit.flext_tests.test_factories",
         "TestsFlextTestsFactoriesRes",
     ),
-    "m": ("tests.unit.flext_tests.test_files", "TestFileInfoFromModels"),
-    "r": ("tests.unit.flext_tests.test_utilities", "TestFlextTestsUtilitiesResult"),
-    "s": ("tests.unit.flext_tests.test_factories", "TestService"),
 }
 
 __all__ = [
@@ -192,9 +186,6 @@ __all__ = [
     "TestsFlextTestsFactoriesList",
     "TestsFlextTestsFactoriesModel",
     "TestsFlextTestsFactoriesRes",
-    "m",
-    "r",
-    "s",
 ]
 
 
