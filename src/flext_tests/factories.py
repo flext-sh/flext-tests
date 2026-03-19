@@ -23,10 +23,10 @@ import builtins
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from typing import Never, override
 
-from flext_core import r, s
+from flext_core import r
 from pydantic import BaseModel, TypeAdapter, ValidationError
 
-from flext_tests import c, m, t, u
+from flext_tests import c, m, s, t, u
 
 _TEST_CONTAINER_LIST_ADAPTER: TypeAdapter[list[t.Tests.TestobjectSerializable]] = (
     TypeAdapter(
