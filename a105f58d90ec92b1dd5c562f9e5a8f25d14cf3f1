@@ -1,0 +1,27 @@
+src/flext_tests/constants.py
+  95b56ff5386c5e7f 34-35,128,189,278,439
+src/flext_tests/typings.py
+  95b56ff5386c5e7f 4,69,72,127,134,175,187,189,195,197,199,204,211,216,218,222,230,232,237,239,244,246,248,250,252,255
+src/flext_tests/protocols.py
+  95b56ff5386c5e7f 4,12,26,28-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.15",
+  "base_commit_sha": "a105f58d90ec92b1dd5c562f9e5a8f25d14cf3f1",
+  "prompts": {
+    "95b56ff5386c5e7f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2f73bd879ffeSzL4iskjvMedz5",
+        "model": "anthropic/claude-opus-4-6"
+      },
+      "human_author": "FLEXT Bot <team@flext.sh>",
+      "messages": [],
+      "total_additions": 40,
+      "total_deletions": 1514,
+      "accepted_lines": 39,
+      "overriden_lines": 0
+    }
+  }
+}
