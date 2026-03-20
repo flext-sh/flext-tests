@@ -35,7 +35,6 @@ if TYPE_CHECKING:
     from flext_tests._validator.settings import FlextValidatorSettings
     from flext_tests._validator.tests import FlextValidatorTests
     from flext_tests._validator.types import FlextValidatorTypes
-    from flext_tests.builders import FlextTestsBuilders, tb
     from flext_tests.constants import FlextTestsConstants, FlextTestsConstants as c
     from flext_tests.docker import FlextTestsDocker, tk
     from flext_tests.domains import FlextTestsDomains, td
@@ -49,7 +48,6 @@ if TYPE_CHECKING:
     from flext_tests.validator import FlextTestsValidator, tv
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
-    "FlextTestsBuilders": ("flext_tests.builders", "FlextTestsBuilders"),
     "FlextTestsConstants": ("flext_tests.constants", "FlextTestsConstants"),
     "FlextTestsDocker": ("flext_tests.docker", "FlextTestsDocker"),
     "FlextTestsDomains": ("flext_tests.domains", "FlextTestsDomains"),
@@ -84,7 +82,6 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "r": ("flext_core", "r"),
     "s": ("flext_core", "s"),
     "t": ("flext_tests.typings", "FlextTestsTypes"),
-    "tb": ("flext_tests.builders", "tb"),
     "td": ("flext_tests.domains", "td"),
     "tf": ("flext_tests.files", "tf"),
     "tk": ("flext_tests.docker", "tk"),
@@ -97,7 +94,6 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
 }
 
 __all__ = [
-    "FlextTestsBuilders",
     "FlextTestsConstants",
     "FlextTestsDocker",
     "FlextTestsDomains",
@@ -126,7 +122,6 @@ __all__ = [
     "r",
     "s",
     "t",
-    "tb",
     "td",
     "tf",
     "tk",
