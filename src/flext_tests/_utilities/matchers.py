@@ -1483,3 +1483,7 @@ class FlextTestsMatchersUtilities:
                             value=subject_payload
                         ),
                     )
+
+
+tm = FlextTestsMatchersUtilities.Tests.Matchers
+__all__ = ["FlextTestsMatchersUtilities", "tm"]

@@ -817,7 +817,7 @@ class FlextTestsUtilities(FlextUtilities):
                     Success message string from constants.
 
                 """
-                return c.Tests.Factory.SUCCESS_MESSAGE
+                return "success"
 
         class ResultHelpers:
             """Result helpers — delegates to Tests.Result (compat).

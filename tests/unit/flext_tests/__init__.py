@@ -1,12 +1,7 @@
 # AUTO-GENERATED FILE — DO NOT EDIT MANUALLY.
 # Regenerate with: make codegen
 #
-"""Unit tests for flext_tests namespace.
-
-Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT
-
-"""
+"""Flext tests package."""
 
 from __future__ import annotations
 
@@ -25,11 +20,6 @@ if TYPE_CHECKING:
         TestFlextTestsDockerWorkspaceRoot,
     )
     from .test_domains import TestFlextTestsDomains
-    from .test_factories import (
-        TestConfig,
-        TestService,
-        TestUser,
-    )
     from .test_files import (
         TestAssertExists,
         TestBatchOperations,
@@ -52,15 +42,12 @@ if TYPE_CHECKING:
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "TestAssertExists": ("tests.unit.flext_tests.test_files", "TestAssertExists"),
     "TestBatchOperations": ("tests.unit.flext_tests.test_files", "TestBatchOperations"),
-    "TestConfig": ("tests.unit.flext_tests.test_factories", "TestConfig"),
     "TestContainerInfo": ("tests.unit.flext_tests.test_docker", "TestContainerInfo"),
     "TestContainerStatus": (
         "tests.unit.flext_tests.test_docker",
         "TestContainerStatus",
     ),
     "TestCreateInStatic": ("tests.unit.flext_tests.test_files", "TestCreateInStatic"),
-        "tests.unit.flext_tests.test_factories",
-    ),
     "TestFileInfo": ("tests.unit.flext_tests.test_files", "TestFileInfo"),
     "TestFileInfoFromModels": (
         "tests.unit.flext_tests.test_files",
@@ -81,8 +68,6 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "TestFlextTestsDomains": (
         "tests.unit.flext_tests.test_domains",
         "TestFlextTestsDomains",
-    ),
-        "tests.unit.flext_tests.test_factories",
     ),
     "TestFlextTestsFiles": ("tests.unit.flext_tests.test_files", "TestFlextTestsFiles"),
     "TestFlextTestsFilesNewApi": (
@@ -113,25 +98,12 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
         "tests.unit.flext_tests.test_files",
         "TestInfoWithContentMeta",
     ),
-    "TestService": ("tests.unit.flext_tests.test_factories", "TestService"),
     "TestShortAlias": ("tests.unit.flext_tests.test_files", "TestShortAlias"),
-    "TestUser": ("tests.unit.flext_tests.test_factories", "TestUser"),
-        "tests.unit.flext_tests.test_factories",
-    ),
-        "tests.unit.flext_tests.test_factories",
-    ),
-        "tests.unit.flext_tests.test_factories",
-    ),
-        "tests.unit.flext_tests.test_factories",
-    ),
-        "tests.unit.flext_tests.test_factories",
-    ),
 }
 
 __all__ = [
     "TestAssertExists",
     "TestBatchOperations",
-    "TestConfig",
     "TestContainerInfo",
     "TestContainerStatus",
     "TestCreateInStatic",
@@ -149,9 +121,7 @@ __all__ = [
     "TestFlextTestsUtilitiesResultCompat",
     "TestFlextTestsUtilitiesTestContext",
     "TestInfoWithContentMeta",
-    "TestService",
     "TestShortAlias",
-    "TestUser",
 ]
 
 
