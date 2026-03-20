@@ -65,26 +65,13 @@ from flext_core import m as core_m, r
 from flext_core._utilities.guards import FlextUtilitiesGuards
 from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
 
-from flext_tests.utilities import FlextTestsUtilities
+from flext_tests.constants import FlextTestsConstants as c
+from flext_tests.models import FlextTestsModels as m
+from flext_tests.typings import FlextTestsTypes as t
+from flext_tests.utilities import FlextTestsUtilities as u
 
-# Delayed imports to avoid circular dependencies
-def __getattr__(name: str):
-    """Lazy import c, m, t, u to break circular dependencies."""
-    if name == "c":
-        from flext_tests.constants import FlextTestsConstants
-        return FlextTestsConstants
-    elif name == "m":
-        from flext_tests.models import FlextTestsModels
-        return FlextTestsModels
-    elif name == "t":
-        from flext_tests.typings import FlextTestsTypes
-        return FlextTestsTypes
-    elif name == "u":
-        return FlextTestsUtilities
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-
-_length_validate = FlextTestsUtilities.Tests.Length.validate
-_deep_match = FlextTestsUtilities.Tests.DeepMatch.match
+_length_validate = u.Tests.Length.validate
+_deep_match = u.Tests.DeepMatch.match
 
 _TEST_PAYLOAD_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.TestobjectSerializable])
 _TEST_PAYLOAD_LIST_ADAPTER = TypeAdapter(list[t.Tests.TestobjectSerializable])

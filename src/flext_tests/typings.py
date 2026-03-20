@@ -14,9 +14,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal, TypeAliasType, TypeIs
 
-from flext_core import FlextProtocols, FlextTypes, r
+from flext_core import FlextProtocols, FlextTypes, m, r
 from pydantic import BaseModel, InstanceOf
-from flext_core import m
 
 p = FlextProtocols
 
