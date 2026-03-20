@@ -27,14 +27,7 @@ if TYPE_CHECKING:
     from .test_domains import TestFlextTestsDomains
     from .test_factories import (
         TestConfig,
-        TestFactoriesHelpers,
-        TestFlextTestsFactoriesModernAPI,
         TestService,
-        TestsFlextTestsFactoriesDict,
-        TestsFlextTestsFactoriesGeneric,
-        TestsFlextTestsFactoriesList,
-        TestsFlextTestsFactoriesModel,
-        TestsFlextTestsFactoriesRes,
         TestUser,
     )
     from .test_files import (
@@ -66,9 +59,7 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
         "TestContainerStatus",
     ),
     "TestCreateInStatic": ("tests.unit.flext_tests.test_files", "TestCreateInStatic"),
-    "TestFactoriesHelpers": (
         "tests.unit.flext_tests.test_factories",
-        "TestFactoriesHelpers",
     ),
     "TestFileInfo": ("tests.unit.flext_tests.test_files", "TestFileInfo"),
     "TestFileInfoFromModels": (
@@ -91,9 +82,7 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
         "tests.unit.flext_tests.test_domains",
         "TestFlextTestsDomains",
     ),
-    "TestFlextTestsFactoriesModernAPI": (
         "tests.unit.flext_tests.test_factories",
-        "TestFlextTestsFactoriesModernAPI",
     ),
     "TestFlextTestsFiles": ("tests.unit.flext_tests.test_files", "TestFlextTestsFiles"),
     "TestFlextTestsFilesNewApi": (
@@ -127,25 +116,15 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "TestService": ("tests.unit.flext_tests.test_factories", "TestService"),
     "TestShortAlias": ("tests.unit.flext_tests.test_files", "TestShortAlias"),
     "TestUser": ("tests.unit.flext_tests.test_factories", "TestUser"),
-    "TestsFlextTestsFactoriesDict": (
         "tests.unit.flext_tests.test_factories",
-        "TestsFlextTestsFactoriesDict",
     ),
-    "TestsFlextTestsFactoriesGeneric": (
         "tests.unit.flext_tests.test_factories",
-        "TestsFlextTestsFactoriesGeneric",
     ),
-    "TestsFlextTestsFactoriesList": (
         "tests.unit.flext_tests.test_factories",
-        "TestsFlextTestsFactoriesList",
     ),
-    "TestsFlextTestsFactoriesModel": (
         "tests.unit.flext_tests.test_factories",
-        "TestsFlextTestsFactoriesModel",
     ),
-    "TestsFlextTestsFactoriesRes": (
         "tests.unit.flext_tests.test_factories",
-        "TestsFlextTestsFactoriesRes",
     ),
 }
 
@@ -156,14 +135,12 @@ __all__ = [
     "TestContainerInfo",
     "TestContainerStatus",
     "TestCreateInStatic",
-    "TestFactoriesHelpers",
     "TestFileInfo",
     "TestFileInfoFromModels",
     "TestFlextTestsDocker",
     "TestFlextTestsDockerWorkerId",
     "TestFlextTestsDockerWorkspaceRoot",
     "TestFlextTestsDomains",
-    "TestFlextTestsFactoriesModernAPI",
     "TestFlextTestsFiles",
     "TestFlextTestsFilesNewApi",
     "TestFlextTestsMatchers",
@@ -175,11 +152,6 @@ __all__ = [
     "TestService",
     "TestShortAlias",
     "TestUser",
-    "TestsFlextTestsFactoriesDict",
-    "TestsFlextTestsFactoriesGeneric",
-    "TestsFlextTestsFactoriesList",
-    "TestsFlextTestsFactoriesModel",
-    "TestsFlextTestsFactoriesRes",
 ]
 
 

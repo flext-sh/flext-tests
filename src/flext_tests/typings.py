@@ -68,39 +68,6 @@ class FlextTestsTypes(FlextTypes):
         type TestResultValue = _Testobject
         "Type for test result values."
 
-        class Factory:
-            """Factory-specific type definitions for test factories (tt)."""
-
-            type ModelKind = Literal[
-                "user",
-                "config",
-                "service",
-                "entity",
-                "value",
-                "command",
-                "query",
-                "event",
-            ]
-            "Kind parameter for model() factory method."
-            type ResultKind = Literal["ok", "fail", "from_value"]
-            "Kind parameter for res() factory method."
-            type OpKind = Literal[
-                "simple",
-                "add",
-                "format",
-                "error",
-                "type_error",
-                "result_ok",
-                "result_fail",
-            ]
-            "Kind parameter for op() factory method."
-            type BatchKind = Literal["user", "config", "service"]
-            "Kind parameter for batch() factory method."
-            type BatchPattern = Sequence[bool]
-            "Pattern for batch result creation (True=success, False=failure)."
-            type FactoryModel = BaseModel
-            "Base type for all factory model types (Pydantic BaseModel)."
-
         class Files:
             """File-specific type definitions for test file operations (tf)."""
 

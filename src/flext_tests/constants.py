@@ -122,67 +122,6 @@ class FlextTestsConstants(FlextConstants):
                 "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
             )
 
-        class Factory:
-            """Factory constants for test data generation (tt.* methods).
-
-            Provides default values and error messages
-            for FlextTestsFactories. Use c.Tests.Factory.* for access.
-            """
-
-            DEFAULT_USER_NAME: Final[str] = "Test User"
-            DEFAULT_USER_EMAIL_TEMPLATE: Final[str] = "user_{id}@example.com"
-            DEFAULT_USER_ACTIVE: Final[bool] = True
-            DEFAULT_SERVICE_TYPE: Final[str] = "api"
-            DEFAULT_ENVIRONMENT: Final[str] = "test"
-            DEFAULT_DEBUG: Final[bool] = True
-            DEFAULT_LOG_LEVEL: Final[str] = "DEBUG"
-            DEFAULT_TIMEOUT: Final[int] = FlextConstants.DEFAULT_TIMEOUT_SECONDS
-            DEFAULT_MAX_RETRIES: Final[int] = FlextConstants.DEFAULT_MAX_RETRY_ATTEMPTS
-            DEFAULT_SERVICE_NAME_TEMPLATE: Final[str] = "Test {type} Service"
-            DEFAULT_ENTITY_NAME: Final[str] = "test_entity"
-            DEFAULT_BATCH_COUNT: Final[int] = 5
-            DEFAULT_BATCH_ENVIRONMENTS: Final[tuple[str, ...]] = (
-                "test",
-                "staging",
-                "production",
-            )
-            DEFAULT_BATCH_SERVICE_TYPES: Final[tuple[str, ...]] = (
-                "api",
-                "database",
-                "cache",
-            )
-            ERROR_VALUE_NONE: Final[str] = "Value cannot be None"
-            ERROR_DEFAULT: Final[str] = "Operation failed"
-            ERROR_VALIDATION: Final[str] = "Validation failed"
-            ERROR_NOT_FOUND: Final[str] = "Not found"
-            SUCCESS_MESSAGE: Final[str] = "success"
-
-            @classmethod
-            def service_name(cls, service_type: str) -> str:
-                """Generate service name from template.
-
-                Args:
-                    service_type: Type of service.
-
-                Returns:
-                    Formatted service name.
-
-                """
-                return cls.DEFAULT_SERVICE_NAME_TEMPLATE.format(type=service_type)
-
-            @classmethod
-            def user_email(cls, user_id: str) -> str:
-                """Generate user email from template.
-
-                Args:
-                    user_id: User identifier for email generation.
-
-                Returns:
-                    Formatted email address.
-
-                """
-                return cls.DEFAULT_USER_EMAIL_TEMPLATE.format(id=user_id)
-
         class Files:
             """File management constants for test infrastructure.
 
