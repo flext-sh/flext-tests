@@ -14,7 +14,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal, TypeAliasType, TypeIs
 
-from flext_core import FlextProtocols, FlextTypes, m, r
+from flext_core import FlextProtocols, FlextTypes, m
 from pydantic import BaseModel, InstanceOf
 
 p = FlextProtocols
@@ -129,47 +129,6 @@ class FlextTestsTypes(FlextTypes):
                 Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject]
             )
             "Type for batch file operations - Mapping or Sequence of files."
-
-        class Builders:
-            """Builder-specific type definitions for test data construction (tb)."""
-
-            type BuilderValue = FlextTestsTypes.Tests.Testobject
-            "Type for values stored in builder."
-            type BuilderDict = dict[str, FlextTestsTypes.Tests.Testobject]
-            "Type for builder internal data structure."
-            type BuilderOutputDict = Mapping[
-                str,
-                FlextTestsTypes.Tests.Testobject
-                | r[FlextTestsTypes.Tests.Testobject]
-                | list[
-                    FlextTestsTypes.Tests.Testobject
-                    | r[FlextTestsTypes.Tests.Testobject]
-                ]
-                | Mapping[str, FlextTestsTypes.Tests.Testobject],
-            ]
-            "Type for builder output dict after batch result conversion."
-            type BuildOutputValue = (
-                FlextTestsTypes.Tests.Testobject
-                | r[FlextTestsTypes.Tests.Testobject]
-                | list[
-                    FlextTestsTypes.Tests.Testobject
-                    | r[FlextTestsTypes.Tests.Testobject]
-                ]
-                | Mapping[str, FlextTestsTypes.Tests.Builders.BuildOutputValue]
-            )
-            "Type for build() output values, including r-wrapped results."
-            type ParametrizedCase = tuple[
-                str,
-                Mapping[str, FlextTestsTypes.Tests.Testobject],
-            ]
-            "Type for parametrized test cases (test_id, data)."
-            type TransformFunc = Callable[
-                [FlextTestsTypes.Tests.Testobject],
-                FlextTestsTypes.Tests.Testobject,
-            ]
-            "Type for transformation functions."
-            type ValidateFunc = Callable[[FlextTestsTypes.Tests.Testobject], bool]
-            "Type for validation functions."
 
         class Matcher:
             """Matcher-specific type definitions for test assertions (tm.* methods)."""

@@ -272,42 +272,6 @@ class FlextTestsConstants(FlextConstants):
                 """
                 return cls.EXT_TO_FMT.get(extension.lower(), "text")
 
-        class Builders:
-            """Builder constants for test data construction.
-
-            Provides default values and error messages
-            for FlextTestsBuilders. Use c.Tests.Builders.* for access.
-            """
-
-            KEY_ID: Final[str] = "id"
-            KEY_NAME: Final[str] = "name"
-            KEY_EMAIL: Final[str] = "email"
-            KEY_ACTIVE: Final[str] = "active"
-            KEY_SERVICE_TYPE: Final[str] = "service_type"
-            KEY_ENVIRONMENT: Final[str] = "environment"
-            KEY_DEBUG: Final[str] = "debug"
-            KEY_LOG_LEVEL: Final[str] = "log_level"
-            KEY_TIMEOUT: Final[str] = "timeout"
-            KEY_MAX_RETRIES: Final[str] = "max_retries"
-            KEY_DATABASE_URL: Final[str] = "database_url"
-            KEY_MAX_CONNECTIONS: Final[str] = "max_connections"
-            DEFAULT_DATABASE_URL: Final[str] = (
-                f"postgresql://{FlextConstants.Platform.DEFAULT_HOST}/testdb"
-            )
-            DEFAULT_MAX_CONNECTIONS: Final[int] = 10
-            DEFAULT_ENVIRONMENT_PRODUCTION: Final[str] = "production"
-            DEFAULT_ENVIRONMENT_DEVELOPMENT: Final[str] = "development"
-            INVALID_EMAIL_SAMPLES: Final[tuple[str, ...]] = (
-                "invalid",
-                "no-at-sign.com",
-                "",
-            )
-            VALID_HOSTNAME_SAMPLES: Final[tuple[str, ...]] = (
-                "example.com",
-                FlextConstants.Platform.DEFAULT_HOST,
-            )
-            ERROR_INVALID_COUNT: Final[str] = "Count must be positive: {count}"
-
         class Validator:
             """Architecture validator constants.
 
