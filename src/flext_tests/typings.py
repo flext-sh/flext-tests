@@ -16,8 +16,7 @@ from typing import Literal, TypeAliasType, TypeIs
 
 from flext_core import FlextProtocols, FlextTypes, r
 from pydantic import BaseModel, InstanceOf
-
-from flext_tests import m
+from flext_core import m
 
 p = FlextProtocols
 

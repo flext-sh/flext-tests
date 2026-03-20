@@ -38,7 +38,22 @@ from flext_core import (
 )
 from pydantic import BaseModel, ConfigDict, RootModel, TypeAdapter, ValidationError
 
-from flext_tests import c, m, p, t
+# Delayed imports to avoid circular dependencies
+def __getattr__(name: str):
+    """Lazy import c, m, p, t to break circular dependencies."""
+    if name == "c":
+        from flext_tests.constants import FlextTestsConstants
+        return FlextTestsConstants
+    elif name == "m":
+        from flext_tests.models import FlextTestsModels
+        return FlextTestsModels
+    elif name == "p":
+        from flext_tests.protocols import FlextTestsProtocols
+        return FlextTestsProtocols
+    elif name == "t":
+        from flext_tests.typings import FlextTestsTypes
+        return FlextTestsTypes
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 _ARBTYPES = ConfigDict(arbitrary_types_allowed=True)
 _PAYLOAD_MAPPING_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject], config=_ARBTYPES)
