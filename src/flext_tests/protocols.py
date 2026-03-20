@@ -11,8 +11,6 @@ from __future__ import annotations
 
 from flext_core import FlextProtocols
 
-from flext_tests import t
-
 
 class FlextTestsProtocols(FlextProtocols):
     """Protocol definitions for FLEXT tests - extends FlextProtocols.
