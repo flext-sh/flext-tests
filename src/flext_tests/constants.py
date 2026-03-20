@@ -20,9 +20,7 @@ class FlextTestsConstants(FlextConstants):
     """Constants for FLEXT tests - extends FlextConstants.
 
     Architecture layer: Layer 0 foundation constants with test extensions.
-    Architecture: Extends FlextConstants with test-specific constants.
     All base constants from FlextConstants are available through inheritance.
-    Uses StrEnum and Literals for type-safe constants following Python 3.13+ patterns.
     """
 
     class Tests:
@@ -33,15 +31,8 @@ class FlextTestsConstants(FlextConstants):
         """
 
         class Docker:
-            """Docker test infrastructure constants for test infrastructure."""
+            """Docker test infrastructure constants."""
 
-            DEFAULT_LOG_TAIL: Final[int] = 100
-            DEFAULT_CONTAINER_CHOICES: Final[tuple[str, ...]] = (
-                "postgres",
-                "redis",
-                "mongodb",
-                "elasticsearch",
-            )
             SHARED_CONTAINERS: Final[Mapping[str, FlextModels.ConfigMap]] = {
                 "flext-oracle-db-test": FlextModels.ConfigMap(
                     root={
@@ -53,11 +44,6 @@ class FlextTestsConstants(FlextConstants):
                     },
                 ),
             }
-            DEFAULT_TIMEOUT_SECONDS: Final[int] = FlextConstants.Network.DEFAULT_TIMEOUT
-            MAX_TIMEOUT_SECONDS: Final[int] = 300
-            DEFAULT_HEALTH_CHECK_INTERVAL: Final[int] = 2
-            DEFAULT_HEALTH_CHECK_RETRIES: Final[int] = 10
-            DEFAULT_STARTUP_WAIT_SECONDS: Final[int] = 5
 
             @unique
             class ContainerStatus(StrEnum):
@@ -71,87 +57,13 @@ class FlextTestsConstants(FlextConstants):
                 STOPPING = "stopping"
                 RESTARTING = "restarting"
 
-            @unique
-            class Operation(StrEnum):
-                """Docker operation types."""
-
-                START = "start"
-                STOP = "stop"
-                RESTART = "restart"
-                REMOVE = "remove"
-                BUILD = "build"
-                PULL = "pull"
-                LOGS = "logs"
-                EXEC = "exec"
-
-            @unique
-            class OperationLiteral(StrEnum):
-                """Supported operation literals for test scenarios."""
-
-                CREATE = "create"
-                READ = "read"
-                DELETE = "delete"
-                COMPARE = "compare"
-                INFO = "info"
-
-            "Type-safe literal for Docker operations."
-            type ContainerStatusLiteral = Literal[
-                "running",
-                "stopped",
-                "not_found",
-                "error",
-                "starting",
-                "stopping",
-                "restarting",
-            ]
-            "Type-safe literal for container status."
-            ERROR_CONTAINER_NOT_FOUND: Final[str] = "Container not found"
-            ERROR_CONTAINER_ALREADY_RUNNING: Final[str] = "Container already running"
-            ERROR_CONTAINER_NOT_RUNNING: Final[str] = "Container not running"
-            ERROR_DOCKER_NOT_AVAILABLE: Final[str] = "Docker not available"
-            ERROR_COMPOSE_FILE_NOT_FOUND: Final[str] = "Docker compose file not found"
-            ERROR_OPERATION_TIMEOUT: Final[str] = "Docker operation timed out"
-
         class Matcher:
             """Matcher constants for test assertions (tm.* methods).
 
             Provides error message templates with .format() support.
             Use c.Tests.Matcher.* for access.
-
-            Usage:
-                c.Tests.Matcher.ERR_EXPECTED_SUCCESS.format(error="err")
-                c.Tests.Matcher.ERR_LENGTH_MISMATCH.format(expected=5, actual=3)
             """
 
-            ERR_EXPECTED_SUCCESS: Final[str] = (
-                "Expected success but got failure: {error}"
-            )
-            ERR_EXPECTED_FAILURE: Final[str] = (
-                "Expected failure but got success: {value}"
-            )
-            ERR_ERROR_CONTAINS: Final[str] = (
-                "Expected error containing '{expected}' but got: {actual}"
-            )
-            ERR_VALUE_NONE: Final[str] = "Expected error but got None"
-            ERR_CHAIN_NO_VALUE: Final[str] = "Cannot get value from failed result"
-            ERR_CHAIN_NO_ERROR: Final[str] = "Cannot get error from successful result"
-            ERR_EXPECTED_VALUE: Final[str] = "Expected {expected!r}, got {actual!r}"
-            ERR_KEY_NOT_FOUND: Final[str] = "Key '{key}' not found in dict"
-            ERR_KEY_VALUE_MISMATCH: Final[str] = (
-                "Key '{key}': expected {expected!r}, got {actual!r}"
-            )
-            ERR_NOT_IN_STRING: Final[str] = "Expected '{item}' in '{container}'"
-            ERR_NOT_IN_SEQUENCE: Final[str] = "Expected {item!r} in sequence"
-            ERR_LENGTH_EXACT: Final[str] = "Expected length {expected}, got {actual}"
-            ERR_LENGTH_GT: Final[str] = "Expected length > {min}, got {actual}"
-            ERR_LENGTH_GTE: Final[str] = "Expected length >= {min}, got {actual}"
-            ERR_LENGTH_LT: Final[str] = "Expected length < {max}, got {actual}"
-            ERR_LENGTH_LTE: Final[str] = "Expected length <= {max}, got {actual}"
-            ERR_EMPTY_SEQUENCE: Final[str] = "Expected non-empty sequence"
-            ERR_EXPECTED_NONE: Final[str] = "Expected None, got {value!r}"
-            ERR_EXPECTED_NOT_NONE: Final[str] = "Expected not None, got None"
-            ERR_TYPE_MISMATCH: Final[str] = "Expected {expected}, got {actual}"
-            ERR_NOT_CONTAINS: Final[str] = "Expected '{substring}' in '{text}'"
             ERR_NOT_STARTSWITH: Final[str] = (
                 "Expected '{text}' to start with '{prefix}'"
             )
@@ -159,13 +71,10 @@ class FlextTestsConstants(FlextConstants):
             ERR_NOT_MATCHES: Final[str] = (
                 "Expected '{text}' to match pattern '{pattern}'"
             )
-            ERR_SHOULD_NOT_CONTAIN: Final[str] = "Expected '{excluded}' NOT in '{text}'"
             ERR_OK_FAILED: Final[str] = "Expected success but got failure: {error}"
             ERR_FAIL_EXPECTED: Final[str] = (
                 "Expected failure but got success with value: {value!r}"
             )
-            ERR_EQ_FAILED: Final[str] = "Expected {expected!r} but got {actual!r}"
-            ERR_NE_FAILED: Final[str] = "Expected value different from {value!r}"
             ERR_TYPE_FAILED: Final[str] = "Expected type {expected} but got {actual}"
             ERR_CONTAINS_FAILED: Final[str] = (
                 "Expected {container!r} to contain {item!r}"
@@ -209,19 +118,6 @@ class FlextTestsConstants(FlextConstants):
             ERR_SCOPE_CLEANUP_FAILED: Final[str] = (
                 "Cleanup function failed in scope: {error}"
             )
-            ERR_EMAIL_NOT_STRING: Final[str] = (
-                "{field} must be a string for email validation"
-            )
-            ERR_INVALID_EMAIL: Final[str] = "Invalid email format: '{value}'"
-            ERR_CONFIG_NOT_DICT: Final[str] = (
-                "{field} must be a dict for config validation"
-            )
-            ERR_CONFIG_MISSING_KEY: Final[str] = "Required config key '{key}' missing"
-            ERR_EMPTY_VALUE: Final[str] = "{field} cannot be empty"
-            CONFIG_REQUIRED_KEYS: Final[tuple[str, ...]] = (
-                "service_type",
-                "environment",
-            )
             EMAIL_PATTERN: Final[str] = (
                 "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
             )
@@ -229,7 +125,7 @@ class FlextTestsConstants(FlextConstants):
         class Factory:
             """Factory constants for test data generation (tt.* methods).
 
-            Provides default values, error messages, and configuration templates
+            Provides default values and error messages
             for FlextTestsFactories. Use c.Tests.Factory.* for access.
             """
 
@@ -242,11 +138,8 @@ class FlextTestsConstants(FlextConstants):
             DEFAULT_LOG_LEVEL: Final[str] = "DEBUG"
             DEFAULT_TIMEOUT: Final[int] = FlextConstants.Network.DEFAULT_TIMEOUT
             DEFAULT_MAX_RETRIES: Final[int] = FlextConstants.DEFAULT_MAX_RETRY_ATTEMPTS
-            DEFAULT_SERVICE_STATUS: Final[str] = "active"
             DEFAULT_SERVICE_NAME_TEMPLATE: Final[str] = "Test {type} Service"
             DEFAULT_ENTITY_NAME: Final[str] = "test_entity"
-            DEFAULT_VALUE_DATA: Final[str] = "test_data"
-            DEFAULT_VALUE_COUNT: Final[int] = 0
             DEFAULT_BATCH_COUNT: Final[int] = 5
             DEFAULT_BATCH_ENVIRONMENTS: Final[tuple[str, ...]] = (
                 "test",
@@ -262,8 +155,6 @@ class FlextTestsConstants(FlextConstants):
             ERROR_DEFAULT: Final[str] = "Operation failed"
             ERROR_VALIDATION: Final[str] = "Validation failed"
             ERROR_NOT_FOUND: Final[str] = "Not found"
-            ERROR_VALIDATION_FAILED: Final[str] = "Validation failed"
-            ERROR_OPERATION_FAILED: Final[str] = "Operation failed"
             SUCCESS_MESSAGE: Final[str] = "success"
 
             @classmethod
@@ -292,21 +183,11 @@ class FlextTestsConstants(FlextConstants):
                 """
                 return cls.DEFAULT_USER_EMAIL_TEMPLATE.format(id=user_id)
 
-        class Execution:
-            """Test execution constants for test infrastructure."""
-
-            DEFAULT_TEST_TIMEOUT_SECONDS: Final[int] = 60
-            MAX_TEST_TIMEOUT_SECONDS: Final[int] = 600
-            DEFAULT_BATCH_SIZE: Final[int] = 10
-            MAX_BATCH_SIZE: Final[int] = 1000
-            DEFAULT_FIXTURE_COUNT: Final[int] = 5
-            MAX_FIXTURE_COUNT: Final[int] = 100
-
         class Files:
             """File management constants for test infrastructure.
 
-            Provides format mappings, default values, error messages, and deprecation
-            message templates for FlextTestsFiles. Use c.Tests.Files.* for access.
+            Provides format mappings, default values, and error messages
+            for FlextTestsFiles. Use c.Tests.Files.* for access.
             """
 
             class Format(StrEnum):
@@ -320,17 +201,6 @@ class FlextTestsConstants(FlextConstants):
                 CSV = "csv"
                 UNKNOWN = "unknown"
 
-            @unique
-            class FormatLiteral(StrEnum):
-                """Serialization format literals for test fixtures."""
-
-                JSON = "json"
-                YAML = "yaml"
-                CSV = "csv"
-                TXT = "txt"
-                MD = "md"
-                AUTO = "auto"
-
             class CompareMode(StrEnum):
                 """File comparison mode enumeration."""
 
@@ -339,44 +209,6 @@ class FlextTestsConstants(FlextConstants):
                 HASH = "hash"
                 LINES = "lines"
 
-            type CompareModeLiteral = Literal["content", "size", "hash", "lines"]
-            DEFAULT_BATCH_SIZE: Final[int] = 100
-            BATCH_TIMEOUT_SECONDS: Final[int] = FlextConstants.Network.DEFAULT_TIMEOUT
-
-            class Operation(StrEnum):
-                """File operation types for batch operations."""
-
-                CREATE = "create"
-                READ = "read"
-                DELETE = "delete"
-                COMPARE = "compare"
-                INFO = "info"
-
-            type OperationLiteral = Literal[
-                "create",
-                "read",
-                "delete",
-                "compare",
-                "info",
-            ]
-            "Type-safe literal for file operations."
-
-            class ErrorMode(StrEnum):
-                """Error handling modes for batch operations."""
-
-                STOP = "stop"
-                SKIP = "skip"
-                COLLECT = "collect"
-
-            @unique
-            class ErrorModeLiteral(StrEnum):
-                """Error handling mode literals for tests."""
-
-                STOP = "stop"
-                SKIP = "skip"
-                COLLECT = "collect"
-
-            "Type-safe literal for error handling modes."
             EXT_TO_FMT: Final[Mapping[str, str]] = {
                 ".txt": "text",
                 ".log": "text",
@@ -391,19 +223,13 @@ class FlextTestsConstants(FlextConstants):
                 ".tsv": "csv",
             }
             DEFAULT_FILENAME: Final[str] = "file"
-            DEFAULT_TEXT_FILENAME: Final[str] = "test.txt"
-            DEFAULT_BINARY_FILENAME: Final[str] = "binary_data.bin"
-            DEFAULT_EMPTY_FILENAME: Final[str] = "empty.txt"
-            DEFAULT_CONFIG_FILENAME: Final[str] = "config.json"
             DEFAULT_ENCODING: Final[str] = FlextConstants.ENCODING
             DEFAULT_BINARY_ENCODING: Final[str] = "binary"
             DEFAULT_JSON_INDENT: Final[int] = 2
             DEFAULT_CSV_DELIMITER: Final[str] = ","
             DEFAULT_EXTENSION: Final[str] = ".txt"
-            DEFAULT_READONLY_DIR_NAME: Final[str] = "readonly"
             PERMISSION_READONLY_FILE: Final[int] = 292
             PERMISSION_WRITABLE_FILE: Final[int] = 420
-            PERMISSION_READONLY_DIR: Final[int] = 365
             PERMISSION_WRITABLE_DIR: Final[int] = 493
             HASH_CHUNK_SIZE: Final[int] = 8192
             SIZE_UNITS: Final[tuple[str, ...]] = ("B", "KB", "MB", "GB", "TB", "PB")
@@ -449,24 +275,10 @@ class FlextTestsConstants(FlextConstants):
         class Builders:
             """Builder constants for test data construction.
 
-            Provides default values, error messages, and templates
+            Provides default values and error messages
             for FlextTestsBuilders. Use c.Tests.Builders.* for access.
-
-            Usage:
-                count = c.Tests.Builders.DEFAULT_USER_COUNT
-                msg = c.Tests.Builders.ERROR_INVALID_COUNT.format(count=-1)
-                email = c.Tests.Builders.validation_email(index=0)
             """
 
-            DEFAULT_USER_COUNT: Final[int] = 5
-            DEFAULT_VALIDATION_COUNT: Final[int] = 5
-            KEY_USERS: Final[str] = "users"
-            KEY_CONFIGS: Final[str] = "configs"
-            KEY_VALIDATION_FIELDS: Final[str] = "validation_fields"
-            KEY_VALID_EMAILS: Final[str] = "valid_emails"
-            KEY_INVALID_EMAILS: Final[str] = "invalid_emails"
-            KEY_VALID_HOSTNAMES: Final[str] = "valid_hostnames"
-            KEY_INVALID_HOSTNAMES: Final[str] = "invalid_hostnames"
             KEY_ID: Final[str] = "id"
             KEY_NAME: Final[str] = "name"
             KEY_EMAIL: Final[str] = "email"
@@ -494,33 +306,13 @@ class FlextTestsConstants(FlextConstants):
                 "example.com",
                 FlextConstants.Platform.DEFAULT_HOST,
             )
-            INVALID_HOSTNAME_SAMPLES: Final[tuple[str, ...]] = ("invalid..hostname", "")
-            VALIDATION_EMAIL_TEMPLATE: Final[str] = "user{index}@example.com"
-            ERROR_EMPTY_DATASET: Final[str] = "Cannot build empty dataset"
             ERROR_INVALID_COUNT: Final[str] = "Count must be positive: {count}"
-
-            @classmethod
-            def validation_email(cls, index: int) -> str:
-                """Generate validation email from template.
-
-                Args:
-                    index: Index for email generation.
-
-                Returns:
-                    Formatted email address.
-
-                """
-                return cls.VALIDATION_EMAIL_TEMPLATE.format(index=index)
 
         class Validator:
             """Architecture validator constants.
 
             Provides rule definitions, severity levels, approved patterns.
             Use c.Tests.Validator.* for access.
-
-            Usage:
-                severity, desc = c.Tests.Validator.Rules.IMPORT_001
-                c.Tests.Validator.Messages.VIOLATION.format(rule_id="X")
             """
 
             class Severity(StrEnum):
@@ -644,11 +436,7 @@ class FlextTestsConstants(FlextConstants):
                     return rule
 
             class Messages:
-                """Error message templates supporting .format().
-
-                Usage:
-                    c.Tests.Validator.Messages.VIOLATION.format(rule_id="X")
-                """
+                """Error message templates supporting .format()."""
 
                 VIOLATION: Final[str] = "{rule_id} at {file}:{line}"
                 VIOLATION_DETAIL: Final[str] = (
@@ -831,47 +619,6 @@ class FlextTestsConstants(FlextConstants):
                         "registry": cls.REGISTRY,
                         "decorators": cls.DECORATORS,
                     }
-
-    @unique
-    class ModelKind(StrEnum):
-        """Model kind literals for helper factories."""
-
-        USER = "user"
-        CONFIG = "config"
-        SERVICE = "service"
-        ENTITY = "entity"
-        VALUE = "value"
-        COMMAND = "command"
-        QUERY = "query"
-        EVENT = "event"
-
-    @unique
-    class ResultKind(StrEnum):
-        """Result kind literals for assertion helpers."""
-
-        OK = "ok"
-        FAIL = "fail"
-        FROM_VALUE = "from_value"
-
-    @unique
-    class OpKind(StrEnum):
-        """Operation kind literals for utility adapters."""
-
-        SIMPLE = "simple"
-        ADD = "add"
-        FORMAT = "format"
-        ERROR = "error"
-        TYPE_ERROR = "type_error"
-        RESULT_OK = "result_ok"
-        RESULT_FAIL = "result_fail"
-
-    @unique
-    class BatchKind(StrEnum):
-        """Batch entity kind literals for grouped fixtures."""
-
-        USER = "user"
-        CONFIG = "config"
-        SERVICE = "service"
 
 
 c = FlextTestsConstants
