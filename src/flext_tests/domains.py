@@ -23,38 +23,6 @@ class FlextTestsDomains:
     Provides common test data and domain objects used across FLEXT test suites.
     """
 
-    class TestDomainResult:
-        """Simple domain result for testing services.
-
-        Implements ResultLike protocol for compatibility with r operations.
-        """
-
-        __test__ = False
-
-        def __init__(self, value: str) -> None:
-            """Initialize domain result."""
-            super().__init__()
-            self.value = value
-
-        @property
-        def error(self) -> str | None:
-            """Get error."""
-            return None
-
-        @property
-        def is_failure(self) -> bool:
-            """Check if failure."""
-            return False
-
-        @property
-        def is_success(self) -> bool:
-            """Check if success."""
-            return True
-
-        def unwrap(self) -> FlextTestsDomains.TestDomainResult:
-            """Unwrap the result value."""
-            return self
-
     @staticmethod
     def build_dbt_project_config(
         *,
@@ -151,30 +119,6 @@ class FlextTestsDomains:
             response["error"] = {"code": "TEST_ERROR", "message": "Test error message"}
         response.update(custom_fields)
         return response
-
-    @staticmethod
-    def batch_users(
-        count: int = 5,
-        **user_overrides: str | bool,
-    ) -> list[MutableMapping[str, str | bool]]:
-        """Create a batch of test users.
-
-        Args:
-            count: Number of users to create
-            **user_overrides: Common overrides for all users
-
-        Returns:
-            List of user dictionaries
-
-        """
-        users: list[MutableMapping[str, str | bool]] = []
-        for i in range(count):
-            user_overrides_copy: dict[str, str | bool] = dict(user_overrides)
-            user_overrides_copy["username"] = f"testuser{i}"
-            user_overrides_copy["email"] = f"testuser{i}@example.com"
-            user_data = FlextTestsDomains.create_user(**user_overrides_copy)
-            users.append(user_data)
-        return users
 
     @staticmethod
     def create_configuration(
@@ -308,44 +252,6 @@ class FlextTestsDomains:
         }
         user.update(overrides)
         return user
-
-    @staticmethod
-    def invalid_ages() -> list[int]:
-        """Get invalid age test cases.
-
-        Returns:
-            List of invalid ages
-
-        """
-        return [-5, 0, 17, 151, 200]
-
-    @staticmethod
-    def invalid_email_cases() -> list[tuple[str, bool]]:
-        """Get invalid email test cases.
-
-        Returns:
-            List of (email, is_valid) tuples - all marked as invalid
-
-        """
-        return [
-            ("invalid-email", False),
-            ("@example.com", False),
-            ("test@", False),
-            ("", False),
-            ("test@.com", False),
-            ("test..test@example.com", False),
-            ("test@example..com", False),
-        ]
-
-    @staticmethod
-    def valid_ages() -> list[int]:
-        """Get valid age test cases.
-
-        Returns:
-            List of valid ages
-
-        """
-        return [18, 25, 30, 45, 65, 80, 99]
 
     @staticmethod
     def valid_email_cases() -> list[tuple[str, bool]]:
