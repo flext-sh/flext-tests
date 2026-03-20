@@ -136,7 +136,7 @@ class FlextTestsConstants(FlextConstants):
             DEFAULT_ENVIRONMENT: Final[str] = "test"
             DEFAULT_DEBUG: Final[bool] = True
             DEFAULT_LOG_LEVEL: Final[str] = "DEBUG"
-            DEFAULT_TIMEOUT: Final[int] = FlextConstants.Network.DEFAULT_TIMEOUT
+            DEFAULT_TIMEOUT: Final[int] = FlextConstants.DEFAULT_TIMEOUT_SECONDS
             DEFAULT_MAX_RETRIES: Final[int] = FlextConstants.DEFAULT_MAX_RETRY_ATTEMPTS
             DEFAULT_SERVICE_NAME_TEMPLATE: Final[str] = "Test {type} Service"
             DEFAULT_ENTITY_NAME: Final[str] = "test_entity"
