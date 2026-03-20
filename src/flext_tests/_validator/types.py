@@ -12,11 +12,16 @@ import ast
 import re
 from collections.abc import Mapping
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_core import r
 
-from flext_tests import c, m, u
+from flext_tests import c
 from flext_tests._validator.models import vm
+from flext_tests.utilities import u
+
+if TYPE_CHECKING:
+    from flext_tests import m
 
 
 class FlextValidatorTypes:
