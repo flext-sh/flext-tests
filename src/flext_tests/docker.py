@@ -18,8 +18,6 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import contextlib
-import socket
-import time
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import ClassVar
@@ -298,49 +296,6 @@ class FlextTestsDocker:
         if result.is_failure:
             return r[str].fail(f"Stack start failed: {result.error}")
         return r[str].ok("Stack started successfully")
-
-    def start_existing_container(self, name: str) -> r[str]:
-        """Start an existing stopped container without recreating it."""
-        try:
-            client = self.get_client()
-            container = client.containers.get(name)
-            status_val = str(container.status)
-            if status_val == "running":
-                return r[str].ok(f"Container {name} already running")
-            if status_val in {"exited", "created", "paused"}:
-                container.start()
-                return r[str].ok(f"Container {name} started")
-            return r[str].ok(f"Container {name} in state: {status_val}")
-        except NotFound:
-            return r[str].fail(f"Container {name} not found")
-        except (AttributeError, OSError, RuntimeError, TypeError, ValueError) as exc:
-            return r[str].fail(f"Failed to start container: {exc}")
-
-    def wait_for_port_ready(self, host: str, port: int, max_wait: int = 60) -> r[bool]:
-        """Wait for network port to become available."""
-        try:
-            start_time = time.time()
-            while time.time() - start_time < max_wait:
-                try:
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    sock.settimeout(5)
-                    result = sock.connect_ex((host, port))
-                    sock.close()
-                    if result == 0:
-                        self.logger.info("Port ready", host=host, port=port)
-                        return r[bool].ok(value=True)
-                except OSError:
-                    pass
-                time.sleep(2)
-            self.logger.warning(
-                "Port not ready",
-                host=host,
-                port=port,
-                max_wait=max_wait,
-            )
-            return r[bool].ok(False)
-        except OSError as exc:
-            return r[bool].fail(f"Failed to wait for port: {exc}")
 
     def _load_dirty_state(self) -> None:
         """Load dirty container state from persistent storage."""
