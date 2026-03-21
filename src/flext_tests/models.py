@@ -27,7 +27,8 @@ from pydantic import (
     model_validator,
 )
 
-from flext_tests import c, t
+from flext_tests.constants import FlextTestsConstants as c
+from flext_tests.typings import FlextTestsTypes as t
 
 
 class FlextTestsModels(

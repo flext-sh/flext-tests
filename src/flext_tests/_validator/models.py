@@ -15,8 +15,8 @@ from typing import Annotated
 from flext_core import r
 from pydantic import Field
 
-from flext_tests import c
-from flext_tests.models import m
+from flext_tests.constants import FlextTestsConstants as c
+from flext_tests.models import FlextTestsModels as m
 
 
 class FlextValidatorModels(m):

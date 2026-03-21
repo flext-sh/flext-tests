@@ -15,12 +15,12 @@ from typing import TYPE_CHECKING
 
 from flext_core import r
 
-from flext_tests import c
 from flext_tests._validator.models import vm
-from flext_tests.utilities import u
+from flext_tests.constants import FlextTestsConstants as c
+from flext_tests.utilities import FlextTestsUtilities as u
 
 if TYPE_CHECKING:
-    from flext_tests import m
+    from flext_tests.models import FlextTestsModels as m
 
 
 class FlextValidatorTests:

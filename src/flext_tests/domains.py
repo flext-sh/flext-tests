@@ -14,7 +14,8 @@ from __future__ import annotations
 import uuid
 from collections.abc import Mapping, MutableMapping
 
-from flext_tests import t, tt
+from flext_tests.models import FlextTestsModels as m
+from flext_tests.typings import FlextTestsTypes as t
 
 
 class FlextTestsDomains:
@@ -137,8 +138,7 @@ class FlextTestsDomains:
             Configuration dictionary
 
         """
-        config_result = tt.model(
-            "config",
+        config_result = m.Tests.Config(
             service_type=service_type,
             environment=environment,
         )
@@ -235,8 +235,8 @@ class FlextTestsDomains:
         first_name = str(overrides.get("first_name", "Test"))
         last_name = str(overrides.get("last_name", "User"))
         email = str(overrides.get("email", "test@example.com"))
-        user_model_result = tt.model(
-            "user",
+        user_model_result = m.Tests.User(
+            id="",
             name=f"{first_name} {last_name}",
             email=email,
         )

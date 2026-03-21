@@ -14,13 +14,15 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal, TypeAliasType, TypeIs
 
-from flext_core import FlextProtocols, FlextTypes, m
+from flext_core.models import m
+from flext_core.protocols import FlextProtocols
+from flext_core.typings import FlextTypes, t as core_t
 from pydantic import BaseModel, InstanceOf
 
 p = FlextProtocols
 
 type _TestobjectSerializable = (
-    t.Primitives
+    core_t.Primitives
     | None
     | bytes
     | datetime
@@ -93,7 +95,8 @@ class FlextTestsTypes(FlextTypes):
             type ErrorModeLiteral = Literal["stop", "skip", "collect"]
             "Error handling mode for batch operations."
             type BatchFiles = (
-                Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject]
+                Mapping[str, FlextTestsTypes.Tests.Testobject]
+                | Sequence[FlextTestsTypes.Tests.Testobject]
             )
             "Type for batch file operations - Mapping or Sequence of files."
 

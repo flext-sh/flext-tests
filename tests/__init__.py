@@ -12,7 +12,7 @@ from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 if TYPE_CHECKING:
     from flext_core.typings import FlextTypes
 
-    from .conftest import c, m, p, t, tb, td, tf, tk, tm, tt, u
+    from .conftest import c, m, p, t, td, tf, tk, tm, tt, u
     from .test_utils import AssertionHelpers, T, assertion_helpers
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
@@ -23,7 +23,6 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "m": ("tests.conftest", "m"),
     "p": ("tests.conftest", "p"),
     "t": ("tests.conftest", "t"),
-    "tb": ("tests.conftest", "tb"),
     "td": ("tests.conftest", "td"),
     "tf": ("tests.conftest", "tf"),
     "tk": ("tests.conftest", "tk"),
@@ -40,7 +39,6 @@ __all__ = [
     "m",
     "p",
     "t",
-    "tb",
     "td",
     "tf",
     "tk",

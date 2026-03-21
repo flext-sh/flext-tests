@@ -12,17 +12,19 @@ from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 if TYPE_CHECKING:
     from flext_core.typings import FlextTypes
 
-    from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
+    from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "FlextTestsMatchersUtilities": (
         "flext_tests._utilities.matchers",
         "FlextTestsMatchersUtilities",
     ),
+    "tm": ("flext_tests._utilities.matchers", "tm"),
 }
 
 __all__ = [
     "FlextTestsMatchersUtilities",
+    "tm",
 ]
 
 

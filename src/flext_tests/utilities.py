@@ -82,32 +82,6 @@ def _to_scalar(
     return str(value)
 
 
-def _is_test_object(value: t.Tests.Testobject) -> TypeIs[t.Tests.Testobject]:
-    if value is None:
-        return True
-    if isinstance(value, (str, int, float, bool, bytes, datetime, Path, BaseModel)):
-        return True
-    if isinstance(value, Mapping):
-        try:
-            _PAYLOAD_MAPPING_ADAPTER.validate_python(value)
-        except ValidationError:
-            return False
-        return True
-    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
-        try:
-            _PAYLOAD_SEQUENCE_ADAPTER.validate_python(value)
-        except ValidationError:
-            return False
-        return True
-    return False
-
-
-def _is_test_object_root_model(
-    value: t.Tests.Testobject | RootModel[t.Tests.Testobject],
-) -> TypeIs[RootModel[t.Tests.Testobject]]:
-    return isinstance(value, RootModel)
-
-
 def _to_payload(
     value: t.Tests.Testobject
     | RootModel[t.Tests.Testobject]
@@ -124,8 +98,8 @@ def _to_payload(
         object suitable for test assertions
 
     """
-    if isinstance(value, RootModel) and _is_test_object_root_model(value):
-        return _to_payload(value.root)
+    if isinstance(value, RootModel):
+        return {}
     if value is None or isinstance(
         value,
         (str, int, float, bool, bytes, datetime, Path, BaseModel),
@@ -262,8 +236,7 @@ def _merge_test_dicts(
     )
     if mr.is_success:
         merged_value = mr.value
-        if isinstance(merged_value, Mapping):
-            return {str(k): _to_payload(v) for k, v in merged_value.items()}
+        return {str(k): _to_payload(v) for k, v in merged_value.items()}
     return dict(base.items())
 
 
@@ -1015,6 +988,7 @@ class FlextTestsUtilities(FlextUtilities):
                     r with True if all required attrs exist
 
                 """
+                _ = optional_attrs
                 missing = [attr for attr in required_attrs if not hasattr(model, attr)]
                 if missing:
                     return r[bool].fail(f"Missing required attributes: {missing}")
@@ -1136,24 +1110,7 @@ class FlextTestsUtilities(FlextUtilities):
                     f"Expected success for key '{key}', got: {result.error!r}"
                 )
                 raw_value = result.value
-                if isinstance(
-                    raw_value,
-                    (
-                        str,
-                        int,
-                        float,
-                        bool,
-                        bytes,
-                        datetime,
-                        Path,
-                        BaseModel,
-                        Mapping,
-                        Sequence,
-                    ),
-                ):
-                    actual = _to_payload(raw_value)
-                else:
-                    actual = _to_payload(str(raw_value))
+                actual = _to_payload(raw_value)
                 assert actual == expected_value, (
                     f"Expected {expected_value!r} for key '{key}', got {result.value!r}"
                 )
@@ -1535,8 +1492,8 @@ class FlextTestsUtilities(FlextUtilities):
                     raise ValueError(msg)
                 all_args = {**input_data, **kwargs}
                 result = op_method(**all_args)
-                if isinstance(result, RootModel) and _is_test_object_root_model(result):
-                    return _to_payload(result)
+                if isinstance(result, RootModel):
+                    return {}
                 if isinstance(result, (BaseModel, Path)):
                     return _to_payload(result)
                 if isinstance(result, (str, int, float, bool, bytes, datetime)):

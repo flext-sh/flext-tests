@@ -13,7 +13,7 @@ from collections.abc import Mapping
 from enum import StrEnum, unique
 from typing import Final, Literal
 
-from flext_core import FlextConstants, FlextModels
+from flext_core import FlextConstants
 
 
 class FlextTestsConstants(FlextConstants):
@@ -33,16 +33,14 @@ class FlextTestsConstants(FlextConstants):
         class Docker:
             """Docker test infrastructure constants."""
 
-            SHARED_CONTAINERS: Final[Mapping[str, FlextModels.ConfigMap]] = {
-                "flext-oracle-db-test": FlextModels.ConfigMap(
-                    root={
-                        "compose_file": "docker/docker-compose.oracle-db.yml",
-                        "service": "oracle-db",
-                        "port": 1522,
-                        "host": "localhost",
-                        "container_name": "flext-oracle-db-test",
-                    },
-                ),
+            SHARED_CONTAINERS: Final[Mapping[str, Mapping[str, str | int]]] = {
+                "flext-oracle-db-test": {
+                    "compose_file": "docker/docker-compose.oracle-db.yml",
+                    "service": "oracle-db",
+                    "port": 1522,
+                    "host": "localhost",
+                    "container_name": "flext-oracle-db-test",
+                },
             }
 
             @unique
@@ -162,7 +160,7 @@ class FlextTestsConstants(FlextConstants):
                 ".tsv": "csv",
             }
             DEFAULT_FILENAME: Final[str] = "file"
-            DEFAULT_ENCODING: Final[str] = FlextConstants.ENCODING
+            DEFAULT_ENCODING: Final[str] = FlextConstants.Utilities.DEFAULT_ENCODING
             DEFAULT_BINARY_ENCODING: Final[str] = "binary"
             DEFAULT_JSON_INDENT: Final[int] = 2
             DEFAULT_CSV_DELIMITER: Final[str] = ","

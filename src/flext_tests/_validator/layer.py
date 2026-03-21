@@ -14,9 +14,9 @@ from pathlib import Path
 
 from flext_core import r
 
-from flext_tests import c
-from flext_tests.models import m
-from flext_tests.utilities import u
+from flext_tests.constants import FlextTestsConstants as c
+from flext_tests.models import FlextTestsModels as m
+from flext_tests.utilities import FlextTestsUtilities as u
 
 
 class FlextValidatorLayer:

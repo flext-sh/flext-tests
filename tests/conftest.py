@@ -1,5 +1,7 @@
 from __future__ import annotations
 
-from flext_tests import c, m, p, t, tb, td, tf, tk, tm, tt, u
+from flext_tests import c, m, p, t, td, tf, tk, tm, u
 
-__all__ = ["c", "m", "p", "t", "tb", "td", "tf", "tk", "tm", "tt", "u"]
+tt = t.Tests
+
+__all__ = ["c", "m", "p", "t", "td", "tf", "tk", "tm", "tt", "u"]
