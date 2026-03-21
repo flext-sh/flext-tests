@@ -14,8 +14,6 @@ if TYPE_CHECKING:
 
 
 if TYPE_CHECKING:
-    from flext_core.typings import FlextTypes
-
     from .test_docker import (
         TestContainerInfo,
         TestContainerStatus,

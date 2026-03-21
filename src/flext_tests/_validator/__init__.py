@@ -21,8 +21,6 @@ if TYPE_CHECKING:
 
 
 if TYPE_CHECKING:
-    from flext_core.typings import FlextTypes
-
     from flext_tests._validator.bypass import FlextValidatorBypass
     from flext_tests._validator.imports import FlextValidatorImports
     from flext_tests._validator.layer import FlextValidatorLayer
