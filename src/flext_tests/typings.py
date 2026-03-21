@@ -14,7 +14,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal, TypeAliasType, TypeIs
 
-from flext_core.models import m
 from flext_core.protocols import FlextProtocols
 from flext_core.typings import FlextTypes, t as core_t
 from pydantic import BaseModel, InstanceOf
@@ -173,7 +172,7 @@ class FlextTestsTypes(FlextTypes):
             "Attribute-value specification: single pair or mapping."
             type ErrorCodeSpec = str | Sequence[str]
             "Error code specification: single code or sequence."
-            type ErrorDataSpec = m.ConfigMap
+            type ErrorDataSpec = core_t.ConfigMap
             "Error data specification: key-value pairs."
             type CleanupSpec = Sequence[Callable[[], None]]
             "Cleanup specification: sequence of cleanup functions."
