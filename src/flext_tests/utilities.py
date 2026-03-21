@@ -52,7 +52,7 @@ _PAYLOAD_SEQUENCE_ADAPTER = TypeAdapter(
 
 
 def _to_scalar(
-    value: BaseModel
+    value: p.Model
     | Exception
     | Mapping[str, t.Tests.Testobject]
     | Path
@@ -588,7 +588,7 @@ class FlextTestsUtilities(FlextUtilities):
             @staticmethod
             @contextmanager
             def temporary_attribute(
-                target: BaseModel,
+                target: p.Model,
                 attribute: str,
                 value: t.Tests.Testobject,
             ) -> Generator[None]:
@@ -986,7 +986,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def validate_model_attributes(
-                model: BaseModel,
+                model: p.Model,
                 required_attrs: list[str],
                 optional_attrs: list[str] | None = None,
             ) -> r[bool]:

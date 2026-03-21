@@ -285,6 +285,25 @@ class FlextTestsDocker:
         except (OSError, TypeError) as exc:
             return r[bool].fail(f"Failed to mark dirty: {exc}")
 
+    def start_existing_container(self, container_name: str) -> r[bool]:
+        """Start an existing stopped container by name.
+
+        Uses docker SDK to find and start the container. If already running,
+        returns success. If not found, returns failure.
+        """
+        try:
+            client = self.get_client()
+            container = client.containers.get(container_name)
+            status = str(container.status)
+            if status == "running":
+                return r[bool].ok(value=True)
+            container.start()
+            return r[bool].ok(value=True)
+        except NotFound:
+            return r[bool].fail(f"Container {container_name} not found")
+        except (DockerException, OSError, RuntimeError, AttributeError) as exc:
+            return r[bool].fail(f"Failed to start container {container_name}: {exc}")
+
     def start_compose_stack(
         self,
         compose_file: str,

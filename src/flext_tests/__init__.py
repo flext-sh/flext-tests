@@ -24,11 +24,8 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 
 if TYPE_CHECKING:
-    from flext_core.typings import FlextTypes
-
-
-if TYPE_CHECKING:
     from flext_core import d, e, h, r, s, x
+    from flext_core.typings import FlextTypes
 
     from flext_tests import _utilities, _validator
     from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm

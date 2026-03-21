@@ -61,7 +61,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import TypeIs, overload
 
-from flext_core import m as core_m, r
+from flext_core import m as core_m, r, t as core_t
 from flext_core._utilities.guards import FlextUtilitiesGuards
 from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
 
@@ -164,8 +164,8 @@ def _to_normalized(value: t.Tests.Testobject) -> t.NormalizedValue:
     return str(value)
 
 
-def _to_extract_value(value: t.Tests.Testobject) -> t.NormalizedValue | BaseModel:
-    """Convert _Testobject to NormalizedValue | BaseModel for extract() calls."""
+def _to_extract_value(value: t.Tests.Testobject) -> core_t.ValueOrModel:
+    """Convert _Testobject to ValueOrModel for extract() calls."""
     if value is None:
         return None
     if isinstance(value, (str, int, float, bool)):
@@ -695,9 +695,7 @@ class FlextTestsMatchersUtilities:
                             params.msg
                             or f"Path extraction requires dict or model, got {type(result_value).__name__}",
                         )
-                    extract_data: (
-                        BaseModel | Mapping[str, t.NormalizedValue | BaseModel]
-                    )
+                    extract_data: BaseModel | Mapping[str, core_t.ValueOrModel]
                     if isinstance(result_value, BaseModel):
                         extract_data = result_value
                     else:
