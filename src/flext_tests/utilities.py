@@ -227,7 +227,7 @@ def _merge_test_dicts(
     DRY helper: consolidates the repeated pattern of
     ``u.merge(to_normalized_dict(...), to_normalized_dict(...))``.
     """
-    from flext_tests import u as _u  # noqa: PLC0415
+    from flext_tests import u as _u
 
     mr = _u.merge(
         {k: _to_normalized_value(v) for k, v in base.items()},
@@ -517,7 +517,7 @@ class FlextTestsUtilities(FlextUtilities):
                         error_msg or f"Expected success but got failure: {result.error}"
                     )
                     raise AssertionError(msg)
-                value: TResult = result.value  # type: ignore[assignment]
+                value: TResult = result.value
                 return value
 
             @staticmethod
