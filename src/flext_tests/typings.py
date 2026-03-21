@@ -14,11 +14,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal, TypeAliasType, TypeIs
 
-from flext_core.protocols import FlextProtocols
-from flext_core.typings import FlextTypes, t as core_t
+from flext_core import FlextTypes, p, t as core_t
 from pydantic import BaseModel, InstanceOf
-
-p = FlextProtocols
 
 type _TestobjectSerializable = (
     core_t.Primitives
