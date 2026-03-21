@@ -160,7 +160,7 @@ class FlextTestsConstants(FlextConstants):
                 ".tsv": "csv",
             }
             DEFAULT_FILENAME: Final[str] = "file"
-            DEFAULT_ENCODING: Final[str] = FlextConstants.Utilities.DEFAULT_ENCODING
+            DEFAULT_ENCODING: Final[str] = FlextConstants.DEFAULT_ENCODING
             DEFAULT_BINARY_ENCODING: Final[str] = "binary"
             DEFAULT_JSON_INDENT: Final[int] = 2
             DEFAULT_CSV_DELIMITER: Final[str] = ","

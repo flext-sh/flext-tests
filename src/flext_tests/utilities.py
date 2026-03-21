@@ -1186,8 +1186,8 @@ class FlextTestsUtilities(FlextUtilities):
             def create_handler_config(
                 handler_id: str,
                 handler_name: str,
-                handler_type: c.Cqrs.HandlerType | None = None,
-                handler_mode: c.Cqrs.HandlerType | None = None,
+                handler_type: c.HandlerType | None = None,
+                handler_mode: c.HandlerType | None = None,
                 command_timeout: int | None = None,
                 max_command_retries: int | None = None,
                 metadata: m.Metadata | None = None,
@@ -1208,16 +1208,16 @@ class FlextTestsUtilities(FlextUtilities):
                     Handler configuration model
 
                 """
-                h_type = handler_type or c.Cqrs.HandlerType.COMMAND
+                h_type = handler_type or c.HandlerType.COMMAND
                 h_mode = handler_mode or h_type
                 return m.Handler(
                     handler_id=handler_id,
                     handler_name=handler_name,
                     handler_type=h_type,
                     handler_mode=h_mode,
-                    command_timeout=command_timeout or c.Cqrs.DEFAULT_COMMAND_TIMEOUT,
+                    command_timeout=command_timeout or c.DEFAULT_COMMAND_TIMEOUT,
                     max_command_retries=max_command_retries
-                    or c.Cqrs.DEFAULT_MAX_COMMAND_RETRIES,
+                    or c.DEFAULT_MAX_COMMAND_RETRIES,
                     metadata=metadata,
                 )
 
