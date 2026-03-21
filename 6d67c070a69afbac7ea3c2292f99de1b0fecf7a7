@@ -1,0 +1,23 @@
+src/flext_tests/typings.py
+  7d92cadfcdb5a40e 17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "6d67c070a69afbac7ea3c2292f99de1b0fecf7a7",
+  "prompts": {
+    "7d92cadfcdb5a40e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2ef162a8affeCJh0x30UVhVjRT",
+        "model": "openai/gpt-5.2"
+      },
+      "human_author": "FLEXT Bot <team@flext.sh>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 4,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
