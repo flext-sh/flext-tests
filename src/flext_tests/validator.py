@@ -3,7 +3,7 @@
 Provides FlextTestsValidator (tv) for detecting architecture violations in pytest tests.
 
 Usage:
-    from flext_tests import tv
+    from flext_core.validator import tv
 
     # Validate imports
     result = tv.imports(Path("src"))
@@ -29,15 +29,16 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import ClassVar
 
+from algar_oud_mig.base import s
 from flext_core import r
-
-from flext_tests import c, m, s
-from flext_tests._validator.bypass import FlextValidatorBypass
-from flext_tests._validator.imports import FlextValidatorImports
-from flext_tests._validator.layer import FlextValidatorLayer
-from flext_tests._validator.settings import FlextValidatorSettings
-from flext_tests._validator.tests import FlextValidatorTests
-from flext_tests._validator.types import FlextValidatorTypes
+from flext_core._validator.bypass import FlextValidatorBypass
+from flext_core._validator.imports import FlextValidatorImports
+from flext_core._validator.layer import FlextValidatorLayer
+from flext_core._validator.settings import FlextValidatorSettings
+from flext_core._validator.tests import FlextValidatorTests
+from flext_core._validator.types import FlextValidatorTypes
+from flext_core.constants import c
+from flext_core.models import m
 
 
 class FlextTestsValidator(s[m.Tests.ScanResult]):
@@ -54,7 +55,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         Uses c.Validator for all rules, messages, and defaults.
 
         Usage:
-            from flext_tests import tv
+            from flext_core.validator import tv
 
             result = tv.imports(Path("src"))
             result = tv.types(Path("src"))

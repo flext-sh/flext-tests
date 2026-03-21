@@ -15,13 +15,12 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from flext_core import r
-
-from flext_tests import c
-from flext_tests._validator.models import vm
-from flext_tests.utilities import u
+from flext_core._validator.models import vm
+from flext_core.constants import c
+from flext_core.utilities import u
 
 if TYPE_CHECKING:
-    from flext_tests import m
+    from flext_core.models import m
 
 
 class FlextValidatorImports:
@@ -142,14 +141,14 @@ class FlextValidatorImports:
 
         Detects imports from internal modules (prefixed with _) like:
         - from flext_core import domain  (violation)
-        - from flext_tests import imports  (violation)
+        - from flext_core import imports  (violation)
 
         Allows public module imports:
         - from flext_core import r  (OK)
-        - from flext_tests import m  (OK)
+        - from flext_core import m  (OK)
 
         Allows __init__.py inside internal packages to import sibling modules:
-        - _validator/__init__.py can import from flext_tests._validator.* (OK)
+        - _validator/__init__.py can import from flext_core._validator.* (OK)
         """
         if u.Tests.Validator.is_approved("IMPORT-006", file_path, approved):
             return []

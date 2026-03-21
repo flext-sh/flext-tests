@@ -11,7 +11,6 @@ import pytest
 from flext_core import r
 from pydantic import BaseModel, ConfigDict
 
-from flext_tests import tm
 from tests import u
 
 
@@ -22,7 +21,7 @@ class TestFlextTestsUtilitiesResult:
         """Test assert_success with successful result."""
         result = r[str].ok("success")
         value = u.Tests.Result.assert_success(result)
-        tm.that(value == "success", eq=True)
+        u.Tests.Matchers.that(value == "success", eq=True)
 
     def test_assert_success_fails(self) -> None:
         """Test assert_success with failed result."""
@@ -34,7 +33,7 @@ class TestFlextTestsUtilitiesResult:
         """Test assert_failure with failed result."""
         result: r[str] = r[str].fail("error message")
         error = u.Tests.Result.assert_failure(result)
-        tm.that(error == "error message", eq=True)
+        u.Tests.Matchers.that(error == "error message", eq=True)
 
     def test_assert_failure_fails(self) -> None:
         """Test assert_failure with successful result."""
@@ -46,7 +45,7 @@ class TestFlextTestsUtilitiesResult:
         """Test assert_failure with expected error substring."""
         result: r[str] = r[str].fail("validation error occurred")
         error = u.Tests.Result.assert_failure(result, "validation")
-        tm.that("validation" in error, eq=True)
+        u.Tests.Matchers.that("validation" in error, eq=True)
 
     def test_assert_failure_with_expected_error_mismatch(self) -> None:
         """Test assert_failure when expected error doesn't match."""
@@ -88,8 +87,8 @@ class TestFlextTestsUtilitiesTestContext:
 
         obj = TestObject()
         with u.Tests.TestContext.temporary_attribute(obj, "attribute", "modified"):
-            tm.that(obj.attribute == "modified", eq=True)
-        tm.that(obj.attribute == "original", eq=True)
+            u.Tests.Matchers.that(obj.attribute == "modified", eq=True)
+        u.Tests.Matchers.that(obj.attribute == "original", eq=True)
 
     def test_temporary_attribute_new(self) -> None:
         """Test temporary_attribute adds new attribute temporarily."""
@@ -99,9 +98,11 @@ class TestFlextTestsUtilitiesTestContext:
 
         obj = TestObject()
         with u.Tests.TestContext.temporary_attribute(obj, "new_attr", "new_value"):
-            tm.that(hasattr(obj, "new_attr"), eq=True)
-            tm.that(getattr(obj, "new_attr", None) == "new_value", eq=True)
-        tm.that(not hasattr(obj, "new_attr"), eq=True)
+            u.Tests.Matchers.that(hasattr(obj, "new_attr"), eq=True)
+            u.Tests.Matchers.that(
+                getattr(obj, "new_attr", None) == "new_value", eq=True
+            )
+        u.Tests.Matchers.that(not hasattr(obj, "new_attr"), eq=True)
 
     def test_temporary_attribute_exception_restores(self) -> None:
         """Test temporary_attribute restores value even when exception occurs."""
@@ -111,11 +112,11 @@ class TestFlextTestsUtilitiesTestContext:
 
         obj = TestObject()
         with u.Tests.TestContext.temporary_attribute(obj, "attribute", "modified"):
-            tm.that(obj.attribute == "modified", eq=True)
+            u.Tests.Matchers.that(obj.attribute == "modified", eq=True)
             msg = "Test exception"
             with pytest.raises(RuntimeError):
                 raise RuntimeError(msg)
-        tm.that(obj.attribute == "original", eq=True)
+        u.Tests.Matchers.that(obj.attribute == "original", eq=True)
 
 
 class TestFlextTestsUtilitiesFactory:
@@ -124,27 +125,27 @@ class TestFlextTestsUtilitiesFactory:
     def test_create_result_success(self) -> None:
         """Test create_result with value."""
         result = u.Tests.Factory.create_result("test_value")
-        tm.that(result.is_success, eq=True)
-        tm.that(result.value == "test_value", eq=True)
+        u.Tests.Matchers.that(result.is_success, eq=True)
+        u.Tests.Matchers.that(result.value == "test_value", eq=True)
 
     def test_create_result_failure(self) -> None:
         """Test create_result with error."""
         result: r[str] = u.Tests.Factory.create_result(None, error="test error")
-        tm.that(result.is_failure, eq=True)
-        tm.that(result.error == "test error", eq=True)
+        u.Tests.Matchers.that(result.is_failure, eq=True)
+        u.Tests.Matchers.that(result.error == "test error", eq=True)
 
     def test_create_result_no_args(self) -> None:
         """Test create_result with no arguments returns failure."""
         result: r[str] = u.Tests.Factory.create_result(None)
-        tm.that(result.is_failure, eq=True)
-        tm.that(result.error == "No value or error provided", eq=True)
+        u.Tests.Matchers.that(result.is_failure, eq=True)
+        u.Tests.Matchers.that(result.error == "No value or error provided", eq=True)
 
     def test_create_test_data(self) -> None:
         """Test create_test_data creates dict with kwargs."""
         data = u.Tests.Factory.create_test_data(key1="value1", key2=42, key3=True)
-        tm.that(data["key1"] == "value1", eq=True)
-        tm.that(data["key2"] == 42, eq=True)
-        tm.that(data["key3"] is True, eq=True)
+        u.Tests.Matchers.that(data["key1"] == "value1", eq=True)
+        u.Tests.Matchers.that(data["key2"] == 42, eq=True)
+        u.Tests.Matchers.that(data["key3"] is True, eq=True)
 
 
 class TestFlextTestsUtilitiesResultCompat:

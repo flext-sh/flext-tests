@@ -16,6 +16,8 @@ from pathlib import Path
 from typing import Annotated, ClassVar, TypeAliasType, override
 
 from flext_core import FlextModels, r
+from flext_core.constants import c
+from flext_core.typings import t
 from pydantic import (
     AliasChoices,
     BaseModel,
@@ -26,8 +28,6 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-
-from flext_tests import c, t
 
 
 class FlextTestsModels(

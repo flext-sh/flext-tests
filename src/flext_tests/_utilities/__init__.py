@@ -12,17 +12,31 @@ from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 if TYPE_CHECKING:
     from flext_core.typings import FlextTypes
 
+    from flext_tests._utilities.docker import FlextTestsDockerUtilities, tk
+    from flext_tests._utilities.files import FlextTestsFilesUtilities
     from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
+    "FlextTestsDockerUtilities": (
+        "flext_tests._utilities.docker",
+        "FlextTestsDockerUtilities",
+    ),
+    "FlextTestsFilesUtilities": (
+        "flext_tests._utilities.files",
+        "FlextTestsFilesUtilities",
+    ),
     "FlextTestsMatchersUtilities": (
         "flext_tests._utilities.matchers",
         "FlextTestsMatchersUtilities",
     ),
+    "tk": ("flext_tests._utilities.docker", "tk"),
 }
 
 __all__ = [
+    "FlextTestsDockerUtilities",
+    "FlextTestsFilesUtilities",
     "FlextTestsMatchersUtilities",
+    "tk",
 ]
 
 
