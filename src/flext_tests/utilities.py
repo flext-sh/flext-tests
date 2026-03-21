@@ -33,15 +33,11 @@ from flext_core import (
     FlextRegistry,
     FlextSettings,
     FlextUtilities,
-    m as core_m,
     r,
 )
 from pydantic import BaseModel, ConfigDict, RootModel, TypeAdapter, ValidationError
 
-from flext_tests.constants import FlextTestsConstants as c
-from flext_tests.models import FlextTestsModels as m
-from flext_tests.protocols import FlextTestsProtocols as p
-from flext_tests.typings import FlextTestsTypes as t
+from flext_tests import c, m, p, t
 
 _ARBTYPES = ConfigDict(arbitrary_types_allowed=True)
 _PAYLOAD_MAPPING_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject], config=_ARBTYPES)
@@ -222,14 +218,12 @@ def _merge_test_dicts(
     *,
     strategy: str = "deep",
 ) -> dict[str, t.Tests.Testobject]:
-    """Merge two test dicts via u.merge(), handling payload conversion.
+    """Merge two test dicts via FlextUtilities.merge(), handling payload conversion.
 
     DRY helper: consolidates the repeated pattern of
-    ``u.merge(to_normalized_dict(...), to_normalized_dict(...))``.
+    ``FlextUtilities.merge(to_normalized_dict(...), to_normalized_dict(...))``.
     """
-    from flext_tests import u as _u
-
-    mr = _u.merge(
+    mr = FlextUtilities.merge(
         {k: _to_normalized_value(v) for k, v in base.items()},
         {k: _to_normalized_value(v) for k, v in override.items()},
         strategy=strategy,
@@ -333,7 +327,7 @@ class FlextTestsUtilities(FlextUtilities):
     class Tests:
         """Test-specific utilities namespace.
 
-        All test utilities organized under u.Tests.* pattern.
+        All test utilities organized under FlextUtilities.Tests.* pattern.
         """
 
         @staticmethod
@@ -356,7 +350,7 @@ class FlextTestsUtilities(FlextUtilities):
         def to_normalized_dict(
             data: dict[str, t.Tests.Testobject],
         ) -> dict[str, t.NormalizedValue]:
-            """Convert test payload dict to NormalizedValue dict for u.merge().
+            """Convert test payload dict to NormalizedValue dict for FlextUtilities.merge().
 
             Uses _to_normalized_value for proper runtime type narrowing.
             """
@@ -405,7 +399,7 @@ class FlextTestsUtilities(FlextUtilities):
             *,
             strategy: str = "deep",
         ) -> dict[str, t.Tests.Testobject]:
-            """Merge two test dicts via u.merge() (DRY helper).
+            """Merge two test dicts via FlextUtilities.merge() (DRY helper).
 
             Delegates to module-level _merge_test_dicts.
             """
@@ -772,7 +766,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def generate_id() -> str:
-                """Generate unique ID using u.generate().
+                """Generate unique ID using FlextUtilities.generate().
 
                 Returns:
                     r[TEntity]: Result containing created entity or error
@@ -783,7 +777,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def generate_short_id(length: int = 8) -> str:
-                """Generate short unique ID using u.generate('ulid', length=...).
+                """Generate short unique ID using FlextUtilities.generate('ulid', length=...).
 
                 Args:
                     length: Length of ID (default: 8)
@@ -810,7 +804,7 @@ class FlextTestsUtilities(FlextUtilities):
             """Result helpers — delegates to Tests.Result (compat).
 
             .. deprecated::
-                Use ``u.Tests.Result`` directly. This namespace exists only
+                Use ``FlextUtilities.Tests.Result`` directly. This namespace exists only
                 for backward-compatibility.
             """
 
@@ -1618,7 +1612,7 @@ class FlextTestsUtilities(FlextUtilities):
             """Common assertion helpers — delegates to Tests.Result (compat).
 
             .. deprecated::
-                Use ``u.Tests.Result`` directly for assert_result_failure /
+                Use ``FlextUtilities.Tests.Result`` directly for assert_result_failure /
                 assert_result_success. Only ``assert_result_matches_expected``
                 is unique to this namespace.
             """
@@ -2044,7 +2038,7 @@ class FlextTestsUtilities(FlextUtilities):
                 )
 
         class DeepMatch:
-            """Deep structural matching utilities - delegates to u.extract().
+            """Deep structural matching utilities - delegates to FlextUtilities.extract().
 
             Follows FLEXT patterns:
             - Zero code duplication - delegates to flext-core utilities
@@ -2068,7 +2062,7 @@ class FlextTestsUtilities(FlextUtilities):
             ) -> m.Tests.DeepMatchResult:
                 """Match object against deep specification.
 
-                Uses u.extract() for path extraction - NO code duplication.
+                Uses FlextUtilities.extract() for path extraction - NO code duplication.
                 Supports unlimited nesting depth via dot notation paths.
 
                 Args:
@@ -2081,7 +2075,7 @@ class FlextTestsUtilities(FlextUtilities):
                     DeepMatchResult with match status and details
 
                 Examples:
-                    result = u.Tests.DeepMatch.match(
+                    result = FlextUtilities.Tests.DeepMatch.match(
                         data,
                         {
                             "user.name": "John",
@@ -2184,7 +2178,7 @@ class FlextTestsUtilities(FlextUtilities):
                 )
 
         class Length:
-            """Length validation utilities - delegates to u.chk().
+            """Length validation utilities - delegates to FlextUtilities.chk().
 
             Follows FLEXT patterns:
             - Zero code duplication - delegates to flext-core utilities
@@ -2203,7 +2197,7 @@ class FlextTestsUtilities(FlextUtilities):
             ) -> bool:
                 """Validate length against spec.
 
-                Uses u.chk() for validation - NO code duplication.
+                Uses FlextUtilities.chk() for validation - NO code duplication.
                 Supports exact length (int) or range (tuple[int, int]).
 
                 Args:
@@ -2215,9 +2209,9 @@ class FlextTestsUtilities(FlextUtilities):
                     True if length matches spec, False otherwise
 
                 Examples:
-                    u.Tests.Length.validate("hello", 5)           # Exact: True
-                    u.Tests.Length.validate([1, 2, 3], (1, 10))  # Range: True
-                    u.Tests.Length.validate("hi", 5)              # Exact: False
+                    FlextUtilities.Tests.Length.validate("hello", 5)           # Exact: True
+                    FlextUtilities.Tests.Length.validate([1, 2, 3], (1, 10))  # Range: True
+                    FlextUtilities.Tests.Length.validate("hi", 5)              # Exact: False
 
                 """
                 try:
@@ -2227,15 +2221,13 @@ class FlextTestsUtilities(FlextUtilities):
                 except TypeError:
                     return False
                 if isinstance(spec, int):
-                    return FlextUtilities.chk(
-                        actual_len, core_m.GuardCheckSpec(eq=spec)
-                    )
+                    return FlextUtilities.chk(actual_len, m.GuardCheckSpec(eq=spec))
                 min_len, max_len = spec
                 return FlextUtilities.chk(
                     actual_len,
-                    core_m.GuardCheckSpec(gte=min_len, lte=max_len),
+                    m.GuardCheckSpec(gte=min_len, lte=max_len),
                 )
 
 
-u = FlextTestsUtilities
+FlextUtilities = FlextTestsUtilities
 __all__ = ["FlextTestsUtilities", "u"]
