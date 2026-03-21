@@ -268,10 +268,24 @@ def _value_factory_for[T: BaseModel](
 
 
 class _EntityFactory[TEntity](Protocol):
+    """Factory protocol that builds test entity objects.
+
+    Methods:
+        __call__: build an entity instance given name/value.
+
+    """
+
     def __call__(self, *, name: str, value: t.Tests.Testobject) -> TEntity: ...
 
 
 class _ValueFactory[TValue](Protocol):
+    """Factory protocol that builds value objects for test helpers.
+
+    Methods:
+        __call__: build a typed value instance given data and count.
+
+    """
+
     def __call__(self, *, data: str, count: int) -> TValue: ...
 
 

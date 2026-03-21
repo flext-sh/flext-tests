@@ -367,7 +367,11 @@ def _check_has_lacks(
 
 
 class FlextTestsMatchersUtilities:
+    """Namespace for test matcher utilities used in flext-tests."""
+
     class Tests:
+        """Container for test utility storages and aliases."""
+
         class Matchers:
             """Test matchers with powerful generalist methods.
 
@@ -429,7 +433,15 @@ class FlextTestsMatchersUtilities:
 
             @staticmethod
             def check[TResult](result: r[TResult]) -> m.Tests.Chain[TResult]:
-                """Start chained assertions on result (railway pattern)."""
+                """Start chained assertions on result (railway pattern).
+
+                Args:
+                    result: Railway result to chain assertions on.
+
+                Returns:
+                    Chain object for fluent assertion API.
+
+                """
                 return m.Tests.Chain[TResult](result=result)
 
             @staticmethod
@@ -602,8 +614,19 @@ class FlextTestsMatchersUtilities:
             ) -> TResult | t.Tests.Testobject:
                 """Enhanced assertion for r success with optional value validation.
 
-                Uses Pydantic 2 models for parameter validation and computation.
-                All parameters are validated via m.Tests.OkParams model.
+                Args:
+                    result: Railway result expected to be success.
+                    **kwargs: Validation criteria, validated by m.Tests.OkParams.
+
+                Returns:
+                    Unwrapped result value on success.
+
+                Raises:
+                    AssertionError: If result is failure or validation fails.
+
+                Notes:
+                    Uses Pydantic 2 models for parameter validation and computation.
+                    All parameters are validated via m.Tests.OkParams model.
 
                 Examples:
                     # Basic success assertions
