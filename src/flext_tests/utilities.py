@@ -29,21 +29,19 @@ from re import Pattern
 from typing import Protocol, TypeIs, override
 
 from flext_core import (
+    FlextContext,
     FlextRegistry,
     FlextSettings,
     FlextUtilities,
     m as core_m,
     r,
 )
-from flext_core.constants import FlextTestsConstants as c
-from flext_core.context import FlextContext
-from flext_core.models import FlextTestsModels as m
-from flext_core.protocols import FlextTestsProtocols as p
-from flext_core.typings import FlextTestsTypes as t
 from pydantic import BaseModel, ConfigDict, RootModel, TypeAdapter, ValidationError
 
-from flext_tests._utilities.files import FlextTestsFilesUtilities
-from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
+from flext_tests.constants import FlextTestsConstants as c
+from flext_tests.models import FlextTestsModels as m
+from flext_tests.protocols import FlextTestsProtocols as p
+from flext_tests.typings import FlextTestsTypes as t
 
 _ARBTYPES = ConfigDict(arbitrary_types_allowed=True)
 _PAYLOAD_MAPPING_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject], config=_ARBTYPES)
@@ -255,7 +253,7 @@ def _merge_test_dicts(
     DRY helper: consolidates the repeated pattern of
     ``u.merge(to_normalized_dict(...), to_normalized_dict(...))``.
     """
-    from flext_core import u as _u  # noqa: PLC0415
+    from flext_tests import u as _u  # noqa: PLC0415
 
     mr = _u.merge(
         {k: _to_normalized_value(v) for k, v in base.items()},
@@ -304,11 +302,7 @@ class _ValueFactory[TValue](Protocol):
     def __call__(self, *, data: str, count: int) -> TValue: ...
 
 
-class FlextTestsUtilities(
-    FlextTestsMatchersUtilities,
-    FlextTestsFilesUtilities,
-    FlextUtilities,
-):
+class FlextTestsUtilities(FlextUtilities):
     """Test utilities for FLEXT ecosystem - extends FlextUtilities.
 
     Provides essential test helpers that complement FlextUtilities.
@@ -349,11 +343,7 @@ class FlextTestsUtilities(
                     return r[bool].fail(str(e))
             return r[bool].ok(value=True)
 
-    class Tests(
-        FlextTestsMatchersUtilities.Tests,
-        FlextTestsFilesUtilities.Tests,
-        getattr(FlextUtilities, "Tests", object),
-    ):
+    class Tests:
         """Test-specific utilities namespace.
 
         All test utilities organized under u.Tests.* pattern.

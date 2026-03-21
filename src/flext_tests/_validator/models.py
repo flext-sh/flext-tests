@@ -13,9 +13,10 @@ from pathlib import Path
 from typing import Annotated
 
 from flext_core import r
-from flext_core.constants import c
-from flext_core.models import m
 from pydantic import Field
+
+from flext_tests import c
+from flext_tests.models import m
 
 
 class FlextValidatorModels(m):

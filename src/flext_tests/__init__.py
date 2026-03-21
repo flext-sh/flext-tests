@@ -28,9 +28,6 @@ if TYPE_CHECKING:
     from flext_core.typings import FlextTypes
 
     from flext_tests import _utilities, _validator
-    from flext_tests._utilities.docker import FlextTestsDockerUtilities, tk
-    from flext_tests._utilities.files import FlextTestsFilesUtilities
-    from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
     from flext_tests._validator.bypass import FlextValidatorBypass
     from flext_tests._validator.imports import FlextValidatorImports
     from flext_tests._validator.layer import FlextValidatorLayer
@@ -39,7 +36,10 @@ if TYPE_CHECKING:
     from flext_tests._validator.tests import FlextValidatorTests
     from flext_tests._validator.types import FlextValidatorTypes
     from flext_tests.constants import FlextTestsConstants, FlextTestsConstants as c
+    from flext_tests.docker import FlextTestsDocker, tk
     from flext_tests.domains import FlextTestsDomains, td
+    from flext_tests.files import FlextTestsFiles, tf
+    from flext_tests.matchers import FlextTestsMatchersUtilities, tm
     from flext_tests.models import FlextTestsModels, FlextTestsModels as m
     from flext_tests.protocols import FlextTestsProtocols, FlextTestsProtocols as p
     from flext_tests.typings import FlextTestsTypes, FlextTestsTypes as t
@@ -48,17 +48,11 @@ if TYPE_CHECKING:
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "FlextTestsConstants": ("flext_tests.constants", "FlextTestsConstants"),
-    "FlextTestsDockerUtilities": (
-        "flext_tests._utilities.docker",
-        "FlextTestsDockerUtilities",
-    ),
+    "FlextTestsDocker": ("flext_tests.docker", "FlextTestsDocker"),
     "FlextTestsDomains": ("flext_tests.domains", "FlextTestsDomains"),
-    "FlextTestsFilesUtilities": (
-        "flext_tests._utilities.files",
-        "FlextTestsFilesUtilities",
-    ),
+    "FlextTestsFiles": ("flext_tests.files", "FlextTestsFiles"),
     "FlextTestsMatchersUtilities": (
-        "flext_tests._utilities.matchers",
+        "flext_tests.matchers",
         "FlextTestsMatchersUtilities",
     ),
     "FlextTestsModels": ("flext_tests.models", "FlextTestsModels"),
@@ -91,7 +85,9 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "s": ("flext_core", "s"),
     "t": ("flext_tests.typings", "FlextTestsTypes"),
     "td": ("flext_tests.domains", "td"),
-    "tk": ("flext_tests._utilities.docker", "tk"),
+    "tf": ("flext_tests.files", "tf"),
+    "tk": ("flext_tests.docker", "tk"),
+    "tm": ("flext_tests.matchers", "tm"),
     "tv": ("flext_tests.validator", "tv"),
     "u": ("flext_tests.utilities", "FlextTestsUtilities"),
     "vm": ("flext_tests._validator.models", "vm"),
@@ -100,9 +96,9 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
 
 __all__ = [
     "FlextTestsConstants",
-    "FlextTestsDockerUtilities",
+    "FlextTestsDocker",
     "FlextTestsDomains",
-    "FlextTestsFilesUtilities",
+    "FlextTestsFiles",
     "FlextTestsMatchersUtilities",
     "FlextTestsModels",
     "FlextTestsProtocols",
@@ -128,7 +124,9 @@ __all__ = [
     "s",
     "t",
     "td",
+    "tf",
     "tk",
+    "tm",
     "tv",
     "u",
     "vm",

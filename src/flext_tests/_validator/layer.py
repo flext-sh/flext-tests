@@ -13,9 +13,10 @@ from collections.abc import Mapping
 from pathlib import Path
 
 from flext_core import r
-from flext_core.constants import c
-from flext_core.models import m
-from flext_core.utilities import u
+
+from flext_tests import c
+from flext_tests.models import m
+from flext_tests.utilities import u
 
 
 class FlextValidatorLayer:
