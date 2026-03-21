@@ -169,10 +169,9 @@ class FlextTestsModels(
             content: t.Tests.Testobject
             """File content to create."""
             name: Annotated[
-                str,
+                t.NonEmptyStr,
                 Field(
                     default=c.Tests.Files.DEFAULT_FILENAME,
-                    min_length=1,
                     description="Filename for the created file (non-empty).",
                 ),
             ]
@@ -191,18 +190,16 @@ class FlextTestsModels(
                 ),
             ]
             enc: Annotated[
-                str,
+                t.NonEmptyStr,
                 Field(
                     default=c.Tests.Files.DEFAULT_ENCODING,
-                    min_length=1,
                     description="File encoding.",
                 ),
             ]
             indent: Annotated[
-                int,
+                t.NonNegativeInt,
                 Field(
                     default=c.Tests.Files.DEFAULT_JSON_INDENT,
-                    ge=0,
                     description="JSON/YAML indentation (non-negative).",
                 ),
             ]
@@ -210,8 +207,6 @@ class FlextTestsModels(
                 str,
                 Field(
                     default=c.Tests.Files.DEFAULT_CSV_DELIMITER,
-                    min_length=1,
-                    max_length=1,
                     description="CSV delimiter (single character).",
                 ),
             ]
@@ -269,10 +264,9 @@ class FlextTestsModels(
                 ),
             ]
             enc: Annotated[
-                str,
+                t.NonEmptyStr,
                 Field(
                     default=c.Tests.Files.DEFAULT_ENCODING,
-                    min_length=1,
                     description="File encoding.",
                 ),
             ]
@@ -435,18 +429,16 @@ class FlextTestsModels(
                 ),
             ]
             enc: Annotated[
-                str,
+                t.NonEmptyStr,
                 Field(
                     default=c.Tests.Files.DEFAULT_ENCODING,
-                    min_length=1,
                     description="File encoding.",
                 ),
             ]
             indent: Annotated[
-                int,
+                t.NonNegativeInt,
                 Field(
                     default=c.Tests.Files.DEFAULT_JSON_INDENT,
-                    ge=0,
                     description="JSON indentation level.",
                 ),
             ]
@@ -530,10 +522,12 @@ class FlextTestsModels(
                 ),
             ]
             failed: Annotated[
-                int,
-                Field(ge=0, description="Number of failed operations"),
+                t.NonNegativeInt,
+                Field(description="Number of failed operations"),
             ]
-            total: Annotated[int, Field(ge=0, description="Total number of operations")]
+            total: Annotated[
+                t.NonNegativeInt, Field(description="Total number of operations")
+            ]
             results: Annotated[
                 Mapping[str, r[Path | t.Tests.Testobject]],
                 Field(
