@@ -91,7 +91,7 @@ class FlextTestsModels(
             last_updated: str | None = None
 
         class User(FlextModels.Value):
-            """Test user model - immutable value object."""
+            """Test user model - immutable value t.NormalizedValue."""
 
             id: str
             name: str
@@ -99,7 +99,7 @@ class FlextTestsModels(
             active: bool = True
 
         class Config(FlextModels.Value):
-            """Test configuration model - immutable value object."""
+            """Test configuration model - immutable value t.NormalizedValue."""
 
             service_type: str = "api"
             environment: str = "test"
@@ -109,7 +109,7 @@ class FlextTestsModels(
             max_retries: int = 3
 
         class Service(FlextModels.Value):
-            """Test service model - immutable value object."""
+            """Test service model - immutable value t.NormalizedValue."""
 
             id: str
             type: str = "api"
@@ -123,7 +123,7 @@ class FlextTestsModels(
             value: t.Tests.Testobject = None
 
         class Value(FlextModels.Value):
-            """Factory value object class for tests."""
+            """Factory value t.NormalizedValue class for tests."""
 
             data: str = ""
             count: int = 0
@@ -616,7 +616,7 @@ class FlextTestsModels(
         class OkParams(FlextModels.Value):
             """Matcher parameters for successful result assertions."""
 
-            model_config = ConfigDict(populate_by_name=True)
+            model_config: ClassVar[ConfigDict] = ConfigDict(populate_by_name=True)
 
             eq: Annotated[
                 (
@@ -730,7 +730,7 @@ class FlextTestsModels(
         class FailParams(FlextModels.Value):
             """Matcher parameters for failure result assertions."""
 
-            model_config = ConfigDict(populate_by_name=True)
+            model_config: ClassVar[ConfigDict] = ConfigDict(populate_by_name=True)
 
             msg: Annotated[
                 str | None,
@@ -780,7 +780,7 @@ class FlextTestsModels(
         class ThatParams(FlextModels.Value):
             """Generic matcher parameters for value assertions."""
 
-            model_config = ConfigDict(populate_by_name=True)
+            model_config: ClassVar[ConfigDict] = ConfigDict(populate_by_name=True)
 
             msg: Annotated[
                 str | None,
@@ -992,7 +992,7 @@ class FlextTestsModels(
         class ScopeParams(FlextModels.Value):
             """Parameters for temporary test scope configuration."""
 
-            model_config = ConfigDict(populate_by_name=True)
+            model_config: ClassVar[ConfigDict] = ConfigDict(populate_by_name=True)
 
             config: Annotated[
                 Mapping[str, t.Tests.Testobject] | None,

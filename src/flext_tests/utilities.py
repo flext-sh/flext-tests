@@ -78,7 +78,7 @@ def _to_scalar(
 
 
 def _coerce_to_test_object(raw: t.Tests.Testobject) -> t.Tests.Testobject:
-    """Coerce an arbitrary object to t.Tests.Testobject."""
+    """Coerce an arbitrary t.NormalizedValue to t.Tests.Testobject."""
     if isinstance(raw, (str, int, float, bool, bytes, BaseModel)):
         return raw
     if raw is None:
@@ -89,7 +89,7 @@ def _coerce_to_test_object(raw: t.Tests.Testobject) -> t.Tests.Testobject:
 def _is_flext_result(
     val: r[BaseModel] | BaseModel | t.Tests.Testobject,
 ) -> TypeIs[r[BaseModel]]:
-    """TypeGuard: narrow any object to r[BaseModel]."""
+    """TypeGuard: narrow any t.NormalizedValue to r[BaseModel]."""
     return isinstance(val, r)
 
 
@@ -220,7 +220,7 @@ class FlextTestsUtilities(FlextUtilities):
 
         @staticmethod
         def to_payload(value: t.Tests.Testobject) -> t.Tests.Testobject:
-            """Convert a value to test payload object.
+            """Convert a value to test payload t.NormalizedValue.
 
             Delegates to module-level _to_payload for recursive conversion.
             """
@@ -246,7 +246,7 @@ class FlextTestsUtilities(FlextUtilities):
 
         @staticmethod
         def coerce_to_test_object(raw: t.Tests.Testobject) -> t.Tests.Testobject:
-            """Coerce an arbitrary object to t.Tests.Testobject.
+            """Coerce an arbitrary t.NormalizedValue to t.Tests.Testobject.
 
             Delegates to module-level _coerce_to_test_object.
             """
@@ -256,7 +256,7 @@ class FlextTestsUtilities(FlextUtilities):
         def is_flext_result(
             val: r[BaseModel] | BaseModel | t.Tests.Testobject,
         ) -> TypeIs[r[BaseModel]]:
-            """TypeGuard: narrow any object to r[BaseModel].
+            """TypeGuard: narrow any t.NormalizedValue to r[BaseModel].
 
             Delegates to module-level _is_flext_result.
             """
@@ -474,7 +474,7 @@ class FlextTestsUtilities(FlextUtilities):
                 attribute: str,
                 value: t.Tests.Testobject,
             ) -> Generator[None]:
-                """Temporarily set attribute on target object.
+                """Temporarily set attribute on target t.NormalizedValue.
 
                 Args:
                     target: Object to modify
@@ -875,7 +875,7 @@ class FlextTestsUtilities(FlextUtilities):
                 """Validate model has required attributes.
 
                 Args:
-                    model: Model object to validate
+                    model: Model t.NormalizedValue to validate
                     required_attrs: List of required attribute names
                     optional_attrs: Optional list of optional attribute names
 
@@ -1321,15 +1321,15 @@ class FlextTestsUtilities(FlextUtilities):
                 count: int,
                 value_class: _ValueFactory[TValue],
             ) -> TValue:
-                """Create a test value object instance.
+                """Create a test value t.NormalizedValue instance.
 
                 Args:
                     data: Data field value
                     count: Count field value
-                    value_class: Value object class or factory callable
+                    value_class: Value t.NormalizedValue class or factory callable
 
                 Returns:
-                    TValue: Created value object instance
+                    TValue: Created value t.NormalizedValue instance
 
                 """
                 return value_class(data=data, count=count)
@@ -1345,7 +1345,7 @@ class FlextTestsUtilities(FlextUtilities):
                 Args:
                     data_list: List of data values
                     count_list: List of count values
-                    value_class: Value object class to instantiate
+                    value_class: Value t.NormalizedValue class to instantiate
 
                 Returns:
                     r[TEntity]: Result containing created entity or error
@@ -1408,14 +1408,14 @@ class FlextTestsUtilities(FlextUtilities):
             def create_metadata_object(
                 attributes: Mapping[str, t.Tests.TestobjectSerializable],
             ) -> MutableMapping[str, t.Tests.Testobject]:
-                """Create a metadata object for exceptions.
+                """Create a metadata t.NormalizedValue for exceptions.
 
                 Args:
                     attributes: Metadata attributes
 
                 Returns:
                     r[TEntity]: Result containing created entity or error
-                    Metadata object with attributes as dict
+                    Metadata t.NormalizedValue with attributes as dict
 
                 """
                 return {"attributes": attributes, **attributes}
@@ -1433,7 +1433,7 @@ class FlextTestsUtilities(FlextUtilities):
                 )
 
             class BadConfig:
-                """Config object that raises on attribute access."""
+                """Config t.NormalizedValue that raises on attribute access."""
 
                 @override
                 def __getattribute__(self, name: str) -> t.Tests.Testobject:
@@ -1445,7 +1445,7 @@ class FlextTestsUtilities(FlextUtilities):
                     raise AttributeError(msg)
 
             class BadConfigTypeError:
-                """Config object that raises TypeError on attribute access."""
+                """Config t.NormalizedValue that raises TypeError on attribute access."""
 
                 @override
                 def __getattribute__(self, name: str) -> t.Tests.Testobject:
@@ -1948,7 +1948,7 @@ class FlextTestsUtilities(FlextUtilities):
                 *,
                 path_sep: str = ".",
             ) -> m.Tests.DeepMatchResult:
-                """Match object against deep specification.
+                """Match t.NormalizedValue against deep specification.
 
                 Uses FlextUtilities.extract() for path extraction - NO code duplication.
                 Supports unlimited nesting depth via dot notation paths.
@@ -1984,7 +1984,7 @@ class FlextTestsUtilities(FlextUtilities):
             - Zero code duplication - delegates to flext-core utilities
             - Uses t.Tests.Matcher.LengthSpec for type safety
             - Supports exact length or range validation
-            - Works with any object that has __len__
+            - Works with any t.NormalizedValue that has __len__
 
             All operations delegate to FlextUtilities.chk() for validation,
             ensuring consistency with flext-core patterns.

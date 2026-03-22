@@ -87,7 +87,7 @@ def _is_non_string_sequence(
 
 
 def _is_matcher_input(
-    value: object,
+    value: t.NormalizedValue,
 ) -> TypeIs[t.Tests.Testobject]:
     if value is None:
         return True
@@ -221,7 +221,7 @@ def _as_guard_input(
 
 
 def _to_chk_value(
-    value: object,
+    value: t.NormalizedValue,
 ) -> t.NormalizedValue:
     """Convert a test value to NormalizedValue for use with u.chk()."""
     if value is None:
@@ -438,7 +438,7 @@ class FlextTestsMatchersUtilities:
                     result: Railway result to chain assertions on.
 
                 Returns:
-                    Chain object for fluent assertion API.
+                    Chain t.NormalizedValue for fluent assertion API.
 
                 """
                 return m.Tests.Chain[TResult](result=result)

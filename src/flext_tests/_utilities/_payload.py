@@ -40,7 +40,7 @@ def to_payload(
         value: value to convert
 
     Returns:
-        object suitable for test assertions
+        t.NormalizedValue suitable for test assertions
 
     """
     if isinstance(value, RootModel):
@@ -157,7 +157,7 @@ def deep_match(
     *,
     path_sep: str = ".",
 ) -> m.Tests.DeepMatchResult:
-    """Match object against deep specification.
+    """Match t.NormalizedValue against deep specification.
 
     Uses FlextUtilities.extract() for path extraction.
     Supports unlimited nesting depth via dot notation paths.

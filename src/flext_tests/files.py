@@ -1465,7 +1465,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
 
     def _mapping_to_payload(
         self,
-        mapping: Mapping[str, object],
+        mapping: Mapping[str, t.NormalizedValue],
     ) -> Mapping[str, t.Tests.Testobject]:
         normalized_mapping: Mapping[str, t.Tests.Testobject] = (
             _OBJECT_DICT_ADAPTER.validate_python(mapping)
