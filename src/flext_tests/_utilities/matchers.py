@@ -61,17 +61,16 @@ from datetime import datetime
 from pathlib import Path
 from typing import TypeIs, overload
 
-from flext_core import m as core_m, r, t as core_t
-from flext_core._utilities.guards import FlextUtilitiesGuards
+from flext_core import FlextUtilities as u, m as core_m, r, t as core_t
 from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
 
+from flext_tests._utilities._payload import (
+    deep_match as _deep_match,
+    length_validate as _length_validate,
+)
 from flext_tests.constants import FlextTestsConstants as c
 from flext_tests.models import FlextTestsModels as m
 from flext_tests.typings import FlextTestsTypes as t
-from flext_tests.utilities import FlextTestsUtilities as u
-
-_length_validate = u.Tests.Length.validate
-_deep_match = u.Tests.DeepMatch.match
 
 _TEST_PAYLOAD_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.TestobjectSerializable])
 _TEST_PAYLOAD_LIST_ADAPTER = TypeAdapter(list[t.Tests.TestobjectSerializable])
@@ -88,7 +87,7 @@ def _is_non_string_sequence(
 
 
 def _is_matcher_input(
-    value: t.Tests.Testobject,
+    value: object,
 ) -> TypeIs[t.Tests.Testobject]:
     if value is None:
         return True
@@ -222,7 +221,7 @@ def _as_guard_input(
 
 
 def _to_chk_value(
-    value: t.Tests.Testobject,
+    value: object,
 ) -> t.NormalizedValue:
     """Convert a test value to NormalizedValue for use with u.chk()."""
     if value is None:
@@ -1038,16 +1037,16 @@ class FlextTestsMatchersUtilities:
                     ValueError: If parameter validation fails (via Pydantic model)
 
                 """
-                raw_eq: t.Tests.Testobject | None = (
+                raw_eq: t.Tests.Matcher.MatcherKwargValue | None = (
                     kwargs.get("eq") if "eq" in kwargs else None
                 )
-                raw_ne: t.Tests.Testobject | None = (
+                raw_ne: t.Tests.Matcher.MatcherKwargValue | None = (
                     kwargs.get("ne") if "ne" in kwargs else None
                 )
-                raw_has: t.NormalizedValue | None = (
+                raw_has: t.Tests.Matcher.MatcherKwargValue | None = (
                     kwargs.get("has") if "has" in kwargs else None
                 )
-                raw_contains: t.Tests.Testobject | None = (
+                raw_contains: t.Tests.Matcher.MatcherKwargValue | None = (
                     kwargs.get("contains") if "contains" in kwargs else None
                 )
                 try:
@@ -1073,9 +1072,7 @@ class FlextTestsMatchersUtilities:
                             f"Parameter validation failed: {filtered_exc}",
                         ) from filtered_exc
                 subject = value
-                if isinstance(
-                    subject, BaseModel
-                ) and FlextUtilitiesGuards.is_result_like(
+                if isinstance(subject, BaseModel) and u.is_result_like(
                     subject,
                 ):
                     result_obj = subject
