@@ -130,7 +130,7 @@ def _yaml_dump(value: dict[str, t.Tests.Testobject], *, indent: int) -> str:
     )
 
 
-def _is_batch_content(content_raw: object) -> TypeIs[t.Tests.Testobject]:
+def _is_batch_content(content_raw: t.Tests.Testobject) -> TypeIs[t.Tests.Testobject]:
     try:
         _ = m.Tests.CreateParams.model_validate({
             "content": content_raw,
@@ -1628,7 +1628,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             ]
         return str(value)
 
-    def _to_payload_value(self, value: object) -> t.Tests.Testobject:
+    def _to_payload_value(self, value: t.Tests.Testobject) -> t.Tests.Testobject:
         if value is None:
             return None
         if isinstance(value, str):
