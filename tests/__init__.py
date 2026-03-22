@@ -15,11 +15,11 @@ if TYPE_CHECKING:
     from flext_tests import d, e, h, r, s, x
 
     from .conftest import td, tf, tk, tm, tt
-    from .constants import TestsFlextTestsConstants, TestsFlextTestsConstants as c
-    from .models import TestsFlextTestsModels, TestsFlextTestsModels as m
-    from .protocols import TestsFlextTestsProtocols, TestsFlextTestsProtocols as p
+    from .constants import FlextTestsTestConstants, FlextTestsTestConstants as c
+    from .models import FlextTestsTestModels, FlextTestsTestModels as m
+    from .protocols import FlextTestsTestProtocols, FlextTestsTestProtocols as p
     from .test_utils import AssertionHelpers, T, assertion_helpers
-    from .typings import TestsFlextTestsTypes, TestsFlextTestsTypes as t
+    from .typings import FlextTestsTestTypes, FlextTestsTestTypes as t
     from .unit.flext_tests.test_docker import (
         TestContainerInfo,
         TestContainerStatus,
@@ -46,10 +46,15 @@ if TYPE_CHECKING:
         TestFlextTestsUtilitiesResultCompat,
         TestFlextTestsUtilitiesTestContext,
     )
-    from .utilities import TestsFlextTestsUtilities, TestsFlextTestsUtilities as u
+    from .utilities import FlextTestsTestUtilities, FlextTestsTestUtilities as u
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "AssertionHelpers": ("tests.test_utils", "AssertionHelpers"),
+    "FlextTestsTestConstants": ("tests.constants", "FlextTestsTestConstants"),
+    "FlextTestsTestModels": ("tests.models", "FlextTestsTestModels"),
+    "FlextTestsTestProtocols": ("tests.protocols", "FlextTestsTestProtocols"),
+    "FlextTestsTestTypes": ("tests.typings", "FlextTestsTestTypes"),
+    "FlextTestsTestUtilities": ("tests.utilities", "FlextTestsTestUtilities"),
     "T": ("tests.test_utils", "T"),
     "TestAssertExists": ("tests.unit.flext_tests.test_files", "TestAssertExists"),
     "TestBatchOperations": ("tests.unit.flext_tests.test_files", "TestBatchOperations"),
@@ -110,32 +115,32 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
         "TestInfoWithContentMeta",
     ),
     "TestShortAlias": ("tests.unit.flext_tests.test_files", "TestShortAlias"),
-    "TestsFlextTestsConstants": ("tests.constants", "TestsFlextTestsConstants"),
-    "TestsFlextTestsModels": ("tests.models", "TestsFlextTestsModels"),
-    "TestsFlextTestsProtocols": ("tests.protocols", "TestsFlextTestsProtocols"),
-    "TestsFlextTestsTypes": ("tests.typings", "TestsFlextTestsTypes"),
-    "TestsFlextTestsUtilities": ("tests.utilities", "TestsFlextTestsUtilities"),
     "assertion_helpers": ("tests.test_utils", "assertion_helpers"),
-    "c": ("tests.constants", "TestsFlextTestsConstants"),
+    "c": ("tests.constants", "FlextTestsTestConstants"),
     "d": ("flext_tests", "d"),
     "e": ("flext_tests", "e"),
     "h": ("flext_tests", "h"),
-    "m": ("tests.models", "TestsFlextTestsModels"),
-    "p": ("tests.protocols", "TestsFlextTestsProtocols"),
+    "m": ("tests.models", "FlextTestsTestModels"),
+    "p": ("tests.protocols", "FlextTestsTestProtocols"),
     "r": ("flext_tests", "r"),
     "s": ("flext_tests", "s"),
-    "t": ("tests.typings", "TestsFlextTestsTypes"),
+    "t": ("tests.typings", "FlextTestsTestTypes"),
     "td": ("tests.conftest", "td"),
     "tf": ("tests.conftest", "tf"),
     "tk": ("tests.conftest", "tk"),
     "tm": ("tests.conftest", "tm"),
     "tt": ("tests.conftest", "tt"),
-    "u": ("tests.utilities", "TestsFlextTestsUtilities"),
+    "u": ("tests.utilities", "FlextTestsTestUtilities"),
     "x": ("flext_tests", "x"),
 }
 
 __all__ = [
     "AssertionHelpers",
+    "FlextTestsTestConstants",
+    "FlextTestsTestModels",
+    "FlextTestsTestProtocols",
+    "FlextTestsTestTypes",
+    "FlextTestsTestUtilities",
     "T",
     "TestAssertExists",
     "TestBatchOperations",
@@ -157,11 +162,6 @@ __all__ = [
     "TestFlextTestsUtilitiesTestContext",
     "TestInfoWithContentMeta",
     "TestShortAlias",
-    "TestsFlextTestsConstants",
-    "TestsFlextTestsModels",
-    "TestsFlextTestsProtocols",
-    "TestsFlextTestsTypes",
-    "TestsFlextTestsUtilities",
     "assertion_helpers",
     "c",
     "d",
