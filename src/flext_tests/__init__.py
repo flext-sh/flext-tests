@@ -28,6 +28,13 @@ if TYPE_CHECKING:
     from flext_core.typings import FlextTypes
 
     from flext_tests import _utilities, _validator
+    from flext_tests._utilities._payload import (
+        deep_match,
+        length_validate,
+        to_config_map_value,
+        to_normalized_value,
+        to_payload,
+    )
     from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
     from flext_tests._validator.bypass import FlextValidatorBypass
     from flext_tests._validator.imports import FlextValidatorImports
@@ -84,8 +91,10 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "_validator": ("flext_tests._validator", ""),
     "c": ("flext_tests.constants", "FlextTestsConstants"),
     "d": ("flext_core", "d"),
+    "deep_match": ("flext_tests._utilities._payload", "deep_match"),
     "e": ("flext_core", "e"),
     "h": ("flext_core", "h"),
+    "length_validate": ("flext_tests._utilities._payload", "length_validate"),
     "m": ("flext_tests.models", "FlextTestsModels"),
     "p": ("flext_tests.protocols", "FlextTestsProtocols"),
     "r": ("flext_core", "r"),
@@ -95,6 +104,9 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "tf": ("flext_tests.files", "tf"),
     "tk": ("flext_tests.docker", "tk"),
     "tm": ("flext_tests._utilities.matchers", "tm"),
+    "to_config_map_value": ("flext_tests._utilities._payload", "to_config_map_value"),
+    "to_normalized_value": ("flext_tests._utilities._payload", "to_normalized_value"),
+    "to_payload": ("flext_tests._utilities._payload", "to_payload"),
     "tv": ("flext_tests.validator", "tv"),
     "u": ("flext_tests.utilities", "FlextTestsUtilities"),
     "vm": ("flext_tests._validator.models", "vm"),
@@ -125,8 +137,10 @@ __all__ = [
     "_validator",
     "c",
     "d",
+    "deep_match",
     "e",
     "h",
+    "length_validate",
     "m",
     "p",
     "r",
@@ -136,6 +150,9 @@ __all__ = [
     "tf",
     "tk",
     "tm",
+    "to_config_map_value",
+    "to_normalized_value",
+    "to_payload",
     "tv",
     "u",
     "vm",

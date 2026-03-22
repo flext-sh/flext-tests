@@ -18,6 +18,8 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import contextlib
+import socket
+import time
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import ClassVar
@@ -315,6 +317,28 @@ class FlextTestsDocker:
         if result.is_failure:
             return r[str].fail(f"Stack start failed: {result.error}")
         return r[str].ok("Stack started successfully")
+
+    def wait_for_port_ready(
+        self,
+        host: str,
+        port: int,
+        max_wait: int = 30,
+    ) -> r[bool]:
+        """Wait until a TCP port is accepting connections.
+
+        Returns ok(True) if the port becomes ready within the timeout,
+        ok(False) if the timeout expires without the port becoming ready.
+        Only returns failure for unexpected errors.
+        """
+        waited = 0.0
+        while waited < max_wait:
+            try:
+                with socket.create_connection((host, port), timeout=1):
+                    return r[bool].ok(value=True)
+            except (ConnectionRefusedError, TimeoutError, OSError):
+                time.sleep(0.5)
+                waited += 0.5
+        return r[bool].ok(value=False)
 
     def _load_dirty_state(self) -> None:
         """Load dirty container state from persistent storage."""
