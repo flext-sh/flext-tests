@@ -53,7 +53,7 @@ class FlextTestsDocker:
     class ContainerInfo(m.Tests.ContainerInfo):
         """Container information model for tests - real inheritance from m."""
 
-    SHARED_CONTAINERS: ClassVar[Mapping[str, m.ConfigMap]] = (
+    SHARED_CONTAINERS: ClassVar[Mapping[str, Mapping[str, str | int]]] = (
         c.Tests.Docker.SHARED_CONTAINERS
     )
 
@@ -113,7 +113,7 @@ class FlextTestsDocker:
         _ = self.get_client()
 
     @property
-    def shared_containers(self) -> Mapping[str, m.ConfigMap]:
+    def shared_containers(self) -> Mapping[str, Mapping[str, str | int]]:
         """Get shared container configurations."""
         return c.Tests.Docker.SHARED_CONTAINERS
 

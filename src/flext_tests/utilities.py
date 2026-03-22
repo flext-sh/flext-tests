@@ -26,7 +26,7 @@ from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from re import Pattern
-from typing import Protocol, TypeIs, override
+from typing import TypeIs, override
 
 from flext_core import (
     FlextContext,
@@ -38,6 +38,7 @@ from flext_core import (
 from pydantic import BaseModel, ConfigDict, RootModel, TypeAdapter, ValidationError
 
 from flext_tests import c, m, p, t
+from flext_tests.protocols import _EntityFactory, _ValueFactory
 
 _ARBTYPES = ConfigDict(arbitrary_types_allowed=True)
 _PAYLOAD_MAPPING_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject], config=_ARBTYPES)
@@ -259,28 +260,6 @@ def _value_factory_for[T: BaseModel](
         return cls.model_validate({"data": data, "count": count})
 
     return _factory
-
-
-class _EntityFactory[TEntity](Protocol):
-    """Factory protocol that builds test entity objects.
-
-    Methods:
-        __call__: build an entity instance given name/value.
-
-    """
-
-    def __call__(self, *, name: str, value: t.Tests.Testobject) -> TEntity: ...
-
-
-class _ValueFactory[TValue](Protocol):
-    """Factory protocol that builds value objects for test helpers.
-
-    Methods:
-        __call__: build a typed value instance given data and count.
-
-    """
-
-    def __call__(self, *, data: str, count: int) -> TValue: ...
 
 
 class FlextTestsUtilities(FlextUtilities):
@@ -2230,4 +2209,6 @@ class FlextTestsUtilities(FlextUtilities):
 
 
 FlextUtilities = FlextTestsUtilities
+u = FlextTestsUtilities
+
 __all__ = ["FlextTestsUtilities", "u"]

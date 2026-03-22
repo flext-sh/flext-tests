@@ -9,7 +9,40 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import Protocol, TypeVar
+
 from flext_core import FlextProtocols
+
+from flext_tests.typings import t
+
+TEntity = TypeVar("TEntity")
+TValue = TypeVar("TValue")
+
+
+class _EntityFactory[TEntity](Protocol):
+    """Factory protocol that builds test entity objects.
+
+    Methods:
+        __call__: build an entity instance given name/value.
+
+    """
+
+    def __call__(self, *, name: str, value: t.Tests.Testobject) -> TEntity:
+        """Build an entity instance."""
+        ...
+
+
+class _ValueFactory[TValue](Protocol):
+    """Factory protocol that builds value objects for test helpers.
+
+    Methods:
+        __call__: build a typed value instance given data and count.
+
+    """
+
+    def __call__(self, *, data: str, count: int) -> TValue:
+        """Build a typed value instance."""
+        ...
 
 
 class FlextTestsProtocols(FlextProtocols):
@@ -29,4 +62,4 @@ class FlextTestsProtocols(FlextProtocols):
 
 
 p = FlextTestsProtocols
-__all__ = ["FlextTestsProtocols", "p"]
+__all__ = ["FlextTestsProtocols", "_EntityFactory", "_ValueFactory", "p"]

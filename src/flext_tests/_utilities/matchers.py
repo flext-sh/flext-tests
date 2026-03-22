@@ -647,28 +647,19 @@ class FlextTestsMatchersUtilities:
                     # Custom validation
                     tm.ok(result, where=lambda x: x.status == "active")
 
-                Args:
-                    result: r to validate
-                    **kwargs: Parameters validated via m.Tests.OkParams model
-                        - eq, ne: Equality/inequality check
-                        - is_: Runtime type check against single type or tuple
-                        - none, empty: Nullability checks
-                        - gt, gte, lt, lte: Comparison checks (numeric or length)
-                        - has, lacks: Unified containment (replaces contains)
-                        - starts, ends, match: String assertions
-                        - len: Length spec - exact int or (min, max) tuple
-                        - deep: Deep structural matching specification
-                        - path: Extract nested value via dot notation before validation
-                        - where: Custom predicate function for validation
-                        - msg: Custom error message
-                        - contains, starts, ends: Legacy parameters (deprecated)
-
-                Returns:
-                    Unwrapped value from result
-
-                Raises:
-                    AssertionError: If result is failure or value doesn't satisfy constraints
-                    ValueError: If parameter validation fails (via Pydantic model)
+                    Parameters validated via m.Tests.OkParams model:
+                    - eq, ne: Equality/inequality check
+                    - is_: Runtime type check against single type or tuple
+                    - none, empty: Nullability checks
+                    - gt, gte, lt, lte: Comparison checks (numeric or length)
+                    - has, lacks: Unified containment (replaces contains)
+                    - starts, ends, match: String assertions
+                    - len: Length spec - exact int or (min, max) tuple
+                    - deep: Deep structural matching specification
+                    - path: Extract nested value via dot notation before validation
+                    - where: Custom predicate function for validation
+                    - msg: Custom error message
+                    - contains, starts, ends: Legacy parameters (deprecated)
 
                 """
                 try:

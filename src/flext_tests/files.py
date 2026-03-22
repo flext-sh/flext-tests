@@ -26,9 +26,9 @@ from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 from types import TracebackType
-from typing import ClassVar, Literal, Self, TypeIs, TypeVar, overload
+from typing import ClassVar, Literal, Self, TypeIs, TypeVar, overload, override
 
-from flext_core import FlextModelsContainers, FlextResult, FlextRuntime, r
+from flext_core import FlextResult, FlextRuntime, r
 from pydantic import BaseModel, ConfigDict, TypeAdapter, ValidationError
 from yaml import YAMLError, dump as yaml_dump, safe_load as yaml_safe_load
 
@@ -87,7 +87,7 @@ def _to_normalized_or_model(value: t.Tests.Testobject) -> t.NormalizedValue | Ba
     if isinstance(value, bytes):
         return value.decode("utf-8", errors="replace")
     if isinstance(value, Mapping):
-        return FlextModelsContainers.ConfigMap(
+        return m.ConfigMap(
             root={str(k): _to_normalized_or_model(v) for k, v in value.items()},
         )
     if isinstance(value, (list, tuple)):
@@ -460,9 +460,10 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             extract_result=extract_result,
         )
 
+    @override
     def batch[TModel: BaseModel](
         self,
-        files: t.Tests.Files.BatchFiles,
+        items: t.Tests.Files.BatchFiles,
         *,
         directory: Path | None = None,
         operation: _OperationLiteral = "create",
@@ -475,7 +476,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         Uses u.batch() for batch processing with error handling.
 
         Args:
-            files: Mapping[str, t.FileContent] or Sequence[tuple[str, t.FileContent]]
+            items: Mapping[str, t.FileContent] or Sequence[tuple[str, t.FileContent]]
             directory: Target directory for create operations
             operation: "create", "read", or "delete"
             model: Optional model class for read operations
@@ -504,7 +505,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         """
         try:
             params = m.Tests.BatchParams.model_validate({
-                "files": files,
+                "files": items,
                 "directory": directory,
                 "operation": operation,
                 "model": model,
@@ -957,6 +958,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         self._created_files.append(file_path)
         return file_path
 
+    @override
     def execute(self) -> r[t.Tests.TestResultValue]:
         """Execute service - returns success for file manager.
 
