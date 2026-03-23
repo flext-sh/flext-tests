@@ -13,7 +13,7 @@ from typing import Protocol, TypeVar
 
 from flext_core import FlextProtocols
 
-from flext_tests.typings import t
+from flext_tests import t
 
 TEntity = TypeVar("TEntity")
 TValue = TypeVar("TValue")

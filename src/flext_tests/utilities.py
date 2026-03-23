@@ -36,14 +36,18 @@ from flext_core import (
 )
 from pydantic import BaseModel, RootModel
 
-from flext_tests import c, m, p, t
-from flext_tests._utilities._payload import (
+from flext_tests import (
+    _EntityFactory,
+    _ValueFactory,
+    c,
     deep_match as _deep_match_impl,
     length_validate as _length_validate_impl,
+    m,
+    p,
+    t,
     to_normalized_value as _to_normalized_value,
     to_payload as _to_payload,
 )
-from flext_tests.protocols import _EntityFactory, _ValueFactory
 
 
 def _to_scalar(
@@ -2020,7 +2024,7 @@ class FlextTestsUtilities(FlextUtilities):
 FlextUtilities = FlextTestsUtilities
 u = FlextTestsUtilities
 
-from flext_tests._utilities.matchers import FlextTestsMatchersUtilities  # noqa: E402
+from flext_tests import FlextTestsMatchersUtilities  # noqa: E402
 
 FlextTestsUtilities.Tests.Matchers = FlextTestsMatchersUtilities.Tests.Matchers  # type: ignore[attr-defined]
 

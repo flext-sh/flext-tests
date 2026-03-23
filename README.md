@@ -25,8 +25,8 @@ poetry add --group dev flext-tests
 
 ```python
 from flext_tests import FlextTestsHelpers as h
-from flext_tests import FlextTestsConstants as c
-from flext_tests import FlextTestsUtilities as u
+from flext_tests import c
+from flext_tests import u
 ```
 
 ## License

@@ -21,8 +21,7 @@ import pytest
 from docker import DockerClient
 from flext_core import r
 
-from flext_tests import tm
-from flext_tests.docker import tk
+from flext_tests import tk, tm
 from tests import c
 from tests.test_utils import assertion_helpers
 

@@ -31,14 +31,16 @@ from typing import ClassVar, override
 
 from flext_core import r, s
 
-from flext_tests._validator.bypass import FlextValidatorBypass
-from flext_tests._validator.imports import FlextValidatorImports
-from flext_tests._validator.layer import FlextValidatorLayer
-from flext_tests._validator.settings import FlextValidatorSettings
-from flext_tests._validator.tests import FlextValidatorTests
-from flext_tests._validator.types import FlextValidatorTypes
-from flext_tests.constants import FlextTestsConstants as c
-from flext_tests.models import FlextTestsModels as m
+from flext_tests import (
+    FlextValidatorBypass,
+    FlextValidatorImports,
+    FlextValidatorLayer,
+    FlextValidatorSettings,
+    FlextValidatorTests,
+    FlextValidatorTypes,
+    c,
+    m,
+)
 
 
 class FlextTestsValidator(s[m.Tests.ScanResult]):

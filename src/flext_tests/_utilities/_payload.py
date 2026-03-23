@@ -16,8 +16,7 @@ from pathlib import Path
 from flext_core import FlextUtilities, m as core_m
 from pydantic import BaseModel, ConfigDict, RootModel, TypeAdapter, ValidationError
 
-from flext_tests.models import FlextTestsModels as m
-from flext_tests.typings import FlextTestsTypes as t
+from flext_tests import m, t
 
 _ARBTYPES = ConfigDict(arbitrary_types_allowed=True)
 _PAYLOAD_MAPPING_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject], config=_ARBTYPES)
