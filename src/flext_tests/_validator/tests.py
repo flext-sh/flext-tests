@@ -140,7 +140,7 @@ class FlextValidatorTests:
 
     @classmethod
     def _is_patch_decorator(cls, decorator: ast.expr) -> bool:
-        """Check if decorator is @patch or @patch.t.NormalizedValue, etc."""
+        """Check if decorator is @patch or @patch.object, etc."""
         if isinstance(decorator, ast.Name) and decorator.id == "patch":
             return True
         if isinstance(decorator, ast.Call):
