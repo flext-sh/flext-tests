@@ -474,7 +474,7 @@ class FlextTestsUtilities(FlextUtilities):
             @staticmethod
             @contextmanager
             def temporary_attribute(
-                target: object,
+                target: t.Tests.Testobject,
                 attribute: str,
                 value: t.Tests.Testobject,
             ) -> Generator[None]:
