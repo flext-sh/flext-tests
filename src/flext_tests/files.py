@@ -1440,7 +1440,9 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             ValueError: If r is failure and extraction is enabled
 
         """
-        if extract_result and u.is_result_like(content):
+        if extract_result and (
+            u.is_result_like(content) or isinstance(content, FlextResult)
+        ):
             if content.is_failure:
                 error_msg = content.error or "r failure"
                 raise ValueError(f"Cannot create file from failed r: {error_msg}")

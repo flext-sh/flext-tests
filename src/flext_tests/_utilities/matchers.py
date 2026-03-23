@@ -1072,8 +1072,10 @@ class FlextTestsMatchersUtilities:
                             f"Parameter validation failed: {filtered_exc}",
                         ) from filtered_exc
                 subject = value
-                if isinstance(subject, BaseModel) and u.is_result_like(
-                    subject,
+                if u.is_result_like(subject) or (
+                    hasattr(subject, "is_success")
+                    and hasattr(subject, "error")
+                    and hasattr(type(subject), "value")
                 ):
                     result_obj = subject
                     actual_value: t.Tests.Testobject | str = ""
