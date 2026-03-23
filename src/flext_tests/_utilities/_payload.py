@@ -19,9 +19,11 @@ from pydantic import BaseModel, ConfigDict, RootModel, TypeAdapter, ValidationEr
 from flext_tests import m, t
 
 _ARBTYPES = ConfigDict(arbitrary_types_allowed=True)
-_PAYLOAD_MAPPING_ADAPTER = TypeAdapter(dict[str, t.Tests.Testobject], config=_ARBTYPES)
+_PAYLOAD_MAPPING_ADAPTER = TypeAdapter(
+    Mapping[str, t.Tests.Testobject], config=_ARBTYPES
+)
 _PAYLOAD_SEQUENCE_ADAPTER = TypeAdapter(
-    list[t.Tests.Testobject],
+    Sequence[t.Tests.Testobject],
     config=_ARBTYPES,
 )
 
@@ -55,18 +57,18 @@ def to_payload(
             mapping_value = _PAYLOAD_MAPPING_ADAPTER.validate_python(value)
         except ValidationError:
             return {}
-        payload_map: dict[str, t.Tests.Testobject] = {}
+        payload_map: Mapping[str, t.Tests.Testobject] = {}
         for key_raw, item_obj in mapping_value.items():
             payload_map[str(key_raw)] = to_payload(item_obj)
         return payload_map
     if isinstance(value, (list, tuple, set)):
         try:
-            iterable_items: list[t.Tests.Testobject] = (
+            iterable_items: Sequence[t.Tests.Testobject] = (
                 _PAYLOAD_SEQUENCE_ADAPTER.validate_python(value)
             )
         except ValidationError:
             return []
-        payload_items: list[t.Tests.Testobject] = [
+        payload_items: Sequence[t.Tests.Testobject] = [
             to_payload(item_obj) for item_obj in iterable_items
         ]
         return payload_items
@@ -170,7 +172,7 @@ def deep_match(
         DeepMatchResult with match status and details
 
     """
-    source_obj: dict[str, t.NormalizedValue | BaseModel]
+    source_obj: Mapping[str, t.NormalizedValue | BaseModel]
     if isinstance(obj, BaseModel):
         dumped = obj.model_dump(mode="python")
         source_obj = {

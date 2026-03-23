@@ -72,10 +72,10 @@ from flext_tests import (
     t,
 )
 
-_TEST_PAYLOAD_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.TestobjectSerializable])
-_TEST_PAYLOAD_LIST_ADAPTER = TypeAdapter(list[t.Tests.TestobjectSerializable])
-_GUARD_PAYLOAD_DICT_ADAPTER = TypeAdapter(dict[str, t.Tests.TestobjectSerializable])
-_GUARD_PAYLOAD_LIST_ADAPTER = TypeAdapter(list[t.Tests.TestobjectSerializable])
+_TEST_PAYLOAD_DICT_ADAPTER = TypeAdapter(Mapping[str, t.Tests.TestobjectSerializable])
+_TEST_PAYLOAD_LIST_ADAPTER = TypeAdapter(Sequence[t.Tests.TestobjectSerializable])
+_GUARD_PAYLOAD_DICT_ADAPTER = TypeAdapter(Mapping[str, t.Tests.TestobjectSerializable])
+_GUARD_PAYLOAD_LIST_ADAPTER = TypeAdapter(Sequence[t.Tests.TestobjectSerializable])
 
 
 def _is_non_string_sequence(
@@ -129,7 +129,7 @@ def _to_test_payload(
                 str(key): _to_test_payload(item) for key, item in mapping_value.items()
             }
         except ValidationError:
-            empty_map: dict[str, t.Tests.Testobject] = {}
+            empty_map: Mapping[str, t.Tests.Testobject] = {}
             return empty_map
     if _is_non_string_sequence(value):
         try:
@@ -209,7 +209,7 @@ def _as_guard_input(
                 str(key): _as_guard_input(item) for key, item in mapping_value.items()
             }
         except ValidationError:
-            empty_map: dict[str, t.Tests.Testobject] = {}
+            empty_map: Mapping[str, t.Tests.Testobject] = {}
             return empty_map
     if _is_non_string_sequence(value):
         try:
@@ -240,14 +240,14 @@ def _to_chk_value(
         try:
             mapping_value = _GUARD_PAYLOAD_DICT_ADAPTER.validate_python(value)
         except ValidationError:
-            empty_map: dict[str, t.NormalizedValue] = {}
+            empty_map: Mapping[str, t.NormalizedValue] = {}
             return empty_map
         return {str(k): _to_chk_value(v) for k, v in mapping_value.items()}
     if isinstance(value, (list, tuple)):
         try:
             sequence_value = _GUARD_PAYLOAD_LIST_ADAPTER.validate_python(value)
         except ValidationError:
-            empty_list: list[t.NormalizedValue] = []
+            empty_list: Sequence[t.NormalizedValue] = []
             return empty_list
         return [_to_chk_value(item) for item in sequence_value]
     return str(value)
@@ -554,7 +554,7 @@ class FlextTestsMatchersUtilities:
                     actual_code = result.error_code or ""
                     code_has_value = params.code_has
                     if isinstance(code_has_value, str):
-                        items_list: list[str] = [code_has_value]
+                        items_list: Sequence[str] = [code_has_value]
                     else:
                         items_list = [str(x) for x in code_has_value]
                     for item in items_list:
@@ -893,7 +893,7 @@ class FlextTestsMatchersUtilities:
                     params = m.Tests.ScopeParams.model_validate(kwargs)
                 except (TypeError, ValueError, AttributeError) as exc:
                     raise ValueError(f"Parameter validation failed: {exc}") from exc
-                original_env: dict[str, str | None] = {}
+                original_env: Mapping[str, str | None] = {}
                 original_cwd: Path | None = None
                 try:
                     if params.env is not None:
@@ -908,15 +908,15 @@ class FlextTestsMatchersUtilities:
                             else params.cwd
                         )
                         os.chdir(cwd_path)
-                    cfg: dict[str, t.Tests.Testobject] = {}
+                    cfg: Mapping[str, t.Tests.Testobject] = {}
                     if params.config:
                         cfg = {str(key): value for key, value in params.config.items()}
-                    container_dict: dict[str, t.Tests.Testobject] = {
+                    container_dict: Mapping[str, t.Tests.Testobject] = {
                         k: v
                         for k, v in (params.container or {}).items()
                         if t.Guards.is_general_value(v)
                     }
-                    context_map: dict[str, t.Tests.Testobject] = {}
+                    context_map: Mapping[str, t.Tests.Testobject] = {}
                     if params.context:
                         context_map = {
                             str(key): value for key, value in params.context.items()
@@ -1227,7 +1227,7 @@ class FlextTestsMatchersUtilities:
                         ),
                     )
                 if isinstance(subject_payload, (list, tuple)):
-                    seq_value: list[t.Tests.TestobjectSerializable] = []
+                    seq_value: Sequence[t.Tests.TestobjectSerializable] = []
                     try:
                         seq_value = _TEST_PAYLOAD_LIST_ADAPTER.validate_python(
                             subject_payload
@@ -1353,7 +1353,7 @@ class FlextTestsMatchersUtilities:
                                 params.msg or "Sequence contains duplicate items",
                             )
                 if isinstance(subject_payload, Mapping):
-                    mapping_value: dict[str, t.Tests.TestobjectSerializable] = {}
+                    mapping_value: Mapping[str, t.Tests.TestobjectSerializable] = {}
                     try:
                         mapping_value = _TEST_PAYLOAD_DICT_ADAPTER.validate_python(
                             subject_payload,
@@ -1416,7 +1416,7 @@ class FlextTestsMatchersUtilities:
                 if params.attrs is not None:
                     attrs_target = value
                     if isinstance(params.attrs, str):
-                        attr_list: list[str] = [params.attrs]
+                        attr_list: Sequence[str] = [params.attrs]
                     else:
                         attr_list = list(params.attrs)
                     for attr in attr_list:
@@ -1427,7 +1427,7 @@ class FlextTestsMatchersUtilities:
                 if params.methods is not None:
                     methods_target = value
                     if isinstance(params.methods, str):
-                        method_list: list[str] = [params.methods]
+                        method_list: Sequence[str] = [params.methods]
                     else:
                         method_list = list(params.methods)
                     for method in method_list:

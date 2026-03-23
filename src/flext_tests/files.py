@@ -42,11 +42,11 @@ _ErrorModeLiteral = Literal["stop", "skip", "collect"]
 TestsFileContent = t.Tests.FileContent
 _YAMLError = YAMLError
 _OBJECT_LIST_ADAPTER = TypeAdapter(
-    list[t.Tests.Testobject],
+    Sequence[t.Tests.Testobject],
     config=ConfigDict(arbitrary_types_allowed=True),
 )
 _OBJECT_DICT_ADAPTER = TypeAdapter(
-    dict[str, t.Tests.Testobject],
+    Mapping[str, t.Tests.Testobject],
     config=ConfigDict(arbitrary_types_allowed=True),
 )
 
@@ -120,11 +120,11 @@ def _to_normalized_leaf(value: t.Tests.Testobject) -> t.NormalizedValue:
 
 def _yaml_safe_load(
     raw: str,
-) -> dict[str, t.Tests.Testobject] | list[t.Tests.Testobject] | None:
+) -> Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject] | None:
     return yaml_safe_load(raw)
 
 
-def _yaml_dump(value: dict[str, t.Tests.Testobject], *, indent: int) -> str:
+def _yaml_dump(value: Mapping[str, t.Tests.Testobject], *, indent: int) -> str:
     return str(
         yaml_dump(value, default_flow_style=False, allow_unicode=True, indent=indent),
     )
@@ -171,7 +171,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
     @staticmethod
     def _validate_model_content[TModelRead: BaseModel](
         model_cls: type[TModelRead],
-        content: str | bytes | m.ConfigMap | list[list[str]],
+        content: str | bytes | m.ConfigMap | Sequence[Sequence[str]],
     ) -> r[TModelRead]:
         try:
             model_instance: TModelRead = model_cls.model_validate(content)
@@ -180,8 +180,8 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             return r[TModelRead].fail(f"Failed to validate model: {ex}")
 
     _base_dir: Path | None = None
-    _created_files: list[Path] | None = None
-    _created_dirs: list[Path] | None = None
+    _created_files: Sequence[Path] | None = None
+    _created_dirs: Sequence[Path] | None = None
 
     def __init__(
         self,
@@ -220,12 +220,12 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         return self._base_dir
 
     @property
-    def created_dirs(self) -> list[Path]:
+    def created_dirs(self) -> Sequence[Path]:
         """Get list of created directories."""
         return self._created_dirs or []
 
     @property
-    def created_files(self) -> list[Path]:
+    def created_files(self) -> Sequence[Path]:
         """Get list of created files."""
         return self._created_files or []
 
@@ -273,7 +273,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         if directory is not None:
             manager._base_dir = directory
         with manager:
-            paths: dict[str, Path] = {}
+            paths: Mapping[str, Path] = {}
             default_ext = ext or c.Tests.Files.DEFAULT_EXTENSION
             for name, data_raw in content.items():
                 data: t.Tests.Testobject = data_raw
@@ -411,7 +411,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         indent: int = c.Tests.Files.DEFAULT_JSON_INDENT,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
-        headers: list[str] | None = None,
+        headers: Sequence[str] | None = None,
         readonly: bool = False,
         extract_result: bool = True,
     ) -> Path:
@@ -516,7 +516,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             return r[m.Tests.BatchResult].fail(
                 f"Invalid parameters for batch operation: {exc}",
             )
-        files_dict: dict[str, t.Tests.Testobject]
+        files_dict: Mapping[str, t.Tests.Testobject]
         if isinstance(params.files, Mapping):
             files_dict = {str(k): v for k, v in params.files.items()}
         elif not isinstance(params.files, str):
@@ -606,9 +606,9 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                 case _:
                     return r[Path].fail(f"Unknown operation: {params.operation}")
 
-        items_list: list[tuple[str, t.Tests.Testobject]] = list(files_dict.items())
-        results: list[Path | t.Tests.Testobject] = []
-        errors: list[tuple[int, str]] = []
+        items_list: Sequence[tuple[str, t.Tests.Testobject]] = list(files_dict.items())
+        results: Sequence[Path | t.Tests.Testobject] = []
+        errors: Sequence[tuple[int, str]] = []
         total = len(items_list)
         for index, item in enumerate(items_list):
             operation_result = process_one(item)
@@ -625,8 +625,8 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                 errors.append((index, str(error_message)))
                 continue
             results.append(operation_result)
-        results_dict: dict[str, r[Path | t.Tests.Testobject]] = {}
-        failed_dict: dict[str, str] = {}
+        results_dict: Mapping[str, r[Path | t.Tests.Testobject]] = {}
+        failed_dict: Mapping[str, str] = {}
         for idx, result in enumerate(results):
             if idx < len(items_list):
                 name, _ = items_list[idx]
@@ -694,8 +694,8 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         ignore_case: bool = False,
         pattern: str | None = None,
         deep: bool = True,
-        keys: list[str] | None = None,
-        exclude_keys: list[str] | None = None,
+        keys: Sequence[str] | None = None,
+        exclude_keys: Sequence[str] | None = None,
     ) -> r[bool]:
         """Compare two files.
 
@@ -790,7 +790,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         indent: int = c.Tests.Files.DEFAULT_JSON_INDENT,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
-        headers: list[str] | None = None,
+        headers: Sequence[str] | None = None,
         readonly: bool = False,
         extract_result: bool = True,
     ) -> Path:
@@ -803,7 +803,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                 - str: text file
                 - bytes: binary file
                 - dict/Mapping: JSON file
-                - list[list[str]]: CSV file
+                - Sequence[Sequence[str]]: CSV file
                 - BaseModel: JSON file (via model_dump())
                 - r[T]: Extracts value if success (if extract_result=True)
             name: Filename (extension hints format)
@@ -836,7 +836,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             result = service.get_config()  # r[dict]
             path = tf().create(result, "config.json")
 
-            # CSV file (auto-detected from list[list])
+            # CSV file (auto-detected from Sequence[list])
             path = tf().create([["a", "b"], ["1", "2"]], "data.csv",
                               headers=["col1", "col2"])
 
@@ -874,7 +874,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         if isinstance(actual_content, BaseModel):
             actual_content = self._mapping_to_payload(u.dump(actual_content))
         content_for_detect: (
-            str | bytes | Mapping[str, t.Tests.Testobject] | list[list[str]]
+            str | bytes | Mapping[str, t.Tests.Testobject] | Sequence[Sequence[str]]
         )
         if isinstance(actual_content, str | bytes):
             content_for_detect = actual_content
@@ -905,11 +905,11 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                 _ = file_path.write_bytes(str(actual_content).encode(params.enc))
         elif actual_fmt == c.Tests.Files.Format.JSON:
             if isinstance(actual_content, Mapping):
-                data: dict[str, t.Tests.Testobject] = {
+                data: Mapping[str, t.Tests.Testobject] = {
                     str(key): value for key, value in actual_content.items()
                 }
             else:
-                empty_data: dict[str, t.Tests.Testobject] = {}
+                empty_data: Mapping[str, t.Tests.Testobject] = {}
                 data = {"value": actual_content} if actual_content else empty_data
             json_str = _OBJECT_DICT_ADAPTER.dump_json(
                 data, indent=params.indent
@@ -917,18 +917,18 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             _ = file_path.write_text(json_str, encoding=params.enc)
         elif actual_fmt == c.Tests.Files.Format.YAML:
             if isinstance(actual_content, Mapping):
-                data_yaml: dict[str, t.Tests.Testobject] = {
+                data_yaml: Mapping[str, t.Tests.Testobject] = {
                     str(key): value for key, value in actual_content.items()
                 }
             else:
-                empty_data_y: dict[str, t.Tests.Testobject] = {}
+                empty_data_y: Mapping[str, t.Tests.Testobject] = {}
                 data_yaml = (
                     {"value": actual_content} if actual_content else empty_data_y
                 )
             yaml_result = _yaml_dump(data_yaml, indent=params.indent)
             _ = file_path.write_text(yaml_result, encoding=params.enc)
         elif actual_fmt == c.Tests.Files.Format.CSV:
-            csv_content: list[list[str]]
+            csv_content: Sequence[Sequence[str]]
             if isinstance(actual_content, Sequence) and (
                 not isinstance(actual_content, str | bytes)
             ):
@@ -1102,7 +1102,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
-    ) -> r[str | bytes | m.ConfigMap | list[list[str]]]: ...
+    ) -> r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]]: ...
 
     @overload
     def read(
@@ -1125,7 +1125,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
-    ) -> r[str | bytes | m.ConfigMap | list[list[str]]] | r[TModel]:
+    ) -> r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]] | r[TModel]:
         """Read file with auto-detection or explicit format.
 
         Supports loading directly into Pydantic models when model_cls is provided.
@@ -1161,7 +1161,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
 
             # Read CSV
             result = tf().read(Path("data.csv"))
-            rows = result.value  # list[list[str]]
+            rows = result.value  # Sequence[Sequence[str]]
 
         """
         try:
@@ -1178,20 +1178,22 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             if model_cls is not None:
                 invalid_params_result: r[TModel] = r[TModel].fail(error_msg)
                 return invalid_params_result
-            return r[str | bytes | m.ConfigMap | list[list[str]]].fail(error_msg)
+            return r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]].fail(
+                error_msg
+            )
         if not params.path.exists():
             if model_cls is not None:
                 file_not_found_result: r[TModel] = r[TModel].fail(
                     c.Tests.Files.ERROR_FILE_NOT_FOUND.format(path=params.path),
                 )
                 return file_not_found_result
-            return r[str | bytes | m.ConfigMap | list[list[str]]].fail(
+            return r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]].fail(
                 c.Tests.Files.ERROR_FILE_NOT_FOUND.format(path=params.path),
             )
         actual_fmt = u.Tests.Files.detect_format_from_path(params.path, params.fmt)
         try:
             if actual_fmt == c.Tests.Files.Format.BIN:
-                content: str | bytes | m.ConfigMap | list[list[str]] = (
+                content: str | bytes | m.ConfigMap | Sequence[Sequence[str]] = (
                     params.path.read_bytes()
                 )
             elif actual_fmt == c.Tests.Files.Format.JSON:
@@ -1217,14 +1219,14 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                 content = params.path.read_text(encoding=params.enc)
             if model_cls is not None:
                 return self._validate_model_content(model_cls, content)
-            return r[str | bytes | m.ConfigMap | list[list[str]]].ok(content)
+            return r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]].ok(content)
         except UnicodeDecodeError as e:
             if model_cls is not None:
                 invalid_encoding_result: r[TModel] = r[TModel].fail(
                     c.Tests.Files.ERROR_ENCODING.format(error=e),
                 )
                 return invalid_encoding_result
-            return r[str | bytes | m.ConfigMap | list[list[str]]].fail(
+            return r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]].fail(
                 c.Tests.Files.ERROR_ENCODING.format(error=e),
             )
         except ValueError as e:
@@ -1233,7 +1235,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                     c.Tests.Files.ERROR_INVALID_JSON.format(error=e),
                 )
                 return invalid_json_result
-            return r[str | bytes | m.ConfigMap | list[list[str]]].fail(
+            return r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]].fail(
                 c.Tests.Files.ERROR_INVALID_JSON.format(error=e),
             )
         except _YAMLError as e:
@@ -1242,7 +1244,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                     c.Tests.Files.ERROR_INVALID_YAML.format(error=e),
                 )
                 return invalid_yaml_result
-            return r[str | bytes | m.ConfigMap | list[list[str]]].fail(
+            return r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]].fail(
                 c.Tests.Files.ERROR_INVALID_YAML.format(error=e),
             )
         except OSError as e:
@@ -1251,7 +1253,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                     c.Tests.Files.ERROR_READ.format(error=e),
                 )
                 return file_read_error_result
-            return r[str | bytes | m.ConfigMap | list[list[str]]].fail(
+            return r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]].fail(
                 c.Tests.Files.ERROR_READ.format(error=e),
             )
 
@@ -1270,21 +1272,21 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         self,
         dict1: Mapping[str, t.Tests.Testobject],
         dict2: Mapping[str, t.Tests.Testobject],
-        keys: list[str] | None,
-        exclude_keys: list[str] | None,
+        keys: Sequence[str] | None,
+        exclude_keys: Sequence[str] | None,
     ) -> tuple[Mapping[str, t.Tests.Testobject], Mapping[str, t.Tests.Testobject]]:
         """Apply key filtering to both dicts if specified."""
         if keys is None and exclude_keys is None:
             return (dict1, dict2)
         filter_keys_set = set(keys) if keys is not None else None
         exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
-        config_root1: dict[str, t.NormalizedValue | BaseModel] = {
+        config_root1: Mapping[str, t.NormalizedValue | BaseModel] = {
             str(k): _to_container_value(
                 self._to_config_map_value(self._to_payload_value(v)),
             )
             for k, v in dict1.items()
         }
-        config_root2: dict[str, t.NormalizedValue | BaseModel] = {
+        config_root2: Mapping[str, t.NormalizedValue | BaseModel] = {
             str(k): _to_container_value(
                 self._to_config_map_value(self._to_payload_value(v)),
             )
@@ -1324,7 +1326,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         if isinstance(value, BaseModel):
             return value
         if self._is_mapping(value):
-            coerce_root: dict[str, t.NormalizedValue | BaseModel] = {
+            coerce_root: Mapping[str, t.NormalizedValue | BaseModel] = {
                 str(key): _to_container_value(
                     self._to_config_map_value(self._to_payload_value(item)),
                 )
@@ -1332,7 +1334,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             }
             return m.ConfigMap(root=coerce_root)
         if self._is_nested_rows(value):
-            rows: list[list[str]] = []
+            rows: Sequence[Sequence[str]] = []
             sequence_value: Sequence[t.Tests.Testobject] = (
                 value if isinstance(value, (list, tuple)) else ()
             )
@@ -1346,12 +1348,12 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
 
     def _coerce_read_content(
         self,
-        value: dict[str, t.Tests.Testobject] | None,
-    ) -> str | bytes | m.ConfigMap | list[list[str]]:
+        value: Mapping[str, t.Tests.Testobject] | None,
+    ) -> str | bytes | m.ConfigMap | Sequence[Sequence[str]]:
         if isinstance(value, str | bytes):
             return value
         if self._is_mapping(value):
-            read_root: dict[str, t.NormalizedValue | BaseModel] = {
+            read_root: Mapping[str, t.NormalizedValue | BaseModel] = {
                 str(key): _to_container_value(
                     self._to_config_map_value(self._to_payload_value(item)),
                 )
@@ -1470,7 +1472,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         normalized_mapping: Mapping[str, t.Tests.Testobject] = (
             _OBJECT_DICT_ADAPTER.validate_python(mapping)
         )
-        payload: dict[str, t.Tests.Testobject] = {}
+        payload: Mapping[str, t.Tests.Testobject] = {}
         for key, value in normalized_mapping.items():
             payload[str(key)] = self._to_payload_value(value)
         return payload
@@ -1523,15 +1525,15 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         column_count: int | None = None
         model_valid: bool | None = None
         model_name: str | None = None
-        parsed_content: m.ConfigMap | list[t.Tests.Testobject] | None = None
+        parsed_content: m.ConfigMap | Sequence[t.Tests.Testobject] | None = None
         if fmt in {"json", "yaml"}:
             try:
                 if fmt == "json":
                     if text.strip():
                         try:
                             parsed_raw: (
-                                dict[str, t.Tests.Testobject]
-                                | list[t.Tests.Testobject]
+                                Mapping[str, t.Tests.Testobject]
+                                | Sequence[t.Tests.Testobject]
                                 | None
                             ) = _OBJECT_DICT_ADAPTER.validate_json(text.encode())
                         except ValidationError:
@@ -1547,7 +1549,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                         else dict(m.ConfigMap(root={}).root)
                     )
                 if self._is_mapping(parsed_raw):
-                    parse_root: dict[str, t.NormalizedValue | BaseModel] = {
+                    parse_root: Mapping[str, t.NormalizedValue | BaseModel] = {
                         str(key): _to_container_value(
                             self._to_config_map_value(self._to_payload_value(v)),
                         )
@@ -1620,7 +1622,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             try:
                 sequence_value = _OBJECT_LIST_ADAPTER.validate_python(value)
             except ValidationError:
-                empty_sequence: list[t.Tests.Testobject] = []
+                empty_sequence: Sequence[t.Tests.Testobject] = []
                 return empty_sequence
             return [
                 self._to_config_map_value(self._to_payload_value(item))
@@ -1655,7 +1657,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                 sequence_value = _OBJECT_LIST_ADAPTER.validate_python(value)
             except ValidationError:
                 return []
-            payload_items: list[t.Tests.Testobject] = [
+            payload_items: Sequence[t.Tests.Testobject] = [
                 self._to_payload_value(item_raw) for item_raw in sequence_value
             ]
             return payload_items
@@ -1665,8 +1667,8 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         self,
         content1_raw: str,
         content2_raw: str,
-        keys: list[str] | None,
-        exclude_keys: list[str] | None,
+        keys: Sequence[str] | None,
+        exclude_keys: Sequence[str] | None,
     ) -> r[bool] | None:
         """Try to parse and deeply compare content as JSON or YAML.
 
@@ -1680,13 +1682,13 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         dict1, dict2 = parsed
         filter_keys_set = set(keys) if keys is not None else None
         exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
-        left_root: dict[str, t.NormalizedValue | BaseModel] = {
+        left_root: Mapping[str, t.NormalizedValue | BaseModel] = {
             str(k): _to_container_value(
                 self._to_config_map_value(self._to_payload_value(v)),
             )
             for k, v in dict1.items()
         }
-        right_root: dict[str, t.NormalizedValue | BaseModel] = {
+        right_root: Mapping[str, t.NormalizedValue | BaseModel] = {
             str(k): _to_container_value(
                 self._to_config_map_value(self._to_payload_value(v)),
             )

@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import ast
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -32,13 +32,13 @@ class FlextValidatorTests:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: list[str],
-        approved: Mapping[str, list[str]],
-    ) -> list[m.Tests.Violation]:
+        lines: Sequence[str],
+        approved: Mapping[str, Sequence[str]],
+    ) -> Sequence[m.Tests.Violation]:
         """Detect Mock and MagicMock usage."""
         if u.Tests.Validator.is_approved("TEST-002", file_path, approved):
             return []
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         mock_names = c.Tests.Validator.Approved.MOCK_NAMES
         for node in ast.walk(tree):
             if isinstance(node, ast.ImportFrom):
@@ -73,13 +73,13 @@ class FlextValidatorTests:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: list[str],
-        approved: Mapping[str, list[str]],
-    ) -> list[m.Tests.Violation]:
+        lines: Sequence[str],
+        approved: Mapping[str, Sequence[str]],
+    ) -> Sequence[m.Tests.Violation]:
         """Detect monkeypatch usage in function parameters and calls."""
         if u.Tests.Validator.is_approved("TEST-001", file_path, approved):
             return []
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 for arg in node.args.args:
@@ -114,13 +114,13 @@ class FlextValidatorTests:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: list[str],
-        approved: Mapping[str, list[str]],
-    ) -> list[m.Tests.Violation]:
+        lines: Sequence[str],
+        approved: Mapping[str, Sequence[str]],
+    ) -> Sequence[m.Tests.Violation]:
         """Detect @patch decorator usage."""
         if u.Tests.Validator.is_approved("TEST-003", file_path, approved):
             return []
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if not isinstance(
                 node,
@@ -164,10 +164,10 @@ class FlextValidatorTests:
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, list[str]],
-    ) -> list[m.Tests.Violation]:
+        approved: Mapping[str, Sequence[str]],
+    ) -> Sequence[m.Tests.Violation]:
         """Scan a single file for test violations."""
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         try:
             content = file_path.read_text(encoding="utf-8")
             tree = ast.parse(content, filename=str(file_path))
@@ -182,8 +182,8 @@ class FlextValidatorTests:
     @classmethod
     def scan(
         cls,
-        files: list[Path],
-        approved_exceptions: Mapping[str, list[str]] | None = None,
+        files: Sequence[Path],
+        approved_exceptions: Mapping[str, Sequence[str]] | None = None,
     ) -> r[m.Tests.ScanResult]:
         """Scan files for test violations.
 

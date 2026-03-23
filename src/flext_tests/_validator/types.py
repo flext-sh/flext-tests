@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import ast
 import re
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -33,13 +33,13 @@ class FlextValidatorTypes:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: list[str],
-        approved: Mapping[str, list[str]],
-    ) -> list[m.Tests.Violation]:
+        lines: Sequence[str],
+        approved: Mapping[str, Sequence[str]],
+    ) -> Sequence[m.Tests.Violation]:
         """Detect wildcard type annotations."""
         if u.Tests.Validator.is_approved("TYPE-002", file_path, approved):
             return []
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 if node.returns and u.Tests.Validator.is_any_type(node.returns):
@@ -78,9 +78,9 @@ class FlextValidatorTypes:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: list[str],
-        approved: Mapping[str, list[str]],
-    ) -> list[m.Tests.Violation]:
+        lines: Sequence[str],
+        approved: Mapping[str, Sequence[str]],
+    ) -> Sequence[m.Tests.Violation]:
         """Detect unapproved  usage."""
         patterns = list(approved.get("TYPE-003", [])) + list(
             c.Tests.Validator.Approved.CAST_PATTERNS,
@@ -88,7 +88,7 @@ class FlextValidatorTypes:
         file_str = str(file_path)
         if any(re.search(pattern, file_str) for pattern in patterns):
             return []
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if not isinstance(node, ast.Call):
                 continue
@@ -113,13 +113,13 @@ class FlextValidatorTypes:
     def _check_type_ignore(
         cls,
         file_path: Path,
-        lines: list[str],
-        approved: Mapping[str, list[str]],
-    ) -> list[m.Tests.Violation]:
+        lines: Sequence[str],
+        approved: Mapping[str, Sequence[str]],
+    ) -> Sequence[m.Tests.Violation]:
         """Detect type: ignore comments in code (not in strings/docstrings)."""
         if u.Tests.Validator.is_approved("TYPE-001", file_path, approved):
             return []
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         pattern = re.compile(r"#\s*type:\s*ignore")
         for i, line in enumerate(lines, start=1):
             is_real = u.Tests.Validator.is_real_comment(line, pattern)
@@ -137,10 +137,10 @@ class FlextValidatorTypes:
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, list[str]],
-    ) -> list[m.Tests.Violation]:
+        approved: Mapping[str, Sequence[str]],
+    ) -> Sequence[m.Tests.Violation]:
         """Scan a single file for type violations."""
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         try:
             content = file_path.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
@@ -158,8 +158,8 @@ class FlextValidatorTypes:
     @classmethod
     def scan(
         cls,
-        files: list[Path],
-        approved_exceptions: Mapping[str, list[str]] | None = None,
+        files: Sequence[Path],
+        approved_exceptions: Mapping[str, Sequence[str]] | None = None,
     ) -> r[m.Tests.ScanResult]:
         """Scan files for type violations.
 

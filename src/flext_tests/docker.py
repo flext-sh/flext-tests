@@ -35,7 +35,7 @@ from flext_tests import c, m, p, t
 
 docker: WhalesDockerClient = WhalesDockerClient(client_type="docker")
 logger: p.Logger = FlextLogger(__name__)
-_HOST_BINDINGS_ADAPTER = TypeAdapter(list[dict[str, str]])
+_HOST_BINDINGS_ADAPTER = TypeAdapter(Sequence[Mapping[str, str]])
 
 
 class FlextTestsDocker:
@@ -132,15 +132,15 @@ class FlextTestsDocker:
     @staticmethod
     def _normalize_bindings(
         bindings: t.Tests.Testobject | None,
-    ) -> list[dict[str, str]]:
+    ) -> Sequence[Mapping[str, str]]:
         try:
             return _HOST_BINDINGS_ADAPTER.validate_python(bindings)
         except ValidationError:
             return []
 
-    def cleanup_dirty_containers(self) -> r[list[str]]:
+    def cleanup_dirty_containers(self) -> r[Sequence[str]]:
         """Clean up all dirty containers by recreating them with fresh volumes."""
-        cleaned: list[str] = []
+        cleaned: Sequence[str] = []
         for container_name in list(self._dirty_containers):
             config = self.shared_containers.get(container_name)
             if not config:
@@ -157,7 +157,7 @@ class FlextTestsDocker:
             if result.is_success:
                 _ = self.mark_container_clean(container_name)
                 cleaned.append(container_name)
-        return r[list[str]].ok(cleaned)
+        return r[Sequence[str]].ok(cleaned)
 
     def compose_down(self, compose_file: str) -> r[str]:
         """Stop services using docker-compose via python_on_whales."""
@@ -228,7 +228,7 @@ class FlextTestsDocker:
             ports_raw: Mapping[str, t.Tests.Testobject] = TypeAdapter(
                 Mapping[str, t.Tests.TestobjectSerializable],
             ).validate_python(container.ports)
-            ports: dict[str, str] = {}
+            ports: Mapping[str, str] = {}
             for container_port, host_bindings in ports_raw.items():
                 normalized_bindings = self._normalize_bindings(host_bindings)
                 host_port = self._extract_host_port(normalized_bindings)
@@ -259,7 +259,7 @@ class FlextTestsDocker:
         """Get container status (alias for get_container_info)."""
         return self.get_container_info(container_name)
 
-    def get_dirty_containers(self) -> list[str]:
+    def get_dirty_containers(self) -> Sequence[str]:
         """Get list of all dirty containers."""
         return list(self._dirty_containers)
 
@@ -360,10 +360,10 @@ class FlextTestsDocker:
         """Save dirty container state to persistent storage."""
         try:
             self._state_file.parent.mkdir(parents=True, exist_ok=True)
-            data: dict[str, list[str]] = {
+            data: Mapping[str, Sequence[str]] = {
                 "dirty_containers": list(self._dirty_containers),
             }
-            json_bytes = TypeAdapter(dict[str, list[str]]).dump_json(data)
+            json_bytes = TypeAdapter(Mapping[str, Sequence[str]]).dump_json(data)
             self._state_file.write_bytes(json_bytes)
         except (OSError, TypeError) as exc:
             self.logger.warning("Failed to save dirty state", error=str(exc))

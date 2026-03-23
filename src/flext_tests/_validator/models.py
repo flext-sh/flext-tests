@@ -8,7 +8,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Annotated
 
@@ -33,15 +33,15 @@ class FlextValidatorModels(m):
         @staticmethod
         def run_scan(
             *,
-            files: list[Path],
-            approved_exceptions: Mapping[str, list[str]] | None,
+            files: Sequence[Path],
+            approved_exceptions: Mapping[str, Sequence[str]] | None,
             validator_name: str,
             scan_file: Callable[
-                [Path, Mapping[str, list[str]]],
-                list[m.Tests.Violation],
+                [Path, Mapping[str, Sequence[str]]],
+                Sequence[m.Tests.Violation],
             ],
         ) -> r[m.Tests.ScanResult]:
-            violations: list[m.Tests.Violation] = []
+            violations: Sequence[m.Tests.Violation] = []
             approved = approved_exceptions or {}
             for file_path in files:
                 violations.extend(scan_file(file_path, approved))
@@ -58,7 +58,7 @@ class FlextValidatorModels(m):
 
         target_path: Path
         include_patterns: Annotated[
-            list[str],
+            Sequence[str],
             Field(
                 default_factory=lambda: list(
                     c.Tests.Validator.Defaults.INCLUDE_PATTERNS,
@@ -69,7 +69,7 @@ class FlextValidatorModels(m):
             ),
         ]
         exclude_patterns: Annotated[
-            list[str],
+            Sequence[str],
             Field(
                 default_factory=lambda: list(
                     c.Tests.Validator.Defaults.EXCLUDE_PATTERNS,
@@ -80,7 +80,7 @@ class FlextValidatorModels(m):
             ),
         ]
         approved_exceptions: Annotated[
-            Mapping[str, list[str]],
+            Mapping[str, Sequence[str]],
             Field(
                 default_factory=dict,
                 description="Rule-to-path allowlist for known and explicitly approved exceptions.",

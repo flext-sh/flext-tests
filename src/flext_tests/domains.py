@@ -12,7 +12,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import uuid
-from collections.abc import Mapping, MutableMapping
+from collections.abc import Mapping, MutableMapping, Sequence
 
 from flext_tests import m, t
 
@@ -31,7 +31,7 @@ class FlextTestsDomains:
         profile: str,
         model_config: Mapping[str, t.Tests.Testobject],
         variables: Mapping[str, t.Tests.Testobject],
-    ) -> dict[str, t.Tests.Testobject]:
+    ) -> Mapping[str, t.Tests.Testobject]:
         """Create a shared dbt project configuration structure."""
         return {
             "name": name,
@@ -53,7 +53,7 @@ class FlextTestsDomains:
         }
 
     @staticmethod
-    def default_handler_case_specs() -> list[dict[str, t.Tests.Testobject]]:
+    def default_handler_case_specs() -> Sequence[Mapping[str, t.Tests.Testobject]]:
         """Create shared handler test-case specs for service-base tests."""
         return [
             {
@@ -253,7 +253,7 @@ class FlextTestsDomains:
         return user
 
     @staticmethod
-    def valid_email_cases() -> list[tuple[str, bool]]:
+    def valid_email_cases() -> Sequence[tuple[str, bool]]:
         """Get valid email test cases.
 
         Returns:

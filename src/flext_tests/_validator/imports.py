@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import ast
 import re
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -33,13 +33,13 @@ class FlextValidatorImports:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: list[str],
-        approved: Mapping[str, list[str]],
-    ) -> list[m.Tests.Violation]:
+        lines: Sequence[str],
+        approved: Mapping[str, Sequence[str]],
+    ) -> Sequence[m.Tests.Violation]:
         """Detect direct technology imports."""
         if u.Tests.Validator.is_approved("IMPORT-005", file_path, approved):
             return []
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         tech_imports = c.Tests.Validator.Approved.TECH_IMPORTS
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
@@ -73,13 +73,13 @@ class FlextValidatorImports:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: list[str],
-        approved: Mapping[str, list[str]],
-    ) -> list[m.Tests.Violation]:
+        lines: Sequence[str],
+        approved: Mapping[str, Sequence[str]],
+    ) -> Sequence[m.Tests.Violation]:
         """Detect try/except ImportError patterns."""
         if u.Tests.Validator.is_approved("IMPORT-003", file_path, approved):
             return []
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if not isinstance(node, ast.Try):
                 continue
@@ -105,13 +105,13 @@ class FlextValidatorImports:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: list[str],
-        approved: Mapping[str, list[str]],
-    ) -> list[m.Tests.Violation]:
+        lines: Sequence[str],
+        approved: Mapping[str, Sequence[str]],
+    ) -> Sequence[m.Tests.Violation]:
         """Detect imports not at module top level."""
         if u.Tests.Validator.is_approved("IMPORT-001", file_path, approved):
             return []
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if isinstance(node, (ast.Import, ast.ImportFrom)):
                 parent = u.Tests.Validator.get_parent(tree, node)
@@ -133,9 +133,9 @@ class FlextValidatorImports:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: list[str],
-        approved: Mapping[str, list[str]],
-    ) -> list[m.Tests.Violation]:
+        lines: Sequence[str],
+        approved: Mapping[str, Sequence[str]],
+    ) -> Sequence[m.Tests.Violation]:
         """Detect non-root imports from flext-* packages internal modules.
 
         Detects imports from internal modules (prefixed with _) like:
@@ -155,7 +155,7 @@ class FlextValidatorImports:
         internal_init_patterns = c.Tests.Validator.Approved.INTERNAL_INIT_PATTERNS
         if any(re.search(pattern, file_str) for pattern in internal_init_patterns):
             return []
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         flext_packages = c.Tests.Validator.Approved.FLEXT_PACKAGES
         for node in ast.walk(tree):
             if isinstance(node, ast.ImportFrom) and node.module:
@@ -179,13 +179,13 @@ class FlextValidatorImports:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: list[str],
-        approved: Mapping[str, list[str]],
-    ) -> list[m.Tests.Violation]:
+        lines: Sequence[str],
+        approved: Mapping[str, Sequence[str]],
+    ) -> Sequence[m.Tests.Violation]:
         """Detect sys.path manipulation."""
         if u.Tests.Validator.is_approved("IMPORT-004", file_path, approved):
             return []
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if (
                 isinstance(node, ast.Attribute)
@@ -209,9 +209,9 @@ class FlextValidatorImports:
         cls,
         file_path: Path,
         _tree: ast.AST,
-        _lines: list[str],
-        approved: Mapping[str, list[str]],
-    ) -> list[m.Tests.Violation]:
+        _lines: Sequence[str],
+        approved: Mapping[str, Sequence[str]],
+    ) -> Sequence[m.Tests.Violation]:
         """Detect TYPE_CHECKING blocks in files with Pydantic field annotations.
 
         TYPE_CHECKING is permitted for type-only imports in non-Pydantic files.
@@ -229,10 +229,10 @@ class FlextValidatorImports:
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, list[str]],
-    ) -> list[m.Tests.Violation]:
+        approved: Mapping[str, Sequence[str]],
+    ) -> Sequence[m.Tests.Violation]:
         """Scan a single file for import violations."""
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         try:
             content = file_path.read_text(encoding="utf-8")
             tree = ast.parse(content, filename=str(file_path))
@@ -256,8 +256,8 @@ class FlextValidatorImports:
     @classmethod
     def scan(
         cls,
-        files: list[Path],
-        approved_exceptions: Mapping[str, list[str]] | None = None,
+        files: Sequence[Path],
+        approved_exceptions: Mapping[str, Sequence[str]] | None = None,
     ) -> r[m.Tests.ScanResult]:
         """Scan files for import violations.
 

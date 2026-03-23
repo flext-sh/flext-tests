@@ -212,7 +212,7 @@ class FlextTestsModels(
                 ),
             ]
             headers: Annotated[
-                list[str] | None,
+                Sequence[str] | None,
                 Field(
                     default=None,
                     description="CSV headers.",
@@ -345,14 +345,14 @@ class FlextTestsModels(
                 ),
             ]
             keys: Annotated[
-                list[str] | None,
+                Sequence[str] | None,
                 Field(
                     default=None,
                     description="Only compare these keys (for dict/JSON/YAML content).",
                 ),
             ]
             exclude_keys: Annotated[
-                list[str] | None,
+                Sequence[str] | None,
                 Field(
                     default=None,
                     description="Exclude these keys from comparison (for dict/JSON/YAML content).",
@@ -453,7 +453,7 @@ class FlextTestsModels(
                 ),
             ]
             headers: Annotated[
-                list[str] | None,
+                Sequence[str] | None,
                 Field(
                     default=None,
                     description="CSV column headers.",
@@ -594,7 +594,7 @@ class FlextTestsModels(
 
             validator_name: str
             files_scanned: int
-            violations: list[FlextTestsModels.Tests.Violation]
+            violations: Sequence[FlextTestsModels.Tests.Violation]
             passed: bool
 
             @classmethod
@@ -602,7 +602,7 @@ class FlextTestsModels(
                 cls,
                 validator_name: str,
                 files_scanned: int,
-                violations: list[FlextTestsModels.Tests.Violation],
+                violations: Sequence[FlextTestsModels.Tests.Violation],
             ) -> FlextTestsModels.Tests.ScanResult:
                 """Create a ScanResult from violations."""
                 return cls(
@@ -1054,15 +1054,15 @@ class FlextTestsModels(
             """
 
             DICT_ADAPTER: ClassVar[
-                TypeAdapter[dict[str, t.Tests.TestobjectSerializable]]
+                TypeAdapter[Mapping[str, t.Tests.TestobjectSerializable]]
             ] = TypeAdapter(
-                dict[str, t.Tests.TestobjectSerializable],
+                Mapping[str, t.Tests.TestobjectSerializable],
                 config=ConfigDict(arbitrary_types_allowed=True),
             )
             LIST_ADAPTER: ClassVar[
-                TypeAdapter[list[t.Tests.TestobjectSerializable]]
+                TypeAdapter[Sequence[t.Tests.TestobjectSerializable]]
             ] = TypeAdapter(
-                list[t.Tests.TestobjectSerializable],
+                Sequence[t.Tests.TestobjectSerializable],
                 config=ConfigDict(arbitrary_types_allowed=True),
             )
 

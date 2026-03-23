@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import ast
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 from flext_core import r
@@ -40,13 +40,13 @@ class FlextValidatorLayer:
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, list[str]],
+        approved: Mapping[str, Sequence[str]],
         hierarchy: Mapping[str, int],
-    ) -> list[m.Tests.Violation]:
+    ) -> Sequence[m.Tests.Violation]:
         """Scan a single file for layer violations."""
         if u.Tests.Validator.is_approved("LAYER-001", file_path, approved):
             return []
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         current_module = file_path.stem
         current_layer = hierarchy.get(current_module)
         if current_layer is None:
@@ -80,8 +80,8 @@ class FlextValidatorLayer:
     @classmethod
     def scan(
         cls,
-        files: list[Path],
-        approved_exceptions: Mapping[str, list[str]] | None = None,
+        files: Sequence[Path],
+        approved_exceptions: Mapping[str, Sequence[str]] | None = None,
         layer_hierarchy: Mapping[str, int] | None = None,
     ) -> r[m.Tests.ScanResult]:
         """Scan files for layer violations.
@@ -95,7 +95,7 @@ class FlextValidatorLayer:
             r with ScanResult containing all violations found
 
         """
-        violations: list[m.Tests.Violation] = []
+        violations: Sequence[m.Tests.Violation] = []
         approved = approved_exceptions or {}
         hierarchy = layer_hierarchy or c.Tests.Validator.LayerHierarchy.as_dict()
         for file_path in files:

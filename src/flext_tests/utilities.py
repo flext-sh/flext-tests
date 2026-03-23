@@ -100,10 +100,10 @@ def _is_flext_result(
 def _do_extract_model[T: BaseModel](
     result: (
         BaseModel
-        | list[BaseModel]
+        | Sequence[BaseModel]
         | Mapping[str, BaseModel]
         | r[BaseModel]
-        | r[list[BaseModel]]
+        | r[Sequence[BaseModel]]
         | r[Mapping[str, BaseModel]]
     ),
     expected: type[T],
@@ -131,7 +131,7 @@ def _merge_test_dicts(
     override: Mapping[str, t.Tests.Testobject],
     *,
     strategy: str = "deep",
-) -> dict[str, t.Tests.Testobject]:
+) -> Mapping[str, t.Tests.Testobject]:
     """Merge two test dicts via FlextUtilities.merge(), handling payload conversion.
 
     DRY helper: consolidates the repeated pattern of
@@ -188,7 +188,7 @@ class FlextTestsUtilities(FlextUtilities):
         @staticmethod
         def validate_pipeline(
             value: str,
-            validators: list[Callable[[str], r[bool]]],
+            validators: Sequence[Callable[[str], r[bool]]],
         ) -> r[bool]:
             """Execute validation pipeline with multiple validators.
 
@@ -240,8 +240,8 @@ class FlextTestsUtilities(FlextUtilities):
 
         @staticmethod
         def to_normalized_dict(
-            data: dict[str, t.Tests.Testobject],
-        ) -> dict[str, t.NormalizedValue]:
+            data: Mapping[str, t.Tests.Testobject],
+        ) -> Mapping[str, t.NormalizedValue]:
             """Convert test payload dict to NormalizedValue dict for FlextUtilities.merge().
 
             Uses _to_normalized_value for proper runtime type narrowing.
@@ -270,10 +270,10 @@ class FlextTestsUtilities(FlextUtilities):
         def extract_model[T: BaseModel](
             result: (
                 BaseModel
-                | list[BaseModel]
+                | Sequence[BaseModel]
                 | Mapping[str, BaseModel]
                 | r[BaseModel]
-                | r[list[BaseModel]]
+                | r[Sequence[BaseModel]]
                 | r[Mapping[str, BaseModel]]
             ),
             expected: type[T],
@@ -290,7 +290,7 @@ class FlextTestsUtilities(FlextUtilities):
             override: Mapping[str, t.Tests.Testobject],
             *,
             strategy: str = "deep",
-        ) -> dict[str, t.Tests.Testobject]:
+        ) -> Mapping[str, t.Tests.Testobject]:
             """Merge two test dicts via FlextUtilities.merge() (DRY helper).
 
             Delegates to module-level _merge_test_dicts.
@@ -748,7 +748,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_result_chain[T](
-                results: list[r[T]],
+                results: Sequence[r[T]],
                 expected_successes: int | None = None,
                 expected_failures: int | None = None,
                 expected_success_count: int | None = None,
@@ -800,11 +800,11 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def create_parametrized_cases(
-                success_values: list[t.Tests.Testobject],
-                failure_errors: list[str] | None = None,
+                success_values: Sequence[t.Tests.Testobject],
+                failure_errors: Sequence[str] | None = None,
                 *,
-                error_codes: list[str | None] | None = None,
-            ) -> list[
+                error_codes: Sequence[str | None] | None = None,
+            ) -> Sequence[
                 tuple[
                     r[t.Tests.Testobject],
                     bool,
@@ -824,7 +824,7 @@ class FlextTestsUtilities(FlextUtilities):
                     List of tuples (result, is_success, value, error)
 
                 """
-                cases: list[
+                cases: Sequence[
                     tuple[
                         r[t.Tests.Testobject],
                         bool,
@@ -873,8 +873,8 @@ class FlextTestsUtilities(FlextUtilities):
             @staticmethod
             def validate_model_attributes(
                 model: p.Model,
-                required_attrs: list[str],
-                optional_attrs: list[str] | None = None,
+                required_attrs: Sequence[str],
+                optional_attrs: Sequence[str] | None = None,
             ) -> r[bool]:
                 """Validate model has required attributes.
 
@@ -944,7 +944,7 @@ class FlextTestsUtilities(FlextUtilities):
                     New FlextSettings instance
 
                 """
-                scalar_overrides: dict[str, t.Scalar] = {
+                scalar_overrides: Mapping[str, t.Scalar] = {
                     str(key): _to_scalar(value) for key, value in kwargs.items()
                 }
                 return FlextSettings.get_global(overrides=scalar_overrides)
@@ -953,7 +953,7 @@ class FlextTestsUtilities(FlextUtilities):
             @contextmanager
             def env_vars_context(
                 env_vars: Mapping[str, t.Tests.TestobjectSerializable],
-                vars_to_clear: list[str] | None = None,
+                vars_to_clear: Sequence[str] | None = None,
             ) -> Generator[None]:
                 """Context manager for temporary environment variable changes.
 
@@ -1161,11 +1161,11 @@ class FlextTestsUtilities(FlextUtilities):
             @staticmethod
             def create_batch_operation_test_cases(
                 operation: str,
-                descriptions: list[str],
-                input_data_list: list[Mapping[str, t.Tests.Testobject]],
-                expected_results: list[t.Tests.Testobject],
+                descriptions: Sequence[str],
+                input_data_list: Sequence[Mapping[str, t.Tests.Testobject]],
+                expected_results: Sequence[t.Tests.Testobject],
                 **common_kwargs: t.Tests.Testobject,
-            ) -> list[MutableMapping[str, t.Tests.Testobject]]:
+            ) -> Sequence[MutableMapping[str, t.Tests.Testobject]]:
                 """Create batch test cases for operation testing.
 
                 Args:
@@ -1180,7 +1180,7 @@ class FlextTestsUtilities(FlextUtilities):
                     List of test case dictionaries
 
                 """
-                cases: list[MutableMapping[str, t.Tests.Testobject]] = []
+                cases: Sequence[MutableMapping[str, t.Tests.Testobject]] = []
                 for desc, data, expected in zip(
                     descriptions,
                     input_data_list,
@@ -1253,11 +1253,11 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def create_test_entities_batch[TEntity](
-                names: list[str],
-                values: list[t.Tests.Testobject],
+                names: Sequence[str],
+                values: Sequence[t.Tests.Testobject],
                 entity_class: _EntityFactory[TEntity],
-                remove_ids: list[bool] | None = None,
-            ) -> r[list[TEntity]]:
+                remove_ids: Sequence[bool] | None = None,
+            ) -> r[Sequence[TEntity]]:
                 """Create batch of test entities.
 
                 Args:
@@ -1267,11 +1267,11 @@ class FlextTestsUtilities(FlextUtilities):
                     remove_ids: List of booleans for ID removal
 
                 Returns:
-                    r[list[TEntity]]: Result containing list of entities or error
+                    r[Sequence[TEntity]]: Result containing list of entities or error
 
                 """
                 ids_removal = remove_ids or [False] * len(names)
-                entities: list[TEntity] = []
+                entities: Sequence[TEntity] = []
                 dh = FlextTestsUtilities.Tests.DomainHelpers
                 for name, value, remove_id in zip(
                     names,
@@ -1288,10 +1288,10 @@ class FlextTestsUtilities(FlextUtilities):
                         )
                         entities.append(entity)
                     except (TypeError, ValueError, AttributeError, RuntimeError) as e:
-                        return r[list[TEntity]].fail(
+                        return r[Sequence[TEntity]].fail(
                             f"Failed to create entity {name}: {e}",
                         )
-                return r[list[TEntity]].ok(entities)
+                return r[Sequence[TEntity]].ok(entities)
 
             @staticmethod
             def create_test_entity_instance[TEntity](
@@ -1340,10 +1340,10 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def create_test_value_objects_batch[TValue](
-                data_list: list[str],
-                count_list: list[int],
+                data_list: Sequence[str],
+                count_list: Sequence[int],
                 value_class: _ValueFactory[TValue],
-            ) -> list[TValue]:
+            ) -> Sequence[TValue]:
                 """Create batch of test value objects.
 
                 Args:
@@ -1578,7 +1578,7 @@ class FlextTestsUtilities(FlextUtilities):
                 content: str
                 | bytes
                 | Mapping[str, t.Tests.Testobject]
-                | list[list[str]],
+                | Sequence[Sequence[str]],
                 name: str,
                 fmt: str,
             ) -> str:
@@ -1647,7 +1647,7 @@ class FlextTestsUtilities(FlextUtilities):
                 encoding: str | None = None,
                 *,
                 has_headers: bool = True,
-            ) -> list[list[str]]:
+            ) -> Sequence[Sequence[str]]:
                 """Read CSV file.
 
                 Args:
@@ -1676,8 +1676,8 @@ class FlextTestsUtilities(FlextUtilities):
                 content: str
                 | bytes
                 | Mapping[str, t.Tests.Testobject]
-                | list[list[str]],
-                headers: list[str] | None,
+                | Sequence[Sequence[str]],
+                headers: Sequence[str] | None,
                 delimiter: str | None = None,
                 encoding: str | None = None,
             ) -> None:
@@ -1713,7 +1713,7 @@ class FlextTestsUtilities(FlextUtilities):
                 file_path: Path,
                 line_number: int,
                 rule_id: str,
-                lines: list[str],
+                lines: Sequence[str],
                 extra_desc: str = "",
             ) -> m.Tests.Violation:
                 """Create a violation model using c.Tests.Validator.Rules.
@@ -1743,7 +1743,7 @@ class FlextTestsUtilities(FlextUtilities):
                 )
 
             @staticmethod
-            def find_line_number(lines: list[str], pattern: str) -> int:
+            def find_line_number(lines: Sequence[str], pattern: str) -> int:
                 """Find line number containing pattern.
 
                 Args:
@@ -1823,7 +1823,7 @@ class FlextTestsUtilities(FlextUtilities):
             def is_approved(
                 rule_id: str,
                 file_path: Path,
-                approved: Mapping[str, list[str]],
+                approved: Mapping[str, Sequence[str]],
             ) -> bool:
                 """Check if file is approved for this rule.
 
@@ -1842,7 +1842,7 @@ class FlextTestsUtilities(FlextUtilities):
                 return any(re.search(pattern, file_str) for pattern in patterns)
 
             @staticmethod
-            def is_only_pass(body: list[ast.stmt]) -> bool:
+            def is_only_pass(body: Sequence[ast.stmt]) -> bool:
                 """Check if exception handler body contains only pass or ellipsis.
 
                 Used by BYPASS-003 to detect exception swallowing patterns.
