@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import tomllib
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, MutableSequence, Sequence
 from pathlib import Path
 
 from flext_core import r
@@ -32,7 +32,7 @@ class FlextValidatorSettings:
         approved: Mapping[str, Sequence[str]],
     ) -> Sequence[m.Tests.Violation]:
         """Check mypy configuration for violations."""
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         tool_data_raw: t.Tests.Testobject = data.get("tool", {})
         if not isinstance(tool_data_raw, dict):
             return violations
@@ -125,7 +125,7 @@ class FlextValidatorSettings:
         approved: Mapping[str, Sequence[str]],
     ) -> Sequence[m.Tests.Violation]:
         """Check pyright configuration for violations."""
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         tool_data = data.get("tool", {})
         if not isinstance(tool_data, dict):
             return violations
@@ -159,7 +159,7 @@ class FlextValidatorSettings:
         """Check ruff configuration for violations."""
         if u.Tests.Validator.is_approved("CONFIG-002", file_path, approved):
             return []
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         tool_data = data.get("tool", {})
         if not isinstance(tool_data, dict):
             return violations
@@ -220,7 +220,7 @@ class FlextValidatorSettings:
         approved: Mapping[str, Sequence[str]],
     ) -> Sequence[m.Tests.Violation]:
         """Scan a single pyproject.toml for config violations."""
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         try:
             content = file_path.read_text(encoding="utf-8")
             data = tomllib.loads(content)
@@ -248,7 +248,7 @@ class FlextValidatorSettings:
             r with ScanResult containing all violations found
 
         """
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         approved = approved_exceptions or {}
         for file_path in files:
             if file_path.name != "pyproject.toml":

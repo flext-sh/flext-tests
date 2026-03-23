@@ -21,7 +21,13 @@ import os
 import re
 import shutil
 import tempfile
-from collections.abc import Generator, Mapping, Sequence
+from collections.abc import (
+    Generator,
+    Mapping,
+    MutableMapping,
+    MutableSequence,
+    Sequence,
+)
 from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
@@ -70,7 +76,9 @@ def _to_runtime_data(value: t.Tests.Testobject) -> t.RuntimeData:
     if isinstance(value, bytes):
         return value.decode("utf-8", errors="replace")
     if isinstance(value, Mapping):
-        return {str(k): _to_normalized_or_model(v) for k, v in value.items()}
+        return m.ConfigMap(
+            root={str(k): _to_normalized_or_model(v) for k, v in value.items()},
+        )
     if isinstance(value, (list, tuple)):
         return [_to_normalized_leaf(item) for item in value]
     return str(value)
@@ -180,8 +188,8 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             return r[TModelRead].fail(f"Failed to validate model: {ex}")
 
     _base_dir: Path | None = None
-    _created_files: Sequence[Path] | None = None
-    _created_dirs: Sequence[Path] | None = None
+    _created_files: MutableSequence[Path] | None = None
+    _created_dirs: MutableSequence[Path] | None = None
 
     def __init__(
         self,
@@ -273,7 +281,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         if directory is not None:
             manager._base_dir = directory
         with manager:
-            paths: Mapping[str, Path] = {}
+            paths: MutableMapping[str, Path] = {}
             default_ext = ext or c.Tests.Files.DEFAULT_EXTENSION
             for name, data_raw in content.items():
                 data: t.Tests.Testobject = data_raw
@@ -607,8 +615,8 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                     return r[Path].fail(f"Unknown operation: {params.operation}")
 
         items_list: Sequence[tuple[str, t.Tests.Testobject]] = list(files_dict.items())
-        results: Sequence[Path | t.Tests.Testobject] = []
-        errors: Sequence[tuple[int, str]] = []
+        results: MutableSequence[Path | t.Tests.Testobject] = []
+        errors: MutableSequence[tuple[int, str]] = []
         total = len(items_list)
         for index, item in enumerate(items_list):
             operation_result = process_one(item)
@@ -625,8 +633,8 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                 errors.append((index, str(error_message)))
                 continue
             results.append(operation_result)
-        results_dict: Mapping[str, r[Path | t.Tests.Testobject]] = {}
-        failed_dict: Mapping[str, str] = {}
+        results_dict: MutableMapping[str, r[Path | t.Tests.Testobject]] = {}
+        failed_dict: MutableMapping[str, str] = {}
         for idx, result in enumerate(results):
             if idx < len(items_list):
                 name, _ = items_list[idx]
@@ -681,8 +689,10 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
                     shutil.rmtree(dir_path)
                 except OSError:
                     pass
-        self.created_files.clear()
-        self.created_dirs.clear()
+        if self._created_files is not None:
+            self._created_files.clear()
+        if self._created_dirs is not None:
+            self._created_dirs.clear()
 
     def compare(
         self,
@@ -1334,7 +1344,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
             }
             return m.ConfigMap(root=coerce_root)
         if self._is_nested_rows(value):
-            rows: Sequence[Sequence[str]] = []
+            rows: MutableSequence[Sequence[str]] = []
             sequence_value: Sequence[t.Tests.Testobject] = (
                 value if isinstance(value, (list, tuple)) else ()
             )
@@ -1474,7 +1484,7 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         normalized_mapping: Mapping[str, t.Tests.Testobject] = (
             _OBJECT_DICT_ADAPTER.validate_python(mapping)
         )
-        payload: Mapping[str, t.Tests.Testobject] = {}
+        payload: MutableMapping[str, t.Tests.Testobject] = {}
         for key, value in normalized_mapping.items():
             payload[str(key)] = self._to_payload_value(value)
         return payload

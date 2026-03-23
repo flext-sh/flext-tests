@@ -19,7 +19,7 @@ TEntity = TypeVar("TEntity")
 TValue = TypeVar("TValue")
 
 
-class _EntityFactory[TEntity](Protocol):
+class EntityFactory[TEntity](Protocol):
     """Factory protocol that builds test entity objects.
 
     Methods:
@@ -32,7 +32,7 @@ class _EntityFactory[TEntity](Protocol):
         ...
 
 
-class _ValueFactory[TValue](Protocol):
+class ValueFactory[TValue](Protocol):
     """Factory protocol that builds value objects for test helpers.
 
     Methods:
@@ -62,4 +62,4 @@ class FlextTestsProtocols(FlextProtocols):
 
 
 p = FlextTestsProtocols
-__all__ = ["FlextTestsProtocols", "_EntityFactory", "_ValueFactory", "p"]
+__all__ = ["EntityFactory", "FlextTestsProtocols", "ValueFactory", "p"]

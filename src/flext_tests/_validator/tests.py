@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import ast
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, MutableSequence, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -38,7 +38,7 @@ class FlextValidatorTests:
         """Detect Mock and MagicMock usage."""
         if u.Tests.Validator.is_approved("TEST-002", file_path, approved):
             return []
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         mock_names = c.Tests.Validator.Approved.MOCK_NAMES
         for node in ast.walk(tree):
             if isinstance(node, ast.ImportFrom):
@@ -79,7 +79,7 @@ class FlextValidatorTests:
         """Detect monkeypatch usage in function parameters and calls."""
         if u.Tests.Validator.is_approved("TEST-001", file_path, approved):
             return []
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 for arg in node.args.args:
@@ -120,7 +120,7 @@ class FlextValidatorTests:
         """Detect @patch decorator usage."""
         if u.Tests.Validator.is_approved("TEST-003", file_path, approved):
             return []
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if not isinstance(
                 node,
@@ -167,7 +167,7 @@ class FlextValidatorTests:
         approved: Mapping[str, Sequence[str]],
     ) -> Sequence[m.Tests.Violation]:
         """Scan a single file for test violations."""
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         try:
             content = file_path.read_text(encoding="utf-8")
             tree = ast.parse(content, filename=str(file_path))

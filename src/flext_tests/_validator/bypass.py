@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import ast
 import re
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, MutableSequence, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -39,7 +39,7 @@ class FlextValidatorBypass:
         """Detect exception swallowing patterns (bare except or except with pass)."""
         if u.Tests.Validator.is_approved("BYPASS-003", file_path, approved):
             return []
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if isinstance(node, ast.ExceptHandler):
                 if node.type is None:
@@ -72,7 +72,7 @@ class FlextValidatorBypass:
         """Detect # noqa comments."""
         if u.Tests.Validator.is_approved("BYPASS-001", file_path, approved):
             return []
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         pattern = re.compile(r"#\s*noqa", re.IGNORECASE)
         for i, line in enumerate(lines, start=1):
             is_real = u.Tests.Validator.is_real_comment(line, pattern)
@@ -100,7 +100,7 @@ class FlextValidatorBypass:
         file_str = str(file_path)
         if any(re.search(pattern, file_str) for pattern in patterns):
             return []
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         pattern = re.compile(r"#\s*pragma:\s*no\s*cover", re.IGNORECASE)
         for i, line in enumerate(lines, start=1):
             is_real = u.Tests.Validator.is_real_comment(line, pattern)
@@ -121,7 +121,7 @@ class FlextValidatorBypass:
         approved: Mapping[str, Sequence[str]],
     ) -> Sequence[m.Tests.Violation]:
         """Scan a single file for bypass violations."""
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         try:
             content = file_path.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):

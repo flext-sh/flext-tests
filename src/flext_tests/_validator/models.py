@@ -8,7 +8,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Mapping, MutableSequence, Sequence
 from pathlib import Path
 from typing import Annotated
 
@@ -41,7 +41,7 @@ class FlextValidatorModels(m):
                 Sequence[m.Tests.Violation],
             ],
         ) -> r[m.Tests.ScanResult]:
-            violations: Sequence[m.Tests.Violation] = []
+            violations: MutableSequence[m.Tests.Violation] = []
             approved = approved_exceptions or {}
             for file_path in files:
                 violations.extend(scan_file(file_path, approved))

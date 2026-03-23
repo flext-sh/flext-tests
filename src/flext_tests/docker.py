@@ -20,7 +20,7 @@ from __future__ import annotations
 import contextlib
 import socket
 import time
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, MutableMapping, MutableSequence, Sequence
 from pathlib import Path
 from typing import ClassVar
 
@@ -140,7 +140,7 @@ class FlextTestsDocker:
 
     def cleanup_dirty_containers(self) -> r[Sequence[str]]:
         """Clean up all dirty containers by recreating them with fresh volumes."""
-        cleaned: Sequence[str] = []
+        cleaned: MutableSequence[str] = []
         for container_name in list(self._dirty_containers):
             config = self.shared_containers.get(container_name)
             if not config:
@@ -228,7 +228,7 @@ class FlextTestsDocker:
             ports_raw: Mapping[str, t.Tests.Testobject] = TypeAdapter(
                 Mapping[str, t.Tests.TestobjectSerializable],
             ).validate_python(container.ports)
-            ports: Mapping[str, str] = {}
+            ports: MutableMapping[str, str] = {}
             for container_port, host_bindings in ports_raw.items():
                 normalized_bindings = self._normalize_bindings(host_bindings)
                 host_port = self._extract_host_port(normalized_bindings)

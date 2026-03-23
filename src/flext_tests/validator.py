@@ -25,7 +25,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import fnmatch
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, MutableSequence, Sequence
 from pathlib import Path
 from typing import ClassVar, override
 
@@ -92,7 +92,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         excludes = exclude_patterns or list(c.Tests.Validator.Defaults.EXCLUDE_PATTERNS)
         if path.is_file():
             return [path] if path.suffix == ".py" else []
-        files: Sequence[Path] = []
+        files: MutableSequence[Path] = []
         for py_file in path.rglob("*.py"):
             file_str = str(py_file)
             excluded = False
@@ -127,9 +127,9 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
             r[ScanResult] with combined violations from all validators
 
         """
-        all_violations: Sequence[m.Tests.Violation] = []
+        all_violations: MutableSequence[m.Tests.Violation] = []
         total_files = 0
-        validators: Sequence[tuple[str, r[m.Tests.ScanResult]]] = [
+        validators: list[tuple[str, r[m.Tests.ScanResult]]] = [
             ("imports", cls.imports(path, exclude_patterns, approved_exceptions)),
             ("types", cls.types(path, exclude_patterns, approved_exceptions)),
             ("bypass", cls.bypass(path, exclude_patterns, approved_exceptions)),

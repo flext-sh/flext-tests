@@ -55,11 +55,17 @@ from __future__ import annotations
 
 import os
 import warnings
-from collections.abc import Iterator, Mapping, MutableMapping, Sequence, Sized
+from collections.abc import (
+    Iterator,
+    Mapping,
+    MutableMapping,
+    Sequence,
+    Sized,
+)
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
-from typing import TypeIs, overload
+from typing import TypeGuard, TypeIs, cast, overload
 
 from flext_core import m as core_m, r, t as core_t, u
 from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
@@ -69,6 +75,7 @@ from flext_tests import (
     deep_match as _deep_match,
     length_validate as _length_validate,
     m,
+    p,
     t,
 )
 
@@ -79,7 +86,7 @@ _GUARD_PAYLOAD_LIST_ADAPTER = TypeAdapter(Sequence[t.Tests.TestobjectSerializabl
 
 
 def _is_non_string_sequence(
-    value: t.Tests.Testobject,
+    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
 ) -> TypeIs[Sequence[t.Tests.Testobject]]:
     return isinstance(value, Sequence) and (
         not isinstance(value, (str, bytes, bytearray))
@@ -87,8 +94,8 @@ def _is_non_string_sequence(
 
 
 def _is_matcher_input(
-    value: t.NormalizedValue,
-) -> TypeIs[t.Tests.Testobject]:
+    value: object,
+) -> TypeGuard[t.Tests.Testobject]:
     if value is None:
         return True
     if isinstance(value, (str, int, float, bool, bytes, datetime, Path, BaseModel)):
@@ -107,7 +114,7 @@ def _is_matcher_input(
 
 
 def _to_test_payload(
-    value: t.Tests.Testobject,
+    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
 ) -> t.Tests.Testobject:
     if isinstance(value, type):
         return value
@@ -185,7 +192,7 @@ def _to_extract_value(value: t.Tests.Testobject) -> core_t.ValueOrModel:
 
 
 def _as_guard_input(
-    value: t.Tests.Testobject,
+    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
 ) -> t.Tests.Testobject:
     if isinstance(value, type):
         return value
@@ -221,7 +228,7 @@ def _as_guard_input(
 
 
 def _to_chk_value(
-    value: t.NormalizedValue,
+    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
 ) -> t.NormalizedValue:
     """Convert a test value to NormalizedValue for use with u.chk()."""
     if value is None:
@@ -255,8 +262,14 @@ def _to_chk_value(
 
 def _check_has_lacks(
     value: t.Tests.Testobject,
-    has: t.NormalizedValue | None,
-    lacks: t.NormalizedValue | None,
+    has: t.Tests.Matcher.ContainmentSpec
+    | t.Tests.Matcher.MatcherKwargValue
+    | t.NormalizedValue
+    | None,
+    lacks: t.Tests.Matcher.ContainmentSpec
+    | t.Tests.Matcher.MatcherKwargValue
+    | t.NormalizedValue
+    | None,
     msg: str | None,
     *,
     as_str: bool = False,
@@ -893,7 +906,7 @@ class FlextTestsMatchersUtilities:
                     params = m.Tests.ScopeParams.model_validate(kwargs)
                 except (TypeError, ValueError, AttributeError) as exc:
                     raise ValueError(f"Parameter validation failed: {exc}") from exc
-                original_env: Mapping[str, str | None] = {}
+                original_env: MutableMapping[str, str | None] = {}
                 original_cwd: Path | None = None
                 try:
                     if params.env is not None:
@@ -1072,12 +1085,13 @@ class FlextTestsMatchersUtilities:
                             f"Parameter validation failed: {filtered_exc}",
                         ) from filtered_exc
                 subject = value
-                if u.is_result_like(subject) or (
+                guard_subject = cast("t.GuardInput", subject)
+                if u.is_result_like(guard_subject) or (
                     hasattr(subject, "is_success")
                     and hasattr(subject, "error")
                     and hasattr(type(subject), "value")
                 ):
-                    result_obj = subject
+                    result_obj = cast("p.ResultLike[t.Tests.Testobject]", subject)
                     actual_value: t.Tests.Testobject | str = ""
                     if params.ok is not None:
                         if params.ok and (not result_obj.is_success):

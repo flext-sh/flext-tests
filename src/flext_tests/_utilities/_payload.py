@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping, Sequence, Sized
+from collections.abc import Callable, Mapping, MutableMapping, Sequence, Sized
 from datetime import datetime
 from pathlib import Path
 
@@ -57,7 +57,7 @@ def to_payload(
             mapping_value = _PAYLOAD_MAPPING_ADAPTER.validate_python(value)
         except ValidationError:
             return {}
-        payload_map: Mapping[str, t.Tests.Testobject] = {}
+        payload_map: MutableMapping[str, t.Tests.Testobject] = {}
         for key_raw, item_obj in mapping_value.items():
             payload_map[str(key_raw)] = to_payload(item_obj)
         return payload_map

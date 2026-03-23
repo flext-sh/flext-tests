@@ -19,6 +19,7 @@ from collections.abc import (
     Generator,
     Mapping,
     MutableMapping,
+    MutableSequence,
     Sequence,
 )
 from contextlib import contextmanager
@@ -37,8 +38,8 @@ from flext_core import (
 from pydantic import BaseModel, RootModel
 
 from flext_tests import (
-    _EntityFactory,
-    _ValueFactory,
+    EntityFactory,
+    ValueFactory,
     c,
     deep_match as _deep_match_impl,
     length_validate as _length_validate_impl,
@@ -137,7 +138,7 @@ def _merge_test_dicts(
     DRY helper: consolidates the repeated pattern of
     ``FlextUtilities.merge(to_normalized_dict(...), to_normalized_dict(...))``.
     """
-    mr = FlextUtilities.merge(
+    mr = FlextUtilities.merge_mappings(
         {k: _to_normalized_value(v) for k, v in base.items()},
         {k: _to_normalized_value(v) for k, v in override.items()},
         strategy=strategy,
@@ -150,8 +151,8 @@ def _merge_test_dicts(
 
 def _entity_factory_for[T: BaseModel](
     cls: type[T],
-) -> _EntityFactory[T]:
-    """Build an _EntityFactory lambda for *cls* (DRY helper)."""
+) -> EntityFactory[T]:
+    """Build an EntityFactory lambda for *cls* (DRY helper)."""
 
     def _factory(
         *,
@@ -166,8 +167,8 @@ def _entity_factory_for[T: BaseModel](
 
 def _value_factory_for[T: BaseModel](
     cls: type[T],
-) -> _ValueFactory[T]:
-    """Build a _ValueFactory lambda for *cls* (DRY helper)."""
+) -> ValueFactory[T]:
+    """Build a ValueFactory lambda for *cls* (DRY helper)."""
 
     def _factory(*, data: str, count: int) -> T:
         return cls.model_validate({"data": data, "count": count})
@@ -300,8 +301,8 @@ class FlextTestsUtilities(FlextUtilities):
         @staticmethod
         def entity_factory_for[T: BaseModel](
             model_cls: type[T],
-        ) -> _EntityFactory[T]:
-            """Build an _EntityFactory for the given class (DRY helper).
+        ) -> EntityFactory[T]:
+            """Build an EntityFactory for the given class (DRY helper).
 
             Delegates to module-level _entity_factory_for.
             """
@@ -310,8 +311,8 @@ class FlextTestsUtilities(FlextUtilities):
         @staticmethod
         def value_factory_for[T: BaseModel](
             model_cls: type[T],
-        ) -> _ValueFactory[T]:
-            """Build a _ValueFactory for the given class (DRY helper).
+        ) -> ValueFactory[T]:
+            """Build a ValueFactory for the given class (DRY helper).
 
             Delegates to module-level _value_factory_for.
             """
@@ -824,7 +825,7 @@ class FlextTestsUtilities(FlextUtilities):
                     List of tuples (result, is_success, value, error)
 
                 """
-                cases: Sequence[
+                cases: MutableSequence[
                     tuple[
                         r[t.Tests.Testobject],
                         bool,
@@ -1180,7 +1181,7 @@ class FlextTestsUtilities(FlextUtilities):
                     List of test case dictionaries
 
                 """
-                cases: Sequence[MutableMapping[str, t.Tests.Testobject]] = []
+                cases: MutableSequence[MutableMapping[str, t.Tests.Testobject]] = []
                 for desc, data, expected in zip(
                     descriptions,
                     input_data_list,
@@ -1255,7 +1256,7 @@ class FlextTestsUtilities(FlextUtilities):
             def create_test_entities_batch[TEntity](
                 names: Sequence[str],
                 values: Sequence[t.Tests.Testobject],
-                entity_class: _EntityFactory[TEntity],
+                entity_class: EntityFactory[TEntity],
                 remove_ids: Sequence[bool] | None = None,
             ) -> r[Sequence[TEntity]]:
                 """Create batch of test entities.
@@ -1271,7 +1272,7 @@ class FlextTestsUtilities(FlextUtilities):
 
                 """
                 ids_removal = remove_ids or [False] * len(names)
-                entities: Sequence[TEntity] = []
+                entities: MutableSequence[TEntity] = []
                 dh = FlextTestsUtilities.Tests.DomainHelpers
                 for name, value, remove_id in zip(
                     names,
@@ -1297,7 +1298,7 @@ class FlextTestsUtilities(FlextUtilities):
             def create_test_entity_instance[TEntity](
                 name: str,
                 value: t.Tests.Testobject,
-                entity_class: _EntityFactory[TEntity],
+                entity_class: EntityFactory[TEntity],
                 *,
                 remove_id: bool = False,
             ) -> TEntity:
@@ -1323,7 +1324,7 @@ class FlextTestsUtilities(FlextUtilities):
             def create_test_value_object_instance[TValue](
                 data: str,
                 count: int,
-                value_class: _ValueFactory[TValue],
+                value_class: ValueFactory[TValue],
             ) -> TValue:
                 """Create a test value t.NormalizedValue instance.
 
@@ -1342,7 +1343,7 @@ class FlextTestsUtilities(FlextUtilities):
             def create_test_value_objects_batch[TValue](
                 data_list: Sequence[str],
                 count_list: Sequence[int],
-                value_class: _ValueFactory[TValue],
+                value_class: ValueFactory[TValue],
             ) -> Sequence[TValue]:
                 """Create batch of test value objects.
 
@@ -2026,6 +2027,8 @@ u = FlextTestsUtilities
 
 from flext_tests import FlextTestsMatchersUtilities
 
-FlextTestsUtilities.Tests.Matchers = FlextTestsMatchersUtilities.Tests.Matchers
+setattr(
+    FlextTestsUtilities.Tests, "Matchers", FlextTestsMatchersUtilities.Tests.Matchers
+)
 
 __all__ = ["FlextTestsUtilities", "u"]

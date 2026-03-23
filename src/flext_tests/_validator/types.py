@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import ast
 import re
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, MutableSequence, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -39,7 +39,7 @@ class FlextValidatorTypes:
         """Detect wildcard type annotations."""
         if u.Tests.Validator.is_approved("TYPE-002", file_path, approved):
             return []
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 if node.returns and u.Tests.Validator.is_any_type(node.returns):
@@ -88,7 +88,7 @@ class FlextValidatorTypes:
         file_str = str(file_path)
         if any(re.search(pattern, file_str) for pattern in patterns):
             return []
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if not isinstance(node, ast.Call):
                 continue
@@ -119,7 +119,7 @@ class FlextValidatorTypes:
         """Detect type: ignore comments in code (not in strings/docstrings)."""
         if u.Tests.Validator.is_approved("TYPE-001", file_path, approved):
             return []
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         pattern = re.compile(r"#\s*type:\s*ignore")
         for i, line in enumerate(lines, start=1):
             is_real = u.Tests.Validator.is_real_comment(line, pattern)
@@ -140,7 +140,7 @@ class FlextValidatorTypes:
         approved: Mapping[str, Sequence[str]],
     ) -> Sequence[m.Tests.Violation]:
         """Scan a single file for type violations."""
-        violations: Sequence[m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         try:
             content = file_path.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
