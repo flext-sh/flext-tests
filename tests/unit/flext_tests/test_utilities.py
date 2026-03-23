@@ -14,7 +14,7 @@ from flext_core import r
 from pydantic import BaseModel, ConfigDict
 
 from flext_tests import tm
-from tests import u
+from flext_tests.utilities import FlextTestsUtilities as u
 
 
 class TestFlextTestsUtilitiesResult:

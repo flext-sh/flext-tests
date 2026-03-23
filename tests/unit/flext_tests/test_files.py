@@ -18,7 +18,9 @@ from flext_core import r
 from pydantic import BaseModel
 
 from flext_tests import tf, tm
-from tests import assertion_helpers, m
+from flext_tests.models import FlextTestsModels
+from tests.models import FlextTestsTestModels as m
+from tests.test_utils import assertion_helpers
 
 
 class TestFileInfo:
@@ -733,7 +735,7 @@ class TestFileInfoFromModels:
 
     def test_fileinfo_import_from_models(self) -> None:
         """Test tf.FileInfo can be imported from models."""
-        info = m.Tests.FileInfo(exists=True, size=100, lines=5)
+        info = FlextTestsModels.Tests.FileInfo(exists=True, size=100, lines=5)
         tm.that(info.exists is True, eq=True)
         tm.that(info.size == 100, eq=True)
         tm.that(info.lines == 5, eq=True)
@@ -742,13 +744,13 @@ class TestFileInfoFromModels:
         """Test tf.FileInfo alias works for backward compatibility."""
         info = tf.FileInfo(exists=True)
         tm.that(info.exists is True, eq=True)
-        info2 = m.Tests.FileInfo(exists=True)
+        info2 = FlextTestsModels.Tests.FileInfo(exists=True)
         tm.that(info2.exists is True, eq=True)
 
     def test_fileinfo_all_fields(self) -> None:
         """Test tf.FileInfo with all fields populated."""
         now = datetime.now(tz=UTC)
-        info = m.Tests.FileInfo(
+        info = FlextTestsModels.Tests.FileInfo(
             exists=True,
             path=Path("/test/file.txt"),
             size=1024,

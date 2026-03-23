@@ -474,7 +474,7 @@ class FlextTestsUtilities(FlextUtilities):
             @staticmethod
             @contextmanager
             def temporary_attribute(
-                target: p.Model,
+                target: object,
                 attribute: str,
                 value: t.Tests.Testobject,
             ) -> Generator[None]:
@@ -2026,6 +2026,6 @@ u = FlextTestsUtilities
 
 from flext_tests import FlextTestsMatchersUtilities  # noqa: E402
 
-FlextTestsUtilities.Tests.Matchers = FlextTestsMatchersUtilities.Tests.Matchers  # type: ignore[attr-defined]
+FlextTestsUtilities.Tests.Matchers = FlextTestsMatchersUtilities.Tests.Matchers
 
 __all__ = ["FlextTestsUtilities", "u"]
