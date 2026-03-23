@@ -2024,7 +2024,7 @@ class FlextTestsUtilities(FlextUtilities):
 FlextUtilities = FlextTestsUtilities
 u = FlextTestsUtilities
 
-from flext_tests import FlextTestsMatchersUtilities  # noqa: E402
+from flext_tests import FlextTestsMatchersUtilities
 
 FlextTestsUtilities.Tests.Matchers = FlextTestsMatchersUtilities.Tests.Matchers
 
