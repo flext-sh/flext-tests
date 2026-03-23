@@ -1232,7 +1232,7 @@ class FlextTestsUtilities(FlextUtilities):
             @staticmethod
             def execute_and_assert_operation_result(
                 operation: Callable[[], t.Tests.Testobject],
-                test_case: Mapping[str, t.Tests.TestobjectSerializable],
+                test_case: Mapping[str, t.Tests.Testobject],
             ) -> None:
                 """Execute operation and assert result.
 
@@ -1368,7 +1368,7 @@ class FlextTestsUtilities(FlextUtilities):
             @staticmethod
             def execute_domain_operation(
                 operation: str,
-                input_data: Mapping[str, t.Tests.TestobjectSerializable],
+                input_data: Mapping[str, t.Tests.Testobject],
                 **kwargs: t.Tests.Testobject,
             ) -> t.Tests.Testobject:
                 """Execute a domain utility operation.
