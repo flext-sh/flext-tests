@@ -13,22 +13,21 @@ if TYPE_CHECKING:
     from flext_core import FlextTypes
 
     from flext_tests import d, e, h, r, s, x
-
-    from .conftest import td, tf, tk, tm, tt
-    from .constants import FlextTestsTestConstants, FlextTestsTestConstants as c
-    from .models import FlextTestsTestModels, FlextTestsTestModels as m
-    from .protocols import FlextTestsTestProtocols, FlextTestsTestProtocols as p
-    from .test_utils import AssertionHelpers, T, assertion_helpers
-    from .typings import FlextTestsTestTypes, FlextTestsTestTypes as t
-    from .unit.flext_tests.test_docker import (
+    from tests.conftest import td, tf, tk, tm, tt
+    from tests.constants import FlextTestsTestConstants, FlextTestsTestConstants as c
+    from tests.models import FlextTestsTestModels, FlextTestsTestModels as m
+    from tests.protocols import FlextTestsTestProtocols, FlextTestsTestProtocols as p
+    from tests.test_utils import AssertionHelpers, T, assertion_helpers
+    from tests.typings import FlextTestsTestTypes, FlextTestsTestTypes as t
+    from tests.unit.flext_tests.test_docker import (
         TestContainerInfo,
         TestContainerStatus,
         TestFlextTestsDocker,
         TestFlextTestsDockerWorkerId,
         TestFlextTestsDockerWorkspaceRoot,
     )
-    from .unit.flext_tests.test_domains import TestFlextTestsDomains
-    from .unit.flext_tests.test_files import (
+    from tests.unit.flext_tests.test_domains import TestFlextTestsDomains
+    from tests.unit.flext_tests.test_files import (
         TestAssertExists,
         TestBatchOperations,
         TestCreateInStatic,
@@ -39,14 +38,14 @@ if TYPE_CHECKING:
         TestInfoWithContentMeta,
         TestShortAlias,
     )
-    from .unit.flext_tests.test_matchers import TestFlextTestsMatchers
-    from .unit.flext_tests.test_utilities import (
+    from tests.unit.flext_tests.test_matchers import TestFlextTestsMatchers
+    from tests.unit.flext_tests.test_utilities import (
         TestFlextTestsUtilitiesFactory,
         TestFlextTestsUtilitiesResult,
         TestFlextTestsUtilitiesResultCompat,
         TestFlextTestsUtilitiesTestContext,
     )
-    from .utilities import FlextTestsTestUtilities, FlextTestsTestUtilities as u
+    from tests.utilities import FlextTestsTestUtilities, FlextTestsTestUtilities as u
 
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "AssertionHelpers": ("tests.test_utils", "AssertionHelpers"),

@@ -12,15 +12,15 @@ from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 if TYPE_CHECKING:
     from flext_core import FlextTypes
 
-    from .test_docker import (
+    from tests.unit.flext_tests.test_docker import (
         TestContainerInfo,
         TestContainerStatus,
         TestFlextTestsDocker,
         TestFlextTestsDockerWorkerId,
         TestFlextTestsDockerWorkspaceRoot,
     )
-    from .test_domains import TestFlextTestsDomains
-    from .test_files import (
+    from tests.unit.flext_tests.test_domains import TestFlextTestsDomains
+    from tests.unit.flext_tests.test_files import (
         TestAssertExists,
         TestBatchOperations,
         TestCreateInStatic,
@@ -31,8 +31,8 @@ if TYPE_CHECKING:
         TestInfoWithContentMeta,
         TestShortAlias,
     )
-    from .test_matchers import TestFlextTestsMatchers
-    from .test_utilities import (
+    from tests.unit.flext_tests.test_matchers import TestFlextTestsMatchers
+    from tests.unit.flext_tests.test_utilities import (
         TestFlextTestsUtilitiesFactory,
         TestFlextTestsUtilitiesResult,
         TestFlextTestsUtilitiesResultCompat,
