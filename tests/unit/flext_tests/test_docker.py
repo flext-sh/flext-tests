@@ -22,8 +22,7 @@ from docker import DockerClient
 from flext_core import r
 
 from flext_tests import tk, tm
-from tests import c
-from tests.test_utils import assertion_helpers
+from tests import assertion_helpers, c
 
 
 class TestContainerStatus:

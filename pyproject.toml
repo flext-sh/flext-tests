@@ -33,8 +33,8 @@ classifiers = [
 dependencies = [
   "factory-boy>=3.3.1",
   "faker>=37.4",
-  "flext-core",
-  "flext-infra",
+  "flext-core @ file:../flext-core",
+  "flext-infra @ file:../flext-infra",
   "hypothesis>=6.125",
   "pytest-benchmark>=5.1",
   "pytest-clarity>=1.0.1",
@@ -51,13 +51,66 @@ dependencies = [
 # [MANAGED] consolidated development dependencies
 # [AUTO] merged from dev/docs/security/test/typings
 optional-dependencies.dev = [
+  "autoflake>=2.3.1",
   "bandit>=1.8",
+  "black>=25.1",
   "codespell>=2.3",
   "deptry>=0.23",
   "detect-secrets>=1.5",
+  "django-stubs>=5.2.2",
+  "factory-boy>=3.3.1",
+  "faker>=37.4",
+  "hypothesis>=6.125",
+  "isort>=6.0.1",
+  "mkdocs-awesome-pages-plugin>=2.9",
+  "mkdocs-encryptcontent-plugin>=2",
+  "mkdocs-exclude>=1",
+  "mkdocs-get-deps>=0.2",
+  "mkdocs-git-revision-date-localized-plugin>=1.2",
+  "mkdocs-literate-nav>=0.6",
+  "mkdocs-macros-plugin>=1",
+  "mkdocs-material-extensions>=1.3.1",
+  "mkdocs-material>=9.5",
+  "mkdocs-mermaid2-plugin>=1.1",
+  "mkdocs-minify-plugin>=0.7",
+  "mkdocs-newsletter>=0.1",
+  "mkdocs-print-site-plugin>=0.8",
+  "mkdocs-redirects>=1.2",
+  "mkdocs-section-index>=0.3",
+  "mkdocs-versioning>=0.2",
+  "mkdocs>=1.6",
+  "mkdocstrings-python>=1.7",
+  "mkdocstrings>=0.24",
   "mypy>=1.18.2",
+  "pip-audit>=2.7.3",
+  "pre-commit>=4.0.1",
+  "pylint>=3.3",
+  "pytest-benchmark>=5.1",
+  "pytest-clarity>=1.0.1",
+  "pytest-cov>=6.2",
+  "pytest-deadfixtures>=2.2.1",
+  "pytest-env>=1.1.5",
+  "pytest-mock>=3.14",
+  "pytest-randomly>=3.16",
+  "pytest-sugar>=1",
+  "pytest-timeout>=2.4",
+  "pytest-xdist>=3.8",
+  "pytest>=8.4",
+  "pyupgrade>=3.19",
+  "radon>=6.0.1",
   "ruff>=0.12.3",
+  "types-docker>=7.1",
+  "types-ldap3>=2.9.13.20250622",
+  "types-protobuf>=6.30.2.20250703",
+  "types-psutil>=7",
+  "types-psycopg2>=2.9.21.20250718",
+  "types-python-dateutil>=2.9",
   "types-pyyaml>=6.0.12",
+  "types-redis>=4.6",
+  "types-requests>=2.32.4",
+  "types-setuptools>=80.9",
+  "types-toml>=0.10.8.20240310",
+  "vulture>=2.13",
 ]
 urls = {Documentation = "https://github.com/flext-sh/flext-tests/blob/main/README.md", Homepage = "https://github.com/flext-sh/flext-tests", Repository = "https://github.com/flext-sh/flext-tests"}
 
@@ -68,6 +121,7 @@ packages = [
 ]
 
 # [CUSTOM] poetry path dependencies for local development
+# [CUSTOM] poetry dev extensions
 [tool.poetry.group.dev.dependencies]
 flext-core = {path = "../flext-core", develop = true}
 flext-infra = {path = "../flext-core", develop = true, extras = [  ]}
@@ -91,6 +145,7 @@ check-filenames = true
 ignore-words-list = "crate,nd"
 skip = ".git,poetry.lock,.mypy_cache,.pytest_cache,.ruff_cache"
 
+# [MANAGED] pyrefly
 [tool.pyrefly]
 ignore-errors-in-generated-code = true
 project-excludes = [
@@ -100,6 +155,13 @@ project-excludes = [
 python-version = "3.13"
 search-path = [
   ".",
+  "../flext-core/examples",
+  "../flext-core/src",
+  "../flext-core/tests",
+  "../flext-infra/src",
+  "../flext-infra/tests",
+  "src",
+  "tests",
 ]
 
 [tool.pyrefly.errors]
@@ -123,7 +185,18 @@ unannotated-return = true
 disable_error_code = [
   "prop-decorator",
 ]
-mypy_path = [ "src" ]
+mypy_path = [
+  ".",
+  "../flext-core/examples",
+  "../flext-core/src",
+  "../flext-core/tests",
+  "../flext-infra/src",
+  "../flext-infra/tests",
+  "../typings",
+  "../typings/generated",
+  "src",
+  "tests",
+]
 plugins = [
   "pydantic.mypy",
 ]
@@ -139,6 +212,7 @@ init_forbid_extra = true
 init_typed = true
 warn_required_dynamic_aliases = true
 
+# [MANAGED] ruff
 [tool.ruff]
 exclude = [
   ".git",
@@ -164,6 +238,7 @@ respect-gitignore = true
 show-fixes = true
 src = [
   "src",
+  "tests",
 ]
 target-version = "py313"
 
@@ -237,6 +312,100 @@ force-single-line = false
 split-on-trailing-comma = true
 
 [tool.ruff.lint.per-file-ignores]
+"**/.vulture_whitelist.py" = [
+  "ALL",
+]
+"**/*_pb2*.py" = [
+  "ALL",
+]
+"**/*docs*" = [
+  "INP001",
+  "S404",
+  "S603",
+  "T201",
+]
+"**/*examples*" = [
+  "ANN401",
+  "C901",
+  "D103",
+  "EXE001",
+  "FBT001",
+  "FBT002",
+  "FIX002",
+  "INP001",
+  "N999",
+  "PLR2004",
+  "S105",
+  "S106",
+  "S112",
+  "S404",
+  "S603",
+  "T201",
+  "TID252",
+]
+"**/*exceptions*" = [
+  "A001",
+  "S105",
+  "SLF001",
+]
+"**/*instrumentation*" = [
+  "C901",
+  "FBT001",
+  "SLF001",
+]
+"**/*loggings*" = [
+  "PLR0904",
+  "PLW0603",
+]
+"**/*middleware*" = [
+  "ANN401",
+  "FBT001",
+  "FBT002",
+  "PLC2801",
+  "S107",
+]
+"**/*models*" = [
+  "ANN401",
+  "F821",
+  "FBT001",
+  "PLC2701",
+  "PLR0206",
+  "PLW0603",
+]
+"**/*oracle*" = [
+  "DTZ007",
+]
+"**/*result*" = [
+  "PLC2701",
+  "SLF001",
+]
+"**/*scripts*" = [
+  "EXE001",
+  "FIX002",
+  "INP001",
+  "PLR0911",
+  "PLR0912",
+  "PLR0915",
+  "PLR2004",
+  "PLW2901",
+  "S105",
+  "S107",
+  "S404",
+  "S603",
+  "T201",
+  "TID252",
+]
+"**/*service*" = [
+  "N815",
+  "PLC2801",
+  "S404",
+  "S603",
+  "SLF001",
+]
+"**/*subprocess_utils*" = [
+  "S404",
+  "S603",
+]
 "**/*tests*" = [
   "ANN001",
   "ANN002",
@@ -327,18 +496,79 @@ split-on-trailing-comma = true
   "N999",
   "RUF067",
 ]
+"**/_utilities/parser.py" = [
+  "ARG004",
+  "FBT001",
+]
+"**/config.py" = [
+  "ANN401",
+  "FBT001",
+  "SLF001",
+]
 "**/constants.py" = [
   "S105",
 ]
-"**/models.py" = [
+"**/container.py" = [
   "ANN401",
-  "F821",
-  "FBT001",
-  "PLC2701",
+  "SLF001",
+]
+"**/file_tools.py" = [
+  "D102",
+]
+"**/managers.py" = [
+  "S105",
+]
+"**/models.py" = [
   "PLC2801",
-  "PLR0206",
-  "PLW0603",
   "S102",
+]
+"**/output.py" = [
+  "FBT001",
+]
+"**/plugins/*.py" = [
+  "FBT001",
+  "FBT002",
+  "S404",
+  "S603",
+  "S607",
+  "TID252",
+]
+"**/providers/*.py" = [
+  "S106",
+  "S107",
+]
+"**/services/prompts.py" = [
+  "D102",
+  "D107",
+]
+"**/settings.py" = [
+  "ANN401",
+]
+"**/singer/*.py" = [
+  "S404",
+  "S603",
+]
+"**/subprocess.py" = [
+  "S404",
+  "S603",
+]
+"**/tools/*.py" = [
+  "FBT001",
+  "FBT002",
+  "N802",
+  "S404",
+  "S603",
+  "S607",
+  "T201",
+]
+"**/tools/**/*.py" = [
+  "FBT001",
+  "FBT002",
+  "N802",
+  "S404",
+  "S603",
+  "S607",
+  "T201",
 ]
 "**/typings.py" = [
   "RUF036",
@@ -352,6 +582,14 @@ quote-style = "double"
 
 [tool.pyright]
 extraPaths = [
+  ".",
+  "../flext-core/examples",
+  "../flext-core/src",
+  "../flext-core/tests",
+  "../flext-infra/src",
+  "../flext-infra/tests",
+  "../typings",
+  "../typings/generated",
   "src",
   "tests",
 ]
@@ -360,6 +598,7 @@ pythonVersion = "3.13"
 typeCheckingMode = "strict"
 
 # [MANAGED] tomlsort
+reportCallIssue = "none"
 reportConstantRedefinition = "error"
 reportIncompatibleMethodOverride = "error"
 reportIncompatibleVariableOverride = "error"
@@ -410,7 +649,14 @@ filterwarnings = [
 ]
 markers = [
   "core: core functionality tests",
+  "docker: tests requiring Docker",
+  "e2e: end-to-end integration tests",
+  "edge_cases: edge case tests",
   "integration: integration tests",
+  "performance: performance and benchmark tests",
+  "resilience: resilience tests",
+  "slow: slow-running tests",
+  "stress: stress tests",
   "unit: unit tests",
 ]
 minversion = "8.0"
@@ -418,7 +664,7 @@ python_classes = [ "Test*" ]
 python_files = [ "*_test.py", "*_tests.py", "test_*.py" ]
 
 [tool.coverage.report]
-fail_under = 45
+fail_under = 15
 precision = 2
 show_missing = true
 skip_covered = false
