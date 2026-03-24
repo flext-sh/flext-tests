@@ -9,13 +9,22 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping, Sequence
+import re
+import types as _bt
+from collections.abc import (
+    Callable,
+    Mapping,
+    MutableMapping,
+    Sequence,
+    Set as AbstractSet,
+)
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
 from typing import Literal, TypeAliasType, TypeIs
 
 from flext_core import FlextResult, FlextTypes, p, t as core_t
-from pydantic import BaseModel, InstanceOf
+from pydantic import BaseModel, InstanceOf, SecretStr
 
 type _TestobjectSerializable = (
     core_t.Primitives
@@ -33,8 +42,19 @@ type _TestobjectSerializable = (
 type _Testobject = (
     _TestobjectSerializable
     | Exception
+    | Enum
+    | SecretStr
     | p.Logger
     | p.Container
+    | p.Dispatcher
+    | p.Base
+    | FlextResult[_Testobject]
+    | re.Match[str]
+    | _bt.UnionType
+    | set[_Testobject]
+    | AbstractSet[_Testobject]
+    | MutableMapping[str, _Testobject]
+    | Callable[..., _Testobject]
     | Sequence[_Testobject]
     | Mapping[str, _Testobject]
 )

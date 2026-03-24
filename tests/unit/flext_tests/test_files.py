@@ -455,7 +455,7 @@ class TestFlextTestsFilesNewApi:
         path = manager.create(content, "config.yaml")
         result = manager.read(path)
         _ = assertion_helpers.assert_flext_result_success(result)
-        tm.that(result.value, eq=content)
+        tm.that(result.value.model_dump() == content.model_dump(), eq=True)
 
     def test_read_csv_file(self, tmp_path: Path) -> None:
         """Test read() returns Sequence[list] content for .csv files."""

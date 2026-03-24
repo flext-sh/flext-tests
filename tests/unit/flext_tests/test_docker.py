@@ -109,7 +109,7 @@ class TestFlextTestsDocker:
         """Test loading dirty state when file doesn't exist."""
         docker_manager._state_file = Path("/tmp/nonexistent_state.json")
         docker_manager._load_dirty_state()
-        tm.that(docker_manager._dirty_containers, eq=set())
+        tm.that(docker_manager._dirty_containers, eq=frozenset())
 
     def test_load_dirty_state_file_exists(
         self,

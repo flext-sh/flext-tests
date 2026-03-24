@@ -119,14 +119,7 @@ def _to_test_payload(
     if isinstance(value, type):
         return value
     if isinstance(value, (set, frozenset)):
-        try:
-            typed_items = _TEST_PAYLOAD_LIST_ADAPTER.validate_python(value)
-            normalized_values: set[str] = {
-                item for item in typed_items if isinstance(item, str)
-            }
-            return frozenset(normalized_values)
-        except ValidationError:
-            return frozenset()
+        return frozenset(_to_test_payload(item) for item in value)
     if value is None or isinstance(value, (str, int, float, bool, bytes, BaseModel)):
         return value
     if isinstance(value, Mapping):
@@ -197,14 +190,7 @@ def _as_guard_input(
     if isinstance(value, type):
         return value
     if isinstance(value, (set, frozenset)):
-        try:
-            typed_items = _GUARD_PAYLOAD_LIST_ADAPTER.validate_python(value)
-            normalized_values: set[str] = {
-                item for item in typed_items if isinstance(item, str)
-            }
-            return frozenset(normalized_values)
-        except ValidationError:
-            return frozenset()
+        return frozenset(str(item) for item in value)
     if isinstance(value, (BaseModel, str, int, float, bool, Path)):
         return value
     if value is None:
@@ -1110,6 +1096,30 @@ class FlextTestsMatchersUtilities:
                                 actual=type(value).__name__,
                             ),
                         )
+                # If is_/not_ was the only validation, return early —
+                # skip FlextResult unwrap which assumes ok/has.
+                only_type_check = (
+                    (params.is_ is not None or params.not_ is not None)
+                    and params.ok is None
+                    and params.has is None
+                    and params.lacks is None
+                    and params.eq is None
+                    and raw_eq is None
+                    and params.ne is None
+                    and raw_ne is None
+                    and params.gt is None
+                    and params.gte is None
+                    and params.lt is None
+                    and params.lte is None
+                    and params.none is None
+                    and params.empty is None
+                    and params.starts is None
+                    and params.ends is None
+                    and params.match is None
+                    and params.len is None
+                )
+                if only_type_check:
+                    return
                 subject = value
                 guard_subject = cast("t.GuardInput", subject)
                 if u.is_result_like(guard_subject) or (
