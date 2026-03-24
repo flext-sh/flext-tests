@@ -1457,7 +1457,9 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                 raise ValueError(f"Cannot create file from failed r: {error_msg}")
             if not isinstance(content, FlextResult):
                 return self._coerce_file_content(None)
-            resolved: str | bytes | m.ConfigMap | Sequence[Sequence[str]] | BaseModel | None
+            resolved: (
+                str | bytes | m.ConfigMap | Sequence[Sequence[str]] | BaseModel | None
+            )
             resolved = content.value  # pyright: ignore[reportUnknownMemberType,reportUnknownVariableType]
             return self._coerce_file_content(resolved)
         return self._coerce_file_content(content)

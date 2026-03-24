@@ -52,7 +52,6 @@ from flext_tests import (
 )
 
 
-
 def _to_scalar(
     value: p.Model
     | Exception

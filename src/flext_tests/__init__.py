@@ -59,6 +59,7 @@ if TYPE_CHECKING:
     from flext_tests.validator import FlextTestsValidator, tv
 
 _LAZY_IMPORTS: Mapping[str, tuple[str, str]] = {
+    "EntityFactory": ("flext_tests.protocols", "EntityFactory"),
     "FlextTestsConstants": ("flext_tests.constants", "FlextTestsConstants"),
     "FlextTestsDocker": ("flext_tests.docker", "FlextTestsDocker"),
     "FlextTestsDomains": ("flext_tests.domains", "FlextTestsDomains"),
@@ -85,7 +86,6 @@ _LAZY_IMPORTS: Mapping[str, tuple[str, str]] = {
     ),
     "FlextValidatorTests": ("flext_tests._validator.tests", "FlextValidatorTests"),
     "FlextValidatorTypes": ("flext_tests._validator.types", "FlextValidatorTypes"),
-    "EntityFactory": ("flext_tests.protocols", "EntityFactory"),
     "ValueFactory": ("flext_tests.protocols", "ValueFactory"),
     "_utilities": ("flext_tests._utilities", ""),
     "_validator": ("flext_tests._validator", ""),
