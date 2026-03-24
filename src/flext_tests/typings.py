@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import re
 import types as _bt
-from collections.abc import (, Mapping, MutableMapping, Sequence
+from collections.abc import (
     Callable,
     Mapping,
     MutableMapping,
@@ -23,11 +23,11 @@ from enum import Enum
 from pathlib import Path
 from typing import Literal, TypeAliasType, TypeIs
 
-from flext_core import FlextResult, FlextTypes, p, t as core_t
+from flext_core import FlextResult, FlextTypes, p
 from pydantic import BaseModel, InstanceOf, SecretStr
 
 type _TestobjectSerializable = (
-    core_t.Primitives
+    FlextTypes.Primitives
     | None
     | bytes
     | datetime
@@ -80,7 +80,7 @@ class FlextTestsTypes(FlextTypes):
             str
             | bytes
             | Mapping[str, _Testobject]
-            | Sequence[t.StrSequence]
+            | Sequence[Sequence[str]]
             | InstanceOf[BaseModel]
         )
         type TestResultValue = _Testobject
@@ -117,7 +117,7 @@ class FlextTestsTypes(FlextTypes):
             "Type for batch file operations - Mapping or Sequence of files."
 
             type FileContentPlain = (
-                str | bytes | core_t.ConfigMap | Sequence[t.StrSequence] | BaseModel
+                str | bytes | FlextTypes.ConfigMap | Sequence[Sequence[str]] | BaseModel
             )
             "Plain file content (no result wrapper): str, bytes, ConfigMap, CSV rows, or any Pydantic model."
 
@@ -125,8 +125,8 @@ class FlextTestsTypes(FlextTypes):
                 FlextTestsTypes.Tests.Files.FileContentPlain
                 | FlextResult[str]
                 | FlextResult[bytes]
-                | FlextResult[core_t.ConfigMap]
-                | FlextResult[Sequence[t.StrSequence]]
+                | FlextResult[FlextTypes.ConfigMap]
+                | FlextResult[Sequence[Sequence[str]]]
                 | FlextResult[BaseModel]
             )
             "Full file input type: plain content or result-wrapped content."
@@ -153,7 +153,7 @@ class FlextTestsTypes(FlextTypes):
                 | FlextTestsTypes.Tests.Testobject,
             ]
             "Deep structural matching specification: path -> value or predicate."
-            type PathSpec = str | t.StrSequence
+            type PathSpec = str | Sequence[str]
             "Path specification for nested value extraction."
             type PredicateSpec = Callable[[FlextTestsTypes.Tests.Testobject], bool]
             "Predicate function for custom assertions."
@@ -174,7 +174,7 @@ class FlextTestsTypes(FlextTypes):
                 | Sequence[FlextTestsTypes.Tests.Testobject]
             )
             "Containment specification: single item or sequence of items."
-            type ExclusionSpec = str | t.StrSequence
+            type ExclusionSpec = str | Sequence[str]
             "Exclusion specification: single string or sequence of strings."
             type SequencePredicate = (
                 type | Callable[[FlextTestsTypes.Tests.Testobject], bool]
@@ -188,23 +188,23 @@ class FlextTestsTypes(FlextTypes):
                 ]
             )
             "Sort key specification: bool for natural sort or callable."
-            type KeySpec = t.StrSequence | set[str]
+            type KeySpec = Sequence[str] | set[str]
             "Key specification: sequence or set of keys."
             type KeyValueSpec = (
                 tuple[str, FlextTestsTypes.Tests.Testobject]
                 | Mapping[str, FlextTestsTypes.Tests.Testobject]
             )
             "Key-value specification: single pair or mapping."
-            type AttributeSpec = str | t.StrSequence
+            type AttributeSpec = str | Sequence[str]
             "Attribute specification: single attribute or sequence."
             type AttributeValueSpec = (
                 tuple[str, FlextTestsTypes.Tests.Testobject]
                 | Mapping[str, FlextTestsTypes.Tests.Testobject]
             )
             "Attribute-value specification: single pair or mapping."
-            type ErrorCodeSpec = str | t.StrSequence
+            type ErrorCodeSpec = str | Sequence[str]
             "Error code specification: single code or sequence."
-            type ErrorDataSpec = core_t.ConfigMap
+            type ErrorDataSpec = FlextTypes.ConfigMap
             "Error data specification: key-value pairs."
             type CleanupSpec = Sequence[Callable[[], None]]
             "Cleanup specification: sequence of cleanup functions."

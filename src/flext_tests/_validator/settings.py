@@ -28,8 +28,8 @@ class FlextValidatorSettings:
         cls,
         file_path: Path,
         data: Mapping[str, t.Tests.Testobject],
-        lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
+        lines: Sequence[str],
+        approved: Mapping[str, Sequence[str]],
     ) -> Sequence[m.Tests.Violation]:
         """Check mypy configuration for violations."""
         violations: MutableSequence[m.Tests.Violation] = []
@@ -121,8 +121,8 @@ class FlextValidatorSettings:
         cls,
         file_path: Path,
         data: Mapping[str, t.Tests.Testobject],
-        lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
+        lines: Sequence[str],
+        approved: Mapping[str, Sequence[str]],
     ) -> Sequence[m.Tests.Violation]:
         """Check pyright configuration for violations."""
         violations: MutableSequence[m.Tests.Violation] = []
@@ -153,8 +153,8 @@ class FlextValidatorSettings:
         cls,
         file_path: Path,
         data: Mapping[str, t.Tests.Testobject],
-        lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
+        lines: Sequence[str],
+        approved: Mapping[str, Sequence[str]],
     ) -> Sequence[m.Tests.Violation]:
         """Check ruff configuration for violations."""
         if u.Tests.Validator.is_approved("CONFIG-002", file_path, approved):
@@ -217,7 +217,7 @@ class FlextValidatorSettings:
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, t.StrSequence],
+        approved: Mapping[str, Sequence[str]],
     ) -> Sequence[m.Tests.Violation]:
         """Scan a single pyproject.toml for config violations."""
         violations: MutableSequence[m.Tests.Violation] = []
@@ -236,7 +236,7 @@ class FlextValidatorSettings:
     def scan(
         cls,
         files: Sequence[Path],
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
+        approved_exceptions: Mapping[str, Sequence[str]] | None = None,
     ) -> r[m.Tests.ScanResult]:
         """Scan pyproject.toml files for config violations.
 
@@ -267,7 +267,7 @@ class FlextValidatorSettings:
     def validate(
         cls,
         pyproject_path: Path,
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
+        approved_exceptions: Mapping[str, Sequence[str]] | None = None,
     ) -> r[m.Tests.ScanResult]:
         """Validate a single pyproject.toml file.
 

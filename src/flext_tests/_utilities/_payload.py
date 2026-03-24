@@ -96,7 +96,7 @@ def to_normalized_value(value: t.Tests.Testobject) -> t.NormalizedValue:
     return str(value)
 
 
-def to_config_map_value(value: t.Tests.Testobject) -> t.NormalizedValue | BaseModel:
+def to_config_map_value(value: t.Tests.Testobject) -> t.ValueOrModel:
     """Convert value to NormalizedValue or BaseModel for AccessibleData compatibility."""
     if value is None:
         return None
@@ -172,7 +172,7 @@ def deep_match(
         DeepMatchResult with match status and details
 
     """
-    source_obj: Mapping[str, t.NormalizedValue | BaseModel]
+    source_obj: Mapping[str, t.ValueOrModel]
     if isinstance(obj, BaseModel):
         dumped = obj.model_dump(mode="python")
         source_obj = {

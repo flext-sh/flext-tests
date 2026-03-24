@@ -55,7 +55,7 @@ from __future__ import annotations
 
 import os
 import warnings
-from collections.abc import (, Mapping, MutableMapping, Sequence
+from collections.abc import (
     Iterator,
     Mapping,
     MutableMapping,
