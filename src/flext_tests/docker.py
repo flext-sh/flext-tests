@@ -58,6 +58,12 @@ class FlextTestsDocker:
     SHARED_CONTAINERS: ClassVar[Mapping[str, Mapping[str, str | int]]] = (
         c.Tests.Docker.SHARED_CONTAINERS
     )
+    _ports_adapter: ClassVar[
+        TypeAdapter[Mapping[str, t.Tests.TestobjectSerializable]]
+    ] = TypeAdapter(Mapping[str, t.Tests.TestobjectSerializable])
+    _str_seq_map_adapter: ClassVar[TypeAdapter[Mapping[str, t.StrSequence]]] = (
+        TypeAdapter(Mapping[str, t.StrSequence])
+    )
 
     class _OfflineContainers:
         """Minimal container manager that always reports not found.
@@ -225,9 +231,9 @@ class FlextTestsDocker:
         try:
             client = self.get_client()
             container = client.containers.get(container_name)
-            ports_raw: Mapping[str, t.Tests.Testobject] = TypeAdapter(
-                Mapping[str, t.Tests.TestobjectSerializable],
-            ).validate_python(container.ports)
+            ports_raw: Mapping[str, t.Tests.Testobject] = (
+                self._ports_adapter.validate_python(container.ports)
+            )
             ports: MutableMapping[str, str] = {}
             for container_port, host_bindings in ports_raw.items():
                 normalized_bindings = self._normalize_bindings(host_bindings)
@@ -345,9 +351,9 @@ class FlextTestsDocker:
         try:
             if self._state_file.exists():
                 state_text = self._state_file.read_text(encoding="utf-8")
-                state_raw: Mapping[str, t.StrSequence] = TypeAdapter(
-                    Mapping[str, t.StrSequence],
-                ).validate_json(state_text)
+                state_raw: Mapping[str, t.StrSequence] = (
+                    self._str_seq_map_adapter.validate_json(state_text)
+                )
                 dirty_raw = state_raw.get("dirty_containers", ())
                 self._dirty_containers = {
                     str(container_name) for container_name in dirty_raw
@@ -363,7 +369,7 @@ class FlextTestsDocker:
             data: Mapping[str, t.StrSequence] = {
                 "dirty_containers": list(self._dirty_containers),
             }
-            json_bytes = TypeAdapter(Mapping[str, t.StrSequence]).dump_json(data)
+            json_bytes = self._str_seq_map_adapter.dump_json(data)
             self._state_file.write_bytes(json_bytes)
         except (OSError, TypeError) as exc:
             self.logger.warning("Failed to save dirty state", error=str(exc))
