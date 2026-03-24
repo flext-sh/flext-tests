@@ -103,7 +103,7 @@ class TestFlextTestsUtilitiesTestContext:
         with u.Tests.TestContext.temporary_attribute(obj, "new_attr", "new_value"):
             tm.that(hasattr(obj, "new_attr"), eq=True)
             tm.that(getattr(obj, "new_attr", None), eq="new_value")
-        tm.that(hasattr(obj, "new_attr"), eq=False)
+        tm.that(not hasattr(obj, "new_attr"), eq=True)
 
     def test_temporary_attribute_exception_restores(self) -> None:
         """Test temporary_attribute restores value even when exception occurs."""

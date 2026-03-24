@@ -243,7 +243,7 @@ class FlextTestsUtilities(FlextUtilities):
         @staticmethod
         def to_normalized_dict(
             data: Mapping[str, t.Tests.Testobject],
-        ) -> Mapping[str, t.NormalizedValue]:
+        ) -> t.ContainerMapping:
             """Convert test payload dict to NormalizedValue dict for FlextUtilities.merge().
 
             Uses _to_normalized_value for proper runtime type narrowing.

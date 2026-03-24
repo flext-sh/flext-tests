@@ -247,14 +247,14 @@ def _to_chk_value(
         try:
             mapping_value = _GUARD_PAYLOAD_DICT_ADAPTER.validate_python(value)
         except ValidationError:
-            empty_map: Mapping[str, t.NormalizedValue] = {}
+            empty_map: t.ContainerMapping = {}
             return empty_map
         return {str(k): _to_chk_value(v) for k, v in mapping_value.items()}
     if isinstance(value, (list, tuple)):
         try:
             sequence_value = _GUARD_PAYLOAD_LIST_ADAPTER.validate_python(value)
         except ValidationError:
-            empty_list: Sequence[t.NormalizedValue] = []
+            empty_list: t.ContainerList = []
             return empty_list
         return [_to_chk_value(item) for item in sequence_value]
     return str(value)
@@ -1084,6 +1084,32 @@ class FlextTestsMatchersUtilities:
                         raise ValueError(
                             f"Parameter validation failed: {filtered_exc}",
                         ) from filtered_exc
+                # Early is_/not_ checks on the ORIGINAL value before any
+                # conversion — _to_test_payload may coerce types (e.g.
+                # Exception → str) which breaks isinstance checks.
+                if params.is_ is not None:
+                    is_types = (
+                        params.is_ if isinstance(params.is_, tuple) else (params.is_,)
+                    )
+                    if not isinstance(value, is_types):
+                        raise AssertionError(
+                            params.msg
+                            or f"Assertion failed: {c.Tests.Matcher.ERR_TYPE_FAILED.format(expected=params.is_, actual=type(value).__name__)}",
+                        )
+                if params.not_ is not None:
+                    not_types = (
+                        params.not_
+                        if isinstance(params.not_, tuple)
+                        else (params.not_,)
+                    )
+                    if isinstance(value, not_types):
+                        raise AssertionError(
+                            params.msg
+                            or c.Tests.Matcher.ERR_TYPE_FAILED.format(
+                                expected=f"not {params.not_}",
+                                actual=type(value).__name__,
+                            ),
+                        )
                 subject = value
                 guard_subject = cast("t.GuardInput", subject)
                 if u.is_result_like(guard_subject) or (
@@ -1169,50 +1195,8 @@ class FlextTestsMatchersUtilities:
                             or f"Assertion failed: {subject_payload!r} did not satisfy constraints"
                         )
                         raise AssertionError(error_msg)
-                # is_/not_ checks use the ORIGINAL value (not the
-                # _to_test_payload conversion) so isinstance works
-                # correctly for types like Exception, Path, etc.
-                is_subject = value
-                if (
-                    params.is_ is not None
-                    and (not isinstance(params.is_, tuple))
-                    and (not isinstance(is_subject, params.is_))
-                ):
-                    raise AssertionError(
-                        params.msg
-                        or f"Assertion failed: {c.Tests.Matcher.ERR_TYPE_FAILED.format(expected=params.is_, actual=type(is_subject).__name__)}",
-                    )
-                if (
-                    params.not_ is not None
-                    and (not isinstance(params.not_, tuple))
-                    and isinstance(is_subject, params.not_)
-                ):
-                    raise AssertionError(
-                        params.msg
-                        or c.Tests.Matcher.ERR_TYPE_FAILED.format(
-                            expected=f"not {params.not_}",
-                            actual=type(subject_payload).__name__,
-                        ),
-                    )
-                if (
-                    params.is_ is not None
-                    and isinstance(params.is_, tuple)
-                    and not isinstance(is_subject, params.is_)
-                ):
-                    raise AssertionError(
-                        params.msg
-                        or f"Assertion failed: {c.Tests.Matcher.ERR_TYPE_FAILED.format(expected=params.is_, actual=type(is_subject).__name__)}",
-                    )
-                if (
-                    params.not_ is not None
-                    and isinstance(params.not_, tuple)
-                    and isinstance(is_subject, params.not_)
-                ):
-                    error_msg = (
-                        params.msg
-                        or f"Assertion failed: {c.Tests.Matcher.ERR_TYPE_FAILED.format(expected=f'not {params.not_}', actual=type(is_subject).__name__)}"
-                    )
-                    raise AssertionError(error_msg)
+                # is_/not_ checks are handled early (before result
+                # detection) to avoid _to_test_payload coercion issues.
                 effective_has = (
                     raw_has
                     if raw_has is not None

@@ -1638,11 +1638,11 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             return None
         if isinstance(value, str):
             return value
+        if isinstance(value, bool):
+            return value
         if isinstance(value, int):
             return value
         if isinstance(value, float):
-            return value
-        if isinstance(value, bool):
             return value
         if isinstance(value, bytes):
             return value

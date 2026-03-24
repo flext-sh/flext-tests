@@ -51,7 +51,7 @@ class TestContainerInfo:
         tm.that(info.status, eq=c.Tests.Docker.ContainerStatus.RUNNING.value)
         tm.that(info.ports, eq={"8080/tcp": "8080"})
         tm.that(info.image, eq="nginx:latest")
-        tm.that(info.container_id, eq=False)
+        tm.that(not info.container_id, eq=True)
 
     def test_container_info_with_container_id(self) -> None:
         """Test tk.ContainerInfo with container_id."""
@@ -175,7 +175,7 @@ class TestFlextTestsDocker:
         """Test checking if container is dirty."""
         docker_manager._dirty_containers.add("dirty_container")
         tm.that(docker_manager.is_container_dirty("dirty_container"), eq=True)
-        tm.that(docker_manager.is_container_dirty("clean_container"), eq=False)
+        tm.that(not docker_manager.is_container_dirty("clean_container"), eq=True)
 
     def test_get_dirty_containers(self, docker_manager: tk) -> None:
         """Test getting list of dirty containers."""

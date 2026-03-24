@@ -141,7 +141,7 @@ class TestFlextTestsMatchers:
 
     def test_assert_config_valid_passes(self) -> None:
         """Test tm.that() with keys parameter for config validation."""
-        config: Mapping[str, t.NormalizedValue] = {
+        config: t.ContainerMapping = {
             "service_type": "api",
             "environment": "test",
             "timeout": 30,
@@ -163,7 +163,7 @@ class TestFlextTestsMatchers:
 
     def test_assert_config_valid_zero_timeout(self) -> None:
         """Test tm.that() with zero timeout."""
-        config: Mapping[str, t.NormalizedValue] = {
+        config: t.ContainerMapping = {
             "service_type": "api",
             "environment": "test",
             "timeout": 0,

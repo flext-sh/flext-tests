@@ -78,7 +78,7 @@ class TestFlextTestsFiles:
             tm.that(temp_dir, is_=Path)
             tm.that(temp_dir.exists(), eq=True)
             tm.that(temp_dir.is_dir(), eq=True)
-        tm.that(temp_dir.exists(), eq=False)
+        tm.that(not temp_dir.exists(), eq=True)
 
     def test_create_text_file_default(self, tmp_path: Path) -> None:
         """Test creating text file with default parameters."""
@@ -234,9 +234,9 @@ class TestFlextTestsFiles:
         tm.that(file1.exists(), eq=True)
         tm.that(file2.exists(), eq=True)
         manager.cleanup()
-        tm.that(file1.exists(), eq=False)
-        tm.that(file2.exists(), eq=False)
-        tm.that(manager.created_files, eq=False)
+        tm.that(not file1.exists(), eq=True)
+        tm.that(not file2.exists(), eq=True)
+        tm.that(not manager.created_files, eq=True)
 
     def test_cleanup_directories(self) -> None:
         """Test cleaning up created directories."""
@@ -246,8 +246,8 @@ class TestFlextTestsFiles:
         tm.that(temp_dir.exists(), eq=True)
         tm.that(manager.created_dirs, has=temp_dir)
         manager.cleanup()
-        tm.that(temp_dir.exists(), eq=False)
-        tm.that(manager.created_dirs, eq=False)
+        tm.that(not temp_dir.exists(), eq=True)
+        tm.that(not manager.created_dirs, eq=True)
 
     def test_cleanup_nonexistent_files(self, tmp_path: Path) -> None:
         """Test cleanup handles non-existent files gracefully."""
@@ -255,14 +255,14 @@ class TestFlextTestsFiles:
         file_path = manager.create("content", "test.txt")
         file_path.unlink()
         manager.cleanup()
-        tm.that(manager.created_files, eq=False)
+        tm.that(not manager.created_files, eq=True)
 
     def test_context_manager(self, tmp_path: Path) -> None:
         """Test context manager usage."""
         with tf(base_dir=tmp_path) as manager:
             file_path = manager.create("content", "test.txt")
             tm.that(file_path.exists(), eq=True)
-        tm.that(file_path.exists(), eq=False)
+        tm.that(not file_path.exists(), eq=True)
 
     def test_resolve_directory_with_directory(self, tmp_path: Path) -> None:
         """Test directory resolution with provided directory."""
@@ -297,8 +297,8 @@ class TestFlextTestsFiles:
             tm.that(created["file2"].exists(), eq=True)
             tm.that(created["file1"].read_text(), eq="content1")
             tm.that(created["file2"].read_text(), eq="content2")
-        tm.that(created["file1"].exists(), eq=False)
-        tm.that(created["file2"].exists(), eq=False)
+        tm.that(not created["file1"].exists(), eq=True)
+        tm.that(not created["file2"].exists(), eq=True)
 
     def test_temporary_files_custom_extension(self) -> None:
         """Test files with custom extension."""
@@ -334,7 +334,7 @@ class TestFlextTestsFiles:
         _ = manager.create("content", "test.txt")
         manager.cleanup()
         manager.cleanup()
-        tm.that(manager.created_files, eq=False)
+        tm.that(not manager.created_files, eq=True)
 
 
 class TestFlextTestsFilesNewApi:
@@ -682,8 +682,8 @@ class TestFlextTestsFilesNewApi:
             tm.that(paths["b"].exists(), eq=True)
             tm.that(paths["a"].read_text(), eq="content A")
             tm.that(paths["b"].read_text(), eq="content B")
-        tm.that(paths["a"].exists(), eq=False)
-        tm.that(paths["b"].exists(), eq=False)
+        tm.that(not paths["a"].exists(), eq=True)
+        tm.that(not paths["b"].exists(), eq=True)
 
     def test_files_context_manager_json_auto_detect(self) -> None:
         """Test files() auto-detects JSON from dict content."""
