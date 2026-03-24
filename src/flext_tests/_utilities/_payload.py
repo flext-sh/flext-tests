@@ -13,7 +13,6 @@ from collections.abc import (
     Callable,
     Mapping,
     MutableMapping,
-    MutableSequence,
     Sequence,
     Sized,
 )
@@ -136,12 +135,10 @@ class FlextTestsPayloadUtilities:
                     value,
                 )
             )
-            result_seq: MutableSequence[t.NormalizedValue] = []
-            for item in validated_seq:
-                entry: t.Tests.Testobject = item
-                result_seq.append(
-                    FlextTestsPayloadUtilities.to_normalized_value(entry),
-                )
+            result_seq: Sequence[t.NormalizedValue] = [
+                FlextTestsPayloadUtilities.to_normalized_value(item)
+                for item in validated_seq
+            ]
             return result_seq
         return str(value)
 
@@ -178,12 +175,10 @@ class FlextTestsPayloadUtilities:
                     value,
                 )
             )
-            cfg_seq: MutableSequence[t.NormalizedValue] = []
-            for item in validated_seq:
-                entry: t.Tests.Testobject = item
-                cfg_seq.append(
-                    FlextTestsPayloadUtilities.to_normalized_value(entry),
-                )
+            cfg_seq: Sequence[t.NormalizedValue] = [
+                FlextTestsPayloadUtilities.to_normalized_value(item)
+                for item in validated_seq
+            ]
             return cfg_seq
         return str(value)
 

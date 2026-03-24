@@ -124,27 +124,26 @@ class FlextValidatorSettings:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Check pyright configuration for violations."""
-        violations: MutableSequence[m.Tests.Violation] = []
         tool_data: _TomlValue = data.get("tool", {})
         if not isinstance(tool_data, dict):
-            return violations
+            return []
         pyright_config: _TomlValue = tool_data.get("pyright", {})
         if not isinstance(pyright_config, dict):
-            return violations
+            return []
         if (
             not u.Tests.Validator.is_approved("CONFIG-005", file_path, approved)
             and pyright_config.get("reportPrivateUsage") is False
         ):
             line_num = u.Tests.Validator.find_line_number(lines, "reportPrivateUsage")
-            violations.append(
+            return [
                 cls._create_config_violation(
                     file_path,
                     line_num,
                     "CONFIG-005",
                     "reportPrivateUsage = false",
                 ),
-            )
-        return violations
+            ]
+        return []
 
     @classmethod
     def _check_ruff_settings(

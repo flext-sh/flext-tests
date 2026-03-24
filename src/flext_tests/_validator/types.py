@@ -88,26 +88,25 @@ class FlextValidatorTypes:
         file_str = str(file_path)
         if any(re.search(pattern, file_str) for pattern in patterns):
             return []
-        violations: MutableSequence[m.Tests.Violation] = []
-        for node in ast.walk(tree):
-            if not isinstance(node, ast.Call):
-                continue
-            is_cast_name = isinstance(node.func, ast.Name) and node.func.id == "cast"
-            is_cast_typing = (
-                isinstance(node.func, ast.Attribute)
-                and node.func.attr == "cast"
-                and isinstance(node.func.value, ast.Name)
-                and (node.func.value.id == "typing")
+        return [
+            u.Tests.Validator.create_violation(
+                file_path,
+                node.lineno,
+                "TYPE-003",
+                lines,
             )
-            if is_cast_name or is_cast_typing:
-                violation = u.Tests.Validator.create_violation(
-                    file_path,
-                    node.lineno,
-                    "TYPE-003",
-                    lines,
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Call)
+            and (
+                (isinstance(node.func, ast.Name) and node.func.id == "cast")
+                or (
+                    isinstance(node.func, ast.Attribute)
+                    and node.func.attr == "cast"
+                    and isinstance(node.func.value, ast.Name)
+                    and node.func.value.id == "typing"
                 )
-                violations.append(violation)
-        return violations
+            )
+        ]
 
     @classmethod
     def _check_type_ignore(
@@ -119,19 +118,17 @@ class FlextValidatorTypes:
         """Detect type: ignore comments in code (not in strings/docstrings)."""
         if u.Tests.Validator.is_approved("TYPE-001", file_path, approved):
             return []
-        violations: MutableSequence[m.Tests.Violation] = []
         pattern = re.compile(r"#\s*type:\s*ignore")
-        for i, line in enumerate(lines, start=1):
-            is_real = u.Tests.Validator.is_real_comment(line, pattern)
-            if pattern.search(line) and is_real:
-                violation = u.Tests.Validator.create_violation(
-                    file_path,
-                    i,
-                    "TYPE-001",
-                    lines,
-                )
-                violations.append(violation)
-        return violations
+        return [
+            u.Tests.Validator.create_violation(
+                file_path,
+                i,
+                "TYPE-001",
+                lines,
+            )
+            for i, line in enumerate(lines, start=1)
+            if pattern.search(line) and u.Tests.Validator.is_real_comment(line, pattern)
+        ]
 
     @classmethod
     def _scan_file(

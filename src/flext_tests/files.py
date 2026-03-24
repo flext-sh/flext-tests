@@ -1340,15 +1340,14 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             }
             return t.ConfigMap(root=coerce_root)
         if self._is_nested_rows(value):
-            rows: MutableSequence[t.StrSequence] = []
             sequence_value: Sequence[t.Tests.Testobject] = (
                 value if isinstance(value, (list, tuple)) else ()
             )
-            rows.extend(
+            rows: Sequence[t.StrSequence] = [
                 [str(cell) for cell in row]
                 for row in sequence_value
                 if isinstance(row, (list, tuple))
-            )
+            ]
             return rows
         return str(value)
 

@@ -1093,22 +1093,22 @@ class FlextTestsUtilities(FlextUtilities):
                     List of test case dictionaries
 
                 """
-                cases: MutableSequence[MutableMapping[str, t.Tests.Testobject]] = []
-                for desc, data, expected in zip(
-                    descriptions,
-                    input_data_list,
-                    expected_results,
-                    strict=True,
-                ):
-                    th = FlextTestsUtilities.Tests.TestCaseHelpers
-                    case = th.create_operation_test_case(
+                th = FlextTestsUtilities.Tests.TestCaseHelpers
+                cases: Sequence[MutableMapping[str, t.Tests.Testobject]] = [
+                    th.create_operation_test_case(
                         operation=operation,
                         description=desc,
                         input_data=data,
                         expected_result=expected,
                         **common_kwargs,
                     )
-                    cases.append(case)
+                    for desc, data, expected in zip(
+                        descriptions,
+                        input_data_list,
+                        expected_results,
+                        strict=True,
+                    )
+                ]
                 return cases
 
             @staticmethod

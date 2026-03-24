@@ -111,22 +111,20 @@ class FlextValidatorImports:
         """Detect imports not at module top level."""
         if u.Tests.Validator.is_approved("IMPORT-001", file_path, approved):
             return []
-        violations: MutableSequence[m.Tests.Violation] = []
-        for node in ast.walk(tree):
-            if isinstance(node, (ast.Import, ast.ImportFrom)):
-                parent = u.Tests.Validator.get_parent(tree, node)
-                if isinstance(
-                    parent,
-                    (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef),
-                ):
-                    violation = u.Tests.Validator.create_violation(
-                        file_path,
-                        node.lineno,
-                        "IMPORT-001",
-                        lines,
-                    )
-                    violations.append(violation)
-        return violations
+        return [
+            u.Tests.Validator.create_violation(
+                file_path,
+                node.lineno,
+                "IMPORT-001",
+                lines,
+            )
+            for node in ast.walk(tree)
+            if isinstance(node, (ast.Import, ast.ImportFrom))
+            and isinstance(
+                u.Tests.Validator.get_parent(tree, node),
+                (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef),
+            )
+        ]
 
     @classmethod
     def _check_non_root_flext_imports(
@@ -185,24 +183,20 @@ class FlextValidatorImports:
         """Detect sys.path manipulation."""
         if u.Tests.Validator.is_approved("IMPORT-004", file_path, approved):
             return []
-        violations: MutableSequence[m.Tests.Violation] = []
-        for node in ast.walk(tree):
-            if (
-                isinstance(node, ast.Attribute)
-                and isinstance(node.value, ast.Name)
-                and (node.value.id == "sys")
-                and (node.attr == "path")
-            ):
-                parent = u.Tests.Validator.get_parent(tree, node)
-                if isinstance(parent, ast.Call):
-                    violation = u.Tests.Validator.create_violation(
-                        file_path,
-                        node.lineno,
-                        "IMPORT-004",
-                        lines,
-                    )
-                    violations.append(violation)
-        return violations
+        return [
+            u.Tests.Validator.create_violation(
+                file_path,
+                node.lineno,
+                "IMPORT-004",
+                lines,
+            )
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Attribute)
+            and isinstance(node.value, ast.Name)
+            and node.value.id == "sys"
+            and node.attr == "path"
+            and isinstance(u.Tests.Validator.get_parent(tree, node), ast.Call)
+        ]
 
     @classmethod
     def _check_type_checking(
