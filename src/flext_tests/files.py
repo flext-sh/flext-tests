@@ -149,7 +149,7 @@ def _is_batch_content(content_raw: t.Tests.Testobject) -> TypeIs[t.Tests.Testobj
         return False
 
 
-class FlextTestsFiles(s[t.Tests.TestResultValue]):
+class FlextTestsFiles(s[t.NormalizedValue]):
     """Manages test files for FLEXT ecosystem testing.
 
     Extends FlextTestsServiceBase for consistent service patterns.
@@ -969,13 +969,13 @@ class FlextTestsFiles(s[t.Tests.TestResultValue]):
         return file_path
 
     @override
-    def execute(self) -> r[t.Tests.TestResultValue]:
+    def execute(self) -> r[t.NormalizedValue]:
         """Execute service - returns success for file manager.
 
         FlextTestsFiles is a utility service that doesn't have a specific
         execution result. Returns success by default.
         """
-        return r[t.Tests.TestResultValue].ok(None)
+        return r[t.NormalizedValue].ok(None)
 
     def info(
         self,
