@@ -169,7 +169,7 @@ class FlextTestsUtilities(FlextUtilities):
             """Extract a BaseModel from various tt.model() return shapes."""
             if isinstance(result, expected):
                 return result
-            if isinstance(result, r) and result.is_success:
+            if t.Guards.is_testobject_result(result) and result.is_success:
                 payload = result.value
                 if isinstance(payload, expected):
                     return payload
@@ -181,7 +181,8 @@ class FlextTestsUtilities(FlextUtilities):
                 for val in result.values():
                     if isinstance(val, expected):
                         return val
-            raise TypeError(f"Expected {expected.__name__}, got {type(result)}")
+            msg = f"Expected {expected.__name__}, got {type(result)}"
+            raise TypeError(msg)
 
         @staticmethod
         def merge_test_dicts(
@@ -825,7 +826,7 @@ class FlextTestsUtilities(FlextUtilities):
             @staticmethod
             def assert_config_fields(
                 config: p.Settings,
-                expected_fields: m.ConfigMap,
+                expected_fields: t.ConfigMap,
             ) -> None:
                 """Assert config has expected field values.
 

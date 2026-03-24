@@ -15,7 +15,7 @@ from collections.abc import Mapping, MutableMapping, Sequence
 from pathlib import Path
 from typing import Annotated, ClassVar, TypeAliasType, override
 
-from flext_core import FlextModels, FlextTypingContainers, r
+from flext_core import FlextModels, r
 from pydantic import (
     AliasChoices,
     BaseModel,
@@ -34,8 +34,6 @@ class FlextTestsModels(
     FlextModels,
 ):
     """Test models extending FlextModels with test-specific factory models."""
-
-    ConfigMap = FlextTypingContainers.ConfigMap
 
     class Tests:
         """Test-specific models namespace."""

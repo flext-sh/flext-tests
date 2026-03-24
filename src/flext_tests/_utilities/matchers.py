@@ -105,7 +105,10 @@ class FlextTestsMatchersUtilities:
 
     @staticmethod
     def _is_matcher_input(
-        value: t.Tests.Testobject,
+        value: t.Tests.Testobject
+        | t.Tests.Matcher.MatcherKwargValue
+        | t.RuntimeData
+        | t.NormalizedValue,
     ) -> TypeIs[t.Tests.Testobject]:
         if value is None:
             return True
@@ -132,7 +135,7 @@ class FlextTestsMatchersUtilities:
     ) -> t.Tests.Testobject:
         if isinstance(value, type):
             return value
-        if isinstance(value, (set, frozenset)):
+        if t.Guards.is_testobject_set(value):
             return frozenset(
                 FlextTestsMatchersUtilities._to_test_payload(item) for item in value
             )
@@ -183,12 +186,12 @@ class FlextTestsMatchersUtilities:
             return value
         if isinstance(value, BaseModel):
             return str(value)
-        if isinstance(value, Mapping):
+        if t.Guards.is_testobject_mapping(value):
             return {
                 str(k): FlextTestsMatchersUtilities._to_normalized(v)
                 for k, v in value.items()
             }
-        if isinstance(value, (list, tuple)):
+        if t.Guards.is_testobject_sequence(value):
             return [FlextTestsMatchersUtilities._to_normalized(item) for item in value]
         return str(value)
 
@@ -207,12 +210,12 @@ class FlextTestsMatchersUtilities:
             return value.decode("utf-8", errors="replace")
         if isinstance(value, datetime):
             return value
-        if isinstance(value, Mapping):
+        if t.Guards.is_testobject_mapping(value):
             return {
                 str(k): FlextTestsMatchersUtilities._to_normalized(v)
                 for k, v in value.items()
             }
-        if isinstance(value, (list, tuple)):
+        if t.Guards.is_testobject_sequence(value):
             return [FlextTestsMatchersUtilities._to_normalized(item) for item in value]
         return str(value)
 
@@ -222,7 +225,7 @@ class FlextTestsMatchersUtilities:
     ) -> t.Tests.Testobject:
         if isinstance(value, type):
             return value
-        if isinstance(value, (set, frozenset)):
+        if t.Guards.is_testobject_set(value):
             return frozenset(str(item) for item in value)
         if isinstance(value, (BaseModel, str, int, float, bool, Path)):
             return value
@@ -657,19 +660,19 @@ class FlextTestsMatchersUtilities:
 
             @staticmethod
             @overload
-            def ok[TResult](
+            def ok[TResult: t.Tests.Testobject](
                 result: r[TResult],
             ) -> TResult: ...
 
             @staticmethod
             @overload
-            def ok[TResult](
+            def ok[TResult: t.Tests.Testobject](
                 result: r[TResult],
                 **kwargs: t.Tests.Matcher.MatcherKwargValue,
             ) -> TResult | t.Tests.Testobject: ...
 
             @staticmethod
-            def ok[TResult](
+            def ok[TResult: t.Tests.Testobject](
                 result: r[TResult],
                 **kwargs: t.Tests.Matcher.MatcherKwargValue,
             ) -> TResult | t.Tests.Testobject:
@@ -732,12 +735,7 @@ class FlextTestsMatchersUtilities:
                         params.msg
                         or c.Tests.Matcher.ERR_OK_FAILED.format(error=result.error),
                     )
-                result_raw = result.value
-                result_value: t.Tests.Testobject = (
-                    result_raw
-                    if FlextTestsMatchersUtilities._is_matcher_input(result_raw)
-                    else str(result_raw)
-                )
+                result_value: t.Tests.Testobject = result.value
                 extracted_payload: t.Tests.Testobject | None = None
                 if params.path is not None:
                     if isinstance(params.path, str):
@@ -889,20 +887,14 @@ class FlextTestsMatchersUtilities:
                             ),
                         )
                 if params.path is None:
-                    current_raw = result.value
                     result_payload = FlextTestsMatchersUtilities._to_test_payload(
-                        current_raw
-                        if FlextTestsMatchersUtilities._is_matcher_input(current_raw)
-                        else str(current_raw),
+                        result.value,
                     )
                 elif extracted_payload is not None:
                     result_payload = extracted_payload
                 else:
-                    current_raw = result.value
                     result_payload = FlextTestsMatchersUtilities._to_test_payload(
-                        current_raw
-                        if FlextTestsMatchersUtilities._is_matcher_input(current_raw)
-                        else str(current_raw),
+                        result.value,
                     )
                 if params.where is not None and (not params.where(result_payload)):
                     raise AssertionError(
@@ -1193,7 +1185,7 @@ class FlextTestsMatchersUtilities:
                 if only_type_check:
                     return
                 subject = value
-                if isinstance(subject, r):
+                if t.Guards.is_testobject_result(subject):
                     result_obj: r[t.Tests.Testobject] = subject
                     actual_value: t.Tests.Testobject | str = ""
                     if params.ok is not None:
