@@ -108,7 +108,7 @@ def _to_normalized_or_model(value: t.Tests.Testobject) -> t.ValueOrModel:
             root={k: _to_normalized_or_model(v) for k, v in mapping_val.items()},
         )
     if isinstance(value, (list, tuple)):
-        seq_val: Sequence[t.Tests.Testobject] = [item for item in value]  # noqa: C416
+        seq_val: Sequence[t.Tests.Testobject] = list(value)
         return [_to_normalized_leaf(item) for item in seq_val]
     return str(value)
 
@@ -135,7 +135,7 @@ def _to_normalized_leaf(value: t.Tests.Testobject) -> t.NormalizedValue:
         }
         return {k: _to_normalized_leaf(v) for k, v in mapping_val.items()}
     if isinstance(value, (list, tuple)):
-        seq_val: Sequence[t.Tests.Testobject] = [item for item in value]  # noqa: C416
+        seq_val: Sequence[t.Tests.Testobject] = list(value)
         return [_to_normalized_leaf(item) for item in seq_val]
     return str(value)
 
