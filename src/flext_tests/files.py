@@ -902,7 +902,8 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                 empty_data: Mapping[str, t.Tests.Testobject] = {}
                 data = {"value": actual_content} if actual_content else empty_data
             json_str = _OBJECT_DICT_ADAPTER.dump_json(
-                data, indent=params.indent
+                data,
+                indent=params.indent,
             ).decode()
             _ = file_path.write_text(json_str, encoding=params.enc)
         elif actual_fmt == c.Tests.Files.Format.YAML:
@@ -1169,7 +1170,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                 invalid_params_result: r[TModel] = r[TModel].fail(error_msg)
                 return invalid_params_result
             return r[str | bytes | m.ConfigMap | Sequence[t.StrSequence]].fail(
-                error_msg
+                error_msg,
             )
         if not params.path.exists():
             if model_cls is not None:
@@ -1540,7 +1541,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                             ) = _OBJECT_DICT_ADAPTER.validate_json(text.encode())
                         except ValidationError:
                             parsed_raw = _OBJECT_LIST_ADAPTER.validate_json(
-                                text.encode()
+                                text.encode(),
                             )
                     else:
                         parsed_raw = dict(m.ConfigMap(root={}).root)

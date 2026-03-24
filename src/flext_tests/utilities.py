@@ -1937,7 +1937,9 @@ class FlextTestsUtilities(FlextUtilities):
 u = FlextTestsUtilities
 
 setattr(
-    FlextTestsUtilities.Tests, "Matchers", FlextTestsMatchersUtilities.Tests.Matchers
+    FlextTestsUtilities.Tests,
+    "Matchers",
+    FlextTestsMatchersUtilities.Tests.Matchers,
 )
 
 __all__ = ["FlextTestsUtilities", "u"]

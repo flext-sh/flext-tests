@@ -67,7 +67,7 @@ class FlextTestsPayloadUtilities:
             try:
                 mapping_value = (
                     FlextTestsPayloadUtilities._PAYLOAD_MAPPING_ADAPTER.validate_python(
-                        value
+                        value,
                     )
                 )
             except ValidationError:
@@ -76,14 +76,14 @@ class FlextTestsPayloadUtilities:
             payload_map: MutableMapping[str, t.Tests.Testobject] = {}
             for key_raw, item_obj in mapping_value.items():
                 payload_map[str(key_raw)] = FlextTestsPayloadUtilities.to_payload(
-                    item_obj
+                    item_obj,
                 )
             return payload_map
         if isinstance(value, (list, tuple, set)):
             try:
                 iterable_items: Sequence[t.Tests.Testobject] = (
                     FlextTestsPayloadUtilities._PAYLOAD_SEQUENCE_ADAPTER.validate_python(
-                        value
+                        value,
                     )
                 )
             except ValidationError:
@@ -209,7 +209,7 @@ class FlextTestsPayloadUtilities:
             dumped = obj.model_dump(mode="python")
             source_obj = {
                 str(key): FlextTestsPayloadUtilities.to_config_map_value(
-                    FlextTestsPayloadUtilities.to_payload(value)
+                    FlextTestsPayloadUtilities.to_payload(value),
                 )
                 for key, value in dumped.items()
             }

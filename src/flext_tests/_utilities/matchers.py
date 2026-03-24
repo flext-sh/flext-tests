@@ -120,7 +120,8 @@ class FlextTestsMatchersUtilities:
         if isinstance(value, Mapping):
             return True
         if isinstance(value, Sequence) and not isinstance(
-            value, (str, bytes, bytearray)
+            value,
+            (str, bytes, bytearray),
         ):
             return True
         return callable(value)
@@ -136,13 +137,14 @@ class FlextTestsMatchersUtilities:
                 FlextTestsMatchersUtilities._to_test_payload(item) for item in value
             )
         if value is None or isinstance(
-            value, (str, int, float, bool, bytes, BaseModel)
+            value,
+            (str, int, float, bool, bytes, BaseModel),
         ):
             return value
         if isinstance(value, Mapping):
             try:
                 mapping_value = FlextTestsMatchersUtilities._TEST_PAYLOAD_DICT_ADAPTER.validate_python(
-                    value
+                    value,
                 )
                 return {
                     str(key): FlextTestsMatchersUtilities._to_test_payload(item)
@@ -154,7 +156,7 @@ class FlextTestsMatchersUtilities:
         if FlextTestsMatchersUtilities._is_non_string_sequence(value):
             try:
                 sequence_value = FlextTestsMatchersUtilities._TEST_PAYLOAD_LIST_ADAPTER.validate_python(
-                    value
+                    value,
                 )
                 return [
                     FlextTestsMatchersUtilities._to_test_payload(seq_item)
@@ -229,7 +231,7 @@ class FlextTestsMatchersUtilities:
         if isinstance(value, Mapping):
             try:
                 mapping_value = FlextTestsMatchersUtilities._GUARD_PAYLOAD_DICT_ADAPTER.validate_python(
-                    value
+                    value,
                 )
                 return {
                     str(key): FlextTestsMatchersUtilities._as_guard_input(item)
@@ -241,7 +243,7 @@ class FlextTestsMatchersUtilities:
         if FlextTestsMatchersUtilities._is_non_string_sequence(value):
             try:
                 sequence_value = FlextTestsMatchersUtilities._GUARD_PAYLOAD_LIST_ADAPTER.validate_python(
-                    value
+                    value,
                 )
                 return [
                     FlextTestsMatchersUtilities._as_guard_input(seq_item)
@@ -271,7 +273,7 @@ class FlextTestsMatchersUtilities:
         if isinstance(value, Mapping):
             try:
                 mapping_value = FlextTestsMatchersUtilities._GUARD_PAYLOAD_DICT_ADAPTER.validate_python(
-                    value
+                    value,
                 )
             except ValidationError:
                 empty_map: t.ContainerMapping = {}
@@ -283,7 +285,7 @@ class FlextTestsMatchersUtilities:
         if isinstance(value, (list, tuple)):
             try:
                 sequence_value = FlextTestsMatchersUtilities._GUARD_PAYLOAD_LIST_ADAPTER.validate_python(
-                    value
+                    value,
                 )
             except ValidationError:
                 empty_list: t.ContainerList = []
@@ -333,7 +335,7 @@ class FlextTestsMatchersUtilities:
                     target_raw = FlextTestsMatchersUtilities._as_guard_input(value)
                     if isinstance(target_raw, RootModel):
                         target_raw = FlextTestsMatchersUtilities._as_guard_input(
-                            target_raw.model_dump()
+                            target_raw.model_dump(),
                         )
                     if not isinstance(
                         target_raw,
@@ -396,7 +398,7 @@ class FlextTestsMatchersUtilities:
                     target_raw_2 = FlextTestsMatchersUtilities._as_guard_input(value)
                     if isinstance(target_raw_2, RootModel):
                         target_raw_2 = FlextTestsMatchersUtilities._as_guard_input(
-                            target_raw_2.model_dump()
+                            target_raw_2.model_dump(),
                         )
                     if not isinstance(target_raw_2, (Mapping, str, list)):
                         raise AssertionError(
@@ -564,7 +566,11 @@ class FlextTestsMatchersUtilities:
                     or params.match
                 ):
                     FlextTestsMatchersUtilities._check_has_lacks(
-                        err, params.has, params.lacks, params.msg, as_str=True
+                        err,
+                        params.has,
+                        params.lacks,
+                        params.msg,
+                        as_str=True,
                     )
                     if params.starts is not None and (
                         not u.chk(err, core_m.GuardCheckSpec(starts=params.starts))
@@ -635,7 +641,7 @@ class FlextTestsMatchersUtilities:
                             raise AssertionError(
                                 params.msg
                                 or c.Tests.Matcher.ERR_ERROR_DATA_KEY_MISSING.format(
-                                    key=key
+                                    key=key,
                                 ),
                             )
                         if actual_data[key] != expected_value:
@@ -827,10 +833,13 @@ class FlextTestsMatchersUtilities:
                         ),
                     )
                 FlextTestsMatchersUtilities._check_has_lacks(
-                    result_value, params.has, params.lacks, params.msg
+                    result_value,
+                    params.has,
+                    params.lacks,
+                    params.msg,
                 )
                 result_payload = FlextTestsMatchersUtilities._to_test_payload(
-                    result_value
+                    result_value,
                 )
                 if params.len is not None and (
                     not _length_validate(result_payload, params.len)
@@ -899,7 +908,7 @@ class FlextTestsMatchersUtilities:
                     raise AssertionError(
                         params.msg
                         or c.Tests.Matcher.ERR_PREDICATE_FAILED.format(
-                            value=result_payload
+                            value=result_payload,
                         ),
                     )
                 if result_value is None:
@@ -1192,7 +1201,7 @@ class FlextTestsMatchersUtilities:
                             raise AssertionError(
                                 params.msg
                                 or c.Tests.Matcher.ERR_OK_FAILED.format(
-                                    error=result_obj.error
+                                    error=result_obj.error,
                                 ),
                             )
                         if not params.ok and result_obj.is_success:
@@ -1200,7 +1209,7 @@ class FlextTestsMatchersUtilities:
                             raise AssertionError(
                                 params.msg
                                 or c.Tests.Matcher.ERR_FAIL_EXPECTED.format(
-                                    value=value_str
+                                    value=value_str,
                                 ),
                             )
                         if result_obj.is_success:
@@ -1208,14 +1217,18 @@ class FlextTestsMatchersUtilities:
                     elif params.has is not None:
                         err = result_obj.error or ""
                         FlextTestsMatchersUtilities._check_has_lacks(
-                            err, params.has, None, params.msg, as_str=True
+                            err,
+                            params.has,
+                            None,
+                            params.msg,
+                            as_str=True,
                         )
                         actual_value = err
                     elif params.ok is None:
                         raise AssertionError(
                             params.msg
                             or c.Tests.Matcher.ERR_OK_FAILED.format(
-                                error=result_obj.error
+                                error=result_obj.error,
                             ),
                         )
                     else:
@@ -1273,7 +1286,10 @@ class FlextTestsMatchersUtilities:
                     else (raw_contains if raw_contains is not None else params.has)
                 )
                 FlextTestsMatchersUtilities._check_has_lacks(
-                    subject_payload, effective_has, params.lacks, params.msg
+                    subject_payload,
+                    effective_has,
+                    params.lacks,
+                    params.msg,
                 )
                 value_payload = subject_payload
                 if params.len is not None and (
@@ -1304,7 +1320,7 @@ class FlextTestsMatchersUtilities:
                     seq_value: Sequence[t.Tests.TestobjectSerializable] = []
                     try:
                         seq_value = FlextTestsMatchersUtilities._TEST_PAYLOAD_LIST_ADAPTER.validate_python(
-                            subject_payload
+                            subject_payload,
                         )
                     except ValidationError:
                         pass
@@ -1355,7 +1371,7 @@ class FlextTestsMatchersUtilities:
                         elif callable(params.all_) and (
                             not all(
                                 params.all_(
-                                    FlextTestsMatchersUtilities._to_test_payload(item)
+                                    FlextTestsMatchersUtilities._to_test_payload(item),
                                 )
                                 for item in seq_value
                             )
@@ -1366,8 +1382,8 @@ class FlextTestsMatchersUtilities:
                                     for i, item in enumerate(list(seq_value))
                                     if not params.all_(
                                         FlextTestsMatchersUtilities._to_test_payload(
-                                            item
-                                        )
+                                            item,
+                                        ),
                                     )
                                 ),
                                 None,
@@ -1375,7 +1391,7 @@ class FlextTestsMatchersUtilities:
                             raise AssertionError(
                                 params.msg
                                 or c.Tests.Matcher.ERR_ALL_ITEMS_FAILED.format(
-                                    index=failed_idx
+                                    index=failed_idx,
                                 ),
                             )
                     if params.any_ is not None:
@@ -1390,7 +1406,7 @@ class FlextTestsMatchersUtilities:
                         elif callable(params.any_) and (
                             not any(
                                 params.any_(
-                                    FlextTestsMatchersUtilities._to_test_payload(item)
+                                    FlextTestsMatchersUtilities._to_test_payload(item),
                                 )
                                 for item in seq_value
                             )
@@ -1408,7 +1424,7 @@ class FlextTestsMatchersUtilities:
                             )
                             if value_list != sorted_list:
                                 raise AssertionError(
-                                    params.msg or "Sequence is not sorted"
+                                    params.msg or "Sequence is not sorted",
                                 )
                         elif callable(sorted_param):
                             user_key_fn = sorted_param
@@ -1418,7 +1434,7 @@ class FlextTestsMatchersUtilities:
                             ) -> tuple[str, str]:
                                 """Wrap user key to return comparable tuple."""
                                 result = user_key_fn(
-                                    FlextTestsMatchersUtilities._to_test_payload(x)
+                                    FlextTestsMatchersUtilities._to_test_payload(x),
                                 )
                                 type_name = type(result).__name__
                                 return (str(type_name), str(result))
@@ -1451,7 +1467,7 @@ class FlextTestsMatchersUtilities:
                             raise AssertionError(
                                 params.msg
                                 or c.Tests.Matcher.ERR_KEYS_MISSING.format(
-                                    keys=list(missing)
+                                    keys=list(missing),
                                 ),
                             )
                     if params.lacks_keys is not None:
@@ -1461,7 +1477,7 @@ class FlextTestsMatchersUtilities:
                             raise AssertionError(
                                 params.msg
                                 or c.Tests.Matcher.ERR_KEYS_EXTRA.format(
-                                    keys=list(present)
+                                    keys=list(present),
                                 ),
                             )
                     if params.values is not None:
@@ -1579,7 +1595,7 @@ class FlextTestsMatchersUtilities:
                     raise AssertionError(
                         params.msg
                         or c.Tests.Matcher.ERR_PREDICATE_FAILED.format(
-                            value=subject_payload
+                            value=subject_payload,
                         ),
                     )
 

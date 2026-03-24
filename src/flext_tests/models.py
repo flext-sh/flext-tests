@@ -527,7 +527,8 @@ class FlextTestsModels(
                 Field(description="Number of failed operations"),
             ]
             total: Annotated[
-                t.NonNegativeInt, Field(description="Total number of operations")
+                t.NonNegativeInt,
+                Field(description="Total number of operations"),
             ]
             results: Annotated[
                 Mapping[str, r[Path | t.Tests.Testobject]],
