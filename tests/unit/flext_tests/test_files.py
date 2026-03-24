@@ -236,7 +236,7 @@ class TestFlextTestsFiles:
         manager.cleanup()
         tm.that(not file1.exists(), eq=True)
         tm.that(not file2.exists(), eq=True)
-        tm.that(len(manager.created_files) == 0, eq=True)
+        tm.that(not manager.created_files, eq=True)
 
     def test_cleanup_directories(self) -> None:
         """Test cleaning up created directories."""
@@ -247,7 +247,7 @@ class TestFlextTestsFiles:
         tm.that(temp_dir in manager.created_dirs, eq=True)
         manager.cleanup()
         tm.that(not temp_dir.exists(), eq=True)
-        tm.that(len(manager.created_dirs) == 0, eq=True)
+        tm.that(not manager.created_dirs, eq=True)
 
     def test_cleanup_nonexistent_files(self, tmp_path: Path) -> None:
         """Test cleanup handles non-existent files gracefully."""
@@ -255,7 +255,7 @@ class TestFlextTestsFiles:
         file_path = manager.create("content", "test.txt")
         file_path.unlink()
         manager.cleanup()
-        tm.that(len(manager.created_files) == 0, eq=True)
+        tm.that(not manager.created_files, eq=True)
 
     def test_context_manager(self, tmp_path: Path) -> None:
         """Test context manager usage."""
@@ -334,7 +334,7 @@ class TestFlextTestsFiles:
         _ = manager.create("content", "test.txt")
         manager.cleanup()
         manager.cleanup()
-        tm.that(len(manager.created_files) == 0, eq=True)
+        tm.that(not manager.created_files, eq=True)
 
 
 class TestFlextTestsFilesNewApi:

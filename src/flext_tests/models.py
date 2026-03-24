@@ -609,7 +609,7 @@ class FlextTestsModels(
                     validator_name=validator_name,
                     files_scanned=files_scanned,
                     violations=violations,
-                    passed=len(violations) == 0,
+                    passed=not violations,
                 )
 
         class OkParams(FlextModels.Value):

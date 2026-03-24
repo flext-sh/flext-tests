@@ -1039,7 +1039,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                     errors="replace",
                 )
                 lines = text.count("\n") + 1 if text else 0
-                is_empty = len(text.strip()) == 0
+                is_empty = not text.strip()
                 first_line = text.split("\n")[0] if text else ""
                 encoding = c.Tests.Files.DEFAULT_ENCODING
             except UnicodeDecodeError:
@@ -1474,7 +1474,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             sequence_value = _OBJECT_LIST_ADAPTER.validate_python(value)
         except ValidationError:
             return False
-        if len(sequence_value) == 0:
+        if not sequence_value:
             return False
         for row_raw in sequence_value:
             if not isinstance(row_raw, Sequence) or isinstance(row_raw, str | bytes):
