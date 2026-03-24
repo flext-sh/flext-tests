@@ -588,6 +588,16 @@ class FlextTestsModels(
             description: str
             code_snippet: str = ""
 
+            @field_validator("severity", mode="before")
+            @classmethod
+            def _coerce_severity(
+                cls,
+                value: c.Tests.Validator.Severity | str,
+            ) -> c.Tests.Validator.Severity:
+                if isinstance(value, c.Tests.Validator.Severity):
+                    return value
+                return c.Tests.Validator.Severity(str(value).upper())
+
             def format(self) -> str:
                 """Format violation as string."""
                 return c.Tests.Validator.Messages.VIOLATION_WITH_SNIPPET.format(

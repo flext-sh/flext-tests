@@ -30,6 +30,7 @@ from docker.models.containers import Container
 from flext_core import FlextLogger, r
 from pydantic import TypeAdapter, ValidationError
 from python_on_whales import DockerClient as WhalesDockerClient
+from python_on_whales.exceptions import DockerException as WhalesDockerException
 
 from flext_tests import c, m, p, t
 
@@ -178,7 +179,14 @@ class FlextTestsDocker:
             finally:
                 docker.client_config.compose_files = original_files
             return r[str].ok("Compose down successful")
-        except (AttributeError, OSError, RuntimeError, TypeError, ValueError) as exc:
+        except (
+            AttributeError,
+            OSError,
+            RuntimeError,
+            TypeError,
+            ValueError,
+            WhalesDockerException,
+        ) as exc:
             self.logger.warning("Compose down failed", error=str(exc))
             return r[str].fail(f"Compose down failed: {exc}")
 
@@ -205,7 +213,14 @@ class FlextTestsDocker:
             finally:
                 docker.client_config.compose_files = original_files
             return r[str].ok("Compose up successful")
-        except (AttributeError, OSError, RuntimeError, TypeError, ValueError) as exc:
+        except (
+            AttributeError,
+            OSError,
+            RuntimeError,
+            TypeError,
+            ValueError,
+            WhalesDockerException,
+        ) as exc:
             self.logger.exception("Compose up failed")
             return r[str].fail(f"Compose up failed: {exc}")
 

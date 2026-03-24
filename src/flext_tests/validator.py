@@ -130,7 +130,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         """
         all_violations: MutableSequence[m.Tests.Violation] = []
         total_files = 0
-        validators: list[tuple[str, r[m.Tests.ScanResult]]] = [
+        validators: MutableSequence[tuple[str, r[m.Tests.ScanResult]]] = [
             ("imports", cls.imports(path, exclude_patterns, approved_exceptions)),
             ("types", cls.types(path, exclude_patterns, approved_exceptions)),
             ("bypass", cls.bypass(path, exclude_patterns, approved_exceptions)),
