@@ -146,7 +146,7 @@ class FlextTestsConstants(FlextConstants):
                 HASH = "hash"
                 LINES = "lines"
 
-            EXT_TO_FMT: Final[Mapping[str, str]] = {
+            EXT_TO_FMT: Final[t.StrMapping] = {
                 ".txt": "text",
                 ".log": "text",
                 ".md": "text",

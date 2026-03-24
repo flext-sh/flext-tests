@@ -21,7 +21,7 @@ import os
 import re
 import shutil
 import tempfile
-from collections.abc import (
+from collections.abc import (, Mapping, MutableMapping, MutableSequence, Sequence
     Generator,
     Mapping,
     MutableMapping,
@@ -179,7 +179,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
     @staticmethod
     def _validate_model_content[TModelRead: BaseModel](
         model_cls: type[TModelRead],
-        content: str | bytes | m.ConfigMap | Sequence[Sequence[str]],
+        content: str | bytes | m.ConfigMap | Sequence[t.StrSequence],
     ) -> r[TModelRead]:
         try:
             model_instance: TModelRead = model_cls.model_validate(content)
@@ -410,7 +410,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         indent: int = c.Tests.Files.DEFAULT_JSON_INDENT,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
-        headers: Sequence[str] | None = None,
+        headers: t.StrSequence | None = None,
         readonly: bool = False,
         extract_result: bool = True,
     ) -> Path:
@@ -694,8 +694,8 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         ignore_case: bool = False,
         pattern: str | None = None,
         deep: bool = True,
-        keys: Sequence[str] | None = None,
-        exclude_keys: Sequence[str] | None = None,
+        keys: t.StrSequence | None = None,
+        exclude_keys: t.StrSequence | None = None,
     ) -> r[bool]:
         """Compare two files.
 
@@ -781,7 +781,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         indent: int = c.Tests.Files.DEFAULT_JSON_INDENT,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
-        headers: Sequence[str] | None = None,
+        headers: t.StrSequence | None = None,
         readonly: bool = False,
         extract_result: bool = True,
     ) -> Path:
@@ -794,7 +794,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                 - str: text file
                 - bytes: binary file
                 - dict/Mapping: JSON file
-                - Sequence[Sequence[str]]: CSV file
+                - Sequence[t.StrSequence]: CSV file
                 - BaseModel: JSON file (via model_dump())
                 - r[T]: Extracts value if success (if extract_result=True)
             name: Filename (extension hints format)
@@ -858,14 +858,14 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             str
             | bytes
             | m.ConfigMap
-            | Sequence[Sequence[str]]
+            | Sequence[t.StrSequence]
             | BaseModel
             | Mapping[str, t.Tests.Testobject]
         ) = self._coerce_file_content(params.content)
         if isinstance(actual_content, BaseModel):
             actual_content = self._mapping_to_payload(u.dump(actual_content))
         content_for_detect: (
-            str | bytes | Mapping[str, t.Tests.Testobject] | Sequence[Sequence[str]]
+            str | bytes | Mapping[str, t.Tests.Testobject] | Sequence[t.StrSequence]
         )
         if isinstance(actual_content, str | bytes):
             content_for_detect = actual_content
@@ -919,7 +919,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             yaml_result = _yaml_dump(data_yaml, indent=params.indent)
             _ = file_path.write_text(yaml_result, encoding=params.enc)
         elif actual_fmt == c.Tests.Files.Format.CSV:
-            csv_content: Sequence[Sequence[str]]
+            csv_content: Sequence[t.StrSequence]
             if isinstance(actual_content, Sequence) and (
                 not isinstance(actual_content, str | bytes)
             ):
@@ -1093,7 +1093,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
-    ) -> r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]]: ...
+    ) -> r[str | bytes | m.ConfigMap | Sequence[t.StrSequence]]: ...
 
     @overload
     def read(
@@ -1116,7 +1116,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
-    ) -> r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]] | r[TModel]:
+    ) -> r[str | bytes | m.ConfigMap | Sequence[t.StrSequence]] | r[TModel]:
         """Read file with auto-detection or explicit format.
 
         Supports loading directly into Pydantic models when model_cls is provided.
@@ -1152,7 +1152,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
 
             # Read CSV
             result = tf().read(Path("data.csv"))
-            rows = result.value  # Sequence[Sequence[str]]
+            rows = result.value  # Sequence[t.StrSequence]
 
         """
         try:
@@ -1169,7 +1169,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             if model_cls is not None:
                 invalid_params_result: r[TModel] = r[TModel].fail(error_msg)
                 return invalid_params_result
-            return r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]].fail(
+            return r[str | bytes | m.ConfigMap | Sequence[t.StrSequence]].fail(
                 error_msg
             )
         if not params.path.exists():
@@ -1178,13 +1178,13 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                     c.Tests.Files.ERROR_FILE_NOT_FOUND.format(path=params.path),
                 )
                 return file_not_found_result
-            return r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]].fail(
+            return r[str | bytes | m.ConfigMap | Sequence[t.StrSequence]].fail(
                 c.Tests.Files.ERROR_FILE_NOT_FOUND.format(path=params.path),
             )
         actual_fmt = u.Tests.Files.detect_format_from_path(params.path, params.fmt)
         try:
             if actual_fmt == c.Tests.Files.Format.BIN:
-                content: str | bytes | m.ConfigMap | Sequence[Sequence[str]] = (
+                content: str | bytes | m.ConfigMap | Sequence[t.StrSequence] = (
                     params.path.read_bytes()
                 )
             elif actual_fmt == c.Tests.Files.Format.JSON:
@@ -1210,14 +1210,14 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                 content = params.path.read_text(encoding=params.enc)
             if model_cls is not None:
                 return self._validate_model_content(model_cls, content)
-            return r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]].ok(content)
+            return r[str | bytes | m.ConfigMap | Sequence[t.StrSequence]].ok(content)
         except UnicodeDecodeError as e:
             if model_cls is not None:
                 invalid_encoding_result: r[TModel] = r[TModel].fail(
                     c.Tests.Files.ERROR_ENCODING.format(error=e),
                 )
                 return invalid_encoding_result
-            return r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]].fail(
+            return r[str | bytes | m.ConfigMap | Sequence[t.StrSequence]].fail(
                 c.Tests.Files.ERROR_ENCODING.format(error=e),
             )
         except ValueError as e:
@@ -1226,7 +1226,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                     c.Tests.Files.ERROR_INVALID_JSON.format(error=e),
                 )
                 return invalid_json_result
-            return r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]].fail(
+            return r[str | bytes | m.ConfigMap | Sequence[t.StrSequence]].fail(
                 c.Tests.Files.ERROR_INVALID_JSON.format(error=e),
             )
         except _YAMLError as e:
@@ -1235,7 +1235,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                     c.Tests.Files.ERROR_INVALID_YAML.format(error=e),
                 )
                 return invalid_yaml_result
-            return r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]].fail(
+            return r[str | bytes | m.ConfigMap | Sequence[t.StrSequence]].fail(
                 c.Tests.Files.ERROR_INVALID_YAML.format(error=e),
             )
         except OSError as e:
@@ -1244,7 +1244,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                     c.Tests.Files.ERROR_READ.format(error=e),
                 )
                 return file_read_error_result
-            return r[str | bytes | m.ConfigMap | Sequence[Sequence[str]]].fail(
+            return r[str | bytes | m.ConfigMap | Sequence[t.StrSequence]].fail(
                 c.Tests.Files.ERROR_READ.format(error=e),
             )
 
@@ -1263,8 +1263,8 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         self,
         dict1: Mapping[str, t.Tests.Testobject],
         dict2: Mapping[str, t.Tests.Testobject],
-        keys: Sequence[str] | None,
-        exclude_keys: Sequence[str] | None,
+        keys: t.StrSequence | None,
+        exclude_keys: t.StrSequence | None,
     ) -> tuple[Mapping[str, t.Tests.Testobject], Mapping[str, t.Tests.Testobject]]:
         """Apply key filtering to both dicts if specified."""
         if keys is None and exclude_keys is None:
@@ -1307,7 +1307,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         self,
         value: t.Tests.Testobject
         | FlextResult[t.Tests.Testobject]
-        | FlextResult[Sequence[Sequence[str]]]
+        | FlextResult[Sequence[t.StrSequence]]
         | FlextResult[bytes]
         | FlextResult[str]
         | None,
@@ -1325,7 +1325,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             }
             return m.ConfigMap(root=coerce_root)
         if self._is_nested_rows(value):
-            rows: MutableSequence[Sequence[str]] = []
+            rows: MutableSequence[t.StrSequence] = []
             sequence_value: Sequence[t.Tests.Testobject] = (
                 value if isinstance(value, (list, tuple)) else ()
             )
@@ -1340,7 +1340,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
     def _coerce_read_content(
         self,
         value: Mapping[str, t.Tests.Testobject] | None,
-    ) -> str | bytes | m.ConfigMap | Sequence[Sequence[str]]:
+    ) -> str | bytes | m.ConfigMap | Sequence[t.StrSequence]:
         if isinstance(value, str | bytes):
             return value
         if self._is_mapping(value):
@@ -1454,7 +1454,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
     def _is_nested_rows(
         self,
         value: t.Tests.Testobject,
-    ) -> TypeIs[Sequence[Sequence[str]]]:
+    ) -> TypeIs[Sequence[t.StrSequence]]:
         if not isinstance(value, Sequence) or isinstance(value, str | bytes):
             return False
         try:
@@ -1670,8 +1670,8 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         self,
         content1_raw: str,
         content2_raw: str,
-        keys: Sequence[str] | None,
-        exclude_keys: Sequence[str] | None,
+        keys: t.StrSequence | None,
+        exclude_keys: t.StrSequence | None,
     ) -> r[bool] | None:
         """Try to parse and deeply compare content as JSON or YAML.
 

@@ -14,7 +14,7 @@ import csv
 import hashlib
 import os
 import re
-from collections.abc import (
+from collections.abc import (, Mapping, MutableMapping, MutableSequence, Sequence
     Callable,
     Generator,
     Mapping,
@@ -946,7 +946,7 @@ class FlextTestsUtilities(FlextUtilities):
                     New FlextSettings instance
 
                 """
-                scalar_overrides: Mapping[str, t.Scalar] = {
+                scalar_overrides: t.ConfigurationMapping = {
                     str(key): _to_scalar(value) for key, value in kwargs.items()
                 }
                 return FlextSettings.get_global(overrides=scalar_overrides)
