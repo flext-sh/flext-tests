@@ -4,8 +4,8 @@
 # Sections with [CUSTOM] are project-specific extension points.
 # [MANAGED] build system
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = [ "poetry-core>=2" ]
+build-backend = "hatchling.build"
+requires = [ "hatchling" ]
 
 # [CUSTOM] project metadata
 [project]
@@ -159,18 +159,8 @@ plugins = [
 ]
 python_version = "3.13"
 
-[tool.poetry]
-
-# [CUSTOM] poetry path dependencies for local development
-
-packages = [
-  {include = "flext_tests", from = "src"},
-]
-
-# [CUSTOM] poetry dev extensions
-[tool.poetry.group.dev.dependencies]
-flext-core = {path = "../flext-core", develop = true}
-flext-infra = {path = "../flext-core", develop = true, extras = [  ]}
+[tool.hatch.build.targets.wheel]
+packages = [ "src/flext_tests" ]
 
 # [MANAGED] pydantic-mypy
 [tool.pydantic-mypy]
