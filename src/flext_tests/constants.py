@@ -129,6 +129,7 @@ class FlextTestsConstants(FlextConstants):
             for FlextTestsFiles. Use c.Tests.Files.* for access.
             """
 
+            @unique
             class Format(StrEnum):
                 """File format enumeration."""
 
@@ -140,6 +141,7 @@ class FlextTestsConstants(FlextConstants):
                 CSV = "csv"
                 UNKNOWN = "unknown"
 
+            @unique
             class CompareMode(StrEnum):
                 """File comparison mode enumeration."""
 
@@ -218,6 +220,7 @@ class FlextTestsConstants(FlextConstants):
             Use c.Tests.Validator.* for access.
             """
 
+            @unique
             class Severity(StrEnum):
                 """Violation severity levels."""
 
