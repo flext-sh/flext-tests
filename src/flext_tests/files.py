@@ -532,7 +532,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         if isinstance(params.files, Mapping):
             files_dict = {str(k): v for k, v in params.files.items()}
         elif not isinstance(params.files, str):
-            files_dict = {}
+            files_dict: Mapping[str, t.Tests.Testobject] = {}
             for item in params.files:
                 if (
                     isinstance(item, tuple)

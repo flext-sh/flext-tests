@@ -760,7 +760,7 @@ class FlextTestsMatchersUtilities:
                                 for k, v in validated.items()
                             }
                         except ValidationError:
-                            extract_data = {}
+                            extract_data: Mapping[str, core_t.ValueOrModel] = {}
                     extracted = u.extract(extract_data, path_str)
                     if extracted.is_failure:
                         raise AssertionError(
@@ -876,7 +876,7 @@ class FlextTestsMatchersUtilities:
                                 result_value,
                             )
                         except ValidationError:
-                            deep_input = {}
+                            deep_input: Mapping[str, t.Tests.Testobject] = {}
                     match_result = _deep_match(deep_input, params.deep)
                     if not match_result.matched:
                         raise AssertionError(
