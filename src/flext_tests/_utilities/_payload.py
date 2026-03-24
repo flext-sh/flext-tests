@@ -118,36 +118,32 @@ class FlextTestsPayloadUtilities:
             return value.decode(errors="ignore")
         if isinstance(value, BaseModel):
             return str(value)
-        if isinstance(value, Mapping):
-            mapping_val: Mapping[str, t.Tests.Testobject] = value
-            return FlextTestsPayloadUtilities._normalize_mapping(mapping_val)
+        if isinstance(value, (dict, Mapping)):
+            validated_map: Mapping[str, t.Tests.Testobject] = (
+                FlextTestsPayloadUtilities._PAYLOAD_MAPPING_ADAPTER.validate_python(
+                    value,
+                )
+            )
+            result_map: MutableMapping[str, t.NormalizedValue] = {}
+            for k, v in validated_map.items():
+                key: str = str(k)
+                val: t.Tests.Testobject = v
+                result_map[key] = FlextTestsPayloadUtilities.to_normalized_value(val)
+            return result_map
         if isinstance(value, (list, tuple)):
-            seq_val: Sequence[t.Tests.Testobject] = value
-            return FlextTestsPayloadUtilities._normalize_sequence(seq_val)
+            validated_seq: Sequence[t.Tests.Testobject] = (
+                FlextTestsPayloadUtilities._PAYLOAD_SEQUENCE_ADAPTER.validate_python(
+                    value,
+                )
+            )
+            result_seq: MutableSequence[t.NormalizedValue] = []
+            for item in validated_seq:
+                entry: t.Tests.Testobject = item
+                result_seq.append(
+                    FlextTestsPayloadUtilities.to_normalized_value(entry),
+                )
+            return result_seq
         return str(value)
-
-    @staticmethod
-    def _normalize_mapping(
-        mapping: Mapping[str, t.Tests.Testobject],
-    ) -> Mapping[str, t.NormalizedValue]:
-        """Normalize a mapping's values to NormalizedValue."""
-        result: MutableMapping[str, t.NormalizedValue] = {}
-        for k, v in mapping.items():
-            key: str = str(k)
-            val: t.Tests.Testobject = v
-            result[key] = FlextTestsPayloadUtilities.to_normalized_value(val)
-        return result
-
-    @staticmethod
-    def _normalize_sequence(
-        seq: Sequence[t.Tests.Testobject],
-    ) -> Sequence[t.NormalizedValue]:
-        """Normalize a sequence's items to NormalizedValue."""
-        result: MutableSequence[t.NormalizedValue] = []
-        for item in seq:
-            entry: t.Tests.Testobject = item
-            result.append(FlextTestsPayloadUtilities.to_normalized_value(entry))
-        return result
 
     @staticmethod
     def to_config_map_value(value: t.Tests.Testobject) -> t.ValueOrModel:
@@ -164,12 +160,31 @@ class FlextTestsPayloadUtilities:
             return value
         if isinstance(value, Path):
             return str(value)
-        if isinstance(value, Mapping):
-            mapping_val: Mapping[str, t.Tests.Testobject] = value
-            return FlextTestsPayloadUtilities._normalize_mapping(mapping_val)
+        if isinstance(value, (dict, Mapping)):
+            validated_map: Mapping[str, t.Tests.Testobject] = (
+                FlextTestsPayloadUtilities._PAYLOAD_MAPPING_ADAPTER.validate_python(
+                    value,
+                )
+            )
+            cfg_map: MutableMapping[str, t.NormalizedValue] = {}
+            for k, v in validated_map.items():
+                key: str = str(k)
+                val: t.Tests.Testobject = v
+                cfg_map[key] = FlextTestsPayloadUtilities.to_normalized_value(val)
+            return cfg_map
         if isinstance(value, (list, tuple)):
-            seq_val: Sequence[t.Tests.Testobject] = value
-            return FlextTestsPayloadUtilities._normalize_sequence(seq_val)
+            validated_seq: Sequence[t.Tests.Testobject] = (
+                FlextTestsPayloadUtilities._PAYLOAD_SEQUENCE_ADAPTER.validate_python(
+                    value,
+                )
+            )
+            cfg_seq: MutableSequence[t.NormalizedValue] = []
+            for item in validated_seq:
+                entry: t.Tests.Testobject = item
+                cfg_seq.append(
+                    FlextTestsPayloadUtilities.to_normalized_value(entry),
+                )
+            return cfg_seq
         return str(value)
 
     @staticmethod

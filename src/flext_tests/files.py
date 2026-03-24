@@ -75,11 +75,15 @@ def _to_runtime_data(value: t.Tests.Testobject) -> t.RuntimeData:
     if isinstance(value, bytes):
         return value.decode("utf-8", errors="replace")
     if isinstance(value, Mapping):
+        mapping_val: Mapping[str, t.Tests.Testobject] = {
+            str(raw_k): raw_v for raw_k, raw_v in value.items()
+        }
         return m.ConfigMap(
-            root={str(k): _to_normalized_or_model(v) for k, v in value.items()},
+            root={k: _to_normalized_or_model(v) for k, v in mapping_val.items()},
         )
     if isinstance(value, (list, tuple)):
-        return [_to_normalized_leaf(item) for item in value]
+        seq_val: Sequence[t.Tests.Testobject] = [item for item in value]  # noqa: C416
+        return [_to_normalized_leaf(item) for item in seq_val]
     return str(value)
 
 
@@ -94,11 +98,15 @@ def _to_normalized_or_model(value: t.Tests.Testobject) -> t.ValueOrModel:
     if isinstance(value, bytes):
         return value.decode("utf-8", errors="replace")
     if isinstance(value, Mapping):
+        mapping_val: Mapping[str, t.Tests.Testobject] = {
+            str(raw_k): raw_v for raw_k, raw_v in value.items()
+        }
         return m.ConfigMap(
-            root={str(k): _to_normalized_or_model(v) for k, v in value.items()},
+            root={k: _to_normalized_or_model(v) for k, v in mapping_val.items()},
         )
     if isinstance(value, (list, tuple)):
-        return [_to_normalized_leaf(item) for item in value]
+        seq_val: Sequence[t.Tests.Testobject] = [item for item in value]  # noqa: C416
+        return [_to_normalized_leaf(item) for item in seq_val]
     return str(value)
 
 
@@ -119,9 +127,13 @@ def _to_normalized_leaf(value: t.Tests.Testobject) -> t.NormalizedValue:
     if isinstance(value, BaseModel):
         return str(value)
     if isinstance(value, Mapping):
-        return {str(k): _to_normalized_leaf(v) for k, v in value.items()}
+        mapping_val: Mapping[str, t.Tests.Testobject] = {
+            str(raw_k): raw_v for raw_k, raw_v in value.items()
+        }
+        return {k: _to_normalized_leaf(v) for k, v in mapping_val.items()}
     if isinstance(value, (list, tuple)):
-        return [_to_normalized_leaf(item) for item in value]
+        seq_val: Sequence[t.Tests.Testobject] = [item for item in value]  # noqa: C416
+        return [_to_normalized_leaf(item) for item in seq_val]
     return str(value)
 
 

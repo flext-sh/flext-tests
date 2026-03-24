@@ -16,6 +16,9 @@ from flext_core import r
 
 from flext_tests import c, m, t, u
 
+_TomlValue = str | int | float | bool | list["_TomlValue"] | dict[str, "_TomlValue"]
+_TomlDict = dict[str, _TomlValue]
+
 
 class FlextValidatorSettings:
     """Config validation methods for FlextTestsValidator.
@@ -27,20 +30,18 @@ class FlextValidatorSettings:
     def _check_mypy_settings(
         cls,
         file_path: Path,
-        data: Mapping[str, t.Tests.Testobject],
+        data: _TomlDict,
         lines: t.StrSequence,
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Check mypy configuration for violations."""
         violations: MutableSequence[m.Tests.Violation] = []
-        tool_data_raw: t.Tests.Testobject = data.get("tool", {})
-        if not isinstance(tool_data_raw, dict):
+        tool_data: _TomlValue = data.get("tool", {})
+        if not isinstance(tool_data, dict):
             return violations
-        tool_data: Mapping[str, t.Tests.Testobject] = tool_data_raw
-        mypy_config_raw: t.Tests.Testobject = tool_data.get("mypy", {})
-        if not isinstance(mypy_config_raw, dict):
+        mypy_config: _TomlValue = tool_data.get("mypy", {})
+        if not isinstance(mypy_config, dict):
             return violations
-        mypy_config: Mapping[str, t.Tests.Testobject] = mypy_config_raw
         if (
             not u.Tests.Validator.is_approved("CONFIG-001", file_path, approved)
             and mypy_config.get("ignore_errors") is True
@@ -55,22 +56,20 @@ class FlextValidatorSettings:
                     "(global)",
                 ),
             )
-        overrides_raw: t.Tests.Testobject = mypy_config.get("overrides", [])
+        overrides_raw: _TomlValue = mypy_config.get("overrides", [])
         if not isinstance(overrides_raw, list):
             return violations
-        overrides: Sequence[t.Tests.Testobject] = [v for v in overrides_raw]  # noqa: C416
-        for override in overrides:
+        for override in overrides_raw:
             if not isinstance(override, dict):
                 continue
-            override_dict: Mapping[str, t.Tests.Testobject] = override
-            module_raw: t.Tests.Testobject = override_dict.get("module", "unknown")
+            module_raw: _TomlValue = override.get("module", "unknown")
             module: str = str(module_raw) if module_raw is not None else "unknown"
             is_approved = u.Tests.Validator.is_approved(
                 "CONFIG-001",
                 file_path,
                 approved,
             )
-            ignore_errors_raw: t.Tests.Testobject = override_dict.get("ignore_errors")
+            ignore_errors_raw: _TomlValue = override.get("ignore_errors", False)
             if ignore_errors_raw is True and (not is_approved):
                 line_num = u.Tests.Validator.find_line_number(
                     lines,
@@ -120,20 +119,18 @@ class FlextValidatorSettings:
     def _check_pyright_settings(
         cls,
         file_path: Path,
-        data: Mapping[str, t.Tests.Testobject],
+        data: _TomlDict,
         lines: t.StrSequence,
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Check pyright configuration for violations."""
         violations: MutableSequence[m.Tests.Violation] = []
-        tool_data_raw: t.Tests.Testobject = data.get("tool", {})
-        if not isinstance(tool_data_raw, dict):
+        tool_data: _TomlValue = data.get("tool", {})
+        if not isinstance(tool_data, dict):
             return violations
-        tool_data: Mapping[str, t.Tests.Testobject] = tool_data_raw
-        pyright_config_raw: t.Tests.Testobject = tool_data.get("pyright", {})
-        if not isinstance(pyright_config_raw, dict):
+        pyright_config: _TomlValue = tool_data.get("pyright", {})
+        if not isinstance(pyright_config, dict):
             return violations
-        pyright_config: Mapping[str, t.Tests.Testobject] = pyright_config_raw
         if (
             not u.Tests.Validator.is_approved("CONFIG-005", file_path, approved)
             and pyright_config.get("reportPrivateUsage") is False
@@ -153,7 +150,7 @@ class FlextValidatorSettings:
     def _check_ruff_settings(
         cls,
         file_path: Path,
-        data: Mapping[str, t.Tests.Testobject],
+        data: _TomlDict,
         lines: t.StrSequence,
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
@@ -161,23 +158,19 @@ class FlextValidatorSettings:
         if u.Tests.Validator.is_approved("CONFIG-002", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
-        tool_data_raw: t.Tests.Testobject = data.get("tool", {})
-        if not isinstance(tool_data_raw, dict):
+        tool_data: _TomlValue = data.get("tool", {})
+        if not isinstance(tool_data, dict):
             return violations
-        tool_data: Mapping[str, t.Tests.Testobject] = tool_data_raw
-        ruff_config_raw: t.Tests.Testobject = tool_data.get("ruff", {})
-        if not isinstance(ruff_config_raw, dict):
+        ruff_config: _TomlValue = tool_data.get("ruff", {})
+        if not isinstance(ruff_config, dict):
             return violations
-        ruff_config: Mapping[str, t.Tests.Testobject] = ruff_config_raw
-        lint_config_raw: t.Tests.Testobject = ruff_config.get("lint", {})
-        if not isinstance(lint_config_raw, dict):
+        lint_config: _TomlValue = ruff_config.get("lint", {})
+        if not isinstance(lint_config, dict):
             return violations
-        lint_config: Mapping[str, t.Tests.Testobject] = lint_config_raw
-        ignores_raw: t.Tests.Testobject = lint_config.get("ignore", [])
+        ignores_raw: _TomlValue = lint_config.get("ignore", [])
         if isinstance(ignores_raw, list):
             approved_ignores = c.Tests.Validator.Approved.RUFF_IGNORES
-            ignores_list: list[t.Tests.Testobject] = ignores_raw
-            for ignore_raw in ignores_list:
+            for ignore_raw in ignores_raw:
                 ignore_str: str = str(ignore_raw)
                 if ignore_str not in approved_ignores:
                     line_num = u.Tests.Validator.find_line_number(lines, ignore_str)
@@ -225,7 +218,7 @@ class FlextValidatorSettings:
         violations: MutableSequence[m.Tests.Violation] = []
         try:
             content = file_path.read_text(encoding="utf-8")
-            data = tomllib.loads(content)
+            data: _TomlDict = tomllib.loads(content)
         except (OSError, tomllib.TOMLDecodeError):
             return violations
         lines = content.splitlines()
