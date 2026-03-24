@@ -79,9 +79,9 @@ class TestFlextTestsDocker:
 
     def test_init(self, docker_manager: tk) -> None:
         """Test tk initialization."""
-        tm.that(docker_manager, is_=tk)
+        assert isinstance(docker_manager, tk)
         tm.that(docker_manager.workspace_root, none=False)
-        tm.that(docker_manager._dirty_containers, is_=set)
+        assert isinstance(docker_manager._dirty_containers, set)
 
     def test_get_client_initialization(self) -> None:
         """Test Docker client lazy initialization."""
@@ -89,9 +89,9 @@ class TestFlextTestsDocker:
         manager._dirty_containers.clear()
         manager._client = None
         client = manager.get_client()
-        tm.that(client, none=False)
-        tm.that(manager._client, none=False)
-        tm.that(client, is_=DockerClient)
+        assert client is not None
+        assert manager._client is not None
+        assert isinstance(client, DockerClient)
 
     def test_get_client_cached(self) -> None:
         """Test Docker client caching."""

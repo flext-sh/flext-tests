@@ -13,14 +13,18 @@ import re
 import types as _bt
 from collections.abc import (
     Callable,
+    ItemsView,
+    KeysView,
     Mapping,
     MutableMapping,
     Sequence,
     Set as AbstractSet,
+    ValuesView,
 )
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
+from types import FrameType, GenericAlias, ModuleType
 from typing import Literal, TypeAliasType, TypeIs
 
 from flext_core import FlextResult, FlextTypes, p
@@ -41,17 +45,26 @@ type _TestobjectSerializable = (
 
 type _Testobject = (
     _TestobjectSerializable
+    | BaseException
     | Exception
     | Enum
     | SecretStr
     | p.Logger
     | p.Container
     | p.Dispatcher
+    | p.Settings
+    | p.Context
     | FlextResult[_Testobject]
     | re.Match[str]
     | _bt.UnionType
+    | FrameType
+    | ModuleType
+    | GenericAlias
     | set[_Testobject]
     | AbstractSet[_Testobject]
+    | ValuesView[_Testobject]
+    | KeysView[str]
+    | ItemsView[str, _Testobject]
     | MutableMapping[str, _Testobject]
     | Sequence[_Testobject]
     | Mapping[str, _Testobject]

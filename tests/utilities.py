@@ -29,7 +29,7 @@ class FlextTestsTestUtilities(FlextTestsUtilities):
     - All generic utilities come from FlextTestsUtilities
     """
 
-    class Tests:
+    class Tests(FlextTestsUtilities.Tests):
         """flext-tests-specific test utilities namespace."""
 
 

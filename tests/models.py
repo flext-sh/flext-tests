@@ -23,7 +23,7 @@ class FlextTestsTestModels(FlextTestsModels):
     All base models from FlextTestsModels are available through inheritance.
     """
 
-    class Tests:
+    class Tests(FlextTestsModels.Tests):
         """flext-tests-specific test models namespace."""
 
 

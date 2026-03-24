@@ -111,9 +111,11 @@ class TestFlextTestsDomains:
         tm.that(response, has="error")
         error_value = response.get("error")
         if isinstance(error_value, dict):
-            error_obj = error_value
-            tm.that(error_obj.get("code"), eq="TEST_ERROR")
-            tm.that(error_obj.get("message"), eq="Test error message")
+            assert "code" in error_value and error_value["code"] == "TEST_ERROR"
+            assert (
+                "message" in error_value
+                and error_value["message"] == "Test error message"
+            )
 
     def test_api_response_data_custom_fields(self) -> None:
         """Test api_response_data with custom field overrides."""

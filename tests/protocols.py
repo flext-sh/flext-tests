@@ -29,7 +29,7 @@ class FlextTestsTestProtocols(FlextTestsProtocols):
     - All generic protocols come from FlextTestsProtocols
     """
 
-    class Tests:
+    class Tests(FlextTestsProtocols.Tests):
         """flext-tests-specific protocol definitions namespace."""
 
 

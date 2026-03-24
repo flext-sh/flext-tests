@@ -14,7 +14,7 @@ import pytest
 from flext_core import r
 
 from flext_tests import tm
-from tests import c, m, t
+from tests import c, t
 
 
 def _is_string(value: t.Tests.Testobject) -> bool:
@@ -376,7 +376,7 @@ class TestFlextTestsMatchers:
         """Test tm.fail() with data parameter."""
         result: r[str] = r[str].fail(
             "error",
-            error_data=m.ConfigMap(root={"field": "email"}),
+            error_data=t.ConfigMap(root={"field": "email"}),
         )
         error = tm.fail(result, data={"field": "email"})
         tm.that(error, eq="error")
