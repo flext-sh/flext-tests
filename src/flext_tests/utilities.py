@@ -803,7 +803,7 @@ class FlextTestsUtilities(FlextUtilities):
             @staticmethod
             def create_parametrized_cases(
                 success_values: Sequence[t.Tests.Testobject],
-                failure_errors: Sequence[str] | None = None,
+                failure_errors: t.StrSequence | None = None,
                 *,
                 error_codes: Sequence[str | None] | None = None,
             ) -> Sequence[
@@ -875,8 +875,8 @@ class FlextTestsUtilities(FlextUtilities):
             @staticmethod
             def validate_model_attributes(
                 model: p.Model,
-                required_attrs: Sequence[str],
-                optional_attrs: Sequence[str] | None = None,
+                required_attrs: t.StrSequence,
+                optional_attrs: t.StrSequence | None = None,
             ) -> r[bool]:
                 """Validate model has required attributes.
 
@@ -955,7 +955,7 @@ class FlextTestsUtilities(FlextUtilities):
             @contextmanager
             def env_vars_context(
                 env_vars: Mapping[str, t.Tests.TestobjectSerializable],
-                vars_to_clear: Sequence[str] | None = None,
+                vars_to_clear: t.StrSequence | None = None,
             ) -> Generator[None]:
                 """Context manager for temporary environment variable changes.
 
@@ -1163,7 +1163,7 @@ class FlextTestsUtilities(FlextUtilities):
             @staticmethod
             def create_batch_operation_test_cases(
                 operation: str,
-                descriptions: Sequence[str],
+                descriptions: t.StrSequence,
                 input_data_list: Sequence[Mapping[str, t.Tests.Testobject]],
                 expected_results: Sequence[t.Tests.Testobject],
                 **common_kwargs: t.Tests.Testobject,
@@ -1255,7 +1255,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def create_test_entities_batch[TEntity](
-                names: Sequence[str],
+                names: t.StrSequence,
                 values: Sequence[t.Tests.Testobject],
                 entity_class: EntityFactory[TEntity],
                 remove_ids: Sequence[bool] | None = None,
@@ -1342,7 +1342,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def create_test_value_objects_batch[TValue](
-                data_list: Sequence[str],
+                data_list: t.StrSequence,
                 count_list: Sequence[int],
                 value_class: ValueFactory[TValue],
             ) -> Sequence[TValue]:
@@ -1580,7 +1580,7 @@ class FlextTestsUtilities(FlextUtilities):
                 content: str
                 | bytes
                 | Mapping[str, t.Tests.Testobject]
-                | Sequence[Sequence[str]],
+                | Sequence[t.StrSequence],
                 name: str,
                 fmt: str,
             ) -> str:
@@ -1649,7 +1649,7 @@ class FlextTestsUtilities(FlextUtilities):
                 encoding: str | None = None,
                 *,
                 has_headers: bool = True,
-            ) -> Sequence[Sequence[str]]:
+            ) -> Sequence[t.StrSequence]:
                 """Read CSV file.
 
                 Args:
@@ -1678,8 +1678,8 @@ class FlextTestsUtilities(FlextUtilities):
                 content: str
                 | bytes
                 | Mapping[str, t.Tests.Testobject]
-                | Sequence[Sequence[str]],
-                headers: Sequence[str] | None,
+                | Sequence[t.StrSequence],
+                headers: t.StrSequence | None,
                 delimiter: str | None = None,
                 encoding: str | None = None,
             ) -> None:
@@ -1715,7 +1715,7 @@ class FlextTestsUtilities(FlextUtilities):
                 file_path: Path,
                 line_number: int,
                 rule_id: str,
-                lines: Sequence[str],
+                lines: t.StrSequence,
                 extra_desc: str = "",
             ) -> m.Tests.Violation:
                 """Create a violation model using c.Tests.Validator.Rules.
@@ -1745,7 +1745,7 @@ class FlextTestsUtilities(FlextUtilities):
                 )
 
             @staticmethod
-            def find_line_number(lines: Sequence[str], pattern: str) -> int:
+            def find_line_number(lines: t.StrSequence, pattern: str) -> int:
                 """Find line number containing pattern.
 
                 Args:
@@ -1825,7 +1825,7 @@ class FlextTestsUtilities(FlextUtilities):
             def is_approved(
                 rule_id: str,
                 file_path: Path,
-                approved: Mapping[str, Sequence[str]],
+                approved: Mapping[str, t.StrSequence],
             ) -> bool:
                 """Check if file is approved for this rule.
 

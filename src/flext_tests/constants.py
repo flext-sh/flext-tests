@@ -15,6 +15,8 @@ from typing import Final, Literal
 
 from flext_core import FlextConstants
 
+from flext_tests import t
+
 
 class FlextTestsConstants(FlextConstants):
     """Constants for FLEXT tests - extends FlextConstants.
@@ -146,7 +148,7 @@ class FlextTestsConstants(FlextConstants):
                 HASH = "hash"
                 LINES = "lines"
 
-            EXT_TO_FMT: Final[Mapping[str, str]] = {
+            EXT_TO_FMT: Final[t.StrMapping] = {
                 ".txt": "text",
                 ".log": "text",
                 ".md": "text",

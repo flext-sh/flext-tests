@@ -34,10 +34,10 @@ class FlextValidatorModels(m):
         def run_scan(
             *,
             files: Sequence[Path],
-            approved_exceptions: Mapping[str, Sequence[str]] | None,
+            approved_exceptions: Mapping[str, t.StrSequence] | None,
             validator_name: str,
             scan_file: Callable[
-                [Path, Mapping[str, Sequence[str]]],
+                [Path, Mapping[str, t.StrSequence]],
                 Sequence[m.Tests.Violation],
             ],
         ) -> r[m.Tests.ScanResult]:
@@ -58,7 +58,7 @@ class FlextValidatorModels(m):
 
         target_path: Path
         include_patterns: Annotated[
-            Sequence[str],
+            t.StrSequence,
             Field(
                 default_factory=lambda: list(
                     c.Tests.Validator.Defaults.INCLUDE_PATTERNS,
@@ -69,7 +69,7 @@ class FlextValidatorModels(m):
             ),
         ]
         exclude_patterns: Annotated[
-            Sequence[str],
+            t.StrSequence,
             Field(
                 default_factory=lambda: list(
                     c.Tests.Validator.Defaults.EXCLUDE_PATTERNS,
@@ -80,7 +80,7 @@ class FlextValidatorModels(m):
             ),
         ]
         approved_exceptions: Annotated[
-            Mapping[str, Sequence[str]],
+            Mapping[str, t.StrSequence],
             Field(
                 default_factory=dict,
                 description="Rule-to-path allowlist for known and explicitly approved exceptions.",

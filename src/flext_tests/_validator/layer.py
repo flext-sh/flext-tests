@@ -14,7 +14,7 @@ from pathlib import Path
 
 from flext_core import r
 
-from flext_tests import c, m, u
+from flext_tests import c, m, t, u
 
 
 class FlextValidatorLayer:
@@ -40,7 +40,7 @@ class FlextValidatorLayer:
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, Sequence[str]],
+        approved: Mapping[str, t.StrSequence],
         hierarchy: Mapping[str, int],
     ) -> Sequence[m.Tests.Violation]:
         """Scan a single file for layer violations."""
@@ -81,7 +81,7 @@ class FlextValidatorLayer:
     def scan(
         cls,
         files: Sequence[Path],
-        approved_exceptions: Mapping[str, Sequence[str]] | None = None,
+        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
         layer_hierarchy: Mapping[str, int] | None = None,
     ) -> r[m.Tests.ScanResult]:
         """Scan files for layer violations.

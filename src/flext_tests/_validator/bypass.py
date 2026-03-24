@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING
 
 from flext_core import r
 
-from flext_tests import c, u, vm
+from flext_tests import c, t, u, vm
 
 if TYPE_CHECKING:
     from flext_tests import m
@@ -33,8 +33,8 @@ class FlextValidatorBypass:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: Sequence[str],
-        approved: Mapping[str, Sequence[str]],
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect exception swallowing patterns (bare except or except with pass)."""
         if u.Tests.Validator.is_approved("BYPASS-003", file_path, approved):
@@ -66,8 +66,8 @@ class FlextValidatorBypass:
     def _check_noqa(
         cls,
         file_path: Path,
-        lines: Sequence[str],
-        approved: Mapping[str, Sequence[str]],
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect # noqa comments."""
         if u.Tests.Validator.is_approved("BYPASS-001", file_path, approved):
@@ -90,8 +90,8 @@ class FlextValidatorBypass:
     def _check_pragma_no_cover(
         cls,
         file_path: Path,
-        lines: Sequence[str],
-        approved: Mapping[str, Sequence[str]],
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect # pragma: no cover comments."""
         patterns = list(approved.get("BYPASS-002", [])) + list(
@@ -118,7 +118,7 @@ class FlextValidatorBypass:
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, Sequence[str]],
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Scan a single file for bypass violations."""
         violations: MutableSequence[m.Tests.Violation] = []
@@ -142,7 +142,7 @@ class FlextValidatorBypass:
     def scan(
         cls,
         files: Sequence[Path],
-        approved_exceptions: Mapping[str, Sequence[str]] | None = None,
+        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
     ) -> r[m.Tests.ScanResult]:
         """Scan files for bypass violations.
 

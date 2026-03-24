@@ -553,7 +553,7 @@ class FlextTestsMatchersUtilities:
                     actual_code = result.error_code or ""
                     code_has_value = params.code_has
                     if isinstance(code_has_value, str):
-                        items_list: Sequence[str] = [code_has_value]
+                        items_list: t.StrSequence = [code_has_value]
                     else:
                         items_list = [str(x) for x in code_has_value]
                     for item in items_list:
@@ -1430,7 +1430,7 @@ class FlextTestsMatchersUtilities:
                 if params.attrs is not None:
                     attrs_target = value
                     if isinstance(params.attrs, str):
-                        attr_list: Sequence[str] = [params.attrs]
+                        attr_list: t.StrSequence = [params.attrs]
                     else:
                         attr_list = list(params.attrs)
                     for attr in attr_list:
@@ -1441,7 +1441,7 @@ class FlextTestsMatchersUtilities:
                 if params.methods is not None:
                     methods_target = value
                     if isinstance(params.methods, str):
-                        method_list: Sequence[str] = [params.methods]
+                        method_list: t.StrSequence = [params.methods]
                     else:
                         method_list = list(params.methods)
                     for method in method_list:

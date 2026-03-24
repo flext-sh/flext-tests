@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING
 
 from flext_core import r
 
-from flext_tests import c, u, vm
+from flext_tests import c, t, u, vm
 
 if TYPE_CHECKING:
     from flext_tests import m
@@ -33,8 +33,8 @@ class FlextValidatorImports:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: Sequence[str],
-        approved: Mapping[str, Sequence[str]],
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect direct technology imports."""
         if u.Tests.Validator.is_approved("IMPORT-005", file_path, approved):
@@ -73,8 +73,8 @@ class FlextValidatorImports:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: Sequence[str],
-        approved: Mapping[str, Sequence[str]],
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect try/except ImportError patterns."""
         if u.Tests.Validator.is_approved("IMPORT-003", file_path, approved):
@@ -105,8 +105,8 @@ class FlextValidatorImports:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: Sequence[str],
-        approved: Mapping[str, Sequence[str]],
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect imports not at module top level."""
         if u.Tests.Validator.is_approved("IMPORT-001", file_path, approved):
@@ -133,8 +133,8 @@ class FlextValidatorImports:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: Sequence[str],
-        approved: Mapping[str, Sequence[str]],
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect non-root imports from flext-* packages internal modules.
 
@@ -179,8 +179,8 @@ class FlextValidatorImports:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: Sequence[str],
-        approved: Mapping[str, Sequence[str]],
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect sys.path manipulation."""
         if u.Tests.Validator.is_approved("IMPORT-004", file_path, approved):
@@ -209,8 +209,8 @@ class FlextValidatorImports:
         cls,
         file_path: Path,
         _tree: ast.AST,
-        _lines: Sequence[str],
-        approved: Mapping[str, Sequence[str]],
+        _lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect TYPE_CHECKING blocks in files with Pydantic field annotations.
 
@@ -229,7 +229,7 @@ class FlextValidatorImports:
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, Sequence[str]],
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Scan a single file for import violations."""
         violations: MutableSequence[m.Tests.Violation] = []
@@ -257,7 +257,7 @@ class FlextValidatorImports:
     def scan(
         cls,
         files: Sequence[Path],
-        approved_exceptions: Mapping[str, Sequence[str]] | None = None,
+        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
     ) -> r[m.Tests.ScanResult]:
         """Scan files for import violations.
 

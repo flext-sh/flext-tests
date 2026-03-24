@@ -45,7 +45,7 @@ class FlextTestsModels(
 
             name: str
             status: c.Tests.Docker.ContainerStatus
-            ports: Mapping[str, str]
+            ports: t.StrMapping
             image: str
             container_id: str = ""
 
@@ -212,7 +212,7 @@ class FlextTestsModels(
                 ),
             ]
             headers: Annotated[
-                Sequence[str] | None,
+                t.StrSequence | None,
                 Field(
                     default=None,
                     description="CSV headers.",
@@ -345,14 +345,14 @@ class FlextTestsModels(
                 ),
             ]
             keys: Annotated[
-                Sequence[str] | None,
+                t.StrSequence | None,
                 Field(
                     default=None,
                     description="Only compare these keys (for dict/JSON/YAML content).",
                 ),
             ]
             exclude_keys: Annotated[
-                Sequence[str] | None,
+                t.StrSequence | None,
                 Field(
                     default=None,
                     description="Exclude these keys from comparison (for dict/JSON/YAML content).",
@@ -453,7 +453,7 @@ class FlextTestsModels(
                 ),
             ]
             headers: Annotated[
-                Sequence[str] | None,
+                t.StrSequence | None,
                 Field(
                     default=None,
                     description="CSV column headers.",
@@ -537,7 +537,7 @@ class FlextTestsModels(
                 ),
             ]
             errors: Annotated[
-                Mapping[str, str],
+                t.StrMapping,
                 Field(
                     default_factory=dict,
                     description="Mapping of file names to error messages",
@@ -947,7 +947,7 @@ class FlextTestsModels(
                 Field(default=None, description="For r: assert success"),
             ]
             error: Annotated[
-                str | Sequence[str] | None,
+                str | t.StrSequence | None,
                 Field(default=None, description="For r: error contains"),
             ]
             deep: Annotated[

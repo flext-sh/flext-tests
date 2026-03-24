@@ -80,7 +80,7 @@ class FlextTestsTypes(FlextTypes):
             str
             | bytes
             | Mapping[str, _Testobject]
-            | Sequence[Sequence[str]]
+            | Sequence[t.StrSequence]
             | InstanceOf[BaseModel]
         )
         type TestResultValue = _Testobject
@@ -117,7 +117,7 @@ class FlextTestsTypes(FlextTypes):
             "Type for batch file operations - Mapping or Sequence of files."
 
             type FileContentPlain = (
-                str | bytes | FlextTypes.ConfigMap | Sequence[Sequence[str]] | BaseModel
+                str | bytes | FlextTypes.ConfigMap | Sequence[t.StrSequence] | BaseModel
             )
             "Plain file content (no result wrapper): str, bytes, ConfigMap, CSV rows, or any Pydantic model."
 
@@ -126,7 +126,7 @@ class FlextTestsTypes(FlextTypes):
                 | FlextResult[str]
                 | FlextResult[bytes]
                 | FlextResult[FlextTypes.ConfigMap]
-                | FlextResult[Sequence[Sequence[str]]]
+                | FlextResult[Sequence[t.StrSequence]]
                 | FlextResult[BaseModel]
             )
             "Full file input type: plain content or result-wrapped content."
@@ -153,7 +153,7 @@ class FlextTestsTypes(FlextTypes):
                 | FlextTestsTypes.Tests.Testobject,
             ]
             "Deep structural matching specification: path -> value or predicate."
-            type PathSpec = str | Sequence[str]
+            type PathSpec = str | t.StrSequence
             "Path specification for nested value extraction."
             type PredicateSpec = Callable[[FlextTestsTypes.Tests.Testobject], bool]
             "Predicate function for custom assertions."
@@ -174,7 +174,7 @@ class FlextTestsTypes(FlextTypes):
                 | Sequence[FlextTestsTypes.Tests.Testobject]
             )
             "Containment specification: single item or sequence of items."
-            type ExclusionSpec = str | Sequence[str]
+            type ExclusionSpec = str | t.StrSequence
             "Exclusion specification: single string or sequence of strings."
             type SequencePredicate = (
                 type | Callable[[FlextTestsTypes.Tests.Testobject], bool]
@@ -188,21 +188,21 @@ class FlextTestsTypes(FlextTypes):
                 ]
             )
             "Sort key specification: bool for natural sort or callable."
-            type KeySpec = Sequence[str] | set[str]
+            type KeySpec = t.StrSequence | set[str]
             "Key specification: sequence or set of keys."
             type KeyValueSpec = (
                 tuple[str, FlextTestsTypes.Tests.Testobject]
                 | Mapping[str, FlextTestsTypes.Tests.Testobject]
             )
             "Key-value specification: single pair or mapping."
-            type AttributeSpec = str | Sequence[str]
+            type AttributeSpec = str | t.StrSequence
             "Attribute specification: single attribute or sequence."
             type AttributeValueSpec = (
                 tuple[str, FlextTestsTypes.Tests.Testobject]
                 | Mapping[str, FlextTestsTypes.Tests.Testobject]
             )
             "Attribute-value specification: single pair or mapping."
-            type ErrorCodeSpec = str | Sequence[str]
+            type ErrorCodeSpec = str | t.StrSequence
             "Error code specification: single code or sequence."
             type ErrorDataSpec = FlextTypes.ConfigMap
             "Error data specification: key-value pairs."

@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING
 
 from flext_core import r
 
-from flext_tests import c, u, vm
+from flext_tests import c, t, u, vm
 
 if TYPE_CHECKING:
     from flext_tests import m
@@ -33,8 +33,8 @@ class FlextValidatorTypes:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: Sequence[str],
-        approved: Mapping[str, Sequence[str]],
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect wildcard type annotations."""
         if u.Tests.Validator.is_approved("TYPE-002", file_path, approved):
@@ -78,8 +78,8 @@ class FlextValidatorTypes:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: Sequence[str],
-        approved: Mapping[str, Sequence[str]],
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect unapproved  usage."""
         patterns = list(approved.get("TYPE-003", [])) + list(
@@ -113,8 +113,8 @@ class FlextValidatorTypes:
     def _check_type_ignore(
         cls,
         file_path: Path,
-        lines: Sequence[str],
-        approved: Mapping[str, Sequence[str]],
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect type: ignore comments in code (not in strings/docstrings)."""
         if u.Tests.Validator.is_approved("TYPE-001", file_path, approved):
@@ -137,7 +137,7 @@ class FlextValidatorTypes:
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, Sequence[str]],
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Scan a single file for type violations."""
         violations: MutableSequence[m.Tests.Violation] = []
@@ -159,7 +159,7 @@ class FlextValidatorTypes:
     def scan(
         cls,
         files: Sequence[Path],
-        approved_exceptions: Mapping[str, Sequence[str]] | None = None,
+        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
     ) -> r[m.Tests.ScanResult]:
         """Scan files for type violations.
 

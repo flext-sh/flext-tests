@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING
 
 from flext_core import r
 
-from flext_tests import c, u, vm
+from flext_tests import c, t, u, vm
 
 if TYPE_CHECKING:
     from flext_tests import m
@@ -32,8 +32,8 @@ class FlextValidatorTests:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: Sequence[str],
-        approved: Mapping[str, Sequence[str]],
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect Mock and MagicMock usage."""
         if u.Tests.Validator.is_approved("TEST-002", file_path, approved):
@@ -73,8 +73,8 @@ class FlextValidatorTests:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: Sequence[str],
-        approved: Mapping[str, Sequence[str]],
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect monkeypatch usage in function parameters and calls."""
         if u.Tests.Validator.is_approved("TEST-001", file_path, approved):
@@ -114,8 +114,8 @@ class FlextValidatorTests:
         cls,
         file_path: Path,
         tree: ast.AST,
-        lines: Sequence[str],
-        approved: Mapping[str, Sequence[str]],
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect @patch decorator usage."""
         if u.Tests.Validator.is_approved("TEST-003", file_path, approved):
@@ -164,7 +164,7 @@ class FlextValidatorTests:
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, Sequence[str]],
+        approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Scan a single file for test violations."""
         violations: MutableSequence[m.Tests.Violation] = []
@@ -183,7 +183,7 @@ class FlextValidatorTests:
     def scan(
         cls,
         files: Sequence[Path],
-        approved_exceptions: Mapping[str, Sequence[str]] | None = None,
+        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
     ) -> r[m.Tests.ScanResult]:
         """Scan files for test violations.
 

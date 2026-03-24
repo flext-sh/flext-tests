@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence, Mapping
 from typing import cast
 
 import pytest
@@ -209,31 +209,31 @@ class TestFlextTestsMatchers:
 
     def test_ok_with_has_parameter(self) -> None:
         """Test tm.ok() with has parameter."""
-        result = r[Sequence[str]].ok(["a", "b", "c"])
+        result = r[t.StrSequence].ok(["a", "b", "c"])
         value = tm.ok(result, has="a")
         tm.that(value, eq=["a", "b", "c"])
 
     def test_ok_with_has_sequence_parameter(self) -> None:
         """Test tm.ok() with has sequence parameter."""
-        result = r[Sequence[str]].ok(["a", "b", "c"])
+        result = r[t.StrSequence].ok(["a", "b", "c"])
         value = tm.ok(result, has=["a", "b"])
         tm.that(value, eq=["a", "b", "c"])
 
     def test_ok_with_lacks_parameter(self) -> None:
         """Test tm.ok() with lacks parameter."""
-        result = r[Sequence[str]].ok(["a", "b", "c"])
+        result = r[t.StrSequence].ok(["a", "b", "c"])
         value = tm.ok(result, lacks="d")
         tm.that(value, eq=["a", "b", "c"])
 
     def test_ok_with_len_exact_parameter(self) -> None:
         """Test tm.ok() with len exact parameter."""
-        result = r[Sequence[str]].ok(["a", "b", "c"])
+        result = r[t.StrSequence].ok(["a", "b", "c"])
         value = tm.ok(result, len=3)
         tm.that(value, eq=["a", "b", "c"])
 
     def test_ok_with_len_range_parameter(self) -> None:
         """Test tm.ok() with len range parameter."""
-        result = r[Sequence[str]].ok(["a", "b", "c"])
+        result = r[t.StrSequence].ok(["a", "b", "c"])
         value = tm.ok(result, len=(2, 4))
         tm.that(value, eq=["a", "b", "c"])
 
@@ -320,7 +320,7 @@ class TestFlextTestsMatchers:
 
     def test_ok_with_empty_parameter(self) -> None:
         """Test tm.ok() with empty parameter."""
-        result = r[Sequence[str]].ok(["a"])
+        result = r[t.StrSequence].ok(["a"])
         value = tm.ok(result, empty=False)
         tm.that(value, eq=["a"])
 
