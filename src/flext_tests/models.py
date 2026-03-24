@@ -19,6 +19,7 @@ from flext_core import FlextModels, r
 from pydantic import (
     AliasChoices,
     BaseModel,
+    BeforeValidator,
     ConfigDict,
     Field,
     TypeAdapter,
@@ -183,8 +184,9 @@ class FlextTestsModels(
             ]
             fmt: Annotated[
                 c.Tests.Files.Format,
+                BeforeValidator(lambda v: c.Tests.Files.Format(v) if isinstance(v, str) else v),
                 Field(
-                    default="auto",
+                    default=c.Tests.Files.Format.AUTO,
                     description="File format override.",
                 ),
             ]
@@ -257,8 +259,9 @@ class FlextTestsModels(
             ]
             fmt: Annotated[
                 c.Tests.Files.Format,
+                BeforeValidator(lambda v: c.Tests.Files.Format(v) if isinstance(v, str) else v),
                 Field(
-                    default="auto",
+                    default=c.Tests.Files.Format.AUTO,
                     description="Format override.",
                 ),
             ]
@@ -422,8 +425,9 @@ class FlextTestsModels(
             ]
             fmt: Annotated[
                 c.Tests.Files.Format,
+                BeforeValidator(lambda v: c.Tests.Files.Format(v) if isinstance(v, str) else v),
                 Field(
-                    default="auto",
+                    default=c.Tests.Files.Format.AUTO,
                     description="File format override.",
                 ),
             ]
@@ -483,8 +487,9 @@ class FlextTestsModels(
             ]
             operation: Annotated[
                 c.Tests.Files.Operation,
+                BeforeValidator(lambda v: c.Tests.Files.Operation(v) if isinstance(v, str) else v),
                 Field(
-                    default="create",
+                    default=c.Tests.Files.Operation.CREATE,
                     description="Operation type: create, read, or delete",
                 ),
             ]
@@ -497,8 +502,9 @@ class FlextTestsModels(
             ]
             on_error: Annotated[
                 c.Tests.Files.ErrorMode,
+                BeforeValidator(lambda v: c.Tests.Files.ErrorMode(v) if isinstance(v, str) else v),
                 Field(
-                    default="collect",
+                    default=c.Tests.Files.ErrorMode.COLLECT,
                     description="Error handling mode: stop, skip, or collect",
                 ),
             ]

@@ -313,7 +313,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                 except (TypeError, ValueError, ValidationError):
                     validated_kwargs = m.Tests.CreateKwargsParams(
                         directory=None,
-                        fmt="auto",
+                        fmt=c.Tests.Files.Format.AUTO,
                         enc="utf-8",
                         indent=2,
                         delim=",",
