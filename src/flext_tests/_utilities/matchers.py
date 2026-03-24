@@ -105,7 +105,7 @@ class FlextTestsMatchersUtilities:
 
     @staticmethod
     def _is_matcher_input(
-        value: object,
+        value: t.Tests.Testobject,
     ) -> TypeIs[t.Tests.Testobject]:
         if value is None:
             return True
@@ -728,7 +728,9 @@ class FlextTestsMatchersUtilities:
                     )
                 result_raw = result.value
                 result_value: t.Tests.Testobject = (
-                    result_raw if FlextTestsMatchersUtilities._is_matcher_input(result_raw) else str(result_raw)
+                    result_raw
+                    if FlextTestsMatchersUtilities._is_matcher_input(result_raw)
+                    else str(result_raw)
                 )
                 extracted_payload: t.Tests.Testobject | None = None
                 if params.path is not None:
@@ -824,8 +826,12 @@ class FlextTestsMatchersUtilities:
                             actual=type(result_value).__name__,
                         ),
                     )
-                FlextTestsMatchersUtilities._check_has_lacks(result_value, params.has, params.lacks, params.msg)
-                result_payload = FlextTestsMatchersUtilities._to_test_payload(result_value)
+                FlextTestsMatchersUtilities._check_has_lacks(
+                    result_value, params.has, params.lacks, params.msg
+                )
+                result_payload = FlextTestsMatchersUtilities._to_test_payload(
+                    result_value
+                )
                 if params.len is not None and (
                     not _length_validate(result_payload, params.len)
                 ):
@@ -1201,7 +1207,9 @@ class FlextTestsMatchersUtilities:
                             actual_value = getattr(result_obj, "value", "")
                     elif params.has is not None:
                         err = result_obj.error or ""
-                        FlextTestsMatchersUtilities._check_has_lacks(err, params.has, None, params.msg, as_str=True)
+                        FlextTestsMatchersUtilities._check_has_lacks(
+                            err, params.has, None, params.msg, as_str=True
+                        )
                         actual_value = err
                     elif params.ok is None:
                         raise AssertionError(
@@ -1346,7 +1354,9 @@ class FlextTestsMatchersUtilities:
                                 )
                         elif callable(params.all_) and (
                             not all(
-                                params.all_(FlextTestsMatchersUtilities._to_test_payload(item))
+                                params.all_(
+                                    FlextTestsMatchersUtilities._to_test_payload(item)
+                                )
                                 for item in seq_value
                             )
                         ):
@@ -1354,7 +1364,11 @@ class FlextTestsMatchersUtilities:
                                 (
                                     i
                                     for i, item in enumerate(list(seq_value))
-                                    if not params.all_(FlextTestsMatchersUtilities._to_test_payload(item))
+                                    if not params.all_(
+                                        FlextTestsMatchersUtilities._to_test_payload(
+                                            item
+                                        )
+                                    )
                                 ),
                                 None,
                             )
@@ -1375,7 +1389,9 @@ class FlextTestsMatchersUtilities:
                                 )
                         elif callable(params.any_) and (
                             not any(
-                                params.any_(FlextTestsMatchersUtilities._to_test_payload(item))
+                                params.any_(
+                                    FlextTestsMatchersUtilities._to_test_payload(item)
+                                )
                                 for item in seq_value
                             )
                         ):
@@ -1401,7 +1417,9 @@ class FlextTestsMatchersUtilities:
                                 x: t.Tests.Testobject,
                             ) -> tuple[str, str]:
                                 """Wrap user key to return comparable tuple."""
-                                result = user_key_fn(FlextTestsMatchersUtilities._to_test_payload(x))
+                                result = user_key_fn(
+                                    FlextTestsMatchersUtilities._to_test_payload(x)
+                                )
                                 type_name = type(result).__name__
                                 return (str(type_name), str(result))
 

@@ -60,7 +60,4 @@ class FlextTestsProtocols(FlextProtocols):
 
 
 p = FlextTestsProtocols
-# Module-level aliases required by __init__.py lazy loading
-EntityFactory = FlextTestsProtocols.EntityFactory
-ValueFactory = FlextTestsProtocols.ValueFactory
-__all__ = ["EntityFactory", "FlextTestsProtocols", "ValueFactory", "p"]
+__all__ = ["FlextTestsProtocols", "p"]

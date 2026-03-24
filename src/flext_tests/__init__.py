@@ -50,17 +50,14 @@ if TYPE_CHECKING:
     from flext_tests.files import FlextTestsFiles, tf
     from flext_tests.models import FlextTestsModels, FlextTestsModels as m
     from flext_tests.protocols import (
-        EntityFactory,
         FlextTestsProtocols,
         FlextTestsProtocols as p,
-        ValueFactory,
     )
     from flext_tests.typings import FlextTestsTypes, FlextTestsTypes as t
     from flext_tests.utilities import FlextTestsUtilities, FlextTestsUtilities as u
     from flext_tests.validator import FlextTestsValidator, tv
 
 _LAZY_IMPORTS: Mapping[str, tuple[str, str]] = {
-    "EntityFactory": ("flext_tests.protocols", "EntityFactory"),
     "FlextTestsConstants": ("flext_tests.constants", "FlextTestsConstants"),
     "FlextTestsDocker": ("flext_tests.docker", "FlextTestsDocker"),
     "FlextTestsDomains": ("flext_tests.domains", "FlextTestsDomains"),
@@ -91,7 +88,6 @@ _LAZY_IMPORTS: Mapping[str, tuple[str, str]] = {
     ),
     "FlextValidatorTests": ("flext_tests._validator.tests", "FlextValidatorTests"),
     "FlextValidatorTypes": ("flext_tests._validator.types", "FlextValidatorTypes"),
-    "ValueFactory": ("flext_tests.protocols", "ValueFactory"),
     "_utilities": ("flext_tests._utilities", ""),
     "_validator": ("flext_tests._validator", ""),
     "c": ("flext_tests.constants", "FlextTestsConstants"),
@@ -119,7 +115,6 @@ _LAZY_IMPORTS: Mapping[str, tuple[str, str]] = {
 }
 
 __all__ = [
-    "EntityFactory",
     "FlextTestsConstants",
     "FlextTestsDocker",
     "FlextTestsDomains",
@@ -138,7 +133,6 @@ __all__ = [
     "FlextValidatorSettings",
     "FlextValidatorTests",
     "FlextValidatorTypes",
-    "ValueFactory",
     "_utilities",
     "_validator",
     "c",

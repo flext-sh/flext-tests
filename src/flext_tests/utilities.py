@@ -38,9 +38,8 @@ from flext_core import (
 from pydantic import BaseModel, RootModel
 
 from flext_tests import (
-    EntityFactory,
     FlextTestsMatchersUtilities,
-    ValueFactory,
+    FlextTestsProtocols,
     c,
     deep_match as _deep_match_impl,
     length_validate as _length_validate_impl,
@@ -205,7 +204,7 @@ class FlextTestsUtilities(FlextUtilities):
         @staticmethod
         def entity_factory_for[T: BaseModel](
             model_cls: type[T],
-        ) -> EntityFactory[T]:
+        ) -> FlextTestsProtocols.EntityFactory[T]:
             """Build an EntityFactory for the given class (DRY helper)."""
 
             def _factory(
@@ -221,7 +220,7 @@ class FlextTestsUtilities(FlextUtilities):
         @staticmethod
         def value_factory_for[T: BaseModel](
             model_cls: type[T],
-        ) -> ValueFactory[T]:
+        ) -> FlextTestsProtocols.ValueFactory[T]:
             """Build a ValueFactory for the given class (DRY helper)."""
 
             def _factory(*, data: str, count: int) -> T:
@@ -1168,7 +1167,7 @@ class FlextTestsUtilities(FlextUtilities):
             def create_test_entities_batch[TEntity](
                 names: t.StrSequence,
                 values: Sequence[t.Tests.Testobject],
-                entity_class: EntityFactory[TEntity],
+                entity_class: FlextTestsProtocols.EntityFactory[TEntity],
                 remove_ids: Sequence[bool] | None = None,
             ) -> r[Sequence[TEntity]]:
                 """Create batch of test entities.
@@ -1210,7 +1209,7 @@ class FlextTestsUtilities(FlextUtilities):
             def create_test_entity_instance[TEntity](
                 name: str,
                 value: t.Tests.Testobject,
-                entity_class: EntityFactory[TEntity],
+                entity_class: FlextTestsProtocols.EntityFactory[TEntity],
                 *,
                 remove_id: bool = False,
             ) -> TEntity:
@@ -1236,7 +1235,7 @@ class FlextTestsUtilities(FlextUtilities):
             def create_test_value_object_instance[TValue](
                 data: str,
                 count: int,
-                value_class: ValueFactory[TValue],
+                value_class: FlextTestsProtocols.ValueFactory[TValue],
             ) -> TValue:
                 """Create a test value t.NormalizedValue instance.
 
@@ -1255,7 +1254,7 @@ class FlextTestsUtilities(FlextUtilities):
             def create_test_value_objects_batch[TValue](
                 data_list: t.StrSequence,
                 count_list: Sequence[int],
-                value_class: ValueFactory[TValue],
+                value_class: FlextTestsProtocols.ValueFactory[TValue],
             ) -> Sequence[TValue]:
                 """Create batch of test value objects.
 
