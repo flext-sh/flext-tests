@@ -45,7 +45,6 @@ _FormatLiteral = Literal["auto", "text", "bin", "json", "yaml", "csv"]
 _CompareModeLiteral = Literal["content", "size", "hash", "lines"]
 _OperationLiteral = Literal["create", "read", "delete"]
 _ErrorModeLiteral = Literal["stop", "skip", "collect"]
-TestsFileContent = t.Tests.FileContent
 _OBJECT_LIST_ADAPTER = TypeAdapter(
     Sequence[t.Tests.Testobject],
     config=ConfigDict(arbitrary_types_allowed=True),
