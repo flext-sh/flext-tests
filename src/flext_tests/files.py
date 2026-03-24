@@ -220,8 +220,8 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         """
         super().__init__()
         self._base_dir = base_dir
-        self._created_files = []
-        self._created_dirs = []
+        self._created_files = list[Path]()
+        self._created_dirs = list[Path]()
 
     def __enter__(self) -> Self:
         """Context manager entry."""
@@ -960,7 +960,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         if params.readonly:
             file_path.chmod(c.Tests.Files.PERMISSION_READONLY_FILE)
         if self._created_files is None:
-            self._created_files = []
+            self._created_files = list[Path]()
         self._created_files.append(file_path)
         return file_path
 
@@ -1622,7 +1622,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             return self.base_dir
         temp_dir = Path(tempfile.mkdtemp())
         if self._created_dirs is None:
-            self._created_dirs = []
+            self._created_dirs = list[Path]()
         self._created_dirs.append(temp_dir)
         return temp_dir
 

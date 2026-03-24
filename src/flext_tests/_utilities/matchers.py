@@ -1573,7 +1573,7 @@ class FlextTestsMatchersUtilities:
                                 subject_payload,
                             )
                         except ValidationError:
-                            deep_value = {}
+                            deep_value = dict[str, t.Tests.Testobject]()
                     match_result = _deep_match(deep_value, params.deep)
                     if not match_result.matched:
                         raise AssertionError(

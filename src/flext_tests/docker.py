@@ -360,7 +360,7 @@ class FlextTestsDocker:
                 }
         except (OSError, ValueError, KeyError, TypeError) as exc:
             self.logger.warning("Failed to load dirty state", error=str(exc))
-            self._dirty_containers = set()
+            self._dirty_containers = set[str]()
 
     def _save_dirty_state(self) -> None:
         """Save dirty container state to persistent storage."""
