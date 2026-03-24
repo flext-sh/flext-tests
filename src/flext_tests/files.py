@@ -75,15 +75,16 @@ def _to_runtime_data(value: t.Tests.Testobject) -> t.RuntimeData:
     if isinstance(value, bytes):
         return value.decode("utf-8", errors="replace")
     if isinstance(value, Mapping):
-        mapping_val: Mapping[str, t.Tests.Testobject] = {
-            str(raw_k): raw_v for raw_k, raw_v in value.items()
-        }
+        raw_pairs: list[tuple[str, t.Tests.Testobject]] = [
+            (str(k), v)  # type: ignore[misc]
+            for k, v in value.items()
+        ]
         return m.ConfigMap(
-            root={k: _to_normalized_or_model(v) for k, v in mapping_val.items()},
+            root={k: _to_normalized_or_model(v) for k, v in raw_pairs},
         )
     if isinstance(value, (list, tuple)):
-        seq_val: Sequence[t.Tests.Testobject] = [item for item in value]  # noqa: C416
-        return [_to_normalized_leaf(item) for item in seq_val]
+        items: list[t.Tests.Testobject] = list(value)  # type: ignore[misc]
+        return [_to_normalized_leaf(item) for item in items]
     return str(value)
 
 
