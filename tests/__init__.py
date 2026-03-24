@@ -48,90 +48,90 @@ if TYPE_CHECKING:
     )
     from tests.utilities import FlextTestsTestUtilities, FlextTestsTestUtilities as u
 
-_LAZY_IMPORTS: Mapping[str, tuple[str, str]] = {
-    "AssertionHelpers": ("tests.test_utils", "AssertionHelpers"),
-    "FlextTestsTestConstants": ("tests.constants", "FlextTestsTestConstants"),
-    "FlextTestsTestModels": ("tests.models", "FlextTestsTestModels"),
-    "FlextTestsTestProtocols": ("tests.protocols", "FlextTestsTestProtocols"),
-    "FlextTestsTestTypes": ("tests.typings", "FlextTestsTestTypes"),
-    "FlextTestsTestUtilities": ("tests.utilities", "FlextTestsTestUtilities"),
-    "T": ("tests.test_utils", "T"),
-    "TestAssertExists": ("tests.unit.flext_tests.test_files", "TestAssertExists"),
-    "TestBatchOperations": ("tests.unit.flext_tests.test_files", "TestBatchOperations"),
-    "TestContainerInfo": ("tests.unit.flext_tests.test_docker", "TestContainerInfo"),
-    "TestContainerStatus": (
+_LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
+    "AssertionHelpers": ["tests.test_utils", "AssertionHelpers"],
+    "FlextTestsTestConstants": ["tests.constants", "FlextTestsTestConstants"],
+    "FlextTestsTestModels": ["tests.models", "FlextTestsTestModels"],
+    "FlextTestsTestProtocols": ["tests.protocols", "FlextTestsTestProtocols"],
+    "FlextTestsTestTypes": ["tests.typings", "FlextTestsTestTypes"],
+    "FlextTestsTestUtilities": ["tests.utilities", "FlextTestsTestUtilities"],
+    "T": ["tests.test_utils", "T"],
+    "TestAssertExists": ["tests.unit.flext_tests.test_files", "TestAssertExists"],
+    "TestBatchOperations": ["tests.unit.flext_tests.test_files", "TestBatchOperations"],
+    "TestContainerInfo": ["tests.unit.flext_tests.test_docker", "TestContainerInfo"],
+    "TestContainerStatus": [
         "tests.unit.flext_tests.test_docker",
         "TestContainerStatus",
-    ),
-    "TestCreateInStatic": ("tests.unit.flext_tests.test_files", "TestCreateInStatic"),
-    "TestFileInfo": ("tests.unit.flext_tests.test_files", "TestFileInfo"),
-    "TestFileInfoFromModels": (
+    ],
+    "TestCreateInStatic": ["tests.unit.flext_tests.test_files", "TestCreateInStatic"],
+    "TestFileInfo": ["tests.unit.flext_tests.test_files", "TestFileInfo"],
+    "TestFileInfoFromModels": [
         "tests.unit.flext_tests.test_files",
         "TestFileInfoFromModels",
-    ),
-    "TestFlextTestsDocker": (
+    ],
+    "TestFlextTestsDocker": [
         "tests.unit.flext_tests.test_docker",
         "TestFlextTestsDocker",
-    ),
-    "TestFlextTestsDockerWorkerId": (
+    ],
+    "TestFlextTestsDockerWorkerId": [
         "tests.unit.flext_tests.test_docker",
         "TestFlextTestsDockerWorkerId",
-    ),
-    "TestFlextTestsDockerWorkspaceRoot": (
+    ],
+    "TestFlextTestsDockerWorkspaceRoot": [
         "tests.unit.flext_tests.test_docker",
         "TestFlextTestsDockerWorkspaceRoot",
-    ),
-    "TestFlextTestsDomains": (
+    ],
+    "TestFlextTestsDomains": [
         "tests.unit.flext_tests.test_domains",
         "TestFlextTestsDomains",
-    ),
-    "TestFlextTestsFiles": ("tests.unit.flext_tests.test_files", "TestFlextTestsFiles"),
-    "TestFlextTestsFilesNewApi": (
+    ],
+    "TestFlextTestsFiles": ["tests.unit.flext_tests.test_files", "TestFlextTestsFiles"],
+    "TestFlextTestsFilesNewApi": [
         "tests.unit.flext_tests.test_files",
         "TestFlextTestsFilesNewApi",
-    ),
-    "TestFlextTestsMatchers": (
+    ],
+    "TestFlextTestsMatchers": [
         "tests.unit.flext_tests.test_matchers",
         "TestFlextTestsMatchers",
-    ),
-    "TestFlextTestsUtilitiesFactory": (
+    ],
+    "TestFlextTestsUtilitiesFactory": [
         "tests.unit.flext_tests.test_utilities",
         "TestFlextTestsUtilitiesFactory",
-    ),
-    "TestFlextTestsUtilitiesResult": (
+    ],
+    "TestFlextTestsUtilitiesResult": [
         "tests.unit.flext_tests.test_utilities",
         "TestFlextTestsUtilitiesResult",
-    ),
-    "TestFlextTestsUtilitiesResultCompat": (
+    ],
+    "TestFlextTestsUtilitiesResultCompat": [
         "tests.unit.flext_tests.test_utilities",
         "TestFlextTestsUtilitiesResultCompat",
-    ),
-    "TestFlextTestsUtilitiesTestContext": (
+    ],
+    "TestFlextTestsUtilitiesTestContext": [
         "tests.unit.flext_tests.test_utilities",
         "TestFlextTestsUtilitiesTestContext",
-    ),
-    "TestInfoWithContentMeta": (
+    ],
+    "TestInfoWithContentMeta": [
         "tests.unit.flext_tests.test_files",
         "TestInfoWithContentMeta",
-    ),
-    "TestShortAlias": ("tests.unit.flext_tests.test_files", "TestShortAlias"),
-    "assertion_helpers": ("tests.test_utils", "assertion_helpers"),
-    "c": ("tests.constants", "FlextTestsTestConstants"),
-    "d": ("flext_tests", "d"),
-    "e": ("flext_tests", "e"),
-    "h": ("flext_tests", "h"),
-    "m": ("tests.models", "FlextTestsTestModels"),
-    "p": ("tests.protocols", "FlextTestsTestProtocols"),
-    "r": ("flext_tests", "r"),
-    "s": ("flext_tests", "s"),
-    "t": ("tests.typings", "FlextTestsTestTypes"),
-    "td": ("tests.conftest", "td"),
-    "tf": ("tests.conftest", "tf"),
-    "tk": ("tests.conftest", "tk"),
-    "tm": ("tests.conftest", "tm"),
-    "tt": ("tests.conftest", "tt"),
-    "u": ("tests.utilities", "FlextTestsTestUtilities"),
-    "x": ("flext_tests", "x"),
+    ],
+    "TestShortAlias": ["tests.unit.flext_tests.test_files", "TestShortAlias"],
+    "assertion_helpers": ["tests.test_utils", "assertion_helpers"],
+    "c": ["tests.constants", "FlextTestsTestConstants"],
+    "d": ["flext_tests", "d"],
+    "e": ["flext_tests", "e"],
+    "h": ["flext_tests", "h"],
+    "m": ["tests.models", "FlextTestsTestModels"],
+    "p": ["tests.protocols", "FlextTestsTestProtocols"],
+    "r": ["flext_tests", "r"],
+    "s": ["flext_tests", "s"],
+    "t": ["tests.typings", "FlextTestsTestTypes"],
+    "td": ["tests.conftest", "td"],
+    "tf": ["tests.conftest", "tf"],
+    "tk": ["tests.conftest", "tk"],
+    "tm": ["tests.conftest", "tm"],
+    "tt": ["tests.conftest", "tt"],
+    "u": ["tests.utilities", "FlextTestsTestUtilities"],
+    "x": ["flext_tests", "x"],
 }
 
 __all__ = [

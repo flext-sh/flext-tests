@@ -28,21 +28,21 @@ if TYPE_CHECKING:
     from flext_tests._validator.tests import FlextValidatorTests
     from flext_tests._validator.types import FlextValidatorTypes
 
-_LAZY_IMPORTS: Mapping[str, tuple[str, str]] = {
-    "FlextValidatorBypass": ("flext_tests._validator.bypass", "FlextValidatorBypass"),
-    "FlextValidatorImports": (
+_LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
+    "FlextValidatorBypass": ["flext_tests._validator.bypass", "FlextValidatorBypass"],
+    "FlextValidatorImports": [
         "flext_tests._validator.imports",
         "FlextValidatorImports",
-    ),
-    "FlextValidatorLayer": ("flext_tests._validator.layer", "FlextValidatorLayer"),
-    "FlextValidatorModels": ("flext_tests._validator.models", "FlextValidatorModels"),
-    "FlextValidatorSettings": (
+    ],
+    "FlextValidatorLayer": ["flext_tests._validator.layer", "FlextValidatorLayer"],
+    "FlextValidatorModels": ["flext_tests._validator.models", "FlextValidatorModels"],
+    "FlextValidatorSettings": [
         "flext_tests._validator.settings",
         "FlextValidatorSettings",
-    ),
-    "FlextValidatorTests": ("flext_tests._validator.tests", "FlextValidatorTests"),
-    "FlextValidatorTypes": ("flext_tests._validator.types", "FlextValidatorTypes"),
-    "vm": ("flext_tests._validator.models", "vm"),
+    ],
+    "FlextValidatorTests": ["flext_tests._validator.tests", "FlextValidatorTests"],
+    "FlextValidatorTypes": ["flext_tests._validator.types", "FlextValidatorTypes"],
+    "vm": ["flext_tests._validator.models", "vm"],
 }
 
 __all__ = [

@@ -40,66 +40,66 @@ if TYPE_CHECKING:
         TestFlextTestsUtilitiesTestContext,
     )
 
-_LAZY_IMPORTS: Mapping[str, tuple[str, str]] = {
-    "TestAssertExists": ("tests.unit.flext_tests.test_files", "TestAssertExists"),
-    "TestBatchOperations": ("tests.unit.flext_tests.test_files", "TestBatchOperations"),
-    "TestContainerInfo": ("tests.unit.flext_tests.test_docker", "TestContainerInfo"),
-    "TestContainerStatus": (
+_LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
+    "TestAssertExists": ["tests.unit.flext_tests.test_files", "TestAssertExists"],
+    "TestBatchOperations": ["tests.unit.flext_tests.test_files", "TestBatchOperations"],
+    "TestContainerInfo": ["tests.unit.flext_tests.test_docker", "TestContainerInfo"],
+    "TestContainerStatus": [
         "tests.unit.flext_tests.test_docker",
         "TestContainerStatus",
-    ),
-    "TestCreateInStatic": ("tests.unit.flext_tests.test_files", "TestCreateInStatic"),
-    "TestFileInfo": ("tests.unit.flext_tests.test_files", "TestFileInfo"),
-    "TestFileInfoFromModels": (
+    ],
+    "TestCreateInStatic": ["tests.unit.flext_tests.test_files", "TestCreateInStatic"],
+    "TestFileInfo": ["tests.unit.flext_tests.test_files", "TestFileInfo"],
+    "TestFileInfoFromModels": [
         "tests.unit.flext_tests.test_files",
         "TestFileInfoFromModels",
-    ),
-    "TestFlextTestsDocker": (
+    ],
+    "TestFlextTestsDocker": [
         "tests.unit.flext_tests.test_docker",
         "TestFlextTestsDocker",
-    ),
-    "TestFlextTestsDockerWorkerId": (
+    ],
+    "TestFlextTestsDockerWorkerId": [
         "tests.unit.flext_tests.test_docker",
         "TestFlextTestsDockerWorkerId",
-    ),
-    "TestFlextTestsDockerWorkspaceRoot": (
+    ],
+    "TestFlextTestsDockerWorkspaceRoot": [
         "tests.unit.flext_tests.test_docker",
         "TestFlextTestsDockerWorkspaceRoot",
-    ),
-    "TestFlextTestsDomains": (
+    ],
+    "TestFlextTestsDomains": [
         "tests.unit.flext_tests.test_domains",
         "TestFlextTestsDomains",
-    ),
-    "TestFlextTestsFiles": ("tests.unit.flext_tests.test_files", "TestFlextTestsFiles"),
-    "TestFlextTestsFilesNewApi": (
+    ],
+    "TestFlextTestsFiles": ["tests.unit.flext_tests.test_files", "TestFlextTestsFiles"],
+    "TestFlextTestsFilesNewApi": [
         "tests.unit.flext_tests.test_files",
         "TestFlextTestsFilesNewApi",
-    ),
-    "TestFlextTestsMatchers": (
+    ],
+    "TestFlextTestsMatchers": [
         "tests.unit.flext_tests.test_matchers",
         "TestFlextTestsMatchers",
-    ),
-    "TestFlextTestsUtilitiesFactory": (
+    ],
+    "TestFlextTestsUtilitiesFactory": [
         "tests.unit.flext_tests.test_utilities",
         "TestFlextTestsUtilitiesFactory",
-    ),
-    "TestFlextTestsUtilitiesResult": (
+    ],
+    "TestFlextTestsUtilitiesResult": [
         "tests.unit.flext_tests.test_utilities",
         "TestFlextTestsUtilitiesResult",
-    ),
-    "TestFlextTestsUtilitiesResultCompat": (
+    ],
+    "TestFlextTestsUtilitiesResultCompat": [
         "tests.unit.flext_tests.test_utilities",
         "TestFlextTestsUtilitiesResultCompat",
-    ),
-    "TestFlextTestsUtilitiesTestContext": (
+    ],
+    "TestFlextTestsUtilitiesTestContext": [
         "tests.unit.flext_tests.test_utilities",
         "TestFlextTestsUtilitiesTestContext",
-    ),
-    "TestInfoWithContentMeta": (
+    ],
+    "TestInfoWithContentMeta": [
         "tests.unit.flext_tests.test_files",
         "TestInfoWithContentMeta",
-    ),
-    "TestShortAlias": ("tests.unit.flext_tests.test_files", "TestShortAlias"),
+    ],
+    "TestShortAlias": ["tests.unit.flext_tests.test_files", "TestShortAlias"],
 }
 
 __all__ = [
