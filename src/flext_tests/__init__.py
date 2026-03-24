@@ -49,10 +49,7 @@ if TYPE_CHECKING:
     from flext_tests.domains import FlextTestsDomains, td
     from flext_tests.files import FlextTestsFiles, tf
     from flext_tests.models import FlextTestsModels, FlextTestsModels as m
-    from flext_tests.protocols import (
-        FlextTestsProtocols,
-        FlextTestsProtocols as p,
-    )
+    from flext_tests.protocols import FlextTestsProtocols, FlextTestsProtocols as p
     from flext_tests.typings import FlextTestsTypes, FlextTestsTypes as t
     from flext_tests.utilities import FlextTestsUtilities, FlextTestsUtilities as u
     from flext_tests.validator import FlextTestsValidator, tv
