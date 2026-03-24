@@ -182,7 +182,7 @@ class FlextTestsModels(
                 ),
             ]
             fmt: Annotated[
-                t.Tests.Files.FormatLiteral,
+                c.Tests.Files.Format,
                 Field(
                     default="auto",
                     description="File format override.",
@@ -256,7 +256,7 @@ class FlextTestsModels(
                 ),
             ]
             fmt: Annotated[
-                t.Tests.Files.FormatLiteral,
+                c.Tests.Files.Format,
                 Field(
                     default="auto",
                     description="Format override.",
@@ -421,7 +421,7 @@ class FlextTestsModels(
                 ),
             ]
             fmt: Annotated[
-                t.Tests.Files.FormatLiteral,
+                c.Tests.Files.Format,
                 Field(
                     default="auto",
                     description="File format override.",
@@ -482,7 +482,7 @@ class FlextTestsModels(
                 ),
             ]
             operation: Annotated[
-                t.Tests.Files.OperationLiteral,
+                c.Tests.Files.Operation,
                 Field(
                     default="create",
                     description="Operation type: create, read, or delete",
@@ -496,7 +496,7 @@ class FlextTestsModels(
                 ),
             ]
             on_error: Annotated[
-                t.Tests.Files.ErrorModeLiteral,
+                c.Tests.Files.ErrorMode,
                 Field(
                     default="collect",
                     description="Error handling mode: stop, skip, or collect",
@@ -568,7 +568,7 @@ class FlextTestsModels(
             file_path: Path
             line_number: int
             rule_id: str
-            severity: c.Tests.Validator.SeverityLiteral
+            severity: c.Tests.Validator.Severity
             description: str
             code_snippet: str = ""
 

@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from enum import StrEnum, unique
-from typing import Final, Literal
+from typing import Final
 
 from flext_core import FlextConstants
 
@@ -150,6 +150,22 @@ class FlextTestsConstants(FlextConstants):
                 HASH = "hash"
                 LINES = "lines"
 
+            @unique
+            class Operation(StrEnum):
+                """File operation type enumeration."""
+
+                CREATE = "create"
+                READ = "read"
+                DELETE = "delete"
+
+            @unique
+            class ErrorMode(StrEnum):
+                """Error handling mode enumeration."""
+
+                STOP = "stop"
+                SKIP = "skip"
+                COLLECT = "collect"
+
             EXT_TO_FMT: Final[t.StrMapping] = {
                 ".txt": "text",
                 ".log": "text",
@@ -228,8 +244,6 @@ class FlextTestsConstants(FlextConstants):
                 HIGH = "HIGH"
                 MEDIUM = "MEDIUM"
                 LOW = "LOW"
-
-            type SeverityLiteral = Literal["CRITICAL", "HIGH", "MEDIUM", "LOW"]
 
             class Rules:
                 """Rule definitions with (severity, description) tuples.
@@ -321,7 +335,7 @@ class FlextTestsConstants(FlextConstants):
                 def get(
                     cls,
                     rule_id: str,
-                ) -> tuple[FlextTestsConstants.Tests.Validator.SeverityLiteral, str]:
+                ) -> tuple[FlextTestsConstants.Tests.Validator.Severity, str]:
                     """Get rule by ID string (e.g., 'IMPORT-001' -> IMPORT_001).
 
                     Args:
@@ -336,7 +350,7 @@ class FlextTestsConstants(FlextConstants):
                     """
                     attr_name = rule_id.replace("-", "_")
                     rule: tuple[
-                        FlextTestsConstants.Tests.Validator.SeverityLiteral,
+                        FlextTestsConstants.Tests.Validator.Severity,
                         str,
                     ] = getattr(cls, attr_name)
                     return rule

@@ -25,7 +25,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
-from typing import Literal, TypeAliasType, TypeIs
+from typing import TypeAliasType, TypeIs
 
 from flext_core import FlextResult, FlextTypes, p
 from pydantic import BaseModel, InstanceOf, SecretStr
@@ -100,27 +100,7 @@ class FlextTestsTypes(FlextTypes):
         class Files:
             """File-specific type definitions for test file operations (tf)."""
 
-            type FormatLiteral = Literal[
-                "auto",
-                "text",
-                "bin",
-                "json",
-                "yaml",
-                "csv",
-                "txt",
-                "md",
-            ]
-            "Literal type for file format specification in create/read operations."
-            type OperationLiteral = Literal[
-                "create",
-                "read",
-                "delete",
-                "compare",
-                "info",
-            ]
-            "Literal type for batch operation specification."
-            type ErrorModeLiteral = Literal["stop", "skip", "collect"]
-            "Error handling mode for batch operations."
+            "File-specific types removed — use c.Tests.Files.Format, Operation, ErrorMode StrEnums."
             type BatchFiles = (
                 Mapping[str, FlextTestsTypes.Tests.Testobject]
                 | Sequence[FlextTestsTypes.Tests.Testobject]

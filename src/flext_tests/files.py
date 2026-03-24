@@ -32,7 +32,7 @@ from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 from types import TracebackType
-from typing import ClassVar, Literal, Self, TypeIs, TypeVar, overload, override
+from typing import ClassVar, Self, TypeIs, TypeVar, overload, override
 
 from flext_core import FlextResult, FlextRuntime, r
 from pydantic import BaseModel, ConfigDict, TypeAdapter, ValidationError
@@ -41,10 +41,10 @@ from yaml import YAMLError, dump as yaml_dump, safe_load as yaml_safe_load
 from flext_tests import c, m, s, t, u
 
 TModel = TypeVar("TModel", bound=BaseModel)
-_FormatLiteral = Literal["auto", "text", "bin", "json", "yaml", "csv"]
-_CompareModeLiteral = Literal["content", "size", "hash", "lines"]
-_OperationLiteral = Literal["create", "read", "delete"]
-_ErrorModeLiteral = Literal["stop", "skip", "collect"]
+_FormatLiteral = c.Tests.Files.Format
+_CompareModeLiteral = c.Tests.Files.CompareMode
+_OperationLiteral = c.Tests.Files.Operation
+_ErrorModeLiteral = c.Tests.Files.ErrorMode
 _OBJECT_LIST_ADAPTER = TypeAdapter(
     Sequence[t.Tests.Testobject],
     config=ConfigDict(arbitrary_types_allowed=True),
