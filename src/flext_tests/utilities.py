@@ -39,6 +39,7 @@ from pydantic import BaseModel, RootModel
 
 from flext_tests import (
     EntityFactory,
+    FlextTestsMatchersUtilities,
     ValueFactory,
     c,
     deep_match as _deep_match_impl,
@@ -49,6 +50,7 @@ from flext_tests import (
     to_normalized_value as _to_normalized_value,
     to_payload as _to_payload,
 )
+
 
 
 def _to_scalar(
@@ -2024,8 +2026,6 @@ class FlextTestsUtilities(FlextUtilities):
 
 FlextUtilities = FlextTestsUtilities
 u = FlextTestsUtilities
-
-from flext_tests import FlextTestsMatchersUtilities
 
 setattr(
     FlextTestsUtilities.Tests, "Matchers", FlextTestsMatchersUtilities.Tests.Matchers

@@ -103,7 +103,7 @@ def _to_normalized_or_model(value: t.Tests.Testobject) -> t.NormalizedValue | Ba
     return str(value)
 
 
-def _to_container_value(value: t.Tests.Testobject) -> t.Container | BaseModel:
+def _to_container_value(value: t.Tests.Testobject) -> t.NormalizedValue | BaseModel:
     """Convert t.Tests.Testobject to Container | BaseModel for ConfigMap values."""
     runtime_data: t.RuntimeData = _to_runtime_data(value)
     return FlextRuntime.normalize_to_container(runtime_data)
@@ -468,8 +468,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             extract_result=extract_result,
         )
 
-    @override
-    def batch[TModel: BaseModel](
+    def batch_files[TModel: BaseModel](
         self,
         items: t.Tests.Files.BatchFiles,
         *,
@@ -481,7 +480,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
     ) -> r[m.Tests.BatchResult]:
         """Batch file operations.
 
-        Uses u.batch() for batch processing with error handling.
+        Uses u.batch_files() for batch processing with error handling.
 
         Args:
             items: Mapping[str, t.FileContent] or Sequence[tuple[str, t.FileContent]]
@@ -496,7 +495,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
 
         Examples:
             # Batch create
-            result = tf().batch({
+            result = tf().batch_files({
                 "file1.txt": "content1",
                 "file2.json": {"key": "value"},
                 "file3.yaml": config_model,
@@ -504,7 +503,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
 
             # Batch read with model
             file_paths = {"user1.json": Path("user1.json"), ...}
-            result = tf().batch(
+            result = tf().batch_files(
                 file_paths,
                 operation="read",
                 model=UserModel,
@@ -1456,8 +1455,11 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             if content.is_failure:
                 error_msg = content.error or "r failure"
                 raise ValueError(f"Cannot create file from failed r: {error_msg}")
-            resolved_value: t.Tests.Testobject = getattr(content, "value", None)
-            return self._coerce_file_content(resolved_value)
+            if not isinstance(content, FlextResult):
+                return self._coerce_file_content(None)
+            resolved: str | bytes | m.ConfigMap | Sequence[Sequence[str]] | BaseModel | None
+            resolved = content.value  # pyright: ignore[reportUnknownMemberType,reportUnknownVariableType]
+            return self._coerce_file_content(resolved)
         return self._coerce_file_content(content)
 
     def _is_nested_rows(
@@ -1479,7 +1481,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
 
     def _mapping_to_payload(
         self,
-        mapping: Mapping[str, t.NormalizedValue],
+        mapping: Mapping[str, t.Tests.Testobject],
     ) -> Mapping[str, t.Tests.Testobject]:
         normalized_mapping: Mapping[str, t.Tests.Testobject] = (
             _OBJECT_DICT_ADAPTER.validate_python(mapping)

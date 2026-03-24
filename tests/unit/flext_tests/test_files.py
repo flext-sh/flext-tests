@@ -983,12 +983,12 @@ class TestAssertExists:
 
 
 class TestBatchOperations:
-    """Test suite for tf().batch() method."""
+    """Test suite for tf().batch_files() method."""
 
     def test_batch_create_multiple_files(self, tmp_path: Path) -> None:
         """Test batch create for multiple files."""
         manager = tf(base_dir=tmp_path)
-        result = manager.batch(
+        result = manager.batch_files(
             {"file1.txt": "content1", "file2.txt": "content2", "file3.txt": "content3"},
             directory=tmp_path,
         )
@@ -1002,7 +1002,7 @@ class TestBatchOperations:
     def test_batch_create_json_files(self, tmp_path: Path) -> None:
         """Test batch create for JSON files."""
         manager = tf(base_dir=tmp_path)
-        result = manager.batch(
+        result = manager.batch_files(
             {"config1.json": {"key": "value1"}, "config2.json": {"key": "value2"}},
             directory=tmp_path,
         )
@@ -1018,7 +1018,7 @@ class TestBatchOperations:
         manager = tf(base_dir=tmp_path)
         readonly_dir = tmp_path / "readonly"
         readonly_dir.mkdir()
-        result = manager.batch(
+        result = manager.batch_files(
             {"valid.txt": "content"},
             directory=tmp_path,
             on_error="collect",
@@ -1030,7 +1030,7 @@ class TestBatchOperations:
     def test_batch_result_model_structure(self, tmp_path: Path) -> None:
         """Test BatchResult model has correct structure."""
         manager = tf(base_dir=tmp_path)
-        result = manager.batch({"file.txt": "content"}, directory=tmp_path)
+        result = manager.batch_files({"file.txt": "content"}, directory=tmp_path)
         _ = assertion_helpers.assert_flext_result_success(result)
         batch_result = result.value
         tm.that(hasattr(batch_result, "succeeded"), eq=True)
