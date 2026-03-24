@@ -75,16 +75,14 @@ def _to_runtime_data(value: t.Tests.Testobject) -> t.RuntimeData:
     if isinstance(value, bytes):
         return value.decode("utf-8", errors="replace")
     if isinstance(value, Mapping):
-        raw_pairs: list[tuple[str, t.Tests.Testobject]] = [
-            (str(k), v)  # type: ignore[misc]
-            for k, v in value.items()
-        ]
         return m.ConfigMap(
-            root={k: _to_normalized_or_model(v) for k, v in raw_pairs},
+            root={
+                str(k): _to_normalized_or_model(_OBJECT_DICT_ADAPTER.validate_python({str(k): v})[str(k)])
+                for k, v in value.items()
+            },
         )
     if isinstance(value, (list, tuple)):
-        items: list[t.Tests.Testobject] = list(value)  # type: ignore[misc]
-        return [_to_normalized_leaf(item) for item in items]
+        return [_to_normalized_leaf(_OBJECT_LIST_ADAPTER.validate_python([v])[0]) for v in value]
     return str(value)
 
 
