@@ -36,11 +36,11 @@ class FlextValidatorSettings:
         tool_data_raw: t.Tests.Testobject = data.get("tool", {})
         if not isinstance(tool_data_raw, dict):
             return violations
-        tool_data = tool_data_raw
+        tool_data: Mapping[str, t.Tests.Testobject] = tool_data_raw
         mypy_config_raw: t.Tests.Testobject = tool_data.get("mypy", {})
         if not isinstance(mypy_config_raw, dict):
             return violations
-        mypy_config = mypy_config_raw
+        mypy_config: Mapping[str, t.Tests.Testobject] = mypy_config_raw
         if (
             not u.Tests.Validator.is_approved("CONFIG-001", file_path, approved)
             and mypy_config.get("ignore_errors") is True
@@ -58,19 +58,19 @@ class FlextValidatorSettings:
         overrides_raw: t.Tests.Testobject = mypy_config.get("overrides", [])
         if not isinstance(overrides_raw, list):
             return violations
-        overrides: Sequence[t.Tests.Testobject] = list(overrides_raw)
+        overrides: Sequence[t.Tests.Testobject] = [v for v in overrides_raw]  # noqa: C416
         for override in overrides:
             if not isinstance(override, dict):
                 continue
             override_dict: Mapping[str, t.Tests.Testobject] = override
-            module_raw = override_dict.get("module", "unknown")
+            module_raw: t.Tests.Testobject = override_dict.get("module", "unknown")
             module: str = str(module_raw) if module_raw is not None else "unknown"
             is_approved = u.Tests.Validator.is_approved(
                 "CONFIG-001",
                 file_path,
                 approved,
             )
-            ignore_errors_raw = override_dict.get("ignore_errors")
+            ignore_errors_raw: t.Tests.Testobject = override_dict.get("ignore_errors")
             if ignore_errors_raw is True and (not is_approved):
                 line_num = u.Tests.Validator.find_line_number(
                     lines,
@@ -126,13 +126,14 @@ class FlextValidatorSettings:
     ) -> Sequence[m.Tests.Violation]:
         """Check pyright configuration for violations."""
         violations: MutableSequence[m.Tests.Violation] = []
-        tool_data = data.get("tool", {})
-        if not isinstance(tool_data, dict):
+        tool_data_raw: t.Tests.Testobject = data.get("tool", {})
+        if not isinstance(tool_data_raw, dict):
             return violations
-        pyright_config_raw = tool_data.get("pyright", {})
+        tool_data: Mapping[str, t.Tests.Testobject] = tool_data_raw
+        pyright_config_raw: t.Tests.Testobject = tool_data.get("pyright", {})
         if not isinstance(pyright_config_raw, dict):
             return violations
-        pyright_config = pyright_config_raw
+        pyright_config: Mapping[str, t.Tests.Testobject] = pyright_config_raw
         if (
             not u.Tests.Validator.is_approved("CONFIG-005", file_path, approved)
             and pyright_config.get("reportPrivateUsage") is False
@@ -160,21 +161,22 @@ class FlextValidatorSettings:
         if u.Tests.Validator.is_approved("CONFIG-002", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
-        tool_data = data.get("tool", {})
-        if not isinstance(tool_data, dict):
+        tool_data_raw: t.Tests.Testobject = data.get("tool", {})
+        if not isinstance(tool_data_raw, dict):
             return violations
-        ruff_config_raw = tool_data.get("ruff", {})
+        tool_data: Mapping[str, t.Tests.Testobject] = tool_data_raw
+        ruff_config_raw: t.Tests.Testobject = tool_data.get("ruff", {})
         if not isinstance(ruff_config_raw, dict):
             return violations
-        ruff_config = ruff_config_raw
-        lint_config_raw = ruff_config.get("lint", {})
+        ruff_config: Mapping[str, t.Tests.Testobject] = ruff_config_raw
+        lint_config_raw: t.Tests.Testobject = ruff_config.get("lint", {})
         if not isinstance(lint_config_raw, dict):
             return violations
-        lint_config = lint_config_raw
-        ignores_raw = lint_config.get("ignore", [])
+        lint_config: Mapping[str, t.Tests.Testobject] = lint_config_raw
+        ignores_raw: t.Tests.Testobject = lint_config.get("ignore", [])
         if isinstance(ignores_raw, list):
             approved_ignores = c.Tests.Validator.Approved.RUFF_IGNORES
-            ignores_list = ignores_raw
+            ignores_list: list[t.Tests.Testobject] = ignores_raw
             for ignore_raw in ignores_list:
                 ignore_str: str = str(ignore_raw)
                 if ignore_str not in approved_ignores:

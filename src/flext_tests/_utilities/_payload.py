@@ -9,7 +9,14 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping, MutableMapping, Sequence, Sized
+from collections.abc import (
+    Callable,
+    Mapping,
+    MutableMapping,
+    MutableSequence,
+    Sequence,
+    Sized,
+)
 from datetime import datetime
 from pathlib import Path
 from typing import ClassVar
@@ -112,15 +119,35 @@ class FlextTestsPayloadUtilities:
         if isinstance(value, BaseModel):
             return str(value)
         if isinstance(value, Mapping):
-            return {
-                str(k): FlextTestsPayloadUtilities.to_normalized_value(v)
-                for k, v in value.items()
-            }
+            mapping_val: Mapping[str, t.Tests.Testobject] = value
+            return FlextTestsPayloadUtilities._normalize_mapping(mapping_val)
         if isinstance(value, (list, tuple)):
-            return [
-                FlextTestsPayloadUtilities.to_normalized_value(item) for item in value
-            ]
+            seq_val: Sequence[t.Tests.Testobject] = value
+            return FlextTestsPayloadUtilities._normalize_sequence(seq_val)
         return str(value)
+
+    @staticmethod
+    def _normalize_mapping(
+        mapping: Mapping[str, t.Tests.Testobject],
+    ) -> Mapping[str, t.NormalizedValue]:
+        """Normalize a mapping's values to NormalizedValue."""
+        result: MutableMapping[str, t.NormalizedValue] = {}
+        for k, v in mapping.items():
+            key: str = str(k)
+            val: t.Tests.Testobject = v
+            result[key] = FlextTestsPayloadUtilities.to_normalized_value(val)
+        return result
+
+    @staticmethod
+    def _normalize_sequence(
+        seq: Sequence[t.Tests.Testobject],
+    ) -> Sequence[t.NormalizedValue]:
+        """Normalize a sequence's items to NormalizedValue."""
+        result: MutableSequence[t.NormalizedValue] = []
+        for item in seq:
+            entry: t.Tests.Testobject = item
+            result.append(FlextTestsPayloadUtilities.to_normalized_value(entry))
+        return result
 
     @staticmethod
     def to_config_map_value(value: t.Tests.Testobject) -> t.ValueOrModel:
@@ -138,14 +165,11 @@ class FlextTestsPayloadUtilities:
         if isinstance(value, Path):
             return str(value)
         if isinstance(value, Mapping):
-            return {
-                str(k): FlextTestsPayloadUtilities.to_normalized_value(v)
-                for k, v in value.items()
-            }
+            mapping_val: Mapping[str, t.Tests.Testobject] = value
+            return FlextTestsPayloadUtilities._normalize_mapping(mapping_val)
         if isinstance(value, (list, tuple)):
-            return [
-                FlextTestsPayloadUtilities.to_normalized_value(item) for item in value
-            ]
+            seq_val: Sequence[t.Tests.Testobject] = value
+            return FlextTestsPayloadUtilities._normalize_sequence(seq_val)
         return str(value)
 
     @staticmethod
