@@ -70,7 +70,7 @@ class FlextTestsTypes(FlextTypes):
     class Tests:
         """Test-specific type definitions namespace.
 
-        All test-specific types organized under t.Tests.* pattern.
+        All test-specific types organized under FlextTypes.Tests.* pattern.
         """
 
         type Testobject = _Testobject
@@ -80,7 +80,7 @@ class FlextTestsTypes(FlextTypes):
             str
             | bytes
             | Mapping[str, _Testobject]
-            | Sequence[t.StrSequence]
+            | Sequence[FlextTypes.StrSequence]
             | InstanceOf[BaseModel]
         )
         type TestResultValue = _Testobject
@@ -117,7 +117,11 @@ class FlextTestsTypes(FlextTypes):
             "Type for batch file operations - Mapping or Sequence of files."
 
             type FileContentPlain = (
-                str | bytes | FlextTypes.ConfigMap | Sequence[t.StrSequence] | BaseModel
+                str
+                | bytes
+                | FlextTypes.ConfigMap
+                | Sequence[FlextTypes.StrSequence]
+                | BaseModel
             )
             "Plain file content (no result wrapper): str, bytes, ConfigMap, CSV rows, or any Pydantic model."
 
@@ -126,7 +130,7 @@ class FlextTestsTypes(FlextTypes):
                 | FlextResult[str]
                 | FlextResult[bytes]
                 | FlextResult[FlextTypes.ConfigMap]
-                | FlextResult[Sequence[t.StrSequence]]
+                | FlextResult[Sequence[FlextTypes.StrSequence]]
                 | FlextResult[BaseModel]
             )
             "Full file input type: plain content or result-wrapped content."
@@ -153,7 +157,7 @@ class FlextTestsTypes(FlextTypes):
                 | FlextTestsTypes.Tests.Testobject,
             ]
             "Deep structural matching specification: path -> value or predicate."
-            type PathSpec = str | t.StrSequence
+            type PathSpec = str | FlextTypes.StrSequence
             "Path specification for nested value extraction."
             type PredicateSpec = Callable[[FlextTestsTypes.Tests.Testobject], bool]
             "Predicate function for custom assertions."
@@ -174,7 +178,7 @@ class FlextTestsTypes(FlextTypes):
                 | Sequence[FlextTestsTypes.Tests.Testobject]
             )
             "Containment specification: single item or sequence of items."
-            type ExclusionSpec = str | t.StrSequence
+            type ExclusionSpec = str | FlextTypes.StrSequence
             "Exclusion specification: single string or sequence of strings."
             type SequencePredicate = (
                 type | Callable[[FlextTestsTypes.Tests.Testobject], bool]
@@ -188,27 +192,27 @@ class FlextTestsTypes(FlextTypes):
                 ]
             )
             "Sort key specification: bool for natural sort or callable."
-            type KeySpec = t.StrSequence | set[str]
+            type KeySpec = FlextTypes.StrSequence | set[str]
             "Key specification: sequence or set of keys."
             type KeyValueSpec = (
                 tuple[str, FlextTestsTypes.Tests.Testobject]
                 | Mapping[str, FlextTestsTypes.Tests.Testobject]
             )
             "Key-value specification: single pair or mapping."
-            type AttributeSpec = str | t.StrSequence
+            type AttributeSpec = str | FlextTypes.StrSequence
             "Attribute specification: single attribute or sequence."
             type AttributeValueSpec = (
                 tuple[str, FlextTestsTypes.Tests.Testobject]
                 | Mapping[str, FlextTestsTypes.Tests.Testobject]
             )
             "Attribute-value specification: single pair or mapping."
-            type ErrorCodeSpec = str | t.StrSequence
+            type ErrorCodeSpec = str | FlextTypes.StrSequence
             "Error code specification: single code or sequence."
             type ErrorDataSpec = FlextTypes.ConfigMap
             "Error data specification: key-value pairs."
             type CleanupSpec = Sequence[Callable[[], None]]
             "Cleanup specification: sequence of cleanup functions."
-            type EnvironmentSpec = t.StrMapping
+            type EnvironmentSpec = FlextTypes.StrMapping
             "Environment specification: mapping of env var names to values."
 
     class Guards:

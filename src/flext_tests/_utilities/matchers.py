@@ -65,7 +65,7 @@ from collections.abc import (
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
-from typing import TypeGuard, TypeIs, cast, overload
+from typing import TypeIs, overload
 
 from flext_core import m as core_m, r, t as core_t, u
 from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
@@ -95,7 +95,7 @@ def _is_non_string_sequence(
 
 def _is_matcher_input(
     value: object,
-) -> TypeGuard[t.Tests.Testobject]:
+) -> TypeIs[t.Tests.Testobject]:
     if value is None:
         return True
     if isinstance(value, (str, int, float, bool, bytes, datetime, Path, BaseModel)):
@@ -1121,13 +1121,12 @@ class FlextTestsMatchersUtilities:
                 if only_type_check:
                     return
                 subject = value
-                guard_subject = cast("t.GuardInput", subject)
-                if u.is_result_like(guard_subject) or (
+                if u.is_result_like(subject) or (
                     hasattr(subject, "is_success")
                     and hasattr(subject, "error")
                     and hasattr(type(subject), "value")
                 ):
-                    result_obj = cast("p.ResultLike[t.Tests.Testobject]", subject)
+                    result_obj: p.ResultLike[t.Tests.Testobject] = subject  # type: narrowed by is_result_like guard
                     actual_value: t.Tests.Testobject | str = ""
                     if params.ok is not None:
                         if params.ok and (not result_obj.is_success):

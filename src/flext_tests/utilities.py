@@ -2023,7 +2023,6 @@ class FlextTestsUtilities(FlextUtilities):
                 return _length_validate_impl(value, spec)
 
 
-FlextUtilities = FlextTestsUtilities
 u = FlextTestsUtilities
 
 setattr(

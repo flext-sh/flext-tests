@@ -46,7 +46,6 @@ _CompareModeLiteral = Literal["content", "size", "hash", "lines"]
 _OperationLiteral = Literal["create", "read", "delete"]
 _ErrorModeLiteral = Literal["stop", "skip", "collect"]
 TestsFileContent = t.Tests.FileContent
-_YAMLError = YAMLError
 _OBJECT_LIST_ADAPTER = TypeAdapter(
     Sequence[t.Tests.Testobject],
     config=ConfigDict(arbitrary_types_allowed=True),
@@ -1229,7 +1228,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             return r[str | bytes | m.ConfigMap | Sequence[t.StrSequence]].fail(
                 c.Tests.Files.ERROR_INVALID_JSON.format(error=e),
             )
-        except _YAMLError as e:
+        except YAMLError as e:
             if model_cls is not None:
                 invalid_yaml_result: r[TModel] = r[TModel].fail(
                     c.Tests.Files.ERROR_INVALID_YAML.format(error=e),
@@ -1566,7 +1565,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                         self._to_payload_value(item) for item in parsed_list
                     ]
                     item_count = len(parsed_content)
-            except (ValueError, _YAMLError):
+            except (ValueError, YAMLError):
                 pass
         elif fmt == "csv":
             try:
@@ -1741,7 +1740,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                     for key, value in dict2_raw.items()
                 }
                 return (dict1, dict2)
-        except (ValueError, _YAMLError, TypeError):
+        except (ValueError, YAMLError, TypeError):
             pass
         return None
 
