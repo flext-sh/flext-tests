@@ -65,7 +65,7 @@ from collections.abc import (
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
-from typing import TypeIs, overload
+from typing import ClassVar, TypeIs, overload
 
 from flext_core import m as core_m, r, t as core_t, u
 from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
@@ -75,224 +75,252 @@ from flext_tests import (
     deep_match as _deep_match,
     length_validate as _length_validate,
     m,
-    p,
     t,
 )
 
-_TEST_PAYLOAD_DICT_ADAPTER = TypeAdapter(Mapping[str, t.Tests.TestobjectSerializable])
-_TEST_PAYLOAD_LIST_ADAPTER = TypeAdapter(Sequence[t.Tests.TestobjectSerializable])
-_GUARD_PAYLOAD_DICT_ADAPTER = TypeAdapter(Mapping[str, t.Tests.TestobjectSerializable])
-_GUARD_PAYLOAD_LIST_ADAPTER = TypeAdapter(Sequence[t.Tests.TestobjectSerializable])
 
+class FlextTestsMatchersUtilities:
+    """Namespace for test matcher utilities used in flext-tests."""
 
-def _is_non_string_sequence(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
-) -> TypeIs[Sequence[t.Tests.Testobject]]:
-    return isinstance(value, Sequence) and (
-        not isinstance(value, (str, bytes, bytearray))
-    )
+    _TEST_PAYLOAD_DICT_ADAPTER: ClassVar[
+        TypeAdapter[Mapping[str, t.Tests.TestobjectSerializable]]
+    ] = TypeAdapter(Mapping[str, t.Tests.TestobjectSerializable])
+    _TEST_PAYLOAD_LIST_ADAPTER: ClassVar[
+        TypeAdapter[Sequence[t.Tests.TestobjectSerializable]]
+    ] = TypeAdapter(Sequence[t.Tests.TestobjectSerializable])
+    _GUARD_PAYLOAD_DICT_ADAPTER: ClassVar[
+        TypeAdapter[Mapping[str, t.Tests.TestobjectSerializable]]
+    ] = TypeAdapter(Mapping[str, t.Tests.TestobjectSerializable])
+    _GUARD_PAYLOAD_LIST_ADAPTER: ClassVar[
+        TypeAdapter[Sequence[t.Tests.TestobjectSerializable]]
+    ] = TypeAdapter(Sequence[t.Tests.TestobjectSerializable])
 
+    @staticmethod
+    def _is_non_string_sequence(
+        value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
+    ) -> TypeIs[Sequence[t.Tests.Testobject]]:
+        return isinstance(value, Sequence) and (
+            not isinstance(value, (str, bytes, bytearray))
+        )
 
-def _is_matcher_input(
-    value: object,
-) -> TypeIs[t.Tests.Testobject]:
-    if value is None:
-        return True
-    if isinstance(value, (str, int, float, bool, bytes, datetime, Path, BaseModel)):
-        return True
-    if isinstance(value, type):
-        return True
-    if isinstance(value, tuple):
-        return True
-    if isinstance(value, (set, frozenset)):
-        return True
-    if isinstance(value, Mapping):
-        return True
-    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
-        return True
-    return callable(value)
+    @staticmethod
+    def _is_matcher_input(
+        value: object,
+    ) -> TypeIs[t.Tests.Testobject]:
+        if value is None:
+            return True
+        if isinstance(value, (str, int, float, bool, bytes, datetime, Path, BaseModel)):
+            return True
+        if isinstance(value, type):
+            return True
+        if isinstance(value, tuple):
+            return True
+        if isinstance(value, (set, frozenset)):
+            return True
+        if isinstance(value, Mapping):
+            return True
+        if isinstance(value, Sequence) and not isinstance(
+            value, (str, bytes, bytearray)
+        ):
+            return True
+        return callable(value)
 
-
-def _to_test_payload(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
-) -> t.Tests.Testobject:
-    if isinstance(value, type):
-        return value
-    if isinstance(value, (set, frozenset)):
-        return frozenset(_to_test_payload(item) for item in value)
-    if value is None or isinstance(value, (str, int, float, bool, bytes, BaseModel)):
-        return value
-    if isinstance(value, Mapping):
-        try:
-            mapping_value = _TEST_PAYLOAD_DICT_ADAPTER.validate_python(value)
-            return {
-                str(key): _to_test_payload(item) for key, item in mapping_value.items()
-            }
-        except ValidationError:
-            empty_map: Mapping[str, t.Tests.Testobject] = {}
-            return empty_map
-    if _is_non_string_sequence(value):
-        try:
-            sequence_value = _TEST_PAYLOAD_LIST_ADAPTER.validate_python(value)
-            return [_to_test_payload(seq_item) for seq_item in sequence_value]
-        except ValidationError:
-            return list(value)
-    if isinstance(value, (datetime, Path)):
-        return value
-    return str(value)
-
-
-def _to_normalized(value: t.Tests.Testobject) -> t.NormalizedValue:
-    """Convert _Testobject to pure NormalizedValue."""
-    if value is None:
-        return None
-    if isinstance(value, (str, int, float, bool)):
-        return value
-    if isinstance(value, Path):
-        return value
-    if isinstance(value, bytes):
-        return value.decode("utf-8", errors="replace")
-    if isinstance(value, datetime):
-        return value
-    if isinstance(value, BaseModel):
+    @staticmethod
+    def _to_test_payload(
+        value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
+    ) -> t.Tests.Testobject:
+        if isinstance(value, type):
+            return value
+        if isinstance(value, (set, frozenset)):
+            return frozenset(
+                FlextTestsMatchersUtilities._to_test_payload(item) for item in value
+            )
+        if value is None or isinstance(
+            value, (str, int, float, bool, bytes, BaseModel)
+        ):
+            return value
+        if isinstance(value, Mapping):
+            try:
+                mapping_value = FlextTestsMatchersUtilities._TEST_PAYLOAD_DICT_ADAPTER.validate_python(
+                    value
+                )
+                return {
+                    str(key): FlextTestsMatchersUtilities._to_test_payload(item)
+                    for key, item in mapping_value.items()
+                }
+            except ValidationError:
+                empty_map: Mapping[str, t.Tests.Testobject] = {}
+                return empty_map
+        if FlextTestsMatchersUtilities._is_non_string_sequence(value):
+            try:
+                sequence_value = FlextTestsMatchersUtilities._TEST_PAYLOAD_LIST_ADAPTER.validate_python(
+                    value
+                )
+                return [
+                    FlextTestsMatchersUtilities._to_test_payload(seq_item)
+                    for seq_item in sequence_value
+                ]
+            except ValidationError:
+                return list(value)
+        if isinstance(value, (datetime, Path)):
+            return value
         return str(value)
-    if isinstance(value, Mapping):
-        return {str(k): _to_normalized(v) for k, v in value.items()}
-    if isinstance(value, (list, tuple)):
-        return [_to_normalized(item) for item in value]
-    return str(value)
 
-
-def _to_extract_value(value: t.Tests.Testobject) -> core_t.ValueOrModel:
-    """Convert _Testobject to ValueOrModel for extract() calls."""
-    if value is None:
-        return None
-    if isinstance(value, (str, int, float, bool)):
-        return value
-    if isinstance(value, BaseModel):
-        return value
-    if isinstance(value, Path):
-        return value
-    if isinstance(value, bytes):
-        return value.decode("utf-8", errors="replace")
-    if isinstance(value, datetime):
-        return value
-    if isinstance(value, Mapping):
-        return {str(k): _to_normalized(v) for k, v in value.items()}
-    if isinstance(value, (list, tuple)):
-        return [_to_normalized(item) for item in value]
-    return str(value)
-
-
-def _as_guard_input(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
-) -> t.Tests.Testobject:
-    if isinstance(value, type):
-        return value
-    if isinstance(value, (set, frozenset)):
-        return frozenset(str(item) for item in value)
-    if isinstance(value, (BaseModel, str, int, float, bool, Path)):
-        return value
-    if value is None:
-        return None
-    if isinstance(value, Mapping):
-        try:
-            mapping_value = _GUARD_PAYLOAD_DICT_ADAPTER.validate_python(value)
+    @staticmethod
+    def _to_normalized(value: t.Tests.Testobject) -> t.NormalizedValue:
+        """Convert _Testobject to pure NormalizedValue."""
+        if value is None:
+            return None
+        if isinstance(value, (str, int, float, bool)):
+            return value
+        if isinstance(value, Path):
+            return value
+        if isinstance(value, bytes):
+            return value.decode("utf-8", errors="replace")
+        if isinstance(value, datetime):
+            return value
+        if isinstance(value, BaseModel):
+            return str(value)
+        if isinstance(value, Mapping):
             return {
-                str(key): _as_guard_input(item) for key, item in mapping_value.items()
+                str(k): FlextTestsMatchersUtilities._to_normalized(v)
+                for k, v in value.items()
             }
-        except ValidationError:
-            empty_map: Mapping[str, t.Tests.Testobject] = {}
-            return empty_map
-    if _is_non_string_sequence(value):
-        try:
-            sequence_value = _GUARD_PAYLOAD_LIST_ADAPTER.validate_python(value)
-            return [_as_guard_input(seq_item) for seq_item in sequence_value]
-        except ValidationError:
-            return list(value)
-    return _to_test_payload(value)
-
-
-def _to_chk_value(
-    value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
-) -> t.NormalizedValue:
-    """Convert a test value to NormalizedValue for use with u.chk()."""
-    if value is None:
-        return None
-    if isinstance(value, (str, int, float, bool)):
-        return value
-    if isinstance(value, Path):
-        return value
-    if isinstance(value, BaseModel):
+        if isinstance(value, (list, tuple)):
+            return [FlextTestsMatchersUtilities._to_normalized(item) for item in value]
         return str(value)
-    if isinstance(value, bytes):
-        return value.decode("utf-8", errors="replace")
-    if isinstance(value, datetime):
-        return value
-    if isinstance(value, Mapping):
-        try:
-            mapping_value = _GUARD_PAYLOAD_DICT_ADAPTER.validate_python(value)
-        except ValidationError:
-            empty_map: t.ContainerMapping = {}
-            return empty_map
-        return {str(k): _to_chk_value(v) for k, v in mapping_value.items()}
-    if isinstance(value, (list, tuple)):
-        try:
-            sequence_value = _GUARD_PAYLOAD_LIST_ADAPTER.validate_python(value)
-        except ValidationError:
-            empty_list: t.ContainerList = []
-            return empty_list
-        return [_to_chk_value(item) for item in sequence_value]
-    return str(value)
 
+    @staticmethod
+    def _to_extract_value(value: t.Tests.Testobject) -> core_t.ValueOrModel:
+        """Convert _Testobject to ValueOrModel for extract() calls."""
+        if value is None:
+            return None
+        if isinstance(value, (str, int, float, bool)):
+            return value
+        if isinstance(value, BaseModel):
+            return value
+        if isinstance(value, Path):
+            return value
+        if isinstance(value, bytes):
+            return value.decode("utf-8", errors="replace")
+        if isinstance(value, datetime):
+            return value
+        if isinstance(value, Mapping):
+            return {
+                str(k): FlextTestsMatchersUtilities._to_normalized(v)
+                for k, v in value.items()
+            }
+        if isinstance(value, (list, tuple)):
+            return [FlextTestsMatchersUtilities._to_normalized(item) for item in value]
+        return str(value)
 
-def _check_has_lacks(
-    value: t.Tests.Testobject,
-    has: t.Tests.Matcher.ContainmentSpec
-    | t.Tests.Matcher.MatcherKwargValue
-    | t.NormalizedValue
-    | None,
-    lacks: t.Tests.Matcher.ContainmentSpec
-    | t.Tests.Matcher.MatcherKwargValue
-    | t.NormalizedValue
-    | None,
-    msg: str | None,
-    *,
-    as_str: bool = False,
-) -> None:
-    """Shared has/lacks containment check for ok(), fail(), and that()."""
-    if has is not None:
-        items = list(has) if _is_non_string_sequence(has) else [has]
-        for item in items:
-            if as_str:
-                check_str = str(item)
-                target = str(value)
-                if check_str not in target:
-                    raise AssertionError(
-                        msg
-                        or c.Tests.Matcher.ERR_CONTAINS_FAILED.format(
-                            container=value,
-                            item=item,
-                        ),
-                    )
-            else:
-                check_val = _as_guard_input(item)
-                target_raw = _as_guard_input(value)
-                if isinstance(target_raw, RootModel):
-                    target_raw = _as_guard_input(target_raw.model_dump())
-                if not isinstance(
-                    target_raw,
-                    (Mapping, str, list, tuple, set, frozenset),
-                ):
-                    raise AssertionError(
-                        msg
-                        or c.Tests.Matcher.ERR_CONTAINS_FAILED.format(
-                            container=value,
-                            item=item,
-                        ),
-                    )
-                if isinstance(target_raw, (set, frozenset, tuple)):
-                    if check_val not in target_raw:
+    @staticmethod
+    def _as_guard_input(
+        value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
+    ) -> t.Tests.Testobject:
+        if isinstance(value, type):
+            return value
+        if isinstance(value, (set, frozenset)):
+            return frozenset(str(item) for item in value)
+        if isinstance(value, (BaseModel, str, int, float, bool, Path)):
+            return value
+        if value is None:
+            return None
+        if isinstance(value, Mapping):
+            try:
+                mapping_value = FlextTestsMatchersUtilities._GUARD_PAYLOAD_DICT_ADAPTER.validate_python(
+                    value
+                )
+                return {
+                    str(key): FlextTestsMatchersUtilities._as_guard_input(item)
+                    for key, item in mapping_value.items()
+                }
+            except ValidationError:
+                empty_map: Mapping[str, t.Tests.Testobject] = {}
+                return empty_map
+        if FlextTestsMatchersUtilities._is_non_string_sequence(value):
+            try:
+                sequence_value = FlextTestsMatchersUtilities._GUARD_PAYLOAD_LIST_ADAPTER.validate_python(
+                    value
+                )
+                return [
+                    FlextTestsMatchersUtilities._as_guard_input(seq_item)
+                    for seq_item in sequence_value
+                ]
+            except ValidationError:
+                return list(value)
+        return FlextTestsMatchersUtilities._to_test_payload(value)
+
+    @staticmethod
+    def _to_chk_value(
+        value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
+    ) -> t.NormalizedValue:
+        """Convert a test value to NormalizedValue for use with u.chk()."""
+        if value is None:
+            return None
+        if isinstance(value, (str, int, float, bool)):
+            return value
+        if isinstance(value, Path):
+            return value
+        if isinstance(value, BaseModel):
+            return str(value)
+        if isinstance(value, bytes):
+            return value.decode("utf-8", errors="replace")
+        if isinstance(value, datetime):
+            return value
+        if isinstance(value, Mapping):
+            try:
+                mapping_value = FlextTestsMatchersUtilities._GUARD_PAYLOAD_DICT_ADAPTER.validate_python(
+                    value
+                )
+            except ValidationError:
+                empty_map: t.ContainerMapping = {}
+                return empty_map
+            return {
+                str(k): FlextTestsMatchersUtilities._to_chk_value(v)
+                for k, v in mapping_value.items()
+            }
+        if isinstance(value, (list, tuple)):
+            try:
+                sequence_value = FlextTestsMatchersUtilities._GUARD_PAYLOAD_LIST_ADAPTER.validate_python(
+                    value
+                )
+            except ValidationError:
+                empty_list: t.ContainerList = []
+                return empty_list
+            return [
+                FlextTestsMatchersUtilities._to_chk_value(item)
+                for item in sequence_value
+            ]
+        return str(value)
+
+    @staticmethod
+    def _check_has_lacks(
+        value: t.Tests.Testobject,
+        has: t.Tests.Matcher.ContainmentSpec
+        | t.Tests.Matcher.MatcherKwargValue
+        | t.NormalizedValue
+        | None,
+        lacks: t.Tests.Matcher.ContainmentSpec
+        | t.Tests.Matcher.MatcherKwargValue
+        | t.NormalizedValue
+        | None,
+        msg: str | None,
+        *,
+        as_str: bool = False,
+    ) -> None:
+        """Shared has/lacks containment check for ok(), fail(), and that()."""
+        if has is not None:
+            items = (
+                list(has)
+                if FlextTestsMatchersUtilities._is_non_string_sequence(has)
+                else [has]
+            )
+            for item in items:
+                if as_str:
+                    check_str = str(item)
+                    target = str(value)
+                    if check_str not in target:
                         raise AssertionError(
                             msg
                             or c.Tests.Matcher.ERR_CONTAINS_FAILED.format(
@@ -300,9 +328,17 @@ def _check_has_lacks(
                                 item=item,
                             ),
                         )
-                    continue
-                if isinstance(target_raw, str):
-                    if str(check_val) not in target_raw:
+                else:
+                    check_val = FlextTestsMatchersUtilities._as_guard_input(item)
+                    target_raw = FlextTestsMatchersUtilities._as_guard_input(value)
+                    if isinstance(target_raw, RootModel):
+                        target_raw = FlextTestsMatchersUtilities._as_guard_input(
+                            target_raw.model_dump()
+                        )
+                    if not isinstance(
+                        target_raw,
+                        (Mapping, str, list, tuple, set, frozenset),
+                    ):
                         raise AssertionError(
                             msg
                             or c.Tests.Matcher.ERR_CONTAINS_FAILED.format(
@@ -310,43 +346,44 @@ def _check_has_lacks(
                                 item=item,
                             ),
                         )
-                elif check_val not in target_raw:
-                    raise AssertionError(
-                        msg
-                        or c.Tests.Matcher.ERR_CONTAINS_FAILED.format(
-                            container=value,
-                            item=item,
-                        ),
-                    )
-    if lacks is not None:
-        items = list(lacks) if _is_non_string_sequence(lacks) else [lacks]
-        for item in items:
-            if as_str:
-                check_str = str(item)
-                target = str(value)
-                if check_str in target:
-                    raise AssertionError(
-                        msg
-                        or c.Tests.Matcher.ERR_LACKS_FAILED.format(
-                            container=value,
-                            item=item,
-                        ),
-                    )
-            else:
-                check_val = _as_guard_input(item)
-                target_raw_2 = _as_guard_input(value)
-                if isinstance(target_raw_2, RootModel):
-                    target_raw_2 = _as_guard_input(target_raw_2.model_dump())
-                if not isinstance(target_raw_2, (Mapping, str, list)):
-                    raise AssertionError(
-                        msg
-                        or c.Tests.Matcher.ERR_LACKS_FAILED.format(
-                            container=value,
-                            item=item,
-                        ),
-                    )
-                if isinstance(target_raw_2, str):
-                    if str(check_val) in target_raw_2:
+                    if isinstance(target_raw, (set, frozenset, tuple)):
+                        if check_val not in target_raw:
+                            raise AssertionError(
+                                msg
+                                or c.Tests.Matcher.ERR_CONTAINS_FAILED.format(
+                                    container=value,
+                                    item=item,
+                                ),
+                            )
+                        continue
+                    if isinstance(target_raw, str):
+                        if str(check_val) not in target_raw:
+                            raise AssertionError(
+                                msg
+                                or c.Tests.Matcher.ERR_CONTAINS_FAILED.format(
+                                    container=value,
+                                    item=item,
+                                ),
+                            )
+                    elif check_val not in target_raw:
+                        raise AssertionError(
+                            msg
+                            or c.Tests.Matcher.ERR_CONTAINS_FAILED.format(
+                                container=value,
+                                item=item,
+                            ),
+                        )
+        if lacks is not None:
+            items = (
+                list(lacks)
+                if FlextTestsMatchersUtilities._is_non_string_sequence(lacks)
+                else [lacks]
+            )
+            for item in items:
+                if as_str:
+                    check_str = str(item)
+                    target = str(value)
+                    if check_str in target:
                         raise AssertionError(
                             msg
                             or c.Tests.Matcher.ERR_LACKS_FAILED.format(
@@ -354,18 +391,38 @@ def _check_has_lacks(
                                 item=item,
                             ),
                         )
-                elif check_val in target_raw_2:
-                    raise AssertionError(
-                        msg
-                        or c.Tests.Matcher.ERR_LACKS_FAILED.format(
-                            container=value,
-                            item=item,
-                        ),
-                    )
-
-
-class FlextTestsMatchersUtilities:
-    """Namespace for test matcher utilities used in flext-tests."""
+                else:
+                    check_val = FlextTestsMatchersUtilities._as_guard_input(item)
+                    target_raw_2 = FlextTestsMatchersUtilities._as_guard_input(value)
+                    if isinstance(target_raw_2, RootModel):
+                        target_raw_2 = FlextTestsMatchersUtilities._as_guard_input(
+                            target_raw_2.model_dump()
+                        )
+                    if not isinstance(target_raw_2, (Mapping, str, list)):
+                        raise AssertionError(
+                            msg
+                            or c.Tests.Matcher.ERR_LACKS_FAILED.format(
+                                container=value,
+                                item=item,
+                            ),
+                        )
+                    if isinstance(target_raw_2, str):
+                        if str(check_val) in target_raw_2:
+                            raise AssertionError(
+                                msg
+                                or c.Tests.Matcher.ERR_LACKS_FAILED.format(
+                                    container=value,
+                                    item=item,
+                                ),
+                            )
+                    elif check_val in target_raw_2:
+                        raise AssertionError(
+                            msg
+                            or c.Tests.Matcher.ERR_LACKS_FAILED.format(
+                                container=value,
+                                item=item,
+                            ),
+                        )
 
     class Tests:
         """Container for test utility storages and aliases."""
@@ -506,7 +563,7 @@ class FlextTestsMatchersUtilities:
                     or params.ends
                     or params.match
                 ):
-                    _check_has_lacks(
+                    FlextTestsMatchersUtilities._check_has_lacks(
                         err, params.has, params.lacks, params.msg, as_str=True
                     )
                     if params.starts is not None and (
@@ -570,7 +627,7 @@ class FlextTestsMatchersUtilities:
                     actual_data: MutableMapping[str, t.Tests.Testobject] = {}
                     if actual_raw is not None:
                         actual_data = {
-                            str(k): _to_test_payload(v)
+                            str(k): FlextTestsMatchersUtilities._to_test_payload(v)
                             for k, v in actual_raw.root.items()
                         }
                     for key, expected_value in params.data.items():
@@ -671,7 +728,7 @@ class FlextTestsMatchersUtilities:
                     )
                 result_raw = result.value
                 result_value: t.Tests.Testobject = (
-                    result_raw if _is_matcher_input(result_raw) else str(result_raw)
+                    result_raw if FlextTestsMatchersUtilities._is_matcher_input(result_raw) else str(result_raw)
                 )
                 extracted_payload: t.Tests.Testobject | None = None
                 if params.path is not None:
@@ -689,11 +746,11 @@ class FlextTestsMatchersUtilities:
                         extract_data = result_value
                     else:
                         try:
-                            validated = _GUARD_PAYLOAD_DICT_ADAPTER.validate_python(
+                            validated = FlextTestsMatchersUtilities._GUARD_PAYLOAD_DICT_ADAPTER.validate_python(
                                 result_value,
                             )
                             extract_data = {
-                                str(k): _to_extract_value(v)
+                                str(k): FlextTestsMatchersUtilities._to_extract_value(v)
                                 for k, v in validated.items()
                             }
                         except ValidationError:
@@ -708,9 +765,9 @@ class FlextTestsMatchersUtilities:
                             ),
                         )
                     extracted_raw = extracted.value
-                    extracted_payload = _to_test_payload(
+                    extracted_payload = FlextTestsMatchersUtilities._to_test_payload(
                         extracted_raw
-                        if _is_matcher_input(extracted_raw)
+                        if FlextTestsMatchersUtilities._is_matcher_input(extracted_raw)
                         else str(extracted_raw),
                     )
                     result_value = extracted_payload
@@ -730,12 +787,12 @@ class FlextTestsMatchersUtilities:
                 if has_validation:
                     is_type = params.is_ if not isinstance(params.is_, tuple) else None
                     if not u.chk(
-                        _to_chk_value(result_value),
+                        FlextTestsMatchersUtilities._to_chk_value(result_value),
                         core_m.GuardCheckSpec(
-                            eq=_to_chk_value(params.eq)
+                            eq=FlextTestsMatchersUtilities._to_chk_value(params.eq)
                             if params.eq is not None
                             else None,
-                            ne=_to_chk_value(params.ne)
+                            ne=FlextTestsMatchersUtilities._to_chk_value(params.ne)
                             if params.ne is not None
                             else None,
                             is_=is_type,
@@ -767,8 +824,8 @@ class FlextTestsMatchersUtilities:
                             actual=type(result_value).__name__,
                         ),
                     )
-                _check_has_lacks(result_value, params.has, params.lacks, params.msg)
-                result_payload = _to_test_payload(result_value)
+                FlextTestsMatchersUtilities._check_has_lacks(result_value, params.has, params.lacks, params.msg)
+                result_payload = FlextTestsMatchersUtilities._to_test_payload(result_value)
                 if params.len is not None and (
                     not _length_validate(result_payload, params.len)
                 ):
@@ -802,7 +859,7 @@ class FlextTestsMatchersUtilities:
                         deep_input = result_value
                     else:
                         try:
-                            deep_input = _TEST_PAYLOAD_DICT_ADAPTER.validate_python(
+                            deep_input = FlextTestsMatchersUtilities._TEST_PAYLOAD_DICT_ADAPTER.validate_python(
                                 result_value,
                             )
                         except ValidationError:
@@ -818,18 +875,18 @@ class FlextTestsMatchersUtilities:
                         )
                 if params.path is None:
                     current_raw = result.value
-                    result_payload = _to_test_payload(
+                    result_payload = FlextTestsMatchersUtilities._to_test_payload(
                         current_raw
-                        if _is_matcher_input(current_raw)
+                        if FlextTestsMatchersUtilities._is_matcher_input(current_raw)
                         else str(current_raw),
                     )
                 elif extracted_payload is not None:
                     result_payload = extracted_payload
                 else:
                     current_raw = result.value
-                    result_payload = _to_test_payload(
+                    result_payload = FlextTestsMatchersUtilities._to_test_payload(
                         current_raw
-                        if _is_matcher_input(current_raw)
+                        if FlextTestsMatchersUtilities._is_matcher_input(current_raw)
                         else str(current_raw),
                     )
                 if params.where is not None and (not params.where(result_payload)):
@@ -1121,12 +1178,8 @@ class FlextTestsMatchersUtilities:
                 if only_type_check:
                     return
                 subject = value
-                if u.is_result_like(subject) or (
-                    hasattr(subject, "is_success")
-                    and hasattr(subject, "error")
-                    and hasattr(type(subject), "value")
-                ):
-                    result_obj: p.ResultLike[t.Tests.Testobject] = subject  # type: narrowed by is_result_like guard
+                if isinstance(subject, r):
+                    result_obj: r[t.Tests.Testobject] = subject
                     actual_value: t.Tests.Testobject | str = ""
                     if params.ok is not None:
                         if params.ok and (not result_obj.is_success):
@@ -1148,7 +1201,7 @@ class FlextTestsMatchersUtilities:
                             actual_value = getattr(result_obj, "value", "")
                     elif params.has is not None:
                         err = result_obj.error or ""
-                        _check_has_lacks(err, params.has, None, params.msg, as_str=True)
+                        FlextTestsMatchersUtilities._check_has_lacks(err, params.has, None, params.msg, as_str=True)
                         actual_value = err
                     elif params.ok is None:
                         raise AssertionError(
@@ -1159,8 +1212,8 @@ class FlextTestsMatchersUtilities:
                         )
                     else:
                         actual_value = result_obj.error or ""
-                    subject = _to_test_payload(actual_value)
-                subject_payload = _to_test_payload(subject)
+                    subject = FlextTestsMatchersUtilities._to_test_payload(actual_value)
+                subject_payload = FlextTestsMatchersUtilities._to_test_payload(subject)
                 has_validation = (
                     raw_eq is not None
                     or raw_ne is not None
@@ -1180,12 +1233,12 @@ class FlextTestsMatchersUtilities:
                     eq_value = raw_eq if "eq" in kwargs else params.eq
                     ne_value = raw_ne if "ne" in kwargs else params.ne
                     if not u.chk(
-                        _to_chk_value(subject_payload),
+                        FlextTestsMatchersUtilities._to_chk_value(subject_payload),
                         core_m.GuardCheckSpec(
-                            eq=_to_chk_value(eq_value)
+                            eq=FlextTestsMatchersUtilities._to_chk_value(eq_value)
                             if eq_value is not None
                             else None,
-                            ne=_to_chk_value(ne_value)
+                            ne=FlextTestsMatchersUtilities._to_chk_value(ne_value)
                             if ne_value is not None
                             else None,
                             gt=params.gt,
@@ -1211,7 +1264,7 @@ class FlextTestsMatchersUtilities:
                     if raw_has is not None
                     else (raw_contains if raw_contains is not None else params.has)
                 )
-                _check_has_lacks(
+                FlextTestsMatchersUtilities._check_has_lacks(
                     subject_payload, effective_has, params.lacks, params.msg
                 )
                 value_payload = subject_payload
@@ -1242,7 +1295,7 @@ class FlextTestsMatchersUtilities:
                 if isinstance(subject_payload, (list, tuple)):
                     seq_value: Sequence[t.Tests.TestobjectSerializable] = []
                     try:
-                        seq_value = _TEST_PAYLOAD_LIST_ADAPTER.validate_python(
+                        seq_value = FlextTestsMatchersUtilities._TEST_PAYLOAD_LIST_ADAPTER.validate_python(
                             subject_payload
                         )
                     except ValidationError:
@@ -1293,7 +1346,7 @@ class FlextTestsMatchersUtilities:
                                 )
                         elif callable(params.all_) and (
                             not all(
-                                params.all_(_to_test_payload(item))
+                                params.all_(FlextTestsMatchersUtilities._to_test_payload(item))
                                 for item in seq_value
                             )
                         ):
@@ -1301,7 +1354,7 @@ class FlextTestsMatchersUtilities:
                                 (
                                     i
                                     for i, item in enumerate(list(seq_value))
-                                    if not params.all_(_to_test_payload(item))
+                                    if not params.all_(FlextTestsMatchersUtilities._to_test_payload(item))
                                 ),
                                 None,
                             )
@@ -1322,7 +1375,7 @@ class FlextTestsMatchersUtilities:
                                 )
                         elif callable(params.any_) and (
                             not any(
-                                params.any_(_to_test_payload(item))
+                                params.any_(FlextTestsMatchersUtilities._to_test_payload(item))
                                 for item in seq_value
                             )
                         ):
@@ -1348,7 +1401,7 @@ class FlextTestsMatchersUtilities:
                                 x: t.Tests.Testobject,
                             ) -> tuple[str, str]:
                                 """Wrap user key to return comparable tuple."""
-                                result = user_key_fn(_to_test_payload(x))
+                                result = user_key_fn(FlextTestsMatchersUtilities._to_test_payload(x))
                                 type_name = type(result).__name__
                                 return (str(type_name), str(result))
 
@@ -1368,7 +1421,7 @@ class FlextTestsMatchersUtilities:
                 if isinstance(subject_payload, Mapping):
                     mapping_value: Mapping[str, t.Tests.TestobjectSerializable] = {}
                     try:
-                        mapping_value = _TEST_PAYLOAD_DICT_ADAPTER.validate_python(
+                        mapping_value = FlextTestsMatchersUtilities._TEST_PAYLOAD_DICT_ADAPTER.validate_python(
                             subject_payload,
                         )
                     except ValidationError:
@@ -1490,7 +1543,7 @@ class FlextTestsMatchersUtilities:
                         deep_value = subject_payload
                     else:
                         try:
-                            deep_value = _TEST_PAYLOAD_DICT_ADAPTER.validate_python(
+                            deep_value = FlextTestsMatchersUtilities._TEST_PAYLOAD_DICT_ADAPTER.validate_python(
                                 subject_payload,
                             )
                         except ValidationError:

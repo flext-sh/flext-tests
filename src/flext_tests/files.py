@@ -1658,7 +1658,8 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             try:
                 sequence_value = _OBJECT_LIST_ADAPTER.validate_python(value)
             except ValidationError:
-                return []
+                empty_seq: Sequence[t.Tests.Testobject] = []
+                return empty_seq
             payload_items: Sequence[t.Tests.Testobject] = [
                 self._to_payload_value(item_raw) for item_raw in sequence_value
             ]

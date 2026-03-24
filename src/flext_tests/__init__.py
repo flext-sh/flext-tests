@@ -29,6 +29,7 @@ if TYPE_CHECKING:
 
     from flext_tests import _utilities, _validator
     from flext_tests._utilities._payload import (
+        FlextTestsPayloadUtilities,
         deep_match,
         length_validate,
         to_config_map_value,
@@ -69,6 +70,10 @@ _LAZY_IMPORTS: Mapping[str, tuple[str, str]] = {
         "FlextTestsMatchersUtilities",
     ),
     "FlextTestsModels": ("flext_tests.models", "FlextTestsModels"),
+    "FlextTestsPayloadUtilities": (
+        "flext_tests._utilities._payload",
+        "FlextTestsPayloadUtilities",
+    ),
     "FlextTestsProtocols": ("flext_tests.protocols", "FlextTestsProtocols"),
     "FlextTestsTypes": ("flext_tests.typings", "FlextTestsTypes"),
     "FlextTestsUtilities": ("flext_tests.utilities", "FlextTestsUtilities"),
@@ -121,6 +126,7 @@ __all__ = [
     "FlextTestsFiles",
     "FlextTestsMatchersUtilities",
     "FlextTestsModels",
+    "FlextTestsPayloadUtilities",
     "FlextTestsProtocols",
     "FlextTestsTypes",
     "FlextTestsUtilities",

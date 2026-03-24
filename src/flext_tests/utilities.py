@@ -52,137 +52,35 @@ from flext_tests import (
 )
 
 
-def _to_scalar(
-    value: p.Model
-    | Exception
-    | Mapping[str, t.Tests.Testobject]
-    | Path
-    | Sequence[t.Tests.Testobject]
-    | bool
-    | bytes
-    | datetime
-    | float
-    | str
-    | t.Tests.Testobject
-    | None,
-) -> t.Scalar:
-    """Convert a value to ScalarValue for config overrides.
-
-    Args:
-        value value to convert
-
-    Returns:
-        ScalarValue (t.Scalar | None)
-
-    """
-    if isinstance(value, (str, int, float, bool)):
-        scalar_value: t.Scalar = value
-        return scalar_value
-    if isinstance(value, datetime):
-        return value
-    return str(value)
-
-
-def _coerce_to_test_object(raw: t.Tests.Testobject) -> t.Tests.Testobject:
-    """Coerce an arbitrary t.NormalizedValue to t.Tests.Testobject."""
-    if isinstance(raw, (str, int, float, bool, bytes, BaseModel)):
-        return raw
-    if raw is None:
-        return None
-    return str(raw)
-
-
-def _is_flext_result(
-    val: r[BaseModel] | BaseModel | t.Tests.Testobject,
-) -> TypeIs[r[BaseModel]]:
-    """TypeGuard: narrow any t.NormalizedValue to r[BaseModel]."""
-    return isinstance(val, r)
-
-
-def _do_extract_model[T: BaseModel](
-    result: (
-        BaseModel
-        | Sequence[BaseModel]
-        | Mapping[str, BaseModel]
-        | r[BaseModel]
-        | r[Sequence[BaseModel]]
-        | r[Mapping[str, BaseModel]]
-    ),
-    expected: type[T],
-) -> T:
-    """Extract a BaseModel from various tt.model() return shapes."""
-    if isinstance(result, expected):
-        return result
-    if _is_flext_result(result) and result.is_success:
-        payload = result.value
-        if isinstance(payload, expected):
-            return payload
-    if isinstance(result, list):
-        for item in result:
-            if isinstance(item, expected):
-                return item
-    if isinstance(result, Mapping) and not isinstance(result, BaseModel):
-        for val in result.values():
-            if isinstance(val, expected):
-                return val
-    raise TypeError(f"Expected {expected.__name__}, got {type(result)}")
-
-
-def _merge_test_dicts(
-    base: Mapping[str, t.Tests.Testobject],
-    override: Mapping[str, t.Tests.Testobject],
-    *,
-    strategy: str = "deep",
-) -> Mapping[str, t.Tests.Testobject]:
-    """Merge two test dicts via FlextUtilities.merge(), handling payload conversion.
-
-    DRY helper: consolidates the repeated pattern of
-    ``FlextUtilities.merge(to_normalized_dict(...), to_normalized_dict(...))``.
-    """
-    mr = FlextUtilities.merge_mappings(
-        {k: _to_normalized_value(v) for k, v in base.items()},
-        {k: _to_normalized_value(v) for k, v in override.items()},
-        strategy=strategy,
-    )
-    if mr.is_success:
-        merged_value = mr.value
-        return {str(k): _to_payload(v) for k, v in merged_value.items()}
-    return dict(base.items())
-
-
-def _entity_factory_for[T: BaseModel](
-    cls: type[T],
-) -> EntityFactory[T]:
-    """Build an EntityFactory lambda for *cls* (DRY helper)."""
-
-    def _factory(
-        *,
-        name: str,
-        value: t.Tests.Testobject,
-        **_kw: t.Tests.Testobject,
-    ) -> T:
-        return cls.model_validate({"name": name, "value": value})
-
-    return _factory
-
-
-def _value_factory_for[T: BaseModel](
-    cls: type[T],
-) -> ValueFactory[T]:
-    """Build a ValueFactory lambda for *cls* (DRY helper)."""
-
-    def _factory(*, data: str, count: int) -> T:
-        return cls.model_validate({"data": data, "count": count})
-
-    return _factory
-
-
 class FlextTestsUtilities(FlextUtilities):
     """Test utilities for FLEXT ecosystem - extends FlextUtilities.
 
     Provides essential test helpers that complement FlextUtilities.
     All FlextUtilities functionality is available via inheritance.
     """
+
+    @staticmethod
+    def _to_scalar(
+        value: p.Model
+        | Exception
+        | Mapping[str, t.Tests.Testobject]
+        | Path
+        | Sequence[t.Tests.Testobject]
+        | bool
+        | bytes
+        | datetime
+        | float
+        | str
+        | t.Tests.Testobject
+        | None,
+    ) -> t.Scalar:
+        """Convert a value to ScalarValue for config overrides."""
+        if isinstance(value, (str, int, float, bool)):
+            scalar_value: t.Scalar = value
+            return scalar_value
+        if isinstance(value, datetime):
+            return value
+        return str(value)
 
     class Validation:
         """Validation helpers for tests - extends FlextUtilities.Validation."""
@@ -226,47 +124,36 @@ class FlextTestsUtilities(FlextUtilities):
 
         @staticmethod
         def to_payload(value: t.Tests.Testobject) -> t.Tests.Testobject:
-            """Convert a value to test payload t.NormalizedValue.
-
-            Delegates to module-level _to_payload for recursive conversion.
-            """
+            """Convert a value to test payload t.NormalizedValue."""
             return _to_payload(value)
 
         @staticmethod
         def to_normalized_value(value: t.Tests.Testobject) -> t.NormalizedValue:
-            """Convert test payload value to NormalizedValue.
-
-            Delegates to module-level _to_normalized_value.
-            """
+            """Convert test payload value to NormalizedValue."""
             return _to_normalized_value(value)
 
         @staticmethod
         def to_normalized_dict(
             data: Mapping[str, t.Tests.Testobject],
         ) -> t.ContainerMapping:
-            """Convert test payload dict to NormalizedValue dict for FlextUtilities.merge().
-
-            Uses _to_normalized_value for proper runtime type narrowing.
-            """
+            """Convert test payload dict to NormalizedValue dict for FlextUtilities.merge()."""
             return {k: _to_normalized_value(v) for k, v in data.items()}
 
         @staticmethod
         def coerce_to_test_object(raw: t.Tests.Testobject) -> t.Tests.Testobject:
-            """Coerce an arbitrary t.NormalizedValue to t.Tests.Testobject.
-
-            Delegates to module-level _coerce_to_test_object.
-            """
-            return _coerce_to_test_object(raw)
+            """Coerce an arbitrary t.NormalizedValue to t.Tests.Testobject."""
+            if isinstance(raw, (str, int, float, bool, bytes, BaseModel)):
+                return raw
+            if raw is None:
+                return None
+            return str(raw)
 
         @staticmethod
         def is_flext_result(
             val: r[BaseModel] | BaseModel | t.Tests.Testobject,
         ) -> TypeIs[r[BaseModel]]:
-            """TypeGuard: narrow any t.NormalizedValue to r[BaseModel].
-
-            Delegates to module-level _is_flext_result.
-            """
-            return _is_flext_result(val)
+            """TypeGuard: narrow any t.NormalizedValue to r[BaseModel]."""
+            return isinstance(val, r)
 
         @staticmethod
         def extract_model[T: BaseModel](
@@ -280,11 +167,22 @@ class FlextTestsUtilities(FlextUtilities):
             ),
             expected: type[T],
         ) -> T:
-            """Extract a BaseModel from various tt.model() return shapes.
-
-            Delegates to module-level _do_extract_model.
-            """
-            return _do_extract_model(result, expected)
+            """Extract a BaseModel from various tt.model() return shapes."""
+            if isinstance(result, expected):
+                return result
+            if isinstance(result, r) and result.is_success:
+                payload = result.value
+                if isinstance(payload, expected):
+                    return payload
+            if isinstance(result, list):
+                for item in result:
+                    if isinstance(item, expected):
+                        return item
+            if isinstance(result, Mapping) and not isinstance(result, BaseModel):
+                for val in result.values():
+                    if isinstance(val, expected):
+                        return val
+            raise TypeError(f"Expected {expected.__name__}, got {type(result)}")
 
         @staticmethod
         def merge_test_dicts(
@@ -293,31 +191,43 @@ class FlextTestsUtilities(FlextUtilities):
             *,
             strategy: str = "deep",
         ) -> Mapping[str, t.Tests.Testobject]:
-            """Merge two test dicts via FlextUtilities.merge() (DRY helper).
-
-            Delegates to module-level _merge_test_dicts.
-            """
-            return _merge_test_dicts(base, override, strategy=strategy)
+            """Merge two test dicts via FlextUtilities.merge() (DRY helper)."""
+            mr = FlextUtilities.merge_mappings(
+                {k: _to_normalized_value(v) for k, v in base.items()},
+                {k: _to_normalized_value(v) for k, v in override.items()},
+                strategy=strategy,
+            )
+            if mr.is_success:
+                merged_value = mr.value
+                return {str(k): _to_payload(v) for k, v in merged_value.items()}
+            return dict(base.items())
 
         @staticmethod
         def entity_factory_for[T: BaseModel](
             model_cls: type[T],
         ) -> EntityFactory[T]:
-            """Build an EntityFactory for the given class (DRY helper).
+            """Build an EntityFactory for the given class (DRY helper)."""
 
-            Delegates to module-level _entity_factory_for.
-            """
-            return _entity_factory_for(model_cls)
+            def _factory(
+                *,
+                name: str,
+                value: t.Tests.Testobject,
+                **_kw: t.Tests.Testobject,
+            ) -> T:
+                return model_cls.model_validate({"name": name, "value": value})
+
+            return _factory
 
         @staticmethod
         def value_factory_for[T: BaseModel](
             model_cls: type[T],
         ) -> ValueFactory[T]:
-            """Build a ValueFactory for the given class (DRY helper).
+            """Build a ValueFactory for the given class (DRY helper)."""
 
-            Delegates to module-level _value_factory_for.
-            """
-            return _value_factory_for(model_cls)
+            def _factory(*, data: str, count: int) -> T:
+                return model_cls.model_validate({"data": data, "count": count})
+
+            return _factory
 
         class Result:
             """Result helpers for test assertions."""
@@ -947,7 +857,8 @@ class FlextTestsUtilities(FlextUtilities):
 
                 """
                 scalar_overrides: t.ConfigurationMapping = {
-                    str(key): _to_scalar(value) for key, value in kwargs.items()
+                    str(key): FlextTestsUtilities._to_scalar(value)
+                    for key, value in kwargs.items()
                 }
                 return FlextSettings.get_global(overrides=scalar_overrides)
 
@@ -1395,7 +1306,8 @@ class FlextTestsUtilities(FlextUtilities):
                 all_args = {**input_data, **kwargs}
                 result = op_method(**all_args)
                 if isinstance(result, RootModel):
-                    return {}
+                    empty_map: MutableMapping[str, t.Tests.Testobject] = {}
+                    return empty_map
                 if isinstance(result, (BaseModel, Path)):
                     return _to_payload(result)
                 if isinstance(result, (str, int, float, bool, bytes, datetime)):
