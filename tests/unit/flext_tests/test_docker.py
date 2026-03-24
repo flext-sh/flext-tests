@@ -79,9 +79,9 @@ class TestFlextTestsDocker:
 
     def test_init(self, docker_manager: tk) -> None:
         """Test tk initialization."""
-        tm.that(isinstance(docker_manager, tk), eq=True)
+        tm.that(docker_manager, is_=tk)
         tm.that(docker_manager.workspace_root, none=False)
-        tm.that(isinstance(docker_manager._dirty_containers, set), eq=True)
+        tm.that(docker_manager._dirty_containers, is_=set)
 
     def test_get_client_initialization(self) -> None:
         """Test Docker client lazy initialization."""
@@ -91,7 +91,7 @@ class TestFlextTestsDocker:
         client = manager.get_client()
         tm.that(client, none=False)
         tm.that(manager._client, none=False)
-        tm.that(isinstance(client, DockerClient), eq=True)
+        tm.that(client, is_=DockerClient)
 
     def test_get_client_cached(self) -> None:
         """Test Docker client caching."""
@@ -154,7 +154,7 @@ class TestFlextTestsDocker:
         with docker_manager._state_file.open("r") as f:
             data = json.load(f)
         tm.that(data, has="dirty_containers")
-        tm.that(isinstance(data["dirty_containers"], list), eq=True)
+        tm.that(data["dirty_containers"], is_=list)
         tm.that(data["dirty_containers"], has="test_container")
         tm.that(len(data["dirty_containers"]), eq=1)
 
@@ -188,13 +188,13 @@ class TestFlextTestsDocker:
     def test_shared_containers_attribute(self) -> None:
         """Test SHARED_CONTAINERS class attribute."""
         tm.that(tk.SHARED_CONTAINERS, none=False)
-        tm.that(isinstance(tk.SHARED_CONTAINERS, dict), eq=True)
+        tm.that(tk.SHARED_CONTAINERS, is_=dict)
 
     def test_shared_containers_property(self, docker_manager: tk) -> None:
         """Test shared_containers property."""
         containers = docker_manager.shared_containers
         tm.that(containers, none=False)
-        tm.that(isinstance(containers, dict), eq=True)
+        tm.that(containers, is_=dict)
 
     def test_compose_up_returns_flext_result(
         self,
@@ -202,7 +202,7 @@ class TestFlextTestsDocker:
     ) -> None:
         """Test compose_up returns r."""
         result = docker_manager.compose_up("docker-compose.yml")
-        tm.that(isinstance(result, r), eq=True)
+        tm.that(result, is_=r)
 
     def test_compose_down_returns_flext_result(
         self,
@@ -210,7 +210,7 @@ class TestFlextTestsDocker:
     ) -> None:
         """Test compose_down returns r."""
         result = docker_manager.compose_down("docker-compose.yml")
-        tm.that(isinstance(result, r), eq=True)
+        tm.that(result, is_=r)
 
     def test_start_existing_container_not_found(
         self,
@@ -254,7 +254,7 @@ class TestFlextTestsDocker:
     ) -> None:
         """Test start_compose_stack returns r."""
         result = docker_manager.start_compose_stack("docker-compose.yml")
-        tm.that(isinstance(result, r), eq=True)
+        tm.that(result, is_=r)
 
     def test_cleanup_dirty_containers_empty(
         self,

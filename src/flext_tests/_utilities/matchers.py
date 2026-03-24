@@ -1169,19 +1169,23 @@ class FlextTestsMatchersUtilities:
                             or f"Assertion failed: {subject_payload!r} did not satisfy constraints"
                         )
                         raise AssertionError(error_msg)
+                # is_/not_ checks use the ORIGINAL value (not the
+                # _to_test_payload conversion) so isinstance works
+                # correctly for types like Exception, Path, etc.
+                is_subject = value
                 if (
                     params.is_ is not None
                     and (not isinstance(params.is_, tuple))
-                    and (not isinstance(subject_payload, params.is_))
+                    and (not isinstance(is_subject, params.is_))
                 ):
                     raise AssertionError(
                         params.msg
-                        or f"Assertion failed: {c.Tests.Matcher.ERR_TYPE_FAILED.format(expected=params.is_, actual=type(subject_payload).__name__)}",
+                        or f"Assertion failed: {c.Tests.Matcher.ERR_TYPE_FAILED.format(expected=params.is_, actual=type(is_subject).__name__)}",
                     )
                 if (
                     params.not_ is not None
                     and (not isinstance(params.not_, tuple))
-                    and isinstance(subject_payload, params.not_)
+                    and isinstance(is_subject, params.not_)
                 ):
                     raise AssertionError(
                         params.msg
@@ -1193,20 +1197,20 @@ class FlextTestsMatchersUtilities:
                 if (
                     params.is_ is not None
                     and isinstance(params.is_, tuple)
-                    and not isinstance(subject_payload, params.is_)
+                    and not isinstance(is_subject, params.is_)
                 ):
                     raise AssertionError(
                         params.msg
-                        or f"Assertion failed: {c.Tests.Matcher.ERR_TYPE_FAILED.format(expected=params.is_, actual=type(subject_payload).__name__)}",
+                        or f"Assertion failed: {c.Tests.Matcher.ERR_TYPE_FAILED.format(expected=params.is_, actual=type(is_subject).__name__)}",
                     )
                 if (
                     params.not_ is not None
                     and isinstance(params.not_, tuple)
-                    and isinstance(subject_payload, params.not_)
+                    and isinstance(is_subject, params.not_)
                 ):
                     error_msg = (
                         params.msg
-                        or f"Assertion failed: {c.Tests.Matcher.ERR_TYPE_FAILED.format(expected=f'not {params.not_}', actual=type(subject_payload).__name__)}"
+                        or f"Assertion failed: {c.Tests.Matcher.ERR_TYPE_FAILED.format(expected=f'not {params.not_}', actual=type(is_subject).__name__)}"
                     )
                     raise AssertionError(error_msg)
                 effective_has = (

@@ -97,11 +97,7 @@ class FlextTestsTypes(FlextTypes):
             "Type for batch file operations - Mapping or Sequence of files."
 
             type FileContentPlain = (
-                str
-                | bytes
-                | core_t.ConfigMap
-                | Sequence[Sequence[str]]
-                | BaseModel
+                str | bytes | core_t.ConfigMap | Sequence[Sequence[str]] | BaseModel
             )
             "Plain file content (no result wrapper): str, bytes, ConfigMap, CSV rows, or any Pydantic model."
 

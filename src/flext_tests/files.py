@@ -243,7 +243,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         cls,
         content: Mapping[
             str,
-            str | bytes | m.ConfigMap | Sequence[Sequence[str]] | BaseModel,
+            t.Tests.Files.FileContentPlain,
         ],
         *,
         directory: Path | None = None,
@@ -402,16 +402,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
 
     @staticmethod
     def create_in(
-        content: str
-        | bytes
-        | m.ConfigMap
-        | Sequence[Sequence[str]]
-        | BaseModel
-        | r[str]
-        | r[bytes]
-        | r[m.ConfigMap]
-        | r[Sequence[Sequence[str]]]
-        | r[BaseModel],
+        content: t.Tests.Files.FileInput,
         name: str,
         directory: Path,
         *,
@@ -782,16 +773,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
 
     def create(
         self,
-        content: str
-        | bytes
-        | m.ConfigMap
-        | Sequence[Sequence[str]]
-        | BaseModel
-        | r[str]
-        | r[bytes]
-        | r[m.ConfigMap]
-        | r[Sequence[Sequence[str]]]
-        | r[BaseModel],
+        content: t.Tests.Files.FileInput,
         name: str = c.Tests.Files.DEFAULT_FILENAME,
         directory: Path | None = None,
         *,
@@ -1329,7 +1311,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         | FlextResult[bytes]
         | FlextResult[str]
         | None,
-    ) -> str | bytes | m.ConfigMap | Sequence[Sequence[str]] | BaseModel:
+    ) -> t.Tests.Files.FileContentPlain:
         if isinstance(value, str | bytes):
             return value
         if isinstance(value, BaseModel):

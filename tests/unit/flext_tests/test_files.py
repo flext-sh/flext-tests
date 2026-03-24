@@ -75,7 +75,7 @@ class TestFlextTestsFiles:
         """Test temporary_directory context manager."""
         manager = tf()
         with manager.temporary_directory() as temp_dir:
-            tm.that(isinstance(temp_dir, Path), eq=True)
+            tm.that(temp_dir, is_=Path)
             tm.that(temp_dir.exists(), eq=True)
             tm.that(temp_dir.is_dir(), eq=True)
         tm.that(temp_dir.exists(), eq=False)
@@ -183,7 +183,7 @@ class TestFlextTestsFiles:
         result = manager.info(non_existent)
         _ = assertion_helpers.assert_flext_result_success(result)
         file_info = result.value
-        tm.that(isinstance(file_info, tf.FileInfo), eq=True)
+        tm.that(file_info, is_=tf.FileInfo)
         tm.that(file_info.exists is False, eq=True)
 
     def test_get_file_info_exists(self, tmp_path: Path) -> None:
@@ -194,7 +194,7 @@ class TestFlextTestsFiles:
         result = manager.info(file_path)
         _ = assertion_helpers.assert_flext_result_success(result)
         file_info = result.value
-        tm.that(isinstance(file_info, tf.FileInfo), eq=True)
+        tm.that(file_info, is_=tf.FileInfo)
         tm.that(file_info.exists is True, eq=True)
         tm.that(file_info.size, gt=0)
         tm.that(file_info.lines, eq=3)
@@ -209,7 +209,7 @@ class TestFlextTestsFiles:
         result = manager.info(file_path)
         _ = assertion_helpers.assert_flext_result_success(result)
         file_info = result.value
-        tm.that(isinstance(file_info, tf.FileInfo), eq=True)
+        tm.that(file_info, is_=tf.FileInfo)
         tm.that(file_info.exists is True, eq=True)
         tm.that(file_info.size, eq=0)
         tm.that(file_info.is_empty is True, eq=True)
@@ -465,7 +465,7 @@ class TestFlextTestsFilesNewApi:
         result = manager.read(path, has_headers=False)
         _ = assertion_helpers.assert_flext_result_success(result)
         data = result.value
-        tm.that(isinstance(data, list), eq=True)
+        tm.that(data, is_=list)
         tm.that(len(data), eq=2)
 
     def test_read_csv_file_with_headers(self, tmp_path: Path) -> None:
@@ -476,7 +476,7 @@ class TestFlextTestsFilesNewApi:
         result = manager.read(path)
         _ = assertion_helpers.assert_flext_result_success(result)
         data = result.value
-        tm.that(isinstance(data, list), eq=True)
+        tm.that(data, is_=list)
         tm.that(len(data), eq=2)
 
     def test_read_nonexistent_file(self, tmp_path: Path) -> None:
@@ -1038,9 +1038,9 @@ class TestBatchOperations:
         tm.that(hasattr(batch_result, "total"), eq=True)
         tm.that(hasattr(batch_result, "success_count"), eq=True)
         tm.that(hasattr(batch_result, "failure_count"), eq=True)
-        tm.that(isinstance(batch_result.succeeded, int), eq=True)
-        tm.that(isinstance(batch_result.failed, int), eq=True)
-        tm.that(isinstance(batch_result.total, int), eq=True)
+        tm.that(batch_result.succeeded, is_=int)
+        tm.that(batch_result.failed, is_=int)
+        tm.that(batch_result.total, is_=int)
 
 
 class TestCreateInStatic:

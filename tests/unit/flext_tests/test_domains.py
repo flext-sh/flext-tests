@@ -19,7 +19,7 @@ class TestFlextTestsDomains:
     def test_create_configuration_default(self) -> None:
         """Test create_configuration with default parameters."""
         config = td.create_configuration()
-        tm.that(isinstance(config, dict), eq=True)
+        tm.that(config, is_=dict)
         tm.that(config["service_type"], eq="api")
         tm.that(config["environment"], eq="test")
         tm.that(config["debug"] is True, eq=True)
@@ -45,7 +45,7 @@ class TestFlextTestsDomains:
     def test_create_payload_user_default(self) -> None:
         """Test create_payload with user data type default."""
         payload = td.create_payload()
-        tm.that(isinstance(payload, dict), eq=True)
+        tm.that(payload, is_=dict)
         tm.that(payload, has="id")
         tm.that(payload["name"], eq="Test User")
         tm.that(payload["email"], eq="test@example.com")
@@ -54,11 +54,11 @@ class TestFlextTestsDomains:
     def test_create_payload_order(self) -> None:
         """Test create_payload with order data type."""
         payload = td.create_payload("order")
-        tm.that(isinstance(payload, dict), eq=True)
+        tm.that(payload, is_=dict)
         tm.that(payload, has="order_id")
         tm.that(payload, has="user_id")
         amount = payload["amount"]
-        tm.that(isinstance(amount, float), eq=True)
+        tm.that(amount, is_=float)
         if not isinstance(amount, float):
             raise TypeError(f"Expected float, got {type(amount)}")
         tm.that(abs(amount - 99.99), lt=1e-9)
@@ -68,7 +68,7 @@ class TestFlextTestsDomains:
     def test_create_payload_api_request(self) -> None:
         """Test create_payload with api_request data type."""
         payload = td.create_payload("api_request")
-        tm.that(isinstance(payload, dict), eq=True)
+        tm.that(payload, is_=dict)
         tm.that(payload["method"], eq="GET")
         tm.that(payload["url"], eq="/api/test")
         tm.that(payload["headers"], eq={"Content-Type": "application/json"})
@@ -83,13 +83,13 @@ class TestFlextTestsDomains:
     def test_create_payload_unknown_type(self) -> None:
         """Test create_payload with unknown data type."""
         payload = td.create_payload("unknown")
-        tm.that(isinstance(payload, dict), eq=True)
+        tm.that(payload, is_=dict)
         tm.that(payload, eq={})
 
     def test_api_response_data_success_default(self) -> None:
         """Test api_response_data with success status default."""
         response = td.api_response_data()
-        tm.that(isinstance(response, dict), eq=True)
+        tm.that(response, is_=dict)
         tm.that(response["status"], eq="success")
         tm.that(response, has="timestamp")
         tm.that(response, has="request_id")
@@ -124,7 +124,7 @@ class TestFlextTestsDomains:
     def test_valid_email_cases(self) -> None:
         """Test valid_email_cases returns correct test cases."""
         cases = td.valid_email_cases()
-        tm.that(isinstance(cases, list), eq=True)
+        tm.that(cases, is_=list)
         tm.that(len(cases), eq=7)
         valid_emails = list(
             u.map(
@@ -145,7 +145,7 @@ class TestFlextTestsDomains:
     def test_create_service_default(self) -> None:
         """Test create_service with default parameters."""
         service = td.create_service()
-        tm.that(isinstance(service, dict), eq=True)
+        tm.that(service, is_=dict)
         tm.that(service["type"], eq="api")
         tm.that(service["name"], eq="test_api_service")
         tm.that(service["enabled"] is True, eq=True)
@@ -164,7 +164,7 @@ class TestFlextTestsDomains:
     def test_create_user_default(self) -> None:
         """Test create_user with default parameters."""
         user = td.create_user()
-        tm.that(isinstance(user, dict), eq=True)
+        tm.that(user, is_=dict)
         tm.that(user, has="id")
         tm.that(user["username"], eq="testuser")
         tm.that(user["email"], eq="test@example.com")
