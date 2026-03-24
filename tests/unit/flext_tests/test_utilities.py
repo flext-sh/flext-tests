@@ -24,7 +24,7 @@ class TestFlextTestsUtilitiesResult:
         """Test assert_success with successful result."""
         result = r[str].ok("success")
         value = u.Tests.Result.assert_success(result)
-        tm.that(value == "success", eq=True)
+        tm.that(value, eq="success")
 
     def test_assert_success_fails(self) -> None:
         """Test assert_success with failed result."""
@@ -36,7 +36,7 @@ class TestFlextTestsUtilitiesResult:
         """Test assert_failure with failed result."""
         result: r[str] = r[str].fail("error message")
         error = u.Tests.Result.assert_failure(result)
-        tm.that(error == "error message", eq=True)
+        tm.that(error, eq="error message")
 
     def test_assert_failure_fails(self) -> None:
         """Test assert_failure with successful result."""
@@ -48,7 +48,7 @@ class TestFlextTestsUtilitiesResult:
         """Test assert_failure with expected error substring."""
         result: r[str] = r[str].fail("validation error occurred")
         error = u.Tests.Result.assert_failure(result, "validation")
-        tm.that("validation" in error, eq=True)
+        tm.that(error, has="validation")
 
     def test_assert_failure_with_expected_error_mismatch(self) -> None:
         """Test assert_failure when expected error doesn't match."""
@@ -90,8 +90,8 @@ class TestFlextTestsUtilitiesTestContext:
 
         obj = TestObject()
         with u.Tests.TestContext.temporary_attribute(obj, "attribute", "modified"):
-            tm.that(obj.attribute == "modified", eq=True)
-        tm.that(obj.attribute == "original", eq=True)
+            tm.that(obj.attribute, eq="modified")
+        tm.that(obj.attribute, eq="original")
 
     def test_temporary_attribute_new(self) -> None:
         """Test temporary_attribute adds new attribute temporarily."""
@@ -102,8 +102,8 @@ class TestFlextTestsUtilitiesTestContext:
         obj = TestObject()
         with u.Tests.TestContext.temporary_attribute(obj, "new_attr", "new_value"):
             tm.that(hasattr(obj, "new_attr"), eq=True)
-            tm.that(getattr(obj, "new_attr", None) == "new_value", eq=True)
-        tm.that(not hasattr(obj, "new_attr"), eq=True)
+            tm.that(getattr(obj, "new_attr", None), eq="new_value")
+        tm.that(hasattr(obj, "new_attr"), eq=False)
 
     def test_temporary_attribute_exception_restores(self) -> None:
         """Test temporary_attribute restores value even when exception occurs."""
@@ -113,11 +113,11 @@ class TestFlextTestsUtilitiesTestContext:
 
         obj = TestObject()
         with u.Tests.TestContext.temporary_attribute(obj, "attribute", "modified"):
-            tm.that(obj.attribute == "modified", eq=True)
+            tm.that(obj.attribute, eq="modified")
             msg = "Test exception"
             with pytest.raises(RuntimeError):
                 raise RuntimeError(msg)
-        tm.that(obj.attribute == "original", eq=True)
+        tm.that(obj.attribute, eq="original")
 
 
 class TestFlextTestsUtilitiesFactory:
@@ -127,25 +127,25 @@ class TestFlextTestsUtilitiesFactory:
         """Test create_result with value."""
         result = u.Tests.Factory.create_result("test_value")
         tm.that(result.is_success, eq=True)
-        tm.that(result.value == "test_value", eq=True)
+        tm.that(result.value, eq="test_value")
 
     def test_create_result_failure(self) -> None:
         """Test create_result with error."""
         result: r[str] = u.Tests.Factory.create_result(None, error="test error")
         tm.that(result.is_failure, eq=True)
-        tm.that(result.error == "test error", eq=True)
+        tm.that(result.error, eq="test error")
 
     def test_create_result_no_args(self) -> None:
         """Test create_result with no arguments returns failure."""
         result: r[str] = u.Tests.Factory.create_result(None)
         tm.that(result.is_failure, eq=True)
-        tm.that(result.error == "No value or error provided", eq=True)
+        tm.that(result.error, eq="No value or error provided")
 
     def test_create_test_data(self) -> None:
         """Test create_test_data creates dict with kwargs."""
         data = u.Tests.Factory.create_test_data(key1="value1", key2=42, key3=True)
-        tm.that(data["key1"] == "value1", eq=True)
-        tm.that(data["key2"] == 42, eq=True)
+        tm.that(data["key1"], eq="value1")
+        tm.that(data["key2"], eq=42)
         tm.that(data["key3"] is True, eq=True)
 
 

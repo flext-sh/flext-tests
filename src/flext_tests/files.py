@@ -1422,18 +1422,9 @@ class FlextTestsFiles(s[t.NormalizedValue]):
 
     def _extract_content(
         self,
-        content: str
-        | bytes
-        | m.ConfigMap
-        | Sequence[Sequence[str]]
-        | BaseModel
-        | r[str]
-        | r[bytes]
-        | r[m.ConfigMap]
-        | r[Sequence[Sequence[str]]]
-        | r[BaseModel],
+        content: t.Tests.Files.FileInput,
         extract_result: bool,
-    ) -> str | bytes | m.ConfigMap | Sequence[Sequence[str]] | BaseModel:
+    ) -> t.Tests.Files.FileContentPlain:
         """Extract actual content from r or return as-is.
 
         Uses u.is_type(content, "result") for type checking and u.val() for extraction.
@@ -1449,19 +1440,33 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             ValueError: If r is failure and extraction is enabled
 
         """
-        if extract_result and (
-            u.is_result_like(content) or isinstance(content, FlextResult)
-        ):
+        """Extract actual content from r or return as-is.
+
+        Uses isinstance(content, bytes) first (bytes not in t.GuardInput),
+        then u.is_result_like() for proper FLEXT result narrowing.
+
+        Args:
+            content: Plain or result-wrapped file content
+            extract_result: Whether to extract from r
+
+        Returns:
+            Extracted plain content
+
+        Raises:
+            ValueError: If r is failure and extraction is enabled
+
+        """
+        if not extract_result:
+            return self._coerce_file_content(content)
+        # bytes needs handling before u.is_result_like (bytes not in t.GuardInput)
+        if isinstance(content, bytes):
+            return content
+        # u.is_result_like narrows to p.ResultLike[t.RuntimeAtomic] — proper FLEXT pattern
+        if u.is_result_like(content):
             if content.is_failure:
                 error_msg = content.error or "r failure"
                 raise ValueError(f"Cannot create file from failed r: {error_msg}")
-            if not isinstance(content, FlextResult):
-                return self._coerce_file_content(None)
-            resolved: (
-                str | bytes | m.ConfigMap | Sequence[Sequence[str]] | BaseModel | None
-            )
-            resolved = content.value  # pyright: ignore[reportUnknownMemberType,reportUnknownVariableType]
-            return self._coerce_file_content(resolved)
+            return self._coerce_file_content(content.value)
         return self._coerce_file_content(content)
 
     def _is_nested_rows(

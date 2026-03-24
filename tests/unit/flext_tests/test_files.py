@@ -30,11 +30,11 @@ class TestFileInfo:
         """Test tf.FileInfo with exists=False."""
         info = tf.FileInfo(exists=False)
         tm.that(info.exists is False, eq=True)
-        tm.that(info.size == 0, eq=True)
-        tm.that(info.lines == 0, eq=True)
-        tm.that(info.encoding == "utf-8", eq=True)
+        tm.that(info.size, eq=0)
+        tm.that(info.lines, eq=0)
+        tm.that(info.encoding, eq="utf-8")
         tm.that(info.is_empty is False, eq=True)
-        tm.that(info.first_line == "", eq=True)
+        tm.that(info.first_line, eq="")
 
     def test_file_info_exists_true(self) -> None:
         """Test tf.FileInfo with exists=True."""
@@ -47,11 +47,11 @@ class TestFileInfo:
             first_line="first line",
         )
         tm.that(info.exists is True, eq=True)
-        tm.that(info.size == 100, eq=True)
-        tm.that(info.lines == 5, eq=True)
-        tm.that(info.encoding == "utf-8", eq=True)
+        tm.that(info.size, eq=100)
+        tm.that(info.lines, eq=5)
+        tm.that(info.encoding, eq="utf-8")
         tm.that(info.is_empty is False, eq=True)
-        tm.that(info.first_line == "first line", eq=True)
+        tm.that(info.first_line, eq="first line")
 
 
 class TestFlextTestsFiles:
@@ -60,16 +60,16 @@ class TestFlextTestsFiles:
     def test_init_without_base_dir(self) -> None:
         """Test initialization without base directory."""
         manager = tf()
-        tm.that(manager.base_dir is None, eq=True)
-        tm.that(manager.created_files == [], eq=True)
-        tm.that(manager.created_dirs == [], eq=True)
+        tm.that(manager.base_dir, none=True)
+        tm.that(manager.created_files, eq=[])
+        tm.that(manager.created_dirs, eq=[])
 
     def test_init_with_base_dir(self, tmp_path: Path) -> None:
         """Test initialization with base directory."""
         manager = tf(base_dir=tmp_path)
-        tm.that(manager.base_dir == tmp_path, eq=True)
-        tm.that(manager.created_files == [], eq=True)
-        tm.that(manager.created_dirs == [], eq=True)
+        tm.that(manager.base_dir, eq=tmp_path)
+        tm.that(manager.created_files, eq=[])
+        tm.that(manager.created_dirs, eq=[])
 
     def test_temporary_directory(self) -> None:
         """Test temporary_directory context manager."""
@@ -78,7 +78,7 @@ class TestFlextTestsFiles:
             tm.that(isinstance(temp_dir, Path), eq=True)
             tm.that(temp_dir.exists(), eq=True)
             tm.that(temp_dir.is_dir(), eq=True)
-        tm.that(not temp_dir.exists(), eq=True)
+        tm.that(temp_dir.exists(), eq=False)
 
     def test_create_text_file_default(self, tmp_path: Path) -> None:
         """Test creating text file with default parameters."""
@@ -86,9 +86,9 @@ class TestFlextTestsFiles:
         content = "test content"
         file_path = manager.create(content, "test.txt")
         tm.that(file_path.exists(), eq=True)
-        tm.that(file_path.read_text() == content, eq=True)
-        tm.that(file_path.name == "test.txt", eq=True)
-        tm.that(file_path in manager.created_files, eq=True)
+        tm.that(file_path.read_text(), eq=content)
+        tm.that(file_path.name, eq="test.txt")
+        tm.that(manager.created_files, has=file_path)
 
     def test_create_text_file_custom(self, tmp_path: Path) -> None:
         """Test creating text file with custom parameters."""
@@ -98,10 +98,10 @@ class TestFlextTestsFiles:
         custom_dir = tmp_path / "subdir"
         file_path = manager.create(content, filename, directory=custom_dir)
         tm.that(file_path.exists(), eq=True)
-        tm.that(file_path.read_text() == content, eq=True)
-        tm.that(file_path.name == filename, eq=True)
-        tm.that(file_path.parent == custom_dir, eq=True)
-        tm.that(file_path in manager.created_files, eq=True)
+        tm.that(file_path.read_text(), eq=content)
+        tm.that(file_path.name, eq=filename)
+        tm.that(file_path.parent, eq=custom_dir)
+        tm.that(manager.created_files, has=file_path)
 
     def test_create_text_file_custom_encoding(self, tmp_path: Path) -> None:
         """Test creating text file with custom encoding."""
@@ -110,7 +110,7 @@ class TestFlextTestsFiles:
         encoding = "utf-16"
         file_path = manager.create(content, "test.txt", enc=encoding)
         tm.that(file_path.exists(), eq=True)
-        tm.that(file_path.read_text(encoding=encoding) == content, eq=True)
+        tm.that(file_path.read_text(encoding=encoding), eq=content)
 
     def test_create_binary_file_default(self, tmp_path: Path) -> None:
         """Test creating binary file with default parameters."""
@@ -118,9 +118,9 @@ class TestFlextTestsFiles:
         content = b"binary content"
         file_path = manager.create(content, "binary_data.bin")
         tm.that(file_path.exists(), eq=True)
-        tm.that(file_path.read_bytes() == content, eq=True)
-        tm.that(file_path.name == "binary_data.bin", eq=True)
-        tm.that(file_path in manager.created_files, eq=True)
+        tm.that(file_path.read_bytes(), eq=content)
+        tm.that(file_path.name, eq="binary_data.bin")
+        tm.that(manager.created_files, has=file_path)
 
     def test_create_binary_file_custom(self, tmp_path: Path) -> None:
         """Test creating binary file with custom parameters."""
@@ -130,17 +130,17 @@ class TestFlextTestsFiles:
         custom_dir = tmp_path / "subdir"
         file_path = manager.create(content, filename, directory=custom_dir)
         tm.that(file_path.exists(), eq=True)
-        tm.that(file_path.read_bytes() == content, eq=True)
-        tm.that(file_path.name == filename, eq=True)
-        tm.that(file_path.parent == custom_dir, eq=True)
+        tm.that(file_path.read_bytes(), eq=content)
+        tm.that(file_path.name, eq=filename)
+        tm.that(file_path.parent, eq=custom_dir)
 
     def test_create_empty_file(self, tmp_path: Path) -> None:
         """Test creating empty file."""
         manager = tf(base_dir=tmp_path)
         file_path = manager.create("", "empty.txt")
         tm.that(file_path.exists(), eq=True)
-        tm.that(file_path.read_text() == "", eq=True)
-        tm.that(file_path.name == "empty.txt", eq=True)
+        tm.that(file_path.read_text(), eq="")
+        tm.that(file_path.name, eq="empty.txt")
 
     def test_create_empty_file_custom(self, tmp_path: Path) -> None:
         """Test creating empty file with custom name."""
@@ -148,8 +148,8 @@ class TestFlextTestsFiles:
         filename = "custom_empty.txt"
         file_path = manager.create("", filename)
         tm.that(file_path.exists(), eq=True)
-        tm.that(file_path.read_text() == "", eq=True)
-        tm.that(file_path.name == filename, eq=True)
+        tm.that(file_path.read_text(), eq="")
+        tm.that(file_path.name, eq=filename)
 
     def test_create_file_set(self, tmp_path: Path) -> None:
         """Test creating multiple files from dictionary."""
@@ -158,13 +158,13 @@ class TestFlextTestsFiles:
             str | bytes | m.ConfigMap | Sequence[Sequence[str]] | BaseModel,
         ] = {"file1": "content1", "file2": "content2", "file3.txt": "content3"}
         with tf.files(files, directory=tmp_path, ext=".txt") as created:
-            tm.that(len(created) == 3, eq=True)
-            tm.that(created["file1"].read_text() == "content1", eq=True)
-            tm.that(created["file2"].read_text() == "content2", eq=True)
-            tm.that(created["file3.txt"].read_text() == "content3", eq=True)
-            tm.that(created["file1"].name == "file1.txt", eq=True)
-            tm.that(created["file2"].name == "file2.txt", eq=True)
-            tm.that(created["file3.txt"].name == "file3.txt", eq=True)
+            tm.that(len(created), eq=3)
+            tm.that(created["file1"].read_text(), eq="content1")
+            tm.that(created["file2"].read_text(), eq="content2")
+            tm.that(created["file3.txt"].read_text(), eq="content3")
+            tm.that(created["file1"].name, eq="file1.txt")
+            tm.that(created["file2"].name, eq="file2.txt")
+            tm.that(created["file3.txt"].name, eq="file3.txt")
 
     def test_create_file_set_custom_extension(self, tmp_path: Path) -> None:
         """Test creating file set with custom extension."""
@@ -174,7 +174,7 @@ class TestFlextTestsFiles:
         ] = {"file1": "content1"}
         extension = ".md"
         with tf.files(files, directory=tmp_path, ext=extension) as created:
-            tm.that(created["file1"].name == "file1.md", eq=True)
+            tm.that(created["file1"].name, eq="file1.md")
 
     def test_get_file_info_not_exists(self, tmp_path: Path) -> None:
         """Test getting file info for non-existent file."""
@@ -196,11 +196,11 @@ class TestFlextTestsFiles:
         file_info = result.value
         tm.that(isinstance(file_info, tf.FileInfo), eq=True)
         tm.that(file_info.exists is True, eq=True)
-        tm.that(file_info.size > 0, eq=True)
-        tm.that(file_info.lines == 3, eq=True)
-        tm.that(file_info.encoding == "utf-8", eq=True)
+        tm.that(file_info.size, gt=0)
+        tm.that(file_info.lines, eq=3)
+        tm.that(file_info.encoding, eq="utf-8")
         tm.that(file_info.is_empty is False, eq=True)
-        tm.that(file_info.first_line == "line1", eq=True)
+        tm.that(file_info.first_line, eq="line1")
 
     def test_get_file_info_empty_file(self, tmp_path: Path) -> None:
         """Test getting file info for empty file."""
@@ -211,9 +211,9 @@ class TestFlextTestsFiles:
         file_info = result.value
         tm.that(isinstance(file_info, tf.FileInfo), eq=True)
         tm.that(file_info.exists is True, eq=True)
-        tm.that(file_info.size == 0, eq=True)
+        tm.that(file_info.size, eq=0)
         tm.that(file_info.is_empty is True, eq=True)
-        tm.that(file_info.first_line == "", eq=True)
+        tm.that(file_info.first_line, eq="")
 
     def test_get_file_info_multiline(self, tmp_path: Path) -> None:
         """Test getting file info for multiline file."""
@@ -223,8 +223,8 @@ class TestFlextTestsFiles:
         result = manager.info(file_path)
         _ = assertion_helpers.assert_flext_result_success(result)
         file_info = result.value
-        tm.that(file_info.lines == 3, eq=True)
-        tm.that(file_info.first_line == "first line", eq=True)
+        tm.that(file_info.lines, eq=3)
+        tm.that(file_info.first_line, eq="first line")
 
     def test_cleanup_files(self, tmp_path: Path) -> None:
         """Test cleaning up created files."""
@@ -234,9 +234,9 @@ class TestFlextTestsFiles:
         tm.that(file1.exists(), eq=True)
         tm.that(file2.exists(), eq=True)
         manager.cleanup()
-        tm.that(not file1.exists(), eq=True)
-        tm.that(not file2.exists(), eq=True)
-        tm.that(not manager.created_files, eq=True)
+        tm.that(file1.exists(), eq=False)
+        tm.that(file2.exists(), eq=False)
+        tm.that(manager.created_files, eq=False)
 
     def test_cleanup_directories(self) -> None:
         """Test cleaning up created directories."""
@@ -244,10 +244,10 @@ class TestFlextTestsFiles:
         file_path = manager.create("content", "test.txt")
         temp_dir = file_path.parent
         tm.that(temp_dir.exists(), eq=True)
-        tm.that(temp_dir in manager.created_dirs, eq=True)
+        tm.that(manager.created_dirs, has=temp_dir)
         manager.cleanup()
-        tm.that(not temp_dir.exists(), eq=True)
-        tm.that(not manager.created_dirs, eq=True)
+        tm.that(temp_dir.exists(), eq=False)
+        tm.that(manager.created_dirs, eq=False)
 
     def test_cleanup_nonexistent_files(self, tmp_path: Path) -> None:
         """Test cleanup handles non-existent files gracefully."""
@@ -255,27 +255,27 @@ class TestFlextTestsFiles:
         file_path = manager.create("content", "test.txt")
         file_path.unlink()
         manager.cleanup()
-        tm.that(not manager.created_files, eq=True)
+        tm.that(manager.created_files, eq=False)
 
     def test_context_manager(self, tmp_path: Path) -> None:
         """Test context manager usage."""
         with tf(base_dir=tmp_path) as manager:
             file_path = manager.create("content", "test.txt")
             tm.that(file_path.exists(), eq=True)
-        tm.that(not file_path.exists(), eq=True)
+        tm.that(file_path.exists(), eq=False)
 
     def test_resolve_directory_with_directory(self, tmp_path: Path) -> None:
         """Test directory resolution with provided directory."""
         manager = tf(base_dir=tmp_path)
         custom_dir = tmp_path / "custom"
         resolved = manager._resolve_directory(custom_dir)
-        tm.that(resolved == custom_dir, eq=True)
+        tm.that(resolved, eq=custom_dir)
 
     def test_resolve_directory_with_base_dir(self, tmp_path: Path) -> None:
         """Test directory resolution with base_dir."""
         manager = tf(base_dir=tmp_path)
         resolved = manager._resolve_directory(None)
-        tm.that(resolved == tmp_path, eq=True)
+        tm.that(resolved, eq=tmp_path)
 
     def test_resolve_directory_creates_temp(self) -> None:
         """Test directory resolution creates temporary directory."""
@@ -283,7 +283,7 @@ class TestFlextTestsFiles:
         resolved = manager._resolve_directory(None)
         tm.that(resolved.exists(), eq=True)
         tm.that(resolved.is_dir(), eq=True)
-        tm.that(resolved in manager.created_dirs, eq=True)
+        tm.that(manager.created_dirs, has=resolved)
 
     def test_temporary_files_classmethod(self) -> None:
         """Test files classmethod context manager."""
@@ -292,13 +292,13 @@ class TestFlextTestsFiles:
             str | bytes | m.ConfigMap | Sequence[Sequence[str]] | BaseModel,
         ] = {"file1": "content1", "file2": "content2"}
         with tf.files(files) as created:
-            tm.that(len(created) == 2, eq=True)
+            tm.that(len(created), eq=2)
             tm.that(created["file1"].exists(), eq=True)
             tm.that(created["file2"].exists(), eq=True)
-            tm.that(created["file1"].read_text() == "content1", eq=True)
-            tm.that(created["file2"].read_text() == "content2", eq=True)
-        tm.that(not created["file1"].exists(), eq=True)
-        tm.that(not created["file2"].exists(), eq=True)
+            tm.that(created["file1"].read_text(), eq="content1")
+            tm.that(created["file2"].read_text(), eq="content2")
+        tm.that(created["file1"].exists(), eq=False)
+        tm.that(created["file2"].exists(), eq=False)
 
     def test_temporary_files_custom_extension(self) -> None:
         """Test files with custom extension."""
@@ -307,7 +307,7 @@ class TestFlextTestsFiles:
             str | bytes | m.ConfigMap | Sequence[Sequence[str]] | BaseModel,
         ] = {"file1": "content1"}
         with tf.files(files, ext=".md") as created:
-            tm.that(created["file1"].name == "file1.md", eq=True)
+            tm.that(created["file1"].name, eq="file1.md")
 
     def test_create_file_set_nested_directory(self, tmp_path: Path) -> None:
         """Test creating files in nested directory."""
@@ -317,7 +317,7 @@ class TestFlextTestsFiles:
             str | bytes | m.ConfigMap | Sequence[Sequence[str]] | BaseModel,
         ] = {"file1": "content1"}
         with tf.files(files, directory=nested_dir) as created:
-            tm.that(created["file1"].parent == nested_dir, eq=True)
+            tm.that(created["file1"].parent, eq=nested_dir)
             tm.that(nested_dir.exists(), eq=True)
 
     def test_create_text_file_nested_directory(self, tmp_path: Path) -> None:
@@ -325,7 +325,7 @@ class TestFlextTestsFiles:
         manager = tf(base_dir=tmp_path)
         nested_dir = tmp_path / "nested" / "subdir"
         file_path = manager.create("content", "test.txt", directory=nested_dir)
-        tm.that(file_path.parent == nested_dir, eq=True)
+        tm.that(file_path.parent, eq=nested_dir)
         tm.that(nested_dir.exists(), eq=True)
 
     def test_multiple_cleanup_calls(self, tmp_path: Path) -> None:
@@ -334,7 +334,7 @@ class TestFlextTestsFiles:
         _ = manager.create("content", "test.txt")
         manager.cleanup()
         manager.cleanup()
-        tm.that(not manager.created_files, eq=True)
+        tm.that(manager.created_files, eq=False)
 
 
 class TestFlextTestsFilesNewApi:
@@ -345,15 +345,15 @@ class TestFlextTestsFilesNewApi:
         manager = tf(base_dir=tmp_path)
         path = manager.create("hello world", "test.txt")
         tm.that(path.exists(), eq=True)
-        tm.that(path.read_text() == "hello world", eq=True)
-        tm.that(path.suffix == ".txt", eq=True)
+        tm.that(path.read_text(), eq="hello world")
+        tm.that(path.suffix, eq=".txt")
 
     def test_create_binary_auto_detect(self, tmp_path: Path) -> None:
         """Test create() auto-detects binary from bytes content."""
         manager = tf(base_dir=tmp_path)
         path = manager.create(b"\x00\x01\x02", "data.bin")
         tm.that(path.exists(), eq=True)
-        tm.that(path.read_bytes() == b"\x00\x01\x02", eq=True)
+        tm.that(path.read_bytes(), eq=b"\x00\x01\x02")
 
     def test_create_json_auto_detect_from_dict(self, tmp_path: Path) -> None:
         """Test create() auto-detects JSON from dict content."""
@@ -362,7 +362,7 @@ class TestFlextTestsFilesNewApi:
         path = manager.create(content, "config.json")
         tm.that(path.exists(), eq=True)
         data = json.loads(path.read_text())
-        tm.that(data == content.root, eq=True)
+        tm.that(data, eq=content.root)
 
     def test_create_yaml_auto_detect_from_extension(self, tmp_path: Path) -> None:
         """Test create() auto-detects YAML from .yaml extension."""
@@ -371,7 +371,7 @@ class TestFlextTestsFilesNewApi:
         path = manager.create(content, "config.yaml")
         tm.that(path.exists(), eq=True)
         data = yaml.safe_load(path.read_text())
-        tm.that(data == content.root, eq=True)
+        tm.that(data, eq=content.root)
 
     def test_create_csv_auto_detect_from_list(self, tmp_path: Path) -> None:
         """Test create() auto-detects CSV from Sequence[list] content."""
@@ -380,7 +380,7 @@ class TestFlextTestsFilesNewApi:
         path = manager.create(content, "data.csv")
         tm.that(path.exists(), eq=True)
         lines = path.read_text().strip().split("\n")
-        tm.that(len(lines) == 2, eq=True)
+        tm.that(len(lines), eq=2)
 
     def test_create_csv_with_headers(self, tmp_path: Path) -> None:
         """Test create() CSV with explicit headers."""
@@ -389,22 +389,22 @@ class TestFlextTestsFilesNewApi:
         path = manager.create(content, "data.csv", headers=["col1", "col2"])
         tm.that(path.exists(), eq=True)
         lines = path.read_text().strip().split("\n")
-        tm.that(lines[0] == "col1,col2", eq=True)
-        tm.that(len(lines) == 3, eq=True)
+        tm.that(lines[0], eq="col1,col2")
+        tm.that(len(lines), eq=3)
 
     def test_create_explicit_format(self, tmp_path: Path) -> None:
         """Test create() with explicit format override."""
         manager = tf(base_dir=tmp_path)
         path = manager.create(b"raw bytes", "data.dat", fmt="bin")
         tm.that(path.exists(), eq=True)
-        tm.that(path.read_bytes() == b"raw bytes", eq=True)
+        tm.that(path.read_bytes(), eq=b"raw bytes")
 
     def test_create_custom_encoding(self, tmp_path: Path) -> None:
         """Test create() with custom encoding."""
         manager = tf(base_dir=tmp_path)
         path = manager.create("áéíóú", "unicode.txt", enc="utf-16")
         tm.that(path.exists(), eq=True)
-        tm.that(path.read_text(encoding="utf-16") == "áéíóú", eq=True)
+        tm.that(path.read_text(encoding="utf-16"), eq="áéíóú")
 
     def test_create_json_custom_indent(self, tmp_path: Path) -> None:
         """Test create() JSON with custom indentation."""
@@ -413,7 +413,7 @@ class TestFlextTestsFilesNewApi:
         path = manager.create(content, "config.json", indent=4)
         tm.that(path.exists(), eq=True)
         text = path.read_text()
-        tm.that("    " in text, eq=True)
+        tm.that(text, has="    ")
 
     def test_create_in_custom_directory(self, tmp_path: Path) -> None:
         """Test create() in custom directory."""
@@ -421,7 +421,7 @@ class TestFlextTestsFilesNewApi:
         custom_dir = tmp_path / "subdir"
         path = manager.create("content", "test.txt", directory=custom_dir)
         tm.that(path.exists(), eq=True)
-        tm.that(path.parent == custom_dir, eq=True)
+        tm.that(path.parent, eq=custom_dir)
 
     def test_read_text_file(self, tmp_path: Path) -> None:
         """Test read() returns text content for .txt files."""
@@ -429,7 +429,7 @@ class TestFlextTestsFilesNewApi:
         path = manager.create("hello world", "test.txt")
         result = manager.read(path)
         _ = assertion_helpers.assert_flext_result_success(result)
-        tm.that(result.value == "hello world", eq=True)
+        tm.that(result.value, eq="hello world")
 
     def test_read_binary_file(self, tmp_path: Path) -> None:
         """Test read() returns bytes content for .bin files."""
@@ -437,7 +437,7 @@ class TestFlextTestsFilesNewApi:
         path = manager.create(b"\x00\x01\x02", "data.bin", fmt="bin")
         result = manager.read(path)
         _ = assertion_helpers.assert_flext_result_success(result)
-        tm.that(result.value == b"\x00\x01\x02", eq=True)
+        tm.that(result.value, eq=b"\x00\x01\x02")
 
     def test_read_json_file(self, tmp_path: Path) -> None:
         """Test read() returns dict content for .json files."""
@@ -446,7 +446,7 @@ class TestFlextTestsFilesNewApi:
         path = manager.create(content, "config.json")
         result = manager.read(path)
         _ = assertion_helpers.assert_flext_result_success(result)
-        tm.that(result.value == content, eq=True)
+        tm.that(result.value, eq=content)
 
     def test_read_yaml_file(self, tmp_path: Path) -> None:
         """Test read() returns dict content for .yaml files."""
@@ -455,7 +455,7 @@ class TestFlextTestsFilesNewApi:
         path = manager.create(content, "config.yaml")
         result = manager.read(path)
         _ = assertion_helpers.assert_flext_result_success(result)
-        tm.that(result.value == content, eq=True)
+        tm.that(result.value, eq=content)
 
     def test_read_csv_file(self, tmp_path: Path) -> None:
         """Test read() returns Sequence[list] content for .csv files."""
@@ -466,7 +466,7 @@ class TestFlextTestsFilesNewApi:
         _ = assertion_helpers.assert_flext_result_success(result)
         data = result.value
         tm.that(isinstance(data, list), eq=True)
-        tm.that(len(data) == 2, eq=True)
+        tm.that(len(data), eq=2)
 
     def test_read_csv_file_with_headers(self, tmp_path: Path) -> None:
         """Test read() CSV with headers skips first row by default."""
@@ -477,7 +477,7 @@ class TestFlextTestsFilesNewApi:
         _ = assertion_helpers.assert_flext_result_success(result)
         data = result.value
         tm.that(isinstance(data, list), eq=True)
-        tm.that(len(data) == 2, eq=True)
+        tm.that(len(data), eq=2)
 
     def test_read_nonexistent_file(self, tmp_path: Path) -> None:
         """Test read() returns failure for non-existent file."""
@@ -485,7 +485,7 @@ class TestFlextTestsFilesNewApi:
         path = tmp_path / "nonexistent.txt"
         result = manager.read(path)
         _ = assertion_helpers.assert_flext_result_failure(result)
-        tm.that(result.error is not None, eq=True)
+        tm.that(result.error, none=False)
         if result.error is None:
             error_msg = "Expected error to be not None"
             raise TypeError(error_msg)
@@ -503,7 +503,7 @@ class TestFlextTestsFilesNewApi:
         path = manager.create("plain text", "data.dat", fmt="text")
         result = manager.read(path, fmt="text")
         _ = assertion_helpers.assert_flext_result_success(result)
-        tm.that(result.value == "plain text", eq=True)
+        tm.that(result.value, eq="plain text")
 
     def test_compare_identical_content(self, tmp_path: Path) -> None:
         """Test compare() returns True for identical content."""
@@ -620,10 +620,10 @@ class TestFlextTestsFilesNewApi:
         _ = assertion_helpers.assert_flext_result_success(result)
         info = result.value
         tm.that(info.exists is True, eq=True)
-        tm.that(info.size > 0, eq=True)
-        tm.that(info.lines == 3, eq=True)
+        tm.that(info.size, gt=0)
+        tm.that(info.lines, eq=3)
         tm.that(info.is_empty is False, eq=True)
-        tm.that(info.first_line == "line1", eq=True)
+        tm.that(info.first_line, eq="line1")
 
     def test_info_nonexistent_file(self, tmp_path: Path) -> None:
         """Test info() returns tf.FileInfo with exists=False."""
@@ -642,7 +642,7 @@ class TestFlextTestsFilesNewApi:
         _ = assertion_helpers.assert_flext_result_success(result)
         info = result.value
         assert info.sha256 is not None
-        tm.that(len(info.sha256) == 64, eq=True)
+        tm.that(len(info.sha256), eq=64)
 
     def test_info_format_detection(self, tmp_path: Path) -> None:
         """Test info() detects file format."""
@@ -651,7 +651,7 @@ class TestFlextTestsFilesNewApi:
         result = manager.info(path)
         _ = assertion_helpers.assert_flext_result_success(result)
         info = result.value
-        tm.that(info.fmt == "json", eq=True)
+        tm.that(info.fmt, eq="json")
 
     def test_info_empty_file(self, tmp_path: Path) -> None:
         """Test info() for empty file."""
@@ -661,7 +661,7 @@ class TestFlextTestsFilesNewApi:
         _ = assertion_helpers.assert_flext_result_success(result)
         info = result.value
         tm.that(info.exists is True, eq=True)
-        tm.that(info.size == 0, eq=True)
+        tm.that(info.size, eq=0)
         tm.that(info.is_empty is True, eq=True)
 
     def test_info_size_human_readable(self, tmp_path: Path) -> None:
@@ -671,27 +671,27 @@ class TestFlextTestsFilesNewApi:
         result = manager.info(path)
         _ = assertion_helpers.assert_flext_result_success(result)
         info = result.value
-        tm.that(info.size_human != "", eq=True)
+        tm.that(info.size_human, ne="")
 
     def test_files_context_manager_basic(self) -> None:
         """Test files() context manager creates temporary files."""
         with tf.files({"a": "content A", "b": "content B"}) as paths:
-            tm.that("a" in paths, eq=True)
-            tm.that("b" in paths, eq=True)
+            tm.that(paths, has="a")
+            tm.that(paths, has="b")
             tm.that(paths["a"].exists(), eq=True)
             tm.that(paths["b"].exists(), eq=True)
-            tm.that(paths["a"].read_text() == "content A", eq=True)
-            tm.that(paths["b"].read_text() == "content B", eq=True)
-        tm.that(not paths["a"].exists(), eq=True)
-        tm.that(not paths["b"].exists(), eq=True)
+            tm.that(paths["a"].read_text(), eq="content A")
+            tm.that(paths["b"].read_text(), eq="content B")
+        tm.that(paths["a"].exists(), eq=False)
+        tm.that(paths["b"].exists(), eq=False)
 
     def test_files_context_manager_json_auto_detect(self) -> None:
         """Test files() auto-detects JSON from dict content."""
         content = m.ConfigMap(root={"key": "value"})
         with tf.files({"config": content}) as paths:
-            tm.that(paths["config"].suffix == ".json", eq=True)
+            tm.that(paths["config"].suffix, eq=".json")
             data = json.loads(paths["config"].read_text())
-            tm.that(data == content.root, eq=True)
+            tm.that(data, eq=content.root)
 
     def test_files_context_manager_mixed_types(self) -> None:
         """Test files() handles mixed content types."""
@@ -700,19 +700,19 @@ class TestFlextTestsFilesNewApi:
             "json": m.ConfigMap(root={"key": "value"}),
             "csv": [["a", "b"], ["1", "2"]],
         }) as paths:
-            tm.that(paths["text"].read_text() == "plain text", eq=True)
-            tm.that(json.loads(paths["json"].read_text()) == {"key": "value"}, eq=True)
-            tm.that(len(paths["csv"].read_text().strip().split("\n")) == 2, eq=True)
+            tm.that(paths["text"].read_text(), eq="plain text")
+            tm.that(json.loads(paths["json"].read_text()), eq={"key": "value"})
+            tm.that(len(paths["csv"].read_text().strip().split("\n")), eq=2)
 
     def test_files_context_manager_custom_extension(self) -> None:
         """Test files() with custom default extension."""
         with tf.files({"file1": "content"}, ext=".md") as paths:
-            tm.that(paths["file1"].suffix == ".md", eq=True)
+            tm.that(paths["file1"].suffix, eq=".md")
 
     def test_files_context_manager_custom_directory(self, tmp_path: Path) -> None:
         """Test files() in custom directory."""
         with tf.files({"test": "content"}, directory=tmp_path) as paths:
-            tm.that(paths["test"].parent == tmp_path, eq=True)
+            tm.that(paths["test"].parent, eq=tmp_path)
 
 
 class TestShortAlias:
@@ -737,8 +737,8 @@ class TestFileInfoFromModels:
         """Test tf.FileInfo can be imported from models."""
         info = FlextTestsModels.Tests.FileInfo(exists=True, size=100, lines=5)
         tm.that(info.exists is True, eq=True)
-        tm.that(info.size == 100, eq=True)
-        tm.that(info.lines == 5, eq=True)
+        tm.that(info.size, eq=100)
+        tm.that(info.lines, eq=5)
 
     def test_fileinfo_backward_compatibility(self) -> None:
         """Test tf.FileInfo alias works for backward compatibility."""
@@ -768,11 +768,11 @@ class TestFileInfoFromModels:
             sha256="abc123" * 10 + "abcd",
         )
         tm.that(info.exists is True, eq=True)
-        tm.that(info.size == 1024, eq=True)
-        tm.that(info.size_human == "1.0 KB", eq=True)
-        tm.that(info.lines == 50, eq=True)
-        tm.that(info.fmt == "text", eq=True)
-        tm.that(info.sha256 is not None, eq=True)
+        tm.that(info.size, eq=1024)
+        tm.that(info.size_human, eq="1.0 KB")
+        tm.that(info.lines, eq=50)
+        tm.that(info.fmt, eq="text")
+        tm.that(info.sha256, none=False)
 
 
 class TestInfoWithContentMeta:
@@ -788,12 +788,12 @@ class TestInfoWithContentMeta:
         result = manager.info(path, parse_content=True)
         _ = assertion_helpers.assert_flext_result_success(result)
         info = result.value
-        tm.that(info.content_meta is not None, eq=True)
+        tm.that(info.content_meta, none=False)
         if info.content_meta is None:
             error_msg = "Expected content_meta to be not None"
             raise TypeError(error_msg)
-        tm.that(info.content_meta.key_count == 2, eq=True)
-        tm.that(info.content_meta.item_count is None, eq=True)
+        tm.that(info.content_meta.key_count, eq=2)
+        tm.that(info.content_meta.item_count, none=True)
 
     def test_info_parse_content_json_list(self, tmp_path: Path) -> None:
         """Test info() with parse_content=True for JSON list."""
@@ -805,8 +805,8 @@ class TestInfoWithContentMeta:
         _ = assertion_helpers.assert_flext_result_success(result)
         info = result.value
         assert info.content_meta is not None
-        tm.that(info.content_meta.key_count is None, eq=True)
-        tm.that(info.content_meta.item_count == 5, eq=True)
+        tm.that(info.content_meta.key_count, none=True)
+        tm.that(info.content_meta.item_count, eq=5)
 
     def test_info_parse_content_yaml_dict(self, tmp_path: Path) -> None:
         """Test info() with parse_content=True for YAML dict."""
@@ -816,7 +816,7 @@ class TestInfoWithContentMeta:
         _ = assertion_helpers.assert_flext_result_success(result)
         info = result.value
         assert info.content_meta is not None
-        tm.that(info.content_meta.key_count == 3, eq=True)
+        tm.that(info.content_meta.key_count, eq=3)
 
     def test_info_parse_content_csv(self, tmp_path: Path) -> None:
         """Test info() with parse_content=True for CSV."""
@@ -828,8 +828,8 @@ class TestInfoWithContentMeta:
         _ = assertion_helpers.assert_flext_result_success(result)
         info = result.value
         assert info.content_meta is not None
-        tm.that(info.content_meta.row_count == 3, eq=True)
-        tm.that(info.content_meta.column_count == 3, eq=True)
+        tm.that(info.content_meta.row_count, eq=3)
+        tm.that(info.content_meta.column_count, eq=3)
 
     def test_info_validate_model_success(self, tmp_path: Path) -> None:
         """Test info() with validate_model for valid model."""
@@ -848,7 +848,7 @@ class TestInfoWithContentMeta:
         info = result.value
         assert info.content_meta is not None
         tm.that(info.content_meta.model_valid is True, eq=True)
-        tm.that(info.content_meta.model_name == "SimpleModel", eq=True)
+        tm.that(info.content_meta.model_name, eq="SimpleModel")
 
     def test_info_validate_model_failure(self, tmp_path: Path) -> None:
         """Test info() with validate_model for invalid model."""
@@ -866,7 +866,7 @@ class TestInfoWithContentMeta:
         info = result.value
         assert info.content_meta is not None
         tm.that(info.content_meta.model_valid is False, eq=True)
-        tm.that(info.content_meta.model_name == "StrictModel", eq=True)
+        tm.that(info.content_meta.model_name, eq="StrictModel")
 
 
 class TestAssertExists:
@@ -994,10 +994,10 @@ class TestBatchOperations:
         )
         _ = assertion_helpers.assert_flext_result_success(result)
         batch_result = result.value
-        tm.that(batch_result.total == 3, eq=True)
-        tm.that(batch_result.success_count == 3, eq=True)
-        tm.that(batch_result.failure_count == 0, eq=True)
-        tm.that(batch_result.succeeded == 3, eq=True)
+        tm.that(batch_result.total, eq=3)
+        tm.that(batch_result.success_count, eq=3)
+        tm.that(batch_result.failure_count, eq=0)
+        tm.that(batch_result.succeeded, eq=3)
 
     def test_batch_create_json_files(self, tmp_path: Path) -> None:
         """Test batch create for JSON files."""
@@ -1008,10 +1008,10 @@ class TestBatchOperations:
         )
         _ = assertion_helpers.assert_flext_result_success(result)
         batch_result = result.value
-        tm.that(batch_result.success_count == 2, eq=True)
+        tm.that(batch_result.success_count, eq=2)
         config1 = tmp_path / "config1.json"
         tm.that(config1.exists(), eq=True)
-        tm.that(json.loads(config1.read_text())["key"] == "value1", eq=True)
+        tm.that(json.loads(config1.read_text())["key"], eq="value1")
 
     def test_batch_on_error_collect(self, tmp_path: Path) -> None:
         """Test batch with on_error='collect' continues on failures."""
@@ -1025,7 +1025,7 @@ class TestBatchOperations:
         )
         _ = assertion_helpers.assert_flext_result_success(result)
         batch_result = result.value
-        tm.that(batch_result.succeeded >= 1, eq=True)
+        tm.that(batch_result.succeeded, gte=1)
 
     def test_batch_result_model_structure(self, tmp_path: Path) -> None:
         """Test BatchResult model has correct structure."""
@@ -1050,14 +1050,14 @@ class TestCreateInStatic:
         """Test create_in() for text content."""
         path = tf.create_in("hello world", "test.txt", tmp_path)
         tm.that(path.exists(), eq=True)
-        tm.that(path.read_text() == "hello world", eq=True)
+        tm.that(path.read_text(), eq="hello world")
 
     def test_create_in_dict_content(self, tmp_path: Path) -> None:
         """Test create_in() for dict content (JSON)."""
         path = tf.create_in(m.ConfigMap(root={"key": "value"}), "config.json", tmp_path)
         tm.that(path.exists(), eq=True)
         content = json.loads(path.read_text())
-        tm.that(content == {"key": "value"}, eq=True)
+        tm.that(content, eq={"key": "value"})
 
     def test_create_in_yaml_content(self, tmp_path: Path) -> None:
         """Test create_in() for YAML file."""
@@ -1068,7 +1068,7 @@ class TestCreateInStatic:
         )
         tm.that(path.exists(), eq=True)
         content = yaml.safe_load(path.read_text())
-        tm.that(content == {"setting": True}, eq=True)
+        tm.that(content, eq={"setting": True})
 
     def test_create_in_pydantic_model(self, tmp_path: Path) -> None:
         """Test create_in() for Pydantic model content."""
@@ -1081,7 +1081,7 @@ class TestCreateInStatic:
         path = tf.create_in(user, "user.json", tmp_path)
         tm.that(path.exists(), eq=True)
         content = json.loads(path.read_text())
-        tm.that(content == {"name": "Alice", "age": 30}, eq=True)
+        tm.that(content, eq={"name": "Alice", "age": 30})
 
     def test_create_in_format_detection(self, tmp_path: Path) -> None:
         """Test create_in() format auto-detection from extension."""
@@ -1091,18 +1091,18 @@ class TestCreateInStatic:
             tmp_path,
         )
         tm.that(path1.exists(), eq=True)
-        tm.that(json.loads(path1.read_text()) == {"key": "value"}, eq=True)
+        tm.that(json.loads(path1.read_text()), eq={"key": "value"})
         path2 = tf.create_in(
             m.ConfigMap(root={"key": "value"}),
             "config.yaml",
             tmp_path,
         )
         tm.that(path2.exists(), eq=True)
-        tm.that(yaml.safe_load(path2.read_text()) == {"key": "value"}, eq=True)
+        tm.that(yaml.safe_load(path2.read_text()), eq={"key": "value"})
         path3 = tf.create_in([["a", "b"], ["1", "2"]], "data.csv", tmp_path)
         tm.that(path3.exists(), eq=True)
         lines = path3.read_text().strip().split("\n")
-        tm.that(len(lines) >= 2, eq=True)
+        tm.that(len(lines), gte=2)
 
     def test_create_in_with_flextresult(self, tmp_path: Path) -> None:
         """Test create_in() with r content extraction."""
@@ -1110,19 +1110,19 @@ class TestCreateInStatic:
         path = tf.create_in(result, "result.json", tmp_path)
         tm.that(path.exists(), eq=True)
         content = json.loads(path.read_text())
-        tm.that(content == {"status": "success"}, eq=True)
+        tm.that(content, eq={"status": "success"})
 
     def test_create_in_custom_format(self, tmp_path: Path) -> None:
         """Test create_in() with explicit format override."""
         path = tf.create_in(b"binary data", "data.dat", tmp_path, fmt="bin")
         tm.that(path.exists(), eq=True)
-        tm.that(path.read_bytes() == b"binary data", eq=True)
+        tm.that(path.read_bytes(), eq=b"binary data")
 
     def test_create_in_custom_encoding(self, tmp_path: Path) -> None:
         """Test create_in() with custom encoding."""
         path = tf.create_in("áéíóú", "unicode.txt", tmp_path, enc="utf-16")
         tm.that(path.exists(), eq=True)
-        tm.that(path.read_text(encoding="utf-16") == "áéíóú", eq=True)
+        tm.that(path.read_text(encoding="utf-16"), eq="áéíóú")
 
     def test_create_in_json_indent(self, tmp_path: Path) -> None:
         """Test create_in() with custom JSON indentation."""
@@ -1132,7 +1132,7 @@ class TestCreateInStatic:
         path = tf.create_in(content, "config.json", tmp_path, indent=4)
         tm.that(path.exists(), eq=True)
         text = path.read_text()
-        tm.that("    " in text, eq=True)
+        tm.that(text, has="    ")
 
     def test_create_in_csv_with_headers(self, tmp_path: Path) -> None:
         """Test create_in() CSV with explicit headers."""
@@ -1140,5 +1140,5 @@ class TestCreateInStatic:
         path = tf.create_in(content, "data.csv", tmp_path, headers=["col1", "col2"])
         tm.that(path.exists(), eq=True)
         lines = path.read_text().strip().split("\n")
-        tm.that(lines[0] == "col1,col2", eq=True)
-        tm.that(len(lines) == 3, eq=True)
+        tm.that(lines[0], eq="col1,col2")
+        tm.that(len(lines), eq=3)

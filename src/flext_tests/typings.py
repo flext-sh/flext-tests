@@ -14,7 +14,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal, TypeAliasType, TypeIs
 
-from flext_core import FlextTypes, p, t as core_t
+from flext_core import FlextResult, FlextTypes, p, t as core_t
 from pydantic import BaseModel, InstanceOf
 
 type _TestobjectSerializable = (
@@ -95,6 +95,25 @@ class FlextTestsTypes(FlextTypes):
                 | Sequence[FlextTestsTypes.Tests.Testobject]
             )
             "Type for batch file operations - Mapping or Sequence of files."
+
+            type FileContentPlain = (
+                str
+                | bytes
+                | core_t.ConfigMap
+                | Sequence[Sequence[str]]
+                | BaseModel
+            )
+            "Plain file content (no result wrapper): str, bytes, ConfigMap, CSV rows, or any Pydantic model."
+
+            type FileInput = (
+                FlextTestsTypes.Tests.Files.FileContentPlain
+                | FlextResult[str]
+                | FlextResult[bytes]
+                | FlextResult[core_t.ConfigMap]
+                | FlextResult[Sequence[Sequence[str]]]
+                | FlextResult[BaseModel]
+            )
+            "Full file input type: plain content or result-wrapped content."
 
         class Matcher:
             """Matcher-specific type definitions for test assertions (tm.* methods)."""

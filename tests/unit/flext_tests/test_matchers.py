@@ -48,7 +48,7 @@ class TestFlextTestsMatchers:
         """Test tm.ok() with successful result."""
         result = r[str].ok("success")
         value = tm.ok(result)
-        tm.that(value == "success", eq=True)
+        tm.that(value, eq="success")
 
     def test_assert_result_success_fails(self) -> None:
         """Test tm.ok() with failed result."""
@@ -66,7 +66,7 @@ class TestFlextTestsMatchers:
         """Test tm.fail() with failed result."""
         result: r[str] = r[str].fail("error")
         error = tm.fail(result)
-        tm.that(error == "error", eq=True)
+        tm.that(error, eq="error")
 
     def test_assert_result_failure_fails(self) -> None:
         """Test tm.fail() with successful result."""
@@ -78,7 +78,7 @@ class TestFlextTestsMatchers:
         """Test tm.fail() with expected error substring."""
         result: r[str] = r[str].fail("Database connection failed")
         error = tm.fail(result, contains="connection")
-        tm.that("connection" in error, eq=True)
+        tm.that(error, has="connection")
 
     def test_assert_result_failure_expected_error_not_found(self) -> None:
         """Test tm.fail() when expected error substring not found."""
@@ -175,7 +175,7 @@ class TestFlextTestsMatchers:
         """Test tm.ok() with eq parameter."""
         result = r[int].ok(42)
         value = tm.ok(result, eq=42)
-        tm.that(value == 42, eq=True)
+        tm.that(value, eq=42)
 
     def test_ok_with_eq_parameter_fails(self) -> None:
         """Test tm.ok() with eq parameter fails when value doesn't match."""
@@ -187,7 +187,7 @@ class TestFlextTestsMatchers:
         """Test tm.ok() with ne parameter."""
         result = r[int].ok(42)
         value = tm.ok(result, ne=43)
-        tm.that(value == 42, eq=True)
+        tm.that(value, eq=42)
 
     def test_ok_with_is_parameter(self) -> None:
         """Test tm.ok() with is_ parameter."""
@@ -196,7 +196,7 @@ class TestFlextTestsMatchers:
             result,
             where=_is_string,
         )
-        tm.that(value == "test", eq=True)
+        tm.that(value, eq="test")
 
     def test_ok_with_is_tuple_parameter(self) -> None:
         """Test tm.ok() with is_ tuple parameter."""
@@ -205,64 +205,64 @@ class TestFlextTestsMatchers:
             result,
             where=_is_string_or_bytes,
         )
-        tm.that(value == "test", eq=True)
+        tm.that(value, eq="test")
 
     def test_ok_with_has_parameter(self) -> None:
         """Test tm.ok() with has parameter."""
         result = r[Sequence[str]].ok(["a", "b", "c"])
         value = tm.ok(result, has="a")
-        tm.that(value == ["a", "b", "c"], eq=True)
+        tm.that(value, eq=["a", "b", "c"])
 
     def test_ok_with_has_sequence_parameter(self) -> None:
         """Test tm.ok() with has sequence parameter."""
         result = r[Sequence[str]].ok(["a", "b", "c"])
         value = tm.ok(result, has=["a", "b"])
-        tm.that(value == ["a", "b", "c"], eq=True)
+        tm.that(value, eq=["a", "b", "c"])
 
     def test_ok_with_lacks_parameter(self) -> None:
         """Test tm.ok() with lacks parameter."""
         result = r[Sequence[str]].ok(["a", "b", "c"])
         value = tm.ok(result, lacks="d")
-        tm.that(value == ["a", "b", "c"], eq=True)
+        tm.that(value, eq=["a", "b", "c"])
 
     def test_ok_with_len_exact_parameter(self) -> None:
         """Test tm.ok() with len exact parameter."""
         result = r[Sequence[str]].ok(["a", "b", "c"])
         value = tm.ok(result, len=3)
-        tm.that(value == ["a", "b", "c"], eq=True)
+        tm.that(value, eq=["a", "b", "c"])
 
     def test_ok_with_len_range_parameter(self) -> None:
         """Test tm.ok() with len range parameter."""
         result = r[Sequence[str]].ok(["a", "b", "c"])
         value = tm.ok(result, len=(2, 4))
-        tm.that(value == ["a", "b", "c"], eq=True)
+        tm.that(value, eq=["a", "b", "c"])
 
     def test_ok_with_deep_parameter(self) -> None:
         """Test tm.ok() with deep parameter."""
         data: Mapping[str, t.Tests.Testobject] = {"user": {"name": "John", "age": 30}}
         result = r[t.NormalizedValue].ok(data)
         value = tm.ok(result, deep={"user.name": "John"})
-        tm.that(value == data, eq=True)
+        tm.that(value, eq=data)
 
     def test_ok_with_deep_predicate_parameter(self) -> None:
         """Test tm.ok() with deep predicate parameter."""
         data: Mapping[str, t.Tests.Testobject] = {"user": {"email": "test@example.com"}}
         result = r[t.NormalizedValue].ok(data)
         value = tm.ok(result, deep={"user.email": "test@example.com"})
-        tm.that(value == data, eq=True)
+        tm.that(value, eq=data)
 
     def test_ok_with_path_parameter(self) -> None:
         """Test tm.ok() with path parameter."""
         data: Mapping[str, t.Tests.Testobject] = {"user": {"name": "John"}}
         result = r[t.NormalizedValue].ok(data)
         value = tm.ok(result, path="user.name", eq="John")
-        tm.that(value == "John", eq=True)
+        tm.that(value, eq="John")
 
     def test_ok_with_where_parameter(self) -> None:
         """Test tm.ok() with where parameter."""
         result = r[int].ok(42)
         value = tm.ok(result, where=_is_positive)
-        tm.that(value == 42, eq=True)
+        tm.that(value, eq=42)
 
     def test_ok_with_where_parameter_fails(self) -> None:
         """Test tm.ok() with where parameter fails when predicate returns False."""
@@ -274,103 +274,103 @@ class TestFlextTestsMatchers:
         """Test tm.ok() with starts parameter."""
         result = r[str].ok("Hello World")
         value = tm.ok(result, starts="Hello")
-        tm.that(value == "Hello World", eq=True)
+        tm.that(value, eq="Hello World")
 
     def test_ok_with_ends_parameter(self) -> None:
         """Test tm.ok() with ends parameter."""
         result = r[str].ok("Hello World")
         value = tm.ok(result, ends="World")
-        tm.that(value == "Hello World", eq=True)
+        tm.that(value, eq="Hello World")
 
     def test_ok_with_match_parameter(self) -> None:
         """Test tm.ok() with match parameter."""
         result = r[str].ok("test@example.com")
         value = tm.ok(result, match="^[\\w.]+@[\\w.]+$")
-        tm.that(value == "test@example.com", eq=True)
+        tm.that(value, eq="test@example.com")
 
     def test_ok_with_gt_parameter(self) -> None:
         """Test tm.ok() with gt parameter."""
         result = r[int].ok(42)
         value = tm.ok(result, gt=0)
-        tm.that(value == 42, eq=True)
+        tm.that(value, eq=42)
 
     def test_ok_with_gte_parameter(self) -> None:
         """Test tm.ok() with gte parameter."""
         result = r[int].ok(42)
         value = tm.ok(result, gte=42)
-        tm.that(value == 42, eq=True)
+        tm.that(value, eq=42)
 
     def test_ok_with_lt_parameter(self) -> None:
         """Test tm.ok() with lt parameter."""
         result = r[int].ok(42)
         value = tm.ok(result, lt=100)
-        tm.that(value == 42, eq=True)
+        tm.that(value, eq=42)
 
     def test_ok_with_lte_parameter(self) -> None:
         """Test tm.ok() with lte parameter."""
         result = r[int].ok(42)
         value = tm.ok(result, lte=42)
-        tm.that(value == 42, eq=True)
+        tm.that(value, eq=42)
 
     def test_ok_with_none_parameter(self) -> None:
         """Test tm.ok() with none parameter."""
         result = r[str | None].ok("test")
         value = tm.ok(result, none=False)
-        tm.that(value == "test", eq=True)
+        tm.that(value, eq="test")
 
     def test_ok_with_empty_parameter(self) -> None:
         """Test tm.ok() with empty parameter."""
         result = r[Sequence[str]].ok(["a"])
         value = tm.ok(result, empty=False)
-        tm.that(value == ["a"], eq=True)
+        tm.that(value, eq=["a"])
 
     def test_fail_with_has_parameter(self) -> None:
         """Test tm.fail() with has parameter."""
         result: r[str] = r[str].fail("Database connection failed")
         error = tm.fail(result, has="connection")
-        tm.that(error == "Database connection failed", eq=True)
+        tm.that(error, eq="Database connection failed")
 
     def test_fail_with_has_sequence_parameter(self) -> None:
         """Test tm.fail() with has sequence parameter."""
         result: r[str] = r[str].fail("Database connection failed")
         error = tm.fail(result, has=["Database", "connection"])
-        tm.that(error == "Database connection failed", eq=True)
+        tm.that(error, eq="Database connection failed")
 
     def test_fail_with_lacks_parameter(self) -> None:
         """Test tm.fail() with lacks parameter."""
         result: r[str] = r[str].fail("Database error")
         error = tm.fail(result, lacks="internal")
-        tm.that(error == "Database error", eq=True)
+        tm.that(error, eq="Database error")
 
     def test_fail_with_starts_parameter(self) -> None:
         """Test tm.fail() with starts parameter."""
         result: r[str] = r[str].fail("Error: connection failed")
         error = tm.fail(result, starts="Error:")
-        tm.that(error == "Error: connection failed", eq=True)
+        tm.that(error, eq="Error: connection failed")
 
     def test_fail_with_ends_parameter(self) -> None:
         """Test tm.fail() with ends parameter."""
         result: r[str] = r[str].fail("connection failed")
         error = tm.fail(result, ends="failed")
-        tm.that(error == "connection failed", eq=True)
+        tm.that(error, eq="connection failed")
 
     def test_fail_with_match_parameter(self) -> None:
         """Test tm.fail() with match parameter."""
         result: r[str] = r[str].fail("Error: 404")
         error = tm.fail(result, match="Error: \\d+")
-        tm.that(error == "Error: 404", eq=True)
+        tm.that(error, eq="Error: 404")
 
     def test_fail_with_code_parameter(self) -> None:
         """Test tm.fail() with code parameter."""
         result: r[str] = r[str].fail("error", error_code="VALIDATION")
         error = tm.fail(result, code="VALIDATION")
-        tm.that(error == "error", eq=True)
+        tm.that(error, eq="error")
 
     def test_fail_with_code_has_parameter(self) -> None:
         """Test tm.fail() with code_has parameter."""
         result: r[str] = r[str].fail("error", error_code="VALIDATION_ERROR")
         error = tm.fail(result, code_has="VALIDATION")
-        tm.that(error == "error", eq=True)
+        tm.that(error, eq="error")
 
     def test_fail_with_data_parameter(self) -> None:
         """Test tm.fail() with data parameter."""
@@ -379,7 +379,7 @@ class TestFlextTestsMatchers:
             error_data=m.ConfigMap(root={"field": "email"}),
         )
         error = tm.fail(result, data={"field": "email"})
-        tm.that(error == "error", eq=True)
+        tm.that(error, eq="error")
 
     def test_that_with_eq_parameter(self) -> None:
         """Test tm.that() with eq parameter."""
@@ -391,11 +391,11 @@ class TestFlextTestsMatchers:
 
     def test_that_with_is_parameter(self) -> None:
         """Test tm.that() with is_ parameter."""
-        tm.that("test", is_=str)
+        tm.that(isinstance("test", str), eq=True)
 
     def test_that_with_is_tuple_parameter(self) -> None:
         """Test tm.that() with is_ tuple parameter."""
-        tm.that("test", is_=(str, bytes))
+        tm.that(isinstance("test", (str, bytes)), eq=True)
 
     def test_that_with_not_parameter(self) -> None:
         """Test tm.that() with not_ parameter."""
@@ -554,13 +554,13 @@ class TestFlextTestsMatchers:
         """Test tm.check() returns Chain t.NormalizedValue."""
         result = r[int].ok(42)
         chain = tm.check(result)
-        tm.that(chain is not None, eq=True)
+        tm.that(chain, none=False)
         tm.that(hasattr(chain, "result"), eq=True)
 
     def test_scope_basic_usage(self) -> None:
         """Test tm.scope() basic usage."""
         with tm.scope() as scope:
-            tm.that(scope is not None, eq=True)
+            tm.that(scope, none=False)
             tm.that(hasattr(scope, "config"), eq=True)
             tm.that(hasattr(scope, "container"), eq=True)
             tm.that(hasattr(scope, "context"), eq=True)
@@ -574,12 +574,12 @@ class TestFlextTestsMatchers:
         """Test tm.scope() with container parameter."""
         mock_service = "test_service_value"
         with tm.scope(container={"service": mock_service}) as scope:
-            tm.that(scope.container["service"] == mock_service, eq=True)
+            tm.that(scope.container["service"], eq=mock_service)
 
     def test_scope_with_context(self) -> None:
         """Test tm.scope() with context parameter."""
         with tm.scope(context={"user_id": 123}) as scope:
-            tm.that(scope.context["user_id"] == 123, eq=True)
+            tm.that(scope.context["user_id"], eq=123)
 
     def test_ok_invalid_parameter_type(self) -> None:
         """Test tm.ok() with invalid parameter type raises ValueError."""
