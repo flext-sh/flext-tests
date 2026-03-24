@@ -77,7 +77,7 @@ def _to_runtime_data(value: t.Tests.Testobject) -> t.RuntimeData:
         return t.ConfigMap(
             root={
                 str(k): _to_normalized_or_model(
-                    _OBJECT_DICT_ADAPTER.validate_python({str(k): v})[str(k)]
+                    _OBJECT_DICT_ADAPTER.validate_python({str(k): v})[str(k)],
                 )
                 for k, v in value.items()
             },
