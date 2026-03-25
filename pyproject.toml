@@ -13,8 +13,6 @@ requires = [ "hatchling" ]
 # [CUSTOM] poetry - flext-tests ships one namespace package
 
 
-
-
 authors = [ {email = "team@flext.sh", name = "FLEXT Team"} ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -123,10 +121,6 @@ dev = [
 
 
 
-
-
-
-
 [tool.bandit]
 exclude_dirs = [ "tests" ]
 severity = "MEDIUM"
@@ -134,15 +128,11 @@ skips = [ "B101" ]
 targets = [ "src" ]
 
 
-
-
 # [MANAGED] codespell
 [tool.codespell]
 check-filenames = true
 ignore-words-list = "crate,nd"
 skip = ".git,poetry.lock,.mypy_cache,.pytest_cache,.ruff_cache"
-
-
 
 
 # [MANAGED] coverage
@@ -153,26 +143,18 @@ show_missing = true
 skip_covered = false
 
 
-
-
 # [MANAGED] deptry
 [tool.deptry]
 known_first_party = [ "flext_tests" ]
 pep621_dev_dependency_groups = [ "dev" ]
 
 
-
-
 [tool.hatch.build.targets.wheel]
 packages = [ "src/flext_tests" ]
 
 
-
-
 [tool.hatch.metadata]
 allow-direct-references = true
-
-
 
 
 # [MANAGED] mypy
@@ -189,16 +171,11 @@ python_version = "3.13"
 [tool.poetry]
 
 
-
-
-
 # [MANAGED] pydantic-mypy
 [tool.pydantic-mypy]
 init_forbid_extra = true
 init_typed = true
 warn_required_dynamic_aliases = true
-
-
 
 
 # [MANAGED] pyrefly
@@ -240,8 +217,6 @@ redundant-cast = true
 unannotated-attribute = true
 unannotated-parameter = true
 unannotated-return = true
-
-
 
 
 # [MANAGED] pyright
@@ -320,8 +295,6 @@ markers = [
 minversion = "8.0"
 python_classes = [ "Test*" ]
 python_files = [ "*_test.py", "*_tests.py", "test_*.py" ]
-
-
 
 
 # [MANAGED] ruff
@@ -580,8 +553,6 @@ split-on-trailing-comma = true
 "**/typings.py" = [ "RUF036" ]
 "**/workspace/*.py" = [ "PLC0415", "S404", "S603", "S607" ]
 
-
-
 # [MANAGED] tomlsort
 [tool.tomlsort]
 all = true
@@ -593,8 +564,6 @@ workspace = true
 
 [tool.uv.sources.flext-infra]
 workspace = true
-
-
 
 
 # [MANAGED] yamlfix
