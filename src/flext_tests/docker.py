@@ -36,7 +36,7 @@ from flext_tests import c, m, p, t
 
 docker: WhalesDockerClient = WhalesDockerClient(client_type="docker")
 logger: p.Logger = FlextLogger(__name__)
-_HOST_BINDINGS_ADAPTER = TypeAdapter(Sequence[t.StrMapping])
+_HOST_BINDINGS_ADAPTER: TypeAdapter[Sequence[t.StrMapping]] = TypeAdapter(Sequence[t.StrMapping])
 
 
 class FlextTestsDocker:

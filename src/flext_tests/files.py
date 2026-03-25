@@ -45,11 +45,11 @@ _FormatLiteral = c.Tests.Files.Format
 _CompareModeLiteral = c.Tests.Files.CompareMode
 _OperationLiteral = c.Tests.Files.Operation
 _ErrorModeLiteral = c.Tests.Files.ErrorMode
-_OBJECT_LIST_ADAPTER = TypeAdapter(
+_OBJECT_LIST_ADAPTER: TypeAdapter[Sequence[t.Tests.Testobject]] = TypeAdapter(
     Sequence[t.Tests.Testobject],
     config=ConfigDict(arbitrary_types_allowed=True),
 )
-_OBJECT_DICT_ADAPTER = TypeAdapter(
+_OBJECT_DICT_ADAPTER: TypeAdapter[Mapping[str, t.Tests.Testobject]] = TypeAdapter(
     Mapping[str, t.Tests.Testobject],
     config=ConfigDict(arbitrary_types_allowed=True),
 )
@@ -420,7 +420,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         name: str,
         directory: Path,
         *,
-        fmt: _FormatLiteral = "auto",
+        fmt: _FormatLiteral = c.Tests.Files.Format.AUTO,
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         indent: int = c.Tests.Files.DEFAULT_JSON_INDENT,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
@@ -478,9 +478,9 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         items: t.Tests.Files.BatchFiles,
         *,
         directory: Path | None = None,
-        operation: _OperationLiteral = "create",
+        operation: _OperationLiteral = c.Tests.Files.Operation.CREATE,
         model: type[TModel] | None = None,
-        on_error: _ErrorModeLiteral = "collect",
+        on_error: _ErrorModeLiteral = c.Tests.Files.ErrorMode.COLLECT,
         parallel: bool = False,
     ) -> r[m.Tests.BatchResult]:
         """Batch file operations.
@@ -528,11 +528,11 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             return r[m.Tests.BatchResult].fail(
                 f"Invalid parameters for batch operation: {exc}",
             )
-        files_dict: Mapping[str, t.Tests.Testobject]
+        files_dict: MutableMapping[str, t.Tests.Testobject]
         if isinstance(params.files, Mapping):
             files_dict = {str(k): v for k, v in params.files.items()}
         elif not isinstance(params.files, str):
-            files_dict: Mapping[str, t.Tests.Testobject] = {}
+            files_dict = {}
             for item in params.files:
                 if (
                     isinstance(item, tuple)
@@ -703,7 +703,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         file1: Path,
         file2: Path,
         *,
-        mode: _CompareModeLiteral = "content",
+        mode: _CompareModeLiteral = c.Tests.Files.CompareMode.CONTENT,
         ignore_ws: bool = False,
         ignore_case: bool = False,
         pattern: str | None = None,
@@ -791,7 +791,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         name: str = c.Tests.Files.DEFAULT_FILENAME,
         directory: Path | None = None,
         *,
-        fmt: _FormatLiteral = "auto",
+        fmt: _FormatLiteral = c.Tests.Files.Format.AUTO,
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         indent: int = c.Tests.Files.DEFAULT_JSON_INDENT,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
@@ -1105,7 +1105,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         path: Path,
         *,
         model_cls: None = None,
-        fmt: _FormatLiteral = "auto",
+        fmt: _FormatLiteral = c.Tests.Files.Format.AUTO,
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
@@ -1117,7 +1117,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         path: Path,
         *,
         model_cls: type[TModel],
-        fmt: _FormatLiteral = "auto",
+        fmt: _FormatLiteral = c.Tests.Files.Format.AUTO,
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
@@ -1128,7 +1128,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         path: Path,
         *,
         model_cls: type[TModel] | None = None,
-        fmt: _FormatLiteral = "auto",
+        fmt: _FormatLiteral = c.Tests.Files.Format.AUTO,
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
@@ -1287,13 +1287,13 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             return (dict1, dict2)
         filter_keys_set = set(keys) if keys is not None else None
         exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
-        config_root1: Mapping[str, t.ValueOrModel] = {
+        config_root1: MutableMapping[str, t.ValueOrModel] = {
             str(k): _to_container_value(
                 self._to_config_map_value(self._to_payload_value(v)),
             )
             for k, v in dict1.items()
         }
-        config_root2: Mapping[str, t.ValueOrModel] = {
+        config_root2: MutableMapping[str, t.ValueOrModel] = {
             str(k): _to_container_value(
                 self._to_config_map_value(self._to_payload_value(v)),
             )
@@ -1333,7 +1333,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         if isinstance(value, BaseModel):
             return value
         if self._is_mapping(value):
-            coerce_root: Mapping[str, t.ValueOrModel] = {
+            coerce_root: MutableMapping[str, t.ValueOrModel] = {
                 str(key): _to_container_value(
                     self._to_config_map_value(self._to_payload_value(item)),
                 )
@@ -1359,7 +1359,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         if isinstance(value, str | bytes):
             return value
         if self._is_mapping(value):
-            read_root: Mapping[str, t.ValueOrModel] = {
+            read_root: MutableMapping[str, t.ValueOrModel] = {
                 str(key): _to_container_value(
                     self._to_config_map_value(self._to_payload_value(item)),
                 )
@@ -1497,22 +1497,22 @@ class FlextTestsFiles(s[t.NormalizedValue]):
 
     def _normalize_create_format(self, fmt: str) -> _FormatLiteral:
         if fmt in {"txt", "md"}:
-            return "text"
+            return c.Tests.Files.Format.TEXT
         match fmt:
             case "auto":
-                return "auto"
+                return c.Tests.Files.Format.AUTO
             case "text":
-                return "text"
+                return c.Tests.Files.Format.TEXT
             case "bin":
-                return "bin"
+                return c.Tests.Files.Format.BIN
             case "json":
-                return "json"
+                return c.Tests.Files.Format.JSON
             case "yaml":
-                return "yaml"
+                return c.Tests.Files.Format.YAML
             case "csv":
-                return "csv"
+                return c.Tests.Files.Format.CSV
             case _:
-                return "auto"
+                return c.Tests.Files.Format.AUTO
 
     def _parse_content_metadata(
         self,
@@ -1567,7 +1567,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                         else dict(t.ConfigMap(root={}).root)
                     )
                 if self._is_mapping(parsed_raw):
-                    parse_root: Mapping[str, t.ValueOrModel] = {
+                    parse_root: MutableMapping[str, t.ValueOrModel] = {
                         str(key): _to_container_value(
                             self._to_config_map_value(self._to_payload_value(v)),
                         )
@@ -1701,13 +1701,13 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         dict1, dict2 = parsed
         filter_keys_set = set(keys) if keys is not None else None
         exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
-        left_root: Mapping[str, t.ValueOrModel] = {
+        left_root: MutableMapping[str, t.ValueOrModel] = {
             str(k): _to_container_value(
                 self._to_config_map_value(self._to_payload_value(v)),
             )
             for k, v in dict1.items()
         }
-        right_root: Mapping[str, t.ValueOrModel] = {
+        right_root: MutableMapping[str, t.ValueOrModel] = {
             str(k): _to_container_value(
                 self._to_config_map_value(self._to_payload_value(v)),
             )
@@ -1737,6 +1737,8 @@ class FlextTestsFiles(s[t.NormalizedValue]):
     ):
         """Try to parse both contents as dicts in given format."""
         try:
+            dict1_raw: Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject] | None
+            dict2_raw: Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject] | None
             match fmt:
                 case "json":
                     adapter = _OBJECT_DICT_ADAPTER

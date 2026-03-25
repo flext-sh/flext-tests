@@ -316,7 +316,7 @@ class FlextTestsMatchersUtilities:
     ) -> None:
         """Shared has/lacks containment check for ok(), fail(), and that()."""
         if has is not None:
-            items = (
+            items: Sequence[t.Tests.Testobject | t.Tests.Matcher.MatcherKwargValue | t.NormalizedValue] = (
                 list(has)
                 if FlextTestsMatchersUtilities._is_non_string_sequence(has)
                 else [has]
@@ -760,7 +760,7 @@ class FlextTestsMatchersUtilities:
                                 for k, v in validated.items()
                             }
                         except ValidationError:
-                            extract_data: Mapping[str, t.ValueOrModel] = {}
+                            extract_data = {}
                     extracted = u.extract(extract_data, path_str)
                     if extracted.is_failure:
                         raise AssertionError(
@@ -876,7 +876,7 @@ class FlextTestsMatchersUtilities:
                                 result_value,
                             )
                         except ValidationError:
-                            deep_input: Mapping[str, t.Tests.Testobject] = {}
+                            deep_input = {}
                     match_result = _deep_match(deep_input, params.deep)
                     if not match_result.matched:
                         raise AssertionError(

@@ -207,7 +207,7 @@ class FlextTestsUtilities(FlextUtilities):
         @staticmethod
         def entity_factory_for[T: BaseModel](
             model_cls: type[T],
-        ) -> FlextTestsProtocols.EntityFactory[T]:
+        ) -> FlextTestsProtocols.Tests.EntityFactory[T]:
             """Build an EntityFactory for the given class (DRY helper)."""
 
             def _factory(
@@ -223,7 +223,7 @@ class FlextTestsUtilities(FlextUtilities):
         @staticmethod
         def value_factory_for[T: BaseModel](
             model_cls: type[T],
-        ) -> FlextTestsProtocols.ValueFactory[T]:
+        ) -> FlextTestsProtocols.Tests.ValueFactory[T]:
             """Build a ValueFactory for the given class (DRY helper)."""
 
             def _factory(*, data: str, count: int) -> T:
@@ -236,7 +236,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_failure[TResult](
-                result: r[TResult] | p.Result[TResult],
+                result: r[TResult],
                 expected_error: str | None = None,
             ) -> str:
                 """Assert result is failure and return error message.
@@ -268,7 +268,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_failure_with_error[T](
-                result: r[T] | p.Result[T],
+                result: r[T],
                 expected_error: str | None = None,
             ) -> None:
                 """Assert result is failure and has expected error.
@@ -290,7 +290,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_result_failure_with_error[T](
-                result: r[T] | p.Result[T],
+                result: r[T],
                 expected_error: str,
             ) -> None:
                 """Assert result failure with error (compat alias).
@@ -310,7 +310,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_success[TResult](
-                result: r[TResult] | p.Result[TResult],
+                result: r[TResult],
                 error_msg: str | None = None,
             ) -> TResult:
                 """Assert result is success and return unwrapped value.
@@ -336,7 +336,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_success_with_value[T](
-                result: r[T] | p.Result[T],
+                result: r[T],
                 expected_value: T,
             ) -> None:
                 """Assert result is success and has expected value.
@@ -616,7 +616,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_failure_with_error[T](
-                result: r[T] | p.Result[T],
+                result: r[T],
                 expected_error: str | None = None,
             ) -> None:
                 """Delegate to Result.assert_failure_with_error."""
@@ -627,7 +627,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_result_failure_with_error[T](
-                result: r[T] | p.Result[T],
+                result: r[T],
                 expected_error: str,
             ) -> None:
                 """Delegate to Result.assert_result_failure_with_error."""
@@ -638,7 +638,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_success_with_value[T](
-                result: r[T] | p.Result[T],
+                result: r[T],
                 expected_value: T,
             ) -> None:
                 """Delegate to Result.assert_success_with_value."""
@@ -1170,7 +1170,7 @@ class FlextTestsUtilities(FlextUtilities):
             def create_test_entities_batch[TEntity](
                 names: t.StrSequence,
                 values: Sequence[t.Tests.Testobject],
-                entity_class: FlextTestsProtocols.EntityFactory[TEntity],
+                entity_class: FlextTestsProtocols.Tests.EntityFactory[TEntity],
                 remove_ids: Sequence[bool] | None = None,
             ) -> r[Sequence[TEntity]]:
                 """Create batch of test entities.
@@ -1212,7 +1212,7 @@ class FlextTestsUtilities(FlextUtilities):
             def create_test_entity_instance[TEntity](
                 name: str,
                 value: t.Tests.Testobject,
-                entity_class: FlextTestsProtocols.EntityFactory[TEntity],
+                entity_class: FlextTestsProtocols.Tests.EntityFactory[TEntity],
                 *,
                 remove_id: bool = False,
             ) -> TEntity:
@@ -1238,7 +1238,7 @@ class FlextTestsUtilities(FlextUtilities):
             def create_test_value_object_instance[TValue](
                 data: str,
                 count: int,
-                value_class: FlextTestsProtocols.ValueFactory[TValue],
+                value_class: FlextTestsProtocols.Tests.ValueFactory[TValue],
             ) -> TValue:
                 """Create a test value t.NormalizedValue instance.
 
@@ -1257,7 +1257,7 @@ class FlextTestsUtilities(FlextUtilities):
             def create_test_value_objects_batch[TValue](
                 data_list: t.StrSequence,
                 count_list: Sequence[int],
-                value_class: FlextTestsProtocols.ValueFactory[TValue],
+                value_class: FlextTestsProtocols.Tests.ValueFactory[TValue],
             ) -> Sequence[TValue]:
                 """Create batch of test value objects.
 
