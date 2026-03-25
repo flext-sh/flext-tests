@@ -63,7 +63,7 @@ class FlextValidatorSettings:
             if not isinstance(override, dict):
                 continue
             module_raw: _TomlValue = override.get("module", "unknown")
-            module: str = str(module_raw) if module_raw is not None else "unknown"
+            module: str = str(module_raw)
             is_approved = u.Tests.Validator.is_approved(
                 "CONFIG-001",
                 file_path,
