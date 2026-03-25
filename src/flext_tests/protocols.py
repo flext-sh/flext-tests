@@ -59,8 +59,5 @@ class FlextTestsProtocols(FlextProtocols):
                 ...
 
 
-EntityFactory = FlextTestsProtocols.Tests.EntityFactory
-ValueFactory = FlextTestsProtocols.Tests.ValueFactory
-
 p = FlextTestsProtocols
 __all__ = ["FlextTestsProtocols", "p"]

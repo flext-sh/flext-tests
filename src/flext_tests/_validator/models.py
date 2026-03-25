@@ -24,9 +24,6 @@ class FlextValidatorModels(m):
     Uses c.Tests.Validator for constants (Severity, Rules, Defaults, Approved patterns).
     """
 
-    Violation = m.Tests.Violation
-    ScanResult = m.Tests.ScanResult
-
     class ScanCommon(m.Value):
         """Shared routines to build ScanResult payloads."""
 

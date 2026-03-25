@@ -135,7 +135,7 @@ class FlextTestsMatchersUtilities:
     ) -> t.Tests.Testobject:
         if isinstance(value, type):
             return value
-        if t.Guards.is_testobject_set(value):
+        if t.Tests.Guards.is_testobject_set(value):
             return frozenset(
                 FlextTestsMatchersUtilities._to_test_payload(item) for item in value
             )
@@ -186,12 +186,12 @@ class FlextTestsMatchersUtilities:
             return value
         if isinstance(value, BaseModel):
             return str(value)
-        if t.Guards.is_testobject_mapping(value):
+        if t.Tests.Guards.is_testobject_mapping(value):
             return {
                 str(k): FlextTestsMatchersUtilities._to_normalized(v)
                 for k, v in value.items()
             }
-        if t.Guards.is_testobject_sequence(value):
+        if t.Tests.Guards.is_testobject_sequence(value):
             return [FlextTestsMatchersUtilities._to_normalized(item) for item in value]
         return str(value)
 
@@ -210,12 +210,12 @@ class FlextTestsMatchersUtilities:
             return value.decode("utf-8", errors="replace")
         if isinstance(value, datetime):
             return value
-        if t.Guards.is_testobject_mapping(value):
+        if t.Tests.Guards.is_testobject_mapping(value):
             return {
                 str(k): FlextTestsMatchersUtilities._to_normalized(v)
                 for k, v in value.items()
             }
-        if t.Guards.is_testobject_sequence(value):
+        if t.Tests.Guards.is_testobject_sequence(value):
             return [FlextTestsMatchersUtilities._to_normalized(item) for item in value]
         return str(value)
 
@@ -225,7 +225,7 @@ class FlextTestsMatchersUtilities:
     ) -> t.Tests.Testobject:
         if isinstance(value, type):
             return value
-        if t.Guards.is_testobject_set(value):
+        if t.Tests.Guards.is_testobject_set(value):
             return frozenset(str(item) for item in value)
         if isinstance(value, (BaseModel, str, int, float, bool, Path)):
             return value
@@ -977,7 +977,7 @@ class FlextTestsMatchersUtilities:
                     container_dict: Mapping[str, t.Tests.Testobject] = {
                         k: v
                         for k, v in (params.container or {}).items()
-                        if t.Guards.is_general_value(v)
+                        if t.Tests.Guards.is_general_value(v)
                     }
                     context_map: Mapping[str, t.Tests.Testobject] = {}
                     if params.context:
@@ -1185,7 +1185,7 @@ class FlextTestsMatchersUtilities:
                 if only_type_check:
                     return
                 subject = value
-                if t.Guards.is_testobject_result(subject):
+                if t.Tests.Guards.is_testobject_result(subject):
                     result_obj: r[t.Tests.Testobject] = subject
                     actual_value: t.Tests.Testobject | str = ""
                     if params.ok is not None:

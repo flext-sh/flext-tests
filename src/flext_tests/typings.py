@@ -264,9 +264,6 @@ class FlextTestsTypes(FlextTypes):
                 return isinstance(value, FlextResult)
 
 
-FlextTestsTypes.Guards = FlextTestsTypes.Tests.Guards
-Guards = FlextTestsTypes.Tests.Guards
-
 t = FlextTestsTypes
 
 __all__ = ["FlextTestsTypes", "t"]

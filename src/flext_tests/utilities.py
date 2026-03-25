@@ -171,7 +171,7 @@ class FlextTestsUtilities(FlextUtilities):
             """Extract a BaseModel from various tt.model() return shapes."""
             if isinstance(result, expected):
                 return result
-            if t.Guards.is_testobject_result(result) and result.is_success:
+            if t.Tests.Guards.is_testobject_result(result) and result.is_success:
                 payload = result.value
                 if isinstance(payload, expected):
                     return payload
@@ -1936,8 +1936,6 @@ class FlextTestsUtilities(FlextUtilities):
                 """
                 return _length_validate_impl(value, spec)
 
-
-Validation = FlextTestsUtilities.Tests.Validation
 
 u = FlextTestsUtilities
 
