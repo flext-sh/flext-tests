@@ -1458,7 +1458,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         # bytes needs handling before u.is_result_like (bytes not in t.GuardInput)
         if isinstance(content, bytes):
             return content
-        # u.is_result_like narrows to p.ResultLike[t.RuntimeAtomic] — proper FLEXT pattern
+        # u.is_result_like narrows to p.Result[t.RuntimeAtomic] — proper FLEXT pattern
         if u.is_result_like(content):
             if content.is_failure:
                 error_msg = content.error or "r failure"

@@ -27,30 +27,6 @@ class FlextTestsProtocols(FlextProtocols):
     Protocols cannot import models - only other protocols and types.
     """
 
-    class EntityFactory[TEntity](Protocol):
-        """Factory protocol that builds test entity objects.
-
-        Methods:
-            __call__: build an entity instance given name/value.
-
-        """
-
-        def __call__(self, *, name: str, value: t.Tests.Testobject) -> TEntity:
-            """Build an entity instance."""
-            ...
-
-    class ValueFactory[TValue](Protocol):
-        """Factory protocol that builds value objects for test helpers.
-
-        Methods:
-            __call__: build a typed value instance given data and count.
-
-        """
-
-        def __call__(self, *, data: str, count: int) -> TValue:
-            """Build a typed value instance."""
-            ...
-
     class Tests:
         """Test-specific protocol definitions namespace.
 
@@ -58,6 +34,33 @@ class FlextTestsProtocols(FlextProtocols):
         Base protocols from FlextProtocols.* are inherited automatically.
         """
 
+        class EntityFactory[TEntity](Protocol):
+            """Factory protocol that builds test entity objects.
+
+            Methods:
+                __call__: build an entity instance given name/value.
+
+            """
+
+            def __call__(self, *, name: str, value: t.Tests.Testobject) -> TEntity:
+                """Build an entity instance."""
+                ...
+
+        class ValueFactory[TValue](Protocol):
+            """Factory protocol that builds value objects for test helpers.
+
+            Methods:
+                __call__: build a typed value instance given data and count.
+
+            """
+
+            def __call__(self, *, data: str, count: int) -> TValue:
+                """Build a typed value instance."""
+                ...
+
+
+EntityFactory = FlextTestsProtocols.Tests.EntityFactory
+ValueFactory = FlextTestsProtocols.Tests.ValueFactory
 
 p = FlextTestsProtocols
 __all__ = ["FlextTestsProtocols", "p"]

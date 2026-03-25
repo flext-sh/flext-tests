@@ -206,63 +206,66 @@ class FlextTestsTypes(FlextTypes):
             type EnvironmentSpec = FlextTypes.StrMapping
             "Environment specification: mapping of env var names to values."
 
-    class Guards:
-        """TypeGuard functions for type narrowing.
+        class Guards:
+            """TypeGuard functions for type narrowing.
 
-        These guards use TypeIs to provide clean narrowing for recursive
-        _Testobject types, avoiding pyright's partially-unknown type issues
-        that occur when isinstance narrowing on unions containing Callable[...]
-        or empty Protocol members (p.Base).
-        """
+            These guards use TypeIs to provide clean narrowing for recursive
+            _Testobject types, avoiding pyright's partially-unknown type issues
+            that occur when isinstance narrowing on unions containing Callable[...]
+            or empty Protocol members (p.Base).
+            """
 
-        @staticmethod
-        def is_general_value(
-            value: FlextTestsTypes.Tests.Testobject,
-        ) -> TypeIs[FlextTestsTypes.Tests.Testobject]:
-            """Check if value is payload-compatible."""
-            if value is None:
-                return True
-            if isinstance(value, (str, int, float, bool, bytes)):
-                return True
-            if isinstance(value, BaseModel):
-                return True
-            return isinstance(value, (list, dict))
+            @staticmethod
+            def is_general_value(
+                value: FlextTestsTypes.Tests.Testobject,
+            ) -> TypeIs[FlextTestsTypes.Tests.Testobject]:
+                """Check if value is payload-compatible."""
+                if value is None:
+                    return True
+                if isinstance(value, (str, int, float, bool, bytes)):
+                    return True
+                if isinstance(value, BaseModel):
+                    return True
+                return isinstance(value, (list, dict))
 
-        @staticmethod
-        def is_testobject_mapping(
-            value: FlextTestsTypes.Tests.Testobject
-            | FlextTestsTypes.Tests.Matcher.MatcherKwargValue,
-        ) -> TypeIs[Mapping[str, FlextTestsTypes.Tests.Testobject]]:
-            """Narrow _Testobject to Mapping[str, _Testobject]."""
-            return isinstance(value, Mapping)
+            @staticmethod
+            def is_testobject_mapping(
+                value: FlextTestsTypes.Tests.Testobject
+                | FlextTestsTypes.Tests.Matcher.MatcherKwargValue,
+            ) -> TypeIs[Mapping[str, FlextTestsTypes.Tests.Testobject]]:
+                """Narrow _Testobject to Mapping[str, _Testobject]."""
+                return isinstance(value, Mapping)
 
-        @staticmethod
-        def is_testobject_set(
-            value: FlextTestsTypes.Tests.Testobject
-            | FlextTestsTypes.Tests.Matcher.MatcherKwargValue,
-        ) -> TypeIs[set[FlextTestsTypes.Tests.Testobject] | frozenset[str]]:
-            """Narrow _Testobject to set or frozenset."""
-            return isinstance(value, (set, frozenset))
+            @staticmethod
+            def is_testobject_set(
+                value: FlextTestsTypes.Tests.Testobject
+                | FlextTestsTypes.Tests.Matcher.MatcherKwargValue,
+            ) -> TypeIs[set[FlextTestsTypes.Tests.Testobject] | frozenset[str]]:
+                """Narrow _Testobject to set or frozenset."""
+                return isinstance(value, (set, frozenset))
 
-        @staticmethod
-        def is_testobject_sequence(
-            value: FlextTestsTypes.Tests.Testobject
-            | FlextTestsTypes.Tests.Matcher.MatcherKwargValue,
-        ) -> TypeIs[Sequence[FlextTestsTypes.Tests.Testobject]]:
-            """Narrow _Testobject to non-string Sequence."""
-            return isinstance(value, Sequence) and not isinstance(
-                value,
-                (str, bytes, bytearray),
-            )
+            @staticmethod
+            def is_testobject_sequence(
+                value: FlextTestsTypes.Tests.Testobject
+                | FlextTestsTypes.Tests.Matcher.MatcherKwargValue,
+            ) -> TypeIs[Sequence[FlextTestsTypes.Tests.Testobject]]:
+                """Narrow _Testobject to non-string Sequence."""
+                return isinstance(value, Sequence) and not isinstance(
+                    value,
+                    (str, bytes, bytearray),
+                )
 
-        @staticmethod
-        def is_testobject_result(
-            value: FlextTestsTypes.Tests.Testobject
-            | FlextTestsTypes.Tests.Matcher.MatcherKwargValue,
-        ) -> TypeIs[FlextResult[FlextTestsTypes.Tests.Testobject]]:
-            """Narrow _Testobject to FlextResult."""
-            return isinstance(value, FlextResult)
+            @staticmethod
+            def is_testobject_result(
+                value: FlextTestsTypes.Tests.Testobject
+                | FlextTestsTypes.Tests.Matcher.MatcherKwargValue,
+            ) -> TypeIs[FlextResult[FlextTestsTypes.Tests.Testobject]]:
+                """Narrow _Testobject to FlextResult."""
+                return isinstance(value, FlextResult)
 
+
+FlextTestsTypes.Guards = FlextTestsTypes.Tests.Guards
+Guards = FlextTestsTypes.Tests.Guards
 
 t = FlextTestsTypes
 
