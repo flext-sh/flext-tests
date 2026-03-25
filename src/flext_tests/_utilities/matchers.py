@@ -67,7 +67,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import ClassVar, TypeIs, overload
 
-from flext_core import m as core_m, r, t as core_t, u
+from flext_core import r, u
 from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
 
 from flext_tests import (
@@ -196,7 +196,7 @@ class FlextTestsMatchersUtilities:
         return str(value)
 
     @staticmethod
-    def _to_extract_value(value: t.Tests.Testobject) -> core_t.ValueOrModel:
+    def _to_extract_value(value: t.Tests.Testobject) -> t.ValueOrModel:
         """Convert _Testobject to ValueOrModel for extract() calls."""
         if value is None:
             return None
@@ -576,7 +576,7 @@ class FlextTestsMatchersUtilities:
                         as_str=True,
                     )
                     if params.starts is not None and (
-                        not u.chk(err, core_m.GuardCheckSpec(starts=params.starts))
+                        not u.chk(err, m.GuardCheckSpec(starts=params.starts))
                     ):
                         raise AssertionError(
                             params.msg
@@ -586,7 +586,7 @@ class FlextTestsMatchersUtilities:
                             ),
                         )
                     if params.ends is not None and (
-                        not u.chk(err, core_m.GuardCheckSpec(ends=params.ends))
+                        not u.chk(err, m.GuardCheckSpec(ends=params.ends))
                     ):
                         raise AssertionError(
                             params.msg
@@ -596,7 +596,7 @@ class FlextTestsMatchersUtilities:
                             ),
                         )
                     if params.match is not None and (
-                        not u.chk(err, core_m.GuardCheckSpec(match=params.match))
+                        not u.chk(err, m.GuardCheckSpec(match=params.match))
                     ):
                         raise AssertionError(
                             params.msg
@@ -747,7 +747,7 @@ class FlextTestsMatchersUtilities:
                             params.msg
                             or f"Path extraction requires dict or model, got {type(result_value).__name__}",
                         )
-                    extract_data: BaseModel | Mapping[str, core_t.ValueOrModel]
+                    extract_data: BaseModel | Mapping[str, t.ValueOrModel]
                     if isinstance(result_value, BaseModel):
                         extract_data = result_value
                     else:
@@ -760,7 +760,7 @@ class FlextTestsMatchersUtilities:
                                 for k, v in validated.items()
                             }
                         except ValidationError:
-                            extract_data: Mapping[str, core_t.ValueOrModel] = {}
+                            extract_data: Mapping[str, t.ValueOrModel] = {}
                     extracted = u.extract(extract_data, path_str)
                     if extracted.is_failure:
                         raise AssertionError(
@@ -794,7 +794,7 @@ class FlextTestsMatchersUtilities:
                     is_type = params.is_ if not isinstance(params.is_, tuple) else None
                     if not u.chk(
                         FlextTestsMatchersUtilities._to_chk_value(result_value),
-                        core_m.GuardCheckSpec(
+                        m.GuardCheckSpec(
                             eq=FlextTestsMatchersUtilities._to_chk_value(params.eq)
                             if params.eq is not None
                             else None,
@@ -1247,7 +1247,7 @@ class FlextTestsMatchersUtilities:
                     ne_value = raw_ne if "ne" in kwargs else params.ne
                     if not u.chk(
                         FlextTestsMatchersUtilities._to_chk_value(subject_payload),
-                        core_m.GuardCheckSpec(
+                        m.GuardCheckSpec(
                             eq=FlextTestsMatchersUtilities._to_chk_value(eq_value)
                             if eq_value is not None
                             else None,

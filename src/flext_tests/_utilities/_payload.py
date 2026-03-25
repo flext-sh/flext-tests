@@ -20,7 +20,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import ClassVar
 
-from flext_core import FlextUtilities, m as core_m
+from flext_core import FlextUtilities
 from pydantic import BaseModel, ConfigDict, RootModel, TypeAdapter, ValidationError
 
 from flext_tests import m, t
@@ -207,11 +207,11 @@ class FlextTestsPayloadUtilities:
         except TypeError:
             return False
         if isinstance(spec, int):
-            return FlextUtilities.chk(actual_len, core_m.GuardCheckSpec(eq=spec))
+            return FlextUtilities.chk(actual_len, m.GuardCheckSpec(eq=spec))
         min_len, max_len = spec
         return FlextUtilities.chk(
             actual_len,
-            core_m.GuardCheckSpec(gte=min_len, lte=max_len),
+            m.GuardCheckSpec(gte=min_len, lte=max_len),
         )
 
     @staticmethod
