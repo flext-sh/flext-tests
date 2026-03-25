@@ -1737,8 +1737,12 @@ class FlextTestsFiles(s[t.NormalizedValue]):
     ):
         """Try to parse both contents as dicts in given format."""
         try:
-            dict1_raw: Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject] | None
-            dict2_raw: Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject] | None
+            dict1_raw: (
+                Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject] | None
+            )
+            dict2_raw: (
+                Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject] | None
+            )
             match fmt:
                 case "json":
                     adapter = _OBJECT_DICT_ADAPTER

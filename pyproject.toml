@@ -12,7 +12,6 @@ requires = [ "hatchling" ]
 
 # [CUSTOM] poetry - flext-tests ships one namespace package
 
-# [MANAGED] consolidated development dependencies
 authors = [ {email = "team@flext.sh", name = "FLEXT Team"} ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -54,6 +53,7 @@ requires-python = ">=3.13,<3.14"
 urls = {Documentation = "https://github.com/flext-sh/flext-tests/blob/main/README.md", Homepage = "https://github.com/flext-sh/flext-tests", Repository = "https://github.com/flext-sh/flext-tests"}
 version = "0.12.0-dev"
 
+# [MANAGED] consolidated development dependencies
 [project.optional-dependencies]
 dev = [
   "autoflake>=2.3.1",
@@ -125,14 +125,12 @@ skips = [ "B101" ]
 targets = [ "src" ]
 
 # [MANAGED] codespell
-
 [tool.codespell]
 check-filenames = true
 ignore-words-list = "crate,nd"
 skip = ".git,poetry.lock,.mypy_cache,.pytest_cache,.ruff_cache"
 
 # [MANAGED] coverage
-
 [tool.coverage.report]
 fail_under = 15
 precision = 2
@@ -140,23 +138,19 @@ show_missing = true
 skip_covered = false
 
 # [MANAGED] deptry
-
 [tool.deptry]
 known_first_party = [
   "flext_tests",
 ]
 pep621_dev_dependency_groups = [ "dev" ]
 
-# [MANAGED] mypy
-
 [tool.hatch.build.targets.wheel]
 packages = [ "src/flext_tests" ]
-
-# [MANAGED] pydantic-mypy
 
 [tool.hatch.metadata]
 allow-direct-references = true
 
+# [MANAGED] mypy
 [tool.mypy]
 
 disable_error_code = [
@@ -173,13 +167,13 @@ python_version = "3.13"
 
 [tool.poetry]
 
+# [MANAGED] pydantic-mypy
 [tool.pydantic-mypy]
 init_forbid_extra = true
 init_typed = true
 warn_required_dynamic_aliases = true
 
 # [MANAGED] pyrefly
-
 [tool.pyrefly]
 disable-project-excludes-heuristics = true
 ignore-errors-in-generated-code = true
@@ -231,12 +225,19 @@ unannotated-parameter = true
 unannotated-return = true
 
 # [MANAGED] pyright
-
 [tool.pyright]
 exclude = [
   "**/.*",
+  "**/.venv",
+  "**/.venv/**",
   "**/__pycache__",
+  "**/dist-packages",
+  "**/dist-packages/**",
   "**/node_modules",
+  "**/site-packages",
+  "**/site-packages/**",
+  "**/venv",
+  "**/venv/**",
   ".mypy_cache",
   ".pytest_cache",
   ".ruff_cache",
@@ -283,6 +284,7 @@ extraPaths = [ ".", "src" ]
 reportPrivateUsage = "none"
 root = "tests"
 
+# [MANAGED] pytest
 [tool.pytest.ini_options]
 addopts = [ "--strict-markers" ]
 enable_assertion_pass_hook = true
@@ -306,7 +308,6 @@ python_classes = [ "Test*" ]
 python_files = [ "*_test.py", "*_tests.py", "test_*.py" ]
 
 # [MANAGED] ruff
-
 [tool.ruff]
 exclude = [
   ".git",
@@ -412,7 +413,6 @@ split-on-trailing-comma = true
 
 [tool.ruff.lint.per-file-ignores]
 
-# [MANAGED] tomlsort
 "**/.vulture_whitelist.py" = [
   "ALL",
 ]
@@ -702,6 +702,7 @@ split-on-trailing-comma = true
   "S607",
 ]
 
+# [MANAGED] tomlsort
 [tool.tomlsort]
 all = true
 in_place = true
@@ -712,17 +713,16 @@ sort_first = [
   "tool",
 ]
 
-# [MANAGED] yamlfix
+[tool.uv.sources.flext-core]
+workspace = true
 
+[tool.uv.sources.flext-infra]
+workspace = true
+
+# [MANAGED] yamlfix
 [tool.yamlfix]
 explicit_start = false
 line_length = 88
 preserve_quotes = true
 section_whitelines = 1
 whitelines = 1
-
-[tool.uv.sources.flext-core]
-workspace = true
-
-[tool.uv.sources.flext-infra]
-workspace = true

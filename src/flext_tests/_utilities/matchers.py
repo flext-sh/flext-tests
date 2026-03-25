@@ -316,7 +316,11 @@ class FlextTestsMatchersUtilities:
     ) -> None:
         """Shared has/lacks containment check for ok(), fail(), and that()."""
         if has is not None:
-            items: Sequence[t.Tests.Testobject | t.Tests.Matcher.MatcherKwargValue | t.NormalizedValue] = (
+            items: Sequence[
+                t.Tests.Testobject
+                | t.Tests.Matcher.MatcherKwargValue
+                | t.NormalizedValue
+            ] = (
                 list(has)
                 if FlextTestsMatchersUtilities._is_non_string_sequence(has)
                 else [has]
