@@ -96,8 +96,8 @@ class FlextTestsMatchersUtilities:
     ] = TypeAdapter(Sequence[t.Tests.TestobjectSerializable])
 
     @staticmethod
-    def _is_non_string_sequence(
-        value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
+    def _is_non_string_sequence[T](
+        value: T,
     ) -> TypeIs[Sequence[t.Tests.Testobject]]:
         return isinstance(value, Sequence) and (
             not isinstance(value, (str, bytes, bytearray))
@@ -130,12 +130,12 @@ class FlextTestsMatchersUtilities:
         return callable(value)
 
     @staticmethod
-    def _to_test_payload(
-        value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
+    def _to_test_payload[TInput](
+        value: TInput,
     ) -> t.Tests.Testobject:
         if isinstance(value, type):
             return value
-        if t.Tests.Guards.is_testobject_set(value):
+        if isinstance(value, (set, frozenset)):
             return frozenset(
                 FlextTestsMatchersUtilities._to_test_payload(item) for item in value
             )
@@ -220,8 +220,8 @@ class FlextTestsMatchersUtilities:
         return str(value)
 
     @staticmethod
-    def _as_guard_input(
-        value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
+    def _as_guard_input[TInput](
+        value: TInput,
     ) -> t.Tests.Testobject:
         if isinstance(value, type):
             return value
@@ -257,8 +257,8 @@ class FlextTestsMatchersUtilities:
         return FlextTestsMatchersUtilities._to_test_payload(value)
 
     @staticmethod
-    def _to_chk_value(
-        value: t.Tests.Matcher.MatcherKwargValue | t.Tests.Testobject,
+    def _to_chk_value[TInput](
+        value: TInput,
     ) -> t.NormalizedValue:
         """Convert a test value to NormalizedValue for use with u.chk()."""
         if value is None:
@@ -300,8 +300,8 @@ class FlextTestsMatchersUtilities:
         return str(value)
 
     @staticmethod
-    def _check_has_lacks(
-        value: t.Tests.Testobject,
+    def _check_has_lacks[TInput](
+        value: TInput,
         has: t.Tests.Matcher.ContainmentSpec
         | t.Tests.Matcher.MatcherKwargValue
         | t.NormalizedValue
@@ -664,19 +664,19 @@ class FlextTestsMatchersUtilities:
 
             @staticmethod
             @overload
-            def ok[TResult: t.Tests.Testobject](
+            def ok[TResult](
                 result: r[TResult],
             ) -> TResult: ...
 
             @staticmethod
             @overload
-            def ok[TResult: t.Tests.Testobject](
+            def ok[TResult](
                 result: r[TResult],
                 **kwargs: t.Tests.Matcher.MatcherKwargValue,
             ) -> TResult | t.Tests.Testobject: ...
 
             @staticmethod
-            def ok[TResult: t.Tests.Testobject](
+            def ok[TResult](
                 result: r[TResult],
                 **kwargs: t.Tests.Matcher.MatcherKwargValue,
             ) -> TResult | t.Tests.Testobject:
@@ -739,7 +739,7 @@ class FlextTestsMatchersUtilities:
                         params.msg
                         or c.Tests.Matcher.ERR_OK_FAILED.format(error=result.error),
                     )
-                result_value: t.Tests.Testobject = result.value
+                result_value: TResult | t.Tests.Testobject = result.value
                 extracted_payload: t.Tests.Testobject | None = None
                 if params.path is not None:
                     if isinstance(params.path, str):
@@ -1022,8 +1022,8 @@ class FlextTestsMatchersUtilities:
                                 )
 
             @staticmethod
-            def that(
-                value: t.Tests.Testobject,
+            def that[T](
+                value: T,
                 **kwargs: t.Tests.Matcher.MatcherKwargValue,
             ) -> None:
                 r"""Super-powered universal value assertion - ALL validations in ONE method.
@@ -1189,7 +1189,7 @@ class FlextTestsMatchersUtilities:
                 if only_type_check:
                     return
                 subject = value
-                if t.Tests.Guards.is_testobject_result(subject):
+                if isinstance(subject, r):
                     result_obj: r[t.Tests.Testobject] = subject
                     actual_value: t.Tests.Testobject | str = ""
                     if params.ok is not None:
