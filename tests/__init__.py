@@ -1,5 +1,5 @@
 # AUTO-GENERATED FILE — DO NOT EDIT MANUALLY.
-# Regenerate with: make codegen
+# Regenerate with: make gen
 #
 """Tests package - re-exports flext_tests aliases for test convenience."""
 
