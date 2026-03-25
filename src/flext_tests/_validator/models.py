@@ -60,34 +60,35 @@ class FlextValidatorModels(m):
         include_patterns: Annotated[
             t.StrSequence,
             Field(
-                default_factory=lambda: list(
-                    c.Tests.Validator.Defaults.INCLUDE_PATTERNS,
-                ),
                 description="Glob patterns defining files that should be scanned for violations.",
                 title="Include Patterns",
                 examples=[["src/**/*.py", "tests/**/*.py"]],
             ),
-        ]
+        ] = Field(
+            default_factory=lambda: list(
+                c.Tests.Validator.Defaults.INCLUDE_PATTERNS,
+            )
+        )
         exclude_patterns: Annotated[
             t.StrSequence,
             Field(
-                default_factory=lambda: list(
-                    c.Tests.Validator.Defaults.EXCLUDE_PATTERNS,
-                ),
                 description="Glob patterns defining files that should be excluded from scan input.",
                 title="Exclude Patterns",
                 examples=[["**/__pycache__/**", "**/.venv/**"]],
             ),
-        ]
+        ] = Field(
+            default_factory=lambda: list(
+                c.Tests.Validator.Defaults.EXCLUDE_PATTERNS,
+            )
+        )
         approved_exceptions: Annotated[
             Mapping[str, t.StrSequence],
             Field(
-                default_factory=dict,
                 description="Rule-to-path allowlist for known and explicitly approved exceptions.",
                 title="Approved Exceptions",
                 examples=[{"RULE_001": ["tests/fixtures/generated.py"]}],
             ),
-        ]
+        ] = Field(default_factory=dict)
 
 
 # Short alias

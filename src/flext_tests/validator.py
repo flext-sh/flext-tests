@@ -93,16 +93,11 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         excludes = exclude_patterns or list(c.Tests.Validator.Defaults.EXCLUDE_PATTERNS)
         if path.is_file():
             return [path] if path.suffix == ".py" else []
-        files: MutableSequence[Path] = []
-        for py_file in path.rglob("*.py"):
-            file_str = str(py_file)
-            excluded = False
-            for pattern in excludes:
-                if fnmatch.fnmatch(file_str, pattern):
-                    excluded = True
-                    break
-            if not excluded:
-                files.append(py_file)
+        files: Sequence[Path] = [
+            py_file
+            for py_file in path.rglob("*.py")
+            if not any(fnmatch.fnmatch(str(py_file), pattern) for pattern in excludes)
+        ]
         return files
 
     @classmethod

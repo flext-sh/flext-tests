@@ -881,23 +881,24 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         content_for_detect: (
             str | bytes | Mapping[str, t.Tests.Testobject] | Sequence[t.StrSequence]
         )
-        if isinstance(actual_content, str | bytes):
-            content_for_detect = actual_content
-        elif isinstance(actual_content, Mapping):
-            content_for_detect = self._mapping_to_payload(actual_content)
-        elif isinstance(actual_content, list):
-            if self._is_nested_rows(actual_content):
-                content_for_detect = [
-                    [str(cell) for cell in row]
-                    for row in actual_content
-                    if isinstance(row, (list, tuple))
-                ]
-            else:
+        match actual_content:
+            case str() | bytes():
+                content_for_detect = actual_content
+            case Mapping():
+                content_for_detect = self._mapping_to_payload(actual_content)
+            case list():
+                if self._is_nested_rows(actual_content):
+                    content_for_detect = [
+                        [str(cell) for cell in row]
+                        for row in actual_content
+                        if isinstance(row, (list, tuple))
+                    ]
+                else:
+                    content_for_detect = str(actual_content)
+            case tuple():
                 content_for_detect = str(actual_content)
-        elif isinstance(actual_content, tuple):
-            content_for_detect = str(actual_content)
-        else:
-            content_for_detect = str(actual_content)
+            case _:
+                content_for_detect = str(actual_content)
         actual_fmt = u.Tests.Files.detect_format(
             content_for_detect,
             params.name,

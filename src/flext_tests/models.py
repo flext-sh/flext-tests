@@ -547,17 +547,15 @@ class FlextTestsModels(
             results: Annotated[
                 Mapping[str, r[Path | t.Tests.Testobject]],
                 Field(
-                    default_factory=dict,
                     description="Mapping of file names to operation results",
                 ),
-            ]
+            ] = Field(default_factory=dict)
             errors: Annotated[
                 t.StrMapping,
                 Field(
-                    default_factory=dict,
                     description="Mapping of file names to error messages",
                 ),
-            ]
+            ] = Field(default_factory=dict)
 
             @computed_field
             def failure_count(self) -> int:
@@ -1103,16 +1101,16 @@ class FlextTestsModels(
 
             config: Annotated[
                 Mapping[str, t.Tests.TestobjectSerializable],
-                Field(default_factory=dict, description="Configuration dictionary"),
-            ]
+                Field(description="Configuration dictionary"),
+            ] = Field(default_factory=dict)
             container: Annotated[
                 Mapping[str, t.Tests.TestobjectSerializable],
-                Field(default_factory=dict, description="Container/service mappings"),
-            ]
+                Field(description="Container/service mappings"),
+            ] = Field(default_factory=dict)
             context: Annotated[
                 Mapping[str, t.Tests.TestobjectSerializable],
-                Field(default_factory=dict, description="Context values"),
-            ]
+                Field(description="Context values"),
+            ] = Field(default_factory=dict)
 
 
 m = FlextTestsModels
