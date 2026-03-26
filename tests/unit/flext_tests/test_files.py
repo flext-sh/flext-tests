@@ -1080,7 +1080,8 @@ class TestCreateInStatic:
         path = tf.create_in(user, "user.json", tmp_path)
         tm.that(path.exists(), eq=True)
         content = json.loads(path.read_text())
-        tm.that(content, eq={"name": "Alice", "age": 30})
+        expected: t.Tests.Testobject = {"name": "Alice", "age": 30}
+        tm.that(content, eq=expected)
 
     def test_create_in_format_detection(self, tmp_path: Path) -> None:
         """Test create_in() format auto-detection from extension."""

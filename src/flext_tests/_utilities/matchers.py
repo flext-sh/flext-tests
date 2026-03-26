@@ -133,14 +133,20 @@ class FlextTestsMatchersUtilities:
         return callable(value)
 
     @staticmethod
-    def _to_test_payload[TInput](
-        value: TInput,
+    def _to_test_payload(
+        value: t.Tests.Testobject,
     ) -> t.Tests.Testobject:
         if isinstance(value, type):
             return value
-        if isinstance(value, (set, frozenset)):
+        if isinstance(value, set):
+            items_set: set[t.Tests.Testobject] = value
             return frozenset(
-                FlextTestsMatchersUtilities._to_test_payload(item) for item in value
+                FlextTestsMatchersUtilities._to_test_payload(item) for item in items_set
+            )
+        if isinstance(value, frozenset):
+            return frozenset(
+                FlextTestsMatchersUtilities._to_test_payload(str(item))
+                for item in value
             )
         if value is None or isinstance(
             value,
@@ -225,12 +231,15 @@ class FlextTestsMatchersUtilities:
         return str(value)
 
     @staticmethod
-    def _as_guard_input[TInput](
-        value: TInput,
+    def _as_guard_input(
+        value: t.Tests.Testobject,
     ) -> t.Tests.Testobject:
         if isinstance(value, type):
             return value
-        if isinstance(value, (set, frozenset)):
+        if isinstance(value, set):
+            items_set: set[t.Tests.Testobject] = value
+            return frozenset(str(item) for item in items_set)
+        if isinstance(value, frozenset):
             return frozenset(str(item) for item in value)
         if isinstance(value, (BaseModel, str, int, float, bool, Path)):
             return value
@@ -260,12 +269,13 @@ class FlextTestsMatchersUtilities:
                     for seq_item in sequence_value
                 ]
             except ValidationError:
-                return list(value)
+                typed_seq: Sequence[t.Tests.TestobjectSerializable] = value
+                return list(typed_seq)
         return FlextTestsMatchersUtilities._to_test_payload(value)
 
     @staticmethod
-    def _to_chk_value[TInput](
-        value: TInput,
+    def _to_chk_value(
+        value: t.Tests.Testobject,
     ) -> t.NormalizedValue:
         """Convert a test value to NormalizedValue for use with u.chk()."""
         if value is None:
@@ -307,8 +317,8 @@ class FlextTestsMatchersUtilities:
         return str(value)
 
     @staticmethod
-    def _check_has_lacks[TInput](
-        value: TInput,
+    def _check_has_lacks(
+        value: t.Tests.Testobject,
         has: t.Tests.Matcher.ContainmentSpec
         | t.Tests.Matcher.MatcherKwargValue
         | t.NormalizedValue
@@ -1029,8 +1039,8 @@ class FlextTestsMatchersUtilities:
                                 )
 
             @staticmethod
-            def that[T](
-                value: T,
+            def that(
+                value: t.Tests.Testobject,
                 **kwargs: t.Tests.Matcher.MatcherKwargValue,
             ) -> None:
                 r"""Super-powered universal value assertion - ALL validations in ONE method.
@@ -1196,8 +1206,8 @@ class FlextTestsMatchersUtilities:
                 if only_type_check:
                     return
                 subject = value
-                if isinstance(subject, r):
-                    result_obj: r[t.Tests.Testobject] = subject
+                if t.Tests.Guards.is_testobject_result(subject):
+                    result_obj = subject
                     actual_value: t.Tests.Testobject | str = ""
                     if params.ok is not None:
                         if params.ok and (not result_obj.is_success):
