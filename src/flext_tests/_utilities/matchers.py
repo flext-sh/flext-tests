@@ -171,7 +171,7 @@ class FlextTestsMatchersUtilities:
                     for seq_item in sequence_value
                 ]
             except ValidationError:
-                return [v for v in value]  # noqa: C416
+                return list(value)
         if isinstance(value, (datetime, Path)):
             return value
         return str(value)
@@ -260,7 +260,7 @@ class FlextTestsMatchersUtilities:
                     for seq_item in sequence_value
                 ]
             except ValidationError:
-                return [v for v in value]  # noqa: C416
+                return list(value)
         return FlextTestsMatchersUtilities._to_test_payload(value)
 
     @staticmethod
