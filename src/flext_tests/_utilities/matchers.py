@@ -134,7 +134,7 @@ class FlextTestsMatchersUtilities:
 
     @staticmethod
     def _to_test_payload(
-        value: t.Tests.Testobject,
+        value: object,
     ) -> t.Tests.Testobject:
         if isinstance(value, type):
             return value
@@ -177,7 +177,10 @@ class FlextTestsMatchersUtilities:
                     for seq_item in sequence_value
                 ]
             except ValidationError:
-                return list(value)
+                return [
+                    FlextTestsMatchersUtilities._to_test_payload(item)
+                    for item in value
+                ]
         if isinstance(value, (datetime, Path)):
             return value
         return str(value)
@@ -232,7 +235,7 @@ class FlextTestsMatchersUtilities:
 
     @staticmethod
     def _as_guard_input(
-        value: t.Tests.Testobject,
+        value: object,
     ) -> t.Tests.Testobject:
         if isinstance(value, type):
             return value
@@ -269,13 +272,14 @@ class FlextTestsMatchersUtilities:
                     for seq_item in sequence_value
                 ]
             except ValidationError:
-                typed_seq: Sequence[t.Tests.TestobjectSerializable] = value
-                return list(typed_seq)
+                return [
+                    FlextTestsMatchersUtilities._as_guard_input(item) for item in value
+                ]
         return FlextTestsMatchersUtilities._to_test_payload(value)
 
     @staticmethod
     def _to_chk_value(
-        value: t.Tests.Testobject,
+        value: object,
     ) -> t.NormalizedValue:
         """Convert a test value to NormalizedValue for use with u.chk()."""
         if value is None:
@@ -318,7 +322,7 @@ class FlextTestsMatchersUtilities:
 
     @staticmethod
     def _check_has_lacks(
-        value: t.Tests.Testobject,
+        value: object,
         has: t.Tests.Matcher.ContainmentSpec
         | t.Tests.Matcher.MatcherKwargValue
         | t.NormalizedValue
