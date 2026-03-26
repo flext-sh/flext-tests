@@ -1,0 +1,23 @@
+src/flext_tests/_utilities/matchers.py
+  68dbd4878595068b 136-144,151-152,154,173,183,185-186,246-248,265,275,277
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.20",
+  "base_commit_sha": "78d62ebb106e14ad22af9cd24be8b36c9e885481",
+  "prompts": {
+    "68dbd4878595068b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e713beea-5d5d-4f90-bbc7-9650893a58f6",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "FLEXT Bot <team@flext.sh>",
+      "messages": [],
+      "total_additions": 52,
+      "total_deletions": 50,
+      "accepted_lines": 25,
+      "overriden_lines": 0
+    }
+  }
+}
