@@ -16,6 +16,8 @@ from collections.abc import Mapping, MutableMapping, Sequence
 
 from flext_tests import m, t
 
+_NO_BODY: t.Tests.Testobject = None
+
 
 class FlextTestsDomains:
     """Test domain objects and fixtures.
@@ -189,7 +191,7 @@ class FlextTestsDomains:
                 "method": "GET",
                 "url": "/api/test",
                 "headers": {"Content-Type": "application/json"},
-                "body": None,
+                "body": _NO_BODY,
             },
         }
         payload = dict(payloads.get(data_type, {}).items())

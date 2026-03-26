@@ -96,8 +96,11 @@ class FlextTestsMatchersUtilities:
     ] = TypeAdapter(Sequence[t.Tests.TestobjectSerializable])
 
     @staticmethod
-    def _is_non_string_sequence[T](
-        value: T,
+    def _is_non_string_sequence(
+        value: t.Tests.Testobject
+        | t.Tests.Matcher.MatcherKwargValue
+        | t.RuntimeData
+        | t.NormalizedValue,
     ) -> TypeIs[Sequence[t.Tests.Testobject]]:
         return isinstance(value, Sequence) and (
             not isinstance(value, (str, bytes, bytearray))
@@ -156,7 +159,9 @@ class FlextTestsMatchersUtilities:
             except ValidationError:
                 empty_map: Mapping[str, t.Tests.Testobject] = {}
                 return empty_map
-        if FlextTestsMatchersUtilities._is_non_string_sequence(value):
+        if isinstance(value, Sequence) and not isinstance(
+            value, (str, bytes, bytearray)
+        ):
             try:
                 sequence_value = FlextTestsMatchersUtilities._TEST_PAYLOAD_LIST_ADAPTER.validate_python(
                     value,
@@ -166,7 +171,7 @@ class FlextTestsMatchersUtilities:
                     for seq_item in sequence_value
                 ]
             except ValidationError:
-                return list(value)
+                return [v for v in value]  # noqa: C416
         if isinstance(value, (datetime, Path)):
             return value
         return str(value)
@@ -225,7 +230,7 @@ class FlextTestsMatchersUtilities:
     ) -> t.Tests.Testobject:
         if isinstance(value, type):
             return value
-        if t.Tests.Guards.is_testobject_set(value):
+        if isinstance(value, (set, frozenset)):
             return frozenset(str(item) for item in value)
         if isinstance(value, (BaseModel, str, int, float, bool, Path)):
             return value
@@ -243,7 +248,9 @@ class FlextTestsMatchersUtilities:
             except ValidationError:
                 empty_map: Mapping[str, t.Tests.Testobject] = {}
                 return empty_map
-        if FlextTestsMatchersUtilities._is_non_string_sequence(value):
+        if isinstance(value, Sequence) and not isinstance(
+            value, (str, bytes, bytearray)
+        ):
             try:
                 sequence_value = FlextTestsMatchersUtilities._GUARD_PAYLOAD_LIST_ADAPTER.validate_python(
                     value,
@@ -253,7 +260,7 @@ class FlextTestsMatchersUtilities:
                     for seq_item in sequence_value
                 ]
             except ValidationError:
-                return list(value)
+                return [v for v in value]  # noqa: C416
         return FlextTestsMatchersUtilities._to_test_payload(value)
 
     @staticmethod

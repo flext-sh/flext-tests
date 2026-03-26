@@ -17,7 +17,7 @@ import yaml
 from flext_core import r
 from pydantic import BaseModel
 
-from flext_tests import t, tf, tm
+from flext_tests import c, t, tf, tm
 from flext_tests.models import FlextTestsModels
 from tests.test_utils import assertion_helpers
 
@@ -394,7 +394,7 @@ class TestFlextTestsFilesNewApi:
     def test_create_explicit_format(self, tmp_path: Path) -> None:
         """Test create() with explicit format override."""
         manager = tf(base_dir=tmp_path)
-        path = manager.create(b"raw bytes", "data.dat", fmt="bin")
+        path = manager.create(b"raw bytes", "data.dat", fmt=c.Tests.Files.Format.BIN)
         tm.that(path.exists(), eq=True)
         tm.that(path.read_bytes(), eq=b"raw bytes")
 
@@ -433,7 +433,7 @@ class TestFlextTestsFilesNewApi:
     def test_read_binary_file(self, tmp_path: Path) -> None:
         """Test read() returns bytes content for .bin files."""
         manager = tf(base_dir=tmp_path)
-        path = manager.create(b"\x00\x01\x02", "data.bin", fmt="bin")
+        path = manager.create(b"\x00\x01\x02", "data.bin", fmt=c.Tests.Files.Format.BIN)
         result = manager.read(path)
         _ = assertion_helpers.assert_flext_result_success(result)
         tm.that(result.value, eq=b"\x00\x01\x02")
@@ -501,8 +501,8 @@ class TestFlextTestsFilesNewApi:
     def test_read_explicit_format(self, tmp_path: Path) -> None:
         """Test read() with explicit format override."""
         manager = tf(base_dir=tmp_path)
-        path = manager.create("plain text", "data.dat", fmt="text")
-        result = manager.read(path, fmt="text")
+        path = manager.create("plain text", "data.dat", fmt=c.Tests.Files.Format.TEXT)
+        result = manager.read(path, fmt=c.Tests.Files.Format.TEXT)
         _ = assertion_helpers.assert_flext_result_success(result)
         tm.that(result.value, eq="plain text")
 
@@ -529,7 +529,7 @@ class TestFlextTestsFilesNewApi:
         manager = tf(base_dir=tmp_path)
         path1 = manager.create("12345", "file1.txt")
         path2 = manager.create("abcde", "file2.txt")
-        result = manager.compare(path1, path2, mode="size")
+        result = manager.compare(path1, path2, mode=c.Tests.Files.CompareMode.SIZE)
         _ = assertion_helpers.assert_flext_result_success(result)
         tm.that(result.value is True, eq=True)
 
@@ -538,7 +538,7 @@ class TestFlextTestsFilesNewApi:
         manager = tf(base_dir=tmp_path)
         path1 = manager.create("short", "file1.txt")
         path2 = manager.create("much longer content", "file2.txt")
-        result = manager.compare(path1, path2, mode="size")
+        result = manager.compare(path1, path2, mode=c.Tests.Files.CompareMode.SIZE)
         _ = assertion_helpers.assert_flext_result_success(result)
         tm.that(result.value is False, eq=True)
 
@@ -547,7 +547,7 @@ class TestFlextTestsFilesNewApi:
         manager = tf(base_dir=tmp_path)
         path1 = manager.create("identical", "file1.txt")
         path2 = manager.create("identical", "file2.txt")
-        result = manager.compare(path1, path2, mode="hash")
+        result = manager.compare(path1, path2, mode=c.Tests.Files.CompareMode.HASH)
         _ = assertion_helpers.assert_flext_result_success(result)
         tm.that(result.value is True, eq=True)
 
@@ -556,7 +556,7 @@ class TestFlextTestsFilesNewApi:
         manager = tf(base_dir=tmp_path)
         path1 = manager.create("line1\nline2\nline3", "file1.txt")
         path2 = manager.create("line1\nline2\nline3", "file2.txt")
-        result = manager.compare(path1, path2, mode="lines")
+        result = manager.compare(path1, path2, mode=c.Tests.Files.CompareMode.LINES)
         _ = assertion_helpers.assert_flext_result_success(result)
         tm.that(result.value is True, eq=True)
 
@@ -565,7 +565,7 @@ class TestFlextTestsFilesNewApi:
         manager = tf(base_dir=tmp_path)
         path1 = manager.create("line1\nline2\nline3", "file1.txt")
         path2 = manager.create("a\nb\nc", "file2.txt")
-        result = manager.compare(path1, path2, mode="lines")
+        result = manager.compare(path1, path2, mode=c.Tests.Files.CompareMode.LINES)
         _ = assertion_helpers.assert_flext_result_success(result)
         tm.that(result.value is False, eq=True)
 
@@ -1020,7 +1020,7 @@ class TestBatchOperations:
         result = manager.batch_files(
             {"valid.txt": "content"},
             directory=tmp_path,
-            on_error="collect",
+            on_error=c.Tests.Files.ErrorMode.COLLECT,
         )
         _ = assertion_helpers.assert_flext_result_success(result)
         batch_result = result.value
@@ -1113,7 +1113,9 @@ class TestCreateInStatic:
 
     def test_create_in_custom_format(self, tmp_path: Path) -> None:
         """Test create_in() with explicit format override."""
-        path = tf.create_in(b"binary data", "data.dat", tmp_path, fmt="bin")
+        path = tf.create_in(
+            b"binary data", "data.dat", tmp_path, fmt=c.Tests.Files.Format.BIN
+        )
         tm.that(path.exists(), eq=True)
         tm.that(path.read_bytes(), eq=b"binary data")
 
