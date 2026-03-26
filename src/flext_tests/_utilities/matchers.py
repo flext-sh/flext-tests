@@ -56,7 +56,7 @@ from __future__ import annotations
 import os
 import warnings
 from collections.abc import (
-    Iterator,
+    Generator,
     Mapping,
     MutableMapping,
     Sequence,
@@ -133,20 +133,25 @@ class FlextTestsMatchersUtilities:
         return callable(value)
 
     @staticmethod
+    def _is_object_set(value: object) -> TypeIs[set[object] | frozenset[object]]:
+        return isinstance(value, (set, frozenset))
+
+    @staticmethod
+    def _is_object_sequence(value: object) -> TypeIs[Sequence[object]]:
+        return isinstance(value, Sequence) and not isinstance(
+            value, (str, bytes, bytearray)
+        )
+
+    @staticmethod
     def _to_test_payload(
         value: object,
     ) -> t.Tests.Testobject:
         if isinstance(value, type):
             return value
-        if isinstance(value, set):
-            items_set: set[t.Tests.Testobject] = value
+        if FlextTestsMatchersUtilities._is_object_set(value):
+            str_items: Sequence[str] = [str(v) for v in value]
             return frozenset(
-                FlextTestsMatchersUtilities._to_test_payload(item) for item in items_set
-            )
-        if isinstance(value, frozenset):
-            return frozenset(
-                FlextTestsMatchersUtilities._to_test_payload(str(item))
-                for item in value
+                FlextTestsMatchersUtilities._to_test_payload(s) for s in str_items
             )
         if value is None or isinstance(
             value,
@@ -165,9 +170,7 @@ class FlextTestsMatchersUtilities:
             except ValidationError:
                 empty_map: Mapping[str, t.Tests.Testobject] = {}
                 return empty_map
-        if isinstance(value, Sequence) and not isinstance(
-            value, (str, bytes, bytearray)
-        ):
+        if FlextTestsMatchersUtilities._is_object_sequence(value):
             try:
                 sequence_value = FlextTestsMatchersUtilities._TEST_PAYLOAD_LIST_ADAPTER.validate_python(
                     value,
@@ -177,9 +180,10 @@ class FlextTestsMatchersUtilities:
                     for seq_item in sequence_value
                 ]
             except ValidationError:
+                str_fallback: Sequence[str] = [str(v) for v in value]
                 return [
-                    FlextTestsMatchersUtilities._to_test_payload(item)
-                    for item in value
+                    FlextTestsMatchersUtilities._to_test_payload(s)
+                    for s in str_fallback
                 ]
         if isinstance(value, (datetime, Path)):
             return value
@@ -239,11 +243,9 @@ class FlextTestsMatchersUtilities:
     ) -> t.Tests.Testobject:
         if isinstance(value, type):
             return value
-        if isinstance(value, set):
-            items_set: set[t.Tests.Testobject] = value
-            return frozenset(str(item) for item in items_set)
-        if isinstance(value, frozenset):
-            return frozenset(str(item) for item in value)
+        if FlextTestsMatchersUtilities._is_object_set(value):
+            str_items: Sequence[str] = [str(v) for v in value]
+            return frozenset(str_items)
         if isinstance(value, (BaseModel, str, int, float, bool, Path)):
             return value
         if value is None:
@@ -260,9 +262,7 @@ class FlextTestsMatchersUtilities:
             except ValidationError:
                 empty_map: Mapping[str, t.Tests.Testobject] = {}
                 return empty_map
-        if isinstance(value, Sequence) and not isinstance(
-            value, (str, bytes, bytearray)
-        ):
+        if FlextTestsMatchersUtilities._is_object_sequence(value):
             try:
                 sequence_value = FlextTestsMatchersUtilities._GUARD_PAYLOAD_LIST_ADAPTER.validate_python(
                     value,
@@ -272,8 +272,9 @@ class FlextTestsMatchersUtilities:
                     for seq_item in sequence_value
                 ]
             except ValidationError:
+                str_fallback: Sequence[str] = [str(v) for v in value]
                 return [
-                    FlextTestsMatchersUtilities._as_guard_input(item) for item in value
+                    FlextTestsMatchersUtilities._as_guard_input(s) for s in str_fallback
                 ]
         return FlextTestsMatchersUtilities._to_test_payload(value)
 
@@ -937,7 +938,7 @@ class FlextTestsMatchersUtilities:
 
             @staticmethod
             @contextmanager
-            def scope(**kwargs: t.Tests.Testobject) -> Iterator[m.Tests.TestScope]:
+            def scope(**kwargs: t.Tests.Testobject) -> Generator[m.Tests.TestScope]:
                 """Enhanced isolated test execution scope.
 
                 Uses Pydantic 2 model (ScopeParams) for parameter validation and computation.
