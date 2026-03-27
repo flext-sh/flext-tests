@@ -16,7 +16,10 @@ if TYPE_CHECKING:
     from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
 
 _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
-    "FlextTestsMatchersUtilities": ["flext_tests._utilities.matchers", "FlextTestsMatchersUtilities"],
+    "FlextTestsMatchersUtilities": [
+        "flext_tests._utilities.matchers",
+        "FlextTestsMatchersUtilities",
+    ],
     "tm": ["flext_tests._utilities.matchers", "tm"],
 }
 
