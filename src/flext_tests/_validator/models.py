@@ -15,16 +15,16 @@ from typing import Annotated
 from flext_core import r
 from pydantic import Field
 
-from flext_tests import c, m, t
+from flext_tests import FlextTestsModels, c, t
 
 
-class FlextValidatorModels(m):
+class FlextValidatorModels(FlextTestsModels):
     """Models for FLEXT architecture validation - extends FlextTestsModels.
 
     Uses c.Tests.Validator for constants (Severity, Rules, Defaults, Approved patterns).
     """
 
-    class ScanCommon(m.Value):
+    class ScanCommon(FlextTestsModels.Value):
         """Shared routines to build ScanResult payloads."""
 
         @staticmethod
@@ -35,22 +35,22 @@ class FlextValidatorModels(m):
             validator_name: str,
             scan_file: Callable[
                 [Path, Mapping[str, t.StrSequence]],
-                Sequence[m.Tests.Violation],
+                Sequence[FlextTestsModels.Tests.Violation],
             ],
-        ) -> r[m.Tests.ScanResult]:
-            violations: MutableSequence[m.Tests.Violation] = []
+        ) -> r[FlextTestsModels.Tests.ScanResult]:
+            violations: MutableSequence[FlextTestsModels.Tests.Violation] = []
             approved = approved_exceptions or {}
             for file_path in files:
                 violations.extend(scan_file(file_path, approved))
-            return r[m.Tests.ScanResult].ok(
-                m.Tests.ScanResult.create(
+            return r[FlextTestsModels.Tests.ScanResult].ok(
+                FlextTestsModels.Tests.ScanResult.create(
                     validator_name=validator_name,
                     files_scanned=len(files),
                     violations=violations,
                 ),
             )
 
-    class ScanConfig(m.Value):
+    class ScanConfig(FlextTestsModels.Value):
         """Configuration for validation scan."""
 
         target_path: Path
