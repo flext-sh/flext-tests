@@ -76,7 +76,7 @@ class FlextTestsModels(
                 if not self.service:
                     msg = "Service name cannot be empty"
                     raise ValueError(msg)
-                if not (c.MIN_PORT <= self.port <= c.MAX_PORT):
+                if not (c.DEFAULT_RETRY_DELAY_SECONDS <= self.port <= c.MAX_PORT):
                     msg = f"Port {self.port} out of valid range"
                     raise ValueError(msg)
 

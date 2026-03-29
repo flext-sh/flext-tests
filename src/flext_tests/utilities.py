@@ -1030,7 +1030,7 @@ class FlextTestsUtilities(FlextUtilities):
                     handler_name=handler_name,
                     handler_type=h_type,
                     handler_mode=h_mode,
-                    command_timeout=command_timeout or c.DEFAULT_COMMAND_TIMEOUT,
+                    command_timeout=command_timeout or c.DEFAULT_MAX_COMMAND_RETRIES,
                     max_command_retries=max_command_retries
                     or c.DEFAULT_MAX_COMMAND_RETRIES,
                     metadata=metadata,
