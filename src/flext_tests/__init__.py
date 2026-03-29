@@ -36,11 +36,7 @@ if TYPE_CHECKING:
         to_normalized_value,
         to_payload,
     )
-    from flext_tests._utilities.docker import FlextTestsDocker, tk
-    from flext_tests._utilities.domains import FlextTestsDomains, td
-    from flext_tests._utilities.files import FlextTestsFiles, tf
     from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
-    from flext_tests._utilities.validator import FlextTestsValidator, tv
     from flext_tests._validator.bypass import FlextValidatorBypass
     from flext_tests._validator.imports import FlextValidatorImports
     from flext_tests._validator.layer import FlextValidatorLayer
@@ -49,16 +45,20 @@ if TYPE_CHECKING:
     from flext_tests._validator.tests import FlextValidatorTests
     from flext_tests._validator.types import FlextValidatorTypes
     from flext_tests.constants import FlextTestsConstants, FlextTestsConstants as c
+    from flext_tests.docker import FlextTestsDocker, tk
+    from flext_tests.domains import FlextTestsDomains, td
+    from flext_tests.files import FlextTestsFiles, tf
     from flext_tests.models import FlextTestsModels, FlextTestsModels as m
     from flext_tests.protocols import FlextTestsProtocols, FlextTestsProtocols as p
     from flext_tests.typings import FlextTestsTypes, FlextTestsTypes as t
     from flext_tests.utilities import FlextTestsUtilities, FlextTestsUtilities as u
+    from flext_tests.validator import FlextTestsValidator, tv
 
 _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
     "FlextTestsConstants": ["flext_tests.constants", "FlextTestsConstants"],
-    "FlextTestsDocker": ["flext_tests._utilities.docker", "FlextTestsDocker"],
-    "FlextTestsDomains": ["flext_tests._utilities.domains", "FlextTestsDomains"],
-    "FlextTestsFiles": ["flext_tests._utilities.files", "FlextTestsFiles"],
+    "FlextTestsDocker": ["flext_tests.docker", "FlextTestsDocker"],
+    "FlextTestsDomains": ["flext_tests.domains", "FlextTestsDomains"],
+    "FlextTestsFiles": ["flext_tests.files", "FlextTestsFiles"],
     "FlextTestsMatchersUtilities": [
         "flext_tests._utilities.matchers",
         "FlextTestsMatchersUtilities",
@@ -71,7 +71,7 @@ _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
     "FlextTestsProtocols": ["flext_tests.protocols", "FlextTestsProtocols"],
     "FlextTestsTypes": ["flext_tests.typings", "FlextTestsTypes"],
     "FlextTestsUtilities": ["flext_tests.utilities", "FlextTestsUtilities"],
-    "FlextTestsValidator": ["flext_tests._utilities.validator", "FlextTestsValidator"],
+    "FlextTestsValidator": ["flext_tests.validator", "FlextTestsValidator"],
     "FlextValidatorBypass": ["flext_tests._validator.bypass", "FlextValidatorBypass"],
     "FlextValidatorImports": [
         "flext_tests._validator.imports",
@@ -98,14 +98,14 @@ _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
     "r": ["flext_core", "r"],
     "s": ["flext_core", "s"],
     "t": ["flext_tests.typings", "FlextTestsTypes"],
-    "td": ["flext_tests._utilities.domains", "td"],
-    "tf": ["flext_tests._utilities.files", "tf"],
-    "tk": ["flext_tests._utilities.docker", "tk"],
+    "td": ["flext_tests.domains", "td"],
+    "tf": ["flext_tests.files", "tf"],
+    "tk": ["flext_tests.docker", "tk"],
     "tm": ["flext_tests._utilities.matchers", "tm"],
     "to_config_map_value": ["flext_tests._utilities._payload", "to_config_map_value"],
     "to_normalized_value": ["flext_tests._utilities._payload", "to_normalized_value"],
     "to_payload": ["flext_tests._utilities._payload", "to_payload"],
-    "tv": ["flext_tests._utilities.validator", "tv"],
+    "tv": ["flext_tests.validator", "tv"],
     "u": ["flext_tests.utilities", "FlextTestsUtilities"],
     "vm": ["flext_tests._validator.models", "vm"],
     "x": ["flext_core", "x"],
