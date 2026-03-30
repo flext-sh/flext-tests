@@ -22,10 +22,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import install_lazy_exports
-
-from flext_tests._utilities import _LAZY_IMPORTS as _CHILD_LAZY_0
-from flext_tests._validator import _LAZY_IMPORTS as _CHILD_LAZY_1
+from flext_core.lazy import install_lazy_exports, merge_lazy_imports
 
 if TYPE_CHECKING:
     from flext_tests._utilities import *
@@ -40,45 +37,49 @@ if TYPE_CHECKING:
     from flext_tests.utilities import *
     from flext_tests.validator import *
 
-_LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
-    **_CHILD_LAZY_0,
-    **_CHILD_LAZY_1,
-    "FlextTestsConstants": "flext_tests.constants",
-    "FlextTestsDocker": "flext_tests.docker",
-    "FlextTestsDomains": "flext_tests.domains",
-    "FlextTestsFiles": "flext_tests.files",
-    "FlextTestsModels": "flext_tests.models",
-    "FlextTestsProtocols": "flext_tests.protocols",
-    "FlextTestsTypes": "flext_tests.typings",
-    "FlextTestsUtilities": "flext_tests.utilities",
-    "FlextTestsValidator": "flext_tests.validator",
-    "_utilities": "flext_tests._utilities",
-    "_validator": "flext_tests._validator",
-    "c": ["flext_tests.constants", "FlextTestsConstants"],
-    "constants": "flext_tests.constants",
-    "d": "flext_core",
-    "docker": "flext_tests.docker",
-    "domains": "flext_tests.domains",
-    "e": "flext_core",
-    "files": "flext_tests.files",
-    "h": "flext_core",
-    "m": ["flext_tests.models", "FlextTestsModels"],
-    "models": "flext_tests.models",
-    "p": ["flext_tests.protocols", "FlextTestsProtocols"],
-    "protocols": "flext_tests.protocols",
-    "r": "flext_core",
-    "s": "flext_core",
-    "t": ["flext_tests.typings", "FlextTestsTypes"],
-    "td": "flext_tests.domains",
-    "tf": "flext_tests.files",
-    "tk": "flext_tests.docker",
-    "tv": "flext_tests.validator",
-    "typings": "flext_tests.typings",
-    "u": ["flext_tests.utilities", "FlextTestsUtilities"],
-    "utilities": "flext_tests.utilities",
-    "validator": "flext_tests.validator",
-    "x": "flext_core",
-}
+_LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = merge_lazy_imports(
+    (
+        "flext_tests._utilities",
+        "flext_tests._validator",
+    ),
+    {
+        "FlextTestsConstants": "flext_tests.constants",
+        "FlextTestsDocker": "flext_tests.docker",
+        "FlextTestsDomains": "flext_tests.domains",
+        "FlextTestsFiles": "flext_tests.files",
+        "FlextTestsModels": "flext_tests.models",
+        "FlextTestsProtocols": "flext_tests.protocols",
+        "FlextTestsTypes": "flext_tests.typings",
+        "FlextTestsUtilities": "flext_tests.utilities",
+        "FlextTestsValidator": "flext_tests.validator",
+        "_utilities": "flext_tests._utilities",
+        "_validator": "flext_tests._validator",
+        "c": ("flext_tests.constants", "FlextTestsConstants"),
+        "constants": "flext_tests.constants",
+        "d": "flext_core",
+        "docker": "flext_tests.docker",
+        "domains": "flext_tests.domains",
+        "e": "flext_core",
+        "files": "flext_tests.files",
+        "h": "flext_core",
+        "m": ("flext_tests.models", "FlextTestsModels"),
+        "models": "flext_tests.models",
+        "p": ("flext_tests.protocols", "FlextTestsProtocols"),
+        "protocols": "flext_tests.protocols",
+        "r": "flext_core",
+        "s": "flext_core",
+        "t": ("flext_tests.typings", "FlextTestsTypes"),
+        "td": "flext_tests.domains",
+        "tf": "flext_tests.files",
+        "tk": "flext_tests.docker",
+        "tv": "flext_tests.validator",
+        "typings": "flext_tests.typings",
+        "u": ("flext_tests.utilities", "FlextTestsUtilities"),
+        "utilities": "flext_tests.utilities",
+        "validator": "flext_tests.validator",
+        "x": "flext_core",
+    },
+)
 
 
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
