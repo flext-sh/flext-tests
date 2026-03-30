@@ -1092,7 +1092,10 @@ class FlextTestsModels(
         class Chain[TResult](FlextModels.Value):
             """Container for chained result assertions."""
 
-            result: Annotated[p.Result[TResult], Field(description="r being chained")]
+            result: Annotated[
+                r[TResult] | p.Result[TResult],
+                Field(description="r being chained"),
+            ]
 
         class TestScope(FlextModels.ArbitraryTypesModel):
             """Scope container for test configuration and runtime state."""
