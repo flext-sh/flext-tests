@@ -28,8 +28,6 @@ if TYPE_CHECKING:
     from flext_core import *
 
     from flext_tests import (
-        _utilities,
-        _validator,
         constants,
         docker,
         domains,
@@ -40,17 +38,8 @@ if TYPE_CHECKING:
         utilities,
         validator,
     )
-    from flext_tests._utilities import matchers
-    from flext_tests._utilities._payload import *
-    from flext_tests._utilities.matchers import *
-    from flext_tests._validator import bypass, imports, layer, settings, tests, types
-    from flext_tests._validator.bypass import *
-    from flext_tests._validator.imports import *
-    from flext_tests._validator.layer import *
-    from flext_tests._validator.models import *
-    from flext_tests._validator.settings import *
-    from flext_tests._validator.tests import *
-    from flext_tests._validator.types import *
+    from flext_tests._utilities import *
+    from flext_tests._validator import *
     from flext_tests.constants import *
     from flext_tests.docker import *
     from flext_tests.domains import *
