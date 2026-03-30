@@ -11,26 +11,14 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._utilities import matchers as matchers
-    from flext_tests._utilities.matchers import (
-        FlextTestsMatchersUtilities as FlextTestsMatchersUtilities,
-        tm as tm,
-    )
+    from flext_tests._utilities import matchers
+    from flext_tests._utilities.matchers import *
 
-_LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
-    "FlextTestsMatchersUtilities": [
-        "flext_tests._utilities.matchers",
-        "FlextTestsMatchersUtilities",
-    ],
-    "matchers": ["flext_tests._utilities.matchers", ""],
-    "tm": ["flext_tests._utilities.matchers", "tm"],
+_LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
+    "FlextTestsMatchersUtilities": "flext_tests._utilities.matchers",
+    "matchers": "flext_tests._utilities.matchers",
+    "tm": "flext_tests._utilities.matchers",
 }
 
-_EXPORTS: Sequence[str] = [
-    "FlextTestsMatchersUtilities",
-    "matchers",
-    "tm",
-]
 
-
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, _EXPORTS)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, sorted(_LAZY_IMPORTS))
