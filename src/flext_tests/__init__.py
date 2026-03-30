@@ -19,54 +19,89 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping, MutableMapping, Sequence
+from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
+from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_core import FlextTypes, d, e, h, r, s, x
-
     from flext_tests import (
-        _utilities,
-        _validator,
-        constants,
-        docker,
-        domains,
-        files,
-        models,
-        protocols,
-        typings,
-        utilities,
-        validator,
+        _utilities as _utilities,
+        _validator as _validator,
+        constants as constants,
+        docker as docker,
+        domains as domains,
+        files as files,
+        models as models,
+        protocols as protocols,
+        typings as typings,
+        utilities as utilities,
+        validator as validator,
     )
-    from flext_tests._utilities import matchers
+    from flext_tests._utilities import matchers as matchers
     from flext_tests._utilities._payload import (
-        FlextTestsPayloadUtilities,
-        deep_match,
-        length_validate,
-        to_config_map_value,
-        to_normalized_value,
-        to_payload,
+        FlextTestsPayloadUtilities as FlextTestsPayloadUtilities,
+        deep_match as deep_match,
+        length_validate as length_validate,
+        to_config_map_value as to_config_map_value,
+        to_normalized_value as to_normalized_value,
+        to_payload as to_payload,
     )
-    from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
-    from flext_tests._validator import bypass, imports, layer, settings, tests, types
-    from flext_tests._validator.bypass import FlextValidatorBypass
-    from flext_tests._validator.imports import FlextValidatorImports
-    from flext_tests._validator.layer import FlextValidatorLayer
-    from flext_tests._validator.models import FlextValidatorModels, vm
-    from flext_tests._validator.settings import FlextValidatorSettings
-    from flext_tests._validator.tests import FlextValidatorTests
-    from flext_tests._validator.types import FlextValidatorTypes
-    from flext_tests.constants import FlextTestsConstants, FlextTestsConstants as c
-    from flext_tests.docker import FlextTestsDocker, tk
-    from flext_tests.domains import FlextTestsDomains, td
-    from flext_tests.files import FlextTestsFiles, tf
-    from flext_tests.models import FlextTestsModels, FlextTestsModels as m
-    from flext_tests.protocols import FlextTestsProtocols, FlextTestsProtocols as p
-    from flext_tests.typings import FlextTestsTypes, FlextTestsTypes as t
-    from flext_tests.utilities import FlextTestsUtilities, FlextTestsUtilities as u
-    from flext_tests.validator import FlextTestsValidator, tv
+    from flext_tests._utilities.matchers import (
+        FlextTestsMatchersUtilities as FlextTestsMatchersUtilities,
+        tm as tm,
+    )
+    from flext_tests._validator import (
+        bypass as bypass,
+        imports as imports,
+        layer as layer,
+        settings as settings,
+        tests as tests,
+        types as types,
+    )
+    from flext_tests._validator.bypass import (
+        FlextValidatorBypass as FlextValidatorBypass,
+    )
+    from flext_tests._validator.imports import (
+        FlextValidatorImports as FlextValidatorImports,
+    )
+    from flext_tests._validator.layer import FlextValidatorLayer as FlextValidatorLayer
+    from flext_tests._validator.models import (
+        FlextValidatorModels as FlextValidatorModels,
+        vm as vm,
+    )
+    from flext_tests._validator.settings import (
+        FlextValidatorSettings as FlextValidatorSettings,
+    )
+    from flext_tests._validator.tests import FlextValidatorTests as FlextValidatorTests
+    from flext_tests._validator.types import FlextValidatorTypes as FlextValidatorTypes
+    from flext_tests.constants import (
+        FlextTestsConstants as FlextTestsConstants,
+        FlextTestsConstants as c,
+    )
+    from flext_tests.docker import FlextTestsDocker as FlextTestsDocker, tk as tk
+    from flext_tests.domains import FlextTestsDomains as FlextTestsDomains, td as td
+    from flext_tests.files import FlextTestsFiles as FlextTestsFiles, tf as tf
+    from flext_tests.models import (
+        FlextTestsModels as FlextTestsModels,
+        FlextTestsModels as m,
+    )
+    from flext_tests.protocols import (
+        FlextTestsProtocols as FlextTestsProtocols,
+        FlextTestsProtocols as p,
+    )
+    from flext_tests.typings import (
+        FlextTestsTypes as FlextTestsTypes,
+        FlextTestsTypes as t,
+    )
+    from flext_tests.utilities import (
+        FlextTestsUtilities as FlextTestsUtilities,
+        FlextTestsUtilities as u,
+    )
+    from flext_tests.validator import (
+        FlextTestsValidator as FlextTestsValidator,
+        tv as tv,
+    )
 
 _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
     "FlextTestsConstants": ["flext_tests.constants", "FlextTestsConstants"],
@@ -141,7 +176,7 @@ _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
     "x": ["flext_core", "x"],
 }
 
-__all__ = [
+_EXPORTS: Sequence[str] = [
     "FlextTestsConstants",
     "FlextTestsDocker",
     "FlextTestsDomains",
@@ -203,41 +238,4 @@ __all__ = [
 ]
 
 
-_LAZY_CACHE: MutableMapping[str, FlextTypes.ModuleExport] = {}
-
-
-def __getattr__(name: str) -> FlextTypes.ModuleExport:
-    """Lazy-load module attributes on first access (PEP 562).
-
-    A local cache ``_LAZY_CACHE`` persists resolved objects across repeated
-    accesses during process lifetime.
-
-    Args:
-        name: Attribute name requested by dir()/import.
-
-    Returns:
-        Lazy-loaded module export type.
-
-    Raises:
-        AttributeError: If attribute not registered.
-
-    """
-    if name in _LAZY_CACHE:
-        return _LAZY_CACHE[name]
-
-    value = lazy_getattr(name, _LAZY_IMPORTS, globals(), __name__)
-    _LAZY_CACHE[name] = value
-    return value
-
-
-def __dir__() -> Sequence[str]:
-    """Return list of available attributes for dir() and autocomplete.
-
-    Returns:
-        List of public names from module exports.
-
-    """
-    return sorted(__all__)
-
-
-cleanup_submodule_namespace(__name__, _LAZY_IMPORTS)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, _EXPORTS)

@@ -5,57 +5,78 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping, MutableMapping, Sequence
+from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
+from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_core import FlextTypes
-
-    from flext_tests import d, e, h, r, s, x
+    from flext_tests import d as d, e as e, h as h, r as r, s as s, x as x
     from tests import (
-        conftest,
-        constants,
-        models,
-        protocols,
-        test_utils,
-        typings,
-        utilities,
+        conftest as conftest,
+        constants as constants,
+        models as models,
+        protocols as protocols,
+        test_utils as test_utils,
+        typings as typings,
+        utilities as utilities,
     )
-    from tests.conftest import td, tf, tk, tm, tt
-    from tests.constants import FlextTestsTestConstants, FlextTestsTestConstants as c
-    from tests.models import FlextTestsTestModels, FlextTestsTestModels as m
-    from tests.protocols import FlextTestsTestProtocols, FlextTestsTestProtocols as p
-    from tests.test_utils import AssertionHelpers, T, assertion_helpers
-    from tests.typings import FlextTestsTestTypes, FlextTestsTestTypes as t
+    from tests.conftest import td as td, tf as tf, tk as tk, tm as tm, tt as tt
+    from tests.constants import (
+        FlextTestsTestConstants as FlextTestsTestConstants,
+        FlextTestsTestConstants as c,
+    )
+    from tests.models import (
+        FlextTestsTestModels as FlextTestsTestModels,
+        FlextTestsTestModels as m,
+    )
+    from tests.protocols import (
+        FlextTestsTestProtocols as FlextTestsTestProtocols,
+        FlextTestsTestProtocols as p,
+    )
+    from tests.test_utils import (
+        AssertionHelpers as AssertionHelpers,
+        T as T,
+        assertion_helpers as assertion_helpers,
+    )
+    from tests.typings import (
+        FlextTestsTestTypes as FlextTestsTestTypes,
+        FlextTestsTestTypes as t,
+    )
     from tests.unit.flext_tests.test_docker import (
-        TestContainerInfo,
-        TestContainerStatus,
-        TestFlextTestsDocker,
-        TestFlextTestsDockerWorkerId,
-        TestFlextTestsDockerWorkspaceRoot,
+        TestContainerInfo as TestContainerInfo,
+        TestContainerStatus as TestContainerStatus,
+        TestFlextTestsDocker as TestFlextTestsDocker,
+        TestFlextTestsDockerWorkerId as TestFlextTestsDockerWorkerId,
+        TestFlextTestsDockerWorkspaceRoot as TestFlextTestsDockerWorkspaceRoot,
     )
-    from tests.unit.flext_tests.test_domains import TestFlextTestsDomains
+    from tests.unit.flext_tests.test_domains import (
+        TestFlextTestsDomains as TestFlextTestsDomains,
+    )
     from tests.unit.flext_tests.test_files import (
-        TestAssertExists,
-        TestBatchOperations,
-        TestCreateInStatic,
-        TestFileInfo,
-        TestFileInfoFromModels,
-        TestFlextTestsFiles,
-        TestFlextTestsFilesNewApi,
-        TestInfoWithContentMeta,
-        TestShortAlias,
+        TestAssertExists as TestAssertExists,
+        TestBatchOperations as TestBatchOperations,
+        TestCreateInStatic as TestCreateInStatic,
+        TestFileInfo as TestFileInfo,
+        TestFileInfoFromModels as TestFileInfoFromModels,
+        TestFlextTestsFiles as TestFlextTestsFiles,
+        TestFlextTestsFilesNewApi as TestFlextTestsFilesNewApi,
+        TestInfoWithContentMeta as TestInfoWithContentMeta,
+        TestShortAlias as TestShortAlias,
     )
-    from tests.unit.flext_tests.test_matchers import TestFlextTestsMatchers
+    from tests.unit.flext_tests.test_matchers import (
+        TestFlextTestsMatchers as TestFlextTestsMatchers,
+    )
     from tests.unit.flext_tests.test_utilities import (
-        TestFlextTestsUtilitiesFactory,
-        TestFlextTestsUtilitiesResult,
-        TestFlextTestsUtilitiesResultCompat,
-        TestFlextTestsUtilitiesTestContext,
+        TestFlextTestsUtilitiesFactory as TestFlextTestsUtilitiesFactory,
+        TestFlextTestsUtilitiesResult as TestFlextTestsUtilitiesResult,
+        TestFlextTestsUtilitiesResultCompat as TestFlextTestsUtilitiesResultCompat,
+        TestFlextTestsUtilitiesTestContext as TestFlextTestsUtilitiesTestContext,
     )
-    from tests.utilities import FlextTestsTestUtilities, FlextTestsTestUtilities as u
+    from tests.utilities import (
+        FlextTestsTestUtilities as FlextTestsTestUtilities,
+        FlextTestsTestUtilities as u,
+    )
 
 _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
     "AssertionHelpers": ["tests.test_utils", "AssertionHelpers"],
@@ -150,7 +171,7 @@ _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
     "x": ["flext_tests", "x"],
 }
 
-__all__ = [
+_EXPORTS: Sequence[str] = [
     "AssertionHelpers",
     "FlextTestsTestConstants",
     "FlextTestsTestModels",
@@ -205,41 +226,4 @@ __all__ = [
 ]
 
 
-_LAZY_CACHE: MutableMapping[str, FlextTypes.ModuleExport] = {}
-
-
-def __getattr__(name: str) -> FlextTypes.ModuleExport:
-    """Lazy-load module attributes on first access (PEP 562).
-
-    A local cache ``_LAZY_CACHE`` persists resolved objects across repeated
-    accesses during process lifetime.
-
-    Args:
-        name: Attribute name requested by dir()/import.
-
-    Returns:
-        Lazy-loaded module export type.
-
-    Raises:
-        AttributeError: If attribute not registered.
-
-    """
-    if name in _LAZY_CACHE:
-        return _LAZY_CACHE[name]
-
-    value = lazy_getattr(name, _LAZY_IMPORTS, globals(), __name__)
-    _LAZY_CACHE[name] = value
-    return value
-
-
-def __dir__() -> Sequence[str]:
-    """Return list of available attributes for dir() and autocomplete.
-
-    Returns:
-        List of public names from module exports.
-
-    """
-    return sorted(__all__)
-
-
-cleanup_submodule_namespace(__name__, _LAZY_IMPORTS)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, _EXPORTS)
