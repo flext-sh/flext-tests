@@ -236,7 +236,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_failure[TResult](
-                result: r[TResult],
+                result: p.Result[TResult],
                 expected_error: str | None = None,
             ) -> str:
                 """Assert result is failure and return error message.
@@ -268,7 +268,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_failure_with_error[T](
-                result: r[T],
+                result: p.Result[T],
                 expected_error: str | None = None,
             ) -> None:
                 """Assert result is failure and has expected error.
@@ -290,7 +290,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_result_failure_with_error[T](
-                result: r[T],
+                result: p.Result[T],
                 expected_error: str,
             ) -> None:
                 """Assert result failure with error (compat alias).
@@ -310,7 +310,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_success[TResult](
-                result: r[TResult],
+                result: p.Result[TResult],
                 error_msg: str | None = None,
             ) -> TResult:
                 """Assert result is success and return unwrapped value.
@@ -336,7 +336,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_success_with_value[T](
-                result: r[T],
+                result: p.Result[T],
                 expected_value: T,
             ) -> None:
                 """Assert result is success and has expected value.
@@ -616,7 +616,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_failure_with_error[T](
-                result: r[T],
+                result: p.Result[T],
                 expected_error: str | None = None,
             ) -> None:
                 """Delegate to Result.assert_failure_with_error."""
@@ -627,7 +627,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_result_failure_with_error[T](
-                result: r[T],
+                result: p.Result[T],
                 expected_error: str,
             ) -> None:
                 """Delegate to Result.assert_result_failure_with_error."""
@@ -638,7 +638,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_success_with_value[T](
-                result: r[T],
+                result: p.Result[T],
                 expected_value: T,
             ) -> None:
                 """Delegate to Result.assert_success_with_value."""
@@ -1427,7 +1427,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_result_failure[TResult](
-                result: r[TResult],
+                result: p.Result[TResult],
                 expected_error: str | None = None,
             ) -> str:
                 """Delegate to Result.assert_failure."""
@@ -1458,7 +1458,7 @@ class FlextTestsUtilities(FlextUtilities):
                 )
 
             @staticmethod
-            def assert_result_success[TResult](result: r[TResult]) -> TResult:
+            def assert_result_success[TResult](result: p.Result[TResult]) -> TResult:
                 """Delegate to Result.assert_success."""
                 return FlextTestsUtilities.Tests.Result.assert_success(result)
 

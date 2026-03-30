@@ -28,7 +28,7 @@ from pydantic import (
     model_validator,
 )
 
-from flext_tests import c, t
+from flext_tests import c, p, t
 
 
 class FlextTestsModels(
@@ -1092,7 +1092,7 @@ class FlextTestsModels(
         class Chain[TResult](FlextModels.Value):
             """Container for chained result assertions."""
 
-            result: Annotated[r[TResult], Field(description="r being chained")]
+            result: Annotated[p.Result[TResult], Field(description="r being chained")]
 
         class TestScope(FlextModels.ArbitraryTypesModel):
             """Scope container for test configuration and runtime state."""

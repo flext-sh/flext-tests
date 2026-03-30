@@ -14,6 +14,15 @@ if TYPE_CHECKING:
     from flext_core import FlextTypes
 
     from flext_tests import d, e, h, r, s, x
+    from tests import (
+        conftest,
+        constants,
+        models,
+        protocols,
+        test_utils,
+        typings,
+        utilities,
+    )
     from tests.conftest import td, tf, tk, tm, tt
     from tests.constants import FlextTestsTestConstants, FlextTestsTestConstants as c
     from tests.models import FlextTestsTestModels, FlextTestsTestModels as m
@@ -117,20 +126,27 @@ _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
     "TestShortAlias": ["tests.unit.flext_tests.test_files", "TestShortAlias"],
     "assertion_helpers": ["tests.test_utils", "assertion_helpers"],
     "c": ["tests.constants", "FlextTestsTestConstants"],
+    "conftest": ["tests.conftest", ""],
+    "constants": ["tests.constants", ""],
     "d": ["flext_tests", "d"],
     "e": ["flext_tests", "e"],
     "h": ["flext_tests", "h"],
     "m": ["tests.models", "FlextTestsTestModels"],
+    "models": ["tests.models", ""],
     "p": ["tests.protocols", "FlextTestsTestProtocols"],
+    "protocols": ["tests.protocols", ""],
     "r": ["flext_tests", "r"],
     "s": ["flext_tests", "s"],
     "t": ["tests.typings", "FlextTestsTestTypes"],
     "td": ["tests.conftest", "td"],
+    "test_utils": ["tests.test_utils", ""],
     "tf": ["tests.conftest", "tf"],
     "tk": ["tests.conftest", "tk"],
     "tm": ["tests.conftest", "tm"],
     "tt": ["tests.conftest", "tt"],
+    "typings": ["tests.typings", ""],
     "u": ["tests.utilities", "FlextTestsTestUtilities"],
+    "utilities": ["tests.utilities", ""],
     "x": ["flext_tests", "x"],
 }
 
@@ -164,20 +180,27 @@ __all__ = [
     "TestShortAlias",
     "assertion_helpers",
     "c",
+    "conftest",
+    "constants",
     "d",
     "e",
     "h",
     "m",
+    "models",
     "p",
+    "protocols",
     "r",
     "s",
     "t",
     "td",
+    "test_utils",
     "tf",
     "tk",
     "tm",
     "tt",
+    "typings",
     "u",
+    "utilities",
     "x",
 ]
 

@@ -20,6 +20,15 @@ from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 if TYPE_CHECKING:
     from flext_core import FlextTypes
 
+    from flext_tests._validator import (
+        bypass,
+        imports,
+        layer,
+        models,
+        settings,
+        tests,
+        types,
+    )
     from flext_tests._validator.bypass import FlextValidatorBypass
     from flext_tests._validator.imports import FlextValidatorImports
     from flext_tests._validator.layer import FlextValidatorLayer
@@ -42,6 +51,13 @@ _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
     ],
     "FlextValidatorTests": ["flext_tests._validator.tests", "FlextValidatorTests"],
     "FlextValidatorTypes": ["flext_tests._validator.types", "FlextValidatorTypes"],
+    "bypass": ["flext_tests._validator.bypass", ""],
+    "imports": ["flext_tests._validator.imports", ""],
+    "layer": ["flext_tests._validator.layer", ""],
+    "models": ["flext_tests._validator.models", ""],
+    "settings": ["flext_tests._validator.settings", ""],
+    "tests": ["flext_tests._validator.tests", ""],
+    "types": ["flext_tests._validator.types", ""],
     "vm": ["flext_tests._validator.models", "vm"],
 }
 
@@ -53,6 +69,13 @@ __all__ = [
     "FlextValidatorSettings",
     "FlextValidatorTests",
     "FlextValidatorTypes",
+    "bypass",
+    "imports",
+    "layer",
+    "models",
+    "settings",
+    "tests",
+    "types",
     "vm",
 ]
 

@@ -13,6 +13,13 @@ from flext_core.lazy import cleanup_submodule_namespace, lazy_getattr
 if TYPE_CHECKING:
     from flext_core import FlextTypes
 
+    from tests.unit.flext_tests import (
+        test_docker,
+        test_domains,
+        test_files,
+        test_matchers,
+        test_utilities,
+    )
     from tests.unit.flext_tests.test_docker import (
         TestContainerInfo,
         TestContainerStatus,
@@ -100,6 +107,11 @@ _LAZY_IMPORTS: Mapping[str, Sequence[str]] = {
         "TestInfoWithContentMeta",
     ],
     "TestShortAlias": ["tests.unit.flext_tests.test_files", "TestShortAlias"],
+    "test_docker": ["tests.unit.flext_tests.test_docker", ""],
+    "test_domains": ["tests.unit.flext_tests.test_domains", ""],
+    "test_files": ["tests.unit.flext_tests.test_files", ""],
+    "test_matchers": ["tests.unit.flext_tests.test_matchers", ""],
+    "test_utilities": ["tests.unit.flext_tests.test_utilities", ""],
 }
 
 __all__ = [
@@ -123,6 +135,11 @@ __all__ = [
     "TestFlextTestsUtilitiesTestContext",
     "TestInfoWithContentMeta",
     "TestShortAlias",
+    "test_docker",
+    "test_domains",
+    "test_files",
+    "test_matchers",
+    "test_utilities",
 ]
 
 
