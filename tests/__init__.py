@@ -11,27 +11,13 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests import *
-    from tests import (
-        conftest,
-        constants,
-        models,
-        protocols,
-        test_utils,
-        typings,
-        utilities,
-    )
     from tests.conftest import *
     from tests.constants import *
     from tests.models import *
     from tests.protocols import *
     from tests.test_utils import *
     from tests.typings import *
-    from tests.unit.flext_tests.test_docker import *
-    from tests.unit.flext_tests.test_domains import *
-    from tests.unit.flext_tests.test_files import *
-    from tests.unit.flext_tests.test_matchers import *
-    from tests.unit.flext_tests.test_utilities import *
+    from tests.unit.flext_tests import *
     from tests.utilities import *
 
 _LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
@@ -89,4 +75,4 @@ _LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
 }
 
 
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, sorted(_LAZY_IMPORTS))
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
