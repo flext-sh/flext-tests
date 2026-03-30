@@ -17,8 +17,7 @@ import yaml
 from flext_core import r
 from pydantic import BaseModel
 
-from flext_tests import c, t, tf, tm
-from flext_tests.models import FlextTestsModels
+from flext_tests import FlextTestsModels, c, t, tf, tm
 from tests.test_utils import assertion_helpers
 
 

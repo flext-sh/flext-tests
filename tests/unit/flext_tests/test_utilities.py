@@ -13,8 +13,7 @@ import pytest
 from flext_core import r
 from pydantic import BaseModel, ConfigDict
 
-from flext_tests import tm
-from flext_tests.utilities import FlextTestsUtilities as u
+from flext_tests import FlextTestsUtilities as u, tm
 
 
 class TestFlextTestsUtilitiesResult:
