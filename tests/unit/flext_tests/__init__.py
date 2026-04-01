@@ -13,6 +13,13 @@ from flext_core.lazy import install_lazy_exports
 if _TYPE_CHECKING:
     from flext_core import FlextTypes
 
+    from tests.unit.flext_tests import (
+        test_docker,
+        test_domains,
+        test_files,
+        test_matchers,
+        test_utilities,
+    )
     from tests.unit.flext_tests.test_docker import (
         TestContainerInfo,
         TestContainerStatus,

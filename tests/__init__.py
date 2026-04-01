@@ -14,14 +14,44 @@ if _TYPE_CHECKING:
     from flext_core import FlextTypes
 
     from flext_tests import d, e, h, r, s, x
-    from tests.conftest import *
-    from tests.constants import *
-    from tests.models import *
-    from tests.protocols import *
+    from tests import (
+        conftest,
+        constants,
+        models,
+        protocols,
+        test_utils,
+        typings,
+        utilities,
+    )
+    from tests.conftest import td, tf, tk, tm, tt
+    from tests.constants import FlextTestsTestConstants, FlextTestsTestConstants as c
+    from tests.models import FlextTestsTestModels, FlextTestsTestModels as m
+    from tests.protocols import FlextTestsTestProtocols, FlextTestsTestProtocols as p
     from tests.test_utils import AssertionHelpers, T, assertion_helpers
-    from tests.typings import *
-    from tests.unit.flext_tests import *
-    from tests.utilities import *
+    from tests.typings import FlextTestsTestTypes, FlextTestsTestTypes as t
+    from tests.unit.flext_tests import (
+        TestAssertExists,
+        TestBatchOperations,
+        TestContainerInfo,
+        TestContainerStatus,
+        TestCreateInStatic,
+        TestFileInfo,
+        TestFileInfoFromModels,
+        TestFlextTestsDocker,
+        TestFlextTestsDockerWorkerId,
+        TestFlextTestsDockerWorkspaceRoot,
+        TestFlextTestsDomains,
+        TestFlextTestsFiles,
+        TestFlextTestsFilesNewApi,
+        TestFlextTestsMatchers,
+        TestFlextTestsUtilitiesFactory,
+        TestFlextTestsUtilitiesResult,
+        TestFlextTestsUtilitiesResultCompat,
+        TestFlextTestsUtilitiesTestContext,
+        TestInfoWithContentMeta,
+        TestShortAlias,
+    )
+    from tests.utilities import FlextTestsTestUtilities, FlextTestsTestUtilities as u
 
 _LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
     "AssertionHelpers": "tests.test_utils",

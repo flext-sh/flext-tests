@@ -20,13 +20,22 @@ from flext_core.lazy import install_lazy_exports
 if _TYPE_CHECKING:
     from flext_core import FlextTypes
 
-    from flext_tests._validator.bypass import *
-    from flext_tests._validator.imports import *
-    from flext_tests._validator.layer import *
-    from flext_tests._validator.models import *
-    from flext_tests._validator.settings import *
-    from flext_tests._validator.tests import *
-    from flext_tests._validator.types import *
+    from flext_tests._validator import (
+        bypass,
+        imports,
+        layer,
+        models,
+        settings,
+        tests,
+        types,
+    )
+    from flext_tests._validator.bypass import FlextValidatorBypass
+    from flext_tests._validator.imports import FlextValidatorImports
+    from flext_tests._validator.layer import FlextValidatorLayer
+    from flext_tests._validator.models import FlextValidatorModels, vm
+    from flext_tests._validator.settings import FlextValidatorSettings
+    from flext_tests._validator.tests import FlextValidatorTests
+    from flext_tests._validator.types import FlextValidatorTypes
 
 _LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
     "FlextValidatorBypass": "flext_tests._validator.bypass",

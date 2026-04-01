@@ -13,8 +13,16 @@ from flext_core.lazy import install_lazy_exports
 if _TYPE_CHECKING:
     from flext_core import FlextTypes
 
-    from flext_tests._utilities._payload import *
-    from flext_tests._utilities.matchers import *
+    from flext_tests._utilities import _payload, matchers
+    from flext_tests._utilities._payload import (
+        FlextTestsPayloadUtilities,
+        deep_match,
+        length_validate,
+        to_config_map_value,
+        to_normalized_value,
+        to_payload,
+    )
+    from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
 
 _LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
     "FlextTestsMatchersUtilities": "flext_tests._utilities.matchers",
