@@ -67,7 +67,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import ClassVar, TypeIs, overload
 
-from flext_core import r, u
+from flext_core import u
 from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
 
 from flext_tests import (
@@ -495,7 +495,7 @@ class FlextTestsMatchersUtilities:
 
             @staticmethod
             def assert_result_success[TResult](
-                result: r[TResult] | p.Result[TResult],
+                result: p.Result[TResult],
                 msg: str | None = None,
             ) -> TResult:
                 """Assert result is success and return unwrapped value.
@@ -520,7 +520,7 @@ class FlextTestsMatchersUtilities:
 
             @staticmethod
             def check[TResult](
-                result: r[TResult] | p.Result[TResult],
+                result: p.Result[TResult],
             ) -> m.Tests.Chain[TResult]:
                 """Start chained assertions on result (railway pattern).
 
@@ -535,7 +535,7 @@ class FlextTestsMatchersUtilities:
 
             @staticmethod
             def fail[TResult](
-                result: r[TResult] | p.Result[TResult],
+                result: p.Result[TResult],
                 **kwargs: t.Tests.Matcher.MatcherKwargValue,
             ) -> str:
                 r"""Enhanced assertion for r failure with optional error validation.
@@ -690,19 +690,19 @@ class FlextTestsMatchersUtilities:
             @staticmethod
             @overload
             def ok[TResult](
-                result: r[TResult] | p.Result[TResult],
+                result: p.Result[TResult],
             ) -> TResult: ...
 
             @staticmethod
             @overload
             def ok[TResult](
-                result: r[TResult] | p.Result[TResult],
+                result: p.Result[TResult],
                 **kwargs: t.Tests.Matcher.MatcherKwargValue,
             ) -> TResult | t.Tests.Testobject: ...
 
             @staticmethod
             def ok[TResult](
-                result: r[TResult] | p.Result[TResult],
+                result: p.Result[TResult],
                 **kwargs: t.Tests.Matcher.MatcherKwargValue,
             ) -> TResult | t.Tests.Testobject:
                 """Enhanced assertion for r success with optional value validation.

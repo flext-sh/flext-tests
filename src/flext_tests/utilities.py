@@ -239,19 +239,7 @@ class FlextTestsUtilities(FlextUtilities):
                 result: p.Result[TResult],
                 expected_error: str | None = None,
             ) -> str:
-                """Assert result is failure and return error message.
-
-                Args:
-                    result: r or Result protocol to check
-                    expected_error: Optional expected error substring
-
-                Returns:
-                    Error message from result
-
-                Raises:
-                    AssertionError: If result is success
-
-                """
+                """Assert result is failure and return error message."""
                 if result.is_success:
                     msg = f"Expected failure but got success: {result.value}"
                     raise AssertionError(msg)
@@ -293,16 +281,7 @@ class FlextTestsUtilities(FlextUtilities):
                 result: p.Result[T],
                 expected_error: str,
             ) -> None:
-                """Assert result failure with error (compat alias).
-
-                Args:
-                    result: r or Result protocol to check
-                    expected_error: Expected error substring
-
-                Raises:
-                    AssertionError: If result is not failure or error mismatch
-
-                """
+                """Assert result failure with error (compat alias)."""
                 FlextTestsUtilities.Tests.Result.assert_failure_with_error(
                     result,
                     expected_error,
@@ -313,19 +292,7 @@ class FlextTestsUtilities(FlextUtilities):
                 result: p.Result[TResult],
                 error_msg: str | None = None,
             ) -> TResult:
-                """Assert result is success and return unwrapped value.
-
-                Args:
-                    result: r or Result protocol to check
-                    error_msg: Optional custom error message
-
-                Returns:
-                    Unwrapped value from result
-
-                Raises:
-                    AssertionError: If result is failure
-
-                """
+                """Assert result is success and return unwrapped value."""
                 if not result.is_success:
                     msg = (
                         error_msg or f"Expected success but got failure: {result.error}"
@@ -339,16 +306,7 @@ class FlextTestsUtilities(FlextUtilities):
                 result: p.Result[T],
                 expected_value: T,
             ) -> None:
-                """Assert result is success and has expected value.
-
-                Args:
-                    result: r or Result protocol to check
-                    expected_value: Expected value
-
-                Raises:
-                    AssertionError: If result is failure or value doesn't match
-
-                """
+                """Assert result is success and has expected value."""
                 if not result.is_success:
                     msg = f"Expected success, got failure: {result.error}"
                     raise AssertionError(msg)
@@ -1427,7 +1385,7 @@ class FlextTestsUtilities(FlextUtilities):
 
             @staticmethod
             def assert_result_failure[TResult](
-                result: p.Result[TResult],
+                result: r[TResult],
                 expected_error: str | None = None,
             ) -> str:
                 """Delegate to Result.assert_failure."""
@@ -1458,7 +1416,7 @@ class FlextTestsUtilities(FlextUtilities):
                 )
 
             @staticmethod
-            def assert_result_success[TResult](result: p.Result[TResult]) -> TResult:
+            def assert_result_success[TResult](result: r[TResult]) -> TResult:
                 """Delegate to Result.assert_success."""
                 return FlextTestsUtilities.Tests.Result.assert_success(result)
 
