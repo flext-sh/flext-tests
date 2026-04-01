@@ -18,7 +18,7 @@ if _TYPE_CHECKING:
     from tests.constants import *
     from tests.models import *
     from tests.protocols import *
-    from tests.test_utils import *
+    from tests.test_utils import AssertionHelpers, T, assertion_helpers
     from tests.typings import *
     from tests.unit.flext_tests import *
     from tests.utilities import *

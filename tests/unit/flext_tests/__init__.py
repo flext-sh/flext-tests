@@ -13,11 +13,32 @@ from flext_core.lazy import install_lazy_exports
 if _TYPE_CHECKING:
     from flext_core import FlextTypes
 
-    from tests.unit.flext_tests.test_docker import *
-    from tests.unit.flext_tests.test_domains import *
-    from tests.unit.flext_tests.test_files import *
-    from tests.unit.flext_tests.test_matchers import *
-    from tests.unit.flext_tests.test_utilities import *
+    from tests.unit.flext_tests.test_docker import (
+        TestContainerInfo,
+        TestContainerStatus,
+        TestFlextTestsDocker,
+        TestFlextTestsDockerWorkerId,
+        TestFlextTestsDockerWorkspaceRoot,
+    )
+    from tests.unit.flext_tests.test_domains import TestFlextTestsDomains
+    from tests.unit.flext_tests.test_files import (
+        TestAssertExists,
+        TestBatchOperations,
+        TestCreateInStatic,
+        TestFileInfo,
+        TestFileInfoFromModels,
+        TestFlextTestsFiles,
+        TestFlextTestsFilesNewApi,
+        TestInfoWithContentMeta,
+        TestShortAlias,
+    )
+    from tests.unit.flext_tests.test_matchers import TestFlextTestsMatchers
+    from tests.unit.flext_tests.test_utilities import (
+        TestFlextTestsUtilitiesFactory,
+        TestFlextTestsUtilitiesResult,
+        TestFlextTestsUtilitiesResultCompat,
+        TestFlextTestsUtilitiesTestContext,
+    )
 
 _LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
     "TestAssertExists": "tests.unit.flext_tests.test_files",
