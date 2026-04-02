@@ -9,14 +9,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Protocol, TypeVar
+from typing import Protocol
 
 from flext_core import FlextProtocols
 
 from flext_tests import t
-
-TEntity = TypeVar("TEntity")
-TValue = TypeVar("TValue")
 
 
 class FlextTestsProtocols(FlextProtocols):

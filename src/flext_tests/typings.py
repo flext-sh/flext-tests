@@ -86,7 +86,6 @@ class FlextTestsTypes(FlextTypes):
 
         type Testobject = _Testobject
         type TestobjectSerializable = _TestobjectSerializable
-        type NormalizedValue = _Testobject
         type FileContent = (
             str
             | bytes
