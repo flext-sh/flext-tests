@@ -21,7 +21,7 @@ from collections.abc import (
     Set as AbstractSet,
     ValuesView,
 )
-from datetime import datetime
+from datetime import datetime, timezone, tzinfo
 from enum import Enum
 from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
@@ -36,6 +36,7 @@ type _TestobjectSerializable = (
     | None
     | bytes
     | datetime
+    | tzinfo
     | Path
     | BaseModel
     | type
@@ -69,6 +70,8 @@ type _Testobject = (
     | MutableMapping[str, _Testobject]
     | Sequence[_Testobject]
     | Mapping[str, _Testobject]
+    | tzinfo
+    | timezone
 )
 
 
@@ -92,10 +95,39 @@ class FlextTestsTypes(FlextTypes):
     )
     TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER: TypeAdapter[
         Mapping[str, _TestobjectSerializable]
-    ] = TypeAdapter(Mapping[str, _TestobjectSerializable])
+    ] = TypeAdapter(
+        Mapping[str, _TestobjectSerializable],
+        config=ConfigDict(arbitrary_types_allowed=True),
+    )
     TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER: TypeAdapter[
         Sequence[_TestobjectSerializable]
-    ] = TypeAdapter(Sequence[_TestobjectSerializable])
+    ] = TypeAdapter(
+        Sequence[_TestobjectSerializable],
+        config=ConfigDict(arbitrary_types_allowed=True),
+    )
+    PRIMITIVES_MAPPING_ADAPTER: TypeAdapter[Mapping[str, FlextTypes.Primitives]] = (
+        TypeAdapter(Mapping[str, FlextTypes.Primitives])
+    )
+    NORMALIZED_VALUE_ADAPTER: TypeAdapter[FlextTypes.NormalizedValue] = TypeAdapter(
+        FlextTypes.NormalizedValue
+    )
+    DICT_ADAPTER: TypeAdapter[FlextTypes.Dict] = TypeAdapter(FlextTypes.Dict)
+    SCALAR_MAPPING_ADAPTER: TypeAdapter[FlextTypes.ScalarMapping] = TypeAdapter(
+        FlextTypes.ScalarMapping
+    )
+    CONTAINER_MAPPING_ADAPTER: TypeAdapter[FlextTypes.ContainerMapping] = TypeAdapter(
+        FlextTypes.ContainerMapping
+    )
+    CONTAINER_MAPPING_SEQUENCE_ADAPTER: TypeAdapter[
+        Sequence[FlextTypes.ContainerMapping]
+    ] = TypeAdapter(Sequence[FlextTypes.ContainerMapping])
+    STR_MAPPING_ADAPTER: TypeAdapter[FlextTypes.StrMapping] = TypeAdapter(
+        FlextTypes.StrMapping
+    )
+    STR_MAPPING_MAPPING_ADAPTER: TypeAdapter[Mapping[str, FlextTypes.StrMapping]] = (
+        TypeAdapter(Mapping[str, FlextTypes.StrMapping])
+    )
+    INTEGER_SEQUENCE_ADAPTER: TypeAdapter[Sequence[int]] = TypeAdapter(Sequence[int])
     STR_SEQUENCE_MAPPING_ADAPTER: TypeAdapter[Mapping[str, FlextTypes.StrSequence]] = (
         TypeAdapter(Mapping[str, FlextTypes.StrSequence])
     )
