@@ -67,9 +67,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import ClassVar, TypeIs, overload
 
-from flext_core import u
 from pydantic import BaseModel, RootModel, TypeAdapter, ValidationError
 
+from flext_core import u
 from flext_tests import (
     c,
     deep_match as _deep_match,
@@ -985,7 +985,7 @@ class FlextTestsMatchersUtilities:
                     params = m.Tests.ScopeParams.model_validate(kwargs)
                 except (TypeError, ValueError, AttributeError) as exc:
                     raise ValueError(f"Parameter validation failed: {exc}") from exc
-                original_env: MutableMapping[str, str | None] = {}
+                original_env: t.MutableOptionalStrMapping = {}
                 original_cwd: Path | None = None
                 try:
                     if params.env is not None:

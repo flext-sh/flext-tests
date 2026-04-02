@@ -20,9 +20,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import ClassVar
 
-from flext_core import FlextUtilities
 from pydantic import BaseModel, ConfigDict, RootModel, TypeAdapter, ValidationError
 
+from flext_core import FlextUtilities
 from flext_tests import m, t
 
 

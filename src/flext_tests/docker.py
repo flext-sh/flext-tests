@@ -27,11 +27,11 @@ from typing import ClassVar
 from docker import DockerClient as DockerSDKClient, from_env as docker_from_env
 from docker.errors import DockerException, NotFound
 from docker.models.containers import Container
-from flext_core import FlextLogger, r
 from pydantic import TypeAdapter, ValidationError
 from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
+from flext_core import FlextLogger, r
 from flext_tests import c, m, p, t
 
 docker: WhalesDockerClient = WhalesDockerClient(client_type="docker")
@@ -58,7 +58,7 @@ class FlextTestsDocker:
     class ContainerInfo(m.Tests.ContainerInfo):
         """Container information model for tests - real inheritance from m."""
 
-    SHARED_CONTAINERS: ClassVar[Mapping[str, Mapping[str, str | int]]] = (
+    SHARED_CONTAINERS: ClassVar[Mapping[str, t.HeaderMapping]] = (
         c.Tests.Docker.SHARED_CONTAINERS
     )
     _ports_adapter: ClassVar[
@@ -124,7 +124,7 @@ class FlextTestsDocker:
         _ = self.get_client()
 
     @property
-    def shared_containers(self) -> Mapping[str, Mapping[str, str | int]]:
+    def shared_containers(self) -> Mapping[str, t.HeaderMapping]:
         """Get shared container configurations."""
         return c.Tests.Docker.SHARED_CONTAINERS
 

@@ -15,7 +15,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from flext_core import r
-
 from flext_tests import c, t, u, vm
 
 if TYPE_CHECKING:

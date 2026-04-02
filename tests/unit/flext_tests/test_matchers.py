@@ -11,8 +11,8 @@ from collections.abc import Mapping
 from typing import cast
 
 import pytest
-from flext_core import r
 
+from flext_core import r
 from flext_tests import tm
 from tests import c, t
 

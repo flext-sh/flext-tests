@@ -12,9 +12,9 @@ from collections.abc import Callable, Mapping, MutableSequence, Sequence
 from pathlib import Path
 from typing import Annotated
 
-from flext_core import r
 from pydantic import Field
 
+from flext_core import r
 from flext_tests import FlextTestsModels, c, t
 
 

@@ -27,8 +27,9 @@ from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
 from typing import TypeAliasType, TypeIs
 
-from flext_core import FlextResult, FlextTypes, p
 from pydantic import BaseModel, InstanceOf, SecretStr
+
+from flext_core import FlextResult, FlextTypes, p
 
 type _TestobjectSerializable = (
     FlextTypes.Primitives

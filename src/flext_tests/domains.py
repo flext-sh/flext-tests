@@ -223,7 +223,7 @@ class FlextTestsDomains:
         return base_service
 
     @staticmethod
-    def create_user(**overrides: str | bool) -> MutableMapping[str, str | bool]:
+    def create_user(**overrides: str | bool) -> t.MutableFeatureFlagMapping:
         """Create test user data using factories.
 
         Args:
@@ -241,7 +241,7 @@ class FlextTestsDomains:
             name=f"{first_name} {last_name}",
             email=email,
         )
-        user: MutableMapping[str, str | bool] = {
+        user: t.MutableFeatureFlagMapping = {
             "id": getattr(user_model_result, "id", ""),
             "username": str(overrides.get("username", "testuser")),
             "email": getattr(user_model_result, "email", email),

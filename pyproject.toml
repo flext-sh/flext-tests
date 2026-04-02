@@ -155,7 +155,11 @@ omit = [
 
 # [MANAGED] deptry
 [tool.deptry]
-known_first_party = [ "flext_tests" ]
+known_first_party = [
+  "flext_core",
+  "flext_infra",
+  "flext_tests",
+]
 pep621_dev_dependency_groups = [ "dev" ]
 
 [tool.hatch.build.targets.wheel]
@@ -530,7 +534,11 @@ select = [ "ALL" ]
 
 combine-as-imports = true
 force-single-line = false
-known-first-party = [ "flext_tests" ]
+known-first-party = [
+  "flext_core",
+  "flext_infra",
+  "flext_tests",
+]
 split-on-trailing-comma = true
 
 [tool.ruff.lint.per-file-ignores]

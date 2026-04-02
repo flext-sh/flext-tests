@@ -34,10 +34,10 @@ from pathlib import Path
 from types import TracebackType
 from typing import ClassVar, Self, TypeIs, TypeVar, overload, override
 
-from flext_core import FlextResult, FlextRuntime, r
 from pydantic import BaseModel, ConfigDict, TypeAdapter, ValidationError
 from yaml import YAMLError, dump as yaml_dump, safe_load as yaml_safe_load
 
+from flext_core import FlextResult, FlextRuntime, r
 from flext_tests import c, m, s, t, u
 
 TModel = TypeVar("TModel", bound=BaseModel)

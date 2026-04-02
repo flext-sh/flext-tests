@@ -12,7 +12,6 @@ from flext_core.lazy import install_lazy_exports
 
 if _TYPE_CHECKING:
     from flext_core import FlextTypes
-
     from flext_tests._utilities import _payload, matchers
     from flext_tests._utilities._payload import (
         FlextTestsPayloadUtilities,
@@ -24,7 +23,7 @@ if _TYPE_CHECKING:
     )
     from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
 
-_LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
+_LAZY_IMPORTS: FlextTypes.LazyImportIndex = {
     "FlextTestsMatchersUtilities": "flext_tests._utilities.matchers",
     "FlextTestsPayloadUtilities": "flext_tests._utilities._payload",
     "_payload": "flext_tests._utilities._payload",

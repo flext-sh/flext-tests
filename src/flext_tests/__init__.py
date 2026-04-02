@@ -26,7 +26,6 @@ from flext_core.lazy import install_lazy_exports, merge_lazy_imports
 
 if _TYPE_CHECKING:
     from flext_core import FlextTypes, d, e, h, r, s, x
-
     from flext_tests import (
         _utilities,
         _validator,
@@ -77,7 +76,7 @@ if _TYPE_CHECKING:
     from flext_tests.utilities import FlextTestsUtilities, FlextTestsUtilities as u
     from flext_tests.validator import FlextTestsValidator, tv
 
-_LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = merge_lazy_imports(
+_LAZY_IMPORTS: FlextTypes.LazyImportIndex = merge_lazy_imports(
     (
         "flext_tests._utilities",
         "flext_tests._validator",

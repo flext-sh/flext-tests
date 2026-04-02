@@ -12,7 +12,6 @@ from __future__ import annotations
 from typing import Protocol
 
 from flext_core import FlextProtocols
-
 from flext_tests import t
 
 

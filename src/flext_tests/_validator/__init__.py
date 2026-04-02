@@ -19,7 +19,6 @@ from flext_core.lazy import install_lazy_exports
 
 if _TYPE_CHECKING:
     from flext_core import FlextTypes
-
     from flext_tests._validator import (
         bypass,
         imports,
@@ -37,7 +36,7 @@ if _TYPE_CHECKING:
     from flext_tests._validator.tests import FlextValidatorTests
     from flext_tests._validator.types import FlextValidatorTypes
 
-_LAZY_IMPORTS: Mapping[str, str | Sequence[str]] = {
+_LAZY_IMPORTS: FlextTypes.LazyImportIndex = {
     "FlextValidatorBypass": "flext_tests._validator.bypass",
     "FlextValidatorImports": "flext_tests._validator.imports",
     "FlextValidatorLayer": "flext_tests._validator.layer",

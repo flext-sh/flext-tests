@@ -14,7 +14,6 @@ from enum import StrEnum, unique
 from typing import Final
 
 from flext_core import FlextConstants
-
 from flext_tests import t
 
 
@@ -35,7 +34,7 @@ class FlextTestsConstants(FlextConstants):
         class Docker:
             """Docker test infrastructure constants."""
 
-            SHARED_CONTAINERS: Final[Mapping[str, Mapping[str, str | int]]] = {
+            SHARED_CONTAINERS: Final[Mapping[str, t.HeaderMapping]] = {
                 "flext-oracle-db-test": {
                     "compose_file": "docker/docker-compose.oracle-db.yml",
                     "service": "oracle-db",

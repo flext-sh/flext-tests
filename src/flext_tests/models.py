@@ -15,7 +15,6 @@ from collections.abc import Mapping, MutableMapping, Sequence
 from pathlib import Path
 from typing import Annotated, ClassVar, TypeAliasType, override
 
-from flext_core import FlextModels, r
 from pydantic import (
     AliasChoices,
     BaseModel,
@@ -28,6 +27,7 @@ from pydantic import (
     model_validator,
 )
 
+from flext_core import FlextModels, r
 from flext_tests import c, p, t
 
 

@@ -28,6 +28,8 @@ from pathlib import Path
 from re import Pattern
 from typing import TypeIs, override
 
+from pydantic import BaseModel, RootModel
+
 from flext_core import (
     FlextContext,
     FlextRegistry,
@@ -35,8 +37,6 @@ from flext_core import (
     FlextUtilities,
     r,
 )
-from pydantic import BaseModel, RootModel
-
 from flext_tests import (
     FlextTestsMatchersUtilities,
     FlextTestsProtocols,
@@ -838,7 +838,7 @@ class FlextTestsUtilities(FlextUtilities):
                     None
 
                 """
-                original_values: MutableMapping[str, str | None] = {}
+                original_values: t.MutableOptionalStrMapping = {}
                 if vars_to_clear:
                     for var in vars_to_clear:
                         original_values[var] = os.environ.get(var)
