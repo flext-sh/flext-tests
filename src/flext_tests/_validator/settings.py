@@ -15,7 +15,7 @@ from pathlib import Path
 from flext_core import r
 from flext_tests import c, m, t, u
 
-_TomlValue = str | int | float | bool | list["_TomlValue"] | dict[str, "_TomlValue"]
+_TomlValue = t.Primitives | list["_TomlValue"] | dict[str, "_TomlValue"]
 _TomlDict = dict[str, _TomlValue]
 
 

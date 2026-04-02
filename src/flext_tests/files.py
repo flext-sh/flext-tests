@@ -638,7 +638,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                 continue
             results.append(operation_result)
         results_dict: MutableMapping[str, r[Path | t.Tests.Testobject]] = {}
-        failed_dict: MutableMapping[str, str] = {}
+        failed_dict: t.MutableStrMapping = {}
         for idx, result in enumerate(results):
             if idx < len(items_list):
                 name, _ = items_list[idx]

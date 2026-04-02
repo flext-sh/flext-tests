@@ -217,7 +217,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         path: Path,
         exclude_patterns: t.StrSequence | None = None,
         approved_exceptions: Mapping[str, t.StrSequence] | None = None,
-        layer_hierarchy: Mapping[str, int] | None = None,
+        layer_hierarchy: t.IntMapping | None = None,
     ) -> r[m.Tests.ScanResult]:
         """Validate layer dependencies in Python files.
 

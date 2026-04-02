@@ -511,7 +511,7 @@ class FlextTestsConstants(FlextConstants):
                 DECORATORS: Final[int] = 9
 
                 @classmethod
-                def as_dict(cls) -> Mapping[str, int]:
+                def as_dict(cls) -> t.IntMapping:
                     """Get layer hierarchy as dictionary.
 
                     Returns:

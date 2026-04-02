@@ -20,7 +20,7 @@ from __future__ import annotations
 import contextlib
 import socket
 import time
-from collections.abc import Mapping, MutableMapping, MutableSequence, Sequence
+from collections.abc import Mapping, MutableSequence, Sequence
 from pathlib import Path
 from typing import ClassVar
 
@@ -251,7 +251,7 @@ class FlextTestsDocker:
             ports_raw: Mapping[str, t.Tests.Testobject] = (
                 self._ports_adapter.validate_python(container.ports)
             )
-            ports: MutableMapping[str, str] = {}
+            ports: t.MutableStrMapping = {}
             for container_port, host_bindings in ports_raw.items():
                 normalized_bindings = self._normalize_bindings(host_bindings)
                 host_port = self._extract_host_port(normalized_bindings)

@@ -239,21 +239,21 @@ class TestFlextTestsMatchers:
 
     def test_ok_with_deep_parameter(self) -> None:
         """Test tm.ok() with deep parameter."""
-        data: Mapping[str, t.NormalizedValue] = {"user": {"name": "John", "age": 30}}
+        data: t.ContainerMapping = {"user": {"name": "John", "age": 30}}
         result = r[t.NormalizedValue].ok(data)
         value = tm.ok(result, deep={"user.name": "John"})
         tm.that(value, eq=data)
 
     def test_ok_with_deep_predicate_parameter(self) -> None:
         """Test tm.ok() with deep predicate parameter."""
-        data: Mapping[str, t.NormalizedValue] = {"user": {"email": "test@example.com"}}
+        data: t.ContainerMapping = {"user": {"email": "test@example.com"}}
         result = r[t.NormalizedValue].ok(data)
         value = tm.ok(result, deep={"user.email": "test@example.com"})
         tm.that(value, eq=data)
 
     def test_ok_with_path_parameter(self) -> None:
         """Test tm.ok() with path parameter."""
-        data: Mapping[str, t.NormalizedValue] = {"user": {"name": "John"}}
+        data: t.ContainerMapping = {"user": {"name": "John"}}
         result = r[t.NormalizedValue].ok(data)
         value = tm.ok(result, path="user.name", eq="John")
         tm.that(value, eq="John")

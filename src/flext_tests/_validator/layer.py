@@ -40,7 +40,7 @@ class FlextValidatorLayer:
         cls,
         file_path: Path,
         approved: Mapping[str, t.StrSequence],
-        hierarchy: Mapping[str, int],
+        hierarchy: t.IntMapping,
     ) -> Sequence[m.Tests.Violation]:
         """Scan a single file for layer violations."""
         if u.Tests.Validator.is_approved("LAYER-001", file_path, approved):
@@ -81,7 +81,7 @@ class FlextValidatorLayer:
         cls,
         files: Sequence[Path],
         approved_exceptions: Mapping[str, t.StrSequence] | None = None,
-        layer_hierarchy: Mapping[str, int] | None = None,
+        layer_hierarchy: t.IntMapping | None = None,
     ) -> r[m.Tests.ScanResult]:
         """Scan files for layer violations.
 

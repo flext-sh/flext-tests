@@ -123,7 +123,7 @@ class FlextTestsPayloadUtilities:
                     value,
                 )
             )
-            result_map: MutableMapping[str, t.NormalizedValue] = {}
+            result_map: t.MutableContainerMapping = {}
             for k, v in validated_map.items():
                 key: str = str(k)
                 val: t.Tests.Testobject = v
@@ -163,7 +163,7 @@ class FlextTestsPayloadUtilities:
                     value,
                 )
             )
-            cfg_map: MutableMapping[str, t.NormalizedValue] = {}
+            cfg_map: t.MutableContainerMapping = {}
             for k, v in validated_map.items():
                 key: str = str(k)
                 val: t.Tests.Testobject = v

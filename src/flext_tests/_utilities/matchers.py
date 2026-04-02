@@ -150,7 +150,7 @@ class FlextTestsMatchersUtilities:
         if isinstance(value, type):
             return value
         if FlextTestsMatchersUtilities._is_object_set(value):
-            str_items: Sequence[str] = [str(v) for v in value]
+            str_items: t.StrSequence = [str(v) for v in value]
             return frozenset(
                 FlextTestsMatchersUtilities._to_test_payload(s) for s in str_items
             )
@@ -181,7 +181,7 @@ class FlextTestsMatchersUtilities:
                     for seq_item in sequence_value
                 ]
             except ValidationError:
-                str_fallback: Sequence[str] = [str(v) for v in value]
+                str_fallback: t.StrSequence = [str(v) for v in value]
                 return [
                     FlextTestsMatchersUtilities._to_test_payload(s)
                     for s in str_fallback
@@ -245,7 +245,7 @@ class FlextTestsMatchersUtilities:
         if isinstance(value, type):
             return value
         if FlextTestsMatchersUtilities._is_object_set(value):
-            str_items: Sequence[str] = [str(v) for v in value]
+            str_items: t.StrSequence = [str(v) for v in value]
             return frozenset(str_items)
         if isinstance(value, (BaseModel, str, int, float, bool, Path)):
             return value
@@ -273,7 +273,7 @@ class FlextTestsMatchersUtilities:
                     for seq_item in sequence_value
                 ]
             except ValidationError:
-                str_fallback: Sequence[str] = [str(v) for v in value]
+                str_fallback: t.StrSequence = [str(v) for v in value]
                 return [
                     FlextTestsMatchersUtilities._as_guard_input(s) for s in str_fallback
                 ]
