@@ -34,25 +34,13 @@ from pathlib import Path
 from types import TracebackType
 from typing import ClassVar, Self, TypeIs, TypeVar, overload, override
 
-from pydantic import BaseModel, ConfigDict, TypeAdapter, ValidationError
+from pydantic import BaseModel, ValidationError
 from yaml import YAMLError, dump as yaml_dump, safe_load as yaml_safe_load
 
-from flext_core import FlextResult, FlextRuntime, r
-from flext_tests import c, m, s, t, u
+from flext_core import FlextRuntime, r, s
+from flext_tests import c, m, t, u
 
 TModel = TypeVar("TModel", bound=BaseModel)
-_FormatLiteral = c.Tests.Files.Format
-_CompareModeLiteral = c.Tests.Files.CompareMode
-_OperationLiteral = c.Tests.Files.Operation
-_ErrorModeLiteral = c.Tests.Files.ErrorMode
-_OBJECT_LIST_ADAPTER: TypeAdapter[Sequence[t.Tests.Testobject]] = TypeAdapter(
-    Sequence[t.Tests.Testobject],
-    config=ConfigDict(arbitrary_types_allowed=True),
-)
-_OBJECT_DICT_ADAPTER: TypeAdapter[Mapping[str, t.Tests.Testobject]] = TypeAdapter(
-    Mapping[str, t.Tests.Testobject],
-    config=ConfigDict(arbitrary_types_allowed=True),
-)
 
 
 _SCALAR_PATH: tuple[type, ...] = (str, int, float, bool, datetime, Path)
@@ -77,14 +65,14 @@ def _to_runtime_data(value: t.Tests.Testobject) -> t.RuntimeData:
         return t.ConfigMap(
             root={
                 str(k): _to_normalized_or_model(
-                    _OBJECT_DICT_ADAPTER.validate_python({str(k): v})[str(k)],
+                    t.TESTOBJECT_MAPPING_ADAPTER.validate_python({str(k): v})[str(k)],
                 )
                 for k, v in value.items()
             },
         )
     if isinstance(value, (list, tuple)):
         return [
-            _to_normalized_leaf(_OBJECT_LIST_ADAPTER.validate_python([v])[0])
+            _to_normalized_leaf(t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python([v])[0])
             for v in value
         ]
     return str(value)
@@ -420,7 +408,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         name: str,
         directory: Path,
         *,
-        fmt: _FormatLiteral = c.Tests.Files.Format.AUTO,
+        fmt: c.Tests.Files.Format = c.Tests.Files.Format.AUTO,
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         indent: int = c.Tests.Files.DEFAULT_JSON_INDENT,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
@@ -478,9 +466,9 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         items: t.Tests.Files.BatchFiles,
         *,
         directory: Path | None = None,
-        operation: _OperationLiteral = c.Tests.Files.Operation.CREATE,
+        operation: c.Tests.Files.Operation = c.Tests.Files.Operation.CREATE,
         model: type[TModel] | None = None,
-        on_error: _ErrorModeLiteral = c.Tests.Files.ErrorMode.COLLECT,
+        on_error: c.Tests.Files.ErrorMode = c.Tests.Files.ErrorMode.COLLECT,
         parallel: bool = False,
     ) -> r[m.Tests.BatchResult]:
         """Batch file operations.
@@ -703,7 +691,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         file1: Path,
         file2: Path,
         *,
-        mode: _CompareModeLiteral = c.Tests.Files.CompareMode.CONTENT,
+        mode: c.Tests.Files.CompareMode = c.Tests.Files.CompareMode.CONTENT,
         ignore_ws: bool = False,
         ignore_case: bool = False,
         pattern: str | None = None,
@@ -791,7 +779,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         name: str = c.Tests.Files.DEFAULT_FILENAME,
         directory: Path | None = None,
         *,
-        fmt: _FormatLiteral = c.Tests.Files.Format.AUTO,
+        fmt: c.Tests.Files.Format = c.Tests.Files.Format.AUTO,
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         indent: int = c.Tests.Files.DEFAULT_JSON_INDENT,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
@@ -917,7 +905,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             else:
                 empty_data: Mapping[str, t.Tests.Testobject] = {}
                 data = {"value": actual_content} if actual_content else empty_data
-            json_str = _OBJECT_DICT_ADAPTER.dump_json(
+            json_str = t.TESTOBJECT_MAPPING_ADAPTER.dump_json(
                 data,
                 indent=params.indent,
             ).decode()
@@ -1105,7 +1093,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         path: Path,
         *,
         model_cls: None = None,
-        fmt: _FormatLiteral = c.Tests.Files.Format.AUTO,
+        fmt: c.Tests.Files.Format = c.Tests.Files.Format.AUTO,
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
@@ -1117,7 +1105,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         path: Path,
         *,
         model_cls: type[TModel],
-        fmt: _FormatLiteral = c.Tests.Files.Format.AUTO,
+        fmt: c.Tests.Files.Format = c.Tests.Files.Format.AUTO,
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
@@ -1128,7 +1116,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         path: Path,
         *,
         model_cls: type[TModel] | None = None,
-        fmt: _FormatLiteral = c.Tests.Files.Format.AUTO,
+        fmt: c.Tests.Files.Format = c.Tests.Files.Format.AUTO,
         enc: str = c.Tests.Files.DEFAULT_ENCODING,
         delim: str = c.Tests.Files.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
@@ -1205,7 +1193,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                 )
             elif actual_fmt == c.Tests.Files.Format.JSON:
                 text = params.path.read_text(encoding=params.enc)
-                parsed_json = _OBJECT_DICT_ADAPTER.validate_json(
+                parsed_json = t.TESTOBJECT_MAPPING_ADAPTER.validate_json(
                     text.encode(),
                 )
                 content = self._coerce_read_content(parsed_json)
@@ -1322,10 +1310,10 @@ class FlextTestsFiles(s[t.NormalizedValue]):
     def _coerce_file_content(
         self,
         value: t.Tests.Testobject
-        | FlextResult[t.Tests.Testobject]
-        | FlextResult[Sequence[t.StrSequence]]
-        | FlextResult[bytes]
-        | FlextResult[str]
+        | r[t.Tests.Testobject]
+        | r[Sequence[t.StrSequence]]
+        | r[bytes]
+        | r[str]
         | None,
     ) -> t.Tests.Files.FileContentPlain:
         if isinstance(value, str | bytes):
@@ -1473,7 +1461,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         if not isinstance(value, Sequence) or isinstance(value, str | bytes):
             return False
         try:
-            sequence_value = _OBJECT_LIST_ADAPTER.validate_python(value)
+            sequence_value = t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
         except ValidationError:
             return False
         if not sequence_value:
@@ -1488,14 +1476,14 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         mapping: Mapping[str, t.Tests.Testobject],
     ) -> Mapping[str, t.Tests.Testobject]:
         normalized_mapping: Mapping[str, t.Tests.Testobject] = (
-            _OBJECT_DICT_ADAPTER.validate_python(mapping)
+            t.TESTOBJECT_MAPPING_ADAPTER.validate_python(mapping)
         )
         payload: MutableMapping[str, t.Tests.Testobject] = {}
         for key, value in normalized_mapping.items():
             payload[str(key)] = self._to_payload_value(value)
         return payload
 
-    def _normalize_create_format(self, fmt: str) -> _FormatLiteral:
+    def _normalize_create_format(self, fmt: str) -> c.Tests.Files.Format:
         if fmt in {"txt", "md"}:
             return c.Tests.Files.Format.TEXT
         match fmt:
@@ -1553,9 +1541,11 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                                 Mapping[str, t.Tests.Testobject]
                                 | Sequence[t.Tests.Testobject]
                                 | None
-                            ) = _OBJECT_DICT_ADAPTER.validate_json(text.encode())
+                            ) = t.TESTOBJECT_MAPPING_ADAPTER.validate_json(
+                                text.encode()
+                            )
                         except ValidationError:
-                            parsed_raw = _OBJECT_LIST_ADAPTER.validate_json(
+                            parsed_raw = t.TESTOBJECT_SEQUENCE_ADAPTER.validate_json(
                                 text.encode(),
                             )
                     else:
@@ -1576,7 +1566,9 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                     parsed_content = t.ConfigMap(root=parse_root)
                     key_count = len(parsed_content.root)
                 elif isinstance(parsed_raw, list):
-                    parsed_list = _OBJECT_LIST_ADAPTER.validate_python(parsed_raw)
+                    parsed_list = t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
+                        parsed_raw
+                    )
                     parsed_content = [
                         self._to_payload_value(item) for item in parsed_list
                     ]
@@ -1638,7 +1630,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             }
         if isinstance(value, Sequence) and (not isinstance(value, str | bytes)):
             try:
-                sequence_value = _OBJECT_LIST_ADAPTER.validate_python(value)
+                sequence_value = t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
             except ValidationError:
                 empty_sequence: Sequence[t.Tests.Testobject] = []
                 return empty_sequence
@@ -1667,12 +1659,12 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             return str(value)
         if isinstance(value, Mapping):
             mapping_obj: Mapping[str, t.Tests.Testobject] = (
-                _OBJECT_DICT_ADAPTER.validate_python(value)
+                t.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
             )
             return self._mapping_to_payload(mapping_obj)
         if isinstance(value, Sequence) and (not isinstance(value, str | bytes)):
             try:
-                sequence_value = _OBJECT_LIST_ADAPTER.validate_python(value)
+                sequence_value = t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
             except ValidationError:
                 empty_seq: Sequence[t.Tests.Testobject] = []
                 return empty_seq
@@ -1745,7 +1737,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             )
             match fmt:
                 case "json":
-                    adapter = _OBJECT_DICT_ADAPTER
+                    adapter = t.TESTOBJECT_MAPPING_ADAPTER
                     dict1_raw = adapter.validate_json(content1.encode())
                     dict2_raw = adapter.validate_json(content2.encode())
                 case "yaml":

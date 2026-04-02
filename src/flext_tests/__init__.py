@@ -25,7 +25,13 @@ from typing import TYPE_CHECKING as _TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports, merge_lazy_imports
 
 if _TYPE_CHECKING:
-    from flext_core import FlextTypes, d, e, h, r, s, x
+    from flext_core import FlextTypes
+    from flext_core.decorators import FlextDecorators as d
+    from flext_core.exceptions import FlextExceptions as e
+    from flext_core.handlers import FlextHandlers as h
+    from flext_core.mixins import FlextMixins as x
+    from flext_core.result import FlextResult as r
+    from flext_core.service import FlextService as s
     from flext_tests import (
         _utilities,
         _validator,
@@ -95,18 +101,18 @@ _LAZY_IMPORTS: FlextTypes.LazyImportIndex = merge_lazy_imports(
         "_validator": "flext_tests._validator",
         "c": ("flext_tests.constants", "FlextTestsConstants"),
         "constants": "flext_tests.constants",
-        "d": "flext_core",
+        "d": ("flext_core.decorators", "FlextDecorators"),
         "docker": "flext_tests.docker",
         "domains": "flext_tests.domains",
-        "e": "flext_core",
+        "e": ("flext_core.exceptions", "FlextExceptions"),
         "files": "flext_tests.files",
-        "h": "flext_core",
+        "h": ("flext_core.handlers", "FlextHandlers"),
         "m": ("flext_tests.models", "FlextTestsModels"),
         "models": "flext_tests.models",
         "p": ("flext_tests.protocols", "FlextTestsProtocols"),
         "protocols": "flext_tests.protocols",
-        "r": "flext_core",
-        "s": "flext_core",
+        "r": ("flext_core.result", "FlextResult"),
+        "s": ("flext_core.service", "FlextService"),
         "t": ("flext_tests.typings", "FlextTestsTypes"),
         "td": "flext_tests.domains",
         "tf": "flext_tests.files",
@@ -116,7 +122,7 @@ _LAZY_IMPORTS: FlextTypes.LazyImportIndex = merge_lazy_imports(
         "u": ("flext_tests.utilities", "FlextTestsUtilities"),
         "utilities": "flext_tests.utilities",
         "validator": "flext_tests.validator",
-        "x": "flext_core",
+        "x": ("flext_core.mixins", "FlextMixins"),
     },
 )
 

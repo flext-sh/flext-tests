@@ -1078,16 +1078,10 @@ class FlextTestsModels(
 
             DICT_ADAPTER: ClassVar[
                 TypeAdapter[Mapping[str, t.Tests.TestobjectSerializable]]
-            ] = TypeAdapter(
-                Mapping[str, t.Tests.TestobjectSerializable],
-                config=ConfigDict(arbitrary_types_allowed=True),
-            )
+            ] = t.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER
             LIST_ADAPTER: ClassVar[
                 TypeAdapter[Sequence[t.Tests.TestobjectSerializable]]
-            ] = TypeAdapter(
-                Sequence[t.Tests.TestobjectSerializable],
-                config=ConfigDict(arbitrary_types_allowed=True),
-            )
+            ] = t.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER
 
         class Chain[TResult](FlextModels.Value):
             """Container for chained result assertions."""

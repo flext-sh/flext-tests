@@ -18,30 +18,15 @@ from collections.abc import (
 )
 from datetime import datetime
 from pathlib import Path
-from typing import ClassVar
 
-from pydantic import BaseModel, ConfigDict, RootModel, TypeAdapter, ValidationError
+from pydantic import BaseModel, RootModel, ValidationError
 
-from flext_core import FlextUtilities
+from flext_core import u
 from flext_tests import m, t
 
 
 class FlextTestsPayloadUtilities:
     """Namespace class for shared payload conversion helpers in flext_tests."""
-
-    _ARBTYPES: ClassVar[ConfigDict] = ConfigDict(arbitrary_types_allowed=True)
-    _PAYLOAD_MAPPING_ADAPTER: ClassVar[
-        TypeAdapter[Mapping[str, t.Tests.Testobject]]
-    ] = TypeAdapter(
-        Mapping[str, t.Tests.Testobject],
-        config=ConfigDict(arbitrary_types_allowed=True),
-    )
-    _PAYLOAD_SEQUENCE_ADAPTER: ClassVar[TypeAdapter[Sequence[t.Tests.Testobject]]] = (
-        TypeAdapter(
-            Sequence[t.Tests.Testobject],
-            config=ConfigDict(arbitrary_types_allowed=True),
-        )
-    )
 
     @staticmethod
     def to_payload(
@@ -71,10 +56,8 @@ class FlextTestsPayloadUtilities:
             return payload_value
         if isinstance(value, Mapping):
             try:
-                mapping_value = (
-                    FlextTestsPayloadUtilities._PAYLOAD_MAPPING_ADAPTER.validate_python(
-                        value,
-                    )
+                mapping_value = t.TESTOBJECT_MAPPING_ADAPTER.validate_python(
+                    value,
                 )
             except ValidationError:
                 empty_map2: MutableMapping[str, t.Tests.Testobject] = {}
@@ -88,7 +71,7 @@ class FlextTestsPayloadUtilities:
         if isinstance(value, (list, tuple, set)):
             try:
                 iterable_items: Sequence[t.Tests.Testobject] = (
-                    FlextTestsPayloadUtilities._PAYLOAD_SEQUENCE_ADAPTER.validate_python(
+                    t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
                         value,
                     )
                 )
@@ -119,9 +102,7 @@ class FlextTestsPayloadUtilities:
             return str(value)
         if isinstance(value, (dict, Mapping)):
             validated_map: Mapping[str, t.Tests.Testobject] = (
-                FlextTestsPayloadUtilities._PAYLOAD_MAPPING_ADAPTER.validate_python(
-                    value,
-                )
+                t.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
             )
             result_map: t.MutableContainerMapping = {}
             for k, v in validated_map.items():
@@ -131,9 +112,7 @@ class FlextTestsPayloadUtilities:
             return result_map
         if isinstance(value, (list, tuple)):
             validated_seq: Sequence[t.Tests.Testobject] = (
-                FlextTestsPayloadUtilities._PAYLOAD_SEQUENCE_ADAPTER.validate_python(
-                    value,
-                )
+                t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
             )
             result_seq: Sequence[t.NormalizedValue] = [
                 FlextTestsPayloadUtilities.to_normalized_value(item)
@@ -159,9 +138,7 @@ class FlextTestsPayloadUtilities:
             return str(value)
         if isinstance(value, (dict, Mapping)):
             validated_map: Mapping[str, t.Tests.Testobject] = (
-                FlextTestsPayloadUtilities._PAYLOAD_MAPPING_ADAPTER.validate_python(
-                    value,
-                )
+                t.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
             )
             cfg_map: t.MutableContainerMapping = {}
             for k, v in validated_map.items():
@@ -171,9 +148,7 @@ class FlextTestsPayloadUtilities:
             return cfg_map
         if isinstance(value, (list, tuple)):
             validated_seq: Sequence[t.Tests.Testobject] = (
-                FlextTestsPayloadUtilities._PAYLOAD_SEQUENCE_ADAPTER.validate_python(
-                    value,
-                )
+                t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
             )
             cfg_seq: Sequence[t.NormalizedValue] = [
                 FlextTestsPayloadUtilities.to_normalized_value(item)
@@ -189,7 +164,7 @@ class FlextTestsPayloadUtilities:
     ) -> bool:
         """Validate length against spec.
 
-        Uses FlextUtilities.chk() for validation.
+        Uses u.chk() for validation.
         Supports exact length (int) or range (tuple[int, int]).
 
         Args:
@@ -207,9 +182,9 @@ class FlextTestsPayloadUtilities:
         except TypeError:
             return False
         if isinstance(spec, int):
-            return FlextUtilities.chk(actual_len, m.GuardCheckSpec(eq=spec))
+            return u.chk(actual_len, m.GuardCheckSpec(eq=spec))
         min_len, max_len = spec
-        return FlextUtilities.chk(
+        return u.chk(
             actual_len,
             m.GuardCheckSpec(gte=min_len, lte=max_len),
         )
@@ -226,7 +201,7 @@ class FlextTestsPayloadUtilities:
     ) -> m.Tests.DeepMatchResult:
         """Match t.NormalizedValue against deep specification.
 
-        Uses FlextUtilities.extract() for path extraction.
+        Uses u.extract() for path extraction.
         Supports unlimited nesting depth via dot notation paths.
 
         Args:
@@ -253,7 +228,7 @@ class FlextTestsPayloadUtilities:
                 for key, value in obj.items()
             }
         for path, expected in spec.items():
-            result = FlextUtilities.extract(
+            result = u.extract(
                 source_obj,
                 path,
                 separator=path_sep,

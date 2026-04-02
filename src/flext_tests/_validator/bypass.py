@@ -12,13 +12,9 @@ import ast
 import re
 from collections.abc import Mapping, MutableSequence, Sequence
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from flext_core import r
-from flext_tests import c, t, u, vm
-
-if TYPE_CHECKING:
-    from flext_tests import m
+from flext_tests import c, m, t, u, vm
 
 
 class FlextValidatorBypass:

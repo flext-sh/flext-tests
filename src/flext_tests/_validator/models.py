@@ -1,6 +1,6 @@
 """Models for FLEXT architecture validation.
 
-Provides shared models for all validator extensions using FlextTestsModels patterns.
+Provides shared models for all validator extensions using m patterns.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -15,16 +15,16 @@ from typing import Annotated
 from pydantic import Field
 
 from flext_core import r
-from flext_tests import FlextTestsModels, c, t
+from flext_tests import c, m, t
 
 
-class FlextValidatorModels(FlextTestsModels):
-    """Models for FLEXT architecture validation - extends FlextTestsModels.
+class FlextValidatorModels(m):
+    """Models for FLEXT architecture validation - extends m.
 
     Uses c.Tests.Validator for constants (Severity, Rules, Defaults, Approved patterns).
     """
 
-    class ScanCommon(FlextTestsModels.Value):
+    class ScanCommon(m.Value):
         """Shared routines to build ScanResult payloads."""
 
         @staticmethod
@@ -35,22 +35,22 @@ class FlextValidatorModels(FlextTestsModels):
             validator_name: str,
             scan_file: Callable[
                 [Path, Mapping[str, t.StrSequence]],
-                Sequence[FlextTestsModels.Tests.Violation],
+                Sequence[m.Tests.Violation],
             ],
-        ) -> r[FlextTestsModels.Tests.ScanResult]:
-            violations: MutableSequence[FlextTestsModels.Tests.Violation] = []
+        ) -> r[m.Tests.ScanResult]:
+            violations: MutableSequence[m.Tests.Violation] = []
             approved = approved_exceptions or {}
             for file_path in files:
                 violations.extend(scan_file(file_path, approved))
-            return r[FlextTestsModels.Tests.ScanResult].ok(
-                FlextTestsModels.Tests.ScanResult.create(
+            return r[m.Tests.ScanResult].ok(
+                m.Tests.ScanResult.create(
                     validator_name=validator_name,
                     files_scanned=len(files),
                     violations=violations,
                 ),
             )
 
-    class ScanConfig(FlextTestsModels.Value):
+    class ScanConfig(m.Value):
         """Configuration for validation scan."""
 
         target_path: Path

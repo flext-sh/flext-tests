@@ -27,7 +27,7 @@ from typing import ClassVar
 from docker import DockerClient as DockerSDKClient, from_env as docker_from_env
 from docker.errors import DockerException, NotFound
 from docker.models.containers import Container
-from pydantic import TypeAdapter, ValidationError
+from pydantic import ValidationError
 from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
@@ -36,9 +36,6 @@ from flext_tests import c, m, p, t
 
 docker: WhalesDockerClient = WhalesDockerClient(client_type="docker")
 logger: p.Logger = FlextLogger(__name__)
-_HOST_BINDINGS_ADAPTER: TypeAdapter[Sequence[t.StrMapping]] = TypeAdapter(
-    Sequence[t.StrMapping]
-)
 
 
 class FlextTestsDocker:
@@ -60,12 +57,6 @@ class FlextTestsDocker:
 
     SHARED_CONTAINERS: ClassVar[Mapping[str, t.HeaderMapping]] = (
         c.Tests.Docker.SHARED_CONTAINERS
-    )
-    _ports_adapter: ClassVar[
-        TypeAdapter[Mapping[str, t.Tests.TestobjectSerializable]]
-    ] = TypeAdapter(Mapping[str, t.Tests.TestobjectSerializable])
-    _str_seq_map_adapter: ClassVar[TypeAdapter[Mapping[str, t.StrSequence]]] = (
-        TypeAdapter(Mapping[str, t.StrSequence])
     )
 
     class _OfflineContainers:
@@ -143,7 +134,7 @@ class FlextTestsDocker:
         bindings: t.Tests.Testobject | None,
     ) -> Sequence[t.StrMapping]:
         try:
-            return _HOST_BINDINGS_ADAPTER.validate_python(bindings)
+            return t.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(bindings)
         except ValidationError:
             return []
 
@@ -249,7 +240,9 @@ class FlextTestsDocker:
             client = self.get_client()
             container = client.containers.get(container_name)
             ports_raw: Mapping[str, t.Tests.Testobject] = (
-                self._ports_adapter.validate_python(container.ports)
+                t.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
+                    container.ports
+                )
             )
             ports: t.MutableStrMapping = {}
             for container_port, host_bindings in ports_raw.items():
@@ -369,7 +362,7 @@ class FlextTestsDocker:
             if self._state_file.exists():
                 state_text = self._state_file.read_text(encoding="utf-8")
                 state_raw: Mapping[str, t.StrSequence] = (
-                    self._str_seq_map_adapter.validate_json(state_text)
+                    t.STR_SEQUENCE_MAPPING_ADAPTER.validate_json(state_text)
                 )
                 dirty_raw = state_raw.get("dirty_containers", ())
                 self._dirty_containers = {
@@ -386,7 +379,7 @@ class FlextTestsDocker:
             data: Mapping[str, t.StrSequence] = {
                 "dirty_containers": list(self._dirty_containers),
             }
-            json_bytes = self._str_seq_map_adapter.dump_json(data)
+            json_bytes = t.STR_SEQUENCE_MAPPING_ADAPTER.dump_json(data)
             self._state_file.write_bytes(json_bytes)
         except (OSError, TypeError) as exc:
             self.logger.warning("Failed to save dirty state", error=str(exc))

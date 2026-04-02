@@ -27,7 +27,7 @@ from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
 from typing import TypeAliasType, TypeIs
 
-from pydantic import BaseModel, InstanceOf, SecretStr
+from pydantic import BaseModel, ConfigDict, InstanceOf, SecretStr, TypeAdapter
 
 from flext_core import FlextResult, FlextTypes, p
 
@@ -78,6 +78,27 @@ class FlextTestsTypes(FlextTypes):
     Architecture: Extends t with test-specific type aliases and definitions.
     All base types from t are available through inheritance.
     """
+
+    TESTOBJECT_SEQUENCE_ADAPTER: TypeAdapter[Sequence[_Testobject]] = TypeAdapter(
+        Sequence[_Testobject],
+        config=ConfigDict(arbitrary_types_allowed=True),
+    )
+    TESTOBJECT_MAPPING_ADAPTER: TypeAdapter[Mapping[str, _Testobject]] = TypeAdapter(
+        Mapping[str, _Testobject],
+        config=ConfigDict(arbitrary_types_allowed=True),
+    )
+    STR_MAPPING_SEQUENCE_ADAPTER: TypeAdapter[Sequence[FlextTypes.StrMapping]] = (
+        TypeAdapter(Sequence[FlextTypes.StrMapping])
+    )
+    TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER: TypeAdapter[
+        Mapping[str, _TestobjectSerializable]
+    ] = TypeAdapter(Mapping[str, _TestobjectSerializable])
+    TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER: TypeAdapter[
+        Sequence[_TestobjectSerializable]
+    ] = TypeAdapter(Sequence[_TestobjectSerializable])
+    STR_SEQUENCE_MAPPING_ADAPTER: TypeAdapter[Mapping[str, FlextTypes.StrSequence]] = (
+        TypeAdapter(Mapping[str, FlextTypes.StrSequence])
+    )
 
     class Tests:
         """Test-specific type definitions namespace.
