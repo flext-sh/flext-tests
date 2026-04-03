@@ -15,11 +15,11 @@ from pathlib import Path
 import pytest
 import yaml
 from pydantic import BaseModel
+from tests import c, t
+from tests.test_utils import assertion_helpers
 
 from flext_core import r
 from flext_tests import FlextTestsModels, tf, tm
-from tests import c, t
-from tests.test_utils import assertion_helpers
 
 
 class TestFileInfo:

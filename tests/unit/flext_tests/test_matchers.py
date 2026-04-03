@@ -11,10 +11,10 @@ from collections.abc import Mapping
 from typing import cast
 
 import pytest
+from tests import c, t
 
 from flext_core import r
 from flext_tests import tm
-from tests import c, t
 
 
 def _is_string(value: t.Tests.Testobject) -> bool:

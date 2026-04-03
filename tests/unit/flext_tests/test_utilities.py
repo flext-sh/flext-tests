@@ -11,10 +11,10 @@ from typing import ClassVar
 
 import pytest
 from pydantic import BaseModel, ConfigDict
+from tests import u
 
 from flext_core import r
 from flext_tests import tm
-from tests import u
 
 
 class TestFlextTestsUtilitiesResult:

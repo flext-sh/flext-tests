@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from flext_tests import td, tf, tk, tm
 from tests import c, m, p, t, u
+
+from flext_tests import td, tf, tk, tm
 
 tt = t.Tests
 

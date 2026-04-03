@@ -11,13 +11,6 @@ from typing import TYPE_CHECKING as _TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if _TYPE_CHECKING:
-    from flext_core import FlextTypes
-    from flext_core.decorators import FlextDecorators as d
-    from flext_core.exceptions import FlextExceptions as e
-    from flext_core.handlers import FlextHandlers as h
-    from flext_core.mixins import FlextMixins as x
-    from flext_core.result import FlextResult as r
-    from flext_core.service import FlextService as s
     from tests import (
         conftest,
         constants,
@@ -56,6 +49,14 @@ if _TYPE_CHECKING:
         TestShortAlias,
     )
     from tests.utilities import FlextTestsTestUtilities, FlextTestsTestUtilities as u
+
+    from flext_core import FlextTypes
+    from flext_core.decorators import FlextDecorators as d
+    from flext_core.exceptions import FlextExceptions as e
+    from flext_core.handlers import FlextHandlers as h
+    from flext_core.mixins import FlextMixins as x
+    from flext_core.result import FlextResult as r
+    from flext_core.service import FlextService as s
 
 _LAZY_IMPORTS: FlextTypes.LazyImportIndex = {
     "AssertionHelpers": "tests.test_utils",
