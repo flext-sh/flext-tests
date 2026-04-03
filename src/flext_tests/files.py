@@ -37,8 +37,7 @@ from typing import ClassVar, Self, TypeIs, TypeVar, overload, override
 from pydantic import BaseModel, ValidationError
 from yaml import YAMLError, dump as yaml_dump, safe_load as yaml_safe_load
 
-from flext_core import FlextRuntime, r, s
-from flext_tests import c, m, t, u
+from flext_tests import c, m, r, s, t, u
 
 TModel = TypeVar("TModel", bound=BaseModel)
 
@@ -47,11 +46,11 @@ _SCALAR_PATH: tuple[type, ...] = (str, int, float, bool, datetime, Path)
 
 
 def _to_runtime_data(value: t.Tests.Testobject) -> t.RuntimeData:
-    """Narrow t.Tests.Testobject to FlextRuntime.RuntimeData for container normalization.
+    """Narrow t.Tests.Testobject to u.RuntimeData for container normalization.
 
-    Converts bytes to str and ensures the value is FlextRuntime.RuntimeData-compatible.
-    The key difference between t.Tests.Testobject and FlextRuntime.RuntimeData is that t.Tests.Testobject
-    includes `bytes` which is not in FlextRuntime.RuntimeData.
+    Converts bytes to str and ensures the value is u.RuntimeData-compatible.
+    The key difference between t.Tests.Testobject and u.RuntimeData is that t.Tests.Testobject
+    includes `bytes` which is not in u.RuntimeData.
     """
     if value is None:
         return None
@@ -104,7 +103,7 @@ def _to_normalized_or_model(value: t.Tests.Testobject) -> t.ValueOrModel:
 def _to_container_value(value: t.Tests.Testobject) -> t.ValueOrModel:
     """Convert t.Tests.Testobject to Container | BaseModel for ConfigMap values."""
     runtime_data: t.RuntimeData = _to_runtime_data(value)
-    return FlextRuntime.normalize_to_container(runtime_data)
+    return u.normalize_to_container(runtime_data)
 
 
 def _to_normalized_leaf(value: t.Tests.Testobject) -> t.NormalizedValue:
