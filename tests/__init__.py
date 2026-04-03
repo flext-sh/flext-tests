@@ -1,7 +1,7 @@
 # AUTO-GENERATED FILE — DO NOT EDIT MANUALLY.
 # Regenerate with: make gen
 #
-"""Tests package - re-exports flext_tests aliases for test convenience."""
+"""Tests package."""
 
 from __future__ import annotations
 

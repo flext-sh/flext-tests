@@ -1,14 +1,7 @@
 # AUTO-GENERATED FILE — DO NOT EDIT MANUALLY.
 # Regenerate with: make gen
 #
-"""Validator extensions for FLEXT architecture validation.
-
-Internal module providing specialized validation methods.
-Use via FlextTestsValidator (tv) in validator.py.
-
-Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT
-"""
+"""Validator package."""
 
 from __future__ import annotations
 
