@@ -5,25 +5,40 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
-from typing import TYPE_CHECKING as _TYPE_CHECKING
+import typing as _t
 
 from flext_core.lazy import install_lazy_exports
+from flext_tests._utilities._payload import (
+    FlextTestsPayloadUtilities,
+    deep_match,
+    length_validate,
+    to_config_map_value,
+    to_normalized_value,
+    to_payload,
+)
+from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
 
-if _TYPE_CHECKING:
-    from flext_core import FlextTypes
-    from flext_tests._utilities import _payload, matchers
-    from flext_tests._utilities._payload import (
+if _t.TYPE_CHECKING:
+    import flext_tests._utilities._payload as _flext_tests__utilities__payload
+
+    _payload = _flext_tests__utilities__payload
+    import flext_tests._utilities.matchers as _flext_tests__utilities_matchers
+
+    matchers = _flext_tests__utilities_matchers
+
+    _ = (
+        FlextTestsMatchersUtilities,
         FlextTestsPayloadUtilities,
+        _payload,
         deep_match,
         length_validate,
+        matchers,
+        tm,
         to_config_map_value,
         to_normalized_value,
         to_payload,
     )
-    from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
-
-_LAZY_IMPORTS: FlextTypes.LazyImportIndex = {
+_LAZY_IMPORTS = {
     "FlextTestsMatchersUtilities": "flext_tests._utilities.matchers",
     "FlextTestsPayloadUtilities": "flext_tests._utilities._payload",
     "_payload": "flext_tests._utilities._payload",
@@ -35,6 +50,19 @@ _LAZY_IMPORTS: FlextTypes.LazyImportIndex = {
     "to_normalized_value": "flext_tests._utilities._payload",
     "to_payload": "flext_tests._utilities._payload",
 }
+
+__all__ = [
+    "FlextTestsMatchersUtilities",
+    "FlextTestsPayloadUtilities",
+    "_payload",
+    "deep_match",
+    "length_validate",
+    "matchers",
+    "tm",
+    "to_config_map_value",
+    "to_normalized_value",
+    "to_payload",
+]
 
 
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)

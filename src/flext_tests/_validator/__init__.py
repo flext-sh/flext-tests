@@ -5,14 +5,48 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
-from typing import TYPE_CHECKING as _TYPE_CHECKING
+import typing as _t
 
 from flext_core.lazy import install_lazy_exports
+from flext_tests._validator.bypass import FlextValidatorBypass
+from flext_tests._validator.imports import FlextValidatorImports
+from flext_tests._validator.layer import FlextValidatorLayer
+from flext_tests._validator.models import FlextValidatorModels, vm
+from flext_tests._validator.settings import FlextValidatorSettings
+from flext_tests._validator.tests import FlextValidatorTests
+from flext_tests._validator.types import FlextValidatorTypes
 
-if _TYPE_CHECKING:
-    from flext_core import FlextTypes
-    from flext_tests._validator import (
+if _t.TYPE_CHECKING:
+    import flext_tests._validator.bypass as _flext_tests__validator_bypass
+
+    bypass = _flext_tests__validator_bypass
+    import flext_tests._validator.imports as _flext_tests__validator_imports
+
+    imports = _flext_tests__validator_imports
+    import flext_tests._validator.layer as _flext_tests__validator_layer
+
+    layer = _flext_tests__validator_layer
+    import flext_tests._validator.models as _flext_tests__validator_models
+
+    models = _flext_tests__validator_models
+    import flext_tests._validator.settings as _flext_tests__validator_settings
+
+    settings = _flext_tests__validator_settings
+    import flext_tests._validator.tests as _flext_tests__validator_tests
+
+    tests = _flext_tests__validator_tests
+    import flext_tests._validator.types as _flext_tests__validator_types
+
+    types = _flext_tests__validator_types
+
+    _ = (
+        FlextValidatorBypass,
+        FlextValidatorImports,
+        FlextValidatorLayer,
+        FlextValidatorModels,
+        FlextValidatorSettings,
+        FlextValidatorTests,
+        FlextValidatorTypes,
         bypass,
         imports,
         layer,
@@ -20,16 +54,9 @@ if _TYPE_CHECKING:
         settings,
         tests,
         types,
+        vm,
     )
-    from flext_tests._validator.bypass import FlextValidatorBypass
-    from flext_tests._validator.imports import FlextValidatorImports
-    from flext_tests._validator.layer import FlextValidatorLayer
-    from flext_tests._validator.models import FlextValidatorModels, vm
-    from flext_tests._validator.settings import FlextValidatorSettings
-    from flext_tests._validator.tests import FlextValidatorTests
-    from flext_tests._validator.types import FlextValidatorTypes
-
-_LAZY_IMPORTS: FlextTypes.LazyImportIndex = {
+_LAZY_IMPORTS = {
     "FlextValidatorBypass": "flext_tests._validator.bypass",
     "FlextValidatorImports": "flext_tests._validator.imports",
     "FlextValidatorLayer": "flext_tests._validator.layer",
@@ -46,6 +73,24 @@ _LAZY_IMPORTS: FlextTypes.LazyImportIndex = {
     "types": "flext_tests._validator.types",
     "vm": "flext_tests._validator.models",
 }
+
+__all__ = [
+    "FlextValidatorBypass",
+    "FlextValidatorImports",
+    "FlextValidatorLayer",
+    "FlextValidatorModels",
+    "FlextValidatorSettings",
+    "FlextValidatorTests",
+    "FlextValidatorTypes",
+    "bypass",
+    "imports",
+    "layer",
+    "models",
+    "settings",
+    "tests",
+    "types",
+    "vm",
+]
 
 
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
