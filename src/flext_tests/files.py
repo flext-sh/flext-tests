@@ -34,8 +34,9 @@ from pathlib import Path
 from types import TracebackType
 from typing import ClassVar, Self, TypeIs, TypeVar, overload, override
 
+from flext_cli import FlextCliUtilities
 from pydantic import BaseModel, ValidationError
-from yaml import YAMLError, dump as yaml_dump, safe_load as yaml_safe_load
+from yaml import YAMLError, safe_dump as _yaml_raw_safe_dump
 
 from flext_tests import c, m, r, s, t, u
 
@@ -130,12 +131,20 @@ def _to_normalized_leaf(value: t.Tests.Testobject) -> t.NormalizedValue:
 def _yaml_safe_load(
     raw: str,
 ) -> Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject] | None:
-    return yaml_safe_load(raw)
+    result = FlextCliUtilities.Cli.yaml_parse(raw)
+    if result.is_failure:
+        return None
+    return result.value
 
 
 def _yaml_dump(value: Mapping[str, t.Tests.Testobject], *, indent: int) -> str:
     return str(
-        yaml_dump(value, default_flow_style=False, allow_unicode=True, indent=indent),
+        _yaml_raw_safe_dump(
+            value,
+            default_flow_style=False,
+            allow_unicode=True,
+            indent=indent,
+        ),
     )
 
 

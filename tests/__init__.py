@@ -35,31 +35,27 @@ if _t.TYPE_CHECKING:
     typings = _tests_typings
     import tests.utilities as _tests_utilities
     from tests.typings import FlextTestsTestTypes, FlextTestsTestTypes as t
-    from tests.unit.flext_tests.test_docker import (
-        TestContainerInfo,
-        TestContainerStatus,
-        TestFlextTestsDocker,
-        TestFlextTestsDockerWorkerId,
-        TestFlextTestsDockerWorkspaceRoot,
-    )
-    from tests.unit.flext_tests.test_domains import TestFlextTestsDomains
-    from tests.unit.flext_tests.test_files import (
+    from tests.unit.flext_tests import (
         TestAssertExists,
         TestBatchOperations,
+        TestContainerInfo,
+        TestContainerStatus,
         TestCreateInStatic,
         TestFileInfo,
         TestFileInfoFromModels,
+        TestFlextTestsDocker,
+        TestFlextTestsDockerWorkerId,
+        TestFlextTestsDockerWorkspaceRoot,
+        TestFlextTestsDomains,
         TestFlextTestsFiles,
         TestFlextTestsFilesNewApi,
-        TestInfoWithContentMeta,
-        TestShortAlias,
-    )
-    from tests.unit.flext_tests.test_matchers import TestFlextTestsMatchers
-    from tests.unit.flext_tests.test_utilities import (
+        TestFlextTestsMatchers,
         TestFlextTestsUtilitiesFactory,
         TestFlextTestsUtilitiesResult,
         TestFlextTestsUtilitiesResultCompat,
         TestFlextTestsUtilitiesTestContext,
+        TestInfoWithContentMeta,
+        TestShortAlias,
     )
 
     utilities = _tests_utilities
