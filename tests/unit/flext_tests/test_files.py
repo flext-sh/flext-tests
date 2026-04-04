@@ -13,7 +13,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
-import yaml
+from flext_cli import FlextCliUtilities
 from pydantic import BaseModel
 from tests import c, t
 from tests.test_utils import assertion_helpers
@@ -369,7 +369,7 @@ class TestFlextTestsFilesNewApi:
         content: t.ConfigMap = t.ConfigMap(root={"name": "test", "enabled": True})
         path = manager.create(content, "config.yaml")
         tm.that(path.exists(), eq=True)
-        data = yaml.safe_load(path.read_text())
+        data = FlextCliUtilities.Cli.yaml_parse(path.read_text()).unwrap_or({})
         tm.that(data, eq=content.root)
 
     def test_create_csv_auto_detect_from_list(self, tmp_path: Path) -> None:
@@ -1066,7 +1066,7 @@ class TestCreateInStatic:
             tmp_path,
         )
         tm.that(path.exists(), eq=True)
-        content = yaml.safe_load(path.read_text())
+        content = FlextCliUtilities.Cli.yaml_parse(path.read_text()).unwrap_or({})
         tm.that(content, eq={"setting": True})
 
     def test_create_in_pydantic_model(self, tmp_path: Path) -> None:
@@ -1098,7 +1098,10 @@ class TestCreateInStatic:
             tmp_path,
         )
         tm.that(path2.exists(), eq=True)
-        tm.that(yaml.safe_load(path2.read_text()), eq={"key": "value"})
+        tm.that(
+            FlextCliUtilities.Cli.yaml_parse(path2.read_text()).unwrap_or({}),
+            eq={"key": "value"},
+        )
         path3 = tf.create_in([["a", "b"], ["1", "2"]], "data.csv", tmp_path)
         tm.that(path3.exists(), eq=True)
         lines = path3.read_text().strip().split("\n")
