@@ -574,8 +574,6 @@ class FlextTestsModels(
                     return 0.0
                 return (self.succeeded / self.total) * 100.0
 
-        Severity = c.Tests.Validator.Severity
-
         class Violation(FlextModels.Value):
             """A detected architecture violation."""
 
