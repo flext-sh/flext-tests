@@ -149,7 +149,7 @@ class FlextValidatorBypass:
             r with ScanResult containing all violations found
 
         """
-        return vm.ScanCommon.run_scan(
+        return vm.Tests.ScanCommon.run_scan(
             files=files,
             approved_exceptions=approved_exceptions,
             validator_name=c.Tests.Validator.Defaults.VALIDATOR_BYPASS,

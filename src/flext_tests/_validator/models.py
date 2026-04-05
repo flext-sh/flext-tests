@@ -18,77 +18,80 @@ from flext_core import r
 from flext_tests import c, m, t
 
 
-class FlextValidatorModels(m):
+class FlextTestsValidatorModels(m):
     """Models for FLEXT architecture validation - extends m.
 
     Uses c.Tests.Validator for constants (Severity, Rules, Defaults, Approved patterns).
     """
 
-    class ScanCommon(m.Value):
-        """Shared routines to build ScanResult payloads."""
+    class Tests(m.Tests):
+        """Tests namespace — validator models live here."""
 
-        @staticmethod
-        def run_scan(
-            *,
-            files: Sequence[Path],
-            approved_exceptions: Mapping[str, t.StrSequence] | None,
-            validator_name: str,
-            scan_file: Callable[
-                [Path, Mapping[str, t.StrSequence]],
-                Sequence[m.Tests.Violation],
-            ],
-        ) -> r[m.Tests.ScanResult]:
-            violations: MutableSequence[m.Tests.Violation] = []
-            approved = approved_exceptions or {}
-            for file_path in files:
-                violations.extend(scan_file(file_path, approved))
-            return r[m.Tests.ScanResult].ok(
-                m.Tests.ScanResult.create(
-                    validator_name=validator_name,
-                    files_scanned=len(files),
-                    violations=violations,
+        class ScanCommon(m.Value):
+            """Shared routines to build ScanResult payloads."""
+
+            @staticmethod
+            def run_scan(
+                *,
+                files: Sequence[Path],
+                approved_exceptions: Mapping[str, t.StrSequence] | None,
+                validator_name: str,
+                scan_file: Callable[
+                    [Path, Mapping[str, t.StrSequence]],
+                    Sequence[m.Tests.Violation],
+                ],
+            ) -> r[m.Tests.ScanResult]:
+                violations: MutableSequence[m.Tests.Violation] = []
+                approved = approved_exceptions or {}
+                for file_path in files:
+                    violations.extend(scan_file(file_path, approved))
+                return r[m.Tests.ScanResult].ok(
+                    m.Tests.ScanResult.create(
+                        validator_name=validator_name,
+                        files_scanned=len(files),
+                        violations=violations,
+                    ),
+                )
+
+        class ScanConfig(m.Value):
+            """Configuration for validation scan."""
+
+            target_path: Path
+            include_patterns: Annotated[
+                t.StrSequence,
+                Field(
+                    description="Glob patterns defining files that should be scanned for violations.",
+                    title="Include Patterns",
+                    examples=[["src/**/*.py", "tests/**/*.py"]],
                 ),
+            ] = Field(
+                default_factory=lambda: list(
+                    c.Tests.Validator.Defaults.INCLUDE_PATTERNS,
+                )
             )
-
-    class ScanConfig(m.Value):
-        """Configuration for validation scan."""
-
-        target_path: Path
-        include_patterns: Annotated[
-            t.StrSequence,
-            Field(
-                description="Glob patterns defining files that should be scanned for violations.",
-                title="Include Patterns",
-                examples=[["src/**/*.py", "tests/**/*.py"]],
-            ),
-        ] = Field(
-            default_factory=lambda: list(
-                c.Tests.Validator.Defaults.INCLUDE_PATTERNS,
+            exclude_patterns: Annotated[
+                t.StrSequence,
+                Field(
+                    description="Glob patterns defining files that should be excluded from scan input.",
+                    title="Exclude Patterns",
+                    examples=[["**/__pycache__/**", "**/.venv/**"]],
+                ),
+            ] = Field(
+                default_factory=lambda: list(
+                    c.Tests.Validator.Defaults.EXCLUDE_PATTERNS,
+                )
             )
-        )
-        exclude_patterns: Annotated[
-            t.StrSequence,
-            Field(
-                description="Glob patterns defining files that should be excluded from scan input.",
-                title="Exclude Patterns",
-                examples=[["**/__pycache__/**", "**/.venv/**"]],
-            ),
-        ] = Field(
-            default_factory=lambda: list(
-                c.Tests.Validator.Defaults.EXCLUDE_PATTERNS,
-            )
-        )
-        approved_exceptions: Annotated[
-            Mapping[str, t.StrSequence],
-            Field(
-                description="Rule-to-path allowlist for known and explicitly approved exceptions.",
-                title="Approved Exceptions",
-                examples=[{"RULE_001": ["tests/fixtures/generated.py"]}],
-            ),
-        ] = Field(default_factory=dict)
+            approved_exceptions: Annotated[
+                Mapping[str, t.StrSequence],
+                Field(
+                    description="Rule-to-path allowlist for known and explicitly approved exceptions.",
+                    title="Approved Exceptions",
+                    examples=[{"RULE_001": ["tests/fixtures/generated.py"]}],
+                ),
+            ] = Field(default_factory=dict)
 
 
 # Short alias
-vm = FlextValidatorModels
+vm = FlextTestsValidatorModels
 
-__all__ = ["FlextValidatorModels", "vm"]
+__all__ = ["FlextTestsValidatorModels", "vm"]

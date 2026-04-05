@@ -10,7 +10,11 @@ import typing as _t
 from flext_core.lazy import install_lazy_exports, merge_lazy_imports
 
 if _t.TYPE_CHECKING:
+    import flext_tests._fixtures as _flext_tests__fixtures
+
+    _fixtures = _flext_tests__fixtures
     import flext_tests._utilities as _flext_tests__utilities
+    from flext_tests._fixtures import T, reset_settings, settings, settings_factory
 
     _utilities = _flext_tests__utilities
     import flext_tests._validator as _flext_tests__validator
@@ -27,23 +31,25 @@ if _t.TYPE_CHECKING:
     )
 
     _validator = _flext_tests__validator
-    import flext_tests.constants as _flext_tests_constants
+    import flext_tests.conftest_plugin as _flext_tests_conftest_plugin
     from flext_tests._validator import (
+        FlextTestsValidatorModels,
         FlextValidatorBypass,
         FlextValidatorImports,
         FlextValidatorLayer,
-        FlextValidatorModels,
         FlextValidatorSettings,
         FlextValidatorTests,
         FlextValidatorTypes,
         bypass,
         imports,
         layer,
-        settings,
         tests,
         types,
         vm,
     )
+
+    conftest_plugin = _flext_tests_conftest_plugin
+    import flext_tests.constants as _flext_tests_constants
 
     constants = _flext_tests_constants
     import flext_tests.docker as _flext_tests_docker
@@ -87,6 +93,7 @@ if _t.TYPE_CHECKING:
     from flext_tests.validator import FlextTestsValidator, tv
 _LAZY_IMPORTS = merge_lazy_imports(
     (
+        "flext_tests._fixtures",
         "flext_tests._utilities",
         "flext_tests._validator",
     ),
@@ -100,9 +107,11 @@ _LAZY_IMPORTS = merge_lazy_imports(
         "FlextTestsTypes": "flext_tests.typings",
         "FlextTestsUtilities": "flext_tests.utilities",
         "FlextTestsValidator": "flext_tests.validator",
+        "_fixtures": "flext_tests._fixtures",
         "_utilities": "flext_tests._utilities",
         "_validator": "flext_tests._validator",
         "c": ("flext_tests.constants", "FlextTestsConstants"),
+        "conftest_plugin": "flext_tests.conftest_plugin",
         "constants": "flext_tests.constants",
         "d": ("flext_core.decorators", "FlextDecorators"),
         "docker": "flext_tests.docker",
@@ -141,17 +150,20 @@ __all__ = [
     "FlextTestsTypes",
     "FlextTestsUtilities",
     "FlextTestsValidator",
+    "FlextTestsValidatorModels",
     "FlextValidatorBypass",
     "FlextValidatorImports",
     "FlextValidatorLayer",
-    "FlextValidatorModels",
     "FlextValidatorSettings",
     "FlextValidatorTests",
     "FlextValidatorTypes",
+    "T",
+    "_fixtures",
     "_utilities",
     "_validator",
     "bypass",
     "c",
+    "conftest_plugin",
     "constants",
     "d",
     "deep_match",
@@ -169,8 +181,10 @@ __all__ = [
     "p",
     "protocols",
     "r",
+    "reset_settings",
     "s",
     "settings",
+    "settings_factory",
     "t",
     "td",
     "tests",

@@ -84,6 +84,11 @@ class FlextTestsMatchersUtilities:
     """Namespace for test matcher utilities used in flext-tests."""
 
     @staticmethod
+    def _as_object(value: t.Tests.Testobject) -> object:
+        """Normalize matcher subjects before reflective attribute inspection."""
+        return value
+
+    @staticmethod
     def _is_non_string_sequence(
         value: t.Tests.Testobject
         | t.Tests.Matcher.MatcherKwargValue
@@ -1564,7 +1569,7 @@ class FlextTestsMatchersUtilities:
                                         or f"Key {key!r}: expected {expected_obj!r}, got {mapping_value[key]!r}",
                                     )
                 if params.attrs is not None:
-                    attrs_target: object = subject
+                    attrs_target = FlextTestsMatchersUtilities._as_object(subject)
                     if isinstance(params.attrs, str):
                         attr_list: t.StrSequence = [params.attrs]
                     else:
@@ -1575,7 +1580,7 @@ class FlextTestsMatchersUtilities:
                                 params.msg or f"Object missing attribute: {attr}",
                             )
                 if params.methods is not None:
-                    methods_target: object = subject
+                    methods_target = FlextTestsMatchersUtilities._as_object(subject)
                     if isinstance(params.methods, str):
                         method_list: t.StrSequence = [params.methods]
                     else:
@@ -1591,7 +1596,7 @@ class FlextTestsMatchersUtilities:
                                 or f"Object attribute {method} is not callable",
                             )
                 if params.attr_eq is not None:
-                    attr_eq_target: object = subject
+                    attr_eq_target = FlextTestsMatchersUtilities._as_object(subject)
                     if isinstance(params.attr_eq, tuple) and len(params.attr_eq) == 2:
                         attr, expected_val = params.attr_eq
                         if not hasattr(attr_eq_target, attr):
