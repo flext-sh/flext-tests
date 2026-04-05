@@ -84,9 +84,19 @@ class FlextTestsMatchersUtilities:
     """Namespace for test matcher utilities used in flext-tests."""
 
     @staticmethod
-    def _as_object(value: t.Tests.Testobject) -> object:
+    def _as_object(value: object) -> object:
         """Normalize matcher subjects before reflective attribute inspection."""
         return value
+
+    @staticmethod
+    def _type_name(value: object) -> str:
+        """Return a stable runtime type name for matcher diagnostics."""
+        return type(value).__name__
+
+    @staticmethod
+    def _is_result_object(value: object) -> TypeIs[p.Result[t.Tests.Testobject]]:
+        """Narrow arbitrary objects to the runtime-checkable FLEXT result protocol."""
+        return isinstance(value, p.Result)
 
     @staticmethod
     def _is_non_string_sequence(
@@ -1170,35 +1180,37 @@ class FlextTestsMatchersUtilities:
                 # Early is_/not_ checks on the ORIGINAL value before any
                 # conversion — _to_test_payload may coerce types (e.g.
                 # Exception → str) which breaks isinstance checks.
+                value_obj: object = FlextTestsMatchersUtilities._as_object(value)
+                value_type_name = value_obj.__class__.__name__
                 if params.is_ is not None:
                     is_types = (
                         params.is_ if isinstance(params.is_, tuple) else (params.is_,)
                     )
-                    root_value = getattr(value, "root", None)
+                    root_value = getattr(value_obj, "root", None)
                     is_mapping_wrapper = (
                         dict in is_types
                         and isinstance(root_value, dict)
-                        and type(value).__name__ == "Dict"
+                        and value_obj.__class__.__name__ == "Dict"
                     )
                     is_model_mapping = (
                         dict in is_types
-                        and isinstance(value, BaseModel)
-                        and not isinstance(value, RootModel)
+                        and isinstance(value_obj, BaseModel)
+                        and not isinstance(value_obj, RootModel)
                     )
                     is_sequence_wrapper = (
                         list in is_types
                         and isinstance(root_value, (list, tuple))
-                        and type(value).__name__ == "ObjectList"
+                        and value_type_name == "ObjectList"
                     )
                     if (
-                        not isinstance(value, is_types)
+                        not isinstance(value_obj, is_types)
                         and not is_mapping_wrapper
                         and not is_model_mapping
                         and not is_sequence_wrapper
                     ):
                         raise AssertionError(
                             params.msg
-                            or f"Assertion failed: {c.Tests.Matcher.ERR_TYPE_FAILED.format(expected=params.is_, actual=type(value).__name__)}",
+                            or f"Assertion failed: {c.Tests.Matcher.ERR_TYPE_FAILED.format(expected=params.is_, actual=value_type_name)}",
                         )
                 if params.not_ is not None:
                     not_types = (
@@ -1206,12 +1218,12 @@ class FlextTestsMatchersUtilities:
                         if isinstance(params.not_, tuple)
                         else (params.not_,)
                     )
-                    if isinstance(value, not_types):
+                    if isinstance(value_obj, not_types):
                         raise AssertionError(
                             params.msg
                             or c.Tests.Matcher.ERR_TYPE_FAILED.format(
                                 expected=f"not {params.not_}",
-                                actual=type(value).__name__,
+                                actual=value_type_name,
                             ),
                         )
                 # If is_/not_ was the only validation, return early —
@@ -1238,8 +1250,8 @@ class FlextTestsMatchersUtilities:
                 )
                 if only_type_check:
                     return
-                subject = value
-                if t.Tests.Guards.is_testobject_result(subject):
+                subject: t.Tests.Testobject = value
+                if FlextTestsMatchersUtilities._is_result_object(subject):
                     result_obj = subject
                     actual_value: t.Tests.Testobject | str = ""
                     if params.ok is not None:
@@ -1279,7 +1291,7 @@ class FlextTestsMatchersUtilities:
                                 error=result_obj.error,
                             ),
                         )
-                    subject = FlextTestsMatchersUtilities._to_test_payload(actual_value)
+                    subject = actual_value
                 subject_payload = FlextTestsMatchersUtilities._to_test_payload(subject)
                 has_validation = (
                     raw_eq is not None
@@ -1569,7 +1581,7 @@ class FlextTestsMatchersUtilities:
                                         or f"Key {key!r}: expected {expected_obj!r}, got {mapping_value[key]!r}",
                                     )
                 if params.attrs is not None:
-                    attrs_target = FlextTestsMatchersUtilities._as_object(subject)
+                    attrs_target = subject
                     if isinstance(params.attrs, str):
                         attr_list: t.StrSequence = [params.attrs]
                     else:
@@ -1580,7 +1592,7 @@ class FlextTestsMatchersUtilities:
                                 params.msg or f"Object missing attribute: {attr}",
                             )
                 if params.methods is not None:
-                    methods_target = FlextTestsMatchersUtilities._as_object(subject)
+                    methods_target = subject
                     if isinstance(params.methods, str):
                         method_list: t.StrSequence = [params.methods]
                     else:
@@ -1596,7 +1608,7 @@ class FlextTestsMatchersUtilities:
                                 or f"Object attribute {method} is not callable",
                             )
                 if params.attr_eq is not None:
-                    attr_eq_target = FlextTestsMatchersUtilities._as_object(subject)
+                    attr_eq_target = subject
                     if isinstance(params.attr_eq, tuple) and len(params.attr_eq) == 2:
                         attr, expected_val = params.attr_eq
                         if not hasattr(attr_eq_target, attr):

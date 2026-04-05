@@ -162,6 +162,9 @@ known_first_party = [
 ]
 pep621_dev_dependency_groups = [ "dev" ]
 
+[tool.flext.docs]
+project_class = "test"
+
 [tool.hatch.build.targets.wheel]
 packages = [ "src/flext_tests" ]
 
