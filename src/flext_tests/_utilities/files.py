@@ -36,7 +36,7 @@ class FlextTestsFilesUtilitiesMixin:
             SHA256 hash as hex string
 
         """
-        size = chunk_size or c.Tests.Files.HASH_CHUNK_SIZE
+        size = chunk_size or c.Tests.HASH_CHUNK_SIZE
         sha256 = hashlib.sha256()
         with path.open("rb") as f:
             for chunk in iter(lambda: f.read(size), b""):
@@ -64,18 +64,18 @@ class FlextTestsFilesUtilitiesMixin:
             Detected format string
 
         """
-        if fmt != c.Tests.Files.Format.AUTO:
+        if fmt != c.Tests.Format.AUTO:
             return fmt
         if isinstance(content, bytes):
-            return c.Tests.Files.Format.BIN
+            return c.Tests.Format.BIN
         if isinstance(content, Mapping):
             ext = Path(name).suffix.lower()
             if ext in {".yaml", ".yml"}:
-                return c.Tests.Files.Format.YAML
-            return c.Tests.Files.Format.JSON
+                return c.Tests.Format.YAML
+            return c.Tests.Format.JSON
         if isinstance(content, list):
-            return c.Tests.Files.Format.CSV
-        return c.Tests.Files.get_format(Path(name).suffix)
+            return c.Tests.Format.CSV
+        return c.Tests.get_format(Path(name).suffix)
 
     @staticmethod
     def detect_format_from_path(path: Path, fmt: str) -> str:
@@ -90,9 +90,9 @@ class FlextTestsFilesUtilitiesMixin:
             Detected format string
 
         """
-        if fmt != c.Tests.Files.Format.AUTO:
+        if fmt != c.Tests.Format.AUTO:
             return fmt
-        return c.Tests.Files.get_format(path.suffix)
+        return c.Tests.get_format(path.suffix)
 
     @staticmethod
     def format_size(size: int) -> str:
@@ -108,7 +108,7 @@ class FlextTestsFilesUtilitiesMixin:
             Human-readable size string like "1.2 KB"
 
         """
-        return c.Tests.Files.format_size(size)
+        return c.Tests.format_size(size)
 
     @staticmethod
     def read_csv(
@@ -131,8 +131,8 @@ class FlextTestsFilesUtilitiesMixin:
             List of rows (each row is list of strings)
 
         """
-        delim = delimiter or c.Tests.Files.DEFAULT_CSV_DELIMITER
-        enc = encoding or c.Tests.Files.DEFAULT_ENCODING
+        delim = delimiter or c.Tests.DEFAULT_CSV_DELIMITER
+        enc = encoding or c.Tests.DEFAULT_ENCODING
         with path.open(newline="", encoding=enc) as f:
             reader = csv.reader(f, delimiter=delim)
             rows = list(reader)
@@ -161,8 +161,8 @@ class FlextTestsFilesUtilitiesMixin:
             encoding: File encoding (default: from constants)
 
         """
-        delim = delimiter or c.Tests.Files.DEFAULT_CSV_DELIMITER
-        enc = encoding or c.Tests.Files.DEFAULT_ENCODING
+        delim = delimiter or c.Tests.DEFAULT_CSV_DELIMITER
+        enc = encoding or c.Tests.DEFAULT_ENCODING
         with path.open("w", newline="", encoding=enc) as f:
             writer = csv.writer(f, delimiter=delim)
             if headers:

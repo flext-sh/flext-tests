@@ -8,7 +8,7 @@ from collections.abc import (
     MutableMapping,
 )
 
-from flext_cli import FlextCliUtilities
+from flext_cli import u as u_cli
 from flext_tests import (
     r,
     t,
@@ -178,7 +178,7 @@ class FlextTestsFactoryUtilitiesMixin:
             Generated UUID string.
 
         """
-        return FlextCliUtilities.generate()
+        return u_cli.generate()
 
     @staticmethod
     def generate_short_id(length: int = 8) -> str:
@@ -192,7 +192,7 @@ class FlextTestsFactoryUtilitiesMixin:
             Generated short ID string.
 
         """
-        return FlextCliUtilities.generate("ulid", length=length)
+        return u_cli.generate("ulid", length=length)
 
     @staticmethod
     def simple_operation() -> t.Tests.Testobject:

@@ -8,11 +8,13 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from pathlib import Path
+from typing import Self
 
 from pydantic import (
     field_validator,
 )
 
+from flext_core import FlextModels
 from flext_tests import c
 
 
@@ -23,7 +25,7 @@ class FlextTestsValidatorModelsMixin:
         file_path: Path
         line_number: int
         rule_id: str
-        severity: c.Tests.Validator.Severity
+        severity: c.Tests.ValidatorSeverity
         description: str
         code_snippet: str = ""
 
@@ -31,15 +33,15 @@ class FlextTestsValidatorModelsMixin:
         @classmethod
         def _coerce_severity(
             cls,
-            value: c.Tests.Validator.Severity | str,
-        ) -> c.Tests.Validator.Severity:
-            if isinstance(value, c.Tests.Validator.Severity):
+            value: c.Tests.ValidatorSeverity | str,
+        ) -> c.Tests.ValidatorSeverity:
+            if isinstance(value, c.Tests.ValidatorSeverity):
                 return value
-            return c.Tests.Validator.Severity(str(value).upper())
+            return c.Tests.ValidatorSeverity(str(value).upper())
 
         def format(self) -> str:
             """Format violation as string."""
-            return c.Tests.Validator.Messages.VIOLATION_WITH_SNIPPET.format(
+            return c.Tests.VALIDATOR_MSG_VIOLATION_WITH_SNIPPET.format(
                 rule_id=self.rule_id,
                 description=self.description,
                 snippet=self.code_snippet or "(no snippet)",
@@ -47,7 +49,7 @@ class FlextTestsValidatorModelsMixin:
 
         def format_short(self) -> str:
             """Format violation as short string."""
-            return c.Tests.Validator.Messages.VIOLATION.format(
+            return c.Tests.VALIDATOR_MSG_VIOLATION.format(
                 rule_id=self.rule_id,
                 file=self.file_path.name,
                 line=self.line_number,
@@ -58,7 +60,7 @@ class FlextTestsValidatorModelsMixin:
 
         validator_name: str
         files_scanned: int
-        violations: Sequence[FlextTestsModels.Tests.Violation]
+        violations: Sequence[FlextTestsValidatorModelsMixin.Violation]
         passed: bool
 
         @classmethod
@@ -66,8 +68,8 @@ class FlextTestsValidatorModelsMixin:
             cls,
             validator_name: str,
             files_scanned: int,
-            violations: Sequence[FlextTestsModels.Tests.Violation],
-        ) -> FlextTestsModels.Tests.ScanResult:
+            violations: Sequence[FlextTestsValidatorModelsMixin.Violation],
+        ) -> Self:
             """Create a ScanResult from violations."""
             return cls(
                 validator_name=validator_name,

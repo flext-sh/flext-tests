@@ -6,9 +6,10 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import sys
 from collections.abc import Mapping, MutableMapping, Sequence
 from pathlib import Path
-from typing import Annotated, ClassVar, TypeAliasType
+from typing import Annotated, ClassVar, Self, TypeAliasType
 
 from pydantic import (
     AliasChoices,
@@ -19,7 +20,9 @@ from pydantic import (
     model_validator,
 )
 
-from flext_tests import p, r, t
+from flext_core import FlextModels, r
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
 class FlextTestsMatchersModelsMixin:
@@ -94,11 +97,11 @@ class FlextTestsMatchersModelsMixin:
             Field(default=None, description="Less than or equal"),
         ]
         has: Annotated[
-            t.Tests.Matcher.ContainmentSpec | None,
+            t.Tests.ContainmentSpec | None,
             Field(default=None, description="Unified containment check"),
         ]
         lacks: Annotated[
-            t.Tests.Matcher.ExclusionSpec | None,
+            t.Tests.ExclusionSpec | None,
             Field(default=None, description="Unified non-containment check"),
         ]
         starts: Annotated[
@@ -114,22 +117,22 @@ class FlextTestsMatchersModelsMixin:
             Field(default=None, description="Regex pattern"),
         ]
         len: Annotated[
-            t.Tests.Matcher.LengthSpec | None,
+            t.Tests.LengthSpec | None,
             Field(default=None, description="Length spec"),
         ]
         deep: Annotated[
-            t.Tests.Matcher.DeepSpec | None,
+            t.Tests.DeepSpec | None,
             Field(default=None, description="Deep structural matching"),
         ]
         path: Annotated[
-            t.Tests.Matcher.PathSpec | None,
+            t.Tests.PathSpec | None,
             Field(
                 default=None,
                 description="Extract nested value via dot notation",
             ),
         ]
         where: Annotated[
-            t.Tests.Matcher.PredicateSpec | None,
+            t.Tests.PredicateSpec | None,
             Field(default=None, description="Custom predicate function"),
         ]
         msg: Annotated[
@@ -147,7 +150,7 @@ class FlextTestsMatchersModelsMixin:
             Field(default=None, description="Custom error message"),
         ]
         has: Annotated[
-            t.Tests.Matcher.ExclusionSpec | None,
+            t.Tests.ExclusionSpec | None,
             Field(
                 default=None,
                 validation_alias=AliasChoices("has", "contains"),
@@ -155,7 +158,7 @@ class FlextTestsMatchersModelsMixin:
             ),
         ]
         lacks: Annotated[
-            t.Tests.Matcher.ExclusionSpec | None,
+            t.Tests.ExclusionSpec | None,
             Field(
                 default=None,
                 validation_alias=AliasChoices("lacks", "excludes"),
@@ -179,11 +182,11 @@ class FlextTestsMatchersModelsMixin:
             Field(default=None, description="Error code equals"),
         ]
         code_has: Annotated[
-            t.Tests.Matcher.ErrorCodeSpec | None,
+            t.Tests.ErrorCodeSpec | None,
             Field(default=None, description="Error code contains substring(s)"),
         ]
         data: Annotated[
-            t.Tests.Matcher.ErrorDataSpec | None,
+            t.Tests.ErrorDataSpec | None,
             Field(default=None, description="Error data contains key-value pairs"),
         ]
 
@@ -242,7 +245,7 @@ class FlextTestsMatchersModelsMixin:
             Field(default=None, description="Less than or equal"),
         ]
         len: Annotated[
-            t.Tests.Matcher.LengthSpec | None,
+            t.Tests.LengthSpec | None,
             Field(
                 default=None,
                 validation_alias=AliasChoices("len", "length"),
@@ -266,7 +269,7 @@ class FlextTestsMatchersModelsMixin:
             Field(default=None, description="Length less than or equal"),
         ]
         has: Annotated[
-            t.Tests.Matcher.ContainmentSpec | None,
+            t.Tests.ContainmentSpec | None,
             Field(
                 default=None,
                 validation_alias=AliasChoices("has", "contains"),
@@ -274,7 +277,7 @@ class FlextTestsMatchersModelsMixin:
             ),
         ]
         lacks: Annotated[
-            t.Tests.Matcher.ExclusionSpec | None,
+            t.Tests.ExclusionSpec | None,
             Field(
                 default=None,
                 validation_alias=AliasChoices("lacks", "excludes"),
@@ -302,7 +305,7 @@ class FlextTestsMatchersModelsMixin:
             Field(default=None, description="Sequence last item equals"),
         ]
         all_: Annotated[
-            t.Tests.Matcher.SequencePredicate | None,
+            t.Tests.SequencePredicate | None,
             Field(
                 default=None,
                 validation_alias=AliasChoices("all_", "all"),
@@ -310,7 +313,7 @@ class FlextTestsMatchersModelsMixin:
             ),
         ]
         any_: Annotated[
-            t.Tests.Matcher.SequencePredicate | None,
+            t.Tests.SequencePredicate | None,
             Field(
                 default=None,
                 validation_alias=AliasChoices("any_", "any"),
@@ -318,7 +321,7 @@ class FlextTestsMatchersModelsMixin:
             ),
         ]
         sorted: Annotated[
-            t.Tests.Matcher.SortKey | None,
+            t.Tests.SortKey | None,
             Field(default=None, description="Is sorted"),
         ]
         unique: Annotated[
@@ -326,11 +329,11 @@ class FlextTestsMatchersModelsMixin:
             Field(default=None, description="All items unique"),
         ]
         keys: Annotated[
-            t.Tests.Matcher.KeySpec | None,
+            t.Tests.KeySpec | None,
             Field(default=None, description="Mapping has all keys"),
         ]
         lacks_keys: Annotated[
-            t.Tests.Matcher.KeySpec | None,
+            t.Tests.KeySpec | None,
             Field(default=None, description="Mapping missing keys"),
         ]
         values: Annotated[
@@ -338,19 +341,19 @@ class FlextTestsMatchersModelsMixin:
             Field(default=None, description="Mapping has all values"),
         ]
         kv: Annotated[
-            t.Tests.Matcher.KeyValueSpec | None,
+            t.Tests.KeyValueSpec | None,
             Field(default=None, description="Key-value pairs"),
         ]
         attrs: Annotated[
-            t.Tests.Matcher.AttributeSpec | None,
+            t.Tests.AttributeSpec | None,
             Field(default=None, description="Object has attribute(s)"),
         ]
         methods: Annotated[
-            t.Tests.Matcher.AttributeSpec | None,
+            t.Tests.AttributeSpec | None,
             Field(default=None, description="Object has method(s)"),
         ]
         attr_eq: Annotated[
-            t.Tests.Matcher.AttributeValueSpec | None,
+            t.Tests.AttributeValueSpec | None,
             Field(default=None, description="Attribute equals"),
         ]
         ok: Annotated[
@@ -362,16 +365,16 @@ class FlextTestsMatchersModelsMixin:
             Field(default=None, description="For r: error contains"),
         ]
         deep: Annotated[
-            t.Tests.Matcher.DeepSpec | None,
+            t.Tests.DeepSpec | None,
             Field(default=None, description="Deep structural matching"),
         ]
         where: Annotated[
-            t.Tests.Matcher.PredicateSpec | None,
+            t.Tests.PredicateSpec | None,
             Field(default=None, description="Custom predicate function"),
         ]
 
         @model_validator(mode="after")
-        def normalize_legacy_parameters(self) -> FlextTestsModels.Tests.ThatParams:
+        def normalize_legacy_parameters(self) -> Self:
             updates: MutableMapping[str, t.Tests.Testobject] = {}
             if self.error is not None and self.has is None:
                 updates["has"] = self.error
@@ -417,11 +420,11 @@ class FlextTestsMatchersModelsMixin:
             Field(default=None, description="Initial context values"),
         ]
         cleanup: Annotated[
-            t.Tests.Matcher.CleanupSpec | None,
+            t.Tests.CleanupSpec | None,
             Field(default=None, description="Cleanup functions"),
         ]
         env: Annotated[
-            t.Tests.Matcher.EnvironmentSpec | None,
+            t.Tests.EnvironmentSpec | None,
             Field(default=None, description="Temporary environment variables"),
         ]
         cwd: Annotated[
@@ -444,7 +447,7 @@ class FlextTestsMatchersModelsMixin:
             Field(description="Path where match occurred or failed"),
         ]
         expected: Annotated[
-            t.Tests.Matcher.ValueSpec,
+            t.Tests.ValueSpec,
             Field(description="Expected value or predicate"),
         ]
         actual: Annotated[
@@ -466,10 +469,10 @@ class FlextTestsMatchersModelsMixin:
 
         DICT_ADAPTER: ClassVar[
             TypeAdapter[Mapping[str, t.Tests.TestobjectSerializable]]
-        ] = t.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER
+        ] = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER
         LIST_ADAPTER: ClassVar[
             TypeAdapter[Sequence[t.Tests.TestobjectSerializable]]
-        ] = t.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER
+        ] = t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER
 
     class Chain[TResult](FlextModels.Value):
         """Container for chained result assertions."""

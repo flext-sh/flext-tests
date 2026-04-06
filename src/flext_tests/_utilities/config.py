@@ -9,7 +9,7 @@ from collections.abc import (
 )
 from contextlib import contextmanager
 
-from flext_cli import FlextCliUtilities
+from flext_cli import u as u_cli
 from flext_core import (
     FlextSettings,
 )
@@ -54,8 +54,7 @@ class FlextTestsConfigHelpersUtilitiesMixin:
 
         """
         scalar_overrides: t.ConfigurationMapping = {
-            str(key): FlextCliUtilities._to_scalar(value)
-            for key, value in kwargs.items()
+            str(key): u_cli._to_scalar(value) for key, value in kwargs.items()
         }
         return FlextSettings.get_global(overrides=scalar_overrides)
 

@@ -89,7 +89,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
             List of Python file paths
 
         """
-        excludes = exclude_patterns or list(c.Tests.Validator.Defaults.EXCLUDE_PATTERNS)
+        excludes = exclude_patterns or list(c.Tests.VALIDATOR_EXCLUDE_PATTERNS)
         if path.is_file():
             return [path] if path.suffix == ".py" else []
         files: Sequence[Path] = [

@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Annotated
 
@@ -17,7 +17,9 @@ from pydantic import (
     computed_field,
 )
 
-from flext_tests import c, r, t
+from flext_core import FlextModels, r
+from flext_tests.constants import c
+from flext_tests.typings import t
 
 
 class FlextTestsBatchModelsMixin:
@@ -25,7 +27,10 @@ class FlextTestsBatchModelsMixin:
         """Parameters for FlextTestsFiles.batch() method."""
 
         files: Annotated[
-            t.Tests.Files.BatchFiles,
+            (
+                Mapping[str, t.Tests.Testobject]
+                | Sequence[tuple[str, t.Tests.Testobject]]
+            ),
             Field(
                 description="Mapping or Sequence of files to process",
             ),
@@ -38,12 +43,12 @@ class FlextTestsBatchModelsMixin:
             ),
         ]
         operation: Annotated[
-            c.Tests.Files.Operation,
+            c.Tests.Operation,
             BeforeValidator(
-                lambda v: c.Tests.Files.Operation(v) if isinstance(v, str) else v
+                lambda v: c.Tests.Operation(v) if isinstance(v, str) else v
             ),
             Field(
-                default=c.Tests.Files.Operation.CREATE,
+                default=c.Tests.Operation.CREATE,
                 description="Operation type: create, read, or delete",
             ),
         ]
@@ -55,12 +60,12 @@ class FlextTestsBatchModelsMixin:
             ),
         ]
         on_error: Annotated[
-            c.Tests.Files.ErrorMode,
+            c.Tests.ErrorMode,
             BeforeValidator(
-                lambda v: c.Tests.Files.ErrorMode(v) if isinstance(v, str) else v
+                lambda v: c.Tests.ErrorMode(v) if isinstance(v, str) else v
             ),
             Field(
-                default=c.Tests.Files.ErrorMode.COLLECT,
+                default=c.Tests.ErrorMode.COLLECT,
                 description="Error handling mode: stop, skip, or collect",
             ),
         ]

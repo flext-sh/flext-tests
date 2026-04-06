@@ -36,33 +36,33 @@ class FlextValidatorTypes:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect wildcard type annotations."""
-        if u.Tests.Validator.is_approved("TYPE-002", file_path, approved):
+        if u.Tests.is_approved("TYPE-002", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                if node.returns and u.Tests.Validator.is_any_type(node.returns):
-                    violation = u.Tests.Validator.create_violation(
+                if node.returns and u.Tests.is_any_type(node.returns):
+                    violation = u.Tests.create_violation(
                         file_path,
                         node.lineno,
                         "TYPE-002",
                         lines,
-                        c.Tests.Validator.Messages.TYPE_ANY_RETURN,
+                        c.Tests.VALIDATOR_MSG_TYPE_ANY_RETURN,
                     )
                     violations.append(violation)
                 for arg in node.args.args + node.args.kwonlyargs:
-                    if arg.annotation and u.Tests.Validator.is_any_type(arg.annotation):
-                        violation = u.Tests.Validator.create_violation(
+                    if arg.annotation and u.Tests.is_any_type(arg.annotation):
+                        violation = u.Tests.create_violation(
                             file_path,
                             arg.lineno if hasattr(arg, "lineno") else node.lineno,
                             "TYPE-002",
                             lines,
-                            c.Tests.Validator.Messages.TYPE_ANY_ARG.format(arg=arg.arg),
+                            c.Tests.VALIDATOR_MSG_TYPE_ANY_ARG.format(arg=arg.arg),
                         )
                         violations.append(violation)
             elif isinstance(node, ast.AnnAssign):
-                if node.annotation and u.Tests.Validator.is_any_type(node.annotation):
-                    violation = u.Tests.Validator.create_violation(
+                if node.annotation and u.Tests.is_any_type(node.annotation):
+                    violation = u.Tests.create_violation(
                         file_path,
                         node.lineno,
                         "TYPE-002",
@@ -82,13 +82,13 @@ class FlextValidatorTypes:
     ) -> Sequence[m.Tests.Violation]:
         """Detect unapproved  usage."""
         patterns = list(approved.get("TYPE-003", [])) + list(
-            c.Tests.Validator.Approved.CAST_PATTERNS,
+            c.Tests.VALIDATOR_APPROVED_CAST_PATTERNS,
         )
         file_str = str(file_path)
         if any(re.search(pattern, file_str) for pattern in patterns):
             return []
         return [
-            u.Tests.Validator.create_violation(
+            u.Tests.create_violation(
                 file_path,
                 node.lineno,
                 "TYPE-003",
@@ -115,18 +115,18 @@ class FlextValidatorTypes:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect type: ignore comments in code (not in strings/docstrings)."""
-        if u.Tests.Validator.is_approved("TYPE-001", file_path, approved):
+        if u.Tests.is_approved("TYPE-001", file_path, approved):
             return []
         pattern = re.compile(r"#\s*type:\s*ignore")
         return [
-            u.Tests.Validator.create_violation(
+            u.Tests.create_violation(
                 file_path,
                 i,
                 "TYPE-001",
                 lines,
             )
             for i, line in enumerate(lines, start=1)
-            if pattern.search(line) and u.Tests.Validator.is_real_comment(line, pattern)
+            if pattern.search(line) and u.Tests.is_real_comment(line, pattern)
         ]
 
     @classmethod
@@ -170,7 +170,7 @@ class FlextValidatorTypes:
         return vm.Tests.ScanCommon.run_scan(
             files=files,
             approved_exceptions=approved_exceptions,
-            validator_name=c.Tests.Validator.Defaults.VALIDATOR_TYPES,
+            validator_name=c.Tests.VALIDATOR_TYPES_KEY,
             scan_file=cls._scan_file,
         )
 

@@ -32,27 +32,27 @@ class FlextValidatorBypass:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect exception swallowing patterns (bare except or except with pass)."""
-        if u.Tests.Validator.is_approved("BYPASS-003", file_path, approved):
+        if u.Tests.is_approved("BYPASS-003", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if isinstance(node, ast.ExceptHandler):
                 if node.type is None:
-                    violation = u.Tests.Validator.create_violation(
+                    violation = u.Tests.create_violation(
                         file_path,
                         node.lineno,
                         "BYPASS-003",
                         lines,
-                        c.Tests.Validator.Messages.BYPASS_BARE_EXCEPT,
+                        c.Tests.VALIDATOR_MSG_BYPASS_BARE_EXCEPT,
                     )
                     violations.append(violation)
-                elif u.Tests.Validator.is_only_pass(node.body):
-                    violation = u.Tests.Validator.create_violation(
+                elif u.Tests.is_only_pass(node.body):
+                    violation = u.Tests.create_violation(
                         file_path,
                         node.lineno,
                         "BYPASS-003",
                         lines,
-                        c.Tests.Validator.Messages.BYPASS_ONLY_PASS,
+                        c.Tests.VALIDATOR_MSG_BYPASS_ONLY_PASS,
                     )
                     violations.append(violation)
         return violations
@@ -65,14 +65,14 @@ class FlextValidatorBypass:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect # noqa comments."""
-        if u.Tests.Validator.is_approved("BYPASS-001", file_path, approved):
+        if u.Tests.is_approved("BYPASS-001", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         pattern = re.compile(r"#\s*noqa", re.IGNORECASE)
         for i, line in enumerate(lines, start=1):
-            is_real = u.Tests.Validator.is_real_comment(line, pattern)
+            is_real = u.Tests.is_real_comment(line, pattern)
             if pattern.search(line) and is_real:
-                violation = u.Tests.Validator.create_violation(
+                violation = u.Tests.create_violation(
                     file_path,
                     i,
                     "BYPASS-001",
@@ -90,7 +90,7 @@ class FlextValidatorBypass:
     ) -> Sequence[m.Tests.Violation]:
         """Detect # pragma: no cover comments."""
         patterns = list(approved.get("BYPASS-002", [])) + list(
-            c.Tests.Validator.Approved.PRAGMA_PATTERNS,
+            c.Tests.VALIDATOR_APPROVED_PRAGMA_PATTERNS,
         )
         file_str = str(file_path)
         if any(re.search(pattern, file_str) for pattern in patterns):
@@ -98,9 +98,9 @@ class FlextValidatorBypass:
         violations: MutableSequence[m.Tests.Violation] = []
         pattern = re.compile(r"#\s*pragma:\s*no\s*cover", re.IGNORECASE)
         for i, line in enumerate(lines, start=1):
-            is_real = u.Tests.Validator.is_real_comment(line, pattern)
+            is_real = u.Tests.is_real_comment(line, pattern)
             if pattern.search(line) and is_real:
-                violation = u.Tests.Validator.create_violation(
+                violation = u.Tests.create_violation(
                     file_path,
                     i,
                     "BYPASS-002",
@@ -152,7 +152,7 @@ class FlextValidatorBypass:
         return vm.Tests.ScanCommon.run_scan(
             files=files,
             approved_exceptions=approved_exceptions,
-            validator_name=c.Tests.Validator.Defaults.VALIDATOR_BYPASS,
+            validator_name=c.Tests.VALIDATOR_BYPASS_KEY,
             scan_file=cls._scan_file,
         )
 

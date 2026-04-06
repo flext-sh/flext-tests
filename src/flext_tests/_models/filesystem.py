@@ -17,6 +17,7 @@ from pydantic import (
     field_validator,
 )
 
+from flext_core import FlextModels
 from flext_tests import c, t
 
 
@@ -39,7 +40,7 @@ class FlextTestsFilesystemModelsMixin:
         permissions: int = 0
         is_readonly: bool = False
         sha256: str | None = None
-        content_meta: FlextTestsModels.Tests.ContentMeta | None = None
+        content_meta: FlextTestsFilesystemModelsMixin.ContentMeta | None = None
         """Optional content metadata for parsed files."""
 
     class ContentMeta(FlextModels.Value):
@@ -66,7 +67,7 @@ class FlextTestsFilesystemModelsMixin:
         name: Annotated[
             t.NonEmptyStr,
             Field(
-                default=c.Tests.Files.DEFAULT_FILENAME,
+                default=c.Tests.DEFAULT_FILENAME,
                 description="Filename for the created file (non-empty).",
             ),
         ]
@@ -78,33 +79,31 @@ class FlextTestsFilesystemModelsMixin:
             ),
         ]
         fmt: Annotated[
-            c.Tests.Files.Format,
-            BeforeValidator(
-                lambda v: c.Tests.Files.Format(v) if isinstance(v, str) else v
-            ),
+            c.Tests.Format,
+            BeforeValidator(lambda v: c.Tests.Format(v) if isinstance(v, str) else v),
             Field(
-                default=c.Tests.Files.Format.AUTO,
+                default=c.Tests.Format.AUTO,
                 description="File format override.",
             ),
         ]
         enc: Annotated[
             t.NonEmptyStr,
             Field(
-                default=c.Tests.Files.DEFAULT_ENCODING,
+                default=c.Tests.DEFAULT_ENCODING,
                 description="File encoding.",
             ),
         ]
         indent: Annotated[
             t.NonNegativeInt,
             Field(
-                default=c.Tests.Files.DEFAULT_JSON_INDENT,
+                default=c.Tests.DEFAULT_JSON_INDENT,
                 description="JSON/YAML indentation (non-negative).",
             ),
         ]
         delim: Annotated[
             str,
             Field(
-                default=c.Tests.Files.DEFAULT_CSV_DELIMITER,
+                default=c.Tests.DEFAULT_CSV_DELIMITER,
                 description="CSV delimiter (single character).",
             ),
         ]
@@ -155,26 +154,24 @@ class FlextTestsFilesystemModelsMixin:
             ),
         ]
         fmt: Annotated[
-            c.Tests.Files.Format,
-            BeforeValidator(
-                lambda v: c.Tests.Files.Format(v) if isinstance(v, str) else v
-            ),
+            c.Tests.Format,
+            BeforeValidator(lambda v: c.Tests.Format(v) if isinstance(v, str) else v),
             Field(
-                default=c.Tests.Files.Format.AUTO,
+                default=c.Tests.Format.AUTO,
                 description="Format override.",
             ),
         ]
         enc: Annotated[
             t.NonEmptyStr,
             Field(
-                default=c.Tests.Files.DEFAULT_ENCODING,
+                default=c.Tests.DEFAULT_ENCODING,
                 description="File encoding.",
             ),
         ]
         delim: Annotated[
             str,
             Field(
-                default=c.Tests.Files.DEFAULT_CSV_DELIMITER,
+                default=c.Tests.DEFAULT_CSV_DELIMITER,
                 min_length=1,
                 max_length=1,
                 description="CSV delimiter (single character).",
@@ -212,7 +209,7 @@ class FlextTestsFilesystemModelsMixin:
         mode: Annotated[
             str,
             Field(
-                default=c.Tests.Files.CompareMode.CONTENT.value,
+                default=c.Tests.CompareMode.CONTENT.value,
                 description="Comparison mode.",
             ),
         ]
@@ -323,33 +320,31 @@ class FlextTestsFilesystemModelsMixin:
             ),
         ]
         fmt: Annotated[
-            c.Tests.Files.Format,
-            BeforeValidator(
-                lambda v: c.Tests.Files.Format(v) if isinstance(v, str) else v
-            ),
+            c.Tests.Format,
+            BeforeValidator(lambda v: c.Tests.Format(v) if isinstance(v, str) else v),
             Field(
-                default=c.Tests.Files.Format.AUTO,
+                default=c.Tests.Format.AUTO,
                 description="File format override.",
             ),
         ]
         enc: Annotated[
             t.NonEmptyStr,
             Field(
-                default=c.Tests.Files.DEFAULT_ENCODING,
+                default=c.Tests.DEFAULT_ENCODING,
                 description="File encoding.",
             ),
         ]
         indent: Annotated[
             t.NonNegativeInt,
             Field(
-                default=c.Tests.Files.DEFAULT_JSON_INDENT,
+                default=c.Tests.DEFAULT_JSON_INDENT,
                 description="JSON indentation level.",
             ),
         ]
         delim: Annotated[
             str,
             Field(
-                default=c.Tests.Files.DEFAULT_CSV_DELIMITER,
+                default=c.Tests.DEFAULT_CSV_DELIMITER,
                 min_length=1,
                 max_length=1,
                 description="CSV delimiter (single character).",

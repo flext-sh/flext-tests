@@ -100,7 +100,7 @@ class FlextTestsMatchersUtilities:
     @staticmethod
     def _is_non_string_sequence(
         value: t.Tests.Testobject
-        | t.Tests.Matcher.MatcherKwargValue
+        | t.Tests.MatcherKwargValue
         | t.RuntimeData
         | t.NormalizedValue,
     ) -> TypeIs[Sequence[t.Tests.Testobject]]:
@@ -111,7 +111,7 @@ class FlextTestsMatchersUtilities:
     @staticmethod
     def _is_matcher_input(
         value: t.Tests.Testobject
-        | t.Tests.Matcher.MatcherKwargValue
+        | t.Tests.MatcherKwargValue
         | t.RuntimeData
         | t.NormalizedValue,
     ) -> TypeIs[t.Tests.Testobject]:
@@ -210,12 +210,12 @@ class FlextTestsMatchersUtilities:
             return value
         if isinstance(value, BaseModel):
             return str(value)
-        if t.Tests.Guards.is_testobject_mapping(value):
+        if t.Tests.is_testobject_mapping(value):
             return {
                 str(k): FlextTestsMatchersUtilities._to_normalized(v)
                 for k, v in value.items()
             }
-        if t.Tests.Guards.is_testobject_sequence(value):
+        if t.Tests.is_testobject_sequence(value):
             return [FlextTestsMatchersUtilities._to_normalized(item) for item in value]
         return str(value)
 
@@ -234,12 +234,12 @@ class FlextTestsMatchersUtilities:
             return value.decode("utf-8", errors="replace")
         if isinstance(value, datetime):
             return value
-        if t.Tests.Guards.is_testobject_mapping(value):
+        if t.Tests.is_testobject_mapping(value):
             return {
                 str(k): FlextTestsMatchersUtilities._to_normalized(v)
                 for k, v in value.items()
             }
-        if t.Tests.Guards.is_testobject_sequence(value):
+        if t.Tests.is_testobject_sequence(value):
             return [FlextTestsMatchersUtilities._to_normalized(item) for item in value]
         return str(value)
 
@@ -338,12 +338,12 @@ class FlextTestsMatchersUtilities:
     @staticmethod
     def _check_has_lacks(
         value: object,
-        has: t.Tests.Matcher.ContainmentSpec
-        | t.Tests.Matcher.MatcherKwargValue
+        has: t.Tests.ContainmentSpec
+        | t.Tests.MatcherKwargValue
         | t.NormalizedValue
         | None,
-        lacks: t.Tests.Matcher.ContainmentSpec
-        | t.Tests.Matcher.MatcherKwargValue
+        lacks: t.Tests.ContainmentSpec
+        | t.Tests.MatcherKwargValue
         | t.NormalizedValue
         | None,
         msg: str | None,
@@ -353,9 +353,7 @@ class FlextTestsMatchersUtilities:
         """Shared has/lacks containment check for ok(), fail(), and that()."""
         if has is not None:
             items: Sequence[
-                t.Tests.Testobject
-                | t.Tests.Matcher.MatcherKwargValue
-                | t.NormalizedValue
+                t.Tests.Testobject | t.Tests.MatcherKwargValue | t.NormalizedValue
             ] = (
                 list(has)
                 if FlextTestsMatchersUtilities._is_non_string_sequence(has)
@@ -368,7 +366,7 @@ class FlextTestsMatchersUtilities:
                     if check_str not in target:
                         raise AssertionError(
                             msg
-                            or c.Tests.Matcher.ERR_CONTAINS_FAILED.format(
+                            or c.Tests.ERR_CONTAINS_FAILED.format(
                                 container=value,
                                 item=item,
                             ),
@@ -386,7 +384,7 @@ class FlextTestsMatchersUtilities:
                     ):
                         raise AssertionError(
                             msg
-                            or c.Tests.Matcher.ERR_CONTAINS_FAILED.format(
+                            or c.Tests.ERR_CONTAINS_FAILED.format(
                                 container=value,
                                 item=item,
                             ),
@@ -395,7 +393,7 @@ class FlextTestsMatchersUtilities:
                         if check_val not in target_raw:
                             raise AssertionError(
                                 msg
-                                or c.Tests.Matcher.ERR_CONTAINS_FAILED.format(
+                                or c.Tests.ERR_CONTAINS_FAILED.format(
                                     container=value,
                                     item=item,
                                 ),
@@ -405,7 +403,7 @@ class FlextTestsMatchersUtilities:
                         if str(check_val) not in target_raw:
                             raise AssertionError(
                                 msg
-                                or c.Tests.Matcher.ERR_CONTAINS_FAILED.format(
+                                or c.Tests.ERR_CONTAINS_FAILED.format(
                                     container=value,
                                     item=item,
                                 ),
@@ -413,7 +411,7 @@ class FlextTestsMatchersUtilities:
                     elif check_val not in target_raw:
                         raise AssertionError(
                             msg
-                            or c.Tests.Matcher.ERR_CONTAINS_FAILED.format(
+                            or c.Tests.ERR_CONTAINS_FAILED.format(
                                 container=value,
                                 item=item,
                             ),
@@ -431,7 +429,7 @@ class FlextTestsMatchersUtilities:
                     if check_str in target:
                         raise AssertionError(
                             msg
-                            or c.Tests.Matcher.ERR_LACKS_FAILED.format(
+                            or c.Tests.ERR_LACKS_FAILED.format(
                                 container=value,
                                 item=item,
                             ),
@@ -446,7 +444,7 @@ class FlextTestsMatchersUtilities:
                     if not isinstance(target_raw_2, (Mapping, str, list)):
                         raise AssertionError(
                             msg
-                            or c.Tests.Matcher.ERR_LACKS_FAILED.format(
+                            or c.Tests.ERR_LACKS_FAILED.format(
                                 container=value,
                                 item=item,
                             ),
@@ -455,7 +453,7 @@ class FlextTestsMatchersUtilities:
                         if str(check_val) in target_raw_2:
                             raise AssertionError(
                                 msg
-                                or c.Tests.Matcher.ERR_LACKS_FAILED.format(
+                                or c.Tests.ERR_LACKS_FAILED.format(
                                     container=value,
                                     item=item,
                                 ),
@@ -463,7 +461,7 @@ class FlextTestsMatchersUtilities:
                     elif check_val in target_raw_2:
                         raise AssertionError(
                             msg
-                            or c.Tests.Matcher.ERR_LACKS_FAILED.format(
+                            or c.Tests.ERR_LACKS_FAILED.format(
                                 container=value,
                                 item=item,
                             ),
@@ -549,7 +547,7 @@ class FlextTestsMatchersUtilities:
             @staticmethod
             def fail[TResult](
                 result: p.Result[TResult],
-                **kwargs: t.Tests.Matcher.MatcherKwargValue,
+                **kwargs: t.Tests.MatcherKwargValue,
             ) -> str:
                 r"""Enhanced assertion for r failure with optional error validation.
 
@@ -600,7 +598,7 @@ class FlextTestsMatchersUtilities:
                 if result.is_success:
                     raise AssertionError(
                         params.msg
-                        or c.Tests.Matcher.ERR_FAIL_EXPECTED.format(value=result.value),
+                        or c.Tests.ERR_FAIL_EXPECTED.format(value=result.value),
                     )
                 err = result.error or ""
                 if (
@@ -622,7 +620,7 @@ class FlextTestsMatchersUtilities:
                     ):
                         raise AssertionError(
                             params.msg
-                            or c.Tests.Matcher.ERR_NOT_STARTSWITH.format(
+                            or c.Tests.ERR_NOT_STARTSWITH.format(
                                 text=err,
                                 prefix=params.starts,
                             ),
@@ -632,7 +630,7 @@ class FlextTestsMatchersUtilities:
                     ):
                         raise AssertionError(
                             params.msg
-                            or c.Tests.Matcher.ERR_NOT_ENDSWITH.format(
+                            or c.Tests.ERR_NOT_ENDSWITH.format(
                                 text=err,
                                 suffix=params.ends,
                             ),
@@ -642,7 +640,7 @@ class FlextTestsMatchersUtilities:
                     ):
                         raise AssertionError(
                             params.msg
-                            or c.Tests.Matcher.ERR_NOT_MATCHES.format(
+                            or c.Tests.ERR_NOT_MATCHES.format(
                                 text=err,
                                 pattern=params.match,
                             ),
@@ -652,7 +650,7 @@ class FlextTestsMatchersUtilities:
                     if actual_code != params.code:
                         raise AssertionError(
                             params.msg
-                            or c.Tests.Matcher.ERR_ERROR_CODE_MISMATCH.format(
+                            or c.Tests.ERR_ERROR_CODE_MISMATCH.format(
                                 expected=params.code,
                                 actual=actual_code,
                             ),
@@ -668,7 +666,7 @@ class FlextTestsMatchersUtilities:
                         if item not in actual_code:
                             raise AssertionError(
                                 params.msg
-                                or c.Tests.Matcher.ERR_ERROR_CODE_NOT_CONTAINS.format(
+                                or c.Tests.ERR_ERROR_CODE_NOT_CONTAINS.format(
                                     expected=item,
                                     actual=actual_code,
                                 ),
@@ -685,14 +683,14 @@ class FlextTestsMatchersUtilities:
                         if key not in actual_data:
                             raise AssertionError(
                                 params.msg
-                                or c.Tests.Matcher.ERR_ERROR_DATA_KEY_MISSING.format(
+                                or c.Tests.ERR_ERROR_DATA_KEY_MISSING.format(
                                     key=key,
                                 ),
                             )
                         if actual_data[key] != expected_value:
                             raise AssertionError(
                                 params.msg
-                                or c.Tests.Matcher.ERR_ERROR_DATA_VALUE_MISMATCH.format(
+                                or c.Tests.ERR_ERROR_DATA_VALUE_MISMATCH.format(
                                     key=key,
                                     expected=expected_value,
                                     actual=actual_data[key],
@@ -710,13 +708,13 @@ class FlextTestsMatchersUtilities:
             @overload
             def ok[TResult](
                 result: p.Result[TResult],
-                **kwargs: t.Tests.Matcher.MatcherKwargValue,
+                **kwargs: t.Tests.MatcherKwargValue,
             ) -> TResult | t.Tests.Testobject: ...
 
             @staticmethod
             def ok[TResult](
                 result: p.Result[TResult],
-                **kwargs: t.Tests.Matcher.MatcherKwargValue,
+                **kwargs: t.Tests.MatcherKwargValue,
             ) -> TResult | t.Tests.Testobject:
                 """Enhanced assertion for r success with optional value validation.
 
@@ -774,8 +772,7 @@ class FlextTestsMatchersUtilities:
                     raise ValueError(f"Parameter validation failed: {exc}") from exc
                 if not result.is_success:
                     raise AssertionError(
-                        params.msg
-                        or c.Tests.Matcher.ERR_OK_FAILED.format(error=result.error),
+                        params.msg or c.Tests.ERR_OK_FAILED.format(error=result.error),
                     )
                 result_value: TResult | t.Tests.Testobject = result.value
                 extracted_payload: t.Tests.Testobject | None = None
@@ -807,7 +804,7 @@ class FlextTestsMatchersUtilities:
                     if extracted.is_failure:
                         raise AssertionError(
                             params.msg
-                            or c.Tests.Matcher.ERR_SCOPE_PATH_NOT_FOUND.format(
+                            or c.Tests.ERR_SCOPE_PATH_NOT_FOUND.format(
                                 path=path_str,
                                 error=extracted.error,
                             ),
@@ -867,7 +864,7 @@ class FlextTestsMatchersUtilities:
                 ):
                     raise AssertionError(
                         params.msg
-                        or c.Tests.Matcher.ERR_TYPE_FAILED.format(
+                        or c.Tests.ERR_TYPE_FAILED.format(
                             expected=params.is_,
                             actual=type(result_value).__name__,
                         ),
@@ -892,14 +889,14 @@ class FlextTestsMatchersUtilities:
                     if isinstance(params.len, int):
                         raise AssertionError(
                             params.msg
-                            or c.Tests.Matcher.ERR_LEN_EXACT_FAILED.format(
+                            or c.Tests.ERR_LEN_EXACT_FAILED.format(
                                 expected=params.len,
                                 actual=actual_len,
                             ),
                         )
                     raise AssertionError(
                         params.msg
-                        or c.Tests.Matcher.ERR_LEN_RANGE_FAILED.format(
+                        or c.Tests.ERR_LEN_RANGE_FAILED.format(
                             min=params.len[0],
                             max=params.len[1],
                             actual=actual_len,
@@ -927,7 +924,7 @@ class FlextTestsMatchersUtilities:
                     if not match_result.matched:
                         raise AssertionError(
                             params.msg
-                            or c.Tests.Matcher.ERR_DEEP_PATH_FAILED.format(
+                            or c.Tests.ERR_DEEP_PATH_FAILED.format(
                                 path=match_result.path,
                                 reason=match_result.reason,
                             ),
@@ -945,7 +942,7 @@ class FlextTestsMatchersUtilities:
                 if params.where is not None and (not params.where(result_payload)):
                     raise AssertionError(
                         params.msg
-                        or c.Tests.Matcher.ERR_PREDICATE_FAILED.format(
+                        or c.Tests.ERR_PREDICATE_FAILED.format(
                             value=result_payload,
                         ),
                     )
@@ -1023,7 +1020,7 @@ class FlextTestsMatchersUtilities:
                     container_dict: Mapping[str, t.Tests.Testobject] = {
                         k: v
                         for k, v in (params.container or {}).items()
-                        if t.Tests.Guards.is_general_value(v)
+                        if t.Tests.is_general_value(v)
                     }
                     context_map: Mapping[str, t.Tests.Testobject] = {}
                     if params.context:
@@ -1056,7 +1053,7 @@ class FlextTestsMatchersUtilities:
                                 AttributeError,
                             ) as e:
                                 warnings.warn(
-                                    c.Tests.Matcher.ERR_SCOPE_CLEANUP_FAILED.format(
+                                    c.Tests.ERR_SCOPE_CLEANUP_FAILED.format(
                                         error=str(e),
                                     ),
                                     RuntimeWarning,
@@ -1066,7 +1063,7 @@ class FlextTestsMatchersUtilities:
             @staticmethod
             def that(
                 value: t.Tests.Testobject,
-                **kwargs: t.Tests.Matcher.MatcherKwargValue,
+                **kwargs: t.Tests.MatcherKwargValue,
             ) -> None:
                 r"""Super-powered universal value assertion - ALL validations in ONE method.
 
@@ -1146,16 +1143,16 @@ class FlextTestsMatchersUtilities:
                     ValueError: If parameter validation fails (via Pydantic model)
 
                 """
-                raw_eq: t.Tests.Matcher.MatcherKwargValue | None = (
+                raw_eq: t.Tests.MatcherKwargValue | None = (
                     kwargs.get("eq") if "eq" in kwargs else None
                 )
-                raw_ne: t.Tests.Matcher.MatcherKwargValue | None = (
+                raw_ne: t.Tests.MatcherKwargValue | None = (
                     kwargs.get("ne") if "ne" in kwargs else None
                 )
-                raw_has: t.Tests.Matcher.MatcherKwargValue | None = (
+                raw_has: t.Tests.MatcherKwargValue | None = (
                     kwargs.get("has") if "has" in kwargs else None
                 )
-                raw_contains: t.Tests.Matcher.MatcherKwargValue | None = (
+                raw_contains: t.Tests.MatcherKwargValue | None = (
                     kwargs.get("contains") if "contains" in kwargs else None
                 )
                 try:
@@ -1213,7 +1210,7 @@ class FlextTestsMatchersUtilities:
                     ):
                         raise AssertionError(
                             params.msg
-                            or f"Assertion failed: {c.Tests.Matcher.ERR_TYPE_FAILED.format(expected=params.is_, actual=value_type_name)}",
+                            or f"Assertion failed: {c.Tests.ERR_TYPE_FAILED.format(expected=params.is_, actual=value_type_name)}",
                         )
                 if params.not_ is not None:
                     not_types = (
@@ -1224,7 +1221,7 @@ class FlextTestsMatchersUtilities:
                     if isinstance(value_obj, not_types):
                         raise AssertionError(
                             params.msg
-                            or c.Tests.Matcher.ERR_TYPE_FAILED.format(
+                            or c.Tests.ERR_TYPE_FAILED.format(
                                 expected=f"not {params.not_}",
                                 actual=value_type_name,
                             ),
@@ -1261,7 +1258,7 @@ class FlextTestsMatchersUtilities:
                         if params.ok and (not result_obj.is_success):
                             raise AssertionError(
                                 params.msg
-                                or c.Tests.Matcher.ERR_OK_FAILED.format(
+                                or c.Tests.ERR_OK_FAILED.format(
                                     error=result_obj.error,
                                 ),
                             )
@@ -1269,7 +1266,7 @@ class FlextTestsMatchersUtilities:
                             value_str: str = str(result_obj.value)
                             raise AssertionError(
                                 params.msg
-                                or c.Tests.Matcher.ERR_FAIL_EXPECTED.format(
+                                or c.Tests.ERR_FAIL_EXPECTED.format(
                                     value=value_str,
                                 ),
                             )
@@ -1290,7 +1287,7 @@ class FlextTestsMatchersUtilities:
                     else:
                         raise AssertionError(
                             params.msg
-                            or c.Tests.Matcher.ERR_OK_FAILED.format(
+                            or c.Tests.ERR_OK_FAILED.format(
                                 error=result_obj.error,
                             ),
                         )
@@ -1371,14 +1368,14 @@ class FlextTestsMatchersUtilities:
                     if isinstance(params.len, int):
                         raise AssertionError(
                             params.msg
-                            or c.Tests.Matcher.ERR_LEN_EXACT_FAILED.format(
+                            or c.Tests.ERR_LEN_EXACT_FAILED.format(
                                 expected=params.len,
                                 actual=actual_len,
                             ),
                         )
                     raise AssertionError(
                         params.msg
-                        or c.Tests.Matcher.ERR_LEN_RANGE_FAILED.format(
+                        or c.Tests.ERR_LEN_RANGE_FAILED.format(
                             min=params.len[0],
                             max=params.len[1],
                             actual=actual_len,
@@ -1432,7 +1429,7 @@ class FlextTestsMatchersUtilities:
                                 )
                                 raise AssertionError(
                                     params.msg
-                                    or c.Tests.Matcher.ERR_ALL_ITEMS_FAILED.format(
+                                    or c.Tests.ERR_ALL_ITEMS_FAILED.format(
                                         index=failed_idx,
                                     ),
                                 )
@@ -1458,7 +1455,7 @@ class FlextTestsMatchersUtilities:
                             )
                             raise AssertionError(
                                 params.msg
-                                or c.Tests.Matcher.ERR_ALL_ITEMS_FAILED.format(
+                                or c.Tests.ERR_ALL_ITEMS_FAILED.format(
                                     index=failed_idx,
                                 ),
                             )
@@ -1469,7 +1466,7 @@ class FlextTestsMatchersUtilities:
                                 isinstance(item, any_type) for item in seq_value
                             ):
                                 raise AssertionError(
-                                    params.msg or c.Tests.Matcher.ERR_ANY_ITEMS_FAILED,
+                                    params.msg or c.Tests.ERR_ANY_ITEMS_FAILED,
                                 )
                         elif callable(params.any_) and (
                             not any(
@@ -1480,7 +1477,7 @@ class FlextTestsMatchersUtilities:
                             )
                         ):
                             raise AssertionError(
-                                params.msg or c.Tests.Matcher.ERR_ANY_ITEMS_FAILED,
+                                params.msg or c.Tests.ERR_ANY_ITEMS_FAILED,
                             )
                     sorted_param = params.sorted
                     if sorted_param is not None:
@@ -1534,7 +1531,7 @@ class FlextTestsMatchersUtilities:
                         if missing:
                             raise AssertionError(
                                 params.msg
-                                or c.Tests.Matcher.ERR_KEYS_MISSING.format(
+                                or c.Tests.ERR_KEYS_MISSING.format(
                                     keys=list(missing),
                                 ),
                             )
@@ -1544,7 +1541,7 @@ class FlextTestsMatchersUtilities:
                         if present:
                             raise AssertionError(
                                 params.msg
-                                or c.Tests.Matcher.ERR_KEYS_EXTRA.format(
+                                or c.Tests.ERR_KEYS_EXTRA.format(
                                     keys=list(present),
                                 ),
                             )
@@ -1656,7 +1653,7 @@ class FlextTestsMatchersUtilities:
                     if not match_result.matched:
                         raise AssertionError(
                             params.msg
-                            or c.Tests.Matcher.ERR_DEEP_PATH_FAILED.format(
+                            or c.Tests.ERR_DEEP_PATH_FAILED.format(
                                 path=match_result.path,
                                 reason=match_result.reason,
                             ),
@@ -1664,7 +1661,7 @@ class FlextTestsMatchersUtilities:
                 if params.where is not None and (not params.where(subject_payload)):
                     raise AssertionError(
                         params.msg
-                        or c.Tests.Matcher.ERR_PREDICATE_FAILED.format(
+                        or c.Tests.ERR_PREDICATE_FAILED.format(
                             value=subject_payload,
                         ),
                     )

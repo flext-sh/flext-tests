@@ -21,7 +21,7 @@ class FlextTestsDeepMatchUtilitiesMixin:
 
     Follows FLEXT patterns:
     - Zero code duplication - delegates to flext-core utilities
-    - Uses t.Tests.Matcher.DeepSpec for type safety
+    - Uses t.Tests.DeepSpec for type safety
     - Returns m.Tests.DeepMatchResult for structured results
     - Supports unlimited nesting depth via dot notation
 

@@ -42,10 +42,10 @@ class FlextValidatorSettings:
         if not isinstance(mypy_config, dict):
             return violations
         if (
-            not u.Tests.Validator.is_approved("CONFIG-001", file_path, approved)
+            not u.Tests.is_approved("CONFIG-001", file_path, approved)
             and mypy_config.get("ignore_errors") is True
         ):
-            line_num = u.Tests.Validator.find_line_number(lines, "ignore_errors")
+            line_num = u.Tests.find_line_number(lines, "ignore_errors")
             violations.append(
                 cls._create_config_violation(
                     file_path,
@@ -63,14 +63,14 @@ class FlextValidatorSettings:
                 continue
             module_raw: _TomlValue = override.get("module", "unknown")
             module: str = str(module_raw)
-            is_approved = u.Tests.Validator.is_approved(
+            is_approved = u.Tests.is_approved(
                 "CONFIG-001",
                 file_path,
                 approved,
             )
             ignore_errors_raw: _TomlValue = override.get("ignore_errors", False)
             if ignore_errors_raw is True and (not is_approved):
-                line_num = u.Tests.Validator.find_line_number(
+                line_num = u.Tests.find_line_number(
                     lines,
                     f'module = "{module}"',
                 )
@@ -80,14 +80,14 @@ class FlextValidatorSettings:
                         line_num,
                         "CONFIG-001",
                         f"ignore_errors = true (module: {module})",
-                        c.Tests.Validator.Messages.CONFIG_IGNORE.format(module=module),
+                        c.Tests.VALIDATOR_MSG_CONFIG_IGNORE.format(module=module),
                     ),
                 )
         if (
-            not u.Tests.Validator.is_approved("CONFIG-003", file_path, approved)
+            not u.Tests.is_approved("CONFIG-003", file_path, approved)
             and mypy_config.get("disallow_incomplete_defs") is False
         ):
-            line_num = u.Tests.Validator.find_line_number(
+            line_num = u.Tests.find_line_number(
                 lines,
                 "disallow_incomplete_defs",
             )
@@ -100,10 +100,10 @@ class FlextValidatorSettings:
                 ),
             )
         if (
-            not u.Tests.Validator.is_approved("CONFIG-004", file_path, approved)
+            not u.Tests.is_approved("CONFIG-004", file_path, approved)
             and mypy_config.get("warn_return_any") is False
         ):
-            line_num = u.Tests.Validator.find_line_number(lines, "warn_return_any")
+            line_num = u.Tests.find_line_number(lines, "warn_return_any")
             violations.append(
                 cls._create_config_violation(
                     file_path,
@@ -130,10 +130,10 @@ class FlextValidatorSettings:
         if not isinstance(pyright_config, dict):
             return []
         if (
-            not u.Tests.Validator.is_approved("CONFIG-005", file_path, approved)
+            not u.Tests.is_approved("CONFIG-005", file_path, approved)
             and pyright_config.get("reportPrivateUsage") is False
         ):
-            line_num = u.Tests.Validator.find_line_number(lines, "reportPrivateUsage")
+            line_num = u.Tests.find_line_number(lines, "reportPrivateUsage")
             return [
                 cls._create_config_violation(
                     file_path,
@@ -153,7 +153,7 @@ class FlextValidatorSettings:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Check ruff configuration for violations."""
-        if u.Tests.Validator.is_approved("CONFIG-002", file_path, approved):
+        if u.Tests.is_approved("CONFIG-002", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         tool_data: _TomlValue = data.get("tool", {})
@@ -167,18 +167,18 @@ class FlextValidatorSettings:
             return violations
         ignores_raw: _TomlValue = lint_config.get("ignore", [])
         if isinstance(ignores_raw, list):
-            approved_ignores = c.Tests.Validator.Approved.RUFF_IGNORES
+            approved_ignores = c.Tests.VALIDATOR_APPROVED_RUFF_IGNORES
             for ignore_raw in ignores_raw:
                 ignore_str: str = str(ignore_raw)
                 if ignore_str not in approved_ignores:
-                    line_num = u.Tests.Validator.find_line_number(lines, ignore_str)
+                    line_num = u.Tests.find_line_number(lines, ignore_str)
                     violations.append(
                         cls._create_config_violation(
                             file_path,
                             line_num,
                             "CONFIG-002",
                             f'"{ignore_str}"',
-                            c.Tests.Validator.Messages.CONFIG_RUFF.format(
+                            c.Tests.VALIDATOR_MSG_CONFIG_RUFF.format(
                                 code=ignore_str,
                             ),
                         ),
@@ -195,7 +195,7 @@ class FlextValidatorSettings:
         extra_desc: str = "",
     ) -> m.Tests.Violation:
         """Create a config violation (config files have no lines list)."""
-        severity, desc = c.Tests.Validator.Rules.get(rule_id)
+        severity, desc = c.Tests.get_validator_rule(rule_id)
         description = f"{desc}: {extra_desc}" if extra_desc else desc
         return m.Tests.Violation(
             file_path=file_path,
@@ -250,7 +250,7 @@ class FlextValidatorSettings:
             violations.extend(file_violations)
         return r[m.Tests.ScanResult].ok(
             m.Tests.ScanResult.create(
-                validator_name=c.Tests.Validator.Defaults.VALIDATOR_CONFIG,
+                validator_name=c.Tests.VALIDATOR_CONFIG_KEY,
                 files_scanned=len(files),
                 violations=violations,
             ),

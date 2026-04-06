@@ -25,14 +25,14 @@ from flext_tests import tk, tm
 
 
 class TestContainerStatus:
-    """Test suite for c.Tests.Docker.ContainerStatus enum."""
+    """Test suite for c.Tests.ContainerStatus enum."""
 
     def test_container_status_values(self) -> None:
-        """Test c.Tests.Docker.ContainerStatus enum values."""
-        tm.that(c.Tests.Docker.ContainerStatus.RUNNING.value, eq="running")
-        tm.that(c.Tests.Docker.ContainerStatus.STOPPED.value, eq="stopped")
-        tm.that(c.Tests.Docker.ContainerStatus.NOT_FOUND.value, eq="not_found")
-        tm.that(c.Tests.Docker.ContainerStatus.ERROR.value, eq="error")
+        """Test c.Tests.ContainerStatus enum values."""
+        tm.that(c.Tests.ContainerStatus.RUNNING.value, eq="running")
+        tm.that(c.Tests.ContainerStatus.STOPPED.value, eq="stopped")
+        tm.that(c.Tests.ContainerStatus.NOT_FOUND.value, eq="not_found")
+        tm.that(c.Tests.ContainerStatus.ERROR.value, eq="error")
 
 
 class TestContainerInfo:
@@ -42,12 +42,12 @@ class TestContainerInfo:
         """Test tk.ContainerInfo creation with required fields."""
         info = tk.ContainerInfo(
             name="test_container",
-            status=c.Tests.Docker.ContainerStatus.RUNNING,
+            status=c.Tests.ContainerStatus.RUNNING,
             ports={"8080/tcp": "8080"},
             image="nginx:latest",
         )
         tm.that(info.name, eq="test_container")
-        tm.that(info.status, eq=c.Tests.Docker.ContainerStatus.RUNNING.value)
+        tm.that(info.status, eq=c.Tests.ContainerStatus.RUNNING.value)
         tm.that(info.ports, eq={"8080/tcp": "8080"})
         tm.that(info.image, eq="nginx:latest")
         tm.that(not info.container_id, eq=True)
@@ -56,7 +56,7 @@ class TestContainerInfo:
         """Test tk.ContainerInfo with container_id."""
         info = tk.ContainerInfo(
             name="test_container",
-            status=c.Tests.Docker.ContainerStatus.RUNNING,
+            status=c.Tests.ContainerStatus.RUNNING,
             ports={},
             image="nginx:latest",
             container_id="abc123",

@@ -13,7 +13,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, RootModel
 
-from flext_cli import FlextCliUtilities
+from flext_cli import u as u_cli
 from flext_tests import (
     FlextTestsProtocols,
     r,
@@ -157,10 +157,10 @@ class FlextTestsDomainHelpersUtilitiesMixin:
             Operation result (type depends on operation)
 
         """
-        if not hasattr(FlextCliUtilities, operation):
+        if not hasattr(u_cli, operation):
             msg = f"Unknown operation: {operation}"
             raise ValueError(msg)
-        op_method = getattr(FlextCliUtilities, operation)
+        op_method = getattr(u_cli, operation)
         if not callable(op_method):
             msg = f"Unknown operation: {operation}"
             raise ValueError(msg)

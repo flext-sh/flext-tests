@@ -48,15 +48,13 @@ class FlextTestsDocker:
     - Port readiness checking
     """
 
-    ContainerStatus: ClassVar[type[c.Tests.Docker.ContainerStatus]] = (
-        c.Tests.Docker.ContainerStatus
-    )
+    ContainerStatus: ClassVar[type[c.Tests.ContainerStatus]] = c.Tests.ContainerStatus
 
     class ContainerInfo(m.Tests.ContainerInfo):
         """Container information model for tests - real inheritance from m."""
 
     SHARED_CONTAINERS: ClassVar[Mapping[str, t.HeaderMapping]] = (
-        c.Tests.Docker.SHARED_CONTAINERS
+        c.Tests.SHARED_CONTAINERS
     )
 
     class _OfflineContainers:
@@ -117,7 +115,7 @@ class FlextTestsDocker:
     @property
     def shared_containers(self) -> Mapping[str, t.HeaderMapping]:
         """Get shared container configurations."""
-        return c.Tests.Docker.SHARED_CONTAINERS
+        return c.Tests.SHARED_CONTAINERS
 
     @staticmethod
     def _extract_host_port(bindings: Sequence[t.StrMapping] | None) -> str:

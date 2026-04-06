@@ -32,7 +32,7 @@ class FlextTestsValidatorUtilitiesMixin:
         lines: t.StrSequence,
         extra_desc: str = "",
     ) -> m.Tests.Violation:
-        """Create a violation model using c.Tests.Validator.Rules.
+        """Create a violation model using c.Tests.
 
         Args:
             file_path: Path to file with violation
@@ -46,7 +46,7 @@ class FlextTestsValidatorUtilitiesMixin:
             Violation model instance
 
         """
-        severity, desc = c.Tests.Validator.Rules.get(rule_id)
+        severity, desc = c.Tests.get_validator_rule(rule_id)
         description = f"{desc}: {extra_desc}" if extra_desc else desc
         line = lines[line_number - 1] if line_number <= len(lines) else ""
         return m.Tests.Violation(

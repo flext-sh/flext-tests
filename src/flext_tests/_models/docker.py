@@ -9,6 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import override
 
+from flext_core import FlextModels
 from flext_tests import c, t
 
 
@@ -17,7 +18,7 @@ class FlextTestsDockerModelsMixin:
         """Container information model."""
 
         name: str
-        status: c.Tests.Docker.ContainerStatus
+        status: c.Tests.ContainerStatus
         ports: t.StrMapping
         image: str
         container_id: str = ""

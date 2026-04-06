@@ -66,7 +66,7 @@ class FlextTestsValidatorModels(m):
                 ),
             ] = Field(
                 default_factory=lambda: list(
-                    c.Tests.Validator.Defaults.INCLUDE_PATTERNS,
+                    c.Tests.VALIDATOR_INCLUDE_PATTERNS,
                 )
             )
             exclude_patterns: Annotated[
@@ -78,7 +78,7 @@ class FlextTestsValidatorModels(m):
                 ),
             ] = Field(
                 default_factory=lambda: list(
-                    c.Tests.Validator.Defaults.EXCLUDE_PATTERNS,
+                    c.Tests.VALIDATOR_EXCLUDE_PATTERNS,
                 )
             )
             approved_exceptions: Annotated[

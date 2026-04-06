@@ -43,7 +43,7 @@ class FlextValidatorLayer:
         hierarchy: t.IntMapping,
     ) -> Sequence[m.Tests.Violation]:
         """Scan a single file for layer violations."""
-        if u.Tests.Validator.is_approved("LAYER-001", file_path, approved):
+        if u.Tests.is_approved("LAYER-001", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         current_module = file_path.stem
@@ -61,12 +61,12 @@ class FlextValidatorLayer:
                 imported_module = cls._extract_module_name(node.module)
                 imported_layer = hierarchy.get(imported_module)
                 if imported_layer is not None and imported_layer > current_layer:
-                    violation = u.Tests.Validator.create_violation(
+                    violation = u.Tests.create_violation(
                         file_path,
                         node.lineno,
                         "LAYER-001",
                         lines,
-                        c.Tests.Validator.Messages.LAYER_VIOLATION.format(
+                        c.Tests.VALIDATOR_MSG_LAYER_VIOLATION.format(
                             current=current_module,
                             current_level=current_layer,
                             imported=imported_module,
@@ -96,13 +96,13 @@ class FlextValidatorLayer:
         """
         violations: MutableSequence[m.Tests.Violation] = []
         approved = approved_exceptions or {}
-        hierarchy = layer_hierarchy or c.Tests.Validator.LayerHierarchy.as_dict()
+        hierarchy = layer_hierarchy or c.Tests.get_layer_dict()
         for file_path in files:
             file_violations = cls._scan_file(file_path, approved, hierarchy)
             violations.extend(file_violations)
         return r[m.Tests.ScanResult].ok(
             m.Tests.ScanResult.create(
-                validator_name=c.Tests.Validator.Defaults.VALIDATOR_LAYER,
+                validator_name=c.Tests.VALIDATOR_LAYER_KEY,
                 files_scanned=len(files),
                 violations=violations,
             ),

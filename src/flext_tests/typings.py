@@ -9,26 +9,19 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import re
-import types as _bt
 from collections.abc import (
-    ItemsView,
-    KeysView,
     Mapping,
-    MutableMapping,
     Sequence,
-    Set as AbstractSet,
-    ValuesView,
 )
-from datetime import datetime, timezone, tzinfo
-from enum import Enum
-from pathlib import Path
-from types import FrameType, GenericAlias, ModuleType
 
-from pydantic import BaseModel, ConfigDict, InstanceOf, SecretStr, TypeAdapter
+from pydantic import BaseModel, ConfigDict, InstanceOf, TypeAdapter
 
 from flext_cli import FlextCliTypes
-from flext_core import FlextResult, p
+from flext_core import FlextResult
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests._typings.files import FlextTestsFilesTypesMixin
+from flext_tests._typings.guards import FlextTestsGuardsTypesMixin
+from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
 
 
 class FlextTestsTypes(FlextCliTypes):
@@ -38,76 +31,42 @@ class FlextTestsTypes(FlextCliTypes):
     All base types from t are available through inheritance.
     """
 
-    class Tests:
+    class Tests(
+        FlextTestsBaseTypesMixin,
+        FlextTestsFilesTypesMixin,
+        FlextTestsMatchersTypesMixin,
+        FlextTestsGuardsTypesMixin,
+    ):
         """Test-specific type definitions namespace.
 
         All test-specific types organized under FlextCliTypes.Tests.* pattern.
         """
 
-        type TestobjectSerializable = (
-            FlextCliTypes.Primitives
-            | None
-            | bytes
-            | datetime
-            | tzinfo
-            | Path
-            | BaseModel
-            | type
-            | frozenset[str]
-            | Sequence[FlextTestsTypes.Tests.TestobjectSerializable]
-            | Mapping[str, FlextTestsTypes.Tests.TestobjectSerializable]
-        )
-
-        type Testobject = (
-            FlextTestsTypes.Tests.TestobjectSerializable
-            | BaseException
-            | Exception
-            | Enum
-            | SecretStr
-            | p.Logger
-            | p.Container
-            | p.Dispatcher
-            | p.Settings
-            | p.Context
-            | FlextResult[FlextTestsTypes.Tests.Testobject]
-            | re.Match[str]
-            | _bt.UnionType
-            | FrameType
-            | ModuleType
-            | GenericAlias
-            | set[FlextTestsTypes.Tests.Testobject]
-            | AbstractSet[FlextTestsTypes.Tests.Testobject]
-            | ValuesView[FlextTestsTypes.Tests.Testobject]
-            | KeysView[str]
-            | ItemsView[str, FlextTestsTypes.Tests.Testobject]
-            | MutableMapping[str, FlextTestsTypes.Tests.Testobject]
-            | Sequence[FlextTestsTypes.Tests.Testobject]
-            | Mapping[str, FlextTestsTypes.Tests.Testobject]
-            | tzinfo
-            | timezone
-        )
-
-        TESTOBJECT_SEQUENCE_ADAPTER: TypeAdapter[Sequence[Testobject]] = TypeAdapter(
-            Sequence[Testobject],
+        TESTOBJECT_SEQUENCE_ADAPTER: TypeAdapter[
+            Sequence[FlextTestsBaseTypesMixin.Testobject]
+        ] = TypeAdapter(
+            Sequence[FlextTestsBaseTypesMixin.Testobject],
             config=ConfigDict(arbitrary_types_allowed=True),
         )
-        TESTOBJECT_MAPPING_ADAPTER: TypeAdapter[Mapping[str, Testobject]] = TypeAdapter(
-            Mapping[str, Testobject],
+        TESTOBJECT_MAPPING_ADAPTER: TypeAdapter[
+            Mapping[str, FlextTestsBaseTypesMixin.Testobject]
+        ] = TypeAdapter(
+            Mapping[str, FlextTestsBaseTypesMixin.Testobject],
             config=ConfigDict(arbitrary_types_allowed=True),
         )
         STR_MAPPING_SEQUENCE_ADAPTER: TypeAdapter[
             Sequence[FlextCliTypes.StrMapping]
         ] = TypeAdapter(Sequence[FlextCliTypes.StrMapping])
         TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER: TypeAdapter[
-            Mapping[str, TestobjectSerializable]
+            Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
         ] = TypeAdapter(
-            Mapping[str, TestobjectSerializable],
+            Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
             config=ConfigDict(arbitrary_types_allowed=True),
         )
         TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER: TypeAdapter[
-            Sequence[TestobjectSerializable]
+            Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
         ] = TypeAdapter(
-            Sequence[TestobjectSerializable],
+            Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable],
             config=ConfigDict(arbitrary_types_allowed=True),
         )
         PRIMITIVES_MAPPING_ADAPTER: TypeAdapter[
@@ -142,12 +101,27 @@ class FlextTestsTypes(FlextCliTypes):
         type FileContent = (
             str
             | bytes
-            | Mapping[str, Testobject]
+            | Mapping[str, FlextTestsBaseTypesMixin.Testobject]
             | Sequence[FlextCliTypes.StrSequence]
             | InstanceOf[BaseModel]
         )
-        type TestResultValue = Testobject
+        type FileContentPlain = FileContent
+        type FileInput = (
+            FileContentPlain
+            | FlextResult[FlextTestsBaseTypesMixin.Testobject]
+            | FlextResult[Sequence[FlextCliTypes.StrSequence]]
+            | FlextResult[bytes]
+            | FlextResult[str]
+            | None
+        )
+        type BatchFiles = (
+            Mapping[str, FlextTestsBaseTypesMixin.Testobject]
+            | Sequence[tuple[str, FlextTestsBaseTypesMixin.Testobject]]
+        )
+        type TestResultValue = FlextTestsBaseTypesMixin.Testobject
         "Type for test result values."
 
-        class Files:
-            """File-specific type definitions for test file operations (tf)."""
+
+t = FlextTestsTypes
+
+__all__ = ["FlextTestsTypes", "t"]

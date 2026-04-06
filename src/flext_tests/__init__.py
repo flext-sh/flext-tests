@@ -10,11 +10,43 @@ import typing as _t
 from flext_core.lazy import install_lazy_exports, merge_lazy_imports
 
 if _t.TYPE_CHECKING:
+    import flext_tests._constants as _flext_tests__constants
+
+    _constants = _flext_tests__constants
     import flext_tests._fixtures as _flext_tests__fixtures
+    from flext_tests._constants import (
+        FlextTestsDockerConstantsMixin,
+        FlextTestsFilesConstantsMixin,
+        FlextTestsMatcherConstantsMixin,
+        FlextTestsValidatorConstantsMixin,
+        matcher,
+    )
 
     _fixtures = _flext_tests__fixtures
-    import flext_tests._utilities as _flext_tests__utilities
+    import flext_tests._models as _flext_tests__models
     from flext_tests._fixtures import T, reset_settings, settings, settings_factory
+
+    _models = _flext_tests__models
+    import flext_tests._protocols as _flext_tests__protocols
+    from flext_tests._models import (
+        FlextTestsBaseModelsMixin,
+        FlextTestsBatchModelsMixin,
+        FlextTestsDockerModelsMixin,
+        FlextTestsFilesystemModelsMixin,
+        FlextTestsMatchersModelsMixin,
+        FlextTestsValidatorModelsMixin,
+        base,
+        batch,
+        filesystem,
+        matchers,
+    )
+
+    _protocols = _flext_tests__protocols
+    import flext_tests._utilities as _flext_tests__utilities
+    from flext_tests._protocols import (
+        FlextTestsValueFactoryProtocolsMixin,
+        valuefactory,
+    )
 
     _utilities = _flext_tests__utilities
     import flext_tests._validator as _flext_tests__validator
@@ -54,7 +86,6 @@ if _t.TYPE_CHECKING:
         generic,
         handler,
         length,
-        matchers,
         parser,
         payload,
         registry,
@@ -128,7 +159,10 @@ if _t.TYPE_CHECKING:
     from flext_tests.validator import FlextTestsValidator, tv
 _LAZY_IMPORTS = merge_lazy_imports(
     (
+        "flext_tests._constants",
         "flext_tests._fixtures",
+        "flext_tests._models",
+        "flext_tests._protocols",
         "flext_tests._utilities",
         "flext_tests._validator",
     ),
@@ -142,7 +176,10 @@ _LAZY_IMPORTS = merge_lazy_imports(
         "FlextTestsTypes": ("flext_tests.typings", "FlextTestsTypes"),
         "FlextTestsUtilities": ("flext_tests.utilities", "FlextTestsUtilities"),
         "FlextTestsValidator": ("flext_tests.validator", "FlextTestsValidator"),
+        "_constants": "flext_tests._constants",
         "_fixtures": "flext_tests._fixtures",
+        "_models": "flext_tests._models",
+        "_protocols": "flext_tests._protocols",
         "_utilities": "flext_tests._utilities",
         "_validator": "flext_tests._validator",
         "c": ("flext_tests.constants", "FlextTestsConstants"),
@@ -182,6 +219,8 @@ _ = _LAZY_IMPORTS.pop("output_reporting", None)
 __all__ = [
     "FlextTestsAssertionsUtilitiesMixin",
     "FlextTestsBadObjectsUtilitiesMixin",
+    "FlextTestsBaseModelsMixin",
+    "FlextTestsBatchModelsMixin",
     "FlextTestsConfigHelpersUtilitiesMixin",
     "FlextTestsConstants",
     "FlextTestsConstantsHelpersUtilitiesMixin",
@@ -189,15 +228,21 @@ __all__ = [
     "FlextTestsContextHelpersUtilitiesMixin",
     "FlextTestsDeepMatchUtilitiesMixin",
     "FlextTestsDocker",
+    "FlextTestsDockerConstantsMixin",
+    "FlextTestsDockerModelsMixin",
     "FlextTestsDomainHelpersUtilitiesMixin",
     "FlextTestsDomains",
     "FlextTestsExceptionHelpersUtilitiesMixin",
     "FlextTestsFactoryUtilitiesMixin",
     "FlextTestsFiles",
+    "FlextTestsFilesConstantsMixin",
     "FlextTestsFilesUtilitiesMixin",
+    "FlextTestsFilesystemModelsMixin",
     "FlextTestsGenericHelpersUtilitiesMixin",
     "FlextTestsHandlerHelpersUtilitiesMixin",
     "FlextTestsLengthUtilitiesMixin",
+    "FlextTestsMatcherConstantsMixin",
+    "FlextTestsMatchersModelsMixin",
     "FlextTestsMatchersUtilities",
     "FlextTestsModels",
     "FlextTestsParserHelpersUtilitiesMixin",
@@ -211,8 +256,11 @@ __all__ = [
     "FlextTestsUtilities",
     "FlextTestsValidationUtilitiesMixin",
     "FlextTestsValidator",
+    "FlextTestsValidatorConstantsMixin",
     "FlextTestsValidatorModels",
+    "FlextTestsValidatorModelsMixin",
     "FlextTestsValidatorUtilitiesMixin",
+    "FlextTestsValueFactoryProtocolsMixin",
     "FlextValidatorBypass",
     "FlextValidatorImports",
     "FlextValidatorLayer",
@@ -220,11 +268,16 @@ __all__ = [
     "FlextValidatorTests",
     "FlextValidatorTypes",
     "T",
+    "_constants",
     "_fixtures",
+    "_models",
+    "_protocols",
     "_utilities",
     "_validator",
     "assertions",
     "badobjects",
+    "base",
+    "batch",
     "bypass",
     "c",
     "config",
@@ -241,6 +294,7 @@ __all__ = [
     "exception",
     "factory",
     "files",
+    "filesystem",
     "generic",
     "h",
     "handler",
@@ -248,6 +302,7 @@ __all__ = [
     "layer",
     "length",
     "m",
+    "matcher",
     "matchers",
     "models",
     "p",
@@ -276,6 +331,7 @@ __all__ = [
     "utilities",
     "validation",
     "validator",
+    "valuefactory",
     "vm",
     "x",
 ]

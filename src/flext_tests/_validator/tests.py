@@ -35,16 +35,16 @@ class FlextValidatorTests:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect Mock and MagicMock usage."""
-        if u.Tests.Validator.is_approved("TEST-002", file_path, approved):
+        if u.Tests.is_approved("TEST-002", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
-        mock_names = c.Tests.Validator.Approved.MOCK_NAMES
+        mock_names = c.Tests.VALIDATOR_APPROVED_MOCK_NAMES
         for node in ast.walk(tree):
             if isinstance(node, ast.ImportFrom):
                 if node.module and "mock" in node.module.lower():
                     for alias in node.names:
                         if alias.name in mock_names:
-                            violation = u.Tests.Validator.create_violation(
+                            violation = u.Tests.create_violation(
                                 file_path,
                                 node.lineno,
                                 "TEST-002",
@@ -57,7 +57,7 @@ class FlextValidatorTests:
                 and isinstance(node.func, ast.Name)
                 and (node.func.id in mock_names)
             ):
-                violation = u.Tests.Validator.create_violation(
+                violation = u.Tests.create_violation(
                     file_path,
                     node.lineno,
                     "TEST-002",
@@ -76,19 +76,19 @@ class FlextValidatorTests:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect monkeypatch usage in function parameters and calls."""
-        if u.Tests.Validator.is_approved("TEST-001", file_path, approved):
+        if u.Tests.is_approved("TEST-001", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 for arg in node.args.args:
                     if arg.arg == "monkeypatch":
-                        violation = u.Tests.Validator.create_violation(
+                        violation = u.Tests.create_violation(
                             file_path,
                             node.lineno,
                             "TEST-001",
                             lines,
-                            c.Tests.Validator.Messages.TEST_MONKEYPATCH.format(
+                            c.Tests.VALIDATOR_MSG_TEST_MONKEYPATCH.format(
                                 func=node.name,
                             ),
                         )
@@ -98,7 +98,7 @@ class FlextValidatorTests:
                 and isinstance(node.value, ast.Name)
                 and (node.value.id == "monkeypatch")
             ):
-                violation = u.Tests.Validator.create_violation(
+                violation = u.Tests.create_violation(
                     file_path,
                     node.lineno,
                     "TEST-001",
@@ -117,7 +117,7 @@ class FlextValidatorTests:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect @patch decorator usage."""
-        if u.Tests.Validator.is_approved("TEST-003", file_path, approved):
+        if u.Tests.is_approved("TEST-003", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
@@ -128,7 +128,7 @@ class FlextValidatorTests:
                 continue
             for decorator in node.decorator_list:
                 if cls._is_patch_decorator(decorator):
-                    violation = u.Tests.Validator.create_violation(
+                    violation = u.Tests.create_violation(
                         file_path,
                         decorator.lineno,
                         "TEST-003",
@@ -197,7 +197,7 @@ class FlextValidatorTests:
         return vm.Tests.ScanCommon.run_scan(
             files=files,
             approved_exceptions=approved_exceptions,
-            validator_name=c.Tests.Validator.Defaults.VALIDATOR_TESTS,
+            validator_name=c.Tests.VALIDATOR_TESTS_KEY,
             scan_file=cls._scan_file,
         )
 

@@ -13,7 +13,7 @@ class FlextTestsLengthUtilitiesMixin:
 
     Follows FLEXT patterns:
     - Zero code duplication - delegates to flext-core utilities
-    - Uses t.Tests.Matcher.LengthSpec for type safety
+    - Uses t.Tests.LengthSpec for type safety
     - Supports exact length or range validation
     - Works with any t.NormalizedValue that has __len__
 
