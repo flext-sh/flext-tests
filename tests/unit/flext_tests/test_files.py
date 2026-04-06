@@ -13,13 +13,11 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
-from flext_cli import FlextCliUtilities
 from pydantic import BaseModel
-from tests import c, t
+from tests import c, m, r, t, u
 from tests.test_utils import assertion_helpers
 
-from flext_core import r
-from flext_tests import FlextTestsModels, tf, tm
+from flext_tests import tf, tm
 
 
 class TestFileInfo:
@@ -369,7 +367,7 @@ class TestFlextTestsFilesNewApi:
         content: t.ConfigMap = t.ConfigMap(root={"name": "test", "enabled": True})
         path = manager.create(content, "config.yaml")
         tm.that(path.exists(), eq=True)
-        data = FlextCliUtilities.Cli.yaml_parse(path.read_text()).unwrap_or({})
+        data = u.Cli.yaml_parse(path.read_text()).unwrap_or({})
         tm.that(data, eq=content.root)
 
     def test_create_csv_auto_detect_from_list(self, tmp_path: Path) -> None:
@@ -736,7 +734,7 @@ class TestFileInfoFromModels:
 
     def test_fileinfo_import_from_models(self) -> None:
         """Test tf.FileInfo can be imported from models."""
-        info = FlextTestsModels.Tests.FileInfo(exists=True, size=100, lines=5)
+        info = m.Tests.FileInfo(exists=True, size=100, lines=5)
         tm.that(info.exists is True, eq=True)
         tm.that(info.size, eq=100)
         tm.that(info.lines, eq=5)
@@ -745,13 +743,13 @@ class TestFileInfoFromModels:
         """Test tf.FileInfo alias works for backward compatibility."""
         info = tf.FileInfo(exists=True)
         tm.that(info.exists is True, eq=True)
-        info2 = FlextTestsModels.Tests.FileInfo(exists=True)
+        info2 = m.Tests.FileInfo(exists=True)
         tm.that(info2.exists is True, eq=True)
 
     def test_fileinfo_all_fields(self) -> None:
         """Test tf.FileInfo with all fields populated."""
         now = datetime.now(tz=UTC)
-        info = FlextTestsModels.Tests.FileInfo(
+        info = m.Tests.FileInfo(
             exists=True,
             path=Path("/test/file.txt"),
             size=1024,
@@ -1066,7 +1064,7 @@ class TestCreateInStatic:
             tmp_path,
         )
         tm.that(path.exists(), eq=True)
-        content = FlextCliUtilities.Cli.yaml_parse(path.read_text()).unwrap_or({})
+        content = u.Cli.yaml_parse(path.read_text()).unwrap_or({})
         tm.that(content, eq={"setting": True})
 
     def test_create_in_pydantic_model(self, tmp_path: Path) -> None:
@@ -1099,7 +1097,7 @@ class TestCreateInStatic:
         )
         tm.that(path2.exists(), eq=True)
         tm.that(
-            FlextCliUtilities.Cli.yaml_parse(path2.read_text()).unwrap_or({}),
+            u.Cli.yaml_parse(path2.read_text()).unwrap_or({}),
             eq={"key": "value"},
         )
         path3 = tf.create_in([["a", "b"], ["1", "2"]], "data.csv", tmp_path)

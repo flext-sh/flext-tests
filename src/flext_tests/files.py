@@ -34,7 +34,7 @@ from pathlib import Path
 from types import TracebackType
 from typing import ClassVar, Self, TypeIs, TypeVar, overload, override
 
-from flext_cli import FlextCliUtilities
+from flext_cli import t as t_cli, u as u_cli
 from pydantic import BaseModel, ValidationError
 
 from flext_tests import c, m, r, s, t, u
@@ -130,7 +130,7 @@ def _to_normalized_leaf(value: t.Tests.Testobject) -> t.NormalizedValue:
 def _yaml_safe_load(
     raw: str,
 ) -> Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject] | None:
-    result = FlextCliUtilities.Cli.yaml_parse(raw)
+    result = u_cli.Cli.yaml_parse(raw)
     if result.is_failure:
         return None
     return result.value
@@ -140,7 +140,7 @@ def _yaml_dump(value: Mapping[str, t.Tests.Testobject], *, indent: int) -> str:
     normalized: Mapping[str, t.NormalizedValue] = {
         str(k): _to_normalized_leaf(v) for k, v in value.items()
     }
-    return FlextCliUtilities.Cli.yaml_dump_str(normalized, indent=indent)
+    return u_cli.Cli.yaml_dump_str(normalized, indent=indent)
 
 
 def _is_batch_content(content_raw: t.Tests.Testobject) -> TypeIs[t.Tests.Testobject]:
@@ -1236,7 +1236,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             return r[str | bytes | t.ConfigMap | Sequence[t.StrSequence]].fail(
                 c.Tests.Files.ERROR_INVALID_JSON.format(error=e),
             )
-        except FlextCliUtilities.Cli.YAMLError as e:
+        except t_cli.Cli.YAMLError as e:
             if model_cls is not None:
                 invalid_yaml_result: r[TModel] = r[TModel].fail(
                     c.Tests.Files.ERROR_INVALID_YAML.format(error=e),
@@ -1576,7 +1576,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                         self._to_payload_value(item) for item in parsed_list
                     ]
                     item_count = len(parsed_content)
-            except (ValueError, FlextCliUtilities.Cli.YAMLError):
+            except (ValueError, t_cli.Cli.YAMLError):
                 pass
         elif fmt == "csv":
             try:
@@ -1758,7 +1758,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                     for key, value in dict2_raw.items()
                 }
                 return (dict1, dict2)
-        except (ValueError, FlextCliUtilities.Cli.YAMLError, TypeError):
+        except (ValueError, t_cli.Cli.YAMLError, TypeError):
             pass
         return None
 

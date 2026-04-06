@@ -28,6 +28,7 @@ classifiers = [
 dependencies = [
   "factory-boy>=3.3.1",
   "faker>=37.4",
+  "flext-cli",
   "flext-core",
   "flext-infra",
   "hypothesis>=6.125",
@@ -707,6 +708,9 @@ split-on-trailing-comma = true
 all = true
 in_place = true
 sort_first = [ "build-system", "dependency-groups", "project", "tool" ]
+
+[tool.uv.sources.flext-cli]
+workspace = true
 
 [tool.uv.sources.flext-core]
 workspace = true

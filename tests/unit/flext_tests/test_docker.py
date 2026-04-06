@@ -13,12 +13,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import json
 import tempfile
 from pathlib import Path
 
 import pytest
 from docker import DockerClient
+from flext_cli import u
 from tests import assertion_helpers, c
 
 from flext_core import r
@@ -118,13 +118,11 @@ class TestFlextTestsDocker:
         """Test loading dirty state from existing file."""
         test_data = {"dirty_containers": ["container1", "container2"]}
         with tempfile.NamedTemporaryFile(
-            encoding="utf-8",
-            mode="w",
             delete=False,
             suffix=".json",
         ) as f:
-            json.dump(test_data, f)
             temp_file = Path(f.name)
+        u.Cli.json_write(temp_file, test_data)
         try:
             docker_manager._state_file = temp_file
             docker_manager._load_dirty_state()
@@ -151,8 +149,7 @@ class TestFlextTestsDocker:
         tm.that(docker_manager._state_file.name, eq="test_docker_state.json")
         docker_manager._save_dirty_state()
         tm.that(docker_manager._state_file.exists(), eq=True)
-        with docker_manager._state_file.open("r") as f:
-            data = json.load(f)
+        data = u.Cli.json_read(docker_manager._state_file).unwrap_or({})
         tm.that(data, has="dirty_containers")
         tm.that(data["dirty_containers"], is_=list)
         tm.that(data["dirty_containers"], has="test_container")
