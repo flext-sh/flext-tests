@@ -23,7 +23,7 @@ class FlextTestsLengthUtilitiesMixin:
 
     @staticmethod
     def validate(
-        value: t.Tests.Testobject,
+        value: t.Tests.TestobjectSerializable,
         spec: int | tuple[int, int],
     ) -> bool:
         """Validate length against spec.

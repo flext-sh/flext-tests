@@ -62,7 +62,7 @@ class FlextTestsFilesystemModelsMixin:
     class CreateParams(FlextModels.Value):
         """Parameters for file creation operations with Pydantic 2 advanced validation."""
 
-        content: t.Tests.Testobject
+        content: t.Tests.TestobjectSerializable
         """File content to create."""
         name: Annotated[
             t.NonEmptyStr,
@@ -131,7 +131,7 @@ class FlextTestsFilesystemModelsMixin:
 
         @field_validator("name", mode="before")
         @classmethod
-        def normalize_name(cls, value: t.Tests.Testobject) -> str:
+        def normalize_name(cls, value: t.Tests.TestobjectSerializable) -> str:
             """Normalize filename by stripping whitespace."""
             if isinstance(value, str):
                 return value.strip()

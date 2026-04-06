@@ -19,7 +19,7 @@ class FlextTestsContextHelpersUtilitiesMixin:
     def assert_context_get_success(
         context: p.Context,
         key: str,
-        expected_value: t.Tests.Testobject,
+        expected_value: t.Tests.TestobjectSerializable,
     ) -> None:
         """Assert context get returns expected value.
 

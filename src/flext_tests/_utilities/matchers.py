@@ -93,28 +93,30 @@ class FlextTestsMatchersUtilities:
         return type(value).__name__
 
     @staticmethod
-    def _is_result_object(value: object) -> TypeIs[p.Result[t.Tests.Testobject]]:
+    def _is_result_object(
+        value: object,
+    ) -> TypeIs[p.Result[t.Tests.TestobjectSerializable]]:
         """Narrow arbitrary objects to the runtime-checkable FLEXT result protocol."""
         return isinstance(value, p.Result)
 
     @staticmethod
     def _is_non_string_sequence(
-        value: t.Tests.Testobject
+        value: t.Tests.TestobjectSerializable
         | t.Tests.MatcherKwargValue
         | t.RuntimeData
         | t.NormalizedValue,
-    ) -> TypeIs[Sequence[t.Tests.Testobject]]:
+    ) -> TypeIs[Sequence[t.Tests.TestobjectSerializable]]:
         return isinstance(value, Sequence) and (
             not isinstance(value, (str, bytes, bytearray))
         )
 
     @staticmethod
     def _is_matcher_input(
-        value: t.Tests.Testobject
+        value: t.Tests.TestobjectSerializable
         | t.Tests.MatcherKwargValue
         | t.RuntimeData
         | t.NormalizedValue,
-    ) -> TypeIs[t.Tests.Testobject]:
+    ) -> TypeIs[t.Tests.TestobjectSerializable]:
         if value is None:
             return True
         if isinstance(value, (str, int, float, bool, bytes, datetime, Path, BaseModel)):
@@ -147,14 +149,12 @@ class FlextTestsMatchersUtilities:
     @staticmethod
     def _to_test_payload(
         value: object,
-    ) -> t.Tests.Testobject:
+    ) -> t.Tests.TestobjectSerializable:
         if isinstance(value, type):
             return value
         if FlextTestsMatchersUtilities._is_object_set(value):
             str_items: t.StrSequence = [str(v) for v in value]
-            return frozenset(
-                FlextTestsMatchersUtilities._to_test_payload(s) for s in str_items
-            )
+            return frozenset(str(s) for s in str_items)
         if value is None or isinstance(
             value,
             (str, int, float, bool, bytes, BaseModel),
@@ -172,7 +172,7 @@ class FlextTestsMatchersUtilities:
                     for key, item in mapping_value.items()
                 }
             except ValidationError:
-                empty_map: Mapping[str, t.Tests.Testobject] = {}
+                empty_map: Mapping[str, t.Tests.TestobjectSerializable] = {}
                 return empty_map
         if FlextTestsMatchersUtilities._is_object_sequence(value):
             try:
@@ -196,7 +196,7 @@ class FlextTestsMatchersUtilities:
         return str(value)
 
     @staticmethod
-    def _to_normalized(value: t.Tests.Testobject) -> t.NormalizedValue:
+    def _to_normalized(value: t.Tests.TestobjectSerializable) -> t.NormalizedValue:
         """Convert _Testobject to pure NormalizedValue."""
         if value is None:
             return None
@@ -220,7 +220,7 @@ class FlextTestsMatchersUtilities:
         return str(value)
 
     @staticmethod
-    def _to_extract_value(value: t.Tests.Testobject) -> t.ValueOrModel:
+    def _to_extract_value(value: t.Tests.TestobjectSerializable) -> t.ValueOrModel:
         """Convert _Testobject to ValueOrModel for extract() calls."""
         if value is None:
             return None
@@ -246,7 +246,7 @@ class FlextTestsMatchersUtilities:
     @staticmethod
     def _as_guard_input(
         value: object,
-    ) -> t.Tests.Testobject:
+    ) -> t.Tests.TestobjectSerializable:
         if isinstance(value, type):
             return value
         if FlextTestsMatchersUtilities._is_object_set(value):
@@ -268,7 +268,7 @@ class FlextTestsMatchersUtilities:
                     for key, item in mapping_value.items()
                 }
             except ValidationError:
-                empty_map: Mapping[str, t.Tests.Testobject] = {}
+                empty_map: Mapping[str, t.Tests.TestobjectSerializable] = {}
                 return empty_map
         if FlextTestsMatchersUtilities._is_object_sequence(value):
             try:
@@ -353,7 +353,9 @@ class FlextTestsMatchersUtilities:
         """Shared has/lacks containment check for ok(), fail(), and that()."""
         if has is not None:
             items: Sequence[
-                t.Tests.Testobject | t.Tests.MatcherKwargValue | t.NormalizedValue
+                t.Tests.TestobjectSerializable
+                | t.Tests.MatcherKwargValue
+                | t.NormalizedValue
             ] = (
                 list(has)
                 if FlextTestsMatchersUtilities._is_non_string_sequence(has)
@@ -542,7 +544,7 @@ class FlextTestsMatchersUtilities:
                     Chain t.NormalizedValue for fluent assertion API.
 
                 """
-                return m.Tests.Chain[TResult](result=result)
+                return m.Tests.Chain(result=result)
 
             @staticmethod
             def fail[TResult](
@@ -673,7 +675,9 @@ class FlextTestsMatchersUtilities:
                             )
                 if params.data is not None:
                     actual_raw = result.error_data
-                    actual_data: MutableMapping[str, t.Tests.Testobject] = {}
+                    actual_data: MutableMapping[
+                        str, t.Tests.TestobjectSerializable
+                    ] = {}
                     if actual_raw is not None:
                         actual_data = {
                             str(k): FlextTestsMatchersUtilities._to_test_payload(v)
@@ -709,13 +713,13 @@ class FlextTestsMatchersUtilities:
             def ok[TResult](
                 result: p.Result[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
-            ) -> TResult | t.Tests.Testobject: ...
+            ) -> TResult | t.Tests.TestobjectSerializable: ...
 
             @staticmethod
             def ok[TResult](
                 result: p.Result[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
-            ) -> TResult | t.Tests.Testobject:
+            ) -> TResult | t.Tests.TestobjectSerializable:
                 """Enhanced assertion for r success with optional value validation.
 
                 Args:
@@ -774,8 +778,8 @@ class FlextTestsMatchersUtilities:
                     raise AssertionError(
                         params.msg or c.Tests.ERR_OK_FAILED.format(error=result.error),
                     )
-                result_value: TResult | t.Tests.Testobject = result.value
-                extracted_payload: t.Tests.Testobject | None = None
+                result_value: TResult | t.Tests.TestobjectSerializable = result.value
+                extracted_payload: t.Tests.TestobjectSerializable | None = None
                 if params.path is not None:
                     if isinstance(params.path, str):
                         path_str: str = params.path
@@ -908,7 +912,7 @@ class FlextTestsMatchersUtilities:
                             params.msg
                             or f"Deep matching requires dict or model, got {type(result_value).__name__}",
                         )
-                    deep_input: BaseModel | Mapping[str, t.Tests.Testobject]
+                    deep_input: BaseModel | Mapping[str, t.Tests.TestobjectSerializable]
                     if isinstance(result_value, BaseModel):
                         deep_input = result_value
                     else:
@@ -955,7 +959,9 @@ class FlextTestsMatchersUtilities:
 
             @staticmethod
             @contextmanager
-            def scope(**kwargs: t.Tests.Testobject) -> Generator[m.Tests.TestScope]:
+            def scope(
+                **kwargs: t.Tests.TestobjectSerializable,
+            ) -> Generator[m.Tests.TestScope]:
                 """Enhanced isolated test execution scope.
 
                 Uses Pydantic 2 model (ScopeParams) for parameter validation and computation.
@@ -1014,15 +1020,15 @@ class FlextTestsMatchersUtilities:
                             else params.cwd
                         )
                         os.chdir(cwd_path)
-                    cfg: Mapping[str, t.Tests.Testobject] = {}
+                    cfg: Mapping[str, t.Tests.TestobjectSerializable] = {}
                     if params.config:
                         cfg = {str(key): value for key, value in params.config.items()}
-                    container_dict: Mapping[str, t.Tests.Testobject] = {
+                    container_dict = {
                         k: v
                         for k, v in (params.container or {}).items()
                         if t.Tests.is_general_value(v)
                     }
-                    context_map: Mapping[str, t.Tests.Testobject] = {}
+                    context_map: Mapping[str, t.Tests.TestobjectSerializable] = {}
                     if params.context:
                         context_map = {
                             str(key): value for key, value in params.context.items()
@@ -1253,7 +1259,7 @@ class FlextTestsMatchersUtilities:
                 subject: t.Tests.Testobject = value
                 if FlextTestsMatchersUtilities._is_result_object(subject):
                     result_obj = subject
-                    actual_value: t.Tests.Testobject | str = ""
+                    actual_value: t.Tests.TestobjectSerializable | str = ""
                     if params.ok is not None:
                         if params.ok and (not result_obj.is_success):
                             raise AssertionError(
@@ -1414,7 +1420,7 @@ class FlextTestsMatchersUtilities:
 
                             def _all_match(
                                 check_type: type,
-                                seq: Sequence[t.Tests.Testobject],
+                                seq: Sequence[t.Tests.TestobjectSerializable],
                             ) -> bool:
                                 return all(isinstance(x, check_type) for x in seq)
 
@@ -1495,7 +1501,7 @@ class FlextTestsMatchersUtilities:
                             user_key_fn = sorted_param
 
                             def comparable_key(
-                                x: t.Tests.Testobject,
+                                x: t.Tests.TestobjectSerializable,
                             ) -> tuple[str, str]:
                                 """Wrap user key to return comparable tuple."""
                                 result = user_key_fn(
@@ -1566,7 +1572,9 @@ class FlextTestsMatchersUtilities:
                                     or f"Key {key!r}: expected {expected_val!r}, got {mapping_value[key]!r}",
                                 )
                         elif hasattr(params.kv, "keys") and hasattr(params.kv, "items"):
-                            mapping_kv: Mapping[str, t.Tests.Testobject] = params.kv
+                            mapping_kv: Mapping[str, t.Tests.TestobjectSerializable] = (
+                                params.kv
+                            )
                             for key, expected_obj in mapping_kv.items():
                                 if key not in mapping_value:
                                     raise AssertionError(
@@ -1637,7 +1645,7 @@ class FlextTestsMatchersUtilities:
                             params.msg
                             or f"Deep matching requires dict or model, got {type(subject_payload).__name__}",
                         )
-                    deep_value: BaseModel | Mapping[str, t.Tests.Testobject]
+                    deep_value: BaseModel | Mapping[str, t.Tests.TestobjectSerializable]
                     if isinstance(subject_payload, BaseModel):
                         deep_value = subject_payload
                     else:
@@ -1646,7 +1654,7 @@ class FlextTestsMatchersUtilities:
                                 subject_payload,
                             )
                         except ValidationError:
-                            deep_value = dict[str, t.Tests.Testobject]()
+                            deep_value = dict[str, t.Tests.TestobjectSerializable]()
                     match_result = FlextTestsPayloadUtilities.deep_match(
                         deep_value, params.deep
                     )

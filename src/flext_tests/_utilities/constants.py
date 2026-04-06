@@ -35,7 +35,7 @@ class FlextTestsConstantsHelpersUtilitiesMixin:
         return re.compile(pattern_str, re.IGNORECASE)
 
     @staticmethod
-    def get_constant_by_path(path: str) -> t.Tests.Testobject:
+    def get_constant_by_path(path: str) -> t.Tests.TestobjectSerializable:
         """Get a constant value by dot-separated path.
 
         Args:

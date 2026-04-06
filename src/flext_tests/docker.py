@@ -129,7 +129,7 @@ class FlextTestsDocker:
 
     @staticmethod
     def _normalize_bindings(
-        bindings: t.Tests.Testobject | None,
+        bindings: t.Tests.TestobjectSerializable | None,
     ) -> Sequence[t.StrMapping]:
         try:
             return t.Tests.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(bindings)
@@ -237,7 +237,7 @@ class FlextTestsDocker:
         try:
             client = self.get_client()
             container = client.containers.get(container_name)
-            ports_raw: Mapping[str, t.Tests.Testobject] = (
+            ports_raw: Mapping[str, t.Tests.TestobjectSerializable] = (
                 t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
                     container.ports
                 )

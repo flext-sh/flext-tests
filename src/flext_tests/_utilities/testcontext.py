@@ -18,9 +18,9 @@ class FlextTestsTestContextUtilitiesMixin:
     @staticmethod
     @contextmanager
     def temporary_attribute(
-        target: t.Tests.Testobject,
+        target: t.Tests.TestobjectSerializable,
         attribute: str,
-        value: t.Tests.Testobject,
+        value: t.Tests.TestobjectSerializable,
     ) -> Generator[None]:
         """Temporarily set attribute on target t.NormalizedValue.
 
@@ -34,7 +34,7 @@ class FlextTestsTestContextUtilitiesMixin:
 
         """
         attribute_existed = hasattr(target, attribute)
-        original_value: t.Tests.Testobject | None = None
+        original_value: t.Tests.TestobjectSerializable | None = None
         if attribute_existed:
             original_value = target.__getattribute__(attribute)
         object.__setattr__(target, attribute, value)

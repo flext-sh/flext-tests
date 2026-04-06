@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import (
-    Callable,
     Mapping,
 )
 
@@ -31,11 +30,8 @@ class FlextTestsDeepMatchUtilitiesMixin:
 
     @staticmethod
     def match(
-        obj: BaseModel | Mapping[str, t.Tests.Testobject],
-        spec: Mapping[
-            str,
-            t.Tests.Testobject | Callable[[t.Tests.Testobject], bool],
-        ],
+        obj: BaseModel | Mapping[str, t.Tests.TestobjectSerializable],
+        spec: t.Tests.DeepSpec,
         *,
         path_sep: str = ".",
     ) -> m.Tests.DeepMatchResult:

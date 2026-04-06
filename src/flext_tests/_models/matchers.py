@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import sys
-from collections.abc import Mapping, MutableMapping, Sequence
+from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from pathlib import Path
 from typing import Annotated, ClassVar, Self, TypeAliasType
 
@@ -33,8 +33,8 @@ class FlextTestsMatchersModelsMixin:
 
         eq: Annotated[
             (
-                Mapping[str, t.Tests.Testobject]
-                | Sequence[t.Tests.Testobject]
+                Mapping[str, t.Tests.TestobjectSerializable]
+                | Sequence[t.Tests.TestobjectSerializable]
                 | bytes
                 | str
                 | int
@@ -51,8 +51,8 @@ class FlextTestsMatchersModelsMixin:
         ]
         ne: Annotated[
             (
-                Mapping[str, t.Tests.Testobject]
-                | Sequence[t.Tests.Testobject]
+                Mapping[str, t.Tests.TestobjectSerializable]
+                | Sequence[t.Tests.TestobjectSerializable]
                 | bytes
                 | str
                 | int
@@ -200,11 +200,11 @@ class FlextTestsMatchersModelsMixin:
             Field(default=None, description="Custom error message"),
         ]
         eq: Annotated[
-            t.Tests.Testobject | None,
+            t.Tests.TestobjectSerializable | None,
             Field(default=None, description="Expected value (equality check)"),
         ]
         ne: Annotated[
-            t.Tests.Testobject | None,
+            t.Tests.TestobjectSerializable | None,
             Field(default=None, description="Value must not equal"),
         ]
         is_: Annotated[
@@ -297,11 +297,11 @@ class FlextTestsMatchersModelsMixin:
             Field(default=None, description="Regex pattern"),
         ]
         first: Annotated[
-            t.Tests.Testobject | None,
+            t.Tests.TestobjectSerializable | None,
             Field(default=None, description="Sequence first item equals"),
         ]
         last: Annotated[
-            t.Tests.Testobject | None,
+            t.Tests.TestobjectSerializable | None,
             Field(default=None, description="Sequence last item equals"),
         ]
         all_: Annotated[
@@ -337,7 +337,7 @@ class FlextTestsMatchersModelsMixin:
             Field(default=None, description="Mapping missing keys"),
         ]
         values: Annotated[
-            Sequence[t.Tests.Testobject] | None,
+            Sequence[t.Tests.TestobjectSerializable] | None,
             Field(default=None, description="Mapping has all values"),
         ]
         kv: Annotated[
@@ -375,7 +375,7 @@ class FlextTestsMatchersModelsMixin:
 
         @model_validator(mode="after")
         def normalize_legacy_parameters(self) -> Self:
-            updates: MutableMapping[str, t.Tests.Testobject] = {}
+            updates: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
             if self.error is not None and self.has is None:
                 updates["has"] = self.error
             if self.len is None and any(
@@ -408,15 +408,15 @@ class FlextTestsMatchersModelsMixin:
         model_config: ClassVar[ConfigDict] = ConfigDict(populate_by_name=True)
 
         config: Annotated[
-            Mapping[str, t.Tests.Testobject] | None,
+            Mapping[str, t.Tests.TestobjectSerializable] | None,
             Field(default=None, description="Initial configuration values"),
         ]
         container: Annotated[
-            Mapping[str, t.Tests.Testobject] | None,
+            Mapping[str, t.Tests.TestobjectSerializable] | None,
             Field(default=None, description="Initial container/service mappings"),
         ]
         context: Annotated[
-            Mapping[str, t.Tests.Testobject] | None,
+            Mapping[str, t.Tests.TestobjectSerializable] | None,
             Field(default=None, description="Initial context values"),
         ]
         cleanup: Annotated[
@@ -447,11 +447,13 @@ class FlextTestsMatchersModelsMixin:
             Field(description="Path where match occurred or failed"),
         ]
         expected: Annotated[
-            t.Tests.ValueSpec,
+            t.Tests.TestobjectSerializable
+            | Callable[[t.Tests.Testobject], bool]
+            | None,
             Field(description="Expected value or predicate"),
         ]
         actual: Annotated[
-            t.Tests.Testobject | None,
+            t.Tests.TestobjectSerializable | None,
             Field(default=None, description="Actual value found"),
         ]
         matched: Annotated[bool, Field(description="Whether match succeeded")]

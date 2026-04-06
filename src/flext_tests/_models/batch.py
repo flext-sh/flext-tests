@@ -28,8 +28,8 @@ class FlextTestsBatchModelsMixin:
 
         files: Annotated[
             (
-                Mapping[str, t.Tests.Testobject]
-                | Sequence[tuple[str, t.Tests.Testobject]]
+                Mapping[str, t.Tests.TestobjectSerializable]
+                | Sequence[tuple[str, t.Tests.TestobjectSerializable]]
             ),
             Field(
                 description="Mapping or Sequence of files to process",
@@ -96,7 +96,7 @@ class FlextTestsBatchModelsMixin:
             Field(description="Total number of operations"),
         ]
         results: Annotated[
-            Mapping[str, r[Path | t.Tests.Testobject]],
+            Mapping[str, r[Path | t.Tests.TestobjectSerializable]],
             Field(
                 description="Mapping of file names to operation results",
             ),

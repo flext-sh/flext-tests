@@ -28,7 +28,7 @@ class FlextTestsDomainHelpersUtilitiesMixin:
     @staticmethod
     def create_test_entities_batch[TEntity](
         names: t.StrSequence,
-        values: Sequence[t.Tests.Testobject],
+        values: Sequence[t.Tests.TestobjectSerializable],
         entity_class: FlextTestsProtocols.Tests.EntityFactory[TEntity],
         remove_ids: Sequence[bool] | None = None,
     ) -> r[Sequence[TEntity]]:
@@ -70,7 +70,7 @@ class FlextTestsDomainHelpersUtilitiesMixin:
     @staticmethod
     def create_test_entity_instance[TEntity](
         name: str,
-        value: t.Tests.Testobject,
+        value: t.Tests.TestobjectSerializable,
         entity_class: FlextTestsProtocols.Tests.EntityFactory[TEntity],
         *,
         remove_id: bool = False,
@@ -142,9 +142,9 @@ class FlextTestsDomainHelpersUtilitiesMixin:
     @staticmethod
     def execute_domain_operation(
         operation: str,
-        input_data: Mapping[str, t.Tests.Testobject],
-        **kwargs: t.Tests.Testobject,
-    ) -> t.Tests.Testobject:
+        input_data: Mapping[str, t.Tests.TestobjectSerializable],
+        **kwargs: t.Tests.TestobjectSerializable,
+    ) -> t.Tests.TestobjectSerializable:
         """Execute a domain utility operation.
 
         Args:
@@ -167,12 +167,12 @@ class FlextTestsDomainHelpersUtilitiesMixin:
         all_args = {**input_data, **kwargs}
         result = op_method(**all_args)
         if isinstance(result, RootModel):
-            empty_map: MutableMapping[str, t.Tests.Testobject] = {}
+            empty_map: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
             return empty_map
         if isinstance(result, (BaseModel, Path)):
             return FlextTestsPayloadUtilities.to_payload(result)
         if isinstance(result, (str, int, float, bool, bytes, datetime)):
-            payload_scalar: t.Tests.Testobject = result
+            payload_scalar: t.Tests.TestobjectSerializable = result
             return FlextTestsPayloadUtilities.to_payload(payload_scalar)
         if isinstance(result, type):
             return FlextTestsPayloadUtilities.to_payload(result)

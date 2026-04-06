@@ -19,24 +19,24 @@ class FlextTestsMatchersTypesMixin:
         | type
         | tuple[type, ...]
         | TypeAliasType
-        | set[FlextTestsBaseTypesMixin.Testobject]
+        | set[FlextTestsBaseTypesMixin.TestobjectSerializable]
         | Callable[..., FlextTestsBaseTypesMixin.Testobject]
         | Mapping[
             str,
             Callable[..., FlextTestsBaseTypesMixin.Testobject]
-            | FlextTestsBaseTypesMixin.Testobject,
+            | FlextTestsBaseTypesMixin.TestobjectSerializable,
         ]
         | Mapping[
             int,
             Callable[..., FlextTestsBaseTypesMixin.Testobject]
-            | FlextTestsBaseTypesMixin.Testobject,
+            | FlextTestsBaseTypesMixin.TestobjectSerializable,
         ]
     )
     type LengthSpec = int | tuple[int, int]
     type DeepSpec = Mapping[
         str,
         Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
-        | FlextTestsBaseTypesMixin.Testobject,
+        | FlextTestsBaseTypesMixin.TestobjectSerializable,
     ]
     type PathSpec = str | FlextTypes.StrSequence
     type PredicateSpec = Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
@@ -45,14 +45,14 @@ class FlextTestsMatchersTypesMixin:
         | FlextTestsBaseTypesMixin.Testobject
     )
     type AssertionSpec = (
-        Mapping[str, FlextTestsBaseTypesMixin.Testobject]
+        Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
         | Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
         | type
         | tuple[type, ...]
     )
     type ContainmentSpec = (
         FlextTestsBaseTypesMixin.Testobject
-        | Sequence[FlextTestsBaseTypesMixin.Testobject]
+        | Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
     )
     type ExclusionSpec = str | FlextTypes.StrSequence
     type SequencePredicate = (
@@ -66,13 +66,13 @@ class FlextTestsMatchersTypesMixin:
     )
     type KeySpec = FlextTypes.StrSequence | set[str]
     type KeyValueSpec = (
-        tuple[str, FlextTestsBaseTypesMixin.Testobject]
-        | Mapping[str, FlextTestsBaseTypesMixin.Testobject]
+        tuple[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
     )
     type AttributeSpec = str | FlextTypes.StrSequence
     type AttributeValueSpec = (
-        tuple[str, FlextTestsBaseTypesMixin.Testobject]
-        | Mapping[str, FlextTestsBaseTypesMixin.Testobject]
+        tuple[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
     )
     type ErrorCodeSpec = str | FlextTypes.StrSequence
     type ErrorDataSpec = FlextTypes.ConfigMap

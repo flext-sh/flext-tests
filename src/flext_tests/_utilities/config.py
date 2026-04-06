@@ -42,19 +42,17 @@ class FlextTestsConfigHelpersUtilitiesMixin:
             assert actual_value == expected_value, msg
 
     @staticmethod
-    def create_test_config(**kwargs: t.Tests.Testobject) -> FlextSettings:
+    def create_test_config(**kwargs: t.Scalar) -> FlextSettings:
         """Create a test config instance.
 
         Args:
-            **kwargs: Config field values
+            **kwargs: Config field values (scalar types: str, int, float, bool, datetime)
 
         Returns:
             New FlextSettings instance
 
         """
-        scalar_overrides: t.ConfigurationMapping = {
-            str(key): str(value) for key, value in kwargs.items()
-        }
+        scalar_overrides: t.ScalarMapping = dict(kwargs.items())
         return FlextSettings.get_global(overrides=scalar_overrides)
 
     @staticmethod

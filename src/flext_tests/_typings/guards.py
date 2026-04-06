@@ -31,19 +31,19 @@ class FlextTestsGuardsTypesMixin:
     @staticmethod
     def is_testobject_mapping(
         value: FlextTestsBaseTypesMixin.Testobject,
-    ) -> TypeIs[Mapping[str, FlextTestsBaseTypesMixin.Testobject]]:
+    ) -> TypeIs[Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]]:
         return isinstance(value, Mapping)
 
     @staticmethod
     def is_testobject_set(
         value: FlextTestsBaseTypesMixin.Testobject,
-    ) -> TypeIs[set[FlextTestsBaseTypesMixin.Testobject] | frozenset[str]]:
+    ) -> TypeIs[set[FlextTestsBaseTypesMixin.TestobjectSerializable] | frozenset[str]]:
         return isinstance(value, (set, frozenset))
 
     @staticmethod
     def is_testobject_sequence(
         value: FlextTestsBaseTypesMixin.Testobject,
-    ) -> TypeIs[Sequence[FlextTestsBaseTypesMixin.Testobject]]:
+    ) -> TypeIs[Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]]:
         return isinstance(value, Sequence) and not isinstance(
             value, (str, bytes, bytearray)
         )
@@ -51,5 +51,5 @@ class FlextTestsGuardsTypesMixin:
     @staticmethod
     def is_testobject_result(
         value: FlextTestsBaseTypesMixin.Testobject,
-    ) -> TypeIs[FlextResult[FlextTestsBaseTypesMixin.Testobject]]:
+    ) -> TypeIs[FlextResult[FlextTestsBaseTypesMixin.TestobjectSerializable]]:
         return isinstance(value, FlextResult)

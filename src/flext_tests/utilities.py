@@ -67,7 +67,8 @@ class FlextTestsUtilities(_cli_u):
     ):
         """Test utilities namespace."""
 
-        pass
+        class Factory(FlextTestsFactoryUtilitiesMixin):
+            """Factory namespace for test data creation."""
 
 
 u = FlextTestsUtilities

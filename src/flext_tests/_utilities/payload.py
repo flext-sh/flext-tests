@@ -10,7 +10,6 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import (
-    Callable,
     Mapping,
     MutableMapping,
     Sequence,
@@ -31,12 +30,12 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def to_payload(
-        value: t.Tests.Testobject
-        | RootModel[t.Tests.Testobject]
-        | set[t.Tests.Testobject]
+        value: t.Tests.TestobjectSerializable
+        | RootModel[t.Tests.TestobjectSerializable]
+        | set[t.Tests.TestobjectSerializable]
         | type
         | None,
-    ) -> t.Tests.Testobject:
+    ) -> t.Tests.TestobjectSerializable:
         """Convert a value to testobject.
 
         Args:
@@ -47,13 +46,13 @@ class FlextTestsPayloadUtilities:
 
         """
         if isinstance(value, RootModel):
-            empty_map: MutableMapping[str, t.Tests.Testobject] = {}
+            empty_map: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
             return empty_map
         if value is None or isinstance(
             value,
             (str, int, float, bool, bytes, datetime, Path, BaseModel),
         ):
-            payload_value: t.Tests.Testobject = value
+            payload_value: t.Tests.TestobjectSerializable = value
             return payload_value
         if isinstance(value, Mapping):
             try:
@@ -61,9 +60,9 @@ class FlextTestsPayloadUtilities:
                     value,
                 )
             except ValidationError:
-                empty_map2: MutableMapping[str, t.Tests.Testobject] = {}
+                empty_map2: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
                 return empty_map2
-            payload_map: MutableMapping[str, t.Tests.Testobject] = {}
+            payload_map: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
             for key_raw, item_obj in mapping_value.items():
                 payload_map[str(key_raw)] = FlextTestsPayloadUtilities.to_payload(
                     item_obj,
@@ -71,15 +70,15 @@ class FlextTestsPayloadUtilities:
             return payload_map
         if isinstance(value, (list, tuple, set)):
             try:
-                iterable_items: Sequence[t.Tests.Testobject] = (
+                iterable_items: Sequence[t.Tests.TestobjectSerializable] = (
                     t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
                         value,
                     )
                 )
             except ValidationError:
-                empty_seq: Sequence[t.Tests.Testobject] = []
+                empty_seq: Sequence[t.Tests.TestobjectSerializable] = []
                 return empty_seq
-            payload_items: Sequence[t.Tests.Testobject] = [
+            payload_items: Sequence[t.Tests.TestobjectSerializable] = [
                 FlextTestsPayloadUtilities.to_payload(item_obj)
                 for item_obj in iterable_items
             ]
@@ -87,7 +86,7 @@ class FlextTestsPayloadUtilities:
         return str(value)
 
     @staticmethod
-    def to_normalized_value(value: t.Tests.Testobject) -> t.NormalizedValue:
+    def to_normalized_value(value: t.Tests.TestobjectSerializable) -> t.NormalizedValue:
         """Convert _Testobject to pure NormalizedValue (no BaseModel in output)."""
         if value is None:
             return None
@@ -102,17 +101,17 @@ class FlextTestsPayloadUtilities:
         if isinstance(value, BaseModel):
             return str(value)
         if isinstance(value, (dict, Mapping)):
-            validated_map: Mapping[str, t.Tests.Testobject] = (
+            validated_map: Mapping[str, t.Tests.TestobjectSerializable] = (
                 t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
             )
             result_map: t.MutableContainerMapping = {}
             for k, v in validated_map.items():
                 key: str = str(k)
-                val: t.Tests.Testobject = v
+                val: t.Tests.TestobjectSerializable = v
                 result_map[key] = FlextTestsPayloadUtilities.to_normalized_value(val)
             return result_map
         if isinstance(value, (list, tuple)):
-            validated_seq: Sequence[t.Tests.Testobject] = (
+            validated_seq: Sequence[t.Tests.TestobjectSerializable] = (
                 t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
             )
             result_seq: Sequence[t.NormalizedValue] = [
@@ -123,7 +122,7 @@ class FlextTestsPayloadUtilities:
         return str(value)
 
     @staticmethod
-    def to_config_map_value(value: t.Tests.Testobject) -> t.ValueOrModel:
+    def to_config_map_value(value: t.Tests.TestobjectSerializable) -> t.ValueOrModel:
         """Convert value to NormalizedValue or BaseModel for AccessibleData compatibility."""
         if value is None:
             return None
@@ -138,17 +137,17 @@ class FlextTestsPayloadUtilities:
         if isinstance(value, Path):
             return str(value)
         if isinstance(value, (dict, Mapping)):
-            validated_map: Mapping[str, t.Tests.Testobject] = (
+            validated_map: Mapping[str, t.Tests.TestobjectSerializable] = (
                 t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
             )
             cfg_map: t.MutableContainerMapping = {}
             for k, v in validated_map.items():
                 key: str = str(k)
-                val: t.Tests.Testobject = v
+                val: t.Tests.TestobjectSerializable = v
                 cfg_map[key] = FlextTestsPayloadUtilities.to_normalized_value(val)
             return cfg_map
         if isinstance(value, (list, tuple)):
-            validated_seq: Sequence[t.Tests.Testobject] = (
+            validated_seq: Sequence[t.Tests.TestobjectSerializable] = (
                 t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
             )
             cfg_seq: Sequence[t.NormalizedValue] = [
@@ -160,7 +159,7 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def length_validate(
-        value: t.Tests.Testobject,
+        value: t.Tests.TestobjectSerializable,
         spec: int | tuple[int, int],
     ) -> bool:
         """Validate length against spec.
@@ -192,11 +191,8 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def deep_match(
-        obj: BaseModel | Mapping[str, t.Tests.Testobject],
-        spec: Mapping[
-            str,
-            t.Tests.Testobject | Callable[[t.Tests.Testobject], bool],
-        ],
+        obj: BaseModel | Mapping[str, t.Tests.TestobjectSerializable],
+        spec: t.Tests.DeepSpec,
         *,
         path_sep: str = ".",
     ) -> m.Tests.DeepMatchResult:

@@ -71,15 +71,15 @@ class FlextTestsGenericHelpersUtilitiesMixin:
 
     @staticmethod
     def create_parametrized_cases(
-        success_values: Sequence[t.Tests.Testobject],
+        success_values: Sequence[t.Tests.TestobjectSerializable],
         failure_errors: t.StrSequence | None = None,
         *,
         error_codes: Sequence[str | None] | None = None,
     ) -> Sequence[
         tuple[
-            r[t.Tests.Testobject],
+            r[t.Tests.TestobjectSerializable],
             bool,
-            t.Tests.Testobject | None,
+            t.Tests.TestobjectSerializable | None,
             str | None,
         ]
     ]:
@@ -97,20 +97,20 @@ class FlextTestsGenericHelpersUtilitiesMixin:
         """
         cases: MutableSequence[
             tuple[
-                r[t.Tests.Testobject],
+                r[t.Tests.TestobjectSerializable],
                 bool,
-                t.Tests.Testobject | None,
+                t.Tests.TestobjectSerializable | None,
                 str | None,
             ]
         ] = []
         for value in success_values:
-            result = r[t.Tests.Testobject].ok(value)
+            result = r[t.Tests.TestobjectSerializable].ok(value)
             cases.append((result, True, value, None))
         if failure_errors:
             codes = error_codes or [None] * len(failure_errors)
             for i, error in enumerate(failure_errors):
                 error_code = codes[i] if i < len(codes) else None
-                result = r[t.Tests.Testobject].fail(
+                result = r[t.Tests.TestobjectSerializable].fail(
                     error,
                     error_code=error_code,
                 )

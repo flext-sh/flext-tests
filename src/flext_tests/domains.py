@@ -16,7 +16,7 @@ from collections.abc import Mapping, MutableMapping, Sequence
 
 from flext_tests import m, t
 
-_NO_BODY: t.Tests.Testobject = None
+_NO_BODY: t.Tests.TestobjectSerializable = None
 
 
 class FlextTestsDomains:
@@ -31,9 +31,9 @@ class FlextTestsDomains:
         name: str,
         version: str,
         profile: str,
-        model_config: Mapping[str, t.Tests.Testobject],
-        variables: Mapping[str, t.Tests.Testobject],
-    ) -> Mapping[str, t.Tests.Testobject]:
+        model_config: Mapping[str, t.Tests.TestobjectSerializable],
+        variables: Mapping[str, t.Tests.TestobjectSerializable],
+    ) -> Mapping[str, t.Tests.TestobjectSerializable]:
         """Create a shared dbt project configuration structure."""
         return {
             "name": name,
@@ -55,7 +55,9 @@ class FlextTestsDomains:
         }
 
     @staticmethod
-    def default_handler_case_specs() -> Sequence[Mapping[str, t.Tests.Testobject]]:
+    def default_handler_case_specs() -> Sequence[
+        Mapping[str, t.Tests.TestobjectSerializable]
+    ]:
         """Create shared handler test-case specs for service-base tests."""
         return [
             {
@@ -97,8 +99,8 @@ class FlextTestsDomains:
         status: str = "success",
         *,
         include_data: bool | None = None,
-        **custom_fields: t.Tests.Testobject,
-    ) -> MutableMapping[str, t.Tests.Testobject]:
+        **custom_fields: t.Tests.TestobjectSerializable,
+    ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
         """Create API response test data.
 
         Args:
@@ -110,7 +112,7 @@ class FlextTestsDomains:
             API response dictionary
 
         """
-        response: MutableMapping[str, t.Tests.Testobject] = {
+        response: MutableMapping[str, t.Tests.TestobjectSerializable] = {
             "status": status,
             "timestamp": "2025-01-01T00:00:00Z",
             "request_id": str(uuid.uuid4()),
@@ -126,8 +128,8 @@ class FlextTestsDomains:
     def create_configuration(
         service_type: str = "api",
         environment: str = "test",
-        **overrides: t.Tests.Testobject,
-    ) -> MutableMapping[str, t.Tests.Testobject]:
+        **overrides: t.Tests.TestobjectSerializable,
+    ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
         """Create test configuration data using factories.
 
         Args:
@@ -143,7 +145,7 @@ class FlextTestsDomains:
             service_type=service_type,
             environment=environment,
         )
-        base_config: MutableMapping[str, t.Tests.Testobject] = {
+        base_config: MutableMapping[str, t.Tests.TestobjectSerializable] = {
             "service_type": getattr(config_result, "service_type", service_type),
             "environment": getattr(config_result, "environment", environment),
             "debug": getattr(config_result, "debug", False),
@@ -161,8 +163,8 @@ class FlextTestsDomains:
     @staticmethod
     def create_payload(
         data_type: str = "user",
-        **custom_fields: t.Tests.Testobject,
-    ) -> MutableMapping[str, t.Tests.Testobject]:
+        **custom_fields: t.Tests.TestobjectSerializable,
+    ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
         """Create test payload data.
 
         Args:
@@ -173,7 +175,7 @@ class FlextTestsDomains:
             Payload dictionary
 
         """
-        payloads: MutableMapping[str, Mapping[str, t.Tests.Testobject]] = {
+        payloads: MutableMapping[str, Mapping[str, t.Tests.TestobjectSerializable]] = {
             "user": {
                 "id": str(uuid.uuid4()),
                 "name": "Test User",
@@ -201,8 +203,8 @@ class FlextTestsDomains:
     @staticmethod
     def create_service(
         service_type: str = "api",
-        **config: t.Tests.Testobject,
-    ) -> MutableMapping[str, t.Tests.Testobject]:
+        **config: t.Tests.TestobjectSerializable,
+    ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
         """Create test service configuration.
 
         Args:
@@ -213,7 +215,7 @@ class FlextTestsDomains:
             Service configuration dictionary
 
         """
-        base_service: MutableMapping[str, t.Tests.Testobject] = {
+        base_service: MutableMapping[str, t.Tests.TestobjectSerializable] = {
             "type": service_type,
             "name": f"test_{service_type}_service",
             "enabled": True,

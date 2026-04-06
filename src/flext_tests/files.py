@@ -44,11 +44,11 @@ TModel = TypeVar("TModel", bound=BaseModel)
 _SCALAR_PATH: tuple[type, ...] = (str, int, float, bool, datetime, Path)
 
 
-def _to_runtime_data(value: t.Tests.Testobject) -> t.RuntimeData:
-    """Narrow t.Tests.Testobject to u.RuntimeData for container normalization.
+def _to_runtime_data(value: t.Tests.TestobjectSerializable) -> t.RuntimeData:
+    """Narrow t.Tests.TestobjectSerializable to u.RuntimeData for container normalization.
 
     Converts bytes to str and ensures the value is u.RuntimeData-compatible.
-    The key difference between t.Tests.Testobject and u.RuntimeData is that t.Tests.Testobject
+    The key difference between t.Tests.TestobjectSerializable and u.RuntimeData is that t.Tests.TestobjectSerializable
     includes `bytes` which is not in u.RuntimeData.
     """
     if value is None:
@@ -80,8 +80,8 @@ def _to_runtime_data(value: t.Tests.Testobject) -> t.RuntimeData:
     return str(value)
 
 
-def _to_normalized_or_model(value: t.Tests.Testobject) -> t.ValueOrModel:
-    """Convert t.Tests.Testobject to ValueOrModel for Mapping values."""
+def _to_normalized_or_model(value: t.Tests.TestobjectSerializable) -> t.ValueOrModel:
+    """Convert t.Tests.TestobjectSerializable to ValueOrModel for Mapping values."""
     if value is None:
         return None
     if isinstance(value, (str, int, float, bool, datetime, Path)):
@@ -91,26 +91,26 @@ def _to_normalized_or_model(value: t.Tests.Testobject) -> t.ValueOrModel:
     if isinstance(value, bytes):
         return value.decode("utf-8", errors="replace")
     if isinstance(value, Mapping):
-        mapping_val: Mapping[str, t.Tests.Testobject] = {
+        mapping_val: Mapping[str, t.Tests.TestobjectSerializable] = {
             str(raw_k): raw_v for raw_k, raw_v in value.items()
         }
         return t.ConfigMap(
             root={k: _to_normalized_or_model(v) for k, v in mapping_val.items()},
         )
     if isinstance(value, (list, tuple)):
-        seq_val: Sequence[t.Tests.Testobject] = list(value)
+        seq_val: Sequence[t.Tests.TestobjectSerializable] = list(value)
         return [_to_normalized_leaf(item) for item in seq_val]
     return str(value)
 
 
-def _to_container_value(value: t.Tests.Testobject) -> t.ValueOrModel:
-    """Convert t.Tests.Testobject to Container | BaseModel for ConfigMap values."""
+def _to_container_value(value: t.Tests.TestobjectSerializable) -> t.ValueOrModel:
+    """Convert t.Tests.TestobjectSerializable to Container | BaseModel for ConfigMap values."""
     runtime_data: t.RuntimeData = _to_runtime_data(value)
     return u.normalize_to_container(runtime_data)
 
 
-def _to_normalized_leaf(value: t.Tests.Testobject) -> t.NormalizedValue:
-    """Convert t.Tests.Testobject to NormalizedValue (no BaseModel) for list contexts."""
+def _to_normalized_leaf(value: t.Tests.TestobjectSerializable) -> t.NormalizedValue:
+    """Convert t.Tests.TestobjectSerializable to NormalizedValue (no BaseModel) for list contexts."""
     if value is None:
         return None
     if isinstance(value, (str, int, float, bool, datetime, Path)):
@@ -120,33 +120,41 @@ def _to_normalized_leaf(value: t.Tests.Testobject) -> t.NormalizedValue:
     if isinstance(value, BaseModel):
         return str(value)
     if isinstance(value, Mapping):
-        mapping_val: Mapping[str, t.Tests.Testobject] = {
+        mapping_val: Mapping[str, t.Tests.TestobjectSerializable] = {
             str(raw_k): raw_v for raw_k, raw_v in value.items()
         }
         return {k: _to_normalized_leaf(v) for k, v in mapping_val.items()}
     if isinstance(value, (list, tuple)):
-        seq_val: Sequence[t.Tests.Testobject] = list(value)
+        seq_val: Sequence[t.Tests.TestobjectSerializable] = list(value)
         return [_to_normalized_leaf(item) for item in seq_val]
     return str(value)
 
 
 def _yaml_safe_load(
     raw: str,
-) -> Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject] | None:
+) -> (
+    Mapping[str, t.Tests.TestobjectSerializable]
+    | Sequence[t.Tests.TestobjectSerializable]
+    | None
+):
     result = u.Cli.yaml_parse(raw)
     if result.is_failure:
         return None
     return result.value
 
 
-def _yaml_dump(value: Mapping[str, t.Tests.Testobject], *, indent: int) -> str:
+def _yaml_dump(
+    value: Mapping[str, t.Tests.TestobjectSerializable], *, indent: int
+) -> str:
     normalized: Mapping[str, t.NormalizedValue] = {
         str(k): _to_normalized_leaf(v) for k, v in value.items()
     }
     return u.Cli.yaml_dump_str(normalized, indent=indent)
 
 
-def _is_batch_content(content_raw: t.Tests.Testobject) -> TypeIs[t.Tests.Testobject]:
+def _is_batch_content(
+    content_raw: t.Tests.TestobjectSerializable,
+) -> TypeIs[t.Tests.TestobjectSerializable]:
     try:
         _ = m.Tests.CreateParams.model_validate({
             "content": content_raw,
@@ -202,7 +210,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
     def __init__(
         self,
         base_dir: Path | None = None,
-        **data: t.Tests.Testobject,
+        **data: t.Tests.TestobjectSerializable,
     ) -> None:
         """Initialize file manager with optional base directory.
 
@@ -257,7 +265,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         directory: Path | None = None,
         ext: str | None = None,
         extract_result: bool = True,
-        **kwargs: t.Tests.Testobject,
+        **kwargs: t.Tests.TestobjectSerializable,
     ) -> Generator[Mapping[str, Path]]:
         """Create temporary files with auto-cleanup.
 
@@ -292,7 +300,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             paths: MutableMapping[str, Path] = {}
             default_ext = ext or c.Tests.DEFAULT_EXTENSION
             for name, data_raw in content.items():
-                data: t.Tests.Testobject = data_raw
+                data: t.Tests.TestobjectSerializable = data_raw
                 filename = name if "." in name else f"{name}{default_ext}"
                 if "." not in name and (isinstance(data, (Mapping, BaseModel))):
                     filename = f"{name}.json"
@@ -330,9 +338,16 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             yield paths
 
     @staticmethod
+    def _is_file_result(
+        value: t.Tests.FileInput,
+    ) -> TypeIs[r[t.Tests.FileContentPlain]]:
+        """Narrow FileInput to r[FileContentPlain] with known type parameter."""
+        return isinstance(value, r)
+
+    @staticmethod
     def _is_mapping(
-        value: t.Tests.Testobject,
-    ) -> TypeIs[Mapping[str, t.Tests.Testobject]]:
+        value: t.Tests.TestobjectSerializable,
+    ) -> TypeIs[Mapping[str, t.Tests.TestobjectSerializable]]:
         return isinstance(value, Mapping)
 
     @staticmethod
@@ -522,7 +537,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             return r[m.Tests.BatchResult].fail(
                 f"Invalid parameters for batch operation: {exc}",
             )
-        files_dict: MutableMapping[str, t.Tests.Testobject]
+        files_dict: MutableMapping[str, t.Tests.TestobjectSerializable]
         if isinstance(params.files, Mapping):
             files_dict = {str(k): v for k, v in params.files.items()}
         elif not isinstance(params.files, str):
@@ -542,7 +557,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         error_mode_str = "collect" if params.on_error == "collect" else "fail"
 
         def process_one(
-            name_and_content: tuple[str, t.Tests.Testobject],
+            name_and_content: tuple[str, t.Tests.TestobjectSerializable],
         ) -> Path | r[Path]:
             """Process single file operation."""
             name, content = name_and_content
@@ -612,15 +627,19 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                 case _:
                     return r[Path].fail(f"Unknown operation: {params.operation}")
 
-        items_list: Sequence[tuple[str, t.Tests.Testobject]] = list(files_dict.items())
-        results: MutableSequence[Path | t.Tests.Testobject] = []
+        items_list: Sequence[tuple[str, t.Tests.TestobjectSerializable]] = list(
+            files_dict.items()
+        )
+        results: MutableSequence[Path | t.Tests.TestobjectSerializable] = []
         errors: MutableSequence[tuple[int, str]] = []
         total = len(items_list)
         for index, item in enumerate(items_list):
             operation_result = process_one(item)
             if isinstance(operation_result, r):
                 if operation_result.is_success:
-                    success_value: Path | t.Tests.Testobject = operation_result.value
+                    success_value: Path | t.Tests.TestobjectSerializable = (
+                        operation_result.value
+                    )
                     results.append(success_value)
                     continue
                 error_message = operation_result.error or "Unknown error"
@@ -631,15 +650,17 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                 errors.append((index, str(error_message)))
                 continue
             results.append(operation_result)
-        results_dict: MutableMapping[str, r[Path | t.Tests.Testobject]] = {}
+        results_dict: MutableMapping[str, r[Path | t.Tests.TestobjectSerializable]] = {}
         failed_dict: t.MutableStrMapping = {}
         for idx, result in enumerate(results):
             if idx < len(items_list):
                 name, _ = items_list[idx]
                 if isinstance(result, Path):
-                    results_dict[name] = r[Path | t.Tests.Testobject].ok(result)
+                    results_dict[name] = r[Path | t.Tests.TestobjectSerializable].ok(
+                        result
+                    )
                 else:
-                    results_dict[name] = r[Path | t.Tests.Testobject].ok(
+                    results_dict[name] = r[Path | t.Tests.TestobjectSerializable].ok(
                         self._to_payload_value(result),
                     )
         for idx, error_msg in errors:
@@ -868,12 +889,15 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             | t.ConfigMap
             | Sequence[t.StrSequence]
             | BaseModel
-            | Mapping[str, t.Tests.Testobject]
+            | Mapping[str, t.Tests.TestobjectSerializable]
         ) = self._coerce_file_content(params.content)
         if isinstance(actual_content, BaseModel):
             actual_content = self._mapping_to_payload(u.dump(actual_content))
         content_for_detect: (
-            str | bytes | Mapping[str, t.Tests.Testobject] | Sequence[t.StrSequence]
+            str
+            | bytes
+            | Mapping[str, t.Tests.TestobjectSerializable]
+            | Sequence[t.StrSequence]
         )
         match actual_content:
             case str() | bytes():
@@ -905,11 +929,11 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                 _ = file_path.write_bytes(str(actual_content).encode(params.enc))
         elif actual_fmt == c.Tests.Format.JSON:
             if isinstance(actual_content, Mapping):
-                data: Mapping[str, t.Tests.Testobject] = {
+                data: Mapping[str, t.Tests.TestobjectSerializable] = {
                     str(key): value for key, value in actual_content.items()
                 }
             else:
-                empty_data: Mapping[str, t.Tests.Testobject] = {}
+                empty_data: Mapping[str, t.Tests.TestobjectSerializable] = {}
                 data = {"value": actual_content} if actual_content else empty_data
             json_str = t.Tests.TESTOBJECT_MAPPING_ADAPTER.dump_json(
                 data,
@@ -918,11 +942,11 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             _ = file_path.write_text(json_str, encoding=params.enc)
         elif actual_fmt == c.Tests.Format.YAML:
             if isinstance(actual_content, Mapping):
-                data_yaml: Mapping[str, t.Tests.Testobject] = {
+                data_yaml: Mapping[str, t.Tests.TestobjectSerializable] = {
                     str(key): value for key, value in actual_content.items()
                 }
             else:
-                empty_data_y: Mapping[str, t.Tests.Testobject] = {}
+                empty_data_y: Mapping[str, t.Tests.TestobjectSerializable] = {}
                 data_yaml = (
                     {"value": actual_content} if actual_content else empty_data_y
                 )
@@ -1269,11 +1293,14 @@ class FlextTestsFiles(s[t.NormalizedValue]):
 
     def _apply_key_filtering(
         self,
-        dict1: Mapping[str, t.Tests.Testobject],
-        dict2: Mapping[str, t.Tests.Testobject],
+        dict1: Mapping[str, t.Tests.TestobjectSerializable],
+        dict2: Mapping[str, t.Tests.TestobjectSerializable],
         keys: t.StrSequence | None,
         exclude_keys: t.StrSequence | None,
-    ) -> tuple[Mapping[str, t.Tests.Testobject], Mapping[str, t.Tests.Testobject]]:
+    ) -> tuple[
+        Mapping[str, t.Tests.TestobjectSerializable],
+        Mapping[str, t.Tests.TestobjectSerializable],
+    ]:
         """Apply key filtering to both dicts if specified."""
         if keys is None and exclude_keys is None:
             return (dict1, dict2)
@@ -1302,10 +1329,10 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             exclude_keys=exclude_keys_set,
         )
         if result1.is_success and result2.is_success:
-            filtered1: Mapping[str, t.Tests.Testobject] = {
+            filtered1: Mapping[str, t.Tests.TestobjectSerializable] = {
                 str(k): self._to_payload_value(v) for k, v in result1.value.items()
             }
-            filtered2: Mapping[str, t.Tests.Testobject] = {
+            filtered2: Mapping[str, t.Tests.TestobjectSerializable] = {
                 str(k): self._to_payload_value(v) for k, v in result2.value.items()
             }
             return (filtered1, filtered2)
@@ -1313,8 +1340,8 @@ class FlextTestsFiles(s[t.NormalizedValue]):
 
     def _coerce_file_content(
         self,
-        value: t.Tests.Testobject
-        | r[t.Tests.Testobject]
+        value: t.Tests.TestobjectSerializable
+        | r[t.Tests.TestobjectSerializable]
         | r[Sequence[t.StrSequence]]
         | r[bytes]
         | r[str]
@@ -1333,7 +1360,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             }
             return t.ConfigMap(root=coerce_root)
         if self._is_nested_rows(value):
-            sequence_value: Sequence[t.Tests.Testobject] = (
+            sequence_value: Sequence[t.Tests.TestobjectSerializable] = (
                 value if isinstance(value, (list, tuple)) else ()
             )
             rows: Sequence[t.StrSequence] = [
@@ -1346,7 +1373,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
 
     def _coerce_read_content(
         self,
-        value: Mapping[str, t.Tests.Testobject] | None,
+        value: Mapping[str, t.Tests.TestobjectSerializable] | None,
     ) -> str | bytes | t.ConfigMap | Sequence[t.StrSequence]:
         if isinstance(value, str | bytes):
             return value
@@ -1359,7 +1386,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             }
             return t.ConfigMap(root=read_root)
         if self._is_nested_rows(value):
-            sequence_value: Sequence[t.Tests.Testobject] = (
+            sequence_value: Sequence[t.Tests.TestobjectSerializable] = (
                 value if isinstance(value, (list, tuple)) else ()
             )
             return [
@@ -1447,11 +1474,11 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         """
         if not extract_result:
             return self._coerce_file_content(content)
-        # bytes needs handling before u.is_result_like (bytes not in t.GuardInput)
+        # bytes needs handling before result check — bytes not in t.GuardInput
         if isinstance(content, bytes):
             return content
-        # isinstance narrows to r[T] — proper FLEXT pattern
-        if isinstance(content, r):
+        # TypeIs guard narrows to r[FileContentPlain] with known type parameter
+        if self._is_file_result(content):
             if content.is_failure:
                 error_msg = content.error or "r failure"
                 raise ValueError(f"Cannot create file from failed r: {error_msg}")
@@ -1460,7 +1487,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
 
     def _is_nested_rows(
         self,
-        value: t.Tests.Testobject,
+        value: t.Tests.TestobjectSerializable,
     ) -> TypeIs[Sequence[t.StrSequence]]:
         if not isinstance(value, Sequence) or isinstance(value, str | bytes):
             return False
@@ -1477,12 +1504,12 @@ class FlextTestsFiles(s[t.NormalizedValue]):
 
     def _mapping_to_payload(
         self,
-        mapping: Mapping[str, t.Tests.Testobject],
-    ) -> Mapping[str, t.Tests.Testobject]:
-        normalized_mapping: Mapping[str, t.Tests.Testobject] = (
+        mapping: Mapping[str, t.Tests.TestobjectSerializable],
+    ) -> Mapping[str, t.Tests.TestobjectSerializable]:
+        normalized_mapping: Mapping[str, t.Tests.TestobjectSerializable] = (
             t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(mapping)
         )
-        payload: MutableMapping[str, t.Tests.Testobject] = {}
+        payload: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
         for key, value in normalized_mapping.items():
             payload[str(key)] = self._to_payload_value(value)
         return payload
@@ -1535,15 +1562,17 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         column_count: int | None = None
         model_valid: bool | None = None
         model_name: str | None = None
-        parsed_content: t.ConfigMap | Sequence[t.Tests.Testobject] | None = None
+        parsed_content: (
+            t.ConfigMap | Sequence[t.Tests.TestobjectSerializable] | None
+        ) = None
         if fmt in {"json", "yaml"}:
             try:
                 if fmt == "json":
                     if text.strip():
                         try:
                             parsed_raw: (
-                                Mapping[str, t.Tests.Testobject]
-                                | Sequence[t.Tests.Testobject]
+                                Mapping[str, t.Tests.TestobjectSerializable]
+                                | Sequence[t.Tests.TestobjectSerializable]
                                 | None
                             ) = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_json(
                                 text.encode()
@@ -1624,7 +1653,9 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         self._created_dirs.append(temp_dir)
         return temp_dir
 
-    def _to_config_map_value(self, value: t.Tests.Testobject) -> t.Tests.Testobject:
+    def _to_config_map_value(
+        self, value: t.Tests.TestobjectSerializable
+    ) -> t.Tests.TestobjectSerializable:
         if value is None or isinstance(value, (*t.PRIMITIVES_TYPES, BaseModel, Path)):
             return value
         if isinstance(value, bytes):
@@ -1640,7 +1671,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                     value,
                 )
             except ValidationError:
-                empty_sequence: Sequence[t.Tests.Testobject] = []
+                empty_sequence: Sequence[t.Tests.TestobjectSerializable] = []
                 return empty_sequence
             return [
                 self._to_config_map_value(self._to_payload_value(item))
@@ -1648,7 +1679,9 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             ]
         return str(value)
 
-    def _to_payload_value(self, value: t.Tests.Testobject) -> t.Tests.Testobject:
+    def _to_payload_value(
+        self, value: t.Tests.TestobjectSerializable
+    ) -> t.Tests.TestobjectSerializable:
         if value is None:
             return None
         if isinstance(value, str):
@@ -1666,7 +1699,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         if isinstance(value, Path | datetime):
             return str(value)
         if isinstance(value, Mapping):
-            mapping_obj: Mapping[str, t.Tests.Testobject] = (
+            mapping_obj: Mapping[str, t.Tests.TestobjectSerializable] = (
                 t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
             )
             return self._mapping_to_payload(mapping_obj)
@@ -1676,9 +1709,9 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                     value,
                 )
             except ValidationError:
-                empty_seq: Sequence[t.Tests.Testobject] = []
+                empty_seq: Sequence[t.Tests.TestobjectSerializable] = []
                 return empty_seq
-            payload_items: Sequence[t.Tests.Testobject] = [
+            payload_items: Sequence[t.Tests.TestobjectSerializable] = [
                 self._to_payload_value(item_raw) for item_raw in sequence_value
             ]
             return payload_items
@@ -1735,15 +1768,23 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         content2: str,
         fmt: str,
     ) -> (
-        tuple[Mapping[str, t.Tests.Testobject], Mapping[str, t.Tests.Testobject]] | None
+        tuple[
+            Mapping[str, t.Tests.TestobjectSerializable],
+            Mapping[str, t.Tests.TestobjectSerializable],
+        ]
+        | None
     ):
         """Try to parse both contents as dicts in given format."""
         try:
             dict1_raw: (
-                Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject] | None
+                Mapping[str, t.Tests.TestobjectSerializable]
+                | Sequence[t.Tests.TestobjectSerializable]
+                | None
             )
             dict2_raw: (
-                Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject] | None
+                Mapping[str, t.Tests.TestobjectSerializable]
+                | Sequence[t.Tests.TestobjectSerializable]
+                | None
             )
             match fmt:
                 case "json":

@@ -21,10 +21,10 @@ class FlextTestsTestCaseHelpersUtilitiesMixin:
     def create_batch_operation_test_cases(
         operation: str,
         descriptions: t.StrSequence,
-        input_data_list: Sequence[Mapping[str, t.Tests.Testobject]],
-        expected_results: Sequence[t.Tests.Testobject],
-        **common_kwargs: t.Tests.Testobject,
-    ) -> Sequence[MutableMapping[str, t.Tests.Testobject]]:
+        input_data_list: Sequence[Mapping[str, t.Tests.TestobjectSerializable]],
+        expected_results: Sequence[t.Tests.TestobjectSerializable],
+        **common_kwargs: t.Tests.TestobjectSerializable,
+    ) -> Sequence[MutableMapping[str, t.Tests.TestobjectSerializable]]:
         """Create batch test cases for operation testing.
 
         Args:
@@ -40,7 +40,7 @@ class FlextTestsTestCaseHelpersUtilitiesMixin:
 
         """
         th = FlextTestsTestCaseHelpersUtilitiesMixin
-        cases: Sequence[MutableMapping[str, t.Tests.Testobject]] = [
+        cases: Sequence[MutableMapping[str, t.Tests.TestobjectSerializable]] = [
             th.create_operation_test_case(
                 operation=operation,
                 description=desc,
@@ -61,10 +61,10 @@ class FlextTestsTestCaseHelpersUtilitiesMixin:
     def create_operation_test_case(
         operation: str,
         description: str,
-        input_data: Mapping[str, t.Tests.Testobject],
-        expected_result: t.Tests.Testobject,
-        **kwargs: t.Tests.Testobject,
-    ) -> MutableMapping[str, t.Tests.Testobject]:
+        input_data: Mapping[str, t.Tests.TestobjectSerializable],
+        expected_result: t.Tests.TestobjectSerializable,
+        **kwargs: t.Tests.TestobjectSerializable,
+    ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
         """Create a test case dict for operation testing.
 
         Args:
@@ -79,7 +79,7 @@ class FlextTestsTestCaseHelpersUtilitiesMixin:
             Test case dictionary
 
         """
-        result: MutableMapping[str, t.Tests.Testobject] = {
+        result: MutableMapping[str, t.Tests.TestobjectSerializable] = {
             "operation": operation,
             "description": description,
             "input_data": input_data,
@@ -90,8 +90,8 @@ class FlextTestsTestCaseHelpersUtilitiesMixin:
 
     @staticmethod
     def execute_and_assert_operation_result(
-        operation: Callable[[], t.Tests.Testobject],
-        test_case: Mapping[str, t.Tests.Testobject],
+        operation: Callable[[], t.Tests.TestobjectSerializable],
+        test_case: Mapping[str, t.Tests.TestobjectSerializable],
     ) -> None:
         """Execute operation and assert result.
 

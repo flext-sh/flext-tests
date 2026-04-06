@@ -17,27 +17,27 @@ from flext_core import r
 from flext_tests import tm
 
 
-def _is_string(value: t.Tests.Testobject) -> bool:
+def _is_string(value: t.Tests.TestobjectSerializable) -> bool:
     return isinstance(value, str)
 
 
-def _is_string_or_bytes(value: t.Tests.Testobject) -> bool:
+def _is_string_or_bytes(value: t.Tests.TestobjectSerializable) -> bool:
     return isinstance(value, str | bytes)
 
 
-def _is_positive(value: t.Tests.Testobject) -> bool:
+def _is_positive(value: t.Tests.TestobjectSerializable) -> bool:
     return isinstance(value, int) and value > 0
 
 
-def _is_negative(value: t.Tests.Testobject) -> bool:
+def _is_negative(value: t.Tests.TestobjectSerializable) -> bool:
     return isinstance(value, int) and value < 0
 
 
-def _greater_than_zero(value: t.Tests.Testobject) -> bool:
+def _greater_than_zero(value: t.Tests.TestobjectSerializable) -> bool:
     return isinstance(value, int) and value > 0
 
 
-def _greater_than_two(value: t.Tests.Testobject) -> bool:
+def _greater_than_two(value: t.Tests.TestobjectSerializable) -> bool:
     return isinstance(value, int) and value > 2
 
 
@@ -537,7 +537,9 @@ class TestFlextTestsMatchers:
 
     def test_that_with_deep_parameter(self) -> None:
         """Test tm.that() with deep parameter."""
-        data: Mapping[str, t.Tests.Testobject] = {"user": {"name": "John", "age": 30}}
+        data: Mapping[str, t.Tests.TestobjectSerializable] = {
+            "user": {"name": "John", "age": 30}
+        }
         tm.that(data, deep={"user.name": "John"})
 
     def test_that_with_where_parameter(self) -> None:

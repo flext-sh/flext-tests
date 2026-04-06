@@ -18,7 +18,7 @@ class FlextTestsExceptionHelpersUtilitiesMixin:
     @staticmethod
     def create_metadata_object(
         attributes: Mapping[str, t.Tests.TestobjectSerializable],
-    ) -> MutableMapping[str, t.Tests.Testobject]:
+    ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
         """Create a metadata t.NormalizedValue for exceptions.
 
         Args:

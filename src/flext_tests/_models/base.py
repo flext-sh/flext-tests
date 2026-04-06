@@ -15,7 +15,7 @@ class FlextTestsBaseModelsMixin:
         """Factory entity class for tests."""
 
         name: str = ""
-        value: t.Tests.Testobject = None
+        value: t.Tests.TestobjectSerializable = None
 
     class Value(FlextModels.Value):
         """Factory value t.NormalizedValue class for tests."""

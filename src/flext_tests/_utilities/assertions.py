@@ -12,7 +12,7 @@ class FlextTestsAssertionsUtilitiesMixin:
 
     @staticmethod
     def assert_result_matches_expected(
-        result: t.Tests.Testobject,
+        result: t.Tests.TestobjectSerializable,
         expected_type: type,
         description: str = "",
     ) -> None:

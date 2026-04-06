@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import csv
-import hashlib
 from collections.abc import (
     Mapping,
     Sequence,
 )
 from pathlib import Path
 
+from flext_cli import u as u_cli
 from flext_tests import (
     c,
     t,
@@ -25,29 +25,24 @@ class FlextTestsFilesUtilitiesMixin:
 
     @staticmethod
     def compute_hash(path: Path, chunk_size: int | None = None) -> str:
-        """Compute SHA256 hash of file.
+        """Compute SHA256 hash of file via u.Cli.sha256_file().
 
         Args:
             path: Path to file
-            chunk_size: Size of chunks to read (default: from constants)
+            chunk_size: Unused, kept for API compatibility
 
         Returns:
-            r[TEntity]: Result containing created entity or error
             SHA256 hash as hex string
 
         """
-        size = chunk_size or c.Tests.HASH_CHUNK_SIZE
-        sha256 = hashlib.sha256()
-        with path.open("rb") as f:
-            for chunk in iter(lambda: f.read(size), b""):
-                sha256.update(chunk)
-        return sha256.hexdigest()
+        _ = chunk_size
+        return u_cli.Cli.sha256_file(path)
 
     @staticmethod
     def detect_format(
         content: str
         | bytes
-        | Mapping[str, t.Tests.Testobject]
+        | Mapping[str, t.Tests.TestobjectSerializable]
         | Sequence[t.StrSequence],
         name: str,
         fmt: str,
@@ -145,7 +140,7 @@ class FlextTestsFilesUtilitiesMixin:
         path: Path,
         content: str
         | bytes
-        | Mapping[str, t.Tests.Testobject]
+        | Mapping[str, t.Tests.TestobjectSerializable]
         | Sequence[t.StrSequence],
         headers: t.StrSequence | None,
         delimiter: str | None = None,

@@ -16,8 +16,8 @@ from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 class FlextTestsFilesTypesMixin:
     type BatchFiles = (
-        Mapping[str, FlextTestsBaseTypesMixin.Testobject]
-        | Sequence[FlextTestsBaseTypesMixin.Testobject]
+        Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
     )
     type FileContentPlain = (
         str

@@ -17,8 +17,8 @@ class FlextTestsParserHelpersUtilitiesMixin:
 
     @staticmethod
     def execute_and_assert_parser_result(
-        operation: Callable[[], r[t.Tests.Testobject]],
-        expected_value: t.Tests.Testobject | None = None,
+        operation: Callable[[], r[t.Tests.TestobjectSerializable]],
+        expected_value: t.Tests.TestobjectSerializable | None = None,
         expected_error: str | None = None,
         description: str = "",
     ) -> None:
