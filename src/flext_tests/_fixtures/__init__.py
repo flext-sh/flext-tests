@@ -17,10 +17,10 @@ if _t.TYPE_CHECKING:
         settings_factory,
     )
 _LAZY_IMPORTS = {
-    "T": "flext_tests._fixtures.settings",
-    "reset_settings": "flext_tests._fixtures.settings",
-    "settings": "flext_tests._fixtures.settings",
-    "settings_factory": "flext_tests._fixtures.settings",
+    "T": ("flext_tests._fixtures.settings", "T"),
+    "reset_settings": ("flext_tests._fixtures.settings", "reset_settings"),
+    "settings": ("flext_tests._fixtures.settings", "settings"),
+    "settings_factory": ("flext_tests._fixtures.settings", "settings_factory"),
 }
 
 __all__ = [

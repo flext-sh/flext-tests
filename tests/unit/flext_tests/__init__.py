@@ -64,26 +64,65 @@ if _t.TYPE_CHECKING:
     from flext_core.typings import FlextTypes as t
     from flext_core.utilities import FlextUtilities as u
 _LAZY_IMPORTS = {
-    "TestAssertExists": "tests.unit.flext_tests.test_files",
-    "TestBatchOperations": "tests.unit.flext_tests.test_files",
-    "TestContainerInfo": "tests.unit.flext_tests.test_docker",
-    "TestContainerStatus": "tests.unit.flext_tests.test_docker",
-    "TestCreateInStatic": "tests.unit.flext_tests.test_files",
-    "TestFileInfo": "tests.unit.flext_tests.test_files",
-    "TestFileInfoFromModels": "tests.unit.flext_tests.test_files",
-    "TestFlextTestsDocker": "tests.unit.flext_tests.test_docker",
-    "TestFlextTestsDockerWorkerId": "tests.unit.flext_tests.test_docker",
-    "TestFlextTestsDockerWorkspaceRoot": "tests.unit.flext_tests.test_docker",
-    "TestFlextTestsDomains": "tests.unit.flext_tests.test_domains",
-    "TestFlextTestsFiles": "tests.unit.flext_tests.test_files",
-    "TestFlextTestsFilesNewApi": "tests.unit.flext_tests.test_files",
-    "TestFlextTestsMatchers": "tests.unit.flext_tests.test_matchers",
-    "TestFlextTestsUtilitiesFactory": "tests.unit.flext_tests.test_utilities",
-    "TestFlextTestsUtilitiesResult": "tests.unit.flext_tests.test_utilities",
-    "TestFlextTestsUtilitiesResultCompat": "tests.unit.flext_tests.test_utilities",
-    "TestFlextTestsUtilitiesTestContext": "tests.unit.flext_tests.test_utilities",
-    "TestInfoWithContentMeta": "tests.unit.flext_tests.test_files",
-    "TestShortAlias": "tests.unit.flext_tests.test_files",
+    "TestAssertExists": ("tests.unit.flext_tests.test_files", "TestAssertExists"),
+    "TestBatchOperations": ("tests.unit.flext_tests.test_files", "TestBatchOperations"),
+    "TestContainerInfo": ("tests.unit.flext_tests.test_docker", "TestContainerInfo"),
+    "TestContainerStatus": (
+        "tests.unit.flext_tests.test_docker",
+        "TestContainerStatus",
+    ),
+    "TestCreateInStatic": ("tests.unit.flext_tests.test_files", "TestCreateInStatic"),
+    "TestFileInfo": ("tests.unit.flext_tests.test_files", "TestFileInfo"),
+    "TestFileInfoFromModels": (
+        "tests.unit.flext_tests.test_files",
+        "TestFileInfoFromModels",
+    ),
+    "TestFlextTestsDocker": (
+        "tests.unit.flext_tests.test_docker",
+        "TestFlextTestsDocker",
+    ),
+    "TestFlextTestsDockerWorkerId": (
+        "tests.unit.flext_tests.test_docker",
+        "TestFlextTestsDockerWorkerId",
+    ),
+    "TestFlextTestsDockerWorkspaceRoot": (
+        "tests.unit.flext_tests.test_docker",
+        "TestFlextTestsDockerWorkspaceRoot",
+    ),
+    "TestFlextTestsDomains": (
+        "tests.unit.flext_tests.test_domains",
+        "TestFlextTestsDomains",
+    ),
+    "TestFlextTestsFiles": ("tests.unit.flext_tests.test_files", "TestFlextTestsFiles"),
+    "TestFlextTestsFilesNewApi": (
+        "tests.unit.flext_tests.test_files",
+        "TestFlextTestsFilesNewApi",
+    ),
+    "TestFlextTestsMatchers": (
+        "tests.unit.flext_tests.test_matchers",
+        "TestFlextTestsMatchers",
+    ),
+    "TestFlextTestsUtilitiesFactory": (
+        "tests.unit.flext_tests.test_utilities",
+        "TestFlextTestsUtilitiesFactory",
+    ),
+    "TestFlextTestsUtilitiesResult": (
+        "tests.unit.flext_tests.test_utilities",
+        "TestFlextTestsUtilitiesResult",
+    ),
+    "TestFlextTestsUtilitiesResultCompat": (
+        "tests.unit.flext_tests.test_utilities",
+        "TestFlextTestsUtilitiesResultCompat",
+    ),
+    "TestFlextTestsUtilitiesTestContext": (
+        "tests.unit.flext_tests.test_utilities",
+        "TestFlextTestsUtilitiesTestContext",
+    ),
+    "TestInfoWithContentMeta": (
+        "tests.unit.flext_tests.test_files",
+        "TestInfoWithContentMeta",
+    ),
+    "TestShortAlias": ("tests.unit.flext_tests.test_files", "TestShortAlias"),
     "c": ("flext_core.constants", "FlextConstants"),
     "d": ("flext_core.decorators", "FlextDecorators"),
     "e": ("flext_core.exceptions", "FlextExceptions"),

@@ -26,16 +26,22 @@ if _t.TYPE_CHECKING:
     matchers = _flext_tests__utilities_matchers
     from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
 _LAZY_IMPORTS = {
-    "FlextTestsMatchersUtilities": "flext_tests._utilities.matchers",
-    "FlextTestsPayloadUtilities": "flext_tests._utilities._payload",
+    "FlextTestsMatchersUtilities": (
+        "flext_tests._utilities.matchers",
+        "FlextTestsMatchersUtilities",
+    ),
+    "FlextTestsPayloadUtilities": (
+        "flext_tests._utilities._payload",
+        "FlextTestsPayloadUtilities",
+    ),
     "_payload": "flext_tests._utilities._payload",
-    "deep_match": "flext_tests._utilities._payload",
-    "length_validate": "flext_tests._utilities._payload",
+    "deep_match": ("flext_tests._utilities._payload", "deep_match"),
+    "length_validate": ("flext_tests._utilities._payload", "length_validate"),
     "matchers": "flext_tests._utilities.matchers",
-    "tm": "flext_tests._utilities.matchers",
-    "to_config_map_value": "flext_tests._utilities._payload",
-    "to_normalized_value": "flext_tests._utilities._payload",
-    "to_payload": "flext_tests._utilities._payload",
+    "tm": ("flext_tests._utilities.matchers", "tm"),
+    "to_config_map_value": ("flext_tests._utilities._payload", "to_config_map_value"),
+    "to_normalized_value": ("flext_tests._utilities._payload", "to_normalized_value"),
+    "to_payload": ("flext_tests._utilities._payload", "to_payload"),
 }
 
 __all__ = [
