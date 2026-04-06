@@ -72,12 +72,11 @@ from pydantic import BaseModel, RootModel, ValidationError
 from flext_core import u
 from flext_tests import (
     c,
-    deep_match,
-    length_validate,
     m,
     p,
     t,
 )
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsMatchersUtilities:
@@ -164,7 +163,7 @@ class FlextTestsMatchersUtilities:
         if isinstance(value, Mapping):
             try:
                 mapping_value = (
-                    t.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
+                    t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
                         value,
                     )
                 )
@@ -178,7 +177,7 @@ class FlextTestsMatchersUtilities:
         if FlextTestsMatchersUtilities._is_object_sequence(value):
             try:
                 sequence_value = (
-                    t.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
+                    t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
                         value,
                     )
                 )
@@ -260,7 +259,7 @@ class FlextTestsMatchersUtilities:
         if isinstance(value, Mapping):
             try:
                 mapping_value = (
-                    t.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
+                    t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
                         value,
                     )
                 )
@@ -274,7 +273,7 @@ class FlextTestsMatchersUtilities:
         if FlextTestsMatchersUtilities._is_object_sequence(value):
             try:
                 sequence_value = (
-                    t.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
+                    t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
                         value,
                     )
                 )
@@ -309,7 +308,7 @@ class FlextTestsMatchersUtilities:
         if isinstance(value, Mapping):
             try:
                 mapping_value = (
-                    t.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
+                    t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
                         value,
                     )
                 )
@@ -323,7 +322,7 @@ class FlextTestsMatchersUtilities:
         if isinstance(value, (list, tuple)):
             try:
                 sequence_value = (
-                    t.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
+                    t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
                         value,
                     )
                 )
@@ -795,7 +794,7 @@ class FlextTestsMatchersUtilities:
                         extract_data = result_value
                     else:
                         try:
-                            validated = t.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
+                            validated = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
                                 result_value,
                             )
                             extract_data = {
@@ -883,7 +882,9 @@ class FlextTestsMatchersUtilities:
                     result_value,
                 )
                 if params.len is not None and (
-                    not length_validate(result_payload, params.len)
+                    not FlextTestsPayloadUtilities.length_validate(
+                        result_payload, params.len
+                    )
                 ):
                     actual_len = (
                         len(result_value) if isinstance(result_value, Sized) else 0
@@ -915,12 +916,14 @@ class FlextTestsMatchersUtilities:
                         deep_input = result_value
                     else:
                         try:
-                            deep_input = t.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
+                            deep_input = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
                                 result_value,
                             )
                         except ValidationError:
                             deep_input = {}
-                    match_result = deep_match(deep_input, params.deep)
+                    match_result = FlextTestsPayloadUtilities.deep_match(
+                        deep_input, params.deep
+                    )
                     if not match_result.matched:
                         raise AssertionError(
                             params.msg
@@ -1356,7 +1359,9 @@ class FlextTestsMatchersUtilities:
                 )
                 value_payload = subject_payload
                 if params.len is not None and (
-                    not length_validate(value_payload, params.len)
+                    not FlextTestsPayloadUtilities.length_validate(
+                        value_payload, params.len
+                    )
                 ):
                     actual_len = (
                         len(subject_payload)
@@ -1382,10 +1387,8 @@ class FlextTestsMatchersUtilities:
                 if isinstance(subject_payload, (list, tuple)):
                     seq_value: Sequence[t.Tests.TestobjectSerializable] = []
                     try:
-                        seq_value = (
-                            t.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
-                                subject_payload,
-                            )
+                        seq_value = t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
+                            subject_payload,
                         )
                     except ValidationError:
                         pass
@@ -1520,10 +1523,8 @@ class FlextTestsMatchersUtilities:
                 if isinstance(subject_payload, Mapping):
                     mapping_value: Mapping[str, t.Tests.TestobjectSerializable] = {}
                     try:
-                        mapping_value = (
-                            t.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
-                                subject_payload,
-                            )
+                        mapping_value = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
+                            subject_payload,
                         )
                     except ValidationError:
                         pass
@@ -1644,12 +1645,14 @@ class FlextTestsMatchersUtilities:
                         deep_value = subject_payload
                     else:
                         try:
-                            deep_value = t.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
+                            deep_value = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
                                 subject_payload,
                             )
                         except ValidationError:
                             deep_value = dict[str, t.Tests.Testobject]()
-                    match_result = deep_match(deep_value, params.deep)
+                    match_result = FlextTestsPayloadUtilities.deep_match(
+                        deep_value, params.deep
+                    )
                     if not match_result.matched:
                         raise AssertionError(
                             params.msg

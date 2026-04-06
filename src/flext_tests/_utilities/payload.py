@@ -56,7 +56,7 @@ class FlextTestsPayloadUtilities:
             return payload_value
         if isinstance(value, Mapping):
             try:
-                mapping_value = t.TESTOBJECT_MAPPING_ADAPTER.validate_python(
+                mapping_value = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(
                     value,
                 )
             except ValidationError:
@@ -71,7 +71,7 @@ class FlextTestsPayloadUtilities:
         if isinstance(value, (list, tuple, set)):
             try:
                 iterable_items: Sequence[t.Tests.Testobject] = (
-                    t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
+                    t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
                         value,
                     )
                 )
@@ -102,7 +102,7 @@ class FlextTestsPayloadUtilities:
             return str(value)
         if isinstance(value, (dict, Mapping)):
             validated_map: Mapping[str, t.Tests.Testobject] = (
-                t.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
+                t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
             )
             result_map: t.MutableContainerMapping = {}
             for k, v in validated_map.items():
@@ -112,7 +112,7 @@ class FlextTestsPayloadUtilities:
             return result_map
         if isinstance(value, (list, tuple)):
             validated_seq: Sequence[t.Tests.Testobject] = (
-                t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
+                t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
             )
             result_seq: Sequence[t.NormalizedValue] = [
                 FlextTestsPayloadUtilities.to_normalized_value(item)
@@ -138,7 +138,7 @@ class FlextTestsPayloadUtilities:
             return str(value)
         if isinstance(value, (dict, Mapping)):
             validated_map: Mapping[str, t.Tests.Testobject] = (
-                t.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
+                t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
             )
             cfg_map: t.MutableContainerMapping = {}
             for k, v in validated_map.items():
@@ -148,7 +148,7 @@ class FlextTestsPayloadUtilities:
             return cfg_map
         if isinstance(value, (list, tuple)):
             validated_seq: Sequence[t.Tests.Testobject] = (
-                t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
+                t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
             )
             cfg_seq: Sequence[t.NormalizedValue] = [
                 FlextTestsPayloadUtilities.to_normalized_value(item)
@@ -304,11 +304,3 @@ class FlextTestsPayloadUtilities:
             matched=True,
             reason="",
         )
-
-
-# Module-level aliases required by __init__.py lazy loading
-to_payload = FlextTestsPayloadUtilities.to_payload
-to_normalized_value = FlextTestsPayloadUtilities.to_normalized_value
-to_config_map_value = FlextTestsPayloadUtilities.to_config_map_value
-length_validate = FlextTestsPayloadUtilities.length_validate
-deep_match = FlextTestsPayloadUtilities.deep_match

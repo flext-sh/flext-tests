@@ -32,9 +32,8 @@ from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 from types import TracebackType
-from typing import ClassVar, Self, TypeIs, TypeVar, overload, override
+from typing import Self, TypeIs, TypeVar, overload, override
 
-from flext_cli import t as t_cli, u as u_cli
 from pydantic import BaseModel, ValidationError
 
 from flext_tests import c, m, r, s, t, u
@@ -64,14 +63,18 @@ def _to_runtime_data(value: t.Tests.Testobject) -> t.RuntimeData:
         return t.ConfigMap(
             root={
                 str(k): _to_normalized_or_model(
-                    t.TESTOBJECT_MAPPING_ADAPTER.validate_python({str(k): v})[str(k)],
+                    t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(
+                        {str(k): v},
+                    )[str(k)],
                 )
                 for k, v in value.items()
             },
         )
     if isinstance(value, (list, tuple)):
         return [
-            _to_normalized_leaf(t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python([v])[0])
+            _to_normalized_leaf(
+                t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python([v])[0],
+            )
             for v in value
         ]
     return str(value)
@@ -130,7 +133,7 @@ def _to_normalized_leaf(value: t.Tests.Testobject) -> t.NormalizedValue:
 def _yaml_safe_load(
     raw: str,
 ) -> Mapping[str, t.Tests.Testobject] | Sequence[t.Tests.Testobject] | None:
-    result = u_cli.Cli.yaml_parse(raw)
+    result = u.Cli.yaml_parse(raw)
     if result.is_failure:
         return None
     return result.value
@@ -140,7 +143,7 @@ def _yaml_dump(value: Mapping[str, t.Tests.Testobject], *, indent: int) -> str:
     normalized: Mapping[str, t.NormalizedValue] = {
         str(k): _to_normalized_leaf(v) for k, v in value.items()
     }
-    return u_cli.Cli.yaml_dump_str(normalized, indent=indent)
+    return u.Cli.yaml_dump_str(normalized, indent=indent)
 
 
 def _is_batch_content(content_raw: t.Tests.Testobject) -> TypeIs[t.Tests.Testobject]:
@@ -178,8 +181,6 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             assert paths["a"].exists()
 
     """
-
-    FileInfo: ClassVar[type[m.Tests.FileInfo]] = m.Tests.FileInfo
 
     @staticmethod
     def _validate_model_content[TModelRead: BaseModel](
@@ -908,7 +909,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             else:
                 empty_data: Mapping[str, t.Tests.Testobject] = {}
                 data = {"value": actual_content} if actual_content else empty_data
-            json_str = t.TESTOBJECT_MAPPING_ADAPTER.dump_json(
+            json_str = t.Tests.TESTOBJECT_MAPPING_ADAPTER.dump_json(
                 data,
                 indent=params.indent,
             ).decode()
@@ -1196,7 +1197,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                 )
             elif actual_fmt == c.Tests.Files.Format.JSON:
                 text = params.path.read_text(encoding=params.enc)
-                parsed_json = t.TESTOBJECT_MAPPING_ADAPTER.validate_json(
+                parsed_json = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_json(
                     text.encode(),
                 )
                 content = self._coerce_read_content(parsed_json)
@@ -1236,7 +1237,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             return r[str | bytes | t.ConfigMap | Sequence[t.StrSequence]].fail(
                 c.Tests.Files.ERROR_INVALID_JSON.format(error=e),
             )
-        except t_cli.Cli.YAMLError as e:
+        except t.Cli.YAMLError as e:
             if model_cls is not None:
                 invalid_yaml_result: r[TModel] = r[TModel].fail(
                     c.Tests.Files.ERROR_INVALID_YAML.format(error=e),
@@ -1464,7 +1465,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         if not isinstance(value, Sequence) or isinstance(value, str | bytes):
             return False
         try:
-            sequence_value = t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
+            sequence_value = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
         except ValidationError:
             return False
         if not sequence_value:
@@ -1479,7 +1480,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         mapping: Mapping[str, t.Tests.Testobject],
     ) -> Mapping[str, t.Tests.Testobject]:
         normalized_mapping: Mapping[str, t.Tests.Testobject] = (
-            t.TESTOBJECT_MAPPING_ADAPTER.validate_python(mapping)
+            t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(mapping)
         )
         payload: MutableMapping[str, t.Tests.Testobject] = {}
         for key, value in normalized_mapping.items():
@@ -1544,12 +1545,14 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                                 Mapping[str, t.Tests.Testobject]
                                 | Sequence[t.Tests.Testobject]
                                 | None
-                            ) = t.TESTOBJECT_MAPPING_ADAPTER.validate_json(
+                            ) = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_json(
                                 text.encode()
                             )
                         except ValidationError:
-                            parsed_raw = t.TESTOBJECT_SEQUENCE_ADAPTER.validate_json(
-                                text.encode(),
+                            parsed_raw = (
+                                t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_json(
+                                    text.encode(),
+                                )
                             )
                     else:
                         parsed_raw = dict(t.ConfigMap(root={}).root)
@@ -1569,14 +1572,14 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                     parsed_content = t.ConfigMap(root=parse_root)
                     key_count = len(parsed_content.root)
                 elif isinstance(parsed_raw, list):
-                    parsed_list = t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
+                    parsed_list = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
                         parsed_raw
                     )
                     parsed_content = [
                         self._to_payload_value(item) for item in parsed_list
                     ]
                     item_count = len(parsed_content)
-            except (ValueError, t_cli.Cli.YAMLError):
+            except (ValueError, t.Cli.YAMLError):
                 pass
         elif fmt == "csv":
             try:
@@ -1633,7 +1636,9 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             }
         if isinstance(value, Sequence) and (not isinstance(value, str | bytes)):
             try:
-                sequence_value = t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
+                sequence_value = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
+                    value,
+                )
             except ValidationError:
                 empty_sequence: Sequence[t.Tests.Testobject] = []
                 return empty_sequence
@@ -1662,12 +1667,14 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             return str(value)
         if isinstance(value, Mapping):
             mapping_obj: Mapping[str, t.Tests.Testobject] = (
-                t.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
+                t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
             )
             return self._mapping_to_payload(mapping_obj)
         if isinstance(value, Sequence) and (not isinstance(value, str | bytes)):
             try:
-                sequence_value = t.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
+                sequence_value = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
+                    value,
+                )
             except ValidationError:
                 empty_seq: Sequence[t.Tests.Testobject] = []
                 return empty_seq
@@ -1740,7 +1747,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
             )
             match fmt:
                 case "json":
-                    adapter = t.TESTOBJECT_MAPPING_ADAPTER
+                    adapter = t.Tests.TESTOBJECT_MAPPING_ADAPTER
                     dict1_raw = adapter.validate_json(content1.encode())
                     dict2_raw = adapter.validate_json(content2.encode())
                 case "yaml":
@@ -1758,10 +1765,11 @@ class FlextTestsFiles(s[t.NormalizedValue]):
                     for key, value in dict2_raw.items()
                 }
                 return (dict1, dict2)
-        except (ValueError, t_cli.Cli.YAMLError, TypeError):
+        except (ValueError, t.Cli.YAMLError, TypeError):
             pass
         return None
 
 
 tf = FlextTestsFiles
+
 __all__ = ["FlextTestsFiles", "tf"]

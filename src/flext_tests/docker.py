@@ -134,7 +134,7 @@ class FlextTestsDocker:
         bindings: t.Tests.Testobject | None,
     ) -> Sequence[t.StrMapping]:
         try:
-            return t.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(bindings)
+            return t.Tests.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(bindings)
         except ValidationError:
             return []
 
@@ -240,7 +240,7 @@ class FlextTestsDocker:
             client = self.get_client()
             container = client.containers.get(container_name)
             ports_raw: Mapping[str, t.Tests.Testobject] = (
-                t.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
+                t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
                     container.ports
                 )
             )
@@ -362,7 +362,7 @@ class FlextTestsDocker:
             if self._state_file.exists():
                 state_text = self._state_file.read_text(encoding="utf-8")
                 state_raw: Mapping[str, t.StrSequence] = (
-                    t.STR_SEQUENCE_MAPPING_ADAPTER.validate_json(state_text)
+                    t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.validate_json(state_text)
                 )
                 dirty_raw = state_raw.get("dirty_containers", ())
                 self._dirty_containers = {
@@ -379,7 +379,7 @@ class FlextTestsDocker:
             data: Mapping[str, t.StrSequence] = {
                 "dirty_containers": list(self._dirty_containers),
             }
-            json_bytes = t.STR_SEQUENCE_MAPPING_ADAPTER.dump_json(data)
+            json_bytes = t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.dump_json(data)
             self._state_file.write_bytes(json_bytes)
         except (OSError, TypeError) as exc:
             self.logger.warning("Failed to save dirty state", error=str(exc))
