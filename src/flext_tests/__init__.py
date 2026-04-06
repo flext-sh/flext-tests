@@ -42,10 +42,20 @@ if _t.TYPE_CHECKING:
     )
 
     _protocols = _flext_tests__protocols
-    import flext_tests._utilities as _flext_tests__utilities
+    import flext_tests._typings as _flext_tests__typings
     from flext_tests._protocols import (
         FlextTestsValueFactoryProtocolsMixin,
         valuefactory,
+    )
+
+    _typings = _flext_tests__typings
+    import flext_tests._utilities as _flext_tests__utilities
+    from flext_tests._typings import (
+        FlextTestsBaseTypesMixin,
+        FlextTestsFilesTypesMixin,
+        FlextTestsGuardsTypesMixin,
+        FlextTestsMatchersTypesMixin,
+        guards,
     )
 
     _utilities = _flext_tests__utilities
@@ -163,6 +173,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
         "flext_tests._fixtures",
         "flext_tests._models",
         "flext_tests._protocols",
+        "flext_tests._typings",
         "flext_tests._utilities",
         "flext_tests._validator",
     ),
@@ -180,6 +191,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
         "_fixtures": "flext_tests._fixtures",
         "_models": "flext_tests._models",
         "_protocols": "flext_tests._protocols",
+        "_typings": "flext_tests._typings",
         "_utilities": "flext_tests._utilities",
         "_validator": "flext_tests._validator",
         "c": ("flext_tests.constants", "FlextTestsConstants"),
@@ -220,6 +232,7 @@ __all__ = [
     "FlextTestsAssertionsUtilitiesMixin",
     "FlextTestsBadObjectsUtilitiesMixin",
     "FlextTestsBaseModelsMixin",
+    "FlextTestsBaseTypesMixin",
     "FlextTestsBatchModelsMixin",
     "FlextTestsConfigHelpersUtilitiesMixin",
     "FlextTestsConstants",
@@ -236,13 +249,16 @@ __all__ = [
     "FlextTestsFactoryUtilitiesMixin",
     "FlextTestsFiles",
     "FlextTestsFilesConstantsMixin",
+    "FlextTestsFilesTypesMixin",
     "FlextTestsFilesUtilitiesMixin",
     "FlextTestsFilesystemModelsMixin",
     "FlextTestsGenericHelpersUtilitiesMixin",
+    "FlextTestsGuardsTypesMixin",
     "FlextTestsHandlerHelpersUtilitiesMixin",
     "FlextTestsLengthUtilitiesMixin",
     "FlextTestsMatcherConstantsMixin",
     "FlextTestsMatchersModelsMixin",
+    "FlextTestsMatchersTypesMixin",
     "FlextTestsMatchersUtilities",
     "FlextTestsModels",
     "FlextTestsParserHelpersUtilitiesMixin",
@@ -272,6 +288,7 @@ __all__ = [
     "_fixtures",
     "_models",
     "_protocols",
+    "_typings",
     "_utilities",
     "_validator",
     "assertions",
@@ -296,6 +313,7 @@ __all__ = [
     "files",
     "filesystem",
     "generic",
+    "guards",
     "h",
     "handler",
     "imports",

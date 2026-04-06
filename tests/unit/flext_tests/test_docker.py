@@ -151,8 +151,10 @@ class TestFlextTestsDocker:
         data = u.Cli.json_read(docker_manager._state_file).unwrap_or({})
         tm.that(data, has="dirty_containers")
         tm.that(data["dirty_containers"], is_=list)
-        tm.that(data["dirty_containers"], has="test_container")
-        tm.that(len(data["dirty_containers"]), eq=1)
+        dirty = data["dirty_containers"]
+        assert isinstance(dirty, list)
+        tm.that(dirty, has="test_container")
+        tm.that(len(dirty), eq=1)
 
     def test_mark_container_dirty(self, docker_manager: tk) -> None:
         """Test marking container as dirty."""

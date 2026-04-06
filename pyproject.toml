@@ -140,7 +140,6 @@ targets = [ "src" ]
 [tool.codespell]
 check-filenames = true
 ignore-words-list = "crate,nd"
-skip = ".git,poetry.lock,.mypy_cache,.pytest_cache,.ruff_cache"
 
 # [MANAGED] coverage
 [tool.coverage.report]
@@ -245,10 +244,6 @@ project-excludes = [
 project-includes = [ "src/**/*.py*", "tests/**/*.py*" ]
 python-version = "3.13"
 search-path = [
-  ".",
-  "../flext-cli/src",
-  "../flext-core/src",
-  "../flext-infra/src",
   "src",
   "tests",
 ]

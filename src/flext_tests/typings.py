@@ -16,7 +16,7 @@ from collections.abc import (
 
 from pydantic import BaseModel, ConfigDict, InstanceOf, TypeAdapter
 
-from flext_cli import FlextCliTypes
+from flext_cli import t as _cli_t
 from flext_core import FlextResult
 from flext_tests._typings.base import FlextTestsBaseTypesMixin
 from flext_tests._typings.files import FlextTestsFilesTypesMixin
@@ -24,7 +24,7 @@ from flext_tests._typings.guards import FlextTestsGuardsTypesMixin
 from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
 
 
-class FlextTestsTypes(FlextCliTypes):
+class FlextTestsTypes(_cli_t):
     """Type system foundation for FLEXT tests - extends t.
 
     Architecture: Extends t with test-specific type aliases and definitions.
@@ -54,9 +54,9 @@ class FlextTestsTypes(FlextCliTypes):
             Mapping[str, FlextTestsBaseTypesMixin.Testobject],
             config=ConfigDict(arbitrary_types_allowed=True),
         )
-        STR_MAPPING_SEQUENCE_ADAPTER: TypeAdapter[
-            Sequence[FlextCliTypes.StrMapping]
-        ] = TypeAdapter(Sequence[FlextCliTypes.StrMapping])
+        STR_MAPPING_SEQUENCE_ADAPTER: TypeAdapter[Sequence[_cli_t.StrMapping]] = (
+            TypeAdapter(Sequence[_cli_t.StrMapping])
+        )
         TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER: TypeAdapter[
             Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
         ] = TypeAdapter(
@@ -69,47 +69,47 @@ class FlextTestsTypes(FlextCliTypes):
             Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable],
             config=ConfigDict(arbitrary_types_allowed=True),
         )
-        PRIMITIVES_MAPPING_ADAPTER: TypeAdapter[
-            Mapping[str, FlextCliTypes.Primitives]
-        ] = TypeAdapter(Mapping[str, FlextCliTypes.Primitives])
-        NORMALIZED_VALUE_ADAPTER: TypeAdapter[FlextCliTypes.NormalizedValue] = (
-            TypeAdapter(FlextCliTypes.NormalizedValue)
+        PRIMITIVES_MAPPING_ADAPTER: TypeAdapter[Mapping[str, _cli_t.Primitives]] = (
+            TypeAdapter(Mapping[str, _cli_t.Primitives])
         )
-        DICT_ADAPTER: TypeAdapter[FlextCliTypes.Dict] = TypeAdapter(FlextCliTypes.Dict)
-        SCALAR_MAPPING_ADAPTER: TypeAdapter[FlextCliTypes.ScalarMapping] = TypeAdapter(
-            FlextCliTypes.ScalarMapping
+        NORMALIZED_VALUE_ADAPTER: TypeAdapter[_cli_t.NormalizedValue] = TypeAdapter(
+            _cli_t.NormalizedValue
         )
-        CONTAINER_MAPPING_ADAPTER: TypeAdapter[FlextCliTypes.ContainerMapping] = (
-            TypeAdapter(FlextCliTypes.ContainerMapping)
+        DICT_ADAPTER: TypeAdapter[_cli_t.Dict] = TypeAdapter(_cli_t.Dict)
+        SCALAR_MAPPING_ADAPTER: TypeAdapter[_cli_t.ScalarMapping] = TypeAdapter(
+            _cli_t.ScalarMapping
+        )
+        CONTAINER_MAPPING_ADAPTER: TypeAdapter[_cli_t.ContainerMapping] = TypeAdapter(
+            _cli_t.ContainerMapping
         )
         CONTAINER_MAPPING_SEQUENCE_ADAPTER: TypeAdapter[
-            Sequence[FlextCliTypes.ContainerMapping]
-        ] = TypeAdapter(Sequence[FlextCliTypes.ContainerMapping])
-        STR_MAPPING_ADAPTER: TypeAdapter[FlextCliTypes.StrMapping] = TypeAdapter(
-            FlextCliTypes.StrMapping
+            Sequence[_cli_t.ContainerMapping]
+        ] = TypeAdapter(Sequence[_cli_t.ContainerMapping])
+        STR_MAPPING_ADAPTER: TypeAdapter[_cli_t.StrMapping] = TypeAdapter(
+            _cli_t.StrMapping
         )
-        STR_MAPPING_MAPPING_ADAPTER: TypeAdapter[
-            Mapping[str, FlextCliTypes.StrMapping]
-        ] = TypeAdapter(Mapping[str, FlextCliTypes.StrMapping])
+        STR_MAPPING_MAPPING_ADAPTER: TypeAdapter[Mapping[str, _cli_t.StrMapping]] = (
+            TypeAdapter(Mapping[str, _cli_t.StrMapping])
+        )
         INTEGER_SEQUENCE_ADAPTER: TypeAdapter[Sequence[int]] = TypeAdapter(
             Sequence[int]
         )
-        STR_SEQUENCE_MAPPING_ADAPTER: TypeAdapter[
-            Mapping[str, FlextCliTypes.StrSequence]
-        ] = TypeAdapter(Mapping[str, FlextCliTypes.StrSequence])
+        STR_SEQUENCE_MAPPING_ADAPTER: TypeAdapter[Mapping[str, _cli_t.StrSequence]] = (
+            TypeAdapter(Mapping[str, _cli_t.StrSequence])
+        )
 
         type FileContent = (
             str
             | bytes
             | Mapping[str, FlextTestsBaseTypesMixin.Testobject]
-            | Sequence[FlextCliTypes.StrSequence]
+            | Sequence[_cli_t.StrSequence]
             | InstanceOf[BaseModel]
         )
         type FileContentPlain = FileContent
         type FileInput = (
             FileContentPlain
             | FlextResult[FlextTestsBaseTypesMixin.Testobject]
-            | FlextResult[Sequence[FlextCliTypes.StrSequence]]
+            | FlextResult[Sequence[_cli_t.StrSequence]]
             | FlextResult[bytes]
             | FlextResult[str]
             | None

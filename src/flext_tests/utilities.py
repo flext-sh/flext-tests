@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_cli import FlextCliUtilities
+from flext_cli import u as _cli_u
 from flext_tests._utilities.assertions import FlextTestsAssertionsUtilitiesMixin
 from flext_tests._utilities.badobjects import FlextTestsBadObjectsUtilitiesMixin
 from flext_tests._utilities.config import FlextTestsConfigHelpersUtilitiesMixin
@@ -34,7 +34,7 @@ from flext_tests._utilities.validation import FlextTestsValidationUtilitiesMixin
 from flext_tests._utilities.validator import FlextTestsValidatorUtilitiesMixin
 
 
-class FlextTestsUtilities(FlextCliUtilities):
+class FlextTestsUtilities(_cli_u):
     """Test utilities for FLEXT ecosystem - extends FlextCliUtilities.
 
     Provides essential test helpers that complement FlextCliUtilities.

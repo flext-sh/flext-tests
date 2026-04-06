@@ -7,10 +7,6 @@ from __future__ import annotations
 
 import typing as _t
 
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, model_validator
-
-from flext_cli import FlextCliModels
-from flext_core import FlextModels, r
 from flext_core.lazy import install_lazy_exports
 
 if _t.TYPE_CHECKING:

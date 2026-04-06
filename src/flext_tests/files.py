@@ -469,7 +469,7 @@ class FlextTestsFiles(s[t.NormalizedValue]):
 
     def batch_files[TModel: BaseModel](
         self,
-        items: t.Tests,
+        items: t.Tests.BatchFiles,
         *,
         directory: Path | None = None,
         operation: c.Tests.Operation = c.Tests.Operation.CREATE,
@@ -1450,8 +1450,8 @@ class FlextTestsFiles(s[t.NormalizedValue]):
         # bytes needs handling before u.is_result_like (bytes not in t.GuardInput)
         if isinstance(content, bytes):
             return content
-        # u.is_result_like narrows to p.Result[t.RuntimeAtomic] — proper FLEXT pattern
-        if u.is_result_like(content):
+        # isinstance narrows to r[T] — proper FLEXT pattern
+        if isinstance(content, r):
             if content.is_failure:
                 error_msg = content.error or "r failure"
                 raise ValueError(f"Cannot create file from failed r: {error_msg}")

@@ -9,7 +9,7 @@ from __future__ import annotations
 from enum import StrEnum, unique
 from typing import Final
 
-from flext_cli import FlextCliConstants
+from flext_cli import c as _cli_c
 from flext_tests import t
 
 
@@ -67,7 +67,7 @@ class FlextTestsFilesConstantsMixin:
         ".tsv": "csv",
     }
     DEFAULT_FILENAME: Final[str] = "file"
-    DEFAULT_ENCODING: Final[str] = FlextCliConstants.DEFAULT_ENCODING
+    DEFAULT_ENCODING: Final[str] = _cli_c.DEFAULT_ENCODING
     DEFAULT_BINARY_ENCODING: Final[str] = "binary"
     DEFAULT_JSON_INDENT: Final[int] = 2
     DEFAULT_CSV_DELIMITER: Final[str] = ","

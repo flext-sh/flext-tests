@@ -39,13 +39,13 @@ class FlextTestsBaseTypesMixin:
         | BaseModel
         | type
         | frozenset[str]
-        | Sequence[TestobjectSerializable]
-        | Mapping[str, TestobjectSerializable]
+        | Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
         | None
     )
 
     type Testobject = (
-        TestobjectSerializable
+        FlextTestsBaseTypesMixin.TestobjectSerializable
         | BaseException
         | Exception
         | Enum
@@ -61,14 +61,14 @@ class FlextTestsBaseTypesMixin:
         | FrameType
         | ModuleType
         | GenericAlias
-        | set[Testobject]
-        | AbstractSet[Testobject]
-        | ValuesView[Testobject]
+        | set[FlextTestsBaseTypesMixin.Testobject]
+        | AbstractSet[FlextTestsBaseTypesMixin.Testobject]
+        | ValuesView[FlextTestsBaseTypesMixin.Testobject]
         | KeysView[str]
-        | ItemsView[str, Testobject]
-        | MutableMapping[str, Testobject]
-        | Sequence[Testobject]
-        | Mapping[str, Testobject]
+        | ItemsView[str, FlextTestsBaseTypesMixin.Testobject]
+        | MutableMapping[str, FlextTestsBaseTypesMixin.Testobject]
+        | Sequence[FlextTestsBaseTypesMixin.Testobject]
+        | Mapping[str, FlextTestsBaseTypesMixin.Testobject]
         | tzinfo
         | timezone
     )
