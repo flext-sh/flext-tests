@@ -12,7 +12,7 @@ And the following on-demand fixtures:
 - settings_factory: Factory for project-specific settings classes
 """
 
-from flext_tests._fixtures.settings import (
+from flext_tests import (
     reset_settings,
     settings,
     settings_factory,
