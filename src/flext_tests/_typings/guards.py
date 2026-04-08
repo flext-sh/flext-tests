@@ -11,7 +11,7 @@ from typing import TypeIs
 
 from pydantic import BaseModel
 
-from flext_core import FlextResult
+from flext_core import r
 from flext_tests import FlextTestsBaseTypesMixin
 
 
@@ -51,5 +51,5 @@ class FlextTestsGuardsTypesMixin:
     @staticmethod
     def is_testobject_result(
         value: FlextTestsBaseTypesMixin.Testobject,
-    ) -> TypeIs[FlextResult[FlextTestsBaseTypesMixin.TestobjectSerializable]]:
-        return isinstance(value, FlextResult)
+    ) -> TypeIs[r[FlextTestsBaseTypesMixin.TestobjectSerializable]]:
+        return isinstance(value, r)

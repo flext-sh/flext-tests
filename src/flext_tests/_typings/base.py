@@ -25,7 +25,7 @@ from types import FrameType, GenericAlias, ModuleType
 from pydantic import BaseModel, ConfigDict, SecretStr, TypeAdapter
 
 from flext_cli import t
-from flext_core import FlextResult, p
+from flext_core import p, r
 
 
 class FlextTestsBaseTypesMixin:
@@ -59,7 +59,7 @@ class FlextTestsBaseTypesMixin:
         | p.Dispatcher
         | p.Settings
         | p.Context
-        | FlextResult[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | r[FlextTestsBaseTypesMixin.TestobjectSerializable]
         | re.Match[str]
         | _bt.UnionType
         | FrameType

@@ -1233,7 +1233,7 @@ class FlextTestsMatchersUtilities:
                             ),
                         )
                 # If is_/not_ was the only validation, return early —
-                # skip FlextResult unwrap which assumes ok/has.
+                # skip r unwrap which assumes ok/has.
                 only_type_check = (
                     (params.is_ is not None or params.not_ is not None)
                     and params.ok is None

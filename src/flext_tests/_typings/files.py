@@ -10,7 +10,7 @@ from collections.abc import Mapping, Sequence
 
 from pydantic import BaseModel
 
-from flext_core import FlextResult, FlextTypes
+from flext_core import FlextTypes, r
 from flext_tests import FlextTestsBaseTypesMixin
 
 
@@ -28,9 +28,9 @@ class FlextTestsFilesTypesMixin:
     )
     type FileInput = (
         FileContentPlain
-        | FlextResult[str]
-        | FlextResult[bytes]
-        | FlextResult[FlextTypes.ConfigMap]
-        | FlextResult[Sequence[FlextTypes.StrSequence]]
-        | FlextResult[BaseModel]
+        | r[str]
+        | r[bytes]
+        | r[FlextTypes.ConfigMap]
+        | r[Sequence[FlextTypes.StrSequence]]
+        | r[BaseModel]
     )
