@@ -18,7 +18,7 @@ This project portal is generated from `pyproject.toml`, package exports, and rea
 
 ## Public Surface Summary
 
-- Primary facades: `FlextTestsConstants`, `TestsFlextDocker`, `TestsFlextDomains`, `TestsFlextFiles`, `TestsFlextModels`, `TestsFlextProtocols` (+3 more)
+- Primary facades: `FlextTestsConstants`, `tk`, `TestsFlextDomains`, `TestsFlextFiles`, `TestsFlextModels`, `TestsFlextProtocols` (+3 more)
 - Alias namespaces: `c`, `d`, `e`, `h`, `m`, `p`, `r`, `s`, `t`, `u`, `x`
 - Public symbol exports: `13`
 - Exported module shortcuts: `conftest_plugin`, `constants`, `docker`, `domains`, `files`, `models` (+4 more)
