@@ -77,19 +77,31 @@ class FlextTestsBaseTypesMixin:
 
     TESTOBJECT_SEQUENCE_ADAPTER: TypeAdapter[
         Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
-    ]
+    ] = TypeAdapter(
+        Sequence[TestobjectSerializable],
+        config=ConfigDict(arbitrary_types_allowed=True),
+    )
     TESTOBJECT_MAPPING_ADAPTER: TypeAdapter[
         Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-    ]
+    ] = TypeAdapter(
+        Mapping[str, TestobjectSerializable],
+        config=ConfigDict(arbitrary_types_allowed=True),
+    )
     STR_MAPPING_SEQUENCE_ADAPTER: TypeAdapter[Sequence[t.StrMapping]] = TypeAdapter(
         Sequence[t.StrMapping]
     )
     TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER: TypeAdapter[
         Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-    ]
+    ] = TypeAdapter(
+        Mapping[str, TestobjectSerializable],
+        config=ConfigDict(arbitrary_types_allowed=True),
+    )
     TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER: TypeAdapter[
         Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
-    ]
+    ] = TypeAdapter(
+        Sequence[TestobjectSerializable],
+        config=ConfigDict(arbitrary_types_allowed=True),
+    )
     PRIMITIVES_MAPPING_ADAPTER: TypeAdapter[Mapping[str, t.Primitives]] = TypeAdapter(
         Mapping[str, t.Primitives]
     )
@@ -115,21 +127,3 @@ class FlextTestsBaseTypesMixin:
 
     type TestResultValue = FlextTestsBaseTypesMixin.Testobject
     "Type for test result values."
-
-
-FlextTestsBaseTypesMixin.TESTOBJECT_SEQUENCE_ADAPTER = TypeAdapter(
-    Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable],
-    config=ConfigDict(arbitrary_types_allowed=True),
-)
-FlextTestsBaseTypesMixin.TESTOBJECT_MAPPING_ADAPTER = TypeAdapter(
-    Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
-    config=ConfigDict(arbitrary_types_allowed=True),
-)
-FlextTestsBaseTypesMixin.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER = TypeAdapter(
-    Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
-    config=ConfigDict(arbitrary_types_allowed=True),
-)
-FlextTestsBaseTypesMixin.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER = TypeAdapter(
-    Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable],
-    config=ConfigDict(arbitrary_types_allowed=True),
-)

@@ -13,14 +13,11 @@ if _t.TYPE_CHECKING:
     import flext_tests._fixtures.settings as _flext_tests__fixtures_settings
 
     settings = _flext_tests__fixtures_settings
-    from flext_tests._fixtures.settings import T
 _LAZY_IMPORTS = {
-    "T": ("flext_tests._fixtures.settings", "T"),
     "settings": "flext_tests._fixtures.settings",
 }
 
 __all__ = [
-    "T",
     "settings",
 ]
 

@@ -12,6 +12,8 @@ And the following on-demand fixtures:
 - settings_factory: Factory for project-specific settings classes
 """
 
+from __future__ import annotations
+
 from flext_tests import (
     reset_settings,
     settings,

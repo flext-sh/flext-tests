@@ -1,11 +1,11 @@
 """Utilities for flext-tests tests.
 
-Provides FlextTestsTestUtilities, extending FlextTestsUtilities with
+Provides TestsFlextTestsUtilities, extending TestsFlextUtilities with
 flext-tests-specific utilities.
 
 Architecture:
-- FlextTestsUtilities (flext_tests) = Generic utilities for all FLEXT projects
-- FlextTestsTestUtilities (tests/) = flext-tests-specific utilities extending FlextTestsUtilities
+- TestsFlextUtilities (flext_tests) = Generic utilities for all FLEXT projects
+- TestsFlextTestsUtilities (tests/) = flext-tests-specific utilities extending TestsFlextUtilities
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -16,23 +16,23 @@ from __future__ import annotations
 from flext_tests import FlextTestsUtilities
 
 
-class FlextTestsTestUtilities(FlextTestsUtilities):
-    """Utilities for flext-tests tests - extends FlextTestsUtilities.
+class TestsFlextTestsUtilities(FlextTestsUtilities):
+    """Utilities for flext-tests tests - extends TestsFlextUtilities.
 
-    Architecture: Extends FlextTestsUtilities with flext-tests-specific utility
-    definitions. All generic utilities from FlextTestsUtilities are available
+    Architecture: Extends TestsFlextUtilities with flext-tests-specific utility
+    definitions. All generic utilities from TestsFlextUtilities are available
     through inheritance.
 
     Rules:
-    - NEVER redeclare utilities from FlextTestsUtilities
+    - NEVER redeclare utilities from TestsFlextUtilities
     - Only flext-tests-specific utilities allowed
-    - All generic utilities come from FlextTestsUtilities
+    - All generic utilities come from TestsFlextUtilities
     """
 
     class Tests(FlextTestsUtilities.Tests):
         """flext-tests-specific test utilities namespace."""
 
 
-u = FlextTestsTestUtilities
+u = TestsFlextTestsUtilities
 
-__all__ = ["FlextTestsTestUtilities", "u"]
+__all__ = ["TestsFlextTestsUtilities", "u"]

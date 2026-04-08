@@ -1,11 +1,11 @@
 """Constants for flext-tests tests.
 
-Provides FlextTestsTestConstants, extending FlextTestsConstants with
+Provides TestsFlextTestsConstants, extending FlextTestsConstants with
 flext-tests-specific constants. All generic test constants come from flext_tests.
 
 Architecture:
 - FlextTestsConstants (flext_tests) = Generic constants for all FLEXT projects
-- FlextTestsTestConstants (tests/) = flext-tests-specific constants extending FlextTestsConstants
+- TestsFlextTestsConstants (tests/) = flext-tests-specific constants extending FlextTestsConstants
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -16,7 +16,7 @@ from __future__ import annotations
 from flext_tests import FlextTestsConstants
 
 
-class FlextTestsTestConstants(FlextTestsConstants):
+class TestsFlextTestsConstants(FlextTestsConstants):
     """Test constants for flext-tests - extends FlextTestsConstants.
 
     Architecture: Extends FlextTestsConstants with flext-tests-specific constants.
@@ -32,6 +32,6 @@ class FlextTestsTestConstants(FlextTestsConstants):
         """flext-tests-specific test constants namespace."""
 
 
-c = FlextTestsTestConstants
+c = TestsFlextTestsConstants
 
-__all__ = ["FlextTestsTestConstants", "c"]
+__all__ = ["TestsFlextTestsConstants", "c"]
