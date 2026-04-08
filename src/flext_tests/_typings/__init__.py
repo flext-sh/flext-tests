@@ -8,22 +8,10 @@ from __future__ import annotations
 from flext_core.lazy import install_lazy_exports
 
 _LAZY_IMPORTS = {
-    "FlextTestsBaseTypesMixin": (
-        "flext_tests._typings.base",
-        "FlextTestsBaseTypesMixin",
-    ),
-    "FlextTestsFilesTypesMixin": (
-        "flext_tests._typings.files",
-        "FlextTestsFilesTypesMixin",
-    ),
-    "FlextTestsGuardsTypesMixin": (
-        "flext_tests._typings.guards",
-        "FlextTestsGuardsTypesMixin",
-    ),
-    "FlextTestsMatchersTypesMixin": (
-        "flext_tests._typings.matchers",
-        "FlextTestsMatchersTypesMixin",
-    ),
+    "FlextTestsBaseTypesMixin": ".base",
+    "FlextTestsFilesTypesMixin": ".files",
+    "FlextTestsGuardsTypesMixin": ".guards",
+    "FlextTestsMatchersTypesMixin": ".matchers",
 }
 
 

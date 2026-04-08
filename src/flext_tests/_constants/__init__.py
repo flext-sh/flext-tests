@@ -8,22 +8,10 @@ from __future__ import annotations
 from flext_core.lazy import install_lazy_exports
 
 _LAZY_IMPORTS = {
-    "FlextTestsDockerConstantsMixin": (
-        "flext_tests._constants.docker",
-        "FlextTestsDockerConstantsMixin",
-    ),
-    "FlextTestsFilesConstantsMixin": (
-        "flext_tests._constants.files",
-        "FlextTestsFilesConstantsMixin",
-    ),
-    "FlextTestsMatcherConstantsMixin": (
-        "flext_tests._constants.matcher",
-        "FlextTestsMatcherConstantsMixin",
-    ),
-    "FlextTestsValidatorConstantsMixin": (
-        "flext_tests._constants.validator",
-        "FlextTestsValidatorConstantsMixin",
-    ),
+    "FlextTestsDockerConstantsMixin": ".docker",
+    "FlextTestsFilesConstantsMixin": ".files",
+    "FlextTestsMatcherConstantsMixin": ".matcher",
+    "FlextTestsValidatorConstantsMixin": ".validator",
 }
 
 

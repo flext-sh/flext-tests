@@ -8,22 +8,13 @@ from __future__ import annotations
 from flext_core.lazy import install_lazy_exports
 
 _LAZY_IMPORTS = {
-    "FlextTestsValidatorModels": (
-        "flext_tests._validator.models",
-        "FlextTestsValidatorModels",
-    ),
-    "FlextValidatorBypass": ("flext_tests._validator.bypass", "FlextValidatorBypass"),
-    "FlextValidatorImports": (
-        "flext_tests._validator.imports",
-        "FlextValidatorImports",
-    ),
-    "FlextValidatorLayer": ("flext_tests._validator.layer", "FlextValidatorLayer"),
-    "FlextValidatorSettings": (
-        "flext_tests._validator.settings",
-        "FlextValidatorSettings",
-    ),
-    "FlextValidatorTests": ("flext_tests._validator.tests", "FlextValidatorTests"),
-    "FlextValidatorTypes": ("flext_tests._validator.types", "FlextValidatorTypes"),
+    "FlextTestsValidatorModels": ".models",
+    "FlextValidatorBypass": ".bypass",
+    "FlextValidatorImports": ".imports",
+    "FlextValidatorLayer": ".layer",
+    "FlextValidatorSettings": ".settings",
+    "FlextValidatorTests": ".tests",
+    "FlextValidatorTypes": ".types",
 }
 
 

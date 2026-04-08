@@ -8,30 +8,12 @@ from __future__ import annotations
 from flext_core.lazy import install_lazy_exports
 
 _LAZY_IMPORTS = {
-    "FlextTestsBaseModelsMixin": (
-        "flext_tests._models.base",
-        "FlextTestsBaseModelsMixin",
-    ),
-    "FlextTestsBatchModelsMixin": (
-        "flext_tests._models.batch",
-        "FlextTestsBatchModelsMixin",
-    ),
-    "FlextTestsDockerModelsMixin": (
-        "flext_tests._models.docker",
-        "FlextTestsDockerModelsMixin",
-    ),
-    "FlextTestsFilesystemModelsMixin": (
-        "flext_tests._models.filesystem",
-        "FlextTestsFilesystemModelsMixin",
-    ),
-    "FlextTestsMatchersModelsMixin": (
-        "flext_tests._models.matchers",
-        "FlextTestsMatchersModelsMixin",
-    ),
-    "FlextTestsValidatorModelsMixin": (
-        "flext_tests._models.validator",
-        "FlextTestsValidatorModelsMixin",
-    ),
+    "FlextTestsBaseModelsMixin": ".base",
+    "FlextTestsBatchModelsMixin": ".batch",
+    "FlextTestsDockerModelsMixin": ".docker",
+    "FlextTestsFilesystemModelsMixin": ".filesystem",
+    "FlextTestsMatchersModelsMixin": ".matchers",
+    "FlextTestsValidatorModelsMixin": ".validator",
 }
 
 
