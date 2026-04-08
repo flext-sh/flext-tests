@@ -32,12 +32,6 @@ _LAZY_IMPORTS = {
         "flext_tests._models.validator",
         "FlextTestsValidatorModelsMixin",
     ),
-    "base": "flext_tests._models.base",
-    "batch": "flext_tests._models.batch",
-    "docker": "flext_tests._models.docker",
-    "filesystem": "flext_tests._models.filesystem",
-    "matchers": "flext_tests._models.matchers",
-    "validator": "flext_tests._models.validator",
 }
 
 

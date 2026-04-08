@@ -12,7 +12,6 @@ _LAZY_IMPORTS = {
         "flext_tests._protocols.valuefactory",
         "FlextTestsValueFactoryProtocolsMixin",
     ),
-    "valuefactory": "flext_tests._protocols.valuefactory",
 }
 
 

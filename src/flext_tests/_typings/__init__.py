@@ -24,10 +24,6 @@ _LAZY_IMPORTS = {
         "flext_tests._typings.matchers",
         "FlextTestsMatchersTypesMixin",
     ),
-    "base": "flext_tests._typings.base",
-    "files": "flext_tests._typings.files",
-    "guards": "flext_tests._typings.guards",
-    "matchers": "flext_tests._typings.matchers",
 }
 
 

@@ -24,13 +24,6 @@ _LAZY_IMPORTS = {
     ),
     "FlextValidatorTests": ("flext_tests._validator.tests", "FlextValidatorTests"),
     "FlextValidatorTypes": ("flext_tests._validator.types", "FlextValidatorTypes"),
-    "bypass": "flext_tests._validator.bypass",
-    "imports": "flext_tests._validator.imports",
-    "layer": "flext_tests._validator.layer",
-    "models": "flext_tests._validator.models",
-    "settings": "flext_tests._validator.settings",
-    "tests": "flext_tests._validator.tests",
-    "types": "flext_tests._validator.types",
 }
 
 

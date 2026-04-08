@@ -24,10 +24,6 @@ _LAZY_IMPORTS = {
         "flext_tests._constants.validator",
         "FlextTestsValidatorConstantsMixin",
     ),
-    "docker": "flext_tests._constants.docker",
-    "files": "flext_tests._constants.files",
-    "matcher": "flext_tests._constants.matcher",
-    "validator": "flext_tests._constants.validator",
 }
 
 
