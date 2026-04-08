@@ -14,7 +14,7 @@ from collections.abc import Mapping, MutableSequence, Sequence
 from pathlib import Path
 
 from flext_core import r
-from flext_tests import c, m, t, u, vm
+from flext_tests import FlextTestsValidatorModels, c, m, t, u
 
 
 class FlextValidatorImports:
@@ -258,7 +258,7 @@ class FlextValidatorImports:
             r with ScanResult containing all violations found
 
         """
-        return vm.Tests.ScanCommon.run_scan(
+        return FlextTestsValidatorModels.Tests.ScanCommon.run_scan(
             files=files,
             approved_exceptions=approved_exceptions,
             validator_name=c.Tests.VALIDATOR_IMPORTS_KEY,

@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from flext_core import r
-from flext_tests import c, t, u, vm
+from flext_tests import FlextTestsValidatorModels, c, t, u
 
 if TYPE_CHECKING:
     from flext_tests import m
@@ -167,7 +167,7 @@ class FlextValidatorTypes:
             r with ScanResult containing all violations found
 
         """
-        return vm.Tests.ScanCommon.run_scan(
+        return FlextTestsValidatorModels.Tests.ScanCommon.run_scan(
             files=files,
             approved_exceptions=approved_exceptions,
             validator_name=c.Tests.VALIDATOR_TYPES_KEY,

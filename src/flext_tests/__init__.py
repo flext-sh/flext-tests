@@ -121,7 +121,6 @@ if _t.TYPE_CHECKING:
         layer,
         tests,
         types,
-        vm,
     )
 
     conftest_plugin = _flext_tests_conftest_plugin
@@ -350,7 +349,6 @@ __all__ = [
     "validation",
     "validator",
     "valuefactory",
-    "vm",
     "x",
 ]
 

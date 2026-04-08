@@ -91,7 +91,4 @@ class FlextTestsValidatorModels(m):
             ] = Field(default_factory=dict)
 
 
-# Short alias
-vm = FlextTestsValidatorModels
-
-__all__ = ["FlextTestsValidatorModels", "vm"]
+__all__ = ["FlextTestsValidatorModels"]

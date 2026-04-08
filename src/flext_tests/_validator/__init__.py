@@ -26,7 +26,7 @@ if _t.TYPE_CHECKING:
 
     models = _flext_tests__validator_models
     import flext_tests._validator.settings as _flext_tests__validator_settings
-    from flext_tests._validator.models import FlextTestsValidatorModels, vm
+    from flext_tests._validator.models import FlextTestsValidatorModels
 
     settings = _flext_tests__validator_settings
     import flext_tests._validator.tests as _flext_tests__validator_tests
@@ -62,7 +62,6 @@ _LAZY_IMPORTS = {
     "settings": "flext_tests._validator.settings",
     "tests": "flext_tests._validator.tests",
     "types": "flext_tests._validator.types",
-    "vm": ("flext_tests._validator.models", "vm"),
 }
 
 __all__ = [
@@ -80,7 +79,6 @@ __all__ = [
     "settings",
     "tests",
     "types",
-    "vm",
 ]
 
 
