@@ -9,7 +9,7 @@ from collections.abc import (
 )
 from pathlib import Path
 
-from flext_cli import u_cli
+from flext_cli import u
 from flext_tests import (
     c,
     t,
@@ -36,7 +36,7 @@ class FlextTestsFilesUtilitiesMixin:
 
         """
         _ = chunk_size
-        return u_cli.Cli.sha256_file(path)
+        return u.Cli.sha256_file(path)
 
     @staticmethod
     def detect_format(

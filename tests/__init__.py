@@ -10,31 +10,19 @@ import typing as _t
 from flext_core.lazy import install_lazy_exports
 
 if _t.TYPE_CHECKING:
-    import tests.conftest as _tests_conftest
-
-    conftest = _tests_conftest
-    import tests.constants as _tests_constants
-
-    constants = _tests_constants
-    import tests.models as _tests_models
+    from tests import (
+        conftest,
+        constants,
+        models,
+        protocols,
+        test_utils,
+        typings,
+        utilities,
+    )
     from tests.constants import TestsFlextTestsConstants, TestsFlextTestsConstants as c
-
-    models = _tests_models
-    import tests.protocols as _tests_protocols
     from tests.models import TestsFlextTestsModels, TestsFlextTestsModels as m
-
-    protocols = _tests_protocols
-    import tests.test_utils as _tests_test_utils
     from tests.protocols import TestsFlextTestsProtocols, TestsFlextTestsProtocols as p
-
-    test_utils = _tests_test_utils
-    import tests.typings as _tests_typings
-
-    typings = _tests_typings
-    import tests.utilities as _tests_utilities
     from tests.typings import TestsFlextTestsTypes, TestsFlextTestsTypes as t
-
-    utilities = _tests_utilities
     from tests.utilities import TestsFlextTestsUtilities, TestsFlextTestsUtilities as u
 
     from flext_core.decorators import FlextDecorators as d
