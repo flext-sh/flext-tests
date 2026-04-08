@@ -3,34 +3,38 @@
 
 from __future__ import annotations
 
-from flext_core.lazy import install_lazy_exports
+from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
-_LAZY_IMPORTS = {
-    "FlextTestsAssertionsUtilitiesMixin": ".assertions",
-    "FlextTestsBadObjectsUtilitiesMixin": ".badobjects",
-    "FlextTestsConfigHelpersUtilitiesMixin": ".config",
-    "FlextTestsConstantsHelpersUtilitiesMixin": ".constants",
-    "FlextTestsContainerHelpersUtilitiesMixin": ".container",
-    "FlextTestsContextHelpersUtilitiesMixin": ".context",
-    "FlextTestsDeepMatchUtilitiesMixin": ".deepmatch",
-    "FlextTestsDomainHelpersUtilitiesMixin": ".domain",
-    "FlextTestsExceptionHelpersUtilitiesMixin": ".exception",
-    "FlextTestsFactoryUtilitiesMixin": ".factory",
-    "FlextTestsFilesUtilitiesMixin": ".files",
-    "FlextTestsGenericHelpersUtilitiesMixin": ".generic",
-    "FlextTestsHandlerHelpersUtilitiesMixin": ".handler",
-    "FlextTestsLengthUtilitiesMixin": ".length",
-    "FlextTestsMatchersUtilities": ".matchers",
-    "FlextTestsParserHelpersUtilitiesMixin": ".parser",
-    "FlextTestsPayloadUtilities": ".payload",
-    "FlextTestsRegistryHelpersUtilitiesMixin": ".registry",
-    "FlextTestsResultUtilitiesMixin": ".result",
-    "FlextTestsTestCaseHelpersUtilitiesMixin": ".testcase",
-    "FlextTestsTestContextUtilitiesMixin": ".testcontext",
-    "FlextTestsValidationUtilitiesMixin": ".validation",
-    "FlextTestsValidatorUtilitiesMixin": ".validator",
-    "tm": ".matchers",
-}
+_LAZY_IMPORTS = build_lazy_import_map(
+    {
+        ".assertions": ("FlextTestsAssertionsUtilitiesMixin",),
+        ".badobjects": ("FlextTestsBadObjectsUtilitiesMixin",),
+        ".config": ("FlextTestsConfigHelpersUtilitiesMixin",),
+        ".constants": ("FlextTestsConstantsHelpersUtilitiesMixin",),
+        ".container": ("FlextTestsContainerHelpersUtilitiesMixin",),
+        ".context": ("FlextTestsContextHelpersUtilitiesMixin",),
+        ".deepmatch": ("FlextTestsDeepMatchUtilitiesMixin",),
+        ".domain": ("FlextTestsDomainHelpersUtilitiesMixin",),
+        ".exception": ("FlextTestsExceptionHelpersUtilitiesMixin",),
+        ".factory": ("FlextTestsFactoryUtilitiesMixin",),
+        ".files": ("FlextTestsFilesUtilitiesMixin",),
+        ".generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
+        ".handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
+        ".length": ("FlextTestsLengthUtilitiesMixin",),
+        ".matchers": (
+            "FlextTestsMatchersUtilities",
+            "tm",
+        ),
+        ".parser": ("FlextTestsParserHelpersUtilitiesMixin",),
+        ".payload": ("FlextTestsPayloadUtilities",),
+        ".registry": ("FlextTestsRegistryHelpersUtilitiesMixin",),
+        ".result": ("FlextTestsResultUtilitiesMixin",),
+        ".testcase": ("FlextTestsTestCaseHelpersUtilitiesMixin",),
+        ".testcontext": ("FlextTestsTestContextUtilitiesMixin",),
+        ".validation": ("FlextTestsValidationUtilitiesMixin",),
+        ".validator": ("FlextTestsValidatorUtilitiesMixin",),
+    },
+)
 
 
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

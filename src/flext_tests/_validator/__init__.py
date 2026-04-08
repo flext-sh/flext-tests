@@ -3,17 +3,19 @@
 
 from __future__ import annotations
 
-from flext_core.lazy import install_lazy_exports
+from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
-_LAZY_IMPORTS = {
-    "FlextTestsValidatorModels": ".models",
-    "FlextValidatorBypass": ".bypass",
-    "FlextValidatorImports": ".imports",
-    "FlextValidatorLayer": ".layer",
-    "FlextValidatorSettings": ".settings",
-    "FlextValidatorTests": ".tests",
-    "FlextValidatorTypes": ".types",
-}
+_LAZY_IMPORTS = build_lazy_import_map(
+    {
+        ".bypass": ("FlextValidatorBypass",),
+        ".imports": ("FlextValidatorImports",),
+        ".layer": ("FlextValidatorLayer",),
+        ".models": ("FlextTestsValidatorModels",),
+        ".settings": ("FlextValidatorSettings",),
+        ".tests": ("FlextValidatorTests",),
+        ".types": ("FlextValidatorTypes",),
+    },
+)
 
 
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

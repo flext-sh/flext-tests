@@ -5,7 +5,11 @@ from __future__ import annotations
 
 import typing as _t
 
-from flext_core.lazy import install_lazy_exports, merge_lazy_imports
+from flext_core.lazy import (
+    build_lazy_import_map,
+    install_lazy_exports,
+    merge_lazy_imports,
+)
 
 if _t.TYPE_CHECKING:
     from flext_core.decorators import FlextDecorators as d
@@ -89,32 +93,44 @@ _LAZY_IMPORTS = merge_lazy_imports(
         "._utilities",
         "._validator",
     ),
-    {
-        "FlextTestsConstants": ".constants",
-        "FlextTestsDocker": ".docker",
-        "FlextTestsDomains": ".domains",
-        "FlextTestsFiles": ".files",
-        "FlextTestsModels": ".models",
-        "FlextTestsProtocols": ".protocols",
-        "FlextTestsTypes": ".typings",
-        "FlextTestsUtilities": ".utilities",
-        "FlextTestsValidator": ".validator",
-        "c": (".constants", "FlextTestsConstants"),
-        "d": ("flext_core.decorators", "FlextDecorators"),
-        "e": ("flext_core.exceptions", "FlextExceptions"),
-        "h": ("flext_core.handlers", "FlextHandlers"),
-        "m": (".models", "FlextTestsModels"),
-        "p": (".protocols", "FlextTestsProtocols"),
-        "r": ("flext_core.result", "FlextResult"),
-        "s": ("flext_core.service", "FlextService"),
-        "t": (".typings", "FlextTestsTypes"),
-        "td": ".domains",
-        "tf": ".files",
-        "tk": ".docker",
-        "tv": ".validator",
-        "u": (".utilities", "FlextTestsUtilities"),
-        "x": ("flext_core.mixins", "FlextMixins"),
-    },
+    build_lazy_import_map(
+        {
+            ".constants": ("FlextTestsConstants",),
+            ".docker": (
+                "FlextTestsDocker",
+                "tk",
+            ),
+            ".domains": (
+                "FlextTestsDomains",
+                "td",
+            ),
+            ".files": (
+                "FlextTestsFiles",
+                "tf",
+            ),
+            ".models": ("FlextTestsModels",),
+            ".protocols": ("FlextTestsProtocols",),
+            ".typings": ("FlextTestsTypes",),
+            ".utilities": ("FlextTestsUtilities",),
+            ".validator": (
+                "FlextTestsValidator",
+                "tv",
+            ),
+        },
+        alias_groups={
+            ".constants": (("c", "FlextTestsConstants"),),
+            ".models": (("m", "FlextTestsModels"),),
+            ".protocols": (("p", "FlextTestsProtocols"),),
+            ".typings": (("t", "FlextTestsTypes"),),
+            ".utilities": (("u", "FlextTestsUtilities"),),
+            "flext_core.decorators": (("d", "FlextDecorators"),),
+            "flext_core.exceptions": (("e", "FlextExceptions"),),
+            "flext_core.handlers": (("h", "FlextHandlers"),),
+            "flext_core.mixins": (("x", "FlextMixins"),),
+            "flext_core.result": (("r", "FlextResult"),),
+            "flext_core.service": (("s", "FlextService"),),
+        },
+    ),
     exclude_names=(
         "cleanup_submodule_namespace",
         "install_lazy_exports",
