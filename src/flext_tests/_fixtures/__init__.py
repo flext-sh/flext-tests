@@ -1,6 +1,4 @@
-# AUTO-GENERATED FILE — DO NOT EDIT MANUALLY.
-# Regenerate with: make gen
-#
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Fixtures package."""
 
 from __future__ import annotations
@@ -8,7 +6,9 @@ from __future__ import annotations
 from flext_core.lazy import install_lazy_exports
 
 _LAZY_IMPORTS = {
-    "settings": "flext_tests._fixtures.settings",
+    "reset_settings": ".settings",
+    "settings": ".settings",
+    "settings_factory": ".settings",
 }
 
 

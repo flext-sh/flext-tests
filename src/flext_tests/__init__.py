@@ -18,6 +18,11 @@ if _t.TYPE_CHECKING:
     from flext_tests._constants.files import FlextTestsFilesConstantsMixin
     from flext_tests._constants.matcher import FlextTestsMatcherConstantsMixin
     from flext_tests._constants.validator import FlextTestsValidatorConstantsMixin
+    from flext_tests._fixtures.settings import (
+        reset_settings,
+        settings,
+        settings_factory,
+    )
     from flext_tests._models.base import FlextTestsBaseModelsMixin
     from flext_tests._models.batch import FlextTestsBatchModelsMixin
     from flext_tests._models.docker import FlextTestsDockerModelsMixin
@@ -65,7 +70,6 @@ if _t.TYPE_CHECKING:
     from flext_tests._validator.settings import FlextValidatorSettings
     from flext_tests._validator.tests import FlextValidatorTests
     from flext_tests._validator.types import FlextValidatorTypes
-    from flext_tests.conftest_plugin import reset_settings, settings, settings_factory
     from flext_tests.constants import FlextTestsConstants, FlextTestsConstants as c
     from flext_tests.docker import FlextTestsDocker, tk
     from flext_tests.domains import FlextTestsDomains, td
@@ -78,6 +82,7 @@ if _t.TYPE_CHECKING:
 _LAZY_IMPORTS = merge_lazy_imports(
     (
         "._constants",
+        "._fixtures",
         "._models",
         "._protocols",
         "._typings",
@@ -101,10 +106,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
         "m": (".models", "FlextTestsModels"),
         "p": (".protocols", "FlextTestsProtocols"),
         "r": ("flext_core.result", "FlextResult"),
-        "reset_settings": ".conftest_plugin",
         "s": ("flext_core.service", "FlextService"),
-        "settings": ".conftest_plugin",
-        "settings_factory": ".conftest_plugin",
         "t": (".typings", "FlextTestsTypes"),
         "td": ".domains",
         "tf": ".files",
