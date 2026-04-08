@@ -9,7 +9,7 @@ from collections.abc import (
 )
 from pathlib import Path
 
-from flext_cli import u as u_cli
+from flext_cli import u_cli
 from flext_tests import (
     c,
     t,

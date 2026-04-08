@@ -1,6 +1,6 @@
 """Protocols for FLEXT tests.
 
-Provides FlextTestsProtocols, extending FlextCliProtocols and FlextCoreProtocols
+Provides FlextTestsProtocols, extending p and FlextCoreProtocols
 with test-specific interfaces.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
@@ -9,12 +9,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_cli import FlextCliProtocols
+from flext_cli import p
 from flext_tests import FlextTestsValueFactoryProtocolsMixin
 
 
-class FlextTestsProtocols(FlextCliProtocols):
-    """Protocols for FLEXT tests - extends FlextCliProtocols."""
+class FlextTestsProtocols(p):
+    """Protocols for FLEXT tests - extends p."""
 
     class Tests(FlextTestsValueFactoryProtocolsMixin):
         """Test-specific protocols namespace.

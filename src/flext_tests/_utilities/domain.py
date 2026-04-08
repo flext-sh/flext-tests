@@ -13,7 +13,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, RootModel
 
-from flext_cli import u as u_cli
+from flext_cli import u_cli
 from flext_tests import (
     FlextTestsPayloadUtilities,
     FlextTestsProtocols,

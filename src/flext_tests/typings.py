@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_cli import FlextCliTypes
+from flext_cli import t
 from flext_tests import (
     FlextTestsBaseTypesMixin,
     FlextTestsFilesTypesMixin,
@@ -18,7 +18,7 @@ from flext_tests import (
 )
 
 
-class FlextTestsTypes(FlextCliTypes):
+class FlextTestsTypes(t):
     """Type system foundation for FLEXT tests - extends t.
 
     Architecture: Extends t with test-specific type aliases and definitions.
@@ -33,7 +33,7 @@ class FlextTestsTypes(FlextCliTypes):
     ):
         """Test-specific type definitions namespace.
 
-        All test-specific types organized under FlextCliTypes.Tests.* pattern.
+        All test-specific types organized under t.Tests.* pattern.
         """
 
 
