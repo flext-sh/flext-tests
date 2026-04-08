@@ -10,10 +10,12 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_cli import c as _cli_c
-from flext_tests._constants.docker import FlextTestsDockerConstantsMixin
-from flext_tests._constants.files import FlextTestsFilesConstantsMixin
-from flext_tests._constants.matcher import FlextTestsMatcherConstantsMixin
-from flext_tests._constants.validator import FlextTestsValidatorConstantsMixin
+from flext_tests import (
+    FlextTestsDockerConstantsMixin,
+    FlextTestsFilesConstantsMixin,
+    FlextTestsMatcherConstantsMixin,
+    FlextTestsValidatorConstantsMixin,
+)
 
 
 class FlextTestsConstants(_cli_c):

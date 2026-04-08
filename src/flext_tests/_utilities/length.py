@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from flext_tests import (
+    FlextTestsPayloadUtilities,
     t,
 )
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsLengthUtilitiesMixin:

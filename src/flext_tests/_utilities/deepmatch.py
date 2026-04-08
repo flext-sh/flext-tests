@@ -9,10 +9,10 @@ from collections.abc import (
 from pydantic import BaseModel
 
 from flext_tests import (
+    FlextTestsPayloadUtilities,
     m,
     t,
 )
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsDeepMatchUtilitiesMixin:

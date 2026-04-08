@@ -6,10 +6,10 @@ import re
 from re import Pattern
 
 from flext_tests import (
+    FlextTestsPayloadUtilities,
     c,
     t,
 )
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsConstantsHelpersUtilitiesMixin:

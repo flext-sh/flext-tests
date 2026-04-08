@@ -14,8 +14,7 @@ from pathlib import Path
 
 import pytest
 from pydantic import BaseModel
-from tests import c, m, r, t, u
-from tests.test_utils import assertion_helpers
+from tests import assertion_helpers, c, m, r, t, u
 
 from flext_tests import tf, tm
 

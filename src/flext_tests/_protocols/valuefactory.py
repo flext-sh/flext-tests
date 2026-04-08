@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests import FlextTestsBaseTypesMixin
 
 
 class FlextTestsValueFactoryProtocolsMixin:

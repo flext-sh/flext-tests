@@ -21,8 +21,7 @@ from pathlib import Path
 from pydantic import BaseModel, RootModel, ValidationError
 
 from flext_core import u
-from flext_tests.models import m
-from flext_tests.typings import t
+from flext_tests import m, t
 
 
 class FlextTestsPayloadUtilities:

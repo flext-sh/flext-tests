@@ -71,12 +71,12 @@ from pydantic import BaseModel, RootModel, ValidationError
 
 from flext_core import u
 from flext_tests import (
+    FlextTestsPayloadUtilities,
     c,
     m,
     p,
     t,
 )
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsMatchersUtilities:

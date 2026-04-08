@@ -11,7 +11,7 @@ from collections.abc import Mapping, Sequence
 from pydantic import BaseModel
 
 from flext_core import FlextResult, FlextTypes
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests import FlextTestsBaseTypesMixin
 
 
 class FlextTestsFilesTypesMixin:

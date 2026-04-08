@@ -15,11 +15,11 @@ from pydantic import BaseModel, RootModel
 
 from flext_cli import u as u_cli
 from flext_tests import (
+    FlextTestsPayloadUtilities,
     FlextTestsProtocols,
     r,
     t,
 )
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsDomainHelpersUtilitiesMixin:

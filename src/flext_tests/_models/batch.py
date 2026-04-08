@@ -18,8 +18,7 @@ from pydantic import (
 )
 
 from flext_core import FlextModels, r
-from flext_tests.constants import c
-from flext_tests.typings import t
+from flext_tests import c, t
 
 
 class FlextTestsBatchModelsMixin:

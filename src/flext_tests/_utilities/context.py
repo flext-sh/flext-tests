@@ -6,10 +6,10 @@ from flext_core import (
     FlextContext,
 )
 from flext_tests import (
+    FlextTestsPayloadUtilities,
     p,
     t,
 )
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsContextHelpersUtilitiesMixin:

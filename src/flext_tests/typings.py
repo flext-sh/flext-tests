@@ -10,10 +10,12 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_cli import FlextCliTypes
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
-from flext_tests._typings.files import FlextTestsFilesTypesMixin
-from flext_tests._typings.guards import FlextTestsGuardsTypesMixin
-from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
+from flext_tests import (
+    FlextTestsBaseTypesMixin,
+    FlextTestsFilesTypesMixin,
+    FlextTestsGuardsTypesMixin,
+    FlextTestsMatchersTypesMixin,
+)
 
 
 class FlextTestsTypes(FlextCliTypes):

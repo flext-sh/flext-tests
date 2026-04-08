@@ -10,7 +10,7 @@ from collections.abc import Callable, Mapping, Sequence
 from typing import TypeAliasType
 
 from flext_core import FlextTypes
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests import FlextTestsBaseTypesMixin
 
 
 class FlextTestsMatchersTypesMixin:
