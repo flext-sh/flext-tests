@@ -10,15 +10,6 @@ import typing as _t
 from flext_core.lazy import install_lazy_exports
 
 if _t.TYPE_CHECKING:
-    from tests import (
-        conftest,
-        constants,
-        models,
-        protocols,
-        test_utils,
-        typings,
-        utilities,
-    )
     from tests.constants import TestsFlextTestsConstants, TestsFlextTestsConstants as c
     from tests.models import TestsFlextTestsModels, TestsFlextTestsModels as m
     from tests.protocols import TestsFlextTestsProtocols, TestsFlextTestsProtocols as p
