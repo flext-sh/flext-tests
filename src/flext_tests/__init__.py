@@ -19,12 +19,11 @@ if _t.TYPE_CHECKING:
         FlextTestsFilesConstantsMixin,
         FlextTestsMatcherConstantsMixin,
         FlextTestsValidatorConstantsMixin,
-        matcher,
     )
 
     _fixtures = _flext_tests__fixtures
     import flext_tests._models as _flext_tests__models
-    from flext_tests._fixtures import T, reset_settings, settings, settings_factory
+    from flext_tests._fixtures import T
 
     _models = _flext_tests__models
     import flext_tests._protocols as _flext_tests__protocols
@@ -35,18 +34,11 @@ if _t.TYPE_CHECKING:
         FlextTestsFilesystemModelsMixin,
         FlextTestsMatchersModelsMixin,
         FlextTestsValidatorModelsMixin,
-        base,
-        batch,
-        filesystem,
-        matchers,
     )
 
     _protocols = _flext_tests__protocols
     import flext_tests._typings as _flext_tests__typings
-    from flext_tests._protocols import (
-        FlextTestsValueFactoryProtocolsMixin,
-        valuefactory,
-    )
+    from flext_tests._protocols import FlextTestsValueFactoryProtocolsMixin
 
     _typings = _flext_tests__typings
     import flext_tests._utilities as _flext_tests__utilities
@@ -55,7 +47,6 @@ if _t.TYPE_CHECKING:
         FlextTestsFilesTypesMixin,
         FlextTestsGuardsTypesMixin,
         FlextTestsMatchersTypesMixin,
-        guards,
     )
 
     _utilities = _flext_tests__utilities
@@ -84,26 +75,7 @@ if _t.TYPE_CHECKING:
         FlextTestsTestContextUtilitiesMixin,
         FlextTestsValidationUtilitiesMixin,
         FlextTestsValidatorUtilitiesMixin,
-        assertions,
-        badobjects,
-        config,
-        container,
-        context,
-        deepmatch,
-        domain,
-        exception,
-        factory,
-        generic,
-        handler,
-        length,
-        parser,
-        payload,
-        registry,
-        result,
-        testcase,
-        testcontext,
         tm,
-        validation,
     )
 
     _validator = _flext_tests__validator
@@ -116,15 +88,11 @@ if _t.TYPE_CHECKING:
         FlextValidatorSettings,
         FlextValidatorTests,
         FlextValidatorTypes,
-        bypass,
-        imports,
-        layer,
-        tests,
-        types,
     )
 
     conftest_plugin = _flext_tests_conftest_plugin
     import flext_tests.constants as _flext_tests_constants
+    from flext_tests.conftest_plugin import reset_settings, settings, settings_factory
 
     constants = _flext_tests_constants
     import flext_tests.docker as _flext_tests_docker
@@ -207,7 +175,10 @@ _LAZY_IMPORTS = merge_lazy_imports(
         "p": ("flext_tests.protocols", "FlextTestsProtocols"),
         "protocols": "flext_tests.protocols",
         "r": ("flext_core.result", "FlextResult"),
+        "reset_settings": ("flext_tests.conftest_plugin", "reset_settings"),
         "s": ("flext_core.service", "FlextService"),
+        "settings": ("flext_tests.conftest_plugin", "settings"),
+        "settings_factory": ("flext_tests.conftest_plugin", "settings_factory"),
         "t": ("flext_tests.typings", "FlextTestsTypes"),
         "td": ("flext_tests.domains", "td"),
         "tf": ("flext_tests.files", "tf"),
@@ -290,65 +261,34 @@ __all__ = [
     "_typings",
     "_utilities",
     "_validator",
-    "assertions",
-    "badobjects",
-    "base",
-    "batch",
-    "bypass",
     "c",
-    "config",
     "conftest_plugin",
     "constants",
-    "container",
-    "context",
     "d",
-    "deepmatch",
     "docker",
-    "domain",
     "domains",
     "e",
-    "exception",
-    "factory",
     "files",
-    "filesystem",
-    "generic",
-    "guards",
     "h",
-    "handler",
-    "imports",
-    "layer",
-    "length",
     "m",
-    "matcher",
-    "matchers",
     "models",
     "p",
-    "parser",
-    "payload",
     "protocols",
     "r",
-    "registry",
     "reset_settings",
-    "result",
     "s",
     "settings",
     "settings_factory",
     "t",
     "td",
-    "testcase",
-    "testcontext",
-    "tests",
     "tf",
     "tk",
     "tm",
     "tv",
-    "types",
     "typings",
     "u",
     "utilities",
-    "validation",
     "validator",
-    "valuefactory",
     "x",
 ]
 
