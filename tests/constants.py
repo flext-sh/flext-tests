@@ -29,7 +29,10 @@ class TestsFlextTestsConstants(FlextTestsConstants):
     """
 
     class Tests(FlextTestsConstants.Tests):
-        """flext-tests-specific test constants namespace."""
+        """flext-tests test constants namespace."""
+
+        class Tests:
+            """flext-tests testing namespace."""
 
 
 c = TestsFlextTestsConstants

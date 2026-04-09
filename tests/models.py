@@ -24,7 +24,10 @@ class TestsFlextTestsModels(FlextTestsModels):
     """
 
     class Tests(FlextTestsModels.Tests):
-        """flext-tests-specific test models namespace."""
+        """flext-tests test models namespace."""
+
+        class Tests:
+            """flext-tests testing namespace."""
 
 
 m = TestsFlextTestsModels

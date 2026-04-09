@@ -30,7 +30,10 @@ class TestsFlextTestsProtocols(FlextTestsProtocols):
     """
 
     class Tests(FlextTestsProtocols.Tests):
-        """flext-tests-specific protocol definitions namespace."""
+        """flext-tests test protocols namespace."""
+
+        class Tests:
+            """flext-tests testing namespace."""
 
 
 p = TestsFlextTestsProtocols

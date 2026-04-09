@@ -8,18 +8,17 @@ import typing as _t
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if _t.TYPE_CHECKING:
-    from tests.constants import TestsFlextTestsConstants, TestsFlextTestsConstants as c
-    from tests.models import TestsFlextTestsModels, TestsFlextTestsModels as m
-    from tests.protocols import TestsFlextTestsProtocols, TestsFlextTestsProtocols as p
-    from tests.typings import TestsFlextTestsTypes, TestsFlextTestsTypes as t
-    from tests.utilities import TestsFlextTestsUtilities, TestsFlextTestsUtilities as u
-
     from flext_core.decorators import d
     from flext_core.exceptions import e
     from flext_core.handlers import h
     from flext_core.mixins import x
     from flext_core.result import r
     from flext_core.service import s
+    from tests.constants import TestsFlextTestsConstants, TestsFlextTestsConstants as c
+    from tests.models import TestsFlextTestsModels, TestsFlextTestsModels as m
+    from tests.protocols import TestsFlextTestsProtocols, TestsFlextTestsProtocols as p
+    from tests.typings import TestsFlextTestsTypes, TestsFlextTestsTypes as t
+    from tests.utilities import TestsFlextTestsUtilities, TestsFlextTestsUtilities as u
 _LAZY_IMPORTS = build_lazy_import_map(
     {
         ".constants": ("TestsFlextTestsConstants",),
