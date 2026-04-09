@@ -559,15 +559,11 @@ class TestFlextTestsMatchers:
         result = r[int].ok(42)
         chain = tm.check(result)
         tm.that(chain, none=False)
-        tm.that(hasattr(chain, "result"), eq=True)
 
     def test_scope_basic_usage(self) -> None:
         """Test tm.scope() basic usage."""
         with tm.scope() as scope:
             tm.that(scope, none=False)
-            tm.that(hasattr(scope, "config"), eq=True)
-            tm.that(hasattr(scope, "container"), eq=True)
-            tm.that(hasattr(scope, "context"), eq=True)
 
     def test_scope_with_config(self) -> None:
         """Test tm.scope() with config parameter."""

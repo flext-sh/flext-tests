@@ -1029,11 +1029,6 @@ class TestBatchOperations:
         result = manager.batch_files({"file.txt": "content"}, directory=tmp_path)
         _ = u.Tests.assert_success(result)
         batch_result = result.value
-        tm.that(hasattr(batch_result, "succeeded"), eq=True)
-        tm.that(hasattr(batch_result, "failed"), eq=True)
-        tm.that(hasattr(batch_result, "total"), eq=True)
-        tm.that(hasattr(batch_result, "success_count"), eq=True)
-        tm.that(hasattr(batch_result, "failure_count"), eq=True)
         tm.that(batch_result.succeeded, is_=int)
         tm.that(batch_result.failed, is_=int)
         tm.that(batch_result.total, is_=int)
