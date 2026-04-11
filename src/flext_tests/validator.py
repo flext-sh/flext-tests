@@ -7,7 +7,7 @@ from flext_tests import tv, t
 
     # Validate imports
     result = tv.imports(Path("src"))
-    assert result.is_success and result.value.passed
+    assert result.success and result.value.passed
 
     # Validate types
     result = tv.types(Path("src"))

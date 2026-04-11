@@ -92,7 +92,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
 
         Returns:
             r[TEntity]: Result containing created entity or error
-            List of tuples (result, is_success, value, error)
+            List of tuples (result, success, value, error)
 
         """
         cases: MutableSequence[

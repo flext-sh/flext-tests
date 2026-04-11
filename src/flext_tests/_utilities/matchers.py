@@ -1016,7 +1016,7 @@ class FlextTestsMatchersUtilities:
                         original_cwd = Path.cwd()
                         cwd_path = (
                             Path(params.cwd)
-                            if u.is_type(params.cwd, "str")
+                            if u.matches_type(params.cwd, "str")
                             else params.cwd
                         )
                         os.chdir(cwd_path)

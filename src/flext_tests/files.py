@@ -220,7 +220,6 @@ class FlextTestsFiles(s):
             **data: Additional data passed to parent service.
 
         """
-        super().__init__()
         self._base_dir = base_dir
         self._created_files = list[Path]()
         self._created_dirs = list[Path]()
@@ -1015,19 +1014,19 @@ class FlextTestsFiles(s):
 
         Examples:
             result = tf().info(path)
-            if result.is_success:
+            if result.success:
                 info = result.value
                 logger.info(f"Size: {info.size_human}")
                 logger.info(f"Format: {info.fmt}")
 
             # With content parsing
             result = tf().info(path, parse_content=True)
-            if result.is_success and result.value.content_meta:
+            if result.success and result.value.content_meta:
                 logger.info(f"Keys: {result.value.content_meta.key_count}")
 
             # With model validation
             result = tf().info(path, validate_model=UserModel)
-            if result.is_success and result.value.content_meta:
+            if result.success and result.value.content_meta:
                 logger.info(f"Valid: {result.value.content_meta.model_valid}")
 
         """
@@ -1167,7 +1166,7 @@ class FlextTestsFiles(s):
         Examples:
             # Read text
             result = tf().read(path)
-            if result.is_success:
+            if result.success:
                 text = result.value
 
             # Read JSON
@@ -1443,7 +1442,7 @@ class FlextTestsFiles(s):
     ) -> t.Tests.FileContentPlain:
         """Extract actual content from r or return as-is.
 
-        Uses u.is_type(content, "result") for type checking and u.val() for extraction.
+        Uses u.matches_type(content, "result") for type checking and u.val() for extraction.
 
         Args:
             content: Content that may be wrapped in r
@@ -1459,7 +1458,7 @@ class FlextTestsFiles(s):
         """Extract actual content from r or return as-is.
 
         Uses isinstance(content, bytes) first (bytes not in t.GuardInput),
-        then u.is_result_like() for proper FLEXT result narrowing.
+        then u.result_like() for proper FLEXT result narrowing.
 
         Args:
             content: Plain or result-wrapped file content
