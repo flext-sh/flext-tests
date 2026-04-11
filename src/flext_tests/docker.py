@@ -31,11 +31,10 @@ from pydantic import ValidationError
 from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
-from flext_core import FlextLogger, r
-from flext_tests import c, m, p, t
+from flext_tests import c, m, p, r, t, u
 
 docker: WhalesDockerClient = WhalesDockerClient(client_type="docker")
-logger: p.Logger = FlextLogger(__name__)
+logger: p.Logger = u.fetch_logger(__name__)
 
 
 class FlextTestsDocker:
@@ -102,7 +101,7 @@ class FlextTestsDocker:
         self._client: DockerSDKClient | FlextTestsDocker._OfflineDockerClient | None = (
             None
         )
-        self.logger: p.Logger = FlextLogger(__name__)
+        self.logger: p.Logger = u.fetch_logger(__name__)
         self.workspace_root: Path = workspace_root or Path.cwd()
         self.worker_id: str = worker_id or "master"
         self._dirty_containers: set[str] = set()

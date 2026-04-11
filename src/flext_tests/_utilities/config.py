@@ -53,7 +53,7 @@ class FlextTestsConfigHelpersUtilitiesMixin:
 
         """
         scalar_overrides: t.ScalarMapping = dict(kwargs.items())
-        return FlextSettings.get_global(overrides=scalar_overrides)
+        return FlextSettings.fetch_global(overrides=scalar_overrides)
 
     @staticmethod
     @contextmanager

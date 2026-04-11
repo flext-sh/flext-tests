@@ -12,7 +12,8 @@ from flext_core.lazy import (
 )
 
 if _t.TYPE_CHECKING:
-    from flext_cli import d, e, h, r, s, x
+    from flext_cli import d, e, h, r, x
+    from flext_core import s
     from flext_tests._constants.docker import FlextTestsDockerConstantsMixin
     from flext_tests._constants.files import FlextTestsFilesConstantsMixin
     from flext_tests._constants.matcher import FlextTestsMatcherConstantsMixin
@@ -125,9 +126,9 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "e",
                 "h",
                 "r",
-                "s",
                 "x",
             ),
+            "flext_core": ("s",),
         },
     ),
     exclude_names=(

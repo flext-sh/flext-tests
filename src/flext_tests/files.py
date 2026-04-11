@@ -853,7 +853,7 @@ class FlextTestsFiles(s):
             path = tf().create(user_model, "user.json")
 
             # r with auto-extraction
-            result = service.get_config()  # r[dict]
+            result = service.fetch_config()  # r[dict]
             path = tf().create(result, "config.json")
 
             # CSV file (auto-detected from Sequence[list])
