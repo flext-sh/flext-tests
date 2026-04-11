@@ -34,7 +34,7 @@ class FlextTestsFilesystemModelsMixin:
         is_empty: bool = False
         first_line: str = ""
         fmt: str = "unknown"
-        is_valid: bool = True
+        valid: bool = True
         created: datetime.datetime | None = None
         modified: datetime.datetime | None = None
         permissions: int = 0

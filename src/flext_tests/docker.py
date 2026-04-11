@@ -152,7 +152,7 @@ class FlextTestsDocker:
             self.logger.info("Recreating dirty container", container=container_name)
             _ = self.compose_down(compose_file)
             result = self.compose_up(compose_file, service, force_recreate=True)
-            if result.is_success:
+            if result.success:
                 _ = self.mark_container_clean(container_name)
                 cleaned.append(container_name)
         return r[t.StrSequence].ok(cleaned)
@@ -328,7 +328,7 @@ class FlextTestsDocker:
         """Start a Docker Compose stack."""
         _ = network_name
         result = self.compose_up(compose_file)
-        if result.is_failure:
+        if result.failure:
             return r[str].fail(f"Stack start failed: {result.error}")
         return r[str].ok("Stack started successfully")
 

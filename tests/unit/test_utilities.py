@@ -125,19 +125,19 @@ class TestFlextTestsUtilitiesFactory:
     def test_create_result_success(self) -> None:
         """Test create_result with value."""
         result = u.Tests.create_result("test_value")
-        tm.that(result.is_success, eq=True)
+        tm.that(result.success, eq=True)
         tm.that(result.value, eq="test_value")
 
     def test_create_result_failure(self) -> None:
         """Test create_result with error."""
         result: r[str] = u.Tests.create_result(None, error="test error")
-        tm.that(result.is_failure, eq=True)
+        tm.that(result.failure, eq=True)
         tm.that(result.error, eq="test error")
 
     def test_create_result_no_args(self) -> None:
         """Test create_result with no arguments returns failure."""
         result: r[str] = u.Tests.create_result(None)
-        tm.that(result.is_failure, eq=True)
+        tm.that(result.failure, eq=True)
         tm.that(result.error, eq="No value or error provided")
 
     def test_create_test_data(self) -> None:

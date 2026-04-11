@@ -138,7 +138,7 @@ def _yaml_safe_load(
     | None
 ):
     result = u.Cli.yaml_parse(raw)
-    if result.is_failure:
+    if result.failure:
         return None
     return result.value
 
@@ -610,7 +610,7 @@ class FlextTestsFiles(s):
                         else Path(name)
                     )
                     read_result = self.read(path, model_cls=None)
-                    if read_result.is_success:
+                    if read_result.success:
                         return path
                     return r[Path].fail(read_result.error or f"Failed to read {name}")
                 case "delete":
@@ -636,7 +636,7 @@ class FlextTestsFiles(s):
         for index, item in enumerate(items_list):
             operation_result = process_one(item)
             if isinstance(operation_result, r):
-                if operation_result.is_success:
+                if operation_result.success:
                     success_value: Path | t.Tests.TestobjectSerializable = (
                         operation_result.value
                     )
@@ -1104,7 +1104,7 @@ class FlextTestsFiles(s):
                     is_empty=is_empty,
                     first_line=first_line,
                     fmt=fmt,
-                    is_valid=True,
+                    valid=True,
                     modified=datetime.fromtimestamp(stat.st_mtime, tz=UTC),
                     permissions=permissions,
                     is_readonly=is_readonly,
@@ -1328,7 +1328,7 @@ class FlextTestsFiles(s):
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
-        if result1.is_success and result2.is_success:
+        if result1.success and result2.success:
             filtered1: Mapping[str, t.Tests.TestobjectSerializable] = {
                 str(k): self._to_payload_value(v) for k, v in result1.value.items()
             }
@@ -1479,7 +1479,7 @@ class FlextTestsFiles(s):
             return content
         # TypeIs guard narrows to r[FileContentPlain] with known type parameter
         if self._is_file_result(content):
-            if content.is_failure:
+            if content.failure:
                 error_msg = content.error or "r failure"
                 raise ValueError(f"Cannot create file from failed r: {error_msg}")
             return self._coerce_file_content(content.value)
@@ -1758,7 +1758,7 @@ class FlextTestsFiles(s):
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
-        if left_result.is_failure or right_result.is_failure:
+        if left_result.failure or right_result.failure:
             return r[bool].ok(False)
         return r[bool].ok(u.deep_eq(left_result.value, right_result.value))
 

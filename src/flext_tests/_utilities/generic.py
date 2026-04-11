@@ -42,8 +42,8 @@ class FlextTestsGenericHelpersUtilitiesMixin:
         """
         successes_expected = expected_successes or expected_success_count
         failures_expected = expected_failures or expected_failure_count
-        successes = sum(1 for res in results if res.is_success)
-        failures = sum(1 for res in results if res.is_failure)
+        successes = sum(1 for res in results if res.success)
+        failures = sum(1 for res in results if res.failure)
         if successes_expected is not None:
             assert successes == successes_expected, (
                 f"Expected {successes_expected} successes, got {successes}"
@@ -54,7 +54,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
             )
         if first_failure_index is not None:
             actual_first_failure = next(
-                (i for i, res in enumerate(results) if res.is_failure),
+                (i for i, res in enumerate(results) if res.failure),
                 None,
             )
             assert actual_first_failure == first_failure_index, (
@@ -62,7 +62,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
             )
         elif failures == 0:
             actual_first_failure = next(
-                (i for i, res in enumerate(results) if res.is_failure),
+                (i for i, res in enumerate(results) if res.failure),
                 None,
             )
             assert actual_first_failure is None, (

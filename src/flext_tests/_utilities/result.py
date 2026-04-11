@@ -14,7 +14,7 @@ class FlextTestsResultUtilitiesMixin:
         result: p.Result[TResult], expected_error: str | None = None
     ) -> str:
         """Assert result is failure and return error message."""
-        if result.is_success:
+        if result.success:
             msg = f"Expected failure but got success: {result.value}"
             raise AssertionError(msg)
         error = result.error
@@ -40,7 +40,7 @@ class FlextTestsResultUtilitiesMixin:
             AssertionError: If result is success or error doesn't match
 
         """
-        if result.is_success:
+        if result.success:
             msg = f"Expected failure, got success: {result.value}"
             raise AssertionError(msg)
         if expected_error:
@@ -59,7 +59,7 @@ class FlextTestsResultUtilitiesMixin:
         result: p.Result[TResult], error_msg: str | None = None
     ) -> TResult:
         """Assert result is success and return unwrapped value."""
-        if not result.is_success:
+        if not result.success:
             msg = error_msg or f"Expected success but got failure: {result.error}"
             raise AssertionError(msg)
         value: TResult = result.value
@@ -68,7 +68,7 @@ class FlextTestsResultUtilitiesMixin:
     @staticmethod
     def assert_success_with_value[T](result: p.Result[T], expected_value: T) -> None:
         """Assert result is success and has expected value."""
-        if not result.is_success:
+        if not result.success:
             msg = f"Expected success, got failure: {result.error}"
             raise AssertionError(msg)
         assert result.value == expected_value

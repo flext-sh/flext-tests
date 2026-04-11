@@ -261,7 +261,7 @@ class FlextTestsDomains:
         """Get valid email test cases.
 
         Returns:
-            List of (email, is_valid) tuples
+            List of (email, valid) tuples
 
         """
         return [

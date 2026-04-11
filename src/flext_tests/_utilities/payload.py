@@ -229,7 +229,7 @@ class FlextTestsPayloadUtilities:
                 path,
                 separator=path_sep,
             )
-            if result.is_failure:
+            if result.failure:
                 return m.Tests.DeepMatchResult(
                     path=path,
                     expected=expected,

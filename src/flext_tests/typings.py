@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_cli import t
+from flext_core import t
 from flext_tests._typings.base import FlextTestsBaseTypesMixin
 from flext_tests._typings.files import FlextTestsFilesTypesMixin
 from flext_tests._typings.guards import FlextTestsGuardsTypesMixin

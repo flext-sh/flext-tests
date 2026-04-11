@@ -36,7 +36,7 @@ class FlextTestsValidationUtilitiesMixin:
         for validator in validators:
             try:
                 result = validator(value)
-                if result.is_failure:
+                if result.failure:
                     return result
                 if result.value is False:
                     return r[bool].fail("Validator must return r[bool].ok(True)")

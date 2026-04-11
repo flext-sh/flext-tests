@@ -758,7 +758,7 @@ class TestFileInfoFromModels:
             is_empty=False,
             first_line="#!/usr/bin/env python",
             fmt="text",
-            is_valid=True,
+            valid=True,
             created=now,
             modified=now,
             permissions=420,

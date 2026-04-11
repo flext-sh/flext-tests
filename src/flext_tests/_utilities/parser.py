@@ -33,13 +33,11 @@ class FlextTestsParserHelpersUtilitiesMixin:
         """
         result = operation()
         if expected_error is not None:
-            assert result.is_failure, (
-                f"Expected failure for: {description}, got success"
-            )
+            assert result.failure, f"Expected failure for: {description}, got success"
             m = f"'{expected_error}' not in '{result.error}': {description}"
             assert expected_error in str(result.error), m
         else:
-            assert result.is_success, (
+            assert result.success, (
                 f"Expected success for: {description}, got: {result.error}"
             )
             if expected_value is not None:

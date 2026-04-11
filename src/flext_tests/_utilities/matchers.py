@@ -524,7 +524,7 @@ class FlextTestsMatchersUtilities:
                     AssertionError: If result is failure
 
                 """
-                if not result.is_success:
+                if not result.success:
                     error_msg = (
                         msg or f"Expected success but got failure: {result.error}"
                     )
@@ -597,7 +597,7 @@ class FlextTestsMatchersUtilities:
                     params = m.Tests.FailParams.model_validate(kwargs)
                 except (TypeError, ValueError, AttributeError) as exc:
                     raise ValueError(f"Parameter validation failed: {exc}") from exc
-                if result.is_success:
+                if result.success:
                     raise AssertionError(
                         params.msg
                         or c.Tests.ERR_FAIL_EXPECTED.format(value=result.value),
@@ -774,7 +774,7 @@ class FlextTestsMatchersUtilities:
                     params = m.Tests.OkParams.model_validate(kwargs)
                 except (TypeError, ValueError, AttributeError) as exc:
                     raise ValueError(f"Parameter validation failed: {exc}") from exc
-                if not result.is_success:
+                if not result.success:
                     raise AssertionError(
                         params.msg or c.Tests.ERR_OK_FAILED.format(error=result.error),
                     )
@@ -805,7 +805,7 @@ class FlextTestsMatchersUtilities:
                         except ValidationError:
                             extract_data = {}
                     extracted = u.extract(extract_data, path_str)
-                    if extracted.is_failure:
+                    if extracted.failure:
                         raise AssertionError(
                             params.msg
                             or c.Tests.ERR_SCOPE_PATH_NOT_FOUND.format(
@@ -1261,14 +1261,14 @@ class FlextTestsMatchersUtilities:
                     result_obj = subject
                     actual_value: t.Tests.TestobjectSerializable | str = ""
                     if params.ok is not None:
-                        if params.ok and (not result_obj.is_success):
+                        if params.ok and (not result_obj.success):
                             raise AssertionError(
                                 params.msg
                                 or c.Tests.ERR_OK_FAILED.format(
                                     error=result_obj.error,
                                 ),
                             )
-                        if not params.ok and result_obj.is_success:
+                        if not params.ok and result_obj.success:
                             value_str: str = str(result_obj.value)
                             raise AssertionError(
                                 params.msg
@@ -1276,7 +1276,7 @@ class FlextTestsMatchersUtilities:
                                     value=value_str,
                                 ),
                             )
-                        if result_obj.is_success:
+                        if result_obj.success:
                             actual_value = getattr(result_obj, "value", "")
                     elif params.has is not None:
                         err = result_obj.error or ""
@@ -1288,7 +1288,7 @@ class FlextTestsMatchersUtilities:
                             as_str=True,
                         )
                         actual_value = err
-                    elif result_obj.is_success:
+                    elif result_obj.success:
                         actual_value = getattr(result_obj, "value", "")
                     else:
                         raise AssertionError(

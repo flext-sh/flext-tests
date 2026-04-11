@@ -141,7 +141,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
                 cls.validate_config(pyproject_path, approved_exceptions),
             ))
         for name, result in validators:
-            if result.is_failure:
+            if result.failure:
                 return r[m.Tests.ScanResult].fail(
                     f"Validator '{name}' failed: {result.error}",
                 )

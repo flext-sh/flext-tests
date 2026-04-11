@@ -33,7 +33,7 @@ class FlextTestsContextHelpersUtilitiesMixin:
 
         """
         result = context.get(key)
-        assert result.is_success, (
+        assert result.success, (
             f"Expected success for key '{key}', got: {result.error!r}"
         )
         raw_value = result.value
