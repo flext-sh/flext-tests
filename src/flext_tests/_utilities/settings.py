@@ -23,13 +23,13 @@ class FlextTestsConfigHelpersUtilitiesMixin:
 
     @staticmethod
     def assert_config_fields(
-        config: p.Settings,
+        settings: p.Settings,
         expected_fields: t.ConfigMap,
     ) -> None:
-        """Assert config has expected field values.
+        """Assert settings has expected field values.
 
         Args:
-            config: Config instance to check
+            settings: Config instance to check
             expected_fields: Expected field values
 
         Raises:
@@ -37,13 +37,13 @@ class FlextTestsConfigHelpersUtilitiesMixin:
 
         """
         for key, expected_value in expected_fields.items():
-            actual_value = getattr(config, key) if hasattr(config, key) else None
+            actual_value = getattr(settings, key) if hasattr(settings, key) else None
             msg = f"Config {key}: expected {expected_value}, got {actual_value}"
             assert actual_value == expected_value, msg
 
     @staticmethod
     def create_test_config(**kwargs: t.Scalar) -> FlextSettings:
-        """Create a test config instance.
+        """Create a test settings instance.
 
         Args:
             **kwargs: Config field values (scalar types: str, int, float, bool, datetime)

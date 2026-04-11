@@ -194,7 +194,7 @@ class FlextValidatorSettings:
         code_snippet: str,
         extra_desc: str = "",
     ) -> m.Tests.Violation:
-        """Create a config violation (config files have no lines list)."""
+        """Create a settings violation (settings files have no lines list)."""
         severity, desc = c.Tests.validator_rule(rule_id)
         description = f"{desc}: {extra_desc}" if extra_desc else desc
         return m.Tests.Violation(
@@ -212,7 +212,7 @@ class FlextValidatorSettings:
         file_path: Path,
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
-        """Scan a single pyproject.toml for config violations."""
+        """Scan a single pyproject.toml for settings violations."""
         violations: MutableSequence[m.Tests.Violation] = []
         try:
             content = file_path.read_text(encoding="utf-8")
@@ -231,7 +231,7 @@ class FlextValidatorSettings:
         files: Sequence[Path],
         approved_exceptions: Mapping[str, t.StrSequence] | None = None,
     ) -> r[m.Tests.ScanResult]:
-        """Scan pyproject.toml files for config violations.
+        """Scan pyproject.toml files for settings violations.
 
         Args:
             files: List of pyproject.toml files to scan

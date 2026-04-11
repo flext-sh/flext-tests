@@ -43,7 +43,7 @@ class FlextTestsDockerModelsMixin:
 
         @override
         def model_post_init(self, __context: t.Container | None, /) -> None:
-            """Validate container config after initialization."""
+            """Validate container settings after initialization."""
             super().model_post_init(__context)
             if not self.compose_file.exists():
                 msg = f"Compose file not found: {self.compose_file}"

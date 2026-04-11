@@ -7,11 +7,8 @@ from collections.abc import (
     Sequence,
 )
 
-from flext_tests import (
-    p,
-    r,
-    t,
-)
+from flext_core import r
+from flext_tests import p, t
 
 
 class FlextTestsGenericHelpersUtilitiesMixin:

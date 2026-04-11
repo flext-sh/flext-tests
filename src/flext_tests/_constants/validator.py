@@ -169,7 +169,7 @@ class FlextTestsValidatorConstantsMixin:
     VALIDATOR_IMPORTS_KEY: Final[str] = "imports"
     VALIDATOR_TYPES_KEY: Final[str] = "types"
     VALIDATOR_TESTS_KEY: Final[str] = "tests"
-    VALIDATOR_CONFIG_KEY: Final[str] = "config"
+    VALIDATOR_CONFIG_KEY: Final[str] = "settings"
     VALIDATOR_BYPASS_KEY: Final[str] = "bypass"
     VALIDATOR_LAYER_KEY: Final[str] = "layer"
 
@@ -275,7 +275,7 @@ class FlextTestsValidatorConstantsMixin:
             "constants": cls.LAYER_CONSTANTS,
             "typings": cls.LAYER_TYPINGS,
             "protocols": cls.LAYER_PROTOCOLS,
-            "config": cls.LAYER_CONFIG,
+            "settings": cls.LAYER_CONFIG,
             "runtime": cls.LAYER_RUNTIME,
             "exceptions": cls.LAYER_EXCEPTIONS,
             "result": cls.LAYER_RESULT,

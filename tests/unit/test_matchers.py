@@ -139,37 +139,37 @@ class TestFlextTestsMatchers:
             with pytest.raises(AssertionError):
                 tm.that(email, match=c.Tests.EMAIL_PATTERN)
 
-    def test_assert_config_valid_passes(self) -> None:
-        """Test tm.that() with keys parameter for config validation."""
-        config: t.ContainerMapping = {
+    def test_assert_settings_valid_passes(self) -> None:
+        """Test tm.that() with keys parameter for settings validation."""
+        settings: t.ContainerMapping = {
             "service_type": "api",
             "environment": "test",
             "timeout": 30,
         }
-        tm.that(config, keys=["service_type", "environment", "timeout"])
-        tm.that(config["timeout"], is_=int, gt=0)
+        tm.that(settings, keys=["service_type", "environment", "timeout"])
+        tm.that(settings["timeout"], is_=int, gt=0)
 
-    def test_assert_config_valid_missing_required_key(self) -> None:
+    def test_assert_settings_valid_missing_required_key(self) -> None:
         """Test tm.that() with missing required key."""
-        config = {"service_type": "api"}
+        settings = {"service_type": "api"}
         with pytest.raises(AssertionError, match="Missing required keys"):
-            tm.that(config, keys=["service_type", "environment", "timeout"])
+            tm.that(settings, keys=["service_type", "environment", "timeout"])
 
-    def test_assert_config_valid_invalid_timeout(self) -> None:
+    def test_assert_settings_valid_invalid_timeout(self) -> None:
         """Test tm.that() with invalid timeout type."""
-        config = {"service_type": "api", "environment": "test", "timeout": "invalid"}
+        settings = {"service_type": "api", "environment": "test", "timeout": "invalid"}
         with pytest.raises(AssertionError, match="Assertion failed"):
-            tm.that(config["timeout"], is_=int, gt=0)
+            tm.that(settings["timeout"], is_=int, gt=0)
 
-    def test_assert_config_valid_zero_timeout(self) -> None:
+    def test_assert_settings_valid_zero_timeout(self) -> None:
         """Test tm.that() with zero timeout."""
-        config: t.ContainerMapping = {
+        settings: t.ContainerMapping = {
             "service_type": "api",
             "environment": "test",
             "timeout": 0,
         }
         with pytest.raises(AssertionError, match="Assertion failed"):
-            tm.that(config["timeout"], is_=int, gt=0)
+            tm.that(settings["timeout"], is_=int, gt=0)
 
     def test_ok_with_eq_parameter(self) -> None:
         """Test tm.ok() with eq parameter."""
@@ -565,10 +565,10 @@ class TestFlextTestsMatchers:
         with tm.scope() as scope:
             tm.that(scope, none=False)
 
-    def test_scope_with_config(self) -> None:
-        """Test tm.scope() with config parameter."""
-        with tm.scope(config={"debug": True}) as scope:
-            tm.that(scope.config["debug"] is True, eq=True)
+    def test_scope_with_settings(self) -> None:
+        """Test tm.scope() with settings parameter."""
+        with tm.scope(settings={"debug": True}) as scope:
+            tm.that(scope.settings["debug"] is True, eq=True)
 
     def test_scope_with_container(self) -> None:
         """Test tm.scope() with container parameter."""

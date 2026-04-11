@@ -973,7 +973,7 @@ class FlextTestsMatchersUtilities:
 
                 Args:
                     **kwargs: Parameters validated via m.ScopeParams model
-                        - config: Initial configuration values
+                        - settings: Initial configuration values
                         - container: Initial container/service mappings
                         - context: Initial context values
                         - cleanup: Sequence of cleanup functions to call on exit
@@ -981,7 +981,7 @@ class FlextTestsMatchersUtilities:
                         - cwd: Temporary working directory (restored on exit)
 
                 Yields:
-                    TestScope with config, container, and context dicts
+                    TestScope with settings, container, and context dicts
 
                 Examples:
                     with tm.scope() as s:
@@ -989,8 +989,8 @@ class FlextTestsMatchersUtilities:
                         result = operation()
                         tm.ok(result)
 
-                    with tm.scope(config={"debug": True}, env={"API_KEY": "test"}) as s:
-                        # Test with specific config and env vars
+                    with tm.scope(settings={"debug": True}, env={"API_KEY": "test"}) as s:
+                        # Test with specific settings and env vars
                         pass
 
                     with tm.scope(cleanup=[lambda: cleanup_resource()]) as s:
@@ -1021,8 +1021,10 @@ class FlextTestsMatchersUtilities:
                         )
                         os.chdir(cwd_path)
                     cfg: Mapping[str, t.Tests.TestobjectSerializable] = {}
-                    if params.config:
-                        cfg = {str(key): value for key, value in params.config.items()}
+                    if params.settings:
+                        cfg = {
+                            str(key): value for key, value in params.settings.items()
+                        }
                     container_dict = {
                         k: v
                         for k, v in (params.container or {}).items()
@@ -1034,7 +1036,7 @@ class FlextTestsMatchersUtilities:
                             str(key): value for key, value in params.context.items()
                         }
                     yield m.Tests.TestScope.model_validate({
-                        "config": cfg,
+                        "settings": cfg,
                         "container": container_dict,
                         "context": context_map,
                     })
@@ -1097,7 +1099,7 @@ class FlextTestsMatchersUtilities:
 
                     # Mapping assertions
                     tm.that(data, keys=["id", "name"], kv={"status": "active"})
-                    tm.that(config, attrs=["debug", "timeout"], attr_eq={"debug": True})
+                    tm.that(settings, attrs=["debug", "timeout"], attr_eq={"debug": True})
 
                     # r in tm.that() (auto-detected)
                     tm.that(result, ok=True, eq="expected")

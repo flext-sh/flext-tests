@@ -31,7 +31,8 @@ from pydantic import ValidationError
 from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
-from flext_tests import c, m, p, r, t, u
+from flext_core import r
+from flext_tests import c, m, p, t, u
 
 docker: WhalesDockerClient = WhalesDockerClient(client_type="docker")
 logger: p.Logger = u.fetch_logger(__name__)
@@ -139,15 +140,15 @@ class FlextTestsDocker:
         """Clean up all dirty containers by recreating them with fresh volumes."""
         cleaned: MutableSequence[str] = []
         for container_name in list(self._dirty_containers):
-            config = self.shared_containers.get(container_name)
-            if not config:
+            settings = self.shared_containers.get(container_name)
+            if not settings:
                 continue
-            compose_file = str(config.get("compose_file", ""))
+            compose_file = str(settings.get("compose_file", ""))
             if not compose_file:
                 continue
             if not Path(compose_file).is_absolute():
                 compose_file = str(self.workspace_root / compose_file)
-            service = str(config.get("service", ""))
+            service = str(settings.get("service", ""))
             self.logger.info("Recreating dirty container", container=container_name)
             _ = self.compose_down(compose_file)
             result = self.compose_up(compose_file, service, force_recreate=True)

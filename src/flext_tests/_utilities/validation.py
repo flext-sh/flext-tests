@@ -7,9 +7,7 @@ from collections.abc import (
     Sequence,
 )
 
-from flext_tests import (
-    r,
-)
+from flext_core import r
 
 
 class FlextTestsValidationUtilitiesMixin:

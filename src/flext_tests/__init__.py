@@ -30,7 +30,6 @@ if _t.TYPE_CHECKING:
     from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
     from flext_tests._utilities.assertions import FlextTestsAssertionsUtilitiesMixin
     from flext_tests._utilities.badobjects import FlextTestsBadObjectsUtilitiesMixin
-    from flext_tests._utilities.config import FlextTestsConfigHelpersUtilitiesMixin
     from flext_tests._utilities.constants import (
         FlextTestsConstantsHelpersUtilitiesMixin,
     )
@@ -53,6 +52,7 @@ if _t.TYPE_CHECKING:
     from flext_tests._utilities.payload import FlextTestsPayloadUtilities
     from flext_tests._utilities.registry import FlextTestsRegistryHelpersUtilitiesMixin
     from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
+    from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
     from flext_tests._utilities.testcase import FlextTestsTestCaseHelpersUtilitiesMixin
     from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
     from flext_tests._utilities.validation import FlextTestsValidationUtilitiesMixin

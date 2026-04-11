@@ -9,7 +9,6 @@ _LAZY_IMPORTS = build_lazy_import_map(
     {
         ".assertions": ("FlextTestsAssertionsUtilitiesMixin",),
         ".badobjects": ("FlextTestsBadObjectsUtilitiesMixin",),
-        ".config": ("FlextTestsConfigHelpersUtilitiesMixin",),
         ".constants": ("FlextTestsConstantsHelpersUtilitiesMixin",),
         ".container": ("FlextTestsContainerHelpersUtilitiesMixin",),
         ".context": ("FlextTestsContextHelpersUtilitiesMixin",),
@@ -29,6 +28,7 @@ _LAZY_IMPORTS = build_lazy_import_map(
         ".payload": ("FlextTestsPayloadUtilities",),
         ".registry": ("FlextTestsRegistryHelpersUtilitiesMixin",),
         ".result": ("FlextTestsResultUtilitiesMixin",),
+        ".settings": ("FlextTestsConfigHelpersUtilitiesMixin",),
         ".testcase": ("FlextTestsTestCaseHelpersUtilitiesMixin",),
         ".testcontext": ("FlextTestsTestContextUtilitiesMixin",),
         ".validation": ("FlextTestsValidationUtilitiesMixin",),

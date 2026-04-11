@@ -50,7 +50,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         - imports: lazy imports, TYPE_CHECKING, ImportError handling
     - types: type suppression, wildcard types, unapproved
         - tests: monkeypatch, mocks, @patch
-        - config: pyproject.toml deviations
+        - settings: pyproject.toml deviations
         - bypass: noqa, pragma, exception swallowing
         - layer: cross-layer import violations
 
@@ -137,7 +137,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
             ))
         if pyproject_path and pyproject_path.exists():
             validators.append((
-                "config",
+                "settings",
                 cls.validate_config(pyproject_path, approved_exceptions),
             ))
         for name, result in validators:

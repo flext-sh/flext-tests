@@ -34,7 +34,7 @@ class FlextTestsBadObjectsUtilitiesMixin:
             if name.startswith("__") and name.endswith("__"):
                 result: t.Tests.TestobjectSerializable = super().__getattribute__(name)
                 return result
-            msg = f"Bad config: {name}"
+            msg = f"Bad settings: {name}"
             raise AttributeError(msg)
 
     class BadConfigTypeError:
@@ -46,5 +46,5 @@ class FlextTestsBadObjectsUtilitiesMixin:
             if name.startswith("__") and name.endswith("__"):
                 result: t.Tests.TestobjectSerializable = super().__getattribute__(name)
                 return result
-            msg = f"Bad config type: {name}"
+            msg = f"Bad settings type: {name}"
             raise TypeError(msg)

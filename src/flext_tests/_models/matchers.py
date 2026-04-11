@@ -406,7 +406,7 @@ class FlextTestsMatchersModelsMixin:
 
         model_config: ClassVar[ConfigDict] = ConfigDict(populate_by_name=True)
 
-        config: Annotated[
+        settings: Annotated[
             Mapping[str, t.Tests.TestobjectSerializable] | None,
             Field(default=None, description="Initial configuration values"),
         ]
@@ -488,7 +488,7 @@ class FlextTestsMatchersModelsMixin:
 
         __test__ = False
 
-        config: Annotated[
+        settings: Annotated[
             Mapping[str, t.Tests.TestobjectSerializable],
             Field(description="Configuration dictionary"),
         ] = Field(default_factory=dict)

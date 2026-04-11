@@ -6,10 +6,8 @@ from collections.abc import (
     MutableMapping,
 )
 
-from flext_tests import (
-    r,
-    t,
-)
+from flext_core import r
+from flext_tests import t
 
 
 class FlextTestsFactoryUtilitiesMixin:

@@ -26,12 +26,12 @@ class FlextTestsDomains:
     """
 
     @staticmethod
-    def build_dbt_project_config(
+    def build_dbt_project_settings(
         *,
         name: str,
         version: str,
         profile: str,
-        model_config: Mapping[str, t.Tests.TestobjectSerializable],
+        model_settings: Mapping[str, t.Tests.TestobjectSerializable],
         variables: Mapping[str, t.Tests.TestobjectSerializable],
     ) -> Mapping[str, t.Tests.TestobjectSerializable]:
         """Create a shared dbt project configuration structure."""
@@ -50,7 +50,7 @@ class FlextTestsDomains:
             "target-path": "target",
             "clean-targets": ["target", "dbt_packages"],
             "require-dbt-version": ">=1.8.0",
-            "model_config": dict(model_config.items()),
+            "model_settings": dict(model_settings.items()),
             "vars": dict(variables.items()),
         }
 
@@ -141,24 +141,24 @@ class FlextTestsDomains:
             Configuration dictionary
 
         """
-        config_result = m.Tests.Config(
+        settings_result = m.Tests.Config(
             service_type=service_type,
             environment=environment,
         )
-        base_config: MutableMapping[str, t.Tests.TestobjectSerializable] = {
-            "service_type": getattr(config_result, "service_type", service_type),
-            "environment": getattr(config_result, "environment", environment),
-            "debug": getattr(config_result, "debug", False),
-            "log_level": getattr(config_result, "log_level", "INFO"),
-            "timeout": getattr(config_result, "timeout", 30.0),
-            "max_retries": getattr(config_result, "max_retries", 3),
+        base_settings: MutableMapping[str, t.Tests.TestobjectSerializable] = {
+            "service_type": getattr(settings_result, "service_type", service_type),
+            "environment": getattr(settings_result, "environment", environment),
+            "debug": getattr(settings_result, "debug", False),
+            "log_level": getattr(settings_result, "log_level", "INFO"),
+            "timeout": getattr(settings_result, "timeout", 30.0),
+            "max_retries": getattr(settings_result, "max_retries", 3),
             "namespace": f"test_{service_type}_{uuid.uuid4().hex[:8]}",
             "storage_backend": "memory",
             "enable_caching": True,
             "cache_ttl": 300,
         }
-        base_config.update(overrides)
-        return base_config
+        base_settings.update(overrides)
+        return base_settings
 
     @staticmethod
     def create_payload(
@@ -203,13 +203,13 @@ class FlextTestsDomains:
     @staticmethod
     def create_service(
         service_type: str = "api",
-        **config: t.Tests.TestobjectSerializable,
+        **settings: t.Tests.TestobjectSerializable,
     ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
         """Create test service configuration.
 
         Args:
             service_type: Type of service
-            **config: Service configuration
+            **settings: Service configuration
 
         Returns:
             Service configuration dictionary
@@ -219,9 +219,11 @@ class FlextTestsDomains:
             "type": service_type,
             "name": f"test_{service_type}_service",
             "enabled": True,
-            "config": FlextTestsDomains.create_configuration(service_type=service_type),
+            "settings": FlextTestsDomains.create_configuration(
+                service_type=service_type
+            ),
         }
-        base_service.update(config)
+        base_service.update(settings)
         return base_service
 
     @staticmethod

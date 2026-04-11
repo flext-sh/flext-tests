@@ -18,29 +18,29 @@ class TestFlextTestsDomains:
 
     def test_create_configuration_default(self) -> None:
         """Test create_configuration with default parameters."""
-        config = td.create_configuration()
-        tm.that(config, is_=dict)
-        tm.that(config["service_type"], eq="api")
-        tm.that(config["environment"], eq="test")
-        tm.that(config["debug"] is True, eq=True)
-        tm.that(config["log_level"], eq="DEBUG")
-        tm.that(config["timeout"], eq=30)
-        tm.that(config["max_retries"], eq=3)
-        tm.that(config["storage_backend"], eq="memory")
-        tm.that(config["enable_caching"] is True, eq=True)
-        tm.that(config["cache_ttl"], eq=300)
-        tm.that(config, has="namespace")
+        settings = td.create_configuration()
+        tm.that(settings, is_=dict)
+        tm.that(settings["service_type"], eq="api")
+        tm.that(settings["environment"], eq="test")
+        tm.that(settings["debug"] is True, eq=True)
+        tm.that(settings["log_level"], eq="DEBUG")
+        tm.that(settings["timeout"], eq=30)
+        tm.that(settings["max_retries"], eq=3)
+        tm.that(settings["storage_backend"], eq="memory")
+        tm.that(settings["enable_caching"] is True, eq=True)
+        tm.that(settings["cache_ttl"], eq=300)
+        tm.that(settings, has="namespace")
 
     def test_create_configuration_custom(self) -> None:
         """Test create_configuration with custom parameters."""
-        config = td.create_configuration(
+        settings = td.create_configuration(
             service_type="database",
             environment="production",
             custom_field="custom_value",
         )
-        tm.that(config["service_type"], eq="database")
-        tm.that(config["environment"], eq="production")
-        tm.that(config["custom_field"], eq="custom_value")
+        tm.that(settings["service_type"], eq="database")
+        tm.that(settings["environment"], eq="production")
+        tm.that(settings["custom_field"], eq="custom_value")
 
     def test_create_payload_user_default(self) -> None:
         """Test create_payload with user data type default."""
@@ -151,7 +151,7 @@ class TestFlextTestsDomains:
         tm.that(service["type"], eq="api")
         tm.that(service["name"], eq="test_api_service")
         tm.that(service["enabled"] is True, eq=True)
-        tm.that(service, has="config")
+        tm.that(service, has="settings")
 
     def test_create_service_custom(self) -> None:
         """Test create_service with custom parameters."""

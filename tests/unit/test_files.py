@@ -15,8 +15,9 @@ from pathlib import Path
 import pytest
 from pydantic import BaseModel
 
+from flext_core import r
 from flext_tests import tf, tm
-from tests import c, m, r, t, u
+from tests import c, m, t, u
 
 
 class TestFileInfo:
@@ -355,7 +356,7 @@ class TestFlextTestsFilesNewApi:
         """Test create() auto-detects JSON from dict content."""
         manager = tf(base_dir=tmp_path)
         content: t.ConfigMap = t.ConfigMap(root={"key": "value", "number": 42})
-        path = manager.create(content, "config.json")
+        path = manager.create(content, "settings.json")
         tm.that(path.exists(), eq=True)
         data = u.Cli.json_read(path).unwrap_or({})
         tm.that(data, eq=content.root)
@@ -364,7 +365,7 @@ class TestFlextTestsFilesNewApi:
         """Test create() auto-detects YAML from .yaml extension."""
         manager = tf(base_dir=tmp_path)
         content: t.ConfigMap = t.ConfigMap(root={"name": "test", "enabled": True})
-        path = manager.create(content, "config.yaml")
+        path = manager.create(content, "settings.yaml")
         tm.that(path.exists(), eq=True)
         data = u.Cli.yaml_parse(path.read_text()).unwrap_or({})
         tm.that(data, eq=content.root)
@@ -406,7 +407,7 @@ class TestFlextTestsFilesNewApi:
         """Test create() JSON with custom indentation."""
         manager = tf(base_dir=tmp_path)
         content = t.ConfigMap(root={"key": "value"})
-        path = manager.create(content, "config.json", indent=4)
+        path = manager.create(content, "settings.json", indent=4)
         tm.that(path.exists(), eq=True)
         text = path.read_text()
         tm.that(text, has="    ")
@@ -439,7 +440,7 @@ class TestFlextTestsFilesNewApi:
         """Test read() returns dict content for .json files."""
         manager = tf(base_dir=tmp_path)
         content: t.ConfigMap = t.ConfigMap(root={"key": "value", "number": 42})
-        path = manager.create(content, "config.json")
+        path = manager.create(content, "settings.json")
         result = manager.read(path)
         _ = u.Tests.assert_success(result)
         tm.that(result.value, eq=content)
@@ -448,7 +449,7 @@ class TestFlextTestsFilesNewApi:
         """Test read() returns dict content for .yaml files."""
         manager = tf(base_dir=tmp_path)
         content: t.ConfigMap = t.ConfigMap(root={"name": "test", "enabled": True})
-        path = manager.create(content, "config.yaml")
+        path = manager.create(content, "settings.yaml")
         result = manager.read(path)
         _ = u.Tests.assert_success(result)
         read_value = result.value
@@ -645,7 +646,7 @@ class TestFlextTestsFilesNewApi:
     def test_info_format_detection(self, tmp_path: Path) -> None:
         """Test info() detects file format."""
         manager = tf(base_dir=tmp_path)
-        path = manager.create(t.ConfigMap(root={"key": "value"}), "config.json")
+        path = manager.create(t.ConfigMap(root={"key": "value"}), "settings.json")
         result = manager.info(path)
         _ = u.Tests.assert_success(result)
         info = result.value
@@ -686,9 +687,9 @@ class TestFlextTestsFilesNewApi:
     def test_files_context_manager_json_auto_detect(self) -> None:
         """Test files() auto-detects JSON from dict content."""
         content = t.ConfigMap(root={"key": "value"})
-        with tf.files({"config": content}) as paths:
-            tm.that(paths["config"].suffix, eq=".json")
-            data = u.Cli.json_read(paths["config"]).unwrap_or({})
+        with tf.files({"settings": content}) as paths:
+            tm.that(paths["settings"].suffix, eq=".json")
+            data = u.Cli.json_read(paths["settings"]).unwrap_or({})
             tm.that(data, eq=content.root)
 
     def test_files_context_manager_mixed_types(self) -> None:
@@ -781,7 +782,7 @@ class TestInfoWithContentMeta:
         manager = tf(base_dir=tmp_path)
         path = manager.create(
             t.ConfigMap(root={"key1": "value1", "key2": "value2"}),
-            "config.json",
+            "settings.json",
         )
         result = manager.info(path, parse_content=True)
         _ = u.Tests.assert_success(result)
@@ -809,7 +810,9 @@ class TestInfoWithContentMeta:
     def test_info_parse_content_yaml_dict(self, tmp_path: Path) -> None:
         """Test info() with parse_content=True for YAML dict."""
         manager = tf(base_dir=tmp_path)
-        path = manager.create(t.ConfigMap(root={"a": 1, "b": 2, "c": 3}), "config.yaml")
+        path = manager.create(
+            t.ConfigMap(root={"a": 1, "b": 2, "c": 3}), "settings.yaml"
+        )
         result = manager.info(path, parse_content=True)
         _ = u.Tests.assert_success(result)
         info = result.value
@@ -1000,14 +1003,14 @@ class TestBatchOperations:
         """Test batch create for JSON files."""
         manager = tf(base_dir=tmp_path)
         result = manager.batch_files(
-            {"config1.json": {"key": "value1"}, "config2.json": {"key": "value2"}},
+            {"settings1.json": {"key": "value1"}, "settings2.json": {"key": "value2"}},
             directory=tmp_path,
         )
         batch_result = u.Tests.assert_success(result)
         assert batch_result.success_count == 2
-        config1 = tmp_path / "config1.json"
-        tm.that(config1.exists(), eq=True)
-        tm.that(u.Cli.json_read(config1).unwrap_or({})["key"], eq="value1")
+        settings1 = tmp_path / "settings1.json"
+        tm.that(settings1.exists(), eq=True)
+        tm.that(u.Cli.json_read(settings1).unwrap_or({})["key"], eq="value1")
 
     def test_batch_on_error_collect(self, tmp_path: Path) -> None:
         """Test batch with on_error='collect' continues on failures."""
@@ -1045,7 +1048,9 @@ class TestCreateInStatic:
 
     def test_create_in_dict_content(self, tmp_path: Path) -> None:
         """Test create_in() for dict content (JSON)."""
-        path = tf.create_in(t.ConfigMap(root={"key": "value"}), "config.json", tmp_path)
+        path = tf.create_in(
+            t.ConfigMap(root={"key": "value"}), "settings.json", tmp_path
+        )
         tm.that(path.exists(), eq=True)
         content = u.Cli.json_read(path).unwrap_or({})
         tm.that(content, eq={"key": "value"})
@@ -1054,7 +1059,7 @@ class TestCreateInStatic:
         """Test create_in() for YAML file."""
         path = tf.create_in(
             t.ConfigMap(root={"setting": True}),
-            "config.yaml",
+            "settings.yaml",
             tmp_path,
         )
         tm.that(path.exists(), eq=True)
@@ -1079,14 +1084,14 @@ class TestCreateInStatic:
         """Test create_in() format auto-detection from extension."""
         path1 = tf.create_in(
             t.ConfigMap(root={"key": "value"}),
-            "config.json",
+            "settings.json",
             tmp_path,
         )
         tm.that(path1.exists(), eq=True)
         tm.that(u.Cli.json_read(path1).unwrap_or({}), eq={"key": "value"})
         path2 = tf.create_in(
             t.ConfigMap(root={"key": "value"}),
-            "config.yaml",
+            "settings.yaml",
             tmp_path,
         )
         tm.that(path2.exists(), eq=True)
@@ -1126,7 +1131,7 @@ class TestCreateInStatic:
         content: t.ConfigMap = t.ConfigMap(
             root={"key": "value", "nested": t.ConfigMap(root={"a": 1})},
         )
-        path = tf.create_in(content, "config.json", tmp_path, indent=4)
+        path = tf.create_in(content, "settings.json", tmp_path, indent=4)
         tm.that(path.exists(), eq=True)
         text = path.read_text()
         tm.that(text, has="    ")
