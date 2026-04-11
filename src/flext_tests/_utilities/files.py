@@ -9,7 +9,7 @@ from collections.abc import (
 )
 from pathlib import Path
 
-from flext_cli import u
+from flext_cli.utilities import FlextCliUtilities
 from flext_tests import (
     c,
     t,
@@ -36,7 +36,7 @@ class FlextTestsFilesUtilitiesMixin:
 
         """
         _ = chunk_size
-        return u.Cli.sha256_file(path)
+        return FlextCliUtilities.Cli.sha256_file(path)
 
     @staticmethod
     def detect_format(
@@ -70,7 +70,7 @@ class FlextTestsFilesUtilitiesMixin:
             return c.Tests.Format.JSON
         if isinstance(content, list):
             return c.Tests.Format.CSV
-        return c.Tests.get_format(Path(name).suffix)
+        return c.Tests.format_for_extension(Path(name).suffix)
 
     @staticmethod
     def detect_format_from_path(path: Path, fmt: str) -> str:
@@ -87,7 +87,7 @@ class FlextTestsFilesUtilitiesMixin:
         """
         if fmt != c.Tests.Format.AUTO:
             return fmt
-        return c.Tests.get_format(path.suffix)
+        return c.Tests.format_for_extension(path.suffix)
 
     @staticmethod
     def format_size(size: int) -> str:

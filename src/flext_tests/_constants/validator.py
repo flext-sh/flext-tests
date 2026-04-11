@@ -108,7 +108,7 @@ class FlextTestsValidatorConstantsMixin:
     )
 
     @classmethod
-    def get_validator_rule(
+    def validator_rule(
         cls,
         rule_id: str,
     ) -> tuple[FlextTestsValidatorConstantsMixin.ValidatorSeverity, str]:
@@ -269,7 +269,7 @@ class FlextTestsValidatorConstantsMixin:
     LAYER_DECORATORS: Final[int] = 9
 
     @classmethod
-    def get_layer_dict(cls) -> t.IntMapping:
+    def layer_dict(cls) -> t.IntMapping:
         """Get layer hierarchy as dictionary."""
         return {
             "constants": cls.LAYER_CONSTANTS,

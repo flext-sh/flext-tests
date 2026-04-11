@@ -36,12 +36,12 @@ class FlextValidatorTypes:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect wildcard type annotations."""
-        if u.Tests.is_approved("TYPE-002", file_path, approved):
+        if u.Tests.approved("TYPE-002", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                if node.returns and u.Tests.is_any_type(node.returns):
+                if node.returns and u.Tests.any_type(node.returns):
                     violation = u.Tests.create_violation(
                         file_path,
                         node.lineno,
@@ -51,7 +51,7 @@ class FlextValidatorTypes:
                     )
                     violations.append(violation)
                 for arg in node.args.args + node.args.kwonlyargs:
-                    if arg.annotation and u.Tests.is_any_type(arg.annotation):
+                    if arg.annotation and u.Tests.any_type(arg.annotation):
                         violation = u.Tests.create_violation(
                             file_path,
                             arg.lineno if hasattr(arg, "lineno") else node.lineno,
@@ -61,7 +61,7 @@ class FlextValidatorTypes:
                         )
                         violations.append(violation)
             elif isinstance(node, ast.AnnAssign):
-                if node.annotation and u.Tests.is_any_type(node.annotation):
+                if node.annotation and u.Tests.any_type(node.annotation):
                     violation = u.Tests.create_violation(
                         file_path,
                         node.lineno,
@@ -115,7 +115,7 @@ class FlextValidatorTypes:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect type: ignore comments in code (not in strings/docstrings)."""
-        if u.Tests.is_approved("TYPE-001", file_path, approved):
+        if u.Tests.approved("TYPE-001", file_path, approved):
             return []
         pattern = re.compile(r"#\s*type:\s*ignore")
         return [
@@ -126,7 +126,7 @@ class FlextValidatorTypes:
                 lines,
             )
             for i, line in enumerate(lines, start=1)
-            if pattern.search(line) and u.Tests.is_real_comment(line, pattern)
+            if pattern.search(line) and u.Tests.real_comment(line, pattern)
         ]
 
     @classmethod

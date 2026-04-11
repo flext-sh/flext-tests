@@ -109,7 +109,7 @@ class FlextTestsDocker:
             Path.home() / ".flext" / f"docker_state_{self.worker_id}.json"
         )
         self._load_dirty_state()
-        _ = self.get_client()
+        _ = self.client
 
     @property
     def shared_containers(self) -> Mapping[str, t.HeaderMapping]:
@@ -214,8 +214,9 @@ class FlextTestsDocker:
             self.logger.exception("Compose up failed")
             return r[str].fail(f"Compose up failed: {exc}")
 
-    def get_client(self) -> DockerSDKClient | FlextTestsDocker._OfflineDockerClient:
-        """Get Docker client with lazy initialization.
+    @property
+    def client(self) -> DockerSDKClient | FlextTestsDocker._OfflineDockerClient:
+        """Docker client with lazy initialization.
 
         Returns either a real DockerClient connected to daemon, or an offline stub
         if the daemon is unavailable.
@@ -231,10 +232,10 @@ class FlextTestsDocker:
                 self._client = self._OfflineDockerClient()
         return self._client
 
-    def get_container_info(self, container_name: str) -> r[m.Tests.ContainerInfo]:
-        """Get container information."""
+    def fetch_container_info(self, container_name: str) -> r[m.Tests.ContainerInfo]:
+        """Fetch container information."""
         try:
-            client = self.get_client()
+            client = self.client
             container = client.containers.get(container_name)
             ports_raw: Mapping[str, t.Tests.TestobjectSerializable] = (
                 t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
@@ -268,16 +269,17 @@ class FlextTestsDocker:
         except (AttributeError, KeyError, TypeError, ValueError, RuntimeError) as exc:
             return r[m.Tests.ContainerInfo].fail(str(exc))
 
-    def get_container_status(self, container_name: str) -> r[m.Tests.ContainerInfo]:
-        """Get container status (alias for get_container_info)."""
-        return self.get_container_info(container_name)
+    def fetch_container_status(self, container_name: str) -> r[m.Tests.ContainerInfo]:
+        """Fetch container status."""
+        return self.fetch_container_info(container_name)
 
-    def get_dirty_containers(self) -> t.StrSequence:
-        """Get list of all dirty containers."""
+    @property
+    def dirty_containers(self) -> t.StrSequence:
+        """Dirty container names."""
         return list(self._dirty_containers)
 
-    def is_container_dirty(self, container_name: str) -> bool:
-        """Check if a container is marked as dirty."""
+    def container_dirty(self, container_name: str) -> bool:
+        """Whether a container is marked as dirty."""
         return container_name in self._dirty_containers
 
     def mark_container_clean(self, container_name: str) -> r[bool]:
@@ -307,7 +309,7 @@ class FlextTestsDocker:
         returns success. If not found, returns failure.
         """
         try:
-            client = self.get_client()
+            client = self.client
             container = client.containers.get(container_name)
             status = str(container.status)
             if status == "running":

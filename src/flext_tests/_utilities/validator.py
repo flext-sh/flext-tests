@@ -46,7 +46,7 @@ class FlextTestsValidatorUtilitiesMixin:
             Violation model instance
 
         """
-        severity, desc = c.Tests.get_validator_rule(rule_id)
+        severity, desc = c.Tests.validator_rule(rule_id)
         description = f"{desc}: {extra_desc}" if extra_desc else desc
         line = lines[line_number - 1] if line_number <= len(lines) else ""
         return m.Tests.Violation(
@@ -77,7 +77,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return 1
 
     @staticmethod
-    def get_exception_names(exc_type: ast.expr) -> set[str]:
+    def exception_names(exc_type: ast.expr) -> set[str]:
         """Extract exception names from exception type AST node.
 
         Args:
@@ -98,7 +98,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return names
 
     @staticmethod
-    def get_parent(tree: ast.AST, node: ast.AST) -> ast.AST | None:
+    def parent_node(tree: ast.AST, node: ast.AST) -> ast.AST | None:
         """Get parent node of an AST node.
 
         Args:
@@ -117,7 +117,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return None
 
     @staticmethod
-    def is_any_type(node: ast.expr) -> bool:
+    def any_type(node: ast.expr) -> bool:
         """Check if an annotation node represents the typing wildcard type.
 
         Args:
@@ -136,7 +136,7 @@ class FlextTestsValidatorUtilitiesMixin:
         )
 
     @staticmethod
-    def is_approved(
+    def approved(
         rule_id: str,
         file_path: Path,
         approved: Mapping[str, t.StrSequence],
@@ -158,7 +158,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return any(re.search(pattern, file_str) for pattern in patterns)
 
     @staticmethod
-    def is_only_pass(body: Sequence[ast.stmt]) -> bool:
+    def only_pass(body: Sequence[ast.stmt]) -> bool:
         """Check if exception handler body contains only pass or ellipsis.
 
         Used by BYPASS-003 to detect exception swallowing patterns.
@@ -184,7 +184,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return False
 
     @staticmethod
-    def is_real_comment(line: str, pattern: re.Pattern[str]) -> bool:
+    def real_comment(line: str, pattern: re.Pattern[str]) -> bool:
         """Check if pattern match is in a real comment, not inside a string.
 
         Used by validators to avoid false positives from patterns appearing

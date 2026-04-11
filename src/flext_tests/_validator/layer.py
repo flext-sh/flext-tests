@@ -43,7 +43,7 @@ class FlextValidatorLayer:
         hierarchy: t.IntMapping,
     ) -> Sequence[m.Tests.Violation]:
         """Scan a single file for layer violations."""
-        if u.Tests.is_approved("LAYER-001", file_path, approved):
+        if u.Tests.approved("LAYER-001", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         current_module = file_path.stem
@@ -96,7 +96,7 @@ class FlextValidatorLayer:
         """
         violations: MutableSequence[m.Tests.Violation] = []
         approved = approved_exceptions or {}
-        hierarchy = layer_hierarchy or c.Tests.get_layer_dict()
+        hierarchy = layer_hierarchy or c.Tests.layer_dict()
         for file_path in files:
             file_violations = cls._scan_file(file_path, approved, hierarchy)
             violations.extend(file_violations)

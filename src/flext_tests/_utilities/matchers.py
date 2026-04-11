@@ -210,12 +210,12 @@ class FlextTestsMatchersUtilities:
             return value
         if isinstance(value, BaseModel):
             return str(value)
-        if t.Tests.is_testobject_mapping(value):
+        if t.Tests.testobject_mapping(value):
             return {
                 str(k): FlextTestsMatchersUtilities._to_normalized(v)
                 for k, v in value.items()
             }
-        if t.Tests.is_testobject_sequence(value):
+        if t.Tests.testobject_sequence(value):
             return [FlextTestsMatchersUtilities._to_normalized(item) for item in value]
         return str(value)
 
@@ -234,12 +234,12 @@ class FlextTestsMatchersUtilities:
             return value.decode("utf-8", errors="replace")
         if isinstance(value, datetime):
             return value
-        if t.Tests.is_testobject_mapping(value):
+        if t.Tests.testobject_mapping(value):
             return {
                 str(k): FlextTestsMatchersUtilities._to_normalized(v)
                 for k, v in value.items()
             }
-        if t.Tests.is_testobject_sequence(value):
+        if t.Tests.testobject_sequence(value):
             return [FlextTestsMatchersUtilities._to_normalized(item) for item in value]
         return str(value)
 
@@ -1026,7 +1026,7 @@ class FlextTestsMatchersUtilities:
                     container_dict = {
                         k: v
                         for k, v in (params.container or {}).items()
-                        if t.Tests.is_general_value(v)
+                        if t.Tests.general_value(v)
                     }
                     context_map: Mapping[str, t.Tests.TestobjectSerializable] = {}
                     if params.context:

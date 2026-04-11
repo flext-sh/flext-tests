@@ -13,7 +13,6 @@ from flext_core.lazy import (
 
 if _t.TYPE_CHECKING:
     from flext_cli import d, e, h, r, x
-    from flext_core import s
     from flext_tests._constants.docker import FlextTestsDockerConstantsMixin
     from flext_tests._constants.files import FlextTestsFilesConstantsMixin
     from flext_tests._constants.matcher import FlextTestsMatcherConstantsMixin
@@ -71,6 +70,7 @@ if _t.TYPE_CHECKING:
     from flext_tests.files import FlextTestsFiles, tf
     from flext_tests.models import FlextTestsModels, m
     from flext_tests.protocols import FlextTestsProtocols, p
+    from flext_tests.service import FlextService, s
     from flext_tests.typings import FlextTestsTypes, t
     from flext_tests.utilities import FlextTestsUtilities, u
     from flext_tests.validator import FlextTestsValidator, tv
@@ -109,6 +109,10 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "FlextTestsProtocols",
                 "p",
             ),
+            ".service": (
+                "FlextService",
+                "s",
+            ),
             ".typings": (
                 "FlextTestsTypes",
                 "t",
@@ -128,7 +132,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "r",
                 "x",
             ),
-            "flext_core": ("s",),
         },
     ),
     exclude_names=(
@@ -147,6 +150,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
 
 __all__ = [
+    "FlextService",
     "FlextTestsAssertionsUtilitiesMixin",
     "FlextTestsBadObjectsUtilitiesMixin",
     "FlextTestsBaseModelsMixin",

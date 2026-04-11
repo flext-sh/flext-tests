@@ -17,7 +17,7 @@ from flext_tests import FlextTestsBaseTypesMixin
 
 class FlextTestsGuardsTypesMixin:
     @staticmethod
-    def is_general_value(
+    def general_value(
         value: FlextTestsBaseTypesMixin.Testobject,
     ) -> TypeIs[FlextTestsBaseTypesMixin.Testobject]:
         if value is None:
@@ -29,19 +29,19 @@ class FlextTestsGuardsTypesMixin:
         return isinstance(value, (list, dict))
 
     @staticmethod
-    def is_testobject_mapping(
+    def testobject_mapping(
         value: FlextTestsBaseTypesMixin.Testobject,
     ) -> TypeIs[Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]]:
         return isinstance(value, Mapping)
 
     @staticmethod
-    def is_testobject_set(
+    def testobject_set(
         value: FlextTestsBaseTypesMixin.Testobject,
     ) -> TypeIs[set[FlextTestsBaseTypesMixin.TestobjectSerializable] | frozenset[str]]:
         return isinstance(value, (set, frozenset))
 
     @staticmethod
-    def is_testobject_sequence(
+    def testobject_sequence(
         value: FlextTestsBaseTypesMixin.Testobject,
     ) -> TypeIs[Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]]:
         return isinstance(value, Sequence) and not isinstance(
@@ -49,7 +49,7 @@ class FlextTestsGuardsTypesMixin:
         )
 
     @staticmethod
-    def is_testobject_result(
+    def testobject_result(
         value: FlextTestsBaseTypesMixin.Testobject,
     ) -> TypeIs[r[FlextTestsBaseTypesMixin.TestobjectSerializable]]:
         return isinstance(value, r)

@@ -32,7 +32,7 @@ class FlextValidatorImports:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect direct technology imports."""
-        if u.Tests.is_approved("IMPORT-005", file_path, approved):
+        if u.Tests.approved("IMPORT-005", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         tech_imports = c.Tests.VALIDATOR_APPROVED_TECH_IMPORTS
@@ -72,7 +72,7 @@ class FlextValidatorImports:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect try/except ImportError patterns."""
-        if u.Tests.is_approved("IMPORT-003", file_path, approved):
+        if u.Tests.approved("IMPORT-003", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
@@ -81,7 +81,7 @@ class FlextValidatorImports:
             for handler in node.handlers:
                 if handler.type is None:
                     continue
-                handler_names = u.Tests.get_exception_names(handler.type)
+                handler_names = u.Tests.exception_names(handler.type)
                 if (
                     "ImportError" in handler_names
                     or "ModuleNotFoundError" in handler_names
@@ -104,7 +104,7 @@ class FlextValidatorImports:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect imports not at module top level."""
-        if u.Tests.is_approved("IMPORT-001", file_path, approved):
+        if u.Tests.approved("IMPORT-001", file_path, approved):
             return []
         return [
             u.Tests.create_violation(
@@ -116,7 +116,7 @@ class FlextValidatorImports:
             for node in ast.walk(tree)
             if isinstance(node, (ast.Import, ast.ImportFrom))
             and isinstance(
-                u.Tests.get_parent(tree, node),
+                u.Tests.parent_node(tree, node),
                 (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef),
             )
         ]
@@ -142,7 +142,7 @@ class FlextValidatorImports:
         Allows __init__.py inside internal packages to import sibling modules:
         - _validator/__init__.py can import from flext_tests._validator.* (OK)
         """
-        if u.Tests.is_approved("IMPORT-006", file_path, approved):
+        if u.Tests.approved("IMPORT-006", file_path, approved):
             return []
         file_str = str(file_path)
         internal_init_patterns = c.Tests.VALIDATOR_APPROVED_INTERNAL_INIT_PATTERNS
@@ -176,7 +176,7 @@ class FlextValidatorImports:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect sys.path manipulation."""
-        if u.Tests.is_approved("IMPORT-004", file_path, approved):
+        if u.Tests.approved("IMPORT-004", file_path, approved):
             return []
         return [
             u.Tests.create_violation(
@@ -190,7 +190,7 @@ class FlextValidatorImports:
             and isinstance(node.value, ast.Name)
             and node.value.id == "sys"
             and node.attr == "path"
-            and isinstance(u.Tests.get_parent(tree, node), ast.Call)
+            and isinstance(u.Tests.parent_node(tree, node), ast.Call)
         ]
 
     @classmethod
@@ -210,7 +210,7 @@ class FlextValidatorImports:
         For now, we allow TYPE_CHECKING in all files since detecting usage in
         field annotations requires complex AST analysis.
         """
-        if u.Tests.is_approved("IMPORT-002", file_path, approved):
+        if u.Tests.approved("IMPORT-002", file_path, approved):
             return []
         return []
 

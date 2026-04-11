@@ -35,7 +35,7 @@ class FlextValidatorTests:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect Mock and MagicMock usage."""
-        if u.Tests.is_approved("TEST-002", file_path, approved):
+        if u.Tests.approved("TEST-002", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         mock_names = c.Tests.VALIDATOR_APPROVED_MOCK_NAMES
@@ -76,7 +76,7 @@ class FlextValidatorTests:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect monkeypatch usage in function parameters and calls."""
-        if u.Tests.is_approved("TEST-001", file_path, approved):
+        if u.Tests.approved("TEST-001", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
@@ -117,7 +117,7 @@ class FlextValidatorTests:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect @patch decorator usage."""
-        if u.Tests.is_approved("TEST-003", file_path, approved):
+        if u.Tests.approved("TEST-003", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):

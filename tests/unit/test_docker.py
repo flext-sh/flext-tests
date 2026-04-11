@@ -82,23 +82,23 @@ class TestFlextTestsDocker:
         tm.that(docker_manager.workspace_root, none=False)
         assert isinstance(docker_manager._dirty_containers, set)
 
-    def test_get_client_initialization(self) -> None:
+    def test_client_initialization(self) -> None:
         """Test Docker client lazy initialization."""
         manager = tk()
         manager._dirty_containers.clear()
         manager._client = None
-        client = manager.get_client()
+        client = manager.client
         assert client is not None
         assert manager._client is not None
         assert isinstance(client, (DockerClient, tk._OfflineDockerClient))
 
-    def test_get_client_cached(self) -> None:
+    def test_client_cached(self) -> None:
         """Test Docker client caching."""
         manager = tk()
         manager._dirty_containers.clear()
         manager._client = None
-        client1 = manager.get_client()
-        client2 = manager.get_client()
+        client1 = manager.client
+        client2 = manager.client
         tm.that(client1 is client2, eq=True)
 
     def test_load_dirty_state_file_not_exists(
@@ -169,16 +169,16 @@ class TestFlextTestsDocker:
         _ = u.Tests.assert_success(result)
         tm.that("test_container" not in docker_manager._dirty_containers, eq=True)
 
-    def test_is_container_dirty(self, docker_manager: tk) -> None:
+    def test_container_dirty(self, docker_manager: tk) -> None:
         """Test checking if container is dirty."""
         docker_manager._dirty_containers.add("dirty_container")
-        tm.that(docker_manager.is_container_dirty("dirty_container"), eq=True)
-        tm.that(not docker_manager.is_container_dirty("clean_container"), eq=True)
+        tm.that(docker_manager.container_dirty("dirty_container"), eq=True)
+        tm.that(not docker_manager.container_dirty("clean_container"), eq=True)
 
-    def test_get_dirty_containers(self, docker_manager: tk) -> None:
+    def test_dirty_containers(self, docker_manager: tk) -> None:
         """Test getting list of dirty containers."""
         docker_manager._dirty_containers = {"container1", "container2"}
-        dirty = docker_manager.get_dirty_containers()
+        dirty = docker_manager.dirty_containers
         tm.that(len(dirty), eq=2)
         tm.that(dirty, has="container1")
         tm.that(dirty, has="container2")
@@ -219,18 +219,18 @@ class TestFlextTestsDocker:
         _ = u.Tests.assert_failure(result)
         tm.that(str(result.error).lower(), has="not found")
 
-    def test_get_container_info_not_found(
+    def test_fetch_container_info_not_found(
         self,
         docker_manager: tk,
     ) -> None:
         """Test getting info for non-existent container."""
-        result = docker_manager.get_container_info("nonexistent_container")
+        result = docker_manager.fetch_container_info("nonexistent_container")
         _ = u.Tests.assert_failure(result)
         tm.that(str(result.error).lower(), has="not found")
 
-    def test_get_container_status_alias(self, docker_manager: tk) -> None:
-        """Test get_container_status is alias for get_container_info."""
-        result = docker_manager.get_container_status("nonexistent")
+    def test_fetch_container_status(self, docker_manager: tk) -> None:
+        """Test fetch_container_status delegates to container lookup."""
+        result = docker_manager.fetch_container_status("nonexistent")
         _ = u.Tests.assert_failure(result)
 
     def test_wait_for_port_ready_immediate(

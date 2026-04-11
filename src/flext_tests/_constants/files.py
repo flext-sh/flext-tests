@@ -104,7 +104,7 @@ class FlextTestsFilesConstantsMixin:
         return f"{size:.1f} PB"
 
     @classmethod
-    def get_format(cls, extension: str) -> str:
+    def format_for_extension(cls, extension: str) -> str:
         """Get format from file extension.
 
         Args:

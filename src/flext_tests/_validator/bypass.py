@@ -32,7 +32,7 @@ class FlextValidatorBypass:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect exception swallowing patterns (bare except or except with pass)."""
-        if u.Tests.is_approved("BYPASS-003", file_path, approved):
+        if u.Tests.approved("BYPASS-003", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
@@ -46,7 +46,7 @@ class FlextValidatorBypass:
                         c.Tests.VALIDATOR_MSG_BYPASS_BARE_EXCEPT,
                     )
                     violations.append(violation)
-                elif u.Tests.is_only_pass(node.body):
+                elif u.Tests.only_pass(node.body):
                     violation = u.Tests.create_violation(
                         file_path,
                         node.lineno,
@@ -65,12 +65,12 @@ class FlextValidatorBypass:
         approved: Mapping[str, t.StrSequence],
     ) -> Sequence[m.Tests.Violation]:
         """Detect # noqa comments."""
-        if u.Tests.is_approved("BYPASS-001", file_path, approved):
+        if u.Tests.approved("BYPASS-001", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         pattern = re.compile(r"#\s*noqa", re.IGNORECASE)
         for i, line in enumerate(lines, start=1):
-            is_real = u.Tests.is_real_comment(line, pattern)
+            is_real = u.Tests.real_comment(line, pattern)
             if pattern.search(line) and is_real:
                 violation = u.Tests.create_violation(
                     file_path,
@@ -98,7 +98,7 @@ class FlextValidatorBypass:
         violations: MutableSequence[m.Tests.Violation] = []
         pattern = re.compile(r"#\s*pragma:\s*no\s*cover", re.IGNORECASE)
         for i, line in enumerate(lines, start=1):
-            is_real = u.Tests.is_real_comment(line, pattern)
+            is_real = u.Tests.real_comment(line, pattern)
             if pattern.search(line) and is_real:
                 violation = u.Tests.create_violation(
                     file_path,
