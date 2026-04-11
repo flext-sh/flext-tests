@@ -165,7 +165,7 @@ def _is_batch_content(
         return False
 
 
-class FlextTestsFiles(s[t.NormalizedValue]):
+class FlextTestsFiles(s):
     """Manages test files for FLEXT ecosystem testing.
 
     Extends FlextTestsServiceBase for consistent service patterns.

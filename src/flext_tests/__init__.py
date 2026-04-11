@@ -12,68 +12,74 @@ from flext_core.lazy import (
 )
 
 if _t.TYPE_CHECKING:
-    from _constants.docker import FlextTestsDockerConstantsMixin
-    from _constants.files import FlextTestsFilesConstantsMixin
-    from _constants.matcher import FlextTestsMatcherConstantsMixin
-    from _constants.validator import FlextTestsValidatorConstantsMixin
-    from _models.base import FlextTestsBaseModelsMixin
-    from _models.batch import FlextTestsBatchModelsMixin
-    from _models.docker import FlextTestsDockerModelsMixin
-    from _models.filesystem import FlextTestsFilesystemModelsMixin
-    from _models.matchers import FlextTestsMatchersModelsMixin
-    from _models.validator import FlextTestsValidatorModelsMixin
-    from _protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
-    from _typings.base import FlextTestsBaseTypesMixin
-    from _typings.files import FlextTestsFilesTypesMixin
-    from _typings.guards import FlextTestsGuardsTypesMixin
-    from _typings.matchers import FlextTestsMatchersTypesMixin
-    from _utilities.assertions import FlextTestsAssertionsUtilitiesMixin
-    from _utilities.badobjects import FlextTestsBadObjectsUtilitiesMixin
-    from _utilities.config import FlextTestsConfigHelpersUtilitiesMixin
-    from _utilities.constants import FlextTestsConstantsHelpersUtilitiesMixin
-    from _utilities.container import FlextTestsContainerHelpersUtilitiesMixin
-    from _utilities.context import FlextTestsContextHelpersUtilitiesMixin
-    from _utilities.deepmatch import FlextTestsDeepMatchUtilitiesMixin
-    from _utilities.domain import FlextTestsDomainHelpersUtilitiesMixin
-    from _utilities.exception import FlextTestsExceptionHelpersUtilitiesMixin
-    from _utilities.factory import FlextTestsFactoryUtilitiesMixin
-    from _utilities.files import FlextTestsFilesUtilitiesMixin
-    from _utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
-    from _utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
-    from _utilities.length import FlextTestsLengthUtilitiesMixin
-    from _utilities.matchers import FlextTestsMatchersUtilities, tm
-    from _utilities.parser import FlextTestsParserHelpersUtilitiesMixin
-    from _utilities.payload import FlextTestsPayloadUtilities
-    from _utilities.registry import FlextTestsRegistryHelpersUtilitiesMixin
-    from _utilities.result import FlextTestsResultUtilitiesMixin
-    from _utilities.testcase import FlextTestsTestCaseHelpersUtilitiesMixin
-    from _utilities.testcontext import FlextTestsTestContextUtilitiesMixin
-    from _utilities.validation import FlextTestsValidationUtilitiesMixin
-    from _utilities.validator import FlextTestsValidatorUtilitiesMixin
-
     from flext_cli.base import s
     from flext_core.decorators import d
     from flext_core.exceptions import e
     from flext_core.handlers import h
     from flext_core.mixins import x
     from flext_core.result import r
-    from flext_tests.bypass import FlextValidatorBypass
-    from flext_tests.constants import FlextTestsConstants, c
-    from flext_tests.docker import FlextTestsDocker, tk
-    from flext_tests.domains import FlextTestsDomains, td
-    from flext_tests.files import FlextTestsFiles, tf
-    from flext_tests.imports import FlextValidatorImports
-    from flext_tests.layer import FlextValidatorLayer
-    from flext_tests.models import FlextTestsModels, FlextTestsValidatorModels, m
-    from flext_tests.protocols import FlextTestsProtocols, p
-    from flext_tests.settings import (
-        FlextValidatorSettings,
+    from flext_tests._constants.docker import FlextTestsDockerConstantsMixin
+    from flext_tests._constants.files import FlextTestsFilesConstantsMixin
+    from flext_tests._constants.matcher import FlextTestsMatcherConstantsMixin
+    from flext_tests._constants.validator import FlextTestsValidatorConstantsMixin
+    from flext_tests._fixtures.settings import (
         reset_settings,
         settings,
         settings_factory,
     )
-    from flext_tests.tests import FlextValidatorTests
-    from flext_tests.types import FlextValidatorTypes
+    from flext_tests._models.base import FlextTestsBaseModelsMixin
+    from flext_tests._models.batch import FlextTestsBatchModelsMixin
+    from flext_tests._models.docker import FlextTestsDockerModelsMixin
+    from flext_tests._models.filesystem import FlextTestsFilesystemModelsMixin
+    from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
+    from flext_tests._models.validator import FlextTestsValidatorModelsMixin
+    from flext_tests._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
+    from flext_tests._typings.base import FlextTestsBaseTypesMixin
+    from flext_tests._typings.files import FlextTestsFilesTypesMixin
+    from flext_tests._typings.guards import FlextTestsGuardsTypesMixin
+    from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
+    from flext_tests._utilities.assertions import FlextTestsAssertionsUtilitiesMixin
+    from flext_tests._utilities.badobjects import FlextTestsBadObjectsUtilitiesMixin
+    from flext_tests._utilities.config import FlextTestsConfigHelpersUtilitiesMixin
+    from flext_tests._utilities.constants import (
+        FlextTestsConstantsHelpersUtilitiesMixin,
+    )
+    from flext_tests._utilities.container import (
+        FlextTestsContainerHelpersUtilitiesMixin,
+    )
+    from flext_tests._utilities.context import FlextTestsContextHelpersUtilitiesMixin
+    from flext_tests._utilities.deepmatch import FlextTestsDeepMatchUtilitiesMixin
+    from flext_tests._utilities.domain import FlextTestsDomainHelpersUtilitiesMixin
+    from flext_tests._utilities.exception import (
+        FlextTestsExceptionHelpersUtilitiesMixin,
+    )
+    from flext_tests._utilities.factory import FlextTestsFactoryUtilitiesMixin
+    from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
+    from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
+    from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
+    from flext_tests._utilities.length import FlextTestsLengthUtilitiesMixin
+    from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
+    from flext_tests._utilities.parser import FlextTestsParserHelpersUtilitiesMixin
+    from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+    from flext_tests._utilities.registry import FlextTestsRegistryHelpersUtilitiesMixin
+    from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
+    from flext_tests._utilities.testcase import FlextTestsTestCaseHelpersUtilitiesMixin
+    from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
+    from flext_tests._utilities.validation import FlextTestsValidationUtilitiesMixin
+    from flext_tests._utilities.validator import FlextTestsValidatorUtilitiesMixin
+    from flext_tests._validator.bypass import FlextValidatorBypass
+    from flext_tests._validator.imports import FlextValidatorImports
+    from flext_tests._validator.layer import FlextValidatorLayer
+    from flext_tests._validator.models import FlextTestsValidatorModels
+    from flext_tests._validator.settings import FlextValidatorSettings
+    from flext_tests._validator.tests import FlextValidatorTests
+    from flext_tests._validator.types import FlextValidatorTypes
+    from flext_tests.constants import FlextTestsConstants, c
+    from flext_tests.docker import FlextTestsDocker, tk
+    from flext_tests.domains import FlextTestsDomains, td
+    from flext_tests.files import FlextTestsFiles, tf
+    from flext_tests.models import FlextTestsModels, m
+    from flext_tests.protocols import FlextTestsProtocols, p
     from flext_tests.typings import FlextTestsTypes, t
     from flext_tests.utilities import FlextTestsUtilities, u
     from flext_tests.validator import FlextTestsValidator, tv
@@ -89,7 +95,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
     ),
     build_lazy_import_map(
         {
-            ".bypass": ("FlextValidatorBypass",),
             ".constants": (
                 "FlextTestsConstants",
                 "c",
@@ -106,25 +111,14 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "FlextTestsFiles",
                 "tf",
             ),
-            ".imports": ("FlextValidatorImports",),
-            ".layer": ("FlextValidatorLayer",),
             ".models": (
                 "FlextTestsModels",
-                "FlextTestsValidatorModels",
                 "m",
             ),
             ".protocols": (
                 "FlextTestsProtocols",
                 "p",
             ),
-            ".settings": (
-                "FlextValidatorSettings",
-                "reset_settings",
-                "settings",
-                "settings_factory",
-            ),
-            ".tests": ("FlextValidatorTests",),
-            ".types": ("FlextValidatorTypes",),
             ".typings": (
                 "FlextTestsTypes",
                 "t",
@@ -137,47 +131,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "FlextTestsValidator",
                 "tv",
             ),
-            "_constants.docker": ("FlextTestsDockerConstantsMixin",),
-            "_constants.files": ("FlextTestsFilesConstantsMixin",),
-            "_constants.matcher": ("FlextTestsMatcherConstantsMixin",),
-            "_constants.validator": ("FlextTestsValidatorConstantsMixin",),
-            "_models.base": ("FlextTestsBaseModelsMixin",),
-            "_models.batch": ("FlextTestsBatchModelsMixin",),
-            "_models.docker": ("FlextTestsDockerModelsMixin",),
-            "_models.filesystem": ("FlextTestsFilesystemModelsMixin",),
-            "_models.matchers": ("FlextTestsMatchersModelsMixin",),
-            "_models.validator": ("FlextTestsValidatorModelsMixin",),
-            "_protocols.valuefactory": ("FlextTestsValueFactoryProtocolsMixin",),
-            "_typings.base": ("FlextTestsBaseTypesMixin",),
-            "_typings.files": ("FlextTestsFilesTypesMixin",),
-            "_typings.guards": ("FlextTestsGuardsTypesMixin",),
-            "_typings.matchers": ("FlextTestsMatchersTypesMixin",),
-            "_utilities.assertions": ("FlextTestsAssertionsUtilitiesMixin",),
-            "_utilities.badobjects": ("FlextTestsBadObjectsUtilitiesMixin",),
-            "_utilities.config": ("FlextTestsConfigHelpersUtilitiesMixin",),
-            "_utilities.constants": ("FlextTestsConstantsHelpersUtilitiesMixin",),
-            "_utilities.container": ("FlextTestsContainerHelpersUtilitiesMixin",),
-            "_utilities.context": ("FlextTestsContextHelpersUtilitiesMixin",),
-            "_utilities.deepmatch": ("FlextTestsDeepMatchUtilitiesMixin",),
-            "_utilities.domain": ("FlextTestsDomainHelpersUtilitiesMixin",),
-            "_utilities.exception": ("FlextTestsExceptionHelpersUtilitiesMixin",),
-            "_utilities.factory": ("FlextTestsFactoryUtilitiesMixin",),
-            "_utilities.files": ("FlextTestsFilesUtilitiesMixin",),
-            "_utilities.generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
-            "_utilities.handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
-            "_utilities.length": ("FlextTestsLengthUtilitiesMixin",),
-            "_utilities.matchers": (
-                "FlextTestsMatchersUtilities",
-                "tm",
-            ),
-            "_utilities.parser": ("FlextTestsParserHelpersUtilitiesMixin",),
-            "_utilities.payload": ("FlextTestsPayloadUtilities",),
-            "_utilities.registry": ("FlextTestsRegistryHelpersUtilitiesMixin",),
-            "_utilities.result": ("FlextTestsResultUtilitiesMixin",),
-            "_utilities.testcase": ("FlextTestsTestCaseHelpersUtilitiesMixin",),
-            "_utilities.testcontext": ("FlextTestsTestContextUtilitiesMixin",),
-            "_utilities.validation": ("FlextTestsValidationUtilitiesMixin",),
-            "_utilities.validator": ("FlextTestsValidatorUtilitiesMixin",),
             "flext_cli.base": ("s",),
             "flext_core.decorators": ("d",),
             "flext_core.exceptions": ("e",),
