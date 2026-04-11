@@ -12,16 +12,11 @@ from flext_core.lazy import (
 )
 
 if _t.TYPE_CHECKING:
-    from flext_core import d, e, h, r, s, x
+    from flext_cli import d, e, h, r, s, x
     from flext_tests._constants.docker import FlextTestsDockerConstantsMixin
     from flext_tests._constants.files import FlextTestsFilesConstantsMixin
     from flext_tests._constants.matcher import FlextTestsMatcherConstantsMixin
     from flext_tests._constants.validator import FlextTestsValidatorConstantsMixin
-    from flext_tests._fixtures.settings import (
-        reset_settings,
-        settings,
-        settings_factory,
-    )
     from flext_tests._models.base import FlextTestsBaseModelsMixin
     from flext_tests._models.batch import FlextTestsBatchModelsMixin
     from flext_tests._models.docker import FlextTestsDockerModelsMixin
@@ -126,12 +121,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "FlextTestsValidator",
                 "tv",
             ),
-            "._fixtures.settings": (
-                "reset_settings",
-                "settings",
-                "settings_factory",
-            ),
-            "flext_core": (
+            "flext_cli": (
                 "d",
                 "e",
                 "h",
