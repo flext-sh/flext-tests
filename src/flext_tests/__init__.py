@@ -12,12 +12,12 @@ from flext_core.lazy import (
 )
 
 if _t.TYPE_CHECKING:
+    from flext_cli.base import s
     from flext_core.decorators import d
     from flext_core.exceptions import e
     from flext_core.handlers import h
     from flext_core.mixins import x
     from flext_core.result import r
-    from flext_core.service import s
     from flext_tests._constants.docker import FlextTestsDockerConstantsMixin
     from flext_tests._constants.files import FlextTestsFilesConstantsMixin
     from flext_tests._constants.matcher import FlextTestsMatcherConstantsMixin
@@ -74,14 +74,14 @@ if _t.TYPE_CHECKING:
     from flext_tests._validator.settings import FlextValidatorSettings
     from flext_tests._validator.tests import FlextValidatorTests
     from flext_tests._validator.types import FlextValidatorTypes
-    from flext_tests.constants import FlextTestsConstants, FlextTestsConstants as c
+    from flext_tests.constants import FlextTestsConstants, c
     from flext_tests.docker import FlextTestsDocker, tk
     from flext_tests.domains import FlextTestsDomains, td
     from flext_tests.files import FlextTestsFiles, tf
-    from flext_tests.models import FlextTestsModels, FlextTestsModels as m
-    from flext_tests.protocols import FlextTestsProtocols, FlextTestsProtocols as p
-    from flext_tests.typings import FlextTestsTypes, FlextTestsTypes as t
-    from flext_tests.utilities import FlextTestsUtilities, FlextTestsUtilities as u
+    from flext_tests.models import FlextTestsModels, m
+    from flext_tests.protocols import FlextTestsProtocols, p
+    from flext_tests.typings import FlextTestsTypes, t
+    from flext_tests.utilities import FlextTestsUtilities, u
     from flext_tests.validator import FlextTestsValidator, tv
 _LAZY_IMPORTS = merge_lazy_imports(
     (
@@ -95,7 +95,10 @@ _LAZY_IMPORTS = merge_lazy_imports(
     ),
     build_lazy_import_map(
         {
-            ".constants": ("FlextTestsConstants",),
+            ".constants": (
+                "FlextTestsConstants",
+                "c",
+            ),
             ".docker": (
                 "FlextTestsDocker",
                 "tk",
@@ -108,27 +111,32 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "FlextTestsFiles",
                 "tf",
             ),
-            ".models": ("FlextTestsModels",),
-            ".protocols": ("FlextTestsProtocols",),
-            ".typings": ("FlextTestsTypes",),
-            ".utilities": ("FlextTestsUtilities",),
+            ".models": (
+                "FlextTestsModels",
+                "m",
+            ),
+            ".protocols": (
+                "FlextTestsProtocols",
+                "p",
+            ),
+            ".typings": (
+                "FlextTestsTypes",
+                "t",
+            ),
+            ".utilities": (
+                "FlextTestsUtilities",
+                "u",
+            ),
             ".validator": (
                 "FlextTestsValidator",
                 "tv",
             ),
+            "flext_cli.base": ("s",),
             "flext_core.decorators": ("d",),
             "flext_core.exceptions": ("e",),
             "flext_core.handlers": ("h",),
             "flext_core.mixins": ("x",),
             "flext_core.result": ("r",),
-            "flext_core.service": ("s",),
-        },
-        alias_groups={
-            ".constants": (("c", "FlextTestsConstants"),),
-            ".models": (("m", "FlextTestsModels"),),
-            ".protocols": (("p", "FlextTestsProtocols"),),
-            ".typings": (("t", "FlextTestsTypes"),),
-            ".utilities": (("u", "FlextTestsUtilities"),),
         },
     ),
     exclude_names=(
@@ -142,6 +150,9 @@ _LAZY_IMPORTS = merge_lazy_imports(
     ),
     module_name=__name__,
 )
+
+
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
 
 __all__ = [
     "FlextTestsAssertionsUtilitiesMixin",
@@ -218,6 +229,3 @@ __all__ = [
     "u",
     "x",
 ]
-
-
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
