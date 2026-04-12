@@ -6,6 +6,6 @@ inherit the CLI-specialized ``s`` alias through lazy-init MRO fallback.
 
 from __future__ import annotations
 
-from flext_core.service import FlextService, s
+from flext_core import FlextService, s
 
 __all__: list[str] = ["FlextService", "s"]

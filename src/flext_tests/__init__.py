@@ -77,7 +77,6 @@ if _t.TYPE_CHECKING:
 _LAZY_IMPORTS = merge_lazy_imports(
     (
         "._constants",
-        "._fixtures",
         "._models",
         "._protocols",
         "._typings",

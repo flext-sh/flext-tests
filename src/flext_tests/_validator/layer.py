@@ -27,8 +27,8 @@ class FlextValidatorLayer:
         """Extract the final module name from an import path.
 
         Examples:
-            'flext_core.result' -> 'result'
-            'flext_core._models.domain' -> 'domain'
+            'flext_core' -> 'result'
+            'flext_core' -> 'domain'
             'result' -> 'result'
 
         """
