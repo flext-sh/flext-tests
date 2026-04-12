@@ -41,7 +41,7 @@ class FlextTestsPayloadUtilities:
             value: value to convert
 
         Returns:
-            t.NormalizedValue suitable for test assertions
+            t.RecursiveContainer suitable for test assertions
 
         """
         if isinstance(value, RootModel):
@@ -85,7 +85,9 @@ class FlextTestsPayloadUtilities:
         return str(value)
 
     @staticmethod
-    def to_normalized_value(value: t.Tests.TestobjectSerializable) -> t.NormalizedValue:
+    def to_normalized_value(
+        value: t.Tests.TestobjectSerializable,
+    ) -> t.RecursiveContainer:
         """Convert _Testobject to pure NormalizedValue (no BaseModel in output)."""
         if value is None:
             return None
@@ -103,7 +105,7 @@ class FlextTestsPayloadUtilities:
             validated_map: Mapping[str, t.Tests.TestobjectSerializable] = (
                 t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
             )
-            result_map: t.MutableContainerMapping = {}
+            result_map: t.MutableRecursiveContainerMapping = {}
             for k, v in validated_map.items():
                 key: str = str(k)
                 val: t.Tests.TestobjectSerializable = v
@@ -113,7 +115,7 @@ class FlextTestsPayloadUtilities:
             validated_seq: Sequence[t.Tests.TestobjectSerializable] = (
                 t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
             )
-            result_seq: Sequence[t.NormalizedValue] = [
+            result_seq: Sequence[t.RecursiveContainer] = [
                 FlextTestsPayloadUtilities.to_normalized_value(item)
                 for item in validated_seq
             ]
@@ -139,7 +141,7 @@ class FlextTestsPayloadUtilities:
             validated_map: Mapping[str, t.Tests.TestobjectSerializable] = (
                 t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
             )
-            cfg_map: t.MutableContainerMapping = {}
+            cfg_map: t.MutableRecursiveContainerMapping = {}
             for k, v in validated_map.items():
                 key: str = str(k)
                 val: t.Tests.TestobjectSerializable = v
@@ -149,7 +151,7 @@ class FlextTestsPayloadUtilities:
             validated_seq: Sequence[t.Tests.TestobjectSerializable] = (
                 t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
             )
-            cfg_seq: Sequence[t.NormalizedValue] = [
+            cfg_seq: Sequence[t.RecursiveContainer] = [
                 FlextTestsPayloadUtilities.to_normalized_value(item)
                 for item in validated_seq
             ]
@@ -195,7 +197,7 @@ class FlextTestsPayloadUtilities:
         *,
         path_sep: str = ".",
     ) -> m.Tests.DeepMatchResult:
-        """Match t.NormalizedValue against deep specification.
+        """Match t.RecursiveContainer against deep specification.
 
         Uses u.extract() for path extraction.
         Supports unlimited nesting depth via dot notation paths.

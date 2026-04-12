@@ -64,7 +64,7 @@ class FlextTestsDockerModelsMixin:
         last_updated: str | None = None
 
     class User(FlextModels.Value):
-        """Test user model - immutable value t.NormalizedValue."""
+        """Test user model - immutable value t.RecursiveContainer."""
 
         id: str
         name: str
@@ -72,7 +72,7 @@ class FlextTestsDockerModelsMixin:
         active: bool = True
 
     class Config(FlextModels.Value):
-        """Test configuration model - immutable value t.NormalizedValue."""
+        """Test configuration model - immutable value t.RecursiveContainer."""
 
         service_type: str = "api"
         environment: str = "test"
@@ -82,7 +82,7 @@ class FlextTestsDockerModelsMixin:
         max_retries: int = 3
 
     class Service(FlextModels.Value):
-        """Test service model - immutable value t.NormalizedValue."""
+        """Test service model - immutable value t.RecursiveContainer."""
 
         id: str
         type: str = "api"

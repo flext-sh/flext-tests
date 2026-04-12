@@ -26,7 +26,7 @@ class FlextTestsBadObjectsUtilitiesMixin:
         )
 
     class BadConfig:
-        """Config t.NormalizedValue that raises on attribute access."""
+        """Config t.RecursiveContainer that raises on attribute access."""
 
         @override
         def __getattribute__(self, name: str) -> t.Tests.TestobjectSerializable:
@@ -38,7 +38,7 @@ class FlextTestsBadObjectsUtilitiesMixin:
             raise AttributeError(msg)
 
     class BadConfigTypeError:
-        """Config t.NormalizedValue that raises TypeError on attribute access."""
+        """Config t.RecursiveContainer that raises TypeError on attribute access."""
 
         @override
         def __getattribute__(self, name: str) -> t.Tests.TestobjectSerializable:

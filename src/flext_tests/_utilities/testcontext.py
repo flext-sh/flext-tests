@@ -22,7 +22,7 @@ class FlextTestsTestContextUtilitiesMixin:
         attribute: str,
         value: t.Tests.TestobjectSerializable,
     ) -> Generator[None]:
-        """Temporarily set attribute on target t.NormalizedValue.
+        """Temporarily set attribute on target t.RecursiveContainer.
 
         Args:
             target: Object to modify

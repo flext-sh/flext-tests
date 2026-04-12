@@ -110,7 +110,7 @@ def _to_container_value(value: t.Tests.TestobjectSerializable) -> t.ValueOrModel
     return u.normalize_to_container(runtime_data)
 
 
-def _to_normalized_leaf(value: t.Tests.TestobjectSerializable) -> t.NormalizedValue:
+def _to_normalized_leaf(value: t.Tests.TestobjectSerializable) -> t.RecursiveContainer:
     """Convert t.Tests.TestobjectSerializable to NormalizedValue (no BaseModel) for list contexts."""
     if value is None:
         return None
@@ -147,7 +147,7 @@ def _yaml_safe_load(
 def _yaml_dump(
     value: Mapping[str, t.Tests.TestobjectSerializable], *, indent: int
 ) -> str:
-    normalized: Mapping[str, t.NormalizedValue] = {
+    normalized: Mapping[str, t.RecursiveContainer] = {
         str(k): _to_normalized_leaf(v) for k, v in value.items()
     }
     return u.Cli.yaml_dump_str(normalized, indent=indent)
@@ -984,13 +984,13 @@ class FlextTestsFiles(s):
         return file_path
 
     @override
-    def execute(self) -> r[t.NormalizedValue]:
+    def execute(self) -> r[t.RecursiveContainer]:
         """Execute service - returns success for file manager.
 
         FlextTestsFiles is a utility service that doesn't have a specific
         execution result. Returns success by default.
         """
-        return r[t.NormalizedValue].ok(None)
+        return r[t.RecursiveContainer].ok(None)
 
     def info(
         self,

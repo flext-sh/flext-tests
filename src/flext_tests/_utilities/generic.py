@@ -147,7 +147,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
         """Validate model has required attributes.
 
         Args:
-            model: Model t.NormalizedValue to validate
+            model: Model t.RecursiveContainer to validate
             required_attrs: List of required attribute names
             optional_attrs: Optional list of optional attribute names
 

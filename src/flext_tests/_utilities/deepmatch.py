@@ -35,7 +35,7 @@ class FlextTestsDeepMatchUtilitiesMixin:
         *,
         path_sep: str = ".",
     ) -> m.Tests.DeepMatchResult:
-        """Match t.NormalizedValue against deep specification.
+        """Match t.RecursiveContainer against deep specification.
 
         Uses FlextCliUtilities.extract() for path extraction - NO code duplication.
         Supports unlimited nesting depth via dot notation paths.

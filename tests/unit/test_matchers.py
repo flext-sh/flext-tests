@@ -141,7 +141,7 @@ class TestFlextTestsMatchers:
 
     def test_assert_settings_valid_passes(self) -> None:
         """Test tm.that() with keys parameter for settings validation."""
-        settings: t.ContainerMapping = {
+        settings: t.RecursiveContainerMapping = {
             "service_type": "api",
             "environment": "test",
             "timeout": 30,
@@ -163,7 +163,7 @@ class TestFlextTestsMatchers:
 
     def test_assert_settings_valid_zero_timeout(self) -> None:
         """Test tm.that() with zero timeout."""
-        settings: t.ContainerMapping = {
+        settings: t.RecursiveContainerMapping = {
             "service_type": "api",
             "environment": "test",
             "timeout": 0,
@@ -239,22 +239,22 @@ class TestFlextTestsMatchers:
 
     def test_ok_with_deep_parameter(self) -> None:
         """Test tm.ok() with deep parameter."""
-        data: t.ContainerMapping = {"user": {"name": "John", "age": 30}}
-        result = r[t.NormalizedValue].ok(data)
+        data: t.RecursiveContainerMapping = {"user": {"name": "John", "age": 30}}
+        result = r[t.RecursiveContainer].ok(data)
         value = tm.ok(result, deep={"user.name": "John"})
         tm.that(value, eq=data)
 
     def test_ok_with_deep_predicate_parameter(self) -> None:
         """Test tm.ok() with deep predicate parameter."""
-        data: t.ContainerMapping = {"user": {"email": "test@example.com"}}
-        result = r[t.NormalizedValue].ok(data)
+        data: t.RecursiveContainerMapping = {"user": {"email": "test@example.com"}}
+        result = r[t.RecursiveContainer].ok(data)
         value = tm.ok(result, deep={"user.email": "test@example.com"})
         tm.that(value, eq=data)
 
     def test_ok_with_path_parameter(self) -> None:
         """Test tm.ok() with path parameter."""
-        data: t.ContainerMapping = {"user": {"name": "John"}}
-        result = r[t.NormalizedValue].ok(data)
+        data: t.RecursiveContainerMapping = {"user": {"name": "John"}}
+        result = r[t.RecursiveContainer].ok(data)
         value = tm.ok(result, path="user.name", eq="John")
         tm.that(value, eq="John")
 
@@ -484,7 +484,7 @@ class TestFlextTestsMatchers:
                 self.attr2 = "value2"
 
         obj = TestClass()
-        tm.that(cast("t.NormalizedValue", obj), attrs=["attr1", "attr2"])
+        tm.that(cast("t.RecursiveContainer", obj), attrs=["attr1", "attr2"])
 
     def test_that_with_methods_parameter(self) -> None:
         """Test tm.that() with methods parameter."""
@@ -499,7 +499,7 @@ class TestFlextTestsMatchers:
                 raise NotImplementedError(msg)
 
         obj = TestClass()
-        tm.that(cast("t.NormalizedValue", obj), methods=["method1", "method2"])
+        tm.that(cast("t.RecursiveContainer", obj), methods=["method1", "method2"])
 
     def test_that_with_attr_eq_tuple_parameter(self) -> None:
         """Test tm.that() with attr_eq tuple parameter."""
@@ -509,7 +509,7 @@ class TestFlextTestsMatchers:
                 self.attr = "value"
 
         obj = TestClass()
-        tm.that(cast("t.NormalizedValue", obj), attr_eq=("attr", "value"))
+        tm.that(cast("t.RecursiveContainer", obj), attr_eq=("attr", "value"))
 
     def test_that_with_attr_eq_mapping_parameter(self) -> None:
         """Test tm.that() with attr_eq mapping parameter."""
@@ -521,7 +521,7 @@ class TestFlextTestsMatchers:
 
         obj = TestClass()
         tm.that(
-            cast("t.NormalizedValue", obj),
+            cast("t.RecursiveContainer", obj),
             attr_eq={"attr1": "value1", "attr2": "value2"},
         )
 
@@ -555,7 +555,7 @@ class TestFlextTestsMatchers:
         tm.that(["a", 1, "c"], any=int)
 
     def test_check_returns_chain(self) -> None:
-        """Test tm.check() returns Chain t.NormalizedValue."""
+        """Test tm.check() returns Chain t.RecursiveContainer."""
         result = r[int].ok(42)
         chain = tm.check(result)
         tm.that(chain, none=False)

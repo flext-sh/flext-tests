@@ -105,17 +105,17 @@ class FlextTestsBaseTypesMixin:
     PRIMITIVES_MAPPING_ADAPTER: TypeAdapter[Mapping[str, t.Primitives]] = TypeAdapter(
         Mapping[str, t.Primitives]
     )
-    NORMALIZED_VALUE_ADAPTER: TypeAdapter[t.NormalizedValue] = TypeAdapter(
-        t.NormalizedValue
+    NORMALIZED_VALUE_ADAPTER: TypeAdapter[t.RecursiveContainer] = TypeAdapter(
+        t.RecursiveContainer
     )
     DICT_ADAPTER: TypeAdapter[t.Dict] = TypeAdapter(t.Dict)
     SCALAR_MAPPING_ADAPTER: TypeAdapter[t.ScalarMapping] = TypeAdapter(t.ScalarMapping)
-    CONTAINER_MAPPING_ADAPTER: TypeAdapter[t.ContainerMapping] = TypeAdapter(
-        t.ContainerMapping
+    CONTAINER_MAPPING_ADAPTER: TypeAdapter[t.RecursiveContainerMapping] = TypeAdapter(
+        t.RecursiveContainerMapping
     )
-    CONTAINER_MAPPING_SEQUENCE_ADAPTER: TypeAdapter[Sequence[t.ContainerMapping]] = (
-        TypeAdapter(Sequence[t.ContainerMapping])
-    )
+    CONTAINER_MAPPING_SEQUENCE_ADAPTER: TypeAdapter[
+        Sequence[t.RecursiveContainerMapping]
+    ] = TypeAdapter(Sequence[t.RecursiveContainerMapping])
     STR_MAPPING_ADAPTER: TypeAdapter[t.StrMapping] = TypeAdapter(t.StrMapping)
     STR_MAPPING_MAPPING_ADAPTER: TypeAdapter[Mapping[str, t.StrMapping]] = TypeAdapter(
         Mapping[str, t.StrMapping]

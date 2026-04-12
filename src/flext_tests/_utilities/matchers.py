@@ -104,7 +104,7 @@ class FlextTestsMatchersUtilities:
         value: t.Tests.TestobjectSerializable
         | t.Tests.MatcherKwargValue
         | t.RuntimeData
-        | t.NormalizedValue,
+        | t.RecursiveContainer,
     ) -> TypeIs[Sequence[t.Tests.TestobjectSerializable]]:
         return isinstance(value, Sequence) and (
             not isinstance(value, (str, bytes, bytearray))
@@ -115,7 +115,7 @@ class FlextTestsMatchersUtilities:
         value: t.Tests.TestobjectSerializable
         | t.Tests.MatcherKwargValue
         | t.RuntimeData
-        | t.NormalizedValue,
+        | t.RecursiveContainer,
     ) -> TypeIs[t.Tests.TestobjectSerializable]:
         if value is None:
             return True
@@ -196,7 +196,7 @@ class FlextTestsMatchersUtilities:
         return str(value)
 
     @staticmethod
-    def _to_normalized(value: t.Tests.TestobjectSerializable) -> t.NormalizedValue:
+    def _to_normalized(value: t.Tests.TestobjectSerializable) -> t.RecursiveContainer:
         """Convert _Testobject to pure NormalizedValue."""
         if value is None:
             return None
@@ -291,7 +291,7 @@ class FlextTestsMatchersUtilities:
     @staticmethod
     def _to_chk_value(
         value: object,
-    ) -> t.NormalizedValue:
+    ) -> t.RecursiveContainer:
         """Convert a test value to NormalizedValue for use with u.chk()."""
         if value is None:
             return None
@@ -313,7 +313,7 @@ class FlextTestsMatchersUtilities:
                     )
                 )
             except ValidationError:
-                empty_map: t.ContainerMapping = {}
+                empty_map: t.RecursiveContainerMapping = {}
                 return empty_map
             return {
                 str(k): FlextTestsMatchersUtilities._to_chk_value(v)
@@ -327,7 +327,7 @@ class FlextTestsMatchersUtilities:
                     )
                 )
             except ValidationError:
-                empty_list: t.ContainerList = []
+                empty_list: t.RecursiveContainerList = []
                 return empty_list
             return [
                 FlextTestsMatchersUtilities._to_chk_value(item)
@@ -340,11 +340,11 @@ class FlextTestsMatchersUtilities:
         value: object,
         has: t.Tests.ContainmentSpec
         | t.Tests.MatcherKwargValue
-        | t.NormalizedValue
+        | t.RecursiveContainer
         | None,
         lacks: t.Tests.ContainmentSpec
         | t.Tests.MatcherKwargValue
-        | t.NormalizedValue
+        | t.RecursiveContainer
         | None,
         msg: str | None,
         *,
@@ -355,7 +355,7 @@ class FlextTestsMatchersUtilities:
             items: Sequence[
                 t.Tests.TestobjectSerializable
                 | t.Tests.MatcherKwargValue
-                | t.NormalizedValue
+                | t.RecursiveContainer
             ] = (
                 list(has)
                 if FlextTestsMatchersUtilities._is_non_string_sequence(has)
@@ -541,7 +541,7 @@ class FlextTestsMatchersUtilities:
                     result: Railway result to chain assertions on.
 
                 Returns:
-                    Chain t.NormalizedValue for fluent assertion API.
+                    Chain t.RecursiveContainer for fluent assertion API.
 
                 """
                 return m.Tests.Chain(result=result)

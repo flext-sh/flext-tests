@@ -15,7 +15,7 @@ class FlextTestsLengthUtilitiesMixin:
     - Zero code duplication - delegates to flext-core utilities
     - Uses t.Tests.LengthSpec for type safety
     - Supports exact length or range validation
-    - Works with any t.NormalizedValue that has __len__
+    - Works with any t.RecursiveContainer that has __len__
 
     All operations delegate to FlextCliUtilities.chk() for validation,
     ensuring consistency with flext-core patterns.
