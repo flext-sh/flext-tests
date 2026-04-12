@@ -9,10 +9,6 @@ requires = [ "hatchling" ]
 
 # [CUSTOM] project metadata
 [project]
-
-# [CUSTOM] poetry - flext-tests ships one namespace package
-
-authors = [ {email = "team@flext.sh", name = "FLEXT Team"} ]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Framework :: Pydantic :: 2",
@@ -47,12 +43,18 @@ dependencies = [
 description = "FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem"
 keywords = [ "builders", "factories", "flext", "test-infrastructure", "testing" ]
 license = "MIT"
-maintainers = [ {email = "team@flext.sh", name = "FLEXT Team"} ]
 name = "flext-tests"
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
-urls = {Documentation = "https://github.com/flext-sh/flext-tests/blob/main/README.md", Homepage = "https://github.com/flext-sh/flext-tests", Repository = "https://github.com/flext-sh/flext-tests"}
 version = "0.12.0-dev"
+
+[[project.authors]]
+email = "team@flext.sh"
+name = "FLEXT Team"
+
+[[project.maintainers]]
+email = "team@flext.sh"
+name = "FLEXT Team"
 
 # [MANAGED] consolidated development dependencies
 [project.optional-dependencies]
@@ -130,6 +132,11 @@ dev = [
   "vulture>=2.13",
 ]
 
+[project.urls]
+Documentation = "https://github.com/flext-sh/flext-tests/blob/main/README.md"
+Homepage = "https://github.com/flext-sh/flext-tests"
+Repository = "https://github.com/flext-sh/flext-tests"
+
 [tool.bandit]
 exclude_dirs = [ "tests" ]
 severity = "MEDIUM"
@@ -149,18 +156,11 @@ show_missing = true
 skip_covered = false
 
 [tool.coverage.run]
-omit = [
-  "*/dependency_injector/providers.pyx",
-]
+omit = [ "*/dependency_injector/providers.pyx" ]
 
 # [MANAGED] deptry
 [tool.deptry]
-known_first_party = [
-  "flext_cli",
-  "flext_core",
-  "flext_infra",
-  "flext_tests",
-]
+known_first_party = [ "flext_cli", "flext_core", "flext_infra", "flext_tests" ]
 pep621_dev_dependency_groups = [ "dev" ]
 
 [tool.flext.docs]
@@ -219,14 +219,10 @@ project-excludes = [
 ]
 project-includes = [ "src/**/*.py*", "tests/**/*.py*" ]
 python-version = "3.13"
-search-path = [
-  ".",
-  "src",
-]
+search-path = [ ".", "src" ]
 use-ignore-files = false
 
 [tool.pyrefly.errors]
-
 abstract-method-call = false
 annotation-mismatch = true
 bad-argument-count = true
@@ -333,19 +329,9 @@ exclude = [
   "**/venv/**",
   ".venv",
 ]
-extraPaths = [
-  ".",
-  "../typings",
-  "src",
-]
-ignore = [
-  "**/*.pyi",
-  "../typings",
-]
-include = [
-  "src",
-  "tests",
-]
+extraPaths = [ ".", "../typings", "src" ]
+ignore = [ "**/*.pyi", "../typings" ]
+include = [ "src", "tests" ]
 pythonPlatform = "Linux"
 pythonVersion = "3.13"
 reportCallIssue = "none"
@@ -496,14 +482,12 @@ ignore = [
 select = [ "ALL" ]
 
 [tool.ruff.lint.isort]
-
 combine-as-imports = true
 force-single-line = false
 known-first-party = [ "flext_cli", "flext_core", "flext_infra", "flext_tests" ]
 split-on-trailing-comma = true
 
 [tool.ruff.lint.per-file-ignores]
-
 "**/.vulture_whitelist.py" = [ "ALL" ]
 "**/*_pb2*.py" = [ "ALL" ]
 "**/*dispatcher*" = [  ]
@@ -664,15 +648,7 @@ split-on-trailing-comma = true
 "**/settings.py" = [ "ANN401", "PLC0415", "S105" ]
 "**/singer/*.py" = [ "S404", "S603" ]
 "**/tools/*.py" = [ "FBT001", "FBT002", "N802", "S404", "S603", "S607", "T201" ]
-"**/tools/**/*.py" = [
-  "FBT001",
-  "FBT002",
-  "N802",
-  "S404",
-  "S603",
-  "S607",
-  "T201",
-]
+"**/tools/**/*.py" = [ "FBT001", "FBT002", "N802", "S404", "S603", "S607", "T201" ]
 "**/typings.py" = [ "RUF036" ]
 "**/workspace/*.py" = [ "PLC0415", "S404", "S603", "S607" ]
 

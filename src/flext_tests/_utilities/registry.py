@@ -2,21 +2,18 @@
 
 from __future__ import annotations
 
-from flext_core import (
-    FlextRegistry,
-)
+from flext_core import p, u
 
 
 class FlextTestsRegistryHelpersUtilitiesMixin:
-    """Registry testing helpers - use FlextRegistry directly when possible."""
+    """Registry testing helpers over the canonical registry DSL."""
 
     @staticmethod
     def create_test_registry() -> p.Registry:
         """Create a test registry instance.
 
         Returns:
-            r[TEntity]: Result containing created entity or error
-            New FlextRegistry instance
+            Canonical registry instance typed as `p.Registry`.
 
         """
-        return FlextRegistry()
+        return u.build_registry()
