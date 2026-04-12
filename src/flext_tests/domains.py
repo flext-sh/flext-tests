@@ -31,7 +31,7 @@ class FlextTestsDomains:
         name: str,
         version: str,
         profile: str,
-        model_settings: Mapping[str, t.Tests.TestobjectSerializable],
+        model_config: Mapping[str, t.Tests.TestobjectSerializable],
         variables: Mapping[str, t.Tests.TestobjectSerializable],
     ) -> Mapping[str, t.Tests.TestobjectSerializable]:
         """Create a shared dbt project configuration structure."""
@@ -50,7 +50,7 @@ class FlextTestsDomains:
             "target-path": "target",
             "clean-targets": ["target", "dbt_packages"],
             "require-dbt-version": ">=1.8.0",
-            "model_settings": dict(model_settings.items()),
+            "model_config": dict(model_config.items()),
             "vars": dict(variables.items()),
         }
 
@@ -125,20 +125,20 @@ class FlextTestsDomains:
         return response
 
     @staticmethod
-    def create_configuration(
+    def create_settings(
         service_type: str = "api",
         environment: str = "test",
         **overrides: t.Tests.TestobjectSerializable,
     ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
-        """Create test configuration data using factories.
+        """Create test settings data using factories.
 
         Args:
-            service_type: Type of service configuration
+            service_type: Type of service settings
             environment: Environment setting
-            **overrides: Additional configuration overrides
+            **overrides: Additional settings overrides
 
         Returns:
-            Configuration dictionary
+            Settings dictionary
 
         """
         settings_result = m.Tests.Config(
@@ -219,9 +219,7 @@ class FlextTestsDomains:
             "type": service_type,
             "name": f"test_{service_type}_service",
             "enabled": True,
-            "settings": FlextTestsDomains.create_configuration(
-                service_type=service_type
-            ),
+            "settings": FlextTestsDomains.create_settings(service_type=service_type),
         }
         base_service.update(settings)
         return base_service

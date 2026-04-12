@@ -16,9 +16,9 @@ from tests import u
 class TestFlextTestsDomains:
     """Test suite for td class."""
 
-    def test_create_configuration_default(self) -> None:
-        """Test create_configuration with default parameters."""
-        settings = td.create_configuration()
+    def test_create_settings_default(self) -> None:
+        """Test create_settings with default parameters."""
+        settings = td.create_settings()
         tm.that(settings, is_=dict)
         tm.that(settings["service_type"], eq="api")
         tm.that(settings["environment"], eq="test")
@@ -31,9 +31,9 @@ class TestFlextTestsDomains:
         tm.that(settings["cache_ttl"], eq=300)
         tm.that(settings, has="namespace")
 
-    def test_create_configuration_custom(self) -> None:
-        """Test create_configuration with custom parameters."""
-        settings = td.create_configuration(
+    def test_create_settings_custom(self) -> None:
+        """Test create_settings with custom parameters."""
+        settings = td.create_settings(
             service_type="database",
             environment="production",
             custom_field="custom_value",
