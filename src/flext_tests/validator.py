@@ -316,4 +316,4 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
 
 
 tv = FlextTestsValidator
-__all__ = ["FlextTestsValidator", "tv"]
+__all__: list[str] = ["FlextTestsValidator", "tv"]

@@ -1813,4 +1813,4 @@ class FlextTestsFiles(s):
 
 tf = FlextTestsFiles
 
-__all__ = ["FlextTestsFiles", "tf"]
+__all__: list[str] = ["FlextTestsFiles", "tf"]

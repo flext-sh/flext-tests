@@ -8,7 +8,7 @@ from collections.abc import (
 )
 
 from flext_core import r
-from flext_tests import p, t
+from flext_tests import t
 
 
 class FlextTestsGenericHelpersUtilitiesMixin:
@@ -140,7 +140,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
 
     @staticmethod
     def validate_model_attributes(
-        model: p.Model,
+        model: m.BaseModel,
         required_attrs: t.StrSequence,
         optional_attrs: t.StrSequence | None = None,
     ) -> r[bool]:

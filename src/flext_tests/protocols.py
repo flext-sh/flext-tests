@@ -26,4 +26,4 @@ class FlextTestsProtocols(p):
 
 p = FlextTestsProtocols
 
-__all__ = ["FlextTestsProtocols", "p"]
+__all__: list[str] = ["FlextTestsProtocols", "p"]

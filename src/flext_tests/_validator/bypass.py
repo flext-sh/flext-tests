@@ -157,4 +157,4 @@ class FlextValidatorBypass:
         )
 
 
-__all__ = ["FlextValidatorBypass"]
+__all__: list[str] = ["FlextValidatorBypass"]

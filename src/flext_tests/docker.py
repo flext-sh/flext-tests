@@ -387,4 +387,4 @@ class FlextTestsDocker:
 
 tk = FlextTestsDocker
 
-__all__ = ["FlextTestsDocker", "tk"]
+__all__: list[str] = ["FlextTestsDocker", "tk"]

@@ -109,4 +109,4 @@ class FlextValidatorLayer:
         )
 
 
-__all__ = ["FlextValidatorLayer"]
+__all__: list[str] = ["FlextValidatorLayer"]

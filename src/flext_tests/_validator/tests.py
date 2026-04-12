@@ -202,4 +202,4 @@ class FlextValidatorTests:
         )
 
 
-__all__ = ["FlextValidatorTests"]
+__all__: list[str] = ["FlextValidatorTests"]

@@ -277,4 +277,4 @@ class FlextTestsDomains:
 
 td = FlextTestsDomains
 
-__all__ = ["FlextTestsDomains", "td"]
+__all__: list[str] = ["FlextTestsDomains", "td"]

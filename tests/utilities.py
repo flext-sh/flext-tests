@@ -17,4 +17,4 @@ class TestsFlextTestsUtilities(FlextTestsUtilities):
 
 u = TestsFlextTestsUtilities
 
-__all__ = ["TestsFlextTestsUtilities", "u"]
+__all__: list[str] = ["TestsFlextTestsUtilities", "u"]

@@ -8,4 +8,4 @@ from __future__ import annotations
 
 from flext_core.service import FlextService, s
 
-__all__ = ["FlextService", "s"]
+__all__: list[str] = ["FlextService", "s"]

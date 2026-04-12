@@ -1678,4 +1678,4 @@ class FlextTestsMatchersUtilities:
 
 
 tm = FlextTestsMatchersUtilities.Tests.Matchers
-__all__ = ["FlextTestsMatchersUtilities", "tm"]
+__all__: list[str] = ["FlextTestsMatchersUtilities", "tm"]

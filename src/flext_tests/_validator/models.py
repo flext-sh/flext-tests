@@ -91,4 +91,4 @@ class FlextTestsValidatorModels(m):
             ] = Field(default_factory=dict)
 
 
-__all__ = ["FlextTestsValidatorModels"]
+__all__: list[str] = ["FlextTestsValidatorModels"]

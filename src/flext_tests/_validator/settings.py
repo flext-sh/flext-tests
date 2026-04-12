@@ -275,4 +275,4 @@ class FlextValidatorSettings:
         return cls.scan([pyproject_path], approved_exceptions)
 
 
-__all__ = ["FlextValidatorSettings"]
+__all__: list[str] = ["FlextValidatorSettings"]

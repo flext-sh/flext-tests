@@ -36,4 +36,4 @@ class FlextTestsModels(m):
 
 m = FlextTestsModels
 
-__all__ = ["FlextTestsModels", "m"]
+__all__: list[str] = ["FlextTestsModels", "m"]
