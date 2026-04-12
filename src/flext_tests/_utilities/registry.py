@@ -11,7 +11,7 @@ class FlextTestsRegistryHelpersUtilitiesMixin:
     """Registry testing helpers - use FlextRegistry directly when possible."""
 
     @staticmethod
-    def create_test_registry() -> FlextRegistry:
+    def create_test_registry() -> p.Registry:
         """Create a test registry instance.
 
         Returns:
