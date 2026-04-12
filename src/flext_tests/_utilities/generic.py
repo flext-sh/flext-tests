@@ -8,7 +8,7 @@ from collections.abc import (
 )
 
 from flext_core import r
-from flext_tests import t
+from flext_tests import m, t
 
 
 class FlextTestsGenericHelpersUtilitiesMixin:
