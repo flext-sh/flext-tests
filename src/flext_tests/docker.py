@@ -31,8 +31,7 @@ from pydantic import ValidationError
 from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
-from flext_core import p, r
-from flext_tests import c, m, p, t, u
+from flext_tests import c, m, p, r, t, u
 
 docker: WhalesDockerClient = WhalesDockerClient(client_type="docker")
 logger: p.Logger = u.fetch_logger(__name__)
