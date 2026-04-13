@@ -12,7 +12,7 @@ import tomllib
 from collections.abc import Mapping, MutableSequence, Sequence
 from pathlib import Path
 
-from flext_core import r
+from flext_core import p, r
 from flext_tests import c, m, t, u
 
 type _TomlValue = t.Primitives | list[_TomlValue] | dict[str, _TomlValue]
@@ -230,7 +230,7 @@ class FlextValidatorSettings:
         cls,
         files: Sequence[Path],
         approved_exceptions: Mapping[str, t.StrSequence] | None = None,
-    ) -> r[m.Tests.ScanResult]:
+    ) -> p.Result[m.Tests.ScanResult]:
         """Scan pyproject.toml files for settings violations.
 
         Args:
@@ -261,7 +261,7 @@ class FlextValidatorSettings:
         cls,
         pyproject_path: Path,
         approved_exceptions: Mapping[str, t.StrSequence] | None = None,
-    ) -> r[m.Tests.ScanResult]:
+    ) -> p.Result[m.Tests.ScanResult]:
         """Validate a single pyproject.toml file.
 
         Args:

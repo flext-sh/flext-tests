@@ -13,7 +13,6 @@ import re
 from collections.abc import Mapping, MutableSequence, Sequence
 from pathlib import Path
 
-from flext_core import r
 from flext_tests import FlextTestsValidatorModels, c, m, t, u
 
 
@@ -138,7 +137,7 @@ class FlextValidatorBypass:
         cls,
         files: Sequence[Path],
         approved_exceptions: Mapping[str, t.StrSequence] | None = None,
-    ) -> r[m.Tests.ScanResult]:
+    ) -> p.Result[m.Tests.ScanResult]:
         """Scan files for bypass violations.
 
         Args:

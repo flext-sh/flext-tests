@@ -31,7 +31,7 @@ from pydantic import ValidationError
 from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
-from flext_core import r
+from flext_core import p, r
 from flext_tests import c, m, p, t, u
 
 docker: WhalesDockerClient = WhalesDockerClient(client_type="docker")
@@ -136,7 +136,7 @@ class FlextTestsDocker:
         except ValidationError:
             return []
 
-    def cleanup_dirty_containers(self) -> r[t.StrSequence]:
+    def cleanup_dirty_containers(self) -> p.Result[t.StrSequence]:
         """Clean up all dirty containers by recreating them with fresh volumes."""
         cleaned: MutableSequence[str] = []
         for container_name in list(self._dirty_containers):
@@ -157,7 +157,7 @@ class FlextTestsDocker:
                 cleaned.append(container_name)
         return r[t.StrSequence].ok(cleaned)
 
-    def compose_down(self, compose_file: str) -> r[str]:
+    def compose_down(self, compose_file: str) -> p.Result[str]:
         """Stop services using docker-compose via python_on_whales."""
         try:
             compose_path = Path(compose_file)
@@ -187,7 +187,7 @@ class FlextTestsDocker:
         service: str | None = None,
         *,
         force_recreate: bool = False,
-    ) -> r[str]:
+    ) -> p.Result[str]:
         """Start services using docker-compose via python_on_whales."""
         try:
             compose_path = Path(compose_file)
@@ -233,7 +233,9 @@ class FlextTestsDocker:
                 self._client = self._OfflineDockerClient()
         return self._client
 
-    def fetch_container_info(self, container_name: str) -> r[m.Tests.ContainerInfo]:
+    def fetch_container_info(
+        self, container_name: str
+    ) -> p.Result[m.Tests.ContainerInfo]:
         """Fetch container information."""
         try:
             client = self.client
@@ -270,7 +272,9 @@ class FlextTestsDocker:
         except (AttributeError, KeyError, TypeError, ValueError, RuntimeError) as exc:
             return r[m.Tests.ContainerInfo].fail(str(exc))
 
-    def fetch_container_status(self, container_name: str) -> r[m.Tests.ContainerInfo]:
+    def fetch_container_status(
+        self, container_name: str
+    ) -> p.Result[m.Tests.ContainerInfo]:
         """Fetch container status."""
         return self.fetch_container_info(container_name)
 
@@ -283,7 +287,7 @@ class FlextTestsDocker:
         """Whether a container is marked as dirty."""
         return container_name in self._dirty_containers
 
-    def mark_container_clean(self, container_name: str) -> r[bool]:
+    def mark_container_clean(self, container_name: str) -> p.Result[bool]:
         """Mark a container as clean after successful recreation."""
         try:
             self._dirty_containers.discard(container_name)
@@ -293,7 +297,7 @@ class FlextTestsDocker:
         except (OSError, TypeError) as exc:
             return r[bool].fail(f"Failed to mark clean: {exc}")
 
-    def mark_container_dirty(self, container_name: str) -> r[bool]:
+    def mark_container_dirty(self, container_name: str) -> p.Result[bool]:
         """Mark a container as dirty for recreation on next use."""
         try:
             self._dirty_containers.add(container_name)
@@ -303,7 +307,7 @@ class FlextTestsDocker:
         except (OSError, TypeError) as exc:
             return r[bool].fail(f"Failed to mark dirty: {exc}")
 
-    def start_existing_container(self, container_name: str) -> r[bool]:
+    def start_existing_container(self, container_name: str) -> p.Result[bool]:
         """Start an existing stopped container by name.
 
         Uses docker SDK to find and start the container. If already running,
@@ -326,7 +330,7 @@ class FlextTestsDocker:
         self,
         compose_file: str,
         network_name: str | None = None,
-    ) -> r[str]:
+    ) -> p.Result[str]:
         """Start a Docker Compose stack."""
         _ = network_name
         result = self.compose_up(compose_file)
@@ -339,7 +343,7 @@ class FlextTestsDocker:
         host: str,
         port: int,
         max_wait: int = 30,
-    ) -> r[bool]:
+    ) -> p.Result[bool]:
         """Wait until a TCP port is accepting connections.
 
         Returns ok(True) if the port becomes ready within the timeout,

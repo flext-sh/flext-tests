@@ -6,7 +6,7 @@ from collections.abc import (
     MutableMapping,
 )
 
-from flext_core import r
+from flext_core import p, r
 from flext_tests import t
 
 
@@ -18,7 +18,7 @@ class FlextTestsFactoryUtilitiesMixin:
         value: T | None = None,
         *,
         error: str | None = None,
-    ) -> r[T]:
+    ) -> p.Result[T]:
         """Create r for tests.
 
         Args:

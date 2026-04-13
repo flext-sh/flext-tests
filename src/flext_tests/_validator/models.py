@@ -14,7 +14,7 @@ from typing import Annotated
 
 from pydantic import Field
 
-from flext_core import r
+from flext_core import p, r
 from flext_tests import c, m, t
 
 
@@ -40,7 +40,7 @@ class FlextTestsValidatorModels(m):
                     [Path, Mapping[str, t.StrSequence]],
                     Sequence[m.Tests.Violation],
                 ],
-            ) -> r[m.Tests.ScanResult]:
+            ) -> p.Result[m.Tests.ScanResult]:
                 violations: MutableSequence[m.Tests.Violation] = []
                 approved = approved_exceptions or {}
                 for file_path in files:

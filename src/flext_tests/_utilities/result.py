@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flext_core import r
+from flext_core import p, r
 from flext_tests import p
 
 
@@ -74,7 +74,7 @@ class FlextTestsResultUtilitiesMixin:
         assert result.value == expected_value
 
     @staticmethod
-    def create_failure_result(error: str) -> r[str]:
+    def create_failure_result(error: str) -> p.Result[str]:
         """Create a failure result with the given error.
 
         Args:
@@ -88,7 +88,7 @@ class FlextTestsResultUtilitiesMixin:
         return r[str].fail(error)
 
     @staticmethod
-    def create_success_result[T](value: T) -> r[T]:
+    def create_success_result[T](value: T) -> p.Result[T]:
         """Create a success result with the given value.
 
         Args:

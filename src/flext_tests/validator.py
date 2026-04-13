@@ -29,7 +29,7 @@ from collections.abc import Mapping, MutableSequence, Sequence
 from pathlib import Path
 from typing import ClassVar, override
 
-from flext_core import r, s
+from flext_core import p, r, s
 from flext_tests import (
     FlextValidatorBypass,
     FlextValidatorImports,
@@ -69,7 +69,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
     ScanResult: ClassVar[type[m.Tests.ScanResult]] = m.Tests.ScanResult
 
     @override
-    def execute(self) -> r[m.Tests.ScanResult]:
+    def execute(self) -> p.Result[m.Tests.ScanResult]:
         """Execute validator service with default current-path scope."""
         return self.all(Path.cwd())
 
@@ -108,7 +108,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         approved_exceptions: Mapping[str, t.StrSequence] | None = None,
         *,
         include_tests_validation: bool = False,
-    ) -> r[m.Tests.ScanResult]:
+    ) -> p.Result[m.Tests.ScanResult]:
         """Run all validations and combine results.
 
         Args:
@@ -162,7 +162,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         path: Path,
         exclude_patterns: t.StrSequence | None = None,
         approved_exceptions: Mapping[str, t.StrSequence] | None = None,
-    ) -> r[m.Tests.ScanResult]:
+    ) -> p.Result[m.Tests.ScanResult]:
         """Validate bypass patterns in Python files.
 
         Detects:
@@ -188,7 +188,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         path: Path,
         exclude_patterns: t.StrSequence | None = None,
         approved_exceptions: Mapping[str, t.StrSequence] | None = None,
-    ) -> r[m.Tests.ScanResult]:
+    ) -> p.Result[m.Tests.ScanResult]:
         """Validate imports in Python files.
 
         Detects:
@@ -218,7 +218,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         exclude_patterns: t.StrSequence | None = None,
         approved_exceptions: Mapping[str, t.StrSequence] | None = None,
         layer_hierarchy: t.IntMapping | None = None,
-    ) -> r[m.Tests.ScanResult]:
+    ) -> p.Result[m.Tests.ScanResult]:
         """Validate layer dependencies in Python files.
 
         Detects:
@@ -243,7 +243,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         path: Path,
         exclude_patterns: t.StrSequence | None = None,
         approved_exceptions: Mapping[str, t.StrSequence] | None = None,
-    ) -> r[m.Tests.ScanResult]:
+    ) -> p.Result[m.Tests.ScanResult]:
         """Validate test patterns in Python files.
 
         Detects:
@@ -269,7 +269,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         path: Path,
         exclude_patterns: t.StrSequence | None = None,
         approved_exceptions: Mapping[str, t.StrSequence] | None = None,
-    ) -> r[m.Tests.ScanResult]:
+    ) -> p.Result[m.Tests.ScanResult]:
         """Validate type annotations in Python files.
 
         Detects:
@@ -294,7 +294,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         cls,
         pyproject_path: Path,
         approved_exceptions: Mapping[str, t.StrSequence] | None = None,
-    ) -> r[m.Tests.ScanResult]:
+    ) -> p.Result[m.Tests.ScanResult]:
         """Validate pyproject.toml configuration.
 
         Detects:

@@ -7,7 +7,7 @@ from collections.abc import (
     Sequence,
 )
 
-from flext_core import r
+from flext_core import p, r
 
 
 class FlextTestsValidationUtilitiesMixin:
@@ -17,7 +17,7 @@ class FlextTestsValidationUtilitiesMixin:
     def validate_pipeline(
         value: str,
         validators: Sequence[Callable[[str], r[bool]]],
-    ) -> r[bool]:
+    ) -> p.Result[bool]:
         """Execute validation pipeline with multiple validators.
 
         Runs validators sequentially. If any validator fails, returns that failure.

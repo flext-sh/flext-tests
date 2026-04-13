@@ -7,7 +7,7 @@ from collections.abc import (
     Sequence,
 )
 
-from flext_core import r
+from flext_core import p, r
 from flext_tests import m, t
 
 
@@ -119,7 +119,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
         value: T | None,
         error_on_none: str = "Value cannot be None",
         default_on_none: T | None = None,
-    ) -> r[T]:
+    ) -> p.Result[T]:
         """Create result from value, failing if None (unless default).
 
         Args:
@@ -143,7 +143,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
         model: m.BaseModel,
         required_attrs: t.StrSequence,
         optional_attrs: t.StrSequence | None = None,
-    ) -> r[bool]:
+    ) -> p.Result[bool]:
         """Validate model has required attributes.
 
         Args:

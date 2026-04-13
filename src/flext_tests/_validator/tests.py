@@ -13,7 +13,6 @@ from collections.abc import Mapping, MutableSequence, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from flext_core import r
 from flext_tests import FlextTestsValidatorModels, c, t, u
 
 if TYPE_CHECKING:
@@ -183,7 +182,7 @@ class FlextValidatorTests:
         cls,
         files: Sequence[Path],
         approved_exceptions: Mapping[str, t.StrSequence] | None = None,
-    ) -> r[m.Tests.ScanResult]:
+    ) -> p.Result[m.Tests.ScanResult]:
         """Scan files for test violations.
 
         Args:

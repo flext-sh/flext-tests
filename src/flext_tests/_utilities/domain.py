@@ -14,7 +14,7 @@ from pathlib import Path
 from pydantic import BaseModel, RootModel
 
 from flext_cli.utilities import FlextCliUtilities
-from flext_core import r
+from flext_core import p, r
 from flext_tests import (
     FlextTestsPayloadUtilities,
     FlextTestsProtocols,
@@ -31,7 +31,7 @@ class FlextTestsDomainHelpersUtilitiesMixin:
         values: Sequence[t.Tests.TestobjectSerializable],
         entity_class: FlextTestsProtocols.Tests.EntityFactory[TEntity],
         remove_ids: Sequence[bool] | None = None,
-    ) -> r[Sequence[TEntity]]:
+    ) -> p.Result[Sequence[TEntity]]:
         """Create batch of test entities.
 
         Args:

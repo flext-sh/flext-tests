@@ -36,7 +36,7 @@ from typing import ClassVar, Self, TypeIs, TypeVar, overload, override
 
 from pydantic import BaseModel, ValidationError
 
-from flext_core import r
+from flext_core import p, r
 from flext_tests import c, m, s, t, u
 
 TModel = TypeVar("TModel", bound=BaseModel)
@@ -197,7 +197,7 @@ class FlextTestsFiles(s):
     def _validate_model_content[TModelRead: BaseModel](
         model_cls: type[TModelRead],
         content: str | bytes | t.ConfigMap | Sequence[t.StrSequence],
-    ) -> r[TModelRead]:
+    ) -> p.Result[TModelRead]:
         try:
             model_instance: TModelRead = model_cls.model_validate(content)
             return r[TModelRead].ok(model_instance)
@@ -491,7 +491,7 @@ class FlextTestsFiles(s):
         model: type[TModel] | None = None,
         on_error: c.Tests.ErrorMode = c.Tests.ErrorMode.COLLECT,
         parallel: bool = False,
-    ) -> r[m.Tests.BatchResult]:
+    ) -> p.Result[m.Tests.BatchResult]:
         """Batch file operations.
 
         Uses u.batch_files() for batch processing with error handling.
@@ -725,7 +725,7 @@ class FlextTestsFiles(s):
         deep: bool = True,
         keys: t.StrSequence | None = None,
         exclude_keys: t.StrSequence | None = None,
-    ) -> r[bool]:
+    ) -> p.Result[bool]:
         """Compare two files.
 
         Args:
@@ -984,7 +984,7 @@ class FlextTestsFiles(s):
         return file_path
 
     @override
-    def execute(self) -> r[t.RecursiveContainer]:
+    def execute(self) -> p.Result[t.RecursiveContainer]:
         """Execute service - returns success for file manager.
 
         FlextTestsFiles is a utility service that doesn't have a specific
@@ -1000,7 +1000,7 @@ class FlextTestsFiles(s):
         detect_fmt: bool = True,
         parse_content: bool = False,
         validate_model: type[BaseModel] | None = None,
-    ) -> r[m.Tests.FileInfo]:
+    ) -> p.Result[m.Tests.FileInfo]:
         """Get comprehensive file information.
 
         Args:
@@ -1125,7 +1125,7 @@ class FlextTestsFiles(s):
         enc: str = c.Tests.DEFAULT_ENCODING,
         delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
-    ) -> r[str | bytes | t.ConfigMap | Sequence[t.StrSequence]]: ...
+    ) -> p.Result[str | bytes | t.ConfigMap | Sequence[t.StrSequence]]: ...
 
     @overload
     def read(
@@ -1137,7 +1137,7 @@ class FlextTestsFiles(s):
         enc: str = c.Tests.DEFAULT_ENCODING,
         delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
-    ) -> r[TModel]: ...
+    ) -> p.Result[TModel]: ...
 
     def read(
         self,
@@ -1148,7 +1148,7 @@ class FlextTestsFiles(s):
         enc: str = c.Tests.DEFAULT_ENCODING,
         delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
-    ) -> r[str | bytes | t.ConfigMap | Sequence[t.StrSequence]] | r[TModel]:
+    ) -> p.Result[str | bytes | t.ConfigMap | Sequence[t.StrSequence]] | r[TModel]:
         """Read file with auto-detection or explicit format.
 
         Supports loading directly into Pydantic models when model_cls is provided.
@@ -1396,7 +1396,7 @@ class FlextTestsFiles(s):
             ]
         return str(value)
 
-    def _compare_content(self, params: m.Tests.CompareParams) -> r[bool]:
+    def _compare_content(self, params: m.Tests.CompareParams) -> p.Result[bool]:
         """Compare file content with optional deep/structured comparison."""
         content1_raw = params.file1.read_text(encoding=c.Tests.DEFAULT_ENCODING)
         content2_raw = params.file2.read_text(encoding=c.Tests.DEFAULT_ENCODING)
@@ -1420,7 +1420,7 @@ class FlextTestsFiles(s):
             content2 = content2.lower()
         return r[bool].ok(content1 == content2)
 
-    def _compare_lines(self, params: m.Tests.CompareParams) -> r[bool]:
+    def _compare_lines(self, params: m.Tests.CompareParams) -> p.Result[bool]:
         """Compare files line by line with optional normalization."""
         lines1 = params.file1.read_text(
             encoding=c.Tests.DEFAULT_ENCODING,
@@ -1723,7 +1723,7 @@ class FlextTestsFiles(s):
         content2_raw: str,
         keys: t.StrSequence | None,
         exclude_keys: t.StrSequence | None,
-    ) -> r[bool] | None:
+    ) -> p.Result[bool] | None:
         """Try to parse and deeply compare content as JSON or YAML.
 
         Returns None if content cannot be parsed as structured data.
