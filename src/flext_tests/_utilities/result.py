@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from flext_core import p, r
-from flext_tests import p
+from flext_tests import p, r
 
 
 class FlextTestsResultUtilitiesMixin:

@@ -13,7 +13,7 @@ import re
 from collections.abc import Mapping, MutableSequence, Sequence
 from pathlib import Path
 
-from flext_tests import FlextTestsValidatorModels, c, m, t, u
+from flext_tests import FlextTestsValidatorModels, c, m, p, t, u
 
 
 class FlextValidatorBypass:
