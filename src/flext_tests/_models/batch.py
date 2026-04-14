@@ -17,7 +17,7 @@ from pydantic import (
     computed_field,
 )
 
-from flext_core import FlextModels, r
+from flext_core import FlextModels, p
 from flext_tests import c, t
 
 
@@ -95,7 +95,7 @@ class FlextTestsBatchModelsMixin:
             Field(description="Total number of operations"),
         ]
         results: Annotated[
-            Mapping[str, r[Path | t.Tests.TestobjectSerializable]],
+            Mapping[str, p.ResultLike[t.Tests.TestResultValue]],
             Field(
                 description="Mapping of file names to operation results",
             ),

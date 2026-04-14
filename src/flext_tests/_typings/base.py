@@ -25,7 +25,7 @@ from types import FrameType, GenericAlias, ModuleType
 from pydantic import BaseModel, ConfigDict, SecretStr, TypeAdapter
 
 from flext_cli import t
-from flext_core import p, r
+from flext_core import p
 
 
 class FlextTestsBaseTypesMixin:
@@ -48,8 +48,10 @@ class FlextTestsBaseTypesMixin:
         | None
     )
 
-    type Testobject = (
+    type TestResultValue = (
         FlextTestsBaseTypesMixin.TestobjectSerializable
+        | t.RegisterableService
+        | t.TypeHintSpecifier
         | BaseException
         | Exception
         | Enum
@@ -59,7 +61,7 @@ class FlextTestsBaseTypesMixin:
         | p.Dispatcher
         | p.Settings
         | p.Context
-        | r[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | p.Registry
         | re.Match[str]
         | _bt.UnionType
         | FrameType
@@ -73,6 +75,12 @@ class FlextTestsBaseTypesMixin:
         | MutableMapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
         | tzinfo
         | timezone
+    )
+    "Type for FLEXT test result payloads."
+
+    type Testobject = (
+        FlextTestsBaseTypesMixin.TestResultValue
+        | p.ResultLike[FlextTestsBaseTypesMixin.TestResultValue]
     )
 
     TESTOBJECT_SEQUENCE_ADAPTER: TypeAdapter[
@@ -124,6 +132,3 @@ class FlextTestsBaseTypesMixin:
     STR_SEQUENCE_MAPPING_ADAPTER: TypeAdapter[Mapping[str, t.StrSequence]] = (
         TypeAdapter(Mapping[str, t.StrSequence])
     )
-
-    type TestResultValue = FlextTestsBaseTypesMixin.Testobject
-    "Type for test result values."

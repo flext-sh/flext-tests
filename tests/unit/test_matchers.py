@@ -12,9 +12,8 @@ from typing import cast
 
 import pytest
 
-from flext_core import r
 from flext_tests import tm
-from tests import c, t
+from tests import c, p, r, t
 
 
 def _is_string(value: t.Tests.TestobjectSerializable) -> bool:
@@ -52,19 +51,19 @@ class TestFlextTestsMatchers:
 
     def test_assert_result_success_fails(self) -> None:
         """Test tm.ok() with failed result."""
-        result: r[str] = r[str].fail("error")
+        result: p.Result[str] = r[str].fail("error")
         with pytest.raises(AssertionError, match="Expected success but got failure"):
             tm.ok(result)
 
     def test_assert_result_success_custom_message(self) -> None:
         """Test tm.ok() with custom error message."""
-        result: r[str] = r[str].fail("error")
+        result: p.Result[str] = r[str].fail("error")
         with pytest.raises(AssertionError, match="Custom message"):
             tm.ok(result, msg="Custom message")
 
     def test_assert_result_failure_passes(self) -> None:
         """Test tm.fail() with failed result."""
-        result: r[str] = r[str].fail("error")
+        result: p.Result[str] = r[str].fail("error")
         error = tm.fail(result)
         tm.that(error, eq="error")
 
@@ -76,13 +75,13 @@ class TestFlextTestsMatchers:
 
     def test_assert_result_failure_with_expected_error(self) -> None:
         """Test tm.fail() with expected error substring."""
-        result: r[str] = r[str].fail("Database connection failed")
+        result: p.Result[str] = r[str].fail("Database connection failed")
         error = tm.fail(result, contains="connection")
         tm.that(error, has="connection")
 
     def test_assert_result_failure_expected_error_not_found(self) -> None:
         """Test tm.fail() when expected error substring not found."""
-        result: r[str] = r[str].fail("Database error")
+        result: p.Result[str] = r[str].fail("Database error")
         with pytest.raises(AssertionError, match=r"Expected.*to contain 'connection'"):
             tm.fail(result, contains="connection")
 
@@ -326,55 +325,55 @@ class TestFlextTestsMatchers:
 
     def test_fail_with_has_parameter(self) -> None:
         """Test tm.fail() with has parameter."""
-        result: r[str] = r[str].fail("Database connection failed")
+        result: p.Result[str] = r[str].fail("Database connection failed")
         error = tm.fail(result, has="connection")
         tm.that(error, eq="Database connection failed")
 
     def test_fail_with_has_sequence_parameter(self) -> None:
         """Test tm.fail() with has sequence parameter."""
-        result: r[str] = r[str].fail("Database connection failed")
+        result: p.Result[str] = r[str].fail("Database connection failed")
         error = tm.fail(result, has=["Database", "connection"])
         tm.that(error, eq="Database connection failed")
 
     def test_fail_with_lacks_parameter(self) -> None:
         """Test tm.fail() with lacks parameter."""
-        result: r[str] = r[str].fail("Database error")
+        result: p.Result[str] = r[str].fail("Database error")
         error = tm.fail(result, lacks="internal")
         tm.that(error, eq="Database error")
 
     def test_fail_with_starts_parameter(self) -> None:
         """Test tm.fail() with starts parameter."""
-        result: r[str] = r[str].fail("Error: connection failed")
+        result: p.Result[str] = r[str].fail("Error: connection failed")
         error = tm.fail(result, starts="Error:")
         tm.that(error, eq="Error: connection failed")
 
     def test_fail_with_ends_parameter(self) -> None:
         """Test tm.fail() with ends parameter."""
-        result: r[str] = r[str].fail("connection failed")
+        result: p.Result[str] = r[str].fail("connection failed")
         error = tm.fail(result, ends="failed")
         tm.that(error, eq="connection failed")
 
     def test_fail_with_match_parameter(self) -> None:
         """Test tm.fail() with match parameter."""
-        result: r[str] = r[str].fail("Error: 404")
+        result: p.Result[str] = r[str].fail("Error: 404")
         error = tm.fail(result, match="Error: \\d+")
         tm.that(error, eq="Error: 404")
 
     def test_fail_with_code_parameter(self) -> None:
         """Test tm.fail() with code parameter."""
-        result: r[str] = r[str].fail("error", error_code="VALIDATION")
+        result: p.Result[str] = r[str].fail("error", error_code="VALIDATION")
         error = tm.fail(result, code="VALIDATION")
         tm.that(error, eq="error")
 
     def test_fail_with_code_has_parameter(self) -> None:
         """Test tm.fail() with code_has parameter."""
-        result: r[str] = r[str].fail("error", error_code="VALIDATION_ERROR")
+        result: p.Result[str] = r[str].fail("error", error_code="VALIDATION_ERROR")
         error = tm.fail(result, code_has="VALIDATION")
         tm.that(error, eq="error")
 
     def test_fail_with_data_parameter(self) -> None:
         """Test tm.fail() with data parameter."""
-        result: r[str] = r[str].fail(
+        result: p.Result[str] = r[str].fail(
             "error",
             error_data=t.ConfigMap(root={"field": "email"}),
         )
@@ -532,7 +531,7 @@ class TestFlextTestsMatchers:
 
     def test_that_with_error_parameter(self) -> None:
         """Test tm.that() with error parameter for r."""
-        result: r[str] = r[str].fail("error")
+        result: p.Result[str] = r[str].fail("error")
         tm.that(result, error="error")
 
     def test_that_with_deep_parameter(self) -> None:
@@ -589,7 +588,7 @@ class TestFlextTestsMatchers:
 
     def test_fail_invalid_parameter_type(self) -> None:
         """Test tm.fail() with invalid parameter type raises ValueError."""
-        result: r[str] = r[str].fail("error")
+        result: p.Result[str] = r[str].fail("error")
         with pytest.raises(ValueError, match="Parameter validation failed"):
             tm.fail(result, code=123)
 
@@ -603,3 +602,75 @@ class TestFlextTestsMatchers:
         with pytest.raises(ValueError, match="Parameter validation failed"):
             with tm.scope(env="invalid"):
                 pass
+
+    def test_that_with_paths_data_driven_rules(self) -> None:
+        """Validate multiple dotted paths with a single declarative matcher call."""
+        payload: t.RecursiveContainerMapping = {
+            "user": {
+                "name": "John",
+                "age": 33,
+                "email": "john@example.com",
+            },
+            "status": "active",
+        }
+        tm.that(
+            payload,
+            paths={
+                "user.name": "John",
+                "user.age": {"gte": 18, "lt": 120},
+                "user.email": {"match": c.Tests.EMAIL_PATTERN},
+                "status": {"eq": "active"},
+            },
+        )
+
+    def test_that_with_items_data_driven_rules(self) -> None:
+        """Validate indexed, first/last and all-item rules declaratively."""
+        rows: t.StrSequence = ["alpha", "beta", "gamma"]
+        tm.that(
+            rows,
+            items={
+                "first": {"starts": "al"},
+                1: {"eq": "beta"},
+                "last": {"ends": "ma"},
+                "all": {"is_": str},
+            },
+        )
+
+    def test_that_with_attrs_match_data_driven_rules(self) -> None:
+        """Validate nested attributes using one declarative attrs_match spec."""
+
+        class Profile:
+            def __init__(self) -> None:
+                self.name = "Ada"
+                self.level = 7
+
+        class User:
+            def __init__(self) -> None:
+                self.profile = Profile()
+                self.active = True
+
+        user = User()
+        tm.that(
+            cast("t.RecursiveContainer", user),
+            attrs_match={
+                "profile.name": {"eq": "Ada"},
+                "profile.level": {"gte": 1, "lte": 10},
+                "active": {"eq": True},
+            },
+        )
+
+    def test_ok_with_composed_data_driven_validations(self) -> None:
+        """Validate result payload with path extraction plus composed rules."""
+        result = r[t.RecursiveContainer].ok({
+            "meta": {"version": "v1", "count": 3},
+            "items": ["a", "b", "c"],
+        })
+        value = tm.ok(
+            result,
+            paths={
+                "meta.version": {"starts": "v"},
+                "meta.count": {"eq": 3},
+            },
+            where=lambda data: isinstance(data, Mapping),
+        )
+        tm.that(value, is_=dict)

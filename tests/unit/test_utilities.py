@@ -12,9 +12,8 @@ from typing import ClassVar
 import pytest
 from pydantic import BaseModel, ConfigDict
 
-from flext_core import r
 from flext_tests import tm
-from tests import u
+from tests import p, r, u
 
 
 class TestFlextTestsUtilitiesResult:
@@ -28,13 +27,13 @@ class TestFlextTestsUtilitiesResult:
 
     def test_assert_success_fails(self) -> None:
         """Test assert_success with failed result."""
-        result: r[str] = r[str].fail("error")
+        result: p.Result[str] = r[str].fail("error")
         with pytest.raises(AssertionError, match="Expected success but got failure"):
             _ = u.Tests.assert_success(result)
 
     def test_assert_failure_passes(self) -> None:
         """Test assert_failure with failed result."""
-        result: r[str] = r[str].fail("error message")
+        result: p.Result[str] = r[str].fail("error message")
         error = u.Tests.assert_failure(result)
         tm.that(error, eq="error message")
 
@@ -46,13 +45,13 @@ class TestFlextTestsUtilitiesResult:
 
     def test_assert_failure_with_expected_error(self) -> None:
         """Test assert_failure with expected error substring."""
-        result: r[str] = r[str].fail("validation error occurred")
+        result: p.Result[str] = r[str].fail("validation error occurred")
         error = u.Tests.assert_failure(result, "validation")
         tm.that(error, has="validation")
 
     def test_assert_failure_with_expected_error_mismatch(self) -> None:
         """Test assert_failure when expected error doesn't match."""
-        result: r[str] = r[str].fail("validation error occurred")
+        result: p.Result[str] = r[str].fail("validation error occurred")
         with pytest.raises(AssertionError, match="Expected error containing"):
             _ = u.Tests.assert_failure(result, "not found")
 
@@ -69,12 +68,12 @@ class TestFlextTestsUtilitiesResult:
 
     def test_assert_failure_with_error(self) -> None:
         """Test assert_failure_with_error with matching error."""
-        result: r[str] = r[str].fail("test error")
+        result: p.Result[str] = r[str].fail("test error")
         u.Tests.assert_failure_with_error(result, "test")
 
     def test_assert_failure_with_error_mismatch(self) -> None:
         """Test assert_failure_with_error with non-matching error."""
-        result: r[str] = r[str].fail("actual error")
+        result: p.Result[str] = r[str].fail("actual error")
         with pytest.raises(AssertionError):
             u.Tests.assert_failure_with_error(result, "expected")
 
@@ -130,13 +129,13 @@ class TestFlextTestsUtilitiesFactory:
 
     def test_create_result_failure(self) -> None:
         """Test create_result with error."""
-        result: r[str] = u.Tests.create_result(None, error="test error")
+        result = u.Tests.create_result(None, error="test error")
         tm.that(result.failure, eq=True)
         tm.that(result.error, eq="test error")
 
     def test_create_result_no_args(self) -> None:
         """Test create_result with no arguments returns failure."""
-        result: r[str] = u.Tests.create_result(None)
+        result = u.Tests.create_result(None)
         tm.that(result.failure, eq=True)
         tm.that(result.error, eq="No value or error provided")
 
@@ -158,13 +157,13 @@ class TestFlextTestsUtilitiesResultCompat:
 
     def test_assert_result_success_fails(self) -> None:
         """Test assert_result_success with failed result."""
-        result: r[str] = r[str].fail("error")
+        result: p.Result[str] = r[str].fail("error")
         with pytest.raises(AssertionError, match="Expected success but got failure"):
             _ = u.Tests.assert_success(result)
 
     def test_assert_result_failure_passes(self) -> None:
         """Test assert_result_failure with failed result."""
-        result: r[str] = r[str].fail("error")
+        result: p.Result[str] = r[str].fail("error")
         _ = u.Tests.assert_failure(result)
 
     def test_assert_result_failure_fails(self) -> None:

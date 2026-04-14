@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import (
-    MutableMapping,
-)
+from collections.abc import MutableMapping
 
-from flext_core import p, r
-from flext_tests import t
+from flext_tests import p, r, t
 
 
 class FlextTestsFactoryUtilitiesMixin:

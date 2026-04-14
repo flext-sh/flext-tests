@@ -15,9 +15,8 @@ from pathlib import Path
 import pytest
 from pydantic import BaseModel
 
-from flext_core import r
 from flext_tests import tf, tm
-from tests import c, m, t, u
+from tests import c, m, r, t, u
 
 
 class TestFileInfo:
@@ -261,26 +260,28 @@ class TestFlextTestsFiles:
             tm.that(file_path.exists(), eq=True)
         tm.that(not file_path.exists(), eq=True)
 
-    def test_resolve_directory_with_directory(self, tmp_path: Path) -> None:
-        """Test directory resolution with provided directory."""
+    def test_create_uses_explicit_directory(self, tmp_path: Path) -> None:
+        """Test create() writes into explicitly provided directory."""
         manager = tf(base_dir=tmp_path)
         custom_dir = tmp_path / "custom"
-        resolved = manager._resolve_directory(custom_dir)
-        tm.that(resolved, eq=custom_dir)
+        file_path = manager.create("content", "explicit.txt", directory=custom_dir)
+        tm.that(file_path.parent, eq=custom_dir)
+        tm.that(file_path.exists(), eq=True)
 
-    def test_resolve_directory_with_base_dir(self, tmp_path: Path) -> None:
-        """Test directory resolution with base_dir."""
+    def test_create_uses_base_dir_when_directory_missing(self, tmp_path: Path) -> None:
+        """Test create() defaults to base_dir when no directory is provided."""
         manager = tf(base_dir=tmp_path)
-        resolved = manager._resolve_directory(None)
-        tm.that(resolved, eq=tmp_path)
+        file_path = manager.create("content", "base-dir.txt")
+        tm.that(file_path.parent, eq=tmp_path)
+        tm.that(file_path.exists(), eq=True)
 
-    def test_resolve_directory_creates_temp(self) -> None:
-        """Test directory resolution creates temporary directory."""
+    def test_create_without_base_dir_tracks_temp_directory(self) -> None:
+        """Test create() without base_dir uses and tracks one temporary directory."""
         manager = tf()
-        resolved = manager._resolve_directory(None)
-        tm.that(resolved.exists(), eq=True)
-        tm.that(resolved.is_dir(), eq=True)
-        tm.that(manager.created_dirs, has=resolved)
+        file_path = manager.create("content", "temp.txt")
+        tm.that(file_path.exists(), eq=True)
+        tm.that(manager.created_dirs, length_gte=1)
+        tm.that(manager.created_dirs, has=file_path.parent)
 
     def test_temporary_files_classmethod(self) -> None:
         """Test files classmethod context manager."""

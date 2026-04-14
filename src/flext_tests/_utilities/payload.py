@@ -211,20 +211,20 @@ class FlextTestsPayloadUtilities:
             DeepMatchResult with match status and details
 
         """
-        source_obj: Mapping[str, t.ValueOrModel]
+        source_obj: t.ConfigMap
         if isinstance(obj, BaseModel):
             dumped = obj.model_dump(mode="python")
-            source_obj = {
+            source_obj = t.ConfigMap.model_validate({
                 str(key): FlextTestsPayloadUtilities.to_config_map_value(
                     FlextTestsPayloadUtilities.to_payload(value),
                 )
                 for key, value in dumped.items()
-            }
+            })
         else:
-            source_obj = {
+            source_obj = t.ConfigMap.model_validate({
                 str(key): FlextTestsPayloadUtilities.to_config_map_value(value)
                 for key, value in obj.items()
-            }
+            })
         for path, expected in spec.items():
             result = u.extract(
                 source_obj,

@@ -19,13 +19,10 @@ class FlextTestsFilesTypesMixin:
         Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
         | Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
     )
-    type FileContentPlain = (
-        str
-        | bytes
-        | FlextTypes.ConfigMap
-        | Sequence[FlextTypes.StrSequence]
-        | BaseModel
+    type ReadContent = (
+        str | bytes | FlextTypes.ConfigMap | Sequence[FlextTypes.StrSequence]
     )
+    type FileContentPlain = ReadContent | BaseModel
     type FileInput = (
         FileContentPlain
         | r[str]

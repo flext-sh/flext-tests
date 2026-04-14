@@ -14,29 +14,54 @@ from flext_tests import FlextTestsBaseTypesMixin
 
 
 class FlextTestsMatchersTypesMixin:
-    type MatcherKwargValue = (
+    type MatchRuleLeaf = (
         FlextTestsBaseTypesMixin.Testobject
         | type
         | tuple[type, ...]
         | TypeAliasType
+    )
+    type MatchRuleKwargs = Mapping[
+        str,
+        Callable[..., FlextTestsBaseTypesMixin.Testobject]
+        | FlextTestsBaseTypesMixin.TestobjectSerializable,
+    ]
+    type MatchRuleValue = (
+        MatchRuleLeaf
+        | MatchRuleKwargs
+    )
+    type MatcherKwargValue = (
+        MatchRuleLeaf
         | set[FlextTestsBaseTypesMixin.TestobjectSerializable]
         | Callable[..., FlextTestsBaseTypesMixin.Testobject]
-        | Mapping[
-            str,
-            Callable[..., FlextTestsBaseTypesMixin.Testobject]
-            | FlextTestsBaseTypesMixin.TestobjectSerializable,
-        ]
-        | Mapping[
-            int,
-            Callable[..., FlextTestsBaseTypesMixin.Testobject]
-            | FlextTestsBaseTypesMixin.TestobjectSerializable,
-        ]
+        | MatchRuleKwargs
+        | Mapping[int, MatchRuleValue]
+        | Mapping[str, MatchRuleValue]
+        | Mapping[FlextTestsMatchersTypesMixin.ItemSelector, MatchRuleValue]
     )
     type LengthSpec = int | tuple[int, int]
+    type MatchRuleSpec = (
+        FlextTestsBaseTypesMixin.Testobject
+        | type
+        | tuple[type, ...]
+        | Mapping[str, FlextTestsMatchersTypesMixin.MatcherKwargValue]
+    )
     type DeepSpec = Mapping[
         str,
         Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
         | FlextTestsBaseTypesMixin.TestobjectSerializable,
+    ]
+    type PathMatchSpec = Mapping[str, FlextTestsMatchersTypesMixin.MatchRuleSpec]
+    type ItemSelector = int | str
+    type ItemMatchSpec = (
+        Sequence[FlextTestsMatchersTypesMixin.MatchRuleSpec]
+        | Mapping[
+            FlextTestsMatchersTypesMixin.ItemSelector,
+            FlextTestsMatchersTypesMixin.MatchRuleSpec,
+        ]
+    )
+    type AttributeMatchSpec = Mapping[
+        str,
+        FlextTestsMatchersTypesMixin.MatchRuleSpec,
     ]
     type PathSpec = str | FlextTypes.StrSequence
     type PredicateSpec = Callable[[FlextTestsBaseTypesMixin.Testobject], bool]

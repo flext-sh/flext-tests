@@ -12,8 +12,7 @@ import tomllib
 from collections.abc import Mapping, MutableSequence, Sequence
 from pathlib import Path
 
-from flext_core import p, r
-from flext_tests import c, m, t, u
+from flext_tests import c, m, p, r, t, u
 
 type _TomlValue = t.Primitives | list[_TomlValue] | dict[str, _TomlValue]
 type _TomlDict = dict[str, _TomlValue]

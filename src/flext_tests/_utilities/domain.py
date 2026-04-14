@@ -14,10 +14,11 @@ from pathlib import Path
 from pydantic import BaseModel, RootModel
 
 from flext_cli.utilities import FlextCliUtilities
-from flext_core import p, r
 from flext_tests import (
     FlextTestsPayloadUtilities,
     FlextTestsProtocols,
+    p,
+    r,
     t,
 )
 

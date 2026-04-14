@@ -20,7 +20,7 @@ from pydantic import (
     model_validator,
 )
 
-from flext_core import FlextModels, r
+from flext_core import FlextModels
 from flext_tests import p, t
 
 
@@ -129,6 +129,18 @@ class FlextTestsMatchersModelsMixin:
                 default=None,
                 description="Extract nested value via dot notation",
             ),
+        ]
+        paths: Annotated[
+            t.Tests.PathMatchSpec | None,
+            Field(default=None, description="Multiple path-based assertions"),
+        ]
+        items: Annotated[
+            t.Tests.ItemMatchSpec | None,
+            Field(default=None, description="Sequence item assertions by selector"),
+        ]
+        attrs_match: Annotated[
+            t.Tests.AttributeMatchSpec | None,
+            Field(default=None, description="Attribute assertions by attribute path"),
         ]
         where: Annotated[
             t.Tests.PredicateSpec | None,
@@ -367,6 +379,18 @@ class FlextTestsMatchersModelsMixin:
             t.Tests.DeepSpec | None,
             Field(default=None, description="Deep structural matching"),
         ]
+        paths: Annotated[
+            t.Tests.PathMatchSpec | None,
+            Field(default=None, description="Multiple path-based assertions"),
+        ]
+        items: Annotated[
+            t.Tests.ItemMatchSpec | None,
+            Field(default=None, description="Sequence item assertions by selector"),
+        ]
+        attrs_match: Annotated[
+            t.Tests.AttributeMatchSpec | None,
+            Field(default=None, description="Attribute assertions by attribute path"),
+        ]
         where: Annotated[
             t.Tests.PredicateSpec | None,
             Field(default=None, description="Custom predicate function"),
@@ -479,7 +503,7 @@ class FlextTestsMatchersModelsMixin:
         """Container for chained result assertions."""
 
         result: Annotated[
-            r[TResult] | p.Result[TResult],
+            p.Result[TResult],
             Field(description="r being chained"),
         ]
 

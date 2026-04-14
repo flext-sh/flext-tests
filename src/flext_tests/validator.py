@@ -29,7 +29,6 @@ from collections.abc import Mapping, MutableSequence, Sequence
 from pathlib import Path
 from typing import ClassVar, override
 
-from flext_core import p, r, s
 from flext_tests import (
     FlextValidatorBypass,
     FlextValidatorImports,
@@ -39,6 +38,9 @@ from flext_tests import (
     FlextValidatorTypes,
     c,
     m,
+    p,
+    r,
+    s,
     t,
 )
 
@@ -124,7 +126,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         """
         all_violations: MutableSequence[m.Tests.Violation] = []
         total_files = 0
-        validators: MutableSequence[tuple[str, r[m.Tests.ScanResult]]] = [
+        validators: MutableSequence[tuple[str, p.Result[m.Tests.ScanResult]]] = [
             ("imports", cls.imports(path, exclude_patterns, approved_exceptions)),
             ("types", cls.types(path, exclude_patterns, approved_exceptions)),
             ("bypass", cls.bypass(path, exclude_patterns, approved_exceptions)),

@@ -7,8 +7,7 @@ from collections.abc import (
     Sequence,
 )
 
-from flext_core import p, r
-from flext_tests import m, t
+from flext_tests import m, p, r, t
 
 
 class FlextTestsGenericHelpersUtilitiesMixin:
@@ -16,7 +15,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
 
     @staticmethod
     def assert_result_chain[T](
-        results: Sequence[r[T]],
+        results: Sequence[p.Result[T]],
         expected_successes: int | None = None,
         expected_failures: int | None = None,
         expected_success_count: int | None = None,

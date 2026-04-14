@@ -13,13 +13,10 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import tempfile
 from pathlib import Path
 
 import pytest
-from docker import DockerClient
 
-from flext_core import r
 from flext_tests import tk, tm
 from tests import c, u
 
@@ -71,90 +68,46 @@ class TestFlextTestsDocker:
     def docker_manager(self, tmp_path: Path) -> tk:
         """Create a tk instance for testing."""
         fixtures_dir = Path(__file__).parent.parent.parent / "fixtures"
-        manager = tk(workspace_root=fixtures_dir)
-        manager._state_file = tmp_path / "test_docker_state.json"
-        manager._dirty_containers.clear()
+        manager = tk(workspace_root=fixtures_dir, worker_id=f"test-{tmp_path.name}")
+        _ = manager.mark_container_clean("container1")
+        _ = manager.mark_container_clean("container2")
+        _ = manager.mark_container_clean("test_container")
+        _ = manager.mark_container_clean("dirty_container")
         return manager
 
     def test_init(self, docker_manager: tk) -> None:
         """Test tk initialization."""
         assert isinstance(docker_manager, tk)
         tm.that(docker_manager.workspace_root, none=False)
-        assert isinstance(docker_manager._dirty_containers, set)
+        tm.that(docker_manager.dirty_containers, is_=list)
 
     def test_client_initialization(self) -> None:
         """Test Docker client lazy initialization."""
         manager = tk()
-        manager._dirty_containers.clear()
-        manager._client = None
         client = manager.client
         assert client is not None
-        assert manager._client is not None
-        assert isinstance(client, (DockerClient, tk._OfflineDockerClient))
+        tm.that(hasattr(client, "containers"), eq=True)
 
     def test_client_cached(self) -> None:
         """Test Docker client caching."""
         manager = tk()
-        manager._dirty_containers.clear()
-        manager._client = None
         client1 = manager.client
         client2 = manager.client
         tm.that(client1 is client2, eq=True)
 
-    def test_load_dirty_state_file_not_exists(
+    def test_dirty_state_persists_between_instances(
         self,
-        docker_manager: tk,
-    ) -> None:
-        """Test loading dirty state when file doesn't exist."""
-        docker_manager._state_file = Path("/tmp/nonexistent_state.json")
-        docker_manager._load_dirty_state()
-        tm.that(docker_manager._dirty_containers, eq=frozenset())
-
-    def test_load_dirty_state_file_exists(
-        self,
-        docker_manager: tk,
-    ) -> None:
-        """Test loading dirty state from existing file."""
-        test_data = {"dirty_containers": ["container1", "container2"]}
-        with tempfile.NamedTemporaryFile(
-            delete=False,
-            suffix=".json",
-        ) as f:
-            temp_file = Path(f.name)
-        u.Cli.json_write(temp_file, test_data)
-        try:
-            docker_manager._state_file = temp_file
-            docker_manager._load_dirty_state()
-            tm.that(docker_manager._dirty_containers, has="container1")
-            tm.that(docker_manager._dirty_containers, has="container2")
-        finally:
-            temp_file.unlink()
-
-    def test_save_dirty_state(
-        self,
-        docker_manager: tk,
         tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
-        """Test saving dirty state to file.
-
-        Validates:
-        1. Dirty state is saved to file correctly
-        2. File is created in tmp_path (not permanent location)
-        3. Saved data matches expected content
-        4. File can be read back correctly
-        """
-        docker_manager._dirty_containers = {"test_container"}
-        tm.that(docker_manager._state_file.parent, eq=tmp_path)
-        tm.that(docker_manager._state_file.name, eq="test_docker_state.json")
-        docker_manager._save_dirty_state()
-        tm.that(docker_manager._state_file.exists(), eq=True)
-        data = u.Cli.json_read(docker_manager._state_file).unwrap_or({})
-        tm.that(data, has="dirty_containers")
-        tm.that(data["dirty_containers"], is_=list)
-        dirty = data["dirty_containers"]
-        assert isinstance(dirty, list)
-        tm.that(dirty, has="test_container")
-        tm.that(len(dirty), eq=1)
+        """Test dirty-state persistence through public API across instances."""
+        monkeypatch.setenv("HOME", str(tmp_path))
+        worker_id = "persist-worker"
+        manager = tk(worker_id=worker_id)
+        mark_result = manager.mark_container_dirty("container1")
+        _ = u.Tests.assert_success(mark_result)
+        reloaded_manager = tk(worker_id=worker_id)
+        tm.that(reloaded_manager.container_dirty("container1"), eq=True)
 
     def test_mark_container_dirty(self, docker_manager: tk) -> None:
         """Test marking container as dirty."""
@@ -164,20 +117,21 @@ class TestFlextTestsDocker:
 
     def test_mark_container_clean(self, docker_manager: tk) -> None:
         """Test marking container as clean."""
-        docker_manager._dirty_containers.add("test_container")
+        _ = docker_manager.mark_container_dirty("test_container")
         result = docker_manager.mark_container_clean("test_container")
         _ = u.Tests.assert_success(result)
-        tm.that("test_container" not in docker_manager._dirty_containers, eq=True)
+        tm.that(not docker_manager.container_dirty("test_container"), eq=True)
 
     def test_container_dirty(self, docker_manager: tk) -> None:
         """Test checking if container is dirty."""
-        docker_manager._dirty_containers.add("dirty_container")
+        _ = docker_manager.mark_container_dirty("dirty_container")
         tm.that(docker_manager.container_dirty("dirty_container"), eq=True)
         tm.that(not docker_manager.container_dirty("clean_container"), eq=True)
 
     def test_dirty_containers(self, docker_manager: tk) -> None:
         """Test getting list of dirty containers."""
-        docker_manager._dirty_containers = {"container1", "container2"}
+        _ = docker_manager.mark_container_dirty("container1")
+        _ = docker_manager.mark_container_dirty("container2")
         dirty = docker_manager.dirty_containers
         tm.that(len(dirty), eq=2)
         tm.that(dirty, has="container1")
@@ -198,17 +152,21 @@ class TestFlextTestsDocker:
         self,
         docker_manager: tk,
     ) -> None:
-        """Test compose_up returns r."""
-        result = docker_manager.compose_up("docker-compose.yml")
-        tm.that(result, is_=r)
+        """Test compose_up returns a valid public Result contract."""
+        result = docker_manager.compose_up("missing-compose.yml")
+        tm.that(result.success or result.failure, eq=True)
+        if result.success:
+            tm.that(result.value, is_=str)
+        else:
+            tm.that(result.error, is_=str)
 
     def test_compose_down_returns_flext_result(
         self,
         docker_manager: tk,
     ) -> None:
-        """Test compose_down returns r."""
-        result = docker_manager.compose_down("docker-compose.yml")
-        tm.that(result, is_=r)
+        """Test compose_down failure behavior for missing compose file."""
+        result = docker_manager.compose_down("missing-compose.yml")
+        _ = u.Tests.assert_failure(result)
 
     def test_start_existing_container_not_found(
         self,
@@ -250,16 +208,21 @@ class TestFlextTestsDocker:
         self,
         docker_manager: tk,
     ) -> None:
-        """Test start_compose_stack returns r."""
-        result = docker_manager.start_compose_stack("docker-compose.yml")
-        tm.that(result, is_=r)
+        """Test start_compose_stack returns a valid public Result contract."""
+        result = docker_manager.start_compose_stack("missing-compose.yml")
+        tm.that(result.success or result.failure, eq=True)
+        if result.success:
+            tm.that(result.value, is_=str)
+        else:
+            tm.that(result.error, is_=str)
 
     def test_cleanup_dirty_containers_empty(
         self,
         docker_manager: tk,
     ) -> None:
         """Test cleanup with no dirty containers."""
-        docker_manager._dirty_containers.clear()
+        _ = docker_manager.mark_container_clean("container1")
+        _ = docker_manager.mark_container_clean("container2")
         result = docker_manager.cleanup_dirty_containers()
         _ = u.Tests.assert_success(result)
         tm.that(result.value, eq=[])
@@ -271,20 +234,26 @@ class TestFlextTestsDockerWorkerId:
     def test_default_worker_id(self) -> None:
         """Test default worker_id is 'master'."""
         manager = tk()
-        manager._dirty_containers.clear()
         tm.that(manager.worker_id, eq="master")
 
     def test_custom_worker_id(self) -> None:
         """Test custom worker_id."""
         manager = tk(worker_id="worker_1")
-        manager._dirty_containers.clear()
         tm.that(manager.worker_id, eq="worker_1")
 
-    def test_state_file_includes_worker_id(self) -> None:
-        """Test state file path includes worker_id."""
-        manager = tk(worker_id="test_worker")
-        manager._dirty_containers.clear()
-        tm.that(str(manager._state_file), has="test_worker")
+    def test_worker_id_isolates_persisted_dirty_state(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Test different worker_id values isolate persisted dirty state."""
+        monkeypatch.setenv("HOME", str(tmp_path))
+        manager_a = tk(worker_id="worker_a")
+        _ = manager_a.mark_container_dirty("container-x")
+        manager_b = tk(worker_id="worker_b")
+        tm.that(manager_b.container_dirty("container-x"), eq=False)
+        manager_a_reload = tk(worker_id="worker_a")
+        tm.that(manager_a_reload.container_dirty("container-x"), eq=True)
 
 
 class TestFlextTestsDockerWorkspaceRoot:
@@ -293,11 +262,9 @@ class TestFlextTestsDockerWorkspaceRoot:
     def test_default_workspace_root(self) -> None:
         """Test default workspace_root is cwd."""
         manager = tk()
-        manager._dirty_containers.clear()
         tm.that(manager.workspace_root, eq=Path.cwd())
 
     def test_custom_workspace_root(self, tmp_path: Path) -> None:
         """Test custom workspace_root."""
         manager = tk(workspace_root=tmp_path)
-        manager._dirty_containers.clear()
         tm.that(manager.workspace_root, eq=tmp_path)
