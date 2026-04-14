@@ -206,7 +206,7 @@ class TestFlextTestsUtilitiesParser:
         def operation() -> p.Result[str]:
             return r[str].ok("actual")
 
-        with pytest.raises(AssertionError, match="Want expected, got actual"):
+        with pytest.raises(AssertionError):
             u.Tests.execute_and_assert_parser_result(
                 operation,
                 expected_value="expected",

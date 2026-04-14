@@ -33,7 +33,13 @@ class FlextTestsParserHelpersUtilitiesMixin:
         if expected_error is not None:
             _ = FlextTestsResultUtilitiesMixin.assert_failure(result, expected_error)
             return
-        value = FlextTestsResultUtilitiesMixin.assert_success(
+        if expected_value is not None:
+            FlextTestsResultUtilitiesMixin.assert_success_with_value(
+                result,
+                expected_value,
+            )
+            return
+        _ = FlextTestsResultUtilitiesMixin.assert_success(
             result,
             error_msg=(
                 f"Expected success for: {description}, got: {result.error}"
@@ -41,6 +47,3 @@ class FlextTestsParserHelpersUtilitiesMixin:
                 else None
             ),
         )
-        if expected_value is not None and value != expected_value:
-            msg = f"Want {expected_value}, got {value}: {description}"
-            raise AssertionError(msg)

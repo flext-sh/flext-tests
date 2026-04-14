@@ -45,8 +45,26 @@ class FlextTestsPayloadUtilities:
 
         """
         if isinstance(value, RootModel):
-            empty_map: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
-            return empty_map
+            root_value = value.root
+            if root_value is None or isinstance(
+                root_value,
+                (
+                    str,
+                    int,
+                    float,
+                    bool,
+                    bytes,
+                    datetime,
+                    Path,
+                    BaseModel,
+                    type,
+                    frozenset,
+                ),
+            ):
+                return root_value
+            if isinstance(root_value, (Mapping, list, tuple, set)):
+                return FlextTestsPayloadUtilities.to_payload(root_value)
+            return str(root_value)
         if value is None or isinstance(
             value,
             (str, int, float, bool, bytes, datetime, Path, BaseModel),
