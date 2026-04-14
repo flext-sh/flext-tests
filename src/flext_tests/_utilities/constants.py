@@ -17,16 +17,7 @@ class FlextTestsConstantsHelpersUtilitiesMixin:
 
     @staticmethod
     def compile_pattern(pattern_attr: str) -> Pattern[str]:
-        """Compile a regex pattern from FlextConstants.
-
-        Args:
-            pattern_attr: Attribute name like "Patterns.EMAIL_REGEX"
-
-        Returns:
-            r[TEntity]: Result containing created entity or error
-            Compiled regex pattern
-
-        """
+        """Compile a regex pattern from FlextConstants."""
         parts = pattern_attr.split(".")
         current = c
         for part in parts:
@@ -36,16 +27,7 @@ class FlextTestsConstantsHelpersUtilitiesMixin:
 
     @staticmethod
     def resolve_constant_by_path(path: str) -> t.Tests.TestobjectSerializable:
-        """Get a constant value by dot-separated path.
-
-        Args:
-            path: Dot-separated path like "Utilities.MAX_TIMEOUT_SECONDS"
-
-        Returns:
-            r[TEntity]: Result containing created entity or error
-            The constant value at the given path
-
-        """
+        """Get a constant value by dot-separated path."""
         parts = path.split(".")
         current = c
         for part in parts:

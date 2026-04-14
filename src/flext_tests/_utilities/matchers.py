@@ -62,12 +62,10 @@ from collections.abc import (
     Sequence,
     Sized,
 )
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from datetime import datetime
 from pathlib import Path
 from typing import TypeIs, overload
-
-from pydantic import BaseModel, RootModel, ValidationError
 
 from flext_core import u
 from flext_tests import (
@@ -77,6 +75,7 @@ from flext_tests import (
     p,
     t,
 )
+from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
 
 
 class FlextTestsMatchersUtilities:
@@ -146,13 +145,13 @@ class FlextTestsMatchersUtilities:
     @staticmethod
     def _extract_mapping_path(
         value: t.Tests.TestobjectSerializable
-        | BaseModel
+        | m.BaseModel
         | Mapping[str, t.Tests.TestobjectSerializable],
         path: str,
     ) -> t.Tests.TestobjectSerializable:
         """Extract one dotted path from a model or mapping using flext-core extract helpers."""
         extract_source: t.ConfigMap
-        if isinstance(value, BaseModel):
+        if isinstance(value, m.BaseModel):
             extract_source = t.ConfigMap.model_validate({
                 str(key): FlextTestsPayloadUtilities.to_config_map_value(
                     FlextTestsPayloadUtilities.to_payload(item),
@@ -197,7 +196,7 @@ class FlextTestsMatchersUtilities:
 
     @staticmethod
     def _apply_rule(
-        subject: t.Tests.TestobjectSerializable | BaseModel | t.Tests.Testobject,
+        subject: t.Tests.TestobjectSerializable | m.BaseModel | t.Tests.Testobject,
         rule: t.Tests.MatchRuleSpec,
         *,
         inherited_msg: str | None = None,
@@ -214,7 +213,7 @@ class FlextTestsMatchersUtilities:
     @staticmethod
     def _apply_path_rules(
         subject: t.Tests.TestobjectSerializable
-        | BaseModel
+        | m.BaseModel
         | Mapping[str, t.Tests.TestobjectSerializable],
         rules: t.Tests.PathMatchSpec,
         *,
@@ -335,7 +334,7 @@ class FlextTestsMatchersUtilities:
             return True
         if isinstance(value, (str, int, float, bool, bytes, datetime, Path)):
             return True
-        if u.instance_of(value, BaseModel):
+        if u.instance_of(value, m.BaseModel):
             return True
         if isinstance(value, type):
             return True
@@ -374,7 +373,7 @@ class FlextTestsMatchersUtilities:
             return frozenset(str(s) for s in str_items)
         if value is None or isinstance(value, (str, int, float, bool, bytes)):
             return value
-        if u.instance_of(value, BaseModel):
+        if u.instance_of(value, m.BaseModel):
             return value
         if isinstance(value, Mapping):
             try:
@@ -387,7 +386,7 @@ class FlextTestsMatchersUtilities:
                     str(key): FlextTestsMatchersUtilities._to_test_payload(item)
                     for key, item in mapping_value.items()
                 }
-            except ValidationError:
+            except c.ValidationError:
                 empty_map: Mapping[str, t.Tests.TestobjectSerializable] = {}
                 return empty_map
         if FlextTestsMatchersUtilities._is_object_sequence(value):
@@ -401,7 +400,7 @@ class FlextTestsMatchersUtilities:
                     FlextTestsMatchersUtilities._to_test_payload(seq_item)
                     for seq_item in sequence_value
                 ]
-            except ValidationError:
+            except c.ValidationError:
                 if isinstance(value, Sequence) and not isinstance(
                     value,
                     (str, bytes, bytearray),
@@ -430,7 +429,7 @@ class FlextTestsMatchersUtilities:
             return value.decode("utf-8", errors="replace")
         if isinstance(value, datetime):
             return value
-        if u.instance_of(value, BaseModel):
+        if u.instance_of(value, m.BaseModel):
             return str(value)
         if t.Tests.testobject_mapping(value):
             return {
@@ -448,7 +447,7 @@ class FlextTestsMatchersUtilities:
             return None
         if isinstance(value, (str, int, float, bool)):
             return value
-        if u.instance_of(value, BaseModel):
+        if u.instance_of(value, m.BaseModel):
             return value
         if isinstance(value, Path):
             return value
@@ -477,7 +476,7 @@ class FlextTestsMatchersUtilities:
             return frozenset(str_items)
         if isinstance(value, (str, int, float, bool, Path)):
             return value
-        if u.instance_of(value, BaseModel):
+        if u.instance_of(value, m.BaseModel):
             return value
         if value is None:
             return None
@@ -492,7 +491,7 @@ class FlextTestsMatchersUtilities:
                     str(key): FlextTestsMatchersUtilities._as_guard_input(item)
                     for key, item in mapping_value.items()
                 }
-            except ValidationError:
+            except c.ValidationError:
                 empty_map: Mapping[str, t.Tests.TestobjectSerializable] = {}
                 return empty_map
         if FlextTestsMatchersUtilities._is_object_sequence(value):
@@ -506,7 +505,7 @@ class FlextTestsMatchersUtilities:
                     FlextTestsMatchersUtilities._as_guard_input(seq_item)
                     for seq_item in sequence_value
                 ]
-            except ValidationError:
+            except c.ValidationError:
                 if isinstance(value, Sequence) and not isinstance(
                     value,
                     (str, bytes, bytearray),
@@ -528,7 +527,7 @@ class FlextTestsMatchersUtilities:
             return value
         if isinstance(value, Path):
             return value
-        if u.instance_of(value, BaseModel):
+        if u.instance_of(value, m.BaseModel):
             return str(value)
         if isinstance(value, bytes):
             return value.decode("utf-8", errors="replace")
@@ -541,7 +540,7 @@ class FlextTestsMatchersUtilities:
                         value,
                     )
                 )
-            except ValidationError:
+            except c.ValidationError:
                 empty_map: t.RecursiveContainerMapping = {}
                 return empty_map
             return {
@@ -555,7 +554,7 @@ class FlextTestsMatchersUtilities:
                         value,
                     )
                 )
-            except ValidationError:
+            except c.ValidationError:
                 empty_list: t.RecursiveContainerList = []
                 return empty_list
             return [
@@ -605,7 +604,7 @@ class FlextTestsMatchersUtilities:
                 else:
                     check_val = FlextTestsMatchersUtilities._as_guard_input(item)
                     target_raw = FlextTestsMatchersUtilities._as_guard_input(value)
-                    if isinstance(target_raw, RootModel):
+                    if isinstance(target_raw, m.RootModel):
                         target_raw = FlextTestsMatchersUtilities._as_guard_input(
                             target_raw.model_dump(),
                         )
@@ -668,7 +667,7 @@ class FlextTestsMatchersUtilities:
                 else:
                     check_val = FlextTestsMatchersUtilities._as_guard_input(item)
                     target_raw_2 = FlextTestsMatchersUtilities._as_guard_input(value)
-                    if isinstance(target_raw_2, RootModel):
+                    if isinstance(target_raw_2, m.RootModel):
                         target_raw_2 = FlextTestsMatchersUtilities._as_guard_input(
                             target_raw_2.model_dump(),
                         )
@@ -1014,13 +1013,13 @@ class FlextTestsMatchersUtilities:
                         path_str: str = params.path
                     else:
                         path_str = ".".join(params.path)
-                    if not (isinstance(result_value, (BaseModel, Mapping))):
+                    if not (isinstance(result_value, (m.BaseModel, Mapping))):
                         raise AssertionError(
                             params.msg
                             or f"Path extraction requires dict or model, got {type(result_value).__name__}",
                         )
                     extract_data: t.ConfigMap
-                    if isinstance(result_value, BaseModel):
+                    if isinstance(result_value, m.BaseModel):
                         extract_data = t.ConfigMap.model_validate(
                             result_value.model_dump(mode="python"),
                         )
@@ -1033,7 +1032,7 @@ class FlextTestsMatchersUtilities:
                                 str(k): FlextTestsMatchersUtilities._to_extract_value(v)
                                 for k, v in validated.items()
                             })
-                        except ValidationError:
+                        except c.ValidationError:
                             extract_data = t.ConfigMap(root={})
                     extracted = u.extract(extract_data, path_str)
                     if extracted.failure:
@@ -1144,20 +1143,22 @@ class FlextTestsMatchersUtilities:
                         ),
                     )
                 if params.deep is not None:
-                    if not isinstance(result_value, (BaseModel, Mapping)):
+                    if not isinstance(result_value, (m.BaseModel, Mapping)):
                         raise AssertionError(
                             params.msg
                             or f"Deep matching requires dict or model, got {type(result_value).__name__}",
                         )
-                    deep_input: BaseModel | Mapping[str, t.Tests.TestobjectSerializable]
-                    if isinstance(result_value, BaseModel):
+                    deep_input: (
+                        m.BaseModel | Mapping[str, t.Tests.TestobjectSerializable]
+                    )
+                    if isinstance(result_value, m.BaseModel):
                         deep_input = result_value
                     else:
                         try:
                             deep_input = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
                                 result_value,
                             )
-                        except ValidationError:
+                        except c.ValidationError:
                             deep_input = {}
                     match_result = FlextTestsPayloadUtilities.deep_match(
                         deep_input, params.deep
@@ -1260,48 +1261,44 @@ class FlextTestsMatchersUtilities:
                     params = m.Tests.ScopeParams.model_validate(kwargs)
                 except (TypeError, ValueError, AttributeError) as exc:
                     raise ValueError(f"Parameter validation failed: {exc}") from exc
-                original_env: t.MutableOptionalStrMapping = {}
                 original_cwd: Path | None = None
+                env_context = (
+                    FlextTestsConfigHelpersUtilitiesMixin.env_vars_context(params.env)
+                    if params.env is not None
+                    else nullcontext()
+                )
                 try:
-                    if params.env is not None:
-                        for key, value in params.env.items():
-                            original_env[key] = os.environ.get(key)
-                            os.environ[key] = value
-                    if params.cwd is not None:
-                        original_cwd = Path.cwd()
-                        cwd_path = (
-                            Path(params.cwd)
-                            if u.matches_type(params.cwd, "str")
-                            else params.cwd
-                        )
-                        os.chdir(cwd_path)
-                    cfg: Mapping[str, t.Tests.TestobjectSerializable] = {}
-                    if params.settings:
-                        cfg = {
-                            str(key): value for key, value in params.settings.items()
+                    with env_context:
+                        if params.cwd is not None:
+                            original_cwd = Path.cwd()
+                            cwd_path = (
+                                Path(params.cwd)
+                                if u.matches_type(params.cwd, "str")
+                                else params.cwd
+                            )
+                            os.chdir(cwd_path)
+                        cfg: Mapping[str, t.Tests.TestobjectSerializable] = {}
+                        if params.settings:
+                            cfg = {
+                                str(key): value
+                                for key, value in params.settings.items()
+                            }
+                        container_dict = {
+                            k: v
+                            for k, v in (params.container or {}).items()
+                            if t.Tests.general_value(v)
                         }
-                    container_dict = {
-                        k: v
-                        for k, v in (params.container or {}).items()
-                        if t.Tests.general_value(v)
-                    }
-                    context_map: Mapping[str, t.Tests.TestobjectSerializable] = {}
-                    if params.context:
-                        context_map = {
-                            str(key): value for key, value in params.context.items()
-                        }
-                    yield m.Tests.TestScope.model_validate({
-                        "settings": cfg,
-                        "container": container_dict,
-                        "context": context_map,
-                    })
+                        context_map: Mapping[str, t.Tests.TestobjectSerializable] = {}
+                        if params.context:
+                            context_map = {
+                                str(key): value for key, value in params.context.items()
+                            }
+                        yield m.Tests.TestScope.model_validate({
+                            "settings": cfg,
+                            "container": container_dict,
+                            "context": context_map,
+                        })
                 finally:
-                    if params.env is not None:
-                        for key, original_value in original_env.items():
-                            if original_value is None:
-                                _ = os.environ.pop(key, None)
-                            else:
-                                os.environ[key] = original_value
                     if original_cwd is not None:
                         os.chdir(original_cwd)
                     if params.cleanup is not None:
@@ -1457,8 +1454,8 @@ class FlextTestsMatchersUtilities:
                     )
                     is_model_mapping = (
                         dict in is_types
-                        and isinstance(value_obj, BaseModel)
-                        and not isinstance(value_obj, RootModel)
+                        and isinstance(value_obj, m.BaseModel)
+                        and not isinstance(value_obj, m.RootModel)
                     )
                     is_sequence_wrapper = (
                         list in is_types
@@ -1663,7 +1660,7 @@ class FlextTestsMatchersUtilities:
                         seq_value = t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
                             subject_payload,
                         )
-                    except ValidationError:
+                    except c.ValidationError:
                         pass
                     if params.first is not None:
                         if not seq_value:
@@ -1799,7 +1796,7 @@ class FlextTestsMatchersUtilities:
                         mapping_value = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
                             subject_payload,
                         )
-                    except ValidationError:
+                    except c.ValidationError:
                         pass
                     if params.keys is not None:
                         key_set: set[str] = set(params.keys)
@@ -1910,20 +1907,22 @@ class FlextTestsMatchersUtilities:
                                     or f"Attribute {attr}: expected {expected_val!r}, got {actual_val!r}",
                                 )
                 if params.deep is not None:
-                    if not isinstance(subject_payload, (BaseModel, dict)):
+                    if not isinstance(subject_payload, (m.BaseModel, dict)):
                         raise AssertionError(
                             params.msg
                             or f"Deep matching requires dict or model, got {type(subject_payload).__name__}",
                         )
-                    deep_value: BaseModel | Mapping[str, t.Tests.TestobjectSerializable]
-                    if isinstance(subject_payload, BaseModel):
+                    deep_value: (
+                        m.BaseModel | Mapping[str, t.Tests.TestobjectSerializable]
+                    )
+                    if isinstance(subject_payload, m.BaseModel):
                         deep_value = subject_payload
                     else:
                         try:
                             deep_value = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
                                 subject_payload,
                             )
-                        except ValidationError:
+                        except c.ValidationError:
                             deep_value = dict[str, t.Tests.TestobjectSerializable]()
                     match_result = FlextTestsPayloadUtilities.deep_match(
                         deep_value, params.deep

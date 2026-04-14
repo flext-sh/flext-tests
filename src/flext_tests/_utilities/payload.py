@@ -18,10 +18,8 @@ from collections.abc import (
 from datetime import datetime
 from pathlib import Path
 
-from pydantic import BaseModel, RootModel, ValidationError
-
 from flext_core import u
-from flext_tests import m, t
+from flext_tests import c, m, t
 
 
 class FlextTestsPayloadUtilities:
@@ -30,7 +28,7 @@ class FlextTestsPayloadUtilities:
     @staticmethod
     def to_payload(
         value: t.Tests.TestobjectSerializable
-        | RootModel[t.Tests.TestobjectSerializable]
+        | m.RootModel[t.Tests.TestobjectSerializable]
         | set[t.Tests.TestobjectSerializable]
         | type
         | None,
@@ -44,7 +42,7 @@ class FlextTestsPayloadUtilities:
             t.RecursiveContainer suitable for test assertions
 
         """
-        if isinstance(value, RootModel):
+        if isinstance(value, m.RootModel):
             root_value = value.root
             if root_value is None or isinstance(
                 root_value,
@@ -56,7 +54,7 @@ class FlextTestsPayloadUtilities:
                     bytes,
                     datetime,
                     Path,
-                    BaseModel,
+                    m.BaseModel,
                     type,
                     frozenset,
                 ),
@@ -67,7 +65,7 @@ class FlextTestsPayloadUtilities:
             return str(root_value)
         if value is None or isinstance(
             value,
-            (str, int, float, bool, bytes, datetime, Path, BaseModel),
+            (str, int, float, bool, bytes, datetime, Path, m.BaseModel),
         ):
             payload_value: t.Tests.TestobjectSerializable = value
             return payload_value
@@ -76,7 +74,7 @@ class FlextTestsPayloadUtilities:
                 mapping_value = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(
                     value,
                 )
-            except ValidationError:
+            except c.ValidationError:
                 empty_map2: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
                 return empty_map2
             payload_map: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
@@ -92,7 +90,7 @@ class FlextTestsPayloadUtilities:
                         value,
                     )
                 )
-            except ValidationError:
+            except c.ValidationError:
                 empty_seq: Sequence[t.Tests.TestobjectSerializable] = []
                 return empty_seq
             payload_items: Sequence[t.Tests.TestobjectSerializable] = [
@@ -117,7 +115,7 @@ class FlextTestsPayloadUtilities:
             return value
         if isinstance(value, bytes):
             return value.decode(errors="ignore")
-        if isinstance(value, BaseModel):
+        if isinstance(value, m.BaseModel):
             return str(value)
         if isinstance(value, (dict, Mapping)):
             validated_map: Mapping[str, t.Tests.TestobjectSerializable] = (
@@ -147,7 +145,7 @@ class FlextTestsPayloadUtilities:
             return None
         if isinstance(value, (str, int, float, bool)):
             return value
-        if isinstance(value, BaseModel):
+        if isinstance(value, m.BaseModel):
             return value
         if isinstance(value, bytes):
             return value.decode(errors="ignore")
@@ -210,7 +208,7 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def deep_match(
-        obj: BaseModel | Mapping[str, t.Tests.TestobjectSerializable],
+        obj: m.BaseModel | Mapping[str, t.Tests.TestobjectSerializable],
         spec: t.Tests.DeepSpec,
         *,
         path_sep: str = ".",
@@ -230,7 +228,7 @@ class FlextTestsPayloadUtilities:
 
         """
         source_obj: t.ConfigMap
-        if isinstance(obj, BaseModel):
+        if isinstance(obj, m.BaseModel):
             dumped = obj.model_dump(mode="python")
             source_obj = t.ConfigMap.model_validate({
                 str(key): FlextTestsPayloadUtilities.to_config_map_value(
@@ -271,7 +269,7 @@ class FlextTestsPayloadUtilities:
                             bytes,
                             datetime,
                             Path,
-                            BaseModel,
+                            m.BaseModel,
                             Mapping,
                             Sequence,
                         ),
@@ -299,7 +297,7 @@ class FlextTestsPayloadUtilities:
                             bytes,
                             datetime,
                             Path,
-                            BaseModel,
+                            m.BaseModel,
                             Mapping,
                             Sequence,
                         ),

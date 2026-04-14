@@ -118,35 +118,6 @@ class TestFlextTestsUtilitiesTestContext:
         tm.that(obj.attribute, eq="original")
 
 
-class TestFlextTestsUtilitiesFactory:
-    """Test suite for u.Tests.Factory class."""
-
-    def test_create_result_success(self) -> None:
-        """Test create_result with value."""
-        result = u.Tests.create_result("test_value")
-        tm.that(result.success, eq=True)
-        tm.that(result.value, eq="test_value")
-
-    def test_create_result_failure(self) -> None:
-        """Test create_result with error."""
-        result = u.Tests.create_result(None, error="test error")
-        tm.that(result.failure, eq=True)
-        tm.that(result.error, eq="test error")
-
-    def test_create_result_no_args(self) -> None:
-        """Test create_result with no arguments returns failure."""
-        result = u.Tests.create_result(None)
-        tm.that(result.failure, eq=True)
-        tm.that(result.error, eq="No value or error provided")
-
-    def test_create_test_data(self) -> None:
-        """Test create_test_data creates dict with kwargs."""
-        data = u.Tests.create_test_data(key1="value1", key2=42, key3=True)
-        tm.that(data["key1"], eq="value1")
-        tm.that(data["key2"], eq=42)
-        tm.that(data["key3"] is True, eq=True)
-
-
 class TestFlextTestsUtilitiesResultCompat:
     """Test suite for Result compatibility methods."""
 

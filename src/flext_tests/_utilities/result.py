@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flext_tests import p, r
+from flext_tests import p
 
 
 class FlextTestsResultUtilitiesMixin:
@@ -47,13 +47,6 @@ class FlextTestsResultUtilitiesMixin:
             assert expected_error in result.error
 
     @staticmethod
-    def assert_result_failure_with_error[T](
-        result: p.Result[T], expected_error: str
-    ) -> None:
-        """Assert result failure with error (compat alias)."""
-        FlextTestsResultUtilitiesMixin.assert_failure_with_error(result, expected_error)
-
-    @staticmethod
     def assert_success[TResult](
         result: p.Result[TResult], error_msg: str | None = None
     ) -> TResult:
@@ -71,31 +64,3 @@ class FlextTestsResultUtilitiesMixin:
             msg = f"Expected success, got failure: {result.error}"
             raise AssertionError(msg)
         assert result.value == expected_value
-
-    @staticmethod
-    def create_failure_result(error: str) -> p.Result[str]:
-        """Create a failure result with the given error.
-
-        Args:
-            error: Error message for the failure result
-
-        Returns:
-            r[TEntity]: Result containing created entity or error
-            r with failure and error message
-
-        """
-        return r[str].fail(error)
-
-    @staticmethod
-    def create_success_result[T](value: T) -> p.Result[T]:
-        """Create a success result with the given value.
-
-        Args:
-            value: Value for the success result
-
-        Returns:
-            r[TEntity]: Result containing created entity or error
-            r with success and value
-
-        """
-        return r[T].ok(value)

@@ -17,17 +17,13 @@ from flext_tests import (
     FlextTestsConstantsHelpersUtilitiesMixin,
     FlextTestsContainerHelpersUtilitiesMixin,
     FlextTestsContextHelpersUtilitiesMixin,
-    FlextTestsDeepMatchUtilitiesMixin,
     FlextTestsDomainHelpersUtilitiesMixin,
     FlextTestsExceptionHelpersUtilitiesMixin,
-    FlextTestsFactoryUtilitiesMixin,
     FlextTestsFilesUtilitiesMixin,
     FlextTestsGenericHelpersUtilitiesMixin,
     FlextTestsHandlerHelpersUtilitiesMixin,
-    FlextTestsLengthUtilitiesMixin,
     FlextTestsMatchersUtilities,
     FlextTestsParserHelpersUtilitiesMixin,
-    FlextTestsRegistryHelpersUtilitiesMixin,
     FlextTestsResultUtilitiesMixin,
     FlextTestsTestCaseHelpersUtilitiesMixin,
     FlextTestsTestContextUtilitiesMixin,
@@ -47,9 +43,7 @@ class FlextTestsUtilities(FlextCliUtilities):
         FlextTestsValidationUtilitiesMixin,
         FlextTestsResultUtilitiesMixin,
         FlextTestsTestContextUtilitiesMixin,
-        FlextTestsFactoryUtilitiesMixin,
         FlextTestsGenericHelpersUtilitiesMixin,
-        FlextTestsRegistryHelpersUtilitiesMixin,
         FlextTestsConfigHelpersUtilitiesMixin,
         FlextTestsContextHelpersUtilitiesMixin,
         FlextTestsContainerHelpersUtilitiesMixin,
@@ -63,14 +57,9 @@ class FlextTestsUtilities(FlextCliUtilities):
         FlextTestsAssertionsUtilitiesMixin,
         FlextTestsFilesUtilitiesMixin,
         FlextTestsValidatorUtilitiesMixin,
-        FlextTestsDeepMatchUtilitiesMixin,
-        FlextTestsLengthUtilitiesMixin,
         FlextTestsMatchersUtilities.Tests,
     ):
         """Test utilities namespace."""
-
-        class Factory(FlextTestsFactoryUtilitiesMixin):
-            """Factory namespace for test data creation."""
 
 
 u = FlextTestsUtilities

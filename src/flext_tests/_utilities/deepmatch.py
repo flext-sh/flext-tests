@@ -6,8 +6,6 @@ from collections.abc import (
     Mapping,
 )
 
-from pydantic import BaseModel
-
 from flext_tests import (
     FlextTestsPayloadUtilities,
     m,
@@ -30,7 +28,7 @@ class FlextTestsDeepMatchUtilitiesMixin:
 
     @staticmethod
     def match(
-        obj: BaseModel | Mapping[str, t.Tests.TestobjectSerializable],
+        obj: m.BaseModel | Mapping[str, t.Tests.TestobjectSerializable],
         spec: t.Tests.DeepSpec,
         *,
         path_sep: str = ".",

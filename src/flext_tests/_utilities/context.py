@@ -2,9 +2,6 @@
 
 from __future__ import annotations
 
-from flext_core import (
-    FlextContext,
-)
 from flext_tests import (
     FlextTestsPayloadUtilities,
     p,
@@ -41,19 +38,3 @@ class FlextTestsContextHelpersUtilitiesMixin:
         assert actual == expected_value, (
             f"Expected {expected_value!r} for key '{key}', got {result.value!r}"
         )
-
-    @staticmethod
-    def clear_context() -> None:
-        """Clear the global context."""
-        FlextContext.Utilities.clear_context()
-
-    @staticmethod
-    def create_test_context() -> FlextContext:
-        """Create a test context instance.
-
-        Returns:
-            r[TEntity]: Result containing created entity or error
-            New FlextContext instance
-
-        """
-        return FlextContext.create()

@@ -11,12 +11,11 @@ from collections.abc import (
 from datetime import datetime
 from pathlib import Path
 
-from pydantic import BaseModel, RootModel
-
 from flext_cli.utilities import FlextCliUtilities
 from flext_tests import (
     FlextTestsPayloadUtilities,
     FlextTestsProtocols,
+    m,
     p,
     r,
     t,
@@ -167,10 +166,10 @@ class FlextTestsDomainHelpersUtilitiesMixin:
             raise ValueError(msg)
         all_args = {**input_data, **kwargs}
         result = op_method(**all_args)
-        if isinstance(result, RootModel):
+        if isinstance(result, m.RootModel):
             empty_map: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
             return empty_map
-        if isinstance(result, (BaseModel, Path)):
+        if isinstance(result, (m.BaseModel, Path)):
             return FlextTestsPayloadUtilities.to_payload(result)
         if isinstance(result, (str, int, float, bool, bytes, datetime)):
             payload_scalar: t.Tests.TestobjectSerializable = result

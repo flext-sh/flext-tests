@@ -36,8 +36,9 @@ class FlextTestsConfigHelpersUtilitiesMixin:
             AssertionError: If fields don't match
 
         """
+        dumped_settings = settings.model_dump()
         for key, expected_value in expected_fields.items():
-            actual_value = getattr(settings, key) if hasattr(settings, key) else None
+            actual_value = dumped_settings.get(key)
             msg = f"Config {key}: expected {expected_value}, got {actual_value}"
             assert actual_value == expected_value, msg
 
