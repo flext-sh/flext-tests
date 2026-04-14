@@ -234,6 +234,37 @@ class FlextTestsFiles(s):
         return isinstance(value, Mapping)
 
     @staticmethod
+    def _to_config_map(
+        value: Mapping[str, t.Tests.TestobjectSerializable],
+    ) -> t.ConfigMap:
+        config_root: MutableMapping[str, t.ValueOrModel] = {
+            str(key): FlextTestsPayloadUtilities.to_config_map_value(
+                FlextTestsPayloadUtilities.to_payload(item),
+            )
+            for key, item in value.items()
+        }
+        return t.ConfigMap(root=config_root)
+
+    @staticmethod
+    def _to_payload_mapping(
+        value: Mapping[str, t.Tests.TestobjectSerializable],
+    ) -> Mapping[str, t.Tests.TestobjectSerializable]:
+        return {
+            str(key): FlextTestsPayloadUtilities.to_payload(item)
+            for key, item in value.items()
+        }
+
+    @staticmethod
+    def _to_string_rows(
+        value: Sequence[t.Tests.TestobjectSerializable],
+    ) -> Sequence[t.StrSequence]:
+        return [
+            [str(cell) for cell in row]
+            for row in value
+            if isinstance(row, (list, tuple))
+        ]
+
+    @staticmethod
     def assert_exists(
         path: Path,
         msg: str | None = None,
@@ -426,10 +457,7 @@ class FlextTestsFiles(s):
         elif not isinstance(params.files, str):
             files_dict = {}
             for item in params.files:
-                if (
-                    isinstance(item, tuple)
-                    and len(item) == 2
-                ):
+                if isinstance(item, tuple) and len(item) == 2:
                     try:
                         _ = m.Tests.CreateParams.model_validate({
                             "content": item[1],
@@ -454,14 +482,10 @@ class FlextTestsFiles(s):
                 case "create":
                     try:
                         content_for_create = (
-                            t.ConfigMap(
-                                root={
-                                    str(k): FlextTestsPayloadUtilities.to_config_map_value(
-                                        FlextTestsPayloadUtilities.to_payload(v),
-                                    )
-                                    for k, v in content.items()
-                                },
-                            )
+                            {
+                                str(k): FlextTestsPayloadUtilities.to_payload(v)
+                                for k, v in content.items()
+                            }
                             if isinstance(content, Mapping)
                             else content
                         )
@@ -759,9 +783,16 @@ class FlextTestsFiles(s):
             | BaseModel
             | Mapping[str, t.Tests.TestobjectSerializable]
         ) = self._coerce_file_content(params.content)
+        if isinstance(actual_content, t.ConfigMap):
+            actual_content = {
+                str(key): FlextTestsPayloadUtilities.to_payload(value)
+                for key, value in actual_content.root.items()
+            }
         if isinstance(actual_content, BaseModel):
-            actual_content = FlextTestsPayloadUtilities.to_payload(
-                actual_content.model_dump(mode="json"),
+            actual_content = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(
+                FlextTestsPayloadUtilities.to_payload(
+                    actual_content.model_dump(mode="json"),
+                ),
             )
         content_for_detect: (
             str
@@ -1126,9 +1157,7 @@ class FlextTestsFiles(s):
             return self._read_content_ok(content)
         except UnicodeDecodeError as e:
             if model_cls is not None:
-                invalid_encoding_result: p.Result[TModelRead] = r[
-                    TModelRead
-                ].fail(
+                invalid_encoding_result: p.Result[TModelRead] = r[TModelRead].fail(
                     c.Tests.ERROR_ENCODING.format(error=e),
                 )
                 return invalid_encoding_result
@@ -1189,37 +1218,19 @@ class FlextTestsFiles(s):
             return (dict1, dict2)
         filter_keys_set = set(keys) if keys is not None else None
         exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
-        settings_root1: MutableMapping[str, t.ValueOrModel] = {
-            str(k): FlextTestsPayloadUtilities.to_config_map_value(
-                FlextTestsPayloadUtilities.to_payload(v),
-            )
-            for k, v in dict1.items()
-        }
-        settings_root2: MutableMapping[str, t.ValueOrModel] = {
-            str(k): FlextTestsPayloadUtilities.to_config_map_value(
-                FlextTestsPayloadUtilities.to_payload(v),
-            )
-            for k, v in dict2.items()
-        }
         result1 = u.transform(
-            t.ConfigMap(root=settings_root1),
+            self._to_config_map(dict1),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
         result2 = u.transform(
-            t.ConfigMap(root=settings_root2),
+            self._to_config_map(dict2),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
         if result1.success and result2.success:
-            filtered1: Mapping[str, t.Tests.TestobjectSerializable] = {
-                str(k): FlextTestsPayloadUtilities.to_payload(v)
-                for k, v in result1.value.items()
-            }
-            filtered2: Mapping[str, t.Tests.TestobjectSerializable] = {
-                str(k): FlextTestsPayloadUtilities.to_payload(v)
-                for k, v in result2.value.items()
-            }
+            filtered1 = self._to_payload_mapping(result1.value)
+            filtered2 = self._to_payload_mapping(result2.value)
             return (filtered1, filtered2)
         return (dict1, dict2)
 
@@ -1237,23 +1248,12 @@ class FlextTestsFiles(s):
         if isinstance(value, BaseModel):
             return value
         if self._is_mapping(value):
-            coerce_root: MutableMapping[str, t.ValueOrModel] = {
-                str(key): FlextTestsPayloadUtilities.to_config_map_value(
-                    FlextTestsPayloadUtilities.to_payload(item),
-                )
-                for key, item in value.items()
-            }
-            return t.ConfigMap(root=coerce_root)
+            return self._to_config_map(value)
         if self._is_nested_rows(value):
             sequence_value: Sequence[t.Tests.TestobjectSerializable] = (
                 value if isinstance(value, (list, tuple)) else ()
             )
-            rows: Sequence[t.StrSequence] = [
-                [str(cell) for cell in row]
-                for row in sequence_value
-                if isinstance(row, (list, tuple))
-            ]
-            return rows
+            return self._to_string_rows(sequence_value)
         return str(value)
 
     def _coerce_read_content(
@@ -1263,22 +1263,12 @@ class FlextTestsFiles(s):
         if isinstance(value, str | bytes):
             return value
         if self._is_mapping(value):
-            read_root: MutableMapping[str, t.ValueOrModel] = {
-                str(key): FlextTestsPayloadUtilities.to_config_map_value(
-                    FlextTestsPayloadUtilities.to_payload(item),
-                )
-                for key, item in value.items()
-            }
-            return t.ConfigMap(root=read_root)
+            return self._to_config_map(value)
         if self._is_nested_rows(value):
             sequence_value: Sequence[t.Tests.TestobjectSerializable] = (
                 value if isinstance(value, (list, tuple)) else ()
             )
-            return [
-                [str(cell) for cell in row]
-                for row in sequence_value
-                if isinstance(row, (list, tuple))
-            ]
+            return self._to_string_rows(sequence_value)
         return str(value)
 
     def _compare_content(self, params: m.Tests.CompareParams) -> p.Result[bool]:
@@ -1453,13 +1443,7 @@ class FlextTestsFiles(s):
                         else dict(t.ConfigMap(root={}).root)
                     )
                 if self._is_mapping(parsed_raw):
-                    parse_root: MutableMapping[str, t.ValueOrModel] = {
-                        str(key): FlextTestsPayloadUtilities.to_config_map_value(
-                            FlextTestsPayloadUtilities.to_payload(v),
-                        )
-                        for key, v in parsed_raw.items()
-                    }
-                    parsed_content = t.ConfigMap(root=parse_root)
+                    parsed_content = self._to_config_map(parsed_raw)
                     key_count = len(parsed_content.root)
                 elif isinstance(parsed_raw, list):
                     parsed_list = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
@@ -1534,25 +1518,13 @@ class FlextTestsFiles(s):
         dict1, dict2 = parsed
         filter_keys_set = set(keys) if keys is not None else None
         exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
-        left_root: MutableMapping[str, t.ValueOrModel] = {
-            str(k): FlextTestsPayloadUtilities.to_config_map_value(
-                FlextTestsPayloadUtilities.to_payload(v),
-            )
-            for k, v in dict1.items()
-        }
-        right_root: MutableMapping[str, t.ValueOrModel] = {
-            str(k): FlextTestsPayloadUtilities.to_config_map_value(
-                FlextTestsPayloadUtilities.to_payload(v),
-            )
-            for k, v in dict2.items()
-        }
         left_result = u.transform(
-            t.ConfigMap(root=left_root),
+            self._to_config_map(dict1),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
         right_result = u.transform(
-            t.ConfigMap(root=right_root),
+            self._to_config_map(dict2),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
@@ -1597,14 +1569,8 @@ class FlextTestsFiles(s):
                 case _:
                     return None
             if self._is_mapping(dict1_raw) and self._is_mapping(dict2_raw):
-                dict1 = {
-                    str(key): FlextTestsPayloadUtilities.to_payload(value)
-                    for key, value in dict1_raw.items()
-                }
-                dict2 = {
-                    str(key): FlextTestsPayloadUtilities.to_payload(value)
-                    for key, value in dict2_raw.items()
-                }
+                dict1 = self._to_payload_mapping(dict1_raw)
+                dict2 = self._to_payload_mapping(dict2_raw)
                 return (dict1, dict2)
         except (ValueError, t.Cli.YAMLError, TypeError):
             pass

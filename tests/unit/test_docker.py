@@ -113,7 +113,7 @@ class TestFlextTestsDocker:
         """Test marking container as dirty."""
         result = docker_manager.mark_container_dirty("test_container")
         _ = u.Tests.assert_success(result)
-        tm.that(docker_manager._dirty_containers, has="test_container")
+        tm.that(docker_manager.container_dirty("test_container"), eq=True)
 
     def test_mark_container_clean(self, docker_manager: tk) -> None:
         """Test marking container as clean."""

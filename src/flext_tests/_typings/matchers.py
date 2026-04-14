@@ -15,20 +15,14 @@ from flext_tests import FlextTestsBaseTypesMixin
 
 class FlextTestsMatchersTypesMixin:
     type MatchRuleLeaf = (
-        FlextTestsBaseTypesMixin.Testobject
-        | type
-        | tuple[type, ...]
-        | TypeAliasType
+        FlextTestsBaseTypesMixin.Testobject | type | tuple[type, ...] | TypeAliasType
     )
     type MatchRuleKwargs = Mapping[
         str,
         Callable[..., FlextTestsBaseTypesMixin.Testobject]
         | FlextTestsBaseTypesMixin.TestobjectSerializable,
     ]
-    type MatchRuleValue = (
-        MatchRuleLeaf
-        | MatchRuleKwargs
-    )
+    type MatchRuleValue = MatchRuleLeaf | MatchRuleKwargs
     type MatcherKwargValue = (
         MatchRuleLeaf
         | set[FlextTestsBaseTypesMixin.TestobjectSerializable]

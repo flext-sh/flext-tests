@@ -128,16 +128,26 @@ class FlextTestsMatchersUtilities:
                 return normalized_mapping
             return {"eq": rule, "msg": inherited_msg} if inherited_msg else {"eq": rule}
         if isinstance(rule, type):
-            return {"is_": rule, "msg": inherited_msg} if inherited_msg else {"is_": rule}
+            return (
+                {"is_": rule, "msg": inherited_msg} if inherited_msg else {"is_": rule}
+            )
         if isinstance(rule, tuple) and all(isinstance(item, type) for item in rule):
-            return {"is_": rule, "msg": inherited_msg} if inherited_msg else {"is_": rule}
+            return (
+                {"is_": rule, "msg": inherited_msg} if inherited_msg else {"is_": rule}
+            )
         if callable(rule):
-            return {"where": rule, "msg": inherited_msg} if inherited_msg else {"where": rule}
+            return (
+                {"where": rule, "msg": inherited_msg}
+                if inherited_msg
+                else {"where": rule}
+            )
         return {"eq": rule, "msg": inherited_msg} if inherited_msg else {"eq": rule}
 
     @staticmethod
     def _extract_mapping_path(
-        value: t.Tests.TestobjectSerializable | BaseModel | Mapping[str, t.Tests.TestobjectSerializable],
+        value: t.Tests.TestobjectSerializable
+        | BaseModel
+        | Mapping[str, t.Tests.TestobjectSerializable],
         path: str,
     ) -> t.Tests.TestobjectSerializable:
         """Extract one dotted path from a model or mapping using flext-core extract helpers."""
@@ -171,7 +181,9 @@ class FlextTestsMatchersUtilities:
         return FlextTestsMatchersUtilities._to_test_payload(extracted.value)
 
     @staticmethod
-    def _extract_attribute_path[TValue](value: TValue, attr_path: str) -> t.Tests.TestobjectSerializable:
+    def _extract_attribute_path[TValue](
+        value: TValue, attr_path: str
+    ) -> t.Tests.TestobjectSerializable:
         """Extract one dotted attribute path from a runtime object."""
         current: TValue | t.Tests.TestobjectSerializable = value
         for segment in attr_path.split("."):
@@ -201,7 +213,9 @@ class FlextTestsMatchersUtilities:
 
     @staticmethod
     def _apply_path_rules(
-        subject: t.Tests.TestobjectSerializable | BaseModel | Mapping[str, t.Tests.TestobjectSerializable],
+        subject: t.Tests.TestobjectSerializable
+        | BaseModel
+        | Mapping[str, t.Tests.TestobjectSerializable],
         rules: t.Tests.PathMatchSpec,
         *,
         inherited_msg: str | None = None,
@@ -209,7 +223,9 @@ class FlextTestsMatchersUtilities:
         """Apply multiple dotted-path assertions against a mapping/model subject."""
         for path, rule in rules.items():
             try:
-                extracted = FlextTestsMatchersUtilities._extract_mapping_path(subject, path)
+                extracted = FlextTestsMatchersUtilities._extract_mapping_path(
+                    subject, path
+                )
                 FlextTestsMatchersUtilities._apply_rule(
                     extracted,
                     rule,
@@ -222,18 +238,24 @@ class FlextTestsMatchersUtilities:
 
     @staticmethod
     def _apply_item_rules(
-        subject: t.Tests.TestobjectSerializable | Sequence[t.Tests.TestobjectSerializable],
+        subject: t.Tests.TestobjectSerializable
+        | Sequence[t.Tests.TestobjectSerializable],
         rules: t.Tests.ItemMatchSpec,
         *,
         inherited_msg: str | None = None,
     ) -> None:
         """Apply selector-based assertions against a sequence subject."""
-        if not isinstance(subject, Sequence) or isinstance(subject, (str, bytes, bytearray)):
+        if not isinstance(subject, Sequence) or isinstance(
+            subject, (str, bytes, bytearray)
+        ):
             raise AssertionError(
-                inherited_msg or f"Item assertions require a sequence, got {type(subject).__name__}",
+                inherited_msg
+                or f"Item assertions require a sequence, got {type(subject).__name__}",
             )
         sequence_value = list(subject)
-        if isinstance(rules, Sequence) and not isinstance(rules, (str, bytes, bytearray)):
+        if isinstance(rules, Sequence) and not isinstance(
+            rules, (str, bytes, bytearray)
+        ):
             for index, rule in enumerate(rules):
                 FlextTestsMatchersUtilities._apply_rule(
                     sequence_value[index],
@@ -243,7 +265,8 @@ class FlextTestsMatchersUtilities:
             return
         if not isinstance(rules, Mapping):
             raise AssertionError(
-                inherited_msg or "Item assertions must be a sequence or selector mapping",
+                inherited_msg
+                or "Item assertions must be a sequence or selector mapping",
             )
         for selector, rule in rules.items():
             if selector in {"*", "all"}:
@@ -1069,12 +1092,16 @@ class FlextTestsMatchersUtilities:
                             or f"Value {result_value!r} did not satisfy constraints"
                         )
                         raise AssertionError(error_msg)
-                if params.is_ is not None and isinstance(params.is_, tuple) and not any(
-                    FlextTestsMatchersUtilities._matches_runtime_type(
-                        result_value,
-                        expected_type,
+                if (
+                    params.is_ is not None
+                    and isinstance(params.is_, tuple)
+                    and not any(
+                        FlextTestsMatchersUtilities._matches_runtime_type(
+                            result_value,
+                            expected_type,
+                        )
+                        for expected_type in params.is_
                     )
-                    for expected_type in params.is_
                 ):
                     raise AssertionError(
                         params.msg

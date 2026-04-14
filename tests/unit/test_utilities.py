@@ -171,3 +171,44 @@ class TestFlextTestsUtilitiesResultCompat:
         result = r[str].ok("success")
         with pytest.raises(AssertionError, match="Expected failure but got success"):
             _ = u.Tests.assert_failure(result)
+
+
+class TestFlextTestsUtilitiesParser:
+    """Test suite for parser helper assertions via public u.Tests API."""
+
+    def test_execute_and_assert_parser_result_success(self) -> None:
+        """Helper should pass when parser operation returns expected success value."""
+
+        def operation() -> p.Result[str]:
+            return r[str].ok("parsed")
+
+        u.Tests.execute_and_assert_parser_result(
+            operation,
+            expected_value="parsed",
+            description="parser success",
+        )
+
+    def test_execute_and_assert_parser_result_failure(self) -> None:
+        """Helper should pass when parser operation returns expected failure."""
+
+        def operation() -> p.Result[str]:
+            return r[str].fail("invalid input")
+
+        u.Tests.execute_and_assert_parser_result(
+            operation,
+            expected_error="invalid",
+            description="parser failure",
+        )
+
+    def test_execute_and_assert_parser_result_value_mismatch(self) -> None:
+        """Helper should raise when success value differs from expected."""
+
+        def operation() -> p.Result[str]:
+            return r[str].ok("actual")
+
+        with pytest.raises(AssertionError, match="Want expected, got actual"):
+            u.Tests.execute_and_assert_parser_result(
+                operation,
+                expected_value="expected",
+                description="value mismatch",
+            )

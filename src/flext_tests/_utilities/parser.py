@@ -6,17 +6,17 @@ from collections.abc import (
     Callable,
 )
 
-from flext_core import r
-from flext_tests import t
+from flext_tests import p, t
+from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
 
 
 class FlextTestsParserHelpersUtilitiesMixin:
     """Helpers for parser testing."""
 
     @staticmethod
-    def execute_and_assert_parser_result(
-        operation: Callable[[], r[t.Tests.TestobjectSerializable]],
-        expected_value: t.Tests.TestobjectSerializable | None = None,
+    def execute_and_assert_parser_result[TResult: t.Tests.TestobjectSerializable](
+        operation: Callable[[], p.Result[TResult]],
+        expected_value: TResult | None = None,
         expected_error: str | None = None,
         description: str = "",
     ) -> None:
@@ -29,15 +29,18 @@ class FlextTestsParserHelpersUtilitiesMixin:
             description: Test case description for error messages
 
         """
-        result = operation()
+        result: p.Result[TResult] = operation()
         if expected_error is not None:
-            assert result.failure, f"Expected failure for: {description}, got success"
-            m = f"'{expected_error}' not in '{result.error}': {description}"
-            assert expected_error in str(result.error), m
-        else:
-            assert result.success, (
+            _ = FlextTestsResultUtilitiesMixin.assert_failure(result, expected_error)
+            return
+        value = FlextTestsResultUtilitiesMixin.assert_success(
+            result,
+            error_msg=(
                 f"Expected success for: {description}, got: {result.error}"
-            )
-            if expected_value is not None:
-                m = f"Want {expected_value}, got {result.value}: {description}"
-                assert result.value == expected_value, m
+                if description
+                else None
+            ),
+        )
+        if expected_value is not None and value != expected_value:
+            msg = f"Want {expected_value}, got {value}: {description}"
+            raise AssertionError(msg)
