@@ -17,6 +17,11 @@ if _t.TYPE_CHECKING:
     from flext_tests._constants.files import FlextTestsFilesConstantsMixin
     from flext_tests._constants.matcher import FlextTestsMatcherConstantsMixin
     from flext_tests._constants.validator import FlextTestsValidatorConstantsMixin
+    from flext_tests._fixtures.settings import (
+        reset_settings,
+        settings,
+        settings_factory,
+    )
     from flext_tests._models.base import FlextTestsBaseModelsMixin
     from flext_tests._models.batch import FlextTestsBatchModelsMixin
     from flext_tests._models.docker import FlextTestsDockerModelsMixin
@@ -77,6 +82,7 @@ if _t.TYPE_CHECKING:
 _LAZY_IMPORTS = merge_lazy_imports(
     (
         "._constants",
+        "._fixtures",
         "._models",
         "._protocols",
         "._typings",
@@ -212,7 +218,10 @@ __all__: list[str] = [
     "m",
     "p",
     "r",
+    "reset_settings",
     "s",
+    "settings",
+    "settings_factory",
     "t",
     "td",
     "tf",
