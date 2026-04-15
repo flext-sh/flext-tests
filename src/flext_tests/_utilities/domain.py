@@ -11,7 +11,7 @@ from collections.abc import (
 from datetime import datetime
 from pathlib import Path
 
-from flext_cli.utilities import FlextCliUtilities
+from flext_cli import FlextCliUtilities
 from flext_tests import (
     FlextTestsPayloadUtilities,
     FlextTestsProtocols,

@@ -6,8 +6,7 @@ from collections.abc import (
     Callable,
 )
 
-from flext_tests import p, t
-from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
+from flext_tests import FlextTestsResultUtilitiesMixin, p, t
 
 
 class FlextTestsParserHelpersUtilitiesMixin:

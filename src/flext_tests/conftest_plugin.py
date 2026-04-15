@@ -14,6 +14,6 @@ And the following on-demand fixtures:
 
 from __future__ import annotations
 
-from flext_tests._fixtures.settings import reset_settings, settings, settings_factory
+from flext_tests import reset_settings, settings, settings_factory
 
 _ = (reset_settings, settings, settings_factory)

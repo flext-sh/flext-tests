@@ -69,13 +69,13 @@ from typing import TypeIs, overload
 
 from flext_core import u
 from flext_tests import (
+    FlextTestsConfigHelpersUtilitiesMixin,
     FlextTestsPayloadUtilities,
     c,
     m,
     p,
     t,
 )
-from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
 
 
 class FlextTestsMatchersUtilities:
