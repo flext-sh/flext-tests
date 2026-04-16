@@ -1,0 +1,14 @@
+src/flext_tests/_utilities/exception.py
+  h_9db9d35f50cf33 22,29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "d33280486f06a3108f5d280eaffed11a462d9a9b",
+  "prompts": {},
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
