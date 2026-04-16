@@ -11,16 +11,7 @@ from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from pathlib import Path
 from typing import Annotated, ClassVar, Self, TypeAliasType
 
-from pydantic import (
-    AliasChoices,
-    ConfigDict,
-    Field,
-    TypeAdapter,
-    field_validator,
-    model_validator,
-)
-
-from flext_core import FlextModels
+from flext_core import FlextModels, m, u
 from flext_tests import p, t
 
 
@@ -28,7 +19,7 @@ class FlextTestsMatchersModelsMixin:
     class OkParams(FlextModels.Value):
         """Matcher parameters for successful result assertions."""
 
-        model_config: ClassVar[ConfigDict] = ConfigDict(populate_by_name=True)
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
 
         eq: Annotated[
             (
@@ -42,12 +33,11 @@ class FlextTestsMatchersModelsMixin:
                 | TypeAliasType
                 | None
             ),
-            Field(
-                default=None,
+            m.Field(
                 description="Expected value (equality check)",
                 union_mode="left_to_right",
             ),
-        ]
+        ] = None
         ne: Annotated[
             (
                 Mapping[str, t.Tests.TestobjectSerializable]
@@ -60,343 +50,259 @@ class FlextTestsMatchersModelsMixin:
                 | TypeAliasType
                 | None
             ),
-            Field(
-                default=None,
+            m.Field(
                 description="Value must not equal",
                 union_mode="left_to_right",
             ),
-        ]
+        ] = None
         is_: Annotated[
             type | tuple[type, ...] | None,
-            Field(
-                default=None,
-                validation_alias=AliasChoices("is_", "is"),
+            m.Field(
+                validation_alias=t.AliasChoices("is_", "is"),
                 description="Runtime type check",
             ),
-        ]
-        none: Annotated[bool | None, Field(default=None, description="None check")]
-        empty: Annotated[
-            bool | None,
-            Field(default=None, description="Empty check"),
-        ]
-        gt: Annotated[
-            float | int | None,
-            Field(default=None, description="Greater than"),
-        ]
+        ] = None
+        none: Annotated[bool | None, m.Field(description="None check")] = None
+        empty: Annotated[bool | None, m.Field(description="Empty check")] = None
+        gt: Annotated[float | int | None, m.Field(description="Greater than")] = None
         gte: Annotated[
-            float | int | None,
-            Field(default=None, description="Greater than or equal"),
-        ]
-        lt: Annotated[
-            float | int | None,
-            Field(default=None, description="Less than"),
-        ]
+            float | int | None, m.Field(description="Greater than or equal")
+        ] = None
+        lt: Annotated[float | int | None, m.Field(description="Less than")] = None
         lte: Annotated[
-            float | int | None,
-            Field(default=None, description="Less than or equal"),
-        ]
+            float | int | None, m.Field(description="Less than or equal")
+        ] = None
         has: Annotated[
             t.Tests.ContainmentSpec | None,
-            Field(default=None, description="Unified containment check"),
-        ]
+            m.Field(description="Unified containment check"),
+        ] = None
         lacks: Annotated[
             t.Tests.ExclusionSpec | None,
-            Field(default=None, description="Unified non-containment check"),
-        ]
+            m.Field(description="Unified non-containment check"),
+        ] = None
         starts: Annotated[
-            str | None,
-            Field(default=None, description="String starts with prefix"),
-        ]
-        ends: Annotated[
-            str | None,
-            Field(default=None, description="String ends with suffix"),
-        ]
-        match: Annotated[
-            str | None,
-            Field(default=None, description="Regex pattern"),
-        ]
+            str | None, m.Field(description="String starts with prefix")
+        ] = None
+        ends: Annotated[str | None, m.Field(description="String ends with suffix")] = (
+            None
+        )
+        match: Annotated[str | None, m.Field(description="Regex pattern")] = None
         len: Annotated[
-            t.Tests.LengthSpec | None,
-            Field(default=None, description="Length spec"),
-        ]
+            t.Tests.LengthSpec | None, m.Field(description="Length spec")
+        ] = None
         deep: Annotated[
-            t.Tests.DeepSpec | None,
-            Field(default=None, description="Deep structural matching"),
-        ]
+            t.Tests.DeepSpec | None, m.Field(description="Deep structural matching")
+        ] = None
         path: Annotated[
             t.Tests.PathSpec | None,
-            Field(
-                default=None,
+            m.Field(
                 description="Extract nested value via dot notation",
             ),
-        ]
+        ] = None
         paths: Annotated[
             t.Tests.PathMatchSpec | None,
-            Field(default=None, description="Multiple path-based assertions"),
-        ]
+            m.Field(description="Multiple path-based assertions"),
+        ] = None
         items: Annotated[
             t.Tests.ItemMatchSpec | None,
-            Field(default=None, description="Sequence item assertions by selector"),
-        ]
+            m.Field(description="Sequence item assertions by selector"),
+        ] = None
         attrs_match: Annotated[
             t.Tests.AttributeMatchSpec | None,
-            Field(default=None, description="Attribute assertions by attribute path"),
-        ]
+            m.Field(description="Attribute assertions by attribute path"),
+        ] = None
         where: Annotated[
             t.Tests.PredicateSpec | None,
-            Field(default=None, description="Custom predicate function"),
-        ]
-        msg: Annotated[
-            str | None,
-            Field(default=None, description="Custom error message"),
-        ]
+            m.Field(description="Custom predicate function"),
+        ] = None
+        msg: Annotated[str | None, m.Field(description="Custom error message")] = None
 
     class FailParams(FlextModels.Value):
         """Matcher parameters for failure result assertions."""
 
-        model_config: ClassVar[ConfigDict] = ConfigDict(populate_by_name=True)
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
 
-        msg: Annotated[
-            str | None,
-            Field(default=None, description="Custom error message"),
-        ]
+        msg: Annotated[str | None, m.Field(description="Custom error message")] = None
         has: Annotated[
             t.Tests.ExclusionSpec | None,
-            Field(
-                default=None,
-                validation_alias=AliasChoices("has", "contains"),
+            m.Field(
+                validation_alias=t.AliasChoices("has", "contains"),
                 description="Error contains substring(s)",
             ),
-        ]
+        ] = None
         lacks: Annotated[
             t.Tests.ExclusionSpec | None,
-            Field(
-                default=None,
-                validation_alias=AliasChoices("lacks", "excludes"),
+            m.Field(
+                validation_alias=t.AliasChoices("lacks", "excludes"),
                 description="Error does NOT contain substring(s)",
             ),
-        ]
+        ] = None
         starts: Annotated[
-            str | None,
-            Field(default=None, description="Error starts with prefix"),
-        ]
-        ends: Annotated[
-            str | None,
-            Field(default=None, description="Error ends with suffix"),
-        ]
-        match: Annotated[
-            str | None,
-            Field(default=None, description="Error matches regex"),
-        ]
-        code: Annotated[
-            str | None,
-            Field(default=None, description="Error code equals"),
-        ]
+            str | None, m.Field(description="Error starts with prefix")
+        ] = None
+        ends: Annotated[str | None, m.Field(description="Error ends with suffix")] = (
+            None
+        )
+        match: Annotated[str | None, m.Field(description="Error matches regex")] = None
+        code: Annotated[str | None, m.Field(description="Error code equals")] = None
         code_has: Annotated[
             t.Tests.ErrorCodeSpec | None,
-            Field(default=None, description="Error code contains substring(s)"),
-        ]
+            m.Field(description="Error code contains substring(s)"),
+        ] = None
         data: Annotated[
             t.Tests.ErrorDataSpec | None,
-            Field(default=None, description="Error data contains key-value pairs"),
-        ]
+            m.Field(description="Error data contains key-value pairs"),
+        ] = None
 
     class ThatParams(FlextModels.Value):
         """Generic matcher parameters for value assertions."""
 
-        model_config: ClassVar[ConfigDict] = ConfigDict(populate_by_name=True)
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
 
-        msg: Annotated[
-            str | None,
-            Field(default=None, description="Custom error message"),
-        ]
+        msg: Annotated[str | None, m.Field(description="Custom error message")] = None
         eq: Annotated[
             t.Tests.TestobjectSerializable | None,
-            Field(default=None, description="Expected value (equality check)"),
-        ]
+            m.Field(description="Expected value (equality check)"),
+        ] = None
         ne: Annotated[
             t.Tests.TestobjectSerializable | None,
-            Field(default=None, description="Value must not equal"),
-        ]
+            m.Field(description="Value must not equal"),
+        ] = None
         is_: Annotated[
             type | tuple[type, ...] | None,
-            Field(
-                default=None,
-                validation_alias=AliasChoices("is_", "is"),
+            m.Field(
+                validation_alias=t.AliasChoices("is_", "is"),
                 description="Runtime type check",
             ),
-        ]
+        ] = None
         not_: Annotated[
             type | tuple[type, ...] | None,
-            Field(
-                default=None,
-                validation_alias=AliasChoices("not_", "not"),
+            m.Field(
+                validation_alias=t.AliasChoices("not_", "not"),
                 description="Type check — value is NOT instance of type(s)",
             ),
-        ]
-        none: Annotated[bool | None, Field(default=None, description="None check")]
-        empty: Annotated[
-            bool | None,
-            Field(default=None, description="Empty check"),
-        ]
-        gt: Annotated[
-            float | int | None,
-            Field(default=None, description="Greater than"),
-        ]
+        ] = None
+        none: Annotated[bool | None, m.Field(description="None check")] = None
+        empty: Annotated[bool | None, m.Field(description="Empty check")] = None
+        gt: Annotated[float | int | None, m.Field(description="Greater than")] = None
         gte: Annotated[
-            float | int | None,
-            Field(default=None, description="Greater than or equal"),
-        ]
-        lt: Annotated[
-            float | int | None,
-            Field(default=None, description="Less than"),
-        ]
+            float | int | None, m.Field(description="Greater than or equal")
+        ] = None
+        lt: Annotated[float | int | None, m.Field(description="Less than")] = None
         lte: Annotated[
-            float | int | None,
-            Field(default=None, description="Less than or equal"),
-        ]
+            float | int | None, m.Field(description="Less than or equal")
+        ] = None
         len: Annotated[
             t.Tests.LengthSpec | None,
-            Field(
-                default=None,
-                validation_alias=AliasChoices("len", "length"),
+            m.Field(
+                validation_alias=t.AliasChoices("len", "length"),
                 description="Length spec",
             ),
-        ]
-        length_gt: Annotated[
-            int | None,
-            Field(default=None, description="Length greater than"),
-        ]
+        ] = None
+        length_gt: Annotated[int | None, m.Field(description="Length greater than")] = (
+            None
+        )
         length_gte: Annotated[
-            int | None,
-            Field(default=None, description="Length greater than or equal"),
-        ]
-        length_lt: Annotated[
-            int | None,
-            Field(default=None, description="Length less than"),
-        ]
+            int | None, m.Field(description="Length greater than or equal")
+        ] = None
+        length_lt: Annotated[int | None, m.Field(description="Length less than")] = None
         length_lte: Annotated[
-            int | None,
-            Field(default=None, description="Length less than or equal"),
-        ]
+            int | None, m.Field(description="Length less than or equal")
+        ] = None
         has: Annotated[
             t.Tests.ContainmentSpec | None,
-            Field(
-                default=None,
-                validation_alias=AliasChoices("has", "contains"),
+            m.Field(
+                validation_alias=t.AliasChoices("has", "contains"),
                 description="Unified containment check",
             ),
-        ]
+        ] = None
         lacks: Annotated[
             t.Tests.ExclusionSpec | None,
-            Field(
-                default=None,
-                validation_alias=AliasChoices("lacks", "excludes"),
+            m.Field(
+                validation_alias=t.AliasChoices("lacks", "excludes"),
                 description="Unified non-containment check",
             ),
-        ]
+        ] = None
         starts: Annotated[
-            str | None,
-            Field(default=None, description="String starts with prefix"),
-        ]
-        ends: Annotated[
-            str | None,
-            Field(default=None, description="String ends with suffix"),
-        ]
-        match: Annotated[
-            str | None,
-            Field(default=None, description="Regex pattern"),
-        ]
+            str | None, m.Field(description="String starts with prefix")
+        ] = None
+        ends: Annotated[str | None, m.Field(description="String ends with suffix")] = (
+            None
+        )
+        match: Annotated[str | None, m.Field(description="Regex pattern")] = None
         first: Annotated[
             t.Tests.TestobjectSerializable | None,
-            Field(default=None, description="Sequence first item equals"),
-        ]
+            m.Field(description="Sequence first item equals"),
+        ] = None
         last: Annotated[
             t.Tests.TestobjectSerializable | None,
-            Field(default=None, description="Sequence last item equals"),
-        ]
+            m.Field(description="Sequence last item equals"),
+        ] = None
         all_: Annotated[
             t.Tests.SequencePredicate | None,
-            Field(
-                default=None,
-                validation_alias=AliasChoices("all_", "all"),
+            m.Field(
+                validation_alias=t.AliasChoices("all_", "all"),
                 description="All items match type or predicate",
             ),
-        ]
+        ] = None
         any_: Annotated[
             t.Tests.SequencePredicate | None,
-            Field(
-                default=None,
-                validation_alias=AliasChoices("any_", "any"),
+            m.Field(
+                validation_alias=t.AliasChoices("any_", "any"),
                 description="Each item matches type or predicate",
             ),
-        ]
-        sorted: Annotated[
-            t.Tests.SortKey | None,
-            Field(default=None, description="Is sorted"),
-        ]
-        unique: Annotated[
-            bool | None,
-            Field(default=None, description="All items unique"),
-        ]
+        ] = None
+        sorted: Annotated[t.Tests.SortKey | None, m.Field(description="Is sorted")] = (
+            None
+        )
+        unique: Annotated[bool | None, m.Field(description="All items unique")] = None
         keys: Annotated[
-            t.Tests.KeySpec | None,
-            Field(default=None, description="Mapping has all keys"),
-        ]
+            t.Tests.KeySpec | None, m.Field(description="Mapping has all keys")
+        ] = None
         lacks_keys: Annotated[
-            t.Tests.KeySpec | None,
-            Field(default=None, description="Mapping missing keys"),
-        ]
+            t.Tests.KeySpec | None, m.Field(description="Mapping missing keys")
+        ] = None
         values: Annotated[
             Sequence[t.Tests.TestobjectSerializable] | None,
-            Field(default=None, description="Mapping has all values"),
-        ]
+            m.Field(description="Mapping has all values"),
+        ] = None
         kv: Annotated[
-            t.Tests.KeyValueSpec | None,
-            Field(default=None, description="Key-value pairs"),
-        ]
+            t.Tests.KeyValueSpec | None, m.Field(description="Key-value pairs")
+        ] = None
         attrs: Annotated[
-            t.Tests.AttributeSpec | None,
-            Field(default=None, description="Object has attribute(s)"),
-        ]
+            t.Tests.AttributeSpec | None, m.Field(description="Object has attribute(s)")
+        ] = None
         methods: Annotated[
-            t.Tests.AttributeSpec | None,
-            Field(default=None, description="Object has method(s)"),
-        ]
+            t.Tests.AttributeSpec | None, m.Field(description="Object has method(s)")
+        ] = None
         attr_eq: Annotated[
-            t.Tests.AttributeValueSpec | None,
-            Field(default=None, description="Attribute equals"),
-        ]
-        ok: Annotated[
-            bool | None,
-            Field(default=None, description="For r: assert success"),
-        ]
+            t.Tests.AttributeValueSpec | None, m.Field(description="Attribute equals")
+        ] = None
+        ok: Annotated[bool | None, m.Field(description="For r: assert success")] = None
         error: Annotated[
-            str | t.StrSequence | None,
-            Field(default=None, description="For r: error contains"),
-        ]
+            str | t.StrSequence | None, m.Field(description="For r: error contains")
+        ] = None
         deep: Annotated[
-            t.Tests.DeepSpec | None,
-            Field(default=None, description="Deep structural matching"),
-        ]
+            t.Tests.DeepSpec | None, m.Field(description="Deep structural matching")
+        ] = None
         paths: Annotated[
             t.Tests.PathMatchSpec | None,
-            Field(default=None, description="Multiple path-based assertions"),
-        ]
+            m.Field(description="Multiple path-based assertions"),
+        ] = None
         items: Annotated[
             t.Tests.ItemMatchSpec | None,
-            Field(default=None, description="Sequence item assertions by selector"),
-        ]
+            m.Field(description="Sequence item assertions by selector"),
+        ] = None
         attrs_match: Annotated[
             t.Tests.AttributeMatchSpec | None,
-            Field(default=None, description="Attribute assertions by attribute path"),
-        ]
+            m.Field(description="Attribute assertions by attribute path"),
+        ] = None
         where: Annotated[
             t.Tests.PredicateSpec | None,
-            Field(default=None, description="Custom predicate function"),
-        ]
+            m.Field(description="Custom predicate function"),
+        ] = None
 
-        @model_validator(mode="after")
+        @u.model_validator(mode="after")
         def normalize_legacy_parameters(self) -> Self:
             updates: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
             if self.error is not None and self.has is None:
@@ -428,34 +334,32 @@ class FlextTestsMatchersModelsMixin:
     class ScopeParams(FlextModels.Value):
         """Parameters for temporary test scope configuration."""
 
-        model_config: ClassVar[ConfigDict] = ConfigDict(populate_by_name=True)
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
 
         settings: Annotated[
             Mapping[str, t.Tests.TestobjectSerializable] | None,
-            Field(default=None, description="Initial configuration values"),
-        ]
+            m.Field(description="Initial configuration values"),
+        ] = None
         container: Annotated[
             Mapping[str, t.Tests.TestobjectSerializable] | None,
-            Field(default=None, description="Initial container/service mappings"),
-        ]
+            m.Field(description="Initial container/service mappings"),
+        ] = None
         context: Annotated[
             Mapping[str, t.Tests.TestobjectSerializable] | None,
-            Field(default=None, description="Initial context values"),
-        ]
+            m.Field(description="Initial context values"),
+        ] = None
         cleanup: Annotated[
-            t.Tests.CleanupSpec | None,
-            Field(default=None, description="Cleanup functions"),
-        ]
+            t.Tests.CleanupSpec | None, m.Field(description="Cleanup functions")
+        ] = None
         env: Annotated[
             t.Tests.EnvironmentSpec | None,
-            Field(default=None, description="Temporary environment variables"),
-        ]
+            m.Field(description="Temporary environment variables"),
+        ] = None
         cwd: Annotated[
-            Path | str | None,
-            Field(default=None, description="Temporary working directory"),
-        ]
+            Path | str | None, m.Field(description="Temporary working directory")
+        ] = None
 
-        @field_validator("cwd", mode="before")
+        @m.field_validator("cwd", mode="before")
         @classmethod
         def convert_cwd(cls, value: Path | str | None) -> Path | str | None:
             if isinstance(value, str):
@@ -467,23 +371,20 @@ class FlextTestsMatchersModelsMixin:
 
         path: Annotated[
             str,
-            Field(description="Path where match occurred or failed"),
+            m.Field(description="Path where match occurred or failed"),
         ]
         expected: Annotated[
             t.Tests.TestobjectSerializable
             | Callable[[t.Tests.Testobject], bool]
             | None,
-            Field(description="Expected value or predicate"),
+            m.Field(description="Expected value or predicate"),
         ]
         actual: Annotated[
             t.Tests.TestobjectSerializable | None,
-            Field(default=None, description="Actual value found"),
-        ]
-        matched: Annotated[bool, Field(description="Whether match succeeded")]
-        reason: Annotated[
-            str,
-            Field(default="", description="Reason for match failure"),
-        ]
+            m.Field(description="Actual value found"),
+        ] = None
+        matched: Annotated[bool, m.Field(description="Whether match succeeded")]
+        reason: Annotated[str, m.Field(description="Reason for match failure")] = ""
 
     class Validate:
         """Centralized TypeAdapters for test data validation.
@@ -493,10 +394,10 @@ class FlextTestsMatchersModelsMixin:
         """
 
         DICT_ADAPTER: ClassVar[
-            TypeAdapter[Mapping[str, t.Tests.TestobjectSerializable]]
+            m.TypeAdapter[Mapping[str, t.Tests.TestobjectSerializable]]
         ] = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER
         LIST_ADAPTER: ClassVar[
-            TypeAdapter[Sequence[t.Tests.TestobjectSerializable]]
+            m.TypeAdapter[Sequence[t.Tests.TestobjectSerializable]]
         ] = t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER
 
     class Chain[TResult](FlextModels.Value):
@@ -504,7 +405,7 @@ class FlextTestsMatchersModelsMixin:
 
         result: Annotated[
             p.Result[TResult],
-            Field(description="r being chained"),
+            m.Field(description="r being chained"),
         ]
 
     class TestScope(FlextModels.ArbitraryTypesModel):
@@ -514,13 +415,13 @@ class FlextTestsMatchersModelsMixin:
 
         settings: Annotated[
             Mapping[str, t.Tests.TestobjectSerializable],
-            Field(description="Configuration dictionary"),
-        ] = Field(default_factory=dict)
+            m.Field(description="Configuration dictionary"),
+        ] = m.Field(default_factory=dict)
         container: Annotated[
             Mapping[str, t.Tests.TestobjectSerializable],
-            Field(description="Container/service mappings"),
-        ] = Field(default_factory=dict)
+            m.Field(description="Container/service mappings"),
+        ] = m.Field(default_factory=dict)
         context: Annotated[
             Mapping[str, t.Tests.TestobjectSerializable],
-            Field(description="Context values"),
-        ] = Field(default_factory=dict)
+            m.Field(description="Context values"),
+        ] = m.Field(default_factory=dict)

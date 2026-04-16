@@ -116,6 +116,7 @@ class FlextTestsMatchersUtilities:
         inherited_msg: str | None = None,
     ) -> dict[str, t.Tests.MatcherKwargValue]:
         """Normalize one declarative matcher rule into tm.that()-compatible kwargs."""
+        kwargs_t = dict[str, t.Tests.MatcherKwargValue]
         if isinstance(rule, Mapping):
             raw_mapping = {str(key): value for key, value in rule.items()}
             if raw_mapping and set(raw_mapping).issubset(
@@ -125,7 +126,13 @@ class FlextTestsMatchersUtilities:
                 if inherited_msg is not None and "msg" not in normalized_mapping:
                     normalized_mapping["msg"] = inherited_msg
                 return normalized_mapping
-            return {"eq": rule, "msg": inherited_msg} if inherited_msg else {"eq": rule}
+            eq_value: t.Tests.Testobject = FlextTestsMatchersUtilities._to_test_payload(
+                rule
+            )
+            result: kwargs_t = {"eq": eq_value}
+            if inherited_msg:
+                result["msg"] = inherited_msg
+            return result
         if isinstance(rule, type):
             return (
                 {"is_": rule, "msg": inherited_msg} if inherited_msg else {"is_": rule}
@@ -140,7 +147,10 @@ class FlextTestsMatchersUtilities:
                 if inherited_msg
                 else {"where": rule}
             )
-        return {"eq": rule, "msg": inherited_msg} if inherited_msg else {"eq": rule}
+        fallback: kwargs_t = {"eq": rule}
+        if inherited_msg:
+            fallback["msg"] = inherited_msg
+        return fallback
 
     @staticmethod
     def _extract_mapping_path(
@@ -373,7 +383,7 @@ class FlextTestsMatchersUtilities:
             return frozenset(str(s) for s in str_items)
         if value is None or isinstance(value, (str, int, float, bool, bytes)):
             return value
-        if u.instance_of(value, m.BaseModel):
+        if isinstance(value, m.BaseModel):
             return value
         if isinstance(value, Mapping):
             try:
@@ -414,7 +424,10 @@ class FlextTestsMatchersUtilities:
                 ]
         if isinstance(value, (datetime, Path)):
             return value
-        return str(value)
+        try:
+            return str(value)
+        except (AttributeError, TypeError, ValueError):
+            return type(value).__name__
 
     @staticmethod
     def _to_normalized(value: t.Tests.TestobjectSerializable) -> t.RecursiveContainer:
@@ -447,7 +460,7 @@ class FlextTestsMatchersUtilities:
             return None
         if isinstance(value, (str, int, float, bool)):
             return value
-        if u.instance_of(value, m.BaseModel):
+        if isinstance(value, m.BaseModel):
             return value
         if isinstance(value, Path):
             return value
@@ -476,7 +489,7 @@ class FlextTestsMatchersUtilities:
             return frozenset(str_items)
         if isinstance(value, (str, int, float, bool, Path)):
             return value
-        if u.instance_of(value, m.BaseModel):
+        if isinstance(value, m.BaseModel):
             return value
         if value is None:
             return None

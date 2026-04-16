@@ -27,7 +27,6 @@ from typing import ClassVar
 from docker import DockerClient as DockerSDKClient, from_env as docker_from_env
 from docker.errors import DockerException, NotFound
 from docker.models.containers import Container
-from pydantic import ValidationError
 from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
@@ -132,7 +131,7 @@ class FlextTestsDocker:
     ) -> Sequence[t.StrMapping]:
         try:
             return t.Tests.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(bindings)
-        except ValidationError:
+        except c.ValidationError:
             return []
 
     def cleanup_dirty_containers(self) -> p.Result[t.StrSequence]:

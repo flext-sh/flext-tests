@@ -1352,7 +1352,7 @@ class FlextTestsFiles(s):
             return False
         try:
             sequence_value = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
-        except ValidationError:
+        except c.ValidationError:
             return False
         if not sequence_value:
             return False
@@ -1424,7 +1424,7 @@ class FlextTestsFiles(s):
                             ) = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_json(
                                 text.encode()
                             )
-                        except ValidationError:
+                        except c.ValidationError:
                             parsed_raw = (
                                 t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_json(
                                     text.encode(),

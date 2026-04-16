@@ -29,7 +29,13 @@ if _t.TYPE_CHECKING:
     from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
     from flext_tests._models.validator import FlextTestsValidatorModelsMixin
     from flext_tests._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
-    from flext_tests._typings.base import FlextTestsBaseTypesMixin
+    from flext_tests._typings.base import (
+        BaseModel,
+        ConfigDict,
+        FlextTestsBaseTypesMixin,
+        SecretStr,
+        TypeAdapter,
+    )
     from flext_tests._typings.files import FlextTestsFilesTypesMixin
     from flext_tests._typings.guards import FlextTestsGuardsTypesMixin
     from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
@@ -107,7 +113,13 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._models.matchers": ("FlextTestsMatchersModelsMixin",),
             "._models.validator": ("FlextTestsValidatorModelsMixin",),
             "._protocols.valuefactory": ("FlextTestsValueFactoryProtocolsMixin",),
-            "._typings.base": ("FlextTestsBaseTypesMixin",),
+            "._typings.base": (
+                "BaseModel",
+                "ConfigDict",
+                "FlextTestsBaseTypesMixin",
+                "SecretStr",
+                "TypeAdapter",
+            ),
             "._typings.files": ("FlextTestsFilesTypesMixin",),
             "._typings.guards": ("FlextTestsGuardsTypesMixin",),
             "._typings.matchers": ("FlextTestsMatchersTypesMixin",),
@@ -209,6 +221,8 @@ _LAZY_IMPORTS = merge_lazy_imports(
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
 
 __all__: list[str] = [
+    "BaseModel",
+    "ConfigDict",
     "FlextService",
     "FlextTestsAssertionsUtilitiesMixin",
     "FlextTestsBadObjectsUtilitiesMixin",
@@ -264,6 +278,8 @@ __all__: list[str] = [
     "FlextValidatorSettings",
     "FlextValidatorTests",
     "FlextValidatorTypes",
+    "SecretStr",
+    "TypeAdapter",
     "c",
     "d",
     "e",
