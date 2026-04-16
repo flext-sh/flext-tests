@@ -18,7 +18,7 @@ class FlextTestsBaseModelsMixin:
         value: t.Tests.TestobjectSerializable = None
 
     class Value(FlextModels.Value):
-        """Factory value t.RecursiveContainer class for tests."""
+        """Factory value object class for tests."""
 
         data: str = ""
         count: int = 0

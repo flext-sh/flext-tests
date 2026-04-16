@@ -99,15 +99,15 @@ class FlextTestsDomainHelpersUtilitiesMixin:
         count: int,
         value_class: FlextTestsProtocols.Tests.ValueFactory[TValue],
     ) -> TValue:
-        """Create a test value t.RecursiveContainer instance.
+        """Create a test value object instance.
 
         Args:
             data: Data field value
             count: Count field value
-            value_class: Value t.RecursiveContainer class or factory callable
+            value_class: Value object class or factory callable
 
         Returns:
-            TValue: Created value t.RecursiveContainer instance
+            TValue: Created value object instance
 
         """
         return value_class(data=data, count=count)
@@ -123,7 +123,7 @@ class FlextTestsDomainHelpersUtilitiesMixin:
         Args:
             data_list: List of data values
             count_list: List of count values
-            value_class: Value t.RecursiveContainer class to instantiate
+            value_class: Value object class to instantiate
 
         Returns:
             r[TEntity]: Result containing created entity or error
