@@ -1,0 +1,34 @@
+src/flext_tests/_validator/models.py
+  042872ef4e0005dc 15
+src/flext_tests/_models/filesystem.py
+  042872ef4e0005dc 18
+src/flext_tests/_models/validator.py
+  042872ef4e0005dc 13
+src/flext_tests/_utilities/matchers.py
+  042872ef4e0005dc 1237
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "4fc3da671a0b1d8ceed125c434db6b0ac9f33b63",
+  "prompts": {
+    "042872ef4e0005dc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5bfd9f1e-a74b-4952-b429-f2c6cb088948",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "FLEXT Bot",
+      "messages": [],
+      "total_additions": 175,
+      "total_deletions": 180,
+      "accepted_lines": 15,
+      "overriden_lines": 152
+    }
+  },
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
