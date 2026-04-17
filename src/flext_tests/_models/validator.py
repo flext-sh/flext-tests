@@ -10,11 +10,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Self
 
-from pydantic import (
-    field_validator,
-)
-
-from flext_core import FlextModels
+from flext_core import FlextModels, u
 from flext_tests import c
 
 
@@ -29,7 +25,7 @@ class FlextTestsValidatorModelsMixin:
         description: str
         code_snippet: str = ""
 
-        @field_validator("severity", mode="before")
+        @u.field_validator("severity", mode="before")
         @classmethod
         def _coerce_severity(
             cls,

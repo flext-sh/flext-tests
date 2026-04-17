@@ -13,10 +13,9 @@ from typing import Annotated
 from pydantic import (
     BaseModel,
     BeforeValidator,
-    field_validator,
 )
 
-from flext_core import m
+from flext_core import m, u
 from flext_tests import c, t
 
 
@@ -65,62 +64,62 @@ class FlextTestsFilesystemModelsMixin:
         """File content to create."""
         name: Annotated[
             t.NonEmptyStr,
-            m.Field(
+            u.Field(
                 description="Filename for the created file (non-empty).",
             ),
         ] = c.Tests.DEFAULT_FILENAME
         directory: Annotated[
             Path | None,
-            m.Field(
+            u.Field(
                 description="Target directory (uses base_dir or temp if None).",
             ),
         ] = None
         fmt: Annotated[
             c.Tests.Format,
             BeforeValidator(lambda v: c.Tests.Format(v) if isinstance(v, str) else v),
-            m.Field(
+            u.Field(
                 default=c.Tests.Format.AUTO,
                 description="File format override.",
             ),
         ]
         enc: Annotated[
             t.NonEmptyStr,
-            m.Field(
+            u.Field(
                 description="File encoding.",
             ),
         ] = c.Tests.DEFAULT_ENCODING
         indent: Annotated[
             t.NonNegativeInt,
-            m.Field(
+            u.Field(
                 description="JSON/YAML indentation (non-negative).",
             ),
         ] = c.Tests.DEFAULT_JSON_INDENT
         delim: Annotated[
             str,
-            m.Field(
+            u.Field(
                 description="CSV delimiter (single character).",
             ),
         ] = c.Tests.DEFAULT_CSV_DELIMITER
         headers: Annotated[
             t.StrSequence | None,
-            m.Field(
+            u.Field(
                 description="CSV headers.",
             ),
         ] = None
         readonly: Annotated[
             bool,
-            m.Field(
+            u.Field(
                 description="Create file as read-only.",
             ),
         ] = False
         extract_result: Annotated[
             bool,
-            m.Field(
+            u.Field(
                 description="Auto-extract r value.",
             ),
         ] = True
 
-        @field_validator("name", mode="before")
+        @u.field_validator("name", mode="before")
         @classmethod
         def normalize_name(cls, value: t.Tests.TestobjectSerializable) -> str:
             """Normalize filename by stripping whitespace."""
@@ -133,33 +132,33 @@ class FlextTestsFilesystemModelsMixin:
 
         path: Annotated[
             Path,
-            m.Field(
+            u.Field(
                 description="Path to file to read (str or Path converted automatically).",
             ),
         ]
         model_cls: Annotated[
             type[BaseModel] | None,
-            m.Field(
+            u.Field(
                 description="Optional Pydantic model class to deserialize into.",
             ),
         ] = None
         fmt: Annotated[
             c.Tests.Format,
             BeforeValidator(lambda v: c.Tests.Format(v) if isinstance(v, str) else v),
-            m.Field(
+            u.Field(
                 default=c.Tests.Format.AUTO,
                 description="Format override.",
             ),
         ]
         enc: Annotated[
             t.NonEmptyStr,
-            m.Field(
+            u.Field(
                 description="File encoding.",
             ),
         ] = c.Tests.DEFAULT_ENCODING
         delim: Annotated[
             str,
-            m.Field(
+            u.Field(
                 min_length=1,
                 max_length=1,
                 description="CSV delimiter (single character).",
@@ -167,12 +166,12 @@ class FlextTestsFilesystemModelsMixin:
         ] = c.Tests.DEFAULT_CSV_DELIMITER
         has_headers: Annotated[
             bool,
-            m.Field(
+            u.Field(
                 description="CSV has headers.",
             ),
         ] = True
 
-        @field_validator("path", mode="before")
+        @u.field_validator("path", mode="before")
         @classmethod
         def convert_path(cls, value: Path | str) -> Path:
             """Convert string to Path - Field constraints cannot handle type conversion."""
@@ -183,60 +182,60 @@ class FlextTestsFilesystemModelsMixin:
 
         file1: Annotated[
             Path,
-            m.Field(
+            u.Field(
                 description="First file to compare (str or Path converted automatically).",
             ),
         ]
         file2: Annotated[
             Path,
-            m.Field(
+            u.Field(
                 description="Second file to compare (str or Path converted automatically).",
             ),
         ]
         mode: Annotated[
             str,
-            m.Field(
+            u.Field(
                 description="Comparison mode.",
             ),
         ] = c.Tests.CompareMode.CONTENT.value
         ignore_ws: Annotated[
             bool,
-            m.Field(
+            u.Field(
                 description="Ignore whitespace in comparison.",
             ),
         ] = False
         ignore_case: Annotated[
             bool,
-            m.Field(
+            u.Field(
                 description="Case-insensitive comparison.",
             ),
         ] = False
         pattern: Annotated[
             str | None,
-            m.Field(
+            u.Field(
                 description="Pattern to check if both files contain.",
             ),
         ] = None
         deep: Annotated[
             bool,
-            m.Field(
+            u.Field(
                 description="Use deep comparison for nested structures (dict/JSON/YAML).",
             ),
         ] = True
         keys: Annotated[
             t.StrSequence | None,
-            m.Field(
+            u.Field(
                 description="Only compare these keys (for dict/JSON/YAML content).",
             ),
         ] = None
         exclude_keys: Annotated[
             t.StrSequence | None,
-            m.Field(
+            u.Field(
                 description="Exclude these keys from comparison (for dict/JSON/YAML content).",
             ),
         ] = None
 
-        @field_validator("file1", "file2", mode="before")
+        @u.field_validator("file1", "file2", mode="before")
         @classmethod
         def convert_path(cls, value: Path | str) -> Path:
             """Convert string to Path - Field constraints cannot handle type conversion."""
@@ -247,36 +246,36 @@ class FlextTestsFilesystemModelsMixin:
 
         path: Annotated[
             Path,
-            m.Field(
+            u.Field(
                 description="Path to file (str or Path converted automatically).",
             ),
         ]
         compute_hash: Annotated[
             bool,
-            m.Field(
+            u.Field(
                 description="Compute SHA256 hash.",
             ),
         ] = False
         detect_fmt: Annotated[
             bool,
-            m.Field(
+            u.Field(
                 description="Auto-detect format.",
             ),
         ] = True
         parse_content: Annotated[
             bool,
-            m.Field(
+            u.Field(
                 description="Parse content and include metadata.",
             ),
         ] = False
         validate_model: Annotated[
             type[BaseModel] | None,
-            m.Field(
+            u.Field(
                 description="Pydantic model to validate content against.",
             ),
         ] = None
 
-        @field_validator("path", mode="before")
+        @u.field_validator("path", mode="before")
         @classmethod
         def convert_path(cls, value: Path | str) -> Path:
             """Convert string to Path - Field constraints cannot handle type conversion."""
@@ -290,33 +289,33 @@ class FlextTestsFilesystemModelsMixin:
 
         directory: Annotated[
             Path | None,
-            m.Field(
+            u.Field(
                 description="Directory to create file in.",
             ),
         ] = None
         fmt: Annotated[
             c.Tests.Format,
             BeforeValidator(lambda v: c.Tests.Format(v) if isinstance(v, str) else v),
-            m.Field(
+            u.Field(
                 default=c.Tests.Format.AUTO,
                 description="File format override.",
             ),
         ]
         enc: Annotated[
             t.NonEmptyStr,
-            m.Field(
+            u.Field(
                 description="File encoding.",
             ),
         ] = c.Tests.DEFAULT_ENCODING
         indent: Annotated[
             t.NonNegativeInt,
-            m.Field(
+            u.Field(
                 description="JSON indentation level.",
             ),
         ] = c.Tests.DEFAULT_JSON_INDENT
         delim: Annotated[
             str,
-            m.Field(
+            u.Field(
                 min_length=1,
                 max_length=1,
                 description="CSV delimiter (single character).",
@@ -324,13 +323,13 @@ class FlextTestsFilesystemModelsMixin:
         ] = c.Tests.DEFAULT_CSV_DELIMITER
         headers: Annotated[
             t.StrSequence | None,
-            m.Field(
+            u.Field(
                 description="CSV column headers.",
             ),
         ] = None
         readonly: Annotated[
             bool,
-            m.Field(
+            u.Field(
                 description="Create file as read-only.",
             ),
         ] = False

@@ -23,13 +23,13 @@ class FlextTestsBatchModelsMixin:
                 Mapping[str, t.Tests.TestobjectSerializable]
                 | Sequence[tuple[str, t.Tests.TestobjectSerializable]]
             ),
-            m.Field(
+            u.Field(
                 description="Mapping or Sequence of files to process",
             ),
         ]
         directory: Annotated[
             Path | None,
-            m.Field(
+            u.Field(
                 description="Target directory for create operations",
             ),
         ] = None
@@ -38,14 +38,14 @@ class FlextTestsBatchModelsMixin:
             m.BeforeValidator(
                 lambda v: c.Tests.Operation(v) if isinstance(v, str) else v
             ),
-            m.Field(
+            u.Field(
                 default=c.Tests.Operation.CREATE,
                 description="Operation type: create, read, or delete",
             ),
         ]
         model: Annotated[
             type[m.BaseModel] | None,
-            m.Field(
+            u.Field(
                 description="Optional model class for read operations",
             ),
         ] = None
@@ -54,14 +54,14 @@ class FlextTestsBatchModelsMixin:
             m.BeforeValidator(
                 lambda v: c.Tests.ErrorMode(v) if isinstance(v, str) else v
             ),
-            m.Field(
+            u.Field(
                 default=c.Tests.ErrorMode.COLLECT,
                 description="Error handling mode: stop, skip, or collect",
             ),
         ]
         parallel: Annotated[
             bool,
-            m.Field(
+            u.Field(
                 description="Run operations in parallel",
             ),
         ] = False
@@ -71,31 +71,31 @@ class FlextTestsBatchModelsMixin:
 
         succeeded: Annotated[
             int,
-            m.Field(
+            u.Field(
                 ge=0,
                 description="Number of successful operations",
             ),
         ]
         failed: Annotated[
             t.NonNegativeInt,
-            m.Field(description="Number of failed operations"),
+            u.Field(description="Number of failed operations"),
         ]
         total: Annotated[
             t.NonNegativeInt,
-            m.Field(description="Total number of operations"),
+            u.Field(description="Total number of operations"),
         ]
         results: Annotated[
             Mapping[str, p.ResultLike[t.Tests.TestResultValue]],
-            m.Field(
+            u.Field(
                 description="Mapping of file names to operation results",
             ),
-        ] = m.Field(default_factory=dict)
+        ] = u.Field(default_factory=dict)
         errors: Annotated[
             t.StrMapping,
-            m.Field(
+            u.Field(
                 description="Mapping of file names to error messages",
             ),
-        ] = m.Field(default_factory=dict)
+        ] = u.Field(default_factory=dict)
 
         @u.computed_field()
         @property

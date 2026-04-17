@@ -1234,7 +1234,7 @@ class FlextTestsMatchersUtilities:
                 """Enhanced isolated test execution scope.
 
                 Uses Pydantic 2 model (ScopeParams) for parameter validation and computation.
-                All parameters are validated automatically via u.from_kwargs.
+                All parameters are validated automatically via from_kwargs.
 
                 Provides isolated configuration, container, and context for tests.
                 Supports temporary environment variables, working directory changes,

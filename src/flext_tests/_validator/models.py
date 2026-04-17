@@ -12,7 +12,7 @@ from collections.abc import Callable, Mapping, MutableSequence, Sequence
 from pathlib import Path
 from typing import Annotated
 
-from flext_tests import c, m, p, r, t
+from flext_tests import c, m, p, r, t, u
 
 
 class FlextTestsValidatorModels(m):
@@ -56,36 +56,36 @@ class FlextTestsValidatorModels(m):
             target_path: Path
             include_patterns: Annotated[
                 t.StrSequence,
-                m.Field(
+                u.Field(
                     description="Glob patterns defining files that should be scanned for violations.",
                     title="Include Patterns",
                     examples=[["src/**/*.py", "tests/**/*.py"]],
                 ),
-            ] = m.Field(
+            ] = u.Field(
                 default_factory=lambda: list(
                     c.Tests.VALIDATOR_INCLUDE_PATTERNS,
                 )
             )
             exclude_patterns: Annotated[
                 t.StrSequence,
-                m.Field(
+                u.Field(
                     description="Glob patterns defining files that should be excluded from scan input.",
                     title="Exclude Patterns",
                     examples=[["**/__pycache__/**", "**/.venv/**"]],
                 ),
-            ] = m.Field(
+            ] = u.Field(
                 default_factory=lambda: list(
                     c.Tests.VALIDATOR_EXCLUDE_PATTERNS,
                 )
             )
             approved_exceptions: Annotated[
                 Mapping[str, t.StrSequence],
-                m.Field(
+                u.Field(
                     description="Rule-to-path allowlist for known and explicitly approved exceptions.",
                     title="Approved Exceptions",
                     examples=[{"RULE_001": ["tests/fixtures/generated.py"]}],
                 ),
-            ] = m.Field(default_factory=dict)
+            ] = u.Field(default_factory=dict)
 
 
 __all__: list[str] = ["FlextTestsValidatorModels"]

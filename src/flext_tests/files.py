@@ -183,7 +183,7 @@ class FlextTestsFiles(s):
             paths: MutableMapping[str, Path] = {}
             default_ext = ext or c.Tests.DEFAULT_EXTENSION
             for name, data_raw in content.items():
-                data: t.Tests.TestobjectSerializable = data_raw
+                data: t.Tests.FileContentPlain = data_raw
                 filename = name if "." in name else f"{name}{default_ext}"
                 if "." not in name and (isinstance(data, (Mapping, BaseModel))):
                     filename = f"{name}.json"
@@ -1236,7 +1236,8 @@ class FlextTestsFiles(s):
 
     def _coerce_file_content(
         self,
-        value: t.Tests.TestobjectSerializable
+        value: t.Tests.FileContentPlain
+        | t.Tests.TestobjectSerializable
         | r[t.Tests.TestobjectSerializable]
         | r[Sequence[t.StrSequence]]
         | r[bytes]
@@ -1346,7 +1347,7 @@ class FlextTestsFiles(s):
 
     def _is_nested_rows(
         self,
-        value: t.Tests.TestobjectSerializable,
+        value: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable,
     ) -> TypeIs[Sequence[t.StrSequence]]:
         if not isinstance(value, Sequence) or isinstance(value, str | bytes):
             return False
