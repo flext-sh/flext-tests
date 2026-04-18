@@ -28,6 +28,7 @@ class FlextTestsPayloadUtilities:
     @staticmethod
     def to_payload(
         value: t.Tests.TestobjectSerializable
+        | t.RuntimeAtomic
         | m.RootModel[t.Tests.TestobjectSerializable]
         | set[t.Tests.TestobjectSerializable]
         | type
