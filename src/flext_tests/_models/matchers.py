@@ -9,7 +9,7 @@ from __future__ import annotations
 import sys
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from pathlib import Path
-from typing import Annotated, ClassVar, Self, TypeAliasType
+from typing import Annotated, ClassVar, Self
 
 from flext_core import FlextModels, m, u
 from flext_tests import p, t
@@ -22,38 +22,12 @@ class FlextTestsMatchersModelsMixin:
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
 
         eq: Annotated[
-            (
-                Mapping[str, t.Tests.TestobjectSerializable]
-                | Sequence[t.Tests.TestobjectSerializable]
-                | bytes
-                | str
-                | int
-                | float
-                | bool
-                | TypeAliasType
-                | None
-            ),
-            u.Field(
-                description="Expected value (equality check)",
-                union_mode="left_to_right",
-            ),
+            t.Tests.MatcherEqTarget | None,
+            u.Field(description="Expected value (equality check)"),
         ] = None
         ne: Annotated[
-            (
-                Mapping[str, t.Tests.TestobjectSerializable]
-                | Sequence[t.Tests.TestobjectSerializable]
-                | bytes
-                | str
-                | int
-                | float
-                | bool
-                | TypeAliasType
-                | None
-            ),
-            u.Field(
-                description="Value must not equal",
-                union_mode="left_to_right",
-            ),
+            t.Tests.MatcherEqTarget | None,
+            u.Field(description="Value must not equal"),
         ] = None
         is_: Annotated[
             type | tuple[type, ...] | None,

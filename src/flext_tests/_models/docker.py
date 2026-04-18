@@ -7,9 +7,9 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
-from typing import override
+from typing import Annotated, override
 
-from flext_core import FlextModels
+from flext_core import FlextModels, u
 from flext_tests import c, t
 
 
@@ -17,11 +17,20 @@ class FlextTestsDockerModelsMixin:
     class ContainerInfo(FlextModels.Value):
         """Container information model."""
 
-        name: str
-        status: c.Tests.ContainerStatus
-        ports: t.StrMapping
-        image: str
-        container_id: str = ""
+        name: Annotated[str, u.Field(description="Container name.")]
+        status: Annotated[
+            c.Tests.ContainerStatus,
+            u.Field(description="Runtime lifecycle status."),
+        ]
+        ports: Annotated[
+            t.StrMapping,
+            u.Field(description="Port mapping (internal → external)."),
+        ]
+        image: Annotated[str, u.Field(description="Source image tag.")]
+        container_id: Annotated[
+            str,
+            u.Field(description="Docker-assigned container identifier."),
+        ] = ""
 
         @override
         def model_post_init(self, __context: t.Container | None, /) -> None:
@@ -37,9 +46,18 @@ class FlextTestsDockerModelsMixin:
     class ContainerConfig(FlextModels.Value):
         """Container configuration model."""
 
-        compose_file: Path
-        service: str
-        port: int
+        compose_file: Annotated[
+            Path,
+            u.Field(description="Path to the docker-compose file."),
+        ]
+        service: Annotated[
+            str,
+            u.Field(description="Compose service name to target."),
+        ]
+        port: Annotated[
+            int,
+            u.Field(description="Host-side port exposed by the service."),
+        ]
 
         @override
         def model_post_init(self, __context: t.Container | None, /) -> None:
@@ -58,33 +76,75 @@ class FlextTestsDockerModelsMixin:
     class ContainerState(FlextModels.Value):
         """Container state tracking model."""
 
-        container_name: str
-        is_dirty: bool
-        worker_id: str
-        last_updated: str | None = None
+        container_name: Annotated[
+            str,
+            u.Field(description="Container name being tracked."),
+        ]
+        is_dirty: Annotated[
+            bool,
+            u.Field(description="True when test state has mutated the container."),
+        ]
+        worker_id: Annotated[
+            str,
+            u.Field(description="Pytest-xdist worker that owns the state."),
+        ]
+        last_updated: Annotated[
+            str | None,
+            u.Field(description="ISO timestamp of last state change."),
+        ] = None
 
     class User(FlextModels.Value):
         """Test user model - immutable value object."""
 
-        id: str
-        name: str
-        email: str
-        active: bool = True
+        id: Annotated[str, u.Field(description="Opaque user identifier.")]
+        name: Annotated[str, u.Field(description="Display name.")]
+        email: Annotated[str, u.Field(description="Primary email address.")]
+        active: Annotated[
+            bool,
+            u.Field(description="True when the account is active."),
+        ] = True
 
     class Config(FlextModels.Value):
         """Test configuration model - immutable value object."""
 
-        service_type: str = "api"
-        environment: str = "test"
-        debug: bool = True
-        log_level: str = "DEBUG"
-        timeout: int = 30
-        max_retries: int = 3
+        service_type: Annotated[
+            str,
+            u.Field(description="Service kind under test."),
+        ] = "api"
+        environment: Annotated[
+            str,
+            u.Field(description="Target environment label."),
+        ] = "test"
+        debug: Annotated[
+            bool,
+            u.Field(description="Enable verbose debug output."),
+        ] = True
+        log_level: Annotated[
+            str,
+            u.Field(description="Logging level name."),
+        ] = "DEBUG"
+        timeout: Annotated[
+            int,
+            u.Field(description="Request timeout in seconds."),
+        ] = 30
+        max_retries: Annotated[
+            int,
+            u.Field(description="Retry budget on transient failure."),
+        ] = 3
 
     class Service(FlextModels.Value):
         """Test service model - immutable value object."""
 
-        id: str
-        type: str = "api"
-        name: str = ""
-        status: str = "active"
+        id: Annotated[str, u.Field(description="Opaque service identifier.")]
+        type: Annotated[
+            str,
+            u.Field(description="Service classification."),
+        ] = "api"
+        name: Annotated[
+            str,
+            u.Field(description="Human-readable service name."),
+        ] = ""
+        status: Annotated[
+            str,
+            u.Field(description="Lifecycle status."),
+        ] = "active"

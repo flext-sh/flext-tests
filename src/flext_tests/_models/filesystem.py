@@ -23,45 +23,106 @@ class FlextTestsFilesystemModelsMixin:
     class FileInfo(m.Value):
         """Comprehensive file information model."""
 
-        exists: bool
-        path: Path | None = None
-        size: int = 0
-        size_human: str = ""
-        lines: int = 0
-        encoding: str = "utf-8"
-        is_empty: bool = False
-        first_line: str = ""
-        fmt: str = "unknown"
-        valid: bool = True
-        created: datetime.datetime | None = None
-        modified: datetime.datetime | None = None
-        permissions: int = 0
-        is_readonly: bool = False
-        sha256: str | None = None
-        content_meta: FlextTestsFilesystemModelsMixin.ContentMeta | None = None
-        """Optional content metadata for parsed files."""
+        exists: Annotated[
+            bool,
+            u.Field(description="True when the file exists on disk."),
+        ]
+        path: Annotated[
+            Path | None,
+            u.Field(description="Absolute path to the file."),
+        ] = None
+        size: Annotated[
+            int,
+            u.Field(description="File size in bytes."),
+        ] = 0
+        size_human: Annotated[
+            str,
+            u.Field(description="Human-readable size (e.g. '1.2 KB')."),
+        ] = ""
+        lines: Annotated[
+            int,
+            u.Field(description="Line count for text files."),
+        ] = 0
+        encoding: Annotated[
+            str,
+            u.Field(description="Text encoding detected or assumed."),
+        ] = "utf-8"
+        is_empty: Annotated[
+            bool,
+            u.Field(description="True when the file has zero bytes."),
+        ] = False
+        first_line: Annotated[
+            str,
+            u.Field(description="First line of the file (text files)."),
+        ] = ""
+        fmt: Annotated[
+            str,
+            u.Field(description="Detected format label."),
+        ] = "unknown"
+        valid: Annotated[
+            bool,
+            u.Field(description="True when the file parses cleanly."),
+        ] = True
+        created: Annotated[
+            datetime.datetime | None,
+            u.Field(description="File creation timestamp."),
+        ] = None
+        modified: Annotated[
+            datetime.datetime | None,
+            u.Field(description="File last-modified timestamp."),
+        ] = None
+        permissions: Annotated[
+            int,
+            u.Field(description="Unix-style permission bits."),
+        ] = 0
+        is_readonly: Annotated[
+            bool,
+            u.Field(description="True when the file is not writable."),
+        ] = False
+        sha256: Annotated[
+            str | None,
+            u.Field(description="Hex-encoded SHA-256 digest."),
+        ] = None
+        content_meta: Annotated[
+            FlextTestsFilesystemModelsMixin.ContentMeta | None,
+            u.Field(description="Optional content metadata for parsed files."),
+        ] = None
 
     class ContentMeta(m.Value):
         """Content-specific metadata for parsed files."""
 
-        key_count: int | None = None
-        """Number of keys for JSON/YAML dicts."""
-        item_count: int | None = None
-        """Number of items for JSON/YAML lists."""
-        row_count: int | None = None
-        """Number of rows for CSV files."""
-        column_count: int | None = None
-        """Number of columns for CSV files."""
-        model_valid: bool | None = None
-        """Whether content is valid for a specific model."""
-        model_name: str | None = None
-        """Model class name if validated."""
+        key_count: Annotated[
+            int | None,
+            u.Field(description="Number of keys for JSON/YAML dicts."),
+        ] = None
+        item_count: Annotated[
+            int | None,
+            u.Field(description="Number of items for JSON/YAML lists."),
+        ] = None
+        row_count: Annotated[
+            int | None,
+            u.Field(description="Number of rows for CSV files."),
+        ] = None
+        column_count: Annotated[
+            int | None,
+            u.Field(description="Number of columns for CSV files."),
+        ] = None
+        model_valid: Annotated[
+            bool | None,
+            u.Field(description="Whether content is valid for a specific model."),
+        ] = None
+        model_name: Annotated[
+            str | None,
+            u.Field(description="Model class name if validated."),
+        ] = None
 
     class CreateParams(m.Value):
         """Parameters for file creation operations with Pydantic 2 advanced validation."""
 
-        content: t.Tests.TestobjectSerializable
-        """File content to create."""
+        content: Annotated[
+            t.Tests.TestobjectSerializable,
+            u.Field(description="File content to create."),
+        ]
         name: Annotated[
             t.NonEmptyStr,
             u.Field(

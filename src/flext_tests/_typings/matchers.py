@@ -14,6 +14,23 @@ from flext_tests import FlextTestsBaseTypesMixin
 
 
 class FlextTestsMatchersTypesMixin:
+    type MatcherEqTarget = (
+        Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | bytes
+        | str
+        | int
+        | float
+        | bool
+        | TypeAliasType
+    )
+    """Expected-value target for ``Ok``/``Fail`` matcher ``eq`` / ``ne`` fields.
+
+    The ``| None`` nullability is attached by the field defaulting to
+    ``None`` rather than by the alias itself — Pydantic rejects
+    ``union_mode`` on nullable schemas, so the alias stays non-nullable.
+    """
+
     type MatchRuleLeaf = (
         FlextTestsBaseTypesMixin.Testobject | type | tuple[type, ...] | TypeAliasType
     )
