@@ -6,8 +6,9 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import re
 from enum import StrEnum, unique
-from typing import Final
+from typing import ClassVar, Final
 
 from flext_tests import t
 
@@ -106,6 +107,22 @@ class FlextTestsValidatorConstantsMixin:
         "CRITICAL",
         "Lower layer importing upper layer",
     )
+    VALIDATOR_RULE_MD_001: Final[tuple[str, str]] = (
+        "CRITICAL",
+        "Python syntax error in markdown code block",
+    )
+    VALIDATOR_RULE_MD_002: Final[tuple[str, str]] = (
+        "CRITICAL",
+        "Forbidden typing import in markdown code block",
+    )
+    VALIDATOR_RULE_MD_003: Final[tuple[str, str]] = (
+        "MEDIUM",
+        "Missing future annotations in markdown code block",
+    )
+    VALIDATOR_RULE_MD_004: Final[tuple[str, str]] = (
+        "HIGH",
+        "Forbidden type annotation in markdown code block",
+    )
 
     @classmethod
     def validator_rule(
@@ -153,6 +170,32 @@ class FlextTestsValidatorConstantsMixin:
     VALIDATOR_MSG_BYPASS_EXCEPTION: Final[str] = "Exception swallowing: {pattern}"
     VALIDATOR_MSG_BYPASS_BARE_EXCEPT: Final[str] = "bare except"
     VALIDATOR_MSG_BYPASS_ONLY_PASS: Final[str] = "except with only pass"
+    VALIDATOR_MSG_MD_SYNTAX: Final[str] = "SyntaxError in code block: {msg}"
+    VALIDATOR_MSG_MD_FORBIDDEN_IMPORT: Final[str] = "Forbidden import: {import_name}"
+    VALIDATOR_MSG_MD_MISSING_FUTURE: Final[str] = (
+        "Missing: from __future__ import annotations"
+    )
+    VALIDATOR_MSG_MD_FORBIDDEN_ANNOTATION: Final[str] = (
+        "Forbidden annotation: {annotation} (use t.* contracts)"
+    )
+
+    # Markdown validation
+    VALIDATOR_MD_PYTHON_BLOCK_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^```python\s*$\n(.*?)^```\s*$",
+        re.MULTILINE | re.DOTALL,
+    )
+    VALIDATOR_MD_OBJECT_ANNOTATION_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"(?::\s*object\b|->.*\bobject\b)",
+    )
+    VALIDATOR_MD_FUTURE_ANNOTATIONS_MARKER: Final[str] = (
+        "from __future__ import annotations"
+    )
+    VALIDATOR_MD_TYPING_IMPORT_PREFIX: Final[str] = "from typing import"
+    VALIDATOR_MD_FORBIDDEN_TYPING_NAMES: Final[frozenset[str]] = frozenset({
+        "Any",
+        "Optional",
+        "Union",
+    })
 
     # Defaults
     VALIDATOR_EXCLUDE_PATTERNS: Final[tuple[str, ...]] = (
@@ -172,6 +215,7 @@ class FlextTestsValidatorConstantsMixin:
     VALIDATOR_CONFIG_KEY: Final[str] = "settings"
     VALIDATOR_BYPASS_KEY: Final[str] = "bypass"
     VALIDATOR_LAYER_KEY: Final[str] = "layer"
+    VALIDATOR_MARKDOWN_KEY: Final[str] = "markdown"
 
     # Approved
     VALIDATOR_APPROVED_CAST_PATTERNS: Final[tuple[str, ...]] = (

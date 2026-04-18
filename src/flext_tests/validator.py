@@ -33,6 +33,7 @@ from flext_tests import (
     FlextValidatorBypass,
     FlextValidatorImports,
     FlextValidatorLayer,
+    FlextValidatorMarkdown,
     FlextValidatorSettings,
     FlextValidatorTests,
     FlextValidatorTypes,
@@ -55,6 +56,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         - settings: pyproject.toml deviations
         - bypass: noqa, pragma, exception swallowing
         - layer: cross-layer import violations
+        - markdown: Python code blocks in .md files
 
         Uses c.Validator for all rules, messages, and defaults.
 
@@ -315,6 +317,34 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
 
         """
         return FlextValidatorSettings.validate(pyproject_path, approved_exceptions)
+
+    @classmethod
+    def markdown(
+        cls,
+        project_root: Path,
+        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
+    ) -> p.Result[m.Tests.ScanResult]:
+        """Validate Python code blocks in markdown files.
+
+        Detects:
+        - MD-001: Python syntax errors
+        - MD-002: Forbidden typing imports (Any, Optional, Union)
+        - MD-003: Missing future annotations
+        - MD-004: Forbidden annotations (object as type)
+
+        Args:
+            project_root: Root directory to scan for .md files
+            approved_exceptions: Dict mapping rule IDs to approved file patterns
+
+        Returns:
+            r[ScanResult] with violations found
+
+        """
+        md_files = FlextValidatorMarkdown.collect_markdown_files(project_root)
+        return FlextValidatorMarkdown.markdown(
+            md_files,
+            approved_exceptions=approved_exceptions,
+        )
 
 
 tv = FlextTestsValidator

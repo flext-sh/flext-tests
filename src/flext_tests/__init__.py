@@ -10,6 +10,7 @@ from flext_core.lazy import (
     install_lazy_exports,
     merge_lazy_imports,
 )
+from flext_tests.__version__ import *
 
 if _t.TYPE_CHECKING:
     from flext_cli import d, e, h, r, x
@@ -17,6 +18,13 @@ if _t.TYPE_CHECKING:
     from flext_tests._constants.files import FlextTestsFilesConstantsMixin
     from flext_tests._constants.matcher import FlextTestsMatcherConstantsMixin
     from flext_tests._constants.validator import FlextTestsValidatorConstantsMixin
+    from flext_tests._fixtures.markdown_validation import (
+        MarkdownCodeBlockCollector,
+        MarkdownCodeBlockItem,
+        MarkdownValidationError,
+        pytest_addoption,
+        pytest_collect_file,
+    )
     from flext_tests._fixtures.settings import (
         reset_settings,
         settings,
@@ -71,6 +79,7 @@ if _t.TYPE_CHECKING:
     from flext_tests._validator.bypass import FlextValidatorBypass
     from flext_tests._validator.imports import FlextValidatorImports
     from flext_tests._validator.layer import FlextValidatorLayer
+    from flext_tests._validator.markdown import FlextValidatorMarkdown
     from flext_tests._validator.models import FlextTestsValidatorModels
     from flext_tests._validator.settings import FlextValidatorSettings
     from flext_tests._validator.tests import FlextValidatorTests
@@ -97,10 +106,27 @@ _LAZY_IMPORTS = merge_lazy_imports(
     ),
     build_lazy_import_map(
         {
+            ".__version__": (
+                "__author__",
+                "__author_email__",
+                "__description__",
+                "__license__",
+                "__title__",
+                "__url__",
+                "__version__",
+                "__version_info__",
+            ),
             "._constants.docker": ("FlextTestsDockerConstantsMixin",),
             "._constants.files": ("FlextTestsFilesConstantsMixin",),
             "._constants.matcher": ("FlextTestsMatcherConstantsMixin",),
             "._constants.validator": ("FlextTestsValidatorConstantsMixin",),
+            "._fixtures.markdown_validation": (
+                "MarkdownCodeBlockCollector",
+                "MarkdownCodeBlockItem",
+                "MarkdownValidationError",
+                "pytest_addoption",
+                "pytest_collect_file",
+            ),
             "._fixtures.settings": (
                 "reset_settings",
                 "settings",
@@ -152,6 +178,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._validator.bypass": ("FlextValidatorBypass",),
             "._validator.imports": ("FlextValidatorImports",),
             "._validator.layer": ("FlextValidatorLayer",),
+            "._validator.markdown": ("FlextValidatorMarkdown",),
             "._validator.models": ("FlextTestsValidatorModels",),
             "._validator.settings": ("FlextValidatorSettings",),
             "._validator.tests": ("FlextValidatorTests",),
@@ -275,17 +302,31 @@ __all__: list[str] = [
     "FlextValidatorBypass",
     "FlextValidatorImports",
     "FlextValidatorLayer",
+    "FlextValidatorMarkdown",
     "FlextValidatorSettings",
     "FlextValidatorTests",
     "FlextValidatorTypes",
+    "MarkdownCodeBlockCollector",
+    "MarkdownCodeBlockItem",
+    "MarkdownValidationError",
     "SecretStr",
     "TypeAdapter",
+    "__author__",
+    "__author_email__",
+    "__description__",
+    "__license__",
+    "__title__",
+    "__url__",
+    "__version__",
+    "__version_info__",
     "c",
     "d",
     "e",
     "h",
     "m",
     "p",
+    "pytest_addoption",
+    "pytest_collect_file",
     "r",
     "reset_settings",
     "s",

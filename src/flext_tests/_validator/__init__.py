@@ -10,6 +10,7 @@ _LAZY_IMPORTS = build_lazy_import_map(
         ".bypass": ("FlextValidatorBypass",),
         ".imports": ("FlextValidatorImports",),
         ".layer": ("FlextValidatorLayer",),
+        ".markdown": ("FlextValidatorMarkdown",),
         ".models": ("FlextTestsValidatorModels",),
         ".settings": ("FlextValidatorSettings",),
         ".tests": ("FlextValidatorTests",),
