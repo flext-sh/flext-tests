@@ -14,6 +14,11 @@ _LAZY_IMPORTS = build_lazy_import_map(
             "pytest_addoption",
             "pytest_collect_file",
         ),
+        ".project_metadata": (
+            "project_metadata",
+            "project_namespace_config",
+            "project_tool_flext",
+        ),
         ".settings": (
             "reset_settings",
             "settings",

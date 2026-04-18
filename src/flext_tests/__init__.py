@@ -25,6 +25,11 @@ if _t.TYPE_CHECKING:
         pytest_addoption,
         pytest_collect_file,
     )
+    from flext_tests._fixtures.project_metadata import (
+        project_metadata,
+        project_namespace_config,
+        project_tool_flext,
+    )
     from flext_tests._fixtures.settings import (
         reset_settings,
         settings,
@@ -126,6 +131,11 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "MarkdownValidationError",
                 "pytest_addoption",
                 "pytest_collect_file",
+            ),
+            "._fixtures.project_metadata": (
+                "project_metadata",
+                "project_namespace_config",
+                "project_tool_flext",
             ),
             "._fixtures.settings": (
                 "reset_settings",
@@ -325,6 +335,9 @@ __all__: list[str] = [
     "h",
     "m",
     "p",
+    "project_metadata",
+    "project_namespace_config",
+    "project_tool_flext",
     "pytest_addoption",
     "pytest_collect_file",
     "r",
