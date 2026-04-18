@@ -759,7 +759,11 @@ class FlextTestsFiles(s):
         content_to_validate = self._extract_content(content, extract_result)
         try:
             params = m.Tests.CreateParams.model_validate({
-                "content": content_to_validate,
+                "content": (
+                    content_to_validate.root
+                    if isinstance(content_to_validate, t.ConfigMap)
+                    else content_to_validate
+                ),
                 "name": name,
                 "directory": directory,
                 "fmt": fmt,

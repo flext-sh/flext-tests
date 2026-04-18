@@ -397,8 +397,10 @@ class FlextTestsMatchersUtilities:
                     for key, item in mapping_value.items()
                 }
             except c.ValidationError:
-                empty_map: Mapping[str, t.Tests.TestobjectSerializable] = {}
-                return empty_map
+                return {
+                    str(key): FlextTestsMatchersUtilities._to_test_payload(item)
+                    for key, item in value.items()
+                }
         if FlextTestsMatchersUtilities._is_object_sequence(value):
             try:
                 sequence_value = (
@@ -505,8 +507,10 @@ class FlextTestsMatchersUtilities:
                     for key, item in mapping_value.items()
                 }
             except c.ValidationError:
-                empty_map: Mapping[str, t.Tests.TestobjectSerializable] = {}
-                return empty_map
+                return {
+                    str(key): FlextTestsMatchersUtilities._as_guard_input(item)
+                    for key, item in value.items()
+                }
         if FlextTestsMatchersUtilities._is_object_sequence(value):
             try:
                 sequence_value = (
