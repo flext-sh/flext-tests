@@ -9,6 +9,7 @@ from __future__ import annotations
 import sys
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from pathlib import Path
+from types import MappingProxyType
 from typing import Annotated, ClassVar, Self
 
 from flext_core import FlextModels, m, u
@@ -390,12 +391,12 @@ class FlextTestsMatchersModelsMixin:
         settings: Annotated[
             Mapping[str, t.Tests.TestobjectSerializable],
             u.Field(description="Configuration dictionary"),
-        ] = u.Field(default_factory=dict)
+        ] = u.Field(default_factory=lambda: MappingProxyType({}))
         container: Annotated[
             Mapping[str, t.Tests.TestobjectSerializable],
             u.Field(description="Container/service mappings"),
-        ] = u.Field(default_factory=dict)
+        ] = u.Field(default_factory=lambda: MappingProxyType({}))
         context: Annotated[
             Mapping[str, t.Tests.TestobjectSerializable],
             u.Field(description="Context values"),
-        ] = u.Field(default_factory=dict)
+        ] = u.Field(default_factory=lambda: MappingProxyType({}))

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from pathlib import Path
+from types import MappingProxyType
 from typing import Annotated
 
 from flext_core import FlextModels, m, p, u
@@ -89,13 +90,13 @@ class FlextTestsBatchModelsMixin:
             u.Field(
                 description="Mapping of file names to operation results",
             ),
-        ] = u.Field(default_factory=dict)
+        ] = u.Field(default_factory=lambda: MappingProxyType({}))
         errors: Annotated[
             t.StrMapping,
             u.Field(
                 description="Mapping of file names to error messages",
             ),
-        ] = u.Field(default_factory=dict)
+        ] = u.Field(default_factory=lambda: MappingProxyType({}))
 
         @u.computed_field()
         @property
