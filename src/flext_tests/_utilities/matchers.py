@@ -1062,9 +1062,7 @@ class FlextTestsMatchersUtilities:
                         )
                     extracted_raw = extracted.value
                     extracted_payload = FlextTestsMatchersUtilities._to_test_payload(
-                        extracted_raw
-                        if FlextTestsMatchersUtilities._is_matcher_input(extracted_raw)
-                        else str(extracted_raw),
+                        extracted_raw,
                     )
                     result_value = extracted_payload
                 has_validation = (
