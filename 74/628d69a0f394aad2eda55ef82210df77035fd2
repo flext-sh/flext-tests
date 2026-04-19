@@ -1,0 +1,36 @@
+src/flext_tests/_typings/guards.py
+  h_9db9d35f50cf33 12,25
+src/flext_tests/files.py
+  h_9db9d35f50cf33 68,156,186,196,357,397,717,785,793,914,1043,1054,1251,1391
+tests/unit/test_files.py
+  h_9db9d35f50cf33 153,168,289,304,314
+src/flext_tests/_typings/files.py
+  h_9db9d35f50cf33 11,23,30
+src/flext_tests/_models/filesystem.py
+  h_9db9d35f50cf33 135,196,203,328,354
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "74628d69a0f394aad2eda55ef82210df77035fd2",
+  "prompts": {
+    "042872ef4e0005dc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5bfd9f1e-a74b-4952-b429-f2c6cb088948",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "FLEXT Bot",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 0,
+      "overriden_lines": 1
+    }
+  },
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
