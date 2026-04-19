@@ -28,7 +28,7 @@ class FlextTestsPayloadUtilities:
     @staticmethod
     def to_payload(
         value: t.Tests.TestobjectSerializable
-        | t.RuntimeAtomic
+        | t.RuntimeData
         | m.RootModel[t.Tests.TestobjectSerializable]
         | set[t.Tests.TestobjectSerializable]
         | type
@@ -40,7 +40,7 @@ class FlextTestsPayloadUtilities:
             value: value to convert
 
         Returns:
-            t.RecursiveContainer suitable for test assertions
+            t.Container suitable for test assertions
 
         """
         if isinstance(value, m.RootModel):
@@ -104,7 +104,7 @@ class FlextTestsPayloadUtilities:
     @staticmethod
     def to_normalized_value(
         value: t.Tests.TestobjectSerializable,
-    ) -> t.RecursiveContainer:
+    ) -> t.Container:
         """Convert _Testobject to pure NormalizedValue (no BaseModel in output)."""
         if value is None:
             return None
@@ -132,7 +132,7 @@ class FlextTestsPayloadUtilities:
             validated_seq: Sequence[t.Tests.TestobjectSerializable] = (
                 t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
             )
-            result_seq: Sequence[t.RecursiveContainer] = [
+            result_seq: Sequence[t.Container] = [
                 FlextTestsPayloadUtilities.to_normalized_value(item)
                 for item in validated_seq
             ]
@@ -168,7 +168,7 @@ class FlextTestsPayloadUtilities:
             validated_seq: Sequence[t.Tests.TestobjectSerializable] = (
                 t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
             )
-            cfg_seq: Sequence[t.RecursiveContainer] = [
+            cfg_seq: Sequence[t.Container] = [
                 FlextTestsPayloadUtilities.to_normalized_value(item)
                 for item in validated_seq
             ]
@@ -214,7 +214,7 @@ class FlextTestsPayloadUtilities:
         *,
         path_sep: str = ".",
     ) -> m.Tests.DeepMatchResult:
-        """Match t.RecursiveContainer against deep specification.
+        """Match t.Container against deep specification.
 
         Uses u.extract() for path extraction.
         Supports unlimited nesting depth via dot notation paths.
@@ -228,17 +228,17 @@ class FlextTestsPayloadUtilities:
             DeepMatchResult with match status and details
 
         """
-        source_obj: t.ConfigMap
+        source_obj: m.ConfigMap
         if isinstance(obj, m.BaseModel):
             dumped = obj.model_dump(mode="python")
-            source_obj = t.ConfigMap.model_validate({
+            source_obj = m.ConfigMap.model_validate({
                 str(key): FlextTestsPayloadUtilities.to_config_map_value(
                     FlextTestsPayloadUtilities.to_payload(value),
                 )
                 for key, value in dumped.items()
             })
         else:
-            source_obj = t.ConfigMap.model_validate({
+            source_obj = m.ConfigMap.model_validate({
                 str(key): FlextTestsPayloadUtilities.to_config_map_value(value)
                 for key, value in obj.items()
             })

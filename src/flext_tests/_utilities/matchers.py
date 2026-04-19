@@ -160,16 +160,16 @@ class FlextTestsMatchersUtilities:
         path: str,
     ) -> t.Tests.TestobjectSerializable:
         """Extract one dotted path from a model or mapping using flext-core extract helpers."""
-        extract_source: t.ConfigMap
+        extract_source: m.ConfigMap
         if isinstance(value, m.BaseModel):
-            extract_source = t.ConfigMap.model_validate({
+            extract_source = m.ConfigMap.model_validate({
                 str(key): FlextTestsPayloadUtilities.to_config_map_value(
                     FlextTestsPayloadUtilities.to_payload(item),
                 )
                 for key, item in value.model_dump(mode="python").items()
             })
         elif isinstance(value, Mapping):
-            extract_source = t.ConfigMap.model_validate({
+            extract_source = m.ConfigMap.model_validate({
                 str(key): FlextTestsPayloadUtilities.to_config_map_value(
                     FlextTestsPayloadUtilities.to_payload(item),
                 )
@@ -327,7 +327,7 @@ class FlextTestsMatchersUtilities:
         value: t.Tests.TestobjectSerializable
         | t.Tests.MatcherKwargValue
         | t.RuntimeData
-        | t.RecursiveContainer,
+        | t.Container,
     ) -> TypeIs[Sequence[t.Tests.TestobjectSerializable]]:
         return isinstance(value, Sequence) and (
             not isinstance(value, (str, bytes, bytearray))
@@ -338,7 +338,7 @@ class FlextTestsMatchersUtilities:
         value: t.Tests.TestobjectSerializable
         | t.Tests.MatcherKwargValue
         | t.RuntimeData
-        | t.RecursiveContainer,
+        | t.Container,
     ) -> TypeIs[t.Tests.TestobjectSerializable]:
         if value is None:
             return True
@@ -432,7 +432,7 @@ class FlextTestsMatchersUtilities:
             return type(value).__name__
 
     @staticmethod
-    def _to_normalized(value: t.Tests.TestobjectSerializable) -> t.RecursiveContainer:
+    def _to_normalized(value: t.Tests.TestobjectSerializable) -> t.Container:
         """Convert _Testobject to pure NormalizedValue."""
         if value is None:
             return None
@@ -536,7 +536,7 @@ class FlextTestsMatchersUtilities:
         return FlextTestsMatchersUtilities._to_test_payload(value)
 
     @staticmethod
-    def _to_chk_value[TValue](value: TValue) -> t.RecursiveContainer:
+    def _to_chk_value[TValue](value: TValue) -> t.Container:
         """Convert a test value to NormalizedValue for use with u.chk()."""
         if value is None:
             return None
@@ -558,7 +558,7 @@ class FlextTestsMatchersUtilities:
                     )
                 )
             except c.ValidationError:
-                empty_map: t.RecursiveContainerMapping = {}
+                empty_map: Mapping[str, t.Container] = {}
                 return empty_map
             return {
                 str(k): FlextTestsMatchersUtilities._to_chk_value(v)
@@ -583,14 +583,8 @@ class FlextTestsMatchersUtilities:
     @staticmethod
     def _check_has_lacks[TValue](
         value: TValue,
-        has: t.Tests.ContainmentSpec
-        | t.Tests.MatcherKwargValue
-        | t.RecursiveContainer
-        | None,
-        lacks: t.Tests.ContainmentSpec
-        | t.Tests.MatcherKwargValue
-        | t.RecursiveContainer
-        | None,
+        has: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.Container | None,
+        lacks: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.Container | None,
         msg: str | None,
         *,
         as_str: bool = False,
@@ -598,9 +592,7 @@ class FlextTestsMatchersUtilities:
         """Shared has/lacks containment check for ok(), fail(), and that()."""
         if has is not None:
             items: Sequence[
-                t.Tests.TestobjectSerializable
-                | t.Tests.MatcherKwargValue
-                | t.RecursiveContainer
+                t.Tests.TestobjectSerializable | t.Tests.MatcherKwargValue | t.Container
             ] = (
                 list(has)
                 if FlextTestsMatchersUtilities._is_non_string_sequence(has)
@@ -786,7 +778,7 @@ class FlextTestsMatchersUtilities:
                     result: Railway result to chain assertions on.
 
                 Returns:
-                    Chain t.RecursiveContainer for fluent assertion API.
+                    Chain t.Container for fluent assertion API.
 
                 """
                 return m.Tests.Chain(result=result)
@@ -1035,9 +1027,9 @@ class FlextTestsMatchersUtilities:
                             params.msg
                             or f"Path extraction requires dict or model, got {type(result_value).__name__}",
                         )
-                    extract_data: t.ConfigMap
+                    extract_data: m.ConfigMap
                     if isinstance(result_value, m.BaseModel):
-                        extract_data = t.ConfigMap.model_validate(
+                        extract_data = m.ConfigMap.model_validate(
                             result_value.model_dump(mode="python"),
                         )
                     else:
@@ -1045,12 +1037,12 @@ class FlextTestsMatchersUtilities:
                             validated = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
                                 result_value,
                             )
-                            extract_data = t.ConfigMap.model_validate({
+                            extract_data = m.ConfigMap.model_validate({
                                 str(k): FlextTestsMatchersUtilities._to_extract_value(v)
                                 for k, v in validated.items()
                             })
                         except c.ValidationError:
-                            extract_data = t.ConfigMap(root={})
+                            extract_data = m.ConfigMap(root={})
                     extracted = u.extract(extract_data, path_str)
                     if extracted.failure:
                         raise AssertionError(

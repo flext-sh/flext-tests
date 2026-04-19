@@ -24,7 +24,7 @@ class FlextTestsConfigHelpersUtilitiesMixin:
     @staticmethod
     def assert_config_fields(
         settings: p.Settings,
-        expected_fields: t.ConfigMap,
+        expected_fields: m.ConfigMap,
     ) -> None:
         """Assert settings has expected field values.
 

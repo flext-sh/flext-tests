@@ -193,7 +193,7 @@ class FlextTestsFiles(s):
                         filename = f"{name}.csv"
                 try:
                     validated_kwargs = m.Tests.CreateKwargsParams.model_validate(kwargs)
-                except (TypeError, ValueError, m.ValidationError):
+                except (TypeError, ValueError, c.ValidationError):
                     validated_kwargs = m.Tests.CreateKwargsParams(
                         directory=None,
                         fmt=c.Tests.Format.AUTO,
@@ -234,14 +234,14 @@ class FlextTestsFiles(s):
     @staticmethod
     def _to_config_map(
         value: Mapping[str, t.Tests.TestobjectSerializable],
-    ) -> t.ConfigMap:
+    ) -> m.ConfigMap:
         config_root: MutableMapping[str, t.ValueOrModel] = {
             str(key): FlextTestsPayloadUtilities.to_config_map_value(
                 FlextTestsPayloadUtilities.to_payload(item),
             )
             for key, item in value.items()
         }
-        return t.ConfigMap(root=config_root)
+        return m.ConfigMap(root=config_root)
 
     @staticmethod
     def _to_payload_mapping(
@@ -759,7 +759,7 @@ class FlextTestsFiles(s):
             params = m.Tests.CreateParams.model_validate({
                 "content": (
                     content_to_validate.root
-                    if isinstance(content_to_validate, t.ConfigMap)
+                    if isinstance(content_to_validate, m.ConfigMap)
                     else content_to_validate
                 ),
                 "name": name,
@@ -780,12 +780,12 @@ class FlextTestsFiles(s):
         actual_content: (
             str
             | bytes
-            | t.ConfigMap
+            | m.ConfigMap
             | Sequence[t.StrSequence]
             | m.BaseModel
             | Mapping[str, t.Tests.TestobjectSerializable]
         ) = self._coerce_file_content(params.content)
-        if isinstance(actual_content, t.ConfigMap):
+        if isinstance(actual_content, m.ConfigMap):
             actual_content = {
                 str(key): FlextTestsPayloadUtilities.to_payload(value)
                 for key, value in actual_content.root.items()
@@ -858,7 +858,7 @@ class FlextTestsFiles(s):
                 data_yaml = (
                     {"value": actual_content} if actual_content else empty_data_y
                 )
-            yaml_payload: Mapping[str, t.RecursiveContainer] = {
+            yaml_payload: Mapping[str, t.Container] = {
                 str(k): FlextTestsPayloadUtilities.to_normalized_value(v)
                 for k, v in data_yaml.items()
             }
@@ -896,13 +896,13 @@ class FlextTestsFiles(s):
         return file_path
 
     @override
-    def execute(self) -> p.Result[t.RecursiveContainer]:
+    def execute(self) -> p.Result[t.Container]:
         """Execute service - returns success for file manager.
 
         FlextTestsFiles is a utility service that doesn't have a specific
         execution result. Returns success by default.
         """
-        return r[t.RecursiveContainer].ok(None)
+        return r[t.Container].ok(None)
 
     def info(
         self,
@@ -1262,7 +1262,7 @@ class FlextTestsFiles(s):
     def _coerce_read_content(
         self,
         value: Mapping[str, t.Tests.TestobjectSerializable] | None,
-    ) -> str | bytes | t.ConfigMap | Sequence[t.StrSequence]:
+    ) -> str | bytes | m.ConfigMap | Sequence[t.StrSequence]:
         if isinstance(value, str | bytes):
             return value
         if self._is_mapping(value):
@@ -1413,7 +1413,7 @@ class FlextTestsFiles(s):
         model_valid: bool | None = None
         model_name: str | None = None
         parsed_content: (
-            t.ConfigMap | Sequence[t.Tests.TestobjectSerializable] | None
+            m.ConfigMap | Sequence[t.Tests.TestobjectSerializable] | None
         ) = None
         if fmt in {"json", "yaml"}:
             try:
@@ -1434,7 +1434,7 @@ class FlextTestsFiles(s):
                                 )
                             )
                     else:
-                        parsed_raw = dict(t.ConfigMap(root={}).root)
+                        parsed_raw = dict(m.ConfigMap(root={}).root)
                 else:
                     parsed_raw = (
                         (
@@ -1443,7 +1443,7 @@ class FlextTestsFiles(s):
                             else None
                         )
                         if text.strip()
-                        else dict(t.ConfigMap(root={}).root)
+                        else dict(m.ConfigMap(root={}).root)
                     )
                 if self._is_mapping(parsed_raw):
                     parsed_content = self._to_config_map(parsed_raw)
@@ -1469,7 +1469,7 @@ class FlextTestsFiles(s):
                 pass
         if validate_model is not None:
             model_name = validate_model.__name__
-            if isinstance(parsed_content, t.ConfigMap):
+            if isinstance(parsed_content, m.ConfigMap):
                 try:
                     _ = validate_model.model_validate(parsed_content.root)
                     model_valid = True

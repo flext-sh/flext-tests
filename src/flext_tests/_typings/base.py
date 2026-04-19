@@ -21,13 +21,10 @@ from datetime import datetime, timezone, tzinfo
 from enum import Enum
 from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
-from typing import TYPE_CHECKING
 
 from flext_cli import t
 from flext_core import FlextModelsPydantic, p
-
-if TYPE_CHECKING:
-    from flext_tests import m
+from flext_tests import m
 
 BaseModel = FlextModelsPydantic.BaseModel
 ConfigDict = FlextModelsPydantic.ConfigDict
@@ -120,19 +117,17 @@ class FlextTestsBaseTypesMixin:
     PRIMITIVES_MAPPING_ADAPTER: m.TypeAdapter[Mapping[str, t.Primitives]] = TypeAdapter(
         Mapping[str, t.Primitives]
     )
-    NORMALIZED_VALUE_ADAPTER: m.TypeAdapter[t.RecursiveContainer] = TypeAdapter(
-        t.RecursiveContainer
-    )
-    DICT_ADAPTER: m.TypeAdapter[t.Dict] = TypeAdapter(t.Dict)
+    NORMALIZED_VALUE_ADAPTER: m.TypeAdapter[t.Container] = TypeAdapter(t.Container)
+    DICT_ADAPTER: m.TypeAdapter[m.Dict] = TypeAdapter(m.Dict)
     SCALAR_MAPPING_ADAPTER: m.TypeAdapter[t.ScalarMapping] = TypeAdapter(
         t.ScalarMapping
     )
-    CONTAINER_MAPPING_ADAPTER: m.TypeAdapter[t.RecursiveContainerMapping] = TypeAdapter(
-        t.RecursiveContainerMapping
+    CONTAINER_MAPPING_ADAPTER: m.TypeAdapter[Mapping[str, t.Container]] = TypeAdapter(
+        Mapping[str, t.Container]
     )
     CONTAINER_MAPPING_SEQUENCE_ADAPTER: m.TypeAdapter[
-        Sequence[t.RecursiveContainerMapping]
-    ] = TypeAdapter(Sequence[t.RecursiveContainerMapping])
+        Sequence[Mapping[str, t.Container]]
+    ] = TypeAdapter(Sequence[Mapping[str, t.Container]])
     STR_MAPPING_ADAPTER: m.TypeAdapter[t.StrMapping] = TypeAdapter(t.StrMapping)
     STR_MAPPING_MAPPING_ADAPTER: m.TypeAdapter[Mapping[str, t.StrMapping]] = (
         TypeAdapter(Mapping[str, t.StrMapping])

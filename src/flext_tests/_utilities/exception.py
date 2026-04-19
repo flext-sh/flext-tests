@@ -19,14 +19,14 @@ class FlextTestsExceptionHelpersUtilitiesMixin:
     def create_metadata_object(
         attributes: Mapping[str, t.Tests.TestobjectSerializable],
     ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
-        """Create a metadata t.RecursiveContainer for exceptions.
+        """Create a metadata t.Container for exceptions.
 
         Args:
             attributes: Metadata attributes
 
         Returns:
             r[TEntity]: Result containing created entity or error
-            Metadata t.RecursiveContainer with attributes as dict
+            Metadata t.Container with attributes as dict
 
         """
         return {"attributes": attributes, **attributes}
