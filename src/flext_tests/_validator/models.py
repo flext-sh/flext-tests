@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping, MutableSequence, Sequence
 from pathlib import Path
+from types import MappingProxyType
 from typing import Annotated
 
 from flext_tests import c, m, p, r, t, u
@@ -53,7 +54,10 @@ class FlextTestsValidatorModels(m):
         class ScanConfig(m.Value):
             """Configuration for validation scan."""
 
-            target_path: Path
+            target_path: Annotated[
+                Path,
+                u.Field(description="Filesystem root path to scan for violations."),
+            ]
             include_patterns: Annotated[
                 t.StrSequence,
                 u.Field(
@@ -85,7 +89,7 @@ class FlextTestsValidatorModels(m):
                     title="Approved Exceptions",
                     examples=[{"RULE_001": ["tests/fixtures/generated.py"]}],
                 ),
-            ] = u.Field(default_factory=dict)
+            ] = u.Field(default_factory=lambda: MappingProxyType({}))
 
 
 __all__: list[str] = ["FlextTestsValidatorModels"]

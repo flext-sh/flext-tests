@@ -12,7 +12,7 @@ And the following on-demand fixtures:
 - settings_factory: Factory for project-specific settings classes
 
 And the following CLI options:
-- --markdown-check: Validate Python code blocks in .md files
+- --markdown-docs: Validate Python code blocks in .md files
 - --markdown-ruff: Also run ruff on extracted code blocks
 """
 

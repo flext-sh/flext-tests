@@ -1,6 +1,6 @@
 """Pytest plugin for automatic markdown Python code block validation.
 
-Provides --markdown-check option that validates Python code blocks
+Provides --markdown-docs option that validates Python code blocks
 in .md files against project linting rules.
 
 Usage in any project's conftest.py::
@@ -22,10 +22,10 @@ from flext_tests import FlextValidatorMarkdown
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
-    """Add --markdown-check option to pytest."""
+    """Add --markdown-docs option to pytest."""
     group = parser.getgroup("markdown", "Markdown code block validation")
     group.addoption(
-        "--markdown-check",
+        "--markdown-docs",
         action="store_true",
         default=False,
         help="Validate Python code blocks in .md files",
@@ -98,8 +98,8 @@ def pytest_collect_file(
     parent: pytest.Collector,
     file_path: Path,
 ) -> MarkdownCodeBlockCollector | None:
-    """Collect .md files when --markdown-check is enabled."""
-    if not parent.config.getoption("--markdown-check", default=False):
+    """Collect .md files when --markdown-docs is enabled."""
+    if not parent.config.getoption("--markdown-docs", default=False):
         return None
     if file_path.suffix == ".md" and file_path.stat().st_size > 0:
         content = file_path.read_text(encoding="utf-8")
