@@ -13,7 +13,6 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
-from pydantic import BaseModel
 
 from flext_tests import tf, tm
 from tests import c, m, r, t, u
@@ -151,7 +150,7 @@ class TestFlextTestsFiles:
         """Test creating multiple files from dictionary."""
         files: Mapping[
             str,
-            str | bytes | t.ConfigMap | Sequence[t.StrSequence] | BaseModel,
+            str | bytes | t.ConfigMap | Sequence[t.StrSequence] | m.BaseModel,
         ] = {"file1": "content1", "file2": "content2", "file3.txt": "content3"}
         with tf.files(files, directory=tmp_path, ext=".txt") as created:
             tm.that(len(created), eq=3)
@@ -166,7 +165,7 @@ class TestFlextTestsFiles:
         """Test creating file set with custom extension."""
         files: Mapping[
             str,
-            str | bytes | t.ConfigMap | Sequence[t.StrSequence] | BaseModel,
+            str | bytes | t.ConfigMap | Sequence[t.StrSequence] | m.BaseModel,
         ] = {"file1": "content1"}
         extension = ".md"
         with tf.files(files, directory=tmp_path, ext=extension) as created:
@@ -287,7 +286,7 @@ class TestFlextTestsFiles:
         """Test files classmethod context manager."""
         files: Mapping[
             str,
-            str | bytes | t.ConfigMap | Sequence[t.StrSequence] | BaseModel,
+            str | bytes | t.ConfigMap | Sequence[t.StrSequence] | m.BaseModel,
         ] = {"file1": "content1", "file2": "content2"}
         with tf.files(files) as created:
             tm.that(len(created), eq=2)
@@ -302,7 +301,7 @@ class TestFlextTestsFiles:
         """Test files with custom extension."""
         files: Mapping[
             str,
-            str | bytes | t.ConfigMap | Sequence[t.StrSequence] | BaseModel,
+            str | bytes | t.ConfigMap | Sequence[t.StrSequence] | m.BaseModel,
         ] = {"file1": "content1"}
         with tf.files(files, ext=".md") as created:
             tm.that(created["file1"].name, eq="file1.md")
@@ -312,7 +311,7 @@ class TestFlextTestsFiles:
         nested_dir = tmp_path / "nested" / "subdir"
         files: Mapping[
             str,
-            str | bytes | t.ConfigMap | Sequence[t.StrSequence] | BaseModel,
+            str | bytes | t.ConfigMap | Sequence[t.StrSequence] | m.BaseModel,
         ] = {"file1": "content1"}
         with tf.files(files, directory=nested_dir) as created:
             tm.that(created["file1"].parent, eq=nested_dir)

@@ -8,9 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 
-from pydantic import BaseModel
-
-from flext_core import FlextTypes, r
+from flext_core import FlextTypes, m, r
 from flext_tests import FlextTestsBaseTypesMixin
 
 
@@ -22,12 +20,12 @@ class FlextTestsFilesTypesMixin:
     type ReadContent = (
         str | bytes | FlextTypes.ConfigMap | Sequence[FlextTypes.StrSequence]
     )
-    type FileContentPlain = ReadContent | BaseModel
+    type FileContentPlain = ReadContent | m.BaseModel
     type FileInput = (
         FileContentPlain
         | r[str]
         | r[bytes]
         | r[FlextTypes.ConfigMap]
         | r[Sequence[FlextTypes.StrSequence]]
-        | r[BaseModel]
+        | r[m.BaseModel]
     )

@@ -10,7 +10,6 @@ from __future__ import annotations
 from typing import ClassVar
 
 import pytest
-from pydantic import ConfigDict
 
 from flext_tests import tm
 from tests import m, p, r, u
@@ -96,7 +95,7 @@ class TestFlextTestsUtilitiesTestContext:
         """Test temporary_attribute adds new attribute temporarily."""
 
         class TestObject(m.BaseModel):
-            model_config: ClassVar[ConfigDict] = ConfigDict(extra="allow")
+            model_config: ClassVar[m.ConfigDict] = m.ConfigDict(extra="allow")
 
         obj = TestObject()
         with u.Tests.temporary_attribute(obj, "new_attr", "new_value"):

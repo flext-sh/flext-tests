@@ -10,11 +10,6 @@ import datetime
 from pathlib import Path
 from typing import Annotated
 
-from pydantic import (
-    BaseModel,
-    BeforeValidator,
-)
-
 from flext_core import m, u
 from flext_tests import c, t
 
@@ -137,7 +132,7 @@ class FlextTestsFilesystemModelsMixin:
         ] = None
         fmt: Annotated[
             c.Tests.Format,
-            BeforeValidator(lambda v: c.Tests.Format(v) if isinstance(v, str) else v),
+            m.BeforeValidator(lambda v: c.Tests.Format(v) if isinstance(v, str) else v),
             u.Field(
                 default=c.Tests.Format.AUTO,
                 description="File format override.",
@@ -198,14 +193,14 @@ class FlextTestsFilesystemModelsMixin:
             ),
         ]
         model_cls: Annotated[
-            type[BaseModel] | None,
+            type[m.BaseModel] | None,
             u.Field(
                 description="Optional Pydantic model class to deserialize into.",
             ),
         ] = None
         fmt: Annotated[
             c.Tests.Format,
-            BeforeValidator(lambda v: c.Tests.Format(v) if isinstance(v, str) else v),
+            m.BeforeValidator(lambda v: c.Tests.Format(v) if isinstance(v, str) else v),
             u.Field(
                 default=c.Tests.Format.AUTO,
                 description="Format override.",
@@ -330,7 +325,7 @@ class FlextTestsFilesystemModelsMixin:
             ),
         ] = False
         validate_model: Annotated[
-            type[BaseModel] | None,
+            type[m.BaseModel] | None,
             u.Field(
                 description="Pydantic model to validate content against.",
             ),
@@ -356,7 +351,7 @@ class FlextTestsFilesystemModelsMixin:
         ] = None
         fmt: Annotated[
             c.Tests.Format,
-            BeforeValidator(lambda v: c.Tests.Format(v) if isinstance(v, str) else v),
+            m.BeforeValidator(lambda v: c.Tests.Format(v) if isinstance(v, str) else v),
             u.Field(
                 default=c.Tests.Format.AUTO,
                 description="File format override.",

@@ -34,8 +34,6 @@ from pathlib import Path
 from types import TracebackType
 from typing import ClassVar, Self, TypeIs, overload, override
 
-from pydantic import BaseModel, ValidationError
-
 from flext_tests import FlextTestsPayloadUtilities, c, m, p, r, s, t, u
 
 
@@ -67,7 +65,7 @@ class FlextTestsFiles(s):
     FileInfo: ClassVar[type[m.Tests.FileInfo]] = m.Tests.FileInfo
 
     @staticmethod
-    def _validate_model_content[TModelRead: BaseModel](
+    def _validate_model_content[TModelRead: m.BaseModel](
         model_cls: type[TModelRead],
         content: t.Tests.ReadContent,
     ) -> p.Result[TModelRead]:
@@ -155,7 +153,7 @@ class FlextTestsFiles(s):
         Supports Pydantic models, dicts, lists, and raw content.
 
         Args:
-            content: Dict mapping names to content (str, bytes, dict, list, BaseModel)
+            content: Dict mapping names to content (str, bytes, dict, list, m.BaseModel)
             directory: Base directory (temp if None)
             ext: Default extension if not in name
             extract_result: Auto-extract r values (default: True)
@@ -185,7 +183,7 @@ class FlextTestsFiles(s):
             for name, data_raw in content.items():
                 data: t.Tests.FileContentPlain = data_raw
                 filename = name if "." in name else f"{name}{default_ext}"
-                if "." not in name and (isinstance(data, (Mapping, BaseModel))):
+                if "." not in name and (isinstance(data, (Mapping, m.BaseModel))):
                     filename = f"{name}.json"
                 else:
                     is_nested_sequence = "." not in name and manager._is_nested_rows(
@@ -195,7 +193,7 @@ class FlextTestsFiles(s):
                         filename = f"{name}.csv"
                 try:
                     validated_kwargs = m.Tests.CreateKwargsParams.model_validate(kwargs)
-                except (TypeError, ValueError, ValidationError):
+                except (TypeError, ValueError, m.ValidationError):
                     validated_kwargs = m.Tests.CreateKwargsParams(
                         directory=None,
                         fmt=c.Tests.Format.AUTO,
@@ -356,7 +354,7 @@ class FlextTestsFiles(s):
         Supports r, Pydantic models, lists, dicts, and raw content.
 
         Args:
-            content: File content (str, bytes, dict, list, BaseModel, or r[T])
+            content: File content (str, bytes, dict, list, m.BaseModel, or r[T])
             name: Filename
             directory: Target directory
             fmt: Format override ("auto", "text", "bin", "json", "yaml", "csv")
@@ -396,7 +394,7 @@ class FlextTestsFiles(s):
             extract_result=extract_result,
         )
 
-    def batch_files[TModel: BaseModel](
+    def batch_files[TModel: m.BaseModel](
         self,
         items: t.Tests.BatchFiles,
         *,
@@ -716,7 +714,7 @@ class FlextTestsFiles(s):
                 - bytes: binary file
                 - dict/Mapping: JSON file
                 - Sequence[t.StrSequence]: CSV file
-                - BaseModel: JSON file (via model_dump())
+                - m.BaseModel: JSON file (via model_dump())
                 - r[T]: Extracts value if success (if extract_result=True)
             name: Filename (extension hints format)
             directory: Directory (uses base_dir or temp if None)
@@ -784,7 +782,7 @@ class FlextTestsFiles(s):
             | bytes
             | t.ConfigMap
             | Sequence[t.StrSequence]
-            | BaseModel
+            | m.BaseModel
             | Mapping[str, t.Tests.TestobjectSerializable]
         ) = self._coerce_file_content(params.content)
         if isinstance(actual_content, t.ConfigMap):
@@ -792,7 +790,7 @@ class FlextTestsFiles(s):
                 str(key): FlextTestsPayloadUtilities.to_payload(value)
                 for key, value in actual_content.root.items()
             }
-        if isinstance(actual_content, BaseModel):
+        if isinstance(actual_content, m.BaseModel):
             actual_content = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(
                 FlextTestsPayloadUtilities.to_payload(
                     actual_content.model_dump(mode="json"),
@@ -913,7 +911,7 @@ class FlextTestsFiles(s):
         compute_hash: bool = False,
         detect_fmt: bool = True,
         parse_content: bool = False,
-        validate_model: type[BaseModel] | None = None,
+        validate_model: type[m.BaseModel] | None = None,
     ) -> p.Result[m.Tests.FileInfo]:
         """Get comprehensive file information.
 
@@ -1042,7 +1040,7 @@ class FlextTestsFiles(s):
     ) -> p.Result[t.Tests.ReadContent]: ...
 
     @overload
-    def read[TModelRead: BaseModel](
+    def read[TModelRead: m.BaseModel](
         self,
         path: Path,
         *,
@@ -1053,7 +1051,7 @@ class FlextTestsFiles(s):
         has_headers: bool = True,
     ) -> p.Result[TModelRead]: ...
 
-    def read[TModelRead: BaseModel](
+    def read[TModelRead: m.BaseModel](
         self,
         path: Path,
         *,
@@ -1250,7 +1248,7 @@ class FlextTestsFiles(s):
     ) -> t.Tests.FileContentPlain:
         if isinstance(value, str | bytes):
             return value
-        if isinstance(value, BaseModel):
+        if isinstance(value, m.BaseModel):
             return value
         if self._is_mapping(value):
             return self._to_config_map(value)
@@ -1390,7 +1388,7 @@ class FlextTestsFiles(s):
         path: Path,
         text: str,
         fmt: str,
-        validate_model: type[BaseModel] | None = None,
+        validate_model: type[m.BaseModel] | None = None,
     ) -> m.Tests.ContentMeta:
         """Parse file content and extract metadata.
 
