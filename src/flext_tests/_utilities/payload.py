@@ -11,12 +11,12 @@ from __future__ import annotations
 
 from collections.abc import (
     Mapping,
-    MutableMapping,
     Sequence,
     Sized,
 )
 from datetime import datetime
 from pathlib import Path
+from typing import ClassVar
 
 from flext_core import u
 from flext_tests import c, m, t
@@ -25,155 +25,70 @@ from flext_tests import c, m, t
 class FlextTestsPayloadUtilities:
     """Namespace class for shared payload conversion helpers in flext_tests."""
 
+    _SCALAR_PAYLOAD: ClassVar[tuple[type, ...]] = (
+        str,
+        int,
+        float,
+        bool,
+        bytes,
+        datetime,
+        Path,
+        m.BaseModel,
+    )
+
     @staticmethod
-    def to_payload(
-        value: t.Tests.TestobjectSerializable
-        | t.RuntimeData
-        | m.RootModel[t.Tests.TestobjectSerializable]
-        | set[t.Tests.TestobjectSerializable]
-        | type
-        | None,
-    ) -> t.Tests.TestobjectSerializable:
-        """Convert a value to testobject.
-
-        Args:
-            value: value to convert
-
-        Returns:
-            t.Container suitable for test assertions
-
-        """
+    def to_payload[TValue](value: TValue) -> t.Tests.TestobjectSerializable:
+        """Recursively flatten any runtime value to ``TestobjectSerializable``."""
+        to_p = FlextTestsPayloadUtilities.to_payload
         if isinstance(value, m.RootModel):
-            root_value = value.root
-            if root_value is None or isinstance(
-                root_value,
-                (
-                    str,
-                    int,
-                    float,
-                    bool,
-                    bytes,
-                    datetime,
-                    Path,
-                    m.BaseModel,
-                    type,
-                    frozenset,
-                ),
-            ):
-                return root_value
-            if isinstance(root_value, (Mapping, list, tuple, set)):
-                return FlextTestsPayloadUtilities.to_payload(root_value)
-            return str(root_value)
+            return to_p(value.root)
         if value is None or isinstance(
-            value,
-            (str, int, float, bool, bytes, datetime, Path, m.BaseModel),
+            value, FlextTestsPayloadUtilities._SCALAR_PAYLOAD
         ):
-            payload_value: t.Tests.TestobjectSerializable = value
-            return payload_value
+            return value
         if isinstance(value, Mapping):
             try:
-                mapping_value = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(
-                    value,
+                validated_map = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(
+                    value
                 )
             except c.ValidationError:
-                empty_map2: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
-                return empty_map2
-            payload_map: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
-            for key_raw, item_obj in mapping_value.items():
-                payload_map[str(key_raw)] = FlextTestsPayloadUtilities.to_payload(
-                    item_obj,
-                )
-            return payload_map
+                return {}
+            return {str(k): to_p(v) for k, v in validated_map.items()}
         if isinstance(value, (list, tuple, set)):
             try:
-                iterable_items: Sequence[t.Tests.TestobjectSerializable] = (
-                    t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
-                        value,
-                    )
+                validated_seq = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
+                    value
                 )
             except c.ValidationError:
-                empty_seq: Sequence[t.Tests.TestobjectSerializable] = []
-                return empty_seq
-            payload_items: Sequence[t.Tests.TestobjectSerializable] = [
-                FlextTestsPayloadUtilities.to_payload(item_obj)
-                for item_obj in iterable_items
-            ]
-            return payload_items
+                return []
+            return [to_p(item) for item in validated_seq]
         return str(value)
 
     @staticmethod
     def to_normalized_value(
         value: t.Tests.TestobjectSerializable,
     ) -> t.Container:
-        """Convert _Testobject to pure NormalizedValue (no BaseModel in output)."""
-        if value is None:
-            return None
-        if isinstance(value, (str, int, float, bool)):
-            return value
-        if isinstance(value, datetime):
-            return value
-        if isinstance(value, Path):
-            return value
-        if isinstance(value, bytes):
-            return value.decode(errors="ignore")
+        """Flatten to pure Container via canonical runtime helper."""
         if isinstance(value, m.BaseModel):
             return str(value)
-        if isinstance(value, (dict, Mapping)):
-            validated_map: Mapping[str, t.Tests.TestobjectSerializable] = (
-                t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
-            )
-            result_map: t.MutableRecursiveContainerMapping = {}
-            for k, v in validated_map.items():
-                key: str = str(k)
-                val: t.Tests.TestobjectSerializable = v
-                result_map[key] = FlextTestsPayloadUtilities.to_normalized_value(val)
-            return result_map
-        if isinstance(value, (list, tuple)):
-            validated_seq: Sequence[t.Tests.TestobjectSerializable] = (
-                t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
-            )
-            result_seq: Sequence[t.Container] = [
-                FlextTestsPayloadUtilities.to_normalized_value(item)
-                for item in validated_seq
-            ]
-            return result_seq
-        return str(value)
+        if isinstance(value, bytes):
+            return value.decode(errors="ignore")
+        if isinstance(value, (Mapping, list, tuple)):
+            return u.to_plain_container(value)
+        if value is None:
+            return ""
+        return (
+            value
+            if isinstance(value, (str, int, float, bool, datetime, Path))
+            else str(value)
+        )
 
     @staticmethod
     def to_config_map_value(value: t.Tests.TestobjectSerializable) -> t.ValueOrModel:
-        """Convert value to NormalizedValue or BaseModel for AccessibleData compatibility."""
-        if value is None:
-            return None
-        if isinstance(value, (str, int, float, bool)):
-            return value
+        """Preserve BaseModel, else delegate to canonical Container flattening."""
         if isinstance(value, m.BaseModel):
             return value
-        if isinstance(value, bytes):
-            return value.decode(errors="ignore")
-        if isinstance(value, datetime):
-            return value
-        if isinstance(value, Path):
-            return str(value)
-        if isinstance(value, (dict, Mapping)):
-            validated_map: Mapping[str, t.Tests.TestobjectSerializable] = (
-                t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(value)
-            )
-            cfg_map: t.MutableRecursiveContainerMapping = {}
-            for k, v in validated_map.items():
-                key: str = str(k)
-                val: t.Tests.TestobjectSerializable = v
-                cfg_map[key] = FlextTestsPayloadUtilities.to_normalized_value(val)
-            return cfg_map
-        if isinstance(value, (list, tuple)):
-            validated_seq: Sequence[t.Tests.TestobjectSerializable] = (
-                t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
-            )
-            cfg_seq: Sequence[t.Container] = [
-                FlextTestsPayloadUtilities.to_normalized_value(item)
-                for item in validated_seq
-            ]
-            return cfg_seq
-        return str(value)
+        return FlextTestsPayloadUtilities.to_normalized_value(value)
 
     @staticmethod
     def length_validate(
@@ -242,12 +157,21 @@ class FlextTestsPayloadUtilities:
                 str(key): FlextTestsPayloadUtilities.to_config_map_value(value)
                 for key, value in obj.items()
             })
+        payload_types = (
+            str,
+            int,
+            float,
+            bool,
+            bytes,
+            datetime,
+            Path,
+            m.BaseModel,
+            Mapping,
+            Sequence,
+        )
+        to_payload = FlextTestsPayloadUtilities.to_payload
         for path, expected in spec.items():
-            result = u.extract(
-                source_obj,
-                path,
-                separator=path_sep,
-            )
+            result = u.extract(source_obj, path, separator=path_sep)
             if result.failure:
                 return m.Tests.DeepMatchResult(
                     path=path,
@@ -257,26 +181,10 @@ class FlextTestsPayloadUtilities:
                     reason=f"Path not found: {path}",
                 )
             actual = result.value
+            actual_payload = to_payload(
+                actual if isinstance(actual, payload_types) else str(actual)
+            )
             if callable(expected):
-                actual_payload = (
-                    FlextTestsPayloadUtilities.to_payload(actual)
-                    if isinstance(
-                        actual,
-                        (
-                            str,
-                            int,
-                            float,
-                            bool,
-                            bytes,
-                            datetime,
-                            Path,
-                            m.BaseModel,
-                            Mapping,
-                            Sequence,
-                        ),
-                    )
-                    else FlextTestsPayloadUtilities.to_payload(str(actual))
-                )
                 if not expected(actual_payload):
                     return m.Tests.DeepMatchResult(
                         path=path,
@@ -286,25 +194,6 @@ class FlextTestsPayloadUtilities:
                         reason="Predicate failed",
                     )
             elif actual != expected:
-                actual_payload = (
-                    FlextTestsPayloadUtilities.to_payload(actual)
-                    if isinstance(
-                        actual,
-                        (
-                            str,
-                            int,
-                            float,
-                            bool,
-                            bytes,
-                            datetime,
-                            Path,
-                            m.BaseModel,
-                            Mapping,
-                            Sequence,
-                        ),
-                    )
-                    else FlextTestsPayloadUtilities.to_payload(str(actual))
-                )
                 return m.Tests.DeepMatchResult(
                     path=path,
                     expected=expected,
@@ -314,8 +203,8 @@ class FlextTestsPayloadUtilities:
                 )
         return m.Tests.DeepMatchResult(
             path="",
-            expected=FlextTestsPayloadUtilities.to_payload(obj),
-            actual=FlextTestsPayloadUtilities.to_payload(obj),
+            expected=to_payload(obj),
+            actual=to_payload(obj),
             matched=True,
             reason="",
         )

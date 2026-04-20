@@ -6,10 +6,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import (
+    Mapping,
+    Sequence,
+)
 
 from flext_core import FlextTypes, m, r
-from flext_tests import FlextTestsBaseTypesMixin
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 
 class FlextTestsFilesTypesMixin:
@@ -18,14 +21,11 @@ class FlextTestsFilesTypesMixin:
         | Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
     )
     type ReadContent = (
-        str | bytes | FlextTypes.ConfigMap | Sequence[FlextTypes.StrSequence]
+        str
+        | bytes
+        | FlextTypes.ConfigMap
+        | m.ConfigMap
+        | Sequence[FlextTypes.StrSequence]
     )
     type FileContentPlain = ReadContent | m.BaseModel
-    type FileInput = (
-        FileContentPlain
-        | r[str]
-        | r[bytes]
-        | r[FlextTypes.ConfigMap]
-        | r[Sequence[FlextTypes.StrSequence]]
-        | r[m.BaseModel]
-    )
+    type FileInput = FileContentPlain | r[FileContentPlain]

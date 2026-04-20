@@ -53,6 +53,9 @@ class FlextTestsFilesConstantsMixin:
         SKIP = "skip"
         COLLECT = "collect"
 
+    KNOWN_FORMATS: Final[frozenset[str]] = frozenset(
+        {"auto", "text", "bin", "json", "yaml", "csv"},
+    )
     EXT_TO_FMT: Final[t.StrMapping] = {
         ".txt": "text",
         ".log": "text",

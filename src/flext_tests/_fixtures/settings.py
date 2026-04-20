@@ -12,7 +12,10 @@ flext-cli, and other project conftest.py files.
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterator
+from collections.abc import (
+    Callable,
+    Iterator,
+)
 from typing import TypeVar
 
 import pytest
@@ -62,6 +65,6 @@ def settings_factory() -> Callable[..., FlextSettings]:
 
     def _create(settings_cls: type[T], **overrides: str | float | bool | None) -> T:
         settings_cls.reset_for_testing()
-        return settings_cls(**overrides)
+        return settings_cls(**{k: v for k, v in overrides.items() if v is not None})
 
     return _create

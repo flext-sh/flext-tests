@@ -7,13 +7,15 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import (
+    Mapping,
+)
 from typing import cast
 
 import pytest
 
 from flext_tests import tm
-from tests import c, p, r, t
+from tests import c, m, p, r, t
 
 
 def _is_string(value: t.Tests.TestobjectSerializable) -> bool:

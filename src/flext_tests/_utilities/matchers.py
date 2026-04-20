@@ -63,7 +63,6 @@ from collections.abc import (
     Sized,
 )
 from contextlib import contextmanager, nullcontext
-from datetime import datetime
 from pathlib import Path
 from typing import TypeIs, overload
 
@@ -80,21 +79,6 @@ from flext_tests import (
 
 class FlextTestsMatchersUtilities:
     """Namespace for test matcher utilities used in flext-tests."""
-
-    @staticmethod
-    def _as_object[TValue](value: TValue) -> TValue:
-        """Normalize matcher subjects before reflective attribute inspection."""
-        return value
-
-    @staticmethod
-    def _type_name[TValue](value: TValue) -> str:
-        """Return a stable runtime type name for matcher diagnostics."""
-        return type(value).__name__
-
-    @staticmethod
-    def _is_result_object[TValue](value: TValue) -> bool:
-        """Narrow arbitrary objects to the runtime-checkable FLEXT result protocol."""
-        return u.instance_of(value, p.ResultLike)
 
     @staticmethod
     def _matches_runtime_type[TValue](
@@ -126,9 +110,7 @@ class FlextTestsMatchersUtilities:
                 if inherited_msg is not None and "msg" not in normalized_mapping:
                     normalized_mapping["msg"] = inherited_msg
                 return normalized_mapping
-            eq_value: t.Tests.Testobject = FlextTestsMatchersUtilities._to_test_payload(
-                rule
-            )
+            eq_value: t.Tests.Testobject = FlextTestsPayloadUtilities.to_payload(rule)
             result: kwargs_t = {"eq": eq_value}
             if inherited_msg:
                 result["msg"] = inherited_msg
@@ -187,7 +169,7 @@ class FlextTestsMatchersUtilities:
                     error=extracted.error,
                 ),
             )
-        return FlextTestsMatchersUtilities._to_test_payload(extracted.value)
+        return FlextTestsPayloadUtilities.to_payload(extracted.value)
 
     @staticmethod
     def _extract_attribute_path[TValue](
@@ -202,7 +184,7 @@ class FlextTestsMatchersUtilities:
             if not hasattr(current, segment):
                 raise AssertionError(f"Object missing attribute path: {attr_path}")
             current = getattr(current, segment)
-        return FlextTestsMatchersUtilities._to_test_payload(current)
+        return FlextTestsPayloadUtilities.to_payload(current)
 
     @staticmethod
     def _apply_rule(
@@ -334,253 +316,6 @@ class FlextTestsMatchersUtilities:
         )
 
     @staticmethod
-    def _is_matcher_input(
-        value: t.Tests.TestobjectSerializable
-        | t.Tests.MatcherKwargValue
-        | t.RuntimeData
-        | t.Container,
-    ) -> TypeIs[t.Tests.TestobjectSerializable]:
-        if value is None:
-            return True
-        if isinstance(value, (str, int, float, bool, bytes, datetime, Path)):
-            return True
-        if u.instance_of(value, m.BaseModel):
-            return True
-        if isinstance(value, type):
-            return True
-        if isinstance(value, tuple):
-            return True
-        if isinstance(value, (set, frozenset)):
-            return True
-        if isinstance(value, Mapping):
-            return True
-        if isinstance(value, Sequence) and not isinstance(
-            value,
-            (str, bytes, bytearray),
-        ):
-            return True
-        return callable(value)
-
-    @staticmethod
-    def _is_object_set[TValue](value: TValue) -> bool:
-        return isinstance(value, (set, frozenset))
-
-    @staticmethod
-    def _is_object_sequence[TValue](value: TValue) -> bool:
-        return isinstance(value, Sequence) and not isinstance(
-            value, (str, bytes, bytearray)
-        )
-
-    @staticmethod
-    def _to_test_payload[TValue](value: TValue) -> t.Tests.TestobjectSerializable:
-        if isinstance(value, type):
-            return value
-        if FlextTestsMatchersUtilities._is_object_set(value):
-            if isinstance(value, (set, frozenset)):
-                str_items: t.StrSequence = [str(v) for v in value]
-            else:
-                str_items = []
-            return frozenset(str(s) for s in str_items)
-        if value is None or isinstance(value, (str, int, float, bool, bytes)):
-            return value
-        if isinstance(value, m.BaseModel):
-            return value
-        if isinstance(value, Mapping):
-            try:
-                mapping_value = (
-                    t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
-                        value,
-                    )
-                )
-                return {
-                    str(key): FlextTestsMatchersUtilities._to_test_payload(item)
-                    for key, item in mapping_value.items()
-                }
-            except c.ValidationError:
-                return {
-                    str(key): FlextTestsMatchersUtilities._to_test_payload(item)
-                    for key, item in value.items()
-                }
-        if FlextTestsMatchersUtilities._is_object_sequence(value):
-            try:
-                sequence_value = (
-                    t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
-                        value,
-                    )
-                )
-                return [
-                    FlextTestsMatchersUtilities._to_test_payload(seq_item)
-                    for seq_item in sequence_value
-                ]
-            except c.ValidationError:
-                if isinstance(value, Sequence) and not isinstance(
-                    value,
-                    (str, bytes, bytearray),
-                ):
-                    str_fallback: t.StrSequence = [str(v) for v in value]
-                else:
-                    str_fallback = []
-                return [
-                    FlextTestsMatchersUtilities._to_test_payload(s)
-                    for s in str_fallback
-                ]
-        if isinstance(value, (datetime, Path)):
-            return value
-        try:
-            return str(value)
-        except (AttributeError, TypeError, ValueError):
-            return type(value).__name__
-
-    @staticmethod
-    def _to_normalized(value: t.Tests.TestobjectSerializable) -> t.Container:
-        """Convert _Testobject to pure NormalizedValue."""
-        if value is None:
-            return None
-        if isinstance(value, (str, int, float, bool)):
-            return value
-        if isinstance(value, Path):
-            return value
-        if isinstance(value, bytes):
-            return value.decode("utf-8", errors="replace")
-        if isinstance(value, datetime):
-            return value
-        if u.instance_of(value, m.BaseModel):
-            return str(value)
-        if t.Tests.testobject_mapping(value):
-            return {
-                str(k): FlextTestsMatchersUtilities._to_normalized(v)
-                for k, v in value.items()
-            }
-        if t.Tests.testobject_sequence(value):
-            return [FlextTestsMatchersUtilities._to_normalized(item) for item in value]
-        return str(value)
-
-    @staticmethod
-    def _to_extract_value(value: t.Tests.TestobjectSerializable) -> t.ValueOrModel:
-        """Convert _Testobject to ValueOrModel for extract() calls."""
-        if value is None:
-            return None
-        if isinstance(value, (str, int, float, bool)):
-            return value
-        if isinstance(value, m.BaseModel):
-            return value
-        if isinstance(value, Path):
-            return value
-        if isinstance(value, bytes):
-            return value.decode("utf-8", errors="replace")
-        if isinstance(value, datetime):
-            return value
-        if t.Tests.testobject_mapping(value):
-            return {
-                str(k): FlextTestsMatchersUtilities._to_normalized(v)
-                for k, v in value.items()
-            }
-        if t.Tests.testobject_sequence(value):
-            return [FlextTestsMatchersUtilities._to_normalized(item) for item in value]
-        return str(value)
-
-    @staticmethod
-    def _as_guard_input[TValue](value: TValue) -> t.Tests.TestobjectSerializable:
-        if isinstance(value, type):
-            return value
-        if FlextTestsMatchersUtilities._is_object_set(value):
-            if isinstance(value, (set, frozenset)):
-                str_items: t.StrSequence = [str(v) for v in value]
-            else:
-                str_items = []
-            return frozenset(str_items)
-        if isinstance(value, (str, int, float, bool, Path)):
-            return value
-        if isinstance(value, m.BaseModel):
-            return value
-        if value is None:
-            return None
-        if isinstance(value, Mapping):
-            try:
-                mapping_value = (
-                    t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
-                        value,
-                    )
-                )
-                return {
-                    str(key): FlextTestsMatchersUtilities._as_guard_input(item)
-                    for key, item in mapping_value.items()
-                }
-            except c.ValidationError:
-                return {
-                    str(key): FlextTestsMatchersUtilities._as_guard_input(item)
-                    for key, item in value.items()
-                }
-        if FlextTestsMatchersUtilities._is_object_sequence(value):
-            try:
-                sequence_value = (
-                    t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
-                        value,
-                    )
-                )
-                return [
-                    FlextTestsMatchersUtilities._as_guard_input(seq_item)
-                    for seq_item in sequence_value
-                ]
-            except c.ValidationError:
-                if isinstance(value, Sequence) and not isinstance(
-                    value,
-                    (str, bytes, bytearray),
-                ):
-                    str_fallback: t.StrSequence = [str(v) for v in value]
-                else:
-                    str_fallback = []
-                return [
-                    FlextTestsMatchersUtilities._as_guard_input(s) for s in str_fallback
-                ]
-        return FlextTestsMatchersUtilities._to_test_payload(value)
-
-    @staticmethod
-    def _to_chk_value[TValue](value: TValue) -> t.Container:
-        """Convert a test value to NormalizedValue for use with u.chk()."""
-        if value is None:
-            return None
-        if isinstance(value, (str, int, float, bool)):
-            return value
-        if isinstance(value, Path):
-            return value
-        if u.instance_of(value, m.BaseModel):
-            return str(value)
-        if isinstance(value, bytes):
-            return value.decode("utf-8", errors="replace")
-        if isinstance(value, datetime):
-            return value
-        if isinstance(value, Mapping):
-            try:
-                mapping_value = (
-                    t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
-                        value,
-                    )
-                )
-            except c.ValidationError:
-                empty_map: Mapping[str, t.Container] = {}
-                return empty_map
-            return {
-                str(k): FlextTestsMatchersUtilities._to_chk_value(v)
-                for k, v in mapping_value.items()
-            }
-        if isinstance(value, (list, tuple)):
-            try:
-                sequence_value = (
-                    t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
-                        value,
-                    )
-                )
-            except c.ValidationError:
-                empty_list: t.RecursiveContainerList = []
-                return empty_list
-            return [
-                FlextTestsMatchersUtilities._to_chk_value(item)
-                for item in sequence_value
-            ]
-        return str(value)
-
-    @staticmethod
     def _check_has_lacks[TValue](
         value: TValue,
         has: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.Container | None,
@@ -611,10 +346,10 @@ class FlextTestsMatchersUtilities:
                             ),
                         )
                 else:
-                    check_val = FlextTestsMatchersUtilities._as_guard_input(item)
-                    target_raw = FlextTestsMatchersUtilities._as_guard_input(value)
+                    check_val = FlextTestsPayloadUtilities.to_payload(item)
+                    target_raw = FlextTestsPayloadUtilities.to_payload(value)
                     if isinstance(target_raw, m.RootModel):
-                        target_raw = FlextTestsMatchersUtilities._as_guard_input(
+                        target_raw = FlextTestsPayloadUtilities.to_payload(
                             target_raw.model_dump(),
                         )
                     if not isinstance(
@@ -674,10 +409,10 @@ class FlextTestsMatchersUtilities:
                             ),
                         )
                 else:
-                    check_val = FlextTestsMatchersUtilities._as_guard_input(item)
-                    target_raw_2 = FlextTestsMatchersUtilities._as_guard_input(value)
+                    check_val = FlextTestsPayloadUtilities.to_payload(item)
+                    target_raw_2 = FlextTestsPayloadUtilities.to_payload(value)
                     if isinstance(target_raw_2, m.RootModel):
-                        target_raw_2 = FlextTestsMatchersUtilities._as_guard_input(
+                        target_raw_2 = FlextTestsPayloadUtilities.to_payload(
                             target_raw_2.model_dump(),
                         )
                     if not isinstance(target_raw_2, (Mapping, str, list)):
@@ -917,8 +652,8 @@ class FlextTestsMatchersUtilities:
                     ] = {}
                     if actual_raw is not None:
                         actual_data = {
-                            str(k): FlextTestsMatchersUtilities._to_test_payload(v)
-                            for k, v in actual_raw.root.items()
+                            str(k): FlextTestsPayloadUtilities.to_payload(v)
+                            for k, v in actual_raw.items()
                         }
                     for key, expected_value in params.data.items():
                         if key not in actual_data:
@@ -1034,13 +769,7 @@ class FlextTestsMatchersUtilities:
                         )
                     else:
                         try:
-                            validated = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
-                                result_value,
-                            )
-                            extract_data = m.ConfigMap.model_validate({
-                                str(k): FlextTestsMatchersUtilities._to_extract_value(v)
-                                for k, v in validated.items()
-                            })
+                            extract_data = m.ConfigMap.model_validate(result_value)
                         except c.ValidationError:
                             extract_data = m.ConfigMap(root={})
                     extracted = u.extract(extract_data, path_str)
@@ -1053,7 +782,7 @@ class FlextTestsMatchersUtilities:
                             ),
                         )
                     extracted_raw = extracted.value
-                    extracted_payload = FlextTestsMatchersUtilities._to_test_payload(
+                    extracted_payload = FlextTestsPayloadUtilities.to_payload(
                         extracted_raw,
                     )
                     result_value = extracted_payload
@@ -1072,26 +801,37 @@ class FlextTestsMatchersUtilities:
                 )
                 if has_validation:
                     is_type = params.is_ if not isinstance(params.is_, tuple) else None
+                    chk_value: t.GuardInput | None = (
+                        result_value
+                        if result_value is None
+                        else u.to_plain_container(result_value)
+                    )
+                    eq_plain = (
+                        u.to_plain_container(params.eq)
+                        if params.eq is not None
+                        else None
+                    )
+                    ne_plain = (
+                        u.to_plain_container(params.ne)
+                        if params.ne is not None
+                        else None
+                    )
                     if not u.chk(
-                        FlextTestsMatchersUtilities._to_chk_value(result_value),
-                        m.GuardCheckSpec(
-                            eq=FlextTestsMatchersUtilities._to_chk_value(params.eq)
-                            if params.eq is not None
-                            else None,
-                            ne=FlextTestsMatchersUtilities._to_chk_value(params.ne)
-                            if params.ne is not None
-                            else None,
-                            is_=is_type,
-                            none=params.none,
-                            empty=params.empty,
-                            gt=params.gt,
-                            gte=params.gte,
-                            lt=params.lt,
-                            lte=params.lte,
-                            starts=params.starts,
-                            ends=params.ends,
-                            match=params.match,
-                        ),
+                        chk_value,
+                        m.GuardCheckSpec.model_validate({
+                            "eq": eq_plain,
+                            "ne": ne_plain,
+                            "is_": is_type,
+                            "none": params.none,
+                            "empty": params.empty,
+                            "gt": params.gt,
+                            "gte": params.gte,
+                            "lt": params.lt,
+                            "lte": params.lte,
+                            "starts": params.starts,
+                            "ends": params.ends,
+                            "match": params.match,
+                        }),
                     ):
                         error_msg = (
                             params.msg
@@ -1122,7 +862,7 @@ class FlextTestsMatchersUtilities:
                     params.lacks,
                     params.msg,
                 )
-                result_payload = FlextTestsMatchersUtilities._to_test_payload(
+                result_payload = FlextTestsPayloadUtilities.to_payload(
                     result_value,
                 )
                 if params.len is not None and (
@@ -1197,13 +937,13 @@ class FlextTestsMatchersUtilities:
                         inherited_msg=params.msg,
                     )
                 if params.path is None:
-                    result_payload = FlextTestsMatchersUtilities._to_test_payload(
+                    result_payload = FlextTestsPayloadUtilities.to_payload(
                         result.value,
                     )
                 elif extracted_payload is not None:
                     result_payload = extracted_payload
                 else:
-                    result_payload = FlextTestsMatchersUtilities._to_test_payload(
+                    result_payload = FlextTestsPayloadUtilities.to_payload(
                         result.value,
                     )
                 if params.where is not None and (not params.where(result_payload)):
@@ -1447,22 +1187,21 @@ class FlextTestsMatchersUtilities:
                 # Early is_/not_ checks on the ORIGINAL value before any
                 # conversion — _to_test_payload may coerce types (e.g.
                 # Exception → str) which breaks isinstance checks.
-                value_obj = FlextTestsMatchersUtilities._as_object(value)
-                value_type_name = value_obj.__class__.__name__
+                value_type_name = type(value).__name__
                 if params.is_ is not None:
                     is_types = (
                         params.is_ if isinstance(params.is_, tuple) else (params.is_,)
                     )
-                    root_value = getattr(value_obj, "root", None)
+                    root_value = getattr(value, "root", None)
                     is_mapping_wrapper = (
                         dict in is_types
                         and isinstance(root_value, dict)
-                        and value_obj.__class__.__name__ == "Dict"
+                        and value.__class__.__name__ == "Dict"
                     )
                     is_model_mapping = (
                         dict in is_types
-                        and isinstance(value_obj, m.BaseModel)
-                        and not isinstance(value_obj, m.RootModel)
+                        and isinstance(value, m.BaseModel)
+                        and not isinstance(value, m.RootModel)
                     )
                     is_sequence_wrapper = (
                         list in is_types
@@ -1471,7 +1210,7 @@ class FlextTestsMatchersUtilities:
                     )
                     matches_declared_type = any(
                         FlextTestsMatchersUtilities._matches_runtime_type(
-                            value_obj,
+                            value,
                             expected_type,
                         )
                         for expected_type in is_types
@@ -1494,7 +1233,7 @@ class FlextTestsMatchersUtilities:
                     )
                     if any(
                         FlextTestsMatchersUtilities._matches_runtime_type(
-                            value_obj,
+                            value,
                             forbidden_type,
                         )
                         for forbidden_type in not_types
@@ -1572,7 +1311,7 @@ class FlextTestsMatchersUtilities:
                             ),
                         )
                     subject = actual_value
-                subject_payload = FlextTestsMatchersUtilities._to_test_payload(subject)
+                subject_payload = FlextTestsPayloadUtilities.to_payload(subject)
                 has_validation = (
                     raw_eq is not None
                     or raw_ne is not None
@@ -1596,25 +1335,32 @@ class FlextTestsMatchersUtilities:
                     )
                     eq_value = raw_eq if "eq" in kwargs else params.eq
                     ne_value = raw_ne if "ne" in kwargs else params.ne
+                    eq_plain2 = (
+                        u.to_plain_container(eq_value) if eq_value is not None else None
+                    )
+                    ne_plain2 = (
+                        u.to_plain_container(ne_value) if ne_value is not None else None
+                    )
+                    chk_subject_plain: t.GuardInput | None = (
+                        chk_subject_payload
+                        if chk_subject_payload is None
+                        else u.to_plain_container(chk_subject_payload)
+                    )
                     if not u.chk(
-                        FlextTestsMatchersUtilities._to_chk_value(chk_subject_payload),
-                        m.GuardCheckSpec(
-                            eq=FlextTestsMatchersUtilities._to_chk_value(eq_value)
-                            if eq_value is not None
-                            else None,
-                            ne=FlextTestsMatchersUtilities._to_chk_value(ne_value)
-                            if ne_value is not None
-                            else None,
-                            gt=params.gt,
-                            gte=params.gte,
-                            lt=params.lt,
-                            lte=params.lte,
-                            none=params.none,
-                            empty=params.empty,
-                            starts=params.starts,
-                            ends=params.ends,
-                            match=params.match,
-                        ),
+                        chk_subject_plain,
+                        m.GuardCheckSpec.model_validate({
+                            "eq": eq_plain2,
+                            "ne": ne_plain2,
+                            "gt": params.gt,
+                            "gte": params.gte,
+                            "lt": params.lt,
+                            "lte": params.lte,
+                            "none": params.none,
+                            "empty": params.empty,
+                            "starts": params.starts,
+                            "ends": params.ends,
+                            "match": params.match,
+                        }),
                     ):
                         error_msg = (
                             params.msg
@@ -1691,19 +1437,13 @@ class FlextTestsMatchersUtilities:
                             )
                     if params.all_ is not None:
                         if isinstance(params.all_, type):
-
-                            def _all_match(
-                                check_type: type,
-                                seq: Sequence[t.Tests.TestobjectSerializable],
-                            ) -> bool:
-                                return all(isinstance(x, check_type) for x in seq)
-
-                            if not _all_match(params.all_, seq_value):
+                            all_type = params.all_
+                            if not all(isinstance(x, all_type) for x in seq_value):
                                 failed_idx = next(
                                     (
                                         i
-                                        for i, item in enumerate(list(seq_value))
-                                        if not isinstance(item, params.all_)
+                                        for i, item in enumerate(seq_value)
+                                        if not isinstance(item, all_type)
                                     ),
                                     None,
                                 )
@@ -1716,7 +1456,7 @@ class FlextTestsMatchersUtilities:
                         elif callable(params.all_) and (
                             not all(
                                 params.all_(
-                                    FlextTestsMatchersUtilities._to_test_payload(item),
+                                    FlextTestsPayloadUtilities.to_payload(item),
                                 )
                                 for item in seq_value
                             )
@@ -1726,7 +1466,7 @@ class FlextTestsMatchersUtilities:
                                     i
                                     for i, item in enumerate(list(seq_value))
                                     if not params.all_(
-                                        FlextTestsMatchersUtilities._to_test_payload(
+                                        FlextTestsPayloadUtilities.to_payload(
                                             item,
                                         ),
                                     )
@@ -1751,7 +1491,7 @@ class FlextTestsMatchersUtilities:
                         elif callable(params.any_) and (
                             not any(
                                 params.any_(
-                                    FlextTestsMatchersUtilities._to_test_payload(item),
+                                    FlextTestsPayloadUtilities.to_payload(item),
                                 )
                                 for item in seq_value
                             )
@@ -1779,7 +1519,7 @@ class FlextTestsMatchersUtilities:
                             ) -> tuple[str, str]:
                                 """Wrap user key to return comparable tuple."""
                                 result = user_key_fn(
-                                    FlextTestsMatchersUtilities._to_test_payload(x),
+                                    FlextTestsPayloadUtilities.to_payload(x),
                                 )
                                 type_name = type(result).__name__
                                 return (str(type_name), str(result))

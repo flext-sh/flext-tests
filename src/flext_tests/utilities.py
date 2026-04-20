@@ -11,7 +11,6 @@ from __future__ import annotations
 
 from flext_cli import FlextCliUtilities
 from flext_tests import (
-    FlextTestsAssertionsUtilitiesMixin,
     FlextTestsBadObjectsUtilitiesMixin,
     FlextTestsConfigHelpersUtilitiesMixin,
     FlextTestsConstantsHelpersUtilitiesMixin,
@@ -54,7 +53,6 @@ class FlextTestsUtilities(FlextCliUtilities):
         FlextTestsExceptionHelpersUtilitiesMixin,
         FlextTestsBadObjectsUtilitiesMixin,
         FlextTestsConstantsHelpersUtilitiesMixin,
-        FlextTestsAssertionsUtilitiesMixin,
         FlextTestsFilesUtilitiesMixin,
         FlextTestsValidatorUtilitiesMixin,
         FlextTestsMatchersUtilities.Tests,

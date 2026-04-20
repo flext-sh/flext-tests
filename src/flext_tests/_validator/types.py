@@ -10,7 +10,11 @@ from __future__ import annotations
 
 import ast
 import re
-from collections.abc import Mapping, MutableSequence, Sequence
+from collections.abc import (
+    Mapping,
+    MutableSequence,
+    Sequence,
+)
 from pathlib import Path
 from typing import TYPE_CHECKING
 

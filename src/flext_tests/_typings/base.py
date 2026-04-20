@@ -23,8 +23,7 @@ from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
 
 from flext_cli import t
-from flext_core import FlextModelsPydantic, p
-from flext_tests import m
+from flext_core import FlextModelsContainers, FlextModelsPydantic, p
 
 BaseModel = FlextModelsPydantic.BaseModel
 ConfigDict = FlextModelsPydantic.ConfigDict
@@ -87,52 +86,60 @@ class FlextTestsBaseTypesMixin:
         | p.ResultLike[FlextTestsBaseTypesMixin.TestResultValue]
     )
 
-    TESTOBJECT_SEQUENCE_ADAPTER: m.TypeAdapter[
+    TESTOBJECT_SEQUENCE_ADAPTER: FlextModelsPydantic.TypeAdapter[
         Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
     ] = TypeAdapter(
         Sequence[TestobjectSerializable],
         config=ConfigDict(arbitrary_types_allowed=True),
     )
-    TESTOBJECT_MAPPING_ADAPTER: m.TypeAdapter[
+    TESTOBJECT_MAPPING_ADAPTER: FlextModelsPydantic.TypeAdapter[
         Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
     ] = TypeAdapter(
         Mapping[str, TestobjectSerializable],
         config=ConfigDict(arbitrary_types_allowed=True),
     )
-    STR_MAPPING_SEQUENCE_ADAPTER: m.TypeAdapter[Sequence[t.StrMapping]] = TypeAdapter(
+    STR_MAPPING_SEQUENCE_ADAPTER: FlextModelsPydantic.TypeAdapter[
         Sequence[t.StrMapping]
-    )
-    TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER: m.TypeAdapter[
+    ] = TypeAdapter(Sequence[t.StrMapping])
+    TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER: FlextModelsPydantic.TypeAdapter[
         Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
     ] = TypeAdapter(
         Mapping[str, TestobjectSerializable],
         config=ConfigDict(arbitrary_types_allowed=True),
     )
-    TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER: m.TypeAdapter[
+    TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER: FlextModelsPydantic.TypeAdapter[
         Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
     ] = TypeAdapter(
         Sequence[TestobjectSerializable],
         config=ConfigDict(arbitrary_types_allowed=True),
     )
-    PRIMITIVES_MAPPING_ADAPTER: m.TypeAdapter[Mapping[str, t.Primitives]] = TypeAdapter(
+    PRIMITIVES_MAPPING_ADAPTER: FlextModelsPydantic.TypeAdapter[
         Mapping[str, t.Primitives]
+    ] = TypeAdapter(Mapping[str, t.Primitives])
+    NORMALIZED_VALUE_ADAPTER: FlextModelsPydantic.TypeAdapter[t.Container] = (
+        TypeAdapter(t.Container)
     )
-    NORMALIZED_VALUE_ADAPTER: m.TypeAdapter[t.Container] = TypeAdapter(t.Container)
-    DICT_ADAPTER: m.TypeAdapter[m.Dict] = TypeAdapter(m.Dict)
-    SCALAR_MAPPING_ADAPTER: m.TypeAdapter[t.ScalarMapping] = TypeAdapter(
-        t.ScalarMapping
+    DICT_ADAPTER: FlextModelsPydantic.TypeAdapter[FlextModelsContainers.Dict] = (
+        TypeAdapter(FlextModelsContainers.Dict)
     )
-    CONTAINER_MAPPING_ADAPTER: m.TypeAdapter[Mapping[str, t.Container]] = TypeAdapter(
+    SCALAR_MAPPING_ADAPTER: FlextModelsPydantic.TypeAdapter[t.ScalarMapping] = (
+        TypeAdapter(t.ScalarMapping)
+    )
+    CONTAINER_MAPPING_ADAPTER: FlextModelsPydantic.TypeAdapter[
         Mapping[str, t.Container]
-    )
-    CONTAINER_MAPPING_SEQUENCE_ADAPTER: m.TypeAdapter[
+    ] = TypeAdapter(Mapping[str, t.Container])
+    CONTAINER_MAPPING_SEQUENCE_ADAPTER: FlextModelsPydantic.TypeAdapter[
         Sequence[Mapping[str, t.Container]]
     ] = TypeAdapter(Sequence[Mapping[str, t.Container]])
-    STR_MAPPING_ADAPTER: m.TypeAdapter[t.StrMapping] = TypeAdapter(t.StrMapping)
-    STR_MAPPING_MAPPING_ADAPTER: m.TypeAdapter[Mapping[str, t.StrMapping]] = (
-        TypeAdapter(Mapping[str, t.StrMapping])
+    STR_MAPPING_ADAPTER: FlextModelsPydantic.TypeAdapter[t.StrMapping] = TypeAdapter(
+        t.StrMapping
     )
-    INTEGER_SEQUENCE_ADAPTER: m.TypeAdapter[Sequence[int]] = TypeAdapter(Sequence[int])
-    STR_SEQUENCE_MAPPING_ADAPTER: m.TypeAdapter[Mapping[str, t.StrSequence]] = (
-        TypeAdapter(Mapping[str, t.StrSequence])
+    STR_MAPPING_MAPPING_ADAPTER: FlextModelsPydantic.TypeAdapter[
+        Mapping[str, t.StrMapping]
+    ] = TypeAdapter(Mapping[str, t.StrMapping])
+    INTEGER_SEQUENCE_ADAPTER: FlextModelsPydantic.TypeAdapter[Sequence[int]] = (
+        TypeAdapter(Sequence[int])
     )
+    STR_SEQUENCE_MAPPING_ADAPTER: FlextModelsPydantic.TypeAdapter[
+        Mapping[str, t.StrSequence]
+    ] = TypeAdapter(Mapping[str, t.StrSequence])

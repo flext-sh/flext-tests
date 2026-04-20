@@ -10,14 +10,12 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_cli import m
-from flext_tests import (
-    FlextTestsBaseModelsMixin,
-    FlextTestsBatchModelsMixin,
-    FlextTestsDockerModelsMixin,
-    FlextTestsFilesystemModelsMixin,
-    FlextTestsMatchersModelsMixin,
-    FlextTestsValidatorModelsMixin,
-)
+from flext_tests._models.base import FlextTestsBaseModelsMixin
+from flext_tests._models.batch import FlextTestsBatchModelsMixin
+from flext_tests._models.docker import FlextTestsDockerModelsMixin
+from flext_tests._models.filesystem import FlextTestsFilesystemModelsMixin
+from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
+from flext_tests._models.validator import FlextTestsValidatorModelsMixin
 
 
 class FlextTestsModels(m):

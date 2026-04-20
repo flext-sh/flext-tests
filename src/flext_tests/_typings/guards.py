@@ -6,11 +6,14 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import (
+    Mapping,
+    Sequence,
+)
 from typing import TypeIs
 
 from flext_core import m, p
-from flext_tests import FlextTestsBaseTypesMixin
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 
 class FlextTestsGuardsTypesMixin:

@@ -24,7 +24,7 @@ class FlextTestsConfigHelpersUtilitiesMixin:
     @staticmethod
     def assert_config_fields(
         settings: p.Settings,
-        expected_fields: m.ConfigMap,
+        expected_fields: t.ConfigMap,
     ) -> None:
         """Assert settings has expected field values.
 
@@ -72,7 +72,7 @@ class FlextTestsConfigHelpersUtilitiesMixin:
             None
 
         """
-        original_values: t.MutableOptionalStrMapping = {}
+        original_values: dict[str, str | None] = {}
         if vars_to_clear:
             for var in vars_to_clear:
                 original_values[var] = os.environ.get(var)

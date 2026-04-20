@@ -6,11 +6,15 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import (
+    Callable,
+    Mapping,
+    Sequence,
+)
 from typing import TypeAliasType
 
 from flext_core import FlextTypes
-from flext_tests import FlextTestsBaseTypesMixin
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 
 class FlextTestsMatchersTypesMixin:

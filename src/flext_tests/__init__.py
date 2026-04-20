@@ -52,7 +52,6 @@ if _t.TYPE_CHECKING:
     from flext_tests._typings.files import FlextTestsFilesTypesMixin
     from flext_tests._typings.guards import FlextTestsGuardsTypesMixin
     from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
-    from flext_tests._utilities.assertions import FlextTestsAssertionsUtilitiesMixin
     from flext_tests._utilities.badobjects import FlextTestsBadObjectsUtilitiesMixin
     from flext_tests._utilities.constants import (
         FlextTestsConstantsHelpersUtilitiesMixin,
@@ -61,20 +60,16 @@ if _t.TYPE_CHECKING:
         FlextTestsContainerHelpersUtilitiesMixin,
     )
     from flext_tests._utilities.context import FlextTestsContextHelpersUtilitiesMixin
-    from flext_tests._utilities.deepmatch import FlextTestsDeepMatchUtilitiesMixin
     from flext_tests._utilities.domain import FlextTestsDomainHelpersUtilitiesMixin
     from flext_tests._utilities.exception import (
         FlextTestsExceptionHelpersUtilitiesMixin,
     )
-    from flext_tests._utilities.factory import FlextTestsFactoryUtilitiesMixin
     from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
     from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
     from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
-    from flext_tests._utilities.length import FlextTestsLengthUtilitiesMixin
     from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
     from flext_tests._utilities.parser import FlextTestsParserHelpersUtilitiesMixin
     from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-    from flext_tests._utilities.registry import FlextTestsRegistryHelpersUtilitiesMixin
     from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
     from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
     from flext_tests._utilities.testcase import FlextTestsTestCaseHelpersUtilitiesMixin
@@ -159,26 +154,21 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._typings.files": ("FlextTestsFilesTypesMixin",),
             "._typings.guards": ("FlextTestsGuardsTypesMixin",),
             "._typings.matchers": ("FlextTestsMatchersTypesMixin",),
-            "._utilities.assertions": ("FlextTestsAssertionsUtilitiesMixin",),
             "._utilities.badobjects": ("FlextTestsBadObjectsUtilitiesMixin",),
             "._utilities.constants": ("FlextTestsConstantsHelpersUtilitiesMixin",),
             "._utilities.container": ("FlextTestsContainerHelpersUtilitiesMixin",),
             "._utilities.context": ("FlextTestsContextHelpersUtilitiesMixin",),
-            "._utilities.deepmatch": ("FlextTestsDeepMatchUtilitiesMixin",),
             "._utilities.domain": ("FlextTestsDomainHelpersUtilitiesMixin",),
             "._utilities.exception": ("FlextTestsExceptionHelpersUtilitiesMixin",),
-            "._utilities.factory": ("FlextTestsFactoryUtilitiesMixin",),
             "._utilities.files": ("FlextTestsFilesUtilitiesMixin",),
             "._utilities.generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
             "._utilities.handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
-            "._utilities.length": ("FlextTestsLengthUtilitiesMixin",),
             "._utilities.matchers": (
                 "FlextTestsMatchersUtilities",
                 "tm",
             ),
             "._utilities.parser": ("FlextTestsParserHelpersUtilitiesMixin",),
             "._utilities.payload": ("FlextTestsPayloadUtilities",),
-            "._utilities.registry": ("FlextTestsRegistryHelpersUtilitiesMixin",),
             "._utilities.result": ("FlextTestsResultUtilitiesMixin",),
             "._utilities.settings": ("FlextTestsConfigHelpersUtilitiesMixin",),
             "._utilities.testcase": ("FlextTestsTestCaseHelpersUtilitiesMixin",),
@@ -261,7 +251,6 @@ __all__: list[str] = [
     "BaseModel",
     "ConfigDict",
     "FlextService",
-    "FlextTestsAssertionsUtilitiesMixin",
     "FlextTestsBadObjectsUtilitiesMixin",
     "FlextTestsBaseModelsMixin",
     "FlextTestsBaseTypesMixin",
@@ -271,14 +260,12 @@ __all__: list[str] = [
     "FlextTestsConstantsHelpersUtilitiesMixin",
     "FlextTestsContainerHelpersUtilitiesMixin",
     "FlextTestsContextHelpersUtilitiesMixin",
-    "FlextTestsDeepMatchUtilitiesMixin",
     "FlextTestsDocker",
     "FlextTestsDockerConstantsMixin",
     "FlextTestsDockerModelsMixin",
     "FlextTestsDomainHelpersUtilitiesMixin",
     "FlextTestsDomains",
     "FlextTestsExceptionHelpersUtilitiesMixin",
-    "FlextTestsFactoryUtilitiesMixin",
     "FlextTestsFiles",
     "FlextTestsFilesConstantsMixin",
     "FlextTestsFilesTypesMixin",
@@ -287,7 +274,6 @@ __all__: list[str] = [
     "FlextTestsGenericHelpersUtilitiesMixin",
     "FlextTestsGuardsTypesMixin",
     "FlextTestsHandlerHelpersUtilitiesMixin",
-    "FlextTestsLengthUtilitiesMixin",
     "FlextTestsMatcherConstantsMixin",
     "FlextTestsMatchersModelsMixin",
     "FlextTestsMatchersTypesMixin",
@@ -296,7 +282,6 @@ __all__: list[str] = [
     "FlextTestsParserHelpersUtilitiesMixin",
     "FlextTestsPayloadUtilities",
     "FlextTestsProtocols",
-    "FlextTestsRegistryHelpersUtilitiesMixin",
     "FlextTestsResultUtilitiesMixin",
     "FlextTestsTestCaseHelpersUtilitiesMixin",
     "FlextTestsTestContextUtilitiesMixin",

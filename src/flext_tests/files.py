@@ -85,6 +85,16 @@ class FlextTestsFiles(s):
         """Build one success result for raw file content reads."""
         return r[t.Tests.ReadContent].ok(content)
 
+    @staticmethod
+    def _read_fail[TModelRead: m.BaseModel](
+        error: str,
+        model_cls: type[TModelRead] | None,
+    ) -> p.Result[t.Tests.ReadContent] | p.Result[TModelRead]:
+        """Dispatch a single read-failure message to the correct result type."""
+        if model_cls is not None:
+            return r[TModelRead].fail(error)
+        return r[t.Tests.ReadContent].fail(error)
+
     _base_dir: Path | None = None
     _created_files: MutableSequence[Path] | None = None
     _created_dirs: MutableSequence[Path] | None = None
@@ -235,13 +245,14 @@ class FlextTestsFiles(s):
     def _to_config_map(
         value: Mapping[str, t.Tests.TestobjectSerializable],
     ) -> m.ConfigMap:
-        config_root: MutableMapping[str, t.ValueOrModel] = {
-            str(key): FlextTestsPayloadUtilities.to_config_map_value(
-                FlextTestsPayloadUtilities.to_payload(item),
-            )
-            for key, item in value.items()
-        }
-        return m.ConfigMap(root=config_root)
+        return m.ConfigMap(
+            root={
+                str(key): FlextTestsPayloadUtilities.to_config_map_value(
+                    FlextTestsPayloadUtilities.to_payload(item),
+                )
+                for key, item in value.items()
+            },
+        )
 
     @staticmethod
     def _to_payload_mapping(
@@ -476,10 +487,11 @@ class FlextTestsFiles(s):
         ) -> Path | r[Path]:
             """Process single file operation."""
             name, content = name_and_content
+            path = Path(content) if isinstance(content, (Path, str)) else Path(name)
             match params.operation:
                 case "create":
                     try:
-                        content_for_create = (
+                        payload = (
                             {
                                 str(k): FlextTestsPayloadUtilities.to_payload(v)
                                 for k, v in content.items()
@@ -487,83 +499,52 @@ class FlextTestsFiles(s):
                             if isinstance(content, Mapping)
                             else content
                         )
-                        normalized_content = self._coerce_file_content(
-                            content_for_create,
+                        return self.create(
+                            self._coerce_file_content(payload),
+                            name,
+                            params.directory,
                         )
-                        return self.create(normalized_content, name, params.directory)
                     except (OSError, TypeError, ValueError, AttributeError) as e:
                         return r[Path].fail(f"Failed to create {name}: {e}")
                 case "read":
-                    path = (
-                        Path(content)
-                        if isinstance(content, (Path, str))
-                        else Path(name)
-                    )
                     read_result = self.read(path, model_cls=None)
-                    if read_result.success:
-                        return path
-                    return r[Path].fail(read_result.error or f"Failed to read {name}")
-                case "delete":
-                    path = (
-                        Path(content)
-                        if isinstance(content, (Path, str))
-                        else Path(name)
+                    return (
+                        path
+                        if read_result.success
+                        else r[Path].fail(read_result.error or f"Failed to read {name}")
                     )
+                case "delete":
                     try:
-                        Path(path).unlink(missing_ok=True)
-                        return Path(path)
+                        path.unlink(missing_ok=True)
+                        return path
                     except OSError as e:
                         return r[Path].fail(f"Failed to delete {name}: {e}")
                 case _:
                     return r[Path].fail(f"Unknown operation: {params.operation}")
 
-        items_list: Sequence[tuple[str, t.Tests.TestobjectSerializable]] = list(
-            files_dict.items()
-        )
-        results: MutableSequence[Path | t.Tests.TestobjectSerializable] = []
-        errors: MutableSequence[tuple[int, str]] = []
-        total = len(items_list)
-        for index, item in enumerate(items_list):
-            operation_result = process_one(item)
-            if isinstance(operation_result, r):
-                if operation_result.success:
-                    success_value: Path | t.Tests.TestobjectSerializable = (
-                        operation_result.value
-                    )
-                    results.append(success_value)
-                    continue
-                error_message = operation_result.error or "Unknown error"
-                if error_mode_str == "fail":
-                    return r[m.Tests.BatchResult].fail(
-                        f"Batch operation failed: {error_message}",
-                    )
-                errors.append((index, str(error_message)))
-                continue
-            results.append(operation_result)
+        items_list = list(files_dict.items())
         results_dict: MutableMapping[str, r[Path | t.Tests.TestobjectSerializable]] = {}
         failed_dict: t.MutableStrMapping = {}
-        for idx, result in enumerate(results):
-            if idx < len(items_list):
-                name, _ = items_list[idx]
-                if isinstance(result, Path):
-                    results_dict[name] = r[Path | t.Tests.TestobjectSerializable].ok(
-                        result
+        rtype = r[Path | t.Tests.TestobjectSerializable]
+        for name, _ in items_list:
+            op_result = process_one((name, files_dict[name]))
+            if isinstance(op_result, r):
+                if op_result.success:
+                    results_dict[name] = rtype.ok(op_result.value)
+                    continue
+                err_msg = op_result.error or "Unknown error"
+                if error_mode_str == "fail":
+                    return r[m.Tests.BatchResult].fail(
+                        f"Batch operation failed: {err_msg}",
                     )
-                else:
-                    results_dict[name] = r[Path | t.Tests.TestobjectSerializable].ok(
-                        FlextTestsPayloadUtilities.to_payload(result),
-                    )
-        for idx, error_msg in errors:
-            if idx < len(items_list):
-                name, _ = items_list[idx]
-                failed_dict[name] = error_msg
-        succeeded_count = len(results_dict)
-        failed_count = len(failed_dict)
+                failed_dict[name] = str(err_msg)
+            else:
+                results_dict[name] = rtype.ok(op_result)
         return r[m.Tests.BatchResult].ok(
             m.Tests.BatchResult(
-                succeeded=succeeded_count,
-                failed=failed_count,
-                total=total,
+                succeeded=len(results_dict),
+                failed=len(failed_dict),
+                total=len(items_list),
                 results=results_dict,
                 errors=failed_dict,
             ),
@@ -680,8 +661,8 @@ class FlextTestsFiles(s):
                         params.file1.stat().st_size == params.file2.stat().st_size,
                     )
                 case "hash":
-                    hash1 = u.Tests.compute_hash(params.file1)
-                    hash2 = u.Tests.compute_hash(params.file2)
+                    hash1 = u.Cli.sha256_file(params.file1)
+                    hash2 = u.Cli.sha256_file(params.file2)
                     return r[bool].ok(hash1 == hash2)
                 case "lines":
                     return self._compare_lines(params)
@@ -796,96 +777,57 @@ class FlextTestsFiles(s):
                     actual_content.model_dump(mode="json"),
                 ),
             )
-        content_for_detect: (
-            str
-            | bytes
-            | Mapping[str, t.Tests.TestobjectSerializable]
-            | Sequence[t.StrSequence]
-        )
-        match actual_content:
-            case str() | bytes():
-                content_for_detect = actual_content
-            case Mapping():
-                content_for_detect = {
-                    str(key): FlextTestsPayloadUtilities.to_payload(value)
-                    for key, value in t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(
-                        actual_content,
-                    ).items()
-                }
-            case list():
-                if self._is_nested_rows(actual_content):
-                    content_for_detect = [
-                        [str(cell) for cell in row]
-                        for row in actual_content
-                        if isinstance(row, (list, tuple))
-                    ]
-                else:
-                    content_for_detect = str(actual_content)
-            case tuple():
-                content_for_detect = str(actual_content)
-            case _:
-                content_for_detect = str(actual_content)
         actual_fmt = u.Tests.detect_format(
-            content_for_detect,
+            actual_content
+            if isinstance(actual_content, (str, bytes, Mapping, list))
+            else str(actual_content),
             params.name,
             params.fmt,
         )
         if actual_fmt == c.Tests.Format.BIN:
-            if isinstance(actual_content, bytes):
-                _ = file_path.write_bytes(actual_content)
-            else:
-                _ = file_path.write_bytes(str(actual_content).encode(params.enc))
-        elif actual_fmt == c.Tests.Format.JSON:
-            if isinstance(actual_content, Mapping):
-                data: Mapping[str, t.Tests.TestobjectSerializable] = {
-                    str(key): value for key, value in actual_content.items()
+            _ = file_path.write_bytes(
+                actual_content
+                if isinstance(actual_content, bytes)
+                else str(actual_content).encode(params.enc)
+            )
+        elif actual_fmt in {c.Tests.Format.JSON, c.Tests.Format.YAML}:
+            raw_payload: Mapping[str, t.Container] = (
+                {
+                    str(k): FlextTestsPayloadUtilities.to_normalized_value(v)
+                    for k, v in actual_content.items()
                 }
-            else:
-                empty_data: Mapping[str, t.Tests.TestobjectSerializable] = {}
-                data = {"value": actual_content} if actual_content else empty_data
-            json_str = t.Tests.TESTOBJECT_MAPPING_ADAPTER.dump_json(
-                data,
-                indent=params.indent,
-            ).decode()
-            _ = file_path.write_text(json_str, encoding=params.enc)
-        elif actual_fmt == c.Tests.Format.YAML:
-            if isinstance(actual_content, Mapping):
-                data_yaml: Mapping[str, t.Tests.TestobjectSerializable] = {
-                    str(key): value for key, value in actual_content.items()
+                if isinstance(actual_content, Mapping)
+                else {
+                    "value": FlextTestsPayloadUtilities.to_normalized_value(
+                        actual_content
+                    )
                 }
+                if actual_content
+                else {}
+            )
+            json_payload = t.json_value_adapter().validate_python(raw_payload)
+            if actual_fmt == c.Tests.Format.JSON:
+                u.Cli.json_write(file_path, json_payload, indent=params.indent)
             else:
-                empty_data_y: Mapping[str, t.Tests.TestobjectSerializable] = {}
-                data_yaml = (
-                    {"value": actual_content} if actual_content else empty_data_y
-                )
-            yaml_payload: Mapping[str, t.Container] = {
-                str(k): FlextTestsPayloadUtilities.to_normalized_value(v)
-                for k, v in data_yaml.items()
-            }
-            yaml_result = u.Cli.yaml_dump_str(yaml_payload, indent=params.indent)
-            _ = file_path.write_text(yaml_result, encoding=params.enc)
+                u.Cli.yaml_dump(file_path, json_payload, indent=params.indent)
         elif actual_fmt == c.Tests.Format.CSV:
-            csv_content: Sequence[t.StrSequence]
-            if isinstance(actual_content, Sequence) and (
-                not isinstance(actual_content, str | bytes)
+            csv_rows: list[t.StrSequence] = []
+            if params.headers:
+                csv_rows.append(list(params.headers))
+            if isinstance(actual_content, Sequence) and not isinstance(
+                actual_content, (str, bytes)
             ):
                 if self._is_nested_rows(actual_content):
-                    csv_content = [
+                    csv_rows.extend(
                         [str(cell) for cell in row]
                         for row in actual_content
-                        if not isinstance(row, str | bytes)
-                    ]
+                        if not isinstance(row, (str, bytes))
+                    )
                 else:
-                    csv_content = [[str(item)] for item in actual_content]
+                    csv_rows.extend([str(item)] for item in actual_content)
             else:
-                csv_content = [[str(actual_content)]]
-            u.Tests.write_csv(
-                file_path,
-                csv_content,
-                params.headers,
-                params.delim,
-                params.enc,
-            )
+                csv_rows.append([str(actual_content)])
+            u.Cli.files_write_csv(file_path, csv_rows)
         else:
             _ = file_path.write_text(str(actual_content), encoding=params.enc)
         if params.readonly:
@@ -902,7 +844,7 @@ class FlextTestsFiles(s):
         FlextTestsFiles is a utility service that doesn't have a specific
         execution result. Returns success by default.
         """
-        return r[t.Container].ok(None)
+        return r[t.Container].ok("")
 
     def info(
         self,
@@ -979,24 +921,10 @@ class FlextTestsFiles(s):
             fmt: str = "unknown"
             if params.detect_fmt:
                 detected = u.Tests.detect_format_from_path(params.path, "auto")
-                match detected:
-                    case "auto":
-                        fmt = "auto"
-                    case "text":
-                        fmt = "text"
-                    case "bin":
-                        fmt = "bin"
-                    case "json":
-                        fmt = "json"
-                    case "yaml":
-                        fmt = "yaml"
-                    case "csv":
-                        fmt = "csv"
-                    case _:
-                        fmt = "unknown"
+                fmt = detected if detected in c.Tests.KNOWN_FORMATS else "unknown"
             permissions = stat.st_mode
             is_readonly = not permissions & 128
-            sha256 = u.Tests.compute_hash(params.path) if params.compute_hash else None
+            sha256 = u.Cli.sha256_file(params.path) if params.compute_hash else None
             content_meta: m.Tests.ContentMeta | None = None
             if params.parse_content or params.validate_model:
                 content_meta = self._parse_content_metadata(
@@ -1109,21 +1037,13 @@ class FlextTestsFiles(s):
                 "model_cls": model_cls,
             })
         except (TypeError, ValueError, AttributeError) as exc:
-            error_msg = f"Invalid parameters for file read: {exc}"
-            if model_cls is not None:
-                invalid_params_result: p.Result[TModelRead] = r[TModelRead].fail(
-                    error_msg
-                )
-                return invalid_params_result
-            return self._read_content_fail(error_msg)
+            return self._read_fail(
+                f"Invalid parameters for file read: {exc}", model_cls
+            )
         if not params.path.exists():
-            if model_cls is not None:
-                file_not_found_result: p.Result[TModelRead] = r[TModelRead].fail(
-                    c.Tests.ERROR_FILE_NOT_FOUND.format(path=params.path),
-                )
-                return file_not_found_result
-            return self._read_content_fail(
+            return self._read_fail(
                 c.Tests.ERROR_FILE_NOT_FOUND.format(path=params.path),
+                model_cls,
             )
         actual_fmt = u.Tests.detect_format_from_path(params.path, params.fmt)
         try:
@@ -1135,64 +1055,50 @@ class FlextTestsFiles(s):
                 parsed_json = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_json(
                     text.encode(),
                 )
-                content = self._coerce_read_content(parsed_json)
+                content = (
+                    self._to_config_map(parsed_json)
+                    if self._is_mapping(parsed_json)
+                    else text
+                )
             elif actual_fmt == c.Tests.Format.YAML:
                 text = params.path.read_text(encoding=params.enc)
                 parsed_yaml_result = u.Cli.yaml_parse(text)
                 parsed_yaml = (
                     parsed_yaml_result.value if parsed_yaml_result.success else None
                 )
-                content = self._coerce_read_content(
-                    parsed_yaml if isinstance(parsed_yaml, dict) else None,
+                content = (
+                    self._to_config_map(parsed_yaml)
+                    if isinstance(parsed_yaml, dict)
+                    else text
                 )
             elif actual_fmt == c.Tests.Format.CSV:
-                content = u.Tests.read_csv(
-                    params.path,
-                    params.delim,
-                    params.enc,
-                    has_headers=params.has_headers,
-                )
+                csv_result = u.Cli.files_read_csv_with_headers(params.path)
+                csv_rows_m = csv_result.value if csv_result.success else ()
+                if csv_rows_m:
+                    keys = list(csv_rows_m[0].keys())
+                    data_rows = [
+                        [str(row.get(k, "")) for k in keys] for row in csv_rows_m
+                    ]
+                    content = data_rows if params.has_headers else [keys, *data_rows]
+                else:
+                    content = []
             else:
                 content = params.path.read_text(encoding=params.enc)
             if model_cls is not None:
                 return self._validate_model_content(model_cls, content)
             return self._read_content_ok(content)
         except UnicodeDecodeError as e:
-            if model_cls is not None:
-                invalid_encoding_result: p.Result[TModelRead] = r[TModelRead].fail(
-                    c.Tests.ERROR_ENCODING.format(error=e),
-                )
-                return invalid_encoding_result
-            return self._read_content_fail(
-                c.Tests.ERROR_ENCODING.format(error=e),
-            )
+            return self._read_fail(c.Tests.ERROR_ENCODING.format(error=e), model_cls)
         except ValueError as e:
-            if model_cls is not None:
-                invalid_json_result: p.Result[TModelRead] = r[TModelRead].fail(
-                    c.Tests.ERROR_INVALID_JSON.format(error=e),
-                )
-                return invalid_json_result
-            return self._read_content_fail(
-                c.Tests.ERROR_INVALID_JSON.format(error=e),
+            return self._read_fail(
+                c.Tests.ERROR_INVALID_JSON.format(error=e), model_cls
             )
         except t.Cli.YAMLError as e:
-            if model_cls is not None:
-                invalid_yaml_result: p.Result[TModelRead] = r[TModelRead].fail(
-                    c.Tests.ERROR_INVALID_YAML.format(error=e),
-                )
-                return invalid_yaml_result
-            return self._read_content_fail(
-                c.Tests.ERROR_INVALID_YAML.format(error=e),
+            return self._read_fail(
+                c.Tests.ERROR_INVALID_YAML.format(error=e), model_cls
             )
         except OSError as e:
-            if model_cls is not None:
-                file_read_error_result: p.Result[TModelRead] = r[TModelRead].fail(
-                    c.Tests.ERROR_READ.format(error=e),
-                )
-                return file_read_error_result
-            return self._read_content_fail(
-                c.Tests.ERROR_READ.format(error=e),
-            )
+            return self._read_fail(c.Tests.ERROR_READ.format(error=e), model_cls)
 
     @contextmanager
     def temporary_directory(self) -> Generator[Path]:
@@ -1238,74 +1144,53 @@ class FlextTestsFiles(s):
 
     def _coerce_file_content(
         self,
-        value: t.Tests.FileContentPlain
-        | t.Tests.TestobjectSerializable
-        | r[t.Tests.TestobjectSerializable]
-        | r[Sequence[t.StrSequence]]
-        | r[bytes]
-        | r[str]
-        | None,
+        value: t.Tests.FileInput | t.Tests.TestobjectSerializable | None,
     ) -> t.Tests.FileContentPlain:
-        if isinstance(value, str | bytes):
-            return value
-        if isinstance(value, m.BaseModel):
-            return value
-        if self._is_mapping(value):
-            return self._to_config_map(value)
-        if self._is_nested_rows(value):
+        unwrapped: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable | None = (
+            value.value
+            if isinstance(value, r) and value.success
+            else value
+            if not isinstance(value, r)
+            else ""
+        )
+        if isinstance(unwrapped, str | bytes):
+            return unwrapped
+        if isinstance(unwrapped, m.BaseModel):
+            return unwrapped
+        if self._is_mapping(unwrapped):
+            return self._to_config_map(unwrapped)
+        if self._is_nested_rows(unwrapped):
             sequence_value: Sequence[t.Tests.TestobjectSerializable] = (
-                value if isinstance(value, (list, tuple)) else ()
+                unwrapped if isinstance(unwrapped, (list, tuple)) else ()
             )
             return self._to_string_rows(sequence_value)
-        return str(value)
+        return str(unwrapped)
 
-    def _coerce_read_content(
-        self,
-        value: Mapping[str, t.Tests.TestobjectSerializable] | None,
-    ) -> str | bytes | m.ConfigMap | Sequence[t.StrSequence]:
-        if isinstance(value, str | bytes):
-            return value
-        if self._is_mapping(value):
-            return self._to_config_map(value)
-        if self._is_nested_rows(value):
-            sequence_value: Sequence[t.Tests.TestobjectSerializable] = (
-                value if isinstance(value, (list, tuple)) else ()
-            )
-            return self._to_string_rows(sequence_value)
-        return str(value)
+    @staticmethod
+    def _read_both(params: m.Tests.CompareParams) -> tuple[str, str]:
+        enc = c.Tests.DEFAULT_ENCODING
+        return (
+            params.file1.read_text(encoding=enc),
+            params.file2.read_text(encoding=enc),
+        )
 
     def _compare_content(self, params: m.Tests.CompareParams) -> p.Result[bool]:
         """Compare file content with optional deep/structured comparison."""
-        content1_raw = params.file1.read_text(encoding=c.Tests.DEFAULT_ENCODING)
-        content2_raw = params.file2.read_text(encoding=c.Tests.DEFAULT_ENCODING)
+        c1, c2 = self._read_both(params)
         if params.deep:
-            deep_result = self._try_deep_compare(
-                content1_raw,
-                content2_raw,
-                params.keys,
-                params.exclude_keys,
-            )
-            if deep_result is not None:
-                return deep_result
-        content1 = (
-            re.sub(r"\s+", "", content1_raw) if params.ignore_ws else content1_raw
-        )
-        content2 = (
-            re.sub(r"\s+", "", content2_raw) if params.ignore_ws else content2_raw
-        )
+            deep = self._try_deep_compare(c1, c2, params.keys, params.exclude_keys)
+            if deep is not None:
+                return deep
+        if params.ignore_ws:
+            c1, c2 = re.sub(r"\s+", "", c1), re.sub(r"\s+", "", c2)
         if params.ignore_case:
-            content1 = content1.lower()
-            content2 = content2.lower()
-        return r[bool].ok(content1 == content2)
+            c1, c2 = c1.lower(), c2.lower()
+        return r[bool].ok(c1 == c2)
 
     def _compare_lines(self, params: m.Tests.CompareParams) -> p.Result[bool]:
         """Compare files line by line with optional normalization."""
-        lines1 = params.file1.read_text(
-            encoding=c.Tests.DEFAULT_ENCODING,
-        ).splitlines()
-        lines2 = params.file2.read_text(
-            encoding=c.Tests.DEFAULT_ENCODING,
-        ).splitlines()
+        c1, c2 = self._read_both(params)
+        lines1, lines2 = c1.splitlines(), c2.splitlines()
         if params.ignore_ws:
             lines1 = [line.strip() for line in lines1]
             lines2 = [line.strip() for line in lines2]
@@ -1364,24 +1249,19 @@ class FlextTestsFiles(s):
                 return False
         return True
 
+    _FMT_NORMALIZE: ClassVar[Mapping[str, c.Tests.Format]] = {
+        "txt": c.Tests.Format.TEXT,
+        "md": c.Tests.Format.TEXT,
+        "auto": c.Tests.Format.AUTO,
+        "text": c.Tests.Format.TEXT,
+        "bin": c.Tests.Format.BIN,
+        "json": c.Tests.Format.JSON,
+        "yaml": c.Tests.Format.YAML,
+        "csv": c.Tests.Format.CSV,
+    }
+
     def _normalize_create_format(self, fmt: str) -> c.Tests.Format:
-        if fmt in {"txt", "md"}:
-            return c.Tests.Format.TEXT
-        match fmt:
-            case "auto":
-                return c.Tests.Format.AUTO
-            case "text":
-                return c.Tests.Format.TEXT
-            case "bin":
-                return c.Tests.Format.BIN
-            case "json":
-                return c.Tests.Format.JSON
-            case "yaml":
-                return c.Tests.Format.YAML
-            case "csv":
-                return c.Tests.Format.CSV
-            case _:
-                return c.Tests.Format.AUTO
+        return self._FMT_NORMALIZE.get(fmt, c.Tests.Format.AUTO)
 
     def _parse_content_metadata(
         self,
@@ -1406,59 +1286,20 @@ class FlextTestsFiles(s):
 
         """
         _ = path
-        key_count: int | None = None
-        item_count: int | None = None
-        row_count: int | None = None
-        column_count: int | None = None
+        key_count = item_count = row_count = column_count = None
         model_valid: bool | None = None
-        model_name: str | None = None
-        parsed_content: (
-            m.ConfigMap | Sequence[t.Tests.TestobjectSerializable] | None
-        ) = None
-        if fmt in {"json", "yaml"}:
-            try:
-                if fmt == "json":
-                    if text.strip():
-                        try:
-                            parsed_raw: (
-                                Mapping[str, t.Tests.TestobjectSerializable]
-                                | Sequence[t.Tests.TestobjectSerializable]
-                                | None
-                            ) = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_json(
-                                text.encode()
-                            )
-                        except c.ValidationError:
-                            parsed_raw = (
-                                t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_json(
-                                    text.encode(),
-                                )
-                            )
-                    else:
-                        parsed_raw = dict(m.ConfigMap(root={}).root)
-                else:
-                    parsed_raw = (
-                        (
-                            parsed_yaml.value
-                            if (parsed_yaml := u.Cli.yaml_parse(text)).success
-                            else None
-                        )
-                        if text.strip()
-                        else dict(m.ConfigMap(root={}).root)
-                    )
-                if self._is_mapping(parsed_raw):
-                    parsed_content = self._to_config_map(parsed_raw)
-                    key_count = len(parsed_content.root)
-                elif isinstance(parsed_raw, list):
-                    parsed_list = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
-                        parsed_raw
-                    )
-                    parsed_content = [
-                        FlextTestsPayloadUtilities.to_payload(item)
-                        for item in parsed_list
-                    ]
-                    item_count = len(parsed_content)
-            except (ValueError, t.Cli.YAMLError):
-                pass
+        model_name = validate_model.__name__ if validate_model else None
+        parsed_mapping: Mapping[str, t.Tests.TestobjectSerializable] | None = None
+        if fmt in {"json", "yaml"} and text.strip():
+            parse_result = (
+                u.Cli.json_parse(text) if fmt == "json" else u.Cli.yaml_parse(text)
+            )
+            parsed_value = parse_result.value if parse_result.success else None
+            if isinstance(parsed_value, Mapping):
+                parsed_mapping = {str(k): v for k, v in parsed_value.items()}
+                key_count = len(parsed_mapping)
+            elif isinstance(parsed_value, list):
+                item_count = len(parsed_value)
         elif fmt == "csv":
             try:
                 rows = list(csv.reader(text.splitlines()))
@@ -1468,17 +1309,14 @@ class FlextTestsFiles(s):
             except csv.Error:
                 pass
         if validate_model is not None:
-            model_name = validate_model.__name__
-            if isinstance(parsed_content, m.ConfigMap):
+            if parsed_mapping is not None:
                 try:
-                    _ = validate_model.model_validate(parsed_content.root)
+                    _ = validate_model.model_validate(parsed_mapping)
                     model_valid = True
                 except (TypeError, ValueError, AttributeError):
                     model_valid = False
             elif fmt in {"json", "yaml"} and text.strip():
                 model_valid = False
-            else:
-                model_valid = None
         return m.Tests.ContentMeta(
             key_count=key_count,
             item_count=item_count,
@@ -1548,35 +1386,23 @@ class FlextTestsFiles(s):
         | None
     ):
         """Try to parse both contents as dicts in given format."""
+        parse = (
+            u.Cli.json_parse
+            if fmt == "json"
+            else u.Cli.yaml_parse
+            if fmt == "yaml"
+            else None
+        )
+        if parse is None:
+            return None
         try:
-            dict1_raw: (
-                Mapping[str, t.Tests.TestobjectSerializable]
-                | Sequence[t.Tests.TestobjectSerializable]
-                | None
-            )
-            dict2_raw: (
-                Mapping[str, t.Tests.TestobjectSerializable]
-                | Sequence[t.Tests.TestobjectSerializable]
-                | None
-            )
-            match fmt:
-                case "json":
-                    adapter = t.Tests.TESTOBJECT_MAPPING_ADAPTER
-                    dict1_raw = adapter.validate_json(content1.encode())
-                    dict2_raw = adapter.validate_json(content2.encode())
-                case "yaml":
-                    parsed1 = u.Cli.yaml_parse(content1)
-                    parsed2 = u.Cli.yaml_parse(content2)
-                    dict1_raw = parsed1.value if parsed1.success else None
-                    dict2_raw = parsed2.value if parsed2.success else None
-                case _:
-                    return None
-            if self._is_mapping(dict1_raw) and self._is_mapping(dict2_raw):
-                dict1 = self._to_payload_mapping(dict1_raw)
-                dict2 = self._to_payload_mapping(dict2_raw)
-                return (dict1, dict2)
+            r1, r2 = parse(content1), parse(content2)
         except (ValueError, t.Cli.YAMLError, TypeError):
-            pass
+            return None
+        d1 = r1.value if r1.success else None
+        d2 = r2.value if r2.success else None
+        if self._is_mapping(d1) and self._is_mapping(d2):
+            return (self._to_payload_mapping(d1), self._to_payload_mapping(d2))
         return None
 
 

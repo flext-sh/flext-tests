@@ -8,7 +8,10 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import json
-from collections.abc import Mapping, Sequence
+from collections.abc import (
+    Mapping,
+    Sequence,
+)
 from datetime import UTC, datetime
 from pathlib import Path
 
