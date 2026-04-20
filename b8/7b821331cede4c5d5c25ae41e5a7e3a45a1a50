@@ -1,0 +1,45 @@
+src/flext_tests/_utilities/settings.py
+  376f82a5e64b61d4 27,75
+src/flext_tests/_utilities/payload.py
+  376f82a5e64b61d4 19,28-37,39-42,44,46,48,51-52,55-56,59-60,63-64,71,74-84,88,91,160-172,174,184-186,206-207
+tests/unit/test_matchers.py
+  376f82a5e64b61d4 18
+src/flext_tests/_typings/files.py
+  376f82a5e64b61d4 24-25,28,31
+  h_9db9d35f50cf33 26-27
+src/flext_tests/_utilities/files.py
+  376f82a5e64b61d4 1-5,15,19,30,37-39,46,53
+src/flext_tests/_typings/base.py
+  376f82a5e64b61d4 101,103-104,110,116,118-120,122-123,125-126,128-131,134-135,137-141,143-145
+src/flext_tests/_utilities/matchers.py
+  376f82a5e64b61d4 113,172,187,349-350,352,412-413,415,655-656,772,785,804-818,820-834,865,940,946,1190,1195,1199,1203-1204,1213,1236,1314,1338-1348,1350-1363,1440-1441,1445-1446,1459,1469,1494,1522
+src/flext_tests/_fixtures/settings.py
+  376f82a5e64b61d4 68
+src/flext_tests/files.py
+  376f82a5e64b61d4 88-97,248-255,490,494,502-505,511-514,516,518-519,525-533,535,538,540-542,545-547,664-665,781-783,788-797,799-803,805-810,812,814-818,821,824-825,827,829-830,847,924,927,1040-1042,1044,1046,1058-1062,1069-1072,1075-1084,1091,1093-1094,1097-1098,1101,1147,1149-1162,1164,1167,1169-1175,1179,1181-1185,1187-1188,1192-1193,1252-1262,1264,1289,1291-1302,1312,1314,1389-1397,1399,1401-1405
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "b87b821331cede4c5d5c25ae41e5a7e3a45a1a50",
+  "prompts": {
+    "376f82a5e64b61d4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c3fe1632-f119-41b5-bbd0-0fc56ae1884d",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "FLEXT Bot",
+      "messages": [],
+      "total_additions": 608,
+      "total_deletions": 1242,
+      "accepted_lines": 440,
+      "overriden_lines": 4
+    }
+  },
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
