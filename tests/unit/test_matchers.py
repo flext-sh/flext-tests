@@ -13,7 +13,6 @@ from collections.abc import (
 from typing import cast
 
 import pytest
-
 from flext_tests import tm
 from tests import c, m, p, r, t
 

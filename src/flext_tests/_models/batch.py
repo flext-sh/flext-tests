@@ -15,6 +15,7 @@ from types import MappingProxyType
 from typing import Annotated
 
 from flext_core import FlextModels, m, p, u
+
 from flext_tests import c, t
 
 

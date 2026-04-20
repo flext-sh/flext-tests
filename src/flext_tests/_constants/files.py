@@ -10,6 +10,7 @@ from enum import StrEnum, unique
 from typing import Final
 
 from flext_cli import c
+
 from flext_tests import t
 
 

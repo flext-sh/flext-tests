@@ -18,9 +18,9 @@ from collections.abc import (
 )
 from typing import TypeVar
 
-import pytest
-
 from flext_core import FlextContainer, FlextSettings
+
+import pytest
 
 T = TypeVar("T", bound=FlextSettings)
 

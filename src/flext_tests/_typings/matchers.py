@@ -14,6 +14,7 @@ from collections.abc import (
 from typing import TypeAliasType
 
 from flext_core import FlextTypes
+
 from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 

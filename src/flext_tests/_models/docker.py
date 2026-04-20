@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Annotated, override
 
 from flext_core import FlextModels, u
+
 from flext_tests import c, t
 
 

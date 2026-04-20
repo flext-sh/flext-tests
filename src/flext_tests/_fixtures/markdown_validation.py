@@ -17,7 +17,6 @@ from pathlib import Path
 from typing import override
 
 import pytest
-
 from flext_tests import FlextValidatorMarkdown
 
 
