@@ -75,7 +75,7 @@ class FlextTestsPayloadUtilities:
         if isinstance(value, bytes):
             return value.decode(errors="ignore")
         if isinstance(value, (Mapping, list, tuple)):
-            return u.to_plain_container(value)
+            return u.normalize_to_metadata(value)
         if value is None:
             return ""
         return (
@@ -85,7 +85,7 @@ class FlextTestsPayloadUtilities:
         )
 
     @staticmethod
-    def to_config_map_value(value: t.Tests.TestobjectSerializable) -> t.ValueOrModel:
+    def to_config_map_value(value: t.Tests.TestobjectSerializable) -> t.RuntimeData:
         """Preserve BaseModel, else delegate to canonical Container flattening."""
         if isinstance(value, m.BaseModel):
             return value

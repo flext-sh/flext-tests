@@ -805,15 +805,15 @@ class FlextTestsMatchersUtilities:
                     chk_value: t.GuardInput | None = (
                         result_value
                         if result_value is None
-                        else u.to_plain_container(result_value)
+                        else u.normalize_to_metadata(result_value)
                     )
                     eq_plain = (
-                        u.to_plain_container(params.eq)
+                        u.normalize_to_metadata(params.eq)
                         if params.eq is not None
                         else None
                     )
                     ne_plain = (
-                        u.to_plain_container(params.ne)
+                        u.normalize_to_metadata(params.ne)
                         if params.ne is not None
                         else None
                     )
@@ -1337,15 +1337,19 @@ class FlextTestsMatchersUtilities:
                     eq_value = raw_eq if "eq" in kwargs else params.eq
                     ne_value = raw_ne if "ne" in kwargs else params.ne
                     eq_plain2 = (
-                        u.to_plain_container(eq_value) if eq_value is not None else None
+                        u.normalize_to_metadata(eq_value)
+                        if eq_value is not None
+                        else None
                     )
                     ne_plain2 = (
-                        u.to_plain_container(ne_value) if ne_value is not None else None
+                        u.normalize_to_metadata(ne_value)
+                        if ne_value is not None
+                        else None
                     )
                     chk_subject_plain: t.GuardInput | None = (
                         chk_subject_payload
                         if chk_subject_payload is None
-                        else u.to_plain_container(chk_subject_payload)
+                        else u.normalize_to_metadata(chk_subject_payload)
                     )
                     if not u.chk(
                         chk_subject_plain,
