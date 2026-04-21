@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Annotated, ClassVar
+from typing import Annotated
 
 from flext_core import FlextModels
 
@@ -16,8 +16,6 @@ from flext_tests import t
 class FlextTestsBaseModelsMixin:
     class Entity(FlextModels.Entity):
         """Factory entity class for tests."""
-
-        _flext_enforcement_exempt: ClassVar[bool] = True
 
         name: Annotated[str, FlextModels.Field(description="Entity display name.")] = ""
         value: Annotated[
