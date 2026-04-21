@@ -10,7 +10,7 @@ from typing import Annotated, ClassVar
 
 from flext_core import FlextModels
 
-from flext_tests.typings import t
+from flext_tests import t
 
 
 class FlextTestsBaseModelsMixin:

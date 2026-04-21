@@ -14,7 +14,7 @@ from typing import TypeIs
 
 from flext_core import m, p
 
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests import FlextTestsBaseTypesMixin
 
 
 class FlextTestsGuardsTypesMixin:

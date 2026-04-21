@@ -13,7 +13,7 @@ from collections.abc import (
 
 from flext_core import FlextTypes, m, r
 
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests import FlextTestsBaseTypesMixin
 
 
 class FlextTestsFilesTypesMixin:

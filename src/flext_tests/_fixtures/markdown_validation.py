@@ -13,15 +13,20 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from importlib.util import find_spec
 from pathlib import Path
 from typing import override
 
 import pytest
 from flext_tests import FlextValidatorMarkdown
 
+_EXTERNAL_MARKDOWN_DOCS = find_spec("pytest_markdown_docs") is not None
+
 
 def pytest_addoption(parser: pytest.Parser) -> None:
-    """Add --markdown-docs option to pytest."""
+    """Add --markdown-docs option if pytest-markdown-docs package is not installed."""
+    if _EXTERNAL_MARKDOWN_DOCS:
+        return  # external package already registers --markdown-docs
     group = parser.getgroup("markdown", "Markdown code block validation")
     group.addoption(
         "--markdown-docs",
