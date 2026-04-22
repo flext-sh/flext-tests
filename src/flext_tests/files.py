@@ -229,11 +229,11 @@ class FlextTestsFiles(s):
             yield paths
 
     @staticmethod
-    def _is_file_result(
-        value: t.Tests.FileInput,
-    ) -> TypeIs[r[t.Tests.FileContentPlain]]:
-        """Narrow FileInput to r[FileContentPlain] with known type parameter."""
-        return isinstance(value, r)
+    def _is_file_result[TFileContent: t.Tests.FileContentPlain](
+        value: TFileContent | p.ResultLike[TFileContent],
+    ) -> TypeIs[p.ResultLike[TFileContent]]:
+        """Narrow file input to a result-like wrapper with the same payload type."""
+        return isinstance(value, p.ResultLike)
 
     @staticmethod
     def _is_mapping(
@@ -347,8 +347,8 @@ class FlextTestsFiles(s):
         return path
 
     @staticmethod
-    def create_in(
-        content: t.Tests.FileInput,
+    def create_in[TFileContent: t.Tests.FileContentPlain](
+        content: TFileContent | p.ResultLike[TFileContent],
         name: str,
         directory: Path,
         *,
@@ -484,7 +484,7 @@ class FlextTestsFiles(s):
 
         def process_one(
             name_and_content: tuple[str, t.Tests.TestobjectSerializable],
-        ) -> Path | r[Path]:
+        ) -> p.Result[Path]:
             """Process single file operation."""
             name, content = name_and_content
             path = Path(content) if isinstance(content, (Path, str)) else Path(name)
@@ -499,24 +499,26 @@ class FlextTestsFiles(s):
                             if isinstance(content, Mapping)
                             else content
                         )
-                        return self.create(
-                            self._coerce_file_content(payload),
-                            name,
-                            params.directory,
+                        return r[Path].ok(
+                            self.create(
+                                self._coerce_file_content(payload),
+                                name,
+                                params.directory,
+                            )
                         )
                     except (OSError, TypeError, ValueError, AttributeError) as e:
                         return r[Path].fail(f"Failed to create {name}: {e}")
                 case "read":
                     read_result = self.read(path, model_cls=None)
                     return (
-                        path
+                        r[Path].ok(path)
                         if read_result.success
                         else r[Path].fail(read_result.error or f"Failed to read {name}")
                     )
                 case "delete":
                     try:
                         path.unlink(missing_ok=True)
-                        return path
+                        return r[Path].ok(path)
                     except OSError as e:
                         return r[Path].fail(f"Failed to delete {name}: {e}")
                 case _:
@@ -528,18 +530,15 @@ class FlextTestsFiles(s):
         rtype = r[Path | t.Tests.TestobjectSerializable]
         for name, _ in items_list:
             op_result = process_one((name, files_dict[name]))
-            if isinstance(op_result, r):
-                if op_result.success:
-                    results_dict[name] = rtype.ok(op_result.value)
-                    continue
-                err_msg = op_result.error or "Unknown error"
-                if error_mode_str == "fail":
-                    return r[m.Tests.BatchResult].fail(
-                        f"Batch operation failed: {err_msg}",
-                    )
-                failed_dict[name] = str(err_msg)
-            else:
-                results_dict[name] = rtype.ok(op_result)
+            if op_result.success:
+                results_dict[name] = rtype.ok(op_result.value)
+                continue
+            err_msg = op_result.error or "Unknown error"
+            if error_mode_str == "fail":
+                return r[m.Tests.BatchResult].fail(
+                    f"Batch operation failed: {err_msg}",
+                )
+            failed_dict[name] = str(err_msg)
         return r[m.Tests.BatchResult].ok(
             m.Tests.BatchResult(
                 succeeded=len(results_dict),
@@ -671,9 +670,9 @@ class FlextTestsFiles(s):
         except OSError as e:
             return r[bool].fail(c.Tests.ERROR_COMPARE.format(error=e))
 
-    def create(
+    def create[TFileContent: t.Tests.FileContentPlain](
         self,
-        content: t.Tests.FileInput,
+        content: TFileContent | p.ResultLike[TFileContent],
         name: str = c.Tests.DEFAULT_FILENAME,
         directory: Path | None = None,
         *,
@@ -738,11 +737,7 @@ class FlextTestsFiles(s):
         content_to_validate = self._extract_content(content, extract_result)
         try:
             params = m.Tests.CreateParams.model_validate({
-                "content": (
-                    content_to_validate.root
-                    if isinstance(content_to_validate, m.ConfigMap)
-                    else content_to_validate
-                ),
+                "content": content_to_validate,
                 "name": name,
                 "directory": directory,
                 "fmt": fmt,
@@ -791,7 +786,7 @@ class FlextTestsFiles(s):
                 else str(actual_content).encode(params.enc)
             )
         elif actual_fmt in {c.Tests.Format.JSON, c.Tests.Format.YAML}:
-            raw_payload: Mapping[str, t.Container] = (
+            raw_payload: Mapping[str, t.JsonValue] = (
                 {
                     str(k): FlextTestsPayloadUtilities.to_normalized_value(v)
                     for k, v in actual_content.items()
@@ -1142,17 +1137,18 @@ class FlextTestsFiles(s):
             return (filtered1, filtered2)
         return (dict1, dict2)
 
-    def _coerce_file_content(
+    def _coerce_file_content[TFileContent: t.Tests.FileContentPlain](
         self,
-        value: t.Tests.FileInput | t.Tests.TestobjectSerializable | None,
+        value: TFileContent
+        | p.ResultLike[TFileContent]
+        | t.Tests.TestobjectSerializable
+        | None,
     ) -> t.Tests.FileContentPlain:
-        unwrapped: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable | None = (
-            value.value
-            if isinstance(value, r) and value.success
-            else value
-            if not isinstance(value, r)
-            else ""
-        )
+        unwrapped: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable | None
+        if isinstance(value, p.ResultLike):
+            unwrapped = value.value if value.success else ""
+        else:
+            unwrapped = value
         if isinstance(unwrapped, str | bytes):
             return unwrapped
         if isinstance(unwrapped, m.BaseModel):
@@ -1199,9 +1195,9 @@ class FlextTestsFiles(s):
             lines2 = [line.lower() for line in lines2]
         return r[bool].ok(lines1 == lines2)
 
-    def _extract_content(
+    def _extract_content[TFileContent: t.Tests.FileContentPlain](
         self,
-        content: t.Tests.FileInput,
+        content: TFileContent | p.ResultLike[TFileContent],
         extract_result: bool,
     ) -> t.Tests.FileContentPlain:
         """Extract actual content from r or return as-is.
@@ -1224,7 +1220,7 @@ class FlextTestsFiles(s):
         # bytes needs handling before result check — bytes not in t.GuardInput
         if isinstance(content, bytes):
             return content
-        # TypeIs guard narrows to r[FileContentPlain] with known type parameter
+        # TypeIs guard narrows to the matching result-like wrapper
         if self._is_file_result(content):
             if content.failure:
                 error_msg = content.error or "r failure"

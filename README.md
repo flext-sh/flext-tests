@@ -24,8 +24,8 @@ poetry add --group dev flext-tests
 ## Usage
 
 ```python
-from flext_tests import TestsFlextHelpers as h
 from flext_tests import c
+from flext_tests import tm
 from flext_tests import u
 ```
 

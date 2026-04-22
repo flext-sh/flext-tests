@@ -116,7 +116,7 @@ class FlextTestsFilesystemModelsMixin:
         """Parameters for file creation operations with Pydantic 2 advanced validation."""
 
         content: Annotated[
-            t.Tests.TestobjectSerializable,
+            t.Tests.FileContentPlain,
             u.Field(description="File content to create."),
         ]
         name: Annotated[

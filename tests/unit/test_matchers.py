@@ -260,22 +260,22 @@ class TestFlextTestsMatchers:
 
     def test_ok_with_deep_parameter(self) -> None:
         """Test tm.ok() with deep parameter."""
-        data: Mapping[str, t.Container] = {"user": {"name": "John", "age": 30}}
-        result = r[t.Container].ok(data)
+        data: t.JsonMapping = {"user": {"name": "John", "age": 30}}
+        result = r[t.JsonMapping].ok(data)
         value = tm.ok(result, deep={"user.name": "John"})
         tm.that(value, eq=data)
 
     def test_ok_with_deep_predicate_parameter(self) -> None:
         """Test tm.ok() with deep predicate parameter."""
-        data: Mapping[str, t.Container] = {"user": {"email": "test@example.com"}}
-        result = r[t.Container].ok(data)
+        data: t.JsonMapping = {"user": {"email": "test@example.com"}}
+        result = r[t.JsonMapping].ok(data)
         value = tm.ok(result, deep={"user.email": "test@example.com"})
         tm.that(value, eq=data)
 
     def test_ok_with_path_parameter(self) -> None:
         """Test tm.ok() with path parameter."""
-        data: Mapping[str, t.Container] = {"user": {"name": "John"}}
-        result = r[t.Container].ok(data)
+        data: t.JsonMapping = {"user": {"name": "John"}}
+        result = r[t.JsonMapping].ok(data)
         value = tm.ok(result, path="user.name", eq="John")
         tm.that(value, eq="John")
 
@@ -435,6 +435,13 @@ class TestFlextTestsMatchers:
     def test_that_with_has_parameter(self) -> None:
         """Test tm.that() with has parameter."""
         tm.that(["a", "b", "c"], has="a")
+
+    def test_that_with_has_parameter_supports_strenum_sets(self) -> None:
+        """Test tm.that() containment with sets of StrEnum values."""
+        tm.that(
+            {c.Tests.Format.TEXT, c.Tests.Format.BIN},
+            has=c.Tests.Format.TEXT,
+        )
 
     def test_that_with_has_sequence_parameter(self) -> None:
         """Test tm.that() with has sequence parameter."""
@@ -627,7 +634,7 @@ class TestFlextTestsMatchers:
 
     def test_that_with_paths_data_driven_rules(self) -> None:
         """Validate multiple dotted paths with a single declarative matcher call."""
-        payload: Mapping[str, t.Container] = {
+        payload: t.JsonMapping = {
             "user": {
                 "name": "John",
                 "age": 33,
@@ -683,7 +690,7 @@ class TestFlextTestsMatchers:
 
     def test_ok_with_composed_data_driven_validations(self) -> None:
         """Validate result payload with path extraction plus composed rules."""
-        result = r[t.Container].ok({
+        result = r[t.JsonMapping].ok({
             "meta": {"version": "v1", "count": 3},
             "items": ["a", "b", "c"],
         })

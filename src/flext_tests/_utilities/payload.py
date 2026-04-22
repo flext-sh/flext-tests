@@ -15,6 +15,7 @@ from collections.abc import (
     Sized,
 )
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
 from typing import ClassVar
 
@@ -43,53 +44,61 @@ class FlextTestsPayloadUtilities:
         to_p = FlextTestsPayloadUtilities.to_payload
         if isinstance(value, m.RootModel):
             return to_p(value.root)
+        if isinstance(value, Enum):
+            return to_p(value.value)
         if value is None or isinstance(
             value, FlextTestsPayloadUtilities._SCALAR_PAYLOAD
         ):
             return value
         if isinstance(value, Mapping):
+            normalized_map = {str(k): to_p(v) for k, v in value.items()}
             try:
                 validated_map = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(
-                    value
+                    normalized_map,
                 )
             except c.ValidationError:
-                return {}
+                return normalized_map
             return {str(k): to_p(v) for k, v in validated_map.items()}
         if isinstance(value, (list, tuple, set)):
+            normalized_seq = [to_p(item) for item in value]
             try:
                 validated_seq = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
-                    value
+                    normalized_seq,
                 )
             except c.ValidationError:
-                return []
+                return normalized_seq
             return [to_p(item) for item in validated_seq]
         return str(value)
 
     @staticmethod
     def to_normalized_value(
         value: t.Tests.TestobjectSerializable,
-    ) -> t.Container:
+    ) -> t.JsonValue:
         """Flatten to pure Container via canonical runtime helper."""
+        to_n = FlextTestsPayloadUtilities.to_normalized_value
         if isinstance(value, m.BaseModel):
             return str(value)
         if isinstance(value, bytes):
             return value.decode(errors="ignore")
-        if isinstance(value, (Mapping, list, tuple)):
-            return u.normalize_to_metadata(value)
+        if isinstance(value, datetime):
+            return value.isoformat()
+        if isinstance(value, Path):
+            return str(value)
+        if isinstance(value, Mapping):
+            return {str(key): to_n(item) for key, item in value.items()}
+        if isinstance(value, (list, tuple, frozenset)):
+            return [to_n(item) for item in value]
         if value is None:
             return ""
-        return (
-            value
-            if isinstance(value, (str, int, float, bool, datetime, Path))
-            else str(value)
-        )
+        return value if isinstance(value, (str, int, float, bool)) else str(value)
 
     @staticmethod
     def to_config_map_value(value: t.Tests.TestobjectSerializable) -> t.RuntimeData:
         """Preserve BaseModel, else delegate to canonical Container flattening."""
         if isinstance(value, m.BaseModel):
             return value
-        return FlextTestsPayloadUtilities.to_normalized_value(value)
+        normalized_value = FlextTestsPayloadUtilities.to_normalized_value(value)
+        return "" if normalized_value is None else normalized_value
 
     @staticmethod
     def length_validate(
