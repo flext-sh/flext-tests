@@ -84,7 +84,7 @@ class TestFlextTestsDomains:
         """Test create_payload with unknown data type."""
         payload = td.create_payload("unknown")
         tm.that(payload, is_=dict)
-        tm.that(payload, eq={})
+        tm.that(payload, empty=True)
 
     def test_api_response_data_success_default(self) -> None:
         """Test api_response_data with success status default."""

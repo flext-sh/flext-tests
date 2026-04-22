@@ -37,6 +37,8 @@ class FlextTestsTypes(t):
         All test-specific types organized under t.Tests.* pattern.
         """
 
+        __test__ = False
+
 
 t = FlextTestsTypes
 

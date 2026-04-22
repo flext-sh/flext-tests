@@ -16,6 +16,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+
 from flext_tests import tk, tm
 from tests import c, u
 
@@ -224,7 +225,7 @@ class TestFlextTestsDocker:
         _ = docker_manager.mark_container_clean("container2")
         result = docker_manager.cleanup_dirty_containers()
         _ = u.Tests.assert_success(result)
-        tm.that(result.value, eq=[])
+        tm.that(result.value, empty=True)
 
 
 class TestFlextTestsDockerWorkerId:

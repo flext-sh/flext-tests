@@ -16,6 +16,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
+
 from flext_tests import tf, tm
 from tests import c, m, r, t, u
 
@@ -58,15 +59,15 @@ class TestFlextTestsFiles:
         """Test initialization without base directory."""
         manager = tf()
         tm.that(manager.base_dir, none=True)
-        tm.that(manager.created_files, eq=[])
-        tm.that(manager.created_dirs, eq=[])
+        tm.that(manager.created_files, empty=True)
+        tm.that(manager.created_dirs, empty=True)
 
     def test_init_with_base_dir(self, tmp_path: Path) -> None:
         """Test initialization with base directory."""
         manager = tf(base_dir=tmp_path)
         tm.that(manager.base_dir, eq=tmp_path)
-        tm.that(manager.created_files, eq=[])
-        tm.that(manager.created_dirs, eq=[])
+        tm.that(manager.created_files, empty=True)
+        tm.that(manager.created_dirs, empty=True)
 
     def test_temporary_directory(self) -> None:
         """Test temporary_directory context manager."""

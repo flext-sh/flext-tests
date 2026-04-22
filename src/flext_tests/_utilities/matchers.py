@@ -63,6 +63,7 @@ from collections.abc import (
     Sized,
 )
 from contextlib import contextmanager, nullcontext
+from datetime import datetime
 from pathlib import Path
 from typing import TypeIs, overload
 
@@ -81,6 +82,16 @@ from flext_tests import (
 class FlextTestsMatchersUtilities:
     """Namespace for test matcher utilities used in flext-tests."""
 
+    _GUARD_EQ_TYPES: tuple[type, ...] = (
+        str,
+        int,
+        float,
+        bool,
+        bytes,
+        datetime,
+        Path,
+    )
+
     @staticmethod
     def _matches_runtime_type[TValue](
         value: TValue,
@@ -93,6 +104,57 @@ class FlextTestsMatchersUtilities:
                 for item in expected_type
             )
         return u.instance_of(value, expected_type)
+
+    @staticmethod
+    def _supports_guard_eq(
+        value: t.Tests.TestobjectSerializable | None,
+    ) -> bool:
+        return value is None or isinstance(
+            value,
+            FlextTestsMatchersUtilities._GUARD_EQ_TYPES,
+        )
+
+    @staticmethod
+    def _prepare_eq_ne_payloads(
+        actual_payload: t.Tests.TestobjectSerializable,
+        eq_value: t.Tests.MatcherKwargValue | t.Tests.TestobjectSerializable | None,
+        ne_value: t.Tests.MatcherKwargValue | t.Tests.TestobjectSerializable | None,
+        *,
+        msg: str | None,
+        default_msg: str,
+    ) -> tuple[
+        t.Tests.TestobjectSerializable | None,
+        t.Tests.TestobjectSerializable | None,
+    ]:
+        eq_payload = (
+            FlextTestsPayloadUtilities.to_payload(eq_value)
+            if eq_value is not None
+            else None
+        )
+        ne_payload = (
+            FlextTestsPayloadUtilities.to_payload(ne_value)
+            if ne_value is not None
+            else None
+        )
+        if (
+            eq_payload is not None
+            and not FlextTestsMatchersUtilities._supports_guard_eq(
+                eq_payload,
+            )
+        ):
+            if actual_payload != eq_payload:
+                raise AssertionError(msg or default_msg)
+            eq_payload = None
+        if (
+            ne_payload is not None
+            and not FlextTestsMatchersUtilities._supports_guard_eq(
+                ne_payload,
+            )
+        ):
+            if actual_payload == ne_payload:
+                raise AssertionError(msg or default_msg)
+            ne_payload = None
+        return (eq_payload, ne_payload)
 
     @staticmethod
     def _rule_to_kwargs(
@@ -802,19 +864,33 @@ class FlextTestsMatchersUtilities:
                 )
                 if has_validation:
                     is_type = params.is_ if not isinstance(params.is_, tuple) else None
+                    result_payload = FlextTestsPayloadUtilities.to_payload(result_value)
+                    eq_payload, ne_payload = (
+                        FlextTestsMatchersUtilities._prepare_eq_ne_payloads(
+                            result_payload,
+                            params.eq,
+                            params.ne,
+                            msg=params.msg,
+                            default_msg=(
+                                f"Value {result_value!r} did not satisfy constraints"
+                            ),
+                        )
+                    )
                     chk_value: t.GuardInput | None = (
-                        result_value
-                        if result_value is None
-                        else u.normalize_to_metadata(result_value)
+                        None
+                        if result_payload is None
+                        else FlextTestsPayloadUtilities.to_normalized_value(
+                            result_payload,
+                        )
                     )
                     eq_plain = (
-                        u.normalize_to_metadata(params.eq)
-                        if params.eq is not None
+                        FlextTestsPayloadUtilities.to_normalized_value(eq_payload)
+                        if eq_payload is not None
                         else None
                     )
                     ne_plain = (
-                        u.normalize_to_metadata(params.ne)
-                        if params.ne is not None
+                        FlextTestsPayloadUtilities.to_normalized_value(ne_payload)
+                        if ne_payload is not None
                         else None
                     )
                     if not u.chk(
@@ -1336,20 +1412,33 @@ class FlextTestsMatchersUtilities:
                     )
                     eq_value = raw_eq if "eq" in kwargs else params.eq
                     ne_value = raw_ne if "ne" in kwargs else params.ne
+                    eq_payload, ne_payload = (
+                        FlextTestsMatchersUtilities._prepare_eq_ne_payloads(
+                            subject_payload,
+                            eq_value,
+                            ne_value,
+                            msg=params.msg,
+                            default_msg=(
+                                f"Assertion failed: {subject_payload!r} did not satisfy constraints"
+                            ),
+                        )
+                    )
                     eq_plain2 = (
-                        u.normalize_to_metadata(eq_value)
-                        if eq_value is not None
+                        FlextTestsPayloadUtilities.to_normalized_value(eq_payload)
+                        if eq_payload is not None
                         else None
                     )
                     ne_plain2 = (
-                        u.normalize_to_metadata(ne_value)
-                        if ne_value is not None
+                        FlextTestsPayloadUtilities.to_normalized_value(ne_payload)
+                        if ne_payload is not None
                         else None
                     )
                     chk_subject_plain: t.GuardInput | None = (
-                        chk_subject_payload
+                        None
                         if chk_subject_payload is None
-                        else u.normalize_to_metadata(chk_subject_payload)
+                        else FlextTestsPayloadUtilities.to_normalized_value(
+                            chk_subject_payload,
+                        )
                     )
                     if not u.chk(
                         chk_subject_plain,

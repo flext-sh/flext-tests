@@ -162,26 +162,7 @@ omit = [ "*/dependency_injector/providers.pyx" ]
 
 # [MANAGED] deptry
 [tool.deptry]
-known_first_party = [
-  "factory-boy",
-  "faker",
-  "flext-cli",
-  "flext-core",
-  "flext-infra",
-  "flext_tests",
-  "hypothesis",
-  "pytest",
-  "pytest-benchmark",
-  "pytest-clarity",
-  "pytest-cov",
-  "pytest-deadfixtures",
-  "pytest-env",
-  "pytest-mock",
-  "pytest-randomly",
-  "pytest-sugar",
-  "pytest-timeout",
-  "pytest-xdist",
-]
+known_first_party = [ "flext_tests" ]
 pep621_dev_dependency_groups = [ "dev" ]
 
 [tool.flext.docs]
@@ -515,26 +496,7 @@ select = [ "ALL" ]
 [tool.ruff.lint.isort]
 combine-as-imports = true
 force-single-line = false
-known-first-party = [
-  "factory-boy",
-  "faker",
-  "flext-cli",
-  "flext-core",
-  "flext-infra",
-  "flext_tests",
-  "hypothesis",
-  "pytest",
-  "pytest-benchmark",
-  "pytest-clarity",
-  "pytest-cov",
-  "pytest-deadfixtures",
-  "pytest-env",
-  "pytest-mock",
-  "pytest-randomly",
-  "pytest-sugar",
-  "pytest-timeout",
-  "pytest-xdist",
-]
+known-first-party = [ "flext_tests" ]
 split-on-trailing-comma = true
 
 [tool.ruff.lint.per-file-ignores]

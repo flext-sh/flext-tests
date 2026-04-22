@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import ClassVar
 
 import pytest
+
 from flext_tests import tm
 from tests import m, p, r, u
 
