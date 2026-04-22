@@ -1,0 +1,24 @@
+README.md
+  h_9db9d35f50cf33 28
+tests/unit/test_matchers.py
+  h_9db9d35f50cf33 263-264,270-271,277-278,439-445,637,693
+src/flext_tests/files.py
+  h_9db9d35f50cf33 232-236,350-351,487,502,507,514,521,673,675,789,1140,1142-1143,1148-1151,1198,1200,1223
+src/flext_tests/_models/filesystem.py
+  h_9db9d35f50cf33 119
+src/flext_tests/_typings/files.py
+  h_9db9d35f50cf33 31,33-35
+src/flext_tests/_utilities/payload.py
+  h_9db9d35f50cf33 18,47-48,54,57,60,63,66,69,76,78,83-90,100-101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "8d8ff62a7b54c3a495babdb8ab2ab6fa33f54530",
+  "prompts": {},
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
