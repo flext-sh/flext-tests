@@ -1,0 +1,30 @@
+pyproject.toml
+  9f85f2ec1ecedfdb 187,198
+src/flext_tests/_typings/base.py
+  9f85f2ec1ecedfdb 86,92,98,101,107,113,116-128,131-134,137-140
+src/flext_tests/_utilities/payload.py
+  9f85f2ec1ecedfdb 42
+src/flext_tests/_utilities/matchers.py
+  9f85f2ec1ecedfdb 242,347-348
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "d0077334697ec7d717a3c99ffd19dbddd3a22f14",
+  "prompts": {
+    "9f85f2ec1ecedfdb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "55c96ba6-e7b4-41e4-8a67-ec8c8d953db4",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "FLEXT Bot",
+      "messages": [],
+      "total_additions": 33,
+      "total_deletions": 35,
+      "accepted_lines": 33,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/a2e4f75de5ef9d792c7ca8da01aab5caf29d83c07b901f3e49d24b38ee56131a"
+    }
+  }
+}
