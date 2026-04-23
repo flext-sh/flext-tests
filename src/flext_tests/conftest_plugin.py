@@ -18,12 +18,14 @@ And the following CLI options:
 
 from __future__ import annotations
 
-from flext_tests import (
+from flext_tests._fixtures.markdown_validation import (
     MarkdownCodeBlockCollector,
     MarkdownCodeBlockItem,
     MarkdownValidationError,
     pytest_addoption,
     pytest_collect_file,
+)
+from flext_tests._fixtures.settings import (
     reset_settings,
     settings,
     settings_factory,
