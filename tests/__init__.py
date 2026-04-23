@@ -43,6 +43,7 @@ if _t.TYPE_CHECKING:
         TestFlextTestsUtilitiesResultCompat,
         TestFlextTestsUtilitiesTestContext,
     )
+    from tests.unit.test_validator_types import TestFlextTestsValidatorTypes
     from tests.utilities import TestsFlextTestsUtilities, u
 _LAZY_IMPORTS = merge_lazy_imports(
     (".unit",),
@@ -90,6 +91,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "TestFlextTestsUtilitiesResultCompat",
                 "TestFlextTestsUtilitiesTestContext",
             ),
+            ".unit.test_validator_types": ("TestFlextTestsValidatorTypes",),
             ".utilities": (
                 "TestsFlextTestsUtilities",
                 "u",
@@ -143,6 +145,7 @@ __all__: list[str] = [
     "TestFlextTestsUtilitiesResult",
     "TestFlextTestsUtilitiesResultCompat",
     "TestFlextTestsUtilitiesTestContext",
+    "TestFlextTestsValidatorTypes",
     "TestInfoWithContentMeta",
     "TestShortAlias",
     "TestsFlextTestsConstants",

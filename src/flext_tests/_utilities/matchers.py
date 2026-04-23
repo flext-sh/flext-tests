@@ -371,7 +371,7 @@ class FlextTestsMatchersUtilities:
     def _is_non_string_sequence(
         value: t.Tests.TestobjectSerializable
         | t.Tests.MatcherKwargValue
-        | t.RuntimeData
+        | t.JsonPayload
         | t.JsonValue,
     ) -> TypeIs[Sequence[t.Tests.TestobjectSerializable]]:
         return isinstance(value, Sequence) and (
@@ -1347,7 +1347,7 @@ class FlextTestsMatchersUtilities:
                 if only_type_check:
                     return
                 subject = value
-                if u.result_like(subject):
+                if isinstance(subject, p.Result):
                     result_obj = subject
                     actual_value: t.Tests.TestobjectSerializable | str = ""
                     if params.ok is not None:

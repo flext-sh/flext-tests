@@ -93,7 +93,7 @@ class FlextTestsPayloadUtilities:
         return value if isinstance(value, (str, int, float, bool)) else str(value)
 
     @staticmethod
-    def to_config_map_value(value: t.Tests.TestobjectSerializable) -> t.RuntimeData:
+    def to_config_map_value(value: t.Tests.TestobjectSerializable) -> t.JsonPayload:
         """Preserve BaseModel, else delegate to canonical Container flattening."""
         if isinstance(value, m.BaseModel):
             return value

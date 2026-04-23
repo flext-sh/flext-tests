@@ -34,7 +34,7 @@ TypeAdapter = FlextModelsPydantic.TypeAdapter
 class FlextTestsBaseTypesMixin:
     """Base generic primitives extending Flext core aliases."""
 
-    type TestobjectSerializable = (
+    type TestobjectAtom = (
         str
         | int
         | float
@@ -46,10 +46,12 @@ class FlextTestsBaseTypesMixin:
         | BaseModel
         | type
         | frozenset[str]
-        | Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | None
     )
+    type TestobjectCollection = (
+        Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+    )
+    type TestobjectSerializable = TestobjectAtom | TestobjectCollection | None
 
     type TestResultValue = (
         FlextTestsBaseTypesMixin.TestobjectSerializable
