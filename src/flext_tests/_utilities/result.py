@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flext_tests import p
+from flext_tests import p, t
 
 
 class FlextTestsResultUtilitiesMixin:
@@ -58,9 +58,9 @@ class FlextTestsResultUtilitiesMixin:
         return value
 
     @staticmethod
-    def assert_success_with_value[TResult, TExpected](
+    def assert_success_with_value[TResult](
         result: p.Result[TResult],
-        expected_value: TExpected,
+        expected_value: t.Tests.TestobjectSerializable,
     ) -> None:
         """Assert result is success and has expected value."""
         if not result.success:

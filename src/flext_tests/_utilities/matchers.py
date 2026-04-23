@@ -1145,8 +1145,8 @@ class FlextTestsMatchersUtilities:
                                 )
 
             @staticmethod
-            def that[TValue](
-                value: TValue,
+            def that(
+                value: t.Tests.TestobjectSerializable,
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> None:
                 r"""Super-powered universal value assertion - ALL validations in ONE method.
