@@ -20,23 +20,6 @@ if _t.TYPE_CHECKING:
     from flext_tests._constants.files import FlextTestsFilesConstantsMixin
     from flext_tests._constants.matcher import FlextTestsMatcherConstantsMixin
     from flext_tests._constants.validator import FlextTestsValidatorConstantsMixin
-    from flext_tests._fixtures.markdown_validation import (
-        MarkdownCodeBlockCollector,
-        MarkdownCodeBlockItem,
-        MarkdownValidationError,
-        pytest_addoption,
-        pytest_collect_file,
-    )
-    from flext_tests._fixtures.project_metadata import (
-        project_metadata,
-        project_namespace_config,
-        project_tool_flext,
-    )
-    from flext_tests._fixtures.settings import (
-        reset_settings,
-        settings,
-        settings_factory,
-    )
     from flext_tests._models.base import FlextTestsBaseModelsMixin
     from flext_tests._models.batch import FlextTestsBatchModelsMixin
     from flext_tests._models.docker import FlextTestsDockerModelsMixin
@@ -99,7 +82,6 @@ if _t.TYPE_CHECKING:
 _LAZY_IMPORTS = merge_lazy_imports(
     (
         "._constants",
-        "._fixtures",
         "._models",
         "._protocols",
         "._typings",
@@ -122,23 +104,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._constants.files": ("FlextTestsFilesConstantsMixin",),
             "._constants.matcher": ("FlextTestsMatcherConstantsMixin",),
             "._constants.validator": ("FlextTestsValidatorConstantsMixin",),
-            "._fixtures.markdown_validation": (
-                "MarkdownCodeBlockCollector",
-                "MarkdownCodeBlockItem",
-                "MarkdownValidationError",
-                "pytest_addoption",
-                "pytest_collect_file",
-            ),
-            "._fixtures.project_metadata": (
-                "project_metadata",
-                "project_namespace_config",
-                "project_tool_flext",
-            ),
-            "._fixtures.settings": (
-                "reset_settings",
-                "settings",
-                "settings_factory",
-            ),
             "._models.base": ("FlextTestsBaseModelsMixin",),
             "._models.batch": ("FlextTestsBatchModelsMixin",),
             "._models.docker": ("FlextTestsDockerModelsMixin",),
@@ -303,9 +268,6 @@ __all__: list[str] = [
     "FlextValidatorSettings",
     "FlextValidatorTests",
     "FlextValidatorTypes",
-    "MarkdownCodeBlockCollector",
-    "MarkdownCodeBlockItem",
-    "MarkdownValidationError",
     "SecretStr",
     "TypeAdapter",
     "__author__",
@@ -322,16 +284,8 @@ __all__: list[str] = [
     "h",
     "m",
     "p",
-    "project_metadata",
-    "project_namespace_config",
-    "project_tool_flext",
-    "pytest_addoption",
-    "pytest_collect_file",
     "r",
-    "reset_settings",
     "s",
-    "settings",
-    "settings_factory",
     "t",
     "td",
     "tf",
