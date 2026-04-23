@@ -93,8 +93,8 @@ class FlextTestsMatchersUtilities:
     )
 
     @staticmethod
-    def _matches_runtime_type[TValue](
-        value: TValue,
+    def _matches_runtime_type(
+        value: object,
         expected_type: type | tuple[type, ...],
     ) -> bool:
         """Check runtime type compatibility using flext-core guards."""
@@ -235,8 +235,8 @@ class FlextTestsMatchersUtilities:
         return FlextTestsPayloadUtilities.to_payload(extracted.value)
 
     @staticmethod
-    def _extract_attribute_path[TValue](
-        value: TValue, attr_path: str
+    def _extract_attribute_path(
+        value: object, attr_path: str
     ) -> t.Tests.TestobjectSerializable:
         """Extract one dotted attribute path from a runtime object."""
         current: object | t.Tests.TestobjectSerializable = value
@@ -379,8 +379,8 @@ class FlextTestsMatchersUtilities:
         )
 
     @staticmethod
-    def _check_has_lacks[TValue](
-        value: TValue,
+    def _check_has_lacks(
+        value: object,
         has: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.JsonValue | None,
         lacks: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.JsonValue | None,
         msg: str | None,
@@ -1145,8 +1145,8 @@ class FlextTestsMatchersUtilities:
                                 )
 
             @staticmethod
-            def that[TValue](
-                value: TValue,
+            def that(
+                value: object,
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> None:
                 r"""Super-powered universal value assertion - ALL validations in ONE method.
@@ -1679,7 +1679,7 @@ class FlextTestsMatchersUtilities:
                                     params.msg
                                     or f"Key {key!r}: expected {expected_val!r}, got {mapping_value[key]!r}",
                                 )
-                        elif hasattr(params.kv, "keys") and hasattr(params.kv, "items"):
+                        elif isinstance(params.kv, Mapping):
                             mapping_kv: Mapping[str, t.Tests.TestobjectSerializable] = (
                                 params.kv
                             )

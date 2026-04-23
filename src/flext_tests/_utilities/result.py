@@ -58,9 +58,9 @@ class FlextTestsResultUtilitiesMixin:
         return value
 
     @staticmethod
-    def assert_success_with_value[TResult, TExpected](
+    def assert_success_with_value[TResult](
         result: p.Result[TResult],
-        expected_value: TExpected,
+        expected_value: object,
     ) -> None:
         """Assert result is success and has expected value."""
         if not result.success:
