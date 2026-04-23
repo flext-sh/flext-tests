@@ -237,7 +237,7 @@ class FlextTestsFiles(s):
 
     @staticmethod
     def _is_mapping(
-        value: t.Tests.TestobjectSerializable,
+        value: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable | None,
     ) -> TypeIs[Mapping[str, t.Tests.TestobjectSerializable]]:
         return isinstance(value, Mapping)
 

@@ -39,9 +39,7 @@ class FlextTestsPayloadUtilities:
     )
 
     @staticmethod
-    def to_payload(
-        value: t.Tests.TestobjectSerializable,
-    ) -> t.Tests.TestobjectSerializable:
+    def to_payload[TValue](value: TValue) -> t.Tests.TestobjectSerializable:
         """Recursively flatten any runtime value to ``TestobjectSerializable``."""
         to_p = FlextTestsPayloadUtilities.to_payload
         if isinstance(value, m.RootModel):

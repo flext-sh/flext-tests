@@ -7,13 +7,7 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 _LAZY_IMPORTS = build_lazy_import_map(
     {
-        ".base": (
-            "BaseModel",
-            "ConfigDict",
-            "FlextTestsBaseTypesMixin",
-            "SecretStr",
-            "TypeAdapter",
-        ),
+        ".base": ("FlextTestsBaseTypesMixin",),
         ".files": ("FlextTestsFilesTypesMixin",),
         ".guards": ("FlextTestsGuardsTypesMixin",),
         ".matchers": ("FlextTestsMatchersTypesMixin",),
