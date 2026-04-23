@@ -193,7 +193,10 @@ class FlextTestsFiles(s):
             for name, data_raw in content.items():
                 data: t.Tests.FileContentPlain = data_raw
                 filename = name if "." in name else f"{name}{default_ext}"
-                if "." not in name and (isinstance(data, (Mapping, m.BaseModel))):
+                if "." not in name and isinstance(
+                    data,
+                    (Mapping, m.BaseModel, m.ConfigMap, m.Dict),
+                ):
                     filename = f"{name}.json"
                 else:
                     is_nested_sequence = "." not in name and manager._is_nested_rows(
@@ -466,7 +469,7 @@ class FlextTestsFiles(s):
         elif not isinstance(params.files, str):
             files_dict = {}
             for item in params.files:
-                if isinstance(item, tuple) and len(item) == 2:
+                if len(item) == 2:
                     try:
                         _ = m.Tests.CreateParams.model_validate({
                             "content": item[1],
@@ -786,12 +789,19 @@ class FlextTestsFiles(s):
                 else str(actual_content).encode(params.enc)
             )
         elif actual_fmt in {c.Tests.Format.JSON, c.Tests.Format.YAML}:
+            mapping_content: Mapping[str, t.Tests.TestobjectSerializable] | None = (
+                actual_content.root
+                if isinstance(actual_content, (m.ConfigMap, m.Dict))
+                else actual_content
+                if isinstance(actual_content, Mapping)
+                else None
+            )
             raw_payload: t.JsonMapping = (
                 {
                     str(k): FlextTestsPayloadUtilities.to_normalized_value(v)
-                    for k, v in actual_content.items()
+                    for k, v in mapping_content.items()
                 }
-                if isinstance(actual_content, Mapping)
+                if mapping_content is not None
                 else {
                     "value": FlextTestsPayloadUtilities.to_normalized_value(
                         actual_content
@@ -1150,6 +1160,8 @@ class FlextTestsFiles(s):
             unwrapped = value
         if isinstance(unwrapped, str | bytes):
             return unwrapped
+        if isinstance(unwrapped, (m.ConfigMap, m.Dict)):
+            return self._to_config_map(unwrapped.root)
         if isinstance(unwrapped, m.BaseModel):
             return unwrapped
         if self._is_mapping(unwrapped):

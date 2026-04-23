@@ -12,7 +12,7 @@ from collections.abc import (
 )
 from pathlib import Path
 
-from flext_tests import c, t
+from flext_tests import c, m, t
 
 
 class FlextTestsFilesUtilitiesMixin:
@@ -22,6 +22,8 @@ class FlextTestsFilesUtilitiesMixin:
     def detect_format(
         content: str
         | bytes
+        | m.ConfigMap
+        | m.Dict
         | Mapping[str, t.Tests.TestobjectSerializable]
         | Sequence[t.StrSequence],
         name: str,
@@ -32,7 +34,7 @@ class FlextTestsFilesUtilitiesMixin:
             return fmt
         if isinstance(content, bytes):
             return c.Tests.Format.BIN
-        if isinstance(content, Mapping):
+        if isinstance(content, (m.ConfigMap, m.Dict, Mapping)):
             ext = Path(name).suffix.lower()
             return (
                 c.Tests.Format.YAML if ext in {".yaml", ".yml"} else c.Tests.Format.JSON

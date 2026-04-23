@@ -76,6 +76,8 @@ class FlextTestsPayloadUtilities:
     ) -> t.JsonValue:
         """Flatten to pure Container via canonical runtime helper."""
         to_n = FlextTestsPayloadUtilities.to_normalized_value
+        if isinstance(value, m.RootModel):
+            return to_n(value.root)
         if isinstance(value, m.BaseModel):
             return str(value)
         if isinstance(value, bytes):

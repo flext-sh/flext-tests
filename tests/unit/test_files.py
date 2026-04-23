@@ -442,11 +442,12 @@ class TestFlextTestsFilesNewApi:
     def test_read_json_file(self, tmp_path: Path) -> None:
         """Test read() returns dict content for .json files."""
         manager = tf(base_dir=tmp_path)
-        content: m.ConfigMap = m.ConfigMap(root={"key": "value", "number": 42})
+        content_root: dict[str, t.JsonPayload] = {"key": "value", "number": 42}
+        content: m.ConfigMap = m.ConfigMap(root=content_root)
         path = manager.create(content, "settings.json")
         result = manager.read(path)
         _ = u.Tests.assert_success(result)
-        tm.that(result.value, eq=content)
+        tm.that(result.value, eq=content_root)
 
     def test_read_yaml_file(self, tmp_path: Path) -> None:
         """Test read() returns dict content for .yaml files."""
@@ -1132,7 +1133,7 @@ class TestCreateInStatic:
     def test_create_in_json_indent(self, tmp_path: Path) -> None:
         """Test create_in() with custom JSON indentation."""
         content: m.ConfigMap = m.ConfigMap(
-            root={"key": "value", "nested": m.ConfigMap(root={"a": 1})},
+            root={"key": "value", "nested": {"a": 1}},
         )
         path = tf.create_in(content, "settings.json", tmp_path, indent=4)
         tm.that(path.exists(), eq=True)
