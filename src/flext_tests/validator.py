@@ -31,7 +31,7 @@ from collections.abc import (
     Sequence,
 )
 from pathlib import Path
-from typing import ClassVar, override
+from typing import ClassVar
 
 from flext_tests import (
     FlextValidatorBypass,
@@ -76,7 +76,6 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
     Violation: ClassVar[type[m.Tests.Violation]] = m.Tests.Violation
     ScanResult: ClassVar[type[m.Tests.ScanResult]] = m.Tests.ScanResult
 
-    @override
     def execute(self) -> p.Result[m.Tests.ScanResult]:
         """Execute validator service with default current-path scope."""
         return self.all(Path.cwd())

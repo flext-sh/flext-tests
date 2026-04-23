@@ -32,7 +32,7 @@ from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 from types import TracebackType
-from typing import ClassVar, Self, TypeIs, overload, override
+from typing import ClassVar, Self, TypeIs, overload
 
 from flext_tests import FlextTestsPayloadUtilities, c, m, p, r, s, t, u
 
@@ -832,7 +832,6 @@ class FlextTestsFiles(s):
         self._created_files.append(file_path)
         return file_path
 
-    @override
     def execute(self) -> p.Result[t.JsonValue]:
         """Execute service - returns success for file manager.
 
