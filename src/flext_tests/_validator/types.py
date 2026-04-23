@@ -30,6 +30,235 @@ class FlextValidatorTypes:
     Uses c.Tests.Validator, m.Tests.Validator, u.Tests.Validator.
     """
 
+    @staticmethod
+    def _annotation_names(node: ast.AST, names: frozenset[str]) -> set[str]:
+        """Return matching typing symbols referenced anywhere inside one annotation."""
+        matches: set[str] = set()
+        for child in ast.walk(node):
+            if isinstance(child, ast.Name) and child.id in names:
+                matches.add(child.id)
+            elif isinstance(child, ast.Attribute) and child.attr in names:
+                matches.add(child.attr)
+            elif isinstance(child, ast.Constant) and child.value in names:
+                matches.add(str(child.value))
+        return matches
+
+    @classmethod
+    def _check_legacy_typing_factories(
+        cls,
+        file_path: Path,
+        tree: ast.AST,
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
+    ) -> Sequence[m.Tests.Violation]:
+        """Detect pre-PEP 695 typing factories and Generic base syntax."""
+        if u.Tests.approved("TYPE-004", file_path, approved):
+            return []
+        violations: MutableSequence[m.Tests.Violation] = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Call):
+                matches = cls._annotation_names(
+                    node.func,
+                    c.Tests.VALIDATOR_LEGACY_FACTORY_NAMES,
+                )
+                for match in sorted(matches):
+                    violations.append(
+                        u.Tests.create_violation(
+                            file_path,
+                            node.lineno,
+                            "TYPE-004",
+                            lines,
+                            c.Tests.VALIDATOR_MSG_TYPE_LEGACY_FACTORY.format(
+                                name=match,
+                            ),
+                        ),
+                    )
+            elif isinstance(node, ast.AnnAssign):
+                matches = cls._annotation_names(
+                    node.annotation,
+                    frozenset({"TypeAlias"}),
+                )
+                for match in sorted(matches):
+                    violations.append(
+                        u.Tests.create_violation(
+                            file_path,
+                            node.lineno,
+                            "TYPE-004",
+                            lines,
+                            c.Tests.VALIDATOR_MSG_TYPE_LEGACY_FACTORY.format(
+                                name=match,
+                            ),
+                        ),
+                    )
+            elif isinstance(node, ast.ClassDef):
+                for base in node.bases:
+                    matches = cls._annotation_names(
+                        base,
+                        c.Tests.VALIDATOR_LEGACY_BASE_NAMES,
+                    )
+                    for match in sorted(matches):
+                        violations.append(
+                            u.Tests.create_violation(
+                                file_path,
+                                getattr(base, "lineno", node.lineno),
+                                "TYPE-004",
+                                lines,
+                                c.Tests.VALIDATOR_MSG_TYPE_LEGACY_FACTORY.format(
+                                    name=match,
+                                ),
+                            ),
+                        )
+        return violations
+
+    @classmethod
+    def _check_legacy_typing_annotations(
+        cls,
+        file_path: Path,
+        tree: ast.AST,
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
+    ) -> Sequence[m.Tests.Violation]:
+        """Detect legacy annotation constructs superseded by modern Python 3.13 syntax."""
+        if u.Tests.approved("TYPE-005", file_path, approved):
+            return []
+        violations: MutableSequence[m.Tests.Violation] = []
+        annotations: MutableSequence[tuple[int, ast.AST]] = []
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                if node.returns is not None:
+                    annotations.append((node.lineno, node.returns))
+                for arg in (*node.args.args, *node.args.kwonlyargs):
+                    if arg.annotation is not None:
+                        annotations.append(
+                            (getattr(arg, "lineno", node.lineno), arg.annotation),
+                        )
+                if node.args.vararg and node.args.vararg.annotation is not None:
+                    annotations.append(
+                        (
+                            getattr(node.args.vararg, "lineno", node.lineno),
+                            node.args.vararg.annotation,
+                        ),
+                    )
+                if node.args.kwarg and node.args.kwarg.annotation is not None:
+                    annotations.append(
+                        (
+                            getattr(node.args.kwarg, "lineno", node.lineno),
+                            node.args.kwarg.annotation,
+                        ),
+                    )
+            elif isinstance(node, ast.AnnAssign):
+                annotations.append((node.lineno, node.annotation))
+        for line_number, annotation in annotations:
+            matches = cls._annotation_names(
+                annotation,
+                c.Tests.VALIDATOR_LEGACY_ANNOTATION_NAMES,
+            )
+            for match in sorted(matches):
+                violations.append(
+                    u.Tests.create_violation(
+                        file_path,
+                        line_number,
+                        "TYPE-005",
+                        lines,
+                        c.Tests.VALIDATOR_MSG_TYPE_LEGACY_ANNOTATION.format(
+                            name=match,
+                        ),
+                    ),
+                )
+        return violations
+
+    @classmethod
+    def _check_object_annotations(
+        cls,
+        file_path: Path,
+        tree: ast.AST,
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
+    ) -> Sequence[m.Tests.Violation]:
+        """Detect forbidden `object` annotations in governed code."""
+        if u.Tests.approved("TYPE-006", file_path, approved):
+            return []
+        violations: MutableSequence[m.Tests.Violation] = []
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                if node.returns is not None and cls._annotation_names(
+                    node.returns,
+                    frozenset({"object"}),
+                ):
+                    violations.append(
+                        u.Tests.create_violation(
+                            file_path,
+                            node.lineno,
+                            "TYPE-006",
+                            lines,
+                            c.Tests.VALIDATOR_MSG_TYPE_OBJECT_ANNOTATION.format(
+                                location=f"return type of '{node.name}'",
+                            ),
+                        ),
+                    )
+                for arg in (*node.args.args, *node.args.kwonlyargs):
+                    if arg.annotation is None or not cls._annotation_names(
+                        arg.annotation,
+                        frozenset({"object"}),
+                    ):
+                        continue
+                    violations.append(
+                        u.Tests.create_violation(
+                            file_path,
+                            getattr(arg, "lineno", node.lineno),
+                            "TYPE-006",
+                            lines,
+                            c.Tests.VALIDATOR_MSG_TYPE_OBJECT_ANNOTATION.format(
+                                location=f"argument '{arg.arg}'",
+                            ),
+                        ),
+                    )
+            elif isinstance(node, ast.AnnAssign):
+                if not cls._annotation_names(node.annotation, frozenset({"object"})):
+                    continue
+                violations.append(
+                    u.Tests.create_violation(
+                        file_path,
+                        node.lineno,
+                        "TYPE-006",
+                        lines,
+                        c.Tests.VALIDATOR_MSG_TYPE_OBJECT_ANNOTATION.format(
+                            location="variable annotation",
+                        ),
+                    ),
+                )
+        return violations
+
+    @classmethod
+    def _check_bool_returning_is_helpers(
+        cls,
+        file_path: Path,
+        tree: ast.AST,
+        lines: t.StrSequence,
+        approved: Mapping[str, t.StrSequence],
+    ) -> Sequence[m.Tests.Violation]:
+        """Detect `is_*` helpers still returning bool instead of TypeIs or a renamed predicate."""
+        if u.Tests.approved("TYPE-007", file_path, approved):
+            return []
+        violations: MutableSequence[m.Tests.Violation] = []
+        for node in ast.walk(tree):
+            if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            if not node.name.startswith("is_") or node.returns is None:
+                continue
+            if not cls._annotation_names(node.returns, frozenset({"bool"})):
+                continue
+            violations.append(
+                u.Tests.create_violation(
+                    file_path,
+                    node.lineno,
+                    "TYPE-007",
+                    lines,
+                    c.Tests.VALIDATOR_MSG_TYPE_BOOL_IS_HELPER.format(name=node.name),
+                ),
+            )
+        return violations
+
     @classmethod
     def _check_any_types(
         cls,
@@ -152,6 +381,18 @@ class FlextValidatorTypes:
             return violations
         violations.extend(cls._check_any_types(file_path, tree, lines, approved))
         violations.extend(cls._check_cast_usage(file_path, tree, lines, approved))
+        violations.extend(
+            cls._check_legacy_typing_factories(file_path, tree, lines, approved),
+        )
+        violations.extend(
+            cls._check_legacy_typing_annotations(file_path, tree, lines, approved),
+        )
+        violations.extend(
+            cls._check_object_annotations(file_path, tree, lines, approved)
+        )
+        violations.extend(
+            cls._check_bool_returning_is_helpers(file_path, tree, lines, approved),
+        )
         return violations
 
     @classmethod

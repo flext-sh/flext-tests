@@ -142,7 +142,7 @@ class TestFlextTestsMatchers:
 
     def test_assert_settings_valid_passes(self) -> None:
         """Test tm.that() with keys parameter for settings validation."""
-        settings: Mapping[str, t.Container] = {
+        settings = {
             "service_type": "api",
             "environment": "test",
             "timeout": 30,
@@ -164,7 +164,7 @@ class TestFlextTestsMatchers:
 
     def test_assert_settings_valid_zero_timeout(self) -> None:
         """Test tm.that() with zero timeout."""
-        settings: Mapping[str, t.Container] = {
+        settings = {
             "service_type": "api",
             "environment": "test",
             "timeout": 0,
@@ -198,7 +198,7 @@ class TestFlextTestsMatchers:
 
     def test_that_with_eq_mapping_parameter(self) -> None:
         """Test tm.that() with structural mapping equality."""
-        payload: Mapping[str, t.Container] = {
+        payload = {
             "service": "api",
             "enabled": True,
             "retries": 2,
@@ -512,7 +512,7 @@ class TestFlextTestsMatchers:
                 self.attr2 = "value2"
 
         obj = TestClass()
-        tm.that(cast("t.Container", obj), attrs=["attr1", "attr2"])
+        tm.that(cast("t.JsonValue", obj), attrs=["attr1", "attr2"])
 
     def test_that_with_methods_parameter(self) -> None:
         """Test tm.that() with methods parameter."""
@@ -527,7 +527,7 @@ class TestFlextTestsMatchers:
                 raise NotImplementedError(msg)
 
         obj = TestClass()
-        tm.that(cast("t.Container", obj), methods=["method1", "method2"])
+        tm.that(cast("t.JsonValue", obj), methods=["method1", "method2"])
 
     def test_that_with_attr_eq_tuple_parameter(self) -> None:
         """Test tm.that() with attr_eq tuple parameter."""
@@ -537,7 +537,7 @@ class TestFlextTestsMatchers:
                 self.attr = "value"
 
         obj = TestClass()
-        tm.that(cast("t.Container", obj), attr_eq=("attr", "value"))
+        tm.that(cast("t.JsonValue", obj), attr_eq=("attr", "value"))
 
     def test_that_with_attr_eq_mapping_parameter(self) -> None:
         """Test tm.that() with attr_eq mapping parameter."""
@@ -549,7 +549,7 @@ class TestFlextTestsMatchers:
 
         obj = TestClass()
         tm.that(
-            cast("t.Container", obj),
+            cast("t.JsonValue", obj),
             attr_eq={"attr1": "value1", "attr2": "value2"},
         )
 
@@ -583,7 +583,7 @@ class TestFlextTestsMatchers:
         tm.that(["a", 1, "c"], any=int)
 
     def test_check_returns_chain(self) -> None:
-        """Test tm.check() returns Chain t.Container."""
+        """Test tm.check() returns Chain t.JsonValue."""
         result = r[int].ok(42)
         chain = tm.check(result)
         tm.that(chain, none=False)
@@ -680,7 +680,7 @@ class TestFlextTestsMatchers:
 
         user = User()
         tm.that(
-            cast("t.Container", user),
+            cast("t.JsonValue", user),
             attrs_match={
                 "profile.name": {"eq": "Ada"},
                 "profile.level": {"gte": 1, "lte": 10},

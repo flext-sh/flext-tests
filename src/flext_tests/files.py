@@ -786,7 +786,7 @@ class FlextTestsFiles(s):
                 else str(actual_content).encode(params.enc)
             )
         elif actual_fmt in {c.Tests.Format.JSON, c.Tests.Format.YAML}:
-            raw_payload: Mapping[str, t.JsonValue] = (
+            raw_payload: t.JsonMapping = (
                 {
                     str(k): FlextTestsPayloadUtilities.to_normalized_value(v)
                     for k, v in actual_content.items()
@@ -833,13 +833,13 @@ class FlextTestsFiles(s):
         return file_path
 
     @override
-    def execute(self) -> p.Result[t.Container]:
+    def execute(self) -> p.Result[t.JsonValue]:
         """Execute service - returns success for file manager.
 
         FlextTestsFiles is a utility service that doesn't have a specific
         execution result. Returns success by default.
         """
-        return r[t.Container].ok("")
+        return r[t.JsonValue].ok("")
 
     def info(
         self,

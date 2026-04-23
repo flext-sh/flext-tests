@@ -59,6 +59,22 @@ class FlextTestsValidatorConstantsMixin:
         "wildcard type annotation",
     )
     VALIDATOR_RULE_TYPE_003: Final[tuple[str, str]] = ("MEDIUM", "Unapproved  usage")
+    VALIDATOR_RULE_TYPE_004: Final[tuple[str, str]] = (
+        "CRITICAL",
+        "legacy typing factory or generic syntax",
+    )
+    VALIDATOR_RULE_TYPE_005: Final[tuple[str, str]] = (
+        "CRITICAL",
+        "legacy typing annotation form",
+    )
+    VALIDATOR_RULE_TYPE_006: Final[tuple[str, str]] = (
+        "CRITICAL",
+        "forbidden object annotation",
+    )
+    VALIDATOR_RULE_TYPE_007: Final[tuple[str, str]] = (
+        "HIGH",
+        "bool-returning is_* helper",
+    )
     VALIDATOR_RULE_TEST_001: Final[tuple[str, str]] = (
         "HIGH",
         "monkeypatch usage detected",
@@ -167,6 +183,18 @@ class FlextTestsValidatorConstantsMixin:
     )
     VALIDATOR_MSG_TYPE_ANY_ARG: Final[str] = "wildcard type in argument '{arg}'"
     VALIDATOR_MSG_TYPE_ANY_RETURN: Final[str] = "wildcard type in return type"
+    VALIDATOR_MSG_TYPE_LEGACY_FACTORY: Final[str] = (
+        "legacy typing factory or generic syntax '{name}'"
+    )
+    VALIDATOR_MSG_TYPE_LEGACY_ANNOTATION: Final[str] = (
+        "legacy typing annotation '{name}'"
+    )
+    VALIDATOR_MSG_TYPE_OBJECT_ANNOTATION: Final[str] = (
+        "forbidden object annotation in {location}"
+    )
+    VALIDATOR_MSG_TYPE_BOOL_IS_HELPER: Final[str] = (
+        "bool-returning is_* helper '{name}'"
+    )
     VALIDATOR_MSG_BYPASS_EXCEPTION: Final[str] = "Exception swallowing: {pattern}"
     VALIDATOR_MSG_BYPASS_BARE_EXCEPT: Final[str] = "bare except"
     VALIDATOR_MSG_BYPASS_ONLY_PASS: Final[str] = "except with only pass"
@@ -222,6 +250,23 @@ class FlextTestsValidatorConstantsMixin:
         "service\\.py$",
         "container\\.py$",
     )
+    VALIDATOR_LEGACY_FACTORY_NAMES: Final[frozenset[str]] = frozenset({
+        "ParamSpec",
+        "TypeAlias",
+        "TypeVar",
+    })
+    VALIDATOR_LEGACY_BASE_NAMES: Final[frozenset[str]] = frozenset({"Generic"})
+    VALIDATOR_LEGACY_ANNOTATION_NAMES: Final[frozenset[str]] = frozenset({
+        "Dict",
+        "FrozenSet",
+        "List",
+        "Optional",
+        "Set",
+        "Tuple",
+        "TypeAliasType",
+        "TypeGuard",
+        "Union",
+    })
     VALIDATOR_APPROVED_PRAGMA_PATTERNS: Final[tuple[str, ...]] = ("__init__\\.py$",)
     VALIDATOR_APPROVED_RUFF_IGNORES: Final[frozenset[str]] = frozenset({
         "BLE001",

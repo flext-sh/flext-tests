@@ -13,7 +13,7 @@ from collections.abc import (
 )
 from typing import TypeAliasType
 
-from flext_core import FlextTypes
+from flext_core import FlextTypes, m
 
 from flext_tests import FlextTestsBaseTypesMixin
 
@@ -116,6 +116,6 @@ class FlextTestsMatchersTypesMixin:
         | Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
     )
     type ErrorCodeSpec = str | FlextTypes.StrSequence
-    type ErrorDataSpec = FlextTypes.ConfigMap
+    type ErrorDataSpec = m.ConfigMap
     type CleanupSpec = Sequence[Callable[[], None]]
     type EnvironmentSpec = FlextTypes.StrMapping

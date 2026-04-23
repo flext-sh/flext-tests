@@ -139,7 +139,7 @@ class FlextTestsPayloadUtilities:
         *,
         path_sep: str = ".",
     ) -> m.Tests.DeepMatchResult:
-        """Match t.Container against deep specification.
+        """Match t.JsonValue against deep specification.
 
         Uses u.extract() for path extraction.
         Supports unlimited nesting depth via dot notation paths.

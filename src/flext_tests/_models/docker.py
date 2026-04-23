@@ -34,7 +34,7 @@ class FlextTestsDockerModelsMixin:
         ] = ""
 
         @override
-        def model_post_init(self, __context: t.Container | None, /) -> None:
+        def model_post_init(self, __context: t.JsonValue | None, /) -> None:
             """Validate container info after initialization."""
             super().model_post_init(__context)
             if not self.name:
@@ -61,7 +61,7 @@ class FlextTestsDockerModelsMixin:
         ]
 
         @override
-        def model_post_init(self, __context: t.Container | None, /) -> None:
+        def model_post_init(self, __context: t.JsonValue | None, /) -> None:
             """Validate container settings after initialization."""
             super().model_post_init(__context)
             if not self.compose_file.exists():

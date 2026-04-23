@@ -116,8 +116,8 @@ class FlextTestsBaseTypesMixin:
     PRIMITIVES_MAPPING_ADAPTER: FlextModelsPydantic.TypeAdapter[
         Mapping[str, t.Primitives]
     ] = TypeAdapter(Mapping[str, t.Primitives])
-    NORMALIZED_VALUE_ADAPTER: FlextModelsPydantic.TypeAdapter[t.Container] = (
-        TypeAdapter(t.Container)
+    NORMALIZED_VALUE_ADAPTER: FlextModelsPydantic.TypeAdapter[t.JsonValue] = (
+        TypeAdapter(t.JsonValue)
     )
     DICT_ADAPTER: FlextModelsPydantic.TypeAdapter[FlextModelsContainers.Dict] = (
         TypeAdapter(FlextModelsContainers.Dict)
@@ -125,12 +125,12 @@ class FlextTestsBaseTypesMixin:
     SCALAR_MAPPING_ADAPTER: FlextModelsPydantic.TypeAdapter[t.ScalarMapping] = (
         TypeAdapter(t.ScalarMapping)
     )
-    CONTAINER_MAPPING_ADAPTER: FlextModelsPydantic.TypeAdapter[
-        Mapping[str, t.Container]
-    ] = TypeAdapter(Mapping[str, t.Container])
+    CONTAINER_MAPPING_ADAPTER: FlextModelsPydantic.TypeAdapter[t.JsonMapping] = (
+        TypeAdapter(t.JsonMapping)
+    )
     CONTAINER_MAPPING_SEQUENCE_ADAPTER: FlextModelsPydantic.TypeAdapter[
-        Sequence[Mapping[str, t.Container]]
-    ] = TypeAdapter(Sequence[Mapping[str, t.Container]])
+        Sequence[t.JsonMapping]
+    ] = TypeAdapter(Sequence[t.JsonMapping])
     STR_MAPPING_ADAPTER: FlextModelsPydantic.TypeAdapter[t.StrMapping] = TypeAdapter(
         t.StrMapping
     )

@@ -16,12 +16,9 @@ from collections.abc import (
     Callable,
     Iterator,
 )
-from typing import TypeVar
 
 import pytest
 from flext_core import FlextContainer, FlextSettings
-
-T = TypeVar("T", bound=FlextSettings)
 
 
 @pytest.fixture(autouse=True)
@@ -62,7 +59,10 @@ def settings_factory() -> Callable[..., FlextSettings]:
     a new instance, ensuring test isolation.
     """
 
-    def _create(settings_cls: type[T], **overrides: str | float | bool | None) -> T:
+    def _create[TSettings: FlextSettings](
+        settings_cls: type[TSettings],
+        **overrides: str | float | bool | None,
+    ) -> TSettings:
         settings_cls.reset_for_testing()
         return settings_cls(**{k: v for k, v in overrides.items() if v is not None})
 

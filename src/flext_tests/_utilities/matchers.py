@@ -372,7 +372,7 @@ class FlextTestsMatchersUtilities:
         value: t.Tests.TestobjectSerializable
         | t.Tests.MatcherKwargValue
         | t.RuntimeData
-        | t.Container,
+        | t.JsonValue,
     ) -> TypeIs[Sequence[t.Tests.TestobjectSerializable]]:
         return isinstance(value, Sequence) and (
             not isinstance(value, (str, bytes, bytearray))
@@ -381,8 +381,8 @@ class FlextTestsMatchersUtilities:
     @staticmethod
     def _check_has_lacks[TValue](
         value: TValue,
-        has: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.Container | None,
-        lacks: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.Container | None,
+        has: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.JsonValue | None,
+        lacks: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.JsonValue | None,
         msg: str | None,
         *,
         as_str: bool = False,
@@ -390,7 +390,7 @@ class FlextTestsMatchersUtilities:
         """Shared has/lacks containment check for ok(), fail(), and that()."""
         if has is not None:
             items: Sequence[
-                t.Tests.TestobjectSerializable | t.Tests.MatcherKwargValue | t.Container
+                t.Tests.TestobjectSerializable | t.Tests.MatcherKwargValue | t.JsonValue
             ] = (
                 list(has)
                 if FlextTestsMatchersUtilities._is_non_string_sequence(has)
@@ -576,7 +576,7 @@ class FlextTestsMatchersUtilities:
                     result: Railway result to chain assertions on.
 
                 Returns:
-                    Chain t.Container for fluent assertion API.
+                    Chain t.JsonValue for fluent assertion API.
 
                 """
                 return m.Tests.Chain(result=result)

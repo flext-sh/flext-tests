@@ -22,7 +22,7 @@ class FlextTestsTestContextUtilitiesMixin:
         attribute: str,
         value: t.Tests.TestobjectSerializable,
     ) -> Generator[None]:
-        """Temporarily set attribute on target t.Container.
+        """Temporarily set attribute on target t.JsonValue.
 
         Args:
             target: Object to modify
