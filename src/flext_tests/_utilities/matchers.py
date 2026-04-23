@@ -239,7 +239,7 @@ class FlextTestsMatchersUtilities:
         value: TValue, attr_path: str
     ) -> t.Tests.TestobjectSerializable:
         """Extract one dotted attribute path from a runtime object."""
-        current: TValue | t.Tests.TestobjectSerializable = value
+        current: object | t.Tests.TestobjectSerializable = value
         for segment in attr_path.split("."):
             if isinstance(current, Mapping) and segment in current:
                 current = current[segment]
@@ -344,8 +344,8 @@ class FlextTestsMatchersUtilities:
             )
 
     @staticmethod
-    def _apply_attribute_rules[TValue](
-        subject: TValue,
+    def _apply_attribute_rules(
+        subject: object,
         rules: t.Tests.AttributeMatchSpec,
         *,
         inherited_msg: str | None = None,
