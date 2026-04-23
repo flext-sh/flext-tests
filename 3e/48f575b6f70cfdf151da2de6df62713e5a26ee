@@ -1,0 +1,14 @@
+src/flext_tests/_typings/base.py
+  h_9db9d35f50cf33 41,58,86,88,90,92,94,96,98,100-101,103,105,107,109,111,113,115-117,119-120,122-123,125-126,128,130-131,134,136-138,140,142
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "3e48f575b6f70cfdf151da2de6df62713e5a26ee",
+  "prompts": {},
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
