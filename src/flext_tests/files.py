@@ -210,7 +210,7 @@ class FlextTestsFiles(s):
                     validated_kwargs = m.Tests.CreateKwargsParams(
                         directory=None,
                         fmt=c.Tests.Format.AUTO,
-                        enc="utf-8",
+                        enc=c.DEFAULT_ENCODING,
                         indent=2,
                         delim=",",
                         headers=None,

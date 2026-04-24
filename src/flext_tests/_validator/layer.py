@@ -54,7 +54,7 @@ class FlextValidatorLayer:
         if current_layer is None:
             return violations
         try:
-            content = file_path.read_text(encoding="utf-8")
+            content = file_path.read_text(encoding=c.DEFAULT_ENCODING)
             tree = ast.parse(content, filename=str(file_path))
         except (SyntaxError, UnicodeDecodeError, OSError):
             return violations

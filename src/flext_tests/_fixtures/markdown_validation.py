@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import override
 
 import pytest
+from flext_core import c
 
 from flext_tests import FlextValidatorMarkdown
 
@@ -107,7 +108,7 @@ def pytest_collect_file(
     if not parent.config.getoption("--markdown-docs", default=False):
         return None
     if file_path.suffix == ".md" and file_path.stat().st_size > 0:
-        content = file_path.read_text(encoding="utf-8")
+        content = file_path.read_text(encoding=c.DEFAULT_ENCODING)
         if "```python" in content:
             return MarkdownCodeBlockCollector.from_parent(parent, path=file_path)
     return None

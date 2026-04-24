@@ -15,7 +15,7 @@ import pytest
 from flext_tests._fixtures import enforcement as dispatcher
 
 
-class TestWorkspaceDiscovery:
+class TestsFlextTestsEnforcementDispatcher:
     """``_discover_workspace_root`` walks up until the triple marker matches."""
 
     def test_detects_workspace_from_nested_path(self, tmp_path: Path) -> None:
@@ -44,10 +44,6 @@ class TestWorkspaceDiscovery:
         # no flext-tests/ directory
         assert dispatcher._discover_workspace_root(fake) is None
 
-
-class TestCsvSplit:
-    """``_split_csv`` normalizes user CLI input."""
-
     def test_empty_string_returns_empty_set(self) -> None:
         assert dispatcher._split_csv("") == frozenset()
 
@@ -57,10 +53,6 @@ class TestCsvSplit:
     def test_splits_and_strips(self) -> None:
         got = dispatcher._split_csv("ENFORCE-001, ENFORCE-002 ,,ENFORCE-003")
         assert got == frozenset({"ENFORCE-001", "ENFORCE-002", "ENFORCE-003"})
-
-
-class TestActiveRules:
-    """``_active_rules`` respects enabled/include/exclude filters."""
 
     def _cfg(
         self,
@@ -91,8 +83,6 @@ class TestActiveRules:
         assert "ENFORCE-034" not in {r.id for r in active}
         assert "ENFORCE-038" not in {r.id for r in active}
 
-
-class TestAutoActivation:
     """Auto-activation requires the pytest rootdir to BE the workspace root.
 
     Running pytest inside a sub-project must be a no-op even though
@@ -122,10 +112,6 @@ class TestAutoActivation:
         workspace = self._make_workspace(tmp_path)
         discovered = dispatcher._discover_workspace_root(workspace)
         assert discovered == workspace
-
-
-class TestPublicHookSurface:
-    """The module exposes the pytest plugin protocol expected by pytest11."""
 
     @pytest.mark.parametrize(
         "hook_name",

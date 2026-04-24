@@ -21,7 +21,7 @@ from flext_tests import tf, tm
 from tests import c, m, r, t, u
 
 
-class TestFileInfo:
+class TestsFlextTestsFiles:
     """Test suite for tf.FileInfo model."""
 
     def test_file_info_exists_false(self) -> None:
@@ -50,10 +50,6 @@ class TestFileInfo:
         tm.that(info.encoding, eq="utf-8")
         tm.that(info.is_empty is False, eq=True)
         tm.that(info.first_line, eq="first line")
-
-
-class TestFlextTestsFiles:
-    """Test suite for tf class."""
 
     def test_init_without_base_dir(self) -> None:
         """Test initialization without base directory."""
@@ -335,10 +331,6 @@ class TestFlextTestsFiles:
         manager.cleanup()
         manager.cleanup()
         tm.that(not manager.created_files, eq=True)
-
-
-class TestFlextTestsFilesNewApi:
-    """Test suite for new tf API methods (create, read, compare, info, files)."""
 
     def test_create_text_auto_detect(self, tmp_path: Path) -> None:
         """Test create() auto-detects text from str content."""
@@ -717,10 +709,6 @@ class TestFlextTestsFilesNewApi:
         with tf.files({"test": "content"}, directory=tmp_path) as paths:
             tm.that(paths["test"].parent, eq=tmp_path)
 
-
-class TestShortAlias:
-    """Test suite for tf short alias."""
-
     def test_tf_alias_usage(self, tmp_path: Path) -> None:
         """Test tf alias can be used to create files."""
         with tf(base_dir=tmp_path) as files:
@@ -731,10 +719,6 @@ class TestShortAlias:
         """Test tf.files() context manager works."""
         with tf.files({"test": "content"}) as paths:
             tm.that(paths["test"].exists(), eq=True)
-
-
-class TestFileInfoFromModels:
-    """Test suite for tf.FileInfo from m.Files namespace."""
 
     def test_fileinfo_import_from_models(self) -> None:
         """Test tf.FileInfo can be imported from models."""
@@ -776,10 +760,6 @@ class TestFileInfoFromModels:
         tm.that(info.lines, eq=50)
         tm.that(info.fmt, eq="text")
         tm.that(info.sha256, none=False)
-
-
-class TestInfoWithContentMeta:
-    """Test suite for info() with ContentMeta integration."""
 
     def test_info_parse_content_json_dict(self, tmp_path: Path) -> None:
         """Test info() with parse_content=True for JSON dict."""
@@ -872,10 +852,6 @@ class TestInfoWithContentMeta:
         assert info.content_meta is not None
         tm.that(info.content_meta.model_valid is False, eq=True)
         tm.that(info.content_meta.model_name, eq="StrictModel")
-
-
-class TestAssertExists:
-    """Test suite for tf.assert_exists() static method."""
 
     def test_assert_exists_file_success(self, tmp_path: Path) -> None:
         """Test assert_exists() succeeds for existing file."""
@@ -986,10 +962,6 @@ class TestAssertExists:
         _ = (subdir / "file.txt").write_text("content")
         _ = tf.assert_exists(subdir, not_empty=True)
 
-
-class TestBatchOperations:
-    """Test suite for tf().batch_files() method."""
-
     def test_batch_create_multiple_files(self, tmp_path: Path) -> None:
         """Test batch create for multiple files."""
         manager = tf(base_dir=tmp_path)
@@ -1039,10 +1011,6 @@ class TestBatchOperations:
         tm.that(batch_result.succeeded, is_=int)
         tm.that(batch_result.failed, is_=int)
         tm.that(batch_result.total, is_=int)
-
-
-class TestCreateInStatic:
-    """Test suite for tf.create_in() static method."""
 
     def test_create_in_text_content(self, tmp_path: Path) -> None:
         """Test create_in() for text content."""

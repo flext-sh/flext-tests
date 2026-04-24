@@ -15,7 +15,7 @@ from flext_tests import tm
 from tests import m, p, r, u
 
 
-class TestFlextTestsUtilitiesResult:
+class TestsFlextTestsUtilitiesUnit:
     """Test suite for u.Tests.Result class."""
 
     def test_assert_success_passes(self) -> None:
@@ -76,10 +76,6 @@ class TestFlextTestsUtilitiesResult:
         with pytest.raises(AssertionError):
             u.Tests.assert_failure_with_error(result, "expected")
 
-
-class TestFlextTestsUtilitiesTestContext:
-    """Test suite for u.Tests.TestContext class."""
-
     def test_temporary_attribute_change(self) -> None:
         """Test temporary_attribute changes attribute temporarily."""
 
@@ -116,10 +112,6 @@ class TestFlextTestsUtilitiesTestContext:
                 raise RuntimeError(msg)
         tm.that(obj.attribute, eq="original")
 
-
-class TestFlextTestsUtilitiesResultCompat:
-    """Test suite for Result compatibility methods."""
-
     def test_assert_result_success_passes(self) -> None:
         """Test assert_result_success with successful result."""
         result = r[str].ok("success")
@@ -141,10 +133,6 @@ class TestFlextTestsUtilitiesResultCompat:
         result = r[str].ok("success")
         with pytest.raises(AssertionError, match="Expected failure but got success"):
             _ = u.Tests.assert_failure(result)
-
-
-class TestFlextTestsUtilitiesParser:
-    """Test suite for parser helper assertions via public u.Tests API."""
 
     def test_execute_and_assert_parser_result_success(self) -> None:
         """Helper should pass when parser operation returns expected success value."""

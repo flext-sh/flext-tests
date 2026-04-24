@@ -21,7 +21,7 @@ from flext_tests import tk, tm
 from tests import c, u
 
 
-class TestContainerStatus:
+class TestsFlextTestsDocker:
     """Test suite for c.Tests.ContainerStatus enum."""
 
     def test_container_status_values(self) -> None:
@@ -30,10 +30,6 @@ class TestContainerStatus:
         tm.that(c.Tests.ContainerStatus.STOPPED.value, eq="stopped")
         tm.that(c.Tests.ContainerStatus.NOT_FOUND.value, eq="not_found")
         tm.that(c.Tests.ContainerStatus.ERROR.value, eq="error")
-
-
-class TestContainerInfo:
-    """Test suite for tk.ContainerInfo model."""
 
     def test_container_info_creation(self) -> None:
         """Test tk.ContainerInfo creation with required fields."""
@@ -59,10 +55,6 @@ class TestContainerInfo:
             container_id="abc123",
         )
         tm.that(info.container_id, eq="abc123")
-
-
-class TestFlextTestsDocker:
-    """Test suite for tk class."""
 
     @pytest.fixture
     def docker_manager(self, tmp_path: Path) -> tk:
@@ -227,10 +219,6 @@ class TestFlextTestsDocker:
         _ = u.Tests.assert_success(result)
         tm.that(result.value, empty=True)
 
-
-class TestFlextTestsDockerWorkerId:
-    """Test worker_id functionality."""
-
     def test_default_worker_id(self) -> None:
         """Test default worker_id is 'master'."""
         manager = tk()
@@ -254,10 +242,6 @@ class TestFlextTestsDockerWorkerId:
         tm.that(manager_b.container_dirty("container-x"), eq=False)
         manager_a_reload = tk(worker_id="worker_a")
         tm.that(manager_a_reload.container_dirty("container-x"), eq=True)
-
-
-class TestFlextTestsDockerWorkspaceRoot:
-    """Test workspace_root functionality."""
 
     def test_default_workspace_root(self) -> None:
         """Test default workspace_root is cwd."""

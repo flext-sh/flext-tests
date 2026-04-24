@@ -370,7 +370,7 @@ class FlextTestsDocker:
         """Load dirty container state from persistent storage."""
         try:
             if self._state_file.exists():
-                state_text = self._state_file.read_text(encoding="utf-8")
+                state_text = self._state_file.read_text(encoding=c.DEFAULT_ENCODING)
                 state_raw: Mapping[str, t.StrSequence] = (
                     t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.validate_json(state_text)
                 )

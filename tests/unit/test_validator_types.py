@@ -12,7 +12,7 @@ from flext_tests import tm, tv
 from tests import u
 
 
-class TestFlextTestsValidatorTypes:
+class TestsFlextTestsValidatorTypes:
     """Verify strict typing validator rules through the public validator facade."""
 
     @staticmethod

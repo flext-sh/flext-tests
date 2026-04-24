@@ -218,7 +218,7 @@ class FlextValidatorSettings:
         """Scan a single pyproject.toml for settings violations."""
         violations: MutableSequence[m.Tests.Violation] = []
         try:
-            content = file_path.read_text(encoding="utf-8")
+            content = file_path.read_text(encoding=c.DEFAULT_ENCODING)
             data: _TomlDict = tomllib.loads(content)
         except (OSError, tomllib.TOMLDecodeError):
             return violations
