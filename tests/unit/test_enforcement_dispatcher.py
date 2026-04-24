@@ -18,9 +18,7 @@ from flext_tests._fixtures import enforcement as dispatcher
 class TestWorkspaceDiscovery:
     """``_discover_workspace_root`` walks up until the triple marker matches."""
 
-    def test_detects_workspace_from_nested_path(
-        self, tmp_path: Path
-    ) -> None:
+    def test_detects_workspace_from_nested_path(self, tmp_path: Path) -> None:
         workspace = tmp_path / "ws"
         workspace.mkdir()
         (workspace / "AGENTS.md").write_text("# stub")
@@ -80,15 +78,11 @@ class TestActiveRules:
         }
 
     def test_include_narrows_to_listed_ids(self) -> None:
-        active = dispatcher._active_rules(
-            self._cfg(include=frozenset({"ENFORCE-001"}))
-        )
+        active = dispatcher._active_rules(self._cfg(include=frozenset({"ENFORCE-001"})))
         assert {r.id for r in active} == {"ENFORCE-001"}
 
     def test_exclude_drops_listed_ids(self) -> None:
-        active = dispatcher._active_rules(
-            self._cfg(exclude=frozenset({"ENFORCE-001"}))
-        )
+        active = dispatcher._active_rules(self._cfg(exclude=frozenset({"ENFORCE-001"})))
         assert "ENFORCE-001" not in {r.id for r in active}
 
     def test_disabled_rules_always_skipped(self) -> None:

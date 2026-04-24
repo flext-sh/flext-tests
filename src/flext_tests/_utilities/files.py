@@ -37,7 +37,9 @@ class FlextTestsFilesUtilitiesMixin:
         if isinstance(content, (m.ConfigMap, m.Dict, Mapping)):
             ext = Path(name).suffix.lower()
             return str(
-                c.Tests.Format.YAML if ext in {".yaml", ".yml"} else c.Tests.Format.JSON,
+                c.Tests.Format.YAML
+                if ext in {".yaml", ".yml"}
+                else c.Tests.Format.JSON,
             )
         if isinstance(content, list):
             return str(c.Tests.Format.CSV)

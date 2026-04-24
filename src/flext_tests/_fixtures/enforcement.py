@@ -201,7 +201,11 @@ def pytest_configure(config: pytest.Config) -> None:
         category = getattr(rule.source, "category", None)
         if not category:
             continue
-        action = "error" if cfg["strict"] and rule.promote_to_error_when_strict else "default"
+        action = (
+            "error"
+            if cfg["strict"] and rule.promote_to_error_when_strict
+            else "default"
+        )
         config.addinivalue_line("filterwarnings", f"{action}::{category}")
 
 
@@ -229,9 +233,7 @@ class EnforcementItem(pytest.Item):
     def runtest(self) -> None:
         if not self._violations:
             return
-        detail_lines = [
-            f"  - {self._format_violation(v)}" for v in self._violations
-        ]
+        detail_lines = [f"  - {self._format_violation(v)}" for v in self._violations]
         header = (
             f"{self._rule.id} ({self._rule.severity}) in {self._project}: "
             f"{len(self._violations)} violation(s)"
@@ -246,9 +248,7 @@ class EnforcementItem(pytest.Item):
         file_path = getattr(violation, "file_path", None) or getattr(
             violation, "file", ""
         )
-        line = getattr(violation, "line_number", None) or getattr(
-            violation, "line", ""
-        )
+        line = getattr(violation, "line_number", None) or getattr(violation, "line", "")
         description = (
             getattr(violation, "description", None)
             or getattr(violation, "detail", None)
@@ -532,17 +532,13 @@ def pytest_terminal_summary(
         kinds[rule.source.kind] = kinds.get(rule.source.kind, 0) + 1
     counter = cast("dict[str, int]", cfg["warning_counter"])
     warning_total = sum(counter.values())
-    terminalreporter.write_sep(
-        "-", "flext-enforce", yellow=True
-    )
+    terminalreporter.write_sep("-", "flext-enforce", yellow=True)
     terminalreporter.write_line(
         f"catalog active: {len(active)} rules across {len(kinds)} source kinds"
     )
     for kind in sorted(kinds):
         terminalreporter.write_line(f"  {kind}: {kinds[kind]}")
-    terminalreporter.write_line(
-        f"runtime warnings captured: {warning_total}"
-    )
+    terminalreporter.write_line(f"runtime warnings captured: {warning_total}")
 
 
 __all__: list[str] = [
