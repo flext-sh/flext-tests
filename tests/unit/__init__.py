@@ -7,40 +7,13 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 _LAZY_IMPORTS = build_lazy_import_map(
     {
-        ".test_docker": (
-            "TestContainerInfo",
-            "TestContainerStatus",
-            "TestFlextTestsDocker",
-            "TestFlextTestsDockerWorkerId",
-            "TestFlextTestsDockerWorkspaceRoot",
-        ),
+        ".test_docker": ("TestsFlextTestsDocker",),
         ".test_domains": ("TestFlextTestsDomains",),
-        ".test_enforcement_dispatcher": (
-            "TestActiveRules",
-            "TestAutoActivation",
-            "TestCsvSplit",
-            "TestPublicHookSurface",
-            "TestWorkspaceDiscovery",
-        ),
-        ".test_files": (
-            "TestAssertExists",
-            "TestBatchOperations",
-            "TestCreateInStatic",
-            "TestFileInfo",
-            "TestFileInfoFromModels",
-            "TestFlextTestsFiles",
-            "TestFlextTestsFilesNewApi",
-            "TestInfoWithContentMeta",
-            "TestShortAlias",
-        ),
+        ".test_enforcement_dispatcher": ("TestsFlextTestsEnforcementDispatcher",),
+        ".test_files": ("TestsFlextTestsFiles",),
         ".test_matchers": ("TestFlextTestsMatchers",),
-        ".test_utilities": (
-            "TestFlextTestsUtilitiesParser",
-            "TestFlextTestsUtilitiesResult",
-            "TestFlextTestsUtilitiesResultCompat",
-            "TestFlextTestsUtilitiesTestContext",
-        ),
-        ".test_validator_types": ("TestFlextTestsValidatorTypes",),
+        ".test_utilities": ("TestsFlextTestsUtilitiesUnit",),
+        ".test_validator_types": ("TestsFlextTestsValidatorTypes",),
     },
 )
 
