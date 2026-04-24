@@ -58,18 +58,22 @@ class FlextTestsValidatorModelsMixin:
 
         def format(self) -> str:
             """Format violation as string."""
-            return c.Tests.VALIDATOR_MSG_VIOLATION_WITH_SNIPPET.format(
-                rule_id=self.rule_id,
-                description=self.description,
-                snippet=self.code_snippet or "(no snippet)",
+            return str(
+                c.Tests.VALIDATOR_MSG_VIOLATION_WITH_SNIPPET.format(
+                    rule_id=self.rule_id,
+                    description=self.description,
+                    snippet=self.code_snippet or "(no snippet)",
+                )
             )
 
         def format_short(self) -> str:
             """Format violation as short string."""
-            return c.Tests.VALIDATOR_MSG_VIOLATION.format(
-                rule_id=self.rule_id,
-                file=self.file_path.name,
-                line=self.line_number,
+            return str(
+                c.Tests.VALIDATOR_MSG_VIOLATION.format(
+                    rule_id=self.rule_id,
+                    file=self.file_path.name,
+                    line=self.line_number,
+                )
             )
 
     class ScanResult(FlextModels.Value):

@@ -31,26 +31,26 @@ class FlextTestsFilesUtilitiesMixin:
     ) -> str:
         """Detect format by content shape + name; honors explicit ``fmt``."""
         if fmt != c.Tests.Format.AUTO:
-            return fmt
+            return str(fmt)
         if isinstance(content, bytes):
-            return c.Tests.Format.BIN
+            return str(c.Tests.Format.BIN)
         if isinstance(content, (m.ConfigMap, m.Dict, Mapping)):
             ext = Path(name).suffix.lower()
-            return (
-                c.Tests.Format.YAML if ext in {".yaml", ".yml"} else c.Tests.Format.JSON
+            return str(
+                c.Tests.Format.YAML if ext in {".yaml", ".yml"} else c.Tests.Format.JSON,
             )
         if isinstance(content, list):
-            return c.Tests.Format.CSV
-        return c.Tests.format_for_extension(Path(name).suffix)
+            return str(c.Tests.Format.CSV)
+        return str(c.Tests.format_for_extension(Path(name).suffix))
 
     @staticmethod
     def detect_format_from_path(path: Path, fmt: str) -> str:
         """Detect format from path extension; honors explicit ``fmt``."""
         if fmt != c.Tests.Format.AUTO:
-            return fmt
-        return c.Tests.format_for_extension(path.suffix)
+            return str(fmt)
+        return str(c.Tests.format_for_extension(path.suffix))
 
     @staticmethod
     def format_size(size: int) -> str:
         """Human-readable size via c.Tests.format_size."""
-        return c.Tests.format_size(size)
+        return str(c.Tests.format_size(size))

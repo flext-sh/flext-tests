@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from flext_core import FlextProtocolsResult
+
 from flext_tests import p
 
 
@@ -23,7 +25,7 @@ class FlextTestsResultUtilitiesMixin:
         if expected_error and expected_error not in error:
             msg = f"Expected error containing '{expected_error}' but got: {error}"
             raise AssertionError(msg)
-        return error
+        return str(error)
 
     @staticmethod
     def assert_failure_with_error[T](
@@ -48,7 +50,7 @@ class FlextTestsResultUtilitiesMixin:
 
     @staticmethod
     def assert_success[TResult](
-        result: p.Result[TResult], error_msg: str | None = None
+        result: FlextProtocolsResult.Result[TResult], error_msg: str | None = None
     ) -> TResult:
         """Assert result is success and return unwrapped value."""
         if not result.success:

@@ -117,7 +117,8 @@ class FlextTestsDocker:
     @property
     def shared_containers(self) -> Mapping[str, t.HeaderMapping]:
         """Get shared container configurations."""
-        return c.Tests.SHARED_CONTAINERS
+        result: Mapping[str, t.HeaderMapping] = c.Tests.SHARED_CONTAINERS
+        return result
 
     @staticmethod
     def _extract_host_port(bindings: Sequence[t.StrMapping] | None) -> str:
@@ -134,9 +135,12 @@ class FlextTestsDocker:
         bindings: t.Tests.TestobjectSerializable | None,
     ) -> Sequence[t.StrMapping]:
         try:
-            return t.Tests.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(bindings)
+            validated: Sequence[t.StrMapping] = (
+                t.Tests.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(bindings)
+            )
         except c.ValidationError:
             return []
+        return validated
 
     def cleanup_dirty_containers(self) -> p.Result[t.StrSequence]:
         """Clean up all dirty containers by recreating them with fresh volumes."""

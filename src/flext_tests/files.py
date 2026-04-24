@@ -822,14 +822,11 @@ class FlextTestsFiles(s):
             if isinstance(actual_content, Sequence) and not isinstance(
                 actual_content, (str, bytes)
             ):
-                if self._is_nested_rows(actual_content):
-                    csv_rows.extend(
-                        [str(cell) for cell in row]
-                        for row in actual_content
-                        if not isinstance(row, (str, bytes))
-                    )
-                else:
-                    csv_rows.extend([str(item)] for item in actual_content)
+                csv_rows.extend(
+                    [str(cell) for cell in row]
+                    for row in actual_content
+                    if isinstance(row, Sequence) and not isinstance(row, (str, bytes))
+                )
             else:
                 csv_rows.append([str(actual_content)])
             u.Cli.files_write_csv(file_path, csv_rows)

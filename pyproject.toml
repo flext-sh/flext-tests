@@ -56,6 +56,12 @@ name = "FLEXT Team"
 email = "team@flext.sh"
 name = "FLEXT Team"
 
+# [CUSTOM] pytest plugin entry points — discovered automatically when
+# `flext-tests` is importable. Keep outside the MANAGED block so `make mod`
+# does not regenerate it away.
+[project.entry-points.pytest11]
+flext_tests_enforcement = "flext_tests._fixtures.enforcement"
+
 # [MANAGED] consolidated development dependencies
 [project.optional-dependencies]
 dev = [

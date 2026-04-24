@@ -31,6 +31,11 @@ from flext_tests._fixtures.settings import (
     settings_factory,
 )
 
+# Enforcement dispatcher (flext_tests._fixtures.enforcement) is loaded via
+# the ``flext_tests_enforcement`` pytest11 entry point in pyproject.toml —
+# re-exporting its hooks here would double-register CLI options when both
+# paths are active.
+
 _ = (
     reset_settings,
     settings,

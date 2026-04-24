@@ -67,7 +67,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import TypeIs, overload
 
-from flext_core import u
+from flext_core import FlextProtocolsResult, u
 
 from flext_tests import (
     FlextTestsConfigHelpersUtilitiesMixin,
@@ -543,7 +543,7 @@ class FlextTestsMatchersUtilities:
 
             @staticmethod
             def assert_result_success[TResult](
-                result: p.Result[TResult],
+                result: FlextProtocolsResult.Result[TResult],
                 msg: str | None = None,
             ) -> TResult:
                 """Assert result is success and return unwrapped value.
@@ -740,19 +740,19 @@ class FlextTestsMatchersUtilities:
             @staticmethod
             @overload
             def ok[TResult](
-                result: p.Result[TResult],
+                result: FlextProtocolsResult.Result[TResult],
             ) -> TResult: ...
 
             @staticmethod
             @overload
             def ok[TResult](
-                result: p.Result[TResult],
+                result: FlextProtocolsResult.Result[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> TResult | t.Tests.TestobjectSerializable: ...
 
             @staticmethod
             def ok[TResult](
-                result: p.Result[TResult],
+                result: FlextProtocolsResult.Result[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> TResult | t.Tests.TestobjectSerializable:
                 """Enhanced assertion for r success with optional value validation.
