@@ -81,16 +81,6 @@ class FlextTestsMatchersTypesMixin:
     ]
     type PathSpec = str | FlextTypes.StrSequence
     type PredicateSpec = Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
-    type ValueSpec = (
-        Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
-        | FlextTestsBaseTypesMixin.Testobject
-    )
-    type AssertionSpec = (
-        Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
-        | type
-        | tuple[type, ...]
-    )
     type ContainmentSpec = (
         FlextTestsBaseTypesMixin.Testobject
         | Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]

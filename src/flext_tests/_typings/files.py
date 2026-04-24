@@ -11,7 +11,7 @@ from collections.abc import (
     Sequence,
 )
 
-from flext_core import FlextTypes, m, r
+from flext_core import FlextTypes, m
 
 from flext_tests import FlextTestsBaseTypesMixin
 
@@ -26,4 +26,3 @@ class FlextTestsFilesTypesMixin:
         Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable] | m.BaseModel
     )
     type FileContentPlain = ReadContent | FileContentStructured
-    type FileInput = FileContentPlain | r[FileContentPlain]
