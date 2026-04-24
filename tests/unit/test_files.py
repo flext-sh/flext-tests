@@ -997,7 +997,7 @@ class TestBatchOperations:
             {"file1.txt": "content1", "file2.txt": "content2", "file3.txt": "content3"},
             directory=tmp_path,
         )
-        batch_result = u.Tests.assert_success(result)
+        batch_result: m.Tests.BatchResult = u.Tests.assert_success(result)
         tm.that(batch_result.total, eq=3)
         assert batch_result.success_count == 3
         assert batch_result.failure_count == 0
@@ -1010,7 +1010,7 @@ class TestBatchOperations:
             {"settings1.json": {"key": "value1"}, "settings2.json": {"key": "value2"}},
             directory=tmp_path,
         )
-        batch_result = u.Tests.assert_success(result)
+        batch_result: m.Tests.BatchResult = u.Tests.assert_success(result)
         assert batch_result.success_count == 2
         settings1 = tmp_path / "settings1.json"
         tm.that(settings1.exists(), eq=True)
