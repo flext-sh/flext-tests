@@ -25,6 +25,13 @@ if _t.TYPE_CHECKING:
         TestFlextTestsDockerWorkspaceRoot,
     )
     from tests.unit.test_domains import TestFlextTestsDomains
+    from tests.unit.test_enforcement_dispatcher import (
+        TestActiveRules,
+        TestAutoActivation,
+        TestCsvSplit,
+        TestPublicHookSurface,
+        TestWorkspaceDiscovery,
+    )
     from tests.unit.test_files import (
         TestAssertExists,
         TestBatchOperations,
@@ -73,6 +80,13 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "TestFlextTestsDockerWorkspaceRoot",
             ),
             ".unit.test_domains": ("TestFlextTestsDomains",),
+            ".unit.test_enforcement_dispatcher": (
+                "TestActiveRules",
+                "TestAutoActivation",
+                "TestCsvSplit",
+                "TestPublicHookSurface",
+                "TestWorkspaceDiscovery",
+            ),
             ".unit.test_files": (
                 "TestAssertExists",
                 "TestBatchOperations",
@@ -127,11 +141,14 @@ _LAZY_IMPORTS = merge_lazy_imports(
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
 
 __all__: list[str] = [
+    "TestActiveRules",
     "TestAssertExists",
+    "TestAutoActivation",
     "TestBatchOperations",
     "TestContainerInfo",
     "TestContainerStatus",
     "TestCreateInStatic",
+    "TestCsvSplit",
     "TestFileInfo",
     "TestFileInfoFromModels",
     "TestFlextTestsDocker",
@@ -147,7 +164,9 @@ __all__: list[str] = [
     "TestFlextTestsUtilitiesTestContext",
     "TestFlextTestsValidatorTypes",
     "TestInfoWithContentMeta",
+    "TestPublicHookSurface",
     "TestShortAlias",
+    "TestWorkspaceDiscovery",
     "TestsFlextTestsConstants",
     "TestsFlextTestsModels",
     "TestsFlextTestsProtocols",

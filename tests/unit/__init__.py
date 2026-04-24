@@ -15,6 +15,13 @@ _LAZY_IMPORTS = build_lazy_import_map(
             "TestFlextTestsDockerWorkspaceRoot",
         ),
         ".test_domains": ("TestFlextTestsDomains",),
+        ".test_enforcement_dispatcher": (
+            "TestActiveRules",
+            "TestAutoActivation",
+            "TestCsvSplit",
+            "TestPublicHookSurface",
+            "TestWorkspaceDiscovery",
+        ),
         ".test_files": (
             "TestAssertExists",
             "TestBatchOperations",
