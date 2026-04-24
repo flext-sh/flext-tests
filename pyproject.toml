@@ -52,15 +52,12 @@ version = "0.12.0-dev"
 email = "team@flext.sh"
 name = "FLEXT Team"
 
+[project.entry-points.pytest11]
+flext_tests_enforcement = "flext_tests._fixtures.enforcement"
+
 [[project.maintainers]]
 email = "team@flext.sh"
 name = "FLEXT Team"
-
-# [CUSTOM] pytest plugin entry points — discovered automatically when
-# `flext-tests` is importable. Keep outside the MANAGED block so `make mod`
-# does not regenerate it away.
-[project.entry-points.pytest11]
-flext_tests_enforcement = "flext_tests._fixtures.enforcement"
 
 # [MANAGED] consolidated development dependencies
 [project.optional-dependencies]
@@ -229,6 +226,7 @@ project-excludes = [
   "**/*_pb2_grpc*.py",
   "**/.venv/**",
   "**/__pycache__",
+  "**/__pyrefly_virtual__/**",
   "**/node_modules",
   "**/typings/**",
   "**/vendor/**",
@@ -339,6 +337,7 @@ exclude = [
   "**/.venv",
   "**/.venv/**",
   "**/__pycache__",
+  "**/__pyrefly_virtual__/**",
   "**/dist-packages",
   "**/dist-packages/**",
   "**/node_modules",
@@ -423,6 +422,7 @@ python_files = [ "*_test.py", "*_tests.py", "test_*.py" ]
 # [MANAGED] ruff
 [tool.ruff]
 exclude = [
+  "**/__pyrefly_virtual__/**",
   ".git",
   ".mypy_cache",
   ".pytest_cache",
