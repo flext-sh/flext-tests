@@ -3,7 +3,6 @@
 Extracts Python code blocks from .md files and validates them against
 project linting rules (syntax, forbidden imports, missing annotations).
 
-Uses FlextInfraUtilitiesParsing from flext-infra for all parsing.
 All constants centralized in c.Tests.VALIDATOR_*.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
@@ -12,6 +11,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import ast
 from collections.abc import (
     Mapping,
     MutableSequence,
@@ -19,8 +19,6 @@ from collections.abc import (
 )
 from pathlib import Path
 from typing import TYPE_CHECKING
-
-from flext_infra import FlextInfraUtilitiesParsing
 
 from flext_tests import FlextTestsValidatorModels, c, p, t, u
 
@@ -32,7 +30,7 @@ class FlextValidatorMarkdown:
     """Markdown Python code block validator.
 
     Validates ```python blocks in .md files via c.Tests constants
-    and FlextInfraUtilitiesParsing for all code parsing.
+    and ``ast.parse`` for Python code parsing.
     """
 
     @classmethod
@@ -70,8 +68,9 @@ class FlextValidatorMarkdown:
             code = match.group(1)
             block_start = content[: match.start()].count("\n") + 1
 
-            tree = FlextInfraUtilitiesParsing.parse_source_ast(code)
-            if tree is None:
+            try:
+                ast.parse(code)
+            except SyntaxError:
                 violations.append(
                     u.Tests.create_violation(
                         file_path,
