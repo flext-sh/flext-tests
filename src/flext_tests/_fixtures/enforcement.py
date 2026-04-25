@@ -35,7 +35,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Sequence
 from importlib import import_module
 from pathlib import Path
-from typing import Final, cast, override
+from typing import Final, override
 
 import pytest
 from flext_core import FlextConstantsEnforcement, FlextModelsEnforcement
@@ -172,10 +172,16 @@ def _active_rules(
     cfg: dict[str, object],
 ) -> tuple[_me.EnforcementRuleSpec, ...]:
     catalog = FlextConstantsEnforcement.ENFORCEMENT_CATALOG
-    include = cfg["include"]
-    exclude = cfg["exclude"]
-    include = cast("frozenset[str]", include)
-    exclude = cast("frozenset[str]", exclude)
+    include_raw = cfg["include"]
+    exclude_raw = cfg["exclude"]
+    if not isinstance(include_raw, frozenset):
+        msg = f"cfg['include'] must be frozenset, got {type(include_raw).__name__}"
+        raise TypeError(msg)
+    if not isinstance(exclude_raw, frozenset):
+        msg = f"cfg['exclude'] must be frozenset, got {type(exclude_raw).__name__}"
+        raise TypeError(msg)
+    include: frozenset[str] = include_raw
+    exclude: frozenset[str] = exclude_raw
     rules: list[_me.EnforcementRuleSpec] = []
     for rule in catalog.rules:
         if not rule.enabled:
@@ -506,7 +512,11 @@ def pytest_warning_recorded(
     if category is None:
         return
     dotted = f"{category.__module__}.{category.__qualname__}"
-    counter = cast("dict[str, int]", cfg["warning_counter"])
+    counter_raw = cfg["warning_counter"]
+    if not isinstance(counter_raw, dict):
+        msg = f"cfg['warning_counter'] must be dict, got {type(counter_raw).__name__}"
+        raise TypeError(msg)
+    counter: dict[str, int] = counter_raw
     counter[dotted] = counter.get(dotted, 0) + 1
 
 
@@ -530,7 +540,11 @@ def pytest_terminal_summary(
     kinds: dict[str, int] = {}
     for rule in active:
         kinds[rule.source.kind] = kinds.get(rule.source.kind, 0) + 1
-    counter = cast("dict[str, int]", cfg["warning_counter"])
+    counter_raw = cfg["warning_counter"]
+    if not isinstance(counter_raw, dict):
+        msg = f"cfg['warning_counter'] must be dict, got {type(counter_raw).__name__}"
+        raise TypeError(msg)
+    counter: dict[str, int] = counter_raw
     warning_total = sum(counter.values())
     terminalreporter.write_sep("-", "flext-enforce", yellow=True)
     terminalreporter.write_line(
