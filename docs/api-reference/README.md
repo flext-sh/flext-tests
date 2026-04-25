@@ -19,7 +19,7 @@ This section is generated from public exports and real docstrings.
 
 ## Surface Summary
 
-- Primary facades: `FlextTestsDocker`, `FlextTestsProtocols`, `FlextValidatorMarkdown`, `FlextTestsFilesystemModelsMixin`, `FlextTestsFilesUtilitiesMixin`, `FlextTestsPayloadUtilities` (+45 more)
+- Primary facades: `FlextTestsBatchModelsMixin`, `FlextTestsContainerHelpersUtilitiesMixin`, `FlextTestsValidatorConstantsMixin`, `FlextValidatorLayer`, `FlextTestsFilesTypesMixin`, `FlextTestsValueFactoryProtocolsMixin` (+45 more)
 - Generated module pages: `11`
 
 - [Back to project docs](../index.md)
