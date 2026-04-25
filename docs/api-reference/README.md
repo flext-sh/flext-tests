@@ -19,7 +19,7 @@ This section is generated from public exports and real docstrings.
 
 ## Surface Summary
 
-- Primary facades: `FlextTestsConstants`, `tk`, `TestsFlextDomains`, `TestsFlextFiles`, `TestsFlextModels`, `TestsFlextProtocols` (+3 more)
-- Generated module pages: `10`
+- Primary facades: `FlextTestsDocker`, `FlextTestsProtocols`, `FlextValidatorMarkdown`, `FlextTestsFilesystemModelsMixin`, `FlextTestsFilesUtilitiesMixin`, `FlextTestsPayloadUtilities` (+45 more)
+- Generated module pages: `11`
 
 - [Back to project docs](../index.md)

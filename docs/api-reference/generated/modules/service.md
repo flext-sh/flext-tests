@@ -1,8 +1,8 @@
 <!-- AUTO-GENERATED — DO NOT EDIT MANUALLY -->
 
-# flext_tests.conftest_plugin
+# flext_tests.service
 
-::: flext_tests.conftest_plugin
+::: flext_tests.service
     options:
       show_root_heading: true
       show_root_full_path: false
