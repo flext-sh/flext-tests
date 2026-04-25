@@ -13,7 +13,7 @@ from flext_tests import td, tm
 from tests import u
 
 
-class TestFlextTestsDomains:
+class TestsFlextTestsDomains:
     """Test suite for td class."""
 
     def test_create_settings_default(self) -> None:

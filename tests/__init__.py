@@ -18,12 +18,12 @@ if _t.TYPE_CHECKING:
     from tests.protocols import TestsFlextTestsProtocols, p
     from tests.typings import TestsFlextTestsTypes, t
     from tests.unit.test_docker import TestsFlextTestsDocker
-    from tests.unit.test_domains import TestFlextTestsDomains
+    from tests.unit.test_domains import TestsFlextTestsDomains
     from tests.unit.test_enforcement_dispatcher import (
         TestsFlextTestsEnforcementDispatcher,
     )
     from tests.unit.test_files import TestsFlextTestsFiles
-    from tests.unit.test_matchers import TestFlextTestsMatchers
+    from tests.unit.test_matchers import TestsFlextTestsMatchers
     from tests.unit.test_utilities import TestsFlextTestsUtilitiesUnit
     from tests.unit.test_validator_types import TestsFlextTestsValidatorTypes
     from tests.utilities import TestsFlextTestsUtilities, u
@@ -48,12 +48,12 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "t",
             ),
             ".unit.test_docker": ("TestsFlextTestsDocker",),
-            ".unit.test_domains": ("TestFlextTestsDomains",),
+            ".unit.test_domains": ("TestsFlextTestsDomains",),
             ".unit.test_enforcement_dispatcher": (
                 "TestsFlextTestsEnforcementDispatcher",
             ),
             ".unit.test_files": ("TestsFlextTestsFiles",),
-            ".unit.test_matchers": ("TestFlextTestsMatchers",),
+            ".unit.test_matchers": ("TestsFlextTestsMatchers",),
             ".unit.test_utilities": ("TestsFlextTestsUtilitiesUnit",),
             ".unit.test_validator_types": ("TestsFlextTestsValidatorTypes",),
             ".utilities": (
@@ -101,12 +101,12 @@ _LAZY_IMPORTS = merge_lazy_imports(
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
 
 __all__: list[str] = [
-    "TestFlextTestsDomains",
-    "TestFlextTestsMatchers",
     "TestsFlextTestsConstants",
     "TestsFlextTestsDocker",
+    "TestsFlextTestsDomains",
     "TestsFlextTestsEnforcementDispatcher",
     "TestsFlextTestsFiles",
+    "TestsFlextTestsMatchers",
     "TestsFlextTestsModels",
     "TestsFlextTestsProtocols",
     "TestsFlextTestsTypes",

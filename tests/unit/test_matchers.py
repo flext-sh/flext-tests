@@ -42,7 +42,7 @@ def _greater_than_two(value: t.Tests.TestobjectSerializable) -> bool:
     return isinstance(value, int) and value > 2
 
 
-class TestFlextTestsMatchers:
+class TestsFlextTestsMatchers:
     """Test suite for tm class."""
 
     def test_assert_result_success_passes(self) -> None:

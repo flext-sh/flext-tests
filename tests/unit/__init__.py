@@ -8,10 +8,10 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 _LAZY_IMPORTS = build_lazy_import_map(
     {
         ".test_docker": ("TestsFlextTestsDocker",),
-        ".test_domains": ("TestFlextTestsDomains",),
+        ".test_domains": ("TestsFlextTestsDomains",),
         ".test_enforcement_dispatcher": ("TestsFlextTestsEnforcementDispatcher",),
         ".test_files": ("TestsFlextTestsFiles",),
-        ".test_matchers": ("TestFlextTestsMatchers",),
+        ".test_matchers": ("TestsFlextTestsMatchers",),
         ".test_utilities": ("TestsFlextTestsUtilitiesUnit",),
         ".test_validator_types": ("TestsFlextTestsValidatorTypes",),
     },
