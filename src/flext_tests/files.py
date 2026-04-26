@@ -76,11 +76,6 @@ class FlextTestsFiles(s):
             return r[TModelRead].fail(f"Failed to validate model: {ex}")
 
     @staticmethod
-    def _read_content_fail(error: str) -> p.Result[t.Tests.ReadContent]:
-        """Build one failure result for raw file content reads."""
-        return r[t.Tests.ReadContent].fail(error)
-
-    @staticmethod
     def _read_content_ok(content: t.Tests.ReadContent) -> p.Result[t.Tests.ReadContent]:
         """Build one success result for raw file content reads."""
         return r[t.Tests.ReadContent].ok(content)
