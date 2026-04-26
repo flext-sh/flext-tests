@@ -16,7 +16,7 @@ from collections.abc import (
 )
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated
+from typing import Annotated, ClassVar
 
 from flext_tests import c, m, p, r, t, u
 
@@ -54,6 +54,40 @@ class FlextTestsValidatorModels(m):
                         files_scanned=len(files),
                         violations=violations,
                     ),
+                )
+
+        class ScannerMixin:
+            """MRO mixin: validator classes inherit ``scan(...)`` for free.
+
+            Each consumer declares ``_VALIDATOR_KEY`` (constants key from
+            ``c.Tests.VALIDATOR_*_KEY``) and a ``_scan_file`` classmethod;
+            the mixin's ``scan`` delegates to ``ScanCommon.run_scan``.
+            Eliminates 22 LOC × N validators of identical scaffolding.
+            """
+
+            _VALIDATOR_KEY: ClassVar[str]
+
+            @classmethod
+            def _scan_file(
+                cls,
+                file_path: Path,
+                approved: Mapping[str, t.StrSequence],
+            ) -> Sequence[m.Tests.Violation]:
+                """Subclass MUST override: scan one file and yield violations."""
+                raise NotImplementedError
+
+            @classmethod
+            def scan(
+                cls,
+                files: Sequence[Path],
+                approved_exceptions: Mapping[str, t.StrSequence] | None = None,
+            ) -> p.Result[m.Tests.ScanResult]:
+                """Scan files for violations using the consumer's ``_scan_file``."""
+                return FlextTestsValidatorModels.Tests.ScanCommon.run_scan(
+                    files=files,
+                    approved_exceptions=approved_exceptions,
+                    validator_name=cls._VALIDATOR_KEY,
+                    scan_file=cls._scan_file,
                 )
 
         class ScanConfig(m.Value):

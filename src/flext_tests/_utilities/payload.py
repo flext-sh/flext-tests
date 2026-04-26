@@ -20,7 +20,6 @@ from pathlib import Path
 from typing import ClassVar
 
 from flext_core import u
-
 from flext_tests import c, m, t
 
 

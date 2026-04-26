@@ -51,8 +51,3 @@ class FlextTestsFilesUtilitiesMixin:
         if fmt != c.Tests.Format.AUTO:
             return str(fmt)
         return str(c.Tests.format_for_extension(path.suffix))
-
-    @staticmethod
-    def format_size(size: int) -> str:
-        """Human-readable size via c.Tests.format_size."""
-        return str(c.Tests.format_size(size))

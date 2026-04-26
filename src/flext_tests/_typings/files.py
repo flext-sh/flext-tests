@@ -12,7 +12,6 @@ from collections.abc import (
 )
 
 from flext_core import FlextTypes, m
-
 from flext_tests import FlextTestsBaseTypesMixin
 
 

@@ -15,19 +15,21 @@ from collections.abc import (
     Sequence,
 )
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
-from flext_tests import FlextTestsValidatorModels, c, p, t, u
+from flext_tests import FlextTestsValidatorModels, c, t, u
 
 if TYPE_CHECKING:
     from flext_tests import m
 
 
-class FlextValidatorTests:
+class FlextValidatorTests(FlextTestsValidatorModels.Tests.ScannerMixin):
     """Test validation methods for FlextTestsValidator.
 
     Uses c.Tests.Validator, m.Tests.Validator, u.Tests.Validator.
     """
+
+    _VALIDATOR_KEY = c.Tests.VALIDATOR_TESTS_KEY
 
     @classmethod
     def _check_mock_usage(
@@ -43,31 +45,31 @@ class FlextValidatorTests:
         violations: MutableSequence[m.Tests.Violation] = []
         mock_names = c.Tests.VALIDATOR_APPROVED_MOCK_NAMES
         for node in ast.walk(tree):
-            if isinstance(node, ast.ImportFrom):
-                if node.module and "mock" in node.module.lower():
-                    for alias in node.names:
-                        if alias.name in mock_names:
-                            violation = u.Tests.create_violation(
-                                file_path,
-                                node.lineno,
-                                "TEST-002",
-                                lines,
-                                f"import {alias.name}",
-                            )
-                            violations.append(violation)
-            elif (
-                isinstance(node, ast.Call)
-                and isinstance(node.func, ast.Name)
-                and (node.func.id in mock_names)
-            ):
-                violation = u.Tests.create_violation(
-                    file_path,
-                    node.lineno,
-                    "TEST-002",
-                    lines,
-                    f"{node.func.id}()",
-                )
-                violations.append(violation)
+            match node:
+                case ast.ImportFrom(module=mod, names=names) if (
+                    mod and "mock" in mod.lower()
+                ):
+                    violations.extend(
+                        u.Tests.create_violation(
+                            file_path,
+                            node.lineno,
+                            "TEST-002",
+                            lines,
+                            f"import {alias.name}",
+                        )
+                        for alias in names
+                        if alias.name in mock_names
+                    )
+                case ast.Call(func=ast.Name(id=name)) if name in mock_names:
+                    violations.append(
+                        u.Tests.create_violation(
+                            file_path,
+                            node.lineno,
+                            "TEST-002",
+                            lines,
+                            f"{name}()",
+                        )
+                    )
         return violations
 
     @classmethod
@@ -163,6 +165,7 @@ class FlextValidatorTests:
         )
 
     @classmethod
+    @override
     def _scan_file(
         cls,
         file_path: Path,
@@ -180,29 +183,6 @@ class FlextValidatorTests:
         violations.extend(cls._check_mock_usage(file_path, tree, lines, approved))
         violations.extend(cls._check_patch_decorator(file_path, tree, lines, approved))
         return violations
-
-    @classmethod
-    def scan(
-        cls,
-        files: Sequence[Path],
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
-    ) -> p.Result[m.Tests.ScanResult]:
-        """Scan files for test violations.
-
-        Args:
-            files: List of Python files to scan
-            approved_exceptions: Dict mapping rule IDs to list of approved file patterns
-
-        Returns:
-            r with ScanResult containing all violations found
-
-        """
-        return FlextTestsValidatorModels.Tests.ScanCommon.run_scan(
-            files=files,
-            approved_exceptions=approved_exceptions,
-            validator_name=c.Tests.VALIDATOR_TESTS_KEY,
-            scan_file=cls._scan_file,
-        )
 
 
 __all__: list[str] = ["FlextValidatorTests"]

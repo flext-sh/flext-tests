@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from flext_core import FlextProtocolsResult
-
 from flext_tests import p
 
 

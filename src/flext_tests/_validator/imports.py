@@ -16,15 +16,18 @@ from collections.abc import (
     Sequence,
 )
 from pathlib import Path
+from typing import override
 
-from flext_tests import FlextTestsValidatorModels, c, m, p, t, u
+from flext_tests import FlextTestsValidatorModels, c, m, t, u
 
 
-class FlextValidatorImports:
+class FlextValidatorImports(FlextTestsValidatorModels.Tests.ScannerMixin):
     """Import validation methods for FlextTestsValidator.
 
     Uses c.Tests.Validator for constants and m.Tests.Validator for models.
     """
+
+    _VALIDATOR_KEY = c.Tests.VALIDATOR_IMPORTS_KEY
 
     @classmethod
     def _check_direct_tech_imports(
@@ -218,6 +221,7 @@ class FlextValidatorImports:
         return []
 
     @classmethod
+    @override
     def _scan_file(
         cls,
         file_path: Path,
@@ -244,29 +248,6 @@ class FlextValidatorImports:
             cls._check_non_root_flext_imports(file_path, tree, lines, approved),
         )
         return violations
-
-    @classmethod
-    def scan(
-        cls,
-        files: Sequence[Path],
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
-    ) -> p.Result[m.Tests.ScanResult]:
-        """Scan files for import violations.
-
-        Args:
-            files: List of Python files to scan
-            approved_exceptions: Dict mapping rule IDs to list of approved file patterns
-
-        Returns:
-            r with ScanResult containing all violations found
-
-        """
-        return FlextTestsValidatorModels.Tests.ScanCommon.run_scan(
-            files=files,
-            approved_exceptions=approved_exceptions,
-            validator_name=c.Tests.VALIDATOR_IMPORTS_KEY,
-            scan_file=cls._scan_file,
-        )
 
 
 __all__: list[str] = ["FlextValidatorImports"]

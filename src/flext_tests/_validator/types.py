@@ -16,19 +16,21 @@ from collections.abc import (
     Sequence,
 )
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
-from flext_tests import FlextTestsValidatorModels, c, p, t, u
+from flext_tests import FlextTestsValidatorModels, c, t, u
 
 if TYPE_CHECKING:
     from flext_tests import m
 
 
-class FlextValidatorTypes:
+class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
     """Type validation methods for FlextTestsValidator.
 
     Uses c.Tests.Validator, m.Tests.Validator, u.Tests.Validator.
     """
+
+    _VALIDATOR_KEY = c.Tests.VALIDATOR_TYPES_KEY
 
     @staticmethod
     def _annotation_names(node: ast.AST, names: frozenset[str]) -> set[str]:
@@ -54,59 +56,44 @@ class FlextValidatorTypes:
         """Detect pre-PEP 695 typing factories and Generic base syntax."""
         if u.Tests.approved("TYPE-004", file_path, approved):
             return []
+
+        def _emit(line: int, name: str) -> m.Tests.Violation:
+            return u.Tests.create_violation(
+                file_path,
+                line,
+                "TYPE-004",
+                lines,
+                c.Tests.VALIDATOR_MSG_TYPE_LEGACY_FACTORY.format(name=name),
+            )
+
         violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
-            if isinstance(node, ast.Call):
-                matches = cls._annotation_names(
-                    node.func,
-                    c.Tests.VALIDATOR_LEGACY_FACTORY_NAMES,
-                )
-                for match in sorted(matches):
-                    violations.append(
-                        u.Tests.create_violation(
-                            file_path,
-                            node.lineno,
-                            "TYPE-004",
-                            lines,
-                            c.Tests.VALIDATOR_MSG_TYPE_LEGACY_FACTORY.format(
-                                name=match,
-                            ),
-                        ),
+            match node:
+                case ast.Call(func=func):
+                    violations.extend(
+                        _emit(node.lineno, name)
+                        for name in sorted(
+                            cls._annotation_names(
+                                func, c.Tests.VALIDATOR_LEGACY_FACTORY_NAMES
+                            )
+                        )
                     )
-            elif isinstance(node, ast.AnnAssign):
-                matches = cls._annotation_names(
-                    node.annotation,
-                    frozenset({"TypeAlias"}),
-                )
-                for match in sorted(matches):
-                    violations.append(
-                        u.Tests.create_violation(
-                            file_path,
-                            node.lineno,
-                            "TYPE-004",
-                            lines,
-                            c.Tests.VALIDATOR_MSG_TYPE_LEGACY_FACTORY.format(
-                                name=match,
-                            ),
-                        ),
+                case ast.AnnAssign(annotation=ann):
+                    violations.extend(
+                        _emit(node.lineno, name)
+                        for name in sorted(
+                            cls._annotation_names(ann, frozenset({"TypeAlias"}))
+                        )
                     )
-            elif isinstance(node, ast.ClassDef):
-                for base in node.bases:
-                    matches = cls._annotation_names(
-                        base,
-                        c.Tests.VALIDATOR_LEGACY_BASE_NAMES,
-                    )
-                    for match in sorted(matches):
-                        violations.append(
-                            u.Tests.create_violation(
-                                file_path,
-                                getattr(base, "lineno", node.lineno),
-                                "TYPE-004",
-                                lines,
-                                c.Tests.VALIDATOR_MSG_TYPE_LEGACY_FACTORY.format(
-                                    name=match,
-                                ),
-                            ),
+                case ast.ClassDef(bases=bases):
+                    for base in bases:
+                        violations.extend(
+                            _emit(getattr(base, "lineno", node.lineno), name)
+                            for name in sorted(
+                                cls._annotation_names(
+                                    base, c.Tests.VALIDATOR_LEGACY_BASE_NAMES
+                                )
+                            )
                         )
         return violations
 
@@ -127,25 +114,16 @@ class FlextValidatorTypes:
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 if node.returns is not None:
                     annotations.append((node.lineno, node.returns))
-                for arg in (*node.args.args, *node.args.kwonlyargs):
-                    if arg.annotation is not None:
+                for arg in (
+                    *node.args.args,
+                    *node.args.kwonlyargs,
+                    node.args.vararg,
+                    node.args.kwarg,
+                ):
+                    if arg is not None and arg.annotation is not None:
                         annotations.append(
                             (getattr(arg, "lineno", node.lineno), arg.annotation),
                         )
-                if node.args.vararg and node.args.vararg.annotation is not None:
-                    annotations.append(
-                        (
-                            getattr(node.args.vararg, "lineno", node.lineno),
-                            node.args.vararg.annotation,
-                        ),
-                    )
-                if node.args.kwarg and node.args.kwarg.annotation is not None:
-                    annotations.append(
-                        (
-                            getattr(node.args.kwarg, "lineno", node.lineno),
-                            node.args.kwarg.annotation,
-                        ),
-                    )
             elif isinstance(node, ast.AnnAssign):
                 annotations.append((node.lineno, node.annotation))
         for line_number, annotation in annotations:
@@ -362,6 +340,7 @@ class FlextValidatorTypes:
         ]
 
     @classmethod
+    @override
     def _scan_file(
         cls,
         file_path: Path,
@@ -394,29 +373,6 @@ class FlextValidatorTypes:
             cls._check_bool_returning_is_helpers(file_path, tree, lines, approved),
         )
         return violations
-
-    @classmethod
-    def scan(
-        cls,
-        files: Sequence[Path],
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
-    ) -> p.Result[m.Tests.ScanResult]:
-        """Scan files for type violations.
-
-        Args:
-            files: List of Python files to scan
-            approved_exceptions: Dict mapping rule IDs to list of approved file patterns
-
-        Returns:
-            r with ScanResult containing all violations found
-
-        """
-        return FlextTestsValidatorModels.Tests.ScanCommon.run_scan(
-            files=files,
-            approved_exceptions=approved_exceptions,
-            validator_name=c.Tests.VALIDATOR_TYPES_KEY,
-            scan_file=cls._scan_file,
-        )
 
 
 __all__: list[str] = ["FlextValidatorTypes"]

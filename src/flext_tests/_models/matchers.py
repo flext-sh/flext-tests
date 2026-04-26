@@ -18,7 +18,6 @@ from types import MappingProxyType
 from typing import Annotated, ClassVar, Self
 
 from flext_core import FlextModels, m, u
-
 from flext_tests import p, t
 
 

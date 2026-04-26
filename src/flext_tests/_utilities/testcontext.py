@@ -36,7 +36,7 @@ class FlextTestsTestContextUtilitiesMixin:
         attribute_existed = hasattr(target, attribute)
         original_value: t.Tests.TestobjectSerializable | None = None
         if attribute_existed:
-            original_value = target.__getattribute__(attribute)
+            original_value = getattr(target, attribute)
         object.__setattr__(target, attribute, value)
         try:
             yield

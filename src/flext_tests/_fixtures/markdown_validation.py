@@ -18,8 +18,8 @@ from pathlib import Path
 from typing import override
 
 import pytest
-from flext_core import c
 
+from flext_core import c
 from flext_tests import FlextValidatorMarkdown
 
 _EXTERNAL_MARKDOWN_DOCS = find_spec("pytest_markdown_docs") is not None

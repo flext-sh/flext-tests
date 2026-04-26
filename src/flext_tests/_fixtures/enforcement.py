@@ -1,6 +1,6 @@
 """Pytest dispatcher for the cross-layer enforcement catalog.
 
-Reads ``flext_core.FlextConstantsEnforcement.ENFORCEMENT_CATALOG`` and, when
+Reads ``flext_core.FlextConstantsEnforcement.get_catalog()`` and, when
 the pytest run is rooted at the FLEXT workspace (triple marker
 ``AGENTS.md`` + ``flext-core/`` + ``flext-tests/``), drives the catalog's
 active sources:
@@ -38,6 +38,7 @@ from pathlib import Path
 from typing import Final, override
 
 import pytest
+
 from flext_core import FlextConstantsEnforcement, FlextModelsEnforcement
 
 _me = FlextModelsEnforcement
@@ -171,7 +172,7 @@ def _resolve_config(config: pytest.Config) -> dict[str, object]:
 def _active_rules(
     cfg: dict[str, object],
 ) -> tuple[_me.EnforcementRuleSpec, ...]:
-    catalog = FlextConstantsEnforcement.ENFORCEMENT_CATALOG
+    catalog = FlextConstantsEnforcement.get_catalog()
     include_raw = cfg["include"]
     exclude_raw = cfg["exclude"]
     if not isinstance(include_raw, frozenset):

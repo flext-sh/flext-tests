@@ -86,35 +86,23 @@ class FlextValidatorSettings:
                         c.Tests.VALIDATOR_MSG_CONFIG_IGNORE.format(module=module),
                     ),
                 )
-        if (
-            not u.Tests.approved("CONFIG-003", file_path, approved)
-            and mypy_config.get("disallow_incomplete_defs") is False
+        for code, key in (
+            ("CONFIG-003", "disallow_incomplete_defs"),
+            ("CONFIG-004", "warn_return_any"),
         ):
-            line_num = u.Tests.find_line_number(
-                lines,
-                "disallow_incomplete_defs",
-            )
-            violations.append(
-                cls._create_config_violation(
-                    file_path,
-                    line_num,
-                    "CONFIG-003",
-                    "disallow_incomplete_defs = false",
-                ),
-            )
-        if (
-            not u.Tests.approved("CONFIG-004", file_path, approved)
-            and mypy_config.get("warn_return_any") is False
-        ):
-            line_num = u.Tests.find_line_number(lines, "warn_return_any")
-            violations.append(
-                cls._create_config_violation(
-                    file_path,
-                    line_num,
-                    "CONFIG-004",
-                    "warn_return_any = false",
-                ),
-            )
+            if (
+                not u.Tests.approved(code, file_path, approved)
+                and mypy_config.get(key) is False
+            ):
+                line_num = u.Tests.find_line_number(lines, key)
+                violations.append(
+                    cls._create_config_violation(
+                        file_path,
+                        line_num,
+                        code,
+                        f"{key} = false",
+                    ),
+                )
         return violations
 
     @classmethod

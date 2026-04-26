@@ -88,14 +88,13 @@ class FlextTestsValidatorUtilitiesMixin:
             Set of exception names found
 
         """
-        names: set[str] = set()
-        if isinstance(exc_type, ast.Name):
-            names.add(exc_type.id)
-        elif isinstance(exc_type, ast.Tuple):
-            for elt in exc_type.elts:
-                if isinstance(elt, ast.Name):
-                    names.add(elt.id)
-        return names
+        match exc_type:
+            case ast.Name(id=name):
+                return {name}
+            case ast.Tuple(elts=elts):
+                return {elt.id for elt in elts if isinstance(elt, ast.Name)}
+            case _:
+                return set()
 
     @staticmethod
     def parent_node(tree: ast.AST, node: ast.AST) -> ast.AST | None:

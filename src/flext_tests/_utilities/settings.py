@@ -12,7 +12,6 @@ from contextlib import contextmanager
 from flext_core import (
     FlextSettings,
 )
-
 from flext_tests import (
     p,
     t,

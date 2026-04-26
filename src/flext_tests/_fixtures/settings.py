@@ -18,6 +18,7 @@ from collections.abc import (
 )
 
 import pytest
+
 from flext_core import FlextContainer, FlextSettings
 
 

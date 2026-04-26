@@ -76,11 +76,6 @@ class FlextTestsFiles(s):
             return r[TModelRead].fail(f"Failed to validate model: {ex}")
 
     @staticmethod
-    def _read_content_ok(content: t.Tests.ReadContent) -> p.Result[t.Tests.ReadContent]:
-        """Build one success result for raw file content reads."""
-        return r[t.Tests.ReadContent].ok(content)
-
-    @staticmethod
     def _read_fail[TModelRead: m.BaseModel](
         error: str,
         model_cls: type[TModelRead] | None,
@@ -898,7 +893,7 @@ class FlextTestsFiles(s):
         try:
             stat = params.path.stat()
             size = stat.st_size
-            size_human = u.Tests.format_size(size)
+            size_human = c.Tests.format_size(size)
             try:
                 text = params.path.read_text(
                     encoding=c.Tests.DEFAULT_ENCODING,
@@ -1082,7 +1077,7 @@ class FlextTestsFiles(s):
                 content = params.path.read_text(encoding=params.enc)
             if model_cls is not None:
                 return self._validate_model_content(model_cls, content)
-            return self._read_content_ok(content)
+            return r[t.Tests.ReadContent].ok(content)
         except UnicodeDecodeError as e:
             return self._read_fail(c.Tests.ERROR_ENCODING.format(error=e), model_cls)
         except ValueError as e:
