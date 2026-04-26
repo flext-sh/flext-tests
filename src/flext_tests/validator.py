@@ -31,7 +31,8 @@ from collections.abc import (
     Sequence,
 )
 from pathlib import Path
-from typing import ClassVar
+from types import MappingProxyType
+from typing import Annotated, ClassVar
 
 from flext_tests import (
     FlextValidatorBypass,
@@ -47,6 +48,7 @@ from flext_tests import (
     r,
     s,
     t,
+    u,
 )
 
 
@@ -75,6 +77,34 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
 
     Violation: ClassVar[type[m.Tests.Violation]] = m.Tests.Violation
     ScanResult: ClassVar[type[m.Tests.ScanResult]] = m.Tests.ScanResult
+
+    class AllValidationOptions(m.Value):
+        """Options envelope for aggregate validation runs."""
+
+        pyproject_path: Annotated[
+            Path | None,
+            u.Field(
+                description="Optional path to pyproject.toml for settings validation.",
+            ),
+        ] = None
+        exclude_patterns: Annotated[
+            t.StrSequence,
+            u.Field(
+                description="Glob patterns to exclude from validation.",
+            ),
+        ] = u.Field(default_factory=lambda: list(c.Tests.VALIDATOR_EXCLUDE_PATTERNS))
+        approved_exceptions: Annotated[
+            Mapping[str, t.StrSequence],
+            u.Field(
+                description="Rule-to-path allowlist for approved exceptions.",
+            ),
+        ] = u.Field(default_factory=lambda: MappingProxyType({}))
+        include_tests_validation: Annotated[
+            bool,
+            u.Field(
+                description="Whether to include test-pattern validation in the aggregate run.",
+            ),
+        ] = False
 
     def execute(self) -> p.Result[m.Tests.ScanResult]:
         """Execute validator service with default current-path scope."""
@@ -110,11 +140,8 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
     def all(
         cls,
         path: Path,
-        pyproject_path: Path | None = None,
-        exclude_patterns: t.StrSequence | None = None,
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
-        *,
-        include_tests_validation: bool = False,
+        options: AllValidationOptions | None = None,
+        **kwargs: t.JsonValue,
     ) -> p.Result[m.Tests.ScanResult]:
         """Run all validations and combine results.
 
@@ -129,23 +156,66 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
             r[ScanResult] with combined violations from all validators
 
         """
+        payload: t.MutableJsonMapping = (
+            options.model_dump(mode="python") if options is not None else {}
+        )
+        payload.update(kwargs)
+        all_options = cls.AllValidationOptions.model_validate(payload)
         all_violations: MutableSequence[m.Tests.Violation] = []
         total_files = 0
         validators: MutableSequence[tuple[str, p.Result[m.Tests.ScanResult]]] = [
-            ("imports", cls.imports(path, exclude_patterns, approved_exceptions)),
-            ("types", cls.types(path, exclude_patterns, approved_exceptions)),
-            ("bypass", cls.bypass(path, exclude_patterns, approved_exceptions)),
-            ("layer", cls.layer(path, exclude_patterns, approved_exceptions)),
+            (
+                "imports",
+                cls.imports(
+                    path,
+                    all_options.exclude_patterns,
+                    all_options.approved_exceptions,
+                ),
+            ),
+            (
+                "types",
+                cls.types(
+                    path,
+                    all_options.exclude_patterns,
+                    all_options.approved_exceptions,
+                ),
+            ),
+            (
+                "bypass",
+                cls.bypass(
+                    path,
+                    all_options.exclude_patterns,
+                    all_options.approved_exceptions,
+                ),
+            ),
+            (
+                "layer",
+                cls.layer(
+                    path,
+                    all_options.exclude_patterns,
+                    all_options.approved_exceptions,
+                ),
+            ),
         ]
-        if include_tests_validation:
+        if all_options.include_tests_validation:
             validators.append((
                 "tests",
-                cls.tests(path, exclude_patterns, approved_exceptions),
+                cls.tests(
+                    path,
+                    all_options.exclude_patterns,
+                    all_options.approved_exceptions,
+                ),
             ))
-        if pyproject_path and pyproject_path.exists():
+        if (
+            all_options.pyproject_path is not None
+            and all_options.pyproject_path.exists()
+        ):
             validators.append((
                 "settings",
-                cls.validate_config(pyproject_path, approved_exceptions),
+                cls.validate_config(
+                    all_options.pyproject_path,
+                    all_options.approved_exceptions,
+                ),
             ))
         for name, result in validators:
             if result.failure:
