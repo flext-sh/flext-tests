@@ -17,7 +17,10 @@ class FlextTestsDockerModelsMixin:
     class ContainerInfo(FlextModels.Value):
         """Container information model."""
 
-        name: Annotated[str, u.Field(description="Container name.")]
+        name: Annotated[
+            str,
+            u.Field(min_length=1, description="Container name."),
+        ]
         status: Annotated[
             c.Tests.ContainerStatus,
             u.Field(description="Runtime lifecycle status."),
@@ -26,22 +29,14 @@ class FlextTestsDockerModelsMixin:
             t.StrMapping,
             u.Field(description="Port mapping (internal → external)."),
         ]
-        image: Annotated[str, u.Field(description="Source image tag.")]
+        image: Annotated[
+            str,
+            u.Field(min_length=1, description="Source image tag."),
+        ]
         container_id: Annotated[
             str,
             u.Field(description="Docker-assigned container identifier."),
         ] = ""
-
-        @override
-        def model_post_init(self, __context: t.JsonValue | None, /) -> None:
-            """Validate container info after initialization."""
-            super().model_post_init(__context)
-            if not self.name:
-                msg = "Container name cannot be empty"
-                raise ValueError(msg)
-            if not self.image:
-                msg = "Container image cannot be empty"
-                raise ValueError(msg)
 
     class ContainerConfig(FlextModels.Value):
         """Container configuration model."""
@@ -52,25 +47,23 @@ class FlextTestsDockerModelsMixin:
         ]
         service: Annotated[
             str,
-            u.Field(description="Compose service name to target."),
+            u.Field(min_length=1, description="Compose service name to target."),
         ]
         port: Annotated[
             int,
-            u.Field(description="Host-side port exposed by the service."),
+            u.Field(
+                ge=c.DEFAULT_RETRY_DELAY_SECONDS,
+                le=c.MAX_PORT,
+                description="Host-side port exposed by the service.",
+            ),
         ]
 
         @override
         def model_post_init(self, __context: t.JsonValue | None, /) -> None:
-            """Validate container settings after initialization."""
+            """Validate compose-file path exists (file-system check)."""
             super().model_post_init(__context)
             if not self.compose_file.exists():
                 msg = f"Compose file not found: {self.compose_file}"
-                raise ValueError(msg)
-            if not self.service:
-                msg = "Service name cannot be empty"
-                raise ValueError(msg)
-            if not (c.DEFAULT_RETRY_DELAY_SECONDS <= self.port <= c.MAX_PORT):
-                msg = f"Port {self.port} out of valid range"
                 raise ValueError(msg)
 
     class ContainerState(FlextModels.Value):
