@@ -772,62 +772,120 @@ class FlextTestsFiles(s):
             params.name,
             params.fmt,
         )
-        if actual_fmt == c.Tests.Format.BIN:
-            _ = file_path.write_bytes(
-                actual_content
-                if isinstance(actual_content, bytes)
-                else str(actual_content).encode(params.enc)
-            )
-        elif actual_fmt in {c.Tests.Format.JSON, c.Tests.Format.YAML}:
-            mapping_content: Mapping[str, t.Tests.TestobjectSerializable] | None = (
-                actual_content.root
-                if isinstance(actual_content, (m.ConfigMap, m.Dict))
-                else actual_content
-                if isinstance(actual_content, Mapping)
-                else None
-            )
-            raw_payload: t.JsonMapping = (
-                {
-                    str(k): FlextTestsPayloadUtilities.to_normalized_value(v)
-                    for k, v in mapping_content.items()
-                }
-                if mapping_content is not None
-                else {
-                    "value": FlextTestsPayloadUtilities.to_normalized_value(
-                        actual_content
-                    )
-                }
-                if actual_content
-                else {}
-            )
-            json_payload = t.json_value_adapter().validate_python(raw_payload)
-            if actual_fmt == c.Tests.Format.JSON:
-                u.Cli.json_write(file_path, json_payload, indent=params.indent)
-            else:
-                u.Cli.yaml_dump(file_path, json_payload, indent=params.indent)
-        elif actual_fmt == c.Tests.Format.CSV:
-            csv_rows: list[t.StrSequence] = []
-            if params.headers:
-                csv_rows.append(list(params.headers))
-            if isinstance(actual_content, Sequence) and not isinstance(
-                actual_content, (str, bytes)
-            ):
-                csv_rows.extend(
-                    [str(cell) for cell in row]
-                    for row in actual_content
-                    if isinstance(row, Sequence) and not isinstance(row, (str, bytes))
-                )
-            else:
-                csv_rows.append([str(actual_content)])
-            u.Cli.files_write_csv(file_path, csv_rows)
-        else:
-            _ = file_path.write_text(str(actual_content), encoding=params.enc)
+        self._write_content_by_format(
+            file_path=file_path,
+            actual_content=actual_content,
+            actual_fmt=actual_fmt,
+            params=params,
+        )
         if params.readonly:
             file_path.chmod(c.Tests.PERMISSION_READONLY_FILE)
         if self._created_files is None:
             self._created_files = list[Path]()
         self._created_files.append(file_path)
         return file_path
+
+    def _write_content_by_format(
+        self,
+        *,
+        file_path: Path,
+        actual_content: (
+            str
+            | bytes
+            | m.ConfigMap
+            | Sequence[t.StrSequence]
+            | m.BaseModel
+            | Mapping[str, t.Tests.TestobjectSerializable]
+        ),
+        actual_fmt: str,
+        params: m.Tests.CreateParams,
+    ) -> None:
+        """Write normalized content using the selected output format."""
+        match actual_fmt:
+            case c.Tests.Format.BIN:
+                _ = file_path.write_bytes(
+                    actual_content
+                    if isinstance(actual_content, bytes)
+                    else str(actual_content).encode(params.enc),
+                )
+            case c.Tests.Format.JSON | c.Tests.Format.YAML:
+                json_payload = self._build_json_payload(actual_content)
+                if actual_fmt == c.Tests.Format.JSON:
+                    u.Cli.json_write(file_path, json_payload, indent=params.indent)
+                else:
+                    u.Cli.yaml_dump(file_path, json_payload, indent=params.indent)
+            case c.Tests.Format.CSV:
+                u.Cli.files_write_csv(
+                    file_path,
+                    self._build_csv_rows(
+                        actual_content=actual_content,
+                        headers=params.headers,
+                    ),
+                )
+            case _:
+                _ = file_path.write_text(str(actual_content), encoding=params.enc)
+
+    @staticmethod
+    def _build_json_payload(
+        actual_content: (
+            str
+            | bytes
+            | m.ConfigMap
+            | Sequence[t.StrSequence]
+            | m.BaseModel
+            | Mapping[str, t.Tests.TestobjectSerializable]
+        ),
+    ) -> t.JsonValue:
+        """Build normalized JSON payload from arbitrary file content."""
+        mapping_content: Mapping[str, t.Tests.TestobjectSerializable] | None = (
+            actual_content.root
+            if isinstance(actual_content, (m.ConfigMap, m.Dict))
+            else actual_content
+            if isinstance(actual_content, Mapping)
+            else None
+        )
+        fallback_value = FlextTestsPayloadUtilities.to_payload(actual_content)
+        raw_payload = (
+            {
+                str(k): FlextTestsPayloadUtilities.to_normalized_value(v)
+                for k, v in mapping_content.items()
+            }
+            if mapping_content is not None
+            else {"value": fallback_value}
+            if actual_content
+            else dict[str, t.JsonValue]()
+        )
+        return t.json_value_adapter().validate_python(raw_payload)
+
+    @staticmethod
+    def _build_csv_rows(
+        *,
+        actual_content: (
+            str
+            | bytes
+            | m.ConfigMap
+            | Sequence[t.StrSequence]
+            | m.BaseModel
+            | Mapping[str, t.Tests.TestobjectSerializable]
+        ),
+        headers: t.StrSequence | None,
+    ) -> list[t.StrSequence]:
+        """Build CSV rows from normalized content and optional headers."""
+        csv_rows: list[t.StrSequence] = []
+        if headers:
+            csv_rows.append(list(headers))
+        if isinstance(actual_content, Sequence) and not isinstance(
+            actual_content,
+            (str, bytes),
+        ):
+            csv_rows.extend(
+                [str(cell) for cell in row]
+                for row in actual_content
+                if isinstance(row, Sequence) and not isinstance(row, (str, bytes))
+            )
+        else:
+            csv_rows.append([str(actual_content)])
+        return csv_rows
 
     def execute(self) -> p.Result[t.JsonValue]:
         """Execute service - returns success for file manager.

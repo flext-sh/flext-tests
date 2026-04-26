@@ -205,38 +205,26 @@ class FlextTestsMatchersUtilities:
     ) -> dict[str, t.Tests.MatcherKwargValue]:
         """Normalize one declarative matcher rule into tm.that()-compatible kwargs."""
         kwargs_t = dict[str, t.Tests.MatcherKwargValue]
+        result: kwargs_t
         if isinstance(rule, Mapping):
             raw_mapping = {str(key): value for key, value in rule.items()}
             if raw_mapping and set(raw_mapping).issubset(
                 c.Tests.MATCHER_RULE_KEYS,
             ):
-                normalized_mapping = dict(raw_mapping)
-                if inherited_msg is not None and "msg" not in normalized_mapping:
-                    normalized_mapping["msg"] = inherited_msg
-                return normalized_mapping
-            eq_value: t.Tests.Testobject = FlextTestsPayloadUtilities.to_payload(rule)
-            result: kwargs_t = {"eq": eq_value}
-            if inherited_msg:
-                result["msg"] = inherited_msg
-            return result
-        if isinstance(rule, type):
-            return (
-                {"is_": rule, "msg": inherited_msg} if inherited_msg else {"is_": rule}
-            )
-        if isinstance(rule, tuple) and all(isinstance(item, type) for item in rule):
-            return (
-                {"is_": rule, "msg": inherited_msg} if inherited_msg else {"is_": rule}
-            )
-        if callable(rule):
-            return (
-                {"where": rule, "msg": inherited_msg}
-                if inherited_msg
-                else {"where": rule}
-            )
-        fallback: kwargs_t = {"eq": rule}
-        if inherited_msg:
-            fallback["msg"] = inherited_msg
-        return fallback
+                result = dict(raw_mapping)
+            else:
+                result = {"eq": FlextTestsPayloadUtilities.to_payload(rule)}
+        elif isinstance(rule, type) or (
+            isinstance(rule, tuple) and all(isinstance(item, type) for item in rule)
+        ):
+            result = {"is_": rule}
+        elif callable(rule):
+            result = {"where": rule}
+        else:
+            result = {"eq": rule}
+        if inherited_msg is not None and "msg" not in result:
+            result["msg"] = inherited_msg
+        return result
 
     @staticmethod
     def _extract_mapping_path(
@@ -1664,31 +1652,31 @@ class FlextTestsMatchersUtilities:
                                     or f"Expected value {expected_val!r} not found in mapping",
                                 )
                     if params.kv is not None:
+                        kv_items: Sequence[tuple[object, object]] = ()
                         match params.kv:
                             case tuple() as key_value if len(key_value) == 2:
                                 key, expected_val = key_value
-                                if key not in mapping_value:
-                                    raise AssertionError(
-                                        params.msg
-                                        or f"Key {key!r} not found in mapping",
-                                    )
-                                if mapping_value[key] != expected_val:
-                                    raise AssertionError(
-                                        params.msg
-                                        or f"Key {key!r}: expected {expected_val!r}, got {mapping_value[key]!r}",
-                                    )
+                                kv_items = ((key, expected_val),)
                             case Mapping() as mapping_kv:
-                                for key, expected_obj in mapping_kv.items():
-                                    if key not in mapping_value:
-                                        raise AssertionError(
-                                            params.msg
-                                            or f"Key {key!r} not found in mapping",
-                                        )
-                                    if mapping_value[key] != expected_obj:
-                                        raise AssertionError(
-                                            params.msg
-                                            or f"Key {key!r}: expected {expected_obj!r}, got {mapping_value[key]!r}",
-                                        )
+                                kv_items = tuple(mapping_kv.items())
+                            case _:
+                                kv_items = ()
+                        for key, expected_val in kv_items:
+                            if not isinstance(key, str):
+                                raise AssertionError(
+                                    params.msg
+                                    or f"Mapping key must be str, got {type(key).__name__}",
+                                )
+                            if key not in mapping_value:
+                                raise AssertionError(
+                                    params.msg or f"Key {key!r} not found in mapping",
+                                )
+                            actual_obj = mapping_value[key]
+                            if actual_obj != expected_val:
+                                raise AssertionError(
+                                    params.msg
+                                    or f"Key {key!r}: expected {expected_val!r}, got {actual_obj!r}",
+                                )
                 if params.attrs is not None:
                     attrs_target = subject
                     if isinstance(params.attrs, str):
@@ -1718,32 +1706,31 @@ class FlextTestsMatchersUtilities:
                             )
                 if params.attr_eq is not None:
                     attr_eq_target = subject
+                    attr_items: Sequence[tuple[object, object]] = ()
                     match params.attr_eq:
                         case tuple() as attr_spec if len(attr_spec) == 2:
                             attr, expected_val = attr_spec
-                            if not hasattr(attr_eq_target, attr):
-                                raise AssertionError(
-                                    params.msg or f"Object missing attribute: {attr}",
-                                )
-                            actual_val = getattr(attr_eq_target, attr)
-                            if actual_val != expected_val:
-                                raise AssertionError(
-                                    params.msg
-                                    or f"Attribute {attr}: expected {expected_val!r}, got {actual_val!r}",
-                                )
+                            attr_items = ((attr, expected_val),)
                         case Mapping() as attr_mapping:
-                            for attr, expected_val in attr_mapping.items():
-                                if not hasattr(attr_eq_target, attr):
-                                    raise AssertionError(
-                                        params.msg
-                                        or f"Object missing attribute: {attr}",
-                                    )
-                                actual_val = getattr(attr_eq_target, attr)
-                                if actual_val != expected_val:
-                                    raise AssertionError(
-                                        params.msg
-                                        or f"Attribute {attr}: expected {expected_val!r}, got {actual_val!r}",
-                                    )
+                            attr_items = tuple(attr_mapping.items())
+                        case _:
+                            attr_items = ()
+                    for attr, expected_val in attr_items:
+                        if not isinstance(attr, str):
+                            raise AssertionError(
+                                params.msg
+                                or f"Attribute name must be str, got {type(attr).__name__}",
+                            )
+                        if not hasattr(attr_eq_target, attr):
+                            raise AssertionError(
+                                params.msg or f"Object missing attribute: {attr}",
+                            )
+                        actual_val = getattr(attr_eq_target, attr)
+                        if actual_val != expected_val:
+                            raise AssertionError(
+                                params.msg
+                                or f"Attribute {attr}: expected {expected_val!r}, got {actual_val!r}",
+                            )
                 if params.deep is not None:
                     if not isinstance(subject_payload, (m.BaseModel, dict)):
                         raise AssertionError(
