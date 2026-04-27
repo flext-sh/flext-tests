@@ -39,7 +39,7 @@ from typing import Final, override
 
 import pytest
 
-from flext_core import FlextConstantsEnforcement, FlextModelsEnforcement
+from flext_core import FlextModelsEnforcement, FlextUtilities
 
 _me = FlextModelsEnforcement
 _sk = _me.EnforcementSourceKind
@@ -172,7 +172,7 @@ def _resolve_config(config: pytest.Config) -> dict[str, object]:
 def _active_rules(
     cfg: dict[str, object],
 ) -> tuple[_me.EnforcementRuleSpec, ...]:
-    catalog = FlextConstantsEnforcement.get_catalog()
+    catalog = FlextUtilities.build_canonical_catalog()
     include_raw = cfg["include"]
     exclude_raw = cfg["exclude"]
     if not isinstance(include_raw, frozenset):

@@ -54,6 +54,12 @@ class FlextTestsMatchersTypesMixin:
         | Mapping[FlextTestsMatchersTypesMixin.ItemSelector, MatchRuleValue]
     )
     type LengthSpec = int | tuple[int, int]
+    type ComparableScalar = float | int | str
+    """Comparable scalar arms for matcher ``gt``/``gte``/``lt``/``lte`` fields.
+
+    Centralized to satisfy AGENTS.md § Model governance rule against
+    inline 3+-arm unions in Pydantic field annotations.
+    """
     type MatchRuleSpec = (
         FlextTestsBaseTypesMixin.Testobject
         | type

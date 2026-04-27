@@ -45,16 +45,18 @@ class FlextTestsMatchersModelsMixin:
         none: Annotated[bool | None, u.Field(description="None check")] = None
         empty: Annotated[bool | None, u.Field(description="Empty check")] = None
         gt: Annotated[
-            float | int | str | None, u.Field(description="Greater than")
+            t.Tests.ComparableScalar | None, u.Field(description="Greater than")
         ] = None
         gte: Annotated[
-            float | int | str | None, u.Field(description="Greater than or equal")
+            t.Tests.ComparableScalar | None,
+            u.Field(description="Greater than or equal"),
         ] = None
         lt: Annotated[
-            float | int | str | None, u.Field(description="Less than")
+            t.Tests.ComparableScalar | None, u.Field(description="Less than")
         ] = None
         lte: Annotated[
-            float | int | str | None, u.Field(description="Less than or equal")
+            t.Tests.ComparableScalar | None,
+            u.Field(description="Less than or equal"),
         ] = None
         has: Annotated[
             t.Tests.ContainmentSpec | None,
@@ -169,16 +171,18 @@ class FlextTestsMatchersModelsMixin:
         none: Annotated[bool | None, u.Field(description="None check")] = None
         empty: Annotated[bool | None, u.Field(description="Empty check")] = None
         gt: Annotated[
-            float | int | str | None, u.Field(description="Greater than")
+            t.Tests.ComparableScalar | None, u.Field(description="Greater than")
         ] = None
         gte: Annotated[
-            float | int | str | None, u.Field(description="Greater than or equal")
+            t.Tests.ComparableScalar | None,
+            u.Field(description="Greater than or equal"),
         ] = None
         lt: Annotated[
-            float | int | str | None, u.Field(description="Less than")
+            t.Tests.ComparableScalar | None, u.Field(description="Less than")
         ] = None
         lte: Annotated[
-            float | int | str | None, u.Field(description="Less than or equal")
+            t.Tests.ComparableScalar | None,
+            u.Field(description="Less than or equal"),
         ] = None
         len: Annotated[
             t.Tests.LengthSpec | None,
