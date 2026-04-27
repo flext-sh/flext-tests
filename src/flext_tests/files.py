@@ -223,7 +223,7 @@ class FlextTestsFiles(s):
                     validated_kwargs = m.Tests.CreateKwargsParams(
                         directory=None,
                         fmt=c.Tests.Format.AUTO,
-                        enc=c.DEFAULT_ENCODING,
+                        enc=c.Tests.DEFAULT_ENCODING,
                         indent=2,
                         delim=",",
                         headers=None,
@@ -1373,18 +1373,23 @@ class FlextTestsFiles(s):
                 case _:
                     pass
         elif fmt == "csv":
+            rows: list[list[str]]
             try:
                 rows = list(csv.reader(text.splitlines()))
             except csv.Error:
-                rows: list[list[str]] = []
+                rows = []
             if rows:
                 row_count = len(rows)
                 column_count = len(rows[0]) if rows[0] else 0
         if validate_model is not None:
             if parsed_mapping is not None:
-                model_valid = r[m.BaseModel].create_from_callable(
-                    lambda: validate_model.model_validate(parsed_mapping)
-                ).success
+                model_valid = (
+                    r[m.BaseModel]
+                    .create_from_callable(
+                        lambda: validate_model.model_validate(parsed_mapping)
+                    )
+                    .success
+                )
             elif structured_text:
                 model_valid = False
         return m.Tests.ContentMeta.model_validate({

@@ -41,7 +41,7 @@ class FlextTestsFilesystemModelsMixin:
         encoding: Annotated[
             str,
             u.Field(description="Text encoding detected or assumed."),
-        ] = c.DEFAULT_ENCODING
+        ] = c.Tests.DEFAULT_ENCODING
         is_empty: Annotated[
             bool,
             u.Field(description="True when the file has zero bytes."),

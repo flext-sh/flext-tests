@@ -1,6 +1,6 @@
 """Pytest plugin for automatic markdown Python code block validation.
 
-Provides --markdown-docs option that validates Python code blocks
+Provides the markdown docs option that validates Python code blocks
 in .md files against project linting rules.
 
 Usage in any project's conftest.py::
@@ -19,19 +19,18 @@ from typing import override
 
 import pytest
 
-from flext_core import c
-from flext_tests import FlextValidatorMarkdown
+from flext_tests import FlextValidatorMarkdown, c
 
 _EXTERNAL_MARKDOWN_DOCS = find_spec("pytest_markdown_docs") is not None
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
-    """Add --markdown-docs option if pytest-markdown-docs package is not installed."""
+    """Add the markdown docs option if pytest-markdown-docs is not installed."""
     if _EXTERNAL_MARKDOWN_DOCS:
-        return  # external package already registers --markdown-docs
+        return
     group = parser.getgroup("markdown", "Markdown code block validation")
     group.addoption(
-        "--markdown-docs",
+        c.Tests.VALIDATOR_MD_OPTION_DOCS,
         action="store_true",
         default=False,
         help="Validate Python code blocks in .md files",
@@ -104,12 +103,12 @@ def pytest_collect_file(
     parent: pytest.Collector,
     file_path: Path,
 ) -> MarkdownCodeBlockCollector | None:
-    """Collect .md files when --markdown-docs is enabled."""
-    if not parent.config.getoption("--markdown-docs", default=False):
+    """Collect .md files when the markdown docs option is enabled."""
+    if not parent.config.getoption(c.Tests.VALIDATOR_MD_OPTION_DOCS, default=False):
         return None
     if file_path.suffix == ".md" and file_path.stat().st_size > 0:
-        content = file_path.read_text(encoding=c.DEFAULT_ENCODING)
-        if "```python" in content:
+        content = file_path.read_text(encoding=c.Tests.DEFAULT_ENCODING)
+        if c.Tests.VALIDATOR_MD_PYTHON_BLOCK_RE.search(content):
             return MarkdownCodeBlockCollector.from_parent(parent, path=file_path)
     return None
 

@@ -12,8 +12,7 @@ And the following on-demand fixtures:
 - settings_factory: Factory for project-specific settings classes
 
 And the following CLI options:
-- --markdown-docs: Validate Python code blocks in .md files
-- --markdown-ruff: Also run ruff on extracted code blocks
+- the markdown docs option: Validate Python code blocks in .md files
 """
 
 from __future__ import annotations

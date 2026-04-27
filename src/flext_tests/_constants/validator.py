@@ -208,6 +208,7 @@ class FlextTestsValidatorConstantsMixin:
     )
 
     # Markdown validation
+    VALIDATOR_MD_OPTION_DOCS: Final[str] = "--markdown-docs"
     VALIDATOR_MD_PYTHON_BLOCK_RE: ClassVar[re.Pattern[str]] = re.compile(
         r"^```python\s*$\n(.*?)^```\s*$",
         re.MULTILINE | re.DOTALL,
