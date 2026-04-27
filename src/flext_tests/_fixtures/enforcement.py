@@ -39,10 +39,12 @@ from typing import Final, override
 
 import pytest
 
-from flext_core import FlextModelsEnforcement, FlextUtilities
+from flext_core import (
+    FlextModelsEnforcement,
+    FlextUtilities,
+)
 
 _me = FlextModelsEnforcement
-_sk = _me.EnforcementSourceKind
 
 _WORKSPACE_MARKERS: Final[tuple[str, ...]] = (
     "AGENTS.md",
@@ -202,7 +204,7 @@ def pytest_configure(config: pytest.Config) -> None:
         return
 
     for rule in _active_rules(cfg):
-        if rule.source.kind != _sk.RUNTIME_WARNING.value:
+        if rule.source.kind != "runtime_warning":
             continue
         # mypy/pyright narrow via discriminator: guard anyway for runtime.
         category = getattr(rule.source, "category", None)
@@ -442,7 +444,7 @@ def _build_items(
     rules = _active_rules(cfg)
 
     infra_report: object | None = None
-    if any(r.source.kind == _sk.FLEXT_INFRA_DETECTOR.value for r in rules):
+    if any(r.source.kind == "flext_infra_detector" for r in rules):
         infra_report = _load_infra_report(workspace_root)
 
     collector = EnforcementCollector.from_parent(
@@ -453,11 +455,11 @@ def _build_items(
 
     for rule in rules:
         grouped: dict[str, list[object]] = {}
-        if rule.source.kind == _sk.FLEXT_INFRA_DETECTOR.value:
+        if rule.source.kind == "flext_infra_detector":
             if infra_report is None:
                 continue
             grouped = _dispatch_infra_detector(rule, infra_report)
-        elif rule.source.kind == _sk.FLEXT_TESTS_VALIDATOR.value:
+        elif rule.source.kind == "flext_tests_validator":
             grouped = _dispatch_tests_validator(rule, workspace_root)
         # RUNTIME_WARNING, RUFF, AST_GREP, SKILL_POINTER → no collection-time items.
         else:
