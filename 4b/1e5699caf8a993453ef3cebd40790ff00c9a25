@@ -1,0 +1,36 @@
+src/flext_tests/_models/filesystem.py
+  h_9db9d35f50cf33 44
+src/flext_tests/_validator/bypass.py
+  h_9db9d35f50cf33 128
+src/flext_tests/_validator/types.py
+  h_9db9d35f50cf33 352
+src/flext_tests/_validator/imports.py
+  h_9db9d35f50cf33 233
+src/flext_tests/_fixtures/markdown_validation.py
+  h_9db9d35f50cf33 3,22,28,30,33,106-107,110-111
+src/flext_tests/_validator/settings.py
+  h_9db9d35f50cf33 209
+src/flext_tests/_validator/tests.py
+  h_9db9d35f50cf33 177
+src/flext_tests/docker.py
+  h_9db9d35f50cf33 373
+src/flext_tests/_constants/validator.py
+  h_9db9d35f50cf33 211
+src/flext_tests/_validator/layer.py
+  h_9db9d35f50cf33 57
+src/flext_tests/conftest_plugin.py
+  h_9db9d35f50cf33 15
+src/flext_tests/files.py
+  h_9db9d35f50cf33 226,1376,1386,1392
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "4b1e5699caf8a993453ef3cebd40790ff00c9a25",
+  "prompts": {},
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
