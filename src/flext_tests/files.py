@@ -134,6 +134,29 @@ class FlextTestsFiles(s):
         """Get list of created files."""
         return self._created_files or []
 
+    def cleanup(self) -> None:
+        """Cleanup all tracked files and directories created by this manager."""
+        if self._created_files is not None:
+            for file_path in reversed(self._created_files):
+                if not file_path.exists():
+                    continue
+                try:
+                    file_path.chmod(c.Tests.PERMISSION_WRITABLE_FILE)
+                    file_path.unlink(missing_ok=True)
+                except OSError:
+                    pass
+            self._created_files.clear()
+        if self._created_dirs is not None:
+            for dir_path in reversed(self._created_dirs):
+                if not dir_path.exists():
+                    continue
+                try:
+                    dir_path.chmod(c.Tests.PERMISSION_WRITABLE_DIR)
+                    shutil.rmtree(dir_path)
+                except OSError:
+                    pass
+            self._created_dirs.clear()
+
     @classmethod
     @contextmanager
     def files(
@@ -270,12 +293,8 @@ class FlextTestsFiles(s):
     def assert_exists(
         path: Path,
         msg: str | None = None,
-        *,
-        is_file: bool | None = None,
-        is_dir: bool | None = None,
-        not_empty: bool | None = None,
-        readable: bool | None = None,
-        writable: bool | None = None,
+        options: m.Tests.AssertExistsParams | None = None,
+        **kwargs: t.JsonValue,
     ) -> Path:
         """Generalized file existence assertion - ALL file validations in ONE method.
 
@@ -301,42 +320,74 @@ class FlextTestsFiles(s):
             _ = tf.assert_exists(path, is_dir=True, writable=True)  # Dir and writable
 
         """
+        payload: t.MutableJsonMapping = (
+            options.model_dump(mode="python") if options is not None else {}
+        )
+        payload.update(kwargs)
+        params = m.Tests.AssertExistsParams.model_validate(payload)
         if not path.exists():
             error_msg = msg or c.Tests.ERROR_FILE_NOT_FOUND.format(path=path)
             raise AssertionError(error_msg)
-        if is_file is not None:
-            if is_file and (not path.is_file()):
-                raise AssertionError(msg or f"Path {path} is not a file")
-            if not is_file and path.is_file():
-                raise AssertionError(msg or f"Path {path} should not be a file")
-        if is_dir is not None:
-            if is_dir and (not path.is_dir()):
-                raise AssertionError(msg or f"Path {path} is not a directory")
-            if not is_dir and path.is_dir():
-                raise AssertionError(msg or f"Path {path} should not be a directory")
-        if not_empty is not None:
-            if not_empty:
-                if path.is_file() and path.stat().st_size == 0:
-                    raise AssertionError(msg or f"File {path} is empty")
-                if path.is_dir() and (not any(path.iterdir())):
-                    raise AssertionError(msg or f"Directory {path} is empty")
-            else:
-                if path.is_file() and path.stat().st_size > 0:
-                    raise AssertionError(msg or f"File {path} is not empty")
-                if path.is_dir() and any(path.iterdir()):
-                    raise AssertionError(msg or f"Directory {path} is not empty")
-        if (
-            readable is not None
-            and readable
-            and path.is_file()
-            and (not os.access(path, os.R_OK))
-        ):
-            raise AssertionError(msg or f"File {path} is not readable")
-        if writable is not None and writable:
-            if path.is_file() and (not os.access(path, os.W_OK)):
-                raise AssertionError(msg or f"File {path} is not writable")
-            if path.is_dir() and (not os.access(path, os.W_OK)):
-                raise AssertionError(msg or f"Directory {path} is not writable")
+        is_file_path = path.is_file()
+        is_dir_path = path.is_dir()
+        is_empty_file = is_file_path and path.stat().st_size == 0
+        is_empty_dir = is_dir_path and (not any(path.iterdir()))
+
+        checks: MutableSequence[tuple[bool, str]] = []
+        if params.is_file is not None:
+            checks.extend([
+                (params.is_file and (not is_file_path), f"Path {path} is not a file"),
+                (
+                    (not params.is_file) and is_file_path,
+                    f"Path {path} should not be a file",
+                ),
+            ])
+        if params.is_dir is not None:
+            checks.extend([
+                (
+                    params.is_dir and (not is_dir_path),
+                    f"Path {path} is not a directory",
+                ),
+                (
+                    (not params.is_dir) and is_dir_path,
+                    f"Path {path} should not be a directory",
+                ),
+            ])
+        if params.not_empty is not None:
+            checks.extend([
+                (params.not_empty and is_empty_file, f"File {path} is empty"),
+                (params.not_empty and is_empty_dir, f"Directory {path} is empty"),
+                (
+                    (not params.not_empty) and is_file_path and (not is_empty_file),
+                    f"File {path} is not empty",
+                ),
+                (
+                    (not params.not_empty) and is_dir_path and (not is_empty_dir),
+                    f"Directory {path} is not empty",
+                ),
+            ])
+        if params.readable:
+            checks.append(
+                (
+                    is_file_path and (not os.access(path, os.R_OK)),
+                    f"File {path} is not readable",
+                ),
+            )
+        if params.writable:
+            checks.extend([
+                (
+                    is_file_path and (not os.access(path, os.W_OK)),
+                    f"File {path} is not writable",
+                ),
+                (
+                    is_dir_path and (not os.access(path, os.W_OK)),
+                    f"Directory {path} is not writable",
+                ),
+            ])
+
+        for failed, check_msg in checks:
+            if failed:
+                raise AssertionError(msg or check_msg)
         return path
 
     @staticmethod
@@ -527,54 +578,19 @@ class FlextTestsFiles(s):
                 results_dict[name] = rtype.ok(op_result.value)
                 continue
             err_msg = op_result.error or "Unknown error"
+            results_dict[name] = rtype.fail(err_msg)
+            failed_dict[name] = err_msg
             if error_mode_str == "fail":
-                return r[m.Tests.BatchResult].fail(
-                    f"Batch operation failed: {err_msg}",
-                )
-            failed_dict[name] = str(err_msg)
-        return r[m.Tests.BatchResult].ok(
-            m.Tests.BatchResult(
-                succeeded=len(results_dict),
-                failed=len(failed_dict),
-                total=len(items_list),
-                results=results_dict,
-                errors=failed_dict,
-            ),
-        )
+                return r[m.Tests.BatchResult].fail(err_msg)
 
-    def cleanup(self) -> None:
-        """Clean up all created files and directories."""
-        for file_path in self.created_files:
-            if file_path.exists():
-                try:
-                    file_path.chmod(c.Tests.PERMISSION_WRITABLE_FILE)
-                except OSError:
-                    pass
-                try:
-                    file_path.unlink()
-                except OSError:
-                    pass
-        for dir_path in self.created_dirs:
-            if dir_path.exists():
-                try:
-                    for item in dir_path.rglob("*"):
-                        try:
-                            perm = (
-                                c.Tests.PERMISSION_WRITABLE_DIR
-                                if item.is_dir()
-                                else c.Tests.PERMISSION_WRITABLE_FILE
-                            )
-                            item.chmod(perm)
-                        except OSError:
-                            pass
-                    dir_path.chmod(c.Tests.PERMISSION_WRITABLE_DIR)
-                    shutil.rmtree(dir_path)
-                except OSError:
-                    pass
-        if self._created_files is not None:
-            self._created_files.clear()
-        if self._created_dirs is not None:
-            self._created_dirs.clear()
+        summary = m.Tests.BatchResult.model_validate({
+            "succeeded": len(items_list) - len(failed_dict),
+            "failed": len(failed_dict),
+            "total": len(items_list),
+            "results": dict(results_dict),
+            "errors": dict(failed_dict),
+        })
+        return r[m.Tests.BatchResult].ok(summary)
 
     def compare(
         self,

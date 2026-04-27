@@ -337,6 +337,32 @@ class FlextTestsFilesystemModelsMixin:
             """Convert string to Path - Field constraints cannot handle type conversion."""
             return Path(value)
 
+    class AssertExistsParams(m.Value):
+        """Validation options for file/dir existence assertions."""
+
+        is_file: Annotated[
+            bool | None,
+            u.Field(description="Assert path is file (True) or not file (False)."),
+        ] = None
+        is_dir: Annotated[
+            bool | None,
+            u.Field(
+                description="Assert path is directory (True) or not directory (False)."
+            ),
+        ] = None
+        not_empty: Annotated[
+            bool | None,
+            u.Field(description="Assert path content emptiness state."),
+        ] = None
+        readable: Annotated[
+            bool | None,
+            u.Field(description="Assert readable permission when True."),
+        ] = None
+        writable: Annotated[
+            bool | None,
+            u.Field(description="Assert writable permission when True."),
+        ] = None
+
     class CreateKwargsParams(m.Value):
         """Parameters for file create() kwargs with Pydantic 2 validation.
 
