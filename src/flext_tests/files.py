@@ -1358,41 +1358,43 @@ class FlextTestsFiles(s):
         model_valid: bool | None = None
         model_name = validate_model.__name__ if validate_model else None
         parsed_mapping: Mapping[str, t.Tests.TestobjectSerializable] | None = None
-        if fmt in {"json", "yaml"} and text.strip():
+        structured_text = fmt in {"json", "yaml"} and bool(text.strip())
+        if structured_text:
             parse_result = (
                 u.Cli.json_parse(text) if fmt == "json" else u.Cli.yaml_parse(text)
             )
             parsed_value = parse_result.value if parse_result.success else None
-            if isinstance(parsed_value, Mapping):
-                parsed_mapping = {str(k): v for k, v in parsed_value.items()}
-                key_count = len(parsed_mapping)
-            elif isinstance(parsed_value, list):
-                item_count = len(parsed_value)
+            match parsed_value:
+                case dict() as parsed_dict:
+                    parsed_mapping = {str(k): v for k, v in parsed_dict.items()}
+                    key_count = len(parsed_mapping)
+                case list() as parsed_list:
+                    item_count = len(parsed_list)
+                case _:
+                    pass
         elif fmt == "csv":
             try:
                 rows = list(csv.reader(text.splitlines()))
-                if rows:
-                    row_count = len(rows)
-                    column_count = len(rows[0]) if rows[0] else 0
             except csv.Error:
-                pass
+                rows: list[list[str]] = []
+            if rows:
+                row_count = len(rows)
+                column_count = len(rows[0]) if rows[0] else 0
         if validate_model is not None:
             if parsed_mapping is not None:
-                try:
-                    _ = validate_model.model_validate(parsed_mapping)
-                    model_valid = True
-                except (TypeError, ValueError, AttributeError):
-                    model_valid = False
-            elif fmt in {"json", "yaml"} and text.strip():
+                model_valid = r[m.BaseModel].create_from_callable(
+                    lambda: validate_model.model_validate(parsed_mapping)
+                ).success
+            elif structured_text:
                 model_valid = False
-        return m.Tests.ContentMeta(
-            key_count=key_count,
-            item_count=item_count,
-            row_count=row_count,
-            column_count=column_count,
-            model_valid=model_valid,
-            model_name=model_name,
-        )
+        return m.Tests.ContentMeta.model_validate({
+            "key_count": key_count,
+            "item_count": item_count,
+            "row_count": row_count,
+            "column_count": column_count,
+            "model_valid": model_valid,
+            "model_name": model_name,
+        })
 
     def _resolve_directory(self, directory: Path | None) -> Path:
         """Resolve target directory for file creation."""
