@@ -1,0 +1,16 @@
+src/flext_tests/_fixtures/enforcement.py
+  h_9db9d35f50cf33 42,44-45,207,447,458,462
+src/flext_tests/constants.py
+  h_9db9d35f50cf33 43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "7f7fa4d463b5e31918df08912075962b0ee61913",
+  "prompts": {},
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
