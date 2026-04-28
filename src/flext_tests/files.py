@@ -38,29 +38,7 @@ from flext_tests import FlextTestsPayloadUtilities, c, m, p, r, s, t, u
 
 
 class FlextTestsFiles(s):
-    """Manages test files for FLEXT ecosystem testing.
-
-    Extends FlextTestsServiceBase for consistent service patterns.
-
-    Provides generalist file operations with powerful optional parameters:
-    - `create()`: Create any file type with auto-detection
-    - `read()`: Read any file type with r
-    - `compare()`: Compare files with multiple modes
-    - `info()`: Get comprehensive file information
-
-    Example:
-        from flext_tests import tf
-
-        with tf() as files:
-            # Auto-detect format from content type
-            path = files.create({"key": "value"}, "settings.json")
-            result = files.read(path)
-
-        # Or use context manager for multiple files
-        with tf.files({"a": "text", "b": {"k": 1}}) as paths:
-            assert paths["a"].exists()
-
-    """
+    """Manages test files for FLEXT ecosystem testing."""
 
     FileInfo: ClassVar[type[m.Tests.FileInfo]] = m.Tests.FileInfo
 
@@ -185,17 +163,6 @@ class FlextTestsFiles(s):
         Yields:
             Dict mapping names to paths.
 
-        Examples:
-            # Basic usage
-            with tf.files({"a": "text", "b": {"key": 1}}) as paths:
-                assert paths["a"].exists()
-                assert paths["b"].suffix == ".json"  # auto-detected
-
-            # With Pydantic models
-            with tf.files({"user": user_model, "settings": settings_model}) as paths:
-                assert paths["user"].suffix == ".json"
-                assert paths["settings"].suffix == ".json"
-
         """
         manager = cls()
         if directory is not None:
@@ -313,12 +280,6 @@ class FlextTestsFiles(s):
         Returns:
             Path if all validations pass
 
-        Examples:
-            _ = tf.assert_exists(path)                    # Just exists
-            _ = tf.assert_exists(path, is_file=True)      # Exists and is file
-            _ = tf.assert_exists(path, not_empty=True)    # Exists and not empty
-            _ = tf.assert_exists(path, is_dir=True, writable=True)  # Dir and writable
-
         """
         payload: t.MutableJsonMapping = (
             options.model_dump(mode="python") if options is not None else {}
@@ -423,17 +384,6 @@ class FlextTestsFiles(s):
         Returns:
             Path to created file.
 
-        Examples:
-            # Simple text file
-            path = tf.create_in("content", "file.txt", output_dir)
-
-            # Pydantic model
-            path = tf.create_in(user_model, "user.json", output_dir)
-
-            # r
-            result = service.get_data()
-            path = tf.create_in(result, "data.json", output_dir)
-
         """
         manager = FlextTestsFiles(base_dir=directory)
         return manager.create(
@@ -474,22 +424,6 @@ class FlextTestsFiles(s):
         Returns:
             r[m.Tests.BatchResult] with results and errors
 
-        Examples:
-            # Batch create
-            result = tf().batch_files({
-                "file1.txt": "content1",
-                "file2.json": {"key": "value"},
-                "file3.yaml": settings_model,
-            }, directory=tmp_path)
-
-            # Batch read with model
-            file_paths = {"user1.json": Path("user1.json"), ...}
-            result = tf().batch_files(
-                file_paths,
-                operation="read",
-                model=UserModel,
-            )
-
         """
         try:
             params = m.Tests.BatchParams.model_validate({
@@ -506,7 +440,7 @@ class FlextTestsFiles(s):
             )
         files_dict: MutableMapping[str, t.Tests.TestobjectSerializable]
         if isinstance(params.files, Mapping):
-            files_dict = {str(k): v for k, v in params.files.items()}
+            files_dict = dict(params.files.items())
         elif not isinstance(params.files, str):
             files_dict = {}
             for item in params.files:
@@ -621,20 +555,6 @@ class FlextTestsFiles(s):
         Returns:
             r[bool] - True if match.
 
-        Examples:
-            # Content comparison
-            result = tf().compare(file1, file2)
-
-            # Hash comparison (faster for large files)
-            result = tf().compare(file1, file2, mode="hash")
-
-            # Check if both contain pattern
-            result = tf().compare(file1, file2, pattern="ERROR")
-
-            # Deep comparison with key filtering (for JSON/YAML)
-            result = tf().compare(file1, file2, keys=["name", "email"])
-            result = tf().compare(file1, file2, exclude_keys=["timestamp"])
-
         """
         try:
             params = m.Tests.CompareParams.model_validate({
@@ -720,27 +640,6 @@ class FlextTestsFiles(s):
 
         Raises:
             ValueError: If r is failure and extract_result=True
-
-        Examples:
-            # Text file
-            path = tf().create("hello", "test.txt")
-
-            # JSON file (auto-detected from dict)
-            path = tf().create({"key": "value"}, "settings.json")
-
-            # Pydantic model (auto-detected as JSON)
-            path = tf().create(user_model, "user.json")
-
-            # r with auto-extraction
-            result = service.fetch_settings()  # r[dict]
-            path = tf().create(result, "settings.json")
-
-            # CSV file (auto-detected from Sequence[list])
-            path = tf().create([["a", "b"], ["1", "2"]], "data.csv",
-                              headers=["col1", "col2"])
-
-            # Binary file
-            path = tf().create(b"\\x00\\x01", "data.bin", fmt="bin")
 
         """
         content_to_validate = self._extract_content(content, extract_result)
@@ -936,23 +835,6 @@ class FlextTestsFiles(s):
         Returns:
             r[FileInfo] with info or error.
 
-        Examples:
-            result = tf().info(path)
-            if result.success:
-                info = result.value
-                logger.info(f"Size: {info.size_human}")
-                logger.info(f"Format: {info.fmt}")
-
-            # With content parsing
-            result = tf().info(path, parse_content=True)
-            if result.success and result.value.content_meta:
-                logger.info(f"Keys: {result.value.content_meta.key_count}")
-
-            # With model validation
-            result = tf().info(path, validate_model=UserModel)
-            if result.success and result.value.content_meta:
-                logger.info(f"Valid: {result.value.content_meta.model_valid}")
-
         """
         try:
             params = m.Tests.InfoParams.model_validate({
@@ -1072,28 +954,6 @@ class FlextTestsFiles(s):
 
         Returns:
             r with content or model instance.
-
-        Examples:
-            # Read text
-            result = tf().read(path)
-            if result.success:
-                text = result.value
-
-            # Read JSON
-            result = tf().read(Path("settings.json"))
-            data = result.value  # dict
-
-            # Read JSON into Pydantic model
-            result = tf().read(Path("user.json"), model_cls=UserModel)
-            user = result.value  # UserModel instance
-
-            # Read YAML into Pydantic model
-            result = tf().read(Path("settings.yaml"), model_cls=SettingsModel)
-            settings = result.value  # SettingsModel instance
-
-            # Read CSV
-            result = tf().read(Path("data.csv"))
-            rows = result.value  # Sequence[t.StrSequence]
 
         """
         try:
@@ -1218,11 +1078,11 @@ class FlextTestsFiles(s):
         | t.Tests.TestobjectSerializable
         | None,
     ) -> t.Tests.FileContentPlain:
-        unwrapped: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable | None
-        if isinstance(value, p.ResultLike):
-            unwrapped = value.value if value.success else ""
-        else:
-            unwrapped = value
+        unwrapped: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable | None = (
+            value.unwrap_or(c.DEFAULT_EMPTY_STRING)
+            if isinstance(value, p.ResultLike)
+            else value
+        )
         if isinstance(unwrapped, str | bytes):
             return unwrapped
         if isinstance(unwrapped, (m.ConfigMap, m.Dict)):

@@ -237,14 +237,14 @@ class FlextTestsMatchersUtilities:
         extract_source: m.ConfigMap
         if isinstance(value, m.BaseModel):
             extract_source = m.ConfigMap.model_validate({
-                str(key): FlextTestsPayloadUtilities.to_config_map_value(
+                key: FlextTestsPayloadUtilities.to_config_map_value(
                     FlextTestsPayloadUtilities.to_payload(item),
                 )
                 for key, item in value.model_dump(mode="python").items()
             })
         elif isinstance(value, Mapping):
             extract_source = m.ConfigMap.model_validate({
-                str(key): FlextTestsPayloadUtilities.to_config_map_value(
+                key: FlextTestsPayloadUtilities.to_config_map_value(
                     FlextTestsPayloadUtilities.to_payload(item),
                 )
                 for key, item in value.items()
@@ -562,31 +562,6 @@ class FlextTestsMatchersUtilities:
             """
 
             @staticmethod
-            def assert_result_success[TResult](
-                result: FlextProtocolsResult.Result[TResult],
-                msg: str | None = None,
-            ) -> TResult:
-                """Assert result is success and return unwrapped value.
-
-                Args:
-                    result: r to check
-                    msg: Optional custom error message
-
-                Returns:
-                    Unwrapped value from result
-
-                Raises:
-                    AssertionError: If result is failure
-
-                """
-                if not result.success:
-                    error_msg = (
-                        msg or f"Expected success but got failure: {result.error}"
-                    )
-                    raise AssertionError(error_msg)
-                return result.value
-
-            @staticmethod
             def check[TResult](
                 result: p.Result[TResult],
             ) -> m.Tests.Chain[TResult]:
@@ -718,7 +693,7 @@ class FlextTestsMatchersUtilities:
                     if isinstance(code_has_value, str):
                         items_list: t.StrSequence = [code_has_value]
                     else:
-                        items_list = [str(x) for x in code_has_value]
+                        items_list = list(code_has_value)
                     for item in items_list:
                         if item not in actual_code:
                             raise AssertionError(
@@ -1106,10 +1081,7 @@ class FlextTestsMatchersUtilities:
                             os.chdir(cwd_path)
                         cfg: Mapping[str, t.Tests.TestobjectSerializable] = {}
                         if params.settings:
-                            cfg = {
-                                str(key): value
-                                for key, value in params.settings.items()
-                            }
+                            cfg = dict(params.settings.items())
                         container_dict = {
                             k: v
                             for k, v in (params.container or {}).items()
@@ -1117,9 +1089,7 @@ class FlextTestsMatchersUtilities:
                         }
                         context_map: Mapping[str, t.Tests.TestobjectSerializable] = {}
                         if params.context:
-                            context_map = {
-                                str(key): value for key, value in params.context.items()
-                            }
+                            context_map = dict(params.context.items())
                         yield m.Tests.TestScope.model_validate({
                             "settings": cfg,
                             "container": container_dict,
