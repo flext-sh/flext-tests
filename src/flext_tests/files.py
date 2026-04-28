@@ -827,7 +827,11 @@ class FlextTestsFiles(s):
             case c.Tests.Format.JSON | c.Tests.Format.YAML:
                 json_payload = self._build_json_payload(actual_content)
                 if actual_fmt == c.Tests.Format.JSON:
-                    u.Cli.json_write(file_path, json_payload, indent=params.indent)
+                    u.Cli.json_write(
+                        file_path,
+                        json_payload,
+                        m.Cli.JsonWriteOptions(indent=params.indent),
+                    )
                 else:
                     u.Cli.yaml_dump(file_path, json_payload, indent=params.indent)
             case c.Tests.Format.CSV:

@@ -95,6 +95,8 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                                 )
                             )
                         )
+                case _:
+                    continue
         return violations
 
     @classmethod
@@ -251,7 +253,7 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         violations: MutableSequence[m.Tests.Violation] = []
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                if node.returns and u.Tests.any_type(node.returns):
+                if node.returns is not None and u.Tests.any_type(node.returns):
                     violation = u.Tests.create_violation(
                         file_path,
                         node.lineno,
@@ -261,25 +263,31 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                     )
                     violations.append(violation)
                 for arg in node.args.args + node.args.kwonlyargs:
-                    if arg.annotation and u.Tests.any_type(arg.annotation):
-                        violation = u.Tests.create_violation(
-                            file_path,
-                            arg.lineno if hasattr(arg, "lineno") else node.lineno,
-                            "TYPE-002",
-                            lines,
-                            c.Tests.VALIDATOR_MSG_TYPE_ANY_ARG.format(arg=arg.arg),
-                        )
-                        violations.append(violation)
-            elif isinstance(node, ast.AnnAssign):
-                if node.annotation and u.Tests.any_type(node.annotation):
+                    annotation = arg.annotation
+                    if annotation is None or not u.Tests.any_type(annotation):
+                        continue
                     violation = u.Tests.create_violation(
                         file_path,
-                        node.lineno,
+                        arg.lineno if hasattr(arg, "lineno") else node.lineno,
                         "TYPE-002",
                         lines,
-                        "in variable annotation",
+                        c.Tests.VALIDATOR_MSG_TYPE_ANY_ARG.format(arg=arg.arg),
                     )
                     violations.append(violation)
+                continue
+            if not isinstance(node, ast.AnnAssign):
+                continue
+            annotation = node.annotation
+            if not u.Tests.any_type(annotation):
+                continue
+            violation = u.Tests.create_violation(
+                file_path,
+                node.lineno,
+                "TYPE-002",
+                lines,
+                "in variable annotation",
+            )
+            violations.append(violation)
         return violations
 
     @classmethod
