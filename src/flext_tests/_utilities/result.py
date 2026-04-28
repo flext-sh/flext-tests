@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+from types import EllipsisType
+
 from flext_core import FlextProtocolsResult
-from flext_tests import p
+from flext_tests import c, p
 
 
 class FlextTestsResultUtilitiesMixin:
@@ -27,44 +29,20 @@ class FlextTestsResultUtilitiesMixin:
         return str(error)
 
     @staticmethod
-    def assert_failure_with_error[T](
-        result: p.Result[T], expected_error: str | None = None
-    ) -> None:
-        """Assert result is failure and has expected error.
-
-        Args:
-            result: r or Result protocol to check
-            expected_error: Optional expected error substring
-
-        Raises:
-            AssertionError: If result is success or error doesn't match
-
-        """
-        if result.success:
-            msg = f"Expected failure, got success: {result.value}"
-            raise AssertionError(msg)
-        if expected_error:
-            assert result.error is not None
-            assert expected_error in result.error
-
-    @staticmethod
     def assert_success[TResult](
-        result: FlextProtocolsResult.Result[TResult], error_msg: str | None = None
+        result: FlextProtocolsResult.Result[TResult],
+        error_msg: str | None = None,
+        *,
+        expected_value: TResult | EllipsisType = ...,
     ) -> TResult:
-        """Assert result is success and return unwrapped value."""
+        """Assert result is success, optionally validate the value, and return it."""
         if not result.success:
-            msg = error_msg or f"Expected success but got failure: {result.error}"
-            raise AssertionError(msg)
-        value: TResult = result.value
+            raise AssertionError(
+                error_msg or c.Tests.ERR_OK_FAILED.format(error=result.error)
+            )
+        value = result.value
+        if expected_value is not ... and value != expected_value:
+            raise AssertionError(
+                f"Expected success value {expected_value!r} but got {value!r}"
+            )
         return value
-
-    @staticmethod
-    def assert_success_with_value[TResult](
-        result: p.Result[TResult],
-        expected_value: TResult,
-    ) -> None:
-        """Assert result is success and has expected value."""
-        if not result.success:
-            msg = f"Expected success, got failure: {result.error}"
-            raise AssertionError(msg)
-        assert result.value == expected_value

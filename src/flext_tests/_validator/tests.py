@@ -70,6 +70,8 @@ class FlextValidatorTests(FlextTestsValidatorModels.Tests.ScannerMixin):
                             f"{name}()",
                         )
                     )
+                case _:
+                    pass
         return violations
 
     @classmethod

@@ -33,9 +33,8 @@ class FlextTestsParserHelpersUtilitiesMixin:
             _ = FlextTestsResultUtilitiesMixin.assert_failure(result, expected_error)
             return
         if expected_value is not None:
-            FlextTestsResultUtilitiesMixin.assert_success_with_value(
-                result,
-                expected_value,
+            FlextTestsResultUtilitiesMixin.assert_success(
+                result, expected_value=expected_value
             )
             return
         _ = FlextTestsResultUtilitiesMixin.assert_success(

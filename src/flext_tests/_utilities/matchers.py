@@ -1081,7 +1081,7 @@ class FlextTestsMatchersUtilities:
                             os.chdir(cwd_path)
                         cfg: Mapping[str, t.Tests.TestobjectSerializable] = {}
                         if params.settings:
-                            cfg = dict(params.settings.items())
+                            cfg = dict(params.settings)
                         container_dict = {
                             k: v
                             for k, v in (params.container or {}).items()
@@ -1089,7 +1089,7 @@ class FlextTestsMatchersUtilities:
                         }
                         context_map: Mapping[str, t.Tests.TestobjectSerializable] = {}
                         if params.context:
-                            context_map = dict(params.context.items())
+                            context_map = dict(params.context)
                         yield m.Tests.TestScope.model_validate({
                             "settings": cfg,
                             "container": container_dict,

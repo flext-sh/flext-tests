@@ -54,27 +54,16 @@ class TestsFlextTestsUtilitiesUnit:
         with pytest.raises(AssertionError, match="Expected error containing"):
             _ = u.Tests.assert_failure(result, "not found")
 
-    def test_assert_success_with_value(self) -> None:
-        """Test assert_success_with_value with matching value."""
+    def test_assert_success_with_expected_value(self) -> None:
+        """Test assert_success with matching expected_value."""
         result = r[str].ok("expected")
-        u.Tests.assert_success_with_value(result, "expected")
+        u.Tests.assert_success(result, expected_value="expected")
 
-    def test_assert_success_with_value_mismatch(self) -> None:
-        """Test assert_success_with_value with non-matching value."""
+    def test_assert_success_with_expected_value_mismatch(self) -> None:
+        """Test assert_success when expected_value does not match."""
         result = r[str].ok("actual")
-        with pytest.raises(AssertionError):
-            u.Tests.assert_success_with_value(result, "expected")
-
-    def test_assert_failure_with_error(self) -> None:
-        """Test assert_failure_with_error with matching error."""
-        result: p.Result[str] = r[str].fail("test error")
-        u.Tests.assert_failure_with_error(result, "test")
-
-    def test_assert_failure_with_error_mismatch(self) -> None:
-        """Test assert_failure_with_error with non-matching error."""
-        result: p.Result[str] = r[str].fail("actual error")
-        with pytest.raises(AssertionError):
-            u.Tests.assert_failure_with_error(result, "expected")
+        with pytest.raises(AssertionError, match="Expected success value"):
+            u.Tests.assert_success(result, expected_value="expected")
 
     def test_temporary_attribute_change(self) -> None:
         """Test temporary_attribute changes attribute temporarily."""
