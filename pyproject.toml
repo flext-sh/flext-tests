@@ -22,23 +22,23 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "factory-boy>=3.3.1",
-  "faker>=37.4",
+  "factory-boy>=3.3.3",
+  "faker>=40.15.0",
   "flext-cli",
   "flext-core",
   "flext-infra",
-  "hypothesis>=6.125",
-  "pytest-benchmark>=5.1",
+  "hypothesis>=6.152.4",
+  "pytest-benchmark>=5.2.3",
   "pytest-clarity>=1.0.1",
-  "pytest-cov>=6.2",
-  "pytest-deadfixtures>=2.2.1",
-  "pytest-env>=1.1.5",
-  "pytest-mock>=3.14",
-  "pytest-randomly>=3.16",
-  "pytest-sugar>=1",
-  "pytest-timeout>=2.4",
-  "pytest-xdist>=3.8",
-  "pytest>=8.4",
+  "pytest-cov>=7.1.0",
+  "pytest-deadfixtures>=3.1.0",
+  "pytest-env>=1.6.0",
+  "pytest-mock>=3.15.1",
+  "pytest-randomly>=4.1.0",
+  "pytest-sugar>=1.1.1",
+  "pytest-timeout>=2.4.0",
+  "pytest-xdist>=3.8.0",
+  "pytest>=9.0.3",
 ]
 description = "FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem"
 keywords = [ "builders", "factories", "flext", "test-infrastructure", "testing" ]
@@ -68,7 +68,7 @@ dev = [
   "blacken-docs>=1.19",
   "codespell>=2.3",
   "deptry>=0.23",
-  "detect-secrets>=1.5",
+  "detect-secrets>=1.5.0",
   "django-stubs>=5.2.2",
   "factory-boy>=3.3.1",
   "faker>=37.4",
@@ -94,7 +94,7 @@ dev = [
   "mkdocs>=1.6",
   "mkdocstrings-python>=1.7",
   "mkdocstrings>=0.24",
-  "mypy>=1.18.2",
+  "mypy>=1.20.2",
   "pip-audit>=2.7.3",
   "pre-commit>=4.0.1",
   "pylint>=3.3",
@@ -201,7 +201,6 @@ no_implicit_reexport = true
 overrides = [  ]
 plugins = [ "pydantic.mypy", "returns.contrib.mypy.returns_plugin" ]
 python_version = "3.13"
-strict_concatenate = true
 strict_equality = true
 warn_redundant_casts = true
 warn_return_any = true
@@ -228,6 +227,7 @@ project-excludes = [
   "**/__pycache__",
   "**/__pyrefly_virtual__/**",
   "**/node_modules",
+  "**/site-packages/**",
   "**/typings/**",
   "**/vendor/**",
   "**/venv/**",
@@ -245,7 +245,6 @@ search-path = [
   "../flext-core/examples",
   "../flext-core/scripts",
   "../flext-core/src",
-  "../flext-core/venv",
   "../flext-infra/src",
   "../flext-infra/tmp_flow_test",
   "../flext-tests/src",
@@ -255,90 +254,90 @@ use-ignore-files = false
 
 [tool.pyrefly.errors]
 abstract-method-call = false
-annotation-mismatch = true
-bad-argument-count = true
-bad-argument-type = true
-bad-assignment = true
-bad-class-definition = true
-bad-context-manager = true
-bad-dunder-all = true
-bad-function-definition = true
-bad-index = true
-bad-instantiation = true
-bad-keyword-argument = true
-bad-match = true
+annotation-mismatch = "error"
+bad-argument-count = "error"
+bad-argument-type = "error"
+bad-assignment = "error"
+bad-class-definition = "error"
+bad-context-manager = "error"
+bad-dunder-all = "error"
+bad-function-definition = "error"
+bad-index = "error"
+bad-instantiation = "error"
+bad-keyword-argument = "error"
+bad-match = "error"
 bad-override = false
-bad-param-name-override = true
-bad-raise = true
-bad-return = true
-bad-specialization = true
-bad-typed-dict = true
-bad-typed-dict-key = true
-bad-unpacking = true
-deprecated = true
-implicit-abstract-class = true
-implicit-any = true
-implicit-import = true
-implicitly-defined-attribute = true
-inconsistent-inheritance = true
-inconsistent-overload = true
-inconsistent-overload-default = true
-invalid-annotation = true
-invalid-argument = true
-invalid-decorator = true
-invalid-inheritance = true
-invalid-literal = true
-invalid-overload = true
-invalid-param-spec = true
-invalid-pattern = true
-invalid-self-type = true
-invalid-super-call = true
-invalid-type-alias = true
-invalid-type-var = true
-invalid-type-var-tuple = true
-invalid-variance = true
-invalid-yield = true
-missing-argument = true
-missing-attribute = true
-missing-import = true
-missing-module-attribute = true
-missing-override-decorator = true
-missing-source = true
-missing-source-for-stubs = true
-no-access = true
-no-matching-overload = true
+bad-param-name-override = "error"
+bad-raise = "error"
+bad-return = "error"
+bad-specialization = "error"
+bad-typed-dict = "error"
+bad-typed-dict-key = "error"
+bad-unpacking = "error"
+deprecated = "error"
+implicit-abstract-class = "error"
+implicit-any = "error"
+implicit-import = "error"
+implicitly-defined-attribute = "error"
+inconsistent-inheritance = "error"
+inconsistent-overload = "error"
+inconsistent-overload-default = "error"
+invalid-annotation = "error"
+invalid-argument = "error"
+invalid-decorator = "error"
+invalid-inheritance = "error"
+invalid-literal = "error"
+invalid-overload = "error"
+invalid-param-spec = "error"
+invalid-pattern = "error"
+invalid-self-type = "error"
+invalid-super-call = "error"
+invalid-type-alias = "error"
+invalid-type-var = "error"
+invalid-type-var-tuple = "error"
+invalid-variance = "error"
+invalid-yield = "error"
+missing-argument = "error"
+missing-attribute = "error"
+missing-import = "error"
+missing-module-attribute = "error"
+missing-override-decorator = "error"
+missing-source = "error"
+missing-source-for-stubs = "error"
+no-access = "error"
+no-matching-overload = "error"
 non-convergent-recursion = false
 non-exhaustive-match = false
-not-a-type = true
-not-async = true
-not-callable = true
-not-iterable = true
-not-required-key-access = true
-open-unpacking = true
-protocol-implicitly-defined-attribute = true
-read-only = true
-redefinition = true
-redundant-cast = true
-redundant-condition = true
-unannotated-attribute = true
-unannotated-parameter = true
-unannotated-return = true
-unbound-name = true
-unexpected-keyword = true
-unexpected-positional-argument = true
-unknown-name = true
-unnecessary-comparison = true
-unnecessary-type-conversion = true
-unreachable = true
-unresolvable-dunder-all = true
-unsafe-overlap = true
-unsupported = true
-unsupported-delete = true
-unsupported-operation = true
-untyped-import = true
-unused-coroutine = true
-unused-ignore = true
-variance-mismatch = true
+not-a-type = "error"
+not-async = "error"
+not-callable = "error"
+not-iterable = "error"
+not-required-key-access = "error"
+open-unpacking = "error"
+protocol-implicitly-defined-attribute = "error"
+read-only = "error"
+redefinition = "error"
+redundant-cast = "error"
+redundant-condition = "error"
+unannotated-attribute = "error"
+unannotated-parameter = "error"
+unannotated-return = "error"
+unbound-name = "error"
+unexpected-keyword = "error"
+unexpected-positional-argument = "error"
+unknown-name = "error"
+unnecessary-comparison = "error"
+unnecessary-type-conversion = "error"
+unreachable = "error"
+unresolvable-dunder-all = "error"
+unsafe-overlap = "error"
+unsupported = "error"
+unsupported-delete = "error"
+unsupported-operation = "error"
+untyped-import = "error"
+unused-coroutine = "error"
+unused-ignore = "error"
+variance-mismatch = "error"
 
 # [MANAGED] pyright
 [tool.pyright]

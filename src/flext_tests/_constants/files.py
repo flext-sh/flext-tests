@@ -117,4 +117,4 @@ class FlextTestsFilesConstantsMixin:
             Format string or "text" as default.
 
         """
-        return str(cls.EXT_TO_FMT.get(extension.lower(), "text"))
+        return cls.EXT_TO_FMT.get(extension.lower(), "text")

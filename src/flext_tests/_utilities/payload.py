@@ -57,7 +57,7 @@ class FlextTestsPayloadUtilities:
                 )
             except c.ValidationError:
                 return normalized_map
-            return {str(k): to_p(v) for k, v in validated_map.items()}
+            return {k: to_p(v) for k, v in validated_map.items()}
         if isinstance(value, (list, tuple, set)):
             normalized_seq = [to_p(item) for item in value]
             try:
@@ -86,7 +86,7 @@ class FlextTestsPayloadUtilities:
         if isinstance(value, Path):
             return str(value)
         if isinstance(value, Mapping):
-            return {str(key): to_n(item) for key, item in value.items()}
+            return {key: to_n(item) for key, item in value.items()}
         if isinstance(value, (list, tuple, frozenset)):
             return [to_n(item) for item in value]
         if value is None:
@@ -158,14 +158,14 @@ class FlextTestsPayloadUtilities:
         if isinstance(obj, m.BaseModel):
             dumped = obj.model_dump(mode="python")
             source_obj = m.ConfigMap.model_validate({
-                str(key): FlextTestsPayloadUtilities.to_config_map_value(
+                key: FlextTestsPayloadUtilities.to_config_map_value(
                     FlextTestsPayloadUtilities.to_payload(value),
                 )
                 for key, value in dumped.items()
             })
         else:
             source_obj = m.ConfigMap.model_validate({
-                str(key): FlextTestsPayloadUtilities.to_config_map_value(value)
+                key: FlextTestsPayloadUtilities.to_config_map_value(value)
                 for key, value in obj.items()
             })
         payload_types = (

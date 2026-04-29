@@ -6,7 +6,8 @@ from collections.abc import (
     Callable,
 )
 
-from flext_tests import FlextTestsResultUtilitiesMixin, p, t
+from flext_tests import p, t
+from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
 
 
 class FlextTestsParserHelpersUtilitiesMixin:
@@ -33,8 +34,9 @@ class FlextTestsParserHelpersUtilitiesMixin:
             _ = FlextTestsResultUtilitiesMixin.assert_failure(result, expected_error)
             return
         if expected_value is not None:
-            FlextTestsResultUtilitiesMixin.assert_success(
-                result, expected_value=expected_value
+            _ = FlextTestsResultUtilitiesMixin.assert_success(
+                result,
+                expected_value=expected_value,
             )
             return
         _ = FlextTestsResultUtilitiesMixin.assert_success(

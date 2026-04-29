@@ -23,24 +23,22 @@ import time
 from collections.abc import (
     Mapping,
     MutableSequence,
+    MutableSet,
     Sequence,
 )
 from pathlib import Path
-from typing import ClassVar
+from typing import Annotated, ClassVar, Self, override
 
 from docker import DockerClient as DockerSDKClient, from_env as docker_from_env
 from docker.errors import DockerException, NotFound
-from docker.models.containers import Container
 from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
 from flext_tests import c, m, p, r, t, u
-
-docker: WhalesDockerClient = WhalesDockerClient(client_type="docker")
-logger: p.Logger = u.fetch_logger(__name__)
+from flext_tests.base import s
 
 
-class FlextTestsDocker:
+class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     """Simplified Docker container management for FLEXT tests.
 
     Essential functionality only:
@@ -50,75 +48,241 @@ class FlextTestsDocker:
     - Port readiness checking
     """
 
-    ContainerStatus: ClassVar[type[c.Tests.ContainerStatus]] = c.Tests.ContainerStatus
+    docker: ClassVar[WhalesDockerClient] = WhalesDockerClient(client_type="docker")
+    workspace_root: Annotated[
+        Path,
+        u.Field(description="Workspace root used to resolve compose files."),
+    ] = u.Field(default_factory=Path.cwd)
+    worker_id: Annotated[
+        str,
+        u.Field(description="Worker identifier used to isolate persisted state."),
+    ] = "master"
+    docker_client: Annotated[
+        DockerSDKClient | None,
+        u.Field(exclude=True, description="Cached Docker SDK client instance."),
+    ] = None
+    client_error: Annotated[
+        str | None,
+        u.Field(exclude=True, description="Last Docker client initialization error."),
+    ] = None
+    dirty_container_names: Annotated[
+        MutableSet[str],
+        u.Field(exclude=True, description="Tracked dirty containers for the worker."),
+    ] = u.Field(default_factory=set)
+    state_file_path: Annotated[
+        Path | None,
+        u.Field(
+            exclude=True, description="Persistent state file for dirty containers."
+        ),
+    ] = None
+    target_config: Annotated[
+        m.Tests.ContainerConfig | None,
+        u.Field(description="Configured Docker target used by the public DSL."),
+    ] = None
 
-    class ContainerInfo(m.Tests.ContainerInfo):
-        """Container information model for tests - real inheritance from m."""
-
-    SHARED_CONTAINERS: ClassVar[Mapping[str, t.HeaderMapping]] = (
-        c.Tests.SHARED_CONTAINERS
-    )
-
-    class _OfflineContainers:
-        """Minimal container manager that always reports not found.
-
-        Does NOT inherit from ContainerCollection (which is untyped in docker SDK).
-        Instead, implements the same interface via composition and protocol.
-        """
-
-        def get(self, container_id: str) -> Container:
-            """Raise NotFound for any container lookup.
-
-            Business Rule: Always raises NotFound.
-            This is intentional for offline mode - containers are not available.
-            """
-            msg = f"Container {container_id} not found (offline client)"
-            raise NotFound(msg)
-
-    class _OfflineDockerClient:
-        """Offline Docker client used when the daemon is unavailable.
-
-        Does NOT inherit from DockerClient (which is untyped in docker SDK).
-        Instead, wraps the containers interface via composition.
-        """
-
-        def __init__(self) -> None:
-            """Initialize offline Docker client without contacting daemon."""
-            super().__init__()
-            self._offline_containers: FlextTestsDocker._OfflineContainers = (
-                FlextTestsDocker._OfflineContainers()
-            )
-
-        @property
-        def containers(self) -> FlextTestsDocker._OfflineContainers:
-            """Return offline container manager."""
-            return self._offline_containers
-
-    def __init__(
-        self,
+    @classmethod
+    def shared(
+        cls,
+        container_name: str,
+        *,
         workspace_root: Path | None = None,
         worker_id: str | None = None,
-    ) -> None:
-        """Initialize Docker client with dirty state tracking."""
-        super().__init__()
-        self._client: DockerSDKClient | FlextTestsDocker._OfflineDockerClient | None = (
-            None
+    ) -> Self:
+        """Build a DSL-configured service from a shared container constant."""
+        resolved_root = workspace_root or Path.cwd()
+        settings = c.Tests.SHARED_CONTAINERS.get(container_name)
+        if settings is None:
+            msg = f"Unknown shared container: {container_name}"
+            raise ValueError(msg)
+        compose_path = Path(str(settings.get("compose_file", "")))
+        if not compose_path.is_absolute():
+            compose_path = resolved_root / compose_path
+        port_value = settings.get("port")
+        port = (
+            port_value
+            if isinstance(port_value, int)
+            else int(str(port_value))
+            if str(port_value).isdigit()
+            else None
         )
-        self.logger: p.Logger = u.fetch_logger(__name__)
-        self.workspace_root: Path = workspace_root or Path.cwd()
-        self.worker_id: str = worker_id or "master"
-        self._dirty_containers: set[str] = set()
-        self._state_file: Path = (
+        return cls(
+            workspace_root=resolved_root,
+            worker_id=worker_id or "master",
+            target_config=m.Tests.ContainerConfig(
+                container_name=container_name,
+                compose_file=compose_path,
+                service=str(settings.get("service", "")),
+                host=str(settings.get("host", c.LOCALHOST)),
+                port=port,
+            ),
+        )
+
+    @classmethod
+    def compose(
+        cls,
+        compose_file: str | Path,
+        *,
+        container_name: str | None = None,
+        service: str = "",
+        host: str = c.LOCALHOST,
+        port: int | None = None,
+        startup_timeout: int = 30,
+        force_recreate: bool = False,
+        workspace_root: Path | None = None,
+        worker_id: str | None = None,
+    ) -> Self:
+        """Build a DSL-configured service for an explicit compose target."""
+        resolved_root = workspace_root or Path.cwd()
+        compose_path = Path(compose_file)
+        if not compose_path.is_absolute():
+            compose_path = resolved_root / compose_path
+        return cls(
+            workspace_root=resolved_root,
+            worker_id=worker_id or "master",
+            target_config=m.Tests.ContainerConfig(
+                container_name=container_name,
+                compose_file=compose_path,
+                service=service,
+                host=host,
+                port=port,
+                startup_timeout=startup_timeout,
+                force_recreate=force_recreate,
+            ),
+        )
+
+    @classmethod
+    def stack(
+        cls,
+        compose_file: str | Path,
+        *,
+        container_name: str | None = None,
+        service: str = "",
+        host: str = c.LOCALHOST,
+        port: int | None = None,
+        startup_timeout: int = 30,
+        force_recreate: bool = False,
+        workspace_root: Path | None = None,
+        worker_id: str | None = None,
+    ) -> Self:
+        """Build a DSL-configured service for a compose stack target."""
+        return cls.compose(
+            compose_file,
+            container_name=container_name,
+            service=service,
+            host=host,
+            port=port,
+            startup_timeout=startup_timeout,
+            force_recreate=force_recreate,
+            workspace_root=workspace_root,
+            worker_id=worker_id,
+        )
+
+    @override
+    def model_post_init(self, __context: t.JsonValue | None, /) -> None:
+        """Initialize private runtime state after model validation."""
+        super().model_post_init(__context)
+        self.state_file_path = (
             Path.home() / ".flext" / f"docker_state_{self.worker_id}.json"
         )
         self._load_dirty_state()
         _ = self.client
 
-    @property
-    def shared_containers(self) -> Mapping[str, t.HeaderMapping]:
-        """Get shared container configurations."""
-        result: Mapping[str, t.HeaderMapping] = c.Tests.SHARED_CONTAINERS
-        return result
+    @override
+    def execute(self) -> p.Result[m.Tests.ContainerInfo]:
+        """Ensure the configured container is available with a single DSL call."""
+        target = self.target_config
+        if target is None:
+            return r[m.Tests.ContainerInfo].fail(
+                "Docker target not configured. Use tk.shared(...).execute() or tk.compose(...).execute().",
+            )
+        if not target.container_name:
+            return r[m.Tests.ContainerInfo].fail(
+                "Docker target has no inspection container configured. Use up()/down()/ready() for stack-only lifecycles.",
+            )
+        if target.force_recreate or self.container_dirty(target.container_name):
+            compose_result = self.compose_up(
+                str(target.compose_file),
+                service=target.service or None,
+                force_recreate=True,
+            )
+            if compose_result.failure:
+                return r[m.Tests.ContainerInfo].fail(
+                    compose_result.error or "Failed to recreate Docker target",
+                )
+            _ = self.mark_container_clean(target.container_name)
+        else:
+            status_result = self.fetch_container_status(target.container_name)
+            container_running = status_result.success and (
+                status_result.value.status == c.Tests.ContainerStatus.RUNNING
+            )
+            if not container_running:
+                start_result = self.start_existing_container(target.container_name)
+                if start_result.failure:
+                    compose_result = self.compose_up(
+                        str(target.compose_file),
+                        service=target.service or None,
+                    )
+                    if compose_result.failure:
+                        return r[m.Tests.ContainerInfo].fail(
+                            compose_result.error or "Failed to start Docker target",
+                        )
+        if target.port is not None:
+            ready_result = self.wait_for_port_ready(
+                target.host,
+                target.port,
+                max_wait=target.startup_timeout,
+            )
+            if ready_result.failure:
+                return r[m.Tests.ContainerInfo].fail(
+                    ready_result.error or "Docker target readiness check failed",
+                )
+            if not ready_result.value:
+                return r[m.Tests.ContainerInfo].fail(
+                    f"Container {target.container_name} did not become ready on {target.host}:{target.port}",
+                )
+        return self.fetch_container_info(target.container_name)
+
+    def up(self) -> p.Result[str]:
+        """Start the configured compose target using the DSL state."""
+        target = self.target_config
+        if target is None:
+            return r[str].fail(
+                "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...).",
+            )
+        return self.compose_up(
+            str(target.compose_file),
+            service=target.service or None,
+            force_recreate=target.force_recreate,
+        )
+
+    def down(self) -> p.Result[str]:
+        """Stop the configured compose target using the DSL state."""
+        target = self.target_config
+        if target is None:
+            return r[str].fail(
+                "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...).",
+            )
+        return self.compose_down(str(target.compose_file))
+
+    def ready(
+        self, *, port: int | None = None, max_wait: int | None = None
+    ) -> p.Result[bool]:
+        """Run a readiness check against the configured target."""
+        target = self.target_config
+        if target is None:
+            return r[bool].fail(
+                "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...).",
+            )
+        resolved_port = target.port if port is None else port
+        if resolved_port is None:
+            return r[bool].fail(
+                f"Docker target {target.container_name} has no configured readiness port.",
+            )
+        return self.wait_for_port_ready(
+            target.host,
+            resolved_port,
+            max_wait=target.startup_timeout if max_wait is None else max_wait,
+        )
 
     @staticmethod
     def _extract_host_port(bindings: Sequence[t.StrMapping] | None) -> str:
@@ -128,7 +292,7 @@ class FlextTestsDocker:
             return ""
         first_binding = bindings[0]
         host_port = first_binding.get("HostPort", "")
-        return str(host_port)
+        return host_port if isinstance(host_port, str) else str(host_port)
 
     @staticmethod
     def _normalize_bindings(
@@ -145,8 +309,8 @@ class FlextTestsDocker:
     def cleanup_dirty_containers(self) -> p.Result[t.StrSequence]:
         """Clean up all dirty containers by recreating them with fresh volumes."""
         cleaned: MutableSequence[str] = []
-        for container_name in list(self._dirty_containers):
-            settings = self.shared_containers.get(container_name)
+        for container_name in list(self.dirty_container_names):
+            settings = c.Tests.SHARED_CONTAINERS.get(container_name)
             if not settings:
                 continue
             compose_file = str(settings.get("compose_file", ""))
@@ -169,12 +333,12 @@ class FlextTestsDocker:
             compose_path = Path(compose_file)
             if not compose_path.is_absolute():
                 compose_path = self.workspace_root / compose_file
-            original_files = docker.client_config.compose_files
+            original_files = self.docker.client_config.compose_files
             try:
-                docker.client_config.compose_files = [str(compose_path)]
-                docker.compose.down(volumes=True, remove_orphans=True)
+                self.docker.client_config.compose_files = [str(compose_path)]
+                self.docker.compose.down(volumes=True, remove_orphans=True)
             finally:
-                docker.client_config.compose_files = original_files
+                self.docker.client_config.compose_files = original_files
             return r[str].ok("Compose down successful")
         except (
             AttributeError,
@@ -199,16 +363,20 @@ class FlextTestsDocker:
             compose_path = Path(compose_file)
             if not compose_path.is_absolute():
                 compose_path = self.workspace_root / compose_file
-            original_files = docker.client_config.compose_files
+            original_files = self.docker.client_config.compose_files
             try:
-                docker.client_config.compose_files = [str(compose_path)]
+                self.docker.client_config.compose_files = [str(compose_path)]
                 if force_recreate:
                     with contextlib.suppress(Exception):
-                        docker.compose.down(remove_orphans=True, volumes=True)
+                        self.docker.compose.down(remove_orphans=True, volumes=True)
                 services = [service] if service else []
-                docker.compose.up(services=services, detach=True, remove_orphans=True)
+                self.docker.compose.up(
+                    services=services,
+                    detach=True,
+                    remove_orphans=True,
+                )
             finally:
-                docker.client_config.compose_files = original_files
+                self.docker.client_config.compose_files = original_files
             return r[str].ok("Compose up successful")
         except (
             AttributeError,
@@ -222,22 +390,23 @@ class FlextTestsDocker:
             return r[str].fail(f"Compose up failed: {exc}")
 
     @property
-    def client(self) -> DockerSDKClient | FlextTestsDocker._OfflineDockerClient:
+    def client(self) -> DockerSDKClient | None:
         """Docker client with lazy initialization.
 
-        Returns either a real DockerClient connected to daemon, or an offline stub
-        if the daemon is unavailable.
+        Returns a real Docker client when the daemon is reachable.
+        Returns None when the daemon is unavailable.
         """
-        if self._client is None:
+        if self.docker_client is None:
             try:
-                self._client = docker_from_env()
+                self.docker_client = docker_from_env()
+                self.client_error = None
             except (DockerException, OSError, TypeError, ValueError) as error:
                 self.logger.exception(
                     "Failed to initialize Docker client",
                     error=str(error),
                 )
-                self._client = self._OfflineDockerClient()
-        return self._client
+                self.client_error = str(error)
+        return self.docker_client
 
     def fetch_container_info(
         self, container_name: str
@@ -245,6 +414,9 @@ class FlextTestsDocker:
         """Fetch container information."""
         try:
             client = self.client
+            if client is None:
+                error = self.client_error or "Docker daemon unavailable"
+                return r[m.Tests.ContainerInfo].fail(error)
             container = client.containers.get(container_name)
             ports_raw: Mapping[str, t.Tests.TestobjectSerializable] = (
                 t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
@@ -256,18 +428,18 @@ class FlextTestsDocker:
                 normalized_bindings = self._normalize_bindings(host_bindings)
                 host_port = self._extract_host_port(normalized_bindings)
                 if host_port:
-                    ports[str(container_port)] = host_port
-            status_val = str(container.status)
+                    ports[container_port] = host_port
+            status_val = container.status
             image_obj = container.image
             image_tags_raw = image_obj.tags if image_obj is not None else ()
-            image_tags = [str(tag) for tag in image_tags_raw]
+            image_tags = list(image_tags_raw)
             container_id = str(container.id)
             return r[m.Tests.ContainerInfo].ok(
                 m.Tests.ContainerInfo(
                     name=container_name,
-                    status=self.ContainerStatus(status_val),
+                    status=c.Tests.ContainerStatus(status_val),
                     ports=ports,
-                    image=str(image_tags[0]) if image_tags else "",
+                    image=image_tags[0] if image_tags else "",
                     container_id=container_id,
                 ),
             )
@@ -287,16 +459,16 @@ class FlextTestsDocker:
     @property
     def dirty_containers(self) -> t.StrSequence:
         """Dirty container names."""
-        return list(self._dirty_containers)
+        return list(self.dirty_container_names)
 
     def container_dirty(self, container_name: str) -> bool:
         """Whether a container is marked as dirty."""
-        return container_name in self._dirty_containers
+        return container_name in self.dirty_container_names
 
     def mark_container_clean(self, container_name: str) -> p.Result[bool]:
         """Mark a container as clean after successful recreation."""
         try:
-            self._dirty_containers.discard(container_name)
+            self.dirty_container_names.discard(container_name)
             self._save_dirty_state()
             self.logger.info("Container marked clean", container=container_name)
             return r[bool].ok(value=True)
@@ -306,7 +478,7 @@ class FlextTestsDocker:
     def mark_container_dirty(self, container_name: str) -> p.Result[bool]:
         """Mark a container as dirty for recreation on next use."""
         try:
-            self._dirty_containers.add(container_name)
+            self.dirty_container_names.add(container_name)
             self._save_dirty_state()
             self.logger.info("Container marked dirty", container=container_name)
             return r[bool].ok(value=True)
@@ -321,8 +493,11 @@ class FlextTestsDocker:
         """
         try:
             client = self.client
+            if client is None:
+                error = self.client_error or "Docker daemon unavailable"
+                return r[bool].fail(error)
             container = client.containers.get(container_name)
-            status = str(container.status)
+            status = container.status
             if status == "running":
                 return r[bool].ok(value=True)
             container.start()
@@ -369,30 +544,30 @@ class FlextTestsDocker:
     def _load_dirty_state(self) -> None:
         """Load dirty container state from persistent storage."""
         try:
-            if self._state_file.exists():
-                state_text = self._state_file.read_text(
-                    encoding=c.Tests.DEFAULT_ENCODING
-                )
+            state_file = self.state_file_path
+            if state_file is not None and state_file.exists():
+                state_text = state_file.read_text(encoding=c.Tests.DEFAULT_ENCODING)
                 state_raw: Mapping[str, t.StrSequence] = (
                     t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.validate_json(state_text)
                 )
                 dirty_raw = state_raw.get("dirty_containers", ())
-                self._dirty_containers = {
-                    str(container_name) for container_name in dirty_raw
-                }
+                self.dirty_container_names = set(dirty_raw)
         except (OSError, ValueError, KeyError, TypeError) as exc:
             self.logger.warning("Failed to load dirty state", error=str(exc))
-            self._dirty_containers = set[str]()
+            self.dirty_container_names = set[str]()
 
     def _save_dirty_state(self) -> None:
         """Save dirty container state to persistent storage."""
         try:
-            self._state_file.parent.mkdir(parents=True, exist_ok=True)
+            state_file = self.state_file_path
+            if state_file is None:
+                return
+            state_file.parent.mkdir(parents=True, exist_ok=True)
             data: Mapping[str, t.StrSequence] = {
-                "dirty_containers": list(self._dirty_containers),
+                "dirty_containers": list(self.dirty_container_names),
             }
             json_bytes = t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.dump_json(data)
-            self._state_file.write_bytes(json_bytes)
+            state_file.write_bytes(json_bytes)
         except (OSError, TypeError) as exc:
             self.logger.warning("Failed to save dirty state", error=str(exc))
 

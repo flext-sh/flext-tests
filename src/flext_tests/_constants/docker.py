@@ -19,6 +19,13 @@ class FlextTestsDockerConstantsMixin:
     """Docker test infrastructure constants mixin."""
 
     SHARED_CONTAINERS: Final[Mapping[str, t.HeaderMapping]] = {
+        "flext-openldap-test": {
+            "compose_file": "docker/docker-compose.openldap.yml",
+            "service": "openldap",
+            "port": 3390,
+            "host": "localhost",
+            "container_name": "flext-openldap-test",
+        },
         "flext-oracle-db-test": {
             "compose_file": "docker/docker-compose.oracle-db.yml",
             "service": "oracle-db",

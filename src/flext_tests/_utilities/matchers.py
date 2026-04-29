@@ -71,6 +71,7 @@ from flext_core import FlextProtocolsResult, u
 from flext_tests import (
     FlextTestsConfigHelpersUtilitiesMixin,
     FlextTestsPayloadUtilities,
+    FlextTestsResultUtilitiesMixin,
     c,
     m,
     p,
@@ -207,7 +208,7 @@ class FlextTestsMatchersUtilities:
         kwargs_t = dict[str, t.Tests.MatcherKwargValue]
         result: kwargs_t
         if isinstance(rule, Mapping):
-            raw_mapping = {str(key): value for key, value in rule.items()}
+            raw_mapping = dict(rule)
             if raw_mapping and set(raw_mapping).issubset(
                 c.Tests.MATCHER_RULE_KEYS,
             ):
@@ -627,12 +628,7 @@ class FlextTestsMatchersUtilities:
                     params = m.Tests.FailParams.model_validate(kwargs)
                 except (TypeError, ValueError, AttributeError) as exc:
                     raise ValueError(f"Parameter validation failed: {exc}") from exc
-                if result.success:
-                    raise AssertionError(
-                        params.msg
-                        or c.Tests.ERR_FAIL_EXPECTED.format(value=result.value),
-                    )
-                err = result.error or ""
+                err = FlextTestsResultUtilitiesMixin.assert_failure(result)
                 if (
                     params.has
                     or params.lacks
@@ -710,7 +706,7 @@ class FlextTestsMatchersUtilities:
                     ] = {}
                     if actual_raw is not None:
                         actual_data = {
-                            str(k): FlextTestsPayloadUtilities.to_payload(v)
+                            k: FlextTestsPayloadUtilities.to_payload(v)
                             for k, v in actual_raw.items()
                         }
                     for key, expected_value in params.data.items():
@@ -804,11 +800,12 @@ class FlextTestsMatchersUtilities:
                     params = m.Tests.OkParams.model_validate(kwargs)
                 except (TypeError, ValueError, AttributeError) as exc:
                     raise ValueError(f"Parameter validation failed: {exc}") from exc
-                if not result.success:
-                    raise AssertionError(
-                        params.msg or c.Tests.ERR_OK_FAILED.format(error=result.error),
+                result_value: TResult | t.Tests.TestobjectSerializable = (
+                    FlextTestsResultUtilitiesMixin.assert_success(
+                        result,
+                        error_msg=params.msg,
                     )
-                result_value: TResult | t.Tests.TestobjectSerializable = result.value
+                )
                 extracted_payload: t.Tests.TestobjectSerializable | None = None
                 if params.path is not None:
                     if isinstance(params.path, str):

@@ -26,7 +26,7 @@ class FlextTestsResultUtilitiesMixin:
         if expected_error and expected_error not in error:
             msg = f"Expected error containing '{expected_error}' but got: {error}"
             raise AssertionError(msg)
-        return str(error)
+        return f"{error}"
 
     @staticmethod
     def assert_success[TResult](

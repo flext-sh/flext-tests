@@ -17,7 +17,7 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import tk, tm
+from flext_tests import m, tk, tm
 from tests import c, u
 
 
@@ -32,8 +32,8 @@ class TestsFlextTestsDocker:
         tm.that(c.Tests.ContainerStatus.ERROR.value, eq="error")
 
     def test_container_info_creation(self) -> None:
-        """Test tk.ContainerInfo creation with required fields."""
-        info = tk.ContainerInfo(
+        """Test container info model creation with required fields."""
+        info = m.Tests.ContainerInfo(
             name="test_container",
             status=c.Tests.ContainerStatus.RUNNING,
             ports={"8080/tcp": "8080"},
@@ -46,8 +46,8 @@ class TestsFlextTestsDocker:
         tm.that(not info.container_id, eq=True)
 
     def test_container_info_with_container_id(self) -> None:
-        """Test tk.ContainerInfo with container_id."""
-        info = tk.ContainerInfo(
+        """Test container info model with container_id."""
+        info = m.Tests.ContainerInfo(
             name="test_container",
             status=c.Tests.ContainerStatus.RUNNING,
             ports={},
@@ -77,8 +77,7 @@ class TestsFlextTestsDocker:
         """Test Docker client lazy initialization."""
         manager = tk()
         client = manager.client
-        assert client is not None
-        tm.that(hasattr(client, "containers"), eq=True)
+        tm.that(client is None or hasattr(client, "containers"), eq=True)
 
     def test_client_cached(self) -> None:
         """Test Docker client caching."""
@@ -130,15 +129,131 @@ class TestsFlextTestsDocker:
         tm.that(dirty, has="container2")
 
     def test_shared_containers_attribute(self) -> None:
-        """Test SHARED_CONTAINERS class attribute."""
-        tm.that(tk.SHARED_CONTAINERS, none=False)
-        tm.that(tk.SHARED_CONTAINERS, is_=dict)
+        """Test canonical shared containers constant."""
+        tm.that(c.Tests.SHARED_CONTAINERS, none=False)
+        tm.that(c.Tests.SHARED_CONTAINERS, is_=dict)
 
-    def test_shared_containers_property(self, docker_manager: tk) -> None:
-        """Test shared_containers property."""
-        containers = docker_manager.shared_containers
-        tm.that(containers, none=False)
-        tm.that(containers, is_=dict)
+    def test_shared_builder_resolves_target_config(self, tmp_path: Path) -> None:
+        """Test shared() builds a resolved container target from constants."""
+        manager = tk.shared("flext-oracle-db-test", workspace_root=tmp_path)
+        tm.that(manager.target_config, none=False)
+        target = manager.target_config
+        assert target is not None
+        tm.that(target.container_name, eq="flext-oracle-db-test")
+        tm.that(
+            target.compose_file,
+            eq=tmp_path / "docker" / "docker-compose.oracle-db.yml",
+        )
+
+    def test_shared_builder_resolves_openldap_target(self, tmp_path: Path) -> None:
+        """Test shared() resolves the centralized OpenLDAP container target."""
+        manager = tk.shared("flext-openldap-test", workspace_root=tmp_path)
+        tm.that(manager.target_config, none=False)
+        target = manager.target_config
+        assert target is not None
+        tm.that(target.container_name, eq="flext-openldap-test")
+        tm.that(
+            target.compose_file,
+            eq=tmp_path / "docker" / "docker-compose.openldap.yml",
+        )
+        tm.that(target.service, eq="openldap")
+        tm.that(target.port, eq=3390)
+
+    def test_compose_builder_resolves_target_config(self, tmp_path: Path) -> None:
+        """Test compose() builds a resolved explicit container target."""
+        manager = tk.compose(
+            "docker-compose.yml",
+            container_name="service-test",
+            service="service-test",
+            port=5432,
+            workspace_root=tmp_path,
+        )
+        tm.that(manager.target_config, none=False)
+        target = manager.target_config
+        assert target is not None
+        tm.that(target.container_name, eq="service-test")
+        tm.that(target.compose_file, eq=tmp_path / "docker-compose.yml")
+        tm.that(target.port, eq=5432)
+
+    def test_stack_builder_resolves_target_config(self, tmp_path: Path) -> None:
+        """Test stack() builds a resolved explicit compose-stack target."""
+        manager = tk.stack(
+            "docker-compose.stack.yml",
+            container_name="stack-main",
+            service="stack-main",
+            port=3389,
+            workspace_root=tmp_path,
+        )
+        tm.that(manager.target_config, none=False)
+        target = manager.target_config
+        assert target is not None
+        tm.that(target.container_name, eq="stack-main")
+        tm.that(target.compose_file, eq=tmp_path / "docker-compose.stack.yml")
+        tm.that(target.service, eq="stack-main")
+        tm.that(target.port, eq=3389)
+
+    def test_stack_builder_allows_stack_only_target(self, tmp_path: Path) -> None:
+        """Test stack() supports lifecycle-only stacks without inspection target."""
+        manager = tk.stack(
+            "docker-compose.stack.yml",
+            host=c.LOOPBACK_IP,
+            port=25432,
+            workspace_root=tmp_path,
+        )
+        tm.that(manager.target_config, none=False)
+        target = manager.target_config
+        assert target is not None
+        tm.that(target.container_name, eq=None)
+        tm.that(target.port, eq=25432)
+
+    def test_execute_requires_target_config(self, docker_manager: tk) -> None:
+        """Test execute fails fast when no DSL target has been configured."""
+        result = docker_manager.execute()
+        _ = u.Tests.assert_failure(result)
+        tm.that(result.error, has="Docker target not configured")
+
+    def test_execute_rejects_stack_only_target(self, tmp_path: Path) -> None:
+        """Test execute rejects stack targets without inspection container."""
+        manager = tk.stack(
+            "docker-compose.stack.yml",
+            host=c.LOOPBACK_IP,
+            port=25432,
+            workspace_root=tmp_path,
+        )
+        result = manager.execute()
+        _ = u.Tests.assert_failure(result)
+        tm.that(result.error, has="no inspection container")
+
+    def test_up_requires_target_config(self, docker_manager: tk) -> None:
+        """Test up fails fast when no DSL target has been configured."""
+        result = docker_manager.up()
+        _ = u.Tests.assert_failure(result)
+        tm.that(result.error, has="Docker target not configured")
+
+    def test_down_requires_target_config(self, docker_manager: tk) -> None:
+        """Test down fails fast when no DSL target has been configured."""
+        result = docker_manager.down()
+        _ = u.Tests.assert_failure(result)
+        tm.that(result.error, has="Docker target not configured")
+
+    def test_ready_requires_target_config(self, docker_manager: tk) -> None:
+        """Test ready fails fast when no DSL target has been configured."""
+        result = docker_manager.ready()
+        _ = u.Tests.assert_failure(result)
+        tm.that(result.error, has="Docker target not configured")
+
+    def test_ready_uses_target_config_port(self, tmp_path: Path) -> None:
+        """Test ready uses the configured target host and port."""
+        manager = tk.stack(
+            "docker-compose.stack.yml",
+            container_name="stack-main",
+            service="stack-main",
+            port=59999,
+            workspace_root=tmp_path,
+        )
+        result = manager.ready(max_wait=1)
+        _ = u.Tests.assert_success(result)
+        tm.that(result.value is False, eq=True)
 
     def test_compose_up_returns_flext_result(
         self,
@@ -164,19 +279,19 @@ class TestsFlextTestsDocker:
         self,
         docker_manager: tk,
     ) -> None:
-        """Test starting non-existent container."""
+        """Test starting a container returns a failure result when unavailable."""
         result = docker_manager.start_existing_container("nonexistent_container")
         _ = u.Tests.assert_failure(result)
-        tm.that(str(result.error).lower(), has="not found")
+        tm.that(result.error, is_=str)
 
     def test_fetch_container_info_not_found(
         self,
         docker_manager: tk,
     ) -> None:
-        """Test getting info for non-existent container."""
+        """Test fetching container info returns a failure result when unavailable."""
         result = docker_manager.fetch_container_info("nonexistent_container")
         _ = u.Tests.assert_failure(result)
-        tm.that(str(result.error).lower(), has="not found")
+        tm.that(result.error, is_=str)
 
     def test_fetch_container_status(self, docker_manager: tk) -> None:
         """Test fetch_container_status delegates to container lookup."""

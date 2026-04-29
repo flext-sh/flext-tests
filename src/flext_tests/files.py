@@ -32,9 +32,10 @@ from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 from types import TracebackType
-from typing import ClassVar, Self, TypeIs, overload
+from typing import ClassVar, Self, TypeIs, overload, override
 
-from flext_tests import FlextTestsPayloadUtilities, c, m, p, r, s, t, u
+from flext_tests import FlextTestsPayloadUtilities, c, m, p, r, t, u
+from flext_tests.base import s
 
 
 class FlextTestsFiles(s):
@@ -230,7 +231,7 @@ class FlextTestsFiles(s):
     ) -> m.ConfigMap:
         return m.ConfigMap(
             root={
-                str(key): FlextTestsPayloadUtilities.to_config_map_value(
+                key: FlextTestsPayloadUtilities.to_config_map_value(
                     FlextTestsPayloadUtilities.to_payload(item),
                 )
                 for key, item in value.items()
@@ -242,7 +243,7 @@ class FlextTestsFiles(s):
         value: Mapping[str, t.Tests.TestobjectSerializable],
     ) -> Mapping[str, t.Tests.TestobjectSerializable]:
         return {
-            str(key): FlextTestsPayloadUtilities.to_payload(item)
+            key: FlextTestsPayloadUtilities.to_payload(item)
             for key, item in value.items()
         }
 
@@ -452,7 +453,7 @@ class FlextTestsFiles(s):
                         })
                     except (TypeError, ValueError, AttributeError):
                         continue
-                    name = str(item[0])
+                    name = item[0]
                     files_dict[name] = item[1]
         else:
             return r[m.Tests.BatchResult].fail(
@@ -471,7 +472,7 @@ class FlextTestsFiles(s):
                     try:
                         payload = (
                             {
-                                str(k): FlextTestsPayloadUtilities.to_payload(v)
+                                k: FlextTestsPayloadUtilities.to_payload(v)
                                 for k, v in content.items()
                             }
                             if isinstance(content, Mapping)
@@ -659,7 +660,7 @@ class FlextTestsFiles(s):
         except (TypeError, ValueError, AttributeError) as exc:
             raise ValueError(f"Invalid parameters for file creation: {exc}") from None
         target_dir = self._resolve_directory(params.directory)
-        name_str = str(params.name)
+        name_str = params.name
         file_path: Path = target_dir / name_str
         actual_content: (
             str
@@ -671,7 +672,7 @@ class FlextTestsFiles(s):
         ) = self._coerce_file_content(params.content)
         if isinstance(actual_content, m.ConfigMap):
             actual_content = {
-                str(key): FlextTestsPayloadUtilities.to_payload(value)
+                key: FlextTestsPayloadUtilities.to_payload(value)
                 for key, value in actual_content.root.items()
             }
         if isinstance(actual_content, m.BaseModel):
@@ -766,7 +767,7 @@ class FlextTestsFiles(s):
         fallback_value = FlextTestsPayloadUtilities.to_payload(actual_content)
         raw_payload = (
             {
-                str(k): FlextTestsPayloadUtilities.to_normalized_value(v)
+                k: FlextTestsPayloadUtilities.to_normalized_value(v)
                 for k, v in mapping_content.items()
             }
             if mapping_content is not None
@@ -798,7 +799,7 @@ class FlextTestsFiles(s):
             (str, bytes),
         ):
             csv_rows.extend(
-                [str(cell) for cell in row]
+                list(row)
                 for row in actual_content
                 if isinstance(row, Sequence) and not isinstance(row, (str, bytes))
             )
@@ -806,6 +807,7 @@ class FlextTestsFiles(s):
             csv_rows.append([str(actual_content)])
         return csv_rows
 
+    @override
     def execute(self) -> p.Result[t.JsonValue]:
         """Execute service - returns success for file manager.
 
@@ -1005,9 +1007,7 @@ class FlextTestsFiles(s):
                 csv_rows_m = csv_result.value if csv_result.success else ()
                 if csv_rows_m:
                     keys = list(csv_rows_m[0].keys())
-                    data_rows = [
-                        [str(row.get(k, "")) for k in keys] for row in csv_rows_m
-                    ]
+                    data_rows = [[row.get(k, "") for k in keys] for row in csv_rows_m]
                     content = data_rows if params.has_headers else [keys, *data_rows]
                 else:
                     content = []
@@ -1230,7 +1230,7 @@ class FlextTestsFiles(s):
             parsed_value = parse_result.value if parse_result.success else None
             match parsed_value:
                 case dict() as parsed_dict:
-                    parsed_mapping = {str(k): v for k, v in parsed_dict.items()}
+                    parsed_mapping = dict(parsed_dict.items())
                     key_count = len(parsed_mapping)
                 case list() as parsed_list:
                     item_count = len(parsed_list)
