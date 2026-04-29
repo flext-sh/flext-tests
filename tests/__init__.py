@@ -28,7 +28,10 @@ if _t.TYPE_CHECKING:
     from tests.unit.test_validator_types import TestsFlextTestsValidatorTypes
     from tests.utilities import TestsFlextTestsUtilities, u
 _LAZY_IMPORTS = merge_lazy_imports(
-    (".unit",),
+    (
+        ".integration",
+        ".unit",
+    ),
     build_lazy_import_map(
         {
             ".constants": (

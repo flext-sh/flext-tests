@@ -5,9 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from tests import c
 
 from flext_tests import tk
+from tests import c
 
 
 def _workspace_root() -> Path:

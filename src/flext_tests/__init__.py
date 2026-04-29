@@ -12,7 +12,7 @@ from flext_core.lazy import (
 )
 
 if _t.TYPE_CHECKING:
-    from flext_cli import d, e, h, r, s, x
+    from flext_cli import d, e, h, r, x
     from flext_tests.__version__ import (
         __author__,
         __author_email__,
@@ -90,6 +90,7 @@ if _t.TYPE_CHECKING:
     from flext_tests._validator.settings import FlextValidatorSettings
     from flext_tests._validator.tests import FlextValidatorTests
     from flext_tests._validator.types import FlextValidatorTypes
+    from flext_tests.base import FlextService, s
     from flext_tests.constants import FlextTestsConstants, c
     from flext_tests.docker import FlextTestsDocker, tk
     from flext_tests.domains import FlextTestsDomains, td
@@ -184,6 +185,10 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._validator.settings": ("FlextValidatorSettings",),
             "._validator.tests": ("FlextValidatorTests",),
             "._validator.types": ("FlextValidatorTypes",),
+            ".base": (
+                "FlextService",
+                "s",
+            ),
             ".constants": (
                 "FlextTestsConstants",
                 "c",
@@ -225,7 +230,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "e",
                 "h",
                 "r",
-                "s",
                 "x",
             ),
         },
@@ -259,6 +263,7 @@ __all__: list[str] = [
     "EnforcementCollector",
     "EnforcementItem",
     "EnforcementViolationError",
+    "FlextService",
     "FlextTestsBadObjectsUtilitiesMixin",
     "FlextTestsBaseModelsMixin",
     "FlextTestsBaseTypesMixin",
