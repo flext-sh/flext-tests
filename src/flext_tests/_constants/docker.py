@@ -29,7 +29,7 @@ class FlextTestsDockerConstantsMixin:
         "flext-oracle-db-test": {
             "compose_file": "docker/docker-compose.oracle-db.yml",
             "service": "oracle-db",
-            "port": 1522,
+            "port": 1521,
             "host": "localhost",
             "container_name": "flext-oracle-db-test",
         },

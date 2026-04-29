@@ -226,10 +226,20 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                         return r[m.Tests.ContainerInfo].fail(
                             compose_result.error or "Failed to start Docker target",
                         )
+        container_info_result = self.fetch_container_info(target.container_name)
+        if container_info_result.failure:
+            return container_info_result
         if target.port is not None:
+            ready_port = self._resolve_readiness_port(
+                target, container_info_result.value
+            )
+            if ready_port is None:
+                return r[m.Tests.ContainerInfo].fail(
+                    f"Docker target {target.container_name} has no resolved host port for readiness check",
+                )
             ready_result = self.wait_for_port_ready(
                 target.host,
-                target.port,
+                ready_port,
                 max_wait=target.startup_timeout,
             )
             if ready_result.failure:
@@ -238,9 +248,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 )
             if not ready_result.value:
                 return r[m.Tests.ContainerInfo].fail(
-                    f"Container {target.container_name} did not become ready on {target.host}:{target.port}",
+                    f"Container {target.container_name} did not become ready on {target.host}:{ready_port}",
                 )
-        return self.fetch_container_info(target.container_name)
+        return container_info_result
 
     def up(self) -> p.Result[str]:
         """Start the configured compose target using the DSL state."""
@@ -283,6 +293,21 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             resolved_port,
             max_wait=target.startup_timeout if max_wait is None else max_wait,
         )
+
+    @staticmethod
+    def _resolve_readiness_port(
+        target: m.Tests.ContainerConfig,
+        info: m.Tests.ContainerInfo,
+    ) -> int | None:
+        if target.port is None:
+            return None
+        target_port_str = str(target.port)
+        for container_port, host_port in info.ports.items():
+            if container_port.startswith(f"{target_port_str}/"):
+                return int(host_port)
+            if host_port == target_port_str:
+                return int(host_port)
+        return int(target_port_str) if target_port_str.isdigit() else None
 
     @staticmethod
     def _extract_host_port(bindings: Sequence[t.StrMapping] | None) -> str:
