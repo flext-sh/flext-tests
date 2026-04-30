@@ -50,11 +50,15 @@ class FlextTestsConfigHelpersUtilitiesMixin:
             **kwargs: Config field values (scalar types: str, int, float, bool, datetime)
 
         Returns:
-            New FlextSettings instance
+            Test FlextSettings singleton with overrides applied
 
         """
-        scalar_overrides: t.ScalarMapping = dict(kwargs.items())
-        return FlextSettings.fetch_global(overrides=scalar_overrides)
+        settings = FlextSettings.fetch_global()
+        if not kwargs:
+            return settings
+        payload = settings.model_dump()
+        payload.update(kwargs)
+        return FlextSettings.model_validate(payload)
 
     @staticmethod
     @contextmanager

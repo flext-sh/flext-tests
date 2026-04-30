@@ -1,8 +1,8 @@
 """Test domain objects and fixtures for FLEXT ecosystem tests.
 
 Provides reusable domain objects, test data structures, and fixtures for
-domain-specific testing scenarios. Includes payloads, API responses,
-validation test cases, and domain result helpers.
+generic domain-specific testing scenarios. Includes bases for payloads,
+API responses, validation test cases, and domain result helpers.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -11,14 +11,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import uuid
 from collections.abc import (
     Mapping,
-    MutableMapping,
     Sequence,
 )
+from pathlib import Path
 
-from flext_tests import m, t
+from flext_tests import p, r, t
 
 _NO_BODY: t.Tests.TestobjectSerializable = None
 
@@ -30,32 +29,131 @@ class FlextTestsDomains:
     """
 
     @staticmethod
-    def build_dbt_project_settings(
+    def fixture_filename(
+        group: str,
+        kind: str,
+        file_extension: str = ".ldif",
+    ) -> str:
+        return f"{group}_{kind}_fixtures{file_extension}"
+
+    @classmethod
+    def fixture_path(
+        cls,
+        group: str,
+        kind: str,
         *,
-        name: str,
-        version: str,
-        profile: str,
-        model_config: Mapping[str, t.Tests.TestobjectSerializable],
-        variables: Mapping[str, t.Tests.TestobjectSerializable],
-    ) -> Mapping[str, t.Tests.TestobjectSerializable]:
-        """Create a shared dbt project configuration structure."""
+        fixtures_root: Path | None = None,
+        file_extension: str = ".ldif",
+    ) -> Path:
+        fixtures_root = fixtures_root or Path.cwd()
+        file_path = (
+            fixtures_root
+            / group
+            / cls.fixture_filename(
+                group,
+                kind,
+                file_extension=file_extension,
+            )
+        )
+        if not file_path.exists():
+            raise FileNotFoundError(f"Fixture file not found: {file_path}")
+        return file_path
+
+    @classmethod
+    def load_fixture(
+        cls,
+        group: str,
+        kind: str,
+        *,
+        fixtures_root: Path | None = None,
+        file_extension: str = ".ldif",
+    ) -> str:
+        return cls.fixture_path(
+            group,
+            kind,
+            fixtures_root=fixtures_root,
+            file_extension=file_extension,
+        ).read_text(encoding="utf-8")
+
+    @classmethod
+    def fixture_exists(
+        cls,
+        group: str,
+        kind: str,
+        *,
+        fixtures_root: Path | None = None,
+        file_extension: str = ".ldif",
+    ) -> bool:
+        try:
+            cls.fixture_path(
+                group,
+                kind,
+                fixtures_root=fixtures_root,
+                file_extension=file_extension,
+            )
+        except FileNotFoundError:
+            return False
+        return True
+
+    @classmethod
+    def available_fixture_servers(
+        cls,
+        *,
+        fixtures_root: Path | None = None,
+    ) -> tuple[str, ...]:
+        fixtures_root = fixtures_root or Path.cwd()
+        if not fixtures_root.exists():
+            return ()
+        return tuple(
+            sorted(
+                directory.name
+                for directory in fixtures_root.iterdir()
+                if directory.is_dir()
+            ),
+        )
+
+    @classmethod
+    def available_fixture_types(
+        cls,
+        group: str,
+        *,
+        fixtures_root: Path | None = None,
+        file_extension: str = ".ldif",
+    ) -> tuple[str, ...]:
+        fixtures_root = fixtures_root or Path.cwd()
+        server_dir = fixtures_root / group
+        if not server_dir.exists():
+            return ()
+        prefix = f"{group}_"
+        suffix = f"_fixtures{file_extension}"
+        return tuple(
+            sorted(
+                name[len(prefix) : -len(suffix)]
+                for name in sorted(entry.name for entry in server_dir.iterdir())
+                if name.startswith(prefix) and name.endswith(suffix)
+            ),
+        )
+
+    @classmethod
+    def load_server_fixtures(
+        cls,
+        group: str,
+        *,
+        fixtures_root: Path | None = None,
+        file_extension: str = ".ldif",
+    ) -> Mapping[str, str]:
         return {
-            "name": name,
-            "version": version,
-            "profile": profile,
-            "model-paths": ["models"],
-            "analysis-paths": ["analyses"],
-            "test-paths": ["tests"],
-            "seed-paths": ["seeds"],
-            "macro-paths": ["macros"],
-            "snapshot-paths": ["snapshots"],
-            "docs-paths": ["docs"],
-            "asset-paths": ["assets"],
-            "target-path": "target",
-            "clean-targets": ["target", "dbt_packages"],
-            "require-dbt-version": ">=1.8.0",
-            "model_config": dict(model_config.items()),
-            "vars": dict(variables.items()),
+            fixture_type: cls.load_fixture(
+                group,
+                fixture_type,
+                fixtures_root=fixtures_root,
+                file_extension=file_extension,
+            )
+            for fixture_type in cls.available_fixture_types(
+                group,
+                fixtures_root=fixtures_root,
+                file_extension=file_extension,
+            )
         }
 
     @staticmethod
@@ -99,166 +197,25 @@ class FlextTestsDomains:
         ]
 
     @staticmethod
-    def api_response_data(
-        status: str = "success",
+    def create_result_ok(
+        value: t.Tests.TestobjectSerializable,
+    ) -> p.Result[t.Tests.TestobjectSerializable]:
+        """Create a generic successful result for test flows."""
+        return r[t.Tests.TestobjectSerializable].ok(value)
+
+    @staticmethod
+    def create_result_failure(
+        message: str,
         *,
-        include_data: bool | None = None,
-        **custom_fields: t.Tests.TestobjectSerializable,
-    ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
-        """Create API response test data.
-
-        Args:
-            status: Response status
-            include_data: Whether to include data field
-            **custom_fields: Custom response fields
-
-        Returns:
-            API response dictionary
-
-        """
-        response: MutableMapping[str, t.Tests.TestobjectSerializable] = {
-            "status": status,
-            "timestamp": "2025-01-01T00:00:00Z",
-            "request_id": str(uuid.uuid4()),
-        }
-        if include_data:
-            response["data"] = {"test": "data"}
-        if status == "error":
-            response["error"] = {"code": "TEST_ERROR", "message": "Test error message"}
-        response.update(custom_fields)
-        return response
-
-    @staticmethod
-    def create_settings(
-        service_type: str = "api",
-        environment: str = "test",
-        **overrides: t.Tests.TestobjectSerializable,
-    ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
-        """Create test settings data using factories.
-
-        Args:
-            service_type: Type of service settings
-            environment: Environment setting
-            **overrides: Additional settings overrides
-
-        Returns:
-            Settings dictionary
-
-        """
-        settings_result = m.Tests.Config(
-            service_type=service_type,
-            environment=environment,
+        error_code: str = "TEST_ERROR",
+        error_data: t.JsonMapping | t.ConfigModelInput | None = None,
+    ) -> p.Result[t.Tests.TestobjectSerializable]:
+        """Create a generic failed result for test flows."""
+        return r[t.Tests.TestobjectSerializable].fail(
+            message,
+            error_code=error_code,
+            error_data=error_data,
         )
-        base_settings: MutableMapping[str, t.Tests.TestobjectSerializable] = {
-            "service_type": getattr(settings_result, "service_type", service_type),
-            "environment": getattr(settings_result, "environment", environment),
-            "debug": getattr(settings_result, "debug", False),
-            "log_level": getattr(settings_result, "log_level", "INFO"),
-            "timeout": getattr(settings_result, "timeout", 30.0),
-            "max_retries": getattr(settings_result, "max_retries", 3),
-            "namespace": f"test_{service_type}_{uuid.uuid4().hex[:8]}",
-            "storage_backend": "memory",
-            "enable_caching": True,
-            "cache_ttl": 300,
-        }
-        base_settings.update(overrides)
-        return base_settings
-
-    @staticmethod
-    def create_payload(
-        data_type: str = "user",
-        **custom_fields: t.Tests.TestobjectSerializable,
-    ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
-        """Create test payload data.
-
-        Args:
-            data_type: Type of data to create
-            **custom_fields: Custom field overrides
-
-        Returns:
-            Payload dictionary
-
-        """
-        payloads: MutableMapping[str, Mapping[str, t.Tests.TestobjectSerializable]] = {
-            "user": {
-                "id": str(uuid.uuid4()),
-                "name": "Test User",
-                "email": "test@example.com",
-                "active": True,
-            },
-            "order": {
-                "order_id": str(uuid.uuid4()),
-                "user_id": str(uuid.uuid4()),
-                "amount": 99.99,
-                "currency": "USD",
-                "status": "pending",
-            },
-            "api_request": {
-                "method": "GET",
-                "url": "/api/test",
-                "headers": {"Content-Type": "application/json"},
-                "body": _NO_BODY,
-            },
-        }
-        payload = dict(payloads.get(data_type, {}).items())
-        payload.update(custom_fields)
-        return payload
-
-    @staticmethod
-    def create_service(
-        service_type: str = "api",
-        **settings: t.Tests.TestobjectSerializable,
-    ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
-        """Create test service configuration.
-
-        Args:
-            service_type: Type of service
-            **settings: Service configuration
-
-        Returns:
-            Service configuration dictionary
-
-        """
-        base_service: MutableMapping[str, t.Tests.TestobjectSerializable] = {
-            "type": service_type,
-            "name": f"test_{service_type}_service",
-            "enabled": True,
-            "settings": FlextTestsDomains.create_settings(service_type=service_type),
-        }
-        base_service.update(settings)
-        return base_service
-
-    @staticmethod
-    def create_user(**overrides: str | bool) -> t.MutableFeatureFlagMapping:
-        """Create test user data using factories.
-
-        Args:
-            **overrides: User field overrides
-
-        Returns:
-            User data dictionary
-
-        """
-        first_name = str(overrides.get("first_name", "Test"))
-        last_name = str(overrides.get("last_name", "User"))
-        email = str(overrides.get("email", "test@example.com"))
-        user_model_result = m.Tests.User(
-            id="",
-            name=f"{first_name} {last_name}",
-            email=email,
-        )
-        user: t.MutableFeatureFlagMapping = {
-            "id": getattr(user_model_result, "id", ""),
-            "username": str(overrides.get("username", "testuser")),
-            "email": getattr(user_model_result, "email", email),
-            "first_name": first_name,
-            "last_name": last_name,
-            "active": getattr(user_model_result, "active", True),
-            "created_at": "2025-01-01T00:00:00Z",
-            "updated_at": "2025-01-01T00:00:00Z",
-        }
-        user.update(overrides)
-        return user
 
     @staticmethod
     def valid_email_cases() -> Sequence[tuple[str, bool]]:
