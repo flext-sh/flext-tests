@@ -14,6 +14,7 @@ from flext_tests import (
     FlextTestsBaseModelsMixin,
     FlextTestsBatchModelsMixin,
     FlextTestsDockerModelsMixin,
+    FlextTestsDomainModelsMixin,
     FlextTestsFilesystemModelsMixin,
     FlextTestsMatchersModelsMixin,
     FlextTestsValidatorModelsMixin,
@@ -26,6 +27,7 @@ class FlextTestsModels(m):
     class Tests(
         FlextTestsDockerModelsMixin,
         FlextTestsBaseModelsMixin,
+        FlextTestsDomainModelsMixin,
         FlextTestsFilesystemModelsMixin,
         FlextTestsBatchModelsMixin,
         FlextTestsValidatorModelsMixin,

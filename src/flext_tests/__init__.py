@@ -50,6 +50,7 @@ if _t.TYPE_CHECKING:
     from flext_tests._models.base import FlextTestsBaseModelsMixin
     from flext_tests._models.batch import FlextTestsBatchModelsMixin
     from flext_tests._models.docker import FlextTestsDockerModelsMixin
+    from flext_tests._models.domains import FlextTestsDomainModelsMixin
     from flext_tests._models.filesystem import FlextTestsFilesystemModelsMixin
     from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
     from flext_tests._models.validator import FlextTestsValidatorModelsMixin
@@ -71,6 +72,7 @@ if _t.TYPE_CHECKING:
         FlextTestsExceptionHelpersUtilitiesMixin,
     )
     from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
+    from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
     from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
     from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
     from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
@@ -148,6 +150,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._models.base": ("FlextTestsBaseModelsMixin",),
             "._models.batch": ("FlextTestsBatchModelsMixin",),
             "._models.docker": ("FlextTestsDockerModelsMixin",),
+            "._models.domains": ("FlextTestsDomainModelsMixin",),
             "._models.filesystem": ("FlextTestsFilesystemModelsMixin",),
             "._models.matchers": ("FlextTestsMatchersModelsMixin",),
             "._models.validator": ("FlextTestsValidatorModelsMixin",),
@@ -163,6 +166,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._utilities.domain": ("FlextTestsDomainHelpersUtilitiesMixin",),
             "._utilities.exception": ("FlextTestsExceptionHelpersUtilitiesMixin",),
             "._utilities.files": ("FlextTestsFilesUtilitiesMixin",),
+            "._utilities.fixtures_dsl": ("FlextTestsFixturesDSLMixin",),
             "._utilities.generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
             "._utilities.handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
             "._utilities.matchers": (
@@ -277,6 +281,7 @@ __all__: list[str] = [
     "FlextTestsDockerConstantsMixin",
     "FlextTestsDockerModelsMixin",
     "FlextTestsDomainHelpersUtilitiesMixin",
+    "FlextTestsDomainModelsMixin",
     "FlextTestsDomains",
     "FlextTestsExceptionHelpersUtilitiesMixin",
     "FlextTestsFiles",
@@ -284,6 +289,7 @@ __all__: list[str] = [
     "FlextTestsFilesTypesMixin",
     "FlextTestsFilesUtilitiesMixin",
     "FlextTestsFilesystemModelsMixin",
+    "FlextTestsFixturesDSLMixin",
     "FlextTestsGenericHelpersUtilitiesMixin",
     "FlextTestsGuardsTypesMixin",
     "FlextTestsHandlerHelpersUtilitiesMixin",

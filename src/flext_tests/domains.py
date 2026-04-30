@@ -28,6 +28,108 @@ class FlextTestsDomains:
     Provides common test data and domain objects used across FLEXT test suites.
     """
 
+    class BoundFixtures:
+        """Bound fixture loader for one fixture root + extension."""
+
+        def __init__(
+            self,
+            fixtures_root: Path,
+            *,
+            file_extension: str = ".ldif",
+        ) -> None:
+            self._fixtures_root: Path = fixtures_root
+            self._file_extension: str = file_extension
+
+        def fixture_path(
+            self,
+            group: str,
+            kind: str,
+        ) -> Path:
+            return FlextTestsDomains.fixture_path(
+                group,
+                kind,
+                fixtures_root=self._fixtures_root,
+                file_extension=self._file_extension,
+            )
+
+        def load_fixture(
+            self,
+            group: str,
+            kind: str,
+        ) -> str:
+            return FlextTestsDomains.load_fixture(
+                group,
+                kind,
+                fixtures_root=self._fixtures_root,
+                file_extension=self._file_extension,
+            )
+
+        def fixture_exists(
+            self,
+            group: str,
+            kind: str,
+        ) -> bool:
+            return FlextTestsDomains.fixture_exists(
+                group,
+                kind,
+                fixtures_root=self._fixtures_root,
+                file_extension=self._file_extension,
+            )
+
+        def available_fixture_servers(self) -> tuple[str, ...]:
+            return FlextTestsDomains.available_fixture_servers(
+                fixtures_root=self._fixtures_root,
+            )
+
+        def available_fixture_types(
+            self,
+            group: str,
+        ) -> tuple[str, ...]:
+            return FlextTestsDomains.available_fixture_types(
+                group,
+                fixtures_root=self._fixtures_root,
+                file_extension=self._file_extension,
+            )
+
+        def load_server_fixtures(
+            self,
+            group: str,
+        ) -> Mapping[str, str]:
+            return FlextTestsDomains.load_server_fixtures(
+                group,
+                fixtures_root=self._fixtures_root,
+                file_extension=self._file_extension,
+            )
+
+        def load_fixture_kind(self, kind: str) -> Mapping[str, str]:
+            return {
+                group: self.load_fixture(group, kind)
+                for group in self.available_fixture_servers()
+                if self.fixture_exists(group, kind)
+            }
+
+        def load_all(self) -> Mapping[str, Mapping[str, str]]:
+            return {
+                group: self.load_server_fixtures(group)
+                for group in self.available_fixture_servers()
+            }
+
+        def pytest_params_for_group(
+            self,
+            group: str,
+        ) -> Sequence[tuple[str, str]]:
+            return [
+                (fixture_type, self.load_fixture(group, fixture_type))
+                for fixture_type in self.available_fixture_types(group)
+            ]
+
+        def all_pytest_params(self) -> Sequence[tuple[str, str, str]]:
+            return [
+                (group, fixture_type, self.load_fixture(group, fixture_type))
+                for group in self.available_fixture_servers()
+                for fixture_type in self.available_fixture_types(group)
+            ]
+
     @staticmethod
     def fixture_filename(
         group: str,
@@ -155,6 +257,43 @@ class FlextTestsDomains:
                 file_extension=file_extension,
             )
         }
+
+    @classmethod
+    def bind(
+        cls,
+        fixtures_root: Path,
+        *,
+        file_extension: str = ".ldif",
+    ) -> BoundFixtures:
+        return cls.BoundFixtures(
+            fixtures_root,
+            file_extension=file_extension,
+        )
+
+    @classmethod
+    def pytest_params_for(
+        cls,
+        group: str,
+        *,
+        fixtures_root: Path,
+        file_extension: str = ".ldif",
+    ) -> Sequence[tuple[str, str]]:
+        return cls.bind(
+            fixtures_root,
+            file_extension=file_extension,
+        ).pytest_params_for_group(group)
+
+    @classmethod
+    def all_pytest_params(
+        cls,
+        *,
+        fixtures_root: Path,
+        file_extension: str = ".ldif",
+    ) -> Sequence[tuple[str, str, str]]:
+        return cls.bind(
+            fixtures_root,
+            file_extension=file_extension,
+        ).all_pytest_params()
 
     @staticmethod
     def default_handler_case_specs() -> Sequence[

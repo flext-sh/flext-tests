@@ -14,6 +14,7 @@ _LAZY_IMPORTS = build_lazy_import_map(
         ".domain": ("FlextTestsDomainHelpersUtilitiesMixin",),
         ".exception": ("FlextTestsExceptionHelpersUtilitiesMixin",),
         ".files": ("FlextTestsFilesUtilitiesMixin",),
+        ".fixtures_dsl": ("FlextTestsFixturesDSLMixin",),
         ".generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
         ".handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
         ".matchers": (

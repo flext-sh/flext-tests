@@ -403,8 +403,6 @@ class FlextTestsMatchersModelsMixin:
     class TestScope(FlextModels.ArbitraryTypesModel):
         """Scope container for test configuration and runtime state."""
 
-        __test__ = False
-
         settings: Annotated[
             Mapping[str, t.Tests.TestobjectSerializable],
             u.Field(description="Configuration dictionary"),
