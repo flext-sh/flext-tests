@@ -1,0 +1,28 @@
+src/flext_tests/__init__.py
+  h_9db9d35f50cf33 26-29,127-129
+src/flext_tests/_constants/__init__.py
+  h_9db9d35f50cf33 10-13
+src/flext_tests/constants.py
+  h_9db9d35f50cf33 14-17,19,32-34
+src/flext_tests/_constants/files.py
+  h_9db9d35f50cf33 16
+src/flext_tests/_constants/docker.py
+  h_9db9d35f50cf33 18
+src/flext_tests/_constants/validator.py
+  h_9db9d35f50cf33 16,147,150
+src/flext_tests/_constants/data_cases.py
+  h_9db9d35f50cf33 1-51
+src/flext_tests/_constants/matcher.py
+  h_9db9d35f50cf33 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "515da986785fea57386b62e4379509c26b0b3d1f",
+  "prompts": {},
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
