@@ -35,7 +35,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Sequence
 from importlib import import_module
 from pathlib import Path
-from typing import Final, override
+from typing import ClassVar, Final, override
 
 import pytest
 
@@ -62,7 +62,10 @@ _VALIDATOR_METHODS: Final[frozenset[str]] = frozenset({
 })
 
 _StashConfig: pytest.StashKey[dict[str, object]] = pytest.StashKey()
-_active_session_config: pytest.Config | None = None
+
+
+class _SessionConfig:
+    value: ClassVar[pytest.Config | None] = None
 
 
 def _discover_workspace_root(start: Path) -> Path | None:
@@ -506,9 +509,9 @@ def pytest_warning_recorded(
 ) -> None:
     """Track (and optionally fail on) runtime enforcement warnings."""
     _ = when, nodeid, location
-    if _active_session_config is None:
+    if _SessionConfig.value is None:
         return
-    cfg = _resolve_config(_active_session_config)
+    cfg = _resolve_config(_SessionConfig.value)
     if not cfg["active"]:
         return
     category = getattr(warning_message, "category", None)
@@ -525,8 +528,7 @@ def pytest_warning_recorded(
 
 def pytest_sessionstart(session: pytest.Session) -> None:
     """Expose the session config for warning-capture plumbing."""
-    global _active_session_config  # noqa: PLW0603 - intentional session state
-    _active_session_config = session.config
+    _SessionConfig.value = session.config
 
 
 def pytest_terminal_summary(
