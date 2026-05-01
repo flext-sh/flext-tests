@@ -5,11 +5,9 @@ from __future__ import annotations
 import re
 from re import Pattern
 
-from flext_tests import (
-    FlextTestsPayloadUtilities,
-    c,
-    t,
-)
+from tests import c, t
+
+from flext_tests import u
 
 
 class FlextTestsConstantsHelpersUtilitiesMixin:
@@ -32,4 +30,4 @@ class FlextTestsConstantsHelpersUtilitiesMixin:
         current = c
         for part in parts:
             current = getattr(current, part)
-        return FlextTestsPayloadUtilities.to_payload(current)
+        return u.Tests.to_payload(current)

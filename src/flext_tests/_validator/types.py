@@ -11,9 +11,7 @@ from __future__ import annotations
 import ast
 import re
 from collections.abc import (
-    Mapping,
     MutableSequence,
-    Sequence,
 )
 from pathlib import Path
 from typing import TYPE_CHECKING, override
@@ -51,8 +49,8 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         file_path: Path,
         tree: ast.AST,
         lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect pre-PEP 695 typing factories and Generic base syntax."""
         if u.Tests.approved("TYPE-004", file_path, approved):
             return []
@@ -105,8 +103,8 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         file_path: Path,
         tree: ast.AST,
         lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect legacy annotation constructs superseded by modern Python 3.13 syntax."""
         if u.Tests.approved("TYPE-005", file_path, approved):
             return []
@@ -153,8 +151,8 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         file_path: Path,
         tree: ast.AST,
         lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect forbidden `object` annotations in governed code."""
         if u.Tests.approved("TYPE-006", file_path, approved):
             return []
@@ -215,8 +213,8 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         file_path: Path,
         tree: ast.AST,
         lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect `is_*` helpers still returning bool instead of TypeIs or a renamed predicate."""
         if u.Tests.approved("TYPE-007", file_path, approved):
             return []
@@ -245,8 +243,8 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         file_path: Path,
         tree: ast.AST,
         lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect wildcard type annotations."""
         if u.Tests.approved("TYPE-002", file_path, approved):
             return []
@@ -296,8 +294,8 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         file_path: Path,
         tree: ast.AST,
         lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect unapproved  usage."""
         patterns = list(approved.get("TYPE-003", [])) + list(
             c.Tests.VALIDATOR_APPROVED_CAST_PATTERNS,
@@ -330,8 +328,8 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         cls,
         file_path: Path,
         lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect type: ignore comments in code (not in strings/docstrings)."""
         if u.Tests.approved("TYPE-001", file_path, approved):
             return []
@@ -352,8 +350,8 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single file for type violations."""
         violations: MutableSequence[m.Tests.Violation] = []
         try:

@@ -6,18 +6,15 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    Sequence,
-)
 from pathlib import Path
 from typing import Annotated, Self
 
-from flext_core import FlextModels, u
-from flext_tests import c
+from flext_core import m, u
+from flext_tests import c, t
 
 
 class FlextTestsValidatorModelsMixin:
-    class Violation(FlextModels.Value):
+    class Violation(m.Value):
         """A detected architecture violation."""
 
         file_path: Annotated[
@@ -73,7 +70,7 @@ class FlextTestsValidatorModelsMixin:
             )
             return formatted
 
-    class ScanResult(FlextModels.Value):
+    class ScanResult(m.Value):
         """Result of a validation scan."""
 
         validator_name: Annotated[
@@ -85,7 +82,7 @@ class FlextTestsValidatorModelsMixin:
             u.Field(description="Count of source files inspected by the validator."),
         ]
         violations: Annotated[
-            Sequence[FlextTestsValidatorModelsMixin.Violation],
+            t.SequenceOf[FlextTestsValidatorModelsMixin.Violation],
             u.Field(description="All violations detected during the scan."),
         ]
         passed: Annotated[
@@ -98,7 +95,7 @@ class FlextTestsValidatorModelsMixin:
             cls,
             validator_name: str,
             files_scanned: int,
-            violations: Sequence[FlextTestsValidatorModelsMixin.Violation],
+            violations: t.SequenceOf[FlextTestsValidatorModelsMixin.Violation],
         ) -> Self:
             """Create a ScanResult from violations."""
             return cls(

@@ -10,9 +10,7 @@ from __future__ import annotations
 
 import ast
 from collections.abc import (
-    Mapping,
     MutableSequence,
-    Sequence,
 )
 from pathlib import Path
 
@@ -42,9 +40,9 @@ class FlextValidatorLayer:
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, t.StrSequence],
+        approved: t.MappingKV[str, t.StrSequence],
         hierarchy: t.IntMapping,
-    ) -> Sequence[m.Tests.Violation]:
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single file for layer violations."""
         if u.Tests.approved("LAYER-001", file_path, approved):
             return []
@@ -82,8 +80,8 @@ class FlextValidatorLayer:
     @classmethod
     def scan(
         cls,
-        files: Sequence[Path],
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
+        files: t.SequenceOf[Path],
+        approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
         layer_hierarchy: t.IntMapping | None = None,
     ) -> p.Result[m.Tests.ScanResult]:
         """Scan files for layer violations.

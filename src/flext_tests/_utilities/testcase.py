@@ -6,7 +6,6 @@ from collections.abc import (
     Callable,
     Mapping,
     MutableMapping,
-    Sequence,
 )
 
 from flext_tests import (
@@ -21,10 +20,10 @@ class FlextTestsTestCaseHelpersUtilitiesMixin:
     def create_batch_operation_test_cases(
         operation: str,
         descriptions: t.StrSequence,
-        input_data_list: Sequence[Mapping[str, t.Tests.TestobjectSerializable]],
-        expected_results: Sequence[t.Tests.TestobjectSerializable],
+        input_data_list: t.SequenceOf[Mapping[str, t.Tests.TestobjectSerializable]],
+        expected_results: t.SequenceOf[t.Tests.TestobjectSerializable],
         **common_kwargs: t.Tests.TestobjectSerializable,
-    ) -> Sequence[MutableMapping[str, t.Tests.TestobjectSerializable]]:
+    ) -> t.SequenceOf[MutableMapping[str, t.Tests.TestobjectSerializable]]:
         """Create batch test cases for operation testing.
 
         Args:
@@ -40,7 +39,7 @@ class FlextTestsTestCaseHelpersUtilitiesMixin:
 
         """
         th = FlextTestsTestCaseHelpersUtilitiesMixin
-        cases: Sequence[MutableMapping[str, t.Tests.TestobjectSerializable]] = [
+        cases: t.SequenceOf[MutableMapping[str, t.Tests.TestobjectSerializable]] = [
             th.create_operation_test_case(
                 operation=operation,
                 description=desc,
@@ -61,7 +60,7 @@ class FlextTestsTestCaseHelpersUtilitiesMixin:
     def create_operation_test_case(
         operation: str,
         description: str,
-        input_data: Mapping[str, t.Tests.TestobjectSerializable],
+        input_data: t.MappingKV[str, t.Tests.TestobjectSerializable],
         expected_result: t.Tests.TestobjectSerializable,
         **kwargs: t.Tests.TestobjectSerializable,
     ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
@@ -91,7 +90,7 @@ class FlextTestsTestCaseHelpersUtilitiesMixin:
     @staticmethod
     def execute_and_assert_operation_result(
         operation: Callable[[], t.Tests.TestobjectSerializable],
-        test_case: Mapping[str, t.Tests.TestobjectSerializable],
+        test_case: t.MappingKV[str, t.Tests.TestobjectSerializable],
     ) -> None:
         """Execute operation and assert result.
 

@@ -6,9 +6,10 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import ClassVar
+
+from flext_tests import t
 
 
 class FlextTestsFixturesDSLMixin:
@@ -89,12 +90,12 @@ class FlextTestsFixturesDSLMixin:
         )
 
     @classmethod
-    def for_group(cls, group: str) -> Mapping[str, str]:
+    def for_group(cls, group: str) -> t.MappingKV[str, str]:
         """All kinds for one server: {kind: content}."""
         return {kind: cls.load(group, kind) for kind in cls.kinds(group)}
 
     @classmethod
-    def for_kind(cls, kind: str) -> Mapping[str, str]:
+    def for_kind(cls, kind: str) -> t.MappingKV[str, str]:
         """All servers that have that kind: {server: content}."""
         return {
             server: cls.load(server, kind)
@@ -103,12 +104,12 @@ class FlextTestsFixturesDSLMixin:
         }
 
     @classmethod
-    def all_fixtures(cls) -> Mapping[str, Mapping[str, str]]:
+    def all_fixtures(cls) -> t.MappingKV[str, t.MappingKV[str, str]]:
         """Full nested fixture dict: {server: {kind: content}}."""
         return {server: cls.for_group(server) for server in cls.servers()}
 
     @classmethod
-    def pytest_params(cls, kind: str) -> Sequence[tuple[str, str]]:
+    def pytest_params(cls, kind: str) -> t.SequenceOf[tuple[str, str]]:
         """All (server, content) tuples for a given kind — ready for parametrize."""
         return [
             (server, cls.load(server, kind))
@@ -117,7 +118,7 @@ class FlextTestsFixturesDSLMixin:
         ]
 
     @classmethod
-    def all_pytest_params(cls) -> Sequence[tuple[str, str, str]]:
+    def all_pytest_params(cls) -> t.SequenceOf[tuple[str, str, str]]:
         """All (server, kind, content) triples — ready for full-matrix parametrize."""
         return [
             (server, kind, cls.load(server, kind))

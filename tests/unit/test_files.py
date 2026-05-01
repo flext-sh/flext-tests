@@ -8,10 +8,6 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import json
-from collections.abc import (
-    Mapping,
-    Sequence,
-)
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -147,9 +143,9 @@ class TestsFlextTestsFiles:
 
     def test_create_file_set(self, tmp_path: Path) -> None:
         """Test creating multiple files from dictionary."""
-        files: Mapping[
+        files: t.MappingKV[
             str,
-            str | bytes | m.ConfigMap | Sequence[t.StrSequence] | m.BaseModel,
+            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
         ] = {"file1": "content1", "file2": "content2", "file3.txt": "content3"}
         with tf.files(files, directory=tmp_path, ext=".txt") as created:
             tm.that(len(created), eq=3)
@@ -162,9 +158,9 @@ class TestsFlextTestsFiles:
 
     def test_create_file_set_custom_extension(self, tmp_path: Path) -> None:
         """Test creating file set with custom extension."""
-        files: Mapping[
+        files: t.MappingKV[
             str,
-            str | bytes | m.ConfigMap | Sequence[t.StrSequence] | m.BaseModel,
+            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
         ] = {"file1": "content1"}
         extension = ".md"
         with tf.files(files, directory=tmp_path, ext=extension) as created:
@@ -283,9 +279,9 @@ class TestsFlextTestsFiles:
 
     def test_temporary_files_classmethod(self) -> None:
         """Test files classmethod context manager."""
-        files: Mapping[
+        files: t.MappingKV[
             str,
-            str | bytes | m.ConfigMap | Sequence[t.StrSequence] | m.BaseModel,
+            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
         ] = {"file1": "content1", "file2": "content2"}
         with tf.files(files) as created:
             tm.that(len(created), eq=2)
@@ -298,9 +294,9 @@ class TestsFlextTestsFiles:
 
     def test_temporary_files_custom_extension(self) -> None:
         """Test files with custom extension."""
-        files: Mapping[
+        files: t.MappingKV[
             str,
-            str | bytes | m.ConfigMap | Sequence[t.StrSequence] | m.BaseModel,
+            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
         ] = {"file1": "content1"}
         with tf.files(files, ext=".md") as created:
             tm.that(created["file1"].name, eq="file1.md")
@@ -308,9 +304,9 @@ class TestsFlextTestsFiles:
     def test_create_file_set_nested_directory(self, tmp_path: Path) -> None:
         """Test creating files in nested directory."""
         nested_dir = tmp_path / "nested" / "subdir"
-        files: Mapping[
+        files: t.MappingKV[
             str,
-            str | bytes | m.ConfigMap | Sequence[t.StrSequence] | m.BaseModel,
+            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
         ] = {"file1": "content1"}
         with tf.files(files, directory=nested_dir) as created:
             tm.that(created["file1"].parent, eq=nested_dir)
@@ -366,7 +362,7 @@ class TestsFlextTestsFiles:
         tm.that(data, eq=content.root)
 
     def test_create_csv_auto_detect_from_list(self, tmp_path: Path) -> None:
-        """Test create() auto-detects CSV from Sequence[list] content."""
+        """Test create() auto-detects CSV from t.SequenceOf[list] content."""
         manager = tf(base_dir=tmp_path)
         content = [["a", "b"], ["1", "2"]]
         path = manager.create(content, "data.csv")
@@ -453,7 +449,7 @@ class TestsFlextTestsFiles:
         tm.that(read_value.model_dump() == content.model_dump(), eq=True)
 
     def test_read_csv_file(self, tmp_path: Path) -> None:
-        """Test read() returns Sequence[list] content for .csv files."""
+        """Test read() returns t.SequenceOf[list] content for .csv files."""
         manager = tf(base_dir=tmp_path)
         content = [["a", "b"], ["1", "2"]]
         path = manager.create(content, "data.csv")

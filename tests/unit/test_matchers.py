@@ -565,7 +565,7 @@ class TestsFlextTestsMatchers:
 
     def test_that_with_deep_parameter(self) -> None:
         """Test tm.that() with deep parameter."""
-        data: Mapping[str, t.Tests.TestobjectSerializable] = {
+        data: t.MappingKV[str, t.Tests.TestobjectSerializable] = {
             "user": {"name": "John", "age": 30}
         }
         tm.that(data, deep={"user.name": "John"})

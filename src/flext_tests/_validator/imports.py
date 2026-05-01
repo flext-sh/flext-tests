@@ -11,9 +11,7 @@ from __future__ import annotations
 import ast
 import re
 from collections.abc import (
-    Mapping,
     MutableSequence,
-    Sequence,
 )
 from pathlib import Path
 from typing import override
@@ -35,8 +33,8 @@ class FlextValidatorImports(FlextTestsValidatorModels.Tests.ScannerMixin):
         file_path: Path,
         tree: ast.AST,
         lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect direct technology imports."""
         if u.Tests.approved("IMPORT-005", file_path, approved):
             return []
@@ -75,8 +73,8 @@ class FlextValidatorImports(FlextTestsValidatorModels.Tests.ScannerMixin):
         file_path: Path,
         tree: ast.AST,
         lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect try/except ImportError patterns."""
         if u.Tests.approved("IMPORT-003", file_path, approved):
             return []
@@ -107,8 +105,8 @@ class FlextValidatorImports(FlextTestsValidatorModels.Tests.ScannerMixin):
         file_path: Path,
         tree: ast.AST,
         lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect imports not at module top level."""
         if u.Tests.approved("IMPORT-001", file_path, approved):
             return []
@@ -133,8 +131,8 @@ class FlextValidatorImports(FlextTestsValidatorModels.Tests.ScannerMixin):
         file_path: Path,
         tree: ast.AST,
         lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect non-root imports from flext-* packages internal modules.
 
         Detects imports from internal modules (prefixed with _) like:
@@ -179,8 +177,8 @@ class FlextValidatorImports(FlextTestsValidatorModels.Tests.ScannerMixin):
         file_path: Path,
         tree: ast.AST,
         lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect sys.path manipulation."""
         if u.Tests.approved("IMPORT-004", file_path, approved):
             return []
@@ -205,8 +203,8 @@ class FlextValidatorImports(FlextTestsValidatorModels.Tests.ScannerMixin):
         file_path: Path,
         _tree: ast.AST,
         _lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect TYPE_CHECKING blocks in files with Pydantic field annotations.
 
         TYPE_CHECKING is permitted for type-only imports in non-Pydantic files.
@@ -225,8 +223,8 @@ class FlextValidatorImports(FlextTestsValidatorModels.Tests.ScannerMixin):
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single file for import violations."""
         violations: MutableSequence[m.Tests.Violation] = []
         try:

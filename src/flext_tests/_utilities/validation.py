@@ -4,10 +4,9 @@ from __future__ import annotations
 
 from collections.abc import (
     Callable,
-    Sequence,
 )
 
-from flext_core import p, r
+from flext_core import p, r, t
 
 
 class FlextTestsValidationUtilitiesMixin:
@@ -16,7 +15,7 @@ class FlextTestsValidationUtilitiesMixin:
     @staticmethod
     def validate_pipeline(
         value: str,
-        validators: Sequence[Callable[[str], r[bool]]],
+        validators: t.SequenceOf[Callable[[str], r[bool]]],
     ) -> p.Result[bool]:
         """Execute validation pipeline with multiple validators.
 

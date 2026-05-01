@@ -5,7 +5,6 @@ from __future__ import annotations
 import os
 from collections.abc import (
     Generator,
-    Mapping,
 )
 from contextlib import contextmanager
 
@@ -24,7 +23,7 @@ class FlextTestsConfigHelpersUtilitiesMixin:
     @staticmethod
     def assert_config_fields(
         settings: p.Settings,
-        expected_fields: Mapping[str, t.JsonValue],
+        expected_fields: t.MappingKV[str, t.JsonValue],
     ) -> None:
         """Assert settings has expected field values.
 
@@ -63,7 +62,7 @@ class FlextTestsConfigHelpersUtilitiesMixin:
     @staticmethod
     @contextmanager
     def env_vars_context(
-        env_vars: Mapping[str, t.Tests.TestobjectSerializable],
+        env_vars: t.MappingKV[str, t.Tests.TestobjectSerializable],
         vars_to_clear: t.StrSequence | None = None,
     ) -> Generator[None]:
         """Context manager for temporary environment variable changes.

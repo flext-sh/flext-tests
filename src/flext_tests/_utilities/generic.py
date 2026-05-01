@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from collections.abc import (
     MutableSequence,
-    Sequence,
 )
 
 from flext_tests import m, p, r, t
@@ -15,7 +14,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
 
     @staticmethod
     def assert_result_chain[T](
-        results: Sequence[p.Result[T]],
+        results: t.SequenceOf[p.Result[T]],
         expected_successes: int | None = None,
         expected_failures: int | None = None,
         expected_success_count: int | None = None,
@@ -67,11 +66,11 @@ class FlextTestsGenericHelpersUtilitiesMixin:
 
     @staticmethod
     def create_parametrized_cases(
-        success_values: Sequence[t.Tests.TestobjectSerializable],
+        success_values: t.SequenceOf[t.Tests.TestobjectSerializable],
         failure_errors: t.StrSequence | None = None,
         *,
-        error_codes: Sequence[str | None] | None = None,
-    ) -> Sequence[
+        error_codes: t.SequenceOf[str | None] | None = None,
+    ) -> t.SequenceOf[
         tuple[
             r[t.Tests.TestobjectSerializable],
             bool,

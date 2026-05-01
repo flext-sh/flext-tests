@@ -104,12 +104,12 @@ class FlextTestsFiles(s):
         return self._base_dir
 
     @property
-    def created_dirs(self) -> Sequence[Path]:
+    def created_dirs(self) -> t.SequenceOf[Path]:
         """Get list of created directories."""
         return self._created_dirs or []
 
     @property
-    def created_files(self) -> Sequence[Path]:
+    def created_files(self) -> t.SequenceOf[Path]:
         """Get list of created files."""
         return self._created_files or []
 
@@ -140,7 +140,7 @@ class FlextTestsFiles(s):
     @contextmanager
     def files(
         cls,
-        content: Mapping[
+        content: t.MappingKV[
             str,
             t.Tests.FileContentPlain,
         ],
@@ -227,7 +227,7 @@ class FlextTestsFiles(s):
 
     @staticmethod
     def _to_config_map(
-        value: Mapping[str, t.Tests.TestobjectSerializable],
+        value: t.MappingKV[str, t.Tests.TestobjectSerializable],
     ) -> m.ConfigMap:
         return m.ConfigMap(
             root={
@@ -240,8 +240,8 @@ class FlextTestsFiles(s):
 
     @staticmethod
     def _to_payload_mapping(
-        value: Mapping[str, t.Tests.TestobjectSerializable],
-    ) -> Mapping[str, t.Tests.TestobjectSerializable]:
+        value: t.MappingKV[str, t.Tests.TestobjectSerializable],
+    ) -> t.MappingKV[str, t.Tests.TestobjectSerializable]:
         return {
             key: FlextTestsPayloadUtilities.to_payload(item)
             for key, item in value.items()
@@ -249,8 +249,8 @@ class FlextTestsFiles(s):
 
     @staticmethod
     def _to_string_rows(
-        value: Sequence[t.Tests.TestobjectSerializable],
-    ) -> Sequence[t.StrSequence]:
+        value: t.SequenceOf[t.Tests.TestobjectSerializable],
+    ) -> t.SequenceOf[t.StrSequence]:
         return [
             [str(cell) for cell in row]
             for row in value
@@ -415,7 +415,7 @@ class FlextTestsFiles(s):
         Uses u.batch_files() for batch processing with error handling.
 
         Args:
-            items: Mapping[str, t.FileContent] or Sequence[tuple[str, t.FileContent]]
+            items: t.MappingKV[str, t.FileContent] or t.SequenceOf[tuple[str, t.FileContent]]
             directory: Target directory for create operations
             operation: "create", "read", or "delete"
             model: Optional model class for read operations
@@ -623,7 +623,7 @@ class FlextTestsFiles(s):
                 - str: text file
                 - bytes: binary file
                 - dict/Mapping: JSON file
-                - Sequence[t.StrSequence]: CSV file
+                - t.SequenceOf[t.StrSequence]: CSV file
                 - m.BaseModel: JSON file (via model_dump())
                 - r[T]: Extracts value if success (if extract_result=True)
             name: Filename (extension hints format)
@@ -666,9 +666,9 @@ class FlextTestsFiles(s):
             str
             | bytes
             | m.ConfigMap
-            | Sequence[t.StrSequence]
+            | t.SequenceOf[t.StrSequence]
             | m.BaseModel
-            | Mapping[str, t.Tests.TestobjectSerializable]
+            | t.MappingKV[str, t.Tests.TestobjectSerializable]
         ) = self._coerce_file_content(params.content)
         if isinstance(actual_content, m.ConfigMap):
             actual_content = {
@@ -709,9 +709,9 @@ class FlextTestsFiles(s):
             str
             | bytes
             | m.ConfigMap
-            | Sequence[t.StrSequence]
+            | t.SequenceOf[t.StrSequence]
             | m.BaseModel
-            | Mapping[str, t.Tests.TestobjectSerializable]
+            | t.MappingKV[str, t.Tests.TestobjectSerializable]
         ),
         actual_fmt: str,
         params: m.Tests.CreateParams,
@@ -751,13 +751,13 @@ class FlextTestsFiles(s):
             str
             | bytes
             | m.ConfigMap
-            | Sequence[t.StrSequence]
+            | t.SequenceOf[t.StrSequence]
             | m.BaseModel
-            | Mapping[str, t.Tests.TestobjectSerializable]
+            | t.MappingKV[str, t.Tests.TestobjectSerializable]
         ),
     ) -> t.JsonValue:
         """Build normalized JSON payload from arbitrary file content."""
-        mapping_content: Mapping[str, t.Tests.TestobjectSerializable] | None = (
+        mapping_content: t.MappingKV[str, t.Tests.TestobjectSerializable] | None = (
             actual_content.root
             if isinstance(actual_content, (m.ConfigMap, m.Dict))
             else actual_content
@@ -784,9 +784,9 @@ class FlextTestsFiles(s):
             str
             | bytes
             | m.ConfigMap
-            | Sequence[t.StrSequence]
+            | t.SequenceOf[t.StrSequence]
             | m.BaseModel
-            | Mapping[str, t.Tests.TestobjectSerializable]
+            | t.MappingKV[str, t.Tests.TestobjectSerializable]
         ),
         headers: t.StrSequence | None,
     ) -> list[t.StrSequence]:
@@ -1042,13 +1042,13 @@ class FlextTestsFiles(s):
 
     def _apply_key_filtering(
         self,
-        dict1: Mapping[str, t.Tests.TestobjectSerializable],
-        dict2: Mapping[str, t.Tests.TestobjectSerializable],
+        dict1: t.MappingKV[str, t.Tests.TestobjectSerializable],
+        dict2: t.MappingKV[str, t.Tests.TestobjectSerializable],
         keys: t.StrSequence | None,
         exclude_keys: t.StrSequence | None,
     ) -> tuple[
-        Mapping[str, t.Tests.TestobjectSerializable],
-        Mapping[str, t.Tests.TestobjectSerializable],
+        t.MappingKV[str, t.Tests.TestobjectSerializable],
+        t.MappingKV[str, t.Tests.TestobjectSerializable],
     ]:
         """Apply key filtering to both dicts if specified."""
         if keys is None and exclude_keys is None:
@@ -1092,7 +1092,7 @@ class FlextTestsFiles(s):
         if self._is_mapping(unwrapped):
             return self._to_config_map(unwrapped)
         if self._is_nested_rows(unwrapped):
-            sequence_value: Sequence[t.Tests.TestobjectSerializable] = (
+            sequence_value: t.SequenceOf[t.Tests.TestobjectSerializable] = (
                 unwrapped if isinstance(unwrapped, (list, tuple)) else ()
             )
             return self._to_string_rows(sequence_value)
@@ -1221,7 +1221,7 @@ class FlextTestsFiles(s):
         key_count = item_count = row_count = column_count = None
         model_valid: bool | None = None
         model_name = validate_model.__name__ if validate_model else None
-        parsed_mapping: Mapping[str, t.Tests.TestobjectSerializable] | None = None
+        parsed_mapping: t.MappingKV[str, t.Tests.TestobjectSerializable] | None = None
         structured_text = fmt in {"json", "yaml"} and bool(text.strip())
         if structured_text:
             parse_result = (
@@ -1319,8 +1319,8 @@ class FlextTestsFiles(s):
         fmt: str,
     ) -> (
         tuple[
-            Mapping[str, t.Tests.TestobjectSerializable],
-            Mapping[str, t.Tests.TestobjectSerializable],
+            t.MappingKV[str, t.Tests.TestobjectSerializable],
+            t.MappingKV[str, t.Tests.TestobjectSerializable],
         ]
         | None
     ):

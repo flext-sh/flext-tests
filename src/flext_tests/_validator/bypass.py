@@ -11,9 +11,7 @@ from __future__ import annotations
 import ast
 import re
 from collections.abc import (
-    Mapping,
     MutableSequence,
-    Sequence,
 )
 from pathlib import Path
 from typing import override
@@ -35,8 +33,8 @@ class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):
         file_path: Path,
         tree: ast.AST,
         lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect exception swallowing patterns (bare except or except with pass)."""
         if u.Tests.approved("BYPASS-003", file_path, approved):
             return []
@@ -68,8 +66,8 @@ class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):
         cls,
         file_path: Path,
         lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect # noqa comments."""
         if u.Tests.approved("BYPASS-001", file_path, approved):
             return []
@@ -92,8 +90,8 @@ class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):
         cls,
         file_path: Path,
         lines: t.StrSequence,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect # pragma: no cover comments."""
         patterns = list(approved.get("BYPASS-002", [])) + list(
             c.Tests.VALIDATOR_APPROVED_PRAGMA_PATTERNS,
@@ -120,8 +118,8 @@ class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single file for bypass violations."""
         violations: MutableSequence[m.Tests.Violation] = []
         try:

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import (
-    Mapping,
     MutableMapping,
     MutableSequence,
     Sequence,
@@ -11,14 +10,12 @@ from collections.abc import (
 from datetime import datetime
 from pathlib import Path
 
-from flext_cli import FlextCliUtilities
 from flext_tests import (
-    FlextTestsPayloadUtilities,
-    FlextTestsProtocols,
     m,
     p,
     r,
     t,
+    u,
 )
 
 
@@ -28,9 +25,9 @@ class FlextTestsDomainHelpersUtilitiesMixin:
     @staticmethod
     def create_test_entities_batch[TEntity](
         names: t.StrSequence,
-        values: Sequence[t.Tests.TestobjectSerializable],
-        entity_class: FlextTestsProtocols.Tests.EntityFactory[TEntity],
-        remove_ids: Sequence[bool] | None = None,
+        values: t.SequenceOf[t.Tests.TestobjectSerializable],
+        entity_class: p.Tests.EntityFactory[TEntity],
+        remove_ids: t.SequenceOf[bool] | None = None,
     ) -> p.Result[Sequence[TEntity]]:
         """Create batch of test entities.
 
@@ -71,7 +68,7 @@ class FlextTestsDomainHelpersUtilitiesMixin:
     def create_test_entity_instance[TEntity](
         name: str,
         value: t.Tests.TestobjectSerializable,
-        entity_class: FlextTestsProtocols.Tests.EntityFactory[TEntity],
+        entity_class: p.Tests.EntityFactory[TEntity],
         *,
         remove_id: bool = False,
     ) -> TEntity:
@@ -97,7 +94,7 @@ class FlextTestsDomainHelpersUtilitiesMixin:
     def create_test_value_object_instance[TValue](
         data: str,
         count: int,
-        value_class: FlextTestsProtocols.Tests.ValueFactory[TValue],
+        value_class: p.Tests.ValueFactory[TValue],
     ) -> TValue:
         """Create a test value object instance.
 
@@ -115,9 +112,9 @@ class FlextTestsDomainHelpersUtilitiesMixin:
     @staticmethod
     def create_test_value_objects_batch[TValue](
         data_list: t.StrSequence,
-        count_list: Sequence[int],
-        value_class: FlextTestsProtocols.Tests.ValueFactory[TValue],
-    ) -> Sequence[TValue]:
+        count_list: t.SequenceOf[int],
+        value_class: p.Tests.ValueFactory[TValue],
+    ) -> t.SequenceOf[TValue]:
         """Create batch of test value objects.
 
         Args:
@@ -142,13 +139,13 @@ class FlextTestsDomainHelpersUtilitiesMixin:
     @staticmethod
     def execute_domain_operation(
         operation: str,
-        input_data: Mapping[str, t.Tests.TestobjectSerializable],
+        input_data: t.MappingKV[str, t.Tests.TestobjectSerializable],
         **kwargs: t.Tests.TestobjectSerializable,
     ) -> t.Tests.TestobjectSerializable:
         """Execute a domain utility operation.
 
         Args:
-            operation: Operation name from FlextCliUtilities
+            operation: Operation name from u.Cli
             input_data: Input data dictionary
             **kwargs: Additional arguments
 
@@ -157,10 +154,10 @@ class FlextTestsDomainHelpersUtilitiesMixin:
             Operation result (type depends on operation)
 
         """
-        if not hasattr(FlextCliUtilities, operation):
+        if not hasattr(u.Cli, operation):
             msg = f"Unknown operation: {operation}"
             raise ValueError(msg)
-        op_method = getattr(FlextCliUtilities, operation)
+        op_method = getattr(u.Cli, operation)
         if not callable(op_method):
             msg = f"Unknown operation: {operation}"
             raise ValueError(msg)
@@ -170,12 +167,12 @@ class FlextTestsDomainHelpersUtilitiesMixin:
             empty_map: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
             return empty_map
         if isinstance(result, (m.BaseModel, Path)):
-            return FlextTestsPayloadUtilities.to_payload(result)
+            return u.Tests.to_payload(result)
         if isinstance(result, (str, int, float, bool, bytes, datetime)):
             payload_scalar: t.Tests.TestobjectSerializable = result
-            return FlextTestsPayloadUtilities.to_payload(payload_scalar)
+            return u.Tests.to_payload(payload_scalar)
         if isinstance(result, type):
-            return FlextTestsPayloadUtilities.to_payload(result)
+            return u.Tests.to_payload(result)
         if result is None:
-            return FlextTestsPayloadUtilities.to_payload(result)
-        return FlextTestsPayloadUtilities.to_payload(str(result))
+            return u.Tests.to_payload(result)
+        return u.Tests.to_payload(str(result))

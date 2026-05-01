@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import (
-    Mapping,
     MutableMapping,
 )
 
@@ -17,7 +16,7 @@ class FlextTestsExceptionHelpersUtilitiesMixin:
 
     @staticmethod
     def create_metadata_object(
-        attributes: Mapping[str, t.Tests.TestobjectSerializable],
+        attributes: t.MappingKV[str, t.Tests.TestobjectSerializable],
     ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
         """Create a metadata t.JsonValue for exceptions.
 

@@ -13,9 +13,7 @@ from __future__ import annotations
 
 import ast
 from collections.abc import (
-    Mapping,
     MutableSequence,
-    Sequence,
 )
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -36,9 +34,9 @@ class FlextValidatorMarkdown:
     @classmethod
     def markdown(
         cls,
-        paths: Sequence[Path],
+        paths: t.SequenceOf[Path],
         *,
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
+        approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate Python code blocks in markdown files."""
         return FlextTestsValidatorModels.Tests.ScanCommon.run_scan(
@@ -52,8 +50,8 @@ class FlextValidatorMarkdown:
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, t.StrSequence],
-    ) -> Sequence[m.Tests.Violation]:
+        approved: t.MappingKV[str, t.StrSequence],
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single markdown file for Python code block violations."""
         violations: MutableSequence[m.Tests.Violation] = []
 
@@ -116,7 +114,7 @@ class FlextValidatorMarkdown:
         code: str,
         lines: t.StrSequence,
         block_start: int,
-        approved: Mapping[str, t.StrSequence],
+        approved: t.MappingKV[str, t.StrSequence],
         violations: MutableSequence[m.Tests.Violation],
     ) -> None:
         """Check for forbidden typing imports via line scanning."""
@@ -147,7 +145,7 @@ class FlextValidatorMarkdown:
         code: str,
         lines: t.StrSequence,
         block_start: int,
-        approved: Mapping[str, t.StrSequence],
+        approved: t.MappingKV[str, t.StrSequence],
         violations: MutableSequence[m.Tests.Violation],
     ) -> None:
         """Check for 'object' used as type annotation."""
@@ -174,7 +172,7 @@ class FlextValidatorMarkdown:
         code: str,
         lines: t.StrSequence,
         block_start: int,
-        approved: Mapping[str, t.StrSequence],
+        approved: t.MappingKV[str, t.StrSequence],
         violations: MutableSequence[m.Tests.Violation],
     ) -> None:
         """Check for missing future annotations import."""
@@ -201,7 +199,7 @@ class FlextValidatorMarkdown:
     def collect_markdown_files(
         cls,
         project_root: Path,
-    ) -> Sequence[Path]:
+    ) -> t.SequenceOf[Path]:
         """Collect all .md files that may contain Python code blocks."""
         md_files: MutableSequence[Path] = []
         for search_dir in (

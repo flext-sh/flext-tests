@@ -231,7 +231,7 @@ class FlextTestsMatchersUtilities:
     def _extract_mapping_path(
         value: t.Tests.TestobjectSerializable
         | m.BaseModel
-        | Mapping[str, t.Tests.TestobjectSerializable],
+        | t.MappingKV[str, t.Tests.TestobjectSerializable],
         path: str,
     ) -> t.Tests.TestobjectSerializable:
         """Extract one dotted path from a model or mapping using flext-core extract helpers."""
@@ -299,7 +299,7 @@ class FlextTestsMatchersUtilities:
     def _apply_path_rules(
         subject: t.Tests.TestobjectSerializable
         | m.BaseModel
-        | Mapping[str, t.Tests.TestobjectSerializable],
+        | t.MappingKV[str, t.Tests.TestobjectSerializable],
         rules: t.Tests.PathMatchSpec,
         *,
         inherited_msg: str | None = None,
@@ -323,7 +323,7 @@ class FlextTestsMatchersUtilities:
     @staticmethod
     def _apply_item_rules(
         subject: t.Tests.TestobjectSerializable
-        | Sequence[t.Tests.TestobjectSerializable],
+        | t.SequenceOf[t.Tests.TestobjectSerializable],
         rules: t.Tests.ItemMatchSpec,
         *,
         inherited_msg: str | None = None,
@@ -419,7 +419,7 @@ class FlextTestsMatchersUtilities:
     ) -> None:
         """Shared has/lacks containment check for ok(), fail(), and that()."""
         if has is not None:
-            items: Sequence[
+            items: t.SequenceOf[
                 t.Tests.TestobjectSerializable | t.Tests.MatcherKwargValue | t.JsonValue
             ] = (
                 list(has)
@@ -948,7 +948,7 @@ class FlextTestsMatchersUtilities:
                             or f"Deep matching requires dict or model, got {type(result_value).__name__}",
                         )
                     deep_input: (
-                        m.BaseModel | Mapping[str, t.Tests.TestobjectSerializable]
+                        m.BaseModel | t.MappingKV[str, t.Tests.TestobjectSerializable]
                     )
                     if isinstance(result_value, m.BaseModel):
                         deep_input = result_value
@@ -1076,7 +1076,7 @@ class FlextTestsMatchersUtilities:
                                 else params.cwd
                             )
                             os.chdir(cwd_path)
-                        cfg: Mapping[str, t.Tests.TestobjectSerializable] = {}
+                        cfg: t.MappingKV[str, t.Tests.TestobjectSerializable] = {}
                         if params.settings:
                             cfg = dict(params.settings)
                         container_dict = {
@@ -1084,7 +1084,9 @@ class FlextTestsMatchersUtilities:
                             for k, v in (params.container or {}).items()
                             if t.Tests.general_value(v)
                         }
-                        context_map: Mapping[str, t.Tests.TestobjectSerializable] = {}
+                        context_map: t.MappingKV[
+                            str, t.Tests.TestobjectSerializable
+                        ] = {}
                         if params.context:
                             context_map = dict(params.context)
                         yield m.Tests.TestScope.model_validate({
@@ -1453,7 +1455,7 @@ class FlextTestsMatchersUtilities:
                         msg=params.msg,
                     )
                 if isinstance(subject_payload, (list, tuple)):
-                    seq_value: Sequence[t.Tests.TestobjectSerializable] = []
+                    seq_value: t.SequenceOf[t.Tests.TestobjectSerializable] = []
                     try:
                         seq_value = t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
                             subject_payload,
@@ -1583,7 +1585,7 @@ class FlextTestsMatchersUtilities:
                                 params.msg or "Sequence contains duplicate items",
                             )
                 if isinstance(subject_payload, Mapping):
-                    mapping_value: Mapping[str, t.Tests.TestobjectSerializable] = {}
+                    mapping_value: t.MappingKV[str, t.Tests.TestobjectSerializable] = {}
                     try:
                         mapping_value = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
                             subject_payload,
@@ -1619,7 +1621,7 @@ class FlextTestsMatchersUtilities:
                                     or f"Expected value {expected_val!r} not found in mapping",
                                 )
                     if params.kv is not None:
-                        kv_items: Sequence[tuple[object, object]] = ()
+                        kv_items: t.SequenceOf[tuple[object, object]] = ()
                         match params.kv:
                             case tuple() as key_value if len(key_value) == 2:
                                 key, expected_val = key_value
@@ -1673,7 +1675,7 @@ class FlextTestsMatchersUtilities:
                             )
                 if params.attr_eq is not None:
                     attr_eq_target = subject
-                    attr_items: Sequence[tuple[object, object]] = ()
+                    attr_items: t.SequenceOf[tuple[object, object]] = ()
                     match params.attr_eq:
                         case tuple() as attr_spec if len(attr_spec) == 2:
                             attr, expected_val = attr_spec
@@ -1705,7 +1707,7 @@ class FlextTestsMatchersUtilities:
                             or f"Deep matching requires dict or model, got {type(subject_payload).__name__}",
                         )
                     deep_value: (
-                        m.BaseModel | Mapping[str, t.Tests.TestobjectSerializable]
+                        m.BaseModel | t.MappingKV[str, t.Tests.TestobjectSerializable]
                     )
                     if isinstance(subject_payload, m.BaseModel):
                         deep_value = subject_payload

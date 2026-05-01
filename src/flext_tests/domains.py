@@ -11,10 +11,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    Mapping,
-    Sequence,
-)
 from pathlib import Path
 
 from flext_tests import p, r, t
@@ -94,21 +90,21 @@ class FlextTestsDomains:
         def load_server_fixtures(
             self,
             group: str,
-        ) -> Mapping[str, str]:
+        ) -> t.MappingKV[str, str]:
             return FlextTestsDomains.load_server_fixtures(
                 group,
                 fixtures_root=self._fixtures_root,
                 file_extension=self._file_extension,
             )
 
-        def load_fixture_kind(self, kind: str) -> Mapping[str, str]:
+        def load_fixture_kind(self, kind: str) -> t.MappingKV[str, str]:
             return {
                 group: self.load_fixture(group, kind)
                 for group in self.available_fixture_servers()
                 if self.fixture_exists(group, kind)
             }
 
-        def load_all(self) -> Mapping[str, Mapping[str, str]]:
+        def load_all(self) -> t.MappingKV[str, t.MappingKV[str, str]]:
             return {
                 group: self.load_server_fixtures(group)
                 for group in self.available_fixture_servers()
@@ -117,13 +113,13 @@ class FlextTestsDomains:
         def pytest_params_for_group(
             self,
             group: str,
-        ) -> Sequence[tuple[str, str]]:
+        ) -> t.SequenceOf[tuple[str, str]]:
             return [
                 (fixture_type, self.load_fixture(group, fixture_type))
                 for fixture_type in self.available_fixture_types(group)
             ]
 
-        def all_pytest_params(self) -> Sequence[tuple[str, str, str]]:
+        def all_pytest_params(self) -> t.SequenceOf[tuple[str, str, str]]:
             return [
                 (group, fixture_type, self.load_fixture(group, fixture_type))
                 for group in self.available_fixture_servers()
@@ -243,7 +239,7 @@ class FlextTestsDomains:
         *,
         fixtures_root: Path | None = None,
         file_extension: str = ".ldif",
-    ) -> Mapping[str, str]:
+    ) -> t.MappingKV[str, str]:
         return {
             fixture_type: cls.load_fixture(
                 group,
@@ -277,7 +273,7 @@ class FlextTestsDomains:
         *,
         fixtures_root: Path,
         file_extension: str = ".ldif",
-    ) -> Sequence[tuple[str, str]]:
+    ) -> t.SequenceOf[tuple[str, str]]:
         return cls.bind(
             fixtures_root,
             file_extension=file_extension,
@@ -289,15 +285,15 @@ class FlextTestsDomains:
         *,
         fixtures_root: Path,
         file_extension: str = ".ldif",
-    ) -> Sequence[tuple[str, str, str]]:
+    ) -> t.SequenceOf[tuple[str, str, str]]:
         return cls.bind(
             fixtures_root,
             file_extension=file_extension,
         ).all_pytest_params()
 
     @staticmethod
-    def default_handler_case_specs() -> Sequence[
-        Mapping[str, t.Tests.TestobjectSerializable]
+    def default_handler_case_specs() -> t.SequenceOf[
+        t.MappingKV[str, t.Tests.TestobjectSerializable]
     ]:
         """Create shared handler test-case specs for service-base tests."""
         return [
@@ -357,7 +353,7 @@ class FlextTestsDomains:
         )
 
     @staticmethod
-    def valid_email_cases() -> Sequence[tuple[str, bool]]:
+    def valid_email_cases() -> t.SequenceOf[tuple[str, bool]]:
         """Get valid email test cases.
 
         Returns:

@@ -32,19 +32,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable
 from importlib import import_module
 from pathlib import Path
 from typing import ClassVar, Final, override
 
 import pytest
-
-from flext_core import (
-    FlextModelsEnforcement,
-    FlextUtilities,
-)
-
-_me = FlextModelsEnforcement
+from tests import m, t, u
 
 _WORKSPACE_MARKERS: Final[tuple[str, ...]] = (
     "AGENTS.md",
@@ -176,8 +170,8 @@ def _resolve_config(config: pytest.Config) -> dict[str, object]:
 
 def _active_rules(
     cfg: dict[str, object],
-) -> tuple[_me.EnforcementRuleSpec, ...]:
-    catalog = FlextUtilities.build_canonical_catalog()
+) -> tuple[m.EnforcementRuleSpec, ...]:
+    catalog = u.build_canonical_catalog()
     include_raw = cfg["include"]
     exclude_raw = cfg["exclude"]
     if not isinstance(include_raw, frozenset):
@@ -188,7 +182,7 @@ def _active_rules(
         raise TypeError(msg)
     include: frozenset[str] = include_raw
     exclude: frozenset[str] = exclude_raw
-    rules: list[_me.EnforcementRuleSpec] = []
+    rules: list[m.EnforcementRuleSpec] = []
     for rule in catalog.rules:
         if not rule.enabled:
             continue
@@ -232,9 +226,9 @@ class EnforcementItem(pytest.Item):
         name: str,
         parent: pytest.Collector,
         *,
-        rule: _me.EnforcementRuleSpec,
+        rule: m.EnforcementRuleSpec,
         project: str,
-        violations: Sequence[_me.Violation | object],
+        violations: t.SequenceOf[m.Violation | object],
     ) -> None:
         super().__init__(name, parent)
         self._rule = rule
@@ -302,7 +296,7 @@ class EnforcementCollector(pytest.Collector):
         name: str,
         parent: pytest.Session,
         *,
-        items: Sequence[EnforcementItem] = (),
+        items: t.SequenceOf[EnforcementItem] = (),
     ) -> None:
         super().__init__(name, parent)
         self._items: list[EnforcementItem] = list(items)
@@ -371,7 +365,7 @@ def _iter_infra_violations(
 
 
 def _dispatch_infra_detector(
-    rule: _me.EnforcementRuleSpec,
+    rule: m.EnforcementRuleSpec,
     report: object,
 ) -> dict[str, list[object]]:
     source = rule.source
@@ -386,7 +380,7 @@ def _dispatch_infra_detector(
 
 
 def _dispatch_tests_validator(
-    rule: _me.EnforcementRuleSpec,
+    rule: m.EnforcementRuleSpec,
     workspace_root: Path,
 ) -> dict[str, list[object]]:
     try:

@@ -21,7 +21,6 @@ import contextlib
 import socket
 import time
 from collections.abc import (
-    Mapping,
     MutableSequence,
     MutableSet,
     Sequence,
@@ -310,7 +309,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return int(target_port_str) if target_port_str.isdigit() else None
 
     @staticmethod
-    def _extract_host_port(bindings: Sequence[t.StrMapping] | None) -> str:
+    def _extract_host_port(bindings: t.SequenceOf[t.StrMapping] | None) -> str:
         if not isinstance(bindings, Sequence) or isinstance(bindings, str | bytes):
             return ""
         if not bindings:
@@ -322,9 +321,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     @staticmethod
     def _normalize_bindings(
         bindings: t.Tests.TestobjectSerializable | None,
-    ) -> Sequence[t.StrMapping]:
+    ) -> t.SequenceOf[t.StrMapping]:
         try:
-            validated: Sequence[t.StrMapping] = (
+            validated: t.SequenceOf[t.StrMapping] = (
                 t.Tests.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(bindings)
             )
         except c.ValidationError:
@@ -443,7 +442,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 error = self.client_error or "Docker daemon unavailable"
                 return r[m.Tests.ContainerInfo].fail(error)
             container = client.containers.get(container_name)
-            ports_raw: Mapping[str, t.Tests.TestobjectSerializable] = (
+            ports_raw: t.MappingKV[str, t.Tests.TestobjectSerializable] = (
                 t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
                     container.ports
                 )
@@ -572,7 +571,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             state_file = self.state_file_path
             if state_file is not None and state_file.exists():
                 state_text = state_file.read_text(encoding=c.Tests.DEFAULT_ENCODING)
-                state_raw: Mapping[str, t.StrSequence] = (
+                state_raw: t.MappingKV[str, t.StrSequence] = (
                     t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.validate_json(state_text)
                 )
                 dirty_raw = state_raw.get("dirty_containers", ())
@@ -588,7 +587,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             if state_file is None:
                 return
             state_file.parent.mkdir(parents=True, exist_ok=True)
-            data: Mapping[str, t.StrSequence] = {
+            data: t.MappingKV[str, t.StrSequence] = {
                 "dirty_containers": list(self.dirty_container_names),
             }
             json_bytes = t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.dump_json(data)

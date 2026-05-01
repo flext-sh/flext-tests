@@ -135,7 +135,7 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def deep_match(
-        obj: m.BaseModel | Mapping[str, t.Tests.TestobjectSerializable],
+        obj: m.BaseModel | t.MappingKV[str, t.Tests.TestobjectSerializable],
         spec: t.Tests.DeepSpec,
         *,
         path_sep: str = ".",

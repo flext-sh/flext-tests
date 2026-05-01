@@ -8,22 +8,23 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from flext_core import FlextModels
-from flext_tests import t
+from tests import t
+
+from flext_core import m
 
 
 class FlextTestsBaseModelsMixin:
-    class Entity(FlextModels.Entity):
+    class Entity(m.Entity):
         """Factory entity class for tests."""
 
-        name: Annotated[str, FlextModels.Field(description="Entity display name.")] = ""
+        name: Annotated[str, m.Field(description="Entity display name.")] = ""
         value: Annotated[
             t.Tests.TestobjectSerializable,
-            FlextModels.Field(description="Arbitrary serializable payload."),
+            m.Field(description="Arbitrary serializable payload."),
         ] = None
 
-    class Value(FlextModels.Value):
+    class Value(m.Value):
         """Factory value object class for tests."""
 
-        data: Annotated[str, FlextModels.Field(description="Payload data string.")] = ""
-        count: Annotated[int, FlextModels.Field(description="Occurrence counter.")] = 0
+        data: Annotated[str, m.Field(description="Payload data string.")] = ""
+        count: Annotated[int, m.Field(description="Occurrence counter.")] = 0

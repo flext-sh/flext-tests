@@ -9,12 +9,12 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Annotated
 
-from flext_core import FlextModels, u
+from flext_core import m, u
 from flext_tests import c, t
 
 
 class FlextTestsDockerModelsMixin:
-    class ContainerConfig(FlextModels.Value):
+    class ContainerConfig(m.Value):
         """Resolved Docker target configuration used by the public DSL."""
 
         container_name: Annotated[
@@ -46,7 +46,7 @@ class FlextTestsDockerModelsMixin:
             u.Field(description="Whether execute should recreate the target stack."),
         ] = False
 
-    class ContainerInfo(FlextModels.Value):
+    class ContainerInfo(m.Value):
         """Container information model."""
 
         name: Annotated[
@@ -70,7 +70,7 @@ class FlextTestsDockerModelsMixin:
             u.Field(description="Docker-assigned container identifier."),
         ] = ""
 
-    class User(FlextModels.Value):
+    class User(m.Value):
         """Test user model - immutable value object."""
 
         id: Annotated[str, u.Field(description="Opaque user identifier.")]
@@ -85,7 +85,7 @@ class FlextTestsDockerModelsMixin:
             u.Field(description="True when the account is active."),
         ] = True
 
-    class Config(FlextModels.Value):
+    class Config(m.Value):
         """Test configuration model - immutable value object."""
 
         service_type: Annotated[

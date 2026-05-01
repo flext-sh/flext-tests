@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-from flext_tests import (
-    FlextTestsPayloadUtilities,
-    p,
-    t,
-)
+from tests import p, t
+
+from flext_tests import u
 
 
 class FlextTestsContextHelpersUtilitiesMixin:
@@ -34,7 +32,7 @@ class FlextTestsContextHelpersUtilitiesMixin:
             f"Expected success for key '{key}', got: {result.error!r}"
         )
         raw_value = result.value
-        actual = FlextTestsPayloadUtilities.to_payload(raw_value)
+        actual = u.Tests.to_payload(raw_value)
         assert actual == expected_value, (
             f"Expected {expected_value!r} for key '{key}', got {result.value!r}"
         )

@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from collections.abc import (
     Mapping,
-    Sequence,
 )
 from pathlib import Path
 
@@ -24,8 +23,8 @@ class FlextTestsFilesUtilitiesMixin:
         | bytes
         | m.ConfigMap
         | m.Dict
-        | Mapping[str, t.Tests.TestobjectSerializable]
-        | Sequence[t.StrSequence],
+        | t.MappingKV[str, t.Tests.TestobjectSerializable]
+        | t.SequenceOf[t.StrSequence],
         name: str,
         fmt: str,
     ) -> str:

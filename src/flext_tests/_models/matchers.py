@@ -17,12 +17,12 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated, ClassVar, Self
 
-from flext_core import FlextModels, m, u
+from flext_core import m, u
 from flext_tests import p, t
 
 
 class FlextTestsMatchersModelsMixin:
-    class OkParams(FlextModels.Value):
+    class OkParams(m.Value):
         """Matcher parameters for successful result assertions."""
 
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
@@ -103,7 +103,7 @@ class FlextTestsMatchersModelsMixin:
         ] = None
         msg: Annotated[str | None, u.Field(description="Custom error message")] = None
 
-    class FailParams(FlextModels.Value):
+    class FailParams(m.Value):
         """Matcher parameters for failure result assertions."""
 
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
@@ -140,7 +140,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Error data contains key-value pairs"),
         ] = None
 
-    class ThatParams(FlextModels.Value):
+    class ThatParams(m.Value):
         """Generic matcher parameters for value assertions."""
 
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
@@ -255,7 +255,7 @@ class FlextTestsMatchersModelsMixin:
             t.Tests.KeySpec | None, u.Field(description="Mapping missing keys")
         ] = None
         values: Annotated[
-            Sequence[t.Tests.TestobjectSerializable] | None,
+            t.SequenceOf[t.Tests.TestobjectSerializable] | None,
             u.Field(description="Mapping has all values"),
         ] = None
         kv: Annotated[
@@ -323,21 +323,21 @@ class FlextTestsMatchersModelsMixin:
                 return self.model_copy(update=updates)
             return self
 
-    class ScopeParams(FlextModels.Value):
+    class ScopeParams(m.Value):
         """Parameters for temporary test scope configuration."""
 
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
 
         settings: Annotated[
-            Mapping[str, t.Tests.TestobjectSerializable] | None,
+            t.MappingKV[str, t.Tests.TestobjectSerializable] | None,
             u.Field(description="Initial configuration values"),
         ] = None
         container: Annotated[
-            Mapping[str, t.Tests.TestobjectSerializable] | None,
+            t.MappingKV[str, t.Tests.TestobjectSerializable] | None,
             u.Field(description="Initial container/service mappings"),
         ] = None
         context: Annotated[
-            Mapping[str, t.Tests.TestobjectSerializable] | None,
+            t.MappingKV[str, t.Tests.TestobjectSerializable] | None,
             u.Field(description="Initial context values"),
         ] = None
         cleanup: Annotated[
@@ -358,7 +358,7 @@ class FlextTestsMatchersModelsMixin:
                 return Path(value)
             return value
 
-    class DeepMatchResult(FlextModels.Value):
+    class DeepMatchResult(m.Value):
         """Structured output for deep-match comparisons."""
 
         path: Annotated[
@@ -392,7 +392,7 @@ class FlextTestsMatchersModelsMixin:
             m.TypeAdapter[Sequence[t.Tests.TestobjectSerializable]]
         ] = t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER
 
-    class Chain[TResult](FlextModels.Value):
+    class Chain[TResult](m.Value):
         """Container for chained result assertions."""
 
         result: Annotated[
@@ -400,18 +400,18 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="r being chained"),
         ]
 
-    class TestScope(FlextModels.ArbitraryTypesModel):
+    class TestScope(m.ArbitraryTypesModel):
         """Scope container for test configuration and runtime state."""
 
         settings: Annotated[
-            Mapping[str, t.Tests.TestobjectSerializable],
+            t.MappingKV[str, t.Tests.TestobjectSerializable],
             u.Field(description="Configuration dictionary"),
         ] = u.Field(default_factory=lambda: MappingProxyType({}))
         container: Annotated[
-            Mapping[str, t.Tests.TestobjectSerializable],
+            t.MappingKV[str, t.Tests.TestobjectSerializable],
             u.Field(description="Container/service mappings"),
         ] = u.Field(default_factory=lambda: MappingProxyType({}))
         context: Annotated[
-            Mapping[str, t.Tests.TestobjectSerializable],
+            t.MappingKV[str, t.Tests.TestobjectSerializable],
             u.Field(description="Context values"),
         ] = u.Field(default_factory=lambda: MappingProxyType({}))

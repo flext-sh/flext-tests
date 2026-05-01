@@ -8,19 +8,17 @@ from __future__ import annotations
 
 from collections.abc import (
     Callable,
-    Mapping,
-    Sequence,
 )
 from typing import TypeAliasType
 
-from flext_core import FlextTypes, m
-from flext_tests import FlextTestsBaseTypesMixin
+from flext_core import m
+from flext_tests import t
 
 
 class FlextTestsMatchersTypesMixin:
     type MatcherEqTarget = (
-        Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        t.MappingKV[str, t.Tests.TestobjectSerializable]
+        | t.SequenceOf[t.Tests.TestobjectSerializable]
         | bytes
         | str
         | int
@@ -35,23 +33,20 @@ class FlextTestsMatchersTypesMixin:
     ``union_mode`` on nullable schemas, so the alias stays non-nullable.
     """
 
-    type MatchRuleLeaf = (
-        FlextTestsBaseTypesMixin.Testobject | type | tuple[type, ...] | TypeAliasType
-    )
-    type MatchRuleKwargs = Mapping[
+    type MatchRuleLeaf = t.Tests.Testobject | type | tuple[type, ...] | TypeAliasType
+    type MatchRuleKwargs = t.MappingKV[
         str,
-        Callable[..., FlextTestsBaseTypesMixin.Testobject]
-        | FlextTestsBaseTypesMixin.TestobjectSerializable,
+        Callable[..., t.Tests.Testobject] | t.Tests.TestobjectSerializable,
     ]
     type MatchRuleValue = MatchRuleLeaf | MatchRuleKwargs
     type MatcherKwargValue = (
         MatchRuleLeaf
-        | set[FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | Callable[..., FlextTestsBaseTypesMixin.Testobject]
+        | set[t.Tests.TestobjectSerializable]
+        | Callable[..., t.Tests.Testobject]
         | MatchRuleKwargs
-        | Mapping[int, MatchRuleValue]
-        | Mapping[str, MatchRuleValue]
-        | Mapping[FlextTestsMatchersTypesMixin.ItemSelector, MatchRuleValue]
+        | t.MappingKV[int, MatchRuleValue]
+        | t.MappingKV[str, MatchRuleValue]
+        | t.MappingKV[FlextTestsMatchersTypesMixin.ItemSelector, MatchRuleValue]
     )
     type LengthSpec = int | tuple[int, int]
     type ComparableScalar = float | int | str
@@ -61,56 +56,47 @@ class FlextTestsMatchersTypesMixin:
     inline 3+-arm unions in Pydantic field annotations.
     """
     type MatchRuleSpec = (
-        FlextTestsBaseTypesMixin.Testobject
+        t.Tests.Testobject
         | type
         | tuple[type, ...]
-        | Mapping[str, FlextTestsMatchersTypesMixin.MatcherKwargValue]
+        | t.MappingKV[str, FlextTestsMatchersTypesMixin.MatcherKwargValue]
     )
-    type DeepSpec = Mapping[
+    type DeepSpec = t.MappingKV[
         str,
-        Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
-        | FlextTestsBaseTypesMixin.TestobjectSerializable,
+        Callable[[t.Tests.Testobject], bool] | t.Tests.TestobjectSerializable,
     ]
-    type PathMatchSpec = Mapping[str, FlextTestsMatchersTypesMixin.MatchRuleSpec]
+    type PathMatchSpec = t.MappingKV[str, FlextTestsMatchersTypesMixin.MatchRuleSpec]
     type ItemSelector = int | str
     type ItemMatchSpec = (
-        Sequence[FlextTestsMatchersTypesMixin.MatchRuleSpec]
-        | Mapping[
+        t.SequenceOf[FlextTestsMatchersTypesMixin.MatchRuleSpec]
+        | t.MappingKV[
             FlextTestsMatchersTypesMixin.ItemSelector,
             FlextTestsMatchersTypesMixin.MatchRuleSpec,
         ]
     )
-    type AttributeMatchSpec = Mapping[
+    type AttributeMatchSpec = t.MappingKV[
         str,
         FlextTestsMatchersTypesMixin.MatchRuleSpec,
     ]
-    type PathSpec = str | FlextTypes.StrSequence
-    type PredicateSpec = Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
+    type PathSpec = str | t.StrSequence
+    type PredicateSpec = Callable[[t.Tests.Testobject], bool]
     type ContainmentSpec = (
-        FlextTestsBaseTypesMixin.Testobject
-        | Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        t.Tests.Testobject | t.SequenceOf[t.Tests.TestobjectSerializable]
     )
-    type ExclusionSpec = str | FlextTypes.StrSequence
-    type SequencePredicate = (
-        type | Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
-    )
-    type SortKey = (
-        bool
-        | Callable[
-            [FlextTestsBaseTypesMixin.Testobject], FlextTestsBaseTypesMixin.Testobject
-        ]
-    )
-    type KeySpec = FlextTypes.StrSequence | set[str]
+    type ExclusionSpec = str | t.StrSequence
+    type SequencePredicate = type | Callable[[t.Tests.Testobject], bool]
+    type SortKey = bool | Callable[[t.Tests.Testobject], t.Tests.Testobject]
+    type KeySpec = t.StrSequence | set[str]
     type KeyValueSpec = (
-        tuple[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        tuple[str, t.Tests.TestobjectSerializable]
+        | t.MappingKV[str, t.Tests.TestobjectSerializable]
     )
-    type AttributeSpec = str | FlextTypes.StrSequence
+    type AttributeSpec = str | t.StrSequence
     type AttributeValueSpec = (
-        tuple[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        tuple[str, t.Tests.TestobjectSerializable]
+        | t.MappingKV[str, t.Tests.TestobjectSerializable]
     )
-    type ErrorCodeSpec = str | FlextTypes.StrSequence
+    type ErrorCodeSpec = str | t.StrSequence
     type ErrorDataSpec = m.ConfigMap
-    type CleanupSpec = Sequence[Callable[[], None]]
-    type EnvironmentSpec = FlextTypes.StrMapping
+    type CleanupSpec = t.SequenceOf[Callable[[], None]]
+    type EnvironmentSpec = t.StrMapping

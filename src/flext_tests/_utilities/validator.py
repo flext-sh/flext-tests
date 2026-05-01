@@ -4,10 +4,6 @@ from __future__ import annotations
 
 import ast
 import re
-from collections.abc import (
-    Mapping,
-    Sequence,
-)
 from pathlib import Path
 
 from flext_tests import (
@@ -138,7 +134,7 @@ class FlextTestsValidatorUtilitiesMixin:
     def approved(
         rule_id: str,
         file_path: Path,
-        approved: Mapping[str, t.StrSequence],
+        approved: t.MappingKV[str, t.StrSequence],
     ) -> bool:
         """Check if file is approved for this rule.
 
@@ -157,7 +153,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return any(re.search(pattern, file_str) for pattern in patterns)
 
     @staticmethod
-    def only_pass(body: Sequence[ast.stmt]) -> bool:
+    def only_pass(body: t.SequenceOf[ast.stmt]) -> bool:
         """Check if exception handler body contains only pass or ellipsis.
 
         Used by BYPASS-003 to detect exception swallowing patterns.

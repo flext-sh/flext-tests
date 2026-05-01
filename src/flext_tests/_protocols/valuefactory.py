@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
-    from flext_tests import FlextTestsBaseTypesMixin
+    from flext_tests import t
 
 
 class FlextTestsValueFactoryProtocolsMixin:
@@ -25,7 +25,7 @@ class FlextTestsValueFactoryProtocolsMixin:
             self,
             *,
             name: str,
-            value: FlextTestsBaseTypesMixin.Testobject,
+            value: t.Tests.Testobject,
         ) -> TEntity:
             """Build a typed entity instance."""
             ...

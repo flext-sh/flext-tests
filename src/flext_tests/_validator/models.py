@@ -10,9 +10,7 @@ from __future__ import annotations
 
 from collections.abc import (
     Callable,
-    Mapping,
     MutableSequence,
-    Sequence,
 )
 from pathlib import Path
 from types import MappingProxyType
@@ -36,12 +34,12 @@ class FlextTestsValidatorModels(m):
             @staticmethod
             def run_scan(
                 *,
-                files: Sequence[Path],
-                approved_exceptions: Mapping[str, t.StrSequence] | None,
+                files: t.SequenceOf[Path],
+                approved_exceptions: t.MappingKV[str, t.StrSequence] | None,
                 validator_name: str,
                 scan_file: Callable[
-                    [Path, Mapping[str, t.StrSequence]],
-                    Sequence[m.Tests.Violation],
+                    [Path, t.MappingKV[str, t.StrSequence]],
+                    t.SequenceOf[m.Tests.Violation],
                 ],
             ) -> p.Result[m.Tests.ScanResult]:
                 violations: MutableSequence[m.Tests.Violation] = []
@@ -71,16 +69,16 @@ class FlextTestsValidatorModels(m):
             def _scan_file(
                 cls,
                 file_path: Path,
-                approved: Mapping[str, t.StrSequence],
-            ) -> Sequence[m.Tests.Violation]:
+                approved: t.MappingKV[str, t.StrSequence],
+            ) -> t.SequenceOf[m.Tests.Violation]:
                 """Subclass MUST override: scan one file and yield violations."""
                 raise NotImplementedError
 
             @classmethod
             def scan(
                 cls,
-                files: Sequence[Path],
-                approved_exceptions: Mapping[str, t.StrSequence] | None = None,
+                files: t.SequenceOf[Path],
+                approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
             ) -> p.Result[m.Tests.ScanResult]:
                 """Scan files for violations using the consumer's ``_scan_file``."""
                 return FlextTestsValidatorModels.Tests.ScanCommon.run_scan(
@@ -122,7 +120,7 @@ class FlextTestsValidatorModels(m):
                 )
             )
             approved_exceptions: Annotated[
-                Mapping[str, t.StrSequence],
+                t.MappingKV[str, t.StrSequence],
                 u.Field(
                     description="Rule-to-path allowlist for known and explicitly approved exceptions.",
                     title="Approved Exceptions",

@@ -6,26 +6,23 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    Mapping,
-    Sequence,
-)
 from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated
 
-from flext_core import FlextModels, m, p, u
-from flext_tests import c, t
+from tests import c, p, t
+
+from flext_core import m, u
 
 
 class FlextTestsBatchModelsMixin:
-    class BatchParams(FlextModels.Value):
+    class BatchParams(m.Value):
         """Parameters for FlextTestsFiles.batch() method."""
 
         files: Annotated[
             (
-                Mapping[str, t.Tests.TestobjectSerializable]
-                | Sequence[tuple[str, t.Tests.TestobjectSerializable]]
+                t.MappingKV[str, t.Tests.TestobjectSerializable]
+                | t.SequenceOf[tuple[str, t.Tests.TestobjectSerializable]]
             ),
             u.Field(
                 description="Mapping or Sequence of files to process",
@@ -70,7 +67,7 @@ class FlextTestsBatchModelsMixin:
             ),
         ] = False
 
-    class BatchResult(FlextModels.Value):
+    class BatchResult(m.Value):
         """Result of batch file operations."""
 
         succeeded: Annotated[
@@ -89,7 +86,7 @@ class FlextTestsBatchModelsMixin:
             u.Field(description="Total number of operations"),
         ]
         results: Annotated[
-            Mapping[str, p.ResultLike[t.Tests.TestResultValue]],
+            t.MappingKV[str, p.ResultLike[t.Tests.TestResultValue]],
             u.Field(
                 description="Mapping of file names to operation results",
             ),

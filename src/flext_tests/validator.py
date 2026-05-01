@@ -26,9 +26,7 @@ from __future__ import annotations
 
 import fnmatch
 from collections.abc import (
-    Mapping,
     MutableSequence,
-    Sequence,
 )
 from pathlib import Path
 from types import MappingProxyType
@@ -94,7 +92,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
             ),
         ] = u.Field(default_factory=lambda: list(c.Tests.VALIDATOR_EXCLUDE_PATTERNS))
         approved_exceptions: Annotated[
-            Mapping[str, t.StrSequence],
+            t.MappingKV[str, t.StrSequence],
             u.Field(
                 description="Rule-to-path allowlist for approved exceptions.",
             ),
@@ -116,7 +114,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         cls,
         path: Path,
         exclude_patterns: t.StrSequence | None = None,
-    ) -> Sequence[Path]:
+    ) -> t.SequenceOf[Path]:
         """Discover Python files to scan.
 
         Args:
@@ -130,7 +128,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         excludes = exclude_patterns or list(c.Tests.VALIDATOR_EXCLUDE_PATTERNS)
         if path.is_file():
             return [path] if path.suffix == ".py" else []
-        files: Sequence[Path] = [
+        files: t.SequenceOf[Path] = [
             py_file
             for py_file in path.rglob("*.py")
             if not any(fnmatch.fnmatch(str(py_file), pattern) for pattern in excludes)
@@ -239,7 +237,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         cls,
         path: Path,
         exclude_patterns: t.StrSequence | None = None,
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
+        approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate bypass patterns in Python files.
 
@@ -265,7 +263,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         cls,
         path: Path,
         exclude_patterns: t.StrSequence | None = None,
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
+        approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate imports in Python files.
 
@@ -294,7 +292,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         cls,
         path: Path,
         exclude_patterns: t.StrSequence | None = None,
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
+        approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
         layer_hierarchy: t.IntMapping | None = None,
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate layer dependencies in Python files.
@@ -320,7 +318,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         cls,
         path: Path,
         exclude_patterns: t.StrSequence | None = None,
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
+        approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate test patterns in Python files.
 
@@ -346,7 +344,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         cls,
         path: Path,
         exclude_patterns: t.StrSequence | None = None,
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
+        approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate type annotations in Python files.
 
@@ -371,7 +369,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
     def validate_config(
         cls,
         pyproject_path: Path,
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
+        approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate pyproject.toml configuration.
 
@@ -396,7 +394,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
     def markdown(
         cls,
         project_root: Path,
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
+        approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate Python code blocks in markdown files.
 
