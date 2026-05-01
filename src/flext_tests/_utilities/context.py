@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from tests import p, t
-
-from flext_tests import u
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests.protocols import FlextTestsProtocols as p
 
 
 class FlextTestsContextHelpersUtilitiesMixin:
@@ -14,7 +14,7 @@ class FlextTestsContextHelpersUtilitiesMixin:
     def assert_context_get_success(
         context: p.Context,
         key: str,
-        expected_value: t.Tests.TestobjectSerializable,
+        expected_value: FlextTestsBaseTypesMixin.TestobjectSerializable,
     ) -> None:
         """Assert context get returns expected value.
 
@@ -32,7 +32,7 @@ class FlextTestsContextHelpersUtilitiesMixin:
             f"Expected success for key '{key}', got: {result.error!r}"
         )
         raw_value = result.value
-        actual = u.Tests.to_payload(raw_value)
+        actual = FlextTestsPayloadUtilities.to_payload(raw_value)
         assert actual == expected_value, (
             f"Expected {expected_value!r} for key '{key}', got {result.value!r}"
         )

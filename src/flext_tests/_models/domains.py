@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Annotated
 
 from flext_core import m, u
-from flext_tests import t
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 
 class FlextTestsDomainModelsMixin:
@@ -58,10 +58,10 @@ class FlextTestsDomainModelsMixin:
             u.Field(description="Human-readable case purpose."),
         ] = ""
         data: Annotated[
-            t.Tests.TestobjectSerializable,
+            FlextTestsBaseTypesMixin.TestobjectSerializable,
             u.Field(description="Input payload for the test case."),
         ] = None
         expected: Annotated[
-            t.Tests.TestobjectSerializable,
+            FlextTestsBaseTypesMixin.TestobjectSerializable,
             u.Field(description="Expected result payload for the test case."),
         ] = None

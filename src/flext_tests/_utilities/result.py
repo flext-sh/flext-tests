@@ -5,7 +5,8 @@ from __future__ import annotations
 from types import EllipsisType
 
 from flext_core import FlextProtocolsResult
-from flext_tests import c, p
+from flext_tests.constants import FlextTestsConstants as c
+from flext_tests.protocols import FlextTestsProtocols as p
 
 
 class FlextTestsResultUtilitiesMixin:

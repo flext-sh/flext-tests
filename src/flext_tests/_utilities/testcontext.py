@@ -11,9 +11,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import TextIO
 
-from flext_tests import (
-    t,
-)
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 
 class FlextTestsTestContextUtilitiesMixin:
@@ -55,9 +53,9 @@ class FlextTestsTestContextUtilitiesMixin:
     @staticmethod
     @contextmanager
     def temporary_attribute(
-        target: t.Tests.TestobjectSerializable,
+        target: FlextTestsBaseTypesMixin.TestobjectSerializable,
         attribute: str,
-        value: t.Tests.TestobjectSerializable,
+        value: FlextTestsBaseTypesMixin.TestobjectSerializable,
     ) -> Generator[None]:
         """Temporarily set attribute on target t.JsonValue.
 
@@ -71,7 +69,7 @@ class FlextTestsTestContextUtilitiesMixin:
 
         """
         attribute_existed = hasattr(target, attribute)
-        original_value: t.Tests.TestobjectSerializable | None = None
+        original_value: FlextTestsBaseTypesMixin.TestobjectSerializable | None = None
         if attribute_existed:
             original_value = getattr(target, attribute)
         object.__setattr__(target, attribute, value)

@@ -11,10 +11,9 @@ from contextlib import contextmanager
 from flext_core import (
     FlextSettings,
 )
-from flext_tests import (
-    p,
-    t,
-)
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests.protocols import FlextTestsProtocols as p
+from flext_tests.typings import FlextTestsTypes as t
 
 
 class FlextTestsConfigHelpersUtilitiesMixin:
@@ -62,7 +61,7 @@ class FlextTestsConfigHelpersUtilitiesMixin:
     @staticmethod
     @contextmanager
     def env_vars_context(
-        env_vars: t.MappingKV[str, t.Tests.TestobjectSerializable],
+        env_vars: t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
         vars_to_clear: t.StrSequence | None = None,
     ) -> Generator[None]:
         """Context manager for temporary environment variable changes.

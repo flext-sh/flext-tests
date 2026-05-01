@@ -8,9 +8,8 @@ from collections.abc import (
     MutableMapping,
 )
 
-from flext_tests import (
-    t,
-)
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests.typings import FlextTestsTypes as t
 
 
 class FlextTestsTestCaseHelpersUtilitiesMixin:
@@ -20,10 +19,14 @@ class FlextTestsTestCaseHelpersUtilitiesMixin:
     def create_batch_operation_test_cases(
         operation: str,
         descriptions: t.StrSequence,
-        input_data_list: t.SequenceOf[Mapping[str, t.Tests.TestobjectSerializable]],
-        expected_results: t.SequenceOf[t.Tests.TestobjectSerializable],
-        **common_kwargs: t.Tests.TestobjectSerializable,
-    ) -> t.SequenceOf[MutableMapping[str, t.Tests.TestobjectSerializable]]:
+        input_data_list: t.SequenceOf[
+            Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        ],
+        expected_results: t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable],
+        **common_kwargs: FlextTestsBaseTypesMixin.TestobjectSerializable,
+    ) -> t.SequenceOf[
+        MutableMapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+    ]:
         """Create batch test cases for operation testing.
 
         Args:
@@ -39,7 +42,9 @@ class FlextTestsTestCaseHelpersUtilitiesMixin:
 
         """
         th = FlextTestsTestCaseHelpersUtilitiesMixin
-        cases: t.SequenceOf[MutableMapping[str, t.Tests.TestobjectSerializable]] = [
+        cases: t.SequenceOf[
+            MutableMapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        ] = [
             th.create_operation_test_case(
                 operation=operation,
                 description=desc,
@@ -60,10 +65,10 @@ class FlextTestsTestCaseHelpersUtilitiesMixin:
     def create_operation_test_case(
         operation: str,
         description: str,
-        input_data: t.MappingKV[str, t.Tests.TestobjectSerializable],
-        expected_result: t.Tests.TestobjectSerializable,
-        **kwargs: t.Tests.TestobjectSerializable,
-    ) -> MutableMapping[str, t.Tests.TestobjectSerializable]:
+        input_data: t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
+        expected_result: FlextTestsBaseTypesMixin.TestobjectSerializable,
+        **kwargs: FlextTestsBaseTypesMixin.TestobjectSerializable,
+    ) -> MutableMapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]:
         """Create a test case dict for operation testing.
 
         Args:
@@ -78,7 +83,7 @@ class FlextTestsTestCaseHelpersUtilitiesMixin:
             Test case dictionary
 
         """
-        result: MutableMapping[str, t.Tests.TestobjectSerializable] = {
+        result: MutableMapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable] = {
             "operation": operation,
             "description": description,
             "input_data": input_data,
@@ -89,8 +94,8 @@ class FlextTestsTestCaseHelpersUtilitiesMixin:
 
     @staticmethod
     def execute_and_assert_operation_result(
-        operation: Callable[[], t.Tests.TestobjectSerializable],
-        test_case: t.MappingKV[str, t.Tests.TestobjectSerializable],
+        operation: Callable[[], FlextTestsBaseTypesMixin.TestobjectSerializable],
+        test_case: t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
     ) -> None:
         """Execute operation and assert result.
 

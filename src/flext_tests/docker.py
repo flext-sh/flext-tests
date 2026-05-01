@@ -34,6 +34,7 @@ from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
 from flext_tests import c, m, p, r, t, u
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
 from flext_tests.base import s
 
 
@@ -320,11 +321,13 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     @staticmethod
     def _normalize_bindings(
-        bindings: t.Tests.TestobjectSerializable | None,
+        bindings: FlextTestsBaseTypesMixin.TestobjectSerializable | None,
     ) -> t.SequenceOf[t.StrMapping]:
         try:
             validated: t.SequenceOf[t.StrMapping] = (
-                t.Tests.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(bindings)
+                FlextTestsBaseTypesMixin.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(
+                    bindings
+                )
             )
         except c.ValidationError:
             return []
@@ -442,10 +445,10 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 error = self.client_error or "Docker daemon unavailable"
                 return r[m.Tests.ContainerInfo].fail(error)
             container = client.containers.get(container_name)
-            ports_raw: t.MappingKV[str, t.Tests.TestobjectSerializable] = (
-                t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
-                    container.ports
-                )
+            ports_raw: t.MappingKV[
+                str, FlextTestsBaseTypesMixin.TestobjectSerializable
+            ] = FlextTestsBaseTypesMixin.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
+                container.ports
             )
             ports: t.MutableStrMapping = {}
             for container_port, host_bindings in ports_raw.items():
@@ -572,7 +575,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             if state_file is not None and state_file.exists():
                 state_text = state_file.read_text(encoding=c.Tests.DEFAULT_ENCODING)
                 state_raw: t.MappingKV[str, t.StrSequence] = (
-                    t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.validate_json(state_text)
+                    FlextTestsBaseTypesMixin.STR_SEQUENCE_MAPPING_ADAPTER.validate_json(
+                        state_text
+                    )
                 )
                 dirty_raw = state_raw.get("dirty_containers", ())
                 self.dirty_container_names = set(dirty_raw)
@@ -590,7 +595,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             data: t.MappingKV[str, t.StrSequence] = {
                 "dirty_containers": list(self.dirty_container_names),
             }
-            json_bytes = t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.dump_json(data)
+            json_bytes = (
+                FlextTestsBaseTypesMixin.STR_SEQUENCE_MAPPING_ADAPTER.dump_json(data)
+            )
             state_file.write_bytes(json_bytes)
         except (OSError, TypeError) as exc:
             self.logger.warning("Failed to save dirty state", error=str(exc))

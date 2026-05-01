@@ -20,7 +20,11 @@ from pathlib import Path
 from typing import ClassVar
 
 from flext_core import u
-from flext_tests import c, m, t
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
+from flext_tests.constants import FlextTestsConstants as c
+from flext_tests.models import FlextTestsModels as m
+from flext_tests.typings import FlextTestsTypes as t
 
 
 class FlextTestsPayloadUtilities:
@@ -38,7 +42,7 @@ class FlextTestsPayloadUtilities:
     )
 
     @staticmethod
-    def to_payload(value: object) -> t.Tests.TestobjectSerializable:
+    def to_payload(value: object) -> FlextTestsBaseTypesMixin.TestobjectSerializable:
         """Recursively flatten any runtime value to ``TestobjectSerializable``."""
         to_p = FlextTestsPayloadUtilities.to_payload
         if isinstance(value, m.RootModel):
@@ -52,8 +56,10 @@ class FlextTestsPayloadUtilities:
         if isinstance(value, Mapping):
             normalized_map = {str(k): to_p(v) for k, v in value.items()}
             try:
-                validated_map = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(
-                    normalized_map,
+                validated_map = (
+                    FlextTestsBaseTypesMixin.TESTOBJECT_MAPPING_ADAPTER.validate_python(
+                        normalized_map,
+                    )
                 )
             except c.ValidationError:
                 return normalized_map
@@ -61,7 +67,7 @@ class FlextTestsPayloadUtilities:
         if isinstance(value, (list, tuple, set)):
             normalized_seq = [to_p(item) for item in value]
             try:
-                validated_seq = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
+                validated_seq = FlextTestsBaseTypesMixin.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
                     normalized_seq,
                 )
             except c.ValidationError:
@@ -71,7 +77,7 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def to_normalized_value(
-        value: t.Tests.TestobjectSerializable,
+        value: FlextTestsBaseTypesMixin.TestobjectSerializable,
     ) -> t.JsonValue:
         """Flatten to pure Container via canonical runtime helper."""
         to_n = FlextTestsPayloadUtilities.to_normalized_value
@@ -94,7 +100,9 @@ class FlextTestsPayloadUtilities:
         return value if isinstance(value, (str, int, float, bool)) else str(value)
 
     @staticmethod
-    def to_config_map_value(value: t.Tests.TestobjectSerializable) -> t.JsonPayload:
+    def to_config_map_value(
+        value: FlextTestsBaseTypesMixin.TestobjectSerializable,
+    ) -> t.JsonPayload:
         """Preserve BaseModel, else delegate to canonical Container flattening."""
         if isinstance(value, m.BaseModel):
             return value
@@ -103,7 +111,7 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def length_validate(
-        value: t.Tests.TestobjectSerializable,
+        value: FlextTestsBaseTypesMixin.TestobjectSerializable,
         spec: int | tuple[int, int],
     ) -> bool:
         """Validate length against spec.
@@ -135,8 +143,9 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def deep_match(
-        obj: m.BaseModel | t.MappingKV[str, t.Tests.TestobjectSerializable],
-        spec: t.Tests.DeepSpec,
+        obj: m.BaseModel
+        | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
+        spec: FlextTestsMatchersTypesMixin.DeepSpec,
         *,
         path_sep: str = ".",
     ) -> m.Tests.DeepMatchResult:

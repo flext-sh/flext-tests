@@ -6,10 +6,9 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Protocol
+from typing import Protocol
 
-if TYPE_CHECKING:
-    from flext_tests import t
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 
 class FlextTestsValueFactoryProtocolsMixin:
@@ -25,7 +24,7 @@ class FlextTestsValueFactoryProtocolsMixin:
             self,
             *,
             name: str,
-            value: t.Tests.Testobject,
+            value: FlextTestsBaseTypesMixin.Testobject,
         ) -> TEntity:
             """Build a typed entity instance."""
             ...

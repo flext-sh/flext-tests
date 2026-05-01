@@ -5,9 +5,9 @@ from __future__ import annotations
 import re
 from re import Pattern
 
-from tests import c, t
-
-from flext_tests import u
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests.constants import FlextTestsConstants as c
 
 
 class FlextTestsConstantsHelpersUtilitiesMixin:
@@ -24,10 +24,12 @@ class FlextTestsConstantsHelpersUtilitiesMixin:
         return re.compile(pattern_str, re.IGNORECASE)
 
     @staticmethod
-    def resolve_constant_by_path(path: str) -> t.Tests.TestobjectSerializable:
+    def resolve_constant_by_path(
+        path: str,
+    ) -> FlextTestsBaseTypesMixin.TestobjectSerializable:
         """Get a constant value by dot-separated path."""
         parts = path.split(".")
         current = c
         for part in parts:
             current = getattr(current, part)
-        return u.Tests.to_payload(current)
+        return FlextTestsPayloadUtilities.to_payload(current)

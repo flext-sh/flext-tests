@@ -17,7 +17,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from tests import m, u
+
+from flext_tests import m, u
 
 
 def _find_project_root() -> Path:

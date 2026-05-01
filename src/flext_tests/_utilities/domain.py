@@ -10,13 +10,10 @@ from collections.abc import (
 from datetime import datetime
 from pathlib import Path
 
-from flext_tests import (
-    m,
-    p,
-    r,
-    t,
-    u,
-)
+from flext_cli import u
+from flext_core import r
+from flext_tests import m, p, t
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities as up
 
 
 class FlextTestsDomainHelpersUtilitiesMixin:
@@ -167,12 +164,12 @@ class FlextTestsDomainHelpersUtilitiesMixin:
             empty_map: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
             return empty_map
         if isinstance(result, (m.BaseModel, Path)):
-            return u.Tests.to_payload(result)
+            return up.to_payload(result)
         if isinstance(result, (str, int, float, bool, bytes, datetime)):
             payload_scalar: t.Tests.TestobjectSerializable = result
-            return u.Tests.to_payload(payload_scalar)
+            return up.to_payload(payload_scalar)
         if isinstance(result, type):
-            return u.Tests.to_payload(result)
+            return up.to_payload(result)
         if result is None:
-            return u.Tests.to_payload(result)
-        return u.Tests.to_payload(str(result))
+            return up.to_payload(result)
+        return up.to_payload(str(result))

@@ -13,12 +13,13 @@ from typing import TypeAliasType
 
 from flext_core import m
 from flext_tests import t
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 
 class FlextTestsMatchersTypesMixin:
     type MatcherEqTarget = (
-        t.MappingKV[str, t.Tests.TestobjectSerializable]
-        | t.SequenceOf[t.Tests.TestobjectSerializable]
+        t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
         | bytes
         | str
         | int
@@ -33,16 +34,19 @@ class FlextTestsMatchersTypesMixin:
     ``union_mode`` on nullable schemas, so the alias stays non-nullable.
     """
 
-    type MatchRuleLeaf = t.Tests.Testobject | type | tuple[type, ...] | TypeAliasType
+    type MatchRuleLeaf = (
+        FlextTestsBaseTypesMixin.Testobject | type | tuple[type, ...] | TypeAliasType
+    )
     type MatchRuleKwargs = t.MappingKV[
         str,
-        Callable[..., t.Tests.Testobject] | t.Tests.TestobjectSerializable,
+        Callable[..., FlextTestsBaseTypesMixin.Testobject]
+        | FlextTestsBaseTypesMixin.TestobjectSerializable,
     ]
     type MatchRuleValue = MatchRuleLeaf | MatchRuleKwargs
     type MatcherKwargValue = (
         MatchRuleLeaf
-        | set[t.Tests.TestobjectSerializable]
-        | Callable[..., t.Tests.Testobject]
+        | set[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | Callable[..., FlextTestsBaseTypesMixin.Testobject]
         | MatchRuleKwargs
         | t.MappingKV[int, MatchRuleValue]
         | t.MappingKV[str, MatchRuleValue]
@@ -56,14 +60,15 @@ class FlextTestsMatchersTypesMixin:
     inline 3+-arm unions in Pydantic field annotations.
     """
     type MatchRuleSpec = (
-        t.Tests.Testobject
+        FlextTestsBaseTypesMixin.Testobject
         | type
         | tuple[type, ...]
         | t.MappingKV[str, FlextTestsMatchersTypesMixin.MatcherKwargValue]
     )
     type DeepSpec = t.MappingKV[
         str,
-        Callable[[t.Tests.Testobject], bool] | t.Tests.TestobjectSerializable,
+        Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
+        | FlextTestsBaseTypesMixin.TestobjectSerializable,
     ]
     type PathMatchSpec = t.MappingKV[str, FlextTestsMatchersTypesMixin.MatchRuleSpec]
     type ItemSelector = int | str
@@ -79,22 +84,30 @@ class FlextTestsMatchersTypesMixin:
         FlextTestsMatchersTypesMixin.MatchRuleSpec,
     ]
     type PathSpec = str | t.StrSequence
-    type PredicateSpec = Callable[[t.Tests.Testobject], bool]
+    type PredicateSpec = Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
     type ContainmentSpec = (
-        t.Tests.Testobject | t.SequenceOf[t.Tests.TestobjectSerializable]
+        FlextTestsBaseTypesMixin.Testobject
+        | t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
     )
     type ExclusionSpec = str | t.StrSequence
-    type SequencePredicate = type | Callable[[t.Tests.Testobject], bool]
-    type SortKey = bool | Callable[[t.Tests.Testobject], t.Tests.Testobject]
+    type SequencePredicate = (
+        type | Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
+    )
+    type SortKey = (
+        bool
+        | Callable[
+            [FlextTestsBaseTypesMixin.Testobject], FlextTestsBaseTypesMixin.Testobject
+        ]
+    )
     type KeySpec = t.StrSequence | set[str]
     type KeyValueSpec = (
-        tuple[str, t.Tests.TestobjectSerializable]
-        | t.MappingKV[str, t.Tests.TestobjectSerializable]
+        tuple[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
     )
     type AttributeSpec = str | t.StrSequence
     type AttributeValueSpec = (
-        tuple[str, t.Tests.TestobjectSerializable]
-        | t.MappingKV[str, t.Tests.TestobjectSerializable]
+        tuple[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
     )
     type ErrorCodeSpec = str | t.StrSequence
     type ErrorDataSpec = m.ConfigMap

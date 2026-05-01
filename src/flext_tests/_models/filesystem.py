@@ -12,6 +12,8 @@ from typing import Annotated
 
 from flext_core import m, u
 from flext_tests import c, t
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests._typings.files import FlextTestsFilesTypesMixin
 
 
 class FlextTestsFilesystemModelsMixin:
@@ -115,7 +117,7 @@ class FlextTestsFilesystemModelsMixin:
         """Parameters for file creation operations with Pydantic 2 advanced validation."""
 
         content: Annotated[
-            t.Tests.FileContentPlain,
+            FlextTestsFilesTypesMixin.FileContentPlain,
             u.Field(description="File content to create."),
         ]
         name: Annotated[
@@ -179,7 +181,9 @@ class FlextTestsFilesystemModelsMixin:
 
         @u.field_validator("name", mode="before")
         @classmethod
-        def normalize_name(cls, value: t.Tests.TestobjectSerializable) -> str:
+        def normalize_name(
+            cls, value: FlextTestsBaseTypesMixin.TestobjectSerializable
+        ) -> str:
             """Normalize filename by stripping whitespace."""
             if isinstance(value, str):
                 return value.strip()

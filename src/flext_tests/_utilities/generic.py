@@ -6,7 +6,11 @@ from collections.abc import (
     MutableSequence,
 )
 
-from flext_tests import m, p, r, t
+from flext_core import r
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests.models import FlextTestsModels as m
+from flext_tests.protocols import FlextTestsProtocols as p
+from flext_tests.typings import FlextTestsTypes as t
 
 
 class FlextTestsGenericHelpersUtilitiesMixin:
@@ -66,15 +70,15 @@ class FlextTestsGenericHelpersUtilitiesMixin:
 
     @staticmethod
     def create_parametrized_cases(
-        success_values: t.SequenceOf[t.Tests.TestobjectSerializable],
+        success_values: t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable],
         failure_errors: t.StrSequence | None = None,
         *,
         error_codes: t.SequenceOf[str | None] | None = None,
     ) -> t.SequenceOf[
         tuple[
-            r[t.Tests.TestobjectSerializable],
+            r[FlextTestsBaseTypesMixin.TestobjectSerializable],
             bool,
-            t.Tests.TestobjectSerializable | None,
+            FlextTestsBaseTypesMixin.TestobjectSerializable | None,
             str | None,
         ]
     ]:
@@ -92,20 +96,20 @@ class FlextTestsGenericHelpersUtilitiesMixin:
         """
         cases: MutableSequence[
             tuple[
-                r[t.Tests.TestobjectSerializable],
+                r[FlextTestsBaseTypesMixin.TestobjectSerializable],
                 bool,
-                t.Tests.TestobjectSerializable | None,
+                FlextTestsBaseTypesMixin.TestobjectSerializable | None,
                 str | None,
             ]
         ] = []
         for value in success_values:
-            result = r[t.Tests.TestobjectSerializable].ok(value)
+            result = r[FlextTestsBaseTypesMixin.TestobjectSerializable].ok(value)
             cases.append((result, True, value, None))
         if failure_errors:
             codes = error_codes or [None] * len(failure_errors)
             for i, error in enumerate(failure_errors):
                 error_code = codes[i] if i < len(codes) else None
-                result = r[t.Tests.TestobjectSerializable].fail(
+                result = r[FlextTestsBaseTypesMixin.TestobjectSerializable].fail(
                     error,
                     error_code=error_code,
                 )

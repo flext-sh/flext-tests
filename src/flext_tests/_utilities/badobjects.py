@@ -8,9 +8,7 @@ from collections.abc import (
 )
 from typing import override
 
-from flext_tests import (
-    t,
-)
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 
 class FlextTestsBadObjectsUtilitiesMixin:
@@ -20,7 +18,7 @@ class FlextTestsBadObjectsUtilitiesMixin:
         """Object with model_dump that raises."""
 
         model_dump: Callable[
-            [], MutableMapping[str, t.Tests.TestobjectSerializable]
+            [], MutableMapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
         ] = staticmethod(
             lambda: (_ for _ in ()).throw(RuntimeError("Bad model_dump")),
         )
@@ -29,10 +27,14 @@ class FlextTestsBadObjectsUtilitiesMixin:
         """Config t.JsonValue that raises on attribute access."""
 
         @override
-        def __getattribute__(self, name: str) -> t.Tests.TestobjectSerializable:
+        def __getattribute__(
+            self, name: str
+        ) -> FlextTestsBaseTypesMixin.TestobjectSerializable:
             """Raise error on attribute access - test helper for error testing."""
             if name.startswith("__") and name.endswith("__"):
-                result: t.Tests.TestobjectSerializable = super().__getattribute__(name)
+                result: FlextTestsBaseTypesMixin.TestobjectSerializable = (
+                    super().__getattribute__(name)
+                )
                 return result
             msg = f"Bad settings: {name}"
             raise AttributeError(msg)
@@ -41,10 +43,14 @@ class FlextTestsBadObjectsUtilitiesMixin:
         """Config t.JsonValue that raises TypeError on attribute access."""
 
         @override
-        def __getattribute__(self, name: str) -> t.Tests.TestobjectSerializable:
+        def __getattribute__(
+            self, name: str
+        ) -> FlextTestsBaseTypesMixin.TestobjectSerializable:
             """Raise TypeError on attribute access - test helper for error testing."""
             if name.startswith("__") and name.endswith("__"):
-                result: t.Tests.TestobjectSerializable = super().__getattribute__(name)
+                result: FlextTestsBaseTypesMixin.TestobjectSerializable = (
+                    super().__getattribute__(name)
+                )
                 return result
             msg = f"Bad settings type: {name}"
             raise TypeError(msg)

@@ -6,15 +6,18 @@ from collections.abc import (
     Callable,
 )
 
-from flext_tests import p, t
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
 from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
+from flext_tests.protocols import FlextTestsProtocols as p
 
 
 class FlextTestsParserHelpersUtilitiesMixin:
     """Helpers for parser testing."""
 
     @staticmethod
-    def execute_and_assert_parser_result[TResult: t.Tests.TestobjectSerializable](
+    def execute_and_assert_parser_result[
+        TResult: FlextTestsBaseTypesMixin.TestobjectSerializable
+    ](
         operation: Callable[[], p.Result[TResult]],
         expected_value: TResult | None = None,
         expected_error: str | None = None,

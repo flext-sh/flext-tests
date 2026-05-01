@@ -13,14 +13,14 @@ from collections.abc import (
 from typing import TypeIs
 
 from flext_core import m, p
-from flext_tests import t
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 
 class FlextTestsGuardsTypesMixin:
     @staticmethod
     def general_value(
-        value: t.Tests.Testobject,
-    ) -> TypeIs[t.Tests.Testobject]:
+        value: FlextTestsBaseTypesMixin.Testobject,
+    ) -> TypeIs[FlextTestsBaseTypesMixin.Testobject]:
         if value is None:
             return True
         if isinstance(value, (str, int, float, bool, bytes)):
@@ -31,26 +31,26 @@ class FlextTestsGuardsTypesMixin:
 
     @staticmethod
     def testobject_mapping(
-        value: t.Tests.Testobject,
-    ) -> TypeIs[Mapping[str, t.Tests.TestobjectSerializable]]:
+        value: FlextTestsBaseTypesMixin.Testobject,
+    ) -> TypeIs[Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]]:
         return isinstance(value, Mapping)
 
     @staticmethod
     def testobject_set(
-        value: t.Tests.Testobject,
-    ) -> TypeIs[set[t.Tests.TestobjectSerializable] | frozenset[str]]:
+        value: FlextTestsBaseTypesMixin.Testobject,
+    ) -> TypeIs[set[FlextTestsBaseTypesMixin.TestobjectSerializable] | frozenset[str]]:
         return isinstance(value, (set, frozenset))
 
     @staticmethod
     def testobject_sequence(
-        value: t.Tests.Testobject,
-    ) -> TypeIs[Sequence[t.Tests.TestobjectSerializable]]:
+        value: FlextTestsBaseTypesMixin.Testobject,
+    ) -> TypeIs[Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]]:
         return isinstance(value, Sequence) and not isinstance(
             value, (str, bytes, bytearray)
         )
 
     @staticmethod
     def testobject_result(
-        value: t.Tests.Testobject,
-    ) -> TypeIs[p.ResultLike[t.Tests.TestResultValue]]:
+        value: FlextTestsBaseTypesMixin.Testobject,
+    ) -> TypeIs[p.ResultLike[FlextTestsBaseTypesMixin.TestResultValue]]:
         return isinstance(value, p.ResultLike)

@@ -38,7 +38,8 @@ from pathlib import Path
 from typing import ClassVar, Final, override
 
 import pytest
-from tests import m, t, u
+
+from flext_tests import m, t, u
 
 _WORKSPACE_MARKERS: Final[tuple[str, ...]] = (
     "AGENTS.md",

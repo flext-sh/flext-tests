@@ -67,16 +67,14 @@ from datetime import datetime
 from pathlib import Path
 from typing import Never, TypeIs, overload
 
-from flext_core import FlextProtocolsResult, u
-from flext_tests import (
-    FlextTestsConfigHelpersUtilitiesMixin,
-    FlextTestsPayloadUtilities,
-    FlextTestsResultUtilitiesMixin,
-    c,
-    m,
-    p,
-    t,
-)
+from flext_core.utilities import u
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
+from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
+from flext_tests.constants import c
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
 class FlextTestsMatchersUtilities:
@@ -731,19 +729,19 @@ class FlextTestsMatchersUtilities:
             @staticmethod
             @overload
             def ok[TResult](
-                result: FlextProtocolsResult.Result[TResult],
+                result: p.Result[TResult],
             ) -> TResult: ...
 
             @staticmethod
             @overload
             def ok[TResult](
-                result: FlextProtocolsResult.Result[TResult],
+                result: p.Result[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> TResult | t.Tests.TestobjectSerializable: ...
 
             @staticmethod
             def ok[TResult](
-                result: FlextProtocolsResult.Result[TResult],
+                result: p.Result[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> TResult | t.Tests.TestobjectSerializable:
                 """Enhanced assertion for r success with optional value validation.

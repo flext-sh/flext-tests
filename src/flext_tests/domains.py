@@ -14,8 +14,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_tests import p, r, t
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
-_NO_BODY: t.Tests.TestobjectSerializable = None
+_NO_BODY: FlextTestsBaseTypesMixin.TestobjectSerializable = None
 
 
 class FlextTestsDomains:
@@ -293,7 +294,7 @@ class FlextTestsDomains:
 
     @staticmethod
     def default_handler_case_specs() -> t.SequenceOf[
-        t.MappingKV[str, t.Tests.TestobjectSerializable]
+        t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
     ]:
         """Create shared handler test-case specs for service-base tests."""
         return [
@@ -333,10 +334,10 @@ class FlextTestsDomains:
 
     @staticmethod
     def create_result_ok(
-        value: t.Tests.TestobjectSerializable,
-    ) -> p.Result[t.Tests.TestobjectSerializable]:
+        value: FlextTestsBaseTypesMixin.TestobjectSerializable,
+    ) -> p.Result[FlextTestsBaseTypesMixin.TestobjectSerializable]:
         """Create a generic successful result for test flows."""
-        return r[t.Tests.TestobjectSerializable].ok(value)
+        return r[FlextTestsBaseTypesMixin.TestobjectSerializable].ok(value)
 
     @staticmethod
     def create_result_failure(
@@ -344,9 +345,9 @@ class FlextTestsDomains:
         *,
         error_code: str = "TEST_ERROR",
         error_data: t.JsonMapping | t.ConfigModelInput | None = None,
-    ) -> p.Result[t.Tests.TestobjectSerializable]:
+    ) -> p.Result[FlextTestsBaseTypesMixin.TestobjectSerializable]:
         """Create a generic failed result for test flows."""
-        return r[t.Tests.TestobjectSerializable].fail(
+        return r[FlextTestsBaseTypesMixin.TestobjectSerializable].fail(
             message,
             error_code=error_code,
             error_data=error_data,

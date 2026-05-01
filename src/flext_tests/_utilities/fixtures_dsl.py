@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import ClassVar
 
-from flext_tests import t
+from flext_tests.typings import FlextTestsTypes as t
 
 
 class FlextTestsFixturesDSLMixin:
