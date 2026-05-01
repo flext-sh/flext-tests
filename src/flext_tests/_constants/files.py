@@ -28,6 +28,15 @@ class FlextTestsFilesConstantsMixin:
         CSV = "csv"
         UNKNOWN = "unknown"
 
+    type FileFormat = Format
+    FILE_FORMAT_AUTO: Final[FileFormat] = Format.AUTO
+    FILE_FORMAT_TEXT: Final[FileFormat] = Format.TEXT
+    FILE_FORMAT_BIN: Final[FileFormat] = Format.BIN
+    FILE_FORMAT_JSON: Final[FileFormat] = Format.JSON
+    FILE_FORMAT_YAML: Final[FileFormat] = Format.YAML
+    FILE_FORMAT_CSV: Final[FileFormat] = Format.CSV
+    FILE_FORMAT_UNKNOWN: Final[FileFormat] = Format.UNKNOWN
+
     @unique
     class CompareMode(StrEnum):
         """File comparison mode enumeration."""

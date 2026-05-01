@@ -190,7 +190,7 @@ class FlextTestsFiles(s):
                 except (TypeError, ValueError, c.ValidationError):
                     validated_kwargs = m.Tests.CreateKwargsParams(
                         directory=None,
-                        fmt=c.Tests.Format.AUTO,
+                        fmt=c.Tests.FILE_FORMAT_AUTO,
                         enc=c.Tests.DEFAULT_ENCODING,
                         indent=2,
                         delim=",",
@@ -358,7 +358,7 @@ class FlextTestsFiles(s):
         name: str,
         directory: Path,
         *,
-        fmt: c.Tests.Format = c.Tests.Format.AUTO,
+        fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
         enc: str = c.Tests.DEFAULT_ENCODING,
         indent: int = c.Tests.DEFAULT_JSON_INDENT,
         delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
@@ -606,7 +606,7 @@ class FlextTestsFiles(s):
         name: str = c.Tests.DEFAULT_FILENAME,
         directory: Path | None = None,
         *,
-        fmt: c.Tests.Format = c.Tests.Format.AUTO,
+        fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
         enc: str = c.Tests.DEFAULT_ENCODING,
         indent: int = c.Tests.DEFAULT_JSON_INDENT,
         delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
@@ -718,15 +718,15 @@ class FlextTestsFiles(s):
     ) -> None:
         """Write normalized content using the selected output format."""
         match actual_fmt:
-            case c.Tests.Format.BIN:
+            case c.Tests.FILE_FORMAT_BIN:
                 _ = file_path.write_bytes(
                     actual_content
                     if isinstance(actual_content, bytes)
                     else str(actual_content).encode(params.enc),
                 )
-            case c.Tests.Format.JSON | c.Tests.Format.YAML:
+            case c.Tests.FILE_FORMAT_JSON | c.Tests.FILE_FORMAT_YAML:
                 json_payload = self._build_json_payload(actual_content)
-                if actual_fmt == c.Tests.Format.JSON:
+                if actual_fmt == c.Tests.FILE_FORMAT_JSON:
                     u.Cli.json_write(
                         file_path,
                         json_payload,
@@ -734,7 +734,7 @@ class FlextTestsFiles(s):
                     )
                 else:
                     u.Cli.yaml_dump(file_path, json_payload, indent=params.indent)
-            case c.Tests.Format.CSV:
+            case c.Tests.FILE_FORMAT_CSV:
                 u.Cli.files_write_csv(
                     file_path,
                     self._build_csv_rows(
@@ -914,7 +914,7 @@ class FlextTestsFiles(s):
         path: Path,
         *,
         model_cls: None = None,
-        fmt: c.Tests.Format = c.Tests.Format.AUTO,
+        fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
         enc: str = c.Tests.DEFAULT_ENCODING,
         delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
@@ -926,7 +926,7 @@ class FlextTestsFiles(s):
         path: Path,
         *,
         model_cls: type[TModelRead],
-        fmt: c.Tests.Format = c.Tests.Format.AUTO,
+        fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
         enc: str = c.Tests.DEFAULT_ENCODING,
         delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
@@ -937,7 +937,7 @@ class FlextTestsFiles(s):
         path: Path,
         *,
         model_cls: type[TModelRead] | None = None,
-        fmt: c.Tests.Format = c.Tests.Format.AUTO,
+        fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
         enc: str = c.Tests.DEFAULT_ENCODING,
         delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
@@ -979,9 +979,9 @@ class FlextTestsFiles(s):
         actual_fmt = u.Tests.detect_format_from_path(params.path, params.fmt)
         try:
             content: t.Tests.ReadContent
-            if actual_fmt == c.Tests.Format.BIN:
+            if actual_fmt == c.Tests.FILE_FORMAT_BIN:
                 content = params.path.read_bytes()
-            elif actual_fmt == c.Tests.Format.JSON:
+            elif actual_fmt == c.Tests.FILE_FORMAT_JSON:
                 text = params.path.read_text(encoding=params.enc)
                 parsed_json = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_json(
                     text.encode(),
@@ -991,7 +991,7 @@ class FlextTestsFiles(s):
                     if self._is_mapping(parsed_json)
                     else text
                 )
-            elif actual_fmt == c.Tests.Format.YAML:
+            elif actual_fmt == c.Tests.FILE_FORMAT_YAML:
                 text = params.path.read_text(encoding=params.enc)
                 parsed_yaml_result = u.Cli.yaml_parse(text)
                 parsed_yaml = (
@@ -1002,7 +1002,7 @@ class FlextTestsFiles(s):
                     if isinstance(parsed_yaml, dict)
                     else text
                 )
-            elif actual_fmt == c.Tests.Format.CSV:
+            elif actual_fmt == c.Tests.FILE_FORMAT_CSV:
                 csv_result = u.Cli.files_read_csv_with_headers(params.path)
                 csv_rows_m = csv_result.value if csv_result.success else ()
                 if csv_rows_m:
@@ -1181,19 +1181,19 @@ class FlextTestsFiles(s):
                 return False
         return True
 
-    _FMT_NORMALIZE: ClassVar[Mapping[str, c.Tests.Format]] = {
-        "txt": c.Tests.Format.TEXT,
-        "md": c.Tests.Format.TEXT,
-        "auto": c.Tests.Format.AUTO,
-        "text": c.Tests.Format.TEXT,
-        "bin": c.Tests.Format.BIN,
-        "json": c.Tests.Format.JSON,
-        "yaml": c.Tests.Format.YAML,
-        "csv": c.Tests.Format.CSV,
+    _FMT_NORMALIZE: ClassVar[Mapping[str, c.Tests.FileFormat]] = {
+        "txt": c.Tests.FILE_FORMAT_TEXT,
+        "md": c.Tests.FILE_FORMAT_TEXT,
+        "auto": c.Tests.FILE_FORMAT_AUTO,
+        "text": c.Tests.FILE_FORMAT_TEXT,
+        "bin": c.Tests.FILE_FORMAT_BIN,
+        "json": c.Tests.FILE_FORMAT_JSON,
+        "yaml": c.Tests.FILE_FORMAT_YAML,
+        "csv": c.Tests.FILE_FORMAT_CSV,
     }
 
-    def _normalize_create_format(self, fmt: str) -> c.Tests.Format:
-        return self._FMT_NORMALIZE.get(fmt, c.Tests.Format.AUTO)
+    def _normalize_create_format(self, fmt: str) -> c.Tests.FileFormat:
+        return self._FMT_NORMALIZE.get(fmt, c.Tests.FILE_FORMAT_AUTO)
 
     def _parse_content_metadata(
         self,

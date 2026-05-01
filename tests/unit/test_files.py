@@ -387,7 +387,7 @@ class TestsFlextTestsFiles:
     def test_create_explicit_format(self, tmp_path: Path) -> None:
         """Test create() with explicit format override."""
         manager = tf(base_dir=tmp_path)
-        path = manager.create(b"raw bytes", "data.dat", fmt=c.Tests.Format.BIN)
+        path = manager.create(b"raw bytes", "data.dat", fmt=c.Tests.FILE_FORMAT_BIN)
         tm.that(path.exists(), eq=True)
         tm.that(path.read_bytes(), eq=b"raw bytes")
 
@@ -426,7 +426,7 @@ class TestsFlextTestsFiles:
     def test_read_binary_file(self, tmp_path: Path) -> None:
         """Test read() returns bytes content for .bin files."""
         manager = tf(base_dir=tmp_path)
-        path = manager.create(b"\x00\x01\x02", "data.bin", fmt=c.Tests.Format.BIN)
+        path = manager.create(b"\x00\x01\x02", "data.bin", fmt=c.Tests.FILE_FORMAT_BIN)
         result = manager.read(path)
         _ = u.Tests.assert_success(result)
         tm.that(result.value, eq=b"\x00\x01\x02")
@@ -495,8 +495,8 @@ class TestsFlextTestsFiles:
     def test_read_explicit_format(self, tmp_path: Path) -> None:
         """Test read() with explicit format override."""
         manager = tf(base_dir=tmp_path)
-        path = manager.create("plain text", "data.dat", fmt=c.Tests.Format.TEXT)
-        result = manager.read(path, fmt=c.Tests.Format.TEXT)
+        path = manager.create("plain text", "data.dat", fmt=c.Tests.FILE_FORMAT_TEXT)
+        result = manager.read(path, fmt=c.Tests.FILE_FORMAT_TEXT)
         _ = u.Tests.assert_success(result)
         tm.that(result.value, eq="plain text")
 
@@ -1087,7 +1087,7 @@ class TestsFlextTestsFiles:
     def test_create_in_custom_format(self, tmp_path: Path) -> None:
         """Test create_in() with explicit format override."""
         path = tf.create_in(
-            b"binary data", "data.dat", tmp_path, fmt=c.Tests.Format.BIN
+            b"binary data", "data.dat", tmp_path, fmt=c.Tests.FILE_FORMAT_BIN
         )
         tm.that(path.exists(), eq=True)
         tm.that(path.read_bytes(), eq=b"binary data")

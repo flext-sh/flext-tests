@@ -439,8 +439,8 @@ class TestsFlextTestsMatchers:
     def test_that_with_has_parameter_supports_strenum_sets(self) -> None:
         """Test tm.that() containment with sets of StrEnum values."""
         tm.that(
-            {c.Tests.Format.TEXT, c.Tests.Format.BIN},
-            has=c.Tests.Format.TEXT,
+            {c.Tests.FILE_FORMAT_TEXT, c.Tests.FILE_FORMAT_BIN},
+            has=c.Tests.FILE_FORMAT_TEXT,
         )
 
     def test_that_with_has_sequence_parameter(self) -> None:

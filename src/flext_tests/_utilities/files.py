@@ -30,25 +30,27 @@ class FlextTestsFilesUtilitiesMixin:
         fmt: str,
     ) -> str:
         """Detect format by content shape + name; honors explicit ``fmt``."""
-        if fmt != c.Tests.Format.AUTO:
+        if fmt != c.Tests.FILE_FORMAT_AUTO:
             return fmt
         if isinstance(content, bytes):
-            return str(c.Tests.Format.BIN)
+            return str(c.Tests.FILE_FORMAT_BIN)
         if isinstance(content, (m.ConfigMap, m.Dict, Mapping)):
             ext = Path(name).suffix.lower()
             mapping_format: str = (
-                c.Tests.Format.YAML if ext in {".yaml", ".yml"} else c.Tests.Format.JSON
+                c.Tests.FILE_FORMAT_YAML
+                if ext in {".yaml", ".yml"}
+                else c.Tests.FILE_FORMAT_JSON
             )
             return mapping_format
         if isinstance(content, list):
-            return str(c.Tests.Format.CSV)
+            return str(c.Tests.FILE_FORMAT_CSV)
         suffix_format: str = c.Tests.format_for_extension(Path(name).suffix)
         return suffix_format
 
     @staticmethod
     def detect_format_from_path(path: Path, fmt: str) -> str:
         """Detect format from path extension; honors explicit ``fmt``."""
-        if fmt != c.Tests.Format.AUTO:
+        if fmt != c.Tests.FILE_FORMAT_AUTO:
             return fmt
         path_format: str = c.Tests.format_for_extension(path.suffix)
         return path_format

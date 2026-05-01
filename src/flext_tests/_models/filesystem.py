@@ -131,10 +131,12 @@ class FlextTestsFilesystemModelsMixin:
             ),
         ] = None
         fmt: Annotated[
-            c.Tests.Format,
-            m.BeforeValidator(lambda v: c.Tests.Format(v) if isinstance(v, str) else v),
+            c.Tests.FileFormat,
+            m.BeforeValidator(
+                lambda v: type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
+            ),
             u.Field(
-                default=c.Tests.Format.AUTO,
+                default=c.Tests.FILE_FORMAT_AUTO,
                 description="File format override.",
             ),
         ]
@@ -199,10 +201,12 @@ class FlextTestsFilesystemModelsMixin:
             ),
         ] = None
         fmt: Annotated[
-            c.Tests.Format,
-            m.BeforeValidator(lambda v: c.Tests.Format(v) if isinstance(v, str) else v),
+            c.Tests.FileFormat,
+            m.BeforeValidator(
+                lambda v: type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
+            ),
             u.Field(
-                default=c.Tests.Format.AUTO,
+                default=c.Tests.FILE_FORMAT_AUTO,
                 description="Format override.",
             ),
         ]
@@ -376,10 +380,12 @@ class FlextTestsFilesystemModelsMixin:
             ),
         ] = None
         fmt: Annotated[
-            c.Tests.Format,
-            m.BeforeValidator(lambda v: c.Tests.Format(v) if isinstance(v, str) else v),
+            c.Tests.FileFormat,
+            m.BeforeValidator(
+                lambda v: type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
+            ),
             u.Field(
-                default=c.Tests.Format.AUTO,
+                default=c.Tests.FILE_FORMAT_AUTO,
                 description="File format override.",
             ),
         ]
