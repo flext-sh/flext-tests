@@ -13,7 +13,7 @@ from flext_cli import c
 from flext_tests import t
 
 
-class FlextTestsFilesConstantsMixin:
+class FlextTestsConstantsFiles:
     """File management constants mixin for test infrastructure."""
 
     @unique

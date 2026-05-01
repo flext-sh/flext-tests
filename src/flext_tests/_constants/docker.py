@@ -15,7 +15,7 @@ from typing import Final
 from flext_tests import t
 
 
-class FlextTestsDockerConstantsMixin:
+class FlextTestsConstantsDocker:
     """Docker test infrastructure constants mixin."""
 
     SHARED_CONTAINERS: Final[Mapping[str, t.HeaderMapping]] = {

@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import Final
 
 
-class FlextTestsMatcherConstantsMixin:
+class FlextTestsConstantsMatcher:
     """Matcher constants mixin for test assertions."""
 
     MATCHER_RULE_KEYS: Final[frozenset[str]] = frozenset({

@@ -7,10 +7,11 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 _LAZY_IMPORTS = build_lazy_import_map(
     {
-        ".docker": ("FlextTestsDockerConstantsMixin",),
-        ".files": ("FlextTestsFilesConstantsMixin",),
-        ".matcher": ("FlextTestsMatcherConstantsMixin",),
-        ".validator": ("FlextTestsValidatorConstantsMixin",),
+        ".data_cases": ("FlextTestsConstantsDataCases",),
+        ".docker": ("FlextTestsConstantsDocker",),
+        ".files": ("FlextTestsConstantsFiles",),
+        ".matcher": ("FlextTestsConstantsMatcher",),
+        ".validator": ("FlextTestsConstantsValidator",),
     },
 )
 

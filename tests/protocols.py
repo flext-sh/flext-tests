@@ -32,9 +32,6 @@ class TestsFlextTestsProtocols(FlextTestsProtocols):
     class Tests(FlextTestsProtocols.Tests):
         """flext-tests test protocols namespace."""
 
-        class Tests:
-            """flext-tests testing namespace."""
-
 
 p = TestsFlextTestsProtocols
 __all__: list[str] = ["TestsFlextTestsProtocols", "p"]

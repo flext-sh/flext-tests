@@ -23,10 +23,11 @@ if _t.TYPE_CHECKING:
         __version__,
         __version_info__,
     )
-    from flext_tests._constants.docker import FlextTestsDockerConstantsMixin
-    from flext_tests._constants.files import FlextTestsFilesConstantsMixin
-    from flext_tests._constants.matcher import FlextTestsMatcherConstantsMixin
-    from flext_tests._constants.validator import FlextTestsValidatorConstantsMixin
+    from flext_tests._constants.data_cases import FlextTestsConstantsDataCases
+    from flext_tests._constants.docker import FlextTestsConstantsDocker
+    from flext_tests._constants.files import FlextTestsConstantsFiles
+    from flext_tests._constants.matcher import FlextTestsConstantsMatcher
+    from flext_tests._constants.validator import FlextTestsConstantsValidator
     from flext_tests._fixtures.enforcement import (
         EnforcementCollector,
         EnforcementItem,
@@ -123,10 +124,11 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "__version__",
                 "__version_info__",
             ),
-            "._constants.docker": ("FlextTestsDockerConstantsMixin",),
-            "._constants.files": ("FlextTestsFilesConstantsMixin",),
-            "._constants.matcher": ("FlextTestsMatcherConstantsMixin",),
-            "._constants.validator": ("FlextTestsValidatorConstantsMixin",),
+            "._constants.data_cases": ("FlextTestsConstantsDataCases",),
+            "._constants.docker": ("FlextTestsConstantsDocker",),
+            "._constants.files": ("FlextTestsConstantsFiles",),
+            "._constants.matcher": ("FlextTestsConstantsMatcher",),
+            "._constants.validator": ("FlextTestsConstantsValidator",),
             "._fixtures.enforcement": (
                 "EnforcementCollector",
                 "EnforcementItem",
@@ -274,18 +276,21 @@ __all__: list[str] = [
     "FlextTestsBatchModelsMixin",
     "FlextTestsConfigHelpersUtilitiesMixin",
     "FlextTestsConstants",
+    "FlextTestsConstantsDataCases",
+    "FlextTestsConstantsDocker",
+    "FlextTestsConstantsFiles",
     "FlextTestsConstantsHelpersUtilitiesMixin",
+    "FlextTestsConstantsMatcher",
+    "FlextTestsConstantsValidator",
     "FlextTestsContainerHelpersUtilitiesMixin",
     "FlextTestsContextHelpersUtilitiesMixin",
     "FlextTestsDocker",
-    "FlextTestsDockerConstantsMixin",
     "FlextTestsDockerModelsMixin",
     "FlextTestsDomainHelpersUtilitiesMixin",
     "FlextTestsDomainModelsMixin",
     "FlextTestsDomains",
     "FlextTestsExceptionHelpersUtilitiesMixin",
     "FlextTestsFiles",
-    "FlextTestsFilesConstantsMixin",
     "FlextTestsFilesTypesMixin",
     "FlextTestsFilesUtilitiesMixin",
     "FlextTestsFilesystemModelsMixin",
@@ -293,7 +298,6 @@ __all__: list[str] = [
     "FlextTestsGenericHelpersUtilitiesMixin",
     "FlextTestsGuardsTypesMixin",
     "FlextTestsHandlerHelpersUtilitiesMixin",
-    "FlextTestsMatcherConstantsMixin",
     "FlextTestsMatchersModelsMixin",
     "FlextTestsMatchersTypesMixin",
     "FlextTestsMatchersUtilities",
@@ -308,7 +312,6 @@ __all__: list[str] = [
     "FlextTestsUtilities",
     "FlextTestsValidationUtilitiesMixin",
     "FlextTestsValidator",
-    "FlextTestsValidatorConstantsMixin",
     "FlextTestsValidatorModels",
     "FlextTestsValidatorModelsMixin",
     "FlextTestsValidatorUtilitiesMixin",

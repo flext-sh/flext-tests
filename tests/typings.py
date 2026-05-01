@@ -31,9 +31,6 @@ class TestsFlextTestsTypes(FlextTestsTypes):
     class Tests(FlextTestsTypes.Tests):
         """flext-tests test types namespace."""
 
-        class Tests:
-            """flext-tests testing namespace."""
-
 
 t = TestsFlextTestsTypes
 

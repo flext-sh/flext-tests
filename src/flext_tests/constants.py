@@ -11,11 +11,12 @@ from __future__ import annotations
 
 from flext_cli import c
 from flext_tests import (
-    FlextTestsDockerConstantsMixin,
-    FlextTestsFilesConstantsMixin,
-    FlextTestsMatcherConstantsMixin,
-    FlextTestsValidatorConstantsMixin,
+    FlextTestsConstantsDocker,
+    FlextTestsConstantsFiles,
+    FlextTestsConstantsMatcher,
+    FlextTestsConstantsValidator,
 )
+from flext_tests._constants.data_cases import FlextTestsConstantsDataCases
 
 
 class FlextTestsConstants(c):
@@ -26,10 +27,11 @@ class FlextTestsConstants(c):
     """
 
     class Tests(
-        FlextTestsDockerConstantsMixin,
-        FlextTestsFilesConstantsMixin,
-        FlextTestsMatcherConstantsMixin,
-        FlextTestsValidatorConstantsMixin,
+        FlextTestsConstantsDataCases,
+        FlextTestsConstantsDocker,
+        FlextTestsConstantsFiles,
+        FlextTestsConstantsMatcher,
+        FlextTestsConstantsValidator,
     ):
         """Test-specific constants namespace.
 

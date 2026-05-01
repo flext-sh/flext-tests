@@ -11,9 +11,6 @@ class TestsFlextTestsUtilities(FlextTestsUtilities):
     class Tests(FlextTestsUtilities.Tests):
         """flext-tests test utilities namespace."""
 
-        class Tests:
-            """flext-tests testing namespace."""
-
 
 u = TestsFlextTestsUtilities
 

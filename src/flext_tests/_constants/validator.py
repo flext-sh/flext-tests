@@ -13,7 +13,7 @@ from typing import ClassVar, Final
 from flext_tests import t
 
 
-class FlextTestsValidatorConstantsMixin:
+class FlextTestsConstantsValidator:
     """Architecture validator constants mixin."""
 
     @unique
@@ -144,10 +144,10 @@ class FlextTestsValidatorConstantsMixin:
     def validator_rule(
         cls,
         rule_id: str,
-    ) -> tuple[FlextTestsValidatorConstantsMixin.ValidatorSeverity, str]:
+    ) -> tuple[FlextTestsConstantsValidator.ValidatorSeverity, str]:
         """Get rule by ID string (e.g., 'IMPORT-001' -> VALIDATOR_RULE_IMPORT_001)."""
         attr_name = "VALIDATOR_RULE_" + rule_id.replace("-", "_")
-        rule: tuple[FlextTestsValidatorConstantsMixin.ValidatorSeverity, str] = getattr(
+        rule: tuple[FlextTestsConstantsValidator.ValidatorSeverity, str] = getattr(
             cls, attr_name
         )
         return rule
