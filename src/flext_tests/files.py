@@ -53,7 +53,7 @@ class FlextTestsFiles(s):
         try:
             model_instance: TModelRead = model_cls.model_validate(content)
             return r[TModelRead].ok(model_instance)
-        except (TypeError, ValueError, AttributeError) as ex:
+        except c.EXC_BASIC_TYPE as ex:
             return r[TModelRead].fail(f"Failed to validate model: {ex}")
 
     @staticmethod

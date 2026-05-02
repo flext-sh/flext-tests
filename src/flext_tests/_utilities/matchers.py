@@ -624,7 +624,7 @@ class FlextTestsMatchersUtilities:
                 """
                 try:
                     params = m.Tests.FailParams.model_validate(kwargs)
-                except (TypeError, ValueError, AttributeError) as exc:
+                except c.EXC_BASIC_TYPE as exc:
                     raise ValueError(f"Parameter validation failed: {exc}") from exc
                 err = FlextTestsResultUtilitiesMixin.assert_failure(result)
                 if (
