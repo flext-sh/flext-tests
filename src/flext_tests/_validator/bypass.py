@@ -124,7 +124,7 @@ class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):
         violations: MutableSequence[m.Tests.Violation] = []
         try:
             content = file_path.read_text(encoding=c.Tests.DEFAULT_ENCODING)
-        except (OSError, UnicodeDecodeError):
+        except c.EXC_OS_DECODING:
             return violations
         lines = content.splitlines()
         violations.extend(cls._check_noqa(file_path, lines, approved))

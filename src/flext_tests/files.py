@@ -665,7 +665,7 @@ class FlextTestsFiles(s):
                 "readonly": readonly,
                 "extract_result": extract_result,
             })
-        except (TypeError, ValueError, AttributeError) as exc:
+        except c.EXC_BASIC_TYPE as exc:
             raise ValueError(f"Invalid parameters for file creation: {exc}") from None
         target_dir = self._resolve_directory(params.directory)
         name_str = params.name

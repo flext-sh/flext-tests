@@ -1227,7 +1227,7 @@ class FlextTestsMatchersUtilities:
                     }
                     try:
                         params = m.Tests.ThatParams.model_validate(filtered_kwargs)
-                    except (TypeError, ValueError, AttributeError) as filtered_exc:
+                    except c.EXC_BASIC_TYPE as filtered_exc:
                         raise ValueError(
                             f"Parameter validation failed: {filtered_exc}",
                         ) from filtered_exc
