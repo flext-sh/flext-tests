@@ -5,7 +5,7 @@ Static methods used internally by ``FlextTestsMatchersUtilities``.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 
 from flext_core.utilities import u
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
@@ -19,6 +19,21 @@ class FlextTestsMatchersRulesDispatchMixin:
     """Normalize declarative match rules and extract dotted paths."""
 
     @staticmethod
+    def _matcher_rule_keys() -> frozenset[str]:
+        """Return the accepted matcher-rule keys from the canonical param models."""
+
+        def iter_aliases() -> Iterable[str]:
+            for model in (m.Tests.ThatParams, m.Tests.OkParams, m.Tests.FailParams):
+                for field_name, field_info in model.model_fields.items():
+                    yield field_name
+                    alias_choices = getattr(field_info.validation_alias, "choices", ())
+                    for alias in alias_choices:
+                        if isinstance(alias, str):
+                            yield alias
+
+        return frozenset(iter_aliases())
+
+    @staticmethod
     def _rule_to_kwargs(
         rule: t.Tests.MatchRuleSpec,
         *,
@@ -30,7 +45,7 @@ class FlextTestsMatchersRulesDispatchMixin:
         if isinstance(rule, Mapping):
             raw_mapping = dict(rule)
             if raw_mapping and set(raw_mapping).issubset(
-                c.Tests.MATCHER_RULE_KEYS,
+                FlextTestsMatchersRulesDispatchMixin._matcher_rule_keys(),
             ):
                 result = dict(raw_mapping)
             else:

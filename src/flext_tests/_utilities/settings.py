@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import os
 from collections.abc import (
     Generator,
 )
 from contextlib import contextmanager
+from unittest.mock import patch
 
 from flext_core import (
     FlextSettings,
@@ -76,22 +76,8 @@ class FlextTestsConfigHelpersUtilitiesMixin:
             None
 
         """
-        original_values: dict[str, str | None] = {}
-        if vars_to_clear:
-            for var in vars_to_clear:
-                original_values[var] = os.environ.get(var)
-                if var in os.environ:
-                    del os.environ[var]
-        for key, value in env_vars.items():
-            if key not in original_values:
-                original_values[key] = os.environ.get(key)
-            os.environ[key] = str(value)
-        try:
+        with patch.dict("os.environ", {}, clear=False) as environ:
+            for var in vars_to_clear or ():
+                environ.pop(var, None)
+            environ.update({key: str(value) for key, value in env_vars.items()})
             yield
-        finally:
-            for key, original in original_values.items():
-                if original is None:
-                    if key in os.environ:
-                        del os.environ[key]
-                else:
-                    os.environ[key] = original
