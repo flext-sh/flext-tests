@@ -577,7 +577,7 @@ class FlextTestsFiles(s):
                 "keys": keys,
                 "exclude_keys": exclude_keys,
             })
-        except (TypeError, ValueError, AttributeError) as exc:
+        except c.EXC_BASIC_TYPE as exc:
             return r[bool].fail(f"Invalid parameters for file comparison: {exc}")
         if not params.file1.exists():
             return r[bool].fail(

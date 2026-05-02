@@ -1211,7 +1211,7 @@ class FlextTestsMatchersUtilities:
                 )
                 try:
                     params = m.Tests.ThatParams.model_validate(kwargs)
-                except (TypeError, ValueError, AttributeError):
+                except c.EXC_BASIC_TYPE:
                     non_serializable_keys = {
                         "eq",
                         "ne",
