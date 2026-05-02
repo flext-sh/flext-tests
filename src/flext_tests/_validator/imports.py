@@ -153,11 +153,10 @@ class FlextValidatorImports(FlextTestsValidatorModels.Tests.ScannerMixin):
         if any(re.search(pattern, file_str) for pattern in internal_init_patterns):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
-        flext_packages = c.Tests.VALIDATOR_APPROVED_FLEXT_PACKAGES
         for node in ast.walk(tree):
             if isinstance(node, ast.ImportFrom) and node.module:
                 parts = node.module.split(".")
-                if len(parts) > 1 and parts[0] in flext_packages:
+                if len(parts) > 1 and parts[0].startswith("flext_"):
                     internal_parts = [p for p in parts[1:] if p.startswith("_")]
                     if internal_parts:
                         internal = internal_parts[0]

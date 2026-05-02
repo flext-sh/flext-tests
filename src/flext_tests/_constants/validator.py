@@ -327,13 +327,6 @@ class FlextTestsConstantsValidator:
         "AsyncMock",
         "PropertyMock",
     })
-    VALIDATOR_APPROVED_FLEXT_PACKAGES: Final[frozenset[str]] = frozenset({
-        "flext_core",
-        "flext_cli",
-        "flext_ldap",
-        "flext_ldif",
-        "flext_tests",
-    })
     VALIDATOR_APPROVED_INTERNAL_INIT_PATTERNS: Final[tuple[str, ...]] = (
         "_[^/]+/__init__\\.py$",
     )
