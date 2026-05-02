@@ -66,9 +66,13 @@ from pathlib import Path
 from typing import TypeIs, overload
 
 from flext_core.utilities import u
-from flext_tests._utilities._matchers import (
+from flext_tests._utilities._matchers._assertions import (
     FlextTestsMatchersAssertionsMixin,
+)
+from flext_tests._utilities._matchers._rules_dispatch import (
     FlextTestsMatchersRulesDispatchMixin,
+)
+from flext_tests._utilities._matchers._typeguards import (
     FlextTestsMatchersTypeGuardsMixin,
 )
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
@@ -217,6 +221,31 @@ class FlextTestsMatchersUtilities(
         )
 
     @staticmethod
+    def _normalize_containment_value(
+        value: p.AttributeProbe,
+    ) -> t.JsonValue:
+        return FlextTestsPayloadUtilities.to_normalized_value(
+            FlextTestsPayloadUtilities.to_payload(value),
+        )
+
+    @staticmethod
+    def _is_supported_containment_container(
+        value: t.JsonValue,
+    ) -> TypeIs[dict[str, t.JsonValue] | list[t.JsonValue] | str]:
+        return isinstance(value, (Mapping, list, str))
+
+    @staticmethod
+    def _payload_contains(
+        container: dict[str, t.JsonValue] | list[t.JsonValue] | str,
+        item: t.JsonValue,
+    ) -> bool:
+        if isinstance(container, Mapping):
+            return isinstance(item, str) and item in container
+        if isinstance(container, str):
+            return str(item) in container
+        return any(candidate == item for candidate in container)
+
+    @staticmethod
     def _check_has_lacks(
         value: p.AttributeProbe,
         has: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.JsonValue | None,
@@ -246,15 +275,14 @@ class FlextTestsMatchersUtilities(
                             item=item,
                         )
                 else:
-                    check_val = FlextTestsPayloadUtilities.to_payload(item)
-                    target_raw = FlextTestsPayloadUtilities.to_payload(value)
-                    if isinstance(target_raw, m.RootModel):
-                        target_raw = FlextTestsPayloadUtilities.to_payload(
-                            target_raw.model_dump(),
-                        )
-                    if not isinstance(
+                    check_val = (
+                        FlextTestsMatchersUtilities._normalize_containment_value(item)
+                    )
+                    target_raw = (
+                        FlextTestsMatchersUtilities._normalize_containment_value(value)
+                    )
+                    if not FlextTestsMatchersUtilities._is_supported_containment_container(
                         target_raw,
-                        (Mapping, str, list, tuple, set, frozenset),
                     ):
                         FlextTestsMatchersUtilities._raise_match_assertion(
                             c.Tests.ERR_CONTAINS_FAILED,
@@ -262,24 +290,10 @@ class FlextTestsMatchersUtilities(
                             container=value,
                             item=item,
                         )
-                    if isinstance(target_raw, (set, frozenset, tuple)):
-                        if check_val not in target_raw:
-                            FlextTestsMatchersUtilities._raise_match_assertion(
-                                c.Tests.ERR_CONTAINS_FAILED,
-                                msg=msg,
-                                container=value,
-                                item=item,
-                            )
-                        continue
-                    if isinstance(target_raw, str):
-                        if str(check_val) not in target_raw:
-                            FlextTestsMatchersUtilities._raise_match_assertion(
-                                c.Tests.ERR_CONTAINS_FAILED,
-                                msg=msg,
-                                container=value,
-                                item=item,
-                            )
-                    elif check_val not in target_raw:
+                    if not FlextTestsMatchersUtilities._payload_contains(
+                        target_raw,
+                        check_val,
+                    ):
                         FlextTestsMatchersUtilities._raise_match_assertion(
                             c.Tests.ERR_CONTAINS_FAILED,
                             msg=msg,
@@ -304,28 +318,25 @@ class FlextTestsMatchersUtilities(
                             item=item,
                         )
                 else:
-                    check_val = FlextTestsPayloadUtilities.to_payload(item)
-                    target_raw_2 = FlextTestsPayloadUtilities.to_payload(value)
-                    if isinstance(target_raw_2, m.RootModel):
-                        target_raw_2 = FlextTestsPayloadUtilities.to_payload(
-                            target_raw_2.model_dump(),
-                        )
-                    if not isinstance(target_raw_2, (Mapping, str, list)):
+                    check_val = (
+                        FlextTestsMatchersUtilities._normalize_containment_value(item)
+                    )
+                    target_raw_2 = (
+                        FlextTestsMatchersUtilities._normalize_containment_value(value)
+                    )
+                    if not FlextTestsMatchersUtilities._is_supported_containment_container(
+                        target_raw_2,
+                    ):
                         FlextTestsMatchersUtilities._raise_match_assertion(
                             c.Tests.ERR_LACKS_FAILED,
                             msg=msg,
                             container=value,
                             item=item,
                         )
-                    if isinstance(target_raw_2, str):
-                        if str(check_val) in target_raw_2:
-                            FlextTestsMatchersUtilities._raise_match_assertion(
-                                c.Tests.ERR_LACKS_FAILED,
-                                msg=msg,
-                                container=value,
-                                item=item,
-                            )
-                    elif check_val in target_raw_2:
+                    if FlextTestsMatchersUtilities._payload_contains(
+                        target_raw_2,
+                        check_val,
+                    ):
                         FlextTestsMatchersUtilities._raise_match_assertion(
                             c.Tests.ERR_LACKS_FAILED,
                             msg=msg,
