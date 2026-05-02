@@ -54,9 +54,11 @@ class FlextTestsConfigHelpersUtilitiesMixin:
         settings = FlextSettings.fetch_global()
         if not kwargs:
             return settings
-        payload = settings.model_dump()
-        payload.update(kwargs)
-        return FlextSettings.model_validate(payload)
+        candidate = settings.model_copy(update=kwargs, deep=True)
+        computed_fields = set(type(candidate).model_computed_fields)
+        return FlextSettings.model_validate(
+            candidate.model_dump(exclude=computed_fields),
+        )
 
     @staticmethod
     @contextmanager

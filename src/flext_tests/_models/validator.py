@@ -104,3 +104,33 @@ class FlextTestsValidatorModelsMixin:
                 violations=violations,
                 passed=not violations,
             )
+
+    class EnforcementDispatcherConfig(m.Value):
+        """Resolved runtime configuration for the pytest enforcement dispatcher."""
+
+        active: Annotated[
+            bool,
+            u.Field(description="Whether the dispatcher is active for this session."),
+        ]
+        strict: Annotated[
+            bool,
+            u.Field(description="Promote runtime warnings to failures when true."),
+        ]
+        include: Annotated[
+            frozenset[str],
+            u.Field(description="Optional allow-list of enforcement rule IDs."),
+        ] = frozenset()
+        exclude: Annotated[
+            frozenset[str],
+            u.Field(description="Optional block-list of enforcement rule IDs."),
+        ] = frozenset()
+        workspace_root: Annotated[
+            Path | None,
+            u.Field(description="Resolved FLEXT workspace root for the session."),
+        ] = None
+        warning_counter: Annotated[
+            t.MutableIntMapping,
+            u.Field(
+                description="Captured runtime warning counts keyed by dotted category.",
+            ),
+        ] = u.Field(default_factory=dict)

@@ -260,7 +260,12 @@ class FlextTestsFiles(s):
         path: Path,
         msg: str | None = None,
         options: m.Tests.AssertExistsParams | None = None,
-        **kwargs: t.JsonValue,
+        *,
+        is_file: bool | None = None,
+        is_dir: bool | None = None,
+        not_empty: bool | None = None,
+        readable: bool | None = None,
+        writable: bool | None = None,
     ) -> Path:
         """Generalized file existence assertion - ALL file validations in ONE method.
 
@@ -280,11 +285,17 @@ class FlextTestsFiles(s):
             Path if all validations pass
 
         """
-        payload: t.MutableJsonMapping = (
-            options.model_dump(mode="python") if options is not None else {}
+        params = (
+            options
+            if options is not None
+            else m.Tests.AssertExistsParams.model_validate({
+                "is_file": is_file,
+                "is_dir": is_dir,
+                "not_empty": not_empty,
+                "readable": readable,
+                "writable": writable,
+            })
         )
-        payload.update(kwargs)
-        params = m.Tests.AssertExistsParams.model_validate(payload)
         if not path.exists():
             error_msg = msg or c.Tests.ERROR_FILE_NOT_FOUND.format(path=path)
             raise AssertionError(error_msg)
@@ -400,6 +411,7 @@ class FlextTestsFiles(s):
             """Process single file operation."""
             name, content = name_and_content
             path = Path(content) if isinstance(content, (Path, str)) else Path(name)
+            result: p.Result[Path]
             match params.operation:
                 case "create":
                     try:
@@ -411,7 +423,7 @@ class FlextTestsFiles(s):
                             if isinstance(content, Mapping)
                             else content
                         )
-                        return r[Path].ok(
+                        result = r[Path].ok(
                             self.create(
                                 self._coerce_file_content(payload),
                                 name,
@@ -419,10 +431,10 @@ class FlextTestsFiles(s):
                             )
                         )
                     except (OSError, TypeError, ValueError, AttributeError) as e:
-                        return r[Path].fail(f"Failed to create {name}: {e}")
+                        result = r[Path].fail(f"Failed to create {name}: {e}")
                 case "read":
                     read_result = self.read(path, model_cls=None)
-                    return (
+                    result = (
                         r[Path].ok(path)
                         if read_result.success
                         else r[Path].fail(read_result.error or f"Failed to read {name}")
@@ -430,11 +442,12 @@ class FlextTestsFiles(s):
                 case "delete":
                     try:
                         path.unlink(missing_ok=True)
-                        return r[Path].ok(path)
+                        result = r[Path].ok(path)
                     except OSError as e:
-                        return r[Path].fail(f"Failed to delete {name}: {e}")
+                        result = r[Path].fail(f"Failed to delete {name}: {e}")
                 case _:
-                    return r[Path].fail(f"Unknown operation: {params.operation}")
+                    result = r[Path].fail(f"Unknown operation: {params.operation}")
+            return result
 
         items_list = list(files_dict.items())
         results_dict: MutableMapping[

@@ -47,17 +47,8 @@ _WORKSPACE_MARKERS: Final[tuple[str, ...]] = (
     "flext-core",
     "flext-tests",
 )
-_VALIDATOR_METHODS: Final[frozenset[str]] = frozenset({
-    "imports",
-    "types",
-    "bypass",
-    "layer",
-    "tests",
-    "validate_config",
-    "markdown",
-})
 
-_StashConfig: pytest.StashKey[dict[str, object]] = pytest.StashKey()
+_StashConfig: pytest.StashKey[m.Tests.EnforcementDispatcherConfig] = pytest.StashKey()
 
 
 class _SessionConfig:
@@ -130,7 +121,7 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     )
 
 
-def _resolve_config(config: pytest.Config) -> dict[str, object]:
+def _resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfig:
     """Build (and cache) the dispatcher's resolved configuration."""
     stashed = config.stash.get(_StashConfig, None)
     if stashed is not None:
@@ -158,39 +149,28 @@ def _resolve_config(config: pytest.Config) -> dict[str, object]:
         workspace_root = discovered if discovered == rootpath else None
 
     active = not disabled and workspace_root is not None
-    resolved: dict[str, object] = {
-        "active": active,
-        "strict": strict,
-        "include": include,
-        "exclude": exclude,
-        "workspace_root": workspace_root,
-        "warning_counter": {},
-    }
+    resolved = m.Tests.EnforcementDispatcherConfig(
+        active=active,
+        strict=strict,
+        include=include,
+        exclude=exclude,
+        workspace_root=workspace_root,
+    )
     config.stash[_StashConfig] = resolved
     return resolved
 
 
 def _active_rules(
-    cfg: dict[str, object],
+    cfg: m.Tests.EnforcementDispatcherConfig,
 ) -> tuple[m.EnforcementRuleSpec, ...]:
     catalog = u.build_canonical_catalog()
-    include_raw = cfg["include"]
-    exclude_raw = cfg["exclude"]
-    if not isinstance(include_raw, frozenset):
-        msg = f"cfg['include'] must be frozenset, got {type(include_raw).__name__}"
-        raise TypeError(msg)
-    if not isinstance(exclude_raw, frozenset):
-        msg = f"cfg['exclude'] must be frozenset, got {type(exclude_raw).__name__}"
-        raise TypeError(msg)
-    include: frozenset[str] = include_raw
-    exclude: frozenset[str] = exclude_raw
     rules: list[m.EnforcementRuleSpec] = []
     for rule in catalog.rules:
         if not rule.enabled:
             continue
-        if include and rule.id not in include:
+        if cfg.include and rule.id not in cfg.include:
             continue
-        if rule.id in exclude:
+        if rule.id in cfg.exclude:
             continue
         rules.append(rule)
     return tuple(rules)
@@ -199,7 +179,7 @@ def _active_rules(
 def pytest_configure(config: pytest.Config) -> None:
     """Register ``filterwarnings`` for every active RUNTIME_WARNING rule."""
     cfg = _resolve_config(config)
-    if not cfg["active"]:
+    if not cfg.active:
         return
 
     for rule in _active_rules(cfg):
@@ -211,7 +191,7 @@ def pytest_configure(config: pytest.Config) -> None:
             continue
         action = (
             "error"
-            if cfg["strict"] and rule.promote_to_error_when_strict
+            if cfg.strict and rule.promote_to_error_when_strict
             else "default"
         )
         config.addinivalue_line("filterwarnings", f"{action}::{category}")
@@ -393,10 +373,10 @@ def _dispatch_tests_validator(
     if tv is None:
         return {}
     method_name = getattr(rule.source, "method", "")
-    if method_name not in _VALIDATOR_METHODS:
+    if not method_name or method_name.startswith("_"):
         return {}
     method = getattr(tv, method_name, None)
-    if method is None:
+    if method is None or not callable(method):
         return {}
     wanted_ids = frozenset(getattr(rule.source, "rule_ids", ()))
     try:
@@ -434,10 +414,10 @@ def _dispatch_tests_validator(
 
 def _build_items(
     session: pytest.Session,
-    cfg: dict[str, p.AttributeProbe],
+    cfg: m.Tests.EnforcementDispatcherConfig,
 ) -> list[EnforcementItem]:
-    workspace_root = cfg.get("workspace_root")
-    if not isinstance(workspace_root, Path):
+    workspace_root = cfg.workspace_root
+    if workspace_root is None:
         return []
 
     rules = _active_rules(cfg)
@@ -486,7 +466,7 @@ def pytest_collection_modifyitems(
 ) -> None:
     """Append dispatcher items to the collection when active."""
     cfg = _resolve_config(config)
-    if not cfg["active"]:
+    if not cfg.active:
         return
     # Skip on xdist workers — let the master collect once.
     if hasattr(config, "workerinput"):
@@ -508,17 +488,13 @@ def pytest_warning_recorded(
     if _SessionConfig.value is None:
         return
     cfg = _resolve_config(_SessionConfig.value)
-    if not cfg["active"]:
+    if not cfg.active:
         return
     category = getattr(warning_message, "category", None)
     if category is None:
         return
     dotted = f"{category.__module__}.{category.__qualname__}"
-    counter_raw = cfg["warning_counter"]
-    if not isinstance(counter_raw, dict):
-        msg = f"cfg['warning_counter'] must be dict, got {type(counter_raw).__name__}"
-        raise TypeError(msg)
-    counter: dict[str, int] = counter_raw
+    counter = cfg.warning_counter
     counter[dotted] = counter.get(dotted, 0) + 1
 
 
@@ -535,18 +511,13 @@ def pytest_terminal_summary(
     """Print the per-kind breakdown at the end of the session."""
     _ = exitstatus
     cfg = _resolve_config(config)
-    if not cfg["active"]:
+    if not cfg.active:
         return
     active = _active_rules(cfg)
     kinds: dict[str, int] = {}
     for rule in active:
         kinds[rule.source.kind] = kinds.get(rule.source.kind, 0) + 1
-    counter_raw = cfg["warning_counter"]
-    if not isinstance(counter_raw, dict):
-        msg = f"cfg['warning_counter'] must be dict, got {type(counter_raw).__name__}"
-        raise TypeError(msg)
-    counter: dict[str, int] = counter_raw
-    warning_total = sum(counter.values())
+    warning_total = sum(cfg.warning_counter.values())
     terminalreporter.write_sep("-", "flext-enforce", yellow=True)
     terminalreporter.write_line(
         f"catalog active: {len(active)} rules across {len(kinds)} source kinds"

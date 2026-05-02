@@ -59,15 +59,13 @@ class TestsFlextTestsEnforcementDispatcher:
         *,
         include: frozenset[str] = frozenset(),
         exclude: frozenset[str] = frozenset(),
-    ) -> dict[str, object]:
-        return {
-            "active": True,
-            "strict": False,
-            "include": include,
-            "exclude": exclude,
-            "workspace_root": None,
-            "warning_counter": {},
-        }
+    ) -> dispatcher.m.Tests.EnforcementDispatcherConfig:
+        return dispatcher.m.Tests.EnforcementDispatcherConfig(
+            active=True,
+            strict=False,
+            include=include,
+            exclude=exclude,
+        )
 
     def test_include_narrows_to_listed_ids(self) -> None:
         active = dispatcher._active_rules(self._cfg(include=frozenset({"ENFORCE-001"})))

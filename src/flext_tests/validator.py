@@ -16,7 +16,10 @@ from flext_tests import tv, t
     result = tv.validate_config(Path("pyproject.toml"))
 
     # Validate all
-    result = tv.all(Path("src"), pyproject=Path("pyproject.toml"))
+    result = tv.all(
+        Path("src"),
+        options=tv.AllValidationOptions(pyproject_path=Path("pyproject.toml")),
+    )
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -140,26 +143,18 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         cls,
         path: Path,
         options: AllValidationOptions | None = None,
-        **kwargs: t.JsonValue,
     ) -> p.Result[m.Tests.ScanResult]:
         """Run all validations and combine results.
 
         Args:
             path: Directory or file to scan
-            pyproject_path: Path to pyproject.toml (optional)
-            exclude_patterns: Glob patterns to exclude
-            approved_exceptions: Dict mapping rule IDs to approved file patterns
-            include_tests_validation: Whether to include test pattern validation
+            options: Typed aggregate-validation options.
 
         Returns:
             r[ScanResult] with combined violations from all validators
 
         """
-        payload: t.MutableJsonMapping = (
-            options.model_dump(mode="python") if options is not None else {}
-        )
-        payload.update(kwargs)
-        all_options = cls.AllValidationOptions.model_validate(payload)
+        all_options = options or cls.AllValidationOptions()
         all_violations: MutableSequence[m.Tests.Violation] = []
         total_files = 0
         validators: MutableSequence[tuple[str, p.Result[m.Tests.ScanResult]]] = [
