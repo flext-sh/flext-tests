@@ -221,14 +221,6 @@ class FlextTestsMatchersUtilities(
         )
 
     @staticmethod
-    def _normalize_containment_value(
-        value: p.AttributeProbe,
-    ) -> t.JsonValue:
-        return FlextTestsPayloadUtilities.to_normalized_value(
-            FlextTestsPayloadUtilities.to_payload(value),
-        )
-
-    @staticmethod
     def _is_supported_containment_container(
         value: t.JsonValue,
     ) -> TypeIs[dict[str, t.JsonValue] | list[t.JsonValue] | str]:
@@ -275,11 +267,11 @@ class FlextTestsMatchersUtilities(
                             item=item,
                         )
                 else:
-                    check_val = (
-                        FlextTestsMatchersUtilities._normalize_containment_value(item)
+                    check_val = FlextTestsPayloadUtilities.to_normalized_value(
+                        FlextTestsPayloadUtilities.to_payload(item),
                     )
-                    target_raw = (
-                        FlextTestsMatchersUtilities._normalize_containment_value(value)
+                    target_raw = FlextTestsPayloadUtilities.to_normalized_value(
+                        FlextTestsPayloadUtilities.to_payload(value),
                     )
                     if not FlextTestsMatchersUtilities._is_supported_containment_container(
                         target_raw,
@@ -318,11 +310,11 @@ class FlextTestsMatchersUtilities(
                             item=item,
                         )
                 else:
-                    check_val = (
-                        FlextTestsMatchersUtilities._normalize_containment_value(item)
+                    check_val = FlextTestsPayloadUtilities.to_normalized_value(
+                        FlextTestsPayloadUtilities.to_payload(item),
                     )
-                    target_raw_2 = (
-                        FlextTestsMatchersUtilities._normalize_containment_value(value)
+                    target_raw_2 = FlextTestsPayloadUtilities.to_normalized_value(
+                        FlextTestsPayloadUtilities.to_payload(value),
                     )
                     if not FlextTestsMatchersUtilities._is_supported_containment_container(
                         target_raw_2,

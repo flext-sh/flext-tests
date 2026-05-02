@@ -117,26 +117,28 @@ class FlextTestsFiles(s):
 
     def cleanup(self) -> None:
         """Cleanup all tracked files and directories created by this manager."""
-        if self._created_files is not None:
-            for file_path in reversed(self._created_files):
-                if not file_path.exists():
-                    continue
-                try:
-                    file_path.chmod(c.Tests.PERMISSION_WRITABLE_FILE)
-                    file_path.unlink(missing_ok=True)
-                except OSError:
-                    pass
-            self._created_files.clear()
-        if self._created_dirs is not None:
-            for dir_path in reversed(self._created_dirs):
-                if not dir_path.exists():
-                    continue
-                try:
-                    dir_path.chmod(c.Tests.PERMISSION_WRITABLE_DIR)
-                    shutil.rmtree(dir_path)
-                except OSError:
-                    pass
-            self._created_dirs.clear()
+        for items, perm, cleanup_fn in [
+            (
+                self._created_files,
+                c.Tests.PERMISSION_WRITABLE_FILE,
+                lambda p: p.unlink(missing_ok=True),
+            ),
+            (
+                self._created_dirs,
+                c.Tests.PERMISSION_WRITABLE_DIR,
+                lambda p: shutil.rmtree(p),
+            ),
+        ]:
+            if items is not None:
+                for path in reversed(items):
+                    if not path.exists():
+                        continue
+                    try:
+                        path.chmod(perm)
+                        cleanup_fn(path)
+                    except OSError:
+                        pass
+                items.clear()
 
     @classmethod
     @contextmanager
@@ -190,20 +192,12 @@ class FlextTestsFiles(s):
                 try:
                     validated_kwargs = m.Tests.CreateKwargsParams.model_validate(kwargs)
                 except c.EXC_VALIDATION_TYPE_VALUE:
-                    validated_kwargs = m.Tests.CreateKwargsParams(
-                        directory=None,
-                        fmt=c.Tests.FILE_FORMAT_AUTO,
-                        enc=c.Tests.DEFAULT_ENCODING,
-                        indent=2,
-                        delim=",",
-                        headers=None,
-                        readonly=False,
-                    )
+                    validated_kwargs = m.Tests.CreateKwargsParams()
                 path = manager.create(
                     manager._coerce_file_content(data),
                     filename,
                     directory=validated_kwargs.directory,
-                    fmt=manager._normalize_create_format(validated_kwargs.fmt),
+                    fmt=validated_kwargs.fmt,
                     enc=validated_kwargs.enc,
                     indent=validated_kwargs.indent,
                     delim=validated_kwargs.delim,
@@ -356,54 +350,6 @@ class FlextTestsFiles(s):
                 raise AssertionError(msg or check_msg)
         return path
 
-    @staticmethod
-    def create_in[TFileContent: FlextTestsFilesTypesMixin.FileContentPlain](
-        content: TFileContent | p.ResultLike[TFileContent],
-        name: str,
-        directory: Path,
-        *,
-        fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
-        enc: str = c.Tests.DEFAULT_ENCODING,
-        indent: int = c.Tests.DEFAULT_JSON_INDENT,
-        delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
-        headers: t.StrSequence | None = None,
-        readonly: bool = False,
-        extract_result: bool = True,
-    ) -> Path:
-        """Create file directly in directory - static convenience method.
-
-        Supports r, Pydantic models, lists, dicts, and raw content.
-
-        Args:
-            content: File content (str, bytes, dict, list, m.BaseModel, or r[T])
-            name: Filename
-            directory: Target directory
-            fmt: Format override ("auto", "text", "bin", "json", "yaml", "csv")
-            enc: Encoding (default: utf-8)
-            indent: JSON/YAML indent (default: 2)
-            delim: CSV delimiter (default: ",")
-            headers: CSV headers (default: None)
-            readonly: Create as read-only (default: False)
-            extract_result: Auto-extract r value (default: True)
-
-        Returns:
-            Path to created file.
-
-        """
-        manager = FlextTestsFiles(base_dir=directory)
-        return manager.create(
-            content,
-            name,
-            directory=None,
-            fmt=fmt,
-            enc=enc,
-            indent=indent,
-            delim=delim,
-            headers=headers,
-            readonly=readonly,
-            extract_result=extract_result,
-        )
-
     def batch_files[TModel: m.BaseModel](
         self,
         items: FlextTestsFilesTypesMixin.BatchFiles,
@@ -414,9 +360,7 @@ class FlextTestsFiles(s):
         on_error: c.Tests.ErrorMode = c.Tests.ErrorMode.COLLECT,
         parallel: bool = False,
     ) -> p.Result[m.Tests.BatchResult]:
-        """Batch file operations.
-
-        Uses u.batch_files() for batch processing with error handling.
+        """Batch file operations with error handling.
 
         Args:
             items: t.MappingKV[str, t.FileContent] or t.SequenceOf[tuple[str, t.FileContent]]
@@ -443,26 +387,9 @@ class FlextTestsFiles(s):
             return r[m.Tests.BatchResult].fail(
                 f"Invalid parameters for batch operation: {exc}",
             )
-        files_dict: MutableMapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-        if isinstance(params.files, Mapping):
-            files_dict = dict(params.files.items())
-        elif not isinstance(params.files, str):
-            files_dict = {}
-            for item in params.files:
-                if len(item) == 2:
-                    try:
-                        _ = m.Tests.CreateParams.model_validate({
-                            "content": item[1],
-                            "name": c.Tests.DEFAULT_FILENAME,
-                        })
-                    except c.EXC_BASIC_TYPE:
-                        continue
-                    name = item[0]
-                    files_dict[name] = item[1]
-        else:
-            return r[m.Tests.BatchResult].fail(
-                f"Invalid BatchFiles type: {type(params.files)}",
-            )
+        files_dict: MutableMapping[
+            str, FlextTestsBaseTypesMixin.TestobjectSerializable
+        ] = dict(params.files)
         error_mode_str = "collect" if params.on_error == "collect" else "fail"
 
         def process_one(
@@ -587,26 +514,29 @@ class FlextTestsFiles(s):
             return r[bool].fail(
                 c.Tests.ERROR_FILE_NOT_FOUND.format(path=params.file2),
             )
+        result: p.Result[bool]
         try:
             if params.pattern is not None:
                 text1 = params.file1.read_text(encoding=c.Tests.DEFAULT_ENCODING)
                 text2 = params.file2.read_text(encoding=c.Tests.DEFAULT_ENCODING)
-                return r[bool].ok(params.pattern in text1 and params.pattern in text2)
-            match params.mode:
-                case "size":
-                    return r[bool].ok(
-                        params.file1.stat().st_size == params.file2.stat().st_size,
-                    )
-                case "hash":
-                    hash1 = u.Cli.sha256_file(params.file1)
-                    hash2 = u.Cli.sha256_file(params.file2)
-                    return r[bool].ok(hash1 == hash2)
-                case "lines":
-                    return self._compare_lines(params)
-                case _:
-                    return self._compare_content(params)
+                result = r[bool].ok(params.pattern in text1 and params.pattern in text2)
+            else:
+                match params.mode:
+                    case "size":
+                        result = r[bool].ok(
+                            params.file1.stat().st_size == params.file2.stat().st_size,
+                        )
+                    case "hash":
+                        hash1 = u.Cli.sha256_file(params.file1)
+                        hash2 = u.Cli.sha256_file(params.file2)
+                        result = r[bool].ok(hash1 == hash2)
+                    case "lines":
+                        result = self._compare_lines(params)
+                    case _:
+                        result = self._compare_content(params)
         except OSError as e:
-            return r[bool].fail(c.Tests.ERROR_COMPARE.format(error=e))
+            result = r[bool].fail(c.Tests.ERROR_COMPARE.format(error=e))
+        return result
 
     def create[TFileContent: FlextTestsFilesTypesMixin.FileContentPlain](
         self,
@@ -893,7 +823,6 @@ class FlextTestsFiles(s):
             content_meta: m.Tests.ContentMeta | None = None
             if params.parse_content or params.validate_model:
                 content_meta = self._parse_content_metadata(
-                    path=params.path,
                     text=text,
                     fmt=fmt,
                     validate_model=params.validate_model,
@@ -990,46 +919,7 @@ class FlextTestsFiles(s):
             )
         actual_fmt = u.Tests.detect_format_from_path(params.path, params.fmt)
         try:
-            content: FlextTestsFilesTypesMixin.ReadContent
-            if actual_fmt == c.Tests.FILE_FORMAT_BIN:
-                content = params.path.read_bytes()
-            elif actual_fmt == c.Tests.FILE_FORMAT_JSON:
-                text = params.path.read_text(encoding=params.enc)
-                parsed_json = (
-                    FlextTestsBaseTypesMixin.TESTOBJECT_MAPPING_ADAPTER.validate_json(
-                        text.encode(),
-                    )
-                )
-                content = (
-                    self._to_config_map(parsed_json)
-                    if self._is_mapping(parsed_json)
-                    else text
-                )
-            elif actual_fmt == c.Tests.FILE_FORMAT_YAML:
-                text = params.path.read_text(encoding=params.enc)
-                parsed_yaml_result = u.Cli.yaml_parse(text)
-                parsed_yaml = (
-                    parsed_yaml_result.value if parsed_yaml_result.success else None
-                )
-                content = (
-                    self._to_config_map(parsed_yaml)
-                    if isinstance(parsed_yaml, dict)
-                    else text
-                )
-            elif actual_fmt == c.Tests.FILE_FORMAT_CSV:
-                csv_result = u.Cli.files_read_csv_with_headers(params.path)
-                csv_rows_m = csv_result.value if csv_result.success else ()
-                if csv_rows_m:
-                    keys = list(csv_rows_m[0].keys())
-                    data_rows = [[row.get(k, "") for k in keys] for row in csv_rows_m]
-                    content = data_rows if params.has_headers else [keys, *data_rows]
-                else:
-                    content = []
-            else:
-                content = params.path.read_text(encoding=params.enc)
-            if model_cls is not None:
-                return self._validate_model_content(model_cls, content)
-            return r[FlextTestsFilesTypesMixin.ReadContent].ok(content)
+            content = self._read_content_by_format(params.path, actual_fmt, params)
         except UnicodeDecodeError as e:
             return self._read_fail(c.Tests.ERROR_ENCODING.format(error=e), model_cls)
         except ValueError as e:
@@ -1042,6 +932,56 @@ class FlextTestsFiles(s):
             )
         except OSError as e:
             return self._read_fail(c.Tests.ERROR_READ.format(error=e), model_cls)
+        if model_cls is not None:
+            return self._validate_model_content(model_cls, content)
+        return r[FlextTestsFilesTypesMixin.ReadContent].ok(content)
+
+    def _read_content_by_format(
+        self,
+        path: Path,
+        actual_fmt: str,
+        params: m.Tests.ReadParams,
+    ) -> FlextTestsFilesTypesMixin.ReadContent:
+        """Read file content using format-specific parsing."""
+        content: FlextTestsFilesTypesMixin.ReadContent
+        match actual_fmt:
+            case _ if actual_fmt == c.Tests.FILE_FORMAT_BIN:
+                content = path.read_bytes()
+            case _ if actual_fmt == c.Tests.FILE_FORMAT_JSON:
+                text = path.read_text(encoding=params.enc)
+                parsed_json = (
+                    FlextTestsBaseTypesMixin.TESTOBJECT_MAPPING_ADAPTER.validate_json(
+                        text.encode(),
+                    )
+                )
+                content = (
+                    self._to_config_map(parsed_json)
+                    if self._is_mapping(parsed_json)
+                    else text
+                )
+            case _ if actual_fmt == c.Tests.FILE_FORMAT_YAML:
+                text = path.read_text(encoding=params.enc)
+                parsed_yaml_result = u.Cli.yaml_parse(text)
+                parsed_yaml = (
+                    parsed_yaml_result.value if parsed_yaml_result.success else None
+                )
+                content = (
+                    self._to_config_map(parsed_yaml)
+                    if isinstance(parsed_yaml, dict)
+                    else text
+                )
+            case _ if actual_fmt == c.Tests.FILE_FORMAT_CSV:
+                csv_result = u.Cli.files_read_csv_with_headers(path)
+                csv_rows_m = csv_result.value if csv_result.success else ()
+                if csv_rows_m:
+                    keys = list(csv_rows_m[0].keys())
+                    data_rows = [[row.get(k, "") for k in keys] for row in csv_rows_m]
+                    content = data_rows if params.has_headers else [keys, *data_rows]
+                else:
+                    content = []
+            case _:
+                content = path.read_text(encoding=params.enc)
+        return content
 
     @contextmanager
     def temporary_directory(self) -> Generator[Path]:
@@ -1101,20 +1041,22 @@ class FlextTestsFiles(s):
             if isinstance(value, p.ResultLike)
             else value
         )
-        if isinstance(unwrapped, str | bytes):
-            return unwrapped
-        if isinstance(unwrapped, (m.ConfigMap, m.Dict)):
-            return self._to_config_map(unwrapped.root)
-        if isinstance(unwrapped, m.BaseModel):
-            return unwrapped
-        if self._is_mapping(unwrapped):
-            return self._to_config_map(unwrapped)
-        if self._is_nested_rows(unwrapped):
-            sequence_value: t.SequenceOf[
-                FlextTestsBaseTypesMixin.TestobjectSerializable
-            ] = unwrapped if isinstance(unwrapped, (list, tuple)) else ()
-            return self._to_string_rows(sequence_value)
-        return str(unwrapped)
+        match unwrapped:
+            case str() | bytes():
+                return unwrapped
+            case m.ConfigMap() | m.Dict():
+                return self._to_config_map(unwrapped.root)
+            case m.BaseModel():
+                return unwrapped
+            case _ if self._is_mapping(unwrapped):
+                return self._to_config_map(unwrapped)
+            case _ if self._is_nested_rows(unwrapped):
+                sequence_value: t.SequenceOf[
+                    FlextTestsBaseTypesMixin.TestobjectSerializable
+                ] = unwrapped if isinstance(unwrapped, (list, tuple)) else ()
+                return self._to_string_rows(sequence_value)
+            case _:
+                return str(unwrapped)
 
     @staticmethod
     def _read_both(params: m.Tests.CompareParams) -> tuple[str, str]:
@@ -1156,7 +1098,7 @@ class FlextTestsFiles(s):
     ) -> FlextTestsFilesTypesMixin.FileContentPlain:
         """Extract actual content from r or return as-is.
 
-        Uses u.matches_type(content, "result") for type checking and u.val() for extraction.
+        Uses isinstance check for result-like wrappers and unwrap_or for extraction.
 
         Args:
             content: Content that may be wrapped in r
@@ -1204,34 +1146,18 @@ class FlextTestsFiles(s):
                 return False
         return True
 
-    _FMT_NORMALIZE: ClassVar[Mapping[str, c.Tests.FileFormat]] = {
-        "txt": c.Tests.FILE_FORMAT_TEXT,
-        "md": c.Tests.FILE_FORMAT_TEXT,
-        "auto": c.Tests.FILE_FORMAT_AUTO,
-        "text": c.Tests.FILE_FORMAT_TEXT,
-        "bin": c.Tests.FILE_FORMAT_BIN,
-        "json": c.Tests.FILE_FORMAT_JSON,
-        "yaml": c.Tests.FILE_FORMAT_YAML,
-        "csv": c.Tests.FILE_FORMAT_CSV,
-    }
-
-    def _normalize_create_format(self, fmt: str) -> c.Tests.FileFormat:
-        return self._FMT_NORMALIZE.get(fmt, c.Tests.FILE_FORMAT_AUTO)
-
     def _parse_content_metadata(
         self,
-        path: Path,
         text: str,
         fmt: str,
         validate_model: type[m.BaseModel] | None = None,
     ) -> m.Tests.ContentMeta:
         """Parse file content and extract metadata.
 
-        Uses u.load() for model validation and format-specific parsing
+        Uses Pydantic model_validate for validation and format-specific parsing
         to extract content statistics (key_count, item_count, row_count, etc.).
 
         Args:
-            path: File path
             text: File text content
             fmt: Detected file format
             validate_model: Pydantic model to validate content against
@@ -1240,36 +1166,33 @@ class FlextTestsFiles(s):
             ContentMeta with extracted statistics
 
         """
-        _ = path
         key_count = item_count = row_count = column_count = None
         model_valid: bool | None = None
         model_name = validate_model.__name__ if validate_model else None
         parsed_mapping: (
             t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable] | None
         ) = None
-        structured_text = fmt in {"json", "yaml"} and bool(text.strip())
-        if structured_text:
-            parse_result = (
-                u.Cli.json_parse(text) if fmt == "json" else u.Cli.yaml_parse(text)
-            )
-            parsed_value = parse_result.value if parse_result.success else None
-            match parsed_value:
-                case dict() as parsed_dict:
-                    parsed_mapping = dict(parsed_dict.items())
-                    key_count = len(parsed_mapping)
-                case list() as parsed_list:
-                    item_count = len(parsed_list)
-                case _:
+        match fmt:
+            case "json" | "yaml" if text.strip():
+                parse_result = (
+                    u.Cli.json_parse(text) if fmt == "json" else u.Cli.yaml_parse(text)
+                )
+                parsed_value = parse_result.value if parse_result.success else None
+                match parsed_value:
+                    case dict() as parsed_dict:
+                        parsed_mapping = dict(parsed_dict.items())
+                        key_count = len(parsed_mapping)
+                    case list() as parsed_list:
+                        item_count = len(parsed_list)
+            case "csv":
+                rows: list[list[str]] = []
+                try:
+                    rows = list(csv.reader(text.splitlines()))
+                except csv.Error:
                     pass
-        elif fmt == "csv":
-            rows: list[list[str]]
-            try:
-                rows = list(csv.reader(text.splitlines()))
-            except csv.Error:
-                rows = []
-            if rows:
-                row_count = len(rows)
-                column_count = len(rows[0]) if rows[0] else 0
+                if rows:
+                    row_count = len(rows)
+                    column_count = len(rows[0]) if rows[0] else 0
         if validate_model is not None:
             if parsed_mapping is not None:
                 model_valid = (
@@ -1279,7 +1202,7 @@ class FlextTestsFiles(s):
                     )
                     .success
                 )
-            elif structured_text:
+            elif fmt in {"json", "yaml"} and text.strip():
                 model_valid = False
         return m.Tests.ContentMeta.model_validate({
             "key_count": key_count,

@@ -1010,14 +1010,14 @@ class TestsFlextTestsFiles:
 
     def test_create_in_text_content(self, tmp_path: Path) -> None:
         """Test create_in() for text content."""
-        path = tf.create_in("hello world", "test.txt", tmp_path)
+        path = tf(base_dir=tmp_path).create("hello world", "test.txt")
         tm.that(path.exists(), eq=True)
         tm.that(path.read_text(), eq="hello world")
 
     def test_create_in_dict_content(self, tmp_path: Path) -> None:
         """Test create_in() for dict content (JSON)."""
-        path = tf.create_in(
-            m.ConfigMap(root={"key": "value"}), "settings.json", tmp_path
+        path = tf(base_dir=tmp_path).create(
+            m.ConfigMap(root={"key": "value"}), "settings.json"
         )
         tm.that(path.exists(), eq=True)
         content = u.Cli.json_read(path).unwrap_or({})
@@ -1025,10 +1025,9 @@ class TestsFlextTestsFiles:
 
     def test_create_in_yaml_content(self, tmp_path: Path) -> None:
         """Test create_in() for YAML file."""
-        path = tf.create_in(
+        path = tf(base_dir=tmp_path).create(
             m.ConfigMap(root={"setting": True}),
             "settings.yaml",
-            tmp_path,
         )
         tm.that(path.exists(), eq=True)
         content = u.Cli.yaml_parse(path.read_text()).unwrap_or({})
@@ -1042,7 +1041,7 @@ class TestsFlextTestsFiles:
             age: int
 
         user = UserModel(name="Alice", age=30)
-        path = tf.create_in(user, "user.json", tmp_path)
+        path = tf(base_dir=tmp_path).create(user, "user.json")
         tm.that(path.exists(), eq=True)
         content = u.Cli.json_read(path).unwrap_or({})
         expected: t.Tests.TestobjectSerializable = {"name": "Alice", "age": 30}
@@ -1050,24 +1049,22 @@ class TestsFlextTestsFiles:
 
     def test_create_in_format_detection(self, tmp_path: Path) -> None:
         """Test create_in() format auto-detection from extension."""
-        path1 = tf.create_in(
+        path1 = tf(base_dir=tmp_path).create(
             m.ConfigMap(root={"key": "value"}),
             "settings.json",
-            tmp_path,
         )
         tm.that(path1.exists(), eq=True)
         tm.that(u.Cli.json_read(path1).unwrap_or({}), eq={"key": "value"})
-        path2 = tf.create_in(
+        path2 = tf(base_dir=tmp_path).create(
             m.ConfigMap(root={"key": "value"}),
             "settings.yaml",
-            tmp_path,
         )
         tm.that(path2.exists(), eq=True)
         tm.that(
             u.Cli.yaml_parse(path2.read_text()).unwrap_or({}),
             eq={"key": "value"},
         )
-        path3 = tf.create_in([["a", "b"], ["1", "2"]], "data.csv", tmp_path)
+        path3 = tf(base_dir=tmp_path).create([["a", "b"], ["1", "2"]], "data.csv")
         tm.that(path3.exists(), eq=True)
         lines = path3.read_text().strip().split("\n")
         tm.that(len(lines), gte=2)
@@ -1075,22 +1072,22 @@ class TestsFlextTestsFiles:
     def test_create_in_with_flextresult(self, tmp_path: Path) -> None:
         """Test create_in() with r content extraction."""
         result = r[m.ConfigMap].ok(m.ConfigMap(root={"status": "success"}))
-        path = tf.create_in(result, "result.json", tmp_path)
+        path = tf(base_dir=tmp_path).create(result, "result.json")
         tm.that(path.exists(), eq=True)
         content = u.Cli.json_read(path).unwrap_or({})
         tm.that(content, eq={"status": "success"})
 
     def test_create_in_custom_format(self, tmp_path: Path) -> None:
         """Test create_in() with explicit format override."""
-        path = tf.create_in(
-            b"binary data", "data.dat", tmp_path, fmt=c.Tests.FILE_FORMAT_BIN
+        path = tf(base_dir=tmp_path).create(
+            b"binary data", "data.dat", fmt=c.Tests.FILE_FORMAT_BIN
         )
         tm.that(path.exists(), eq=True)
         tm.that(path.read_bytes(), eq=b"binary data")
 
     def test_create_in_custom_encoding(self, tmp_path: Path) -> None:
         """Test create_in() with custom encoding."""
-        path = tf.create_in("áéíóú", "unicode.txt", tmp_path, enc="utf-16")
+        path = tf(base_dir=tmp_path).create("áéíóú", "unicode.txt", enc="utf-16")
         tm.that(path.exists(), eq=True)
         tm.that(path.read_text(encoding="utf-16"), eq="áéíóú")
 
@@ -1099,7 +1096,7 @@ class TestsFlextTestsFiles:
         content: m.ConfigMap = m.ConfigMap(
             root={"key": "value", "nested": {"a": 1}},
         )
-        path = tf.create_in(content, "settings.json", tmp_path, indent=4)
+        path = tf(base_dir=tmp_path).create(content, "settings.json", indent=4)
         tm.that(path.exists(), eq=True)
         text = path.read_text()
         tm.that(text, has="    ")
@@ -1107,7 +1104,9 @@ class TestsFlextTestsFiles:
     def test_create_in_csv_with_headers(self, tmp_path: Path) -> None:
         """Test create_in() CSV with explicit headers."""
         content = [["1", "2"], ["3", "4"]]
-        path = tf.create_in(content, "data.csv", tmp_path, headers=["col1", "col2"])
+        path = tf(base_dir=tmp_path).create(
+            content, "data.csv", headers=["col1", "col2"]
+        )
         tm.that(path.exists(), eq=True)
         lines = path.read_text().strip().split("\n")
         tm.that(lines[0], eq="col1,col2")

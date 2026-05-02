@@ -267,31 +267,6 @@ class FlextTestsDomains:
             file_extension=file_extension,
         )
 
-    @classmethod
-    def pytest_params_for(
-        cls,
-        group: str,
-        *,
-        fixtures_root: Path,
-        file_extension: str = ".ldif",
-    ) -> t.SequenceOf[tuple[str, str]]:
-        return cls.bind(
-            fixtures_root,
-            file_extension=file_extension,
-        ).pytest_params_for_group(group)
-
-    @classmethod
-    def all_pytest_params(
-        cls,
-        *,
-        fixtures_root: Path,
-        file_extension: str = ".ldif",
-    ) -> t.SequenceOf[tuple[str, str, str]]:
-        return cls.bind(
-            fixtures_root,
-            file_extension=file_extension,
-        ).all_pytest_params()
-
     @staticmethod
     def default_handler_case_specs() -> t.SequenceOf[
         t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
