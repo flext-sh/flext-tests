@@ -474,7 +474,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             return r[m.Tests.ContainerInfo].fail(
                 f"Container {container_name} not found",
             )
-        except (AttributeError, KeyError, TypeError, ValueError, RuntimeError) as exc:
+        except c.EXC_BROAD_RUNTIME as exc:
             return r[m.Tests.ContainerInfo].fail(str(exc))
 
     def fetch_container_status(

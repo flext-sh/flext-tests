@@ -92,7 +92,7 @@ class FlextTestsMatchersUtilities:
 
     @staticmethod
     def _matches_runtime_type(
-        value: object,
+        value: p.AttributeProbe,
         expected_type: type | tuple[type, ...],
     ) -> bool:
         """Check runtime type compatibility using flext-core guards."""
@@ -159,8 +159,8 @@ class FlextTestsMatchersUtilities:
         template: str,
         *,
         msg: str | None,
-        container: object,
-        item: object,
+        container: p.AttributeProbe,
+        item: p.AttributeProbe,
     ) -> Never:
         """Raise AssertionError with ``msg`` or formatted ``template``."""
         raise AssertionError(
@@ -171,7 +171,7 @@ class FlextTestsMatchersUtilities:
     def _assert_len_match(
         *,
         payload: t.Tests.TestobjectSerializable,
-        sized: object,
+        sized: p.AttributeProbe,
         length_spec: int | tuple[int, int],
         msg: str | None,
     ) -> None:
@@ -264,7 +264,7 @@ class FlextTestsMatchersUtilities:
 
     @staticmethod
     def _extract_attribute_path(
-        value: object, attr_path: str
+        value: p.AttributeProbe, attr_path: str
     ) -> t.Tests.TestobjectSerializable:
         """Extract one dotted attribute path from a runtime object."""
         current: object | t.Tests.TestobjectSerializable = value
@@ -373,7 +373,7 @@ class FlextTestsMatchersUtilities:
 
     @staticmethod
     def _apply_attribute_rules(
-        subject: object,
+        subject: p.AttributeProbe,
         rules: t.Tests.AttributeMatchSpec,
         *,
         inherited_msg: str | None = None,
@@ -408,7 +408,7 @@ class FlextTestsMatchersUtilities:
 
     @staticmethod
     def _check_has_lacks(
-        value: object,
+        value: p.AttributeProbe,
         has: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.JsonValue | None,
         lacks: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.JsonValue | None,
         msg: str | None,
@@ -796,7 +796,7 @@ class FlextTestsMatchersUtilities:
                 """
                 try:
                     params = m.Tests.OkParams.model_validate(kwargs)
-                except (TypeError, ValueError, AttributeError) as exc:
+                except c.EXC_BASIC_TYPE as exc:
                     raise ValueError(f"Parameter validation failed: {exc}") from exc
                 result_value: TResult | t.Tests.TestobjectSerializable = (
                     FlextTestsResultUtilitiesMixin.assert_success(
@@ -1116,7 +1116,7 @@ class FlextTestsMatchersUtilities:
 
             @staticmethod
             def that(
-                value: object,
+                value: p.AttributeProbe,
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> None:
                 r"""Super-powered universal value assertion - ALL validations in ONE method.
@@ -1619,7 +1619,9 @@ class FlextTestsMatchersUtilities:
                                     or f"Expected value {expected_val!r} not found in mapping",
                                 )
                     if params.kv is not None:
-                        kv_items: t.SequenceOf[tuple[object, object]] = ()
+                        kv_items: t.SequenceOf[
+                            tuple[p.AttributeProbe, p.AttributeProbe]
+                        ] = ()
                         match params.kv:
                             case tuple() as key_value if len(key_value) == 2:
                                 key, expected_val = key_value
@@ -1673,7 +1675,9 @@ class FlextTestsMatchersUtilities:
                             )
                 if params.attr_eq is not None:
                     attr_eq_target = subject
-                    attr_items: t.SequenceOf[tuple[object, object]] = ()
+                    attr_items: t.SequenceOf[
+                        tuple[p.AttributeProbe, p.AttributeProbe]
+                    ] = ()
                     match params.attr_eq:
                         case tuple() as attr_spec if len(attr_spec) == 2:
                             attr, expected_val = attr_spec

@@ -24,6 +24,7 @@ from flext_tests._typings.base import FlextTestsBaseTypesMixin
 from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
 from flext_tests.constants import FlextTestsConstants as c
 from flext_tests.models import FlextTestsModels as m
+from flext_tests.protocols import FlextTestsProtocols as p
 from flext_tests.typings import FlextTestsTypes as t
 
 
@@ -42,7 +43,9 @@ class FlextTestsPayloadUtilities:
     )
 
     @staticmethod
-    def to_payload(value: object) -> FlextTestsBaseTypesMixin.TestobjectSerializable:
+    def to_payload(
+        value: p.AttributeProbe,
+    ) -> FlextTestsBaseTypesMixin.TestobjectSerializable:
         """Recursively flatten any runtime value to ``TestobjectSerializable``."""
         to_p = FlextTestsPayloadUtilities.to_payload
         if isinstance(value, m.RootModel):

@@ -439,7 +439,7 @@ class FlextTestsFiles(s):
                 "on_error": on_error,
                 "parallel": parallel,
             })
-        except (TypeError, ValueError, AttributeError) as exc:
+        except c.EXC_BASIC_TYPE as exc:
             return r[m.Tests.BatchResult].fail(
                 f"Invalid parameters for batch operation: {exc}",
             )

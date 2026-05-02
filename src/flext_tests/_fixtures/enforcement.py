@@ -39,6 +39,7 @@ from typing import ClassVar, Final, override
 
 import pytest
 
+from flext_core import p
 from flext_tests import m, t, u
 
 _WORKSPACE_MARKERS: Final[tuple[str, ...]] = (
@@ -229,7 +230,7 @@ class EnforcementItem(pytest.Item):
         *,
         rule: m.EnforcementRuleSpec,
         project: str,
-        violations: t.SequenceOf[m.Violation | object],
+        violations: t.SequenceOf[m.Violation | p.AttributeProbe],
     ) -> None:
         super().__init__(name, parent)
         self._rule = rule
@@ -249,7 +250,7 @@ class EnforcementItem(pytest.Item):
         raise EnforcementViolationError(msg)
 
     @staticmethod
-    def _format_violation(violation: object) -> str:
+    def _format_violation(violation: p.AttributeProbe) -> str:
         # flext_tests Violation has rule_id + file_path + line_number + description
         rule_id = getattr(violation, "rule_id", "")
         file_path = getattr(violation, "file_path", None) or getattr(
@@ -335,18 +336,18 @@ def _load_infra_report(
         return None
     try:
         enforcer = enforcer_cls(workspace_root=workspace_root)
-        report: object = enforcer.enforce()
+        report = enforcer.enforce()
     except Exception:  # pragma: no cover - defensive: propagate as no-op
         return None
     return report
 
 
 def _iter_infra_violations(
-    report: object,
+    report: p.AttributeProbe,
     field: str,
     *,
     match_missing: bool,
-) -> Iterable[tuple[str, object]]:
+) -> Iterable[tuple[str, p.AttributeProbe]]:
     """Yield ``(project_name, violation)`` from a workspace report.
 
     ``match_missing=True`` maps ``facade_statuses`` entries with
@@ -367,12 +368,12 @@ def _iter_infra_violations(
 
 def _dispatch_infra_detector(
     rule: m.EnforcementRuleSpec,
-    report: object,
-) -> dict[str, list[object]]:
+    report: p.AttributeProbe,
+) -> dict[str, list[p.AttributeProbe]]:
     source = rule.source
     field = getattr(source, "violation_field", "")
     match_missing = bool(getattr(source, "match_missing", False))
-    grouped: dict[str, list[object]] = {}
+    grouped: dict[str, list[p.AttributeProbe]] = {}
     for project, entry in _iter_infra_violations(
         report, field, match_missing=match_missing
     ):
@@ -383,7 +384,7 @@ def _dispatch_infra_detector(
 def _dispatch_tests_validator(
     rule: m.EnforcementRuleSpec,
     workspace_root: Path,
-) -> dict[str, list[object]]:
+) -> dict[str, list[p.AttributeProbe]]:
     try:
         validator_mod = import_module("flext_tests.validator")
     except ImportError:
@@ -413,7 +414,7 @@ def _dispatch_tests_validator(
     scan = getattr(result, "value", None)
     if scan is None:
         return {}
-    grouped: dict[str, list[object]] = {}
+    grouped: dict[str, list[p.AttributeProbe]] = {}
     for violation in getattr(scan, "violations", ()):
         if wanted_ids and getattr(violation, "rule_id", "") not in wanted_ids:
             continue
@@ -433,7 +434,7 @@ def _dispatch_tests_validator(
 
 def _build_items(
     session: pytest.Session,
-    cfg: dict[str, object],
+    cfg: dict[str, p.AttributeProbe],
 ) -> list[EnforcementItem]:
     workspace_root = cfg.get("workspace_root")
     if not isinstance(workspace_root, Path):
@@ -441,7 +442,7 @@ def _build_items(
 
     rules = _active_rules(cfg)
 
-    infra_report: object | None = None
+    infra_report: p.AttributeProbe | None = None
     if any(r.source.kind == "flext_infra_detector" for r in rules):
         infra_report = _load_infra_report(workspace_root)
 
@@ -452,7 +453,7 @@ def _build_items(
     items: list[EnforcementItem] = []
 
     for rule in rules:
-        grouped: dict[str, list[object]] = {}
+        grouped: dict[str, list[p.AttributeProbe]] = {}
         if rule.source.kind == "flext_infra_detector":
             if infra_report is None:
                 continue
@@ -497,7 +498,7 @@ def pytest_collection_modifyitems(
 
 
 def pytest_warning_recorded(
-    warning_message: object,
+    warning_message: p.AttributeProbe,
     when: str,
     nodeid: str,
     location: tuple[str, int, str] | None,
