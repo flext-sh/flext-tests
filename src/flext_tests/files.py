@@ -858,7 +858,7 @@ class FlextTestsFiles(s):
                 "parse_content": parse_content,
                 "validate_model": validate_model,
             })
-        except (TypeError, ValueError, AttributeError) as exc:
+        except c.EXC_BASIC_TYPE as exc:
             return r[m.Tests.FileInfo].fail(f"Invalid parameters for file info: {exc}")
         if not params.path.exists():
             return r[m.Tests.FileInfo].ok(
@@ -979,7 +979,7 @@ class FlextTestsFiles(s):
                 "has_headers": has_headers,
                 "model_cls": model_cls,
             })
-        except (TypeError, ValueError, AttributeError) as exc:
+        except c.EXC_BASIC_TYPE as exc:
             return self._read_fail(
                 f"Invalid parameters for file read: {exc}", model_cls
             )
