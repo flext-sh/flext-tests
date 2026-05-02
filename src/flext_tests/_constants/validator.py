@@ -313,14 +313,6 @@ class FlextTestsConstantsValidator:
         "UP040",
         "W293",
     })
-    VALIDATOR_APPROVED_TECH_IMPORTS: Final[frozenset[str]] = frozenset({
-        "ldap3",
-        "oracledb",
-        "cx_Oracle",
-        "click",
-        "rich",
-        "typer",
-    })
     VALIDATOR_APPROVED_MOCK_NAMES: Final[frozenset[str]] = frozenset({
         "Mock",
         "MagicMock",

@@ -272,7 +272,6 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         - IMPORT-002: TYPE_CHECKING blocks
         - IMPORT-003: try/except ImportError
         - IMPORT-004: sys.path manipulation
-        - IMPORT-005: Direct technology imports
         - IMPORT-006: Non-root flext-* imports
 
         Args:

@@ -28,46 +28,6 @@ class FlextValidatorImports(FlextTestsValidatorModels.Tests.ScannerMixin):
     _VALIDATOR_KEY = c.Tests.VALIDATOR_IMPORTS_KEY
 
     @classmethod
-    def _check_direct_tech_imports(
-        cls,
-        file_path: Path,
-        tree: ast.AST,
-        lines: t.StrSequence,
-        approved: t.MappingKV[str, t.StrSequence],
-    ) -> t.SequenceOf[m.Tests.Violation]:
-        """Detect direct technology imports."""
-        if u.Tests.approved("IMPORT-005", file_path, approved):
-            return []
-        violations: MutableSequence[m.Tests.Violation] = []
-        tech_imports = c.Tests.VALIDATOR_APPROVED_TECH_IMPORTS
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                for alias in node.names:
-                    if alias.name.split(".")[0] in tech_imports:
-                        violation = u.Tests.create_violation(
-                            file_path,
-                            node.lineno,
-                            "IMPORT-005",
-                            lines,
-                            alias.name,
-                        )
-                        violations.append(violation)
-            elif (
-                isinstance(node, ast.ImportFrom)
-                and node.module
-                and (node.module.split(".")[0] in tech_imports)
-            ):
-                violation = u.Tests.create_violation(
-                    file_path,
-                    node.lineno,
-                    "IMPORT-005",
-                    lines,
-                    node.module,
-                )
-                violations.append(violation)
-        return violations
-
-    @classmethod
     def _check_import_error_handling(
         cls,
         file_path: Path,
@@ -238,9 +198,6 @@ class FlextValidatorImports(FlextTestsValidatorModels.Tests.ScannerMixin):
             cls._check_import_error_handling(file_path, tree, lines, approved),
         )
         violations.extend(cls._check_sys_path(file_path, tree, lines, approved))
-        violations.extend(
-            cls._check_direct_tech_imports(file_path, tree, lines, approved),
-        )
         violations.extend(
             cls._check_non_root_flext_imports(file_path, tree, lines, approved),
         )
