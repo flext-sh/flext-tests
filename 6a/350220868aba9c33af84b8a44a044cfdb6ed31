@@ -1,0 +1,31 @@
+src/flext_tests/_utilities/matchers.py
+  473c59be621cc5d5 66,69-73,83-87
+src/flext_tests/_utilities/_matchers/__init__.py
+  473c59be621cc5d5 1-36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "6a350220868aba9c33af84b8a44a044cfdb6ed31",
+  "prompts": {
+    "473c59be621cc5d5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f6001f8b-afdd-4757-8812-9bff0bfd46d9",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "FLEXT Bot",
+      "messages": [],
+      "total_additions": 329,
+      "total_deletions": 819,
+      "accepted_lines": 291,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/f59630376b877b4c752036b7a7a96cde31bafa21acc5974336506b691d077cbb"
+    }
+  },
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
