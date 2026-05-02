@@ -581,7 +581,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 )
                 dirty_raw = state_raw.get("dirty_containers", ())
                 self.dirty_container_names = set(dirty_raw)
-        except (OSError, ValueError, KeyError, TypeError) as exc:
+        except c.EXC_KEY_OS_TYPE_VALUE as exc:
             self.logger.warning("Failed to load dirty state", error=str(exc))
             self.dirty_container_names = set[str]()
 
