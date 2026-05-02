@@ -60,6 +60,15 @@ if _t.TYPE_CHECKING:
     from flext_tests._typings.files import FlextTestsFilesTypesMixin
     from flext_tests._typings.guards import FlextTestsGuardsTypesMixin
     from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
+    from flext_tests._utilities._matchers._assertions import (
+        FlextTestsMatchersAssertionsMixin,
+    )
+    from flext_tests._utilities._matchers._rules_dispatch import (
+        FlextTestsMatchersRulesDispatchMixin,
+    )
+    from flext_tests._utilities._matchers._typeguards import (
+        FlextTestsMatchersTypeGuardsMixin,
+    )
     from flext_tests._utilities.badobjects import FlextTestsBadObjectsUtilitiesMixin
     from flext_tests._utilities.constants import (
         FlextTestsConstantsHelpersUtilitiesMixin,
@@ -161,6 +170,11 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._typings.files": ("FlextTestsFilesTypesMixin",),
             "._typings.guards": ("FlextTestsGuardsTypesMixin",),
             "._typings.matchers": ("FlextTestsMatchersTypesMixin",),
+            "._utilities._matchers._assertions": ("FlextTestsMatchersAssertionsMixin",),
+            "._utilities._matchers._rules_dispatch": (
+                "FlextTestsMatchersRulesDispatchMixin",
+            ),
+            "._utilities._matchers._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
             "._utilities.badobjects": ("FlextTestsBadObjectsUtilitiesMixin",),
             "._utilities.constants": ("FlextTestsConstantsHelpersUtilitiesMixin",),
             "._utilities.container": ("FlextTestsContainerHelpersUtilitiesMixin",),
@@ -298,7 +312,10 @@ __all__: list[str] = [
     "FlextTestsGenericHelpersUtilitiesMixin",
     "FlextTestsGuardsTypesMixin",
     "FlextTestsHandlerHelpersUtilitiesMixin",
+    "FlextTestsMatchersAssertionsMixin",
     "FlextTestsMatchersModelsMixin",
+    "FlextTestsMatchersRulesDispatchMixin",
+    "FlextTestsMatchersTypeGuardsMixin",
     "FlextTestsMatchersTypesMixin",
     "FlextTestsMatchersUtilities",
     "FlextTestsModels",

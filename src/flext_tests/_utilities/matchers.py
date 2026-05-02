@@ -60,14 +60,17 @@ from collections.abc import (
     Mapping,
     MutableMapping,
     Sequence,
-    Sized,
 )
 from contextlib import contextmanager, nullcontext
-from datetime import datetime
 from pathlib import Path
-from typing import Never, TypeIs, overload
+from typing import TypeIs, overload
 
 from flext_core.utilities import u
+from flext_tests._utilities._matchers import (
+    FlextTestsMatchersAssertionsMixin,
+    FlextTestsMatchersRulesDispatchMixin,
+    FlextTestsMatchersTypeGuardsMixin,
+)
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
 from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
@@ -77,205 +80,12 @@ from flext_tests.protocols import p
 from flext_tests.typings import t
 
 
-class FlextTestsMatchersUtilities:
+class FlextTestsMatchersUtilities(
+    FlextTestsMatchersTypeGuardsMixin,
+    FlextTestsMatchersAssertionsMixin,
+    FlextTestsMatchersRulesDispatchMixin,
+):
     """Namespace for test matcher utilities used in flext-tests."""
-
-    _GUARD_EQ_TYPES: tuple[type, ...] = (
-        str,
-        int,
-        float,
-        bool,
-        bytes,
-        datetime,
-        Path,
-    )
-
-    @staticmethod
-    def _matches_runtime_type(
-        value: p.AttributeProbe,
-        expected_type: type | tuple[type, ...],
-    ) -> bool:
-        """Check runtime type compatibility using flext-core guards."""
-        if isinstance(expected_type, tuple):
-            return any(
-                FlextTestsMatchersUtilities._matches_runtime_type(value, item)
-                for item in expected_type
-            )
-        return u.instance_of(value, expected_type)
-
-    @staticmethod
-    def _supports_guard_eq(
-        value: t.Tests.TestobjectSerializable | None,
-    ) -> bool:
-        return value is None or isinstance(
-            value,
-            FlextTestsMatchersUtilities._GUARD_EQ_TYPES,
-        )
-
-    @staticmethod
-    def _prepare_eq_ne_payloads(
-        actual_payload: t.Tests.TestobjectSerializable,
-        eq_value: t.Tests.MatcherKwargValue | t.Tests.TestobjectSerializable | None,
-        ne_value: t.Tests.MatcherKwargValue | t.Tests.TestobjectSerializable | None,
-        *,
-        msg: str | None,
-        default_msg: str,
-    ) -> tuple[
-        t.Tests.TestobjectSerializable | None,
-        t.Tests.TestobjectSerializable | None,
-    ]:
-        eq_payload = (
-            FlextTestsPayloadUtilities.to_payload(eq_value)
-            if eq_value is not None
-            else None
-        )
-        ne_payload = (
-            FlextTestsPayloadUtilities.to_payload(ne_value)
-            if ne_value is not None
-            else None
-        )
-        if (
-            eq_payload is not None
-            and not FlextTestsMatchersUtilities._supports_guard_eq(
-                eq_payload,
-            )
-        ):
-            if actual_payload != eq_payload:
-                raise AssertionError(msg or default_msg)
-            eq_payload = None
-        if (
-            ne_payload is not None
-            and not FlextTestsMatchersUtilities._supports_guard_eq(
-                ne_payload,
-            )
-        ):
-            if actual_payload == ne_payload:
-                raise AssertionError(msg or default_msg)
-            ne_payload = None
-        return (eq_payload, ne_payload)
-
-    @staticmethod
-    def _raise_match_assertion(
-        template: str,
-        *,
-        msg: str | None,
-        container: p.AttributeProbe,
-        item: p.AttributeProbe,
-    ) -> Never:
-        """Raise AssertionError with ``msg`` or formatted ``template``."""
-        raise AssertionError(
-            msg or template.format(container=container, item=item),
-        )
-
-    @staticmethod
-    def _assert_len_match(
-        *,
-        payload: t.Tests.TestobjectSerializable,
-        sized: p.AttributeProbe,
-        length_spec: int | tuple[int, int],
-        msg: str | None,
-    ) -> None:
-        """Raise AssertionError if ``payload`` length doesn't match ``length_spec``."""
-        if FlextTestsPayloadUtilities.length_validate(payload, length_spec):
-            return
-        actual_len = len(sized) if isinstance(sized, Sized) else 0
-        if isinstance(length_spec, int):
-            raise AssertionError(
-                msg
-                or c.Tests.ERR_LEN_EXACT_FAILED.format(
-                    expected=length_spec,
-                    actual=actual_len,
-                ),
-            )
-        raise AssertionError(
-            msg
-            or c.Tests.ERR_LEN_RANGE_FAILED.format(
-                min=length_spec[0],
-                max=length_spec[1],
-                actual=actual_len,
-            ),
-        )
-
-    @staticmethod
-    def _rule_to_kwargs(
-        rule: t.Tests.MatchRuleSpec,
-        *,
-        inherited_msg: str | None = None,
-    ) -> dict[str, t.Tests.MatcherKwargValue]:
-        """Normalize one declarative matcher rule into tm.that()-compatible kwargs."""
-        kwargs_t = dict[str, t.Tests.MatcherKwargValue]
-        result: kwargs_t
-        if isinstance(rule, Mapping):
-            raw_mapping = dict(rule)
-            if raw_mapping and set(raw_mapping).issubset(
-                c.Tests.MATCHER_RULE_KEYS,
-            ):
-                result = dict(raw_mapping)
-            else:
-                result = {"eq": FlextTestsPayloadUtilities.to_payload(rule)}
-        elif isinstance(rule, type) or (
-            isinstance(rule, tuple) and all(isinstance(item, type) for item in rule)
-        ):
-            result = {"is_": rule}
-        elif callable(rule):
-            result = {"where": rule}
-        else:
-            result = {"eq": rule}
-        if inherited_msg is not None and "msg" not in result:
-            result["msg"] = inherited_msg
-        return result
-
-    @staticmethod
-    def _extract_mapping_path(
-        value: t.Tests.TestobjectSerializable
-        | m.BaseModel
-        | t.MappingKV[str, t.Tests.TestobjectSerializable],
-        path: str,
-    ) -> t.Tests.TestobjectSerializable:
-        """Extract one dotted path from a model or mapping using flext-core extract helpers."""
-        extract_source: m.ConfigMap
-        if isinstance(value, m.BaseModel):
-            extract_source = m.ConfigMap.model_validate({
-                key: FlextTestsPayloadUtilities.to_config_map_value(
-                    FlextTestsPayloadUtilities.to_payload(item),
-                )
-                for key, item in value.model_dump(mode="python").items()
-            })
-        elif isinstance(value, Mapping):
-            extract_source = m.ConfigMap.model_validate({
-                key: FlextTestsPayloadUtilities.to_config_map_value(
-                    FlextTestsPayloadUtilities.to_payload(item),
-                )
-                for key, item in value.items()
-            })
-        else:
-            raise AssertionError(
-                f"Path assertions require dict or model, got {type(value).__name__}",
-            )
-        extracted = u.extract(extract_source, path)
-        if extracted.failure:
-            raise AssertionError(
-                c.Tests.ERR_SCOPE_PATH_NOT_FOUND.format(
-                    path=path,
-                    error=extracted.error,
-                ),
-            )
-        return FlextTestsPayloadUtilities.to_payload(extracted.value)
-
-    @staticmethod
-    def _extract_attribute_path(
-        value: p.AttributeProbe, attr_path: str
-    ) -> t.Tests.TestobjectSerializable:
-        """Extract one dotted attribute path from a runtime object."""
-        current: object | t.Tests.TestobjectSerializable = value
-        for segment in attr_path.split("."):
-            if isinstance(current, Mapping) and segment in current:
-                current = current[segment]
-                continue
-            if not hasattr(current, segment):
-                raise AssertionError(f"Object missing attribute path: {attr_path}")
-            current = getattr(current, segment)
-        return FlextTestsPayloadUtilities.to_payload(current)
 
     @staticmethod
     def _apply_rule(
