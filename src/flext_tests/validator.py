@@ -374,7 +374,6 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
 
         Detects:
         - CONFIG-001: mypy ignore_errors = true
-        - CONFIG-002: Custom ruff ignores beyond approved
         - CONFIG-003: disallow_incomplete_defs = false
         - CONFIG-004: warn_return_any = false
         - CONFIG-005: reportPrivateUsage = false

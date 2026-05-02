@@ -172,12 +172,10 @@ class FlextTestsConstantsValidator:
     VALIDATOR_MSG_LAYER_VIOLATION: Final[str] = (
         "'{current}' L{current_level} -> '{imported}' L{imported_level}"
     )
-    VALIDATOR_MSG_IMPORT_TECH: Final[str] = "Direct technology import: {module}"
     VALIDATOR_MSG_IMPORT_NON_ROOT: Final[str] = "Non-root import: from {module}"
     VALIDATOR_MSG_CONFIG_IGNORE: Final[str] = (
         "ignore_errors = true for module '{module}'"
     )
-    VALIDATOR_MSG_CONFIG_RUFF: Final[str] = "Custom ruff ignore: {code}"
     VALIDATOR_MSG_TEST_MONKEYPATCH: Final[str] = (
         "monkeypatch usage in function '{func}'"
     )
@@ -269,50 +267,6 @@ class FlextTestsConstantsValidator:
         "Union",
     })
     VALIDATOR_APPROVED_PRAGMA_PATTERNS: Final[tuple[str, ...]] = ("__init__\\.py$",)
-    VALIDATOR_APPROVED_RUFF_IGNORES: Final[frozenset[str]] = frozenset({
-        "BLE001",
-        "COM812",
-        "CPY001",
-        "D203",
-        "D213",
-        "D401",
-        "D417",
-        "DOC201",
-        "DOC202",
-        "DOC402",
-        "DOC501",
-        "DOC502",
-        "E501",
-        "ERA001",
-        "FBT003",
-        "G004",
-        "N813",
-        "N816",
-        "PLR0904",
-        "PLR0911",
-        "PLR0912",
-        "PLR0913",
-        "PLR0914",
-        "PLR0915",
-        "PLR0917",
-        "PLR6301",
-        "PYI042",
-        "Q000",
-        "RUF001",
-        "RUF002",
-        "RUF003",
-        "RUF005",
-        "S608",
-        "TC001",
-        "TC002",
-        "TC003",
-        "TRY003",
-        "TRY300",
-        "TRY301",
-        "UP007",
-        "UP040",
-        "W293",
-    })
     VALIDATOR_APPROVED_MOCK_NAMES: Final[frozenset[str]] = frozenset({
         "Mock",
         "MagicMock",

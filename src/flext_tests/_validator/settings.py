@@ -134,47 +134,6 @@ class FlextValidatorSettings:
         return []
 
     @classmethod
-    def _check_ruff_settings(
-        cls,
-        file_path: Path,
-        data: _TomlDict,
-        lines: t.StrSequence,
-        approved: t.MappingKV[str, t.StrSequence],
-    ) -> t.SequenceOf[m.Tests.Violation]:
-        """Check ruff configuration for violations."""
-        if u.Tests.approved("CONFIG-002", file_path, approved):
-            return []
-        violations: MutableSequence[m.Tests.Violation] = []
-        tool_data: _TomlValue = data.get("tool", {})
-        if not isinstance(tool_data, dict):
-            return violations
-        ruff_config: _TomlValue = tool_data.get("ruff", {})
-        if not isinstance(ruff_config, dict):
-            return violations
-        lint_config: _TomlValue = ruff_config.get("lint", {})
-        if not isinstance(lint_config, dict):
-            return violations
-        ignores_raw: _TomlValue = lint_config.get("ignore", [])
-        if isinstance(ignores_raw, list):
-            approved_ignores = c.Tests.VALIDATOR_APPROVED_RUFF_IGNORES
-            for ignore_raw in ignores_raw:
-                ignore_str: str = str(ignore_raw)
-                if ignore_str not in approved_ignores:
-                    line_num = u.Tests.find_line_number(lines, ignore_str)
-                    violations.append(
-                        cls._create_config_violation(
-                            file_path,
-                            line_num,
-                            "CONFIG-002",
-                            f'"{ignore_str}"',
-                            c.Tests.VALIDATOR_MSG_CONFIG_RUFF.format(
-                                code=ignore_str,
-                            ),
-                        ),
-                    )
-        return violations
-
-    @classmethod
     def _create_config_violation(
         cls,
         file_path: Path,
@@ -210,7 +169,6 @@ class FlextValidatorSettings:
             return violations
         lines = content.splitlines()
         violations.extend(cls._check_mypy_settings(file_path, data, lines, approved))
-        violations.extend(cls._check_ruff_settings(file_path, data, lines, approved))
         violations.extend(cls._check_pyright_settings(file_path, data, lines, approved))
         return violations
 
