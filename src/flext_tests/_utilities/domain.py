@@ -12,7 +12,7 @@ from pathlib import Path
 
 from flext_cli import u
 from flext_core import r
-from flext_tests import m, p, t
+from flext_tests import c, m, p, t
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities as up
 
 
@@ -55,7 +55,7 @@ class FlextTestsDomainHelpersUtilitiesMixin:
                     remove_id=remove_id,
                 )
                 entities.append(entity)
-            except (TypeError, ValueError, AttributeError, RuntimeError) as e:
+            except c.EXC_ATTR_RUNTIME_TYPE as e:
                 return r[Sequence[TEntity]].fail(
                     f"Failed to create entity {name}: {e}",
                 )
