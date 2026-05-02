@@ -455,7 +455,7 @@ class FlextTestsFiles(s):
                             "content": item[1],
                             "name": c.Tests.DEFAULT_FILENAME,
                         })
-                    except (TypeError, ValueError, AttributeError):
+                    except c.EXC_BASIC_TYPE:
                         continue
                     name = item[0]
                     files_dict[name] = item[1]

@@ -1056,7 +1056,7 @@ class FlextTestsMatchersUtilities:
                 """
                 try:
                     params = m.Tests.ScopeParams.model_validate(kwargs)
-                except (TypeError, ValueError, AttributeError) as exc:
+                except c.EXC_BASIC_TYPE as exc:
                     raise ValueError(f"Parameter validation failed: {exc}") from exc
                 original_cwd: Path | None = None
                 env_context = (
