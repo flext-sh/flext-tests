@@ -1,0 +1,28 @@
+src/flext_tests/files.py
+  h_9db9d35f50cf33 263-268,288-289,291-297,414,426,434,437,445,447,449-450
+src/flext_tests/_utilities/settings.py
+  h_9db9d35f50cf33 57-61
+src/flext_tests/_models/validator.py
+  h_9db9d35f50cf33 107-136
+tests/unit/test_enforcement_dispatcher.py
+  h_9db9d35f50cf33 62-68
+src/flext_tests/_fixtures/enforcement.py
+  h_9db9d35f50cf33 51,124,152-158,164,171,173,182,194,376,379,417,419-420,469,491,497,514,520
+src/flext_tests/_utilities/testcase.py
+  h_9db9d35f50cf33 7,9
+src/flext_tests/_utilities/exception.py
+  h_9db9d35f50cf33 7,9
+src/flext_tests/validator.py
+  h_9db9d35f50cf33 21,151,157
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "f7e2c4d6ac36360d4e802a8161ae2cf2785ca718",
+  "prompts": {},
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
