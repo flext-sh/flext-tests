@@ -376,7 +376,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             WhalesDockerException,
         ) as exc:
             self.logger.warning("Compose down failed", error=str(exc))
-            return r[str].fail(f"Compose down failed: {exc}")
+            return r[str].fail_op("Compose down", exc)
 
     def compose_up(
         self,
@@ -414,7 +414,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             WhalesDockerException,
         ) as exc:
             self.logger.exception("Compose up failed")
-            return r[str].fail(f"Compose up failed: {exc}")
+            return r[str].fail_op("Compose up", exc)
 
     @property
     def client(self) -> DockerSDKClient | None:
@@ -543,7 +543,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         _ = network_name
         result = self.compose_up(compose_file)
         if result.failure:
-            return r[str].fail(f"Stack start failed: {result.error}")
+            return r[str].fail_op("Stack start", result.error)
         return r[str].ok("Stack started successfully")
 
     def wait_for_port_ready(

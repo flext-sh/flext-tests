@@ -38,7 +38,7 @@ class FlextTestsValidationUtilitiesMixin:
                 if result.value is False:
                     return r[bool].fail("Validator must return r[bool].ok(True)")
             except TypeError as e:
-                return r[bool].fail(f"Validator failed: {e}")
+                return r[bool].fail_op("Validator", e)
             except (ValueError, AttributeError, RuntimeError) as e:
                 return r[bool].fail(str(e))
         return r[bool].ok(value=True)
