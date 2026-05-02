@@ -189,7 +189,7 @@ class FlextTestsFiles(s):
                         filename = f"{name}.csv"
                 try:
                     validated_kwargs = m.Tests.CreateKwargsParams.model_validate(kwargs)
-                except (TypeError, ValueError, c.ValidationError):
+                except c.EXC_VALIDATION_TYPE_VALUE:
                     validated_kwargs = m.Tests.CreateKwargsParams(
                         directory=None,
                         fmt=c.Tests.FILE_FORMAT_AUTO,

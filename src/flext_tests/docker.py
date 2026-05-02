@@ -499,7 +499,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             self._save_dirty_state()
             self.logger.info("Container marked clean", container=container_name)
             return r[bool].ok(value=True)
-        except (OSError, TypeError) as exc:
+        except c.EXC_OS_TYPE as exc:
             return r[bool].fail(f"Failed to mark clean: {exc}")
 
     def mark_container_dirty(self, container_name: str) -> p.Result[bool]:
@@ -509,7 +509,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             self._save_dirty_state()
             self.logger.info("Container marked dirty", container=container_name)
             return r[bool].ok(value=True)
-        except (OSError, TypeError) as exc:
+        except c.EXC_OS_TYPE as exc:
             return r[bool].fail(f"Failed to mark dirty: {exc}")
 
     def start_existing_container(self, container_name: str) -> p.Result[bool]:
@@ -599,7 +599,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 FlextTestsBaseTypesMixin.STR_SEQUENCE_MAPPING_ADAPTER.dump_json(data)
             )
             state_file.write_bytes(json_bytes)
-        except (OSError, TypeError) as exc:
+        except c.EXC_OS_TYPE as exc:
             self.logger.warning("Failed to save dirty state", error=str(exc))
 
 
