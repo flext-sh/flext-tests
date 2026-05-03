@@ -899,6 +899,7 @@ class FlextTestsFiles(s):
             r with content or model instance.
 
         """
+        result: p.Result[FlextTestsFilesTypesMixin.ReadContent] | p.Result[TModelRead]
         try:
             params = m.Tests.ReadParams.model_validate({
                 "path": path,
@@ -909,32 +910,37 @@ class FlextTestsFiles(s):
                 "model_cls": model_cls,
             })
         except c.EXC_BASIC_TYPE as exc:
-            return self._read_fail(
+            result = self._read_fail(
                 f"Invalid parameters for file read: {exc}", model_cls
             )
-        if not params.path.exists():
-            return self._read_fail(
-                c.Tests.ERROR_FILE_NOT_FOUND.format(path=params.path),
-                model_cls,
-            )
-        actual_fmt = u.Tests.detect_format_from_path(params.path, params.fmt)
-        try:
-            content = self._read_content_by_format(params.path, actual_fmt, params)
-        except UnicodeDecodeError as e:
-            return self._read_fail(c.Tests.ERROR_ENCODING.format(error=e), model_cls)
-        except ValueError as e:
-            return self._read_fail(
-                c.Tests.ERROR_INVALID_JSON.format(error=e), model_cls
-            )
-        except t.Cli.YAMLError as e:
-            return self._read_fail(
-                c.Tests.ERROR_INVALID_YAML.format(error=e), model_cls
-            )
-        except OSError as e:
-            return self._read_fail(c.Tests.ERROR_READ.format(error=e), model_cls)
-        if model_cls is not None:
-            return self._validate_model_content(model_cls, content)
-        return r[FlextTestsFilesTypesMixin.ReadContent].ok(content)
+        else:
+            if not params.path.exists():
+                result = self._read_fail(
+                    c.Tests.ERROR_FILE_NOT_FOUND.format(path=params.path),
+                    model_cls,
+                )
+            else:
+                actual_fmt = u.Tests.detect_format_from_path(params.path, params.fmt)
+                try:
+                    content = self._read_content_by_format(params.path, actual_fmt, params)
+                except UnicodeDecodeError as e:
+                    result = self._read_fail(c.Tests.ERROR_ENCODING.format(error=e), model_cls)
+                except ValueError as e:
+                    result = self._read_fail(
+                        c.Tests.ERROR_INVALID_JSON.format(error=e), model_cls
+                    )
+                except t.Cli.YAMLError as e:
+                    result = self._read_fail(
+                        c.Tests.ERROR_INVALID_YAML.format(error=e), model_cls
+                    )
+                except OSError as e:
+                    result = self._read_fail(c.Tests.ERROR_READ.format(error=e), model_cls)
+                else:
+                    if model_cls is not None:
+                        result = self._validate_model_content(model_cls, content)
+                    else:
+                        result = r[FlextTestsFilesTypesMixin.ReadContent].ok(content)
+        return result
 
     def _read_content_by_format(
         self,
