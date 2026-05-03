@@ -63,7 +63,7 @@ from collections.abc import (
 )
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
-from typing import TypeIs
+from typing import TypeIs, overload
 
 from flext_core.utilities import u
 from flext_tests._utilities._matchers._assertions import (
@@ -538,6 +538,19 @@ class FlextTestsMatchersUtilities(
                                 ),
                             )
                 return err
+
+            @staticmethod
+            @overload
+            def ok[TResult](
+                result: p.Result[TResult],
+            ) -> TResult: ...
+
+            @staticmethod
+            @overload
+            def ok[TResult](
+                result: p.Result[TResult],
+                **kwargs: t.Tests.MatcherKwargValue,
+            ) -> TResult | t.Tests.TestobjectSerializable: ...
 
             @staticmethod
             def ok[TResult](
