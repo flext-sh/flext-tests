@@ -12,33 +12,11 @@ from flext_core import (
     FlextSettings,
 )
 from flext_tests._typings.base import FlextTestsBaseTypesMixin
-from flext_tests.protocols import FlextTestsProtocols as p
 from flext_tests.typings import FlextTestsTypes as t
 
 
 class FlextTestsConfigHelpersUtilitiesMixin:
     """Config testing helpers - use FlextSettings directly when possible."""
-
-    @staticmethod
-    def assert_config_fields(
-        settings: p.Settings,
-        expected_fields: t.MappingKV[str, t.JsonValue],
-    ) -> None:
-        """Assert settings has expected field values.
-
-        Args:
-            settings: Config instance to check
-            expected_fields: Expected field values
-
-        Raises:
-            AssertionError: If fields don't match
-
-        """
-        dumped_settings = settings.model_dump()
-        for key, expected_value in expected_fields.items():
-            actual_value = dumped_settings.get(key)
-            msg = f"Config {key}: expected {expected_value}, got {actual_value}"
-            assert actual_value == expected_value, msg
 
     @staticmethod
     def create_test_config(**kwargs: t.Scalar) -> FlextSettings:

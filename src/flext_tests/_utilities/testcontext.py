@@ -4,14 +4,8 @@ from __future__ import annotations
 
 import fcntl
 import types
-from collections.abc import (
-    Generator,
-)
-from contextlib import contextmanager
 from pathlib import Path
 from typing import TextIO
-
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 
 class FlextTestsTestContextUtilitiesMixin:
@@ -49,34 +43,3 @@ class FlextTestsTestContextUtilitiesMixin:
             if self._file_obj is not None:
                 self._file_obj.close()
             self.lock_file.unlink(missing_ok=True)
-
-    @staticmethod
-    @contextmanager
-    def temporary_attribute(
-        target: FlextTestsBaseTypesMixin.TestobjectSerializable,
-        attribute: str,
-        value: FlextTestsBaseTypesMixin.TestobjectSerializable,
-    ) -> Generator[None]:
-        """Temporarily set attribute on target t.JsonValue.
-
-        Args:
-            target: Object to modify
-            attribute: Attribute name
-            value: Temporary value
-
-        Yields:
-            None
-
-        """
-        attribute_existed = hasattr(target, attribute)
-        original_value: FlextTestsBaseTypesMixin.TestobjectSerializable | None = None
-        if attribute_existed:
-            original_value = getattr(target, attribute)
-        object.__setattr__(target, attribute, value)
-        try:
-            yield
-        finally:
-            if attribute_existed:
-                object.__setattr__(target, attribute, original_value)
-            else:
-                object.__delattr__(target, attribute)
