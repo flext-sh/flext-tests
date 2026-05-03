@@ -48,35 +48,47 @@ class FlextTestsPayloadUtilities:
     ) -> FlextTestsBaseTypesMixin.TestobjectSerializable:
         """Recursively flatten any runtime value to ``TestobjectSerializable``."""
         to_p = FlextTestsPayloadUtilities.to_payload
-        if isinstance(value, m.RootModel):
-            return to_p(value.root)
-        if isinstance(value, Enum):
-            return to_p(value.value)
-        if value is None or isinstance(
-            value, FlextTestsPayloadUtilities._SCALAR_PAYLOAD
-        ):
-            return value
-        if isinstance(value, Mapping):
-            normalized_map = {str(k): to_p(v) for k, v in value.items()}
-            try:
-                validated_map = (
-                    FlextTestsBaseTypesMixin.TESTOBJECT_MAPPING_ADAPTER.validate_python(
+        match value:
+            case m.RootModel():
+                result = to_p(value.root)
+            case Enum():
+                result = to_p(value.value)
+            case None:
+                result = None
+            case (
+                str()
+                | int()
+                | float()
+                | bool()
+                | bytes()
+                | datetime()
+                | Path()
+                | m.BaseModel()
+            ):
+                result = value
+            case Mapping():
+                normalized_map = {str(k): to_p(v) for k, v in value.items()}
+                try:
+                    validated_map = FlextTestsBaseTypesMixin.TESTOBJECT_MAPPING_ADAPTER.validate_python(
                         normalized_map,
                     )
-                )
-            except c.ValidationError:
-                return normalized_map
-            return {k: to_p(v) for k, v in validated_map.items()}
-        if isinstance(value, (list, tuple, set)):
-            normalized_seq = [to_p(item) for item in value]
-            try:
-                validated_seq = FlextTestsBaseTypesMixin.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
-                    normalized_seq,
-                )
-            except c.ValidationError:
-                return normalized_seq
-            return [to_p(item) for item in validated_seq]
-        return str(value)
+                except c.ValidationError:
+                    result = normalized_map
+                else:
+                    result = {k: to_p(v) for k, v in validated_map.items()}
+            case list() | tuple() | set():
+                normalized_seq = [to_p(item) for item in value]
+                try:
+                    validated_seq = FlextTestsBaseTypesMixin.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
+                        normalized_seq,
+                    )
+                except c.ValidationError:
+                    result = normalized_seq
+                else:
+                    result = [to_p(item) for item in validated_seq]
+            case _:
+                result = str(value)
+        return result
 
     @staticmethod
     def to_normalized_value(
@@ -84,23 +96,28 @@ class FlextTestsPayloadUtilities:
     ) -> t.JsonValue:
         """Flatten to pure Container via canonical runtime helper."""
         to_n = FlextTestsPayloadUtilities.to_normalized_value
-        if isinstance(value, m.RootModel):
-            return to_n(value.root)
-        if isinstance(value, m.BaseModel):
-            return str(value)
-        if isinstance(value, bytes):
-            return value.decode(errors="ignore")
-        if isinstance(value, datetime):
-            return value.isoformat()
-        if isinstance(value, Path):
-            return str(value)
-        if isinstance(value, Mapping):
-            return {key: to_n(item) for key, item in value.items()}
-        if isinstance(value, (list, tuple, frozenset)):
-            return [to_n(item) for item in value]
-        if value is None:
-            return ""
-        return value if isinstance(value, (str, int, float, bool)) else str(value)
+        match value:
+            case m.RootModel():
+                result = to_n(value.root)
+            case m.BaseModel():
+                result = str(value)
+            case bytes():
+                result = value.decode(errors="ignore")
+            case datetime():
+                result = value.isoformat()
+            case Path():
+                result = str(value)
+            case Mapping():
+                result = {key: to_n(item) for key, item in value.items()}
+            case list() | tuple() | frozenset():
+                result = [to_n(item) for item in value]
+            case None:
+                result = ""
+            case str() | int() | float() | bool():
+                result = value
+            case _:
+                result = str(value)
+        return result
 
     @staticmethod
     def to_config_map_value(
@@ -111,6 +128,22 @@ class FlextTestsPayloadUtilities:
             return value
         normalized_value = FlextTestsPayloadUtilities.to_normalized_value(value)
         return "" if normalized_value is None else normalized_value
+
+    @staticmethod
+    def to_config_map(
+        value: m.BaseModel
+        | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
+    ) -> m.ConfigMap:
+        """Convert a model or payload mapping to the canonical ConfigMap shape."""
+        source = (
+            value.model_dump(mode="python") if isinstance(value, m.BaseModel) else value
+        )
+        return m.ConfigMap.model_validate({
+            key: FlextTestsPayloadUtilities.to_config_map_value(
+                FlextTestsPayloadUtilities.to_payload(item),
+            )
+            for key, item in source.items()
+        })
 
     @staticmethod
     def length_validate(
@@ -166,20 +199,7 @@ class FlextTestsPayloadUtilities:
             DeepMatchResult with match status and details
 
         """
-        source_obj: m.ConfigMap
-        if isinstance(obj, m.BaseModel):
-            dumped = obj.model_dump(mode="python")
-            source_obj = m.ConfigMap.model_validate({
-                key: FlextTestsPayloadUtilities.to_config_map_value(
-                    FlextTestsPayloadUtilities.to_payload(value),
-                )
-                for key, value in dumped.items()
-            })
-        else:
-            source_obj = m.ConfigMap.model_validate({
-                key: FlextTestsPayloadUtilities.to_config_map_value(value)
-                for key, value in obj.items()
-            })
+        source_obj = FlextTestsPayloadUtilities.to_config_map(obj)
         payload_types = (
             str,
             int,

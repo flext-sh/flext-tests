@@ -224,19 +224,6 @@ class FlextTestsFiles(s):
         return isinstance(value, Mapping)
 
     @staticmethod
-    def _to_config_map(
-        value: t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
-    ) -> m.ConfigMap:
-        return m.ConfigMap(
-            root={
-                key: FlextTestsPayloadUtilities.to_config_map_value(
-                    FlextTestsPayloadUtilities.to_payload(item),
-                )
-                for key, item in value.items()
-            },
-        )
-
-    @staticmethod
     def _to_payload_mapping(
         value: t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
     ) -> t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]:
@@ -968,7 +955,7 @@ class FlextTestsFiles(s):
                     )
                 )
                 content = (
-                    self._to_config_map(parsed_json)
+                    FlextTestsPayloadUtilities.to_config_map(parsed_json)
                     if self._is_mapping(parsed_json)
                     else text
                 )
@@ -979,7 +966,7 @@ class FlextTestsFiles(s):
                     parsed_yaml_result.value if parsed_yaml_result.success else None
                 )
                 content = (
-                    self._to_config_map(parsed_yaml)
+                    FlextTestsPayloadUtilities.to_config_map(parsed_yaml)
                     if isinstance(parsed_yaml, dict)
                     else text
                 )
@@ -1023,12 +1010,12 @@ class FlextTestsFiles(s):
         filter_keys_set = set(keys) if keys is not None else None
         exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
         result1 = u.transform(
-            self._to_config_map(dict1),
+            FlextTestsPayloadUtilities.to_config_map(dict1),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
         result2 = u.transform(
-            self._to_config_map(dict2),
+            FlextTestsPayloadUtilities.to_config_map(dict2),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
@@ -1058,11 +1045,11 @@ class FlextTestsFiles(s):
             case str() | bytes():
                 return unwrapped
             case m.ConfigMap() | m.Dict():
-                return self._to_config_map(unwrapped.root)
+                return FlextTestsPayloadUtilities.to_config_map(unwrapped.root)
             case m.BaseModel():
                 return unwrapped
             case _ if self._is_mapping(unwrapped):
-                return self._to_config_map(unwrapped)
+                return FlextTestsPayloadUtilities.to_config_map(unwrapped)
             case _ if self._is_nested_rows(unwrapped):
                 sequence_value: t.SequenceOf[
                     FlextTestsBaseTypesMixin.TestobjectSerializable
@@ -1260,12 +1247,12 @@ class FlextTestsFiles(s):
         filter_keys_set = set(keys) if keys is not None else None
         exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
         left_result = u.transform(
-            self._to_config_map(dict1),
+            FlextTestsPayloadUtilities.to_config_map(dict1),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
         right_result = u.transform(
-            self._to_config_map(dict2),
+            FlextTestsPayloadUtilities.to_config_map(dict2),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )

@@ -628,16 +628,12 @@ class FlextTestsMatchersUtilities(
                             params.msg
                             or f"Path extraction requires dict or model, got {type(result_value).__name__}",
                         )
-                    extract_data: m.ConfigMap
-                    if isinstance(result_value, m.BaseModel):
-                        extract_data = m.ConfigMap.model_validate(
-                            result_value.model_dump(mode="python"),
+                    try:
+                        extract_data = FlextTestsPayloadUtilities.to_config_map(
+                            result_value,
                         )
-                    else:
-                        try:
-                            extract_data = m.ConfigMap.model_validate(result_value)
-                        except c.ValidationError:
-                            extract_data = m.ConfigMap(root={})
+                    except c.ValidationError:
+                        extract_data = m.ConfigMap(root={})
                     extracted = u.extract(extract_data, path_str)
                     if extracted.failure:
                         raise AssertionError(

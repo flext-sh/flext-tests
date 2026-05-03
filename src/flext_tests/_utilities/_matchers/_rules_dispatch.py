@@ -70,25 +70,11 @@ class FlextTestsMatchersRulesDispatchMixin:
         path: str,
     ) -> t.Tests.TestobjectSerializable:
         """Extract one dotted path from a model or mapping using flext-core extract helpers."""
-        extract_source: m.ConfigMap
-        if isinstance(value, m.BaseModel):
-            extract_source = m.ConfigMap.model_validate({
-                key: FlextTestsPayloadUtilities.to_config_map_value(
-                    FlextTestsPayloadUtilities.to_payload(item),
-                )
-                for key, item in value.model_dump(mode="python").items()
-            })
-        elif isinstance(value, Mapping):
-            extract_source = m.ConfigMap.model_validate({
-                key: FlextTestsPayloadUtilities.to_config_map_value(
-                    FlextTestsPayloadUtilities.to_payload(item),
-                )
-                for key, item in value.items()
-            })
-        else:
+        if not isinstance(value, (m.BaseModel, Mapping)):
             raise AssertionError(
                 f"Path assertions require dict or model, got {type(value).__name__}",
             )
+        extract_source = FlextTestsPayloadUtilities.to_config_map(value)
         extracted = u.extract(extract_source, path)
         if extracted.failure:
             raise AssertionError(
