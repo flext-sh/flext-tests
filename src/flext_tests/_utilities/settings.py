@@ -66,16 +66,7 @@ class FlextTestsConfigHelpersUtilitiesMixin:
         env_vars: t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
         vars_to_clear: t.StrSequence | None = None,
     ) -> Generator[None]:
-        """Context manager for temporary environment variable changes.
-
-        Args:
-            env_vars: Environment variables to set
-            vars_to_clear: Variables to clear on entry
-
-        Yields:
-            None
-
-        """
+        """Context manager for temporary environment variable changes."""
         with patch.dict("os.environ", {}, clear=False) as environ:
             for var in vars_to_clear or ():
                 environ.pop(var, None)

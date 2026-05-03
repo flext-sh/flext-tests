@@ -39,16 +39,8 @@ class FlextTestsMatchersTypeGuardsMixin:
                 FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(value, item)
                 for item in expected_type
             )
-        return u.instance_of(value, expected_type)
-
-    @staticmethod
-    def _supports_guard_eq(
-        value: t.Tests.TestobjectSerializable | None,
-    ) -> bool:
-        return value is None or isinstance(
-            value,
-            FlextTestsMatchersTypeGuardsMixin._GUARD_EQ_TYPES,
-        )
+        matches: bool = u.instance_of(value, expected_type)
+        return matches
 
     @staticmethod
     def prepare_eq_ne_payloads(
@@ -72,20 +64,16 @@ class FlextTestsMatchersTypeGuardsMixin:
             if ne_value is not None
             else None
         )
-        if (
-            eq_payload is not None
-            and not FlextTestsMatchersTypeGuardsMixin._supports_guard_eq(
-                eq_payload,
-            )
+        if eq_payload is not None and not isinstance(
+            eq_payload,
+            FlextTestsMatchersTypeGuardsMixin._GUARD_EQ_TYPES,
         ):
             if actual_payload != eq_payload:
                 raise AssertionError(msg or default_msg)
             eq_payload = None
-        if (
-            ne_payload is not None
-            and not FlextTestsMatchersTypeGuardsMixin._supports_guard_eq(
-                ne_payload,
-            )
+        if ne_payload is not None and not isinstance(
+            ne_payload,
+            FlextTestsMatchersTypeGuardsMixin._GUARD_EQ_TYPES,
         ):
             if actual_payload == ne_payload:
                 raise AssertionError(msg or default_msg)

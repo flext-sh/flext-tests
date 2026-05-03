@@ -922,9 +922,13 @@ class FlextTestsFiles(s):
             else:
                 actual_fmt = u.Tests.detect_format_from_path(params.path, params.fmt)
                 try:
-                    content = self._read_content_by_format(params.path, actual_fmt, params)
+                    content = self._read_content_by_format(
+                        params.path, actual_fmt, params
+                    )
                 except UnicodeDecodeError as e:
-                    result = self._read_fail(c.Tests.ERROR_ENCODING.format(error=e), model_cls)
+                    result = self._read_fail(
+                        c.Tests.ERROR_ENCODING.format(error=e), model_cls
+                    )
                 except ValueError as e:
                     result = self._read_fail(
                         c.Tests.ERROR_INVALID_JSON.format(error=e), model_cls
@@ -934,7 +938,9 @@ class FlextTestsFiles(s):
                         c.Tests.ERROR_INVALID_YAML.format(error=e), model_cls
                     )
                 except OSError as e:
-                    result = self._read_fail(c.Tests.ERROR_READ.format(error=e), model_cls)
+                    result = self._read_fail(
+                        c.Tests.ERROR_READ.format(error=e), model_cls
+                    )
                 else:
                     if model_cls is not None:
                         result = self._validate_model_content(model_cls, content)

@@ -3,49 +3,6 @@
 Provides unified assertion API with powerful generalist methods.
 Short alias: tm (test matchers)
 
-Core Philosophy:
-- MINIMAL API: Only 5 core methods (ok, fail, check, that, scope)
-- POWERFUL: Each method handles multiple scenarios via optional parameters
-- UNIVERSAL: tm.that() does ALL validations (equality, type, length, containment, etc.)
-
-Core Methods (5 main methods):
-    tm.ok(result, **kw)     # Assert r success, optional validation
-    tm.fail(result, **kw)   # Assert r failure, optional validation
-    tm.check(result)        # Railway-pattern chained assertions
-    tm.that(value, **kw)    # Universal assertion - ALL validations in ONE method
-    tm.scope()              # Isolated test context (context manager)
-
-Usage Examples:
-    # r assertions
-    value = tm.ok(result)                    # Assert success, return value
-    tm.ok(result, eq="expected")            # Assert success and equals
-    tm.fail(result, contains="error")       # Assert failure with error check
-
-    # Universal assertions (tm.that() does EVERYTHING)
-    tm.that(x, gt=0, lt=100)                 # Comparisons
-    tm.that(v, is_=str, none=False)          # Type and None
-    tm.that(d, contains="key")               # Containment (dict/list/str)
-    tm.that(lst, length=5, length_gt=0)      # Length checks
-    tm.that(text, starts="http", ends="/")   # String validation
-    tm.that(text, match="[0-9]{4}-[0-9]{2}")    # Regex match
-
-    # Chained assertions
-    tm.check(result).ok().eq(5).done()       # Railway pattern
-
-Deprecated Methods (use tm.that() instead):
-    tm.that() -> tm.that(actual, eq=eq=expected)
-    tm.true() -> tm.that(condition, eq=True)
-    tm.assert_contains() -> tm.that(container, contains=item)
-    tm.str_() -> tm.that(text, contains/starts/ends/match/excludes/empty=...)
-    tm.is_() -> tm.that(value, is_=type, none=...)
-    tm.len() -> tm.that(items, length/length_gt/length_gte/empty=...)
-    tm.hasattr() -> tm.that(hasattr(obj, attr), eq=True)
-    tm.method() -> tm.that(hasattr(...), eq=True) + tm.that(callable(...), eq=True)
-    tm.not_none() -> tm.that(value, none=False)
-
-Note: For test data creation, use tb() (FlextTestsBuilders) instead:
-    data = tb().with_users(10).with_configs(production=True).build()
-
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 
@@ -63,31 +20,27 @@ from collections.abc import (
 )
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
-from typing import TypeIs, overload
+from typing import TypeVar, overload
 
-from flext_core.utilities import u
-from flext_tests._utilities._matchers._assertions import (
+from flext_core import u
+from flext_tests import (
+    FlextTestsConfigHelpersUtilitiesMixin,
     FlextTestsMatchersAssertionsMixin,
-)
-from flext_tests._utilities._matchers._rules_dispatch import (
-    FlextTestsMatchersRulesDispatchMixin,
-)
-from flext_tests._utilities._matchers._typeguards import (
     FlextTestsMatchersTypeGuardsMixin,
+    FlextTestsPayloadUtilities,
+    FlextTestsResultUtilitiesMixin,
+    c,
+    m,
+    p,
+    t,
 )
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
-from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
-from flext_tests.constants import c
-from flext_tests.models import m
-from flext_tests.protocols import p
-from flext_tests.typings import t
+
+TResult = TypeVar("TResult")
 
 
 class FlextTestsMatchersUtilities(
     FlextTestsMatchersTypeGuardsMixin,
     FlextTestsMatchersAssertionsMixin,
-    FlextTestsMatchersRulesDispatchMixin,
 ):
     """Namespace for test matcher utilities used in flext-tests."""
 
@@ -99,12 +52,44 @@ class FlextTestsMatchersUtilities(
         inherited_msg: str | None = None,
     ) -> None:
         """Apply one declarative rule by delegating to tm.that()."""
+        kwargs_t = dict[str, t.Tests.MatcherKwargValue]
+        kwargs: kwargs_t
+        if isinstance(rule, Mapping):
+            raw_mapping = dict(rule)
+            matcher_rule_keys = frozenset(
+                alias
+                for model in (m.Tests.ThatParams, m.Tests.OkParams, m.Tests.FailParams)
+                for field_name, field_info in model.model_fields.items()
+                for alias in (
+                    field_name,
+                    *(
+                        candidate
+                        for candidate in getattr(
+                            field_info.validation_alias,
+                            "choices",
+                            (),
+                        )
+                        if isinstance(candidate, str)
+                    ),
+                )
+            )
+            if raw_mapping and set(raw_mapping).issubset(matcher_rule_keys):
+                kwargs = dict(raw_mapping)
+            else:
+                kwargs = {"eq": FlextTestsPayloadUtilities.to_payload(rule)}
+        elif isinstance(rule, type) or (
+            isinstance(rule, tuple) and all(isinstance(item, type) for item in rule)
+        ):
+            kwargs = {"is_": rule}
+        elif callable(rule):
+            kwargs = {"where": rule}
+        else:
+            kwargs = {"eq": rule}
+        if inherited_msg is not None and "msg" not in kwargs:
+            kwargs["msg"] = inherited_msg
         FlextTestsMatchersUtilities.Tests.Matchers.that(
             subject,
-            **FlextTestsMatchersUtilities._rule_to_kwargs(
-                rule,
-                inherited_msg=inherited_msg,
-            ),
+            **kwargs,
         )
 
     @staticmethod
@@ -119,11 +104,21 @@ class FlextTestsMatchersUtilities(
         """Apply multiple dotted-path assertions against a mapping/model subject."""
         for path, rule in rules.items():
             try:
-                extracted = FlextTestsMatchersUtilities._extract_mapping_path(
-                    subject, path
-                )
+                if not isinstance(subject, (m.BaseModel, Mapping)):
+                    raise AssertionError(
+                        f"Path assertions require dict or model, got {type(subject).__name__}",
+                    )
+                extract_source = FlextTestsPayloadUtilities.to_config_map(subject)
+                extracted = u.extract(extract_source, path)
+                if extracted.failure:
+                    raise AssertionError(
+                        c.Tests.ERR_SCOPE_PATH_NOT_FOUND.format(
+                            path=path,
+                            error=extracted.error,
+                        ),
+                    )
                 FlextTestsMatchersUtilities._apply_rule(
-                    extracted,
+                    FlextTestsPayloadUtilities.to_payload(extracted.value),
                     rule,
                     inherited_msg=inherited_msg,
                 )
@@ -195,12 +190,18 @@ class FlextTestsMatchersUtilities(
         """Apply multiple dotted-attribute assertions against an object subject."""
         for attr_path, rule in rules.items():
             try:
-                attr_value = FlextTestsMatchersUtilities._extract_attribute_path(
-                    subject,
-                    attr_path,
-                )
+                current: object | t.Tests.TestobjectSerializable = subject
+                for segment in attr_path.split("."):
+                    if isinstance(current, Mapping) and segment in current:
+                        current = current[segment]
+                        continue
+                    if not hasattr(current, segment):
+                        raise AssertionError(
+                            f"Object missing attribute path: {attr_path}",
+                        )
+                    current = getattr(current, segment)
                 FlextTestsMatchersUtilities._apply_rule(
-                    attr_value,
+                    FlextTestsPayloadUtilities.to_payload(current),
                     rule,
                     inherited_msg=inherited_msg,
                 )
@@ -208,34 +209,6 @@ class FlextTestsMatchersUtilities(
                 raise AssertionError(
                     inherited_msg or f"Attribute rule '{attr_path}' failed: {exc}",
                 ) from exc
-
-    @staticmethod
-    def _is_non_string_sequence(
-        value: t.Tests.TestobjectSerializable
-        | t.Tests.MatcherKwargValue
-        | t.JsonPayload
-        | t.JsonValue,
-    ) -> TypeIs[Sequence[t.Tests.TestobjectSerializable]]:
-        return isinstance(value, Sequence) and (
-            not isinstance(value, (str, bytes, bytearray))
-        )
-
-    @staticmethod
-    def _is_supported_containment_container(
-        value: t.JsonValue,
-    ) -> TypeIs[dict[str, t.JsonValue] | list[t.JsonValue] | str]:
-        return isinstance(value, (Mapping, list, str))
-
-    @staticmethod
-    def _payload_contains(
-        container: dict[str, t.JsonValue] | list[t.JsonValue] | str,
-        item: t.JsonValue,
-    ) -> bool:
-        if isinstance(container, Mapping):
-            return isinstance(item, str) and item in container
-        if isinstance(container, str):
-            return str(item) in container
-        return any(candidate == item for candidate in container)
 
     @staticmethod
     def _check_has_lacks(
@@ -252,7 +225,8 @@ class FlextTestsMatchersUtilities(
                 t.Tests.TestobjectSerializable | t.Tests.MatcherKwargValue | t.JsonValue
             ] = (
                 list(has)
-                if FlextTestsMatchersUtilities._is_non_string_sequence(has)
+                if isinstance(has, Sequence)
+                and not isinstance(has, (str, bytes, bytearray))
                 else [has]
             )
             for item in items:
@@ -273,19 +247,21 @@ class FlextTestsMatchersUtilities(
                     target_raw = FlextTestsPayloadUtilities.to_normalized_value(
                         FlextTestsPayloadUtilities.to_payload(value),
                     )
-                    if not FlextTestsMatchersUtilities._is_supported_containment_container(
-                        target_raw,
-                    ):
+                    if not isinstance(target_raw, (Mapping, list, str)):
                         FlextTestsMatchersUtilities._raise_match_assertion(
                             c.Tests.ERR_CONTAINS_FAILED,
                             msg=msg,
                             container=value,
                             item=item,
                         )
-                    if not FlextTestsMatchersUtilities._payload_contains(
-                        target_raw,
-                        check_val,
-                    ):
+                    contains_item = (
+                        isinstance(check_val, str) and check_val in target_raw
+                        if isinstance(target_raw, Mapping)
+                        else str(check_val) in target_raw
+                        if isinstance(target_raw, str)
+                        else any(candidate == check_val for candidate in target_raw)
+                    )
+                    if not contains_item:
                         FlextTestsMatchersUtilities._raise_match_assertion(
                             c.Tests.ERR_CONTAINS_FAILED,
                             msg=msg,
@@ -295,7 +271,8 @@ class FlextTestsMatchersUtilities(
         if lacks is not None:
             items = (
                 list(lacks)
-                if FlextTestsMatchersUtilities._is_non_string_sequence(lacks)
+                if isinstance(lacks, Sequence)
+                and not isinstance(lacks, (str, bytes, bytearray))
                 else [lacks]
             )
             for item in items:
@@ -316,19 +293,21 @@ class FlextTestsMatchersUtilities(
                     target_raw_2 = FlextTestsPayloadUtilities.to_normalized_value(
                         FlextTestsPayloadUtilities.to_payload(value),
                     )
-                    if not FlextTestsMatchersUtilities._is_supported_containment_container(
-                        target_raw_2,
-                    ):
+                    if not isinstance(target_raw_2, (Mapping, list, str)):
                         FlextTestsMatchersUtilities._raise_match_assertion(
                             c.Tests.ERR_LACKS_FAILED,
                             msg=msg,
                             container=value,
                             item=item,
                         )
-                    if FlextTestsMatchersUtilities._payload_contains(
-                        target_raw_2,
-                        check_val,
-                    ):
+                    contains_item = (
+                        isinstance(check_val, str) and check_val in target_raw_2
+                        if isinstance(target_raw_2, Mapping)
+                        else str(check_val) in target_raw_2
+                        if isinstance(target_raw_2, str)
+                        else any(candidate == check_val for candidate in target_raw_2)
+                    )
+                    if contains_item:
                         FlextTestsMatchersUtilities._raise_match_assertion(
                             c.Tests.ERR_LACKS_FAILED,
                             msg=msg,
@@ -340,41 +319,10 @@ class FlextTestsMatchersUtilities(
         """Container for test utility storages and aliases."""
 
         class Matchers:
-            """Test matchers with powerful generalist methods.
-
-            Short alias: tm
-
-            Core Methods (5 main methods):
-                tm.ok(result, **kw)     - Assert r success, optional validation
-                tm.fail(result, **kw)   - Assert r failure, optional validation
-                tm.check(result)        - Railway-pattern chained assertions
-                tm.that(value, **kw)    - Universal assertion - ALL validations in ONE method
-                tm.scope()              - Isolated test context (context manager)
-
-            The tm.that() method handles ALL assertion types:
-                - Comparisons: eq, ne, gt, gte, lt, lte
-                - Type/None: is_, none
-                - Containment: contains (works for dict/list/str)
-                - Strings: starts, ends, match, excludes
-                - Length: length, length_gt, length_gte, length_lt, length_lte, empty
-
-            Deprecated Methods (all redirect to tm.that()):
-                tm.that() -> tm.that(actual, eq=eq=expected)
-                tm.true() -> tm.that(condition, eq=True)
-                tm.assert_contains() -> tm.that(container, contains=item)
-                tm.str_() -> tm.that(text, contains/starts/ends/match/excludes/empty=...)
-                tm.is_() -> tm.that(value, is_=type, none=...)
-                tm.len() -> tm.that(items, length/length_gt/length_gte/empty=...)
-                tm.hasattr() -> tm.that(hasattr(obj, attr), eq=True)
-                tm.method() -> tm.that(hasattr(...), eq=True) + tm.that(callable(...), eq=True)
-                tm.not_none() -> tm.that(value, none=False)
-                tm.dict_() -> tm.that(data, contains=...) or tm.that(data, length=...)
-                tm.that() -> tm.that(items, has=...) or tm.that(items, length=...)
-                tm.that() -> tm.that(value, is_=is_=type, none=False, none=False)
-            """
+            """Test matchers with powerful generalist methods."""
 
             @staticmethod
-            def check[TResult](
+            def check(
                 result: p.Result[TResult],
             ) -> m.Tests.Chain[TResult]:
                 """Start chained assertions on result (railway pattern).
@@ -389,24 +337,11 @@ class FlextTestsMatchersUtilities(
                 return m.Tests.Chain(result=result)
 
             @staticmethod
-            def fail[TResult](
+            def fail(
                 result: p.Result[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> str:
                 r"""Enhanced assertion for r failure with optional error validation.
-
-                Examples:
-                    # Basic failure assertions
-                    tm.fail(result)                   # Assert failure
-                    tm.fail(result, has="not found")  # Failure with error containing
-                    tm.fail(result, code="VALIDATION")  # Failure with specific code
-                    tm.fail(result, match=r"Error: \\\\d+")  # Error matches regex
-
-                    # Multiple error checks
-                    tm.fail(result, has=["invalid", "required"], lacks="internal")
-
-                    # Error metadata checks
-                    tm.fail(result, code="VALIDATION", data={"field": "email"})
 
                 Args:
                     result: r to check
@@ -431,15 +366,12 @@ class FlextTestsMatchersUtilities(
                     AssertionError: If result is success or error doesn't satisfy constraints
                     ValueError: If parameter validation fails (via Pydantic model)
 
-                Uses Pydantic 2 models for parameter validation and computation.
-                All parameters are validated via m.Tests.FailParams model.
-
                 """
                 try:
                     params = m.Tests.FailParams.model_validate(kwargs)
                 except c.EXC_BASIC_TYPE as exc:
                     raise ValueError(f"Parameter validation failed: {exc}") from exc
-                err = FlextTestsResultUtilitiesMixin.assert_failure(result)
+                err: str = FlextTestsResultUtilitiesMixin.assert_failure(result)
                 if (
                     params.has
                     or params.lacks
@@ -541,19 +473,19 @@ class FlextTestsMatchersUtilities(
 
             @staticmethod
             @overload
-            def ok[TResult](
+            def ok(
                 result: p.Result[TResult],
             ) -> TResult: ...
 
             @staticmethod
             @overload
-            def ok[TResult](
+            def ok(
                 result: p.Result[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> TResult | t.Tests.TestobjectSerializable: ...
 
             @staticmethod
-            def ok[TResult](
+            def ok(
                 result: p.Result[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> TResult | t.Tests.TestobjectSerializable:
@@ -568,43 +500,6 @@ class FlextTestsMatchersUtilities(
 
                 Raises:
                     AssertionError: If result is failure or validation fails.
-
-                Notes:
-                    Uses Pydantic 2 models for parameter validation and computation.
-                    All parameters are validated via m.Tests.OkParams model.
-
-                Examples:
-                    # Basic success assertions
-                    tm.ok(result)                      # Assert success
-                    tm.ok(result, eq=5)               # Success and value == 5
-                    tm.ok(result, is_=str, len=(1,100))  # Success, is string, len 1-100
-                    tm.ok(result, has=["a", "b"])     # Success and value contains both
-
-                    # Deep structural matching on result value
-                    tm.ok(result, deep={
-                        "user.name": "John",
-                        "user.email": lambda e: "@" in e,
-                    })
-
-                    # Path extraction first
-                    tm.ok(result, path="data.value", eq=42)
-
-                    # Custom validation
-                    tm.ok(result, where=lambda x: x.status == "active")
-
-                    Parameters validated via m.Tests.OkParams model:
-                    - eq, ne: Equality/inequality check
-                    - is_: Runtime type check against single type or tuple
-                    - none, empty: Nullability checks
-                    - gt, gte, lt, lte: Comparison checks (numeric or length)
-                    - has, lacks: Unified containment (replaces contains)
-                    - starts, ends, match: String assertions
-                    - len: Length spec - exact int or (min, max) tuple
-                    - deep: Deep structural matching specification
-                    - path: Extract nested value via dot notation before validation
-                    - where: Custom predicate function for validation
-                    - msg: Custom error message
-                    - contains, starts, ends: Legacy parameters (deprecated)
 
                 """
                 try:
@@ -826,9 +721,6 @@ class FlextTestsMatchersUtilities(
             ) -> Generator[m.Tests.TestScope]:
                 """Enhanced isolated test execution scope.
 
-                Uses Pydantic 2 model (ScopeParams) for parameter validation and computation.
-                All parameters are validated automatically via from_kwargs.
-
                 Provides isolated configuration, container, and context for tests.
                 Supports temporary environment variables, working directory changes,
                 and automatic cleanup functions.
@@ -844,20 +736,6 @@ class FlextTestsMatchersUtilities(
 
                 Yields:
                     TestScope with settings, container, and context dicts
-
-                Examples:
-                    with tm.scope() as s:
-                        s.container["service"] = mock_service
-                        result = operation()
-                        tm.ok(result)
-
-                    with tm.scope(settings={"debug": True}, env={"API_KEY": "test"}) as s:
-                        # Test with specific settings and env vars
-                        pass
-
-                    with tm.scope(cleanup=[lambda: cleanup_resource()]) as s:
-                        # Auto-cleanup on exit
-                        pass
 
                 Raises:
                     ValueError: If parameter validation fails (via Pydantic model)
@@ -930,45 +808,8 @@ class FlextTestsMatchersUtilities(
             ) -> None:
                 r"""Super-powered universal value assertion - ALL validations in ONE method.
 
-                This is the PRIMARY assertion method. All other assertion methods
-                (eq, true, assert_contains, str_, is_, len, etc.) are convenience
-                wrappers that delegate to this method.
-
                 Supports unlimited depth for deep structural matching, comprehensive
                 collection assertions, mapping validations, and custom predicates.
-
-                Examples:
-                    # Basic assertions
-                    tm.that(x, eq=5)                    # x == 5
-                    tm.that(x, is_=str, len=(1, 50))    # is string, len 1-50
-                    tm.that(x, gt=0, lt=100)            # 0 < x < 100
-
-                    # String assertions
-                    tm.that(text, starts="Hello", ends="!", len=(5, 100))
-                    tm.that(email, match=r"^[\\w.]+@[\\w.]+$")
-
-                    # Sequence assertions
-                    tm.that(items, len=5, first="a", last="z", unique=True)
-                    tm.that(items, all_=str, sorted=True)
-                    tm.that(items, has=["required1", "required2"])
-
-                    # Mapping assertions
-                    tm.that(data, keys=["id", "name"], kv={"status": "active"})
-                    tm.that(settings, attrs=["debug", "timeout"], attr_eq={"debug": True})
-
-                    # r in tm.that() (auto-detected)
-                    tm.that(result, ok=True, eq="expected")
-
-                    # Deep structural matching (unlimited depth)
-                    tm.that(response, deep={
-                        "user.name": "John",
-                        "user.profile.address.city": "NYC",
-                        "user.email": lambda e: "@" in e,
-                        "items": lambda i: len(i) > 0,
-                    })
-
-                    # Custom validation
-                    tm.that(user, where=lambda u: u.age >= 18 and u.verified)
 
                 Args:
                     value: Value to validate

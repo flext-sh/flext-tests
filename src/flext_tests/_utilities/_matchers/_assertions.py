@@ -8,7 +8,6 @@ from __future__ import annotations
 from collections.abc import Sized
 from typing import Never
 
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 from flext_tests.constants import c
 from flext_tests.protocols import p
 from flext_tests.typings import t
@@ -39,8 +38,15 @@ class FlextTestsMatchersAssertionsMixin:
         msg: str | None,
     ) -> None:
         """Raise AssertionError if ``payload`` length doesn't match ``length_spec``."""
-        if FlextTestsPayloadUtilities.length_validate(payload, length_spec):
-            return
+        if isinstance(payload, Sized):
+            payload_len = len(payload)
+            match length_spec:
+                case int():
+                    if payload_len == length_spec:
+                        return
+                case (min_len, max_len):
+                    if min_len <= payload_len <= max_len:
+                        return
         actual_len = len(sized) if isinstance(sized, Sized) else 0
         if isinstance(length_spec, int):
             raise AssertionError(

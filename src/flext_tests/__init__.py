@@ -63,9 +63,6 @@ if _t.TYPE_CHECKING:
     from flext_tests._utilities._matchers._assertions import (
         FlextTestsMatchersAssertionsMixin,
     )
-    from flext_tests._utilities._matchers._rules_dispatch import (
-        FlextTestsMatchersRulesDispatchMixin,
-    )
     from flext_tests._utilities._matchers._typeguards import (
         FlextTestsMatchersTypeGuardsMixin,
     )
@@ -90,7 +87,6 @@ if _t.TYPE_CHECKING:
     from flext_tests._utilities.payload import FlextTestsPayloadUtilities
     from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
     from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
-    from flext_tests._utilities.testcase import FlextTestsTestCaseHelpersUtilitiesMixin
     from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
     from flext_tests._utilities.validation import FlextTestsValidationUtilitiesMixin
     from flext_tests._utilities.validator import FlextTestsValidatorUtilitiesMixin
@@ -171,9 +167,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._typings.guards": ("FlextTestsGuardsTypesMixin",),
             "._typings.matchers": ("FlextTestsMatchersTypesMixin",),
             "._utilities._matchers._assertions": ("FlextTestsMatchersAssertionsMixin",),
-            "._utilities._matchers._rules_dispatch": (
-                "FlextTestsMatchersRulesDispatchMixin",
-            ),
             "._utilities._matchers._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
             "._utilities.badobjects": ("FlextTestsBadObjectsUtilitiesMixin",),
             "._utilities.constants": ("FlextTestsConstantsHelpersUtilitiesMixin",),
@@ -193,7 +186,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._utilities.payload": ("FlextTestsPayloadUtilities",),
             "._utilities.result": ("FlextTestsResultUtilitiesMixin",),
             "._utilities.settings": ("FlextTestsConfigHelpersUtilitiesMixin",),
-            "._utilities.testcase": ("FlextTestsTestCaseHelpersUtilitiesMixin",),
             "._utilities.testcontext": ("FlextTestsTestContextUtilitiesMixin",),
             "._utilities.validation": ("FlextTestsValidationUtilitiesMixin",),
             "._utilities.validator": ("FlextTestsValidatorUtilitiesMixin",),
@@ -314,7 +306,6 @@ __all__: list[str] = [
     "FlextTestsHandlerHelpersUtilitiesMixin",
     "FlextTestsMatchersAssertionsMixin",
     "FlextTestsMatchersModelsMixin",
-    "FlextTestsMatchersRulesDispatchMixin",
     "FlextTestsMatchersTypeGuardsMixin",
     "FlextTestsMatchersTypesMixin",
     "FlextTestsMatchersUtilities",
@@ -323,7 +314,6 @@ __all__: list[str] = [
     "FlextTestsPayloadUtilities",
     "FlextTestsProtocols",
     "FlextTestsResultUtilitiesMixin",
-    "FlextTestsTestCaseHelpersUtilitiesMixin",
     "FlextTestsTestContextUtilitiesMixin",
     "FlextTestsTypes",
     "FlextTestsUtilities",

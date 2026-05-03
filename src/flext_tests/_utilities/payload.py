@@ -12,7 +12,6 @@ from __future__ import annotations
 from collections.abc import (
     Mapping,
     Sequence,
-    Sized,
 )
 from datetime import datetime
 from enum import Enum
@@ -120,16 +119,6 @@ class FlextTestsPayloadUtilities:
         return result
 
     @staticmethod
-    def to_config_map_value(
-        value: FlextTestsBaseTypesMixin.TestobjectSerializable,
-    ) -> t.JsonPayload:
-        """Preserve BaseModel, else delegate to canonical Container flattening."""
-        if isinstance(value, m.BaseModel):
-            return value
-        normalized_value = FlextTestsPayloadUtilities.to_normalized_value(value)
-        return "" if normalized_value is None else normalized_value
-
-    @staticmethod
     def to_config_map(
         value: m.BaseModel
         | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
@@ -138,44 +127,15 @@ class FlextTestsPayloadUtilities:
         source = (
             value.model_dump(mode="python") if isinstance(value, m.BaseModel) else value
         )
-        return m.ConfigMap.model_validate({
-            key: FlextTestsPayloadUtilities.to_config_map_value(
-                FlextTestsPayloadUtilities.to_payload(item),
-            )
-            for key, item in source.items()
-        })
-
-    @staticmethod
-    def length_validate(
-        value: FlextTestsBaseTypesMixin.TestobjectSerializable,
-        spec: int | tuple[int, int],
-    ) -> bool:
-        """Validate length against spec.
-
-        Uses u.chk() for validation.
-        Supports exact length (int) or range (tuple[int, int]).
-
-        Args:
-            value: Value to check length of (must have __len__)
-            spec: LengthSpec - exact int or (min, max) tuple
-
-        Returns:
-            True if length matches spec, False otherwise
-
-        """
-        try:
-            if not isinstance(value, Sized):
-                return False
-            actual_len = len(value)
-        except TypeError:
-            return False
-        if isinstance(spec, int):
-            return u.chk(actual_len, m.GuardCheckSpec(eq=spec))
-        min_len, max_len = spec
-        return u.chk(
-            actual_len,
-            m.GuardCheckSpec(gte=min_len, lte=max_len),
-        )
+        config_map: dict[str, t.JsonPayload] = {}
+        for key, item in source.items():
+            payload = FlextTestsPayloadUtilities.to_payload(item)
+            if isinstance(payload, m.BaseModel):
+                config_map[key] = payload
+                continue
+            normalized_value = FlextTestsPayloadUtilities.to_normalized_value(payload)
+            config_map[key] = "" if normalized_value is None else normalized_value
+        return m.ConfigMap.model_validate(config_map)
 
     @staticmethod
     def deep_match(

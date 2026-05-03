@@ -14,7 +14,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
     build_lazy_import_map(
         {
             "._matchers._assertions": ("FlextTestsMatchersAssertionsMixin",),
-            "._matchers._rules_dispatch": ("FlextTestsMatchersRulesDispatchMixin",),
             "._matchers._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
             ".badobjects": ("FlextTestsBadObjectsUtilitiesMixin",),
             ".constants": ("FlextTestsConstantsHelpersUtilitiesMixin",),
@@ -34,7 +33,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
             ".payload": ("FlextTestsPayloadUtilities",),
             ".result": ("FlextTestsResultUtilitiesMixin",),
             ".settings": ("FlextTestsConfigHelpersUtilitiesMixin",),
-            ".testcase": ("FlextTestsTestCaseHelpersUtilitiesMixin",),
             ".testcontext": ("FlextTestsTestContextUtilitiesMixin",),
             ".validation": ("FlextTestsValidationUtilitiesMixin",),
             ".validator": ("FlextTestsValidatorUtilitiesMixin",),

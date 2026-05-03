@@ -214,7 +214,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                     force_recreate=True,
                 )
                 if compose_result.failure:
-                    error_msg = compose_result.error or "Failed to recreate Docker target"
+                    error_msg = (
+                        compose_result.error or "Failed to recreate Docker target"
+                    )
                 else:
                     _ = self.mark_container_clean(target.container_name)
             else:
@@ -230,7 +232,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                             service=target.service or None,
                         )
                         if compose_result.failure:
-                            error_msg = compose_result.error or "Failed to start Docker target"
+                            error_msg = (
+                                compose_result.error or "Failed to start Docker target"
+                            )
 
             if error_msg is None:
                 container_info_result = self.fetch_container_info(target.container_name)
@@ -252,7 +256,8 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                         )
                         if ready_result.failure:
                             result = r[m.Tests.ContainerInfo].fail(
-                                ready_result.error or "Docker target readiness check failed",
+                                ready_result.error
+                                or "Docker target readiness check failed",
                             )
                         elif not ready_result.value:
                             result = r[m.Tests.ContainerInfo].fail(

@@ -48,7 +48,7 @@ class TestsFlextTestsMatchers:
     def test_assert_result_success_passes(self) -> None:
         """Test tm.ok() with successful result."""
         result = r[str].ok("success")
-        value = tm.ok(result)
+        value: t.Tests.TestobjectSerializable = tm.ok(result)
         tm.that(value, eq="success")
 
     def test_assert_result_success_fails(self) -> None:

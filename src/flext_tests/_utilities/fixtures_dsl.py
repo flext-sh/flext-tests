@@ -43,13 +43,9 @@ class FlextTestsFixturesDSLMixin:
         return cls._FIXTURES_ROOT
 
     @classmethod
-    def _fixture_filename(cls, group: str, kind: str) -> str:
-        return f"{group}_{kind}_fixtures{cls._FILE_EXTENSION}"
-
-    @classmethod
     def path(cls, group: str, kind: str) -> Path:
         root = cls._root()
-        fp = root / group / cls._fixture_filename(group, kind)
+        fp = root / group / f"{group}_{kind}_fixtures{cls._FILE_EXTENSION}"
         if not fp.exists():
             raise FileNotFoundError(f"Fixture not found: {fp}")
         return fp

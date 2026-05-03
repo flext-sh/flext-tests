@@ -393,7 +393,11 @@ def _dispatch_tests_validator(
                             if scan is not None:
                                 grouped: dict[str, list[p.AttributeProbe]] = {}
                                 for violation in getattr(scan, "violations", ()):
-                                    if wanted_ids and getattr(violation, "rule_id", "") not in wanted_ids:
+                                    if (
+                                        wanted_ids
+                                        and getattr(violation, "rule_id", "")
+                                        not in wanted_ids
+                                    ):
                                         continue
                                     # Derive the owning project from the file path's first path segment
                                     # relative to the workspace root.
@@ -401,8 +405,16 @@ def _dispatch_tests_validator(
                                     project = "workspace"
                                     if file_path is not None:
                                         try:
-                                            rel = Path(file_path).resolve().relative_to(workspace_root)
-                                            project = rel.parts[0] if rel.parts else "workspace"
+                                            rel = (
+                                                Path(file_path)
+                                                .resolve()
+                                                .relative_to(workspace_root)
+                                            )
+                                            project = (
+                                                rel.parts[0]
+                                                if rel.parts
+                                                else "workspace"
+                                            )
                                         except ValueError:
                                             project = "workspace"
                                     grouped.setdefault(project, []).append(violation)
