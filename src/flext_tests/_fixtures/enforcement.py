@@ -39,8 +39,7 @@ from typing import ClassVar, Final, override
 
 import pytest
 
-from flext_core import p
-from flext_tests import m, t, u
+from flext_tests import m, p, t, u
 
 _WORKSPACE_MARKERS: Final[tuple[str, ...]] = (
     "AGENTS.md",

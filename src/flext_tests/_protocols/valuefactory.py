@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
 
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests import FlextTestsBaseTypesMixin as tb
 
 
 class FlextTestsValueFactoryProtocolsMixin:
@@ -25,7 +25,7 @@ class FlextTestsValueFactoryProtocolsMixin:
             self,
             *,
             name: str,
-            value: FlextTestsBaseTypesMixin.Testobject,
+            value: tb.Testobject,
         ) -> TEntity:
             """Build a typed entity instance."""
             ...

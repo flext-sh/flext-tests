@@ -11,15 +11,14 @@ from collections.abc import (
 )
 from typing import TypeAliasType
 
-from flext_core import m
-from flext_tests import t
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_cli import m, t
+from flext_tests import FlextTestsBaseTypesMixin as tb
 
 
 class FlextTestsMatchersTypesMixin:
     type MatcherEqTarget = (
-        t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        t.MappingKV[str, tb.TestobjectSerializable]
+        | t.SequenceOf[tb.TestobjectSerializable]
         | bytes
         | str
         | int
@@ -34,19 +33,16 @@ class FlextTestsMatchersTypesMixin:
     ``union_mode`` on nullable schemas, so the alias stays non-nullable.
     """
 
-    type MatchRuleLeaf = (
-        FlextTestsBaseTypesMixin.Testobject | type | tuple[type, ...] | TypeAliasType
-    )
+    type MatchRuleLeaf = tb.Testobject | type | tuple[type, ...] | TypeAliasType
     type MatchRuleKwargs = t.MappingKV[
         str,
-        Callable[..., FlextTestsBaseTypesMixin.Testobject]
-        | FlextTestsBaseTypesMixin.TestobjectSerializable,
+        Callable[..., tb.Testobject] | tb.TestobjectSerializable,
     ]
     type MatchRuleValue = MatchRuleLeaf | MatchRuleKwargs
     type MatcherKwargValue = (
         MatchRuleLeaf
-        | set[FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | Callable[..., FlextTestsBaseTypesMixin.Testobject]
+        | set[tb.TestobjectSerializable]
+        | Callable[..., tb.Testobject]
         | MatchRuleKwargs
         | t.MappingKV[int, MatchRuleValue]
         | t.MappingKV[str, MatchRuleValue]
@@ -60,15 +56,14 @@ class FlextTestsMatchersTypesMixin:
     inline 3+-arm unions in Pydantic field annotations.
     """
     type MatchRuleSpec = (
-        FlextTestsBaseTypesMixin.Testobject
+        tb.Testobject
         | type
         | tuple[type, ...]
         | t.MappingKV[str, FlextTestsMatchersTypesMixin.MatcherKwargValue]
     )
     type DeepSpec = t.MappingKV[
         str,
-        Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
-        | FlextTestsBaseTypesMixin.TestobjectSerializable,
+        Callable[[tb.Testobject], bool] | tb.TestobjectSerializable,
     ]
     type PathMatchSpec = t.MappingKV[str, FlextTestsMatchersTypesMixin.MatchRuleSpec]
     type ItemSelector = int | str
@@ -84,30 +79,20 @@ class FlextTestsMatchersTypesMixin:
         FlextTestsMatchersTypesMixin.MatchRuleSpec,
     ]
     type PathSpec = str | t.StrSequence
-    type PredicateSpec = Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
-    type ContainmentSpec = (
-        FlextTestsBaseTypesMixin.Testobject
-        | t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
-    )
+    type PredicateSpec = Callable[[tb.Testobject], bool]
+    type ContainmentSpec = tb.Testobject | t.SequenceOf[tb.TestobjectSerializable]
     type ExclusionSpec = str | t.StrSequence
-    type SequencePredicate = (
-        type | Callable[[FlextTestsBaseTypesMixin.Testobject], bool]
-    )
-    type SortKey = (
-        bool
-        | Callable[
-            [FlextTestsBaseTypesMixin.Testobject], FlextTestsBaseTypesMixin.Testobject
-        ]
-    )
+    type SequencePredicate = type | Callable[[tb.Testobject], bool]
+    type SortKey = bool | Callable[[tb.Testobject], tb.Testobject]
     type KeySpec = t.StrSequence | set[str]
     type KeyValueSpec = (
-        tuple[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        tuple[str, tb.TestobjectSerializable]
+        | t.MappingKV[str, tb.TestobjectSerializable]
     )
     type AttributeSpec = str | t.StrSequence
     type AttributeValueSpec = (
-        tuple[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        tuple[str, tb.TestobjectSerializable]
+        | t.MappingKV[str, tb.TestobjectSerializable]
     )
     type ErrorCodeSpec = str | t.StrSequence
     type ErrorDataSpec = m.ConfigMap

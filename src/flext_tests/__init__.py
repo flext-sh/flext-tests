@@ -12,7 +12,7 @@ from flext_core.lazy import (
 )
 
 if _t.TYPE_CHECKING:
-    from flext_cli import d, e, h, r, x
+    from flext_core import d, e, h, r, x
     from flext_tests.__version__ import (
         __author__,
         __author_email__,
@@ -219,7 +219,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "FlextTestsValidator",
                 "tv",
             ),
-            "flext_cli": (
+            "flext_core": (
                 "d",
                 "e",
                 "h",

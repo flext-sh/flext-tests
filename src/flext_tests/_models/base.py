@@ -8,8 +8,8 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from flext_core import m
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_cli import m
+from flext_tests import t
 
 
 class FlextTestsBaseModelsMixin:
@@ -18,7 +18,7 @@ class FlextTestsBaseModelsMixin:
 
         name: Annotated[str, m.Field(description="Entity display name.")] = ""
         value: Annotated[
-            FlextTestsBaseTypesMixin.TestobjectSerializable,
+            t.Tests.TestobjectSerializable,
             m.Field(description="Arbitrary serializable payload."),
         ] = None
 

@@ -10,9 +10,8 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated
 
-from flext_core import m, u
+from flext_cli import m, u
 from flext_tests import c, p, t
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 
 class FlextTestsBatchModelsMixin:
@@ -21,10 +20,8 @@ class FlextTestsBatchModelsMixin:
 
         files: Annotated[
             (
-                t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-                | t.SequenceOf[
-                    tuple[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-                ]
+                t.MappingKV[str, t.Tests.TestobjectSerializable]
+                | t.SequenceOf[tuple[str, t.Tests.TestobjectSerializable]]
             ),
             u.Field(
                 description="Mapping or Sequence of files to process",
@@ -88,7 +85,7 @@ class FlextTestsBatchModelsMixin:
             u.Field(description="Total number of operations"),
         ]
         results: Annotated[
-            t.MappingKV[str, p.ResultLike[FlextTestsBaseTypesMixin.TestResultValue]],
+            t.MappingKV[str, p.ResultLike[t.Tests.TestResultValue]],
             u.Field(
                 description="Mapping of file names to operation results",
             ),

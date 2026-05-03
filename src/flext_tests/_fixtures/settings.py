@@ -19,7 +19,8 @@ from collections.abc import (
 
 import pytest
 
-from flext_core import FlextContainer, FlextSettings, t
+from flext_core import FlextContainer, FlextSettings
+from flext_tests import t
 
 
 @pytest.fixture(autouse=True)
