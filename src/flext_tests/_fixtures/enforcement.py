@@ -364,51 +364,50 @@ def _dispatch_tests_validator(
     rule: m.EnforcementRuleSpec,
     workspace_root: Path,
 ) -> dict[str, list[p.AttributeProbe]]:
+    result: dict[str, list[p.AttributeProbe]] = {}
     try:
         validator_mod = import_module("flext_tests.validator")
     except ImportError:
-        return {}
-    tv = getattr(validator_mod, "FlextTestsValidator", None)
-    if tv is None:
-        return {}
-    method_name = getattr(rule.source, "method", "")
-    if not method_name or method_name.startswith("_"):
-        return {}
-    method = getattr(tv, method_name, None)
-    if method is None or not callable(method):
-        return {}
-    wanted_ids = frozenset(getattr(rule.source, "rule_ids", ()))
-    try:
-        # validate_config takes a file path, not a directory
-        target: Path = (
-            (workspace_root / "pyproject.toml")
-            if method_name == "validate_config"
-            else workspace_root
-        )
-        result = method(target)
-    except Exception:  # pragma: no cover - defensive
-        return {}
-    if getattr(result, "failure", False):
-        return {}
-    scan = getattr(result, "value", None)
-    if scan is None:
-        return {}
-    grouped: dict[str, list[p.AttributeProbe]] = {}
-    for violation in getattr(scan, "violations", ()):
-        if wanted_ids and getattr(violation, "rule_id", "") not in wanted_ids:
-            continue
-        # Derive the owning project from the file path's first path segment
-        # relative to the workspace root.
-        file_path = getattr(violation, "file_path", None)
-        project = "workspace"
-        if file_path is not None:
-            try:
-                rel = Path(file_path).resolve().relative_to(workspace_root)
-                project = rel.parts[0] if rel.parts else "workspace"
-            except ValueError:
-                project = "workspace"
-        grouped.setdefault(project, []).append(violation)
-    return grouped
+        pass
+    else:
+        tv = getattr(validator_mod, "FlextTestsValidator", None)
+        if tv is not None:
+            method_name = getattr(rule.source, "method", "")
+            if method_name and not method_name.startswith("_"):
+                method = getattr(tv, method_name, None)
+                if method is not None and callable(method):
+                    wanted_ids = frozenset(getattr(rule.source, "rule_ids", ()))
+                    try:
+                        # validate_config takes a file path, not a directory
+                        target: Path = (
+                            (workspace_root / "pyproject.toml")
+                            if method_name == "validate_config"
+                            else workspace_root
+                        )
+                        call_result = method(target)
+                    except Exception:  # pragma: no cover - defensive
+                        pass
+                    else:
+                        if not getattr(call_result, "failure", False):
+                            scan = getattr(call_result, "value", None)
+                            if scan is not None:
+                                grouped: dict[str, list[p.AttributeProbe]] = {}
+                                for violation in getattr(scan, "violations", ()):
+                                    if wanted_ids and getattr(violation, "rule_id", "") not in wanted_ids:
+                                        continue
+                                    # Derive the owning project from the file path's first path segment
+                                    # relative to the workspace root.
+                                    file_path = getattr(violation, "file_path", None)
+                                    project = "workspace"
+                                    if file_path is not None:
+                                        try:
+                                            rel = Path(file_path).resolve().relative_to(workspace_root)
+                                            project = rel.parts[0] if rel.parts else "workspace"
+                                        except ValueError:
+                                            project = "workspace"
+                                    grouped.setdefault(project, []).append(violation)
+                                result = grouped
+    return result
 
 
 def _build_items(
