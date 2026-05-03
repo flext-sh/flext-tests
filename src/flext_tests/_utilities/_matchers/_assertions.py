@@ -31,7 +31,7 @@ class FlextTestsMatchersAssertionsMixin:
         )
 
     @staticmethod
-    def _assert_len_match(
+    def assert_len_match(
         *,
         payload: t.Tests.TestobjectSerializable,
         sized: p.AttributeProbe,

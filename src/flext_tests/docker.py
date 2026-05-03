@@ -80,6 +80,30 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         u.Field(description="Configured Docker target used by the public DSL."),
     ] = None
 
+    @staticmethod
+    def _resolve_shared_target_config(
+        container_name: str,
+        workspace_root: Path,
+    ) -> m.Tests.ContainerConfig:
+        """Resolve one shared-container entry into the canonical target config."""
+        settings = c.Tests.SHARED_CONTAINERS.get(container_name)
+        if settings is None:
+            msg = f"Unknown shared container: {container_name}"
+            raise ValueError(msg)
+        target = m.Tests.ContainerConfig.model_validate({
+            **settings,
+            "compose_file": Path(str(settings.get("compose_file", ""))),
+        })
+        compose_path = target.compose_file
+        if not compose_path.is_absolute():
+            compose_path = workspace_root / compose_path
+        return target.model_copy(
+            update={
+                "container_name": container_name,
+                "compose_file": compose_path,
+            },
+        )
+
     @classmethod
     def shared(
         cls,
@@ -90,30 +114,12 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     ) -> Self:
         """Build a DSL-configured service from a shared container constant."""
         resolved_root = workspace_root or Path.cwd()
-        settings = c.Tests.SHARED_CONTAINERS.get(container_name)
-        if settings is None:
-            msg = f"Unknown shared container: {container_name}"
-            raise ValueError(msg)
-        compose_path = Path(str(settings.get("compose_file", "")))
-        if not compose_path.is_absolute():
-            compose_path = resolved_root / compose_path
-        port_value = settings.get("port")
-        port = (
-            port_value
-            if isinstance(port_value, int)
-            else int(str(port_value))
-            if str(port_value).isdigit()
-            else None
-        )
         return cls(
             workspace_root=resolved_root,
             worker_id=worker_id or "master",
-            target_config=m.Tests.ContainerConfig(
-                container_name=container_name,
-                compose_file=compose_path,
-                service=str(settings.get("service", "")),
-                host=str(settings.get("host", c.LOCALHOST)),
-                port=port,
+            target_config=cls._resolve_shared_target_config(
+                container_name,
+                resolved_root,
             ),
         )
 
@@ -337,21 +343,22 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         """Clean up all dirty containers by recreating them with fresh volumes."""
         cleaned: MutableSequence[str] = []
         for container_name in list(self.dirty_container_names):
-            settings = c.Tests.SHARED_CONTAINERS.get(container_name)
-            if not settings:
+            with contextlib.suppress(ValueError):
+                target = self._resolve_shared_target_config(
+                    container_name,
+                    self.workspace_root,
+                )
+                self.logger.info("Recreating dirty container", container=container_name)
+                _ = self.compose_down(str(target.compose_file))
+                result = self.compose_up(
+                    str(target.compose_file),
+                    target.service,
+                    force_recreate=True,
+                )
+                if result.success:
+                    _ = self.mark_container_clean(container_name)
+                    cleaned.append(container_name)
                 continue
-            compose_file = str(settings.get("compose_file", ""))
-            if not compose_file:
-                continue
-            if not Path(compose_file).is_absolute():
-                compose_file = str(self.workspace_root / compose_file)
-            service = str(settings.get("service", ""))
-            self.logger.info("Recreating dirty container", container=container_name)
-            _ = self.compose_down(compose_file)
-            result = self.compose_up(compose_file, service, force_recreate=True)
-            if result.success:
-                _ = self.mark_container_clean(container_name)
-                cleaned.append(container_name)
         return r[t.StrSequence].ok(cleaned)
 
     def compose_down(self, compose_file: str) -> p.Result[str]:

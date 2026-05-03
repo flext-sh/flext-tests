@@ -24,14 +24,12 @@ class FlextTestsConstantsDocker:
             "service": "openldap",
             "port": 3390,
             "host": "localhost",
-            "container_name": "flext-openldap-test",
         },
         "flext-oracle-db-test": {
             "compose_file": "docker/docker-compose.oracle-db.yml",
             "service": "oracle-db",
             "port": 1521,
             "host": "localhost",
-            "container_name": "flext-oracle-db-test",
         },
     }
 

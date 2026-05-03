@@ -190,9 +190,7 @@ def pytest_configure(config: pytest.Config) -> None:
         if not category:
             continue
         action = (
-            "error"
-            if cfg.strict and rule.promote_to_error_when_strict
-            else "default"
+            "error" if cfg.strict and rule.promote_to_error_when_strict else "default"
         )
         config.addinivalue_line("filterwarnings", f"{action}::{category}")
 
@@ -319,7 +317,8 @@ def _load_infra_report(
         report = enforcer.enforce()
     except Exception:  # pragma: no cover - defensive: propagate as no-op
         return None
-    return report
+    report_obj: object = report
+    return report_obj
 
 
 def _iter_infra_violations(

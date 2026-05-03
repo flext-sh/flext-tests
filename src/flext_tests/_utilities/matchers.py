@@ -63,7 +63,7 @@ from collections.abc import (
 )
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
-from typing import TypeIs, overload
+from typing import TypeIs
 
 from flext_core.utilities import u
 from flext_tests._utilities._matchers._assertions import (
@@ -540,19 +540,6 @@ class FlextTestsMatchersUtilities(
                 return err
 
             @staticmethod
-            @overload
-            def ok[TResult](
-                result: p.Result[TResult],
-            ) -> TResult: ...
-
-            @staticmethod
-            @overload
-            def ok[TResult](
-                result: p.Result[TResult],
-                **kwargs: t.Tests.MatcherKwargValue,
-            ) -> TResult | t.Tests.TestobjectSerializable: ...
-
-            @staticmethod
             def ok[TResult](
                 result: p.Result[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
@@ -665,7 +652,7 @@ class FlextTestsMatchersUtilities(
                     is_type = params.is_ if not isinstance(params.is_, tuple) else None
                     result_payload = FlextTestsPayloadUtilities.to_payload(result_value)
                     eq_payload, ne_payload = (
-                        FlextTestsMatchersUtilities._prepare_eq_ne_payloads(
+                        FlextTestsMatchersUtilities.prepare_eq_ne_payloads(
                             result_payload,
                             params.eq,
                             params.ne,
@@ -718,7 +705,7 @@ class FlextTestsMatchersUtilities(
                     params.is_ is not None
                     and isinstance(params.is_, tuple)
                     and not any(
-                        FlextTestsMatchersUtilities._matches_runtime_type(
+                        FlextTestsMatchersUtilities.matches_runtime_type(
                             result_value,
                             expected_type,
                         )
@@ -742,7 +729,7 @@ class FlextTestsMatchersUtilities(
                     result_value,
                 )
                 if params.len is not None:
-                    FlextTestsMatchersUtilities._assert_len_match(
+                    FlextTestsMatchersUtilities.assert_len_match(
                         payload=result_payload,
                         sized=result_value,
                         length_spec=params.len,
@@ -1065,7 +1052,7 @@ class FlextTestsMatchersUtilities(
                         and value_type_name == "ObjectList"
                     )
                     matches_declared_type = any(
-                        FlextTestsMatchersUtilities._matches_runtime_type(
+                        FlextTestsMatchersUtilities.matches_runtime_type(
                             value,
                             expected_type,
                         )
@@ -1088,7 +1075,7 @@ class FlextTestsMatchersUtilities(
                         else (params.not_,)
                     )
                     if any(
-                        FlextTestsMatchersUtilities._matches_runtime_type(
+                        FlextTestsMatchersUtilities.matches_runtime_type(
                             value,
                             forbidden_type,
                         )
@@ -1192,7 +1179,7 @@ class FlextTestsMatchersUtilities(
                     eq_value = raw_eq if "eq" in kwargs else params.eq
                     ne_value = raw_ne if "ne" in kwargs else params.ne
                     eq_payload, ne_payload = (
-                        FlextTestsMatchersUtilities._prepare_eq_ne_payloads(
+                        FlextTestsMatchersUtilities.prepare_eq_ne_payloads(
                             subject_payload,
                             eq_value,
                             ne_value,
@@ -1255,7 +1242,7 @@ class FlextTestsMatchersUtilities(
                 )
                 value_payload = subject_payload
                 if params.len is not None:
-                    FlextTestsMatchersUtilities._assert_len_match(
+                    FlextTestsMatchersUtilities.assert_len_match(
                         payload=value_payload,
                         sized=subject_payload,
                         length_spec=params.len,

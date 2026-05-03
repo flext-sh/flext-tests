@@ -1184,6 +1184,8 @@ class FlextTestsFiles(s):
                         key_count = len(parsed_mapping)
                     case list() as parsed_list:
                         item_count = len(parsed_list)
+                    case _:
+                        pass
             case "csv":
                 rows: list[list[str]] = []
                 try:
@@ -1193,6 +1195,8 @@ class FlextTestsFiles(s):
                 if rows:
                     row_count = len(rows)
                     column_count = len(rows[0]) if rows[0] else 0
+            case _:
+                pass
         if validate_model is not None:
             if parsed_mapping is not None:
                 model_valid = (

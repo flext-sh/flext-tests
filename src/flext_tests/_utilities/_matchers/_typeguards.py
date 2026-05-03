@@ -29,14 +29,14 @@ class FlextTestsMatchersTypeGuardsMixin:
     )
 
     @staticmethod
-    def _matches_runtime_type(
+    def matches_runtime_type(
         value: p.AttributeProbe,
         expected_type: type | tuple[type, ...],
     ) -> bool:
         """Check runtime type compatibility using flext-core guards."""
         if isinstance(expected_type, tuple):
             return any(
-                FlextTestsMatchersTypeGuardsMixin._matches_runtime_type(value, item)
+                FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(value, item)
                 for item in expected_type
             )
         return u.instance_of(value, expected_type)
@@ -51,7 +51,7 @@ class FlextTestsMatchersTypeGuardsMixin:
         )
 
     @staticmethod
-    def _prepare_eq_ne_payloads(
+    def prepare_eq_ne_payloads(
         actual_payload: t.Tests.TestobjectSerializable,
         eq_value: t.Tests.MatcherKwargValue | t.Tests.TestobjectSerializable | None,
         ne_value: t.Tests.MatcherKwargValue | t.Tests.TestobjectSerializable | None,
