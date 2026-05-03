@@ -8,7 +8,6 @@ from collections.abc import (
 
 from flext_core import r
 from flext_tests._typings.base import FlextTestsBaseTypesMixin
-from flext_tests.models import FlextTestsModels as m
 from flext_tests.protocols import FlextTestsProtocols as p
 from flext_tests.typings import FlextTestsTypes as t
 
@@ -139,27 +138,3 @@ class FlextTestsGenericHelpersUtilitiesMixin:
                 return r[T].ok(default_on_none)
             return r[T].fail(error_on_none)
         return r[T].ok(value)
-
-    @staticmethod
-    def validate_model_attributes(
-        model: m.BaseModel,
-        required_attrs: t.StrSequence,
-        optional_attrs: t.StrSequence | None = None,
-    ) -> p.Result[bool]:
-        """Validate model has required attributes.
-
-        Args:
-            model: Model t.JsonValue to validate
-            required_attrs: List of required attribute names
-            optional_attrs: Optional list of optional attribute names
-
-        Returns:
-            r[TEntity]: Result containing created entity or error
-            r with True if all required attrs exist
-
-        """
-        _ = optional_attrs
-        missing = [attr for attr in required_attrs if not hasattr(model, attr)]
-        if missing:
-            return r[bool].fail(f"Missing required attributes: {missing}")
-        return r[bool].ok(value=True)

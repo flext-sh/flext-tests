@@ -19,7 +19,7 @@ from collections.abc import (
 
 import pytest
 
-from flext_core import FlextContainer, FlextSettings
+from flext_core import FlextContainer, FlextSettings, t
 
 
 @pytest.fixture(autouse=True)
@@ -62,9 +62,12 @@ def settings_factory() -> Callable[..., FlextSettings]:
 
     def _create[TSettings: FlextSettings](
         settings_cls: type[TSettings],
-        **overrides: str | float | bool | None,
+        **overrides: t.Scalar | None,
     ) -> TSettings:
         settings_cls.reset_for_testing()
-        return settings_cls(**{k: v for k, v in overrides.items() if v is not None})
+        filtered_overrides: dict[str, t.Scalar] = {
+            key: value for key, value in overrides.items() if value is not None
+        }
+        return settings_cls.fetch_global(overrides=filtered_overrides)
 
     return _create

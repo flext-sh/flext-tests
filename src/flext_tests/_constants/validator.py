@@ -153,26 +153,9 @@ class FlextTestsConstantsValidator:
         return rule
 
     # Messages
-    VALIDATOR_MSG_VIOLATION: Final[str] = "{rule_id} at {file}:{line}"
-    VALIDATOR_MSG_VIOLATION_DETAIL: Final[str] = (
-        "{rule_id}: {description} at {file}:{line}"
-    )
-    VALIDATOR_MSG_VIOLATION_WITH_SNIPPET: Final[str] = (
-        "{rule_id}: {description}\n  → {snippet}"
-    )
-    VALIDATOR_MSG_SCAN_COMPLETE: Final[str] = (
-        "Scanned {count} files, found {violations} violations"
-    )
-    VALIDATOR_MSG_SCAN_PASSED: Final[str] = (
-        "Validation passed: {count} files, 0 violations"
-    )
-    VALIDATOR_MSG_SCAN_FAILED: Final[str] = (
-        "Validation failed: {violations} violations in {count} files"
-    )
     VALIDATOR_MSG_LAYER_VIOLATION: Final[str] = (
         "'{current}' L{current_level} -> '{imported}' L{imported_level}"
     )
-    VALIDATOR_MSG_IMPORT_NON_ROOT: Final[str] = "Non-root import: from {module}"
     VALIDATOR_MSG_CONFIG_IGNORE: Final[str] = (
         "ignore_errors = true for module '{module}'"
     )
@@ -193,7 +176,6 @@ class FlextTestsConstantsValidator:
     VALIDATOR_MSG_TYPE_BOOL_IS_HELPER: Final[str] = (
         "bool-returning is_* helper '{name}'"
     )
-    VALIDATOR_MSG_BYPASS_EXCEPTION: Final[str] = "Exception swallowing: {pattern}"
     VALIDATOR_MSG_BYPASS_BARE_EXCEPT: Final[str] = "bare except"
     VALIDATOR_MSG_BYPASS_ONLY_PASS: Final[str] = "except with only pass"
     VALIDATOR_MSG_MD_SYNTAX: Final[str] = "SyntaxError in code block: {msg}"

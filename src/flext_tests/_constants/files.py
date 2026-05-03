@@ -126,4 +126,5 @@ class FlextTestsConstantsFiles:
             Format string or "text" as default.
 
         """
-        return cls.EXT_TO_FMT.get(extension.lower(), "text")
+        format_name = cls.EXT_TO_FMT.get(extension.lower())
+        return format_name if isinstance(format_name, str) else "text"

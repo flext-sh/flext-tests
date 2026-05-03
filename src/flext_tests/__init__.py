@@ -266,6 +266,7 @@ __all__: list[str] = [
     "FlextTestsConstantsDataCases",
     "FlextTestsConstantsDocker",
     "FlextTestsConstantsFiles",
+    "FlextTestsConstantsMatcher",
     "FlextTestsConstantsValidator",
     "FlextTestsContainerHelpersUtilitiesMixin",
     "FlextTestsDocker",

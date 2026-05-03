@@ -22,7 +22,7 @@ from contextlib import contextmanager, nullcontext
 from pathlib import Path
 from typing import TypeVar, overload
 
-from flext_core import u
+from flext_core import FlextProtocolsResult, u
 from flext_tests import (
     FlextTestsConfigHelpersUtilitiesMixin,
     FlextTestsMatchersAssertionsMixin,
@@ -473,22 +473,22 @@ class FlextTestsMatchersUtilities(
 
             @staticmethod
             @overload
-            def ok(
-                result: p.Result[TResult],
-            ) -> TResult: ...
+            def ok[TOkResult](
+                result: FlextProtocolsResult.Result[TOkResult],
+            ) -> TOkResult: ...
 
             @staticmethod
             @overload
-            def ok(
-                result: p.Result[TResult],
+            def ok[TOkResult](
+                result: FlextProtocolsResult.Result[TOkResult],
                 **kwargs: t.Tests.MatcherKwargValue,
-            ) -> TResult | t.Tests.TestobjectSerializable: ...
+            ) -> TOkResult | t.Tests.TestobjectSerializable: ...
 
             @staticmethod
-            def ok(
-                result: p.Result[TResult],
+            def ok[TOkResult](
+                result: FlextProtocolsResult.Result[TOkResult],
                 **kwargs: t.Tests.MatcherKwargValue,
-            ) -> TResult | t.Tests.TestobjectSerializable:
+            ) -> TOkResult | t.Tests.TestobjectSerializable:
                 """Enhanced assertion for r success with optional value validation.
 
                 Args:
@@ -506,7 +506,7 @@ class FlextTestsMatchersUtilities(
                     params = m.Tests.OkParams.model_validate(kwargs)
                 except c.EXC_BASIC_TYPE as exc:
                     raise ValueError(f"Parameter validation failed: {exc}") from exc
-                result_value: TResult | t.Tests.TestobjectSerializable = (
+                result_value: TOkResult | t.Tests.TestobjectSerializable = (
                     FlextTestsResultUtilitiesMixin.assert_success(
                         result,
                         error_msg=params.msg,

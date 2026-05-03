@@ -104,18 +104,22 @@ class FlextTestsBatchModelsMixin:
         @property
         def failure_count(self) -> int:
             """Alias for failed count."""
-            return self.failed
+            failed_count: int = self.failed
+            return failed_count
 
         @u.computed_field()
         @property
         def success_count(self) -> int:
             """Alias for succeeded count."""
-            return self.succeeded
+            succeeded_count: int = self.succeeded
+            return succeeded_count
 
         @u.computed_field()
         @property
         def success_rate(self) -> float:
             """Compute success rate as percentage."""
-            if self.total == 0:
+            total: int = self.total
+            if total == 0:
                 return 0.0
-            return (self.succeeded / self.total) * 100.0
+            succeeded: int = self.succeeded
+            return (succeeded / total) * 100.0
