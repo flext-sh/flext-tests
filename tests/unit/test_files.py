@@ -349,7 +349,8 @@ class TestsFlextTestsFiles:
         content: m.ConfigMap = m.ConfigMap(root={"key": "value", "number": 42})
         path = manager.create(content, "settings.json")
         tm.that(path.exists(), eq=True)
-        data = u.Cli.json_read(path).unwrap_or({})
+        empty_data: t.JsonMapping = {}
+        data = u.Cli.json_read(path).unwrap_or(empty_data)
         tm.that(data, eq=content.root)
 
     def test_create_yaml_auto_detect_from_extension(self, tmp_path: Path) -> None:
@@ -358,7 +359,8 @@ class TestsFlextTestsFiles:
         content: m.ConfigMap = m.ConfigMap(root={"name": "test", "enabled": True})
         path = manager.create(content, "settings.yaml")
         tm.that(path.exists(), eq=True)
-        data = u.Cli.yaml_parse(path.read_text()).unwrap_or({})
+        empty_data: t.JsonMapping = {}
+        data = u.Cli.yaml_parse(path.read_text()).unwrap_or(empty_data)
         tm.that(data, eq=content.root)
 
     def test_create_csv_auto_detect_from_list(self, tmp_path: Path) -> None:
@@ -681,7 +683,8 @@ class TestsFlextTestsFiles:
         content = m.ConfigMap(root={"key": "value"})
         with tf.files({"settings": content}) as paths:
             tm.that(paths["settings"].suffix, eq=".json")
-            data = u.Cli.json_read(paths["settings"]).unwrap_or({})
+            empty_data: t.JsonMapping = {}
+            data = u.Cli.json_read(paths["settings"]).unwrap_or(empty_data)
             tm.that(data, eq=content.root)
 
     def test_files_context_manager_mixed_types(self) -> None:
@@ -1020,7 +1023,8 @@ class TestsFlextTestsFiles:
             m.ConfigMap(root={"key": "value"}), "settings.json"
         )
         tm.that(path.exists(), eq=True)
-        content = u.Cli.json_read(path).unwrap_or({})
+        empty_content: t.JsonMapping = {}
+        content = u.Cli.json_read(path).unwrap_or(empty_content)
         tm.that(content, eq={"key": "value"})
 
     def test_create_in_yaml_content(self, tmp_path: Path) -> None:
@@ -1030,7 +1034,8 @@ class TestsFlextTestsFiles:
             "settings.yaml",
         )
         tm.that(path.exists(), eq=True)
-        content = u.Cli.yaml_parse(path.read_text()).unwrap_or({})
+        empty_content: t.JsonMapping = {}
+        content = u.Cli.yaml_parse(path.read_text()).unwrap_or(empty_content)
         tm.that(content, eq={"setting": True})
 
     def test_create_in_pydantic_model(self, tmp_path: Path) -> None:
@@ -1043,7 +1048,8 @@ class TestsFlextTestsFiles:
         user = UserModel(name="Alice", age=30)
         path = tf(base_dir=tmp_path).create(user, "user.json")
         tm.that(path.exists(), eq=True)
-        content = u.Cli.json_read(path).unwrap_or({})
+        empty_content: t.JsonMapping = {}
+        content = u.Cli.json_read(path).unwrap_or(empty_content)
         expected: t.Tests.TestobjectSerializable = {"name": "Alice", "age": 30}
         tm.that(content, eq=expected)
 
@@ -1074,7 +1080,8 @@ class TestsFlextTestsFiles:
         result = r[m.ConfigMap].ok(m.ConfigMap(root={"status": "success"}))
         path = tf(base_dir=tmp_path).create(result, "result.json")
         tm.that(path.exists(), eq=True)
-        content = u.Cli.json_read(path).unwrap_or({})
+        empty_content: t.JsonMapping = {}
+        content = u.Cli.json_read(path).unwrap_or(empty_content)
         tm.that(content, eq={"status": "success"})
 
     def test_create_in_custom_format(self, tmp_path: Path) -> None:
