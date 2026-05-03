@@ -1,0 +1,14 @@
+src/flext_tests/_utilities/matchers.py
+  h_9db9d35f50cf33 66,542-553
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "0cc80f409ef0fca6cbf8711deca5abc12b66304d",
+  "prompts": {},
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
