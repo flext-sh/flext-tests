@@ -1,0 +1,24 @@
+src/flext_tests/docker.py
+  h_9db9d35f50cf33 83-88,93-106,120,122,346-352,354-358,360
+src/flext_tests/_utilities/_matchers/_assertions.py
+  h_9db9d35f50cf33 34
+src/flext_tests/_utilities/matchers.py
+  h_9db9d35f50cf33 655,708,732,1055,1078,1182,1245
+src/flext_tests/_fixtures/enforcement.py
+  h_9db9d35f50cf33 320-321
+src/flext_tests/files.py
+  h_9db9d35f50cf33 1187-1188,1198-1199
+src/flext_tests/_utilities/_matchers/_typeguards.py
+  h_9db9d35f50cf33 32,39,54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "19a82a823435bdeb41f3c685a4c5bf65d5d9ce8e",
+  "prompts": {},
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
