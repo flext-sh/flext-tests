@@ -1,0 +1,56 @@
+src/flext_tests/_typings/base.py
+  h_9db9d35f50cf33 26,65
+src/flext_tests/models.py
+  h_9db9d35f50cf33 12-19
+src/flext_tests/_validator/bypass.py
+  h_9db9d35f50cf33 39-41,44,48-55,58,62,78-80,99,101,108-109
+src/flext_tests/_utilities/validator.py
+  h_9db9d35f50cf33 7,73-81,88,96,103,105,156-202
+src/flext_tests/_models/matchers.py
+  h_9db9d35f50cf33 78-79,140-141,237-238,322-323,348-350
+tests/unit/test_validator_layer_tests_markdown.py
+  h_9db9d35f50cf33 1-111
+src/flext_tests/_validator/layer.py
+  h_9db9d35f50cf33 39-62,80,83-84,89
+src/flext_tests/_validator/types.py
+  h_9db9d35f50cf33 32-34,47,50,57-66,68-76,90-93,120-123,131,135,139,143,147,155,161-162,187,208-210,213,216-217,219-220,223,227-228,232,236,242-243,258,269,291
+tests/unit/test_matchers.py
+  h_9db9d35f50cf33 126,131,138,141,650
+src/flext_tests/protocols.py
+  h_9db9d35f50cf33 12-13
+src/flext_tests/_constants/matcher.py
+  h_9db9d35f50cf33 9-10,49
+src/flext_tests/_utilities/matchers.py
+  h_9db9d35f50cf33 409,414,609-620,1092-1103
+src/flext_tests/typings.py
+  h_9db9d35f50cf33 12-16
+src/flext_tests/utilities.py
+  h_9db9d35f50cf33 3,12,26-27,29-30
+src/flext_tests/_validator/imports.py
+  h_9db9d35f50cf33 39-40,42-44,47,50,67,71-72,98-99,103-117,120,123-124,141,145-147,184-185,187,189,191
+src/flext_tests/constants.py
+  h_9db9d35f50cf33 12
+src/flext_tests/_constants/validator.py
+  h_9db9d35f50cf33 155-159,195-268,270-284
+tests/unit/test_validator_imports_bypass.py
+  h_9db9d35f50cf33 1-133
+src/flext_tests/_typings/matchers.py
+  h_9db9d35f50cf33 15,42,48
+src/flext_tests/files.py
+  h_9db9d35f50cf33 40
+src/flext_tests/_validator/markdown.py
+  h_9db9d35f50cf33 30,69
+src/flext_tests/_validator/tests.py
+  h_9db9d35f50cf33 31-55,72-80,84,87-88,90-92,94-99,119,123,125,127-131,133-134,137,141,160,162-165,182
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "212aece6a6e093da7b9083bc64c2a930b554bb90",
+  "prompts": {},
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  }
+}
