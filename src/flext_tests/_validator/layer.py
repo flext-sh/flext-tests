@@ -8,7 +8,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import ast
 from collections.abc import (
     MutableSequence,
 )
@@ -37,6 +36,31 @@ class FlextValidatorLayer:
         return parts[-1]
 
     @classmethod
+    def _imported_modules(cls, line: str) -> tuple[str, ...]:
+        """Return imported module stems referenced by one import line."""
+        from_match = c.Tests.VALIDATOR_FROM_IMPORT_LINE_RE.match(line)
+        if from_match is not None and u.Tests.code_match(
+            line,
+            c.Tests.VALIDATOR_FROM_IMPORT_LINE_RE,
+        ):
+            module = from_match.group("module").lstrip(".")
+            return (cls._extract_module_name(module),) if module else ()
+
+        import_match = c.Tests.VALIDATOR_IMPORT_LINE_RE.match(line)
+        if import_match is None or not u.Tests.code_match(
+            line,
+            c.Tests.VALIDATOR_IMPORT_LINE_RE,
+        ):
+            return ()
+
+        modules: list[str] = []
+        for target in u.Tests.split_import_targets(import_match.group("modules")):
+            module = target.lstrip(".")
+            if module:
+                modules.append(cls._extract_module_name(module))
+        return tuple(modules)
+
+    @classmethod
     def _scan_file(
         cls,
         file_path: Path,
@@ -53,18 +77,16 @@ class FlextValidatorLayer:
             return violations
         try:
             content = file_path.read_text(encoding=c.Tests.DEFAULT_ENCODING)
-            tree = ast.parse(content, filename=str(file_path))
-        except (SyntaxError, UnicodeDecodeError, OSError):
+        except (UnicodeDecodeError, OSError):
             return violations
         lines = content.splitlines()
-        for node in ast.walk(tree):
-            if isinstance(node, ast.ImportFrom) and node.module:
-                imported_module = cls._extract_module_name(node.module)
+        for line_number, line in enumerate(lines, start=1):
+            for imported_module in cls._imported_modules(line):
                 imported_layer = hierarchy.get(imported_module)
                 if imported_layer is not None and imported_layer > current_layer:
                     violation = u.Tests.create_violation(
                         file_path,
-                        node.lineno,
+                        line_number,
                         "LAYER-001",
                         lines,
                         c.Tests.VALIDATOR_MSG_LAYER_VIOLATION.format(

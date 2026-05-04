@@ -9,14 +9,14 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_cli import c
+from flext_infra import c
 from flext_tests import (
+    FlextTestsConstantsDataCases,
     FlextTestsConstantsDocker,
     FlextTestsConstantsFiles,
     FlextTestsConstantsMatcher,
     FlextTestsConstantsValidator,
 )
-from flext_tests._constants.data_cases import FlextTestsConstantsDataCases
 
 
 class FlextTestsConstants(c):

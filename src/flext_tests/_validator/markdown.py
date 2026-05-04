@@ -11,7 +11,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import ast
 from collections.abc import (
     MutableSequence,
 )
@@ -28,7 +27,7 @@ class FlextValidatorMarkdown:
     """Markdown Python code block validator.
 
     Validates ```python blocks in .md files via c.Tests constants
-    and ``ast.parse`` for Python code parsing.
+    and built-in compilation for Python syntax validation.
     """
 
     @classmethod
@@ -67,7 +66,7 @@ class FlextValidatorMarkdown:
             block_start = content[: match.start()].count("\n") + 1
 
             try:
-                ast.parse(code)
+                compile(code, str(file_path), "exec")
             except SyntaxError:
                 violations.append(
                     u.Tests.create_violation(

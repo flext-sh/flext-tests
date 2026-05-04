@@ -406,14 +406,12 @@ class FlextTestsMatchersUtilities(
                                 suffix=params.ends,
                             ),
                         )
-                    if params.match is not None and (
-                        not u.chk(err, m.GuardCheckSpec(match=params.match))
-                    ):
+                    if params.match is not None and params.match.search(err) is None:
                         raise AssertionError(
                             params.msg
                             or c.Tests.ERR_NOT_MATCHES.format(
                                 text=err,
-                                pattern=params.match,
+                                pattern=params.match.pattern,
                             ),
                         )
                 if params.code is not None:
@@ -601,7 +599,6 @@ class FlextTestsMatchersUtilities(
                             "lte": params.lte,
                             "starts": params.starts,
                             "ends": params.ends,
-                            "match": params.match,
                         }),
                     ):
                         error_msg = (
@@ -609,6 +606,18 @@ class FlextTestsMatchersUtilities(
                             or f"Value {result_value!r} did not satisfy constraints"
                         )
                         raise AssertionError(error_msg)
+                    if (
+                        params.match is not None
+                        and isinstance(result_payload, str)
+                        and params.match.search(result_payload) is None
+                    ):
+                        raise AssertionError(
+                            params.msg
+                            or c.Tests.ERR_NOT_MATCHES.format(
+                                text=result_payload,
+                                pattern=params.match.pattern,
+                            ),
+                        )
                 if (
                     params.is_ is not None
                     and isinstance(params.is_, tuple)
@@ -1073,7 +1082,6 @@ class FlextTestsMatchersUtilities(
                             "empty": params.empty,
                             "starts": params.starts,
                             "ends": params.ends,
-                            "match": params.match,
                         }),
                     ):
                         error_msg = (
@@ -1081,6 +1089,18 @@ class FlextTestsMatchersUtilities(
                             or f"Assertion failed: {subject_payload!r} did not satisfy constraints"
                         )
                         raise AssertionError(error_msg)
+                    if (
+                        params.match is not None
+                        and isinstance(subject_payload, str)
+                        and params.match.search(subject_payload) is None
+                    ):
+                        raise AssertionError(
+                            params.msg
+                            or c.Tests.ERR_NOT_MATCHES.format(
+                                text=subject_payload,
+                                pattern=params.match.pattern,
+                            ),
+                        )
                 # is_/not_ checks are handled early (before result
                 # detection) to avoid _to_test_payload coercion issues.
                 effective_has = (

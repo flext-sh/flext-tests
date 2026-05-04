@@ -6,7 +6,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Final
+import re
+from typing import ClassVar, Final
 
 
 class FlextTestsConstantsMatcher:
@@ -45,3 +46,4 @@ class FlextTestsConstantsMatcher:
     )
     ERR_SCOPE_CLEANUP_FAILED: Final[str] = "Cleanup function failed in scope: {error}"
     EMAIL_PATTERN: Final[str] = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+    EMAIL_PATTERN_RE: ClassVar[re.Pattern[str]] = re.compile(EMAIL_PATTERN)

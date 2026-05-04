@@ -25,6 +25,12 @@ if _t.TYPE_CHECKING:
     from tests.unit.test_files import TestsFlextTestsFiles
     from tests.unit.test_matchers import TestsFlextTestsMatchers
     from tests.unit.test_utilities import TestsFlextTestsUtilitiesUnit
+    from tests.unit.test_validator_imports_bypass import (
+        TestsFlextTestsValidatorImportsBypass,
+    )
+    from tests.unit.test_validator_layer_tests_markdown import (
+        TestsFlextTestsValidatorLayerTestsMarkdown,
+    )
     from tests.unit.test_validator_types import TestsFlextTestsValidatorTypes
     from tests.utilities import TestsFlextTestsUtilities, u
 _LAZY_IMPORTS = merge_lazy_imports(
@@ -58,6 +64,12 @@ _LAZY_IMPORTS = merge_lazy_imports(
             ".unit.test_files": ("TestsFlextTestsFiles",),
             ".unit.test_matchers": ("TestsFlextTestsMatchers",),
             ".unit.test_utilities": ("TestsFlextTestsUtilitiesUnit",),
+            ".unit.test_validator_imports_bypass": (
+                "TestsFlextTestsValidatorImportsBypass",
+            ),
+            ".unit.test_validator_layer_tests_markdown": (
+                "TestsFlextTestsValidatorLayerTestsMarkdown",
+            ),
             ".unit.test_validator_types": ("TestsFlextTestsValidatorTypes",),
             ".utilities": (
                 "TestsFlextTestsUtilities",
@@ -115,6 +127,8 @@ __all__: list[str] = [
     "TestsFlextTestsTypes",
     "TestsFlextTestsUtilities",
     "TestsFlextTestsUtilitiesUnit",
+    "TestsFlextTestsValidatorImportsBypass",
+    "TestsFlextTestsValidatorLayerTestsMarkdown",
     "TestsFlextTestsValidatorTypes",
     "c",
     "d",

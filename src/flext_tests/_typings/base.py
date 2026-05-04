@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import re
 import types as _bt
 from collections.abc import (
     ItemsView,
@@ -24,6 +23,7 @@ from types import FrameType, GenericAlias, ModuleType
 
 from flext_cli import t
 from flext_core import m, p
+from flext_infra import t as it
 
 
 class FlextTestsBaseTypesMixin:
@@ -62,7 +62,7 @@ class FlextTestsBaseTypesMixin:
         | p.Settings
         | p.Context
         | p.Registry
-        | re.Match[str]
+        | it.Infra.RegexMatch
         | _bt.UnionType
         | FrameType
         | ModuleType

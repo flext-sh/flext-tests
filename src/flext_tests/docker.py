@@ -33,9 +33,7 @@ from docker.errors import DockerException, NotFound
 from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
-from flext_tests import c, m, p, r, t, u
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
-from flext_tests.base import s
+from flext_tests import FlextTestsBaseTypesMixin, c, m, p, r, s, t, u
 
 
 class FlextTestsDocker(s[m.Tests.ContainerInfo]):

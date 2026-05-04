@@ -13,8 +13,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_tests import p, r, t
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests import FlextTestsBaseTypesMixin, p, r, t
 
 _NO_BODY: FlextTestsBaseTypesMixin.TestobjectSerializable = None
 

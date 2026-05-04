@@ -8,8 +8,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import ast
-import re
 from collections.abc import (
     MutableSequence,
 )
@@ -31,23 +29,14 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
     _VALIDATOR_KEY = c.Tests.VALIDATOR_TYPES_KEY
 
     @staticmethod
-    def _annotation_names(node: ast.AST, names: frozenset[str]) -> set[str]:
-        """Return matching typing symbols referenced anywhere inside one annotation."""
-        matches: set[str] = set()
-        for child in ast.walk(node):
-            if isinstance(child, ast.Name) and child.id in names:
-                matches.add(child.id)
-            elif isinstance(child, ast.Attribute) and child.attr in names:
-                matches.add(child.attr)
-            elif isinstance(child, ast.Constant) and child.value in names:
-                matches.add(str(child.value))
-        return matches
+    def _match_names(line: str, pattern: t.Infra.RegexPattern) -> tuple[str, ...]:
+        """Collect distinct named regex matches from one line."""
+        return tuple(sorted({match.group("name") for match in pattern.finditer(line)}))
 
     @classmethod
     def _check_legacy_typing_factories(
         cls,
         file_path: Path,
-        tree: ast.AST,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
@@ -55,53 +44,42 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         if u.Tests.approved("TYPE-004", file_path, approved):
             return []
 
-        def _emit(line: int, name: str) -> m.Tests.Violation:
+        def _emit(line_number: int, name: str) -> m.Tests.Violation:
             return u.Tests.create_violation(
                 file_path,
-                line,
+                line_number,
                 "TYPE-004",
                 lines,
                 c.Tests.VALIDATOR_MSG_TYPE_LEGACY_FACTORY.format(name=name),
             )
 
         violations: MutableSequence[m.Tests.Violation] = []
-        for node in ast.walk(tree):
-            match node:
-                case ast.Call(func=func):
-                    violations.extend(
-                        _emit(node.lineno, name)
-                        for name in sorted(
-                            cls._annotation_names(
-                                func, c.Tests.VALIDATOR_LEGACY_FACTORY_NAMES
-                            )
-                        )
-                    )
-                case ast.AnnAssign(annotation=ann):
-                    violations.extend(
-                        _emit(node.lineno, name)
-                        for name in sorted(
-                            cls._annotation_names(ann, frozenset({"TypeAlias"}))
-                        )
-                    )
-                case ast.ClassDef(bases=bases):
-                    for base in bases:
-                        violations.extend(
-                            _emit(getattr(base, "lineno", node.lineno), name)
-                            for name in sorted(
-                                cls._annotation_names(
-                                    base, c.Tests.VALIDATOR_LEGACY_BASE_NAMES
-                                )
-                            )
-                        )
-                case _:
-                    continue
+        for line_number, line in enumerate(lines, start=1):
+            names: set[str] = set()
+            if c.Tests.VALIDATOR_LEGACY_FACTORY_RE.search(line) and u.Tests.code_match(
+                line,
+                c.Tests.VALIDATOR_LEGACY_FACTORY_RE,
+            ):
+                names.update(
+                    cls._match_names(line, c.Tests.VALIDATOR_LEGACY_FACTORY_RE)
+                )
+            if c.Tests.VALIDATOR_TYPE_ALIAS_RE.search(line) and u.Tests.code_match(
+                line,
+                c.Tests.VALIDATOR_TYPE_ALIAS_RE,
+            ):
+                names.add("TypeAlias")
+            if c.Tests.VALIDATOR_GENERIC_BASE_RE.search(line) and u.Tests.code_match(
+                line,
+                c.Tests.VALIDATOR_GENERIC_BASE_RE,
+            ):
+                names.add("Generic")
+            violations.extend(_emit(line_number, name) for name in sorted(names))
         return violations
 
     @classmethod
     def _check_legacy_typing_annotations(
         cls,
         file_path: Path,
-        tree: ast.AST,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
@@ -109,29 +87,12 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         if u.Tests.approved("TYPE-005", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
-        annotations: MutableSequence[tuple[int, ast.AST]] = []
-        for node in ast.walk(tree):
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                if node.returns is not None:
-                    annotations.append((node.lineno, node.returns))
-                for arg in (
-                    *node.args.args,
-                    *node.args.kwonlyargs,
-                    node.args.vararg,
-                    node.args.kwarg,
-                ):
-                    if arg is not None and arg.annotation is not None:
-                        annotations.append(
-                            (getattr(arg, "lineno", node.lineno), arg.annotation),
-                        )
-            elif isinstance(node, ast.AnnAssign):
-                annotations.append((node.lineno, node.annotation))
-        for line_number, annotation in annotations:
-            matches = cls._annotation_names(
-                annotation,
-                c.Tests.VALIDATOR_LEGACY_ANNOTATION_NAMES,
-            )
-            for match in sorted(matches):
+        for line_number, line in enumerate(lines, start=1):
+            if not c.Tests.VALIDATOR_LEGACY_ANNOTATION_RE.search(line):
+                continue
+            if not u.Tests.code_match(line, c.Tests.VALIDATOR_LEGACY_ANNOTATION_RE):
+                continue
+            for name in cls._match_names(line, c.Tests.VALIDATOR_LEGACY_ANNOTATION_RE):
                 violations.append(
                     u.Tests.create_violation(
                         file_path,
@@ -139,7 +100,7 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                         "TYPE-005",
                         lines,
                         c.Tests.VALIDATOR_MSG_TYPE_LEGACY_ANNOTATION.format(
-                            name=match,
+                            name=name,
                         ),
                     ),
                 )
@@ -149,7 +110,6 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
     def _check_object_annotations(
         cls,
         file_path: Path,
-        tree: ast.AST,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
@@ -157,61 +117,59 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         if u.Tests.approved("TYPE-006", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
-        for node in ast.walk(tree):
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                if node.returns is not None and cls._annotation_names(
-                    node.returns,
-                    frozenset({"object"}),
+        for line_number, line in enumerate(lines, start=1):
+            if c.Tests.VALIDATOR_FUNCTION_DEF_RE.match(line) is not None:
+                if c.Tests.VALIDATOR_OBJECT_RETURN_RE.search(
+                    line
+                ) and u.Tests.code_match(
+                    line,
+                    c.Tests.VALIDATOR_OBJECT_RETURN_RE,
                 ):
                     violations.append(
                         u.Tests.create_violation(
                             file_path,
-                            node.lineno,
+                            line_number,
                             "TYPE-006",
                             lines,
                             c.Tests.VALIDATOR_MSG_TYPE_OBJECT_ANNOTATION.format(
-                                location=f"return type of '{node.name}'",
+                                location="return type",
                             ),
                         ),
                     )
-                for arg in (*node.args.args, *node.args.kwonlyargs):
-                    if arg.annotation is None or not cls._annotation_names(
-                        arg.annotation,
-                        frozenset({"object"}),
-                    ):
-                        continue
+                for match in c.Tests.VALIDATOR_OBJECT_ARG_RE.finditer(line):
                     violations.append(
                         u.Tests.create_violation(
                             file_path,
-                            getattr(arg, "lineno", node.lineno),
+                            line_number,
                             "TYPE-006",
                             lines,
                             c.Tests.VALIDATOR_MSG_TYPE_OBJECT_ANNOTATION.format(
-                                location=f"argument '{arg.arg}'",
+                                location=f"argument '{match.group('arg')}'",
                             ),
                         ),
                     )
-            elif isinstance(node, ast.AnnAssign):
-                if not cls._annotation_names(node.annotation, frozenset({"object"})):
-                    continue
-                violations.append(
-                    u.Tests.create_violation(
-                        file_path,
-                        node.lineno,
-                        "TYPE-006",
-                        lines,
-                        c.Tests.VALIDATOR_MSG_TYPE_OBJECT_ANNOTATION.format(
-                            location="variable annotation",
-                        ),
+                continue
+            if not c.Tests.VALIDATOR_OBJECT_VAR_RE.search(line):
+                continue
+            if not u.Tests.code_match(line, c.Tests.VALIDATOR_OBJECT_VAR_RE):
+                continue
+            violations.append(
+                u.Tests.create_violation(
+                    file_path,
+                    line_number,
+                    "TYPE-006",
+                    lines,
+                    c.Tests.VALIDATOR_MSG_TYPE_OBJECT_ANNOTATION.format(
+                        location="variable annotation",
                     ),
-                )
+                ),
+            )
         return violations
 
     @classmethod
     def _check_bool_returning_is_helpers(
         cls,
         file_path: Path,
-        tree: ast.AST,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
@@ -219,20 +177,19 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         if u.Tests.approved("TYPE-007", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
-        for node in ast.walk(tree):
-            if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                continue
-            if not node.name.startswith("is_") or node.returns is None:
-                continue
-            if not cls._annotation_names(node.returns, frozenset({"bool"})):
+        for line_number, line in enumerate(lines, start=1):
+            match = c.Tests.VALIDATOR_BOOL_IS_HELPER_RE.match(line)
+            if match is None:
                 continue
             violations.append(
                 u.Tests.create_violation(
                     file_path,
-                    node.lineno,
+                    line_number,
                     "TYPE-007",
                     lines,
-                    c.Tests.VALIDATOR_MSG_TYPE_BOOL_IS_HELPER.format(name=node.name),
+                    c.Tests.VALIDATOR_MSG_TYPE_BOOL_IS_HELPER.format(
+                        name=match.group("name"),
+                    ),
                 ),
             )
         return violations
@@ -241,7 +198,6 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
     def _check_any_types(
         cls,
         file_path: Path,
-        tree: ast.AST,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
@@ -249,78 +205,74 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         if u.Tests.approved("TYPE-002", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
-        for node in ast.walk(tree):
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                if node.returns is not None and u.Tests.any_type(node.returns):
-                    violation = u.Tests.create_violation(
-                        file_path,
-                        node.lineno,
-                        "TYPE-002",
-                        lines,
-                        c.Tests.VALIDATOR_MSG_TYPE_ANY_RETURN,
+        for line_number, line in enumerate(lines, start=1):
+            if c.Tests.VALIDATOR_FUNCTION_DEF_RE.match(line) is not None:
+                if c.Tests.VALIDATOR_ANY_RETURN_RE.search(line) and u.Tests.code_match(
+                    line,
+                    c.Tests.VALIDATOR_ANY_RETURN_RE,
+                ):
+                    violations.append(
+                        u.Tests.create_violation(
+                            file_path,
+                            line_number,
+                            "TYPE-002",
+                            lines,
+                            c.Tests.VALIDATOR_MSG_TYPE_ANY_RETURN,
+                        ),
                     )
-                    violations.append(violation)
-                for arg in node.args.args + node.args.kwonlyargs:
-                    annotation = arg.annotation
-                    if annotation is None or not u.Tests.any_type(annotation):
-                        continue
-                    violation = u.Tests.create_violation(
-                        file_path,
-                        arg.lineno if hasattr(arg, "lineno") else node.lineno,
-                        "TYPE-002",
-                        lines,
-                        c.Tests.VALIDATOR_MSG_TYPE_ANY_ARG.format(arg=arg.arg),
+                for match in c.Tests.VALIDATOR_ANY_ARG_RE.finditer(line):
+                    violations.append(
+                        u.Tests.create_violation(
+                            file_path,
+                            line_number,
+                            "TYPE-002",
+                            lines,
+                            c.Tests.VALIDATOR_MSG_TYPE_ANY_ARG.format(
+                                arg=match.group("arg"),
+                            ),
+                        ),
                     )
-                    violations.append(violation)
                 continue
-            if not isinstance(node, ast.AnnAssign):
+            if not c.Tests.VALIDATOR_ANY_VAR_RE.search(line):
                 continue
-            annotation = node.annotation
-            if not u.Tests.any_type(annotation):
+            if not u.Tests.code_match(line, c.Tests.VALIDATOR_ANY_VAR_RE):
                 continue
-            violation = u.Tests.create_violation(
-                file_path,
-                node.lineno,
-                "TYPE-002",
-                lines,
-                "in variable annotation",
+            violations.append(
+                u.Tests.create_violation(
+                    file_path,
+                    line_number,
+                    "TYPE-002",
+                    lines,
+                    "in variable annotation",
+                ),
             )
-            violations.append(violation)
         return violations
 
     @classmethod
     def _check_cast_usage(
         cls,
         file_path: Path,
-        tree: ast.AST,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
-        """Detect unapproved  usage."""
-        patterns = list(approved.get("TYPE-003", [])) + list(
+        """Detect unapproved cast usage."""
+        if u.Tests.approved(
+            "TYPE-003",
+            file_path,
+            approved,
             c.Tests.VALIDATOR_APPROVED_CAST_PATTERNS,
-        )
-        file_str = str(file_path)
-        if any(re.search(pattern, file_str) for pattern in patterns):
+        ):
             return []
         return [
             u.Tests.create_violation(
                 file_path,
-                node.lineno,
+                line_number,
                 "TYPE-003",
                 lines,
             )
-            for node in ast.walk(tree)
-            if isinstance(node, ast.Call)
-            and (
-                (isinstance(node.func, ast.Name) and node.func.id == "cast")
-                or (
-                    isinstance(node.func, ast.Attribute)
-                    and node.func.attr == "cast"
-                    and isinstance(node.func.value, ast.Name)
-                    and node.func.value.id == "typing"
-                )
-            )
+            for line_number, line in enumerate(lines, start=1)
+            if c.Tests.VALIDATOR_CAST_USAGE_RE.search(line) is not None
+            and u.Tests.code_match(line, c.Tests.VALIDATOR_CAST_USAGE_RE)
         ]
 
     @classmethod
@@ -333,16 +285,16 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         """Detect type: ignore comments in code (not in strings/docstrings)."""
         if u.Tests.approved("TYPE-001", file_path, approved):
             return []
-        pattern = re.compile(r"#\s*type:\s*ignore")
         return [
             u.Tests.create_violation(
                 file_path,
-                i,
+                line_number,
                 "TYPE-001",
                 lines,
             )
-            for i, line in enumerate(lines, start=1)
-            if pattern.search(line) and u.Tests.real_comment(line, pattern)
+            for line_number, line in enumerate(lines, start=1)
+            if c.Tests.VALIDATOR_TYPE_IGNORE_RE.search(line)
+            and u.Tests.real_comment(line, c.Tests.VALIDATOR_TYPE_IGNORE_RE)
         ]
 
     @classmethod
@@ -360,23 +312,17 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
             return violations
         lines = content.splitlines()
         violations.extend(cls._check_type_ignore(file_path, lines, approved))
-        try:
-            tree = ast.parse(content, filename=str(file_path))
-        except SyntaxError:
-            return violations
-        violations.extend(cls._check_any_types(file_path, tree, lines, approved))
-        violations.extend(cls._check_cast_usage(file_path, tree, lines, approved))
+        violations.extend(cls._check_any_types(file_path, lines, approved))
+        violations.extend(cls._check_cast_usage(file_path, lines, approved))
         violations.extend(
-            cls._check_legacy_typing_factories(file_path, tree, lines, approved),
+            cls._check_legacy_typing_factories(file_path, lines, approved),
         )
         violations.extend(
-            cls._check_legacy_typing_annotations(file_path, tree, lines, approved),
+            cls._check_legacy_typing_annotations(file_path, lines, approved),
         )
+        violations.extend(cls._check_object_annotations(file_path, lines, approved))
         violations.extend(
-            cls._check_object_annotations(file_path, tree, lines, approved)
-        )
-        violations.extend(
-            cls._check_bool_returning_is_helpers(file_path, tree, lines, approved),
+            cls._check_bool_returning_is_helpers(file_path, lines, approved),
         )
         return violations
 

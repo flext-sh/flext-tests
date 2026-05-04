@@ -152,6 +152,11 @@ class FlextTestsConstantsValidator:
         )
         return rule
 
+    @classmethod
+    def path_pattern_matches(cls, value: str, pattern: str) -> bool:
+        """Check whether one validator path pattern matches ``value``."""
+        return re.search(pattern, value) is not None
+
     # Messages
     VALIDATOR_MSG_LAYER_VIOLATION: Final[str] = (
         "'{current}' L{current_level} -> '{imported}' L{imported_level}"
@@ -185,6 +190,97 @@ class FlextTestsConstantsValidator:
     )
     VALIDATOR_MSG_MD_FORBIDDEN_ANNOTATION: Final[str] = (
         "Forbidden annotation: {annotation} (use t.* contracts)"
+    )
+
+    # Code validation patterns
+    VALIDATOR_TYPE_IGNORE_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"#\s*type:\s*ignore",
+    )
+    VALIDATOR_NOQA_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"#\s*noqa",
+        re.IGNORECASE,
+    )
+    VALIDATOR_PRAGMA_NO_COVER_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"#\s*pragma:\s*no\s*cover",
+        re.IGNORECASE,
+    )
+    VALIDATOR_CAST_USAGE_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"\b(?:typing\.)?cast\s*\(",
+    )
+    VALIDATOR_LEGACY_FACTORY_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"\b(?P<name>ParamSpec|TypeVar)\s*\(",
+    )
+    VALIDATOR_TYPE_ALIAS_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r":\s*(?:typing\.)?TypeAlias\b",
+    )
+    VALIDATOR_GENERIC_BASE_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^[ \t]*class\s+\w+\s*\([^)]*\b(?:typing\.)?Generic\s*\[",
+    )
+    VALIDATOR_LEGACY_ANNOTATION_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"(?:[:(,]\s*|->\s*)(?:typing\.)?(?P<name>Dict|FrozenSet|List|Optional|Set|Tuple|TypeAliasType|TypeGuard|Union)\b",
+    )
+    VALIDATOR_FUNCTION_DEF_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^[ \t]*(?:async\s+def|def)\s+(?P<name>[A-Za-z_]\w*)",
+    )
+    VALIDATOR_ANY_ARG_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"(?P<arg>[A-Za-z_]\w*)\s*:\s*(?:typing\.)?Any\b",
+    )
+    VALIDATOR_ANY_RETURN_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"->\s*(?:typing\.)?Any\b",
+    )
+    VALIDATOR_ANY_VAR_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^[ \t]*[A-Za-z_]\w*\s*:\s*(?:typing\.)?Any\b",
+    )
+    VALIDATOR_OBJECT_ARG_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"(?P<arg>[A-Za-z_]\w*)\s*:\s*(?:builtins\.)?object\b",
+    )
+    VALIDATOR_OBJECT_RETURN_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"->\s*(?:builtins\.)?object\b",
+    )
+    VALIDATOR_OBJECT_VAR_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^[ \t]*[A-Za-z_]\w*\s*:\s*(?:builtins\.)?object\b",
+    )
+    VALIDATOR_BOOL_IS_HELPER_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^[ \t]*(?:async\s+def|def)\s+(?P<name>is_[A-Za-z_]\w*)\b.*->\s*bool\b",
+    )
+    VALIDATOR_INDENTED_IMPORT_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^[ \t]+(?:from\s+\S+\s+import\b|import\s+\S+)",
+    )
+    VALIDATOR_IMPORT_ERROR_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^[ \t]*except\b.*\b(?:ImportError|ModuleNotFoundError)\b.*:\s*(?:#.*)?$",
+    )
+    VALIDATOR_BARE_EXCEPT_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^[ \t]*except\s*:\s*(?:#.*)?$",
+    )
+    VALIDATOR_EXCEPT_HEADER_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^(?P<indent>[ \t]*)except\b.*:\s*(?:#.*)?$",
+    )
+    VALIDATOR_PASS_OR_ELLIPSIS_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^(?:pass|\.\.\.)\s*(?:#.*)?$",
+    )
+    VALIDATOR_SYS_PATH_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"\bsys\.path(?:\s*\[|\.(?:append|extend|insert|pop|remove)\s*\()",
+    )
+    VALIDATOR_FLEXT_FROM_IMPORT_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^[ \t]*from\s+(?P<module>flext_[A-Za-z0-9_.]+)\s+import\b",
+    )
+    VALIDATOR_FLEXT_IMPORT_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^[ \t]*import\s+(?P<module>flext_[A-Za-z0-9_.]+)\b",
+    )
+    VALIDATOR_FROM_IMPORT_LINE_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^[ \t]*from\s+(?P<module>\.*[A-Za-z_][\w.]*)\s+import\s+(?P<names>[^#]+)",
+    )
+    VALIDATOR_IMPORT_LINE_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^[ \t]*import\s+(?P<modules>[^#]+)",
+    )
+    VALIDATOR_MONKEYPATCH_ACCESS_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"\bmonkeypatch\.(?P<attr>[A-Za-z_]\w*)\b",
+    )
+    VALIDATOR_MOCK_CALL_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"\b(?P<name>AsyncMock|MagicMock|Mock|PropertyMock)\s*\(",
+    )
+    VALIDATOR_PATCH_DECORATOR_RE: ClassVar[re.Pattern[str]] = re.compile(
+        r"^[ \t]*@(?:[A-Za-z_]\w*\.)*patch(?:\b|\s*\(|\.)",
     )
 
     # Markdown validation

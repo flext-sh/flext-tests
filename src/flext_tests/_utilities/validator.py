@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-import ast
-import re
 from pathlib import Path
 
+from flext_infra import t as it
 from flext_tests.constants import FlextTestsConstants as c
 from flext_tests.models import FlextTestsModels as m
 from flext_tests.typings import FlextTestsTypes as t
@@ -71,68 +70,22 @@ class FlextTestsValidatorUtilitiesMixin:
         return 1
 
     @staticmethod
-    def exception_names(exc_type: ast.expr) -> set[str]:
-        """Extract exception names from exception type AST node.
-
-        Args:
-            exc_type: Exception type AST node
-
-        Returns:
-            r[TEntity]: Result containing created entity or error
-            Set of exception names found
-
-        """
-        match exc_type:
-            case ast.Name(id=name):
-                return {name}
-            case ast.Tuple(elts=elts):
-                return {elt.id for elt in elts if isinstance(elt, ast.Name)}
-            case _:
-                return set()
-
-    @staticmethod
-    def parent_node(tree: ast.AST, node: ast.AST) -> ast.AST | None:
-        """Get parent node of an AST node.
-
-        Args:
-            tree: AST tree root
-            node: Node to find parent of
-
-        Returns:
-            r[TEntity]: Result containing created entity or error
-            Parent node or None if not found
-
-        """
-        for parent in ast.walk(tree):
-            for child in ast.iter_child_nodes(parent):
-                if child is node:
-                    return parent
-        return None
-
-    @staticmethod
-    def any_type(node: ast.expr) -> bool:
-        """Check if an annotation node represents the typing wildcard type.
-
-        Args:
-            node: AST annotation node
-
-        Returns:
-            r[TEntity]: Result containing created entity or error
-            True if node represents typing wildcard type annotation
-
-        """
-        wildcard_name = "".join((chr(65), chr(110), chr(121)))
-        return (
-            (isinstance(node, ast.Name) and node.id == wildcard_name)
-            or (isinstance(node, ast.Attribute) and node.attr == wildcard_name)
-            or (isinstance(node, ast.Constant) and node.value == wildcard_name)
-        )
+    def split_import_targets(value: str) -> tuple[str, ...]:
+        """Normalize one import target list into canonical imported names."""
+        cleaned = value.split("#", maxsplit=1)[0].replace("(", " ").replace(")", " ")
+        targets: list[str] = []
+        for raw_target in cleaned.split(","):
+            target = raw_target.split(" as ", maxsplit=1)[0].strip()
+            if target:
+                targets.append(target)
+        return tuple(targets)
 
     @staticmethod
     def approved(
         rule_id: str,
         file_path: Path,
         approved: t.MappingKV[str, t.StrSequence],
+        extra_patterns: t.StrSequence = (),
     ) -> bool:
         """Check if file is approved for this rule.
 
@@ -140,48 +93,22 @@ class FlextTestsValidatorUtilitiesMixin:
             rule_id: Rule identifier (e.g., "IMPORT-001")
             file_path: Path to file being checked
             approved: Dict mapping rule IDs to list of approved file patterns
+            extra_patterns: Additional canonical patterns to honor for this scan
 
         Returns:
             r[TEntity]: Result containing created entity or error
             True if file matches any approved pattern for this rule
 
         """
-        patterns = approved.get(rule_id, [])
+        patterns = tuple(approved.get(rule_id, ())) + tuple(extra_patterns)
         file_str = str(file_path)
-        return any(re.search(pattern, file_str) for pattern in patterns)
+        return any(
+            c.Tests.path_pattern_matches(file_str, pattern) for pattern in patterns
+        )
 
     @staticmethod
-    def only_pass(body: t.SequenceOf[ast.stmt]) -> bool:
-        """Check if exception handler body contains only pass or ellipsis.
-
-        Used by BYPASS-003 to detect exception swallowing patterns.
-
-        Args:
-            body: AST statement list (exception handler body)
-
-        Returns:
-            r[TEntity]: Result containing created entity or error
-            True if body contains only pass or ellipsis (...)
-
-        """
-        if len(body) == 1:
-            stmt = body[0]
-            if isinstance(stmt, ast.Pass):
-                return True
-            if (
-                isinstance(stmt, ast.Expr)
-                and isinstance(stmt.value, ast.Constant)
-                and (stmt.value.value is ...)
-            ):
-                return True
-        return False
-
-    @staticmethod
-    def real_comment(line: str, pattern: re.Pattern[str]) -> bool:
-        """Check if pattern match is in a real comment, not inside a string.
-
-        Used by validators to avoid false positives from patterns appearing
-        in docstrings or string literals.
+    def code_match(line: str, pattern: it.Infra.RegexPattern) -> bool:
+        """Check if one pattern match appears outside quoted string literals.
 
         Args:
             line: Source code line
@@ -189,12 +116,11 @@ class FlextTestsValidatorUtilitiesMixin:
 
         Returns:
             r[TEntity]: Result containing created entity or error
-            True if pattern appears in real code comment (after #),
-            not inside a string literal (single/double/triple quoted)
+            True if the first match is not inside a quoted string literal
 
         """
         match = pattern.search(line)
-        if not match:
+        if match is None:
             return False
         pos = match.start()
         in_single = False
@@ -227,3 +153,55 @@ class FlextTestsValidatorUtilitiesMixin:
                 in_single = not in_single
             i += 1
         return not (in_single or in_double or in_triple_single or in_triple_double)
+
+    @staticmethod
+    def real_comment(line: str, pattern: it.Infra.RegexPattern) -> bool:
+        """Check if pattern match is in a real comment, not inside a string.
+
+        Used by validators to avoid false positives from patterns appearing
+        in docstrings or string literals.
+
+        Args:
+            line: Source code line
+            pattern: Compiled regex pattern to search
+
+        Returns:
+            r[TEntity]: Result containing created entity or error
+            True if pattern appears in real code comment (after #),
+            not inside a string literal (single/double/triple quoted)
+
+        """
+        return FlextTestsValidatorUtilitiesMixin.code_match(line, pattern)
+
+    @staticmethod
+    def except_block_only_pass(lines: t.StrSequence, line_number: int) -> bool:
+        """Check whether one ``except`` block body contains only pass or ellipsis."""
+        header_index = line_number - 1
+        if header_index < 0 or header_index >= len(lines):
+            return False
+        header_line = lines[header_index]
+        header_match = c.Tests.VALIDATOR_EXCEPT_HEADER_RE.match(header_line)
+        if header_match is None:
+            return False
+        trailing = header_line.rsplit(":", maxsplit=1)[-1].strip()
+        if (
+            trailing
+            and c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(trailing) is not None
+        ):
+            return True
+        header_indent = len(header_match.group("indent").expandtabs())
+        body_lines: list[str] = []
+        for line in lines[header_index + 1 :]:
+            stripped = line.strip()
+            if not stripped:
+                continue
+            current_indent = len(line.expandtabs()) - len(line.lstrip().expandtabs())
+            if current_indent <= header_indent:
+                break
+            if stripped.startswith("#"):
+                continue
+            body_lines.append(stripped)
+        return (
+            len(body_lines) == 1
+            and c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(body_lines[0]) is not None
+        )

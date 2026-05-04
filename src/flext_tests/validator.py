@@ -47,10 +47,10 @@ from flext_tests import (
     m,
     p,
     r,
+    s,
     t,
     u,
 )
-from flext_tests.base import s
 
 
 class FlextTestsValidator(s[m.Tests.ScanResult]):

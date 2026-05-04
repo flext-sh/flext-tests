@@ -15,7 +15,7 @@ from collections.abc import (
 )
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, ClassVar, Self
+from typing import Annotated, ClassVar
 
 from flext_cli import m, u
 from flext_tests import p, t
@@ -74,7 +74,10 @@ class FlextTestsMatchersModelsMixin:
         ends: Annotated[str | None, u.Field(description="String ends with suffix")] = (
             None
         )
-        match: Annotated[str | None, u.Field(description="Regex pattern")] = None
+        match: Annotated[
+            t.Infra.RegexPattern | None,
+            u.Field(description="Compiled regex pattern"),
+        ] = None
         len: Annotated[
             t.Tests.LengthSpec | None,
             u.Field(description="Length spec"),
@@ -133,7 +136,10 @@ class FlextTestsMatchersModelsMixin:
         ends: Annotated[str | None, u.Field(description="Error ends with suffix")] = (
             None
         )
-        match: Annotated[str | None, u.Field(description="Error matches regex")] = None
+        match: Annotated[
+            t.Infra.RegexPattern | None,
+            u.Field(description="Error matches compiled regex"),
+        ] = None
         code: Annotated[str | None, u.Field(description="Error code equals")] = None
         code_has: Annotated[
             t.Tests.ErrorCodeSpec | None,
@@ -227,7 +233,10 @@ class FlextTestsMatchersModelsMixin:
         ends: Annotated[str | None, u.Field(description="String ends with suffix")] = (
             None
         )
-        match: Annotated[str | None, u.Field(description="Regex pattern")] = None
+        match: Annotated[
+            t.Infra.RegexPattern | None,
+            u.Field(description="Compiled regex pattern"),
+        ] = None
         first: Annotated[
             t.Tests.TestobjectSerializable | None,
             u.Field(description="Sequence first item equals"),
@@ -309,7 +318,9 @@ class FlextTestsMatchersModelsMixin:
         ] = None
 
         @u.model_validator(mode="after")
-        def normalize_legacy_parameters(self) -> Self:
+        def normalize_legacy_parameters(
+            self,
+        ) -> FlextTestsMatchersModelsMixin.ThatParams:
             updates: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
             if self.error is not None and self.has is None:
                 updates["has"] = self.error
@@ -334,7 +345,9 @@ class FlextTestsMatchersModelsMixin:
                     max_len = min(max_len, self.length_lte)
                 updates["len"] = (min_len, max_len)
             if updates:
-                return self.model_copy(update=updates)
+                payload = self.model_dump()
+                payload.update(updates)
+                return FlextTestsMatchersModelsMixin.ThatParams(**payload)
             return self
 
     class ScopeParams(m.Value):

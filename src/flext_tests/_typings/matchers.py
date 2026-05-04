@@ -12,6 +12,7 @@ from collections.abc import (
 from typing import TypeAliasType
 
 from flext_cli import m, t
+from flext_infra import t as it
 from flext_tests import FlextTestsBaseTypesMixin as tb
 
 
@@ -36,12 +37,15 @@ class FlextTestsMatchersTypesMixin:
     type MatchRuleLeaf = tb.Testobject | type | tuple[type, ...] | TypeAliasType
     type MatchRuleKwargs = t.MappingKV[
         str,
-        Callable[..., tb.Testobject] | tb.TestobjectSerializable,
+        Callable[..., tb.Testobject]
+        | tb.TestobjectSerializable
+        | it.Infra.RegexPattern,
     ]
     type MatchRuleValue = MatchRuleLeaf | MatchRuleKwargs
     type MatcherKwargValue = (
         MatchRuleLeaf
         | set[tb.TestobjectSerializable]
+        | it.Infra.RegexPattern
         | Callable[..., tb.Testobject]
         | MatchRuleKwargs
         | t.MappingKV[int, MatchRuleValue]

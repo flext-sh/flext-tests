@@ -13,6 +13,10 @@ _LAZY_IMPORTS = build_lazy_import_map(
         ".test_files": ("TestsFlextTestsFiles",),
         ".test_matchers": ("TestsFlextTestsMatchers",),
         ".test_utilities": ("TestsFlextTestsUtilitiesUnit",),
+        ".test_validator_imports_bypass": ("TestsFlextTestsValidatorImportsBypass",),
+        ".test_validator_layer_tests_markdown": (
+            "TestsFlextTestsValidatorLayerTestsMarkdown",
+        ),
         ".test_validator_types": ("TestsFlextTestsValidatorTypes",),
     },
 )

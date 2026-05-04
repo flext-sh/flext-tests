@@ -34,10 +34,18 @@ from pathlib import Path
 from types import TracebackType
 from typing import ClassVar, Self, TypeIs, overload, override
 
-from flext_tests import FlextTestsPayloadUtilities, c, m, p, r, t, u
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
-from flext_tests._typings.files import FlextTestsFilesTypesMixin
-from flext_tests.base import s
+from flext_tests import (
+    FlextTestsBaseTypesMixin,
+    FlextTestsFilesTypesMixin,
+    FlextTestsPayloadUtilities,
+    c,
+    m,
+    p,
+    r,
+    s,
+    t,
+    u,
+)
 
 
 class FlextTestsFiles(s):
