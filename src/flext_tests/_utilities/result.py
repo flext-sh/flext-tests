@@ -4,9 +4,7 @@ from __future__ import annotations
 
 from types import EllipsisType
 
-from flext_core import FlextProtocolsResult
-from flext_tests.constants import FlextTestsConstants as c
-from flext_tests.protocols import FlextTestsProtocols as p
+from flext_tests import c, p
 
 
 class FlextTestsResultUtilitiesMixin:
@@ -31,7 +29,7 @@ class FlextTestsResultUtilitiesMixin:
 
     @staticmethod
     def assert_success[TResult](
-        result: FlextProtocolsResult.Result[TResult],
+        result: p.Result[TResult],
         error_msg: str | None = None,
         *,
         expected_value: TResult | EllipsisType = ...,

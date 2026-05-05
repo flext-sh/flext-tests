@@ -22,7 +22,7 @@ from contextlib import contextmanager, nullcontext
 from pathlib import Path
 from typing import TypeVar, overload
 
-from flext_core import FlextProtocolsResult, u
+from flext_infra import u
 from flext_tests import (
     FlextTestsConfigHelpersUtilitiesMixin,
     FlextTestsMatchersAssertionsMixin,
@@ -472,19 +472,19 @@ class FlextTestsMatchersUtilities(
             @staticmethod
             @overload
             def ok[TOkResult](
-                result: FlextProtocolsResult.Result[TOkResult],
+                result: p.Result[TOkResult],
             ) -> TOkResult: ...
 
             @staticmethod
             @overload
             def ok[TOkResult](
-                result: FlextProtocolsResult.Result[TOkResult],
+                result: p.Result[TOkResult],
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> TOkResult | t.Tests.TestobjectSerializable: ...
 
             @staticmethod
             def ok[TOkResult](
-                result: FlextProtocolsResult.Result[TOkResult],
+                result: p.Result[TOkResult],
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> TOkResult | t.Tests.TestobjectSerializable:
                 """Enhanced assertion for r success with optional value validation.

@@ -6,34 +6,19 @@ via MRO from ``flext_tests._utilities.matchers``.
 
 from __future__ import annotations
 
-from datetime import datetime
-from pathlib import Path
-
-from flext_core.utilities import u
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-from flext_tests.protocols import p
-from flext_tests.typings import t
+from flext_infra import u
+from flext_tests import FlextTestsPayloadUtilities, c, p, t
 
 
 class FlextTestsMatchersTypeGuardsMixin:
     """Type compatibility and equality-guard helpers."""
-
-    _GUARD_EQ_TYPES: tuple[type, ...] = (
-        str,
-        int,
-        float,
-        bool,
-        bytes,
-        datetime,
-        Path,
-    )
 
     @staticmethod
     def matches_runtime_type(
         value: p.AttributeProbe,
         expected_type: type | tuple[type, ...],
     ) -> bool:
-        """Check runtime type compatibility using flext-core guards."""
+        """Check runtime type compatibility using canonical parent guards."""
         if isinstance(expected_type, tuple):
             return any(
                 FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(value, item)
@@ -66,14 +51,14 @@ class FlextTestsMatchersTypeGuardsMixin:
         )
         if eq_payload is not None and not isinstance(
             eq_payload,
-            FlextTestsMatchersTypeGuardsMixin._GUARD_EQ_TYPES,
+            c.Tests.MATCHER_GUARD_EQ_TYPES,
         ):
             if actual_payload != eq_payload:
                 raise AssertionError(msg or default_msg)
             eq_payload = None
         if ne_payload is not None and not isinstance(
             ne_payload,
-            FlextTestsMatchersTypeGuardsMixin._GUARD_EQ_TYPES,
+            c.Tests.MATCHER_GUARD_EQ_TYPES,
         ):
             if actual_payload == ne_payload:
                 raise AssertionError(msg or default_msg)

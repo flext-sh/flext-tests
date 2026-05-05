@@ -35,13 +35,13 @@ from flext_tests._fixtures.settings import (
 # re-exporting its hooks here would double-register CLI options when both
 # paths are active.
 
-_ = (
-    reset_settings,
-    settings,
-    settings_factory,
-    pytest_addoption,
-    pytest_collect_file,
-    MarkdownCodeBlockCollector,
-    MarkdownCodeBlockItem,
-    MarkdownValidationError,
-)
+__all__: list[str] = [
+    "MarkdownCodeBlockCollector",
+    "MarkdownCodeBlockItem",
+    "MarkdownValidationError",
+    "pytest_addoption",
+    "pytest_collect_file",
+    "reset_settings",
+    "settings",
+    "settings_factory",
+]

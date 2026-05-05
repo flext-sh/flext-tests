@@ -21,12 +21,10 @@ import pytest
 
 from flext_tests import FlextValidatorMarkdown, c
 
-_EXTERNAL_MARKDOWN_DOCS = find_spec("pytest_markdown_docs") is not None
-
 
 def pytest_addoption(parser: pytest.Parser) -> None:
     """Add the markdown docs option if pytest-markdown-docs is not installed."""
-    if _EXTERNAL_MARKDOWN_DOCS:
+    if find_spec("pytest_markdown_docs") is not None:
         return
     group = parser.getgroup("markdown", "Markdown code block validation")
     group.addoption(

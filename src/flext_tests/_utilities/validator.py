@@ -4,10 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_infra import t as it
-from flext_tests.constants import FlextTestsConstants as c
-from flext_tests.models import FlextTestsModels as m
-from flext_tests.typings import FlextTestsTypes as t
+from flext_tests import c, m, t
 
 
 class FlextTestsValidatorUtilitiesMixin:
@@ -107,7 +104,7 @@ class FlextTestsValidatorUtilitiesMixin:
         )
 
     @staticmethod
-    def code_match(line: str, pattern: it.Infra.RegexPattern) -> bool:
+    def code_match(line: str, pattern: t.Infra.RegexPattern) -> bool:
         """Check if one pattern match appears outside quoted string literals.
 
         Args:
@@ -155,7 +152,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return not (in_single or in_double or in_triple_single or in_triple_double)
 
     @staticmethod
-    def real_comment(line: str, pattern: it.Infra.RegexPattern) -> bool:
+    def real_comment(line: str, pattern: t.Infra.RegexPattern) -> bool:
         """Check if pattern match is in a real comment, not inside a string.
 
         Used by validators to avoid false positives from patterns appearing

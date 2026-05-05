@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import csv
 import os
-import re
 import shutil
 import tempfile
 from collections.abc import (
@@ -35,8 +34,6 @@ from types import TracebackType
 from typing import ClassVar, Self, TypeIs, overload, override
 
 from flext_tests import (
-    FlextTestsBaseTypesMixin,
-    FlextTestsFilesTypesMixin,
     FlextTestsPayloadUtilities,
     c,
     m,
@@ -56,7 +53,7 @@ class FlextTestsFiles(s):
     @staticmethod
     def _validate_model_content[TModelRead: m.BaseModel](
         model_cls: type[TModelRead],
-        content: FlextTestsFilesTypesMixin.ReadContent,
+        content: t.Tests.ReadContent,
     ) -> p.Result[TModelRead]:
         try:
             model_instance: TModelRead = model_cls.model_validate(content)
@@ -68,11 +65,11 @@ class FlextTestsFiles(s):
     def _read_fail[TModelRead: m.BaseModel](
         error: str,
         model_cls: type[TModelRead] | None,
-    ) -> p.Result[FlextTestsFilesTypesMixin.ReadContent] | p.Result[TModelRead]:
+    ) -> p.Result[t.Tests.ReadContent] | p.Result[TModelRead]:
         """Dispatch a single read-failure message to the correct result type."""
         if model_cls is not None:
             return r[TModelRead].fail(error)
-        return r[FlextTestsFilesTypesMixin.ReadContent].fail(error)
+        return r[t.Tests.ReadContent].fail(error)
 
     _base_dir: Path | None = None
     _created_files: MutableSequence[Path] | None = None
@@ -81,7 +78,7 @@ class FlextTestsFiles(s):
     def __init__(
         self,
         base_dir: Path | None = None,
-        **data: FlextTestsBaseTypesMixin.TestobjectSerializable,
+        **data: t.Tests.TestobjectSerializable,
     ) -> None:
         """Initialize file manager with optional base directory.
 
@@ -154,13 +151,13 @@ class FlextTestsFiles(s):
         cls,
         content: t.MappingKV[
             str,
-            FlextTestsFilesTypesMixin.FileContentPlain,
+            t.Tests.FileContentPlain,
         ],
         *,
         directory: Path | None = None,
         ext: str | None = None,
         extract_result: bool = True,
-        **kwargs: FlextTestsBaseTypesMixin.TestobjectSerializable,
+        **kwargs: t.Tests.TestobjectSerializable,
     ) -> Generator[Mapping[str, Path]]:
         """Create temporary files with auto-cleanup.
 
@@ -184,7 +181,7 @@ class FlextTestsFiles(s):
             paths: MutableMapping[str, Path] = {}
             default_ext = ext or c.Tests.DEFAULT_EXTENSION
             for name, data_raw in content.items():
-                data: FlextTestsFilesTypesMixin.FileContentPlain = data_raw
+                data: t.Tests.FileContentPlain = data_raw
                 filename = name if "." in name else f"{name}{default_ext}"
                 if "." not in name and isinstance(
                     data,
@@ -217,7 +214,7 @@ class FlextTestsFiles(s):
             yield paths
 
     @staticmethod
-    def _is_file_result[TFileContent: FlextTestsFilesTypesMixin.FileContentPlain](
+    def _is_file_result[TFileContent: t.Tests.FileContentPlain](
         value: TFileContent | p.ResultLike[TFileContent],
     ) -> TypeIs[p.ResultLike[TFileContent]]:
         """Narrow file input to a result-like wrapper with the same payload type."""
@@ -225,16 +222,14 @@ class FlextTestsFiles(s):
 
     @staticmethod
     def _is_mapping(
-        value: FlextTestsFilesTypesMixin.FileContentPlain
-        | FlextTestsBaseTypesMixin.TestobjectSerializable
-        | None,
-    ) -> TypeIs[Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]]:
+        value: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable | None,
+    ) -> TypeIs[Mapping[str, t.Tests.TestobjectSerializable]]:
         return isinstance(value, Mapping)
 
     @staticmethod
     def _to_payload_mapping(
-        value: t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
-    ) -> t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]:
+        value: t.MappingKV[str, t.Tests.TestobjectSerializable],
+    ) -> t.MappingKV[str, t.Tests.TestobjectSerializable]:
         return {
             key: FlextTestsPayloadUtilities.to_payload(item)
             for key, item in value.items()
@@ -242,7 +237,7 @@ class FlextTestsFiles(s):
 
     @staticmethod
     def _to_string_rows(
-        value: t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable],
+        value: t.SequenceOf[t.Tests.TestobjectSerializable],
     ) -> t.SequenceOf[t.StrSequence]:
         return [
             [str(cell) for cell in row]
@@ -358,7 +353,7 @@ class FlextTestsFiles(s):
 
     def batch_files[TModel: m.BaseModel](
         self,
-        items: FlextTestsFilesTypesMixin.BatchFiles,
+        items: t.Tests.BatchFiles,
         *,
         directory: Path | None = None,
         operation: c.Tests.Operation = c.Tests.Operation.CREATE,
@@ -393,15 +388,13 @@ class FlextTestsFiles(s):
             return r[m.Tests.BatchResult].fail(
                 f"Invalid parameters for batch operation: {exc}",
             )
-        files_dict: MutableMapping[
-            str, FlextTestsBaseTypesMixin.TestobjectSerializable
-        ] = dict(params.files)
+        files_dict: MutableMapping[str, t.Tests.TestobjectSerializable] = dict(
+            params.files
+        )
         error_mode_str = "collect" if params.on_error == "collect" else "fail"
 
         def process_one(
-            name_and_content: tuple[
-                str, FlextTestsBaseTypesMixin.TestobjectSerializable
-            ],
+            name_and_content: tuple[str, t.Tests.TestobjectSerializable],
         ) -> p.Result[Path]:
             """Process single file operation."""
             name, content = name_and_content
@@ -445,11 +438,9 @@ class FlextTestsFiles(s):
             return result
 
         items_list = list(files_dict.items())
-        results_dict: MutableMapping[
-            str, r[Path | FlextTestsBaseTypesMixin.TestobjectSerializable]
-        ] = {}
+        results_dict: MutableMapping[str, r[Path | t.Tests.TestobjectSerializable]] = {}
         failed_dict: t.MutableStrMapping = {}
-        rtype = r[Path | FlextTestsBaseTypesMixin.TestobjectSerializable]
+        rtype = r[Path | t.Tests.TestobjectSerializable]
         for name, _ in items_list:
             op_result = process_one((name, files_dict[name]))
             if op_result.success:
@@ -546,7 +537,7 @@ class FlextTestsFiles(s):
             result = r[bool].fail(c.Tests.ERROR_COMPARE.format(error=e))
         return result
 
-    def create[TFileContent: FlextTestsFilesTypesMixin.FileContentPlain](
+    def create[TFileContent: t.Tests.FileContentPlain](
         self,
         content: TFileContent | p.ResultLike[TFileContent],
         name: str = c.Tests.DEFAULT_FILENAME,
@@ -614,7 +605,7 @@ class FlextTestsFiles(s):
             | m.ConfigMap
             | t.SequenceOf[t.StrSequence]
             | m.BaseModel
-            | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+            | t.MappingKV[str, t.Tests.TestobjectSerializable]
         ) = self._coerce_file_content(params.content)
         if isinstance(actual_content, m.ConfigMap):
             actual_content = {
@@ -622,12 +613,10 @@ class FlextTestsFiles(s):
                 for key, value in actual_content.root.items()
             }
         if isinstance(actual_content, m.BaseModel):
-            actual_content = (
-                FlextTestsBaseTypesMixin.TESTOBJECT_MAPPING_ADAPTER.validate_python(
-                    FlextTestsPayloadUtilities.to_payload(
-                        actual_content.model_dump(mode="json"),
-                    ),
-                )
+            actual_content = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(
+                FlextTestsPayloadUtilities.to_payload(
+                    actual_content.model_dump(mode="json"),
+                ),
             )
         actual_fmt = u.Tests.detect_format(
             actual_content
@@ -659,7 +648,7 @@ class FlextTestsFiles(s):
             | m.ConfigMap
             | t.SequenceOf[t.StrSequence]
             | m.BaseModel
-            | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+            | t.MappingKV[str, t.Tests.TestobjectSerializable]
         ),
         actual_fmt: str,
         params: m.Tests.CreateParams,
@@ -701,13 +690,11 @@ class FlextTestsFiles(s):
             | m.ConfigMap
             | t.SequenceOf[t.StrSequence]
             | m.BaseModel
-            | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+            | t.MappingKV[str, t.Tests.TestobjectSerializable]
         ),
     ) -> t.JsonValue:
         """Build normalized JSON payload from arbitrary file content."""
-        mapping_content: (
-            t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable] | None
-        ) = (
+        mapping_content: t.MappingKV[str, t.Tests.TestobjectSerializable] | None = (
             actual_content.root
             if isinstance(actual_content, (m.ConfigMap, m.Dict))
             else actual_content
@@ -736,7 +723,7 @@ class FlextTestsFiles(s):
             | m.ConfigMap
             | t.SequenceOf[t.StrSequence]
             | m.BaseModel
-            | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+            | t.MappingKV[str, t.Tests.TestobjectSerializable]
         ),
         headers: t.StrSequence | None,
     ) -> list[t.StrSequence]:
@@ -867,7 +854,7 @@ class FlextTestsFiles(s):
         enc: str = c.Tests.DEFAULT_ENCODING,
         delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
-    ) -> p.Result[FlextTestsFilesTypesMixin.ReadContent]: ...
+    ) -> p.Result[t.Tests.ReadContent]: ...
 
     @overload
     def read[TModelRead: m.BaseModel](
@@ -890,7 +877,7 @@ class FlextTestsFiles(s):
         enc: str = c.Tests.DEFAULT_ENCODING,
         delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
         has_headers: bool = True,
-    ) -> p.Result[FlextTestsFilesTypesMixin.ReadContent] | p.Result[TModelRead]:
+    ) -> p.Result[t.Tests.ReadContent] | p.Result[TModelRead]:
         """Read file with auto-detection or explicit format.
 
         Supports loading directly into Pydantic models when model_cls is provided.
@@ -907,7 +894,7 @@ class FlextTestsFiles(s):
             r with content or model instance.
 
         """
-        result: p.Result[FlextTestsFilesTypesMixin.ReadContent] | p.Result[TModelRead]
+        result: p.Result[t.Tests.ReadContent] | p.Result[TModelRead]
         try:
             params = m.Tests.ReadParams.model_validate({
                 "path": path,
@@ -953,7 +940,7 @@ class FlextTestsFiles(s):
                     if model_cls is not None:
                         result = self._validate_model_content(model_cls, content)
                     else:
-                        result = r[FlextTestsFilesTypesMixin.ReadContent].ok(content)
+                        result = r[t.Tests.ReadContent].ok(content)
         return result
 
     def _read_content_by_format(
@@ -961,18 +948,16 @@ class FlextTestsFiles(s):
         path: Path,
         actual_fmt: str,
         params: m.Tests.ReadParams,
-    ) -> FlextTestsFilesTypesMixin.ReadContent:
+    ) -> t.Tests.ReadContent:
         """Read file content using format-specific parsing."""
-        content: FlextTestsFilesTypesMixin.ReadContent
+        content: t.Tests.ReadContent
         match actual_fmt:
             case _ if actual_fmt == c.Tests.FILE_FORMAT_BIN:
                 content = path.read_bytes()
             case _ if actual_fmt == c.Tests.FILE_FORMAT_JSON:
                 text = path.read_text(encoding=params.enc)
-                parsed_json = (
-                    FlextTestsBaseTypesMixin.TESTOBJECT_MAPPING_ADAPTER.validate_json(
-                        text.encode(),
-                    )
+                parsed_json = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_json(
+                    text.encode(),
                 )
                 content = (
                     FlextTestsPayloadUtilities.to_config_map(parsed_json)
@@ -1016,13 +1001,13 @@ class FlextTestsFiles(s):
 
     def _apply_key_filtering(
         self,
-        dict1: t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
-        dict2: t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
+        dict1: t.MappingKV[str, t.Tests.TestobjectSerializable],
+        dict2: t.MappingKV[str, t.Tests.TestobjectSerializable],
         keys: t.StrSequence | None,
         exclude_keys: t.StrSequence | None,
     ) -> tuple[
-        t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
-        t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
+        t.MappingKV[str, t.Tests.TestobjectSerializable],
+        t.MappingKV[str, t.Tests.TestobjectSerializable],
     ]:
         """Apply key filtering to both dicts if specified."""
         if keys is None and exclude_keys is None:
@@ -1045,18 +1030,14 @@ class FlextTestsFiles(s):
             return (filtered1, filtered2)
         return (dict1, dict2)
 
-    def _coerce_file_content[TFileContent: FlextTestsFilesTypesMixin.FileContentPlain](
+    def _coerce_file_content[TFileContent: t.Tests.FileContentPlain](
         self,
         value: TFileContent
         | p.ResultLike[TFileContent]
-        | FlextTestsBaseTypesMixin.TestobjectSerializable
+        | t.Tests.TestobjectSerializable
         | None,
-    ) -> FlextTestsFilesTypesMixin.FileContentPlain:
-        unwrapped: (
-            FlextTestsFilesTypesMixin.FileContentPlain
-            | FlextTestsBaseTypesMixin.TestobjectSerializable
-            | None
-        ) = (
+    ) -> t.Tests.FileContentPlain:
+        unwrapped: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable | None = (
             value.unwrap_or(c.DEFAULT_EMPTY_STRING)
             if isinstance(value, p.ResultLike)
             else value
@@ -1071,9 +1052,9 @@ class FlextTestsFiles(s):
             case _ if self._is_mapping(unwrapped):
                 return FlextTestsPayloadUtilities.to_config_map(unwrapped)
             case _ if self._is_nested_rows(unwrapped):
-                sequence_value: t.SequenceOf[
-                    FlextTestsBaseTypesMixin.TestobjectSerializable
-                ] = unwrapped if isinstance(unwrapped, (list, tuple)) else ()
+                sequence_value: t.SequenceOf[t.Tests.TestobjectSerializable] = (
+                    unwrapped if isinstance(unwrapped, (list, tuple)) else ()
+                )
                 return self._to_string_rows(sequence_value)
             case _:
                 return str(unwrapped)
@@ -1094,7 +1075,7 @@ class FlextTestsFiles(s):
             if deep is not None:
                 return deep
         if params.ignore_ws:
-            c1, c2 = re.sub(r"\s+", "", c1), re.sub(r"\s+", "", c2)
+            c1, c2 = "".join(c1.split()), "".join(c2.split())
         if params.ignore_case:
             c1, c2 = c1.lower(), c2.lower()
         return r[bool].ok(c1 == c2)
@@ -1111,11 +1092,11 @@ class FlextTestsFiles(s):
             lines2 = [line.lower() for line in lines2]
         return r[bool].ok(lines1 == lines2)
 
-    def _extract_content[TFileContent: FlextTestsFilesTypesMixin.FileContentPlain](
+    def _extract_content[TFileContent: t.Tests.FileContentPlain](
         self,
         content: TFileContent | p.ResultLike[TFileContent],
         extract_result: bool,
-    ) -> FlextTestsFilesTypesMixin.FileContentPlain:
+    ) -> t.Tests.FileContentPlain:
         """Extract actual content from r or return as-is.
 
         Uses isinstance check for result-like wrappers and unwrap_or for extraction.
@@ -1146,17 +1127,12 @@ class FlextTestsFiles(s):
 
     def _is_nested_rows(
         self,
-        value: FlextTestsFilesTypesMixin.FileContentPlain
-        | FlextTestsBaseTypesMixin.TestobjectSerializable,
+        value: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable,
     ) -> TypeIs[Sequence[t.StrSequence]]:
         if not isinstance(value, Sequence) or isinstance(value, str | bytes):
             return False
         try:
-            sequence_value = (
-                FlextTestsBaseTypesMixin.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
-                    value
-                )
-            )
+            sequence_value = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(value)
         except c.ValidationError:
             return False
         if not sequence_value:
@@ -1189,9 +1165,7 @@ class FlextTestsFiles(s):
         key_count = item_count = row_count = column_count = None
         model_valid: bool | None = None
         model_name = validate_model.__name__ if validate_model else None
-        parsed_mapping: (
-            t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable] | None
-        ) = None
+        parsed_mapping: t.MappingKV[str, t.Tests.TestobjectSerializable] | None = None
         match fmt:
             case "json" | "yaml" if text.strip():
                 parse_result = (
@@ -1291,8 +1265,8 @@ class FlextTestsFiles(s):
         fmt: str,
     ) -> (
         tuple[
-            t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
-            t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
+            t.MappingKV[str, t.Tests.TestobjectSerializable],
+            t.MappingKV[str, t.Tests.TestobjectSerializable],
         ]
         | None
     ):

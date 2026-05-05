@@ -7,15 +7,31 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import re
+from datetime import datetime
+from pathlib import Path
 from typing import ClassVar, Final
+
+from flext_tests import t
 
 
 class FlextTestsConstantsMatcher:
     """Matcher constants mixin for test assertions."""
 
+    MATCHER_GUARD_EQ_TYPES: ClassVar[tuple[type, ...]] = (
+        str,
+        int,
+        float,
+        bool,
+        bytes,
+        datetime,
+        Path,
+    )
+
     ERR_NOT_STARTSWITH: Final[str] = "Expected '{text}' to start with '{prefix}'"
     ERR_NOT_ENDSWITH: Final[str] = "Expected '{text}' to end with '{suffix}'"
-    ERR_NOT_MATCHES: Final[str] = "Expected '{text}' to match pattern '{pattern}'"
+    ERR_NOT_MATCHES: Final[str] = (
+        "Assertion failed: Expected '{text}' to match pattern '{pattern}'"
+    )
     ERR_OK_FAILED: Final[str] = "Expected success but got failure: {error}"
     ERR_FAIL_EXPECTED: Final[str] = (
         "Expected failure but got success with value: {value!r}"
@@ -46,4 +62,4 @@ class FlextTestsConstantsMatcher:
     )
     ERR_SCOPE_CLEANUP_FAILED: Final[str] = "Cleanup function failed in scope: {error}"
     EMAIL_PATTERN: Final[str] = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
-    EMAIL_PATTERN_RE: ClassVar[re.Pattern[str]] = re.compile(EMAIL_PATTERN)
+    EMAIL_PATTERN_RE: ClassVar[t.Infra.RegexPattern] = re.compile(EMAIL_PATTERN)

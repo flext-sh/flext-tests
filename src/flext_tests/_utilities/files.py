@@ -11,10 +11,7 @@ from collections.abc import (
 )
 from pathlib import Path
 
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
-from flext_tests.constants import FlextTestsConstants as c
-from flext_tests.models import FlextTestsModels as m
-from flext_tests.typings import FlextTestsTypes as t
+from flext_tests import c, m, t
 
 
 class FlextTestsFilesUtilitiesMixin:
@@ -26,7 +23,7 @@ class FlextTestsFilesUtilitiesMixin:
         | bytes
         | m.ConfigMap
         | m.Dict
-        | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | t.MappingKV[str, t.Tests.TestobjectSerializable]
         | t.SequenceOf[t.StrSequence],
         name: str,
         fmt: str,

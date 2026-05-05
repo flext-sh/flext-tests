@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from flext_tests.constants import FlextTestsConstants as c
-from flext_tests.models import FlextTestsModels as m
+from flext_tests import c, m
 
 
 class FlextTestsHandlerHelpersUtilitiesMixin:
@@ -19,30 +18,22 @@ class FlextTestsHandlerHelpersUtilitiesMixin:
         max_command_retries: int | None = None,
         metadata: m.Metadata | None = None,
     ) -> m.Handler:
-        """Create a handler configuration model.
-
-        Args:
-            handler_id: Handler identifier
-            handler_name: Handler name
-            handler_type: Optional handler type (default: COMMAND)
-            handler_mode: Optional handler mode (default: type or COMMAND)
-            command_timeout: Optional command timeout in seconds
-            max_command_retries: Optional max retry count
-            metadata: Optional handler metadata
-
-        Returns:
-            r[TEntity]: Result containing created entity or error
-            Handler configuration model
-
-        """
-        h_type = handler_type or c.HandlerType.COMMAND
-        h_mode = handler_mode or h_type
-        return m.Handler(
-            handler_id=handler_id,
-            handler_name=handler_name,
-            handler_type=h_type,
-            handler_mode=h_mode,
-            command_timeout=command_timeout or c.DEFAULT_MAX_COMMAND_RETRIES,
-            max_command_retries=max_command_retries or c.DEFAULT_MAX_COMMAND_RETRIES,
-            metadata=metadata,
-        )
+        """Create a handler configuration model using canonical model defaults."""
+        resolved_handler_type = handler_type or c.HandlerType.COMMAND
+        return m.Handler.model_validate({
+            "handler_id": handler_id,
+            "handler_name": handler_name,
+            "handler_type": resolved_handler_type,
+            "handler_mode": handler_mode or resolved_handler_type,
+            **(
+                {"command_timeout": command_timeout}
+                if command_timeout is not None
+                else {}
+            ),
+            **(
+                {"max_command_retries": max_command_retries}
+                if max_command_retries is not None
+                else {}
+            ),
+            **({"metadata": metadata} if metadata is not None else {}),
+        })

@@ -8,11 +8,8 @@ from collections.abc import (
 from contextlib import contextmanager
 from unittest.mock import patch
 
-from flext_core import (
-    FlextSettings,
-)
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
-from flext_tests.typings import FlextTestsTypes as t
+from flext_core import FlextSettings
+from flext_tests import t
 
 
 class FlextTestsConfigHelpersUtilitiesMixin:
@@ -41,7 +38,7 @@ class FlextTestsConfigHelpersUtilitiesMixin:
     @staticmethod
     @contextmanager
     def env_vars_context(
-        env_vars: t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
+        env_vars: t.MappingKV[str, t.Tests.TestobjectSerializable],
         vars_to_clear: t.StrSequence | None = None,
     ) -> Generator[None]:
         """Context manager for temporary environment variable changes."""

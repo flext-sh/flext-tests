@@ -35,34 +35,33 @@ from __future__ import annotations
 from collections.abc import Iterable
 from importlib import import_module
 from pathlib import Path
-from typing import ClassVar, Final, override
+from typing import ClassVar, override
 
 import pytest
 
-from flext_tests import m, p, t, u
-
-_WORKSPACE_MARKERS: Final[tuple[str, ...]] = (
-    "AGENTS.md",
-    "flext-core",
-    "flext-tests",
-)
-
-_StashConfig: pytest.StashKey[m.Tests.EnforcementDispatcherConfig] = pytest.StashKey()
+from flext_tests import c, m, p, t, u
 
 
 class _SessionConfig:
+    stash_config: ClassVar[pytest.StashKey[m.Tests.EnforcementDispatcherConfig]] = (
+        pytest.StashKey()
+    )
     value: ClassVar[pytest.Config | None] = None
 
 
 def _discover_workspace_root(start: Path) -> Path | None:
     """Walk upward from ``start`` to find the FLEXT workspace root.
 
-    Returns the first directory containing all of ``_WORKSPACE_MARKERS``;
+    Returns the first directory containing all of
+    ``c.Tests.ENFORCEMENT_WORKSPACE_MARKERS``;
     ``None`` when the caller is outside the workspace (e.g. running pytest
     rooted at a sub-project).
     """
     for candidate in (start, *start.parents):
-        if all((candidate / marker).exists() for marker in _WORKSPACE_MARKERS):
+        if all(
+            (candidate / marker).exists()
+            for marker in c.Tests.ENFORCEMENT_WORKSPACE_MARKERS
+        ):
             return candidate
     return None
 
@@ -122,7 +121,7 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 
 def _resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfig:
     """Build (and cache) the dispatcher's resolved configuration."""
-    stashed = config.stash.get(_StashConfig, None)
+    stashed = config.stash.get(_SessionConfig.stash_config, None)
     if stashed is not None:
         return stashed
 
@@ -155,7 +154,7 @@ def _resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfi
         exclude=exclude,
         workspace_root=workspace_root,
     )
-    config.stash[_StashConfig] = resolved
+    config.stash[_SessionConfig.stash_config] = resolved
     return resolved
 
 

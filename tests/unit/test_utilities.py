@@ -16,29 +16,66 @@ from tests import p, r, u
 class TestsFlextTestsUtilitiesUnit:
     """Test suite for u.Tests.Result class."""
 
-    def test_assert_success_passes(self) -> None:
-        """Test assert_success with successful result."""
-        result = r[str].ok("success")
-        value = u.Tests.assert_success(result)
-        tm.that(value, eq="success")
+    @pytest.mark.parametrize(
+        ("result", "assertion", "expected"),
+        [
+            pytest.param(
+                r[str].ok("success"),
+                "success",
+                "success",
+                id="assert-success-pass",
+            ),
+            pytest.param(
+                r[str].fail("error message"),
+                "failure",
+                "error message",
+                id="assert-failure-pass",
+            ),
+        ],
+    )
+    def test_result_assertions_pass(
+        self,
+        result: p.Result[str],
+        assertion: str,
+        expected: str,
+    ) -> None:
+        """Successful result assertion helpers should return the unwrapped payload."""
+        actual = (
+            u.Tests.assert_success(result)
+            if assertion == "success"
+            else u.Tests.assert_failure(result)
+        )
+        tm.that(actual, eq=expected)
 
-    def test_assert_success_fails(self) -> None:
-        """Test assert_success with failed result."""
-        result: p.Result[str] = r[str].fail("error")
-        with pytest.raises(AssertionError, match="Expected success but got failure"):
-            _ = u.Tests.assert_success(result)
-
-    def test_assert_failure_passes(self) -> None:
-        """Test assert_failure with failed result."""
-        result: p.Result[str] = r[str].fail("error message")
-        error = u.Tests.assert_failure(result)
-        tm.that(error, eq="error message")
-
-    def test_assert_failure_fails(self) -> None:
-        """Test assert_failure with successful result."""
-        result = r[str].ok("success")
-        with pytest.raises(AssertionError, match="Expected failure but got success"):
-            _ = u.Tests.assert_failure(result)
+    @pytest.mark.parametrize(
+        ("result", "assertion", "match"),
+        [
+            pytest.param(
+                r[str].fail("error"),
+                "success",
+                "Expected success but got failure",
+                id="assert-success-fail",
+            ),
+            pytest.param(
+                r[str].ok("success"),
+                "failure",
+                "Expected failure but got success",
+                id="assert-failure-fail",
+            ),
+        ],
+    )
+    def test_result_assertions_fail(
+        self,
+        result: p.Result[str],
+        assertion: str,
+        match: str,
+    ) -> None:
+        """Failing result assertion helpers should raise the expected assertion."""
+        assertion_fn = (
+            u.Tests.assert_success if assertion == "success" else u.Tests.assert_failure
+        )
+        with pytest.raises(AssertionError, match=match):
+            _ = assertion_fn(result)
 
     def test_assert_failure_with_expected_error(self) -> None:
         """Test assert_failure with expected error substring."""
@@ -63,24 +100,21 @@ class TestsFlextTestsUtilitiesUnit:
         with pytest.raises(AssertionError, match="Expected success value"):
             u.Tests.assert_success(result, expected_value="expected")
 
-    def test_assert_result_success_passes(self) -> None:
-        """Test assert_result_success with successful result."""
-        result = r[str].ok("success")
-        _ = u.Tests.assert_success(result)
+    def test_assert_result_chain_accepts_zero_alias_counts(self) -> None:
+        """Explicit zero alias counts must not be treated as missing."""
+        with pytest.raises(AssertionError, match="Expected 0 successes, got 1"):
+            u.Tests.assert_result_chain(
+                [r[str].ok("success")],
+                expected_success_count=0,
+            )
 
-    def test_assert_result_success_fails(self) -> None:
-        """Test assert_result_success with failed result."""
-        result: p.Result[str] = r[str].fail("error")
-        with pytest.raises(AssertionError, match="Expected success but got failure"):
-            _ = u.Tests.assert_success(result)
+    def test_create_parametrized_cases_preserves_empty_error_codes(self) -> None:
+        """Empty explicit error-code sequences must not be replaced by fallback data."""
+        cases = u.Tests.create_parametrized_cases(
+            success_values=(),
+            failure_errors=("boom",),
+            error_codes=(),
+        )
 
-    def test_assert_result_failure_passes(self) -> None:
-        """Test assert_result_failure with failed result."""
-        result: p.Result[str] = r[str].fail("error")
-        _ = u.Tests.assert_failure(result)
-
-    def test_assert_result_failure_fails(self) -> None:
-        """Test assert_result_failure with successful result."""
-        result = r[str].ok("success")
-        with pytest.raises(AssertionError, match="Expected failure but got success"):
-            _ = u.Tests.assert_failure(result)
+        tm.that(len(cases), eq=1)
+        tm.that(cases[0][0].error_code, eq=None)
