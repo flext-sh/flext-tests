@@ -8,16 +8,32 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import tomllib
 from collections.abc import (
     MutableSequence,
 )
 from pathlib import Path
 
+from flext_cli import u as cli_u
 from flext_tests import c, m, p, r, t, u
 
 type _TomlValue = t.Primitives | list[_TomlValue] | dict[str, _TomlValue]
 type _TomlDict = dict[str, _TomlValue]
+
+
+def _to_toml_value(value: t.JsonValue) -> _TomlValue:
+    """Project a JsonValue into a _TomlValue (TOML lacks None; treat as '')."""
+    if value is None:
+        return ""
+    if isinstance(value, dict):
+        return {key: _to_toml_value(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_to_toml_value(item) for item in value]
+    return value
+
+
+def _to_toml_dict(mapping: t.JsonMapping) -> _TomlDict:
+    """Recursively convert a JsonMapping to a _TomlDict, eliding None values."""
+    return {key: _to_toml_value(value) for key, value in mapping.items()}
 
 
 class FlextValidatorSettings:
@@ -164,9 +180,16 @@ class FlextValidatorSettings:
         violations: MutableSequence[m.Tests.Violation] = []
         try:
             content = file_path.read_text(encoding=c.Tests.DEFAULT_ENCODING)
-            data: _TomlDict = tomllib.loads(content)
-        except (OSError, tomllib.TOMLDecodeError):
+        except OSError:
             return violations
+        mapping = cli_u.Cli.toml_mapping_from_text(content)
+        if mapping is None:
+            return violations
+        # toml_mapping_from_text returns JsonMapping. The TOML grammar produces
+        # a strict subset of JsonValue (no None). Walk the mapping and elide
+        # any None entries so the structure satisfies _TomlDict's narrower
+        # union without introducing a typing.cast or # type: ignore.
+        data: _TomlDict = _to_toml_dict(mapping)
         lines = content.splitlines()
         violations.extend(cls._check_mypy_settings(file_path, data, lines, approved))
         violations.extend(cls._check_pyright_settings(file_path, data, lines, approved))
