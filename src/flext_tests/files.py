@@ -16,7 +16,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import csv
 import os
 import shutil
 import tempfile
@@ -33,6 +32,7 @@ from pathlib import Path
 from types import TracebackType
 from typing import ClassVar, Self, TypeIs, overload, override
 
+from flext_cli import u as cli_u
 from flext_tests import (
     FlextTestsPayloadUtilities,
     c,
@@ -1181,11 +1181,8 @@ class FlextTestsFiles(s):
                     case _:
                         pass
             case "csv":
-                rows: list[list[str]] = []
-                try:
-                    rows = list(csv.reader(text.splitlines()))
-                except csv.Error:
-                    pass
+                csv_outcome = cli_u.Cli.csv_loads(text)
+                rows: list[list[str]] = csv_outcome.value if csv_outcome.success else []
                 if rows:
                     row_count = len(rows)
                     column_count = len(rows[0]) if rows[0] else 0

@@ -7,12 +7,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import json
 from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
 
+from flext_cli import u as cli_u
 from flext_tests import tf, tm
 from tests import c, m, r, t, u
 
@@ -780,7 +780,7 @@ class TestsFlextTestsFiles:
     def test_info_parse_content_json_list(self, tmp_path: Path) -> None:
         """Test info() with parse_content=True for JSON list."""
         manager = tf(base_dir=tmp_path)
-        content = json.dumps([1, 2, 3, 4, 5])
+        content = cli_u.Cli.json_dumps([1, 2, 3, 4, 5]).unwrap()
         path = tmp_path / "list.json"
         _ = path.write_text(content)
         result = manager.info(path, parse_content=True)
