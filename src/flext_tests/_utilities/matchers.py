@@ -473,12 +473,14 @@ class FlextTestsMatchersUtilities(
             @overload
             def ok[TOkResult](
                 result: p.Result[TOkResult],
+                /,
             ) -> TOkResult: ...
 
             @staticmethod
             @overload
             def ok[TOkResult](
                 result: p.Result[TOkResult],
+                /,
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> TOkResult | t.Tests.TestobjectSerializable: ...
 

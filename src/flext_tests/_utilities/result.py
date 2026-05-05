@@ -39,7 +39,7 @@ class FlextTestsResultUtilitiesMixin:
             raise AssertionError(
                 error_msg or c.Tests.ERR_OK_FAILED.format(error=result.error)
             )
-        value = result.value
+        value: TResult = result.value
         if expected_value is not ... and value != expected_value:
             raise AssertionError(
                 f"Expected success value {expected_value!r} but got {value!r}"
