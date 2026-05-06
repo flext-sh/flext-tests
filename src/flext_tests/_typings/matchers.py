@@ -18,7 +18,8 @@ from flext_tests import FlextTestsBaseTypesMixin as tb
 
 class FlextTestsMatchersTypesMixin:
     type MatcherEqTarget = (
-        t.MappingKV[str, tb.TestobjectSerializable]
+        m.BaseModel
+        | t.MappingKV[str, tb.TestobjectSerializable]
         | t.SequenceOf[tb.TestobjectSerializable]
         | bytes
         | str
@@ -44,6 +45,7 @@ class FlextTestsMatchersTypesMixin:
     type MatchRuleValue = MatchRuleLeaf | MatchRuleKwargs
     type MatcherKwargValue = (
         MatchRuleLeaf
+        | m.BaseModel
         | set[tb.TestobjectSerializable]
         | it.Infra.RegexPattern
         | Callable[..., tb.Testobject]

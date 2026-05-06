@@ -17,31 +17,13 @@ And the following CLI options:
 
 from __future__ import annotations
 
-from flext_tests._fixtures.markdown_validation import (
-    MarkdownCodeBlockCollector,
-    MarkdownCodeBlockItem,
-    MarkdownValidationError,
-    pytest_addoption,
-    pytest_collect_file,
-)
-from flext_tests._fixtures.settings import (
-    reset_settings,
-    settings,
-    settings_factory,
+pytest_plugins: tuple[str, ...] = (
+    "flext_tests._fixtures.markdown_validation",
+    "flext_tests._fixtures.settings",
 )
 
 # Enforcement dispatcher (flext_tests._fixtures.enforcement) is loaded via
 # the ``flext_tests_enforcement`` pytest11 entry point in pyproject.toml —
 # re-exporting its hooks here would double-register CLI options when both
-# paths are active.
-
-__all__: list[str] = [
-    "MarkdownCodeBlockCollector",
-    "MarkdownCodeBlockItem",
-    "MarkdownValidationError",
-    "pytest_addoption",
-    "pytest_collect_file",
-    "reset_settings",
-    "settings",
-    "settings_factory",
-]
+# paths are active. The plugin module only delegates to the canonical
+# fixture modules so lazy-init sees a single owner for each exported symbol.

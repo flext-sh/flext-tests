@@ -12,6 +12,7 @@ from pathlib import Path
 
 import pytest
 
+from flext_tests import m
 from flext_tests._fixtures import enforcement as dispatcher
 
 
@@ -59,8 +60,8 @@ class TestsFlextTestsEnforcementDispatcher:
         *,
         include: frozenset[str] = frozenset(),
         exclude: frozenset[str] = frozenset(),
-    ) -> dispatcher.m.Tests.EnforcementDispatcherConfig:
-        return dispatcher.m.Tests.EnforcementDispatcherConfig(
+    ) -> m.Tests.EnforcementDispatcherConfig:
+        return m.Tests.EnforcementDispatcherConfig(
             active=True,
             strict=False,
             include=include,

@@ -701,8 +701,10 @@ class FlextTestsFiles(s):
             if isinstance(actual_content, Mapping)
             else None
         )
-        fallback_value = FlextTestsPayloadUtilities.to_payload(actual_content)
-        raw_payload = (
+        fallback_value = FlextTestsPayloadUtilities.to_normalized_value(
+            FlextTestsPayloadUtilities.to_payload(actual_content),
+        )
+        raw_payload: t.JsonDict = (
             {
                 k: FlextTestsPayloadUtilities.to_normalized_value(v)
                 for k, v in mapping_content.items()
@@ -710,7 +712,7 @@ class FlextTestsFiles(s):
             if mapping_content is not None
             else {"value": fallback_value}
             if actual_content
-            else dict[str, t.JsonValue]()
+            else {}
         )
         return t.json_value_adapter().validate_python(raw_payload)
 
@@ -928,7 +930,7 @@ class FlextTestsFiles(s):
                     result = self._read_fail(
                         c.Tests.ERROR_INVALID_JSON.format(error=e), model_cls
                     )
-                except t.Cli.YAMLError as e:
+                except c.Cli.YamlParseError as e:
                     result = self._read_fail(
                         c.Tests.ERROR_INVALID_YAML.format(error=e), model_cls
                     )
@@ -1279,7 +1281,7 @@ class FlextTestsFiles(s):
             return None
         try:
             r1, r2 = parse(content1), parse(content2)
-        except (ValueError, t.Cli.YAMLError, TypeError):
+        except (ValueError, c.Cli.YamlParseError, TypeError):
             return None
         d1 = r1.value if r1.success else None
         d2 = r2.value if r2.success else None
