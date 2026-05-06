@@ -63,14 +63,14 @@ class FlextTestsFixturesDSLMixin:
         return True
 
     @classmethod
-    def servers(cls) -> tuple[str, ...]:
+    def servers(cls) -> t.StrSequence:
         root = cls._root()
         if not root.exists():
             return ()
         return tuple(sorted(d.name for d in root.iterdir() if d.is_dir()))
 
     @classmethod
-    def kinds(cls, group: str) -> tuple[str, ...]:
+    def kinds(cls, group: str) -> t.StrSequence:
         root = cls._root()
         server_dir = root / group
         if not server_dir.exists():

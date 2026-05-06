@@ -10,7 +10,6 @@ import types as _bt
 from collections.abc import (
     ItemsView,
     KeysView,
-    Mapping,
     MutableMapping,
     Sequence,
     Set as AbstractSet,
@@ -96,7 +95,7 @@ class FlextTestsBaseTypesMixin:
         config=m.ConfigDict(arbitrary_types_allowed=True),
     )
     STR_MAPPING_SEQUENCE_ADAPTER: m.TypeAdapter[t.SequenceOf[t.StrMapping]] = (
-        m.TypeAdapter(Sequence[t.StrMapping])
+        m.TypeAdapter(t.SequenceOf[t.StrMapping])
     )
     TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER: m.TypeAdapter[
         t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
@@ -110,27 +109,19 @@ class FlextTestsBaseTypesMixin:
         t.SequenceOf[TestobjectSerializable],
         config=m.ConfigDict(arbitrary_types_allowed=True),
     )
-    PRIMITIVES_MAPPING_ADAPTER: m.TypeAdapter[t.MappingKV[str, t.Primitives]] = (
-        m.TypeAdapter(Mapping[str, t.Primitives])
-    )
-    NORMALIZED_VALUE_ADAPTER: m.TypeAdapter[t.JsonValue] = m.TypeAdapter(t.JsonValue)
     DICT_ADAPTER: m.TypeAdapter[m.Dict] = m.TypeAdapter(m.Dict)
     SCALAR_MAPPING_ADAPTER: m.TypeAdapter[t.ScalarMapping] = m.TypeAdapter(
         t.ScalarMapping
     )
-    CONTAINER_MAPPING_ADAPTER: m.TypeAdapter[t.JsonMapping] = m.TypeAdapter(
-        t.JsonMapping
-    )
     CONTAINER_MAPPING_SEQUENCE_ADAPTER: m.TypeAdapter[t.SequenceOf[t.JsonMapping]] = (
-        m.TypeAdapter(Sequence[t.JsonMapping])
+        m.TypeAdapter(t.SequenceOf[t.JsonMapping])
     )
-    STR_MAPPING_ADAPTER: m.TypeAdapter[t.StrMapping] = m.TypeAdapter(t.StrMapping)
     STR_MAPPING_MAPPING_ADAPTER: m.TypeAdapter[t.MappingKV[str, t.StrMapping]] = (
-        m.TypeAdapter(Mapping[str, t.StrMapping])
+        m.TypeAdapter(t.MappingKV[str, t.StrMapping])
     )
     INTEGER_SEQUENCE_ADAPTER: m.TypeAdapter[Sequence[int]] = m.TypeAdapter(
         Sequence[int]
     )
     STR_SEQUENCE_MAPPING_ADAPTER: m.TypeAdapter[t.MappingKV[str, t.StrSequence]] = (
-        m.TypeAdapter(Mapping[str, t.StrSequence])
+        m.TypeAdapter(t.MappingKV[str, t.StrSequence])
     )

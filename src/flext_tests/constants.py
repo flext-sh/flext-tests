@@ -16,6 +16,7 @@ from flext_tests import (
     FlextTestsConstantsFiles,
     FlextTestsConstantsMatcher,
     FlextTestsConstantsValidator,
+    t,
 )
 
 
@@ -42,4 +43,4 @@ class FlextTestsConstants(c):
 
 c = FlextTestsConstants
 
-__all__: tuple[str, ...] = ("FlextTestsConstants", "c")
+__all__: t.StrSequence = ("FlextTestsConstants", "c")

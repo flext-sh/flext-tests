@@ -704,7 +704,7 @@ class FlextTestsFiles(s):
         fallback_value = FlextTestsPayloadUtilities.to_normalized_value(
             FlextTestsPayloadUtilities.to_payload(actual_content),
         )
-        raw_payload: t.JsonDict = (
+        raw_payload: t.JsonValue = (
             {
                 k: FlextTestsPayloadUtilities.to_normalized_value(v)
                 for k, v in mapping_content.items()
@@ -1176,8 +1176,7 @@ class FlextTestsFiles(s):
                 parsed_value = parse_result.value if parse_result.success else None
                 match parsed_value:
                     case dict() as parsed_dict:
-                        parsed_mapping = dict(parsed_dict.items())
-                        key_count = len(parsed_mapping)
+                        key_count = len(parsed_dict)
                     case list() as parsed_list:
                         item_count = len(parsed_list)
                     case _:

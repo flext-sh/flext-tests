@@ -17,7 +17,9 @@ And the following CLI options:
 
 from __future__ import annotations
 
-pytest_plugins: tuple[str, ...] = (
+from tests import t
+
+pytest_plugins: t.StrSequence = (
     "flext_tests._fixtures.markdown_validation",
     "flext_tests._fixtures.settings",
 )

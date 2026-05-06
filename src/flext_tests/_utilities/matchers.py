@@ -22,6 +22,7 @@ from contextlib import contextmanager, nullcontext
 from pathlib import Path
 from typing import TypeVar, overload
 
+from flext_core import p as core_p
 from flext_infra import u
 from flext_tests import (
     FlextTestsConfigHelpersUtilitiesMixin,
@@ -471,24 +472,20 @@ class FlextTestsMatchersUtilities(
 
             @staticmethod
             @overload
-            def ok[TOkResult](
-                result: p.Result[TOkResult],
-                /,
-            ) -> TOkResult: ...
+            def ok[TResult](result: core_p.Result[TResult]) -> TResult: ...
 
             @staticmethod
             @overload
-            def ok[TOkResult](
-                result: p.Result[TOkResult],
-                /,
+            def ok[TResult](
+                result: core_p.Result[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
-            ) -> TOkResult | t.Tests.TestobjectSerializable: ...
+            ) -> TResult | t.Tests.TestobjectSerializable: ...
 
             @staticmethod
-            def ok[TOkResult](
-                result: p.Result[TOkResult],
+            def ok[TResult](
+                result: core_p.Result[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
-            ) -> TOkResult | t.Tests.TestobjectSerializable:
+            ) -> TResult | t.Tests.TestobjectSerializable:
                 """Enhanced assertion for r success with optional value validation.
 
                 Args:
@@ -506,7 +503,7 @@ class FlextTestsMatchersUtilities(
                     params = m.Tests.OkParams.model_validate(kwargs)
                 except c.EXC_BASIC_TYPE as exc:
                     raise ValueError(f"Parameter validation failed: {exc}") from exc
-                result_value: TOkResult | t.Tests.TestobjectSerializable = (
+                result_value: TResult | t.Tests.TestobjectSerializable = (
                     FlextTestsResultUtilitiesMixin.assert_success(
                         result,
                         error_msg=params.msg,

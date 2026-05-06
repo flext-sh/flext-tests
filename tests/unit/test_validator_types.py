@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_tests import tm, tv
+from flext_tests import m, tm, tv
 from tests import u
 
 
@@ -46,7 +46,7 @@ def narrow(value: Optional[str]) -> TypeGuard[str]:
 """,
         )
 
-        result = u.Tests.assert_success(tv.types(file_path))
+        result: m.Tests.ScanResult = u.Tests.assert_success(tv.types(file_path))
         rule_ids = {violation.rule_id for violation in result.violations}
 
         tm.that(result.passed, eq=False)
@@ -75,7 +75,7 @@ def is_ready(value: str) -> bool:
 """,
         )
 
-        result = u.Tests.assert_success(tv.types(file_path))
+        result: m.Tests.ScanResult = u.Tests.assert_success(tv.types(file_path))
         rule_ids = {violation.rule_id for violation in result.violations}
 
         tm.that(result.passed, eq=False)
@@ -124,7 +124,7 @@ def narrow_scalar(value: Scalar | None) -> TypeIs[Scalar]:
 """,
         )
 
-        result = u.Tests.assert_success(tv.types(file_path))
+        result: m.Tests.ScanResult = u.Tests.assert_success(tv.types(file_path))
 
         tm.that(result.passed, eq=True)
         tm.that(result.violations, empty=True)

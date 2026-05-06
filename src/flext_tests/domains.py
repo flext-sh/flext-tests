@@ -70,7 +70,7 @@ class FlextTestsDomains:
                 file_extension=self._file_extension,
             )
 
-        def available_fixture_servers(self) -> tuple[str, ...]:
+        def available_fixture_servers(self) -> t.StrSequence:
             return FlextTestsDomains.available_fixture_servers(
                 fixtures_root=self._fixtures_root,
             )
@@ -78,7 +78,7 @@ class FlextTestsDomains:
         def available_fixture_types(
             self,
             group: str,
-        ) -> tuple[str, ...]:
+        ) -> t.StrSequence:
             return FlextTestsDomains.available_fixture_types(
                 group,
                 fixtures_root=self._fixtures_root,
@@ -196,7 +196,7 @@ class FlextTestsDomains:
         cls,
         *,
         fixtures_root: Path | None = None,
-    ) -> tuple[str, ...]:
+    ) -> t.StrSequence:
         fixtures_root = fixtures_root or Path.cwd()
         if not fixtures_root.exists():
             return ()
@@ -215,7 +215,7 @@ class FlextTestsDomains:
         *,
         fixtures_root: Path | None = None,
         file_extension: str = ".ldif",
-    ) -> tuple[str, ...]:
+    ) -> t.StrSequence:
         fixtures_root = fixtures_root or Path.cwd()
         server_dir = fixtures_root / group
         if not server_dir.exists():

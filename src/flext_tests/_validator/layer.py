@@ -36,7 +36,7 @@ class FlextValidatorLayer:
         return parts[-1]
 
     @classmethod
-    def _imported_modules(cls, line: str) -> tuple[str, ...]:
+    def _imported_modules(cls, line: str) -> t.StrSequence:
         """Return imported module stems referenced by one import line."""
         from_match = c.Tests.VALIDATOR_FROM_IMPORT_LINE_RE.match(line)
         if from_match is not None and u.Tests.code_match(

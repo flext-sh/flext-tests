@@ -88,7 +88,7 @@ class FlextTestsConstantsFiles:
     PERMISSION_WRITABLE_FILE: Final[int] = 420
     PERMISSION_WRITABLE_DIR: Final[int] = 493
     HASH_CHUNK_SIZE: Final[int] = 8192
-    SIZE_UNITS: Final[tuple[str, ...]] = ("B", "KB", "MB", "GB", "TB", "PB")
+    SIZE_UNITS: Final[t.StrSequence] = ("B", "KB", "MB", "GB", "TB", "PB")
     SIZE_THRESHOLD: Final[int] = 1024
     ERROR_FILE_NOT_FOUND: Final[str] = "File not found: {path}"
     ERROR_INVALID_JSON: Final[str] = "Invalid JSON: {error}"

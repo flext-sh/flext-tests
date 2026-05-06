@@ -303,14 +303,14 @@ class FlextTestsConstantsValidator:
         "Optional",
         "Union",
     })
-    ENFORCEMENT_WORKSPACE_MARKERS: Final[tuple[str, ...]] = (
+    ENFORCEMENT_WORKSPACE_MARKERS: Final[t.StrSequence] = (
         "AGENTS.md",
         "flext-core",
         "flext-tests",
     )
 
     # Defaults
-    VALIDATOR_EXCLUDE_PATTERNS: Final[tuple[str, ...]] = (
+    VALIDATOR_EXCLUDE_PATTERNS: Final[t.StrSequence] = (
         "**/.venv/**",
         "**/venv/**",
         "**/__pycache__/**",
@@ -320,7 +320,7 @@ class FlextTestsConstantsValidator:
         "**/htmlcov/**",
         "**/*.pyc",
     )
-    VALIDATOR_INCLUDE_PATTERNS: Final[tuple[str, ...]] = ("**/*.py",)
+    VALIDATOR_INCLUDE_PATTERNS: Final[t.StrSequence] = ("**/*.py",)
     VALIDATOR_IMPORTS_KEY: Final[str] = "imports"
     VALIDATOR_TYPES_KEY: Final[str] = "types"
     VALIDATOR_TESTS_KEY: Final[str] = "tests"
@@ -354,7 +354,7 @@ class FlextTestsConstantsValidator:
         VALIDATOR_APPROVED_PRAGMA_PATTERN: VALIDATOR_APPROVED_PRAGMA_RE,
         VALIDATOR_APPROVED_INTERNAL_INIT_PATTERN: VALIDATOR_APPROVED_INTERNAL_INIT_RE,
     })
-    VALIDATOR_APPROVED_CAST_PATTERNS: Final[tuple[str, ...]] = (
+    VALIDATOR_APPROVED_CAST_PATTERNS: Final[t.StrSequence] = (
         VALIDATOR_APPROVED_CAST_SERVICE_PATTERN,
         VALIDATOR_APPROVED_CAST_CONTAINER_PATTERN,
     )
@@ -375,7 +375,7 @@ class FlextTestsConstantsValidator:
         "TypeGuard",
         "Union",
     })
-    VALIDATOR_APPROVED_PRAGMA_PATTERNS: Final[tuple[str, ...]] = (
+    VALIDATOR_APPROVED_PRAGMA_PATTERNS: Final[t.StrSequence] = (
         VALIDATOR_APPROVED_PRAGMA_PATTERN,
     )
     VALIDATOR_APPROVED_MOCK_NAMES: Final[frozenset[str]] = frozenset({
@@ -384,7 +384,7 @@ class FlextTestsConstantsValidator:
         "AsyncMock",
         "PropertyMock",
     })
-    VALIDATOR_APPROVED_INTERNAL_INIT_PATTERNS: Final[tuple[str, ...]] = (
+    VALIDATOR_APPROVED_INTERNAL_INIT_PATTERNS: Final[t.StrSequence] = (
         VALIDATOR_APPROVED_INTERNAL_INIT_PATTERN,
     )
 

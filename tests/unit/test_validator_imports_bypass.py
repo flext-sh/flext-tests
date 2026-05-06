@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_tests import tm, tv
+from flext_tests import m, tm, tv
 from tests import u
 
 
@@ -44,7 +44,7 @@ def load() -> None:
 """,
         )
 
-        result = u.Tests.assert_success(tv.imports(file_path))
+        result: m.Tests.ScanResult = u.Tests.assert_success(tv.imports(file_path))
         rule_ids = {violation.rule_id for violation in result.violations}
 
         tm.that(result.passed, eq=False)
@@ -71,7 +71,7 @@ def render() -> str:
 """,
         )
 
-        result = u.Tests.assert_success(tv.imports(file_path))
+        result: m.Tests.ScanResult = u.Tests.assert_success(tv.imports(file_path))
 
         tm.that(result.passed, eq=True)
         tm.that(result.violations, empty=True)
@@ -104,7 +104,7 @@ def ignore_specific() -> None:
 """,
         )
 
-        result = u.Tests.assert_success(tv.bypass(file_path))
+        result: m.Tests.ScanResult = u.Tests.assert_success(tv.bypass(file_path))
         rule_ids = [violation.rule_id for violation in result.violations]
 
         tm.that(result.passed, eq=False)
@@ -127,7 +127,7 @@ def render() -> str:
 """,
         )
 
-        result = u.Tests.assert_success(tv.bypass(file_path))
+        result: m.Tests.ScanResult = u.Tests.assert_success(tv.bypass(file_path))
 
         tm.that(result.passed, eq=True)
         tm.that(result.violations, empty=True)

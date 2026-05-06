@@ -29,7 +29,7 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
     _VALIDATOR_KEY = c.Tests.VALIDATOR_TYPES_KEY
 
     @staticmethod
-    def _match_names(line: str, pattern: t.Infra.RegexPattern) -> tuple[str, ...]:
+    def _match_names(line: str, pattern: t.Infra.RegexPattern) -> t.StrSequence:
         """Collect distinct named regex matches from one line."""
         return tuple(sorted({match.group("name") for match in pattern.finditer(line)}))
 

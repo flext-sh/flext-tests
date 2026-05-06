@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_tests import tm, tv
+from flext_tests import m, tm, tv
 from tests import u
 
 
@@ -35,7 +35,7 @@ import app.handlers as handlers
 """,
         )
 
-        result = u.Tests.assert_success(
+        result: m.Tests.ScanResult = u.Tests.assert_success(
             tv.layer(
                 file_path,
                 layer_hierarchy={
@@ -71,7 +71,7 @@ def test_example(
 """,
         )
 
-        result = u.Tests.assert_success(tv.tests(file_path))
+        result: m.Tests.ScanResult = u.Tests.assert_success(tv.tests(file_path))
         rule_ids = {violation.rule_id for violation in result.violations}
 
         tm.that(result.passed, eq=False)
@@ -101,7 +101,7 @@ def render(value: object) -> Optional[str]:
 """,
         )
 
-        result = u.Tests.assert_success(tv.markdown(tmp_path))
+        result: m.Tests.ScanResult = u.Tests.assert_success(tv.markdown(tmp_path))
         rule_ids = {violation.rule_id for violation in result.violations}
 
         tm.that(result.passed, eq=False)

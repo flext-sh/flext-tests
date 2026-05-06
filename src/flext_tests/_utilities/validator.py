@@ -67,7 +67,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return 1
 
     @staticmethod
-    def split_import_targets(value: str) -> tuple[str, ...]:
+    def split_import_targets(value: str) -> t.StrSequence:
         """Normalize one import target list into canonical imported names."""
         cleaned = value.split("#", maxsplit=1)[0].replace("(", " ").replace(")", " ")
         targets: list[str] = []
