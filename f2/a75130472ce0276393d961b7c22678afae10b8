@@ -1,0 +1,67 @@
+src/flext_tests/_typings/base.py
+  h_5cf852cc46bf92 98,117,120,126
+src/flext_tests/constants.py
+  h_5cf852cc46bf92 46
+  s_552d8e4891a938::t_44ecbbafda37df 19
+src/flext_tests/_utilities/fixtures_dsl.py
+  h_5cf852cc46bf92 66,73
+src/flext_tests/_validator/types.py
+  h_5cf852cc46bf92 32
+src/flext_tests/_constants/files.py
+  h_5cf852cc46bf92 91
+src/flext_tests/conftest_plugin.py
+  h_5cf852cc46bf92 20,22
+src/flext_tests/files.py
+  s_552d8e4891a938::t_8cd617bfb7cbc0 707
+  h_5cf852cc46bf92 1179
+src/flext_tests/_validator/layer.py
+  h_5cf852cc46bf92 39
+tests/unit/test_validator_imports_bypass.py
+  h_5cf852cc46bf92 11,47,74,107,130
+tests/unit/test_validator_types.py
+  h_5cf852cc46bf92 11,49,78,127
+tests/unit/test_validator_layer_tests_markdown.py
+  h_5cf852cc46bf92 11,38,74,104
+src/flext_tests/_utilities/matchers.py
+  s_0290f35b98ef0c::t_339992f62a3cc5 25,475,480,486
+  h_5cf852cc46bf92 479,482,485,488
+  s_0290f35b98ef0c::t_d67540e8a627f5 506
+src/flext_tests/domains.py
+  h_5cf852cc46bf92 73,81,199,218
+src/flext_tests/_constants/validator.py
+  h_5cf852cc46bf92 306,313,323,357,378,387
+src/flext_tests/_utilities/validator.py
+  h_5cf852cc46bf92 70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "f2a75130472ce0276393d961b7c22678afae10b8",
+  "prompts": {},
+  "humans": {
+    "h_5cf852cc46bf92": {
+      "author": "FLEXT Bot <team@flext.sh>"
+    },
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  },
+  "sessions": {
+    "s_0290f35b98ef0c": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "0c4cc853-563f-48ad-a39a-f49b587090b8",
+        "model": "unknown"
+      },
+      "human_author": "FLEXT Bot <team@flext.sh>"
+    },
+    "s_552d8e4891a938": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "35c0040b-2ae9-466e-90aa-7721509e1e19",
+        "model": "unknown"
+      },
+      "human_author": "FLEXT Bot <team@flext.sh>"
+    }
+  }
+}
