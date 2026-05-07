@@ -1,0 +1,47 @@
+src/flext_tests/_utilities/matchers.py
+  s_b15aa8dbf80823::t_332d8954c5dab3 140,146,225,271
+  s_5a9c2b140a8456::t_f569942cd3ec7d 1228
+  s_b15aa8dbf80823::t_c04d5a01cf0ec8 908,1119
+src/flext_tests/_utilities/fixtures_dsl.py
+  s_5a9c2b140a8456::t_f569942cd3ec7d 108
+src/flext_tests/domains.py
+  s_5a9c2b140a8456::t_f569942cd3ec7d 114
+src/flext_tests/_constants/data_cases.py
+  s_5a9c2b140a8456::t_f569942cd3ec7d 21,31
+  s_5a9c2b140a8456::t_538c2a0b4b1e11 14-15
+src/flext_tests/_constants/validator.py
+  s_5a9c2b140a8456::t_f569942cd3ec7d 30,34,38,42,46,50,54,58,62-63,67,71,75,79,83,87,91,95,99,103,107,111,115,119,123,127,131,135,139
+src/flext_tests/files.py
+  s_b15aa8dbf80823::t_332d8954c5dab3 737,742
+  s_5a9c2b140a8456::t_f569942cd3ec7d 1064
+  s_b15aa8dbf80823::t_c04d5a01cf0ec8 245,1057
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.1",
+  "base_commit_sha": "3ef8d5d266a5be7ef378a63a87f9abd8ebb537af",
+  "prompts": {},
+  "humans": {
+    "h_9db9d35f50cf33": {
+      "author": "FLEXT Bot"
+    }
+  },
+  "sessions": {
+    "s_5a9c2b140a8456": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dfddc-86ee-79a0-b5bf-0433a8110b6a",
+        "model": "gpt-5.5"
+      },
+      "human_author": "FLEXT Bot <team@flext.sh>"
+    },
+    "s_b15aa8dbf80823": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d896ab0f-dd16-4dca-9ad4-b3d924a501e7",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "FLEXT Bot <team@flext.sh>"
+    }
+  }
+}
