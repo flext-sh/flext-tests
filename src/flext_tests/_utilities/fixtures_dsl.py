@@ -105,7 +105,7 @@ class FlextTestsFixturesDSLMixin:
         return {server: cls.for_group(server) for server in cls.servers()}
 
     @classmethod
-    def pytest_params(cls, kind: str) -> t.SequenceOf[tuple[str, str]]:
+    def pytest_params(cls, kind: str) -> t.StrPairSequence:
         """All (server, content) tuples for a given kind — ready for parametrize."""
         return [
             (server, cls.load(server, kind))

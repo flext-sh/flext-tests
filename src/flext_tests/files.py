@@ -242,7 +242,7 @@ class FlextTestsFiles(s):
         return [
             [str(cell) for cell in row]
             for row in value
-            if isinstance(row, (list, tuple))
+            if isinstance(row, t.SEQUENCE_PAIR_TYPES)
         ]
 
     @staticmethod
@@ -734,13 +734,12 @@ class FlextTestsFiles(s):
         if headers:
             csv_rows.append(list(headers))
         if isinstance(actual_content, Sequence) and not isinstance(
-            actual_content,
-            (str, bytes),
+            actual_content, t.STR_BYTES_TYPES
         ):
             csv_rows.extend(
                 list(row)
                 for row in actual_content
-                if isinstance(row, Sequence) and not isinstance(row, (str, bytes))
+                if isinstance(row, Sequence) and not isinstance(row, t.STR_BYTES_TYPES)
             )
         else:
             csv_rows.append([str(actual_content)])
@@ -1055,14 +1054,14 @@ class FlextTestsFiles(s):
                 return FlextTestsPayloadUtilities.to_config_map(unwrapped)
             case _ if self._is_nested_rows(unwrapped):
                 sequence_value: t.SequenceOf[t.Tests.TestobjectSerializable] = (
-                    unwrapped if isinstance(unwrapped, (list, tuple)) else ()
+                    unwrapped if isinstance(unwrapped, t.SEQUENCE_PAIR_TYPES) else ()
                 )
                 return self._to_string_rows(sequence_value)
             case _:
                 return str(unwrapped)
 
     @staticmethod
-    def _read_both(params: m.Tests.CompareParams) -> tuple[str, str]:
+    def _read_both(params: m.Tests.CompareParams) -> t.StrPair:
         enc = c.Tests.DEFAULT_ENCODING
         return (
             params.file1.read_text(encoding=enc),

@@ -11,12 +11,14 @@ from __future__ import annotations
 
 from typing import Final
 
+from flext_tests import t
+
 
 class FlextTestsConstantsDataCases:
     """Reusable test data cases for parametrized testing."""
 
     # App ID normalization test cases: (raw, normalized)
-    FORMAT_APP_ID_CASES: Final[tuple[tuple[str, str], ...]] = (
+    FORMAT_APP_ID_CASES: Final[t.StrPairTuple] = (
         ("FlextApp", "flextapp"),
         ("flext-app", "flextapp"),
         ("FLEXT_APP", "flextapp"),
@@ -26,7 +28,7 @@ class FlextTestsConstantsDataCases:
     )
 
     # Safe string valid test cases: (raw, expected)
-    SAFE_STRING_VALID_CASES: Final[tuple[tuple[str, str], ...]] = (
+    SAFE_STRING_VALID_CASES: Final[t.StrPairTuple] = (
         ("  valid_name  ", "valid_name"),
         ("identifier_123", "identifier_123"),
         ("_private", "_private"),

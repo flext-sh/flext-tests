@@ -111,7 +111,7 @@ class FlextTestsDomains:
         def pytest_params_for_group(
             self,
             group: str,
-        ) -> t.SequenceOf[tuple[str, str]]:
+        ) -> t.StrPairSequence:
             return [
                 (fixture_type, self.load_fixture(group, fixture_type))
                 for fixture_type in self.available_fixture_types(group)

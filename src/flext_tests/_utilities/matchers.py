@@ -137,17 +137,13 @@ class FlextTestsMatchersUtilities(
         inherited_msg: str | None = None,
     ) -> None:
         """Apply selector-based assertions against a sequence subject."""
-        if not isinstance(subject, Sequence) or isinstance(
-            subject, (str, bytes, bytearray)
-        ):
+        if not isinstance(subject, Sequence) or isinstance(subject, t.STR_BINARY_TYPES):
             raise AssertionError(
                 inherited_msg
                 or f"Item assertions require a sequence, got {type(subject).__name__}",
             )
         sequence_value = list(subject)
-        if isinstance(rules, Sequence) and not isinstance(
-            rules, (str, bytes, bytearray)
-        ):
+        if isinstance(rules, Sequence) and not isinstance(rules, t.STR_BINARY_TYPES):
             for index, rule in enumerate(rules):
                 FlextTestsMatchersUtilities._apply_rule(
                     sequence_value[index],
@@ -226,8 +222,7 @@ class FlextTestsMatchersUtilities(
                 t.Tests.TestobjectSerializable | t.Tests.MatcherKwargValue | t.JsonValue
             ] = (
                 list(has)
-                if isinstance(has, Sequence)
-                and not isinstance(has, (str, bytes, bytearray))
+                if isinstance(has, Sequence) and not isinstance(has, t.STR_BINARY_TYPES)
                 else [has]
             )
             for item in items:
@@ -273,7 +268,7 @@ class FlextTestsMatchersUtilities(
             items = (
                 list(lacks)
                 if isinstance(lacks, Sequence)
-                and not isinstance(lacks, (str, bytes, bytearray))
+                and not isinstance(lacks, t.STR_BINARY_TYPES)
                 else [lacks]
             )
             for item in items:
@@ -910,7 +905,7 @@ class FlextTestsMatchersUtilities(
                     )
                     is_sequence_wrapper = (
                         list in is_types
-                        and isinstance(root_value, (list, tuple))
+                        and isinstance(root_value, t.SEQUENCE_PAIR_TYPES)
                         and value_type_name == "ObjectList"
                     )
                     matches_declared_type = any(
@@ -1121,7 +1116,7 @@ class FlextTestsMatchersUtilities(
                         length_spec=params.len,
                         msg=params.msg,
                     )
-                if isinstance(subject_payload, (list, tuple)):
+                if isinstance(subject_payload, t.SEQUENCE_PAIR_TYPES):
                     seq_value: t.SequenceOf[t.Tests.TestobjectSerializable] = []
                     try:
                         seq_value = t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
@@ -1230,7 +1225,7 @@ class FlextTestsMatchersUtilities(
 
                             def comparable_key(
                                 x: t.Tests.TestobjectSerializable,
-                            ) -> tuple[str, str]:
+                            ) -> t.StrPair:
                                 """Wrap user key to return comparable tuple."""
                                 result = user_key_fn(
                                     FlextTestsPayloadUtilities.to_payload(x),
