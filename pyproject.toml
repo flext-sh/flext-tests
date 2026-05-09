@@ -53,6 +53,7 @@ email = "team@flext.sh"
 name = "FLEXT Team"
 
 [project.entry-points.pytest11]
+flext_tests = "flext_tests.conftest_plugin"
 flext_tests_enforcement = "flext_tests._fixtures.enforcement"
 
 [[project.maintainers]]

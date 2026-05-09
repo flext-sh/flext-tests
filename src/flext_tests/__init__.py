@@ -44,9 +44,15 @@ if _t.TYPE_CHECKING:
         project_tool_flext,
     )
     from flext_tests._fixtures.settings import (
+        clean_container,
         reset_settings,
+        sample_data,
         settings,
         settings_factory,
+        temp_dir,
+        temp_file,
+        test_context,
+        test_runtime,
     )
     from flext_tests._models.base import FlextTestsBaseModelsMixin
     from flext_tests._models.batch import FlextTestsBatchModelsMixin
@@ -87,13 +93,14 @@ if _t.TYPE_CHECKING:
     from flext_tests._validator.settings import FlextValidatorSettings
     from flext_tests._validator.tests import FlextValidatorTests
     from flext_tests._validator.types import FlextValidatorTypes
-    from flext_tests.base import FlextService, s
+    from flext_tests.base import FlextService, FlextTestsCase, FlextTestsServiceBase, s
     from flext_tests.constants import FlextTestsConstants, c
     from flext_tests.docker import FlextTestsDocker, tk
     from flext_tests.domains import FlextTestsDomains, td
     from flext_tests.files import FlextTestsFiles, tf
     from flext_tests.models import FlextTestsModels, m
     from flext_tests.protocols import FlextTestsProtocols, p
+    from flext_tests.settings import FlextTestsSettings
     from flext_tests.typings import FlextTestsTypes, t
     from flext_tests.utilities import FlextTestsUtilities, u
     from flext_tests.validator import FlextTestsValidator, tv
@@ -129,9 +136,15 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "project_tool_flext",
             ),
             "._fixtures.settings": (
+                "clean_container",
                 "reset_settings",
+                "sample_data",
                 "settings",
                 "settings_factory",
+                "temp_dir",
+                "temp_file",
+                "test_context",
+                "test_runtime",
             ),
             "._models.base": ("FlextTestsBaseModelsMixin",),
             "._models.batch": ("FlextTestsBatchModelsMixin",),
@@ -171,6 +184,8 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._validator.types": ("FlextValidatorTypes",),
             ".base": (
                 "FlextService",
+                "FlextTestsCase",
+                "FlextTestsServiceBase",
                 "s",
             ),
             ".constants": (
@@ -197,6 +212,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "FlextTestsProtocols",
                 "p",
             ),
+            ".settings": ("FlextTestsSettings",),
             ".typings": (
                 "FlextTestsTypes",
                 "t",
@@ -265,6 +281,7 @@ __all__: list[str] = [
     "FlextTestsBaseModelsMixin",
     "FlextTestsBaseTypesMixin",
     "FlextTestsBatchModelsMixin",
+    "FlextTestsCase",
     "FlextTestsConfigHelpersUtilitiesMixin",
     "FlextTestsConstants",
     "FlextTestsConstantsDataCases",
@@ -294,6 +311,8 @@ __all__: list[str] = [
     "FlextTestsPayloadUtilities",
     "FlextTestsProtocols",
     "FlextTestsResultUtilitiesMixin",
+    "FlextTestsServiceBase",
+    "FlextTestsSettings",
     "FlextTestsTestContextUtilitiesMixin",
     "FlextTestsTypes",
     "FlextTestsUtilities",
@@ -321,6 +340,7 @@ __all__: list[str] = [
     "__version__",
     "__version_info__",
     "c",
+    "clean_container",
     "d",
     "e",
     "h",
@@ -332,10 +352,15 @@ __all__: list[str] = [
     "r",
     "reset_settings",
     "s",
+    "sample_data",
     "settings",
     "settings_factory",
     "t",
     "td",
+    "temp_dir",
+    "temp_file",
+    "test_context",
+    "test_runtime",
     "tf",
     "tk",
     "tm",

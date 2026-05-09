@@ -53,7 +53,7 @@ class FlextTestsFiles(s):
     @staticmethod
     def _validate_model_content[TModelRead: m.BaseModel](
         model_cls: type[TModelRead],
-        content: t.Tests.ReadContent,
+        content: t.Tests.FileContentPlain,
     ) -> p.Result[TModelRead]:
         try:
             model_instance: TModelRead = model_cls.model_validate(content)
@@ -122,28 +122,26 @@ class FlextTestsFiles(s):
 
     def cleanup(self) -> None:
         """Cleanup all tracked files and directories created by this manager."""
-        for items, perm, cleanup_fn in [
-            (
-                self._created_files,
-                c.Tests.PERMISSION_WRITABLE_FILE,
-                lambda p: p.unlink(missing_ok=True),
-            ),
-            (
-                self._created_dirs,
-                c.Tests.PERMISSION_WRITABLE_DIR,
-                lambda p: shutil.rmtree(p),
-            ),
-        ]:
-            if items is not None:
-                for path in reversed(items):
-                    if not path.exists():
-                        continue
-                    try:
-                        path.chmod(perm)
-                        cleanup_fn(path)
-                    except OSError:
-                        pass
-                items.clear()
+        if self._created_files is not None:
+            for path in reversed(self._created_files):
+                if not path.exists():
+                    continue
+                try:
+                    path.chmod(c.Tests.PERMISSION_WRITABLE_FILE)
+                    path.unlink(missing_ok=True)
+                except OSError:
+                    pass
+            self._created_files.clear()
+        if self._created_dirs is not None:
+            for path in reversed(self._created_dirs):
+                if not path.exists():
+                    continue
+                try:
+                    path.chmod(c.Tests.PERMISSION_WRITABLE_DIR)
+                    shutil.rmtree(path)
+                except OSError:
+                    pass
+            self._created_dirs.clear()
 
     @classmethod
     @contextmanager
@@ -1175,6 +1173,7 @@ class FlextTestsFiles(s):
                 parsed_value = parse_result.value if parse_result.success else None
                 match parsed_value:
                     case dict() as parsed_dict:
+                        parsed_mapping = parsed_dict
                         key_count = len(parsed_dict)
                     case list() as parsed_list:
                         item_count = len(parsed_list)
@@ -1190,13 +1189,10 @@ class FlextTestsFiles(s):
                 pass
         if validate_model is not None:
             if parsed_mapping is not None:
-                model_valid = (
-                    r[m.BaseModel]
-                    .create_from_callable(
-                        lambda: validate_model.model_validate(parsed_mapping)
-                    )
-                    .success
-                )
+                model_valid = self._validate_model_content(
+                    validate_model,
+                    parsed_mapping,
+                ).success
             elif fmt in {"json", "yaml"} and text.strip():
                 model_valid = False
         return m.Tests.ContentMeta.model_validate({
@@ -1210,16 +1206,15 @@ class FlextTestsFiles(s):
 
     def _resolve_directory(self, directory: Path | None) -> Path:
         """Resolve target directory for file creation."""
-        if directory is not None:
-            directory.mkdir(parents=True, exist_ok=True)
-            return directory
-        if self.base_dir is not None:
-            self.base_dir.mkdir(parents=True, exist_ok=True)
-            return self.base_dir
+        target_dir = directory or self.base_dir
+        if target_dir is not None:
+            target_dir.mkdir(parents=True, exist_ok=True)
+            return target_dir
         temp_dir = Path(tempfile.mkdtemp())
-        if self._created_dirs is None:
-            self._created_dirs = list[Path]()
-        self._created_dirs.append(temp_dir)
+        created_dirs = self._created_dirs
+        if created_dirs is None:
+            created_dirs = self._created_dirs = list[Path]()
+        created_dirs.append(temp_dir)
         return temp_dir
 
     def _try_deep_compare(

@@ -1,25 +1,17 @@
-"""Pytest plugin providing centralized FlextSettings fixtures and markdown validation.
+"""Pytest plugin wiring the canonical flext-tests fixture modules.
 
 Usage in any project's conftest.py::
 
     pytest_plugins = ["flext_tests.conftest_plugin"]
 
-This registers the following auto-use fixtures:
-- reset_settings: Resets FlextSettings + FlextContainer singletons between tests
-
-And the following on-demand fixtures:
-- settings: Clean FlextSettings with debug=True
-- settings_factory: Factory for project-specific settings classes
-
-And the following CLI options:
-- the markdown docs option: Validate Python code blocks in .md files
+This plugin delegates to the shared markdown-validation and test-runtime
+fixture modules so projects get one canonical owner for CLI options,
+autouse runtime setup, and shared helper fixtures.
 """
 
 from __future__ import annotations
 
-from tests import t
-
-pytest_plugins: t.StrSequence = (
+pytest_plugins: tuple[str, str] = (
     "flext_tests._fixtures.markdown_validation",
     "flext_tests._fixtures.settings",
 )

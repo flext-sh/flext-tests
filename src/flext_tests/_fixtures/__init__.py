@@ -23,9 +23,15 @@ _LAZY_IMPORTS = build_lazy_import_map(
             "project_tool_flext",
         ),
         ".settings": (
+            "clean_container",
             "reset_settings",
+            "sample_data",
             "settings",
             "settings_factory",
+            "temp_dir",
+            "temp_file",
+            "test_context",
+            "test_runtime",
         ),
     },
 )
