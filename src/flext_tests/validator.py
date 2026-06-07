@@ -133,7 +133,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
             return [path] if path.suffix == ".py" else []
         files: t.SequenceOf[Path] = [
             py_file
-            for py_file in path.rglob("*.py")
+            for py_file in u.Infra.iter_matching_files(path, includes=["*.py"])
             if not any(fnmatch.fnmatch(str(py_file), pattern) for pattern in excludes)
         ]
         return files
