@@ -606,18 +606,15 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     def _save_dirty_state(self) -> None:
         """Save dirty container state to persistent storage."""
-        try:
-            state_file = self.state_file_path
-            if state_file is None:
-                return
-            state_file.parent.mkdir(parents=True, exist_ok=True)
-            data: t.MappingKV[str, t.StrSequence] = {
-                "dirty_containers": list(self.dirty_container_names),
-            }
-            json_bytes = t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.dump_json(data)
-            state_file.write_bytes(json_bytes)
-        except c.EXC_OS_TYPE as exc:
-            self.logger.warning("Failed to save dirty state", error=str(exc))
+        state_file = self.state_file_path
+        if state_file is None:
+            return
+        data: t.MappingKV[str, t.StrSequence] = {
+            "dirty_containers": list(self.dirty_container_names),
+        }
+        write = u.Cli.json_write(state_file, data)
+        if write.failure:
+            self.logger.warning("Failed to save dirty state", error=write.error)
 
 
 tk = FlextTestsDocker
