@@ -19,7 +19,7 @@ from typing import override
 
 import pytest
 
-from flext_tests import FlextValidatorMarkdown, c
+from flext_tests import FlextValidatorMarkdown, c, u
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
@@ -105,7 +105,7 @@ def pytest_collect_file(
     if not parent.config.getoption(c.Tests.VALIDATOR_MD_OPTION_DOCS, default=False):
         return None
     if file_path.suffix == ".md" and file_path.stat().st_size > 0:
-        content = file_path.read_text(encoding=c.Tests.DEFAULT_ENCODING)
+        content = u.Cli.files_read_text(file_path).unwrap()
         if c.Tests.VALIDATOR_MD_PYTHON_BLOCK_RE.search(content):
             return MarkdownCodeBlockCollector.from_parent(parent, path=file_path)
     return None
