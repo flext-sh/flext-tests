@@ -306,11 +306,18 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single file for type violations."""
         violations: MutableSequence[m.Tests.Violation] = []
-        try:
-            content = file_path.read_text(encoding=c.Tests.DEFAULT_ENCODING)
-        except c.EXC_OS_DECODING:
-            return violations
-        lines = content.splitlines()
+        read = u.Cli.files_read_text(file_path)
+        if read.failure:
+            return [
+                u.Tests.create_violation(
+                    file_path,
+                    0,
+                    "TYPE-UNREADABLE",
+                    (),
+                    read.error or "could not read file",
+                ),
+            ]
+        lines = read.value.splitlines()
         violations.extend(cls._check_type_ignore(file_path, lines, approved))
         violations.extend(cls._check_any_types(file_path, lines, approved))
         violations.extend(cls._check_cast_usage(file_path, lines, approved))
