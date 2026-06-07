@@ -49,6 +49,12 @@ def reset_settings() -> Iterator[None]:
 def test_runtime(request: pytest.FixtureRequest, reset_settings: None) -> None:
     """Bind the canonical FLEXT test runtime aliases onto pytest class instances."""
     _ = reset_settings
+    # Only pytest.Function items have a resolvable module/instance. Custom
+    # collected items (e.g. pytest-markdown-docs code fences) have neither, and
+    # pytest's request.module property asserts a module exists — which would
+    # raise on every markdown fence. Alias binding is a no-op for such items.
+    if not isinstance(request.node, pytest.Function):
+        return
     package_name = request.module.__package__.split(".", maxsplit=1)[0]
     tests_package = importlib.import_module(package_name)
     service_type = getattr(tests_package, "s", s)
