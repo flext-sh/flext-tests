@@ -1,0 +1,19 @@
+src/flext_tests/_validator/imports.py
+  s_9942ef7a89ba9a::t_50cde9e01a562e 179-190
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "6f5e2c55d2b7dd9cac1311e79fbc0feb1b974528",
+  "prompts": {},
+  "sessions": {
+    "s_9942ef7a89ba9a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "84fb5cb9-a1bd-4654-9339-7a49b63e96d1",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Zed <hi@zed.dev>"
+    }
+  }
+}
