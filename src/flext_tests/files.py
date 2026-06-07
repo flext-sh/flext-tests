@@ -27,7 +27,6 @@ from collections.abc import (
     Sequence,
 )
 from contextlib import contextmanager
-from datetime import UTC, datetime
 from pathlib import Path
 from types import TracebackType
 from typing import ClassVar, Self, TypeIs, overload, override
@@ -833,7 +832,7 @@ class FlextTestsFiles(s):
                     first_line=first_line,
                     fmt=fmt,
                     valid=True,
-                    modified=datetime.fromtimestamp(stat.st_mtime, tz=UTC),
+                    modified=cli_u.from_timestamp(stat.st_mtime),
                     permissions=permissions,
                     is_readonly=is_readonly,
                     sha256=sha256,
