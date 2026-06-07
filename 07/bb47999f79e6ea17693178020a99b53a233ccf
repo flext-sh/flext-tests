@@ -1,0 +1,21 @@
+src/flext_tests/_validator/markdown.py
+  s_9942ef7a89ba9a::t_3cade363c0c901 218-220
+  s_9942ef7a89ba9a::t_510cc5048c3c8e 69
+  s_9942ef7a89ba9a::t_b3a176922b086c 57-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "07bb47999f79e6ea17693178020a99b53a233ccf",
+  "prompts": {},
+  "sessions": {
+    "s_9942ef7a89ba9a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "84fb5cb9-a1bd-4654-9339-7a49b63e96d1",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Zed <hi@zed.dev>"
+    }
+  }
+}
