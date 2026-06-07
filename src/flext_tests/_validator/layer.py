@@ -75,11 +75,18 @@ class FlextValidatorLayer:
         current_layer = hierarchy.get(current_module)
         if current_layer is None:
             return violations
-        try:
-            content = file_path.read_text(encoding=c.Tests.DEFAULT_ENCODING)
-        except (UnicodeDecodeError, OSError):
-            return violations
-        lines = content.splitlines()
+        read = u.Cli.files_read_text(file_path)
+        if read.failure:
+            return [
+                u.Tests.create_violation(
+                    file_path,
+                    0,
+                    "LAYER-UNREADABLE",
+                    (),
+                    read.error or "could not read file",
+                ),
+            ]
+        lines = read.value.splitlines()
         for line_number, line in enumerate(lines, start=1):
             for imported_module in cls._imported_modules(line):
                 imported_layer = hierarchy.get(imported_module)
