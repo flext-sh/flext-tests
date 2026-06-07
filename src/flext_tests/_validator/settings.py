@@ -178,13 +178,29 @@ class FlextValidatorSettings:
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single pyproject.toml for settings violations."""
         violations: MutableSequence[m.Tests.Violation] = []
-        try:
-            content = file_path.read_text(encoding=c.Tests.DEFAULT_ENCODING)
-        except OSError:
-            return violations
+        read = u.Cli.files_read_text(file_path)
+        if read.failure:
+            return [
+                u.Tests.create_violation(
+                    file_path,
+                    0,
+                    "CONFIG-UNREADABLE",
+                    (),
+                    read.error or "could not read file",
+                ),
+            ]
+        content = read.value
         mapping = cli_u.Cli.toml_mapping_from_text(content)
         if mapping is None:
-            return violations
+            return [
+                u.Tests.create_violation(
+                    file_path,
+                    0,
+                    "CONFIG-INVALID-TOML",
+                    (),
+                    "invalid TOML — could not parse pyproject",
+                ),
+            ]
         # toml_mapping_from_text returns JsonMapping. The TOML grammar produces
         # a strict subset of JsonValue (no None). Walk the mapping and elide
         # any None entries so the structure satisfies _TomlDict's narrower
