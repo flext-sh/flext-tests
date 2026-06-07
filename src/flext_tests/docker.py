@@ -586,15 +586,20 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     def _load_dirty_state(self) -> None:
         """Load dirty container state from persistent storage."""
+        state_file = self.state_file_path
+        if state_file is None or not state_file.exists():
+            return
+        read = u.Cli.files_read_text(state_file)
+        if read.failure:
+            self.logger.warning("Failed to load dirty state", error=read.error)
+            self.dirty_container_names = set[str]()
+            return
         try:
-            state_file = self.state_file_path
-            if state_file is not None and state_file.exists():
-                state_text = state_file.read_text(encoding=c.Tests.DEFAULT_ENCODING)
-                state_raw: t.MappingKV[str, t.StrSequence] = (
-                    t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.validate_json(state_text)
-                )
-                dirty_raw = state_raw.get("dirty_containers", ())
-                self.dirty_container_names = set(dirty_raw)
+            state_raw: t.MappingKV[str, t.StrSequence] = (
+                t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.validate_json(read.value)
+            )
+            dirty_raw = state_raw.get("dirty_containers", ())
+            self.dirty_container_names = set(dirty_raw)
         except c.EXC_KEY_OS_TYPE_VALUE as exc:
             self.logger.warning("Failed to load dirty state", error=str(exc))
             self.dirty_container_names = set[str]()
