@@ -177,11 +177,18 @@ class FlextValidatorTests(FlextTestsValidatorModels.Tests.ScannerMixin):
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single file for test violations."""
         violations: MutableSequence[m.Tests.Violation] = []
-        try:
-            content = file_path.read_text(encoding=c.Tests.DEFAULT_ENCODING)
-        except (UnicodeDecodeError, OSError):
-            return violations
-        lines = content.splitlines()
+        read = u.Cli.files_read_text(file_path)
+        if read.failure:
+            return [
+                u.Tests.create_violation(
+                    file_path,
+                    0,
+                    "TEST-UNREADABLE",
+                    (),
+                    read.error or "could not read file",
+                ),
+            ]
+        lines = read.value.splitlines()
         violations.extend(cls._check_monkeypatch(file_path, lines, approved))
         violations.extend(cls._check_mock_usage(file_path, lines, approved))
         violations.extend(cls._check_patch_decorator(file_path, lines, approved))
