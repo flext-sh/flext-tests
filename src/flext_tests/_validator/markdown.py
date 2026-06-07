@@ -54,11 +54,19 @@ class FlextValidatorMarkdown:
         """Scan a single markdown file for Python code block violations."""
         violations: MutableSequence[m.Tests.Violation] = []
 
-        try:
-            content = file_path.read_text(encoding=c.Tests.DEFAULT_ENCODING)
-        except OSError:
-            return violations
+        read = u.Cli.files_read_text(file_path)
+        if read.failure:
+            return [
+                u.Tests.create_violation(
+                    file_path,
+                    0,
+                    "MD-UNREADABLE",
+                    (),
+                    read.error or "could not read file",
+                ),
+            ]
 
+        content = read.value
         lines = content.splitlines()
 
         for match in c.Tests.VALIDATOR_MD_PYTHON_BLOCK_RE.finditer(content):
@@ -207,7 +215,9 @@ class FlextValidatorMarkdown:
             project_root / "docs",
         ):
             if search_dir.is_dir():
-                md_files.extend(search_dir.rglob("*.md"))
+                md_files.extend(
+                    u.Infra.iter_matching_files(search_dir, includes=["*.md"]),
+                )
         return md_files
 
 
