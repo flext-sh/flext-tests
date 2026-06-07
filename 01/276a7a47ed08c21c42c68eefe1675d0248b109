@@ -1,0 +1,20 @@
+src/flext_tests/domains.py
+  s_9942ef7a89ba9a::t_6c128479b00e88 167-174
+  s_9942ef7a89ba9a::t_87803594d4becc 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "01276a7a47ed08c21c42c68eefe1675d0248b109",
+  "prompts": {},
+  "sessions": {
+    "s_9942ef7a89ba9a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "84fb5cb9-a1bd-4654-9339-7a49b63e96d1",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Zed <hi@zed.dev>"
+    }
+  }
+}
