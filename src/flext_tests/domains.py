@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_tests import p, r, t
+from flext_tests import p, r, t, u
 
 
 class FlextTestsDomains:
@@ -164,12 +164,14 @@ class FlextTestsDomains:
         fixtures_root: Path | None = None,
         file_extension: str = ".ldif",
     ) -> str:
-        return cls.fixture_path(
-            group,
-            kind,
-            fixtures_root=fixtures_root,
-            file_extension=file_extension,
-        ).read_text(encoding="utf-8")
+        return u.Cli.files_read_text(
+            cls.fixture_path(
+                group,
+                kind,
+                fixtures_root=fixtures_root,
+                file_extension=file_extension,
+            ),
+        ).unwrap()
 
     @classmethod
     def fixture_exists(
