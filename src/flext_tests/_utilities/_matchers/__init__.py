@@ -8,6 +8,11 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 _LAZY_IMPORTS = build_lazy_import_map(
     {
         "._assertions": ("FlextTestsMatchersAssertionsMixin",),
+        "._containment": ("FlextTestsMatchersContainmentMixin",),
+        "._result": ("FlextTestsMatchersResultMixin",),
+        "._rules": ("FlextTestsMatchersRulesMixin",),
+        "._scope": ("FlextTestsMatchersScopeMixin",),
+        "._that": ("FlextTestsMatchersThatMixin",),
         "._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
     },
 )

@@ -10,10 +10,26 @@ from flext_core.lazy import (
 )
 
 _LAZY_IMPORTS = merge_lazy_imports(
-    ("._matchers",),
+    (
+        "._files",
+        "._matchers",
+    ),
     build_lazy_import_map(
         {
+            "._files._assertions": ("FlextTestsFilesAssertionsMixin",),
+            "._files._batch": ("FlextTestsFilesBatchMixin",),
+            "._files._comparison": ("FlextTestsFilesComparisonMixin",),
+            "._files._contexts": ("FlextTestsFilesContextsMixin",),
+            "._files._creation": ("FlextTestsFilesCreationMixin",),
+            "._files._info": ("FlextTestsFilesInfoMixin",),
+            "._files._lifecycle": ("FlextTestsFilesLifecycleMixin",),
+            "._files._reading": ("FlextTestsFilesReadingMixin",),
             "._matchers._assertions": ("FlextTestsMatchersAssertionsMixin",),
+            "._matchers._containment": ("FlextTestsMatchersContainmentMixin",),
+            "._matchers._result": ("FlextTestsMatchersResultMixin",),
+            "._matchers._rules": ("FlextTestsMatchersRulesMixin",),
+            "._matchers._scope": ("FlextTestsMatchersScopeMixin",),
+            "._matchers._that": ("FlextTestsMatchersThatMixin",),
             "._matchers._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
             ".container": ("FlextTestsContainerHelpersUtilitiesMixin",),
             ".files": ("FlextTestsFilesUtilitiesMixin",),

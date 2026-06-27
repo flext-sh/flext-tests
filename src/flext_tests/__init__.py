@@ -66,9 +66,24 @@ if _t.TYPE_CHECKING:
     from flext_tests._typings.files import FlextTestsFilesTypesMixin
     from flext_tests._typings.guards import FlextTestsGuardsTypesMixin
     from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
+    from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
+    from flext_tests._utilities._files._batch import FlextTestsFilesBatchMixin
+    from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
+    from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
+    from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
+    from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
+    from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
+    from flext_tests._utilities._files._reading import FlextTestsFilesReadingMixin
     from flext_tests._utilities._matchers._assertions import (
         FlextTestsMatchersAssertionsMixin,
     )
+    from flext_tests._utilities._matchers._containment import (
+        FlextTestsMatchersContainmentMixin,
+    )
+    from flext_tests._utilities._matchers._result import FlextTestsMatchersResultMixin
+    from flext_tests._utilities._matchers._rules import FlextTestsMatchersRulesMixin
+    from flext_tests._utilities._matchers._scope import FlextTestsMatchersScopeMixin
+    from flext_tests._utilities._matchers._that import FlextTestsMatchersThatMixin
     from flext_tests._utilities._matchers._typeguards import (
         FlextTestsMatchersTypeGuardsMixin,
     )
@@ -221,6 +236,19 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "FlextTestsUtilities",
                 "u",
             ),
+            "._utilities._files._assertions": ("FlextTestsFilesAssertionsMixin",),
+            "._utilities._files._batch": ("FlextTestsFilesBatchMixin",),
+            "._utilities._files._comparison": ("FlextTestsFilesComparisonMixin",),
+            "._utilities._files._contexts": ("FlextTestsFilesContextsMixin",),
+            "._utilities._files._creation": ("FlextTestsFilesCreationMixin",),
+            "._utilities._files._info": ("FlextTestsFilesInfoMixin",),
+            "._utilities._files._lifecycle": ("FlextTestsFilesLifecycleMixin",),
+            "._utilities._files._reading": ("FlextTestsFilesReadingMixin",),
+            "._utilities._matchers._containment": ("FlextTestsMatchersContainmentMixin",),
+            "._utilities._matchers._result": ("FlextTestsMatchersResultMixin",),
+            "._utilities._matchers._rules": ("FlextTestsMatchersRulesMixin",),
+            "._utilities._matchers._scope": ("FlextTestsMatchersScopeMixin",),
+            "._utilities._matchers._that": ("FlextTestsMatchersThatMixin",),
             ".validator": (
                 "FlextTestsValidator",
                 "tv",
@@ -295,6 +323,14 @@ __all__: list[str] = [
     "FlextTestsDomainModelsMixin",
     "FlextTestsDomains",
     "FlextTestsFiles",
+    "FlextTestsFilesAssertionsMixin",
+    "FlextTestsFilesBatchMixin",
+    "FlextTestsFilesComparisonMixin",
+    "FlextTestsFilesContextsMixin",
+    "FlextTestsFilesCreationMixin",
+    "FlextTestsFilesInfoMixin",
+    "FlextTestsFilesLifecycleMixin",
+    "FlextTestsFilesReadingMixin",
     "FlextTestsFilesTypesMixin",
     "FlextTestsFilesUtilitiesMixin",
     "FlextTestsFilesystemModelsMixin",
@@ -303,7 +339,12 @@ __all__: list[str] = [
     "FlextTestsGuardsTypesMixin",
     "FlextTestsHandlerHelpersUtilitiesMixin",
     "FlextTestsMatchersAssertionsMixin",
+    "FlextTestsMatchersContainmentMixin",
     "FlextTestsMatchersModelsMixin",
+    "FlextTestsMatchersResultMixin",
+    "FlextTestsMatchersRulesMixin",
+    "FlextTestsMatchersScopeMixin",
+    "FlextTestsMatchersThatMixin",
     "FlextTestsMatchersTypeGuardsMixin",
     "FlextTestsMatchersTypesMixin",
     "FlextTestsMatchersUtilities",
