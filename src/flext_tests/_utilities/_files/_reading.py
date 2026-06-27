@@ -11,7 +11,6 @@ from typing import overload
 from flext_infra import u
 from flext_tests import FlextTestsPayloadUtilities, c, m, p, r, t
 from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
-from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
 
 
 class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
@@ -109,7 +108,9 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                     model_cls,
                 )
             else:
-                actual_fmt = FlextTestsFilesUtilitiesMixin.detect_format_from_path(params.path, params.fmt)
+                actual_fmt = u.Cli.files_detect_format_from_path(
+                    params.path, params.fmt
+                )
                 try:
                     content = self._read_content_by_format(
                         params.path, actual_fmt, params

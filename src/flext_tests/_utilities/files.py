@@ -1,21 +1,18 @@
 """Test-domain file helpers (format detection only).
 
-Hash, CSV I/O, and text I/O delegate directly to ``u.Cli.*`` at call sites;
-no wrappers live here.
+Format detection delegates to ``u.Cli`` canonical helpers; no I/O lives here.
 """
 
 from __future__ import annotations
 
-from collections.abc import (
-    Mapping,
-)
 from pathlib import Path
 
-from flext_tests import c, m, t
+from flext_cli._utilities.files import FlextCliUtilitiesFiles
+from flext_tests import m, t
 
 
 class FlextTestsFilesUtilitiesMixin:
-    """Test-only format detection helpers; no I/O."""
+    """Test-only format-detection facade; delegates to ``u.Cli`` canonical helpers."""
 
     @staticmethod
     def detect_format(
@@ -29,27 +26,11 @@ class FlextTestsFilesUtilitiesMixin:
         fmt: str,
     ) -> str:
         """Detect format by content shape + name; honors explicit ``fmt``."""
-        if fmt != c.Tests.FILE_FORMAT_AUTO:
-            return fmt
-        if isinstance(content, bytes):
-            return str(c.Tests.FILE_FORMAT_BIN)
-        if isinstance(content, (m.ConfigMap, m.Dict, Mapping)):
-            ext = Path(name).suffix.lower()
-            mapping_format: str = (
-                c.Tests.FILE_FORMAT_YAML
-                if ext in {".yaml", ".yml"}
-                else c.Tests.FILE_FORMAT_JSON
-            )
-            return mapping_format
-        if isinstance(content, list):
-            return str(c.Tests.FILE_FORMAT_CSV)
-        suffix_format: str = c.Tests.format_for_extension(Path(name).suffix)
-        return suffix_format
+        return FlextCliUtilitiesFiles.files_detect_format_from_content(
+            content, name, fmt
+        )
 
     @staticmethod
     def detect_format_from_path(path: Path, fmt: str) -> str:
         """Detect format from path extension; honors explicit ``fmt``."""
-        if fmt != c.Tests.FILE_FORMAT_AUTO:
-            return fmt
-        path_format: str = c.Tests.format_for_extension(path.suffix)
-        return path_format
+        return FlextCliUtilitiesFiles.files_detect_format_from_path(path, fmt)

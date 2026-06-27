@@ -5,11 +5,9 @@ Generalized file/directory existence and property checks.
 
 from __future__ import annotations
 
-import os
-from collections.abc import MutableSequence
 from pathlib import Path
 
-from flext_tests import c, m
+from flext_tests import c, m, u
 from flext_tests._utilities._files._batch import FlextTestsFilesBatchMixin
 
 
@@ -60,66 +58,17 @@ class FlextTestsFilesAssertionsMixin(FlextTestsFilesBatchMixin):
         if not path.exists():
             error_msg = msg or c.Tests.ERROR_FILE_NOT_FOUND.format(path=path)
             raise AssertionError(error_msg)
-        is_file_path = path.is_file()
-        is_dir_path = path.is_dir()
-        is_empty_file = is_file_path and path.stat().st_size == 0
-        is_empty_dir = is_dir_path and (not any(path.iterdir()))
-
-        checks: MutableSequence[tuple[bool, str]] = []
-        if params.is_file is not None:
-            checks.extend([
-                (params.is_file and (not is_file_path), f"Path {path} is not a file"),
-                (
-                    (not params.is_file) and is_file_path,
-                    f"Path {path} should not be a file",
-                ),
-            ])
-        if params.is_dir is not None:
-            checks.extend([
-                (
-                    params.is_dir and (not is_dir_path),
-                    f"Path {path} is not a directory",
-                ),
-                (
-                    (not params.is_dir) and is_dir_path,
-                    f"Path {path} should not be a directory",
-                ),
-            ])
-        if params.not_empty is not None:
-            checks.extend([
-                (params.not_empty and is_empty_file, f"File {path} is empty"),
-                (params.not_empty and is_empty_dir, f"Directory {path} is empty"),
-                (
-                    (not params.not_empty) and is_file_path and (not is_empty_file),
-                    f"File {path} is not empty",
-                ),
-                (
-                    (not params.not_empty) and is_dir_path and (not is_empty_dir),
-                    f"Directory {path} is not empty",
-                ),
-            ])
-        if params.readable:
-            checks.append(
-                (
-                    is_file_path and (not os.access(path, os.R_OK)),
-                    f"File {path} is not readable",
-                ),
+        try:
+            u.Cli.files_assert_exists(
+                path,
+                is_file=params.is_file,
+                is_dir=params.is_dir,
+                not_empty=params.not_empty,
+                readable=params.readable,
+                writable=params.writable,
             )
-        if params.writable:
-            checks.extend([
-                (
-                    is_file_path and (not os.access(path, os.W_OK)),
-                    f"File {path} is not writable",
-                ),
-                (
-                    is_dir_path and (not os.access(path, os.W_OK)),
-                    f"Directory {path} is not writable",
-                ),
-            ])
-
-        for failed, check_msg in checks:
-            if failed:
-                raise AssertionError(msg or check_msg)
+        except AssertionError as exc:
+            raise AssertionError(msg or str(exc)) from exc
         return path
 
 

@@ -12,7 +12,6 @@ from flext_infra import u
 from flext_tests import c, m, p, r, t
 from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
 from flext_tests._utilities._files._reading import FlextTestsFilesReadingMixin
-from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
 
 
 class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
@@ -55,59 +54,70 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
                 m.Tests.FileInfo(exists=False, path=params.path),
             )
         try:
-            stat = params.path.stat()
-            size = stat.st_size
-            size_human = c.Tests.format_size(size)
-            try:
-                text = params.path.read_text(
-                    encoding=c.Tests.DEFAULT_ENCODING,
-                    errors="replace",
-                )
-                lines = text.count("\n") + 1 if text else 0
-                is_empty = not text.strip()
-                first_line = text.split("\n")[0] if text else ""
-                encoding = c.Tests.DEFAULT_ENCODING
-            except UnicodeDecodeError:
-                text = ""
-                lines = 0
-                is_empty = size == 0
-                first_line = ""
-                encoding = c.Tests.DEFAULT_BINARY_ENCODING
-            fmt: str = "unknown"
-            if params.detect_fmt:
-                detected = FlextTestsFilesUtilitiesMixin.detect_format_from_path(params.path, "auto")
-                fmt = detected if detected in c.Tests.KNOWN_FORMATS else "unknown"
-            permissions = stat.st_mode
-            is_readonly = not permissions & 128
-            sha256 = u.Cli.sha256_file(params.path) if params.compute_hash else None
-            content_meta: m.Tests.ContentMeta | None = None
-            if params.parse_content or params.validate_model:
-                content_meta = self._parse_content_metadata(
-                    text=text,
-                    fmt=fmt,
-                    validate_model=params.validate_model,
-                )
-            return r[m.Tests.FileInfo].ok(
-                m.Tests.FileInfo(
-                    exists=True,
-                    path=params.path,
-                    size=size,
-                    size_human=size_human,
-                    lines=lines,
-                    encoding=encoding,
-                    is_empty=is_empty,
-                    first_line=first_line,
-                    fmt=fmt,
-                    valid=True,
-                    modified=cli_u.from_timestamp(stat.st_mtime),
-                    permissions=permissions,
-                    is_readonly=is_readonly,
-                    sha256=sha256,
-                    content_meta=content_meta,
-                ),
-            )
+            return r[m.Tests.FileInfo].ok(self._build_file_info(params))
         except OSError as e:
             return r[m.Tests.FileInfo].fail(c.Tests.ERROR_INFO.format(error=e))
+
+    def _build_file_info(
+        self,
+        params: m.Tests.InfoParams,
+    ) -> m.Tests.FileInfo:
+        """Build a ``FileInfo`` model for an existing path."""
+        stat = params.path.stat()
+        size = stat.st_size
+        size_human = c.Tests.format_size(size)
+        text, lines, is_empty, first_line, encoding = self._read_info_text(
+            params.path, size
+        )
+        fmt: str = "unknown"
+        if params.detect_fmt:
+            detected = u.Cli.files_detect_format_from_path(params.path, "auto")
+            fmt = detected if detected in c.Tests.KNOWN_FORMATS else "unknown"
+        permissions = stat.st_mode
+        is_readonly = not permissions & 128
+        sha256 = u.Cli.sha256_file(params.path) if params.compute_hash else None
+        content_meta: m.Tests.ContentMeta | None = None
+        if params.parse_content or params.validate_model:
+            content_meta = self._parse_content_metadata(
+                text=text,
+                fmt=fmt,
+                validate_model=params.validate_model,
+            )
+        return m.Tests.FileInfo(
+            exists=True,
+            path=params.path,
+            size=size,
+            size_human=size_human,
+            lines=lines,
+            encoding=encoding,
+            is_empty=is_empty,
+            first_line=first_line,
+            fmt=fmt,
+            valid=True,
+            modified=cli_u.from_timestamp(stat.st_mtime),
+            permissions=permissions,
+            is_readonly=is_readonly,
+            sha256=sha256,
+            content_meta=content_meta,
+        )
+
+    def _read_info_text(
+        self,
+        path: Path,
+        size: int,
+    ) -> tuple[str, int, bool, str, str]:
+        """Read text metadata for a file, falling back to binary defaults."""
+        try:
+            text = path.read_text(
+                encoding=c.Tests.DEFAULT_ENCODING,
+                errors="replace",
+            )
+            lines = text.count("\n") + 1 if text else 0
+            is_empty = not text.strip()
+            first_line = text.split("\n")[0] if text else ""
+            return (text, lines, is_empty, first_line, c.Tests.DEFAULT_ENCODING)
+        except UnicodeDecodeError:
+            return ("", 0, size == 0, "", c.Tests.DEFAULT_BINARY_ENCODING)
 
     def _parse_content_metadata(
         self,

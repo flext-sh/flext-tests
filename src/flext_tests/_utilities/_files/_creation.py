@@ -12,7 +12,6 @@ from typing import TypeIs
 from flext_infra import u
 from flext_tests import FlextTestsPayloadUtilities, c, m, p, t
 from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
-from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
 
 
 class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
@@ -99,7 +98,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                     actual_content.model_dump(mode="json"),
                 ),
             )
-        actual_fmt = FlextTestsFilesUtilitiesMixin.detect_format(
+        actual_fmt = u.Cli.files_detect_format_from_content(
             actual_content
             if isinstance(actual_content, (str, bytes, Mapping, list))
             else str(actual_content),

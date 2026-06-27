@@ -244,7 +244,9 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._utilities._files._info": ("FlextTestsFilesInfoMixin",),
             "._utilities._files._lifecycle": ("FlextTestsFilesLifecycleMixin",),
             "._utilities._files._reading": ("FlextTestsFilesReadingMixin",),
-            "._utilities._matchers._containment": ("FlextTestsMatchersContainmentMixin",),
+            "._utilities._matchers._containment": (
+                "FlextTestsMatchersContainmentMixin",
+            ),
             "._utilities._matchers._result": ("FlextTestsMatchersResultMixin",),
             "._utilities._matchers._rules": ("FlextTestsMatchersRulesMixin",),
             "._utilities._matchers._scope": ("FlextTestsMatchersScopeMixin",),
