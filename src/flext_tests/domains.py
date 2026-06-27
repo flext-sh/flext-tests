@@ -16,9 +16,6 @@ from pathlib import Path
 from flext_cli._utilities.files import FlextCliUtilitiesFiles
 from flext_tests import p, r, t
 
-from typing import reveal_type
-reveal_type(FlextCliUtilitiesFiles)
-
 
 class FlextTestsDomains:
     """Test domain objects and fixtures.
@@ -176,9 +173,6 @@ class FlextTestsDomains:
                 file_extension=file_extension,
             ),
         )
-        from typing import reveal_type
-        reveal_type(FlextCliUtilitiesFiles)
-        reveal_type(text_result)
         return text_result.unwrap()
 
     @classmethod
