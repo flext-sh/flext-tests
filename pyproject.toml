@@ -196,7 +196,13 @@ extra_checks = true
 follow_imports = "normal"
 ignore_missing_imports = true
 local_partial_types = true
-mypy_path = [ ".", "../typings", "../typings/generated", "src" ]
+mypy_path = [
+  ".",
+  "../flext-cli/src",
+  "../typings",
+  "../typings/generated",
+  "src",
+]
 namespace_packages = true
 no_implicit_reexport = true
 overrides = [  ]
