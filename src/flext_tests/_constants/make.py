@@ -38,10 +38,6 @@ class FlextTestsConstantsMake:
         "maintenance",
     })
     MAKE_MUTATION_REQUIRED_PARAMS: Final[frozenset[str]] = frozenset({MAKE_APPLY_PARAM})
-    MAKE_PUBLIC_VERBS_WITHOUT_CASE: Final[frozenset[str]] = frozenset({
-        "clean",
-        "test",
-    })
     MAKE_TRUE_VALUES: Final[frozenset[str]] = frozenset({"1", "Y", "YES", "TRUE"})
     MAKE_SAFE_PROBE_VALUES: Final[t.MappingKV[str, str]] = {
         "APPLY": "N",
