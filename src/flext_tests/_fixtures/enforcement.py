@@ -32,7 +32,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from importlib import import_module
 from pathlib import Path
 from typing import ClassVar, override
@@ -296,6 +296,8 @@ class EnforcementViolationError(Exception):
 
 def _load_infra_report(
     workspace_root: Path,
+    *,
+    project_names: t.StrSequence,
 ) -> object | None:
     """Return a ``WorkspaceEnforcementReport`` or ``None`` when unavailable.
 
@@ -303,6 +305,8 @@ def _load_infra_report(
     package isn't importable, we skip all FLEXT_INFRA_DETECTOR rules rather
     than fail the pytest run.
     """
+    if not project_names:
+        return None
     try:
         refactor = import_module("flext_infra.refactor.namespace_enforcer")
     except ImportError:
@@ -312,11 +316,112 @@ def _load_infra_report(
         return None
     try:
         enforcer = enforcer_cls(workspace_root=workspace_root)
-        report = enforcer.enforce()
+        report = enforcer.enforce(project_names=project_names)
     except Exception:  # pragma: no cover - defensive: propagate as no-op
         return None
     report_obj: object = report
     return report_obj
+
+
+def _item_path(item: pytest.Item) -> Path | None:
+    """Return the filesystem path represented by one collected pytest item."""
+    path_value = getattr(item, "path", None)
+    if isinstance(path_value, Path):
+        return path_value.resolve()
+    fspath = getattr(item, "fspath", None)
+    if fspath is None:
+        return None
+    return Path(str(fspath)).resolve()
+
+
+def _project_name_for_path(
+    *,
+    path: Path,
+    workspace_root: Path,
+) -> str | None:
+    """Return the owning FLEXT project name for one workspace path."""
+    try:
+        relative_path = path.relative_to(workspace_root)
+    except ValueError:
+        return None
+    if not relative_path.parts:
+        return None
+    project_name = relative_path.parts[0]
+    project_root = workspace_root / project_name
+    if not (
+        project_name.startswith("flext-")
+        and project_root.is_dir()
+        and (project_root / "pyproject.toml").is_file()
+    ):
+        return None
+    return project_name
+
+
+def _project_name_for_item(
+    *,
+    item: pytest.Item,
+    workspace_root: Path,
+) -> str | None:
+    """Return the owning FLEXT project name for one collected item."""
+    item_path = _item_path(item)
+    if item_path is None:
+        return None
+    return _project_name_for_path(path=item_path, workspace_root=workspace_root)
+
+
+def _collected_project_names(
+    *,
+    items: t.SequenceOf[pytest.Item],
+    workspace_root: Path,
+) -> t.StrSequence:
+    """Return sorted FLEXT project names represented by collected pytest items."""
+    project_names = {
+        project_name
+        for item in items
+        if (
+            project_name := _project_name_for_item(
+                item=item,
+                workspace_root=workspace_root,
+            )
+        )
+        is not None
+    }
+    return tuple(sorted(project_names))
+
+
+def _validator_target_for_item(
+    *,
+    item: pytest.Item,
+    workspace_root: Path,
+) -> Path | None:
+    """Return the validation target represented by one collected item."""
+    item_path = _item_path(item)
+    if item_path is None:
+        return None
+    project_name = _project_name_for_path(path=item_path, workspace_root=workspace_root)
+    if project_name is not None:
+        return workspace_root / project_name
+    return item_path
+
+
+def _collected_validator_targets(
+    *,
+    items: t.SequenceOf[pytest.Item],
+    workspace_root: Path,
+) -> t.SequenceOf[Path]:
+    """Return sorted validation targets represented by collected pytest items."""
+    targets = {
+        target
+        for item in items
+        if (
+            target := _validator_target_for_item(
+                item=item,
+                workspace_root=workspace_root,
+            )
+        )
+        is not None
+    }
+    return tuple(sorted(targets))
 
 
 def _iter_infra_violations(
@@ -361,6 +466,7 @@ def _dispatch_infra_detector(
 def _dispatch_tests_validator(
     rule: m.EnforcementRuleSpec,
     workspace_root: Path,
+    targets: t.SequenceOf[Path],
 ) -> dict[str, list[p.AttributeProbe]]:
     result: dict[str, list[p.AttributeProbe]] = {}
     try:
@@ -375,54 +481,81 @@ def _dispatch_tests_validator(
                 method = getattr(tv, method_name, None)
                 if method is not None and callable(method):
                     wanted_ids = frozenset(getattr(rule.source, "rule_ids", ()))
-                    try:
-                        # validate_config takes a file path, not a directory
-                        target: Path = (
-                            (workspace_root / "pyproject.toml")
-                            if method_name == "validate_config"
-                            else workspace_root
+                    for target in targets:
+                        dispatch_target = _validator_dispatch_target(
+                            method_name=method_name,
+                            target=target,
                         )
-                        call_result = method(target)
-                    except Exception:  # pragma: no cover - defensive
-                        pass
-                    else:
-                        if not getattr(call_result, "failure", False):
-                            scan = getattr(call_result, "value", None)
-                            if scan is not None:
-                                grouped: dict[str, list[p.AttributeProbe]] = {}
-                                for violation in getattr(scan, "violations", ()):
-                                    if (
-                                        wanted_ids
-                                        and getattr(violation, "rule_id", "")
-                                        not in wanted_ids
-                                    ):
-                                        continue
-                                    # Derive the owning project from the file path's first path segment
-                                    # relative to the workspace root.
-                                    file_path = getattr(violation, "file_path", None)
-                                    project = "workspace"
-                                    if file_path is not None:
-                                        try:
-                                            rel = (
-                                                Path(file_path)
-                                                .resolve()
-                                                .relative_to(workspace_root)
-                                            )
-                                            project = (
-                                                rel.parts[0]
-                                                if rel.parts
-                                                else "workspace"
-                                            )
-                                        except ValueError:
-                                            project = "workspace"
-                                    grouped.setdefault(project, []).append(violation)
-                                result = grouped
+                        if dispatch_target is None:
+                            continue
+                        _merge_tests_validator_result(
+                            method=method,
+                            result=result,
+                            rule_ids=wanted_ids,
+                            target=dispatch_target,
+                            workspace_root=workspace_root,
+                        )
     return result
+
+
+def _validator_dispatch_target(
+    *,
+    method_name: str,
+    target: Path,
+) -> Path | None:
+    """Return the concrete path to pass to one validator method."""
+    if method_name != "validate_config":
+        return target
+    pyproject_path = target / "pyproject.toml" if target.is_dir() else target
+    return pyproject_path if pyproject_path.name == "pyproject.toml" else None
+
+
+def _merge_tests_validator_result(
+    *,
+    method: Callable[[Path], p.AttributeProbe],
+    result: dict[str, list[p.AttributeProbe]],
+    rule_ids: frozenset[str],
+    target: Path,
+    workspace_root: Path,
+) -> None:
+    """Execute one validator and merge matching violations into ``result``."""
+    try:
+        call_result = method(target)
+    except Exception:  # pragma: no cover - defensive
+        return
+    if getattr(call_result, "failure", False):
+        return
+    scan = getattr(call_result, "value", None)
+    if scan is None:
+        return
+    for violation in getattr(scan, "violations", ()):
+        if rule_ids and getattr(violation, "rule_id", "") not in rule_ids:
+            continue
+        project = _violation_project(violation=violation, workspace_root=workspace_root)
+        result.setdefault(project, []).append(violation)
+
+
+def _violation_project(
+    *,
+    violation: p.AttributeProbe,
+    workspace_root: Path,
+) -> str:
+    """Return the owning workspace segment for one validator violation."""
+    file_path = getattr(violation, "file_path", None)
+    if file_path is None:
+        return "workspace"
+    try:
+        rel = Path(file_path).resolve().relative_to(workspace_root)
+    except ValueError:
+        return "workspace"
+    return rel.parts[0] if rel.parts else "workspace"
 
 
 def _build_items(
     session: pytest.Session,
     cfg: m.Tests.EnforcementDispatcherConfig,
+    *,
+    collected_items: t.SequenceOf[pytest.Item],
 ) -> list[EnforcementItem]:
     workspace_root = cfg.workspace_root
     if workspace_root is None:
@@ -431,8 +564,18 @@ def _build_items(
     rules = _active_rules(cfg)
 
     infra_report: p.AttributeProbe | None = None
+    validator_targets = _collected_validator_targets(
+        items=collected_items,
+        workspace_root=workspace_root,
+    )
     if any(r.source.kind == "flext_infra_detector" for r in rules):
-        infra_report = _load_infra_report(workspace_root)
+        infra_report = _load_infra_report(
+            workspace_root,
+            project_names=_collected_project_names(
+                items=collected_items,
+                workspace_root=workspace_root,
+            ),
+        )
 
     collector = EnforcementCollector.from_parent(
         parent=session,
@@ -447,7 +590,11 @@ def _build_items(
                 continue
             grouped = _dispatch_infra_detector(rule, infra_report)
         elif rule.source.kind == "flext_tests_validator":
-            grouped = _dispatch_tests_validator(rule, workspace_root)
+            grouped = _dispatch_tests_validator(
+                rule,
+                workspace_root,
+                validator_targets,
+            )
         # RUNTIME_WARNING, RUFF, AST_GREP, SKILL_POINTER → no collection-time items.
         else:
             continue
@@ -479,7 +626,7 @@ def pytest_collection_modifyitems(
     # Skip on xdist workers — let the master collect once.
     if hasattr(config, "workerinput"):
         return
-    generated = _build_items(session, cfg)
+    generated = _build_items(session, cfg, collected_items=items)
     if not generated:
         return
     items.extend(generated)
