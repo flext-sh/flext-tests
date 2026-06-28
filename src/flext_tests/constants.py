@@ -14,6 +14,7 @@ from flext_tests import (
     FlextTestsConstantsDataCases,
     FlextTestsConstantsDocker,
     FlextTestsConstantsFiles,
+    FlextTestsConstantsMake,
     FlextTestsConstantsMatcher,
     FlextTestsConstantsValidator,
     t,
@@ -31,6 +32,7 @@ class FlextTestsConstants(c):
         FlextTestsConstantsDataCases,
         FlextTestsConstantsDocker,
         FlextTestsConstantsFiles,
+        FlextTestsConstantsMake,
         FlextTestsConstantsMatcher,
         FlextTestsConstantsValidator,
     ):

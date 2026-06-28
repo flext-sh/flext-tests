@@ -14,6 +14,7 @@ from flext_tests import (
     FlextTestsBaseTypesMixin,
     FlextTestsFilesTypesMixin,
     FlextTestsGuardsTypesMixin,
+    FlextTestsMakeTypesMixin,
     FlextTestsMatchersTypesMixin,
 )
 
@@ -28,6 +29,7 @@ class FlextTestsTypes(t):
     class Tests(
         FlextTestsBaseTypesMixin,
         FlextTestsFilesTypesMixin,
+        FlextTestsMakeTypesMixin,
         FlextTestsMatchersTypesMixin,
         FlextTestsGuardsTypesMixin,
     ):

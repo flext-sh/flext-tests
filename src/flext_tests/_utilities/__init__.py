@@ -36,6 +36,11 @@ _LAZY_IMPORTS = merge_lazy_imports(
             ".fixtures_dsl": ("FlextTestsFixturesDSLMixin",),
             ".generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
             ".handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
+            ".make": ("FlextTestsMakeUtilitiesMixin",),
+            ".make_contract": ("FlextTestsMakeContractUtilitiesMixin",),
+            ".make_parsing": ("FlextTestsMakeParsingUtilitiesMixin",),
+            ".make_registry": ("FlextTestsMakeRegistryUtilitiesMixin",),
+            ".make_rendering": ("FlextTestsMakeRenderingUtilitiesMixin",),
             ".matchers": (
                 "FlextTestsMatchersUtilities",
                 "tm",

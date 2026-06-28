@@ -16,6 +16,7 @@ from flext_tests import (
     FlextTestsFilesUtilitiesMixin,
     FlextTestsGenericHelpersUtilitiesMixin,
     FlextTestsHandlerHelpersUtilitiesMixin,
+    FlextTestsMakeUtilitiesMixin,
     FlextTestsMatchersUtilities,
     FlextTestsResultUtilitiesMixin,
     FlextTestsTestContextUtilitiesMixin,
@@ -38,6 +39,7 @@ class FlextTestsUtilities(u):
         FlextTestsContainerHelpersUtilitiesMixin,
         FlextTestsHandlerHelpersUtilitiesMixin,
         FlextTestsFilesUtilitiesMixin,
+        FlextTestsMakeUtilitiesMixin,
         FlextTestsValidatorUtilitiesMixin,
         FlextTestsMatchersUtilities.Tests,
     ):

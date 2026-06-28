@@ -12,6 +12,7 @@ _LAZY_IMPORTS = build_lazy_import_map(
         ".docker": ("FlextTestsDockerModelsMixin",),
         ".domains": ("FlextTestsDomainModelsMixin",),
         ".filesystem": ("FlextTestsFilesystemModelsMixin",),
+        ".make": ("FlextTestsMakeModelsMixin",),
         ".matchers": ("FlextTestsMatchersModelsMixin",),
         ".validator": ("FlextTestsValidatorModelsMixin",),
     },

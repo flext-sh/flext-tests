@@ -10,6 +10,7 @@ _LAZY_IMPORTS = build_lazy_import_map(
         ".data_cases": ("FlextTestsConstantsDataCases",),
         ".docker": ("FlextTestsConstantsDocker",),
         ".files": ("FlextTestsConstantsFiles",),
+        ".make": ("FlextTestsConstantsMake",),
         ".matcher": ("FlextTestsConstantsMatcher",),
         ".validator": ("FlextTestsConstantsValidator",),
     },
