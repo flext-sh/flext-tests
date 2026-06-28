@@ -25,17 +25,18 @@ class FlextTestsFilesLifecycleMixin:
     def __init__(
         self,
         base_dir: Path | None = None,
-        **data: t.Tests.TestobjectSerializable,
     ) -> None:
         """Initialize file manager with optional base directory.
 
         Args:
             base_dir: Optional base directory for file operations.
                      If not provided, temporary directories are used.
-            **data: Additional data passed to parent service.
 
         """
-        del data
+        self._initialize_file_lifecycle(base_dir)
+
+    def _initialize_file_lifecycle(self, base_dir: Path | None) -> None:
+        """Initialize file-manager lifecycle state."""
         self._base_dir = base_dir
         self._created_files = list[Path]()
         self._created_dirs = list[Path]()

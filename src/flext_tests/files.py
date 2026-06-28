@@ -31,9 +31,9 @@ from flext_tests import (
 
 
 class FlextTestsFiles(
+    s,
     FlextTestsFilesInfoMixin,
     FlextTestsFilesComparisonMixin,
-    s,
 ):
     """Manages test files for FLEXT ecosystem testing."""
 
@@ -42,10 +42,10 @@ class FlextTestsFiles(
     def __init__(
         self,
         base_dir: Path | None = None,
-        **data: t.Tests.TestobjectSerializable,
     ) -> None:
         """Initialize file manager with optional base directory."""
-        super().__init__(base_dir=base_dir, **data)
+        super().__init__()
+        self._initialize_file_lifecycle(base_dir)
 
     @override
     def execute(self) -> p.Result[t.JsonValue]:
