@@ -26,6 +26,7 @@ if _t.TYPE_CHECKING:
     from flext_tests._constants.data_cases import FlextTestsConstantsDataCases
     from flext_tests._constants.docker import FlextTestsConstantsDocker
     from flext_tests._constants.files import FlextTestsConstantsFiles
+    from flext_tests._constants.make import FlextTestsConstantsMake
     from flext_tests._constants.matcher import FlextTestsConstantsMatcher
     from flext_tests._constants.validator import FlextTestsConstantsValidator
     from flext_tests._fixtures.enforcement import (
@@ -59,12 +60,14 @@ if _t.TYPE_CHECKING:
     from flext_tests._models.docker import FlextTestsDockerModelsMixin
     from flext_tests._models.domains import FlextTestsDomainModelsMixin
     from flext_tests._models.filesystem import FlextTestsFilesystemModelsMixin
+    from flext_tests._models.make import FlextTestsMakeModelsMixin
     from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
     from flext_tests._models.validator import FlextTestsValidatorModelsMixin
     from flext_tests._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
     from flext_tests._typings.base import FlextTestsBaseTypesMixin
     from flext_tests._typings.files import FlextTestsFilesTypesMixin
     from flext_tests._typings.guards import FlextTestsGuardsTypesMixin
+    from flext_tests._typings.make import FlextTestsMakeTypesMixin
     from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
     from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
     from flext_tests._utilities._files._batch import FlextTestsFilesBatchMixin
@@ -94,6 +97,7 @@ if _t.TYPE_CHECKING:
     from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
     from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
     from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
+    from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
     from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
     from flext_tests._utilities.payload import FlextTestsPayloadUtilities
     from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
@@ -133,6 +137,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._constants.data_cases": ("FlextTestsConstantsDataCases",),
             "._constants.docker": ("FlextTestsConstantsDocker",),
             "._constants.files": ("FlextTestsConstantsFiles",),
+            "._constants.make": ("FlextTestsConstantsMake",),
             "._constants.matcher": ("FlextTestsConstantsMatcher",),
             "._constants.validator": ("FlextTestsConstantsValidator",),
             "._fixtures.enforcement": (
@@ -166,12 +171,14 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._models.docker": ("FlextTestsDockerModelsMixin",),
             "._models.domains": ("FlextTestsDomainModelsMixin",),
             "._models.filesystem": ("FlextTestsFilesystemModelsMixin",),
+            "._models.make": ("FlextTestsMakeModelsMixin",),
             "._models.matchers": ("FlextTestsMatchersModelsMixin",),
             "._models.validator": ("FlextTestsValidatorModelsMixin",),
             "._protocols.valuefactory": ("FlextTestsValueFactoryProtocolsMixin",),
             "._typings.base": ("FlextTestsBaseTypesMixin",),
             "._typings.files": ("FlextTestsFilesTypesMixin",),
             "._typings.guards": ("FlextTestsGuardsTypesMixin",),
+            "._typings.make": ("FlextTestsMakeTypesMixin",),
             "._typings.matchers": ("FlextTestsMatchersTypesMixin",),
             "._utilities._matchers._assertions": ("FlextTestsMatchersAssertionsMixin",),
             "._utilities._matchers._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
@@ -180,6 +187,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._utilities.fixtures_dsl": ("FlextTestsFixturesDSLMixin",),
             "._utilities.generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
             "._utilities.handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
+            "._utilities.make": ("FlextTestsMakeUtilitiesMixin",),
             "._utilities.matchers": (
                 "FlextTestsMatchersUtilities",
                 "tm",
@@ -317,6 +325,7 @@ __all__: list[str] = [
     "FlextTestsConstantsDataCases",
     "FlextTestsConstantsDocker",
     "FlextTestsConstantsFiles",
+    "FlextTestsConstantsMake",
     "FlextTestsConstantsMatcher",
     "FlextTestsConstantsValidator",
     "FlextTestsContainerHelpersUtilitiesMixin",
@@ -340,6 +349,9 @@ __all__: list[str] = [
     "FlextTestsGenericHelpersUtilitiesMixin",
     "FlextTestsGuardsTypesMixin",
     "FlextTestsHandlerHelpersUtilitiesMixin",
+    "FlextTestsMakeModelsMixin",
+    "FlextTestsMakeTypesMixin",
+    "FlextTestsMakeUtilitiesMixin",
     "FlextTestsMatchersAssertionsMixin",
     "FlextTestsMatchersContainmentMixin",
     "FlextTestsMatchersModelsMixin",
