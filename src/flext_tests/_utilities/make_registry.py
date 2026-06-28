@@ -170,6 +170,12 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             "mutates",
             path,
         )
+        mutates_when_result = (
+            FlextTestsMakeParsingUtilitiesMixin.make_parse_mutation_conditions(
+                data.get("mutates_when"),
+                path,
+            )
+        )
         aliases_result = FlextTestsMakeParsingUtilitiesMixin.make_parse_aliases(
             data.get("aliases"),
             path,
@@ -196,6 +202,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
         )
         for result in (
             mutates_result,
+            mutates_when_result,
             aliases_result,
             params_result,
             rules_result,
@@ -216,6 +223,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             example=values["example"],
             path=path,
             mutates=mutates_result.value,
+            mutates_when=mutates_when_result.value,
             aliases=aliases_result.value,
             params=params_result.value,
             rules=rules_result.value,

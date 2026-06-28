@@ -92,6 +92,48 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
             )
         if command.target_env and not command.target:
             return r[bool].fail(f"{command.path}: target_env exige target")
+        condition_result = (
+            FlextTestsMakeContractUtilitiesMixin.make_validate_mutation_conditions(
+                command,
+                param_by_name,
+            )
+        )
+        if condition_result.failure:
+            return r[bool].fail(condition_result.error or "mutates_when invalid")
+        return r[bool].ok(True)
+
+    @staticmethod
+    def make_validate_mutation_conditions(
+        command: m.Tests.MakeCommand,
+        param_by_name: t.MappingKV[str, m.Tests.MakeParam],
+    ) -> p.Result[bool]:
+        """Validate conditional mutation predicates against declared parameters."""
+        if not command.mutates_when:
+            return r[bool].ok(True)
+        apply_param = param_by_name.get(c.Tests.MAKE_APPLY_PARAM)
+        if (
+            apply_param is None
+            or c.Tests.MAKE_DISPATCH_ENV_VALUE not in apply_param.choices
+        ):
+            return r[bool].fail(
+                f"{command.path}: mutates_when exige APPLY com choice Y"
+            )
+        for condition in command.mutates_when:
+            param = param_by_name.get(condition.name)
+            if param is None:
+                return r[bool].fail(
+                    f"{command.path}: mutates_when referencia parametro ausente "
+                    f"{condition.name}"
+                )
+            if param.choices:
+                missing = tuple(
+                    value for value in condition.values if value not in param.choices
+                )
+                if missing:
+                    return r[bool].fail(
+                        f"{command.path}: mutates_when.{condition.name} possui "
+                        f"valores fora de choices: {','.join(missing)}"
+                    )
         return r[bool].ok(True)
 
     @staticmethod

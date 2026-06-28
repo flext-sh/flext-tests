@@ -156,6 +156,73 @@ class FlextTestsMakeParsingUtilitiesMixin:
         return r[t.SequenceOf[m.Tests.MakeParam]].ok(tuple(params))
 
     @staticmethod
+    def make_parse_mutation_conditions(
+        value: t.Tests.MakeTomlValue | None,
+        path: Path,
+    ) -> p.Result[t.SequenceOf[m.Tests.MakeMutationCondition]]:
+        """Parse optional conditional mutation predicates."""
+        if value is None:
+            return r[t.SequenceOf[m.Tests.MakeMutationCondition]].ok(())
+        if not isinstance(value, list):
+            return r[t.SequenceOf[m.Tests.MakeMutationCondition]].fail(
+                f"{path}: mutates_when deve conter lista"
+            )
+        conditions: list[m.Tests.MakeMutationCondition] = []
+        for item in value:
+            if not isinstance(item, dict):
+                return r[t.SequenceOf[m.Tests.MakeMutationCondition]].fail(
+                    f"{path}: mutates_when deve conter objetos TOML"
+                )
+            parsed = t.Tests.MAKE_TOML_TABLE_ADAPTER.validate_python(item)
+            condition_result = (
+                FlextTestsMakeParsingUtilitiesMixin.make_parse_mutation_condition(
+                    parsed,
+                    path,
+                )
+            )
+            if condition_result.failure:
+                return r[t.SequenceOf[m.Tests.MakeMutationCondition]].fail(
+                    condition_result.error or "mutation condition invalid"
+                )
+            conditions.append(condition_result.value)
+        return r[t.SequenceOf[m.Tests.MakeMutationCondition]].ok(tuple(conditions))
+
+    @staticmethod
+    def make_parse_mutation_condition(
+        data: t.Tests.MakeTomlTable,
+        path: Path,
+    ) -> p.Result[m.Tests.MakeMutationCondition]:
+        """Parse one conditional mutation predicate."""
+        name_result = FlextTestsMakeParsingUtilitiesMixin.make_require_string(
+            data,
+            "name",
+            path,
+        )
+        values_result = FlextTestsMakeParsingUtilitiesMixin.make_parse_string_list(
+            data,
+            "values",
+            path,
+        )
+        if name_result.failure:
+            return r[m.Tests.MakeMutationCondition].fail(
+                name_result.error or "condition name missing"
+            )
+        if values_result.failure:
+            return r[m.Tests.MakeMutationCondition].fail(
+                values_result.error or "condition values invalid"
+            )
+        if not values_result.value:
+            return r[m.Tests.MakeMutationCondition].fail(
+                f"{path}: mutates_when.values nao pode estar vazio"
+            )
+        return r[m.Tests.MakeMutationCondition].ok(
+            m.Tests.MakeMutationCondition(
+                name=name_result.value,
+                values=values_result.value,
+            )
+        )
+
+    @staticmethod
     def make_parse_param(
         data: t.Tests.MakeTomlTable,
         path: Path,

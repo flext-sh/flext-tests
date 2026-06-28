@@ -61,7 +61,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
         ]
         commands = registry.commands_by_verb[verb]
         for what, command in sorted(commands.items()):
-            marker = " [mutates]" if command.mutates else ""
+            marker = FlextTestsMakeRenderingUtilitiesMixin.make_mutation_marker(command)
             lines.append(f"  {what:20} [{command.domain:12}] {command.summary}{marker}")
         command_params = [
             (what, command)
@@ -120,10 +120,17 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             f"make {requested_verb} WHAT={what}",
             "",
             f"Dominio: {command.domain}",
-            f"Mutacao: {'sim' if command.mutates else 'nao'}",
+            f"Mutacao: {FlextTestsMakeRenderingUtilitiesMixin.make_mutation_label(command)}",
         ]
         if command.mutates:
             lines.append("Sem APPLY=Y a execucao fica em dry-run.")
+        elif command.mutates_when:
+            conditions = (
+                FlextTestsMakeRenderingUtilitiesMixin.make_format_mutation_conditions(
+                    command.mutates_when
+                )
+            )
+            lines.append(f"Mutacao condicional: {conditions}.")
         lines.extend(("", command.summary, command.description))
         if command.params:
             lines.extend(("", "Parametros:"))
@@ -196,6 +203,34 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
                 rendered = f"{rendered}({';'.join(detail)})"
             parts.append(rendered)
         return ", ".join(parts)
+
+    @staticmethod
+    def make_mutation_marker(command: m.Tests.MakeCommand) -> str:
+        """Return the compact mutation marker for verb help."""
+        if command.mutates:
+            return " [mutates]"
+        if command.mutates_when:
+            return " [conditional-mutates]"
+        return ""
+
+    @staticmethod
+    def make_mutation_label(command: m.Tests.MakeCommand) -> str:
+        """Return the reader-facing mutation label for command help."""
+        if command.mutates:
+            return "sim"
+        if command.mutates_when:
+            return "condicional"
+        return "nao"
+
+    @staticmethod
+    def make_format_mutation_conditions(
+        conditions: Iterable[m.Tests.MakeMutationCondition],
+    ) -> str:
+        """Render conditional mutation predicates compactly."""
+        return "; ".join(
+            f"{condition.name}={('|'.join(condition.values))}"
+            for condition in conditions
+        )
 
     @staticmethod
     def make_example_for(command: m.Tests.MakeCommand, requested_verb: str) -> str:

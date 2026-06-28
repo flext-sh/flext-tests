@@ -35,6 +35,15 @@ class FlextTestsMakeModelsMixin:
             u.Field(description="Allowed values for the parameter."),
         ] = ()
 
+    class MakeMutationCondition(m.Value):
+        """One environment-backed conditional mutation predicate."""
+
+        name: Annotated[str, u.Field(description="Environment variable name.")]
+        values: Annotated[
+            t.StrSequence,
+            u.Field(description="Values that make the command mutating."),
+        ]
+
     class MakeCommand(m.Value):
         """One promoted command discovered from a flext-command header."""
 
@@ -49,6 +58,10 @@ class FlextTestsMakeModelsMixin:
             bool,
             u.Field(description="Whether execution can mutate workspace state."),
         ]
+        mutates_when: Annotated[
+            t.SequenceOf[FlextTestsMakeModelsMixin.MakeMutationCondition],
+            u.Field(description="Conditional mutation predicates."),
+        ] = ()
         aliases: Annotated[
             t.StrSequence,
             u.Field(description="Verb aliases declared on WHAT=all."),
