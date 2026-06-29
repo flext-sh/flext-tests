@@ -72,7 +72,12 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesCreationMixinPart01):
         ),
     ) -> t.JsonValue:
         """Build normalized JSON payload from arbitrary file content."""
-        mapping_content: t.MappingKV[str, t.Tests.TestobjectSerializable] | None = (
+        mapping_content: (
+            t.MappingKV[str, t.Tests.TestobjectSerializable]
+            | t.MappingKV[str, t.JsonPayload]
+            | t.JsonMapping
+            | None
+        ) = (
             actual_content.root
             if isinstance(actual_content, (m.ConfigMap, m.Dict))
             else actual_content
@@ -84,7 +89,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesCreationMixinPart01):
         )
         raw_payload: t.JsonValue = (
             {
-                k: FlextTestsPayloadUtilities.to_normalized_value(v)
+                k: FlextTestsPayloadUtilities.to_normalized_value(
+                    FlextTestsPayloadUtilities.to_payload(v)
+                )
                 for k, v in mapping_content.items()
             }
             if mapping_content is not None

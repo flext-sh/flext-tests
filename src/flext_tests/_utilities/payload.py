@@ -100,7 +100,12 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def to_config_map(
-        value: m.BaseModel | t.MappingKV[str, t.Tests.TestobjectSerializable],
+        value: (
+            m.BaseModel
+            | t.MappingKV[str, t.Tests.TestobjectSerializable]
+            | t.MappingKV[str, t.JsonPayload]
+            | t.JsonMapping
+        ),
     ) -> m.ConfigMap:
         """Convert a model or payload mapping to the canonical ConfigMap shape."""
         source = (
