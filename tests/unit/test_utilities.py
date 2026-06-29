@@ -154,7 +154,7 @@ from __future__ import annotations
         before_header = tmp_path / "before_header.py"
         before_header.write_text(
             """#!/usr/bin/env python3
-print("side effect")
+SIDE_EFFECT = "detected"
 # /// flext-command
 # verb = "demo"
 # what = "before"
