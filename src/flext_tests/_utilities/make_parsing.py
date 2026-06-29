@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import ast
 from pathlib import Path
 
 from flext_cli import u as cli_u
@@ -45,6 +46,30 @@ class FlextTestsMakeParsingUtilitiesMixin:
         except (TypeError, ValueError) as exc:
             return r[t.Tests.MakeTomlTable].fail(f"{path}: header TOML invalido: {exc}")
         return r[t.Tests.MakeTomlTable].ok(table)
+
+    @staticmethod
+    def make_has_executable_body(path: Path) -> p.Result[bool]:
+        """Return whether a command file has executable Python outside metadata."""
+        try:
+            source = path.read_text(encoding="utf-8")
+        except OSError as exc:
+            return r[bool].fail_op("command body read", exc)
+
+        try:
+            tree = ast.parse(source, filename=str(path))
+        except SyntaxError as exc:
+            return r[bool].fail(f"{path}: Python invalido: {exc}")
+
+        body = tuple(tree.body)
+        if not body:
+            return r[bool].ok(False)
+        first = body[0]
+        has_module_docstring = (
+            isinstance(first, ast.Expr)
+            and isinstance(first.value, ast.Constant)
+            and isinstance(first.value.value, str)
+        )
+        return r[bool].ok(len(body) > 1 if has_module_docstring else True)
 
     @staticmethod
     def make_require_string(

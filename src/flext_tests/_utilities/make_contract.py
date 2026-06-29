@@ -92,6 +92,16 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
             )
         if command.target_env and not command.target:
             return r[bool].fail(f"{command.path}: target_env exige target")
+        if command.target:
+            body_result = FlextTestsMakeParsingUtilitiesMixin.make_has_executable_body(
+                command.path
+            )
+            if body_result.failure:
+                return r[bool].fail(body_result.error or "target body check failed")
+            if body_result.value:
+                return r[bool].fail(
+                    f"{command.path}: comandos com target devem ser header-only"
+                )
         condition_result = (
             FlextTestsMakeContractUtilitiesMixin.make_validate_mutation_conditions(
                 command,

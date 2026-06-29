@@ -7,6 +7,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from flext_tests import tm
@@ -118,3 +120,58 @@ class TestsFlextTestsUtilitiesUnit:
 
         tm.that(len(cases), eq=1)
         tm.that(cases[0][0].error_code, eq=None)
+
+    def test_make_has_executable_body_detects_target_script_code(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """Target-backed command metadata must remain header-only."""
+        header_only = tmp_path / "header_only.py"
+        header_only.write_text(
+            """#!/usr/bin/env python3
+\"\"\"Header-only promoted command.\"\"\"
+# /// flext-command
+# verb = "demo"
+# what = "all"
+# ///
+
+# comment-only trailer
+""",
+            encoding="utf-8",
+        )
+        with_body = tmp_path / "with_body.py"
+        with_body.write_text(
+            """#!/usr/bin/env python3
+# /// flext-command
+# verb = "demo"
+# what = "body"
+# ///
+
+from __future__ import annotations
+""",
+            encoding="utf-8",
+        )
+        before_header = tmp_path / "before_header.py"
+        before_header.write_text(
+            """#!/usr/bin/env python3
+print("side effect")
+# /// flext-command
+# verb = "demo"
+# what = "before"
+# ///
+""",
+            encoding="utf-8",
+        )
+
+        tm.that(
+            u.Tests.assert_success(u.Tests.make_has_executable_body(header_only)),
+            eq=False,
+        )
+        tm.that(
+            u.Tests.assert_success(u.Tests.make_has_executable_body(with_body)),
+            eq=True,
+        )
+        tm.that(
+            u.Tests.assert_success(u.Tests.make_has_executable_body(before_header)),
+            eq=True,
+        )
