@@ -7,15 +7,15 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 _LAZY_IMPORTS = build_lazy_import_map(
     {
-        ".data_driven": ("data_driven",),
-        ".fail_constraints": ("fail_constraints",),
-        ".ok_constraints": ("ok_constraints",),
+        ".data_driven": ("MatchersDataDrivenMixin",),
+        ".fail_constraints": ("MatchersFailConstraintsMixin",),
+        ".ok_constraints": ("MatchersOkConstraintsMixin",),
         ".predicates": ("predicates",),
-        ".results": ("results",),
-        ".scope_errors": ("scope_errors",),
-        ".that_attrs": ("that_attrs",),
-        ".that_collections": ("that_collections",),
-        ".validation": ("validation",),
+        ".results": ("MatchersResultsMixin",),
+        ".scope_errors": ("MatchersScopeErrorsMixin",),
+        ".that_attrs": ("MatchersThatAttrsMixin",),
+        ".that_collections": ("MatchersThatCollectionsMixin",),
+        ".validation": ("MatchersValidationMixin",),
         "flext_tests": (
             "c",
             "d",

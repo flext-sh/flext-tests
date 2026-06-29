@@ -7,16 +7,17 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 _LAZY_IMPORTS = build_lazy_import_map(
     {
-        ".assert_exists": ("assert_exists",),
-        ".batch_create_in": ("batch_create_in",),
-        ".compare": ("compare",),
-        ".content_meta": ("content_meta",),
-        ".contexts": ("contexts",),
-        ".creation": ("creation",),
-        ".formats": ("formats",),
-        ".info_cleanup": ("info_cleanup",),
-        ".info_metadata": ("info_metadata",),
-        ".read": ("read",),
+        ".assert_exists": ("FilesAssertExistsMixin",),
+        ".batch_create_in": ("FilesBatchCreateInMixin",),
+        ".compare": ("FilesCompareMixin",),
+        ".content_meta": ("FilesContentMetaMixin",),
+        ".contexts": ("FilesContextsMixin",),
+        ".creation": ("FilesCreationMixin",),
+        ".formats": ("FilesFormatsMixin",),
+        ".info_cleanup": ("FilesInfoCleanupMixin",),
+        ".info_metadata": ("FilesInfoMetadataMixin",),
+        ".models": ("FilesModelsMixin",),
+        ".read": ("FilesReadMixin",),
         "flext_tests": (
             "c",
             "d",

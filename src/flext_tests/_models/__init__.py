@@ -16,13 +16,17 @@ _LAZY_IMPORTS = merge_lazy_imports(
     ),
     build_lazy_import_map(
         {
+            "._filesystem_parts": ("_filesystem_parts",),
+            "._filesystem_parts.filesystem_part_02": (
+                "FlextTestsFilesystemModelsMixin",
+            ),
+            "._matchers_parts": ("_matchers_parts",),
+            "._matchers_parts.matchers_part_03": ("FlextTestsMatchersModelsMixin",),
             ".base": ("FlextTestsBaseModelsMixin",),
             ".batch": ("FlextTestsBatchModelsMixin",),
             ".docker": ("FlextTestsDockerModelsMixin",),
             ".domains": ("FlextTestsDomainModelsMixin",),
-            ".filesystem": ("FlextTestsFilesystemModelsMixin",),
             ".make": ("FlextTestsMakeModelsMixin",),
-            ".matchers": ("FlextTestsMatchersModelsMixin",),
             ".validator": ("FlextTestsValidatorModelsMixin",),
         },
     ),

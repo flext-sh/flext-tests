@@ -7,7 +7,7 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 _LAZY_IMPORTS = build_lazy_import_map(
     {
-        ".filesystem_part_01": ("FlextTestsFilesystemModelsMixin",),
+        ".filesystem_part_02": ("FlextTestsFilesystemModelsMixin",),
     },
 )
 

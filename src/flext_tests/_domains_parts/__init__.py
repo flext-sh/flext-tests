@@ -7,7 +7,7 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 _LAZY_IMPORTS = build_lazy_import_map(
     {
-        ".domains_part_01": ("FlextTestsDomains",),
+        ".domains_part_03": ("FlextTestsDomains",),
     },
 )
 

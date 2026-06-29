@@ -13,10 +13,14 @@ _LAZY_IMPORTS = merge_lazy_imports(
     ("._enforcement_parts",),
     build_lazy_import_map(
         {
+            "._enforcement_parts": ("_enforcement_parts",),
             ".enforcement": (
                 "EnforcementCollector",
                 "EnforcementItem",
                 "EnforcementViolationError",
+                "active_rules",
+                "discover_workspace_root",
+                "split_csv",
             ),
             ".markdown_validation": (
                 "MarkdownCodeBlockCollector",

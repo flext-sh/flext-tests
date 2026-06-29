@@ -18,15 +18,19 @@ _LAZY_IMPORTS = merge_lazy_imports(
     ),
     build_lazy_import_map(
         {
-            "._orchestration_parts.validator_part_01": ("FlextTestsValidator",),
+            "._markdown_parts": ("_markdown_parts",),
+            "._markdown_parts.markdown_part_02": ("FlextValidatorMarkdown",),
+            "._orchestration_parts": ("_orchestration_parts",),
+            "._orchestration_parts.validator_part_02": ("FlextTestsValidator",),
+            "._settings_parts": ("_settings_parts",),
+            "._types_parts": ("_types_parts",),
+            "._types_parts.types_part_02": ("FlextValidatorTypes",),
             ".bypass": ("FlextValidatorBypass",),
             ".imports": ("FlextValidatorImports",),
             ".layer": ("FlextValidatorLayer",),
-            ".markdown": ("FlextValidatorMarkdown",),
             ".models": ("FlextTestsValidatorModels",),
             ".settings": ("FlextValidatorSettings",),
             ".tests": ("FlextValidatorTests",),
-            ".types": ("FlextValidatorTypes",),
         },
     ),
     exclude_names=(

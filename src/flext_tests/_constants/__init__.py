@@ -13,7 +13,8 @@ _LAZY_IMPORTS = merge_lazy_imports(
     ("._validator_parts",),
     build_lazy_import_map(
         {
-            ".validator": ("FlextTestsConstantsValidator",),
+            "._validator_parts": ("_validator_parts",),
+            "._validator_parts.validator_part_03": ("FlextTestsConstantsValidator",),
             ".data_cases": ("FlextTestsConstantsDataCases",),
             ".docker": ("FlextTestsConstantsDocker",),
             ".files": ("FlextTestsConstantsFiles",),

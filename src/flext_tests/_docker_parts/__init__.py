@@ -7,7 +7,7 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 _LAZY_IMPORTS = build_lazy_import_map(
     {
-        ".docker_part_01": ("FlextTestsDocker",),
+        ".docker_part_06": ("FlextTestsDocker",),
     },
 )
 

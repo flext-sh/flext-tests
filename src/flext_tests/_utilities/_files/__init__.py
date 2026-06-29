@@ -18,9 +18,13 @@ _LAZY_IMPORTS = merge_lazy_imports(
         {
             "._assertions": ("FlextTestsFilesAssertionsMixin",),
             "._batch": ("FlextTestsFilesBatchMixin",),
-            "._comparison": ("FlextTestsFilesComparisonMixin",),
+            "._comparison_parts": ("_comparison_parts",),
+            "._comparison_parts.comparison_part_02": (
+                "FlextTestsFilesComparisonMixin",
+            ),
             "._contexts": ("FlextTestsFilesContextsMixin",),
-            "._creation": ("FlextTestsFilesCreationMixin",),
+            "._creation_parts": ("_creation_parts",),
+            "._creation_parts.creation_part_03": ("FlextTestsFilesCreationMixin",),
             "._info": ("FlextTestsFilesInfoMixin",),
             "._lifecycle": ("FlextTestsFilesLifecycleMixin",),
             "._reading": ("FlextTestsFilesReadingMixin",),

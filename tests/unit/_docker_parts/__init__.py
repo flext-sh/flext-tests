@@ -7,10 +7,10 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 _LAZY_IMPORTS = build_lazy_import_map(
     {
-        ".builders": ("builders",),
-        ".operations": ("operations",),
-        ".state": ("state",),
-        ".targets": ("targets",),
+        ".builders": ("DockerBuildersMixin",),
+        ".operations": ("DockerOperationsMixin",),
+        ".state": ("DockerStateMixin",),
+        ".targets": ("DockerTargetsMixin",),
         "flext_tests": (
             "c",
             "d",
