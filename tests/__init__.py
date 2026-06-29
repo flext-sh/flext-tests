@@ -13,28 +13,22 @@ from flext_core.lazy import (
 
 if _t.TYPE_CHECKING:
     from flext_tests import (
-        d as d,
-        e as e,
-        h as h,
-        r as r,
-        s as s,
+        d,
+        e,
+        h,
+        r,
+        s,
         td as td,
         tf as tf,
         tk as tk,
         tm as tm,
         tv as tv,
-        x as x,
+        x,
     )
-    from tests.constants import (
-        TestsFlextTestsConstants as TestsFlextTestsConstants,
-        c as c,
-    )
-    from tests.models import TestsFlextTestsModels as TestsFlextTestsModels, m as m
-    from tests.protocols import (
-        TestsFlextTestsProtocols as TestsFlextTestsProtocols,
-        p as p,
-    )
-    from tests.typings import TestsFlextTestsTypes as TestsFlextTestsTypes, t as t
+    from tests.constants import TestsFlextTestsConstants as TestsFlextTestsConstants, c
+    from tests.models import TestsFlextTestsModels as TestsFlextTestsModels, m
+    from tests.protocols import TestsFlextTestsProtocols as TestsFlextTestsProtocols, p
+    from tests.typings import TestsFlextTestsTypes as TestsFlextTestsTypes, t
     from tests.unit.test_docker import TestsFlextTestsDocker as TestsFlextTestsDocker
     from tests.unit.test_domains import TestsFlextTestsDomains as TestsFlextTestsDomains
     from tests.unit.test_enforcement_dispatcher import (
@@ -56,10 +50,7 @@ if _t.TYPE_CHECKING:
     from tests.unit.test_validator_types import (
         TestsFlextTestsValidatorTypes as TestsFlextTestsValidatorTypes,
     )
-    from tests.utilities import (
-        TestsFlextTestsUtilities as TestsFlextTestsUtilities,
-        u as u,
-    )
+    from tests.utilities import TestsFlextTestsUtilities as TestsFlextTestsUtilities, u
 _LAZY_IMPORTS = merge_lazy_imports(
     (
         ".integration",

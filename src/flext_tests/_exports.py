@@ -1,0 +1,71 @@
+"""Root lazy export map for flext-tests."""
+
+from __future__ import annotations
+
+from flext_core.lazy import build_lazy_import_map, merge_lazy_imports
+
+FLEXT_TESTS_METADATA_EXPORTS: tuple[str, ...] = (
+    "__author__",
+    "__author_email__",
+    "__description__",
+    "__license__",
+    "__title__",
+    "__url__",
+    "__version__",
+    "__version_info__",
+)
+
+FLEXT_TESTS_LAZY_IMPORTS = merge_lazy_imports(
+    (
+        "._constants",
+        "._fixtures",
+        "._models",
+        "._protocols",
+        "._typings",
+        "._utilities",
+        "._validator",
+    ),
+    build_lazy_import_map(
+        {
+            ".base": (
+                "FlextService",
+                "FlextTestsCase",
+                "FlextTestsServiceBase",
+                "s",
+            ),
+            ".constants": ("FlextTestsConstants", "c"),
+            ".docker": ("FlextTestsDocker", "tk"),
+            ".domains": ("FlextTestsDomains", "td"),
+            ".files": ("FlextTestsFiles", "tf"),
+            ".models": ("FlextTestsModels", "m"),
+            ".protocols": ("FlextTestsProtocols", "p"),
+            ".settings": ("FlextTestsSettings",),
+            ".typings": ("FlextTestsTypes", "t"),
+            ".utilities": ("FlextTestsUtilities", "u"),
+            ".validator": ("FlextTestsValidator", "tv"),
+            "flext_core": ("d", "e", "h", "r", "x"),
+        },
+    ),
+    exclude_names=(
+        "cleanup_submodule_namespace",
+        "install_lazy_exports",
+        "lazy_getattr",
+        "logger",
+        "merge_lazy_imports",
+        "output",
+        "output_reporting",
+        "pytest_addoption",
+        "pytest_collect_file",
+        "pytest_collection_modifyitems",
+        "pytest_configure",
+        "pytest_runtest_setup",
+        "pytest_runtest_teardown",
+        "pytest_sessionfinish",
+        "pytest_sessionstart",
+        "pytest_terminal_summary",
+        "pytest_warning_recorded",
+    ),
+    module_name="flext_tests",
+)
+
+__all__: list[str] = ["FLEXT_TESTS_LAZY_IMPORTS", "FLEXT_TESTS_METADATA_EXPORTS"]

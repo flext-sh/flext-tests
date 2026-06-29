@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from flext_tests._docker_parts.docker_part_05 import (
-    FlextTestsDocker as FlextTestsDockerPart05,
+from flext_tests._docker_parts.docker_part_06 import (
+    FlextTestsDocker as FlextTestsDockerPart06,
 )
 
 
-class FlextTestsDocker(FlextTestsDockerPart05):
+class FlextTestsDocker(FlextTestsDockerPart06):
     """Manage Docker containers for FLEXT tests."""
 
 

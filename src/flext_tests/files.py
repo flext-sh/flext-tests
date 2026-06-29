@@ -20,14 +20,14 @@ from pathlib import Path
 from typing import ClassVar, override
 
 from flext_tests import (
-    FlextTestsFilesComparisonMixin,
-    FlextTestsFilesInfoMixin,
     m,
     p,
     r,
     s,
     t,
 )
+from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
+from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
 
 
 class FlextTestsFiles(

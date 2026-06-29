@@ -1,9 +1,12 @@
-"""Docker fluent DSL helpers for flext-tests."""
+"""Docker container operations for flext-tests."""
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Self
+import socket
+import time
+
+from docker.errors import DockerException, NotFound
+from docker.models.containers import Container
 
 from flext_tests import c, m, p, r, t
 from flext_tests._docker_parts.docker_part_03 import (
@@ -12,148 +15,118 @@ from flext_tests._docker_parts.docker_part_03 import (
 
 
 class FlextTestsDocker(FlextTestsDockerPart03):
-    """Expose fluent Docker DSL helpers."""
+    """Run Docker SDK container operations."""
 
-    @classmethod
-    def shared(
-        cls,
-        container_name: str,
-        *,
-        workspace_root: Path | None = None,
-        worker_id: str | None = None,
-    ) -> Self:
-        """Build a DSL-configured service from a shared container constant."""
-        resolved_root = workspace_root or Path.cwd()
-        return cls(
-            workspace_root=resolved_root,
-            worker_id=worker_id or "master",
-            target_config=cls._resolve_shared_target_config(
-                container_name,
-                resolved_root,
-            ),
-        )
-
-    @classmethod
-    def compose(
-        cls,
-        compose_file: str | Path,
-        *,
-        container_name: str | None = None,
-        service: str = "",
-        host: str = c.LOCALHOST,
-        port: int | None = None,
-        startup_timeout: int = 30,
-        force_recreate: bool = False,
-        workspace_root: Path | None = None,
-        worker_id: str | None = None,
-    ) -> Self:
-        """Build a DSL-configured service for an explicit compose target."""
-        resolved_root = workspace_root or Path.cwd()
-        compose_path = Path(compose_file)
-        if not compose_path.is_absolute():
-            compose_path = resolved_root / compose_path
-        return cls(
-            workspace_root=resolved_root,
-            worker_id=worker_id or "master",
-            target_config=m.Tests.ContainerConfig(
-                container_name=container_name,
-                compose_file=compose_path,
-                service=service,
-                host=host,
-                port=port,
-                startup_timeout=startup_timeout,
-                force_recreate=force_recreate,
-            ),
-        )
-
-    @classmethod
-    def stack(
-        cls,
-        compose_file: str | Path,
-        *,
-        container_name: str | None = None,
-        service: str = "",
-        host: str = c.LOCALHOST,
-        port: int | None = None,
-        startup_timeout: int = 30,
-        force_recreate: bool = False,
-        workspace_root: Path | None = None,
-        worker_id: str | None = None,
-    ) -> Self:
-        """Build a DSL-configured service for a compose stack target."""
-        return cls.compose(
-            compose_file,
-            container_name=container_name,
-            service=service,
-            host=host,
-            port=port,
-            startup_timeout=startup_timeout,
-            force_recreate=force_recreate,
-            workspace_root=workspace_root,
-            worker_id=worker_id,
-        )
-
-    def up(self) -> p.Result[str]:
-        """Start the configured compose target using the DSL state."""
-        target = self.target_config
-        if target is None:
-            return r[str].fail(
-                "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...).",
+    def fetch_container_info(
+        self, container_name: str
+    ) -> p.Result[m.Tests.ContainerInfo]:
+        """Fetch container information."""
+        client = self.client
+        if client is None:
+            error = self.client_error or "Docker daemon unavailable"
+            return r[m.Tests.ContainerInfo].fail(error)
+        try:
+            container = client.containers.get(container_name)
+        except NotFound:
+            return r[m.Tests.ContainerInfo].fail(
+                f"Container {container_name} not found",
             )
-        return self.compose_up(
-            str(target.compose_file),
-            service=target.service or None,
-            force_recreate=target.force_recreate,
+        except c.EXC_BROAD_RUNTIME as exc:
+            return r[m.Tests.ContainerInfo].fail(str(exc))
+        return r[m.Tests.ContainerInfo].ok(
+            self._container_info_from_sdk(container_name, container)
         )
 
-    def down(self) -> p.Result[str]:
-        """Stop the configured compose target using the DSL state."""
-        target = self.target_config
-        if target is None:
-            return r[str].fail(
-                "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...).",
-            )
-        return self.compose_down(str(target.compose_file))
+    def fetch_container_status(
+        self, container_name: str
+    ) -> p.Result[m.Tests.ContainerInfo]:
+        """Fetch container status."""
+        return self.fetch_container_info(container_name)
 
-    def ready(
-        self, *, port: int | None = None, max_wait: int | None = None
+    def start_existing_container(self, container_name: str) -> p.Result[bool]:
+        """Start an existing stopped container by name."""
+        client = self.client
+        if client is None:
+            error = self.client_error or "Docker daemon unavailable"
+            return r[bool].fail(error)
+        try:
+            container = client.containers.get(container_name)
+        except NotFound:
+            return r[bool].fail(f"Container {container_name} not found")
+        except (DockerException, OSError, RuntimeError, AttributeError) as exc:
+            return r[bool].fail(f"Failed to inspect container {container_name}: {exc}")
+        return self._start_sdk_container(container_name, container)
+
+    def start_compose_stack(
+        self,
+        compose_file: str,
+        network_name: str | None = None,
+    ) -> p.Result[str]:
+        """Start a Docker Compose stack."""
+        _ = network_name
+        result = self.compose_up(compose_file)
+        if result.failure:
+            return r[str].fail_op("Stack start", result.error)
+        return r[str].ok("Stack started successfully")
+
+    def wait_for_port_ready(
+        self,
+        host: str,
+        port: int,
+        max_wait: int = 30,
     ) -> p.Result[bool]:
-        """Run a readiness check against the configured target."""
-        target = self.target_config
-        if target is None:
-            return r[bool].fail(
-                "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...).",
+        """Wait until a TCP port is accepting connections."""
+        waited = 0.0
+        while waited < max_wait:
+            try:
+                with socket.create_connection((host, port), timeout=1):
+                    return r[bool].ok(value=True)
+            except (ConnectionRefusedError, TimeoutError, OSError):
+                time.sleep(0.5)
+                waited += 0.5
+        return r[bool].ok(value=False)
+
+    def _container_info_from_sdk(
+        self,
+        container_name: str,
+        container: Container,
+    ) -> m.Tests.ContainerInfo:
+        """Build canonical container info from a Docker SDK container."""
+        ports_raw: t.MappingKV[str, t.Tests.TestobjectSerializable] = (
+            t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
+                container.ports
             )
-        resolved_port = target.port if port is None else port
-        if resolved_port is None:
-            return r[bool].fail(
-                f"Docker target {target.container_name} has no configured readiness port.",
-            )
-        return self.wait_for_port_ready(
-            target.host,
-            resolved_port,
-            max_wait=target.startup_timeout if max_wait is None else max_wait,
+        )
+        ports: t.MutableStrMapping = {}
+        for container_port, host_bindings in ports_raw.items():
+            normalized_bindings = self._normalize_bindings(host_bindings)
+            host_port = self._extract_host_port(normalized_bindings)
+            if host_port:
+                ports[container_port] = host_port
+        image_obj = container.image
+        image_tags_raw = image_obj.tags if image_obj is not None else ()
+        image_tags = list(image_tags_raw)
+        return m.Tests.ContainerInfo(
+            name=container_name,
+            status=c.Tests.ContainerStatus(container.status),
+            ports=ports,
+            image=image_tags[0] if image_tags else "",
+            container_id=str(container.id),
         )
 
-    def cleanup_dirty_containers(self) -> p.Result[t.StrSequence]:
-        """Clean up all dirty containers by recreating them with fresh volumes."""
-        cleaned: list[str] = []
-        for container_name in list(self.dirty_container_names):
-            target = self._resolve_shared_target_config(
-                container_name,
-                self.workspace_root,
-            )
-            self.logger.info("Recreating dirty container", container=container_name)
-            _ = self.compose_down(str(target.compose_file))
-            result = self.compose_up(
-                str(target.compose_file),
-                target.service,
-                force_recreate=True,
-            )
-            if result.success:
-                _ = self.mark_container_clean(container_name)
-                cleaned.append(container_name)
-        return r[t.StrSequence].ok(tuple(cleaned))
+    @staticmethod
+    def _start_sdk_container(
+        container_name: str,
+        container: Container,
+    ) -> p.Result[bool]:
+        """Start a Docker SDK container when it is not already running."""
+        try:
+            if container.status == "running":
+                return r[bool].ok(value=True)
+            container.start()
+        except (DockerException, OSError, RuntimeError, AttributeError) as exc:
+            return r[bool].fail(f"Failed to start container {container_name}: {exc}")
+        return r[bool].ok(value=True)
 
 
 __all__: list[str] = ["FlextTestsDocker"]

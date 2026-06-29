@@ -14,7 +14,8 @@ from collections.abc import (
 from pathlib import Path
 from typing import override
 
-from flext_tests import FlextTestsValidatorModels, c, m, t, u
+from flext_tests import c, m, t, u
+from flext_tests._validator.models import FlextTestsValidatorModels
 
 
 class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):

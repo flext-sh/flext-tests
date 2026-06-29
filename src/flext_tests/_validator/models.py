@@ -15,11 +15,14 @@ from collections.abc import (
 from pathlib import Path
 from typing import ClassVar
 
-from flext_tests import m, p, r, t
+from flext_core import r
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
-class FlextTestsValidatorModels(m):
-    """Models for FLEXT architecture validation - extends m.
+class FlextTestsValidatorModels:
+    """Models for FLEXT architecture validation.
 
     Uses c.Tests.Validator for constants (Severity, Rules, Defaults, Approved patterns).
     """

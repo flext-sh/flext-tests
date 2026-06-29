@@ -12,6 +12,7 @@ from flext_core.lazy import (
 _LAZY_IMPORTS = merge_lazy_imports(
     (
         "._files",
+        "._make_parts",
         "._matchers",
     ),
     build_lazy_import_map(
@@ -24,6 +25,18 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._files._info": ("FlextTestsFilesInfoMixin",),
             "._files._lifecycle": ("FlextTestsFilesLifecycleMixin",),
             "._files._reading": ("FlextTestsFilesReadingMixin",),
+            "._make_parts.make_contract_part_01": (
+                "FlextTestsMakeContractUtilitiesMixin",
+            ),
+            "._make_parts.make_parsing_part_01": (
+                "FlextTestsMakeParsingUtilitiesMixin",
+            ),
+            "._make_parts.make_registry_part_01": (
+                "FlextTestsMakeRegistryUtilitiesMixin",
+            ),
+            "._make_parts.make_rendering_part_01": (
+                "FlextTestsMakeRenderingUtilitiesMixin",
+            ),
             "._matchers._assertions": ("FlextTestsMatchersAssertionsMixin",),
             "._matchers._containment": ("FlextTestsMatchersContainmentMixin",),
             "._matchers._result": ("FlextTestsMatchersResultMixin",),
@@ -37,10 +50,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
             ".generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
             ".handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
             ".make": ("FlextTestsMakeUtilitiesMixin",),
-            ".make_contract": ("FlextTestsMakeContractUtilitiesMixin",),
-            ".make_parsing": ("FlextTestsMakeParsingUtilitiesMixin",),
-            ".make_registry": ("FlextTestsMakeRegistryUtilitiesMixin",),
-            ".make_rendering": ("FlextTestsMakeRenderingUtilitiesMixin",),
             ".matchers": (
                 "FlextTestsMatchersUtilities",
                 "tm",

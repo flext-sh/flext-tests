@@ -8,11 +8,7 @@ from flext_tests import c, m, t
 
 
 class FlextTestsValidatorUtilitiesMixin:
-    """Validator utilities for architecture validation (tv.* methods).
-
-    Provides reusable helper functions for validators. All validators
-    should use these instead of implementing their own versions.
-    """
+    """Validator utilities for architecture validation."""
 
     @staticmethod
     def create_violation(
@@ -50,17 +46,7 @@ class FlextTestsValidatorUtilitiesMixin:
 
     @staticmethod
     def find_line_number(lines: t.StrSequence, pattern: str) -> int:
-        """Find line number containing pattern.
-
-        Args:
-            lines: File content as list of lines
-            pattern: Pattern to search for
-
-        Returns:
-            r[TEntity]: Result containing created entity or error
-            Line number (1-indexed) or 1 if not found
-
-        """
+        """Find line number containing pattern."""
         for i, line in enumerate(lines, start=1):
             if pattern in line:
                 return i

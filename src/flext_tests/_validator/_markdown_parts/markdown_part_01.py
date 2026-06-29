@@ -6,7 +6,8 @@ from collections.abc import MutableSequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from flext_tests import FlextTestsValidatorModels, c, p, t, u
+from flext_tests import c, p, t, u
+from flext_tests._validator.models import FlextTestsValidatorModels
 
 if TYPE_CHECKING:
     from flext_tests import m

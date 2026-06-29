@@ -14,7 +14,8 @@ from collections.abc import (
 from pathlib import Path
 from typing import TYPE_CHECKING, override
 
-from flext_tests import FlextTestsValidatorModels, c, t, u
+from flext_tests import c, t, u
+from flext_tests._validator.models import FlextTestsValidatorModels
 
 if TYPE_CHECKING:
     from flext_tests import m

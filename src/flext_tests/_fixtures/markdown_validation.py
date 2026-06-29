@@ -19,7 +19,8 @@ from typing import override
 
 import pytest
 
-from flext_tests import FlextValidatorMarkdown, c, u
+from flext_tests import c, u
+from flext_tests._validator.markdown import FlextValidatorMarkdown
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:

@@ -14,14 +14,12 @@ from collections.abc import (
 from pathlib import Path
 from typing import override
 
-from flext_tests import FlextTestsValidatorModels, c, m, t, u
+from flext_tests import c, m, t, u
+from flext_tests._validator.models import FlextTestsValidatorModels
 
 
 class FlextValidatorImports(FlextTestsValidatorModels.Tests.ScannerMixin):
-    """Import validation methods for FlextTestsValidator.
-
-    Uses c.Tests.Validator for constants and m.Tests.Validator for models.
-    """
+    """Import validation methods for FlextTestsValidator."""
 
     _VALIDATOR_KEY = c.Tests.VALIDATOR_IMPORTS_KEY
 
@@ -32,7 +30,6 @@ class FlextValidatorImports(FlextTestsValidatorModels.Tests.ScannerMixin):
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
-        """Detect try/except ImportError patterns."""
         if u.Tests.approved("IMPORT-003", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
@@ -58,7 +55,6 @@ class FlextValidatorImports(FlextTestsValidatorModels.Tests.ScannerMixin):
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
-        """Detect imports not at module top level."""
         if u.Tests.approved("IMPORT-001", file_path, approved):
             return []
         return [

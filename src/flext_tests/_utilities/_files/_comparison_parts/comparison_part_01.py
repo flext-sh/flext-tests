@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 from flext_infra import u
-from flext_tests import FlextTestsPayloadUtilities, c, m, t
+from flext_tests import c, m, t
 from flext_tests._utilities._files._creation import (
     FlextTestsFilesCreationMixin,
 )
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsFilesComparisonMixin:

@@ -9,8 +9,9 @@ from pathlib import Path
 from typing import overload
 
 from flext_infra import u
-from flext_tests import FlextTestsPayloadUtilities, c, m, p, r, t
+from flext_tests import c, m, p, r, t
 from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):

@@ -1,0 +1,180 @@
+"""Result matcher helpers for success assertions."""
+
+from __future__ import annotations
+
+from collections.abc import Mapping
+from typing import TypeVar
+
+from flext_infra import u
+from flext_tests._utilities._matchers._result_parts.result_part_01 import (
+    FlextTestsMatchersResultMixin as FlextTestsMatchersResultMixinPart01,
+)
+from flext_tests._utilities._matchers._typeguards import (
+    FlextTestsMatchersTypeGuardsMixin,
+)
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests.constants import c
+from flext_tests.models import m
+from flext_tests.typings import t
+
+TResult = TypeVar("TResult")
+
+
+class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
+    """Helper methods for successful result assertions."""
+
+    class Tests:
+        """Container for test utility storages and aliases."""
+
+        class Matchers(FlextTestsMatchersResultMixinPart01.Tests.Matchers):
+            """Reusable success matcher helpers."""
+
+            @staticmethod
+            def _ok_extract_path(
+                result_value: TResult | t.Tests.TestobjectSerializable,
+                params: m.Tests.OkParams,
+            ) -> tuple[
+                TResult | t.Tests.TestobjectSerializable,
+                t.Tests.TestobjectSerializable | None,
+            ]:
+                """Apply optional path extraction to a successful result value."""
+                if params.path is None:
+                    return result_value, None
+                path_str = (
+                    params.path
+                    if isinstance(params.path, str)
+                    else ".".join(params.path)
+                )
+                if not isinstance(result_value, (m.BaseModel, Mapping)):
+                    raise AssertionError(
+                        params.msg
+                        or f"Path extraction requires dict or model, got {type(result_value).__name__}",
+                    )
+                try:
+                    extract_data = FlextTestsPayloadUtilities.to_config_map(
+                        result_value
+                    )
+                except c.ValidationError as exc:
+                    raise AssertionError(
+                        params.msg or f"Path extraction payload is invalid: {exc}",
+                    ) from exc
+                extracted = u.extract(extract_data, path_str)
+                if extracted.failure:
+                    raise AssertionError(
+                        params.msg
+                        or c.Tests.ERR_SCOPE_PATH_NOT_FOUND.format(
+                            path=path_str,
+                            error=extracted.error,
+                        ),
+                    )
+                extracted_payload = FlextTestsPayloadUtilities.to_payload(
+                    extracted.value
+                )
+                return extracted_payload, extracted_payload
+
+            @staticmethod
+            def _ok_has_scalar_validation(params: m.Tests.OkParams) -> bool:
+                """Return whether scalar guard validation is requested."""
+                return (
+                    params.eq is not None
+                    or params.ne is not None
+                    or params.none is not None
+                    or params.empty is not None
+                    or params.gt is not None
+                    or params.gte is not None
+                    or params.lt is not None
+                    or params.lte is not None
+                    or params.starts is not None
+                    or params.ends is not None
+                    or params.match is not None
+                )
+
+            @staticmethod
+            def _ok_validate_scalar(
+                result_value: t.Tests.TestResultValue,
+                params: m.Tests.OkParams,
+            ) -> None:
+                """Validate scalar predicates for a successful result."""
+                if not FlextTestsMatchersResultMixin.Tests.Matchers._ok_has_scalar_validation(
+                    params
+                ):
+                    return
+                is_type = params.is_ if not isinstance(params.is_, tuple) else None
+                result_payload = FlextTestsPayloadUtilities.to_payload(result_value)
+                eq_payload, ne_payload = (
+                    FlextTestsMatchersTypeGuardsMixin.prepare_eq_ne_payloads(
+                        result_payload,
+                        params.eq,
+                        params.ne,
+                        msg=params.msg,
+                        default_msg=f"Value {result_value!r} did not satisfy constraints",
+                    )
+                )
+                chk_value: t.GuardInput | None = (
+                    None
+                    if result_payload is None
+                    else FlextTestsPayloadUtilities.to_normalized_value(result_payload)
+                )
+                guard = m.GuardCheckSpec.model_validate({
+                    "eq": FlextTestsPayloadUtilities.to_normalized_value(eq_payload)
+                    if eq_payload is not None
+                    else None,
+                    "ne": FlextTestsPayloadUtilities.to_normalized_value(ne_payload)
+                    if ne_payload is not None
+                    else None,
+                    "is_": is_type,
+                    "none": params.none,
+                    "empty": params.empty,
+                    "gt": params.gt,
+                    "gte": params.gte,
+                    "lt": params.lt,
+                    "lte": params.lte,
+                    "starts": params.starts,
+                    "ends": params.ends,
+                })
+                if not u.chk(chk_value, guard):
+                    raise AssertionError(
+                        params.msg
+                        or f"Value {result_value!r} did not satisfy constraints"
+                    )
+                if (
+                    params.match is not None
+                    and isinstance(result_payload, str)
+                    and params.match.search(result_payload) is None
+                ):
+                    raise AssertionError(
+                        params.msg
+                        or c.Tests.ERR_NOT_MATCHES.format(
+                            text=result_payload,
+                            pattern=params.match.pattern,
+                        ),
+                    )
+
+            @staticmethod
+            def _ok_validate_type(
+                result_value: t.Tests.TestResultValue,
+                params: m.Tests.OkParams,
+            ) -> None:
+                """Validate tuple-based runtime type constraints."""
+                if not (
+                    params.is_ is not None
+                    and isinstance(params.is_, tuple)
+                    and not any(
+                        FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(
+                            result_value,
+                            expected_type,
+                        )
+                        for expected_type in params.is_
+                    )
+                ):
+                    return
+                raise AssertionError(
+                    params.msg
+                    or c.Tests.ERR_TYPE_FAILED.format(
+                        expected=params.is_,
+                        actual=type(result_value).__name__,
+                    ),
+                )
+
+
+__all__: list[str] = ["FlextTestsMatchersResultMixin"]

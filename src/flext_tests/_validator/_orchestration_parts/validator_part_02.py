@@ -2,27 +2,115 @@
 
 from __future__ import annotations
 
+from collections.abc import MutableSequence
 from pathlib import Path
+from typing import override
 
 from flext_tests import (
-    FlextValidatorBypass,
-    FlextValidatorImports,
-    FlextValidatorLayer,
-    FlextValidatorMarkdown,
-    FlextValidatorSettings,
-    FlextValidatorTests,
-    FlextValidatorTypes,
     m,
     p,
+    r,
     t,
 )
 from flext_tests._validator._orchestration_parts.validator_part_01 import (
     FlextTestsValidator as FlextTestsValidatorPart01,
 )
+from flext_tests._validator.bypass import FlextValidatorBypass
+from flext_tests._validator.imports import FlextValidatorImports
+from flext_tests._validator.layer import FlextValidatorLayer
+from flext_tests._validator.markdown import FlextValidatorMarkdown
+from flext_tests._validator.settings import FlextValidatorSettings
+from flext_tests._validator.tests import FlextValidatorTests
+from flext_tests._validator.types import FlextValidatorTypes
 
 
 class FlextTestsValidator(FlextTestsValidatorPart01):
     """Concrete validation verbs for the public facade."""
+
+    @override
+    def execute(self) -> p.Result[m.Tests.ScanResult]:
+        """Execute validator service with default current-path scope."""
+        return self.all(Path.cwd())
+
+    @classmethod
+    def all(
+        cls,
+        path: Path,
+        options: FlextTestsValidatorPart01.AllValidationOptions | None = None,
+    ) -> p.Result[m.Tests.ScanResult]:
+        """Run all validations and combine results."""
+        all_options = options or cls.AllValidationOptions()
+        all_violations: MutableSequence[m.Tests.Violation] = []
+        total_files = 0
+        validators: MutableSequence[tuple[str, p.Result[m.Tests.ScanResult]]] = [
+            (
+                "imports",
+                cls.imports(
+                    path,
+                    all_options.exclude_patterns,
+                    all_options.approved_exceptions,
+                ),
+            ),
+            (
+                "types",
+                cls.types(
+                    path,
+                    all_options.exclude_patterns,
+                    all_options.approved_exceptions,
+                ),
+            ),
+            (
+                "bypass",
+                cls.bypass(
+                    path,
+                    all_options.exclude_patterns,
+                    all_options.approved_exceptions,
+                ),
+            ),
+            (
+                "layer",
+                cls.layer(
+                    path,
+                    all_options.exclude_patterns,
+                    all_options.approved_exceptions,
+                ),
+            ),
+        ]
+        if all_options.include_tests_validation:
+            validators.append((
+                "tests",
+                cls.tests(
+                    path,
+                    all_options.exclude_patterns,
+                    all_options.approved_exceptions,
+                ),
+            ))
+        if (
+            all_options.pyproject_path is not None
+            and all_options.pyproject_path.exists()
+        ):
+            validators.append((
+                "settings",
+                cls.validate_config(
+                    all_options.pyproject_path,
+                    all_options.approved_exceptions,
+                ),
+            ))
+        for name, result in validators:
+            if result.failure:
+                return r[m.Tests.ScanResult].fail(
+                    f"Validator '{name}' failed: {result.error}",
+                )
+            scan_result = result.value
+            all_violations.extend(scan_result.violations)
+            total_files = max(total_files, scan_result.files_scanned)
+        return r[m.Tests.ScanResult].ok(
+            m.Tests.ScanResult.create(
+                validator_name="all",
+                files_scanned=total_files,
+                violations=all_violations,
+            ),
+        )
 
     @classmethod
     def bypass(

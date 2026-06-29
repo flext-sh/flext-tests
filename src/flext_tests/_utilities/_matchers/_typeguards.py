@@ -7,7 +7,8 @@ via MRO from ``flext_tests._utilities.matchers``.
 from __future__ import annotations
 
 from flext_infra import u
-from flext_tests import FlextTestsPayloadUtilities, c, p, t
+from flext_tests import c, p, t
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsMatchersTypeGuardsMixin:

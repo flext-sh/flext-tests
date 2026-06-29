@@ -13,11 +13,11 @@ from pathlib import Path
 
 from flext_infra import u
 from flext_tests import (
-    FlextTestsConfigHelpersUtilitiesMixin,
     c,
     m,
     t,
 )
+from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
 
 
 class FlextTestsMatchersScopeMixin:

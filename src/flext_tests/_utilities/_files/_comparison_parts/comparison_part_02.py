@@ -5,10 +5,11 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_infra import u
-from flext_tests import FlextTestsPayloadUtilities, c, m, p, r, t
+from flext_tests import c, m, p, r, t
 from flext_tests._utilities._files._comparison_parts.comparison_part_01 import (
     FlextTestsFilesComparisonMixin as FlextTestsFilesComparisonMixinPart01,
 )
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsFilesComparisonMixin(FlextTestsFilesComparisonMixinPart01):

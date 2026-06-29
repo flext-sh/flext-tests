@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import MutableSet, Sequence
 from pathlib import Path
 from typing import Annotated, ClassVar
 
@@ -33,7 +33,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         u.Field(exclude=True, description="Last Docker client initialization error."),
     ] = None
     dirty_container_names: Annotated[
-        set[str],
+        MutableSet[str],
         u.Field(exclude=True, description="Tracked dirty containers for the worker."),
     ] = u.Field(default_factory=set)
     state_file_path: Annotated[
