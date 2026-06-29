@@ -3,12 +3,39 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from flext_core.lazy import (
     build_lazy_import_map,
     install_lazy_exports,
     merge_lazy_imports,
 )
 
+if TYPE_CHECKING:
+    from flext_tests._utilities._files._assertions import (
+        FlextTestsFilesAssertionsMixin as FlextTestsFilesAssertionsMixin,
+    )
+    from flext_tests._utilities._files._batch import (
+        FlextTestsFilesBatchMixin as FlextTestsFilesBatchMixin,
+    )
+    from flext_tests._utilities._files._comparison_parts.comparison_part_02 import (
+        FlextTestsFilesComparisonMixin as FlextTestsFilesComparisonMixin,
+    )
+    from flext_tests._utilities._files._contexts import (
+        FlextTestsFilesContextsMixin as FlextTestsFilesContextsMixin,
+    )
+    from flext_tests._utilities._files._creation_parts.creation_part_03 import (
+        FlextTestsFilesCreationMixin as FlextTestsFilesCreationMixin,
+    )
+    from flext_tests._utilities._files._info import (
+        FlextTestsFilesInfoMixin as FlextTestsFilesInfoMixin,
+    )
+    from flext_tests._utilities._files._lifecycle import (
+        FlextTestsFilesLifecycleMixin as FlextTestsFilesLifecycleMixin,
+    )
+    from flext_tests._utilities._files._reading import (
+        FlextTestsFilesReadingMixin as FlextTestsFilesReadingMixin,
+    )
 _LAZY_IMPORTS = merge_lazy_imports(
     (
         "._comparison_parts",

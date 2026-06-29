@@ -17,7 +17,7 @@ from pathlib import Path
 
 import pytest
 
-from tests import tk
+from flext_tests import tk
 from tests.unit._docker_parts.builders import DockerBuildersMixin
 from tests.unit._docker_parts.operations import DockerOperationsMixin
 from tests.unit._docker_parts.state import DockerStateMixin

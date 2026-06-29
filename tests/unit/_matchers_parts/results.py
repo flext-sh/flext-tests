@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from flext_tests import tm
-from tests import p, r, t
+from flext_tests import r, tm
+from tests.protocols import p
+from tests.typings import t
 
 
 class MatchersResultsMixin:

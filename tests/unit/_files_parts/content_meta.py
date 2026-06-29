@@ -5,7 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_cli import u as cli_u
-from tests import m, tf, tm, u
+from flext_tests import tf, tm
+from tests.models import m
+from tests.utilities import u
 
 
 class FilesContentMetaMixin:

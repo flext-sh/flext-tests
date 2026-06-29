@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from flext_tests import tm
-from tests import c
+from tests.constants import c
 from tests.unit._matchers_parts.predicates import (
     greater_than_two,
     greater_than_zero,

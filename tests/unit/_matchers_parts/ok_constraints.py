@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from flext_tests import tm
-from tests import r, t
+from flext_tests import r, tm
+from tests.typings import t
 from tests.unit._matchers_parts.predicates import (
     is_negative,
     is_positive,

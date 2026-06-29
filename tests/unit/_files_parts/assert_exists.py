@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from tests import tf
+from flext_tests import tf
 
 
 class FilesAssertExistsMixin:

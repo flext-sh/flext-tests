@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from flext_tests import tm
-from tests import m, p, r
+from flext_tests import r, tm
+from tests.models import m
+from tests.protocols import p
 
 
 class MatchersFailConstraintsMixin:

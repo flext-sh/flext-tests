@@ -11,8 +11,9 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import tm
-from tests import p, r, u
+from flext_tests import r, tm
+from tests.protocols import p
+from tests.utilities import u
 
 
 class TestsFlextTestsUtilitiesUnit:

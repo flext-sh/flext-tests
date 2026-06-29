@@ -6,7 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from tests import c, tk, tm, u
+from flext_tests import tk, tm
+from tests.constants import c
+from tests.utilities import u
 
 
 class DockerOperationsMixin:

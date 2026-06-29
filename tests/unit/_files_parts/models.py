@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from tests import tf, tm
+from flext_tests import tf, tm
 
 
 class FilesModelsMixin:

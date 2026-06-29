@@ -3,8 +3,14 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
+if TYPE_CHECKING:
+    from flext_tests._utilities._matchers._that_parts.that_part_06 import (
+        FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixin,
+    )
 _LAZY_IMPORTS = build_lazy_import_map(
     {
         ".that_part_06": ("FlextTestsMatchersThatMixin",),

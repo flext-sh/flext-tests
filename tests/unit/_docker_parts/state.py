@@ -6,7 +6,10 @@ from pathlib import Path
 
 import pytest
 
-from tests import c, m, tk, tm, u
+from flext_tests import tk, tm
+from tests.constants import c
+from tests.models import m
+from tests.utilities import u
 
 
 class DockerStateMixin:

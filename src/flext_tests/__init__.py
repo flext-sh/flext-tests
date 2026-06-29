@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-import typing as _t
+from typing import TYPE_CHECKING
 
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 from flext_tests.__version__ import (
@@ -17,8 +17,8 @@ from flext_tests.__version__ import (
     __version_info__,
 )
 
-if _t.TYPE_CHECKING:
-    from flext_infra import d as d, e as e, h as h, r as r, x as x
+if TYPE_CHECKING:
+    from flext_cli import d as d, e as e, h as h, r as r, x as x
     from flext_tests._fixtures.enforcement import (
         EnforcementCollector as EnforcementCollector,
         EnforcementItem as EnforcementItem,
@@ -134,7 +134,7 @@ _LAZY_IMPORTS = build_lazy_import_map(
             "u",
         ),
         ".validator": ("tv",),
-        "flext_infra": (
+        "flext_cli": (
             "d",
             "e",
             "h",

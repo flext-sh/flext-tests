@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from tests import c, tk, tm
+from flext_tests import tk, tm
+from tests.constants import c
 
 
 class DockerBuildersMixin:

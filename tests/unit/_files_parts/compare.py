@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from tests import c, tf, tm, u
+from flext_tests import tf, tm
+from tests.constants import c
+from tests.utilities import u
 
 
 class FilesCompareMixin:
