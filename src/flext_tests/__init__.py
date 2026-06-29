@@ -18,7 +18,7 @@ from flext_tests.__version__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_cli import d as d, e as e, h as h, r as r, x as x
+    from flext_infra import d as d, e as e, h as h, r as r, x as x
     from flext_tests._fixtures.enforcement import (
         EnforcementCollector as EnforcementCollector,
         EnforcementItem as EnforcementItem,
@@ -134,7 +134,7 @@ _LAZY_IMPORTS = build_lazy_import_map(
             "u",
         ),
         ".validator": ("tv",),
-        "flext_cli": (
+        "flext_infra": (
             "d",
             "e",
             "h",

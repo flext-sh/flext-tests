@@ -3,33 +3,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from flext_core.lazy import (
     build_lazy_import_map,
     install_lazy_exports,
     merge_lazy_imports,
 )
 
-if TYPE_CHECKING:
-    from flext_tests._constants._validator_parts.validator_part_03 import (
-        FlextTestsConstantsValidator as FlextTestsConstantsValidator,
-    )
-    from flext_tests._constants.data_cases import (
-        FlextTestsConstantsDataCases as FlextTestsConstantsDataCases,
-    )
-    from flext_tests._constants.docker import (
-        FlextTestsConstantsDocker as FlextTestsConstantsDocker,
-    )
-    from flext_tests._constants.files import (
-        FlextTestsConstantsFiles as FlextTestsConstantsFiles,
-    )
-    from flext_tests._constants.make import (
-        FlextTestsConstantsMake as FlextTestsConstantsMake,
-    )
-    from flext_tests._constants.matcher import (
-        FlextTestsConstantsMatcher as FlextTestsConstantsMatcher,
-    )
 _LAZY_IMPORTS = merge_lazy_imports(
     ("._validator_parts",),
     build_lazy_import_map(

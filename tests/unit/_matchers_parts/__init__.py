@@ -3,53 +3,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
-if TYPE_CHECKING:
-    from flext_tests import (
-        c as c,
-        d as d,
-        e as e,
-        h as h,
-        m as m,
-        p as p,
-        r as r,
-        s as s,
-        t as t,
-        td as td,
-        tf as tf,
-        tk as tk,
-        tm as tm,
-        tv as tv,
-        u as u,
-        x as x,
-    )
-    from tests.unit._matchers_parts.data_driven import (
-        MatchersDataDrivenMixin as MatchersDataDrivenMixin,
-    )
-    from tests.unit._matchers_parts.fail_constraints import (
-        MatchersFailConstraintsMixin as MatchersFailConstraintsMixin,
-    )
-    from tests.unit._matchers_parts.ok_constraints import (
-        MatchersOkConstraintsMixin as MatchersOkConstraintsMixin,
-    )
-    from tests.unit._matchers_parts.results import (
-        MatchersResultsMixin as MatchersResultsMixin,
-    )
-    from tests.unit._matchers_parts.scope_errors import (
-        MatchersScopeErrorsMixin as MatchersScopeErrorsMixin,
-    )
-    from tests.unit._matchers_parts.that_attrs import (
-        MatchersThatAttrsMixin as MatchersThatAttrsMixin,
-    )
-    from tests.unit._matchers_parts.that_collections import (
-        MatchersThatCollectionsMixin as MatchersThatCollectionsMixin,
-    )
-    from tests.unit._matchers_parts.validation import (
-        MatchersValidationMixin as MatchersValidationMixin,
-    )
 _LAZY_IMPORTS = build_lazy_import_map(
     {
         ".data_driven": ("MatchersDataDrivenMixin",),
