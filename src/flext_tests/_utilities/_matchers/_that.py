@@ -218,7 +218,7 @@ class FlextTestsMatchersThatMixin:
                             actual_value = getattr(result_obj, "value", "")
                     elif params.has is not None:
                         err = result_obj.error or ""
-                        FlextTestsMatchersContainmentMixin._check_has_lacks(
+                        FlextTestsMatchersContainmentMixin.check_has_lacks(
                             err,
                             params.has,
                             None,
@@ -327,7 +327,7 @@ class FlextTestsMatchersThatMixin:
                     if raw_has is not None
                     else (raw_contains if raw_contains is not None else params.has)
                 )
-                FlextTestsMatchersContainmentMixin._check_has_lacks(
+                FlextTestsMatchersContainmentMixin.check_has_lacks(
                     subject_payload,
                     effective_has,
                     params.lacks,
@@ -621,19 +621,19 @@ class FlextTestsMatchersThatMixin:
                             ),
                         )
                 if params.paths is not None:
-                    FlextTestsMatchersThatMixin._apply_path_rules(
+                    FlextTestsMatchersThatMixin.apply_path_rules(
                         subject_payload,
                         params.paths,
                         inherited_msg=params.msg,
                     )
                 if params.items is not None:
-                    FlextTestsMatchersThatMixin._apply_item_rules(
+                    FlextTestsMatchersThatMixin.apply_item_rules(
                         subject_payload,
                         params.items,
                         inherited_msg=params.msg,
                     )
                 if params.attrs_match is not None:
-                    FlextTestsMatchersThatMixin._apply_attribute_rules(
+                    FlextTestsMatchersThatMixin.apply_attribute_rules(
                         subject,
                         params.attrs_match,
                         inherited_msg=params.msg,
@@ -695,7 +695,7 @@ class FlextTestsMatchersThatMixin:
         )
 
     @staticmethod
-    def _apply_path_rules(
+    def apply_path_rules(
         subject: t.Tests.TestobjectSerializable
         | m.BaseModel
         | t.MappingKV[str, t.Tests.TestobjectSerializable],
@@ -730,7 +730,7 @@ class FlextTestsMatchersThatMixin:
                 ) from exc
 
     @staticmethod
-    def _apply_item_rules(
+    def apply_item_rules(
         subject: t.Tests.TestobjectSerializable
         | t.SequenceOf[t.Tests.TestobjectSerializable],
         rules: t.Tests.ItemMatchSpec,
@@ -779,7 +779,7 @@ class FlextTestsMatchersThatMixin:
             )
 
     @staticmethod
-    def _apply_attribute_rules(
+    def apply_attribute_rules(
         subject: p.AttributeProbe,
         rules: t.Tests.AttributeMatchSpec,
         *,

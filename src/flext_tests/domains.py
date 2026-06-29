@@ -165,7 +165,7 @@ class FlextTestsDomains:
         fixtures_root: Path | None = None,
         file_extension: str = ".ldif",
     ) -> str:
-        text_result = FlextCliUtilitiesFiles.files_read_text(
+        text_result: p.Result[str] = FlextCliUtilitiesFiles.files_read_text(
             cls.fixture_path(
                 group,
                 kind,
@@ -173,7 +173,10 @@ class FlextTestsDomains:
                 file_extension=file_extension,
             ),
         )
-        return text_result.unwrap()
+        if text_result.failure:
+            raise ValueError(text_result.error or "Fixture file read failed")
+        text: str = text_result.value
+        return text
 
     @classmethod
     def fixture_exists(

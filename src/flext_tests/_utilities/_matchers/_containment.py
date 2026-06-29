@@ -20,7 +20,7 @@ class FlextTestsMatchersContainmentMixin:
     """Shared ``has``/``lacks`` containment checks."""
 
     @staticmethod
-    def _check_has_lacks(
+    def check_has_lacks(
         value: p.AttributeProbe,
         has: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.JsonValue | None,
         lacks: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.JsonValue | None,
@@ -42,7 +42,7 @@ class FlextTestsMatchersContainmentMixin:
                     check_str = str(item)
                     target = str(value)
                     if check_str not in target:
-                        FlextTestsMatchersAssertionsMixin._raise_match_assertion(
+                        FlextTestsMatchersAssertionsMixin.raise_match_assertion(
                             c.Tests.ERR_CONTAINS_FAILED,
                             msg=msg,
                             container=value,
@@ -56,7 +56,7 @@ class FlextTestsMatchersContainmentMixin:
                         FlextTestsPayloadUtilities.to_payload(value),
                     )
                     if not isinstance(target_raw, (Mapping, list, str)):
-                        FlextTestsMatchersAssertionsMixin._raise_match_assertion(
+                        FlextTestsMatchersAssertionsMixin.raise_match_assertion(
                             c.Tests.ERR_CONTAINS_FAILED,
                             msg=msg,
                             container=value,
@@ -70,7 +70,7 @@ class FlextTestsMatchersContainmentMixin:
                         else any(candidate == check_val for candidate in target_raw)
                     )
                     if not contains_item:
-                        FlextTestsMatchersAssertionsMixin._raise_match_assertion(
+                        FlextTestsMatchersAssertionsMixin.raise_match_assertion(
                             c.Tests.ERR_CONTAINS_FAILED,
                             msg=msg,
                             container=value,
@@ -88,7 +88,7 @@ class FlextTestsMatchersContainmentMixin:
                     check_str = str(item)
                     target = str(value)
                     if check_str in target:
-                        FlextTestsMatchersAssertionsMixin._raise_match_assertion(
+                        FlextTestsMatchersAssertionsMixin.raise_match_assertion(
                             c.Tests.ERR_LACKS_FAILED,
                             msg=msg,
                             container=value,
@@ -102,7 +102,7 @@ class FlextTestsMatchersContainmentMixin:
                         FlextTestsPayloadUtilities.to_payload(value),
                     )
                     if not isinstance(target_raw_2, (Mapping, list, str)):
-                        FlextTestsMatchersAssertionsMixin._raise_match_assertion(
+                        FlextTestsMatchersAssertionsMixin.raise_match_assertion(
                             c.Tests.ERR_LACKS_FAILED,
                             msg=msg,
                             container=value,
@@ -116,7 +116,7 @@ class FlextTestsMatchersContainmentMixin:
                         else any(candidate == check_val for candidate in target_raw_2)
                     )
                     if contains_item:
-                        FlextTestsMatchersAssertionsMixin._raise_match_assertion(
+                        FlextTestsMatchersAssertionsMixin.raise_match_assertion(
                             c.Tests.ERR_LACKS_FAILED,
                             msg=msg,
                             container=value,

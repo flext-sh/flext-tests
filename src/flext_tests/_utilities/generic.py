@@ -80,7 +80,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
         error_codes: t.SequenceOf[str | None] | None = None,
     ) -> t.SequenceOf[
         tuple[
-            r[t.Tests.TestobjectSerializable],
+            p.Result[t.Tests.TestobjectSerializable],
             bool,
             t.Tests.TestobjectSerializable | None,
             str | None,
@@ -100,7 +100,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
         """
         cases: MutableSequence[
             tuple[
-                r[t.Tests.TestobjectSerializable],
+                p.Result[t.Tests.TestobjectSerializable],
                 bool,
                 t.Tests.TestobjectSerializable | None,
                 str | None,

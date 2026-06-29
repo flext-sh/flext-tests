@@ -94,7 +94,7 @@ class FlextTestsMatchersResultMixin:
                     or params.ends
                     or params.match
                 ):
-                    FlextTestsMatchersContainmentMixin._check_has_lacks(
+                    FlextTestsMatchersContainmentMixin.check_has_lacks(
                         err,
                         params.has,
                         params.lacks,
@@ -349,7 +349,7 @@ class FlextTestsMatchersResultMixin:
                             actual=type(result_value).__name__,
                         ),
                     )
-                FlextTestsMatchersContainmentMixin._check_has_lacks(
+                FlextTestsMatchersContainmentMixin.check_has_lacks(
                     result_value,
                     params.has,
                     params.lacks,
@@ -395,19 +395,19 @@ class FlextTestsMatchersResultMixin:
                             ),
                         )
                 if params.paths is not None:
-                    FlextTestsMatchersRulesMixin._apply_path_rules(
+                    FlextTestsMatchersRulesMixin.apply_path_rules(
                         result_payload,
                         params.paths,
                         inherited_msg=params.msg,
                     )
                 if params.items is not None:
-                    FlextTestsMatchersRulesMixin._apply_item_rules(
+                    FlextTestsMatchersRulesMixin.apply_item_rules(
                         result_payload,
                         params.items,
                         inherited_msg=params.msg,
                     )
                 if params.attrs_match is not None:
-                    FlextTestsMatchersRulesMixin._apply_attribute_rules(
+                    FlextTestsMatchersRulesMixin.apply_attribute_rules(
                         result.value,
                         params.attrs_match,
                         inherited_msg=params.msg,

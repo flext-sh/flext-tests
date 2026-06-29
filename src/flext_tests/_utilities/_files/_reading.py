@@ -156,7 +156,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                 )
                 content = (
                     FlextTestsPayloadUtilities.to_config_map(parsed_json)
-                    if FlextTestsFilesCreationMixin._is_mapping(parsed_json)
+                    if FlextTestsFilesCreationMixin.is_mapping(parsed_json)
                     else text
                 )
             case _ if actual_fmt == c.Tests.FILE_FORMAT_YAML:

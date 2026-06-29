@@ -233,13 +233,13 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         return isinstance(value, p.ResultLike)
 
     @staticmethod
-    def _is_mapping(
+    def is_mapping(
         value: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable | None,
     ) -> TypeIs[Mapping[str, t.Tests.TestobjectSerializable]]:
         return isinstance(value, Mapping)
 
     @staticmethod
-    def _to_payload_mapping(
+    def to_payload_mapping(
         value: t.MappingKV[str, t.Tests.TestobjectSerializable],
     ) -> t.MappingKV[str, t.Tests.TestobjectSerializable]:
         return {
@@ -276,7 +276,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                 return FlextTestsPayloadUtilities.to_config_map(unwrapped.root)
             case m.BaseModel():
                 return unwrapped
-            case _ if self._is_mapping(unwrapped):
+            case _ if self.is_mapping(unwrapped):
                 return FlextTestsPayloadUtilities.to_config_map(unwrapped)
             case _ if self._is_nested_rows(unwrapped):
                 sequence_value: t.SequenceOf[t.Tests.TestobjectSerializable] = (

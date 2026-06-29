@@ -15,7 +15,7 @@ class FlextTestsMatchersAssertionsMixin:
     """Centralized AssertionError factories with structured messages."""
 
     @staticmethod
-    def _raise_match_assertion(
+    def raise_match_assertion(
         template: str,
         *,
         msg: str | None,
