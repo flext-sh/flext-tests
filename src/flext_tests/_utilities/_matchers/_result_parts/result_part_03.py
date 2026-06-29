@@ -62,13 +62,17 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
                         params,
                     )
                 )
-                FlextTestsMatchersResultMixin.Tests.Matchers._ok_validate_scalar(
-                    result_value,
-                    params,
+                result_value = (
+                    FlextTestsMatchersResultMixin.Tests.Matchers._ok_validate_scalar(
+                        result_value,
+                        params,
+                    )
                 )
-                FlextTestsMatchersResultMixin.Tests.Matchers._ok_validate_type(
-                    result_value,
-                    params,
+                result_value = (
+                    FlextTestsMatchersResultMixin.Tests.Matchers._ok_validate_type(
+                        result_value,
+                        params,
+                    )
                 )
                 FlextTestsMatchersContainmentMixin.check_has_lacks(
                     result_value,
@@ -154,13 +158,13 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
                     )
 
             @staticmethod
-            def _ok_validate_deep(
-                result_value: t.Tests.TestResultValue,
+            def _ok_validate_deep[TResult: t.Tests.TestResultValue](
+                result_value: TResult | t.Tests.TestobjectSerializable,
                 params: m.Tests.OkParams,
-            ) -> None:
+            ) -> TResult | t.Tests.TestobjectSerializable:
                 deep_spec = params.deep
                 if deep_spec is None:
-                    return
+                    return result_value
                 if not isinstance(result_value, (m.BaseModel, Mapping)):
                     raise AssertionError(
                         params.msg
@@ -192,6 +196,7 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
                             reason=match_result.reason,
                         ),
                     )
+                return result_value
 
 
 __all__: list[str] = ["FlextTestsMatchersResultMixin"]

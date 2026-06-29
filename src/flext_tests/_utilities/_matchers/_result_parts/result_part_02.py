@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TypeVar
 
 from flext_infra import u
 from flext_tests._utilities._matchers._result_parts.result_part_01 import (
@@ -17,8 +16,6 @@ from flext_tests.constants import c
 from flext_tests.models import m
 from flext_tests.typings import t
 
-TResult = TypeVar("TResult")
-
 
 class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
     """Helper methods for successful result assertions."""
@@ -31,10 +28,10 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
 
             @staticmethod
             def _ok_extract_path(
-                result_value: TResult | t.Tests.TestobjectSerializable,
+                result_value: t.Tests.TestResultValue,
                 params: m.Tests.OkParams,
             ) -> tuple[
-                TResult | t.Tests.TestobjectSerializable,
+                t.Tests.TestResultValue,
                 t.Tests.TestobjectSerializable | None,
             ]:
                 """Apply optional path extraction to a successful result value."""
@@ -90,15 +87,15 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
                 )
 
             @staticmethod
-            def _ok_validate_scalar(
-                result_value: t.Tests.TestResultValue,
+            def _ok_validate_scalar[TResult: t.Tests.TestResultValue](
+                result_value: TResult | t.Tests.TestobjectSerializable,
                 params: m.Tests.OkParams,
-            ) -> None:
+            ) -> TResult | t.Tests.TestobjectSerializable:
                 """Validate scalar predicates for a successful result."""
                 if not FlextTestsMatchersResultMixin.Tests.Matchers._ok_has_scalar_validation(
                     params
                 ):
-                    return
+                    return result_value
                 is_type = params.is_ if not isinstance(params.is_, tuple) else None
                 result_payload = FlextTestsPayloadUtilities.to_payload(result_value)
                 eq_payload, ne_payload = (
@@ -149,12 +146,13 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
                             pattern=params.match.pattern,
                         ),
                     )
+                return result_value
 
             @staticmethod
-            def _ok_validate_type(
-                result_value: t.Tests.TestResultValue,
+            def _ok_validate_type[TResult: t.Tests.TestResultValue](
+                result_value: TResult | t.Tests.TestobjectSerializable,
                 params: m.Tests.OkParams,
-            ) -> None:
+            ) -> TResult | t.Tests.TestobjectSerializable:
                 """Validate tuple-based runtime type constraints."""
                 if not (
                     params.is_ is not None
@@ -167,7 +165,7 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
                         for expected_type in params.is_
                     )
                 ):
-                    return
+                    return result_value
                 raise AssertionError(
                     params.msg
                     or c.Tests.ERR_TYPE_FAILED.format(

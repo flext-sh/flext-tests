@@ -61,6 +61,7 @@ class FlextTestsBaseTypesMixin:
         | p.Settings
         | p.Context
         | p.Registry
+        | p.ResultLike[FlextTestsBaseTypesMixin.TestobjectSerializable]
         | it.Infra.RegexMatch
         | _bt.UnionType
         | FrameType
