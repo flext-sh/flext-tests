@@ -60,10 +60,12 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixinP
             "rules",
             path,
         )
-        target_result = FlextTestsMakeParsingUtilitiesMixin.make_require_optional_string(
-            data,
-            "target",
-            path,
+        target_result = (
+            FlextTestsMakeParsingUtilitiesMixin.make_require_optional_string(
+                data,
+                "target",
+                path,
+            )
         )
         target_env_result = FlextTestsMakeParsingUtilitiesMixin.make_parse_string_map(
             data.get("target_env"),

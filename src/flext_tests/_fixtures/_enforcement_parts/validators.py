@@ -23,7 +23,9 @@ def _iter_infra_violations(
         )
         entries = getattr(project, field, ())
         if match_missing:
-            entries = tuple(entry for entry in entries if not getattr(entry, "exists", True))
+            entries = tuple(
+                entry for entry in entries if not getattr(entry, "exists", True)
+            )
         for entry in entries:
             yield str(project_name), entry
 
