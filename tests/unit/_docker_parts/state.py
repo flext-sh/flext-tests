@@ -14,6 +14,7 @@ class DockerStateMixin:
 
     def test_container_status_values(self) -> None:
         """Test c.Tests.ContainerStatus enum values."""
+        tm.that(c.Tests.ContainerStatus.CREATED.value, eq="created")
         tm.that(c.Tests.ContainerStatus.RUNNING.value, eq="running")
         tm.that(c.Tests.ContainerStatus.STOPPED.value, eq="stopped")
         tm.that(c.Tests.ContainerStatus.NOT_FOUND.value, eq="not_found")

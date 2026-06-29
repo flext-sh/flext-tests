@@ -37,6 +37,7 @@ class FlextTestsConstantsDocker:
     class ContainerStatus(StrEnum):
         """Container status enumeration for test infrastructure."""
 
+        CREATED = "created"
         RUNNING = "running"
         STOPPED = "stopped"
         NOT_FOUND = "not_found"

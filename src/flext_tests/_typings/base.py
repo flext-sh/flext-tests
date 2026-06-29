@@ -61,6 +61,7 @@ class FlextTestsBaseTypesMixin:
         | p.Settings
         | p.Context
         | p.Registry
+        | p.AttributeProbe
         | p.ResultLike[FlextTestsBaseTypesMixin.TestobjectSerializable]
         | t.Cli.TyperRunner
         | it.Infra.RegexMatch
