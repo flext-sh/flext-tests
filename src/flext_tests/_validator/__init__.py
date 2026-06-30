@@ -3,12 +3,38 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from flext_core.lazy import (
     build_lazy_import_map,
     install_lazy_exports,
     merge_lazy_imports,
 )
 
+if TYPE_CHECKING:
+    from flext_tests._validator._markdown_parts.markdown_part_02 import (
+        FlextValidatorMarkdown as FlextValidatorMarkdown,
+    )
+    from flext_tests._validator._orchestration_parts.validator_part_02 import (
+        FlextTestsValidator as FlextTestsValidator,
+    )
+    from flext_tests._validator._types_parts.types_part_02 import (
+        FlextValidatorTypes as FlextValidatorTypes,
+    )
+    from flext_tests._validator.bypass import (
+        FlextValidatorBypass as FlextValidatorBypass,
+    )
+    from flext_tests._validator.imports import (
+        FlextValidatorImports as FlextValidatorImports,
+    )
+    from flext_tests._validator.layer import FlextValidatorLayer as FlextValidatorLayer
+    from flext_tests._validator.models import (
+        FlextTestsValidatorModels as FlextTestsValidatorModels,
+    )
+    from flext_tests._validator.settings import (
+        FlextValidatorSettings as FlextValidatorSettings,
+    )
+    from flext_tests._validator.tests import FlextValidatorTests as FlextValidatorTests
 _LAZY_IMPORTS = merge_lazy_imports(
     (
         "._markdown_parts",
