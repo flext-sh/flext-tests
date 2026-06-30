@@ -19,6 +19,10 @@ class DockerStateMixin:
         """Test c.Tests.ContainerStatus enum values."""
         tm.that(c.Tests.ContainerStatus.CREATED.value, eq="created")
         tm.that(c.Tests.ContainerStatus.RUNNING.value, eq="running")
+        tm.that(c.Tests.ContainerStatus.EXITED.value, eq="exited")
+        tm.that(c.Tests.ContainerStatus.PAUSED.value, eq="paused")
+        tm.that(c.Tests.ContainerStatus.REMOVING.value, eq="removing")
+        tm.that(c.Tests.ContainerStatus.DEAD.value, eq="dead")
         tm.that(c.Tests.ContainerStatus.STOPPED.value, eq="stopped")
         tm.that(c.Tests.ContainerStatus.NOT_FOUND.value, eq="not_found")
         tm.that(c.Tests.ContainerStatus.ERROR.value, eq="error")

@@ -39,6 +39,10 @@ class FlextTestsConstantsDocker:
 
         CREATED = "created"
         RUNNING = "running"
+        EXITED = "exited"
+        PAUSED = "paused"
+        REMOVING = "removing"
+        DEAD = "dead"
         STOPPED = "stopped"
         NOT_FOUND = "not_found"
         ERROR = "error"
