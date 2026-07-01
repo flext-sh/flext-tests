@@ -139,6 +139,13 @@ class FlextTestsDocker(FlextTestsDockerPart04):
         """Clean up all dirty containers by recreating them with fresh volumes."""
         cleaned: list[str] = []
         for container_name in list(self.dirty_container_names):
+            if container_name not in c.Tests.SHARED_CONTAINERS:
+                self.logger.warning(
+                    "Removing stale dirty container entry",
+                    container=container_name,
+                )
+                _ = self.mark_container_clean(container_name)
+                continue
             target = self._resolve_shared_target_config(
                 container_name,
                 self.workspace_root,

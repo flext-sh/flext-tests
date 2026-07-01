@@ -93,6 +93,22 @@ class DockerOperationsMixin:
         _ = u.Tests.assert_success(result)
         tm.that(result.value, empty=True)
 
+    def test_cleanup_dirty_containers_removes_stale_shared_entry(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Test cleanup purges retired shared containers from persisted state."""
+        monkeypatch.setenv("HOME", str(tmp_path))
+        manager = tk(workspace_root=tmp_path, worker_id="stale-container")
+        _ = manager.mark_container_dirty("algar-oud-test")
+
+        result = manager.cleanup_dirty_containers()
+
+        _ = u.Tests.assert_success(result)
+        tm.that(result.value, empty=True)
+        tm.that(manager.container_dirty("algar-oud-test"), eq=False)
+
     def test_default_worker_id(self) -> None:
         """Test default worker_id is 'master'."""
         manager = tk()
