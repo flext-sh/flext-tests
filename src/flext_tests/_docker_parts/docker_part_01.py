@@ -55,9 +55,13 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         if settings is None:
             msg = f"Unknown shared container: {container_name}"
             raise ValueError(msg)
+        compose_file_raw = settings.get("compose_file")
+        if not compose_file_raw:
+            msg = f"Shared container '{container_name}' missing compose_file"
+            raise ValueError(msg)
         target = m.Tests.ContainerConfig.model_validate({
             **settings,
-            "compose_file": Path(str(settings.get("compose_file", ""))),
+            "compose_file": Path(str(compose_file_raw)),
         })
         compose_path = target.compose_file
         if not compose_path.is_absolute():
