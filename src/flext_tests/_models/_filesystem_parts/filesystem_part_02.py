@@ -5,12 +5,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Annotated
 
-from flext_cli import m, u
+from flext_tests import c, m, t, u
 from flext_tests._models._filesystem_parts.filesystem_part_01 import (
     FlextTestsFilesystemModelsMixin as FlextTestsFilesystemModelsMixinPart01,
 )
-from flext_tests.constants import c
-from flext_tests.typings import t
 
 
 class FlextTestsFilesystemModelsMixin(FlextTestsFilesystemModelsMixinPart01):

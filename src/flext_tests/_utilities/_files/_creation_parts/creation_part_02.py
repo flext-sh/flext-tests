@@ -5,8 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 
-from flext_infra import u
-from flext_tests import c, m, t
+from flext_tests import c, m, t, u
 from flext_tests._utilities._files._creation_parts.creation_part_01 import (
     FlextTestsFilesCreationMixin as FlextTestsFilesCreationMixinPart01,
 )

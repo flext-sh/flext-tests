@@ -7,12 +7,10 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated, ClassVar
 
-from flext_cli import m, u
+from flext_tests import m, p, t, u
 from flext_tests._models._matchers_parts.matchers_part_02 import (
     FlextTestsMatchersModelsMixin as FlextTestsMatchersModelsMixinPart02,
 )
-from flext_tests.protocols import p
-from flext_tests.typings import t
 
 
 class FlextTestsMatchersModelsMixin(FlextTestsMatchersModelsMixinPart02):

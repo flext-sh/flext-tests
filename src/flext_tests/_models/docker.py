@@ -9,8 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Annotated
 
-from flext_cli import m, u
-from flext_tests import c, t
+from flext_tests import c, m, t, u
 
 
 class FlextTestsDockerModelsMixin:

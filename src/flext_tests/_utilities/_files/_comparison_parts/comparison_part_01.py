@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from flext_infra import u
-from flext_tests import c, m, t
+from flext_tests import c, m, t, u
 from flext_tests._utilities._files._creation import (
     FlextTestsFilesCreationMixin,
 )

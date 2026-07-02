@@ -22,8 +22,8 @@ from types import ModuleType
 
 import pytest
 
-from flext_core import FlextContainer, FlextContext, FlextSettings, p
-from flext_tests import c, e, m, r, s, t, u
+from flext_core import FlextContainer, FlextContext, FlextSettings
+from flext_tests import c, e, m, p, r, s, t, u
 from flext_tests.base import FlextTestsCase
 from flext_tests.settings import FlextTestsSettings
 

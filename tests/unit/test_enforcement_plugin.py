@@ -27,7 +27,7 @@ class TestsFlextTestsEnforcementPlugin:
                 "\n"
                 "\n"
                 "def test_emits_runtime_enforcement_warning() -> None:\n"
-                '    warnings.warn(\n'
+                "    warnings.warn(\n"
                 '        "synthetic MRO violation",\n'
                 "        FlextMroViolation,\n"
                 "        stacklevel=2,\n"
