@@ -6,7 +6,8 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from typing import Self
 
-from flext_core import FlextContainer, FlextService, m, p, t
+from flext_core import FlextContainer, FlextService
+from flext_tests import m, p, t
 from flext_tests.settings import FlextTestsSettings
 
 

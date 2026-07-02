@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from typing import TypeVar, overload
 
 from flext_core import p as core_p
+from flext_tests import c, m, t
 from flext_tests._utilities._matchers._assertions import (
     FlextTestsMatchersAssertionsMixin,
 )
@@ -18,9 +19,6 @@ from flext_tests._utilities._matchers._result_parts.result_part_02 import (
 from flext_tests._utilities._matchers._rules import FlextTestsMatchersRulesMixin
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
-from flext_tests.constants import c
-from flext_tests.models import m
-from flext_tests.typings import t
 
 TResult = TypeVar("TResult", bound=t.Tests.TestResultValue)
 

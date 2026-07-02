@@ -4,13 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
+from flext_tests import c, m, p, t
 from flext_tests._utilities._matchers._that_parts.that_part_03 import (
     FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixinPart03,
 )
-from flext_tests.constants import c
-from flext_tests.models import m
-from flext_tests.protocols import p
-from flext_tests.typings import t
 
 
 class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart03):

@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 from flext_infra import u
+from flext_tests import c, m, t
 from flext_tests._utilities._matchers._result_parts.result_part_01 import (
     FlextTestsMatchersResultMixin as FlextTestsMatchersResultMixinPart01,
 )
@@ -12,9 +13,6 @@ from flext_tests._utilities._matchers._typeguards import (
     FlextTestsMatchersTypeGuardsMixin,
 )
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-from flext_tests.constants import c
-from flext_tests.models import m
-from flext_tests.typings import t
 
 
 class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):

@@ -2,15 +2,13 @@
 
 from __future__ import annotations
 
+from flext_tests import c, m, p
 from flext_tests._utilities._matchers._containment import (
     FlextTestsMatchersContainmentMixin,
 )
 from flext_tests._utilities._matchers._that_parts.that_part_01 import (
     FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixinPart01,
 )
-from flext_tests.constants import c
-from flext_tests.models import m
-from flext_tests.protocols import p
 
 
 class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart01):
