@@ -98,8 +98,11 @@ class FlextTestsDocker(FlextTestsDockerPart03):
             )
         )
         ports: t.MutableStrMapping = {}
+        empty_bindings: t.SequenceOf[t.StrMapping] = []
         for container_port, host_bindings in ports_raw.items():
-            normalized_bindings = self._normalize_bindings(host_bindings)
+            normalized_bindings = self._normalize_bindings(host_bindings).unwrap_or(
+                empty_bindings,
+            )
             host_port = self._extract_host_port(normalized_bindings)
             if host_port:
                 ports[container_port] = host_port

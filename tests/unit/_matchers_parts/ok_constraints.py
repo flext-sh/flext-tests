@@ -6,12 +6,7 @@ import pytest
 
 from flext_tests import r, tm
 from tests.typings import t
-from tests.unit._matchers_parts.predicates import (
-    is_negative,
-    is_positive,
-    is_string,
-    is_string_or_bytes,
-)
+from tests.unit._matchers_parts.predicates import MatchersPredicates
 
 
 class MatchersOkConstraintsMixin:
@@ -22,7 +17,7 @@ class MatchersOkConstraintsMixin:
         result = r[str].ok("test")
         value = tm.ok(
             result,
-            where=is_string,
+            where=MatchersPredicates.is_string,
         )
         tm.that(value, eq="test")
 
@@ -31,7 +26,7 @@ class MatchersOkConstraintsMixin:
         result = r[str].ok("test")
         value = tm.ok(
             result,
-            where=is_string_or_bytes,
+            where=MatchersPredicates.is_string_or_bytes,
         )
         tm.that(value, eq="test")
 
@@ -89,14 +84,14 @@ class MatchersOkConstraintsMixin:
     def test_ok_with_where_parameter(self) -> None:
         """Test tm.ok() with where parameter."""
         result = r[int].ok(42)
-        value = tm.ok(result, where=is_positive)
+        value = tm.ok(result, where=MatchersPredicates.is_positive)
         tm.that(value, eq=42)
 
     def test_ok_with_where_parameter_fails(self) -> None:
         """Test tm.ok() with where parameter fails when predicate returns False."""
         result = r[int].ok(42)
         with pytest.raises(AssertionError):
-            tm.ok(result, where=is_negative)
+            tm.ok(result, where=MatchersPredicates.is_negative)
 
     def test_ok_with_starts_parameter(self) -> None:
         """Test tm.ok() with starts parameter."""

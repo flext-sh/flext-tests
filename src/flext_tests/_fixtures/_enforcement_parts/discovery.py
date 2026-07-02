@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from flext_core import r, u
 from flext_tests import c, p, t
 
 
@@ -14,23 +15,30 @@ def _load_infra_report(
     workspace_root: Path,
     *,
     project_names: t.StrSequence,
-) -> p.AttributeProbe | None:
+) -> p.Result[p.AttributeProbe]:
     """Return a workspace enforcement report when available."""
     if not project_names:
-        return None
-    try:
-        refactor = import_module("flext_infra.refactor.namespace_enforcer")
-    except ImportError:
-        return None
+        return r[p.AttributeProbe].fail("no project names provided")
+    import_result = u.try_(
+        lambda: import_module("flext_infra.refactor.namespace_enforcer"),
+        catch=ImportError,
+        op_name="import flext_infra namespace enforcer",
+    )
+    if import_result.failure:
+        return r[p.AttributeProbe].fail(
+            import_result.error or "import flext_infra namespace enforcer failed",
+        )
+    refactor = import_result.value
     enforcer_cls = getattr(refactor, "FlextInfraNamespaceEnforcer", None)
     if enforcer_cls is None:
-        return None
-    try:
-        enforcer = enforcer_cls(workspace_root=workspace_root)
-        report = enforcer.enforce(project_names=project_names)
-    except c.EXC_BROAD_RUNTIME:
-        return None
-    return report
+        return r[p.AttributeProbe].fail("FlextInfraNamespaceEnforcer not found")
+    return u.try_(
+        lambda: enforcer_cls(workspace_root=workspace_root).enforce(
+            project_names=project_names,
+        ),
+        catch=c.EXC_BROAD_RUNTIME,
+        op_name="run flext_infra namespace enforcement",
+    )
 
 
 def _item_path(item: pytest.Item) -> Path | None:
@@ -48,14 +56,20 @@ def _project_name_for_path(
     *,
     path: Path,
     workspace_root: Path,
-) -> str | None:
+) -> p.Result[str]:
     """Return the owning FLEXT project name for one workspace path."""
-    try:
-        relative_path = path.relative_to(workspace_root)
-    except ValueError:
-        return None
+    relative_result = u.try_(
+        lambda: path.relative_to(workspace_root),
+        catch=ValueError,
+        op_name="resolve relative workspace path",
+    )
+    if relative_result.failure:
+        return r[str].fail(
+            relative_result.error or "path is not relative to workspace root",
+        )
+    relative_path = relative_result.value
     if not relative_path.parts:
-        return None
+        return r[str].fail("path has no parts relative to workspace root")
     project_name = relative_path.parts[0]
     project_root = workspace_root / project_name
     if not (
@@ -63,8 +77,8 @@ def _project_name_for_path(
         and project_root.is_dir()
         and (project_root / "pyproject.toml").is_file()
     ):
-        return None
-    return project_name
+        return r[str].fail(f"{project_name} is not a recognized FLEXT project")
+    return r[str].ok(project_name)
 
 
 def _project_name_for_item(
@@ -76,7 +90,10 @@ def _project_name_for_item(
     item_path = _item_path(item)
     if item_path is None:
         return None
-    return _project_name_for_path(path=item_path, workspace_root=workspace_root)
+    return _project_name_for_path(
+        path=item_path,
+        workspace_root=workspace_root,
+    ).unwrap_or(None)
 
 
 def _collected_project_names(
@@ -108,7 +125,10 @@ def _validator_target_for_item(
     item_path = _item_path(item)
     if item_path is None:
         return None
-    project_name = _project_name_for_path(path=item_path, workspace_root=workspace_root)
+    project_name = _project_name_for_path(
+        path=item_path,
+        workspace_root=workspace_root,
+    ).unwrap_or(None)
     if project_name is not None:
         return workspace_root / project_name
     return item_path

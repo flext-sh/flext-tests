@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TypeVar, overload
+from typing import overload
 
 from flext_core import p as core_p
 from flext_tests import c, m, t
@@ -16,11 +16,11 @@ from flext_tests._utilities._matchers._containment import (
 from flext_tests._utilities._matchers._result_parts.result_part_02 import (
     FlextTestsMatchersResultMixin as FlextTestsMatchersResultMixinPart02,
 )
-from flext_tests._utilities._matchers._rules import FlextTestsMatchersRulesMixin
+from flext_tests._utilities._matchers._that import (
+    FlextTestsMatchersThatMixin as FlextTestsMatchersRulesMixin,
+)
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
-
-TResult = TypeVar("TResult", bound=t.Tests.TestResultValue)
 
 
 class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
@@ -100,7 +100,7 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
                 return result_payload
 
             @staticmethod
-            def _ok_payload(
+            def _ok_payload[TResult: t.Tests.TestResultValue](
                 result: core_p.Result[TResult],
                 result_value: t.Tests.TestResultValue,
                 extracted_payload: t.Tests.TestobjectSerializable | None,
@@ -113,7 +113,7 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
                 return FlextTestsPayloadUtilities.to_payload(result_value)
 
             @staticmethod
-            def _ok_validate_structured(
+            def _ok_validate_structured[TResult: t.Tests.TestResultValue](
                 result: core_p.Result[TResult],
                 result_value: t.Tests.TestResultValue,
                 result_payload: t.Tests.TestobjectSerializable,

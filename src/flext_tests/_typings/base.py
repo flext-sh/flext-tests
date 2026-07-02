@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import types as _bt
+import types as bt
 from collections.abc import (
     ItemsView,
     KeysView,
@@ -65,7 +65,7 @@ class FlextTestsBaseTypesMixin:
         | p.ResultLike[FlextTestsBaseTypesMixin.TestobjectSerializable]
         | t.Cli.TyperRunner
         | it.Infra.RegexMatch
-        | _bt.UnionType
+        | bt.UnionType
         | FrameType
         | ModuleType
         | GenericAlias

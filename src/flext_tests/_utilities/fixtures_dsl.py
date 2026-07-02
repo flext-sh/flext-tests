@@ -43,9 +43,14 @@ class FlextTestsFixturesDSLMixin:
         return cls._FIXTURES_ROOT
 
     @classmethod
-    def path(cls, group: str, kind: str) -> Path:
+    def _resolve_path(cls, group: str, kind: str) -> Path:
+        """Compute the candidate fixture path without checking existence."""
         root = cls._root()
-        fp = root / group / f"{group}_{kind}_fixtures{cls._FILE_EXTENSION}"
+        return root / group / f"{group}_{kind}_fixtures{cls._FILE_EXTENSION}"
+
+    @classmethod
+    def path(cls, group: str, kind: str) -> Path:
+        fp = cls._resolve_path(group, kind)
         if not fp.exists():
             raise FileNotFoundError(f"Fixture not found: {fp}")
         return fp
@@ -56,11 +61,7 @@ class FlextTestsFixturesDSLMixin:
 
     @classmethod
     def exists(cls, group: str, kind: str) -> bool:
-        try:
-            cls.path(group, kind)
-        except FileNotFoundError:
-            return False
-        return True
+        return cls._resolve_path(group, kind).exists()
 
     @classmethod
     def servers(cls) -> t.StrSequence:

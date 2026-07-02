@@ -9,8 +9,6 @@ from flext_cli import u as cli_u
 from flext_tests import c, m, p, r, t, u
 from flext_tests._validator._settings_parts.settings_part_01 import (
     FlextValidatorSettings as FlextValidatorSettingsPart01,
-    _TomlDict,
-    _TomlValue,
 )
 
 
@@ -21,15 +19,15 @@ class FlextValidatorSettings(FlextValidatorSettingsPart01):
     def _check_pyright_settings(
         cls,
         file_path: Path,
-        data: _TomlDict,
+        data: t.Tests.TomlDict,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Check pyright configuration for violations."""
-        tool_data: _TomlValue = data.get("tool", {})
+        tool_data: t.Tests.TomlValue = data.get("tool", {})
         if not isinstance(tool_data, dict):
             return []
-        pyright_config: _TomlValue = tool_data.get("pyright", {})
+        pyright_config: t.Tests.TomlValue = tool_data.get("pyright", {})
         if not isinstance(pyright_config, dict):
             return []
         if (

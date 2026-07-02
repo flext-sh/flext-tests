@@ -4,10 +4,7 @@ from __future__ import annotations
 
 from flext_tests import tm
 from tests.constants import c
-from tests.unit._matchers_parts.predicates import (
-    greater_than_two,
-    greater_than_zero,
-)
+from tests.unit._matchers_parts.predicates import MatchersPredicates
 
 
 class MatchersThatCollectionsMixin:
@@ -76,7 +73,7 @@ class MatchersThatCollectionsMixin:
 
     def test_that_with_all_predicate_parameter(self) -> None:
         """Test tm.that() with all_ predicate parameter."""
-        tm.that([1, 2, 3], all_=greater_than_zero)
+        tm.that([1, 2, 3], all_=MatchersPredicates.greater_than_zero)
 
     def test_that_with_any_type_parameter(self) -> None:
         """Test tm.that() with any_ type parameter."""
@@ -84,7 +81,7 @@ class MatchersThatCollectionsMixin:
 
     def test_that_with_any_predicate_parameter(self) -> None:
         """Test tm.that() with any_ predicate parameter."""
-        tm.that([1, 2, 3], any_=greater_than_two)
+        tm.that([1, 2, 3], any_=MatchersPredicates.greater_than_two)
 
     def test_that_with_sorted_parameter(self) -> None:
         """Test tm.that() with sorted parameter."""

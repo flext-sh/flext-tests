@@ -46,7 +46,7 @@ def _build_items(
                 items=collected_items,
                 workspace_root=workspace_root,
             ),
-        )
+        ).unwrap_or(None)
 
     collector = EnforcementCollector.from_parent(
         parent=session,

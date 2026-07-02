@@ -109,9 +109,15 @@ class FlextTestsFilesComparisonMixin(FlextTestsFilesComparisonMixinPart01):
         exclude_keys: t.StrSequence | None,
     ) -> p.Result[bool] | None:
         """Try to parse and deeply compare content as JSON or YAML."""
-        parsed = self._try_parse_both(content1_raw, content2_raw, "json")
+        parsed = self._try_parse_both(content1_raw, content2_raw, "json").unwrap_or(
+            None,
+        )
         if parsed is None:
-            parsed = self._try_parse_both(content1_raw, content2_raw, "yaml")
+            parsed = self._try_parse_both(
+                content1_raw,
+                content2_raw,
+                "yaml",
+            ).unwrap_or(None)
         if parsed is None:
             return None
         dict1, dict2 = parsed

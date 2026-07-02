@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from flext_cli import m, t
+from flext_core import m, t
 
 
 class FlextTestsMakeTypesMixin:
@@ -18,6 +18,12 @@ class FlextTestsMakeTypesMixin:
     type MakeTomlTable = t.JsonMapping
     type MutableMakeTomlTable = t.MutableJsonMapping
     type DispatchMain = Callable[[tuple[str, ...]], int]
+    type TomlValue = (
+        t.Primitives
+        | list[FlextTestsMakeTypesMixin.TomlValue]
+        | dict[str, FlextTestsMakeTypesMixin.TomlValue]
+    )
+    type TomlDict = dict[str, FlextTestsMakeTypesMixin.TomlValue]
 
     MAKE_TOML_TABLE_ADAPTER: m.TypeAdapter[MakeTomlTable] = m.TypeAdapter(MakeTomlTable)
 

@@ -20,6 +20,23 @@ class FlextTestsDomains:
         return f"{group}_{kind}_fixtures{file_extension}"
 
     @classmethod
+    def _resolve_fixture_path(
+        cls,
+        group: str,
+        kind: str,
+        *,
+        fixtures_root: Path | None = None,
+        file_extension: str = ".ldif",
+    ) -> Path:
+        """Compute the candidate fixture path without checking existence."""
+        fixtures_root = fixtures_root or Path.cwd()
+        return (
+            fixtures_root
+            / group
+            / cls.fixture_filename(group, kind, file_extension=file_extension)
+        )
+
+    @classmethod
     def fixture_path(
         cls,
         group: str,
@@ -28,11 +45,11 @@ class FlextTestsDomains:
         fixtures_root: Path | None = None,
         file_extension: str = ".ldif",
     ) -> Path:
-        fixtures_root = fixtures_root or Path.cwd()
-        file_path = (
-            fixtures_root
-            / group
-            / cls.fixture_filename(group, kind, file_extension=file_extension)
+        file_path = cls._resolve_fixture_path(
+            group,
+            kind,
+            fixtures_root=fixtures_root,
+            file_extension=file_extension,
         )
         if not file_path.exists():
             raise FileNotFoundError(f"Fixture file not found: {file_path}")
@@ -69,16 +86,12 @@ class FlextTestsDomains:
         fixtures_root: Path | None = None,
         file_extension: str = ".ldif",
     ) -> bool:
-        try:
-            cls.fixture_path(
-                group,
-                kind,
-                fixtures_root=fixtures_root,
-                file_extension=file_extension,
-            )
-        except FileNotFoundError:
-            return False
-        return True
+        return cls._resolve_fixture_path(
+            group,
+            kind,
+            fixtures_root=fixtures_root,
+            file_extension=file_extension,
+        ).exists()
 
 
 __all__: list[str] = ["FlextTestsDomains"]

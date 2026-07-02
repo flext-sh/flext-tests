@@ -11,7 +11,7 @@ from collections.abc import Generator
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
 
-from flext_infra import u
+from flext_core import u
 from flext_tests import (
     c,
     m,

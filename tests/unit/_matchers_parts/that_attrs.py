@@ -7,9 +7,7 @@ from typing import cast
 from flext_tests import r, tm
 from tests.protocols import p
 from tests.typings import t
-from tests.unit._matchers_parts.predicates import (
-    is_positive,
-)
+from tests.unit._matchers_parts.predicates import MatchersPredicates
 
 
 class MatchersThatAttrsMixin:
@@ -84,7 +82,7 @@ class MatchersThatAttrsMixin:
 
     def test_that_with_where_parameter(self) -> None:
         """Test tm.that() with where parameter."""
-        tm.that(42, where=is_positive)
+        tm.that(42, where=MatchersPredicates.is_positive)
 
     def test_that_with_all_alias_parameter(self) -> None:
         """Test tm.that() with all alias parameter (accepts both all_ and all)."""

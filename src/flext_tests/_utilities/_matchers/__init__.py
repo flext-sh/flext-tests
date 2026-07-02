@@ -21,9 +21,6 @@ if TYPE_CHECKING:
     from flext_tests._utilities._matchers._result_parts.result_part_03 import (
         FlextTestsMatchersResultMixin as FlextTestsMatchersResultMixin,
     )
-    from flext_tests._utilities._matchers._rules import (
-        FlextTestsMatchersRulesMixin as FlextTestsMatchersRulesMixin,
-    )
     from flext_tests._utilities._matchers._scope import (
         FlextTestsMatchersScopeMixin as FlextTestsMatchersScopeMixin,
     )
@@ -44,7 +41,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
             "._containment": ("FlextTestsMatchersContainmentMixin",),
             "._result_parts": ("_result_parts",),
             "._result_parts.result_part_03": ("FlextTestsMatchersResultMixin",),
-            "._rules": ("FlextTestsMatchersRulesMixin",),
             "._scope": ("FlextTestsMatchersScopeMixin",),
             "._that_parts": ("_that_parts",),
             "._that_parts.that_part_06": ("FlextTestsMatchersThatMixin",),

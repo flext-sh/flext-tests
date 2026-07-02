@@ -9,7 +9,7 @@ from typing import Annotated, ClassVar
 from docker import DockerClient as DockerSDKClient
 from python_on_whales import DockerClient as WhalesDockerClient
 
-from flext_tests import c, m, s, t, u
+from flext_tests import c, m, p, s, t, u
 
 
 class FlextTestsDocker(s[m.Tests.ContainerInfo]):
@@ -99,15 +99,13 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     @staticmethod
     def _normalize_bindings(
         bindings: t.Tests.TestobjectSerializable | None,
-    ) -> t.SequenceOf[t.StrMapping]:
+    ) -> p.Result[t.SequenceOf[t.StrMapping]]:
         """Validate Docker SDK port bindings into a typed sequence."""
-        try:
-            validated: t.SequenceOf[t.StrMapping] = (
-                t.Tests.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(bindings)
-            )
-        except c.ValidationError:
-            return []
-        return validated
+        return u.try_(
+            lambda: t.Tests.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(bindings),
+            catch=c.ValidationError,
+            op_name="normalize Docker port bindings",
+        )
 
 
 __all__: list[str] = ["FlextTestsDocker"]

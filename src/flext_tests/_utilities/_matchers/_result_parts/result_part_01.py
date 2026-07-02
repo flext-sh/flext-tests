@@ -3,17 +3,16 @@
 from __future__ import annotations
 
 from collections.abc import MutableMapping
-from typing import TypeVar
 
-from flext_infra import u
-from flext_tests import c, m, p, t
+from flext_core import p, u
 from flext_tests._utilities._matchers._containment import (
     FlextTestsMatchersContainmentMixin,
 )
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
-
-TResult = TypeVar("TResult")
+from flext_tests.constants import c
+from flext_tests.models import m
+from flext_tests.typings import t
 
 
 class FlextTestsMatchersResultMixin:
@@ -26,12 +25,12 @@ class FlextTestsMatchersResultMixin:
             """Result matcher methods."""
 
             @staticmethod
-            def check(result: p.Result[TResult]) -> m.Tests.Chain[TResult]:
+            def check[TResult](result: p.Result[TResult]) -> m.Tests.Chain[TResult]:
                 """Start chained assertions on result."""
                 return m.Tests.Chain(result=result)
 
             @staticmethod
-            def fail(
+            def fail[TResult](
                 result: p.Result[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> str:
@@ -94,7 +93,7 @@ class FlextTestsMatchersResultMixin:
                     )
 
             @staticmethod
-            def _fail_code(
+            def _fail_code[TResult](
                 result: p.Result[TResult],
                 params: m.Tests.FailParams,
             ) -> None:
@@ -126,7 +125,7 @@ class FlextTestsMatchersResultMixin:
                         )
 
             @staticmethod
-            def _fail_data(
+            def _fail_data[TResult](
                 result: p.Result[TResult],
                 params: m.Tests.FailParams,
             ) -> None:

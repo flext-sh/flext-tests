@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from flext_core import p, r
 from flext_tests import c, m, t, u
 from flext_tests._utilities._files._creation import (
     FlextTestsFilesCreationMixin,
@@ -11,6 +12,11 @@ from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 class FlextTestsFilesComparisonMixin:
     """Compare two files by content, lines, size, hash, or deep structure."""
+
+    type ParsedPair = tuple[
+        t.MappingKV[str, t.Tests.TestobjectSerializable],
+        t.MappingKV[str, t.Tests.TestobjectSerializable],
+    ]
 
     @staticmethod
     def _read_both(params: m.Tests.CompareParams) -> t.StrPair:
@@ -25,13 +31,7 @@ class FlextTestsFilesComparisonMixin:
         content1: str,
         content2: str,
         fmt: str,
-    ) -> (
-        tuple[
-            t.MappingKV[str, t.Tests.TestobjectSerializable],
-            t.MappingKV[str, t.Tests.TestobjectSerializable],
-        ]
-        | None
-    ):
+    ) -> p.Result[FlextTestsFilesComparisonMixin.ParsedPair]:
         """Try to parse both contents as dicts in given format."""
         parse = (
             u.Cli.json_parse
@@ -41,21 +41,31 @@ class FlextTestsFilesComparisonMixin:
             else None
         )
         if parse is None:
-            return None
-        try:
-            r1, r2 = parse(content1), parse(content2)
-        except (ValueError, c.Cli.YamlParseError, TypeError):
-            return None
+            return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
+                f"unsupported comparison format: {fmt}",
+            )
+        parsed_result = u.try_(
+            lambda: (parse(content1), parse(content2)),
+            catch=(ValueError, c.Cli.YamlParseError, TypeError),
+            op_name="parse comparison contents",
+        )
+        if parsed_result.failure:
+            return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
+                parsed_result.error or "parse comparison contents failed",
+            )
+        r1, r2 = parsed_result.value
         d1 = r1.value if r1.success else None
         d2 = r2.value if r2.success else None
         if FlextTestsFilesCreationMixin.is_mapping(
             d1
         ) and FlextTestsFilesCreationMixin.is_mapping(d2):
-            return (
+            return r[FlextTestsFilesComparisonMixin.ParsedPair].ok((
                 FlextTestsFilesCreationMixin.to_payload_mapping(d1),
                 FlextTestsFilesCreationMixin.to_payload_mapping(d2),
-            )
-        return None
+            ))
+        return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
+            "comparison contents are not both mappings",
+        )
 
     def _apply_key_filtering(
         self,

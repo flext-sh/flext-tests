@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 
-from flext_infra import u
+from flext_core import u
 from flext_tests._utilities._matchers._that_parts.that_part_04 import (
     FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixinPart04,
 )
