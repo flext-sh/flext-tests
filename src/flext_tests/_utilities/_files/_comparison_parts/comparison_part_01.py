@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-from flext_core import p, r
+from flext_core import r
 from flext_tests import c, m, t, u
 from flext_tests._utilities._files._creation import (
     FlextTestsFilesCreationMixin,
 )
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests.protocols import p
 
 
 class FlextTestsFilesComparisonMixin:

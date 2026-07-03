@@ -16,7 +16,7 @@ from datetime import datetime, tzinfo
 from enum import Enum
 from pathlib import Path
 
-from flext_core import u
+from flext_infra import u
 from flext_tests import c, m, p, t
 
 

@@ -7,8 +7,9 @@ from pathlib import Path
 
 import pytest
 
-from flext_core import r, u
+from flext_core import r
 from flext_tests import c, p, t
+from flext_tests.utilities import u
 
 
 def _load_infra_report(

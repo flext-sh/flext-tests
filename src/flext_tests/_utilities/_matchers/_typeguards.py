@@ -1,13 +1,13 @@
 """Type-guard helpers for matchers — Group A.
 
+from flext_tests.utilities import u
 Static methods used internally by ``FlextTestsMatchersUtilities``. Composed
 via MRO from ``flext_tests._utilities.matchers``.
 """
 
 from __future__ import annotations
 
-from flext_core import u
-from flext_tests import c, p, t
+from flext_tests import c, p, t, u
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 

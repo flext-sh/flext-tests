@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from flext_core import m, t
+from flext_infra import m, t
 
 
 class FlextTestsMakeTypesMixin:
