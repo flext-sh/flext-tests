@@ -6,7 +6,9 @@ from collections.abc import (
     MutableSequence,
 )
 
-from flext_tests import p, r, t
+from flext_core import r
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
 class FlextTestsGenericHelpersUtilitiesMixin:
