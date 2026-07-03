@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_tests import c, m, t
+import flext_tests.constants as tests_constants
+import flext_tests.models as tests_models
+import flext_tests.typings as tests_typings
 
 
 class FlextTestsValidatorUtilitiesMixin:
@@ -15,9 +17,9 @@ class FlextTestsValidatorUtilitiesMixin:
         file_path: Path,
         line_number: int,
         rule_id: str,
-        lines: t.StrSequence,
+        lines: tests_typings.t.StrSequence,
         extra_desc: str = "",
-    ) -> m.Tests.Violation:
+    ) -> tests_models.m.Tests.Violation:
         """Create a violation model using c.Tests.
 
         Args:
@@ -32,10 +34,10 @@ class FlextTestsValidatorUtilitiesMixin:
             Violation model instance
 
         """
-        severity, desc = c.Tests.validator_rule(rule_id)
+        severity, desc = tests_constants.c.Tests.validator_rule(rule_id)
         description = f"{desc}: {extra_desc}" if extra_desc else desc
         line = lines[line_number - 1] if line_number <= len(lines) else ""
-        return m.Tests.Violation(
+        return tests_models.m.Tests.Violation(
             file_path=file_path,
             line_number=line_number,
             rule_id=rule_id,
@@ -45,7 +47,7 @@ class FlextTestsValidatorUtilitiesMixin:
         )
 
     @staticmethod
-    def find_line_number(lines: t.StrSequence, pattern: str) -> int:
+    def find_line_number(lines: tests_typings.t.StrSequence, pattern: str) -> int:
         """Find line number containing pattern."""
         for i, line in enumerate(lines, start=1):
             if pattern in line:
@@ -53,7 +55,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return 1
 
     @staticmethod
-    def split_import_targets(value: str) -> t.StrSequence:
+    def split_import_targets(value: str) -> tests_typings.t.StrSequence:
         """Normalize one import target list into canonical imported names."""
         cleaned = value.split("#", maxsplit=1)[0].replace("(", " ").replace(")", " ")
         targets: list[str] = []
@@ -67,8 +69,8 @@ class FlextTestsValidatorUtilitiesMixin:
     def approved(
         rule_id: str,
         file_path: Path,
-        approved: t.MappingKV[str, t.StrSequence],
-        extra_patterns: t.StrSequence = (),
+        approved: tests_typings.t.MappingKV[str, tests_typings.t.StrSequence],
+        extra_patterns: tests_typings.t.StrSequence = (),
     ) -> bool:
         """Check if file is approved for this rule.
 
@@ -86,11 +88,12 @@ class FlextTestsValidatorUtilitiesMixin:
         patterns = tuple(approved.get(rule_id, ())) + tuple(extra_patterns)
         file_str = str(file_path)
         return any(
-            c.Tests.path_pattern_matches(file_str, pattern) for pattern in patterns
+            tests_constants.c.Tests.path_pattern_matches(file_str, pattern)
+            for pattern in patterns
         )
 
     @staticmethod
-    def code_match(line: str, pattern: t.Infra.RegexPattern) -> bool:
+    def code_match(line: str, pattern: tests_typings.t.Infra.RegexPattern) -> bool:
         """Check if one pattern match appears outside quoted string literals.
 
         Args:
@@ -138,7 +141,9 @@ class FlextTestsValidatorUtilitiesMixin:
         return not (in_single or in_double or in_triple_single or in_triple_double)
 
     @staticmethod
-    def real_comment(line: str, pattern: t.Infra.RegexPattern) -> bool:
+    def real_comment(
+        line: str, pattern: tests_typings.t.Infra.RegexPattern
+    ) -> bool:
         """Check if pattern match is in a real comment, not inside a string.
 
         Used by validators to avoid false positives from patterns appearing
@@ -157,19 +162,24 @@ class FlextTestsValidatorUtilitiesMixin:
         return FlextTestsValidatorUtilitiesMixin.code_match(line, pattern)
 
     @staticmethod
-    def except_block_only_pass(lines: t.StrSequence, line_number: int) -> bool:
+    def except_block_only_pass(
+        lines: tests_typings.t.StrSequence, line_number: int
+    ) -> bool:
         """Check whether one ``except`` block body contains only pass or ellipsis."""
         header_index = line_number - 1
         if header_index < 0 or header_index >= len(lines):
             return False
         header_line = lines[header_index]
-        header_match = c.Tests.VALIDATOR_EXCEPT_HEADER_RE.match(header_line)
+        header_match = tests_constants.c.Tests.VALIDATOR_EXCEPT_HEADER_RE.match(
+            header_line
+        )
         if header_match is None:
             return False
         trailing = header_line.rsplit(":", maxsplit=1)[-1].strip()
         if (
             trailing
-            and c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(trailing) is not None
+            and tests_constants.c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(trailing)
+            is not None
         ):
             return True
         header_indent = len(header_match.group("indent").expandtabs())
@@ -186,5 +196,8 @@ class FlextTestsValidatorUtilitiesMixin:
             body_lines.append(stripped)
         return (
             len(body_lines) == 1
-            and c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(body_lines[0]) is not None
+            and tests_constants.c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(
+                body_lines[0]
+            )
+            is not None
         )
