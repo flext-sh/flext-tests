@@ -70,18 +70,21 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
             @staticmethod
             def _ok_has_scalar_validation(params: m.Tests.OkParams) -> bool:
                 """Return whether scalar guard validation is requested."""
-                return (
-                    params.eq is not None
-                    or params.ne is not None
-                    or params.none is not None
-                    or params.empty is not None
-                    or params.gt is not None
-                    or params.gte is not None
-                    or params.lt is not None
-                    or params.lte is not None
-                    or params.starts is not None
-                    or params.ends is not None
-                    or params.match is not None
+                return any(
+                    getattr(params, name) is not None
+                    for name in (
+                        "eq",
+                        "ne",
+                        "none",
+                        "empty",
+                        "gt",
+                        "gte",
+                        "lt",
+                        "lte",
+                        "starts",
+                        "ends",
+                        "match",
+                    )
                 )
 
             @staticmethod

@@ -48,12 +48,9 @@ class FlextTestsMatchersResultMixin:
             @staticmethod
             def _fail_text(err: str, params: m.Tests.FailParams) -> None:
                 """Validate textual error constraints."""
-                if not (
-                    params.has
-                    or params.lacks
-                    or params.starts
-                    or params.ends
-                    or params.match
+                if not any(
+                    getattr(params, name)
+                    for name in ("has", "lacks", "starts", "ends", "match")
                 ):
                     return
                 FlextTestsMatchersContainmentMixin.check_has_lacks(

@@ -156,25 +156,29 @@ class FlextTestsMatchersThatMixin:
                 raw_ne: t.Tests.MatcherKwargValue | None,
             ) -> bool:
                 """Return whether only type checks were requested."""
-                return (
-                    (params.is_ is not None or params.not_ is not None)
-                    and params.ok is None
-                    and params.has is None
-                    and params.lacks is None
-                    and params.eq is None
-                    and raw_eq is None
-                    and params.ne is None
-                    and raw_ne is None
-                    and params.gt is None
-                    and params.gte is None
-                    and params.lt is None
-                    and params.lte is None
-                    and params.none is None
-                    and params.empty is None
-                    and params.starts is None
-                    and params.ends is None
-                    and params.match is None
-                    and params.len is None
+                if params.is_ is None and params.not_ is None:
+                    return False
+                if raw_eq is not None or raw_ne is not None:
+                    return False
+                return all(
+                    getattr(params, name) is None
+                    for name in (
+                        "ok",
+                        "has",
+                        "lacks",
+                        "eq",
+                        "ne",
+                        "gt",
+                        "gte",
+                        "lt",
+                        "lte",
+                        "none",
+                        "empty",
+                        "starts",
+                        "ends",
+                        "match",
+                        "len",
+                    )
                 )
 
 
