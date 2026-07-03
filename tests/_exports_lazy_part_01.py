@@ -8,9 +8,7 @@ from flext_core.lazy import build_lazy_import_map
 TESTS_FLEXT_TESTS_LAZY_IMPORTS_PART_01 = build_lazy_import_map(
     {
         ".constants": ("TestsFlextTestsConstants",),
-        ".models": ("TestsFlextTestsModels",),
-        ".protocols": ("TestsFlextTestsProtocols",),
-        ".typings": ("TestsFlextTestsTypes",),
+        ".integration.test_docker_integration": ("TestsFlextTestsDockerIntegration",),
         ".unit._docker_parts.builders": ("DockerBuildersMixin",),
         ".unit._docker_parts.operations": ("DockerOperationsMixin",),
         ".unit._docker_parts.state": ("DockerStateMixin",),
@@ -29,6 +27,7 @@ TESTS_FLEXT_TESTS_LAZY_IMPORTS_PART_01 = build_lazy_import_map(
         ".unit._matchers_parts.data_driven": ("MatchersDataDrivenMixin",),
         ".unit._matchers_parts.fail_constraints": ("MatchersFailConstraintsMixin",),
         ".unit._matchers_parts.ok_constraints": ("MatchersOkConstraintsMixin",),
+        ".unit._matchers_parts.predicates": ("MatchersPredicates",),
         ".unit._matchers_parts.results": ("MatchersResultsMixin",),
         ".unit._matchers_parts.scope_errors": ("MatchersScopeErrorsMixin",),
         ".unit._matchers_parts.that_attrs": ("MatchersThatAttrsMixin",),
@@ -37,6 +36,7 @@ TESTS_FLEXT_TESTS_LAZY_IMPORTS_PART_01 = build_lazy_import_map(
         ".unit.test_docker": ("TestsFlextTestsDocker",),
         ".unit.test_domains": ("TestsFlextTestsDomains",),
         ".unit.test_enforcement_dispatcher": ("TestsFlextTestsEnforcementDispatcher",),
+        ".unit.test_enforcement_plugin": ("TestsFlextTestsEnforcementPlugin",),
         ".unit.test_files": ("TestsFlextTestsFiles",),
         ".unit.test_matchers": ("TestsFlextTestsMatchers",),
     },

@@ -63,7 +63,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             **settings,
             "compose_file": Path(str(compose_file_raw)),
         })
-        compose_path = target.compose_file
+        compose_path = Path(str(compose_file_raw))
         if not compose_path.is_absolute():
             compose_path = workspace_root / compose_path
         return target.model_copy(

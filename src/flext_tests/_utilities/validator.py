@@ -141,9 +141,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return not (in_single or in_double or in_triple_single or in_triple_double)
 
     @staticmethod
-    def real_comment(
-        line: str, pattern: tests_typings.t.Infra.RegexPattern
-    ) -> bool:
+    def real_comment(line: str, pattern: tests_typings.t.Infra.RegexPattern) -> bool:
         """Check if pattern match is in a real comment, not inside a string.
 
         Used by validators to avoid false positives from patterns appearing

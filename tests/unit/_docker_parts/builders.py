@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 import pytest
 
-from flext_tests import FlextTestsDocker, c as flext_tests_c, tk, tm
+from flext_tests import FlextTestsDocker, c as flext_tests_c, m, tk, tm
 from tests.constants import c
 
 
@@ -49,9 +49,11 @@ class DockerBuildersMixin:
         """Test compose() builds a resolved explicit container target."""
         manager = tk.compose(
             "docker-compose.yml",
-            container_name="service-test",
-            service="service-test",
-            port=5432,
+            target=m.Tests.ContainerConfig(
+                container_name="service-test",
+                service="service-test",
+                port=5432,
+            ),
             workspace_root=tmp_path,
         )
         tm.that(manager.target_config, none=False)
@@ -65,9 +67,11 @@ class DockerBuildersMixin:
         """Test stack() builds a resolved explicit compose-stack target."""
         manager = tk.stack(
             "docker-compose.stack.yml",
-            container_name="stack-main",
-            service="stack-main",
-            port=3389,
+            target=m.Tests.ContainerConfig(
+                container_name="stack-main",
+                service="stack-main",
+                port=3389,
+            ),
             workspace_root=tmp_path,
         )
         tm.that(manager.target_config, none=False)
@@ -82,8 +86,10 @@ class DockerBuildersMixin:
         """Test stack() supports lifecycle-only stacks without inspection target."""
         manager = tk.stack(
             "docker-compose.stack.yml",
-            host=c.LOOPBACK_IP,
-            port=25432,
+            target=m.Tests.ContainerConfig(
+                host=c.LOOPBACK_IP,
+                port=25432,
+            ),
             workspace_root=tmp_path,
         )
         tm.that(manager.target_config, none=False)

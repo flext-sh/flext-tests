@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_tests import tk, tm
+from flext_tests import m, tk, tm
 from tests.constants import c
 from tests.utilities import u
 
@@ -22,8 +22,10 @@ class DockerTargetsMixin:
         """Test execute rejects stack targets without inspection container."""
         manager = tk.stack(
             "docker-compose.stack.yml",
-            host=c.LOOPBACK_IP,
-            port=25432,
+            target=m.Tests.ContainerConfig(
+                host=c.LOOPBACK_IP,
+                port=25432,
+            ),
             workspace_root=tmp_path,
         )
         result = manager.execute()
@@ -52,9 +54,11 @@ class DockerTargetsMixin:
         """Test ready uses the configured target host and port."""
         manager = tk.stack(
             "docker-compose.stack.yml",
-            container_name="stack-main",
-            service="stack-main",
-            port=59999,
+            target=m.Tests.ContainerConfig(
+                container_name="stack-main",
+                service="stack-main",
+                port=59999,
+            ),
             workspace_root=tmp_path,
         )
         result = manager.ready(max_wait=1)

@@ -21,9 +21,9 @@ class FlextTestsDockerModelsMixin:
             u.Field(description="Optional managed container name for inspection."),
         ] = None
         compose_file: Annotated[
-            Path,
+            Path | None,
             u.Field(description="Resolved docker-compose file path."),
-        ]
+        ] = None
         service: Annotated[
             str,
             u.Field(description="Compose service name to start."),

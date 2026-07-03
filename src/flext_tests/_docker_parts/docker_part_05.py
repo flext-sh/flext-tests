@@ -38,31 +38,20 @@ class FlextTestsDocker(FlextTestsDockerPart04):
         cls,
         compose_file: str | Path,
         *,
-        container_name: str | None = None,
-        service: str = "",
-        host: str = c.LOCALHOST,
-        port: int | None = None,
-        startup_timeout: int = 30,
-        force_recreate: bool = False,
+        target: m.Tests.ContainerConfig | None = None,
         workspace_root: Path | None = None,
-        worker_id: str | None = None,
     ) -> Self:
         """Build a DSL-configured service for an explicit compose target."""
         resolved_root = workspace_root or Path.cwd()
         compose_path = Path(compose_file)
         if not compose_path.is_absolute():
             compose_path = resolved_root / compose_path
+        base_target = target or m.Tests.ContainerConfig()
         return cls(
             workspace_root=resolved_root,
-            worker_id=worker_id or "master",
-            target_config=m.Tests.ContainerConfig(
-                container_name=container_name,
-                compose_file=compose_path,
-                service=service,
-                host=host,
-                port=port,
-                startup_timeout=startup_timeout,
-                force_recreate=force_recreate,
+            worker_id="master",
+            target_config=base_target.model_copy(
+                update={"compose_file": compose_path},
             ),
         )
 
@@ -71,26 +60,14 @@ class FlextTestsDocker(FlextTestsDockerPart04):
         cls,
         compose_file: str | Path,
         *,
-        container_name: str | None = None,
-        service: str = "",
-        host: str = c.LOCALHOST,
-        port: int | None = None,
-        startup_timeout: int = 30,
-        force_recreate: bool = False,
+        target: m.Tests.ContainerConfig | None = None,
         workspace_root: Path | None = None,
-        worker_id: str | None = None,
     ) -> Self:
         """Build a DSL-configured service for a compose stack target."""
         return cls.compose(
             compose_file,
-            container_name=container_name,
-            service=service,
-            host=host,
-            port=port,
-            startup_timeout=startup_timeout,
-            force_recreate=force_recreate,
+            target=target,
             workspace_root=workspace_root,
-            worker_id=worker_id,
         )
 
     def up(self) -> p.Result[str]:
@@ -99,6 +76,10 @@ class FlextTestsDocker(FlextTestsDockerPart04):
         if target is None:
             return r[str].fail(
                 "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...).",
+            )
+        if target.compose_file is None:
+            return r[str].fail(
+                "Docker target has no compose file configured.",
             )
         return self.compose_up(
             str(target.compose_file),
@@ -112,6 +93,10 @@ class FlextTestsDocker(FlextTestsDockerPart04):
         if target is None:
             return r[str].fail(
                 "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...).",
+            )
+        if target.compose_file is None:
+            return r[str].fail(
+                "Docker target has no compose file configured.",
             )
         return self.compose_down(str(target.compose_file))
 
