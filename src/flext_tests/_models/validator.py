@@ -9,7 +9,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Annotated, Self
 
-from flext_tests import c, m, t, u
+from flext_infra import m, u
+from flext_tests import c, t
 
 
 class FlextTestsValidatorModelsMixin:

@@ -8,7 +8,8 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from flext_tests import m, t
+from flext_infra import m
+from flext_tests import t
 
 
 class FlextTestsBaseModelsMixin:

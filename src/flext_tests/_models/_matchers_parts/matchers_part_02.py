@@ -6,7 +6,8 @@ import sys
 from collections.abc import MutableMapping
 from typing import Annotated, ClassVar
 
-from flext_tests import m, t, u
+from flext_infra import m, u
+from flext_tests import t
 from flext_tests._models._matchers_parts.matchers_part_01 import (
     FlextTestsMatchersModelsMixin as FlextTestsMatchersModelsMixinPart01,
 )

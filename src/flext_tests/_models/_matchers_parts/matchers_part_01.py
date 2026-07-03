@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import Annotated, ClassVar
 
-from flext_tests import m, t, u
+from flext_infra import m, u
+from flext_tests import t
 
 
 class FlextTestsMatchersModelsMixin:
