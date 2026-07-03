@@ -1,34 +1,45 @@
-# FLEXT-Tests
+<!-- AUTO-GENERATED — DO NOT EDIT MANUALLY -->
 
-**FLEXT-Tests** is the shared test infrastructure library for the FLEXT ecosystem. It provides reusable test utilities, builders, factories, matchers, and validation tools used across all FLEXT projects.
+# flext-tests
 
-**Reviewed**: 2026-03-16 | **Version**: 0.12.0-dev
+**Version**: `0.12.0-dev` | **Python**: 3.13+ | **Project class**: `test`
 
-Part of the [FLEXT](https://github.com/flext-sh/flext) ecosystem.
+## Purpose
 
-## Key Components
+FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem
 
-- **Builders**: Fluent test data builders for constructing complex domain objects.
-- **Factories**: Factory Boy factories for generating test fixtures with realistic data.
-- **Matchers**: Custom assertion matchers for domain-specific validations.
-- **Validators**: Architecture and code quality validation rules (imports, layers, types, settings).
-- **Utilities**: Shared test helpers and convenience functions.
-- **Docker**: Docker-based test infrastructure helpers.
+## Module Map
 
-## Installation
+::: flext_tests
+    options:
+      members: false
+      show_root_heading: false
+      show_root_toc_entry: false
+      show_source: false
 
-```bash
-poetry add --group dev flext-tests
-```
+## Collection Rules
 
-## Usage
+Read [`/flext/AGENTS.md`](../AGENTS.md) §9 — Agent Execution Pre-requisites — for the canonical pre-change checklist (parent MRO chain, Scope bootstrap, skill loading, zero-debt baseline, slot registry verification).
 
-```python
-from flext_tests import FlextTestsHelpers as h
-from flext_tests import c
-from flext_tests import u
-```
+## Operation Flow
 
-## License
+- Public surface: see [`docs/index.md`](docs/index.md) and [`docs/api-reference/README.md`](docs/api-reference/README.md).
+- Generated module overview: [`docs/api-reference/generated/overview.md`](docs/api-reference/generated/overview.md).
+- Settings env prefix: see project `pyproject.toml` `[tool.flext]` and `FlextSettings` ConfigDict.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Integration Points
+
+- Parent MRO chain: read this project's `pyproject.toml` `dependencies` array filtered by `flext-*`. The MRO cascade is encoded in the inheritance lists of the facade classes listed under Module Map above.
+- Public extensions exposed by this project: _none_.
+- Library abstraction boundaries: see AGENTS.md §2.7.
+
+## Quality Gates
+
+Canonical `make` verbs (`check`, `test`, `val`, `docs`) — see `AGENTS.md` §5 (Make Contract) and the [`flext-quality-gates`](../.agents/skills/flext-quality-gates/SKILL.md) skill for selectors and thresholds.
+
+## Governance Pointer
+
+- Engineering law: [`/flext/AGENTS.md`](../AGENTS.md)
+- Skills index: [`/flext/.agents/skills/`](../.agents/skills/)
+- Onboarding: [`/flext/docs/guides/onboarding.md`](../docs/guides/onboarding.md)
+- Full project portal: [`docs/index.md`](docs/index.md).

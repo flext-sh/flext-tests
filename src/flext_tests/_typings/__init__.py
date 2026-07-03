@@ -1,64 +1,42 @@
-# AUTO-GENERATED FILE — DO NOT EDIT MANUALLY.
-# Regenerate with: make gen
-#
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Typings package."""
 
 from __future__ import annotations
 
-import typing as _t
+from typing import TYPE_CHECKING
 
-from flext_core.lazy import install_lazy_exports
+from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
-if _t.TYPE_CHECKING:
-    import flext_tests._typings.base as _flext_tests__typings_base
-
-    base = _flext_tests__typings_base
-    import flext_tests._typings.files as _flext_tests__typings_files
-    from flext_tests._typings.base import FlextTestsBaseTypesMixin
-
-    files = _flext_tests__typings_files
-    import flext_tests._typings.guards as _flext_tests__typings_guards
-    from flext_tests._typings.files import FlextTestsFilesTypesMixin
-
-    guards = _flext_tests__typings_guards
-    import flext_tests._typings.matchers as _flext_tests__typings_matchers
-    from flext_tests._typings.guards import FlextTestsGuardsTypesMixin
-
-    matchers = _flext_tests__typings_matchers
-    from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
-_LAZY_IMPORTS = {
-    "FlextTestsBaseTypesMixin": (
-        "flext_tests._typings.base",
-        "FlextTestsBaseTypesMixin",
-    ),
-    "FlextTestsFilesTypesMixin": (
-        "flext_tests._typings.files",
-        "FlextTestsFilesTypesMixin",
-    ),
-    "FlextTestsGuardsTypesMixin": (
-        "flext_tests._typings.guards",
-        "FlextTestsGuardsTypesMixin",
-    ),
-    "FlextTestsMatchersTypesMixin": (
-        "flext_tests._typings.matchers",
-        "FlextTestsMatchersTypesMixin",
-    ),
-    "base": "flext_tests._typings.base",
-    "files": "flext_tests._typings.files",
-    "guards": "flext_tests._typings.guards",
-    "matchers": "flext_tests._typings.matchers",
-}
-
-__all__ = [
-    "FlextTestsBaseTypesMixin",
-    "FlextTestsFilesTypesMixin",
-    "FlextTestsGuardsTypesMixin",
-    "FlextTestsMatchersTypesMixin",
-    "base",
-    "files",
-    "guards",
-    "matchers",
-]
+if TYPE_CHECKING:
+    from flext_tests._typings.base import (
+        FlextTestsBaseTypesMixin as FlextTestsBaseTypesMixin,
+    )
+    from flext_tests._typings.files import (
+        FlextTestsFilesTypesMixin as FlextTestsFilesTypesMixin,
+    )
+    from flext_tests._typings.guards import (
+        FlextTestsGuardsTypesMixin as FlextTestsGuardsTypesMixin,
+    )
+    from flext_tests._typings.make import (
+        FlextTestsMakeTypesMixin as FlextTestsMakeTypesMixin,
+    )
+    from flext_tests._typings.matchers import (
+        FlextTestsMatchersTypesMixin as FlextTestsMatchersTypesMixin,
+    )
+_LAZY_IMPORTS = build_lazy_import_map(
+    {
+        ".base": ("FlextTestsBaseTypesMixin",),
+        ".files": ("FlextTestsFilesTypesMixin",),
+        ".guards": ("FlextTestsGuardsTypesMixin",),
+        ".make": ("FlextTestsMakeTypesMixin",),
+        ".matchers": ("FlextTestsMatchersTypesMixin",),
+    },
+)
 
 
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
+install_lazy_exports(
+    __name__,
+    globals(),
+    _LAZY_IMPORTS,
+    publish_all=False,
+)

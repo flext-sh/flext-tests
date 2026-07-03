@@ -28,7 +28,7 @@ jobs:
           python-version: "3.13"
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@e58605a9b6da7c637471fab8847a5e5a6b8df081 # v5
         with:
           enable-cache: true
 
@@ -44,6 +44,6 @@ jobs:
         continue-on-error: true
         run: make test
 
-      - name: Validate (advisory)
+      - name: Val (advisory)
         continue-on-error: true
-        run: make validate
+        run: make val

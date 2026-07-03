@@ -19,7 +19,7 @@ This section is generated from public exports and real docstrings.
 
 ## Surface Summary
 
-- Primary facades: `FlextTestsConstants`, `FlextTestsDocker`, `FlextTestsDomains`, `FlextTestsFiles`, `FlextTestsModels`, `FlextTestsProtocols` (+3 more)
-- Generated module pages: `10`
+- Primary facades: _none_
+- Generated module pages: `11`
 
 - [Back to project docs](../index.md)

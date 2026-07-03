@@ -8,18 +8,21 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping, MutableSequence, Sequence
+from collections.abc import (
+    Callable,
+    MutableSequence,
+)
 from pathlib import Path
-from typing import Annotated
-
-from pydantic import Field
+from typing import ClassVar
 
 from flext_core import r
-from flext_tests import c, m, t
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
-class FlextTestsValidatorModels(m):
-    """Models for FLEXT architecture validation - extends m.
+class FlextTestsValidatorModels:
+    """Models for FLEXT architecture validation.
 
     Uses c.Tests.Validator for constants (Severity, Rules, Defaults, Approved patterns).
     """
@@ -33,14 +36,14 @@ class FlextTestsValidatorModels(m):
             @staticmethod
             def run_scan(
                 *,
-                files: Sequence[Path],
-                approved_exceptions: Mapping[str, t.StrSequence] | None,
+                files: t.SequenceOf[Path],
+                approved_exceptions: t.MappingKV[str, t.StrSequence] | None,
                 validator_name: str,
                 scan_file: Callable[
-                    [Path, Mapping[str, t.StrSequence]],
-                    Sequence[m.Tests.Violation],
+                    [Path, t.MappingKV[str, t.StrSequence]],
+                    t.SequenceOf[m.Tests.Violation],
                 ],
-            ) -> r[m.Tests.ScanResult]:
+            ) -> p.Result[m.Tests.ScanResult]:
                 violations: MutableSequence[m.Tests.Violation] = []
                 approved = approved_exceptions or {}
                 for file_path in files:
@@ -53,45 +56,39 @@ class FlextTestsValidatorModels(m):
                     ),
                 )
 
-        class ScanConfig(m.Value):
-            """Configuration for validation scan."""
+        class ScannerMixin:
+            """MRO mixin: validator classes inherit ``scan(...)`` for free.
 
-            target_path: Path
-            include_patterns: Annotated[
-                t.StrSequence,
-                Field(
-                    description="Glob patterns defining files that should be scanned for violations.",
-                    title="Include Patterns",
-                    examples=[["src/**/*.py", "tests/**/*.py"]],
-                ),
-            ] = Field(
-                default_factory=lambda: list(
-                    c.Tests.VALIDATOR_INCLUDE_PATTERNS,
+            Each consumer declares ``_VALIDATOR_KEY`` (constants key from
+            ``c.Tests.VALIDATOR_*_KEY``) and a ``_scan_file`` classmethod;
+            the mixin's ``scan`` delegates to ``ScanCommon.run_scan``.
+            Eliminates 22 LOC × N validators of identical scaffolding.
+            """
+
+            _VALIDATOR_KEY: ClassVar[str]
+
+            @classmethod
+            def _scan_file(
+                cls,
+                file_path: Path,
+                approved: t.MappingKV[str, t.StrSequence],
+            ) -> t.SequenceOf[m.Tests.Violation]:
+                """Subclass MUST override: scan one file and yield violations."""
+                raise NotImplementedError
+
+            @classmethod
+            def scan(
+                cls,
+                files: t.SequenceOf[Path],
+                approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
+            ) -> p.Result[m.Tests.ScanResult]:
+                """Scan files for violations using the consumer's ``_scan_file``."""
+                return FlextTestsValidatorModels.Tests.ScanCommon.run_scan(
+                    files=files,
+                    approved_exceptions=approved_exceptions,
+                    validator_name=cls._VALIDATOR_KEY,
+                    scan_file=cls._scan_file,
                 )
-            )
-            exclude_patterns: Annotated[
-                t.StrSequence,
-                Field(
-                    description="Glob patterns defining files that should be excluded from scan input.",
-                    title="Exclude Patterns",
-                    examples=[["**/__pycache__/**", "**/.venv/**"]],
-                ),
-            ] = Field(
-                default_factory=lambda: list(
-                    c.Tests.VALIDATOR_EXCLUDE_PATTERNS,
-                )
-            )
-            approved_exceptions: Annotated[
-                Mapping[str, t.StrSequence],
-                Field(
-                    description="Rule-to-path allowlist for known and explicitly approved exceptions.",
-                    title="Approved Exceptions",
-                    examples=[{"RULE_001": ["tests/fixtures/generated.py"]}],
-                ),
-            ] = Field(default_factory=dict)
 
 
-# Short alias
-vm = FlextTestsValidatorModels
-
-__all__ = ["FlextTestsValidatorModels", "vm"]
+__all__: list[str] = ["FlextTestsValidatorModels"]

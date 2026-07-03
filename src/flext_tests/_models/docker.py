@@ -7,84 +7,108 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
-from typing import override
+from typing import Annotated
 
-from flext_core import FlextModels
+from flext_infra import m, u
 from flext_tests import c, t
 
 
 class FlextTestsDockerModelsMixin:
-    class ContainerInfo(FlextModels.Value):
+    class ContainerConfig(m.Value):
+        """Resolved Docker target configuration used by the public DSL."""
+
+        container_name: Annotated[
+            str | None,
+            u.Field(description="Optional managed container name for inspection."),
+        ] = None
+        compose_file: Annotated[
+            Path | None,
+            u.Field(description="Resolved docker-compose file path."),
+        ] = None
+        service: Annotated[
+            str,
+            u.Field(description="Compose service name to start."),
+        ] = ""
+        host: Annotated[
+            str,
+            u.Field(min_length=1, description="Host used for readiness checks."),
+        ] = c.LOCALHOST
+        port: Annotated[
+            int | None,
+            u.Field(description="Optional host port used for readiness checks."),
+        ] = None
+        startup_timeout: Annotated[
+            int,
+            u.Field(ge=1, description="Maximum wait time for readiness checks."),
+        ] = 30
+        force_recreate: Annotated[
+            bool,
+            u.Field(description="Whether execute should recreate the target stack."),
+        ] = False
+
+    class ContainerInfo(m.Value):
         """Container information model."""
 
-        name: str
-        status: c.Tests.ContainerStatus
-        ports: t.StrMapping
-        image: str
-        container_id: str = ""
+        name: Annotated[
+            str,
+            u.Field(min_length=1, description="Container name."),
+        ]
+        status: Annotated[
+            c.Tests.ContainerStatus,
+            u.Field(description="Runtime lifecycle status."),
+        ]
+        ports: Annotated[
+            t.StrMapping,
+            u.Field(description="Port mapping (internal → external)."),
+        ]
+        image: Annotated[
+            str,
+            u.Field(min_length=1, description="Source image tag."),
+        ]
+        container_id: Annotated[
+            str,
+            u.Field(description="Docker-assigned container identifier."),
+        ] = ""
 
-        @override
-        def model_post_init(self, __context: t.Container | None, /) -> None:
-            """Validate container info after initialization."""
-            super().model_post_init(__context)
-            if not self.name:
-                msg = "Container name cannot be empty"
-                raise ValueError(msg)
-            if not self.image:
-                msg = "Container image cannot be empty"
-                raise ValueError(msg)
+    class User(m.Value):
+        """Test user model - immutable value object."""
 
-    class ContainerConfig(FlextModels.Value):
-        """Container configuration model."""
+        id: Annotated[str, u.Field(description="Opaque user identifier.")]
+        unique_id: Annotated[
+            str | None,
+            u.Field(description="Optional unique user identifier."),
+        ] = None
+        name: Annotated[str, u.Field(description="Display name.")]
+        email: Annotated[str, u.Field(description="Primary email address.")]
+        active: Annotated[
+            bool,
+            u.Field(description="True when the account is active."),
+        ] = True
 
-        compose_file: Path
-        service: str
-        port: int
+    class Config(m.Value):
+        """Test configuration model - immutable value object."""
 
-        @override
-        def model_post_init(self, __context: t.Container | None, /) -> None:
-            """Validate container config after initialization."""
-            super().model_post_init(__context)
-            if not self.compose_file.exists():
-                msg = f"Compose file not found: {self.compose_file}"
-                raise ValueError(msg)
-            if not self.service:
-                msg = "Service name cannot be empty"
-                raise ValueError(msg)
-            if not (c.DEFAULT_RETRY_DELAY_SECONDS <= self.port <= c.MAX_PORT):
-                msg = f"Port {self.port} out of valid range"
-                raise ValueError(msg)
-
-    class ContainerState(FlextModels.Value):
-        """Container state tracking model."""
-
-        container_name: str
-        is_dirty: bool
-        worker_id: str
-        last_updated: str | None = None
-
-    class User(FlextModels.Value):
-        """Test user model - immutable value t.NormalizedValue."""
-
-        id: str
-        name: str
-        email: str
-        active: bool = True
-
-    class Config(FlextModels.Value):
-        """Test configuration model - immutable value t.NormalizedValue."""
-
-        service_type: str = "api"
-        environment: str = "test"
-        debug: bool = True
-        log_level: str = "DEBUG"
-        timeout: int = 30
-        max_retries: int = 3
-
-    class Service(FlextModels.Value):
-        """Test service model - immutable value t.NormalizedValue."""
-
-        id: str
-        type: str = "api"
-        name: str = ""
-        status: str = "active"
+        service_type: Annotated[
+            str,
+            u.Field(description="Service kind under test."),
+        ] = "api"
+        environment: Annotated[
+            str,
+            u.Field(description="Target environment label."),
+        ] = "test"
+        debug: Annotated[
+            bool,
+            u.Field(description="Enable verbose debug output."),
+        ] = True
+        log_level: Annotated[
+            str,
+            u.Field(description="Logging level name."),
+        ] = "DEBUG"
+        timeout: Annotated[
+            int,
+            u.Field(description="Request timeout in seconds."),
+        ] = 30
+        max_retries: Annotated[
+            int,
+            u.Field(description="Retry budget on transient failure."),
+        ] = 3

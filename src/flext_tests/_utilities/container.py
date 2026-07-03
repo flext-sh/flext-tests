@@ -30,10 +30,10 @@ class FlextTestsContainerHelpersUtilitiesMixin:
             count[0] += 1
             return return_value
 
-        def get_count() -> int:
+        def count_value() -> int:
             return count[0]
 
-        return (factory, get_count)
+        return (factory, count_value)
 
     @staticmethod
     def create_factory[TFactory](

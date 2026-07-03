@@ -1,31 +1,26 @@
-# AUTO-GENERATED FILE — DO NOT EDIT MANUALLY.
-# Regenerate with: make gen
-#
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Protocols package."""
 
 from __future__ import annotations
 
-import typing as _t
+from typing import TYPE_CHECKING
 
-from flext_core.lazy import install_lazy_exports
+from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
-if _t.TYPE_CHECKING:
-    import flext_tests._protocols.valuefactory as _flext_tests__protocols_valuefactory
-
-    valuefactory = _flext_tests__protocols_valuefactory
-    from flext_tests._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
-_LAZY_IMPORTS = {
-    "FlextTestsValueFactoryProtocolsMixin": (
-        "flext_tests._protocols.valuefactory",
-        "FlextTestsValueFactoryProtocolsMixin",
-    ),
-    "valuefactory": "flext_tests._protocols.valuefactory",
-}
-
-__all__ = [
-    "FlextTestsValueFactoryProtocolsMixin",
-    "valuefactory",
-]
+if TYPE_CHECKING:
+    from flext_tests._protocols.valuefactory import (
+        FlextTestsValueFactoryProtocolsMixin as FlextTestsValueFactoryProtocolsMixin,
+    )
+_LAZY_IMPORTS = build_lazy_import_map(
+    {
+        ".valuefactory": ("FlextTestsValueFactoryProtocolsMixin",),
+    },
+)
 
 
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
+install_lazy_exports(
+    __name__,
+    globals(),
+    _LAZY_IMPORTS,
+    publish_all=False,
+)

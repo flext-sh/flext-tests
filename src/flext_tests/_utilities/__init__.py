@@ -1,281 +1,194 @@
-# AUTO-GENERATED FILE — DO NOT EDIT MANUALLY.
-# Regenerate with: make gen
-#
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Utilities package."""
 
 from __future__ import annotations
 
-import typing as _t
+from typing import TYPE_CHECKING
 
-from flext_core.lazy import install_lazy_exports
+from flext_core.lazy import (
+    build_lazy_import_map,
+    install_lazy_exports,
+    merge_lazy_imports,
+)
 
-if _t.TYPE_CHECKING:
-    import flext_tests._utilities.assertions as _flext_tests__utilities_assertions
-
-    assertions = _flext_tests__utilities_assertions
-    import flext_tests._utilities.badobjects as _flext_tests__utilities_badobjects
-    from flext_tests._utilities.assertions import FlextTestsAssertionsUtilitiesMixin
-
-    badobjects = _flext_tests__utilities_badobjects
-    import flext_tests._utilities.config as _flext_tests__utilities_config
-    from flext_tests._utilities.badobjects import FlextTestsBadObjectsUtilitiesMixin
-
-    config = _flext_tests__utilities_config
-    import flext_tests._utilities.constants as _flext_tests__utilities_constants
-    from flext_tests._utilities.config import FlextTestsConfigHelpersUtilitiesMixin
-
-    constants = _flext_tests__utilities_constants
-    import flext_tests._utilities.container as _flext_tests__utilities_container
-    from flext_tests._utilities.constants import (
-        FlextTestsConstantsHelpersUtilitiesMixin,
+if TYPE_CHECKING:
+    from flext_tests._utilities._files._assertions import (
+        FlextTestsFilesAssertionsMixin as FlextTestsFilesAssertionsMixin,
     )
-
-    container = _flext_tests__utilities_container
-    import flext_tests._utilities.context as _flext_tests__utilities_context
+    from flext_tests._utilities._files._batch import (
+        FlextTestsFilesBatchMixin as FlextTestsFilesBatchMixin,
+    )
+    from flext_tests._utilities._files._comparison_parts.comparison_part_02 import (
+        FlextTestsFilesComparisonMixin as FlextTestsFilesComparisonMixin,
+    )
+    from flext_tests._utilities._files._contexts import (
+        FlextTestsFilesContextsMixin as FlextTestsFilesContextsMixin,
+    )
+    from flext_tests._utilities._files._creation_parts.creation_part_03 import (
+        FlextTestsFilesCreationMixin as FlextTestsFilesCreationMixin,
+    )
+    from flext_tests._utilities._files._info import (
+        FlextTestsFilesInfoMixin as FlextTestsFilesInfoMixin,
+    )
+    from flext_tests._utilities._files._lifecycle import (
+        FlextTestsFilesLifecycleMixin as FlextTestsFilesLifecycleMixin,
+    )
+    from flext_tests._utilities._files._reading import (
+        FlextTestsFilesReadingMixin as FlextTestsFilesReadingMixin,
+    )
+    from flext_tests._utilities._make_parts.make_contract_part_02 import (
+        FlextTestsMakeContractUtilitiesMixin as FlextTestsMakeContractUtilitiesMixin,
+    )
+    from flext_tests._utilities._make_parts.make_parsing_part_02 import (
+        FlextTestsMakeParsingUtilitiesMixin as FlextTestsMakeParsingUtilitiesMixin,
+    )
+    from flext_tests._utilities._make_parts.make_registry_part_03 import (
+        FlextTestsMakeRegistryUtilitiesMixin as FlextTestsMakeRegistryUtilitiesMixin,
+    )
+    from flext_tests._utilities._make_parts.make_rendering_part_02 import (
+        FlextTestsMakeRenderingUtilitiesMixin as FlextTestsMakeRenderingUtilitiesMixin,
+    )
+    from flext_tests._utilities._matchers._assertions import (
+        FlextTestsMatchersAssertionsMixin as FlextTestsMatchersAssertionsMixin,
+    )
+    from flext_tests._utilities._matchers._containment import (
+        FlextTestsMatchersContainmentMixin as FlextTestsMatchersContainmentMixin,
+    )
+    from flext_tests._utilities._matchers._result_parts.result_part_03 import (
+        FlextTestsMatchersResultMixin as FlextTestsMatchersResultMixin,
+    )
+    from flext_tests._utilities._matchers._scope import (
+        FlextTestsMatchersScopeMixin as FlextTestsMatchersScopeMixin,
+    )
+    from flext_tests._utilities._matchers._that_parts.that_part_06 import (
+        FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixin,
+    )
+    from flext_tests._utilities._matchers._typeguards import (
+        FlextTestsMatchersTypeGuardsMixin as FlextTestsMatchersTypeGuardsMixin,
+    )
     from flext_tests._utilities.container import (
-        FlextTestsContainerHelpersUtilitiesMixin,
+        FlextTestsContainerHelpersUtilitiesMixin as FlextTestsContainerHelpersUtilitiesMixin,
     )
-
-    context = _flext_tests__utilities_context
-    import flext_tests._utilities.deepmatch as _flext_tests__utilities_deepmatch
-    from flext_tests._utilities.context import FlextTestsContextHelpersUtilitiesMixin
-
-    deepmatch = _flext_tests__utilities_deepmatch
-    import flext_tests._utilities.domain as _flext_tests__utilities_domain
-    from flext_tests._utilities.deepmatch import FlextTestsDeepMatchUtilitiesMixin
-
-    domain = _flext_tests__utilities_domain
-    import flext_tests._utilities.exception as _flext_tests__utilities_exception
-    from flext_tests._utilities.domain import FlextTestsDomainHelpersUtilitiesMixin
-
-    exception = _flext_tests__utilities_exception
-    import flext_tests._utilities.factory as _flext_tests__utilities_factory
-    from flext_tests._utilities.exception import (
-        FlextTestsExceptionHelpersUtilitiesMixin,
+    from flext_tests._utilities.files import (
+        FlextTestsFilesUtilitiesMixin as FlextTestsFilesUtilitiesMixin,
     )
-
-    factory = _flext_tests__utilities_factory
-    import flext_tests._utilities.files as _flext_tests__utilities_files
-    from flext_tests._utilities.factory import FlextTestsFactoryUtilitiesMixin
-
-    files = _flext_tests__utilities_files
-    import flext_tests._utilities.generic as _flext_tests__utilities_generic
-    from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
-
-    generic = _flext_tests__utilities_generic
-    import flext_tests._utilities.handler as _flext_tests__utilities_handler
-    from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
-
-    handler = _flext_tests__utilities_handler
-    import flext_tests._utilities.length as _flext_tests__utilities_length
-    from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
-
-    length = _flext_tests__utilities_length
-    import flext_tests._utilities.matchers as _flext_tests__utilities_matchers
-    from flext_tests._utilities.length import FlextTestsLengthUtilitiesMixin
-
-    matchers = _flext_tests__utilities_matchers
-    import flext_tests._utilities.parser as _flext_tests__utilities_parser
-    from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
-
-    parser = _flext_tests__utilities_parser
-    import flext_tests._utilities.payload as _flext_tests__utilities_payload
-    from flext_tests._utilities.parser import FlextTestsParserHelpersUtilitiesMixin
-
-    payload = _flext_tests__utilities_payload
-    import flext_tests._utilities.registry as _flext_tests__utilities_registry
-    from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-
-    registry = _flext_tests__utilities_registry
-    import flext_tests._utilities.result as _flext_tests__utilities_result
-    from flext_tests._utilities.registry import FlextTestsRegistryHelpersUtilitiesMixin
-
-    result = _flext_tests__utilities_result
-    import flext_tests._utilities.testcase as _flext_tests__utilities_testcase
-    from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
-
-    testcase = _flext_tests__utilities_testcase
-    import flext_tests._utilities.testcontext as _flext_tests__utilities_testcontext
-    from flext_tests._utilities.testcase import FlextTestsTestCaseHelpersUtilitiesMixin
-
-    testcontext = _flext_tests__utilities_testcontext
-    import flext_tests._utilities.validation as _flext_tests__utilities_validation
-    from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
-
-    validation = _flext_tests__utilities_validation
-    import flext_tests._utilities.validator as _flext_tests__utilities_validator
-    from flext_tests._utilities.validation import FlextTestsValidationUtilitiesMixin
-
-    validator = _flext_tests__utilities_validator
-    from flext_tests._utilities.validator import FlextTestsValidatorUtilitiesMixin
-_LAZY_IMPORTS = {
-    "FlextTestsAssertionsUtilitiesMixin": (
-        "flext_tests._utilities.assertions",
-        "FlextTestsAssertionsUtilitiesMixin",
+    from flext_tests._utilities.fixtures_dsl import (
+        FlextTestsFixturesDSLMixin as FlextTestsFixturesDSLMixin,
+    )
+    from flext_tests._utilities.generic import (
+        FlextTestsGenericHelpersUtilitiesMixin as FlextTestsGenericHelpersUtilitiesMixin,
+    )
+    from flext_tests._utilities.handler import (
+        FlextTestsHandlerHelpersUtilitiesMixin as FlextTestsHandlerHelpersUtilitiesMixin,
+    )
+    from flext_tests._utilities.make import (
+        FlextTestsMakeUtilitiesMixin as FlextTestsMakeUtilitiesMixin,
+    )
+    from flext_tests._utilities.matchers import (
+        FlextTestsMatchersUtilities as FlextTestsMatchersUtilities,
+        tm as tm,
+    )
+    from flext_tests._utilities.payload import (
+        FlextTestsPayloadUtilities as FlextTestsPayloadUtilities,
+    )
+    from flext_tests._utilities.result import (
+        FlextTestsResultUtilitiesMixin as FlextTestsResultUtilitiesMixin,
+    )
+    from flext_tests._utilities.settings import (
+        FlextTestsConfigHelpersUtilitiesMixin as FlextTestsConfigHelpersUtilitiesMixin,
+    )
+    from flext_tests._utilities.testcontext import (
+        FlextTestsTestContextUtilitiesMixin as FlextTestsTestContextUtilitiesMixin,
+    )
+    from flext_tests._utilities.validator import (
+        FlextTestsValidatorUtilitiesMixin as FlextTestsValidatorUtilitiesMixin,
+    )
+_LAZY_IMPORTS = merge_lazy_imports(
+    (
+        "._files",
+        "._make_parts",
+        "._matchers",
     ),
-    "FlextTestsBadObjectsUtilitiesMixin": (
-        "flext_tests._utilities.badobjects",
-        "FlextTestsBadObjectsUtilitiesMixin",
+    build_lazy_import_map(
+        {
+            "._files": ("_files",),
+            "._files._assertions": ("FlextTestsFilesAssertionsMixin",),
+            "._files._batch": ("FlextTestsFilesBatchMixin",),
+            "._files._comparison_parts.comparison_part_02": (
+                "FlextTestsFilesComparisonMixin",
+            ),
+            "._files._contexts": ("FlextTestsFilesContextsMixin",),
+            "._files._creation_parts.creation_part_03": (
+                "FlextTestsFilesCreationMixin",
+            ),
+            "._files._info": ("FlextTestsFilesInfoMixin",),
+            "._files._lifecycle": ("FlextTestsFilesLifecycleMixin",),
+            "._files._reading": ("FlextTestsFilesReadingMixin",),
+            "._make_parts": ("_make_parts",),
+            "._make_parts.make_contract_part_02": (
+                "FlextTestsMakeContractUtilitiesMixin",
+            ),
+            "._make_parts.make_parsing_part_02": (
+                "FlextTestsMakeParsingUtilitiesMixin",
+            ),
+            "._make_parts.make_registry_part_03": (
+                "FlextTestsMakeRegistryUtilitiesMixin",
+            ),
+            "._make_parts.make_rendering_part_02": (
+                "FlextTestsMakeRenderingUtilitiesMixin",
+            ),
+            "._matchers": ("_matchers",),
+            "._matchers._assertions": ("FlextTestsMatchersAssertionsMixin",),
+            "._matchers._containment": ("FlextTestsMatchersContainmentMixin",),
+            "._matchers._result_parts.result_part_03": (
+                "FlextTestsMatchersResultMixin",
+            ),
+            "._matchers._scope": ("FlextTestsMatchersScopeMixin",),
+            "._matchers._that_parts.that_part_06": ("FlextTestsMatchersThatMixin",),
+            "._matchers._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
+            ".container": ("FlextTestsContainerHelpersUtilitiesMixin",),
+            ".files": ("FlextTestsFilesUtilitiesMixin",),
+            ".fixtures_dsl": ("FlextTestsFixturesDSLMixin",),
+            ".generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
+            ".handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
+            ".make": ("FlextTestsMakeUtilitiesMixin",),
+            ".matchers": (
+                "FlextTestsMatchersUtilities",
+                "tm",
+            ),
+            ".payload": ("FlextTestsPayloadUtilities",),
+            ".result": ("FlextTestsResultUtilitiesMixin",),
+            ".settings": ("FlextTestsConfigHelpersUtilitiesMixin",),
+            ".testcontext": ("FlextTestsTestContextUtilitiesMixin",),
+            ".validator": ("FlextTestsValidatorUtilitiesMixin",),
+        },
     ),
-    "FlextTestsConfigHelpersUtilitiesMixin": (
-        "flext_tests._utilities.config",
-        "FlextTestsConfigHelpersUtilitiesMixin",
+    exclude_names=(
+        "cleanup_submodule_namespace",
+        "install_lazy_exports",
+        "lazy_getattr",
+        "logger",
+        "merge_lazy_imports",
+        "output",
+        "output_reporting",
+        "pytest_addoption",
+        "pytest_collect_file",
+        "pytest_collection_modifyitems",
+        "pytest_configure",
+        "pytest_runtest_setup",
+        "pytest_runtest_teardown",
+        "pytest_sessionfinish",
+        "pytest_sessionstart",
+        "pytest_terminal_summary",
+        "pytest_warning_recorded",
     ),
-    "FlextTestsConstantsHelpersUtilitiesMixin": (
-        "flext_tests._utilities.constants",
-        "FlextTestsConstantsHelpersUtilitiesMixin",
-    ),
-    "FlextTestsContainerHelpersUtilitiesMixin": (
-        "flext_tests._utilities.container",
-        "FlextTestsContainerHelpersUtilitiesMixin",
-    ),
-    "FlextTestsContextHelpersUtilitiesMixin": (
-        "flext_tests._utilities.context",
-        "FlextTestsContextHelpersUtilitiesMixin",
-    ),
-    "FlextTestsDeepMatchUtilitiesMixin": (
-        "flext_tests._utilities.deepmatch",
-        "FlextTestsDeepMatchUtilitiesMixin",
-    ),
-    "FlextTestsDomainHelpersUtilitiesMixin": (
-        "flext_tests._utilities.domain",
-        "FlextTestsDomainHelpersUtilitiesMixin",
-    ),
-    "FlextTestsExceptionHelpersUtilitiesMixin": (
-        "flext_tests._utilities.exception",
-        "FlextTestsExceptionHelpersUtilitiesMixin",
-    ),
-    "FlextTestsFactoryUtilitiesMixin": (
-        "flext_tests._utilities.factory",
-        "FlextTestsFactoryUtilitiesMixin",
-    ),
-    "FlextTestsFilesUtilitiesMixin": (
-        "flext_tests._utilities.files",
-        "FlextTestsFilesUtilitiesMixin",
-    ),
-    "FlextTestsGenericHelpersUtilitiesMixin": (
-        "flext_tests._utilities.generic",
-        "FlextTestsGenericHelpersUtilitiesMixin",
-    ),
-    "FlextTestsHandlerHelpersUtilitiesMixin": (
-        "flext_tests._utilities.handler",
-        "FlextTestsHandlerHelpersUtilitiesMixin",
-    ),
-    "FlextTestsLengthUtilitiesMixin": (
-        "flext_tests._utilities.length",
-        "FlextTestsLengthUtilitiesMixin",
-    ),
-    "FlextTestsMatchersUtilities": (
-        "flext_tests._utilities.matchers",
-        "FlextTestsMatchersUtilities",
-    ),
-    "FlextTestsParserHelpersUtilitiesMixin": (
-        "flext_tests._utilities.parser",
-        "FlextTestsParserHelpersUtilitiesMixin",
-    ),
-    "FlextTestsPayloadUtilities": (
-        "flext_tests._utilities.payload",
-        "FlextTestsPayloadUtilities",
-    ),
-    "FlextTestsRegistryHelpersUtilitiesMixin": (
-        "flext_tests._utilities.registry",
-        "FlextTestsRegistryHelpersUtilitiesMixin",
-    ),
-    "FlextTestsResultUtilitiesMixin": (
-        "flext_tests._utilities.result",
-        "FlextTestsResultUtilitiesMixin",
-    ),
-    "FlextTestsTestCaseHelpersUtilitiesMixin": (
-        "flext_tests._utilities.testcase",
-        "FlextTestsTestCaseHelpersUtilitiesMixin",
-    ),
-    "FlextTestsTestContextUtilitiesMixin": (
-        "flext_tests._utilities.testcontext",
-        "FlextTestsTestContextUtilitiesMixin",
-    ),
-    "FlextTestsValidationUtilitiesMixin": (
-        "flext_tests._utilities.validation",
-        "FlextTestsValidationUtilitiesMixin",
-    ),
-    "FlextTestsValidatorUtilitiesMixin": (
-        "flext_tests._utilities.validator",
-        "FlextTestsValidatorUtilitiesMixin",
-    ),
-    "assertions": "flext_tests._utilities.assertions",
-    "badobjects": "flext_tests._utilities.badobjects",
-    "config": "flext_tests._utilities.config",
-    "constants": "flext_tests._utilities.constants",
-    "container": "flext_tests._utilities.container",
-    "context": "flext_tests._utilities.context",
-    "deepmatch": "flext_tests._utilities.deepmatch",
-    "domain": "flext_tests._utilities.domain",
-    "exception": "flext_tests._utilities.exception",
-    "factory": "flext_tests._utilities.factory",
-    "files": "flext_tests._utilities.files",
-    "generic": "flext_tests._utilities.generic",
-    "handler": "flext_tests._utilities.handler",
-    "length": "flext_tests._utilities.length",
-    "matchers": "flext_tests._utilities.matchers",
-    "parser": "flext_tests._utilities.parser",
-    "payload": "flext_tests._utilities.payload",
-    "registry": "flext_tests._utilities.registry",
-    "result": "flext_tests._utilities.result",
-    "testcase": "flext_tests._utilities.testcase",
-    "testcontext": "flext_tests._utilities.testcontext",
-    "tm": ("flext_tests._utilities.matchers", "tm"),
-    "validation": "flext_tests._utilities.validation",
-    "validator": "flext_tests._utilities.validator",
-}
-
-__all__ = [
-    "FlextTestsAssertionsUtilitiesMixin",
-    "FlextTestsBadObjectsUtilitiesMixin",
-    "FlextTestsConfigHelpersUtilitiesMixin",
-    "FlextTestsConstantsHelpersUtilitiesMixin",
-    "FlextTestsContainerHelpersUtilitiesMixin",
-    "FlextTestsContextHelpersUtilitiesMixin",
-    "FlextTestsDeepMatchUtilitiesMixin",
-    "FlextTestsDomainHelpersUtilitiesMixin",
-    "FlextTestsExceptionHelpersUtilitiesMixin",
-    "FlextTestsFactoryUtilitiesMixin",
-    "FlextTestsFilesUtilitiesMixin",
-    "FlextTestsGenericHelpersUtilitiesMixin",
-    "FlextTestsHandlerHelpersUtilitiesMixin",
-    "FlextTestsLengthUtilitiesMixin",
-    "FlextTestsMatchersUtilities",
-    "FlextTestsParserHelpersUtilitiesMixin",
-    "FlextTestsPayloadUtilities",
-    "FlextTestsRegistryHelpersUtilitiesMixin",
-    "FlextTestsResultUtilitiesMixin",
-    "FlextTestsTestCaseHelpersUtilitiesMixin",
-    "FlextTestsTestContextUtilitiesMixin",
-    "FlextTestsValidationUtilitiesMixin",
-    "FlextTestsValidatorUtilitiesMixin",
-    "assertions",
-    "badobjects",
-    "config",
-    "constants",
-    "container",
-    "context",
-    "deepmatch",
-    "domain",
-    "exception",
-    "factory",
-    "files",
-    "generic",
-    "handler",
-    "length",
-    "matchers",
-    "parser",
-    "payload",
-    "registry",
-    "result",
-    "testcase",
-    "testcontext",
-    "tm",
-    "validation",
-    "validator",
-]
+    module_name=__name__,
+)
 
 
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
+install_lazy_exports(
+    __name__,
+    globals(),
+    _LAZY_IMPORTS,
+    publish_all=False,
+)

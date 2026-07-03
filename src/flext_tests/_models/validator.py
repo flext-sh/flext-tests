@@ -6,30 +6,43 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Sequence
 from pathlib import Path
-from typing import Self
+from typing import Annotated, Self
 
-from pydantic import (
-    field_validator,
-)
-
-from flext_core import FlextModels
-from flext_tests import c
+from flext_infra import m, u
+from flext_tests import c, t
 
 
 class FlextTestsValidatorModelsMixin:
-    class Violation(FlextModels.Value):
+    class Violation(m.Value):
         """A detected architecture violation."""
 
-        file_path: Path
-        line_number: int
-        rule_id: str
-        severity: c.Tests.ValidatorSeverity
-        description: str
-        code_snippet: str = ""
+        file_path: Annotated[
+            Path,
+            u.Field(description="Path to the offending source file."),
+        ]
+        line_number: Annotated[
+            int,
+            u.Field(description="1-based line number of the violation."),
+        ]
+        rule_id: Annotated[
+            str,
+            u.Field(description="Stable identifier for the rule that fired."),
+        ]
+        severity: Annotated[
+            c.Tests.ValidatorSeverity,
+            u.Field(description="Severity level assigned by the rule."),
+        ]
+        description: Annotated[
+            str,
+            u.Field(description="Human-readable violation description."),
+        ]
+        code_snippet: Annotated[
+            str,
+            u.Field(description="Source excerpt surrounding the violation."),
+        ] = ""
 
-        @field_validator("severity", mode="before")
+        @u.field_validator("severity", mode="before")
         @classmethod
         def _coerce_severity(
             cls,
@@ -37,38 +50,34 @@ class FlextTestsValidatorModelsMixin:
         ) -> c.Tests.ValidatorSeverity:
             if isinstance(value, c.Tests.ValidatorSeverity):
                 return value
-            return c.Tests.ValidatorSeverity(str(value).upper())
+            return c.Tests.ValidatorSeverity(value.upper())
 
-        def format(self) -> str:
-            """Format violation as string."""
-            return c.Tests.VALIDATOR_MSG_VIOLATION_WITH_SNIPPET.format(
-                rule_id=self.rule_id,
-                description=self.description,
-                snippet=self.code_snippet or "(no snippet)",
-            )
-
-        def format_short(self) -> str:
-            """Format violation as short string."""
-            return c.Tests.VALIDATOR_MSG_VIOLATION.format(
-                rule_id=self.rule_id,
-                file=self.file_path.name,
-                line=self.line_number,
-            )
-
-    class ScanResult(FlextModels.Value):
+    class ScanResult(m.Value):
         """Result of a validation scan."""
 
-        validator_name: str
-        files_scanned: int
-        violations: Sequence[FlextTestsValidatorModelsMixin.Violation]
-        passed: bool
+        validator_name: Annotated[
+            str,
+            u.Field(description="Identifier of the validator that produced the scan."),
+        ]
+        files_scanned: Annotated[
+            int,
+            u.Field(description="Count of source files inspected by the validator."),
+        ]
+        violations: Annotated[
+            t.SequenceOf[FlextTestsValidatorModelsMixin.Violation],
+            u.Field(description="All violations detected during the scan."),
+        ]
+        passed: Annotated[
+            bool,
+            u.Field(description="True when the scan found no violations."),
+        ]
 
         @classmethod
         def create(
             cls,
             validator_name: str,
             files_scanned: int,
-            violations: Sequence[FlextTestsValidatorModelsMixin.Violation],
+            violations: t.SequenceOf[FlextTestsValidatorModelsMixin.Violation],
         ) -> Self:
             """Create a ScanResult from violations."""
             return cls(
@@ -77,3 +86,33 @@ class FlextTestsValidatorModelsMixin:
                 violations=violations,
                 passed=not violations,
             )
+
+    class EnforcementDispatcherConfig(m.Value):
+        """Resolved runtime configuration for the pytest enforcement dispatcher."""
+
+        active: Annotated[
+            bool,
+            u.Field(description="Whether the dispatcher is active for this session."),
+        ]
+        strict: Annotated[
+            bool,
+            u.Field(description="Promote runtime warnings to failures when true."),
+        ]
+        include: Annotated[
+            frozenset[str],
+            u.Field(description="Optional allow-list of enforcement rule IDs."),
+        ] = frozenset()
+        exclude: Annotated[
+            frozenset[str],
+            u.Field(description="Optional block-list of enforcement rule IDs."),
+        ] = frozenset()
+        workspace_root: Annotated[
+            Path | None,
+            u.Field(description="Resolved FLEXT workspace root for the session."),
+        ] = None
+        warning_counter: Annotated[
+            t.MutableIntMapping,
+            u.Field(
+                description="Captured runtime warning counts keyed by dotted category.",
+            ),
+        ] = u.Field(default_factory=dict)

@@ -8,12 +8,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import ast
-from collections.abc import Mapping, MutableSequence, Sequence
+from collections.abc import (
+    MutableSequence,
+)
 from pathlib import Path
 
-from flext_core import r
-from flext_tests import c, m, t, u
+from flext_tests import c, m, p, r, t, u
 
 
 class FlextValidatorLayer:
@@ -27,8 +27,8 @@ class FlextValidatorLayer:
         """Extract the final module name from an import path.
 
         Examples:
-            'flext_core.result' -> 'result'
-            'flext_core._models.domain' -> 'domain'
+            'flext_core' -> 'result'
+            'flext_core' -> 'domain'
             'result' -> 'result'
 
         """
@@ -36,34 +36,64 @@ class FlextValidatorLayer:
         return parts[-1]
 
     @classmethod
+    def _imported_modules(cls, line: str) -> t.StrSequence:
+        """Return imported module stems referenced by one import line."""
+        from_match = c.Tests.VALIDATOR_FROM_IMPORT_LINE_RE.match(line)
+        if from_match is not None and u.Tests.code_match(
+            line,
+            c.Tests.VALIDATOR_FROM_IMPORT_LINE_RE,
+        ):
+            module = from_match.group("module").lstrip(".")
+            return (cls._extract_module_name(module),) if module else ()
+
+        import_match = c.Tests.VALIDATOR_IMPORT_LINE_RE.match(line)
+        if import_match is None or not u.Tests.code_match(
+            line,
+            c.Tests.VALIDATOR_IMPORT_LINE_RE,
+        ):
+            return ()
+
+        modules: list[str] = []
+        for target in u.Tests.split_import_targets(import_match.group("modules")):
+            module = target.lstrip(".")
+            if module:
+                modules.append(cls._extract_module_name(module))
+        return tuple(modules)
+
+    @classmethod
     def _scan_file(
         cls,
         file_path: Path,
-        approved: Mapping[str, t.StrSequence],
+        approved: t.MappingKV[str, t.StrSequence],
         hierarchy: t.IntMapping,
-    ) -> Sequence[m.Tests.Violation]:
+    ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single file for layer violations."""
-        if u.Tests.is_approved("LAYER-001", file_path, approved):
+        if u.Tests.approved("LAYER-001", file_path, approved):
             return []
         violations: MutableSequence[m.Tests.Violation] = []
         current_module = file_path.stem
         current_layer = hierarchy.get(current_module)
         if current_layer is None:
             return violations
-        try:
-            content = file_path.read_text(encoding="utf-8")
-            tree = ast.parse(content, filename=str(file_path))
-        except (SyntaxError, UnicodeDecodeError, OSError):
-            return violations
-        lines = content.splitlines()
-        for node in ast.walk(tree):
-            if isinstance(node, ast.ImportFrom) and node.module:
-                imported_module = cls._extract_module_name(node.module)
+        read = u.Cli.files_read_text(file_path)
+        if read.failure:
+            return [
+                u.Tests.create_violation(
+                    file_path,
+                    0,
+                    "LAYER-UNREADABLE",
+                    (),
+                    read.error or "could not read file",
+                ),
+            ]
+        lines = read.value.splitlines()
+        for line_number, line in enumerate(lines, start=1):
+            for imported_module in cls._imported_modules(line):
                 imported_layer = hierarchy.get(imported_module)
                 if imported_layer is not None and imported_layer > current_layer:
                     violation = u.Tests.create_violation(
                         file_path,
-                        node.lineno,
+                        line_number,
                         "LAYER-001",
                         lines,
                         c.Tests.VALIDATOR_MSG_LAYER_VIOLATION.format(
@@ -79,10 +109,10 @@ class FlextValidatorLayer:
     @classmethod
     def scan(
         cls,
-        files: Sequence[Path],
-        approved_exceptions: Mapping[str, t.StrSequence] | None = None,
+        files: t.SequenceOf[Path],
+        approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
         layer_hierarchy: t.IntMapping | None = None,
-    ) -> r[m.Tests.ScanResult]:
+    ) -> p.Result[m.Tests.ScanResult]:
         """Scan files for layer violations.
 
         Args:
@@ -96,7 +126,7 @@ class FlextValidatorLayer:
         """
         violations: MutableSequence[m.Tests.Violation] = []
         approved = approved_exceptions or {}
-        hierarchy = layer_hierarchy or c.Tests.get_layer_dict()
+        hierarchy = layer_hierarchy or c.Tests.layer_dict()
         for file_path in files:
             file_violations = cls._scan_file(file_path, approved, hierarchy)
             violations.extend(file_violations)
@@ -109,4 +139,4 @@ class FlextValidatorLayer:
         )
 
 
-__all__ = ["FlextValidatorLayer"]
+__all__: list[str] = ["FlextValidatorLayer"]

@@ -4,14 +4,11 @@ from __future__ import annotations
 
 from collections.abc import (
     MutableSequence,
-    Sequence,
 )
 
-from flext_tests import (
-    p,
-    r,
-    t,
-)
+from flext_core import r
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
 class FlextTestsGenericHelpersUtilitiesMixin:
@@ -19,7 +16,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
 
     @staticmethod
     def assert_result_chain[T](
-        results: Sequence[r[T]],
+        results: t.SequenceOf[p.Result[T]],
         expected_successes: int | None = None,
         expected_failures: int | None = None,
         expected_success_count: int | None = None,
@@ -40,10 +37,18 @@ class FlextTestsGenericHelpersUtilitiesMixin:
             AssertionError: If counts don't match
 
         """
-        successes_expected = expected_successes or expected_success_count
-        failures_expected = expected_failures or expected_failure_count
-        successes = sum(1 for res in results if res.is_success)
-        failures = sum(1 for res in results if res.is_failure)
+        successes_expected = (
+            expected_successes
+            if expected_successes is not None
+            else expected_success_count
+        )
+        failures_expected = (
+            expected_failures
+            if expected_failures is not None
+            else expected_failure_count
+        )
+        successes = sum(1 for res in results if res.success)
+        failures = sum(1 for res in results if res.failure)
         if successes_expected is not None:
             assert successes == successes_expected, (
                 f"Expected {successes_expected} successes, got {successes}"
@@ -54,7 +59,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
             )
         if first_failure_index is not None:
             actual_first_failure = next(
-                (i for i, res in enumerate(results) if res.is_failure),
+                (i for i, res in enumerate(results) if res.failure),
                 None,
             )
             assert actual_first_failure == first_failure_index, (
@@ -62,7 +67,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
             )
         elif failures == 0:
             actual_first_failure = next(
-                (i for i, res in enumerate(results) if res.is_failure),
+                (i for i, res in enumerate(results) if res.failure),
                 None,
             )
             assert actual_first_failure is None, (
@@ -71,13 +76,13 @@ class FlextTestsGenericHelpersUtilitiesMixin:
 
     @staticmethod
     def create_parametrized_cases(
-        success_values: Sequence[t.Tests.TestobjectSerializable],
+        success_values: t.SequenceOf[t.Tests.TestobjectSerializable],
         failure_errors: t.StrSequence | None = None,
         *,
-        error_codes: Sequence[str | None] | None = None,
-    ) -> Sequence[
+        error_codes: t.SequenceOf[str | None] | None = None,
+    ) -> t.SequenceOf[
         tuple[
-            r[t.Tests.TestobjectSerializable],
+            p.Result[t.Tests.TestobjectSerializable],
             bool,
             t.Tests.TestobjectSerializable | None,
             str | None,
@@ -92,12 +97,12 @@ class FlextTestsGenericHelpersUtilitiesMixin:
 
         Returns:
             r[TEntity]: Result containing created entity or error
-            List of tuples (result, is_success, value, error)
+            List of tuples (result, success, value, error)
 
         """
         cases: MutableSequence[
             tuple[
-                r[t.Tests.TestobjectSerializable],
+                p.Result[t.Tests.TestobjectSerializable],
                 bool,
                 t.Tests.TestobjectSerializable | None,
                 str | None,
@@ -107,7 +112,9 @@ class FlextTestsGenericHelpersUtilitiesMixin:
             result = r[t.Tests.TestobjectSerializable].ok(value)
             cases.append((result, True, value, None))
         if failure_errors:
-            codes = error_codes or [None] * len(failure_errors)
+            codes = (
+                error_codes if error_codes is not None else [None] * len(failure_errors)
+            )
             for i, error in enumerate(failure_errors):
                 error_code = codes[i] if i < len(codes) else None
                 result = r[t.Tests.TestobjectSerializable].fail(
@@ -122,7 +129,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
         value: T | None,
         error_on_none: str = "Value cannot be None",
         default_on_none: T | None = None,
-    ) -> r[T]:
+    ) -> p.Result[T]:
         """Create result from value, failing if None (unless default).
 
         Args:
@@ -140,27 +147,3 @@ class FlextTestsGenericHelpersUtilitiesMixin:
                 return r[T].ok(default_on_none)
             return r[T].fail(error_on_none)
         return r[T].ok(value)
-
-    @staticmethod
-    def validate_model_attributes(
-        model: p.Model,
-        required_attrs: t.StrSequence,
-        optional_attrs: t.StrSequence | None = None,
-    ) -> r[bool]:
-        """Validate model has required attributes.
-
-        Args:
-            model: Model t.NormalizedValue to validate
-            required_attrs: List of required attribute names
-            optional_attrs: Optional list of optional attribute names
-
-        Returns:
-            r[TEntity]: Result containing created entity or error
-            r with True if all required attrs exist
-
-        """
-        _ = optional_attrs
-        missing = [attr for attr in required_attrs if not hasattr(model, attr)]
-        if missing:
-            return r[bool].fail(f"Missing required attributes: {missing}")
-        return r[bool].ok(value=True)

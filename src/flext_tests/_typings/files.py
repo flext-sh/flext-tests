@@ -6,31 +6,18 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
-
-from pydantic import BaseModel
-
-from flext_core import FlextResult, FlextTypes
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_infra.models import m
+from flext_infra.typings import t
+from flext_tests._typings.base import FlextTestsBaseTypesMixin as tb
 
 
 class FlextTestsFilesTypesMixin:
     type BatchFiles = (
-        Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        t.MappingKV[str, tb.TestobjectSerializable]
+        | t.SequenceOf[tb.TestobjectSerializable]
     )
-    type FileContentPlain = (
-        str
-        | bytes
-        | FlextTypes.ConfigMap
-        | Sequence[FlextTypes.StrSequence]
-        | BaseModel
+    type ReadContent = str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence]
+    type FileContentStructured = (
+        t.MappingKV[str, tb.TestobjectSerializable] | m.BaseModel
     )
-    type FileInput = (
-        FileContentPlain
-        | FlextResult[str]
-        | FlextResult[bytes]
-        | FlextResult[FlextTypes.ConfigMap]
-        | FlextResult[Sequence[FlextTypes.StrSequence]]
-        | FlextResult[BaseModel]
-    )
+    type FileContentPlain = ReadContent | FileContentStructured

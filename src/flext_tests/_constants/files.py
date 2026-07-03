@@ -9,11 +9,10 @@ from __future__ import annotations
 from enum import StrEnum, unique
 from typing import Final
 
-from flext_cli import c as _cli_c
-from flext_tests import t
+from flext_tests import c, t
 
 
-class FlextTestsFilesConstantsMixin:
+class FlextTestsConstantsFiles:
     """File management constants mixin for test infrastructure."""
 
     @unique
@@ -27,6 +26,15 @@ class FlextTestsFilesConstantsMixin:
         YAML = "yaml"
         CSV = "csv"
         UNKNOWN = "unknown"
+
+    type FileFormat = Format
+    FILE_FORMAT_AUTO: Final[FileFormat] = Format.AUTO
+    FILE_FORMAT_TEXT: Final[FileFormat] = Format.TEXT
+    FILE_FORMAT_BIN: Final[FileFormat] = Format.BIN
+    FILE_FORMAT_JSON: Final[FileFormat] = Format.JSON
+    FILE_FORMAT_YAML: Final[FileFormat] = Format.YAML
+    FILE_FORMAT_CSV: Final[FileFormat] = Format.CSV
+    FILE_FORMAT_UNKNOWN: Final[FileFormat] = Format.UNKNOWN
 
     @unique
     class CompareMode(StrEnum):
@@ -53,6 +61,9 @@ class FlextTestsFilesConstantsMixin:
         SKIP = "skip"
         COLLECT = "collect"
 
+    KNOWN_FORMATS: Final[frozenset[str]] = frozenset(
+        {"auto", "text", "bin", "json", "yaml", "csv"},
+    )
     EXT_TO_FMT: Final[t.StrMapping] = {
         ".txt": "text",
         ".log": "text",
@@ -67,7 +78,7 @@ class FlextTestsFilesConstantsMixin:
         ".tsv": "csv",
     }
     DEFAULT_FILENAME: Final[str] = "file"
-    DEFAULT_ENCODING: Final[str] = _cli_c.DEFAULT_ENCODING
+    DEFAULT_ENCODING: Final[str] = c.DEFAULT_ENCODING
     DEFAULT_BINARY_ENCODING: Final[str] = "binary"
     DEFAULT_JSON_INDENT: Final[int] = 2
     DEFAULT_CSV_DELIMITER: Final[str] = ","
@@ -76,7 +87,7 @@ class FlextTestsFilesConstantsMixin:
     PERMISSION_WRITABLE_FILE: Final[int] = 420
     PERMISSION_WRITABLE_DIR: Final[int] = 493
     HASH_CHUNK_SIZE: Final[int] = 8192
-    SIZE_UNITS: Final[tuple[str, ...]] = ("B", "KB", "MB", "GB", "TB", "PB")
+    SIZE_UNITS: Final[t.StrSequence] = ("B", "KB", "MB", "GB", "TB", "PB")
     SIZE_THRESHOLD: Final[int] = 1024
     ERROR_FILE_NOT_FOUND: Final[str] = "File not found: {path}"
     ERROR_INVALID_JSON: Final[str] = "Invalid JSON: {error}"
@@ -104,7 +115,7 @@ class FlextTestsFilesConstantsMixin:
         return f"{size:.1f} PB"
 
     @classmethod
-    def get_format(cls, extension: str) -> str:
+    def format_for_extension(cls, extension: str) -> str:
         """Get format from file extension.
 
         Args:
@@ -114,4 +125,5 @@ class FlextTestsFilesConstantsMixin:
             Format string or "text" as default.
 
         """
-        return cls.EXT_TO_FMT.get(extension.lower(), "text")
+        format_name = cls.EXT_TO_FMT.get(extension.lower())
+        return format_name if isinstance(format_name, str) else "text"

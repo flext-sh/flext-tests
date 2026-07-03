@@ -6,19 +6,24 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_core import FlextModels
+from typing import Annotated
+
+from flext_infra import m
 from flext_tests import t
 
 
 class FlextTestsBaseModelsMixin:
-    class Entity(FlextModels.Entity):
+    class Entity(m.Entity):
         """Factory entity class for tests."""
 
-        name: str = ""
-        value: t.Tests.TestobjectSerializable = None
+        name: Annotated[str, m.Field(description="Entity display name.")] = ""
+        value: Annotated[
+            t.Tests.TestobjectSerializable,
+            m.Field(description="Arbitrary serializable payload."),
+        ] = None
 
-    class Value(FlextModels.Value):
-        """Factory value t.NormalizedValue class for tests."""
+    class Value(m.Value):
+        """Factory value object class for tests."""
 
-        data: str = ""
-        count: int = 0
+        data: Annotated[str, m.Field(description="Payload data string.")] = ""
+        count: Annotated[int, m.Field(description="Occurrence counter.")] = 0

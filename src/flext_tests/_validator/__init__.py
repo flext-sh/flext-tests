@@ -1,87 +1,90 @@
-# AUTO-GENERATED FILE — DO NOT EDIT MANUALLY.
-# Regenerate with: make gen
-#
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Validator package."""
 
 from __future__ import annotations
 
-import typing as _t
+from typing import TYPE_CHECKING
 
-from flext_core.lazy import install_lazy_exports
+from flext_core.lazy import (
+    build_lazy_import_map,
+    install_lazy_exports,
+    merge_lazy_imports,
+)
 
-if _t.TYPE_CHECKING:
-    import flext_tests._validator.bypass as _flext_tests__validator_bypass
-
-    bypass = _flext_tests__validator_bypass
-    import flext_tests._validator.imports as _flext_tests__validator_imports
-    from flext_tests._validator.bypass import FlextValidatorBypass
-
-    imports = _flext_tests__validator_imports
-    import flext_tests._validator.layer as _flext_tests__validator_layer
-    from flext_tests._validator.imports import FlextValidatorImports
-
-    layer = _flext_tests__validator_layer
-    import flext_tests._validator.models as _flext_tests__validator_models
-    from flext_tests._validator.layer import FlextValidatorLayer
-
-    models = _flext_tests__validator_models
-    import flext_tests._validator.settings as _flext_tests__validator_settings
-    from flext_tests._validator.models import FlextTestsValidatorModels, vm
-
-    settings = _flext_tests__validator_settings
-    import flext_tests._validator.tests as _flext_tests__validator_tests
-    from flext_tests._validator.settings import FlextValidatorSettings
-
-    tests = _flext_tests__validator_tests
-    import flext_tests._validator.types as _flext_tests__validator_types
-    from flext_tests._validator.tests import FlextValidatorTests
-
-    types = _flext_tests__validator_types
-    from flext_tests._validator.types import FlextValidatorTypes
-_LAZY_IMPORTS = {
-    "FlextTestsValidatorModels": (
-        "flext_tests._validator.models",
-        "FlextTestsValidatorModels",
+if TYPE_CHECKING:
+    from flext_tests._validator._markdown_parts.markdown_part_02 import (
+        FlextValidatorMarkdown as FlextValidatorMarkdown,
+    )
+    from flext_tests._validator._orchestration_parts.validator_part_02 import (
+        FlextTestsValidator as FlextTestsValidator,
+    )
+    from flext_tests._validator._types_parts.types_part_02 import (
+        FlextValidatorTypes as FlextValidatorTypes,
+    )
+    from flext_tests._validator.bypass import (
+        FlextValidatorBypass as FlextValidatorBypass,
+    )
+    from flext_tests._validator.imports import (
+        FlextValidatorImports as FlextValidatorImports,
+    )
+    from flext_tests._validator.layer import FlextValidatorLayer as FlextValidatorLayer
+    from flext_tests._validator.models import (
+        FlextTestsValidatorModels as FlextTestsValidatorModels,
+    )
+    from flext_tests._validator.settings import (
+        FlextValidatorSettings as FlextValidatorSettings,
+    )
+    from flext_tests._validator.tests import FlextValidatorTests as FlextValidatorTests
+_LAZY_IMPORTS = merge_lazy_imports(
+    (
+        "._markdown_parts",
+        "._orchestration_parts",
+        "._settings_parts",
+        "._types_parts",
     ),
-    "FlextValidatorBypass": ("flext_tests._validator.bypass", "FlextValidatorBypass"),
-    "FlextValidatorImports": (
-        "flext_tests._validator.imports",
-        "FlextValidatorImports",
+    build_lazy_import_map(
+        {
+            "._markdown_parts": ("_markdown_parts",),
+            "._markdown_parts.markdown_part_02": ("FlextValidatorMarkdown",),
+            "._orchestration_parts": ("_orchestration_parts",),
+            "._orchestration_parts.validator_part_02": ("FlextTestsValidator",),
+            "._settings_parts": ("_settings_parts",),
+            "._types_parts": ("_types_parts",),
+            "._types_parts.types_part_02": ("FlextValidatorTypes",),
+            ".bypass": ("FlextValidatorBypass",),
+            ".imports": ("FlextValidatorImports",),
+            ".layer": ("FlextValidatorLayer",),
+            ".models": ("FlextTestsValidatorModels",),
+            ".settings": ("FlextValidatorSettings",),
+            ".tests": ("FlextValidatorTests",),
+        },
     ),
-    "FlextValidatorLayer": ("flext_tests._validator.layer", "FlextValidatorLayer"),
-    "FlextValidatorSettings": (
-        "flext_tests._validator.settings",
-        "FlextValidatorSettings",
+    exclude_names=(
+        "cleanup_submodule_namespace",
+        "install_lazy_exports",
+        "lazy_getattr",
+        "logger",
+        "merge_lazy_imports",
+        "output",
+        "output_reporting",
+        "pytest_addoption",
+        "pytest_collect_file",
+        "pytest_collection_modifyitems",
+        "pytest_configure",
+        "pytest_runtest_setup",
+        "pytest_runtest_teardown",
+        "pytest_sessionfinish",
+        "pytest_sessionstart",
+        "pytest_terminal_summary",
+        "pytest_warning_recorded",
     ),
-    "FlextValidatorTests": ("flext_tests._validator.tests", "FlextValidatorTests"),
-    "FlextValidatorTypes": ("flext_tests._validator.types", "FlextValidatorTypes"),
-    "bypass": "flext_tests._validator.bypass",
-    "imports": "flext_tests._validator.imports",
-    "layer": "flext_tests._validator.layer",
-    "models": "flext_tests._validator.models",
-    "settings": "flext_tests._validator.settings",
-    "tests": "flext_tests._validator.tests",
-    "types": "flext_tests._validator.types",
-    "vm": ("flext_tests._validator.models", "vm"),
-}
-
-__all__ = [
-    "FlextTestsValidatorModels",
-    "FlextValidatorBypass",
-    "FlextValidatorImports",
-    "FlextValidatorLayer",
-    "FlextValidatorSettings",
-    "FlextValidatorTests",
-    "FlextValidatorTypes",
-    "bypass",
-    "imports",
-    "layer",
-    "models",
-    "settings",
-    "tests",
-    "types",
-    "vm",
-]
+    module_name=__name__,
+)
 
 
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
+install_lazy_exports(
+    __name__,
+    globals(),
+    _LAZY_IMPORTS,
+    publish_all=False,
+)

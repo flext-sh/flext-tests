@@ -1,86 +1,88 @@
-# AUTO-GENERATED FILE — DO NOT EDIT MANUALLY.
-# Regenerate with: make gen
-#
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Models package."""
 
 from __future__ import annotations
 
-import typing as _t
+from typing import TYPE_CHECKING
 
-from flext_core.lazy import install_lazy_exports
+from flext_core.lazy import (
+    build_lazy_import_map,
+    install_lazy_exports,
+    merge_lazy_imports,
+)
 
-if _t.TYPE_CHECKING:
-    import flext_tests._models.base as _flext_tests__models_base
-
-    base = _flext_tests__models_base
-    import flext_tests._models.batch as _flext_tests__models_batch
-    from flext_tests._models.base import FlextTestsBaseModelsMixin
-
-    batch = _flext_tests__models_batch
-    import flext_tests._models.docker as _flext_tests__models_docker
-    from flext_tests._models.batch import FlextTestsBatchModelsMixin
-
-    docker = _flext_tests__models_docker
-    import flext_tests._models.filesystem as _flext_tests__models_filesystem
-    from flext_tests._models.docker import FlextTestsDockerModelsMixin
-
-    filesystem = _flext_tests__models_filesystem
-    import flext_tests._models.matchers as _flext_tests__models_matchers
-    from flext_tests._models.filesystem import FlextTestsFilesystemModelsMixin
-
-    matchers = _flext_tests__models_matchers
-    import flext_tests._models.validator as _flext_tests__models_validator
-    from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
-
-    validator = _flext_tests__models_validator
-    from flext_tests._models.validator import FlextTestsValidatorModelsMixin
-_LAZY_IMPORTS = {
-    "FlextTestsBaseModelsMixin": (
-        "flext_tests._models.base",
-        "FlextTestsBaseModelsMixin",
+if TYPE_CHECKING:
+    from flext_tests._models._filesystem_parts.filesystem_part_02 import (
+        FlextTestsFilesystemModelsMixin as FlextTestsFilesystemModelsMixin,
+    )
+    from flext_tests._models._matchers_parts.matchers_part_03 import (
+        FlextTestsMatchersModelsMixin as FlextTestsMatchersModelsMixin,
+    )
+    from flext_tests._models.base import (
+        FlextTestsBaseModelsMixin as FlextTestsBaseModelsMixin,
+    )
+    from flext_tests._models.batch import (
+        FlextTestsBatchModelsMixin as FlextTestsBatchModelsMixin,
+    )
+    from flext_tests._models.docker import (
+        FlextTestsDockerModelsMixin as FlextTestsDockerModelsMixin,
+    )
+    from flext_tests._models.domains import (
+        FlextTestsDomainModelsMixin as FlextTestsDomainModelsMixin,
+    )
+    from flext_tests._models.make import (
+        FlextTestsMakeModelsMixin as FlextTestsMakeModelsMixin,
+    )
+    from flext_tests._models.validator import (
+        FlextTestsValidatorModelsMixin as FlextTestsValidatorModelsMixin,
+    )
+_LAZY_IMPORTS = merge_lazy_imports(
+    (
+        "._filesystem_parts",
+        "._matchers_parts",
     ),
-    "FlextTestsBatchModelsMixin": (
-        "flext_tests._models.batch",
-        "FlextTestsBatchModelsMixin",
+    build_lazy_import_map(
+        {
+            "._filesystem_parts": ("_filesystem_parts",),
+            "._filesystem_parts.filesystem_part_02": (
+                "FlextTestsFilesystemModelsMixin",
+            ),
+            "._matchers_parts": ("_matchers_parts",),
+            "._matchers_parts.matchers_part_03": ("FlextTestsMatchersModelsMixin",),
+            ".base": ("FlextTestsBaseModelsMixin",),
+            ".batch": ("FlextTestsBatchModelsMixin",),
+            ".docker": ("FlextTestsDockerModelsMixin",),
+            ".domains": ("FlextTestsDomainModelsMixin",),
+            ".make": ("FlextTestsMakeModelsMixin",),
+            ".validator": ("FlextTestsValidatorModelsMixin",),
+        },
     ),
-    "FlextTestsDockerModelsMixin": (
-        "flext_tests._models.docker",
-        "FlextTestsDockerModelsMixin",
+    exclude_names=(
+        "cleanup_submodule_namespace",
+        "install_lazy_exports",
+        "lazy_getattr",
+        "logger",
+        "merge_lazy_imports",
+        "output",
+        "output_reporting",
+        "pytest_addoption",
+        "pytest_collect_file",
+        "pytest_collection_modifyitems",
+        "pytest_configure",
+        "pytest_runtest_setup",
+        "pytest_runtest_teardown",
+        "pytest_sessionfinish",
+        "pytest_sessionstart",
+        "pytest_terminal_summary",
+        "pytest_warning_recorded",
     ),
-    "FlextTestsFilesystemModelsMixin": (
-        "flext_tests._models.filesystem",
-        "FlextTestsFilesystemModelsMixin",
-    ),
-    "FlextTestsMatchersModelsMixin": (
-        "flext_tests._models.matchers",
-        "FlextTestsMatchersModelsMixin",
-    ),
-    "FlextTestsValidatorModelsMixin": (
-        "flext_tests._models.validator",
-        "FlextTestsValidatorModelsMixin",
-    ),
-    "base": "flext_tests._models.base",
-    "batch": "flext_tests._models.batch",
-    "docker": "flext_tests._models.docker",
-    "filesystem": "flext_tests._models.filesystem",
-    "matchers": "flext_tests._models.matchers",
-    "validator": "flext_tests._models.validator",
-}
-
-__all__ = [
-    "FlextTestsBaseModelsMixin",
-    "FlextTestsBatchModelsMixin",
-    "FlextTestsDockerModelsMixin",
-    "FlextTestsFilesystemModelsMixin",
-    "FlextTestsMatchersModelsMixin",
-    "FlextTestsValidatorModelsMixin",
-    "base",
-    "batch",
-    "docker",
-    "filesystem",
-    "matchers",
-    "validator",
-]
+    module_name=__name__,
+)
 
 
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
+install_lazy_exports(
+    __name__,
+    globals(),
+    _LAZY_IMPORTS,
+    publish_all=False,
+)

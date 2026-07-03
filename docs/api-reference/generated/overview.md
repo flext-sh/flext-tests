@@ -7,11 +7,11 @@
 - Description: FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem
 - Project class: `test`
 - Keywords: `builders`, `factories`, `flext`, `test-infrastructure`, `testing`
-- Main facades: `FlextTestsConstants`, `FlextTestsDocker`, `FlextTestsDomains`, `FlextTestsFiles`, `FlextTestsModels`, `FlextTestsProtocols`, `FlextTestsTypes`, `FlextTestsUtilities` (+1 more)
+- Main facades: _none_
 - Alias exports: `c`, `d`, `e`, `h`, `m`, `p`, `r`, `s`, `t`, `u`, `x`
-- Public symbol exports: `FlextTestsConstants`, `FlextTestsDocker`, `FlextTestsDomains`, `FlextTestsFiles`, `FlextTestsModels`, `FlextTestsProtocols`, `FlextTestsTypes`, `FlextTestsUtilities`, `FlextTestsValidator`, `td` (+3 more)
-- Exported module shortcuts: `conftest_plugin`, `constants`, `docker`, `domains`, `files`, `models`, `protocols`, `typings` (+2 more)
-- Generated module pages: `10`
+- Public symbol exports: `test_runtime`, `MarkdownValidationError`, `FlextTestsCase`, `FlextTestsSettings`, `FlextTestsUtilities`, `clean_container`, `tv`, `EnforcementViolationError`, `FlextTestsValidator`, `td` (+23 more)
+- Exported module shortcuts: `project_metadata`, `settings`
+- Generated module pages: `11`
 
 ## Next Pages
 

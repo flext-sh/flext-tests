@@ -6,12 +6,10 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import re
-import types as _bt
+import types as bt
 from collections.abc import (
     ItemsView,
     KeysView,
-    Mapping,
     MutableMapping,
     Sequence,
     Set as AbstractSet,
@@ -22,16 +20,15 @@ from enum import Enum
 from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
 
-from pydantic import BaseModel, ConfigDict, SecretStr, TypeAdapter
-
-from flext_cli import t
-from flext_core import FlextResult, p
+from flext_infra.models import m
+from flext_infra.protocols import p
+from flext_infra.typings import t
 
 
 class FlextTestsBaseTypesMixin:
     """Base generic primitives extending Flext core aliases."""
 
-    type TestobjectSerializable = (
+    type TestobjectAtom = (
         str
         | int
         | float
@@ -40,28 +37,35 @@ class FlextTestsBaseTypesMixin:
         | datetime
         | tzinfo
         | Path
-        | BaseModel
+        | m.BaseModel
         | type
         | frozenset[str]
-        | Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | None
     )
+    type TestobjectCollection = (
+        t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+    )
+    type TestobjectSerializable = TestobjectAtom | TestobjectCollection | None
 
-    type Testobject = (
+    type TestResultValue = (
         FlextTestsBaseTypesMixin.TestobjectSerializable
+        | t.RegisterableService
+        | t.TypeHintSpecifier
         | BaseException
         | Exception
         | Enum
-        | SecretStr
+        | t.SecretStr
         | p.Logger
         | p.Container
         | p.Dispatcher
         | p.Settings
         | p.Context
-        | FlextResult[FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | re.Match[str]
-        | _bt.UnionType
+        | p.Registry
+        | p.AttributeProbe
+        | p.ResultLike[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | t.Cli.TyperRunner
+        | t.Infra.RegexMatch
+        | bt.UnionType
         | FrameType
         | ModuleType
         | GenericAlias
@@ -74,62 +78,53 @@ class FlextTestsBaseTypesMixin:
         | tzinfo
         | timezone
     )
+    "Type for FLEXT test result payloads."
 
-    TESTOBJECT_SEQUENCE_ADAPTER: TypeAdapter[
-        Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
-    ]
-    TESTOBJECT_MAPPING_ADAPTER: TypeAdapter[
-        Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-    ]
-    STR_MAPPING_SEQUENCE_ADAPTER: TypeAdapter[Sequence[t.StrMapping]] = TypeAdapter(
-        Sequence[t.StrMapping]
-    )
-    TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER: TypeAdapter[
-        Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-    ]
-    TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER: TypeAdapter[
-        Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable]
-    ]
-    PRIMITIVES_MAPPING_ADAPTER: TypeAdapter[Mapping[str, t.Primitives]] = TypeAdapter(
-        Mapping[str, t.Primitives]
-    )
-    NORMALIZED_VALUE_ADAPTER: TypeAdapter[t.NormalizedValue] = TypeAdapter(
-        t.NormalizedValue
-    )
-    DICT_ADAPTER: TypeAdapter[t.Dict] = TypeAdapter(t.Dict)
-    SCALAR_MAPPING_ADAPTER: TypeAdapter[t.ScalarMapping] = TypeAdapter(t.ScalarMapping)
-    CONTAINER_MAPPING_ADAPTER: TypeAdapter[t.ContainerMapping] = TypeAdapter(
-        t.ContainerMapping
-    )
-    CONTAINER_MAPPING_SEQUENCE_ADAPTER: TypeAdapter[Sequence[t.ContainerMapping]] = (
-        TypeAdapter(Sequence[t.ContainerMapping])
-    )
-    STR_MAPPING_ADAPTER: TypeAdapter[t.StrMapping] = TypeAdapter(t.StrMapping)
-    STR_MAPPING_MAPPING_ADAPTER: TypeAdapter[Mapping[str, t.StrMapping]] = TypeAdapter(
-        Mapping[str, t.StrMapping]
-    )
-    INTEGER_SEQUENCE_ADAPTER: TypeAdapter[Sequence[int]] = TypeAdapter(Sequence[int])
-    STR_SEQUENCE_MAPPING_ADAPTER: TypeAdapter[Mapping[str, t.StrSequence]] = (
-        TypeAdapter(Mapping[str, t.StrSequence])
+    type Testobject = (
+        FlextTestsBaseTypesMixin.TestResultValue
+        | p.ResultLike[FlextTestsBaseTypesMixin.TestResultValue]
     )
 
-    type TestResultValue = FlextTestsBaseTypesMixin.Testobject
-    "Type for test result values."
-
-
-FlextTestsBaseTypesMixin.TESTOBJECT_SEQUENCE_ADAPTER = TypeAdapter(
-    Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable],
-    config=ConfigDict(arbitrary_types_allowed=True),
-)
-FlextTestsBaseTypesMixin.TESTOBJECT_MAPPING_ADAPTER = TypeAdapter(
-    Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
-    config=ConfigDict(arbitrary_types_allowed=True),
-)
-FlextTestsBaseTypesMixin.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER = TypeAdapter(
-    Mapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable],
-    config=ConfigDict(arbitrary_types_allowed=True),
-)
-FlextTestsBaseTypesMixin.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER = TypeAdapter(
-    Sequence[FlextTestsBaseTypesMixin.TestobjectSerializable],
-    config=ConfigDict(arbitrary_types_allowed=True),
-)
+    TESTOBJECT_SEQUENCE_ADAPTER: m.TypeAdapter[
+        t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
+    ] = m.TypeAdapter(
+        t.SequenceOf[TestobjectSerializable],
+        config=m.ConfigDict(arbitrary_types_allowed=True),
+    )
+    TESTOBJECT_MAPPING_ADAPTER: m.TypeAdapter[
+        t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+    ] = m.TypeAdapter(
+        t.MappingKV[str, TestobjectSerializable],
+        config=m.ConfigDict(arbitrary_types_allowed=True),
+    )
+    STR_MAPPING_SEQUENCE_ADAPTER: m.TypeAdapter[t.SequenceOf[t.StrMapping]] = (
+        m.TypeAdapter(t.SequenceOf[t.StrMapping])
+    )
+    TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER: m.TypeAdapter[
+        t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+    ] = m.TypeAdapter(
+        t.MappingKV[str, TestobjectSerializable],
+        config=m.ConfigDict(arbitrary_types_allowed=True),
+    )
+    TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER: m.TypeAdapter[
+        t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
+    ] = m.TypeAdapter(
+        t.SequenceOf[TestobjectSerializable],
+        config=m.ConfigDict(arbitrary_types_allowed=True),
+    )
+    DICT_ADAPTER: m.TypeAdapter[m.Dict] = m.TypeAdapter(m.Dict)
+    SCALAR_MAPPING_ADAPTER: m.TypeAdapter[t.ScalarMapping] = m.TypeAdapter(
+        t.ScalarMapping
+    )
+    CONTAINER_MAPPING_SEQUENCE_ADAPTER: m.TypeAdapter[t.SequenceOf[t.JsonMapping]] = (
+        m.TypeAdapter(t.SequenceOf[t.JsonMapping])
+    )
+    STR_MAPPING_MAPPING_ADAPTER: m.TypeAdapter[t.MappingKV[str, t.StrMapping]] = (
+        m.TypeAdapter(t.MappingKV[str, t.StrMapping])
+    )
+    INTEGER_SEQUENCE_ADAPTER: m.TypeAdapter[Sequence[int]] = m.TypeAdapter(
+        Sequence[int]
+    )
+    STR_SEQUENCE_MAPPING_ADAPTER: m.TypeAdapter[t.MappingKV[str, t.StrSequence]] = (
+        m.TypeAdapter(t.MappingKV[str, t.StrSequence])
+    )

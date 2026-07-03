@@ -6,23 +6,30 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import (
+    Mapping,
+)
 from enum import StrEnum, unique
 from typing import Final
 
 from flext_tests import t
 
 
-class FlextTestsDockerConstantsMixin:
+class FlextTestsConstantsDocker:
     """Docker test infrastructure constants mixin."""
 
     SHARED_CONTAINERS: Final[Mapping[str, t.HeaderMapping]] = {
+        "flext-openldap-test": {
+            "compose_file": "docker/docker-compose.openldap.yml",
+            "service": "openldap",
+            "port": 3390,
+            "host": "localhost",
+        },
         "flext-oracle-db-test": {
             "compose_file": "docker/docker-compose.oracle-db.yml",
             "service": "oracle-db",
-            "port": 1522,
+            "port": 1521,
             "host": "localhost",
-            "container_name": "flext-oracle-db-test",
         },
     }
 
@@ -30,7 +37,12 @@ class FlextTestsDockerConstantsMixin:
     class ContainerStatus(StrEnum):
         """Container status enumeration for test infrastructure."""
 
+        CREATED = "created"
         RUNNING = "running"
+        EXITED = "exited"
+        PAUSED = "paused"
+        REMOVING = "removing"
+        DEAD = "dead"
         STOPPED = "stopped"
         NOT_FOUND = "not_found"
         ERROR = "error"

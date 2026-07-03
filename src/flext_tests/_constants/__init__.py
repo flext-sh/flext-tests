@@ -1,64 +1,74 @@
-# AUTO-GENERATED FILE — DO NOT EDIT MANUALLY.
-# Regenerate with: make gen
-#
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Constants package."""
 
 from __future__ import annotations
 
-import typing as _t
+from typing import TYPE_CHECKING
 
-from flext_core.lazy import install_lazy_exports
+from flext_core.lazy import (
+    build_lazy_import_map,
+    install_lazy_exports,
+    merge_lazy_imports,
+)
 
-if _t.TYPE_CHECKING:
-    import flext_tests._constants.docker as _flext_tests__constants_docker
-
-    docker = _flext_tests__constants_docker
-    import flext_tests._constants.files as _flext_tests__constants_files
-    from flext_tests._constants.docker import FlextTestsDockerConstantsMixin
-
-    files = _flext_tests__constants_files
-    import flext_tests._constants.matcher as _flext_tests__constants_matcher
-    from flext_tests._constants.files import FlextTestsFilesConstantsMixin
-
-    matcher = _flext_tests__constants_matcher
-    import flext_tests._constants.validator as _flext_tests__constants_validator
-    from flext_tests._constants.matcher import FlextTestsMatcherConstantsMixin
-
-    validator = _flext_tests__constants_validator
-    from flext_tests._constants.validator import FlextTestsValidatorConstantsMixin
-_LAZY_IMPORTS = {
-    "FlextTestsDockerConstantsMixin": (
-        "flext_tests._constants.docker",
-        "FlextTestsDockerConstantsMixin",
+if TYPE_CHECKING:
+    from flext_tests._constants._validator_parts.validator_part_03 import (
+        FlextTestsConstantsValidator as FlextTestsConstantsValidator,
+    )
+    from flext_tests._constants.data_cases import (
+        FlextTestsConstantsDataCases as FlextTestsConstantsDataCases,
+    )
+    from flext_tests._constants.docker import (
+        FlextTestsConstantsDocker as FlextTestsConstantsDocker,
+    )
+    from flext_tests._constants.files import (
+        FlextTestsConstantsFiles as FlextTestsConstantsFiles,
+    )
+    from flext_tests._constants.make import (
+        FlextTestsConstantsMake as FlextTestsConstantsMake,
+    )
+    from flext_tests._constants.matcher import (
+        FlextTestsConstantsMatcher as FlextTestsConstantsMatcher,
+    )
+_LAZY_IMPORTS = merge_lazy_imports(
+    ("._validator_parts",),
+    build_lazy_import_map(
+        {
+            "._validator_parts": ("_validator_parts",),
+            "._validator_parts.validator_part_03": ("FlextTestsConstantsValidator",),
+            ".data_cases": ("FlextTestsConstantsDataCases",),
+            ".docker": ("FlextTestsConstantsDocker",),
+            ".files": ("FlextTestsConstantsFiles",),
+            ".make": ("FlextTestsConstantsMake",),
+            ".matcher": ("FlextTestsConstantsMatcher",),
+        },
     ),
-    "FlextTestsFilesConstantsMixin": (
-        "flext_tests._constants.files",
-        "FlextTestsFilesConstantsMixin",
+    exclude_names=(
+        "cleanup_submodule_namespace",
+        "install_lazy_exports",
+        "lazy_getattr",
+        "logger",
+        "merge_lazy_imports",
+        "output",
+        "output_reporting",
+        "pytest_addoption",
+        "pytest_collect_file",
+        "pytest_collection_modifyitems",
+        "pytest_configure",
+        "pytest_runtest_setup",
+        "pytest_runtest_teardown",
+        "pytest_sessionfinish",
+        "pytest_sessionstart",
+        "pytest_terminal_summary",
+        "pytest_warning_recorded",
     ),
-    "FlextTestsMatcherConstantsMixin": (
-        "flext_tests._constants.matcher",
-        "FlextTestsMatcherConstantsMixin",
-    ),
-    "FlextTestsValidatorConstantsMixin": (
-        "flext_tests._constants.validator",
-        "FlextTestsValidatorConstantsMixin",
-    ),
-    "docker": "flext_tests._constants.docker",
-    "files": "flext_tests._constants.files",
-    "matcher": "flext_tests._constants.matcher",
-    "validator": "flext_tests._constants.validator",
-}
-
-__all__ = [
-    "FlextTestsDockerConstantsMixin",
-    "FlextTestsFilesConstantsMixin",
-    "FlextTestsMatcherConstantsMixin",
-    "FlextTestsValidatorConstantsMixin",
-    "docker",
-    "files",
-    "matcher",
-    "validator",
-]
+    module_name=__name__,
+)
 
 
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS)
+install_lazy_exports(
+    __name__,
+    globals(),
+    _LAZY_IMPORTS,
+    publish_all=False,
+)

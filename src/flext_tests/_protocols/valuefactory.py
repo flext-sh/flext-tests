@@ -6,12 +6,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests._typings.base import FlextTestsBaseTypesMixin as tb
 
 
 class FlextTestsValueFactoryProtocolsMixin:
+    @runtime_checkable
     class EntityFactory[TEntity](Protocol):
         """Factory protocol that builds entity instances for test helpers.
 
@@ -24,11 +25,12 @@ class FlextTestsValueFactoryProtocolsMixin:
             self,
             *,
             name: str,
-            value: FlextTestsBaseTypesMixin.Testobject,
+            value: tb.Testobject,
         ) -> TEntity:
             """Build a typed entity instance."""
             ...
 
+    @runtime_checkable
     class ValueFactory[TValue](Protocol):
         """Factory protocol that builds value objects for test helpers.
 

@@ -9,14 +9,15 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_cli import FlextCliTypes
+from flext_infra import t
 from flext_tests._typings.base import FlextTestsBaseTypesMixin
 from flext_tests._typings.files import FlextTestsFilesTypesMixin
 from flext_tests._typings.guards import FlextTestsGuardsTypesMixin
+from flext_tests._typings.make import FlextTestsMakeTypesMixin
 from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
 
 
-class FlextTestsTypes(FlextCliTypes):
+class FlextTestsTypes(t):
     """Type system foundation for FLEXT tests - extends t.
 
     Architecture: Extends t with test-specific type aliases and definitions.
@@ -26,15 +27,16 @@ class FlextTestsTypes(FlextCliTypes):
     class Tests(
         FlextTestsBaseTypesMixin,
         FlextTestsFilesTypesMixin,
+        FlextTestsMakeTypesMixin,
         FlextTestsMatchersTypesMixin,
         FlextTestsGuardsTypesMixin,
     ):
         """Test-specific type definitions namespace.
 
-        All test-specific types organized under FlextCliTypes.Tests.* pattern.
+        All test-specific types organized under t.Tests.* pattern.
         """
 
 
 t = FlextTestsTypes
 
-__all__ = ["FlextTestsTypes", "t"]
+__all__: list[str] = ["FlextTestsTypes", "t"]
