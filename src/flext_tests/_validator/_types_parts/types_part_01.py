@@ -10,6 +10,7 @@ from flext_tests import c, t, u
 from flext_tests._validator.models import FlextTestsValidatorModels
 
 if TYPE_CHECKING:
+    pass
     from flext_tests import m
 
 

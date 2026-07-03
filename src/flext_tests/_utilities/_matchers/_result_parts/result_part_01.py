@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from flext_tests.protocols import p
+from flext_tests.utilities import u
 from collections.abc import MutableMapping
 
-from flext_core import p, u
 from flext_tests._utilities._matchers._containment import (
     FlextTestsMatchersContainmentMixin,
 )

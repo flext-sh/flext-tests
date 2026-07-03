@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from flext_tests.utilities import u
 from collections.abc import Mapping, Sequence
 
-from flext_core import u
 from flext_tests._utilities._matchers._that_parts.that_part_04 import (
     FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixinPart04,
 )

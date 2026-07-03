@@ -1,5 +1,6 @@
 """Test-scope context manager for matchers.
 
+from flext_tests.utilities import u
 Exposes ``Tests.Matchers.scope`` for isolated test execution scopes.
 """
 
@@ -11,7 +12,6 @@ from collections.abc import Generator
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
 
-from flext_core import u
 from flext_tests import (
     c,
     m,

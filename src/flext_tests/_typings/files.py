@@ -1,12 +1,13 @@
 """Types extraction for flext_tests.
 
+from flext_tests.models import m
+from flext_tests.typings import t
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
 
-from flext_core import m, t
 from flext_tests._typings.base import FlextTestsBaseTypesMixin as tb
 
 

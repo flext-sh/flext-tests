@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
+    pass
     from flext_tests._fixtures._enforcement_parts.config import (
         active_rules as active_rules,
         discover_workspace_root as discover_workspace_root,

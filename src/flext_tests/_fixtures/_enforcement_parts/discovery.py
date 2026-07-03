@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+from flext_tests.utilities import u
 from importlib import import_module
 from pathlib import Path
 
 import pytest
 
-from flext_core import r, u
+from flext_core import r
 from flext_tests import c, p, t
 
 
