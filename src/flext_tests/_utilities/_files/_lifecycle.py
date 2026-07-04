@@ -56,17 +56,17 @@ class FlextTestsFilesLifecycleMixin:
 
     @property
     def base_dir(self) -> Path | None:
-        """Get base directory."""
+        """The base directory."""
         return self._base_dir
 
     @property
     def created_dirs(self) -> t.SequenceOf[Path]:
-        """Get list of created directories."""
+        """The list of created directories."""
         return self._created_dirs or []
 
     @property
     def created_files(self) -> t.SequenceOf[Path]:
-        """Get list of created files."""
+        """The list of created files."""
         return self._created_files or []
 
     def cleanup(self) -> None:
