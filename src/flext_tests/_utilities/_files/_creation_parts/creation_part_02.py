@@ -3,13 +3,16 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_tests import c, m, t, u
 from flext_tests._utilities._files._creation_parts.creation_part_01 import (
     FlextTestsFilesCreationMixin as FlextTestsFilesCreationMixinPart01,
 )
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsFilesCreationMixin(FlextTestsFilesCreationMixinPart01):
@@ -89,7 +92,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesCreationMixinPart01):
         raw_payload: t.JsonValue = (
             {
                 k: FlextTestsPayloadUtilities.to_normalized_value(
-                    FlextTestsPayloadUtilities.to_payload(v)
+                    FlextTestsPayloadUtilities.to_payload(v),
                 )
                 for k, v in mapping_content.items()
             }
@@ -118,7 +121,8 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesCreationMixinPart01):
         if headers:
             csv_rows.append(list(headers))
         if isinstance(actual_content, Sequence) and not isinstance(
-            actual_content, t.STR_BYTES_TYPES
+            actual_content,
+            t.STR_BYTES_TYPES,
         ):
             csv_rows.extend(
                 list(row)

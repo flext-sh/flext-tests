@@ -2,16 +2,18 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, ClassVar
+from typing import TYPE_CHECKING, Annotated, ClassVar
 
 from flext_infra import m, u
 from flext_tests import p, t
 from flext_tests._models._matchers_parts.matchers_part_02 import (
     FlextTestsMatchersModelsMixin as FlextTestsMatchersModelsMixinPart02,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Mapping, Sequence
 
 
 class FlextTestsMatchersModelsMixin(FlextTestsMatchersModelsMixinPart02):

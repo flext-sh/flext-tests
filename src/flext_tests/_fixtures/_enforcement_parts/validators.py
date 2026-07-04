@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable
 from importlib import import_module
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_tests import c, m, p, t
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable
 
 
 def _iter_infra_violations(
@@ -19,7 +22,9 @@ def _iter_infra_violations(
     projects = getattr(report, "projects", ())
     for project in projects:
         project_name = getattr(project, "project", "") or getattr(
-            project, "project_name", ""
+            project,
+            "project_name",
+            "",
         )
         entries = getattr(project, field, ())
         if match_missing:
@@ -39,7 +44,9 @@ def _dispatch_infra_detector(
     match_missing = bool(getattr(source, "match_missing", False))
     grouped: dict[str, list[p.AttributeProbe]] = {}
     for project, entry in _iter_infra_violations(
-        report, field, match_missing=match_missing
+        report,
+        field,
+        match_missing=match_missing,
     ):
         grouped.setdefault(project, []).append(entry)
     return grouped

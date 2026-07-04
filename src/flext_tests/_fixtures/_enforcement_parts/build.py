@@ -2,11 +2,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
-import pytest
-
-from flext_tests import m, p, t
 from flext_tests._fixtures._enforcement_parts.config import active_rules
 from flext_tests._fixtures._enforcement_parts.discovery import (
     _collected_project_names,
@@ -21,6 +18,13 @@ from flext_tests._fixtures._enforcement_parts.validators import (
     _dispatch_infra_detector,
     _dispatch_tests_validator,
 )
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    import pytest
+
+    from flext_tests import m, p, t
 
 
 def _build_items(
@@ -70,7 +74,7 @@ def _build_items(
                     rule=rule,
                     project=project,
                     violations=violations,
-                )
+                ),
             )
     return items
 

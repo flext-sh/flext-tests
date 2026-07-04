@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import re
-from typing import ClassVar, Final
+from typing import TYPE_CHECKING, ClassVar, Final
 
-from flext_infra import t
 from flext_tests._constants._validator_parts.validator_part_01 import (
     FlextTestsConstantsValidator as FlextTestsConstantsValidatorPart01,
 )
+
+if TYPE_CHECKING:
+    from flext_infra import t
 
 
 class FlextTestsConstantsValidator(FlextTestsConstantsValidatorPart01):

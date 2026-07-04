@@ -10,7 +10,7 @@ from flext_tests._utilities.make_registry import FlextTestsMakeRegistryUtilities
 
 
 class FlextTestsMakeRenderingUtilitiesMixin(
-    FlextTestsMakeRenderingUtilitiesMixinPart01
+    FlextTestsMakeRenderingUtilitiesMixinPart01,
 ):
     """Render registry-driven Make help and dry-run output."""
 
@@ -72,7 +72,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(
             for what, command in command_params:
                 rendered = (
                     FlextTestsMakeRenderingUtilitiesMixin.make_format_params_inline(
-                        command.params
+                        command.params,
                     )
                 )
                 lines.append(f"  {what:20} {rendered}")
@@ -126,7 +126,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(
         elif command.mutates_when:
             conditions = (
                 FlextTestsMakeRenderingUtilitiesMixin.make_format_mutation_conditions(
-                    command.mutates_when
+                    command.mutates_when,
                 )
             )
             lines.append(f"Mutacao condicional: {conditions}.")
@@ -138,7 +138,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(
                 default = f" default={param.default}" if param.default else ""
                 choices = f" choices={','.join(param.choices)}" if param.choices else ""
                 lines.append(
-                    f"  {param.name:24} {param.help}{required}{default}{choices}"
+                    f"  {param.name:24} {param.help}{required}{default}{choices}",
                 )
         if command.rules:
             lines.extend(("", "Regras:"))
@@ -177,7 +177,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(
                 required = "obrigatorio" if param.required else "opcional"
                 choices = f" choices={','.join(param.choices)}" if param.choices else ""
                 lines.append(
-                    f"  {param.name:24} {shown:20} {required}{choices} - {param.help}"
+                    f"  {param.name:24} {shown:20} {required}{choices} - {param.help}",
                 )
         lines.extend((
             "",

@@ -7,13 +7,17 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
 from flext_tests import r, tm
-from tests.protocols import p
 from tests.utilities import u
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from tests.protocols import p
 
 
 class TestsFlextTestsUtilitiesUnit:

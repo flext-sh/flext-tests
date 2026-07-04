@@ -3,14 +3,16 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 from flext_infra import m, u
 from flext_tests._models._filesystem_parts.filesystem_part_01 import (
     FlextTestsFilesystemModelsMixin as FlextTestsFilesystemModelsMixinPart01,
 )
 from flext_tests.constants import c
-from flext_tests.typings import t
+
+if TYPE_CHECKING:
+    from flext_tests.typings import t
 
 
 class FlextTestsFilesystemModelsMixin(FlextTestsFilesystemModelsMixinPart01):
@@ -27,7 +29,9 @@ class FlextTestsFilesystemModelsMixin(FlextTestsFilesystemModelsMixinPart01):
         fmt: Annotated[
             c.Tests.FileFormat,
             m.BeforeValidator(
-                lambda v: type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
+                lambda v: (
+                    type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
+                ),
             ),
             u.Field(
                 default=c.Tests.FILE_FORMAT_AUTO,
@@ -153,7 +157,9 @@ class FlextTestsFilesystemModelsMixin(FlextTestsFilesystemModelsMixinPart01):
         fmt: Annotated[
             c.Tests.FileFormat,
             m.BeforeValidator(
-                lambda v: type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
+                lambda v: (
+                    type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
+                ),
             ),
             u.Field(
                 description="File format override.",

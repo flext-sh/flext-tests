@@ -8,14 +8,16 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    MutableSequence,
-)
-from pathlib import Path
-from typing import override
+from typing import TYPE_CHECKING, override
 
 from flext_tests import c, m, t, u
 from flext_tests._validator.models import FlextTestsValidatorModels
+
+if TYPE_CHECKING:
+    from collections.abc import (
+        MutableSequence,
+    )
+    from pathlib import Path
 
 
 class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):
@@ -77,7 +79,8 @@ class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):
         violations: MutableSequence[m.Tests.Violation] = []
         for i, line in enumerate(lines, start=1):
             if c.Tests.VALIDATOR_NOQA_RE.search(line) and u.Tests.real_comment(
-                line, c.Tests.VALIDATOR_NOQA_RE
+                line,
+                c.Tests.VALIDATOR_NOQA_RE,
             ):
                 violation = u.Tests.create_violation(
                     file_path,
@@ -106,7 +109,7 @@ class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):
         violations: MutableSequence[m.Tests.Violation] = []
         for i, line in enumerate(lines, start=1):
             if c.Tests.VALIDATOR_PRAGMA_NO_COVER_RE.search(
-                line
+                line,
             ) and u.Tests.real_comment(line, c.Tests.VALIDATOR_PRAGMA_NO_COVER_RE):
                 violation = u.Tests.create_violation(
                     file_path,

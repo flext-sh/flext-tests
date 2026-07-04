@@ -5,11 +5,15 @@ Format detection delegates to ``u.Cli`` canonical helpers; no I/O lives here.
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_cli._utilities.files import FlextCliUtilitiesFiles
-from flext_tests.models import m
-from flext_tests.typings import t
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from flext_tests.models import m
+    from flext_tests.typings import t
 
 
 class FlextTestsFilesUtilitiesMixin:
@@ -28,7 +32,9 @@ class FlextTestsFilesUtilitiesMixin:
     ) -> str:
         """Detect format by content shape + name; honors explicit ``fmt``."""
         return FlextCliUtilitiesFiles.files_detect_format_from_content(
-            content, name, fmt
+            content,
+            name,
+            fmt,
         )
 
     @staticmethod

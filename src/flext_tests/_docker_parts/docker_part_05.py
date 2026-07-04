@@ -101,7 +101,10 @@ class FlextTestsDocker(FlextTestsDockerPart04):
         return self.compose_down(str(target.compose_file))
 
     def ready(
-        self, *, port: int | None = None, max_wait: int | None = None
+        self,
+        *,
+        port: int | None = None,
+        max_wait: int | None = None,
     ) -> p.Result[bool]:
         """Run a readiness check against the configured target."""
         target = self.target_config

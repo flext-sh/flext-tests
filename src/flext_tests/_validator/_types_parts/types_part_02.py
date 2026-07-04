@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from collections.abc import MutableSequence
-from pathlib import Path
 from typing import TYPE_CHECKING, override
 
 from flext_tests import c, t, u
@@ -12,6 +10,9 @@ from flext_tests._validator._types_parts.types_part_01 import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import MutableSequence
+    from pathlib import Path
+
     from flext_tests import m
 
 
@@ -164,14 +165,14 @@ class FlextValidatorTypes(FlextValidatorTypesPart01):
         violations.extend(cls._check_any_types(file_path, lines, approved))
         violations.extend(cls._check_cast_usage(file_path, lines, approved))
         violations.extend(
-            cls._check_legacy_typing_factories(file_path, lines, approved)
+            cls._check_legacy_typing_factories(file_path, lines, approved),
         )
         violations.extend(
             cls._check_legacy_typing_annotations(file_path, lines, approved),
         )
         violations.extend(cls._check_object_annotations(file_path, lines, approved))
         violations.extend(
-            cls._check_bool_returning_is_helpers(file_path, lines, approved)
+            cls._check_bool_returning_is_helpers(file_path, lines, approved),
         )
         return violations
 

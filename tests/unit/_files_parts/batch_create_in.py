@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_tests import r, tf, tm
 from tests.constants import c
 from tests.models import m
-from tests.typings import t
 from tests.utilities import u
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from tests.typings import t
 
 
 class FilesBatchCreateInMixin:
@@ -73,7 +77,8 @@ class FilesBatchCreateInMixin:
     def test_create_in_dict_content(self, tmp_path: Path) -> None:
         """Test create_in() for dict content (JSON)."""
         path = tf(base_dir=tmp_path).create(
-            m.ConfigMap(root={"key": "value"}), "settings.json"
+            m.ConfigMap(root={"key": "value"}),
+            "settings.json",
         )
         tm.that(path.exists(), eq=True)
         empty_content: t.JsonMapping = {}
@@ -140,7 +145,9 @@ class FilesBatchCreateInMixin:
     def test_create_in_custom_format(self, tmp_path: Path) -> None:
         """Test create_in() with explicit format override."""
         path = tf(base_dir=tmp_path).create(
-            b"binary data", "data.dat", fmt=c.Tests.FILE_FORMAT_BIN
+            b"binary data",
+            "data.dat",
+            fmt=c.Tests.FILE_FORMAT_BIN,
         )
         tm.that(path.exists(), eq=True)
         tm.that(path.read_bytes(), eq=b"binary data")
@@ -165,7 +172,9 @@ class FilesBatchCreateInMixin:
         """Test create_in() CSV with explicit headers."""
         content = [["1", "2"], ["3", "4"]]
         path = tf(base_dir=tmp_path).create(
-            content, "data.csv", headers=["col1", "col2"]
+            content,
+            "data.csv",
+            headers=["col1", "col2"],
         )
         tm.that(path.exists(), eq=True)
         lines = path.read_text().strip().split("\n")

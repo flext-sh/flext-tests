@@ -5,12 +5,15 @@ Comprehensive metadata extraction and optional content parsing.
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_cli import u as cli_u
 from flext_tests import c, m, p, r, t, u
 from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
 from flext_tests._utilities._files._reading import FlextTestsFilesReadingMixin
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
@@ -66,7 +69,8 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
         size = stat.st_size
         size_human = c.Tests.format_size(size)
         text, lines, is_empty, first_line, encoding = self._read_info_text(
-            params.path, size
+            params.path,
+            size,
         )
         fmt: str = "unknown"
         if params.detect_fmt:

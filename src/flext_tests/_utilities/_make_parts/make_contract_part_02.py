@@ -16,26 +16,26 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeContractUtilitiesMixinP
         """Validate the complete discovered command registry."""
         if not registry.commands_by_verb:
             return r[bool].fail(
-                "nenhum comando encontrado em scripts/cmd/<verbo>/<what>"
+                "nenhum comando encontrado em scripts/cmd/<verbo>/<what>",
             )
         for verb, commands in sorted(registry.commands_by_verb.items()):
             if c.Tests.MAKE_DEFAULT_COMMAND not in commands:
                 return r[bool].fail(
-                    f"verbo '{verb}' sem WHAT={c.Tests.MAKE_DEFAULT_COMMAND}"
+                    f"verbo '{verb}' sem WHAT={c.Tests.MAKE_DEFAULT_COMMAND}",
                 )
             domains = {command.domain for command in commands.values()}
             if len(domains) != 1:
                 valid = ", ".join(sorted(domains))
                 return r[bool].fail(
-                    f"verbo '{verb}' declara mais de um domain: {valid}"
+                    f"verbo '{verb}' declara mais de um domain: {valid}",
                 )
             for command in commands.values():
                 command_result = FlextTestsMakeContractUtilitiesMixin.make_validate_registered_command(
-                    command
+                    command,
                 )
                 if command_result.failure:
                     return r[bool].fail(
-                        command_result.error or "command contract invalid"
+                        command_result.error or "command contract invalid",
                     )
             choices_result = (
                 FlextTestsMakeContractUtilitiesMixin.make_validate_all_choices(
@@ -55,10 +55,10 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeContractUtilitiesMixinP
         if command.what != c.Tests.MAKE_DEFAULT_COMMAND and command.aliases:
             return r[bool].fail(
                 f"{command.path}: aliases podem ser declarados apenas em "
-                f"WHAT={c.Tests.MAKE_DEFAULT_COMMAND}"
+                f"WHAT={c.Tests.MAKE_DEFAULT_COMMAND}",
             )
         return FlextTestsMakeContractUtilitiesMixin.make_validate_command_contract(
-            command
+            command,
         )
 
     @staticmethod
@@ -83,7 +83,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeContractUtilitiesMixinP
         if declared != actual:
             return r[bool].fail(
                 f"{all_command.path}: choices de WHAT divergem dos comandos promovidos "
-                f"para {verb}: declared={','.join(declared)} actual={','.join(actual)}"
+                f"para {verb}: declared={','.join(declared)} actual={','.join(actual)}",
             )
         return r[bool].ok(True)
 
@@ -115,10 +115,10 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeContractUtilitiesMixinP
         )
         if resolved.failure:
             return r[t.MappingKV[str, m.Tests.MakeCommand]].fail(
-                resolved.error or "verb unknown"
+                resolved.error or "verb unknown",
             )
         return r[t.MappingKV[str, m.Tests.MakeCommand]].ok(
-            registry.commands_by_verb[resolved.value]
+            registry.commands_by_verb[resolved.value],
         )
 
     @staticmethod
@@ -139,7 +139,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeContractUtilitiesMixinP
         if command is None:
             valid = " ".join(sorted(commands))
             return r[m.Tests.MakeCommand].fail(
-                f"WHAT='{what}' invalido para {verb}. Validos: {valid}"
+                f"WHAT='{what}' invalido para {verb}. Validos: {valid}",
             )
         return r[m.Tests.MakeCommand].ok(command)
 
@@ -154,7 +154,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeContractUtilitiesMixinP
                 alias
                 for alias, target in registry.aliases_by_name.items()
                 if target == verb
-            )
+            ),
         )
 
 

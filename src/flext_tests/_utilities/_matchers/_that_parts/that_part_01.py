@@ -37,7 +37,7 @@ class FlextTestsMatchersThatMixin:
                 except c.EXC_BASIC_TYPE:
                     params = (
                         FlextTestsMatchersThatMixin.Tests.Matchers._filtered_params(
-                            kwargs
+                            kwargs,
                         )
                     )
                 return params, raw_eq, raw_ne, raw_has, raw_contains

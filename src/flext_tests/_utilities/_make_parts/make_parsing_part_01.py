@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import ast
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_cli import u as cli_u
 from flext_tests import c, p, r, t
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsMakeParsingUtilitiesMixin:

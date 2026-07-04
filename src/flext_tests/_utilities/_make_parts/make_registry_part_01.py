@@ -22,14 +22,14 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
         by_what = commands_by_verb.setdefault(command.verb, {})
         if command.what in by_what:
             return r[bool].fail(
-                f"comando duplicado: {command.verb} WHAT={command.what}"
+                f"comando duplicado: {command.verb} WHAT={command.what}",
             )
         by_what[command.what] = command
         for alias in command.aliases:
             previous = aliases_by_name.get(alias)
             if previous and previous != command.verb:
                 return r[bool].fail(
-                    f"alias duplicado: {alias} aponta para {previous} e {command.verb}"
+                    f"alias duplicado: {alias} aponta para {previous} e {command.verb}",
                 )
             aliases_by_name[alias] = command.verb
         return r[bool].ok(True)

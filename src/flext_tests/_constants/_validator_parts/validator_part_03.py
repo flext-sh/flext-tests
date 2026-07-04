@@ -4,12 +4,14 @@ from __future__ import annotations
 
 import re
 from types import MappingProxyType
-from typing import ClassVar, Final
+from typing import TYPE_CHECKING, ClassVar, Final
 
-from flext_infra import t
 from flext_tests._constants._validator_parts.validator_part_02 import (
     FlextTestsConstantsValidator as FlextTestsConstantsValidatorPart02,
 )
+
+if TYPE_CHECKING:
+    from flext_infra import t
 
 
 class FlextTestsConstantsValidator(FlextTestsConstantsValidatorPart02):

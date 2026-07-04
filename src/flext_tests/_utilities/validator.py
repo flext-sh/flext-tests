@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import flext_tests.constants as tests_constants
 import flext_tests.models as tests_models
 import flext_tests.typings as tests_typings
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsValidatorUtilitiesMixin:
@@ -161,7 +164,8 @@ class FlextTestsValidatorUtilitiesMixin:
 
     @staticmethod
     def except_block_only_pass(
-        lines: tests_typings.t.StrSequence, line_number: int
+        lines: tests_typings.t.StrSequence,
+        line_number: int,
     ) -> bool:
         """Check whether one ``except`` block body contains only pass or ellipsis."""
         header_index = line_number - 1
@@ -169,7 +173,7 @@ class FlextTestsValidatorUtilitiesMixin:
             return False
         header_line = lines[header_index]
         header_match = tests_constants.c.Tests.VALIDATOR_EXCEPT_HEADER_RE.match(
-            header_line
+            header_line,
         )
         if header_match is None:
             return False
@@ -195,7 +199,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return (
             len(body_lines) == 1
             and tests_constants.c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(
-                body_lines[0]
+                body_lines[0],
             )
             is not None
         )

@@ -43,7 +43,7 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart03):
                 """Validate mapping-specific predicates."""
                 mapping_value = (
                     FlextTestsMatchersThatMixin.Tests.Matchers._mapping_value(
-                        subject_payload
+                        subject_payload,
                     )
                 )
                 if not mapping_value and not isinstance(subject_payload, Mapping):
@@ -99,7 +99,7 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart03):
                         )
                     if key not in mapping_value:
                         raise AssertionError(
-                            params.msg or f"Key {key!r} not found in mapping"
+                            params.msg or f"Key {key!r} not found in mapping",
                         )
                     actual_obj = mapping_value[key]
                     if actual_obj != expected_val:
@@ -110,7 +110,8 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart03):
 
             @staticmethod
             def _validate_attrs(
-                subject: p.AttributeProbe, params: m.Tests.ThatParams
+                subject: p.AttributeProbe,
+                params: m.Tests.ThatParams,
             ) -> None:
                 """Validate attrs/methods/attr_eq predicates."""
                 if params.attrs is not None:
@@ -148,7 +149,8 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart03):
 
             @staticmethod
             def _validate_attr_eq(
-                subject: p.AttributeProbe, params: m.Tests.ThatParams
+                subject: p.AttributeProbe,
+                params: m.Tests.ThatParams,
             ) -> None:
                 """Validate attribute equality predicates."""
                 attr_items: t.SequenceOf[tuple[p.AttributeProbe, p.AttributeProbe]] = ()
@@ -168,7 +170,7 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart03):
                         )
                     if not hasattr(subject, attr):
                         raise AssertionError(
-                            params.msg or f"Object missing attribute: {attr}"
+                            params.msg or f"Object missing attribute: {attr}",
                         )
                     actual_val = getattr(subject, attr)
                     if actual_val != expected_val:

@@ -14,13 +14,15 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from importlib.util import find_spec
-from pathlib import Path
-from typing import override
+from typing import TYPE_CHECKING, override
 
 import pytest
 
 from flext_tests import c, u
 from flext_tests._validator.markdown import FlextValidatorMarkdown
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:

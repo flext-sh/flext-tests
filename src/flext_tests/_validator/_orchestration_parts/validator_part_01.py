@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import fnmatch
-from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, ClassVar
+from typing import TYPE_CHECKING, Annotated, ClassVar
 
 from flext_tests import c, m, s, t, u
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsValidator(s[m.Tests.ScanResult]):

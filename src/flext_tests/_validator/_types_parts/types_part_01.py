@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
-from collections.abc import MutableSequence
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from flext_tests import c, t, u
 from flext_tests._validator.models import FlextTestsValidatorModels
 
 if TYPE_CHECKING:
+    from collections.abc import MutableSequence
+    from pathlib import Path
+
     from flext_tests import m
 
 
@@ -51,7 +52,7 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                 c.Tests.VALIDATOR_LEGACY_FACTORY_RE,
             ):
                 names.update(
-                    cls._match_names(line, c.Tests.VALIDATOR_LEGACY_FACTORY_RE)
+                    cls._match_names(line, c.Tests.VALIDATOR_LEGACY_FACTORY_RE),
                 )
             if c.Tests.VALIDATOR_TYPE_ALIAS_RE.search(line) and u.Tests.code_match(
                 line,
@@ -110,7 +111,7 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         for line_number, line in enumerate(lines, start=1):
             if c.Tests.VALIDATOR_FUNCTION_DEF_RE.match(line) is not None:
                 if c.Tests.VALIDATOR_OBJECT_RETURN_RE.search(
-                    line
+                    line,
                 ) and u.Tests.code_match(
                     line,
                     c.Tests.VALIDATOR_OBJECT_RETURN_RE,

@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
-from types import EllipsisType
+from typing import TYPE_CHECKING
 
 from flext_tests.constants import c
-from flext_tests.protocols import p
+
+if TYPE_CHECKING:
+    from types import EllipsisType
+
+    from flext_tests.protocols import p
 
 
 class FlextTestsResultUtilitiesMixin:
@@ -13,7 +17,8 @@ class FlextTestsResultUtilitiesMixin:
 
     @staticmethod
     def assert_failure[TResult](
-        result: p.Result[TResult], expected_error: str | None = None
+        result: p.Result[TResult],
+        expected_error: str | None = None,
     ) -> str:
         """Assert result is failure and return error message."""
         if result.success:
@@ -38,11 +43,11 @@ class FlextTestsResultUtilitiesMixin:
         """Assert result is success, optionally validate the value, and return it."""
         if not result.success:
             raise AssertionError(
-                error_msg or c.Tests.ERR_OK_FAILED.format(error=result.error)
+                error_msg or c.Tests.ERR_OK_FAILED.format(error=result.error),
             )
         value: TResult = result.value
         if expected_value is not ... and value != expected_value:
             raise AssertionError(
-                f"Expected success value {expected_value!r} but got {value!r}"
+                f"Expected success value {expected_value!r} but got {value!r}",
             )
         return value

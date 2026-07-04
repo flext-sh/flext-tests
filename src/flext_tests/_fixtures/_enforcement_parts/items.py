@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
-from pathlib import Path
-from typing import override
+from typing import TYPE_CHECKING, override
 
 import pytest
 
-from flext_tests import m, p, t
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+    from pathlib import Path
+
+    from flext_tests import m, p, t
 
 
 class EnforcementItem(pytest.Item):
@@ -43,7 +45,9 @@ class EnforcementItem(pytest.Item):
     def _format_violation(violation: p.AttributeProbe) -> str:
         rule_id = getattr(violation, "rule_id", "")
         file_path = getattr(violation, "file_path", None) or getattr(
-            violation, "file", ""
+            violation,
+            "file",
+            "",
         )
         line = getattr(violation, "line_number", None) or getattr(violation, "line", "")
         description = (

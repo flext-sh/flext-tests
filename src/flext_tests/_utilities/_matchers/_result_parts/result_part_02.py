@@ -47,7 +47,7 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
                     )
                 try:
                     extract_data = FlextTestsPayloadUtilities.to_config_map(
-                        result_value
+                        result_value,
                     )
                 except c.ValidationError as exc:
                     raise AssertionError(
@@ -63,7 +63,7 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
                         ),
                     )
                 extracted_payload = FlextTestsPayloadUtilities.to_payload(
-                    extracted.value
+                    extracted.value,
                 )
                 return extracted_payload, extracted_payload
 
@@ -94,7 +94,7 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
             ) -> TResult | t.Tests.TestobjectSerializable:
                 """Validate scalar predicates for a successful result."""
                 if not FlextTestsMatchersResultMixin.Tests.Matchers._ok_has_scalar_validation(
-                    params
+                    params,
                 ):
                     return result_value
                 is_type = params.is_ if not isinstance(params.is_, tuple) else None
@@ -133,7 +133,7 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
                 if not u.chk(chk_value, guard):
                     raise AssertionError(
                         params.msg
-                        or f"Value {result_value!r} did not satisfy constraints"
+                        or f"Value {result_value!r} did not satisfy constraints",
                     )
                 if (
                     params.match is not None

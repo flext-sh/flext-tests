@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_tests import m, p, r, t
 from flext_tests._utilities._make_parts.make_parsing_part_01 import (
     FlextTestsMakeParsingUtilitiesMixin as FlextTestsMakeParsingUtilitiesMixinPart01,
 )
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsMakeParsingUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixinPart01):
@@ -23,13 +26,13 @@ class FlextTestsMakeParsingUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixinPar
             return r[t.SequenceOf[m.Tests.MakeParam]].ok(())
         if not isinstance(value, list):
             return r[t.SequenceOf[m.Tests.MakeParam]].fail(
-                f"{path}: params deve conter lista"
+                f"{path}: params deve conter lista",
             )
         params: list[m.Tests.MakeParam] = []
         for item in value:
             if not isinstance(item, dict):
                 return r[t.SequenceOf[m.Tests.MakeParam]].fail(
-                    f"{path}: params deve conter objetos TOML"
+                    f"{path}: params deve conter objetos TOML",
                 )
             parsed = t.Tests.MAKE_TOML_TABLE_ADAPTER.validate_python(item)
             param_result = FlextTestsMakeParsingUtilitiesMixin.make_parse_param(
@@ -38,7 +41,7 @@ class FlextTestsMakeParsingUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixinPar
             )
             if param_result.failure:
                 return r[t.SequenceOf[m.Tests.MakeParam]].fail(
-                    param_result.error or "param invalid"
+                    param_result.error or "param invalid",
                 )
             params.append(param_result.value)
         return r[t.SequenceOf[m.Tests.MakeParam]].ok(tuple(params))
@@ -53,13 +56,13 @@ class FlextTestsMakeParsingUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixinPar
             return r[t.SequenceOf[m.Tests.MakeMutationCondition]].ok(())
         if not isinstance(value, list):
             return r[t.SequenceOf[m.Tests.MakeMutationCondition]].fail(
-                f"{path}: mutates_when deve conter lista"
+                f"{path}: mutates_when deve conter lista",
             )
         conditions: list[m.Tests.MakeMutationCondition] = []
         for item in value:
             if not isinstance(item, dict):
                 return r[t.SequenceOf[m.Tests.MakeMutationCondition]].fail(
-                    f"{path}: mutates_when deve conter objetos TOML"
+                    f"{path}: mutates_when deve conter objetos TOML",
                 )
             parsed = t.Tests.MAKE_TOML_TABLE_ADAPTER.validate_python(item)
             condition_result = (
@@ -70,7 +73,7 @@ class FlextTestsMakeParsingUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixinPar
             )
             if condition_result.failure:
                 return r[t.SequenceOf[m.Tests.MakeMutationCondition]].fail(
-                    condition_result.error or "mutation condition invalid"
+                    condition_result.error or "mutation condition invalid",
                 )
             conditions.append(condition_result.value)
         return r[t.SequenceOf[m.Tests.MakeMutationCondition]].ok(tuple(conditions))
@@ -93,21 +96,21 @@ class FlextTestsMakeParsingUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixinPar
         )
         if name_result.failure:
             return r[m.Tests.MakeMutationCondition].fail(
-                name_result.error or "condition name missing"
+                name_result.error or "condition name missing",
             )
         if values_result.failure:
             return r[m.Tests.MakeMutationCondition].fail(
-                values_result.error or "condition values invalid"
+                values_result.error or "condition values invalid",
             )
         if not values_result.value:
             return r[m.Tests.MakeMutationCondition].fail(
-                f"{path}: mutates_when.values nao pode estar vazio"
+                f"{path}: mutates_when.values nao pode estar vazio",
             )
         return r[m.Tests.MakeMutationCondition].ok(
             m.Tests.MakeMutationCondition(
                 name=name_result.value,
                 values=values_result.value,
-            )
+            ),
         )
 
     @staticmethod
@@ -134,7 +137,7 @@ class FlextTestsMakeParsingUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixinPar
         default_raw = data.get("default", "")
         if not isinstance(required_raw, bool):
             return r[m.Tests.MakeParam].fail(
-                f"{path}: params.required deve ser booleano"
+                f"{path}: params.required deve ser booleano",
             )
         if not isinstance(default_raw, str):
             return r[m.Tests.MakeParam].fail(f"{path}: params.default deve ser string")
@@ -152,7 +155,7 @@ class FlextTestsMakeParsingUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixinPar
                 required=required_raw,
                 default=default_raw,
                 choices=choices_result.value,
-            )
+            ),
         )
 
     @staticmethod
@@ -169,11 +172,11 @@ class FlextTestsMakeParsingUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixinPar
         for key, item in sorted(value.items()):
             if not key.strip():
                 return r[t.StrPairSequence].fail(
-                    f"{path}: target_env possui chave invalida"
+                    f"{path}: target_env possui chave invalida",
                 )
             if not isinstance(item, str):
                 return r[t.StrPairSequence].fail(
-                    f"{path}: target_env.{key} deve ser string"
+                    f"{path}: target_env.{key} deve ser string",
                 )
             items.append((key.strip(), item))
         return r[t.StrPairSequence].ok(tuple(items))

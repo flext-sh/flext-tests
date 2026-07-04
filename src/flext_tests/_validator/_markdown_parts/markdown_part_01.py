@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
-from collections.abc import MutableSequence
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from flext_tests import c, p, t, u
 from flext_tests._validator.models import FlextTestsValidatorModels
 
 if TYPE_CHECKING:
+    from collections.abc import MutableSequence
+    from pathlib import Path
+
     from flext_tests import m
 
 
@@ -69,7 +70,7 @@ class FlextValidatorMarkdown:
                         "MD-001",
                         lines,
                         c.Tests.VALIDATOR_MSG_MD_SYNTAX.format(msg="invalid Python"),
-                    )
+                    ),
                 )
                 continue
 
@@ -128,7 +129,7 @@ class FlextValidatorMarkdown:
                             c.Tests.VALIDATOR_MSG_MD_FORBIDDEN_IMPORT.format(
                                 import_name=f"from typing import {name}",
                             ),
-                        )
+                        ),
                     )
 
     @classmethod
@@ -155,7 +156,7 @@ class FlextValidatorMarkdown:
                         c.Tests.VALIDATOR_MSG_MD_FORBIDDEN_ANNOTATION.format(
                             annotation="object",
                         ),
-                    )
+                    ),
                 )
 
     @classmethod
@@ -185,7 +186,7 @@ class FlextValidatorMarkdown:
                     "MD-003",
                     lines,
                     c.Tests.VALIDATOR_MSG_MD_MISSING_FUTURE,
-                )
+                ),
             )
 
 

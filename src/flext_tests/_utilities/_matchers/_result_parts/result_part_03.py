@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import overload
+from typing import TYPE_CHECKING, overload
 
 from flext_tests import c, m, t
 from flext_tests._utilities._matchers._assertions import (
@@ -20,7 +20,9 @@ from flext_tests._utilities._matchers._that import (
 )
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
-from flext_tests.protocols import p as core_p
+
+if TYPE_CHECKING:
+    from flext_tests.protocols import p as core_p
 
 
 class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):

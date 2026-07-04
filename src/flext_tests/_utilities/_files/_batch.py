@@ -51,7 +51,7 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
                 f"Invalid parameters for batch operation: {exc}",
             )
         files_dict: MutableMapping[str, t.Tests.TestobjectSerializable] = dict(
-            params.files
+            params.files,
         )
         error_mode_str = "collect" if params.on_error == "collect" else "fail"
 
@@ -78,7 +78,7 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
                                 self._coerce_file_content(payload),
                                 name,
                                 params.directory,
-                            )
+                            ),
                         )
                     except (OSError, TypeError, ValueError, AttributeError) as e:
                         result = r[Path].fail(f"Failed to create {name}: {e}")

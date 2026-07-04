@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-from flext_tests import t
 from flext_tests._domains_parts.domains_part_01 import (
     FlextTestsDomains as FlextTestsDomainsPart01,
 )
+
+if TYPE_CHECKING:
+    from flext_tests import t
 
 
 class FlextTestsDomains(FlextTestsDomainsPart01):

@@ -4,21 +4,25 @@ from __future__ import annotations
 
 import socket
 import time
+from typing import TYPE_CHECKING
 
 from docker.errors import DockerException, NotFound
-from docker.models.containers import Container
 
 from flext_tests import c, m, p, r, t
 from flext_tests._docker_parts.docker_part_03 import (
     FlextTestsDocker as FlextTestsDockerPart03,
 )
 
+if TYPE_CHECKING:
+    from docker.models.containers import Container
+
 
 class FlextTestsDocker(FlextTestsDockerPart03):
     """Run Docker SDK container operations."""
 
     def fetch_container_info(
-        self, container_name: str
+        self,
+        container_name: str,
     ) -> p.Result[m.Tests.ContainerInfo]:
         """Fetch container information."""
         client = self.client
@@ -34,11 +38,12 @@ class FlextTestsDocker(FlextTestsDockerPart03):
         except c.EXC_BROAD_RUNTIME as exc:
             return r[m.Tests.ContainerInfo].fail(str(exc))
         return r[m.Tests.ContainerInfo].ok(
-            self._container_info_from_sdk(container_name, container)
+            self._container_info_from_sdk(container_name, container),
         )
 
     def fetch_container_status(
-        self, container_name: str
+        self,
+        container_name: str,
     ) -> p.Result[m.Tests.ContainerInfo]:
         """Fetch container status."""
         return self.fetch_container_info(container_name)
@@ -94,7 +99,7 @@ class FlextTestsDocker(FlextTestsDockerPart03):
         """Build canonical container info from a Docker SDK container."""
         ports_raw: t.MappingKV[str, t.Tests.TestobjectSerializable] = (
             t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
-                container.ports
+                container.ports,
             )
         )
         ports: t.MutableStrMapping = {}

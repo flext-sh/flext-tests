@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_tests import c, m, p, r, t, u
 from flext_tests._utilities._files._comparison_parts.comparison_part_01 import (
     FlextTestsFilesComparisonMixin as FlextTestsFilesComparisonMixinPart01,
 )
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsFilesComparisonMixin(FlextTestsFilesComparisonMixinPart01):

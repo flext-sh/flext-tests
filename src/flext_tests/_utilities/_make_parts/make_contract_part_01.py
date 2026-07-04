@@ -41,13 +41,13 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
             if require_required and param.required and not value:
                 return r[bool].fail(
                     f"{command.verb} WHAT={command.what}: parametro obrigatorio "
-                    f"ausente: {param.name}; exemplo: {command.example}"
+                    f"ausente: {param.name}; exemplo: {command.example}",
                 )
             if value and param.choices and value not in param.choices:
                 valid = "|".join(param.choices)
                 return r[bool].fail(
                     f"{command.verb} WHAT={command.what}: {param.name}={value!r} "
-                    f"invalido; validos: {valid}"
+                    f"invalido; validos: {valid}",
                 )
         return r[bool].ok(True)
 
@@ -62,7 +62,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
                 param = param_by_name.get(name)
                 if param is None or not param.required:
                     return r[bool].fail(
-                        f"{command.path}: parametro {name} deve ser obrigatorio"
+                        f"{command.path}: parametro {name} deve ser obrigatorio",
                     )
             apply_param = param_by_name.get(c.Tests.MAKE_APPLY_PARAM)
             if (
@@ -70,33 +70,33 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
                 and c.Tests.MAKE_DISPATCH_ENV_VALUE not in apply_param.choices
             ):
                 return r[bool].fail(
-                    f"{command.path}: APPLY deve declarar choices contendo Y"
+                    f"{command.path}: APPLY deve declarar choices contendo Y",
                 )
         if command.path.suffix not in c.Tests.MAKE_COMMAND_SUFFIXES:
             return r[bool].fail(
-                f"{command.path}: comando deve usar extensao .py ou .sh"
+                f"{command.path}: comando deve usar extensao .py ou .sh",
             )
         if command.path.name != f"{command.what}.py" and command.path.suffix != ".sh":
             return r[bool].fail(
-                f"{command.path}: comando deve usar extensao .py ou .sh"
+                f"{command.path}: comando deve usar extensao .py ou .sh",
             )
         if not command.summary.strip():
             return r[bool].fail(f"{command.path}: campo summary nao pode estar vazio")
         if command.target and command.path.suffix != ".py":
             return r[bool].fail(
-                f"{command.path}: target header-only deve usar arquivo .py"
+                f"{command.path}: target header-only deve usar arquivo .py",
             )
         if command.target_env and not command.target:
             return r[bool].fail(f"{command.path}: target_env exige target")
         if command.target:
             body_result = FlextTestsMakeParsingUtilitiesMixin.make_has_executable_body(
-                command.path
+                command.path,
             )
             if body_result.failure:
                 return r[bool].fail(body_result.error or "target body check failed")
             if body_result.value:
                 return r[bool].fail(
-                    f"{command.path}: comandos com target devem ser header-only"
+                    f"{command.path}: comandos com target devem ser header-only",
                 )
         condition_result = (
             FlextTestsMakeContractUtilitiesMixin.make_validate_mutation_conditions(
@@ -122,14 +122,14 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
             or c.Tests.MAKE_DISPATCH_ENV_VALUE not in apply_param.choices
         ):
             return r[bool].fail(
-                f"{command.path}: mutates_when exige APPLY com choice Y"
+                f"{command.path}: mutates_when exige APPLY com choice Y",
             )
         for condition in command.mutates_when:
             param = param_by_name.get(condition.name)
             if param is None:
                 return r[bool].fail(
                     f"{command.path}: mutates_when referencia parametro ausente "
-                    f"{condition.name}"
+                    f"{condition.name}",
                 )
             if param.choices:
                 missing = tuple(
@@ -138,7 +138,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
                 if missing:
                     return r[bool].fail(
                         f"{command.path}: mutates_when.{condition.name} possui "
-                        f"valores fora de choices: {','.join(missing)}"
+                        f"valores fora de choices: {','.join(missing)}",
                     )
         return r[bool].ok(True)
 

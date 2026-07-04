@@ -3,14 +3,16 @@
 from __future__ import annotations
 
 import sys
-from collections.abc import MutableMapping
-from typing import Annotated, ClassVar
+from typing import TYPE_CHECKING, Annotated, ClassVar
 
 from flext_infra import m, u
 from flext_tests import t
 from flext_tests._models._matchers_parts.matchers_part_01 import (
     FlextTestsMatchersModelsMixin as FlextTestsMatchersModelsMixinPart01,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import MutableMapping
 
 
 class FlextTestsMatchersModelsMixin(FlextTestsMatchersModelsMixinPart01):
@@ -23,10 +25,12 @@ class FlextTestsMatchersModelsMixin(FlextTestsMatchersModelsMixinPart01):
 
         msg: Annotated[str | None, u.Field(description="Message.")] = None
         eq: Annotated[
-            t.Tests.TestobjectSerializable | None, u.Field(description="Equals.")
+            t.Tests.TestobjectSerializable | None,
+            u.Field(description="Equals."),
         ] = None
         ne: Annotated[
-            t.Tests.TestobjectSerializable | None, u.Field(description="Not equals.")
+            t.Tests.TestobjectSerializable | None,
+            u.Field(description="Not equals."),
         ] = None
         is_: Annotated[
             type | tuple[type, ...] | None,
@@ -42,16 +46,20 @@ class FlextTestsMatchersModelsMixin(FlextTestsMatchersModelsMixinPart01):
         none: Annotated[bool | None, u.Field(description="None check.")] = None
         empty: Annotated[bool | None, u.Field(description="Empty check.")] = None
         gt: Annotated[
-            t.Tests.ComparableScalar | None, u.Field(description="Greater than.")
+            t.Tests.ComparableScalar | None,
+            u.Field(description="Greater than."),
         ] = None
         gte: Annotated[
-            t.Tests.ComparableScalar | None, u.Field(description="Greater/equal.")
+            t.Tests.ComparableScalar | None,
+            u.Field(description="Greater/equal."),
         ] = None
         lt: Annotated[
-            t.Tests.ComparableScalar | None, u.Field(description="Less than.")
+            t.Tests.ComparableScalar | None,
+            u.Field(description="Less than."),
         ] = None
         lte: Annotated[
-            t.Tests.ComparableScalar | None, u.Field(description="Less/equal.")
+            t.Tests.ComparableScalar | None,
+            u.Field(description="Less/equal."),
         ] = None
         len: Annotated[
             t.Tests.LengthSpec | None,
@@ -84,10 +92,12 @@ class FlextTestsMatchersModelsMixin(FlextTestsMatchersModelsMixinPart01):
             None
         )
         first: Annotated[
-            t.Tests.TestobjectSerializable | None, u.Field(description="First item.")
+            t.Tests.TestobjectSerializable | None,
+            u.Field(description="First item."),
         ] = None
         last: Annotated[
-            t.Tests.TestobjectSerializable | None, u.Field(description="Last item.")
+            t.Tests.TestobjectSerializable | None,
+            u.Field(description="Last item."),
         ] = None
         all_: Annotated[
             t.Tests.SequencePredicate | None,
@@ -103,20 +113,24 @@ class FlextTestsMatchersModelsMixin(FlextTestsMatchersModelsMixinPart01):
         unique: Annotated[bool | None, u.Field(description="Unique.")] = None
         keys: Annotated[t.Tests.KeySpec | None, u.Field(description="Keys.")] = None
         lacks_keys: Annotated[
-            t.Tests.KeySpec | None, u.Field(description="No keys.")
+            t.Tests.KeySpec | None,
+            u.Field(description="No keys."),
         ] = None
         values: Annotated[
             t.SequenceOf[t.Tests.TestobjectSerializable] | None,
             u.Field(description="Values."),
         ] = None
         kv: Annotated[
-            t.Tests.KeyValueSpec | None, u.Field(description="Key-values.")
+            t.Tests.KeyValueSpec | None,
+            u.Field(description="Key-values."),
         ] = None
         attrs: Annotated[
-            t.Tests.AttributeSpec | None, u.Field(description="Attrs.")
+            t.Tests.AttributeSpec | None,
+            u.Field(description="Attrs."),
         ] = None
         methods: Annotated[
-            t.Tests.AttributeSpec | None, u.Field(description="Methods.")
+            t.Tests.AttributeSpec | None,
+            u.Field(description="Methods."),
         ] = None
         attr_eq: Annotated[
             t.Tests.AttributeValueSpec | None,
@@ -131,10 +145,12 @@ class FlextTestsMatchersModelsMixin(FlextTestsMatchersModelsMixinPart01):
             None
         )
         paths: Annotated[
-            t.Tests.PathMatchSpec | None, u.Field(description="Paths.")
+            t.Tests.PathMatchSpec | None,
+            u.Field(description="Paths."),
         ] = None
         items: Annotated[
-            t.Tests.ItemMatchSpec | None, u.Field(description="Items.")
+            t.Tests.ItemMatchSpec | None,
+            u.Field(description="Items."),
         ] = None
         attrs_match: Annotated[
             t.Tests.AttributeMatchSpec | None,

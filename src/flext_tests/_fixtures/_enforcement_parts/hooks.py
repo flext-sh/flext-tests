@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
-import pytest
+from typing import TYPE_CHECKING
 
-from flext_tests import p
 from flext_tests._fixtures._enforcement_parts.build import _build_items
 from flext_tests._fixtures._enforcement_parts.config import (
     _resolve_config,
     _SessionConfig,
     active_rules,
 )
+
+if TYPE_CHECKING:
+    import pytest
+
+    from flext_tests import p
 
 
 def pytest_collection_modifyitems(
@@ -72,12 +76,12 @@ def pytest_terminal_summary(
         kinds[rule.source.kind] = kinds.get(rule.source.kind, 0) + 1
     terminalreporter.write_sep("-", "flext-enforce", yellow=True)
     terminalreporter.write_line(
-        f"catalog active: {len(active)} rules across {len(kinds)} source kinds"
+        f"catalog active: {len(active)} rules across {len(kinds)} source kinds",
     )
     for kind in sorted(kinds):
         terminalreporter.write_line(f"  {kind}: {kinds[kind]}")
     terminalreporter.write_line(
-        f"runtime warnings captured: {sum(cfg.warning_counter.values())}"
+        f"runtime warnings captured: {sum(cfg.warning_counter.values())}",
     )
 
 

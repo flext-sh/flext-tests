@@ -6,13 +6,15 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    Mapping,
-)
 from enum import StrEnum, unique
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
-from flext_infra import t
+if TYPE_CHECKING:
+    from collections.abc import (
+        Mapping,
+    )
+
+    from flext_infra import t
 
 
 class FlextTestsConstantsDocker:

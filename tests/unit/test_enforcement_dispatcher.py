@@ -8,12 +8,15 @@ using ``pytester`` fixtures.
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
 from flext_tests import m
 from flext_tests._fixtures import enforcement as dispatcher
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class TestsFlextTestsEnforcementDispatcher:

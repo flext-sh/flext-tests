@@ -16,8 +16,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import ClassVar, override
+from typing import TYPE_CHECKING, ClassVar, override
 
 from flext_tests import (
     m,
@@ -28,6 +27,9 @@ from flext_tests import (
 )
 from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
 from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsFiles(

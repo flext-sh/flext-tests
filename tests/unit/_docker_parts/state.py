@@ -2,14 +2,17 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
-import pytest
+from typing import TYPE_CHECKING
 
 from flext_tests import tk, tm
 from tests.constants import c
 from tests.models import m
 from tests.utilities import u
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    import pytest
 
 
 class DockerStateMixin:

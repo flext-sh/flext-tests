@@ -98,7 +98,7 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart01Subject):
                 if not u.chk(chk_plain, guard):
                     raise AssertionError(
                         params.msg
-                        or f"Assertion failed: {subject_payload!r} did not satisfy constraints"
+                        or f"Assertion failed: {subject_payload!r} did not satisfy constraints",
                     )
                 if (
                     params.match is not None
@@ -158,7 +158,7 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart01Subject):
                 if params.first is not None:
                     if not seq_value:
                         raise AssertionError(
-                            params.msg or "Sequence is empty, cannot check first"
+                            params.msg or "Sequence is empty, cannot check first",
                         )
                     if seq_value[0] != params.first:
                         raise AssertionError(
@@ -168,7 +168,7 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart01Subject):
                 if params.last is not None:
                     if not seq_value:
                         raise AssertionError(
-                            params.msg or "Sequence is empty, cannot check last"
+                            params.msg or "Sequence is empty, cannot check last",
                         )
                     if seq_value[-1] != params.last:
                         raise AssertionError(

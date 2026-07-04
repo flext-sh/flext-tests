@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_cli import u as cli_u
 from flext_tests import tf, tm
 from tests.models import m
 from tests.utilities import u
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FilesContentMetaMixin:
@@ -47,7 +50,8 @@ class FilesContentMetaMixin:
         """Test info() with parse_content=True for YAML dict."""
         manager = tf(base_dir=tmp_path)
         path = manager.create(
-            m.ConfigMap(root={"a": 1, "b": 2, "c": 3}), "settings.yaml"
+            m.ConfigMap(root={"a": 1, "b": 2, "c": 3}),
+            "settings.yaml",
         )
         result = manager.info(path, parse_content=True)
         _ = u.Tests.assert_success(result)

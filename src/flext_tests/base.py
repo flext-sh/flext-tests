@@ -2,17 +2,19 @@
 
 from __future__ import annotations
 
-from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 from flext_core import FlextContainer, FlextService
 from flext_tests import m, p, t
 from flext_tests.settings import FlextTestsSettings
 
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
 
 class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](
-    FlextService[TDomainResult]
+    FlextService[TDomainResult],
 ):
     """Base service for test packages with the ``Tests`` settings namespace."""
 

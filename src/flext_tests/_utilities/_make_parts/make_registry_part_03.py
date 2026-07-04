@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_tests import c, m, p, r, t
 from flext_tests._utilities._make_parts.make_registry_part_02 import (
@@ -10,6 +10,9 @@ from flext_tests._utilities._make_parts.make_registry_part_02 import (
 )
 from flext_tests._utilities.make_contract import FlextTestsMakeContractUtilitiesMixin
 from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixinPart02):
@@ -41,7 +44,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixinP
                 )
                 if load_result.failure:
                     return r[m.Tests.MakeRegistry].fail(
-                        load_result.error or "command load failed"
+                        load_result.error or "command load failed",
                     )
                 add_result = cls._make_add_command(
                     commands_by_verb,
@@ -50,7 +53,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixinP
                 )
                 if add_result.failure:
                     return r[m.Tests.MakeRegistry].fail(
-                        add_result.error or "command registration failed"
+                        add_result.error or "command registration failed",
                     )
 
         registry = m.Tests.MakeRegistry(
@@ -58,33 +61,35 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixinP
             aliases_by_name=aliases_by_name,
         )
         validate_result = FlextTestsMakeContractUtilitiesMixin.make_validate_registry(
-            registry
+            registry,
         )
         if validate_result.failure:
             return r[m.Tests.MakeRegistry].fail(
-                validate_result.error or "registry validation failed"
+                validate_result.error or "registry validation failed",
             )
         return r[m.Tests.MakeRegistry].ok(registry)
 
     @classmethod
     def make_load_command(
-        cls, path: Path, expected_verb: str
+        cls,
+        path: Path,
+        expected_verb: str,
     ) -> p.Result[m.Tests.MakeCommand]:
         """Load one promoted command from its flext-command TOML header."""
         if path.name == "__pycache__":
             return r[m.Tests.MakeCommand].fail(f"{path}: cache publico invalido")
         if path.is_dir():
             return r[m.Tests.MakeCommand].fail(
-                f"{path}: diretorio publico nao pode estar aninhado"
+                f"{path}: diretorio publico nao pode estar aninhado",
             )
         if path.suffix not in c.Tests.MAKE_COMMAND_SUFFIXES:
             return r[m.Tests.MakeCommand].fail(
-                f"{path}: arquivo publico deve ser .sh ou .py"
+                f"{path}: arquivo publico deve ser .sh ou .py",
             )
         data_result = FlextTestsMakeParsingUtilitiesMixin.make_header_data(path)
         if data_result.failure:
             return r[m.Tests.MakeCommand].fail(
-                data_result.error or "header load failed"
+                data_result.error or "header load failed",
             )
         data = data_result.value
         verb_result = FlextTestsMakeParsingUtilitiesMixin.make_require_string(
@@ -105,11 +110,11 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixinP
         what = what_result.value
         if verb != expected_verb:
             return r[m.Tests.MakeCommand].fail(
-                f"{path}: header verb={verb} diverge do diretorio {expected_verb}"
+                f"{path}: header verb={verb} diverge do diretorio {expected_verb}",
             )
         if what != path.stem:
             return r[m.Tests.MakeCommand].fail(
-                f"{path}: header what={what} diverge do arquivo {path.stem}"
+                f"{path}: header what={what} diverge do arquivo {path.stem}",
             )
         return cls._make_command_from_data(
             path,

@@ -6,14 +6,17 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 from flext_infra import m, u
 from flext_tests.constants import c
-from flext_tests.protocols import p
-from flext_tests.typings import t
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from flext_tests.protocols import p
+    from flext_tests.typings import t
 
 
 class FlextTestsBatchModelsMixin:
@@ -38,7 +41,7 @@ class FlextTestsBatchModelsMixin:
         operation: Annotated[
             c.Tests.Operation,
             m.BeforeValidator(
-                lambda v: c.Tests.Operation(v) if isinstance(v, str) else v
+                lambda v: c.Tests.Operation(v) if isinstance(v, str) else v,
             ),
             u.Field(
                 default=c.Tests.Operation.CREATE,
@@ -54,7 +57,7 @@ class FlextTestsBatchModelsMixin:
         on_error: Annotated[
             c.Tests.ErrorMode,
             m.BeforeValidator(
-                lambda v: c.Tests.ErrorMode(v) if isinstance(v, str) else v
+                lambda v: c.Tests.ErrorMode(v) if isinstance(v, str) else v,
             ),
             u.Field(
                 default=c.Tests.ErrorMode.COLLECT,

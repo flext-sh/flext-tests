@@ -5,13 +5,15 @@ Read content by format and optional Pydantic model validation.
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import overload
+from typing import TYPE_CHECKING, overload
 
 from flext_cli import u
 from flext_tests import c, m, p, r, t
 from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
@@ -100,7 +102,8 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
             })
         except c.EXC_BASIC_TYPE as exc:
             result = self._read_fail(
-                f"Invalid parameters for file read: {exc}", model_cls
+                f"Invalid parameters for file read: {exc}",
+                model_cls,
             )
         else:
             if not params.path.exists():
@@ -110,27 +113,34 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                 )
             else:
                 actual_fmt = u.Cli.files_detect_format_from_path(
-                    params.path, params.fmt
+                    params.path,
+                    params.fmt,
                 )
                 try:
                     content = self._read_content_by_format(
-                        params.path, actual_fmt, params
+                        params.path,
+                        actual_fmt,
+                        params,
                     )
                 except UnicodeDecodeError as e:
                     result = self._read_fail(
-                        c.Tests.ERROR_ENCODING.format(error=e), model_cls
+                        c.Tests.ERROR_ENCODING.format(error=e),
+                        model_cls,
                     )
                 except ValueError as e:
                     result = self._read_fail(
-                        c.Tests.ERROR_INVALID_JSON.format(error=e), model_cls
+                        c.Tests.ERROR_INVALID_JSON.format(error=e),
+                        model_cls,
                     )
                 except c.Cli.YamlParseError as e:
                     result = self._read_fail(
-                        c.Tests.ERROR_INVALID_YAML.format(error=e), model_cls
+                        c.Tests.ERROR_INVALID_YAML.format(error=e),
+                        model_cls,
                     )
                 except OSError as e:
                     result = self._read_fail(
-                        c.Tests.ERROR_READ.format(error=e), model_cls
+                        c.Tests.ERROR_READ.format(error=e),
+                        model_cls,
                     )
                 else:
                     if model_cls is not None:

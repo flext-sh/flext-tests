@@ -15,12 +15,15 @@ from collections.abc import (
 from datetime import datetime, tzinfo
 from enum import Enum
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_infra import u
 from flext_tests.constants import c
 from flext_tests.models import m
-from flext_tests.protocols import p
 from flext_tests.typings import t
+
+if TYPE_CHECKING:
+    from flext_tests.protocols import p
 
 
 class FlextTestsPayloadUtilities:

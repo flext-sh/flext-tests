@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_cli._utilities.files import FlextCliUtilitiesFiles
-from flext_tests import p
+
+if TYPE_CHECKING:
+    from flext_tests import p
 
 
 class FlextTestsDomains:

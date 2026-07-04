@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from flext_tests import c, m, t
 from flext_tests._utilities._matchers._that_parts.that_part_02 import (
     FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixinPart02,
 )
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart02):
@@ -29,7 +32,8 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart02):
                 """Validate sequence-specific predicates."""
                 seq_value = cls._sequence_value(subject_payload)
                 if not seq_value and not isinstance(
-                    subject_payload, t.SEQUENCE_PAIR_TYPES
+                    subject_payload,
+                    t.SEQUENCE_PAIR_TYPES,
                 ):
                     return
                 cls._validate_sequence_edges(seq_value, params)

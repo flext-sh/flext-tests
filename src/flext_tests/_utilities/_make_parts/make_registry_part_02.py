@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_tests import m, p, r, t
 from flext_tests._utilities._make_parts.make_registry_part_01 import (
@@ -10,6 +10,9 @@ from flext_tests._utilities._make_parts.make_registry_part_01 import (
 )
 from flext_tests._utilities.make_contract import FlextTestsMakeContractUtilitiesMixin
 from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixinPart01):
@@ -32,7 +35,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixinP
             )
             if value_result.failure:
                 return r[m.Tests.MakeCommand].fail(
-                    value_result.error or f"{field} missing"
+                    value_result.error or f"{field} missing",
                 )
             values[field] = value_result.value
 
@@ -82,7 +85,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixinP
         ):
             if result.failure:
                 return r[m.Tests.MakeCommand].fail(
-                    result.error or "command metadata invalid"
+                    result.error or "command metadata invalid",
                 )
 
         command = m.Tests.MakeCommand(
@@ -106,7 +109,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixinP
         )
         if contract_result.failure:
             return r[m.Tests.MakeCommand].fail(
-                contract_result.error or "command contract invalid"
+                contract_result.error or "command contract invalid",
             )
         return r[m.Tests.MakeCommand].ok(command)
 
