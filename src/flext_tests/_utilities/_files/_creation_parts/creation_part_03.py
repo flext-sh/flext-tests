@@ -15,9 +15,9 @@ from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 class FlextTestsFilesCreationMixin(FlextTestsFilesCreationMixinPart02):
     """Create test files with auto-detected or explicit formats."""
 
-    def create[TFileContent: t.Tests.FileContentPlain](
+    def create(
         self,
-        content: TFileContent | p.ResultLike[TFileContent],
+        content: t.Tests.FileContentPlain | p.ResultLike[t.Tests.FileContentPlain],
         name: str = c.Tests.DEFAULT_FILENAME,
         directory: Path | None = None,
         *,

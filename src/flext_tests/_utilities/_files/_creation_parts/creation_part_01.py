@@ -14,9 +14,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
     """Coerce and extract file creation content."""
 
     @staticmethod
-    def _is_file_result[TFileContent: t.Tests.FileContentPlain](
-        value: TFileContent | p.ResultLike[TFileContent],
-    ) -> TypeIs[p.ResultLike[TFileContent]]:
+    def _is_file_result(
+        value: t.Tests.FileContentPlain | p.ResultLike[t.Tests.FileContentPlain],
+    ) -> TypeIs[p.ResultLike[t.Tests.FileContentPlain]]:
         """Narrow file input to a result-like wrapper."""
         return isinstance(value, p.ResultLike)
 
@@ -45,10 +45,10 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             if isinstance(row, t.SEQUENCE_PAIR_TYPES)
         ]
 
-    def _coerce_file_content[TFileContent: t.Tests.FileContentPlain](
+    def _coerce_file_content(
         self,
-        value: TFileContent
-        | p.ResultLike[TFileContent]
+        value: t.Tests.FileContentPlain
+        | p.ResultLike[t.Tests.FileContentPlain]
         | t.Tests.TestobjectSerializable
         | None,
     ) -> t.Tests.FileContentPlain:
@@ -74,9 +74,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             case _:
                 return str(unwrapped)
 
-    def _extract_content[TFileContent: t.Tests.FileContentPlain](
+    def _extract_content(
         self,
-        content: TFileContent | p.ResultLike[TFileContent],
+        content: t.Tests.FileContentPlain | p.ResultLike[t.Tests.FileContentPlain],
         extract_result: bool,
     ) -> t.Tests.FileContentPlain:
         """Extract actual content from a result-like wrapper or return as-is."""

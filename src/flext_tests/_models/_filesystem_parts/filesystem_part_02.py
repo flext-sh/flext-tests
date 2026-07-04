@@ -156,10 +156,9 @@ class FlextTestsFilesystemModelsMixin(FlextTestsFilesystemModelsMixinPart01):
                 lambda v: type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
             ),
             u.Field(
-                default=c.Tests.FILE_FORMAT_AUTO,
                 description="File format override.",
             ),
-        ]
+        ] = c.Tests.FILE_FORMAT_AUTO
         enc: Annotated[
             t.NonEmptyStr,
             u.Field(description="File encoding."),
