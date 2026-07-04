@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from typing import ClassVar, Final
 
-from flext_tests import t
+from flext_infra import t
 from flext_tests._constants._validator_parts.validator_part_01 import (
     FlextTestsConstantsValidator as FlextTestsConstantsValidatorPart01,
 )

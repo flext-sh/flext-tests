@@ -5,7 +5,7 @@ from __future__ import annotations
 from enum import StrEnum, unique
 from typing import Final
 
-from flext_tests import t
+from flext_infra import t
 
 
 class FlextTestsConstantsValidator:

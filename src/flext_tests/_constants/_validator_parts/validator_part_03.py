@@ -6,7 +6,7 @@ import re
 from types import MappingProxyType
 from typing import ClassVar, Final
 
-from flext_tests import t
+from flext_infra import t
 from flext_tests._constants._validator_parts.validator_part_02 import (
     FlextTestsConstantsValidator as FlextTestsConstantsValidatorPart02,
 )

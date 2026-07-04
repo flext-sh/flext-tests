@@ -9,7 +9,7 @@ from __future__ import annotations
 from enum import StrEnum, unique
 from typing import Final
 
-from flext_tests import c, t
+from flext_infra import c as infra_c, t
 
 
 class FlextTestsConstantsFiles:
@@ -78,7 +78,7 @@ class FlextTestsConstantsFiles:
         ".tsv": "csv",
     }
     DEFAULT_FILENAME: Final[str] = "file"
-    DEFAULT_ENCODING: Final[str] = c.DEFAULT_ENCODING
+    DEFAULT_ENCODING: Final[str] = infra_c.DEFAULT_ENCODING
     DEFAULT_BINARY_ENCODING: Final[str] = "binary"
     DEFAULT_JSON_INDENT: Final[int] = 2
     DEFAULT_CSV_DELIMITER: Final[str] = ","

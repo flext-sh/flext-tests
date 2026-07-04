@@ -11,7 +11,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import ClassVar, Final
 
-from flext_tests import t
+from flext_infra import t
 
 
 class FlextTestsConstantsMatcher:
