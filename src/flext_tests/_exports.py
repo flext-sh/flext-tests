@@ -42,6 +42,7 @@ FLEXT_TESTS_LAZY_IMPORTS = merge_lazy_imports(
             ".settings": ("FlextTestsSettings",),
             ".typings": ("FlextTestsTypes", "t"),
             ".utilities": ("FlextTestsUtilities", "u"),
+            "._utilities.matchers": ("tm",),
             ".validator": ("FlextTestsValidator", "tv"),
             "flext_core": ("d", "e", "h", "r", "x"),
         },

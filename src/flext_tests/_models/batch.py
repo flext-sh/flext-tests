@@ -10,8 +10,10 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated
 
-from flext_infra import m
-from flext_tests import c, p, t, u
+from flext_infra import m, u
+from flext_tests.constants import c
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
 class FlextTestsBatchModelsMixin:

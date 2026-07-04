@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flext_tests import c, m, p
+from flext_tests import c, m, p, r
 from flext_tests._utilities._matchers._containment import (
     FlextTestsMatchersContainmentMixin,
 )
@@ -22,7 +22,7 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart01):
                 params: m.Tests.ThatParams,
             ) -> p.AttributeProbe:
                 """Return the value to validate after result-aware unwrapping."""
-                if not isinstance(subject, p.Result):
+                if not isinstance(subject, r):
                     return subject
                 result_obj = subject
                 if params.ok is not None:

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from flext_core import u
 from flext_tests import c, m, t
 from flext_tests._utilities._matchers._assertions import (
     FlextTestsMatchersAssertionsMixin,
@@ -16,7 +17,6 @@ from flext_tests._utilities._matchers._typeguards import (
     FlextTestsMatchersTypeGuardsMixin,
 )
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-from flext_tests.utilities import u
 
 
 class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart01Subject):
