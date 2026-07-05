@@ -32,6 +32,7 @@ class FlextTestsConstantsDocker:
             "service": "oracle-db",
             "port": 1521,
             "host": "localhost",
+            "startup_timeout": 900,
         },
     }
 

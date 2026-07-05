@@ -138,8 +138,7 @@ class TestsFlextTestsDockerIntegration:
             "flext-oracle-db-test",
             workspace_root=self._workspace_root(),
         )
-        if docker.client is None:
-            pytest.skip(docker.client_error or "Docker client unavailable")
+        assert docker.client is not None, docker.client_error or "Docker unavailable"
 
         result = docker.execute()
 
@@ -158,8 +157,7 @@ class TestsFlextTestsDockerIntegration:
             "flext-oracle-db-test",
             workspace_root=self._workspace_root(),
         )
-        if docker.client is None:
-            pytest.skip(docker.client_error or "Docker client unavailable")
+        assert docker.client is not None, docker.client_error or "Docker unavailable"
 
         first = docker.execute()
         second = docker.execute()
