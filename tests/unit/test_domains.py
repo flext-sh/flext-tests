@@ -149,10 +149,7 @@ class TestsFlextTestsDomains:
 
     def test_fixture_filename_follows_group_kind_extension_convention(self) -> None:
         """The filename contract is ``<group>_<kind>_fixtures<ext>``."""
-        assert (
-            td.fixture_filename("oid", "schema")
-            == "oid_schema_fixtures.ldif"
-        )
+        assert td.fixture_filename("oid", "schema") == "oid_schema_fixtures.ldif"
         assert (
             td.fixture_filename("oud", "acl", file_extension=".txt")
             == "oud_acl_fixtures.txt"
@@ -209,10 +206,7 @@ class TestsFlextTestsDomains:
         expected: bool,
     ) -> None:
         """``fixture_exists`` mirrors on-disk presence without raising."""
-        assert (
-            td.fixture_exists(group, kind, fixtures_root=fixtures_root)
-            is expected
-        )
+        assert td.fixture_exists(group, kind, fixtures_root=fixtures_root) is expected
 
     # --- fixture discovery ------------------------------------------------
 
@@ -230,9 +224,12 @@ class TestsFlextTestsDomains:
         tmp_path: Path,
     ) -> None:
         """A non-existent root yields an empty tuple, never an error."""
-        assert td.available_fixture_servers(
-            fixtures_root=tmp_path / "nope",
-        ) == ()
+        assert (
+            td.available_fixture_servers(
+                fixtures_root=tmp_path / "nope",
+            )
+            == ()
+        )
 
     def test_available_fixture_types_lists_kinds_for_group(
         self,
@@ -249,10 +246,13 @@ class TestsFlextTestsDomains:
         fixtures_root: Path,
     ) -> None:
         """An unknown group has no fixture types."""
-        assert td.available_fixture_types(
-            "ghost",
-            fixtures_root=fixtures_root,
-        ) == ()
+        assert (
+            td.available_fixture_types(
+                "ghost",
+                fixtures_root=fixtures_root,
+            )
+            == ()
+        )
 
     def test_load_server_fixtures_maps_every_kind_to_its_contents(
         self,

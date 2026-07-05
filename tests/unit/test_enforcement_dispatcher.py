@@ -80,9 +80,7 @@ class TestsFlextTestsEnforcementDispatcher:
 
         assert dispatcher.discover_workspace_root(nested) == workspace
 
-    def test_returns_workspace_itself_when_start_is_root(
-        self, workspace: Path
-    ) -> None:
+    def test_returns_workspace_itself_when_start_is_root(self, workspace: Path) -> None:
         assert dispatcher.discover_workspace_root(workspace) == workspace
 
     def test_returns_none_when_no_marker_present(self, tmp_path: Path) -> None:
@@ -91,9 +89,7 @@ class TestsFlextTestsEnforcementDispatcher:
 
         assert dispatcher.discover_workspace_root(stray) is None
 
-    def test_returns_none_when_a_single_marker_is_missing(
-        self, tmp_path: Path
-    ) -> None:
+    def test_returns_none_when_a_single_marker_is_missing(self, tmp_path: Path) -> None:
         partial = tmp_path / "partial"
         partial.mkdir()
         # All markers but the last one -> not a workspace.
@@ -147,9 +143,7 @@ class TestsFlextTestsEnforcementDispatcher:
         assert ids.isdisjoint({"ENFORCE-034", "ENFORCE-035", "ENFORCE-038"})
 
     def test_include_narrows_to_the_listed_ids(self) -> None:
-        active = dispatcher.active_rules(
-            self._cfg(include=frozenset({"ENFORCE-001"}))
-        )
+        active = dispatcher.active_rules(self._cfg(include=frozenset({"ENFORCE-001"})))
 
         assert {r.id for r in active} == {"ENFORCE-001"}
 
@@ -281,9 +275,12 @@ class TestsFlextTestsEnforcementDispatcher:
         parser = Parser()
         dispatcher.pytest_addoption(parser)
 
-        enabled = parser.parse(
-            ["--flext-enforce", "--flext-enforce-strict", "--flext-enforce-rules", "A,B"]
-        )
+        enabled = parser.parse([
+            "--flext-enforce",
+            "--flext-enforce-strict",
+            "--flext-enforce-rules",
+            "A,B",
+        ])
         assert enabled.flext_enforce is True
         assert enabled.flext_enforce_strict is True
         assert enabled.flext_enforce_rules == "A,B"

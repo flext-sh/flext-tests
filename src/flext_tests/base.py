@@ -81,7 +81,7 @@ class FlextTestsCase:
     """Pytest class MRO surface populated by the shared test runtime fixture."""
 
     service: FlextTestsServiceBase[p.Base]
-    settings: p.Settings
+    settings: FlextTestsSettings
     logger: p.Logger
     c: type
     e: type

@@ -95,9 +95,7 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
             ),
         )
 
-        layer_violations = [
-            v for v in result.violations if v.rule_id == "LAYER-001"
-        ]
+        layer_violations = [v for v in result.violations if v.rule_id == "LAYER-001"]
         tm.that(result.passed, eq=False)
         tm.that(len(layer_violations) >= 2, eq=True)
         # Every reported violation must point at the scanned file with a real line.
@@ -162,9 +160,7 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
 
     # ---- markdown validator ---------------------------------------------
 
-    @pytest.mark.parametrize(
-        "expected_rule", ["MD-001", "MD-002", "MD-003", "MD-004"]
-    )
+    @pytest.mark.parametrize("expected_rule", ["MD-001", "MD-002", "MD-003", "MD-004"])
     def test_markdown_reports_each_forbidden_code_block_pattern(
         self,
         tmp_path: Path,

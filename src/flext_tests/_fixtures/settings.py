@@ -54,7 +54,7 @@ def _bind_runtime_aliases(
     if instance is None:
         return
     instance.service = service
-    instance.settings = service.settings
+    instance.settings = service.fetch_settings()
     instance.logger = service.logger
     for alias_name, fallback in (
         ("c", c),
