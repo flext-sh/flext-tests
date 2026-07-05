@@ -215,3 +215,25 @@ class TestsFlextTestsEnforcementPlugin:
         result.assert_outcomes(passed=1, warnings=1)
         result.stdout.no_fnmatch_line("*flext-enforce*")
         result.stdout.no_fnmatch_line("runtime warnings captured:*")
+
+    def test_external_pytest11_plugins_are_loaded_in_subprocess(
+        self,
+        pytester: pytest.Pytester,
+    ) -> None:
+        """Auto-registered pytest11 contributions from flext-core/infra load."""
+        pytester.makeini("[pytest]\n")
+        pytester.makepyfile(
+            test_plugins=(
+                "from flext_tests._fixtures._enforcement_parts.registry import builders\n"
+                "\n"
+                "\n"
+                "def test_flext_core_plugin_is_registered() -> None:\n"
+                "    assert 'flext_core_runtime_warning' in builders()\n"
+                "\n"
+                "\n"
+                "def test_flext_infra_plugin_is_registered() -> None:\n"
+                "    assert 'flext_infra_detector' in builders()\n"
+            ),
+        )
+        result = pytester.runpytest_subprocess()
+        result.assert_outcomes(passed=2)
