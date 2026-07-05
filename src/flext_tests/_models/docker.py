@@ -6,15 +6,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated
+from pathlib import Path
+from typing import Annotated
 
 from flext_infra import m, u
 from flext_tests.constants import c
-
-if TYPE_CHECKING:
-    from pathlib import Path
-
-    from flext_tests.typings import t
+from flext_tests.typings import t
 
 
 class FlextTestsDockerModelsMixin:

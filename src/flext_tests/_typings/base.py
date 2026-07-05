@@ -38,7 +38,7 @@ class FlextTestsBaseTypesMixin:
         | tzinfo
         | Path
         | m.BaseModel
-        | type
+        | type[object]
         | frozenset[str]
     )
     type TestobjectCollection = (

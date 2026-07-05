@@ -3,13 +3,11 @@
 from __future__ import annotations
 
 import fnmatch
+from pathlib import Path
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Annotated, ClassVar
+from typing import Annotated, ClassVar
 
 from flext_tests import c, m, s, t, u
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 class FlextTestsValidator(s[m.Tests.ScanResult]):
@@ -55,7 +53,8 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         """Discover Python files to scan."""
         excludes = exclude_patterns or list(c.Tests.VALIDATOR_EXCLUDE_PATTERNS)
         if path.is_file():
-            return [path] if path.suffix == ".py" else []
+            empty: list[Path] = []
+            return [path] if path.suffix == ".py" else empty
         files: t.SequenceOf[Path] = [
             py_file
             for py_file in u.Infra.iter_matching_files(path, includes=["*.py"])

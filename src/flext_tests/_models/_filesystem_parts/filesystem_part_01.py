@@ -6,12 +6,12 @@ from typing import TYPE_CHECKING, Annotated
 
 from flext_infra import m, u
 from flext_tests.constants import c
+from flext_tests.typings import t
 
 if TYPE_CHECKING:
     import datetime
-    from pathlib import Path
 
-    from flext_tests.typings import t
+from pathlib import Path
 
 
 class FlextTestsFilesystemModelsMixin:

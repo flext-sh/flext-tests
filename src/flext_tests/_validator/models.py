@@ -8,20 +8,14 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
+from collections.abc import Callable, MutableSequence
+from pathlib import Path
+from typing import ClassVar
 
 from flext_core import r
 from flext_tests.models import m
-
-if TYPE_CHECKING:
-    from collections.abc import (
-        Callable,
-        MutableSequence,
-    )
-    from pathlib import Path
-
-    from flext_tests.protocols import p
-    from flext_tests.typings import t
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
 class FlextTestsValidatorModels:

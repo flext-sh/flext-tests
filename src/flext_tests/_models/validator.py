@@ -6,15 +6,14 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated, Self
+from collections.abc import MutableMapping
+from pathlib import Path
+from typing import Annotated, Self
 
-from flext_infra import m, u
+from flext_infra.models import m
+from flext_infra.utilities import u
 from flext_tests.constants import c
-
-if TYPE_CHECKING:
-    from pathlib import Path
-
-    from flext_tests.typings import t
+from flext_tests.typings import t
 
 
 class FlextTestsValidatorModelsMixin:
@@ -115,8 +114,13 @@ class FlextTestsValidatorModelsMixin:
             u.Field(description="Resolved FLEXT workspace root for the session."),
         ] = None
         warning_counter: Annotated[
-            t.MutableIntMapping,
+            MutableMapping[str, int],
             u.Field(
                 description="Captured runtime warning counts keyed by dotted category.",
             ),
         ] = u.Field(default_factory=dict)
+
+
+FlextTestsValidatorModelsMixin.Violation.model_rebuild()
+FlextTestsValidatorModelsMixin.ScanResult.model_rebuild()
+FlextTestsValidatorModelsMixin.EnforcementDispatcherConfig.model_rebuild()

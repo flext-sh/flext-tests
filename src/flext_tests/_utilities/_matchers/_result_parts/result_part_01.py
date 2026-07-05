@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from collections.abc import MutableMapping
 
 from flext_core import u
 from flext_tests._utilities._matchers._containment import (
@@ -12,12 +12,8 @@ from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
 from flext_tests.constants import c
 from flext_tests.models import m
-
-if TYPE_CHECKING:
-    from collections.abc import MutableMapping
-
-    from flext_tests.protocols import p
-    from flext_tests.typings import t
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
 class FlextTestsMatchersResultMixin:

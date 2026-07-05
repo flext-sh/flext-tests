@@ -5,15 +5,11 @@ Format detection delegates to ``u.Cli`` canonical helpers; no I/O lives here.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from pathlib import Path
 
 from flext_cli._utilities.files import FlextCliUtilitiesFiles
-
-if TYPE_CHECKING:
-    from pathlib import Path
-
-    from flext_tests.models import m
-    from flext_tests.typings import t
+from flext_tests.models import m
+from flext_tests.typings import t
 
 
 class FlextTestsFilesUtilitiesMixin:

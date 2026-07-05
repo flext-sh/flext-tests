@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import Annotated, ClassVar
 
-from flext_infra import m, u
+from flext_infra.models import m
+from flext_infra.utilities import u
 from flext_tests import t
 
 
@@ -14,7 +15,10 @@ class FlextTestsMatchersModelsMixin:
     class OkParams(m.Value):
         """Matcher parameters for successful result assertions."""
 
-        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
+            populate_by_name=True,
+            arbitrary_types_allowed=True,
+        )
 
         eq: Annotated[
             t.Tests.MatcherEqTarget | None,
@@ -25,7 +29,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Value must not equal."),
         ] = None
         is_: Annotated[
-            type | tuple[type, ...] | None,
+            type[object] | tuple[type[object], ...] | None,
             u.Field(
                 validation_alias=t.AliasChoices("is_", "is"),
                 description="Runtime type check.",
@@ -51,6 +55,7 @@ class FlextTestsMatchersModelsMixin:
         ] = None
         has: Annotated[
             t.Tests.ContainmentSpec | None,
+            m.SkipValidation,
             u.Field(description="Unified containment check."),
         ] = None
         lacks: Annotated[
@@ -83,14 +88,17 @@ class FlextTestsMatchersModelsMixin:
         ] = None
         paths: Annotated[
             t.Tests.PathMatchSpec | None,
+            m.SkipValidation,
             u.Field(description="Multiple path-based assertions."),
         ] = None
         items: Annotated[
             t.Tests.ItemMatchSpec | None,
+            m.SkipValidation,
             u.Field(description="Sequence item assertions by selector."),
         ] = None
         attrs_match: Annotated[
             t.Tests.AttributeMatchSpec | None,
+            m.SkipValidation,
             u.Field(description="Attribute assertions by attribute path."),
         ] = None
         where: Annotated[

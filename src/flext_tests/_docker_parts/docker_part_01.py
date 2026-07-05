@@ -4,14 +4,12 @@ from __future__ import annotations
 
 from collections.abc import MutableSet, Sequence
 from pathlib import Path
-from typing import TYPE_CHECKING, Annotated, ClassVar
+from typing import Annotated, ClassVar
 
+from docker import DockerClient as DockerSDKClient
 from python_on_whales import DockerClient as WhalesDockerClient
 
 from flext_tests import c, m, p, s, t, u
-
-if TYPE_CHECKING:
-    from docker import DockerClient as DockerSDKClient
 
 
 class FlextTestsDocker(s[m.Tests.ContainerInfo]):

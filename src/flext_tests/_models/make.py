@@ -6,15 +6,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from pathlib import Path
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 from flext_infra import m, u
-
-if TYPE_CHECKING:
-    from pathlib import Path
-
-    from flext_tests import t
+from flext_tests import t
 
 
 class FlextTestsMakeModelsMixin:

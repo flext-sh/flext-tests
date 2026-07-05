@@ -5,7 +5,8 @@ from __future__ import annotations
 import sys
 from typing import TYPE_CHECKING, Annotated, ClassVar
 
-from flext_infra import m, u
+from flext_infra.models import m
+from flext_infra.utilities import u
 from flext_tests import t
 from flext_tests._models._matchers_parts.matchers_part_01 import (
     FlextTestsMatchersModelsMixin as FlextTestsMatchersModelsMixinPart01,
@@ -21,7 +22,10 @@ class FlextTestsMatchersModelsMixin(FlextTestsMatchersModelsMixinPart01):
     class ThatParams(m.Value):
         """Generic matcher parameters for value assertions."""
 
-        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
+            populate_by_name=True,
+            arbitrary_types_allowed=True,
+        )
 
         msg: Annotated[str | None, u.Field(description="Message.")] = None
         eq: Annotated[
@@ -33,11 +37,11 @@ class FlextTestsMatchersModelsMixin(FlextTestsMatchersModelsMixinPart01):
             u.Field(description="Not equals."),
         ] = None
         is_: Annotated[
-            type | tuple[type, ...] | None,
+            type[object] | tuple[type[object], ...] | None,
             u.Field(validation_alias=t.AliasChoices("is_", "is"), description="Type."),
         ] = None
         not_: Annotated[
-            type | tuple[type, ...] | None,
+            type[object] | tuple[type[object], ...] | None,
             u.Field(
                 validation_alias=t.AliasChoices("not_", "not"),
                 description="Not type.",
@@ -74,6 +78,7 @@ class FlextTestsMatchersModelsMixin(FlextTestsMatchersModelsMixinPart01):
         length_lte: Annotated[int | None, u.Field(description="Length <=.")] = None
         has: Annotated[
             t.Tests.ContainmentSpec | None,
+            m.SkipValidation,
             u.Field(
                 validation_alias=t.AliasChoices("has", "contains"),
                 description="Contains.",
@@ -101,10 +106,12 @@ class FlextTestsMatchersModelsMixin(FlextTestsMatchersModelsMixinPart01):
         ] = None
         all_: Annotated[
             t.Tests.SequencePredicate | None,
+            m.SkipValidation,
             u.Field(validation_alias=t.AliasChoices("all_", "all"), description="All."),
         ] = None
         any_: Annotated[
             t.Tests.SequencePredicate | None,
+            m.SkipValidation,
             u.Field(validation_alias=t.AliasChoices("any_", "any"), description="Any."),
         ] = None
         sorted: Annotated[t.Tests.SortKey | None, u.Field(description="Sort key.")] = (
@@ -146,18 +153,22 @@ class FlextTestsMatchersModelsMixin(FlextTestsMatchersModelsMixinPart01):
         )
         paths: Annotated[
             t.Tests.PathMatchSpec | None,
+            m.SkipValidation,
             u.Field(description="Paths."),
         ] = None
         items: Annotated[
             t.Tests.ItemMatchSpec | None,
+            m.SkipValidation,
             u.Field(description="Items."),
         ] = None
         attrs_match: Annotated[
             t.Tests.AttributeMatchSpec | None,
+            m.SkipValidation,
             u.Field(description="Attr rules."),
         ] = None
         where: Annotated[
             t.Tests.PredicateSpec | None,
+            m.SkipValidation,
             u.Field(description="Predicate."),
         ] = None
 

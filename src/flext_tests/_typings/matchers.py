@@ -35,7 +35,9 @@ class FlextTestsMatchersTypesMixin:
     ``union_mode`` on nullable schemas, so the alias stays non-nullable.
     """
 
-    type MatchRuleLeaf = tb.Testobject | type | tuple[type, ...] | TypeAliasType
+    type MatchRuleLeaf = (
+        tb.Testobject | type[object] | tuple[type[object], ...] | TypeAliasType
+    )
     type MatchRuleKwargs = t.MappingKV[
         str,
         Callable[..., tb.Testobject] | tb.TestobjectSerializable | t.Infra.RegexPattern,
@@ -61,8 +63,8 @@ class FlextTestsMatchersTypesMixin:
     """
     type MatchRuleSpec = (
         tb.Testobject
-        | type
-        | tuple[type, ...]
+        | type[object]
+        | tuple[type[object], ...]
         | t.MappingKV[str, FlextTestsMatchersTypesMixin.MatcherKwargValue]
     )
     type DeepSpec = t.MappingKV[
@@ -86,7 +88,7 @@ class FlextTestsMatchersTypesMixin:
     type PredicateSpec = Callable[[tb.Testobject], bool]
     type ContainmentSpec = tb.Testobject | t.SequenceOf[tb.TestobjectSerializable]
     type ExclusionSpec = str | t.StrSequence
-    type SequencePredicate = type | Callable[[tb.Testobject], bool]
+    type SequencePredicate = type[object] | Callable[[tb.Testobject], bool]
     type SortKey = bool | Callable[[tb.Testobject], tb.Testobject]
     type KeySpec = t.StrSequence | set[str]
     type KeyValueSpec = (
