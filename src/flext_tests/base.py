@@ -6,7 +6,8 @@ from contextlib import contextmanager
 from typing import TYPE_CHECKING, Self
 
 from flext_core import FlextContainer, FlextService
-from flext_tests import m, p, t
+from flext_core.models import m
+from flext_tests import p, t
 from flext_tests.settings import FlextTestsSettings
 
 if TYPE_CHECKING:
