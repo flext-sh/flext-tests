@@ -7,7 +7,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from flext_core import r
-from flext_tests import c, p, t
+from flext_core.protocols import p
+from flext_tests import c, t
 from flext_tests.utilities import u
 
 if TYPE_CHECKING:
@@ -93,10 +94,13 @@ def _project_name_for_item(
     item_path = _item_path(item)
     if item_path is None:
         return None
-    return _project_name_for_path(
+    project_name_result = _project_name_for_path(
         path=item_path,
         workspace_root=workspace_root,
-    ).unwrap_or(None)
+    )
+    if project_name_result.failure:
+        return None
+    return project_name_result.value
 
 
 def _collected_project_names(
@@ -128,12 +132,12 @@ def _validator_target_for_item(
     item_path = _item_path(item)
     if item_path is None:
         return None
-    project_name = _project_name_for_path(
+    project_name_result = _project_name_for_path(
         path=item_path,
         workspace_root=workspace_root,
-    ).unwrap_or(None)
-    if project_name is not None:
-        return workspace_root / project_name
+    )
+    if project_name_result.success:
+        return workspace_root / project_name_result.value
     return item_path
 
 

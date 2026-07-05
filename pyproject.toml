@@ -224,6 +224,7 @@ warn_untyped_fields = true
 [tool.pyrefly]
 disable-project-excludes-heuristics = true
 ignore-errors-in-generated-code = true
+fallback-python-interpreter-name = "python"
 project-excludes = [
   "**/*_pb2*.py",
   "**/*_pb2_grpc*.py",

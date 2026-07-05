@@ -10,12 +10,13 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import (
+    Callable,
     Mapping,
 )
 from datetime import datetime, tzinfo
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeIs
 
 from flext_infra import u
 from flext_tests.constants import c
@@ -25,9 +26,15 @@ from flext_tests.typings import t
 if TYPE_CHECKING:
     from flext_tests.protocols import p
 
+type _DeepPredicate = Callable[[t.Tests.TestobjectSerializable], bool]
+
 
 class FlextTestsPayloadUtilities:
     """Namespace class for shared payload conversion helpers in flext_tests."""
+
+    @staticmethod
+    def _is_deep_predicate(value: p.AttributeProbe) -> TypeIs[_DeepPredicate]:
+        return callable(value)
 
     @staticmethod
     def to_payload(
@@ -63,8 +70,10 @@ class FlextTestsPayloadUtilities:
                     result = normalized_map
                 else:
                     result = {k: to_p(v) for k, v in validated_map.items()}
-            case list() | tuple() | set():
+            case list() | tuple() | set() | frozenset():
                 normalized_seq = [to_p(item) for item in value]
+                if isinstance(value, (set, frozenset)):
+                    normalized_seq = sorted(normalized_seq, key=repr)
                 try:
                     validated_seq = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
                         normalized_seq,
@@ -98,8 +107,11 @@ class FlextTestsPayloadUtilities:
                 result = u.normalize_to_metadata({
                     key: to_n(item) for key, item in value.items()
                 })
-            case list() | tuple() | frozenset():
-                result = u.normalize_to_metadata([to_n(item) for item in value])
+            case list() | tuple() | set() | frozenset():
+                normalized_items = [to_n(item) for item in value]
+                if isinstance(value, (set, frozenset)):
+                    normalized_items = sorted(normalized_items, key=repr)
+                result = u.normalize_to_metadata(normalized_items)
             case _:
                 result = str(value)
         return result
@@ -165,7 +177,7 @@ class FlextTestsPayloadUtilities:
                 )
             actual = result.value
             actual_payload = to_payload(actual)
-            if callable(expected):
+            if FlextTestsPayloadUtilities._is_deep_predicate(expected):
                 if not expected(actual_payload):
                     return m.Tests.DeepMatchResult(
                         path=path,

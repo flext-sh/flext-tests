@@ -22,7 +22,7 @@ from flext_tests._exports import (
 )
 
 if TYPE_CHECKING:
-    from flext_infra import d as d, e as e, h as h, r as r, x as x
+    from flext_core._root_typing_parts import d as d, e as e, h as h, r as r, x as x
     from flext_tests._fixtures.enforcement import (
         EnforcementCollector as EnforcementCollector,
         EnforcementItem as EnforcementItem,

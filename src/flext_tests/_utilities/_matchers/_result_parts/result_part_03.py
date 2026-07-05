@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, overload
+from typing import overload
 
+from flext_core.protocols import p
 from flext_tests import c, m, t
 from flext_tests._utilities._matchers._assertions import (
     FlextTestsMatchersAssertionsMixin,
@@ -21,9 +22,6 @@ from flext_tests._utilities._matchers._that import (
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
 
-if TYPE_CHECKING:
-    from flext_tests.protocols import p as core_p
-
 
 class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
     class Tests:
@@ -31,19 +29,19 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
             @staticmethod
             @overload
             def ok[TResult: t.Tests.TestResultValue](
-                result: core_p.Result[TResult],
+                result: p.Result[TResult],
             ) -> TResult: ...
 
             @staticmethod
             @overload
             def ok[TResult: t.Tests.TestResultValue](
-                result: core_p.Result[TResult],
+                result: p.Result[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> TResult | t.Tests.TestobjectSerializable: ...
 
             @staticmethod
             def ok[TResult: t.Tests.TestResultValue](
-                result: core_p.Result[TResult],
+                result: p.Result[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> TResult | t.Tests.TestobjectSerializable:
                 try:
@@ -103,7 +101,7 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
 
             @staticmethod
             def _ok_payload[TResult: t.Tests.TestResultValue](
-                result: core_p.Result[TResult],
+                result: p.Result[TResult],
                 result_value: t.Tests.TestResultValue,
                 extracted_payload: t.Tests.TestobjectSerializable | None,
                 params: m.Tests.OkParams,
@@ -116,7 +114,7 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
 
             @staticmethod
             def _ok_validate_structured[TResult: t.Tests.TestResultValue](
-                result: core_p.Result[TResult],
+                result: p.Result[TResult],
                 result_value: t.Tests.TestResultValue,
                 result_payload: t.Tests.TestobjectSerializable,
                 params: m.Tests.OkParams,

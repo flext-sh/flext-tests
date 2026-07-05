@@ -69,7 +69,7 @@ class FlextTestsMatchersTypesMixin:
     )
     type DeepSpec = t.MappingKV[
         str,
-        Callable[[tb.Testobject], bool] | tb.TestobjectSerializable,
+        Callable[[tb.TestobjectSerializable], bool] | tb.TestobjectSerializable,
     ]
     type PathMatchSpec = t.MappingKV[str, FlextTestsMatchersTypesMixin.MatchRuleSpec]
     type ItemSelector = int | str
