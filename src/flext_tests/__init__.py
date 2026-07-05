@@ -22,7 +22,7 @@ from flext_tests._exports import (
 )
 
 if TYPE_CHECKING:
-    from flext_core import d as d, e as e, h as h, r as r, x as x
+    from flext_infra import d as d, e as e, h as h, r as r, x as x
     from flext_tests._fixtures.enforcement import (
         EnforcementCollector as EnforcementCollector,
         EnforcementItem as EnforcementItem,
@@ -91,6 +91,64 @@ _EAGER_EXPORTS = (
 
 
 _PUBLIC_EXPORTS: tuple[str, ...] = FLEXT_TESTS_PUBLIC_EXPORTS
+
+__all__: tuple[str, ...] = (
+    "EnforcementCollector",
+    "EnforcementItem",
+    "EnforcementViolationError",
+    "FlextService",
+    "FlextTestsCase",
+    "FlextTestsConstants",
+    "FlextTestsFiles",
+    "FlextTestsModels",
+    "FlextTestsProtocols",
+    "FlextTestsServiceBase",
+    "FlextTestsSettings",
+    "FlextTestsTypes",
+    "FlextTestsUtilities",
+    "MarkdownCodeBlockCollector",
+    "MarkdownCodeBlockItem",
+    "MarkdownValidationError",
+    "__author__",
+    "__author_email__",
+    "__description__",
+    "__license__",
+    "__title__",
+    "__url__",
+    "__version__",
+    "__version_info__",
+    "active_rules",
+    "c",
+    "clean_container",
+    "d",
+    "discover_workspace_root",
+    "e",
+    "h",
+    "m",
+    "p",
+    "project_metadata",
+    "project_namespace_config",
+    "project_tool_flext",
+    "r",
+    "reset_settings",
+    "s",
+    "sample_data",
+    "settings",
+    "settings_factory",
+    "split_csv",
+    "t",
+    "td",
+    "temp_dir",
+    "temp_file",
+    "test_context",
+    "test_runtime",
+    "tf",
+    "tk",
+    "tm",
+    "tv",
+    "u",
+    "x",
+)
 
 
 install_lazy_exports(
