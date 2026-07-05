@@ -41,16 +41,7 @@ class EnforcementContribution:
         self,
         *,
         source_kind: str,
-        builder: Callable[
-            [
-                pytest.Session,
-                m.Tests.EnforcementDispatcherConfig,
-                m.EnforcementRuleSpec,
-                EnforcementBuildContext,
-            ],
-            list[pytest.Item],
-        ]
-        | None = None,
+        builder: p.Tests.EnforcementBuilder | None = None,
         configure: Callable[[pytest.Config, m.Tests.EnforcementDispatcherConfig], None]
         | None = None,
         warning_categories: Sequence[type[Warning]] = (),
