@@ -10,13 +10,13 @@ from flext_tests._fixtures._enforcement_parts.discovery import (
     collected_validator_targets,
     load_infra_report,
 )
-from flext_tests._fixtures._enforcement_parts.items import (
-    EnforcementCollector,
-    EnforcementItem,
+from flext_tests._fixtures._enforcement_parts.items import EnforcementCollector
+from flext_tests._fixtures._enforcement_parts.registry import (
+    EnforcementBuildContext,
+    builder_for,
 )
 from flext_tests._fixtures._enforcement_parts.validators import (
-    dispatch_infra_detector,
-    dispatch_tests_validator,
+    build_tests_validator_items,
 )
 
 if TYPE_CHECKING:
@@ -32,7 +32,7 @@ def build_items(
     cfg: m.Tests.EnforcementDispatcherConfig,
     *,
     collected_items: t.SequenceOf[pytest.Item],
-) -> list[EnforcementItem]:
+) -> list[pytest.Item]:
     """Build synthetic enforcement items for active collection-time rules."""
     workspace_root = cfg.workspace_root
     if workspace_root is None:
@@ -42,58 +42,46 @@ def build_items(
         items=collected_items,
         workspace_root=workspace_root,
     )
-    infra_report: p.AttributeProbe | None = None
-    if any(rule.source.kind == "flext_infra_detector" for rule in rules):
-        infra_report = load_infra_report(
-            workspace_root,
-            project_names=collected_project_names(
-                items=collected_items,
-                workspace_root=workspace_root,
-            ),
-        ).unwrap_or(None)
+    infra_report = _load_infra_report_if_needed(
+        rules,
+        workspace_root,
+        collected_items,
+    )
 
     collector = EnforcementCollector.from_parent(
         parent=session,
         name="flext-enforcement",
     )
-    items: list[EnforcementItem] = []
+    context = EnforcementBuildContext(
+        infra_report=infra_report,
+        validator_targets=validator_targets,
+        workspace_root=workspace_root,
+    )
+    items: list[pytest.Item] = []
     for rule in rules:
-        grouped = _group_rule_violations(
-            rule=rule,
-            infra_report=infra_report,
-            validator_targets=validator_targets,
-            workspace_root=workspace_root,
-        )
-        for project, violations in grouped.items():
-            if not violations:
-                continue
-            items.append(
-                EnforcementItem.from_parent(
-                    collector,
-                    name=f"{rule.id}[{project}]",
-                    rule=rule,
-                    project=project,
-                    violations=violations,
-                ),
-            )
+        contribution = builder_for(rule.source.kind)
+        if contribution is not None and contribution.builder is not None:
+            items.extend(contribution.builder(session, cfg, rule, context))
+        elif rule.source.kind == "flext_tests_validator":
+            items.extend(build_tests_validator_items(collector, rule, context))
     return items
 
 
-def _group_rule_violations(
-    *,
-    rule: m.EnforcementRuleSpec,
-    infra_report: p.AttributeProbe | None,
-    validator_targets: t.SequenceOf[Path],
+def _load_infra_report_if_needed(
+    rules: tuple[m.EnforcementRuleSpec, ...],
     workspace_root: Path,
-) -> dict[str, list[p.AttributeProbe]]:
-    """Dispatch one rule to its collection-time source."""
-    if rule.source.kind == "flext_infra_detector":
-        if infra_report is None:
-            return {}
-        return dispatch_infra_detector(rule, infra_report)
-    if rule.source.kind == "flext_tests_validator":
-        return dispatch_tests_validator(rule, workspace_root, validator_targets)
-    return {}
+    collected_items: t.SequenceOf[pytest.Item],
+) -> p.AttributeProbe | None:
+    """Load the workspace infra report only when a rule needs it."""
+    if not any(rule.source.kind == "flext_infra_detector" for rule in rules):
+        return None
+    return load_infra_report(
+        workspace_root,
+        project_names=collected_project_names(
+            items=collected_items,
+            workspace_root=workspace_root,
+        ),
+    ).unwrap_or(None)
 
 
 __all__: list[str] = ["build_items"]

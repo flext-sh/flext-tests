@@ -7,9 +7,16 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from flext_tests import c, m, p, t
+from flext_tests._fixtures._enforcement_parts.items import EnforcementItem
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
+
+    import pytest
+
+    from flext_tests._fixtures._enforcement_parts.registry import (
+        EnforcementBuildContext,
+    )
 
 
 def _iter_infra_violations(
@@ -39,6 +46,7 @@ def dispatch_infra_detector(
     rule: m.EnforcementRuleSpec,
     report: p.AttributeProbe,
 ) -> dict[str, list[p.AttributeProbe]]:
+    """Legacy helper kept for existing tests; new code uses the flext-infra plugin."""
     source = rule.source
     field = getattr(source, "violation_field", "")
     match_missing = bool(getattr(source, "match_missing", False))
@@ -52,7 +60,47 @@ def dispatch_infra_detector(
     return grouped
 
 
-def dispatch_tests_validator(
+def build_tests_validator_items(
+    collector: pytest.Collector,
+    rule: m.EnforcementRuleSpec,
+    context: EnforcementBuildContext,
+) -> list[EnforcementItem]:
+    """Build enforcement items from flext-tests validator methods."""
+    workspace_root = context.workspace_root
+    targets = context.validator_targets
+    if workspace_root is None:
+        return []
+    grouped = _collect_tests_validator_violations(
+        rule,
+        workspace_root,
+        targets,
+    )
+    return _items_from_grouped(collector, rule, grouped)
+
+
+def _items_from_grouped(
+    collector: pytest.Collector,
+    rule: m.EnforcementRuleSpec,
+    grouped: dict[str, list[p.AttributeProbe]],
+) -> list[EnforcementItem]:
+    """Convert grouped violations into enforcement items."""
+    items: list[EnforcementItem] = []
+    for project, violations in grouped.items():
+        if not violations:
+            continue
+        items.append(
+            EnforcementItem.from_parent(
+                collector,
+                name=f"{rule.id}[{project}]",
+                rule=rule,
+                project=project,
+                violations=violations,
+            ),
+        )
+    return items
+
+
+def _collect_tests_validator_violations(
     rule: m.EnforcementRuleSpec,
     workspace_root: Path,
     targets: t.SequenceOf[Path],
@@ -143,6 +191,6 @@ def _violation_project(
 
 
 __all__: list[str] = [
+    "build_tests_validator_items",
     "dispatch_infra_detector",
-    "dispatch_tests_validator",
 ]
