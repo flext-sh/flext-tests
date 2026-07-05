@@ -8,7 +8,7 @@ from their own ``pytest11`` entry-point modules.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
@@ -34,6 +34,18 @@ class EnforcementBuildContext:
         self.workspace_root = workspace_root
 
 
+class _BuilderProtocol(Protocol):
+    """Callable shape for an enforcement contribution builder."""
+
+    def __call__(
+        self,
+        session: pytest.Session,
+        cfg: m.Tests.EnforcementDispatcherConfig,
+        rule: m.EnforcementRuleSpec,
+        context: EnforcementBuildContext,
+    ) -> list[pytest.Item]: ...
+
+
 class EnforcementContribution:
     """One contribution from an external enforcement pytest plugin."""
 
@@ -41,7 +53,7 @@ class EnforcementContribution:
         self,
         *,
         source_kind: str,
-        builder: Callable[..., list[pytest.Item]] | None = None,
+        builder: _BuilderProtocol | None = None,
         configure: Callable[[pytest.Config, m.Tests.EnforcementDispatcherConfig], None]
         | None = None,
         warning_categories: Sequence[type[Warning]] = (),
