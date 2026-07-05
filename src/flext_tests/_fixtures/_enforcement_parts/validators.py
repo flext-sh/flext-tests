@@ -35,7 +35,7 @@ def _iter_infra_violations(
             yield str(project_name), entry
 
 
-def _dispatch_infra_detector(
+def dispatch_infra_detector(
     rule: m.EnforcementRuleSpec,
     report: p.AttributeProbe,
 ) -> dict[str, list[p.AttributeProbe]]:
@@ -52,7 +52,7 @@ def _dispatch_infra_detector(
     return grouped
 
 
-def _dispatch_tests_validator(
+def dispatch_tests_validator(
     rule: m.EnforcementRuleSpec,
     workspace_root: Path,
     targets: t.SequenceOf[Path],
@@ -143,6 +143,6 @@ def _violation_project(
 
 
 __all__: list[str] = [
-    "_dispatch_infra_detector",
-    "_dispatch_tests_validator",
+    "dispatch_infra_detector",
+    "dispatch_tests_validator",
 ]

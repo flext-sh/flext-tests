@@ -6,17 +6,17 @@ from typing import TYPE_CHECKING
 
 from flext_tests._fixtures._enforcement_parts.config import active_rules
 from flext_tests._fixtures._enforcement_parts.discovery import (
-    _collected_project_names,
-    _collected_validator_targets,
-    _load_infra_report,
+    collected_project_names,
+    collected_validator_targets,
+    load_infra_report,
 )
 from flext_tests._fixtures._enforcement_parts.items import (
     EnforcementCollector,
     EnforcementItem,
 )
 from flext_tests._fixtures._enforcement_parts.validators import (
-    _dispatch_infra_detector,
-    _dispatch_tests_validator,
+    dispatch_infra_detector,
+    dispatch_tests_validator,
 )
 
 if TYPE_CHECKING:
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from flext_tests import m, p, t
 
 
-def _build_items(
+def build_items(
     session: pytest.Session,
     cfg: m.Tests.EnforcementDispatcherConfig,
     *,
@@ -38,15 +38,15 @@ def _build_items(
     if workspace_root is None:
         return []
     rules = active_rules(cfg)
-    validator_targets = _collected_validator_targets(
+    validator_targets = collected_validator_targets(
         items=collected_items,
         workspace_root=workspace_root,
     )
     infra_report: p.AttributeProbe | None = None
     if any(rule.source.kind == "flext_infra_detector" for rule in rules):
-        infra_report = _load_infra_report(
+        infra_report = load_infra_report(
             workspace_root,
-            project_names=_collected_project_names(
+            project_names=collected_project_names(
                 items=collected_items,
                 workspace_root=workspace_root,
             ),
@@ -90,10 +90,10 @@ def _group_rule_violations(
     if rule.source.kind == "flext_infra_detector":
         if infra_report is None:
             return {}
-        return _dispatch_infra_detector(rule, infra_report)
+        return dispatch_infra_detector(rule, infra_report)
     if rule.source.kind == "flext_tests_validator":
-        return _dispatch_tests_validator(rule, workspace_root, validator_targets)
+        return dispatch_tests_validator(rule, workspace_root, validator_targets)
     return {}
 
 
-__all__: list[str] = ["_build_items"]
+__all__: list[str] = ["build_items"]

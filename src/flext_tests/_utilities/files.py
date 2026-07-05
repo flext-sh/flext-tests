@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_cli._utilities.files import FlextCliUtilitiesFiles
+from flext_cli import u as cli_u
 from flext_tests.models import m
 from flext_tests.typings import t
 
@@ -27,13 +27,15 @@ class FlextTestsFilesUtilitiesMixin:
         fmt: str,
     ) -> str:
         """Detect format by content shape + name; honors explicit ``fmt``."""
-        return FlextCliUtilitiesFiles.files_detect_format_from_content(
+        detected_format: str = cli_u.Cli.files_detect_format_from_content(
             content,
             name,
             fmt,
         )
+        return detected_format
 
     @staticmethod
     def detect_format_from_path(path: Path, fmt: str) -> str:
         """Detect format from path extension; honors explicit ``fmt``."""
-        return FlextCliUtilitiesFiles.files_detect_format_from_path(path, fmt)
+        detected_format: str = cli_u.Cli.files_detect_format_from_path(path, fmt)
+        return detected_format

@@ -10,7 +10,7 @@ import pytest
 from flext_tests import c, m, u
 
 
-class _SessionConfig:
+class SessionConfig:
     stash_config: ClassVar[pytest.StashKey[m.Tests.EnforcementDispatcherConfig]] = (
         pytest.StashKey()
     )
@@ -81,9 +81,9 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     )
 
 
-def _resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfig:
+def resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfig:
     """Build and cache the dispatcher's resolved configuration."""
-    stashed = config.stash.get(_SessionConfig.stash_config, None)
+    stashed = config.stash.get(SessionConfig.stash_config, None)
     if stashed is not None:
         return stashed
 
@@ -110,7 +110,7 @@ def _resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfi
         exclude=exclude,
         workspace_root=workspace_root,
     )
-    config.stash[_SessionConfig.stash_config] = resolved
+    config.stash[SessionConfig.stash_config] = resolved
     return resolved
 
 
@@ -132,7 +132,7 @@ def active_rules(
 
 def pytest_configure(config: pytest.Config) -> None:
     """Register filterwarnings for every active runtime-warning rule."""
-    cfg = _resolve_config(config)
+    cfg = resolve_config(config)
     if not cfg.active:
         return
     for rule in active_rules(cfg):
@@ -148,11 +148,11 @@ def pytest_configure(config: pytest.Config) -> None:
 
 
 __all__: list[str] = [
-    "_SessionConfig",
-    "_resolve_config",
+    "SessionConfig",
     "active_rules",
     "discover_workspace_root",
     "pytest_addoption",
     "pytest_configure",
+    "resolve_config",
     "split_csv",
 ]

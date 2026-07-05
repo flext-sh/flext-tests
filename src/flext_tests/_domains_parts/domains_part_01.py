@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from flext_cli._utilities.files import FlextCliUtilitiesFiles
+from flext_cli import u as cli_u
 
 if TYPE_CHECKING:
     from flext_tests import p
@@ -67,7 +67,7 @@ class FlextTestsDomains:
         fixtures_root: Path | None = None,
         file_extension: str = ".ldif",
     ) -> str:
-        text_result: p.Result[str] = FlextCliUtilitiesFiles.files_read_text(
+        text_result: p.Result[str] = cli_u.Cli.files_read_text(
             cls.fixture_path(
                 group,
                 kind,

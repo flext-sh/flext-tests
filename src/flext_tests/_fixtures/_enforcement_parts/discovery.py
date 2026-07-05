@@ -6,16 +6,14 @@ from importlib import import_module
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from flext_core import r
-from flext_core.protocols import p
-from flext_tests import c, t
+from flext_tests import c, p, r, t
 from flext_tests.utilities import u
 
 if TYPE_CHECKING:
     import pytest
 
 
-def _load_infra_report(
+def load_infra_report(
     workspace_root: Path,
     *,
     project_names: t.StrSequence,
@@ -33,13 +31,23 @@ def _load_infra_report(
             import_result.error or "import flext_infra namespace enforcer failed",
         )
     refactor = import_result.value
-    enforcer_cls = getattr(refactor, "FlextInfraNamespaceEnforcer", None)
-    if enforcer_cls is None:
+    enforcer_cls: object = getattr(refactor, "FlextInfraNamespaceEnforcer", None)
+    if not callable(enforcer_cls):
         return r[p.AttributeProbe].fail("FlextInfraNamespaceEnforcer not found")
-    return u.try_(
-        lambda: enforcer_cls(workspace_root=workspace_root).enforce(
-            project_names=project_names,
-        ),
+    enforcer_result = u.try_(
+        lambda: enforcer_cls(workspace_root=workspace_root),
+        catch=c.EXC_BROAD_RUNTIME,
+        op_name="build flext_infra namespace enforcer",
+    )
+    if enforcer_result.failure:
+        return r[p.AttributeProbe].fail(
+            enforcer_result.error or "build flext_infra namespace enforcer failed",
+        )
+    enforcer: object = enforcer_result.value
+    if not isinstance(enforcer, p.Tests.NamespaceEnforcer):
+        return r[p.AttributeProbe].fail("FlextInfraNamespaceEnforcer contract invalid")
+    return u.guard_result(
+        lambda: enforcer.enforce(project_names=project_names),
         catch=c.EXC_BROAD_RUNTIME,
         op_name="run flext_infra namespace enforcement",
     )
@@ -100,10 +108,11 @@ def _project_name_for_item(
     )
     if project_name_result.failure:
         return None
-    return project_name_result.value
+    project_name: str = project_name_result.value
+    return project_name
 
 
-def _collected_project_names(
+def collected_project_names(
     *,
     items: t.SequenceOf[pytest.Item],
     workspace_root: Path,
@@ -137,11 +146,12 @@ def _validator_target_for_item(
         workspace_root=workspace_root,
     )
     if project_name_result.success:
-        return workspace_root / project_name_result.value
+        project_name: str = project_name_result.value
+        return workspace_root / project_name
     return item_path
 
 
-def _collected_validator_targets(
+def collected_validator_targets(
     *,
     items: t.SequenceOf[pytest.Item],
     workspace_root: Path,
@@ -162,8 +172,7 @@ def _collected_validator_targets(
 
 
 __all__: list[str] = [
-    "_collected_project_names",
-    "_collected_validator_targets",
-    "_load_infra_report",
-    "_project_name_for_path",
+    "collected_project_names",
+    "collected_validator_targets",
+    "load_infra_report",
 ]

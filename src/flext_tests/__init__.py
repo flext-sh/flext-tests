@@ -60,15 +60,18 @@ if TYPE_CHECKING:
         s as s,
     )
     from flext_tests.constants import FlextTestsConstants as FlextTestsConstants, c as c
-    from flext_tests.docker import tk as tk
-    from flext_tests.domains import td as td
+    from flext_tests.docker import FlextTestsDocker as FlextTestsDocker, tk as tk
+    from flext_tests.domains import FlextTestsDomains as FlextTestsDomains, td as td
     from flext_tests.files import FlextTestsFiles as FlextTestsFiles, tf as tf
     from flext_tests.models import FlextTestsModels as FlextTestsModels, m as m
     from flext_tests.protocols import FlextTestsProtocols as FlextTestsProtocols, p as p
     from flext_tests.settings import FlextTestsSettings as FlextTestsSettings
     from flext_tests.typings import FlextTestsTypes as FlextTestsTypes, t as t
     from flext_tests.utilities import FlextTestsUtilities as FlextTestsUtilities, u as u
-    from flext_tests.validator import tv as tv
+    from flext_tests.validator import (
+        FlextTestsValidator as FlextTestsValidator,
+        tv as tv,
+    )
 
 
 _LAZY_IMPORTS = {
@@ -99,6 +102,8 @@ __all__: tuple[str, ...] = (
     "FlextService",
     "FlextTestsCase",
     "FlextTestsConstants",
+    "FlextTestsDocker",
+    "FlextTestsDomains",
     "FlextTestsFiles",
     "FlextTestsModels",
     "FlextTestsProtocols",
@@ -106,6 +111,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsSettings",
     "FlextTestsTypes",
     "FlextTestsUtilities",
+    "FlextTestsValidator",
     "MarkdownCodeBlockCollector",
     "MarkdownCodeBlockItem",
     "MarkdownValidationError",

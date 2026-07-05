@@ -10,13 +10,17 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_infra import p
+from flext_tests._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
 from flext_tests._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
 
 
 class FlextTestsProtocols(p):
     """Protocols for FLEXT tests - extends p."""
 
-    class Tests(FlextTestsValueFactoryProtocolsMixin):
+    class Tests(
+        FlextTestsEnforcementProtocolsMixin,
+        FlextTestsValueFactoryProtocolsMixin,
+    ):
         """Test-specific protocols namespace.
 
         All test protocols belong under this nested namespace to mirror
