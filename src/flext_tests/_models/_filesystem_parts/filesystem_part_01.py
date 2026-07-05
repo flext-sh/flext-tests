@@ -2,16 +2,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated
+import datetime
+from pathlib import Path
+from typing import Annotated
 
 from flext_infra import m, u
 from flext_tests.constants import c
 from flext_tests.typings import t
-
-if TYPE_CHECKING:
-    import datetime
-
-from pathlib import Path
 
 
 class FlextTestsFilesystemModelsMixin:
