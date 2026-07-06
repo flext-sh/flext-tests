@@ -23,35 +23,74 @@ from flext_tests.__version__ import (
 
 if TYPE_CHECKING:
     from flext_infra import d, e, h, r, x
-    from flext_tests._fixtures._enforcement_parts.config import SessionConfig
+    from flext_tests._fixtures._enforcement_parts.build import build_items
+    from flext_tests._fixtures._enforcement_parts.config import (
+        SessionConfig,
+        resolve_config,
+    )
+    from flext_tests._fixtures._enforcement_parts.discovery import (
+        collected_project_names,
+        collected_validator_targets,
+        load_infra_report,
+    )
+    from flext_tests._fixtures._enforcement_parts.validators import (
+        build_tests_validator_items,
+        dispatch_infra_detector,
+    )
     from flext_tests._fixtures.enforcement import (
         EnforcementBuildContext,
         EnforcementCollector,
         EnforcementContribution,
         EnforcementItem,
         EnforcementViolationError,
+        active_rules,
+        builder_for,
+        builders,
+        clear,
+        discover_workspace_root,
+        get,
+        register,
+        split_csv,
+        warning_categories,
     )
     from flext_tests._fixtures.markdown_validation import (
         MarkdownCodeBlockCollector,
         MarkdownCodeBlockItem,
         MarkdownValidationError,
     )
+    from flext_tests._fixtures.project_metadata import (
+        project_metadata,
+        project_namespace_config,
+        project_tool_flext,
+    )
+    from flext_tests._fixtures.settings import (
+        clean_container,
+        reset_settings,
+        sample_data,
+        settings,
+        settings_factory,
+        temp_dir,
+        temp_file,
+        test_context,
+        test_runtime,
+    )
     from flext_tests.base import FlextService, FlextTestsCase, FlextTestsServiceBase, s
     from flext_tests.constants import FlextTestsConstants, c
-    from flext_tests.docker import FlextTestsDocker
-    from flext_tests.domains import FlextTestsDomains
-    from flext_tests.files import FlextTestsFiles
+    from flext_tests.docker import FlextTestsDocker, tk
+    from flext_tests.domains import FlextTestsDomains, td
+    from flext_tests.files import FlextTestsFiles, tf
     from flext_tests.models import FlextTestsModels, m
     from flext_tests.protocols import FlextTestsProtocols, p
     from flext_tests.settings import FlextTestsSettings
-    from flext_tests.tmatchers import FlextTestsMatchersUtilities
+    from flext_tests.tmatchers import FlextTestsMatchersUtilities, tm
     from flext_tests.typings import FlextTestsTypes, t
     from flext_tests.utilities import FlextTestsUtilities, u
-    from flext_tests.validator import FlextTestsValidator
+    from flext_tests.validator import FlextTestsValidator, tv
 _LAZY_IMPORTS = merge_lazy_imports(
     (
         "._docker_parts",
         "._domains_parts",
+        "._validator",
     ),
     build_lazy_import_map(
         {
@@ -106,6 +145,14 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "test_context",
                 "test_runtime",
             ),
+            "._validator._markdown_parts.markdown_part_02": ("FlextValidatorMarkdown",),
+            "._validator._types_parts.types_part_02": ("FlextValidatorTypes",),
+            "._validator.bypass": ("FlextValidatorBypass",),
+            "._validator.imports": ("FlextValidatorImports",),
+            "._validator.layer": ("FlextValidatorLayer",),
+            "._validator.models": ("FlextTestsValidatorModels",),
+            "._validator.settings": ("FlextValidatorSettings",),
+            "._validator.tests": ("FlextValidatorTests",),
             ".base": (
                 "FlextService",
                 "FlextTestsCase",
@@ -163,6 +210,10 @@ _LAZY_IMPORTS = merge_lazy_imports(
         },
     ),
     exclude_names=(
+        "_markdown_parts",
+        "_orchestration_parts",
+        "_settings_parts",
+        "_types_parts",
         "cleanup_submodule_namespace",
         "install_lazy_exports",
         "lazy_getattr",

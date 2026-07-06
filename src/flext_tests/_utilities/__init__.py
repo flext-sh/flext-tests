@@ -60,7 +60,7 @@ if TYPE_CHECKING:
     from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
     from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
     from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
-    from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
+    from flext_tests._utilities.matchers import FlextTestsMatchersUtilities, tm
     from flext_tests._utilities.payload import FlextTestsPayloadUtilities
     from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
     from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
