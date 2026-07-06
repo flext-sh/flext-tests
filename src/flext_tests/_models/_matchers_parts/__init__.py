@@ -9,7 +9,7 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tests._models._matchers_parts.matchers_part_03 import (
-        FlextTestsMatchersModelsMixin,
+        FlextTestsMatchersModelsMixin as FlextTestsMatchersModelsMixin,
     )
 _LAZY_IMPORTS = build_lazy_import_map(
     {

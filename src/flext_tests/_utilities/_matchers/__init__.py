@@ -13,20 +13,22 @@ from flext_core.lazy import (
 
 if TYPE_CHECKING:
     from flext_tests._utilities._matchers._assertions import (
-        FlextTestsMatchersAssertionsMixin,
+        FlextTestsMatchersAssertionsMixin as FlextTestsMatchersAssertionsMixin,
     )
     from flext_tests._utilities._matchers._containment import (
-        FlextTestsMatchersContainmentMixin,
+        FlextTestsMatchersContainmentMixin as FlextTestsMatchersContainmentMixin,
     )
     from flext_tests._utilities._matchers._result_parts.result_part_03 import (
-        FlextTestsMatchersResultMixin,
+        FlextTestsMatchersResultMixin as FlextTestsMatchersResultMixin,
     )
-    from flext_tests._utilities._matchers._scope import FlextTestsMatchersScopeMixin
+    from flext_tests._utilities._matchers._scope import (
+        FlextTestsMatchersScopeMixin as FlextTestsMatchersScopeMixin,
+    )
     from flext_tests._utilities._matchers._that_parts.that_part_06 import (
-        FlextTestsMatchersThatMixin,
+        FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixin,
     )
     from flext_tests._utilities._matchers._typeguards import (
-        FlextTestsMatchersTypeGuardsMixin,
+        FlextTestsMatchersTypeGuardsMixin as FlextTestsMatchersTypeGuardsMixin,
     )
 _LAZY_IMPORTS = merge_lazy_imports(
     (

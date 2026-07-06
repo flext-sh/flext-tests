@@ -9,16 +9,16 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tests._utilities._make_parts.make_contract_part_02 import (
-        FlextTestsMakeContractUtilitiesMixin,
+        FlextTestsMakeContractUtilitiesMixin as FlextTestsMakeContractUtilitiesMixin,
     )
     from flext_tests._utilities._make_parts.make_parsing_part_02 import (
-        FlextTestsMakeParsingUtilitiesMixin,
+        FlextTestsMakeParsingUtilitiesMixin as FlextTestsMakeParsingUtilitiesMixin,
     )
     from flext_tests._utilities._make_parts.make_registry_part_03 import (
-        FlextTestsMakeRegistryUtilitiesMixin,
+        FlextTestsMakeRegistryUtilitiesMixin as FlextTestsMakeRegistryUtilitiesMixin,
     )
     from flext_tests._utilities._make_parts.make_rendering_part_02 import (
-        FlextTestsMakeRenderingUtilitiesMixin,
+        FlextTestsMakeRenderingUtilitiesMixin as FlextTestsMakeRenderingUtilitiesMixin,
     )
 _LAZY_IMPORTS = build_lazy_import_map(
     {
