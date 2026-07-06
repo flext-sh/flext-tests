@@ -29,7 +29,6 @@ dependencies = [
   "flext-core",
   "flext-infra",
   "hypothesis>=6.152.4",
-  "python-on-whales>=0.7",
   "pytest-benchmark>=5.2.3",
   "pytest-clarity>=1.0.1",
   "pytest-cov>=7.1.0",
@@ -41,6 +40,7 @@ dependencies = [
   "pytest-timeout>=2.4.0",
   "pytest-xdist>=3.8.0",
   "pytest>=9.0.3",
+  "python-on-whales>=0.7",
 ]
 description = "FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem"
 keywords = [ "builders", "factories", "flext", "test-infrastructure", "testing" ]
@@ -223,8 +223,8 @@ warn_untyped_fields = true
 # [MANAGED] pyrefly
 [tool.pyrefly]
 disable-project-excludes-heuristics = true
-ignore-errors-in-generated-code = true
 fallback-python-interpreter-name = "python"
+ignore-errors-in-generated-code = true
 project-excludes = [
   "**/*_pb2*.py",
   "**/*_pb2_grpc*.py",

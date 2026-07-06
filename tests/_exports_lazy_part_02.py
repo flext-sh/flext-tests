@@ -23,7 +23,6 @@ TESTS_FLEXT_TESTS_LAZY_IMPORTS_PART_02 = build_lazy_import_map(
             "t",
         ),
         ".unit": ("unit",),
-        ".unit.test_utilities": ("TestsFlextTestsUtilitiesUnit",),
         ".unit.test_validator_imports_bypass": (
             "TestsFlextTestsValidatorImportsBypass",
         ),

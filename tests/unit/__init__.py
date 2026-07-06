@@ -50,7 +50,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
             ".test_enforcement_plugin": ("TestsFlextTestsEnforcementPlugin",),
             ".test_files": ("TestsFlextTestsFiles",),
             ".test_matchers": ("TestsFlextTestsMatchers",),
-            ".test_utilities": ("TestsFlextTestsUtilitiesUnit",),
+            ".test_utilities": ("TestsFlextTestsUtilities",),
             ".test_validator_imports_bypass": (
                 "TestsFlextTestsValidatorImportsBypass",
             ),

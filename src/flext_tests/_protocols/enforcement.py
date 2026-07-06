@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from flext_infra import p
@@ -39,9 +40,10 @@ class FlextTestsEnforcementProtocolsMixin:
             """Resolved workspace root when discovery succeeded."""
             ...
 
-    class EnforcementBuilder(Protocol):
+    class EnforcementBuilder(ABC):
         """Callable contract implemented by enforcement contribution builders."""
 
+        @abstractmethod
         def __call__(
             self,
             session: pytest.Session,

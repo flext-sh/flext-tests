@@ -12,13 +12,37 @@ from flext_core.lazy import (
 )
 
 if TYPE_CHECKING:
+    from flext_tests._fixtures._enforcement_parts.build import (
+        build_items as build_items,
+    )
+    from flext_tests._fixtures._enforcement_parts.config import (
+        SessionConfig as SessionConfig,
+        resolve_config as resolve_config,
+    )
+    from flext_tests._fixtures._enforcement_parts.discovery import (
+        collected_project_names as collected_project_names,
+        collected_validator_targets as collected_validator_targets,
+        load_infra_report as load_infra_report,
+    )
+    from flext_tests._fixtures._enforcement_parts.validators import (
+        build_tests_validator_items as build_tests_validator_items,
+        dispatch_infra_detector as dispatch_infra_detector,
+    )
     from flext_tests._fixtures.enforcement import (
+        EnforcementBuildContext as EnforcementBuildContext,
         EnforcementCollector as EnforcementCollector,
+        EnforcementContribution as EnforcementContribution,
         EnforcementItem as EnforcementItem,
         EnforcementViolationError as EnforcementViolationError,
         active_rules as active_rules,
+        builder_for as builder_for,
+        builders as builders,
+        clear as clear,
         discover_workspace_root as discover_workspace_root,
+        get as get,
+        register as register,
         split_csv as split_csv,
+        warning_categories as warning_categories,
     )
     from flext_tests._fixtures.markdown_validation import (
         MarkdownCodeBlockCollector as MarkdownCodeBlockCollector,
@@ -46,13 +70,35 @@ _LAZY_IMPORTS = merge_lazy_imports(
     build_lazy_import_map(
         {
             "._enforcement_parts": ("_enforcement_parts",),
+            "._enforcement_parts.build": ("build_items",),
+            "._enforcement_parts.config": (
+                "SessionConfig",
+                "resolve_config",
+            ),
+            "._enforcement_parts.discovery": (
+                "collected_project_names",
+                "collected_validator_targets",
+                "load_infra_report",
+            ),
+            "._enforcement_parts.validators": (
+                "build_tests_validator_items",
+                "dispatch_infra_detector",
+            ),
             ".enforcement": (
+                "EnforcementBuildContext",
                 "EnforcementCollector",
+                "EnforcementContribution",
                 "EnforcementItem",
                 "EnforcementViolationError",
                 "active_rules",
+                "builder_for",
+                "builders",
+                "clear",
                 "discover_workspace_root",
+                "get",
+                "register",
                 "split_csv",
+                "warning_categories",
             ),
             ".markdown_validation": (
                 "MarkdownCodeBlockCollector",
