@@ -12,58 +12,56 @@ from flext_core.lazy import (
 )
 
 if TYPE_CHECKING:
-    from flext_tests._fixtures._enforcement_parts.build import (
-        build_items as build_items,
-    )
+    from flext_tests._fixtures._enforcement_parts.build import build_items
     from flext_tests._fixtures._enforcement_parts.config import (
-        SessionConfig as SessionConfig,
-        resolve_config as resolve_config,
+        SessionConfig,
+        resolve_config,
     )
     from flext_tests._fixtures._enforcement_parts.discovery import (
-        collected_project_names as collected_project_names,
-        collected_validator_targets as collected_validator_targets,
-        load_infra_report as load_infra_report,
+        collected_project_names,
+        collected_validator_targets,
+        load_infra_report,
     )
     from flext_tests._fixtures._enforcement_parts.validators import (
-        build_tests_validator_items as build_tests_validator_items,
-        dispatch_infra_detector as dispatch_infra_detector,
+        build_tests_validator_items,
+        dispatch_infra_detector,
     )
     from flext_tests._fixtures.enforcement import (
-        EnforcementBuildContext as EnforcementBuildContext,
-        EnforcementCollector as EnforcementCollector,
-        EnforcementContribution as EnforcementContribution,
-        EnforcementItem as EnforcementItem,
-        EnforcementViolationError as EnforcementViolationError,
-        active_rules as active_rules,
-        builder_for as builder_for,
-        builders as builders,
-        clear as clear,
-        discover_workspace_root as discover_workspace_root,
-        get as get,
-        register as register,
-        split_csv as split_csv,
-        warning_categories as warning_categories,
+        EnforcementBuildContext,
+        EnforcementCollector,
+        EnforcementContribution,
+        EnforcementItem,
+        EnforcementViolationError,
+        active_rules,
+        builder_for,
+        builders,
+        clear,
+        discover_workspace_root,
+        get,
+        register,
+        split_csv,
+        warning_categories,
     )
     from flext_tests._fixtures.markdown_validation import (
-        MarkdownCodeBlockCollector as MarkdownCodeBlockCollector,
-        MarkdownCodeBlockItem as MarkdownCodeBlockItem,
-        MarkdownValidationError as MarkdownValidationError,
+        MarkdownCodeBlockCollector,
+        MarkdownCodeBlockItem,
+        MarkdownValidationError,
     )
     from flext_tests._fixtures.project_metadata import (
-        project_metadata as project_metadata,
-        project_namespace_config as project_namespace_config,
-        project_tool_flext as project_tool_flext,
+        project_metadata,
+        project_namespace_config,
+        project_tool_flext,
     )
     from flext_tests._fixtures.settings import (
-        clean_container as clean_container,
-        reset_settings as reset_settings,
-        sample_data as sample_data,
-        settings as settings,
-        settings_factory as settings_factory,
-        temp_dir as temp_dir,
-        temp_file as temp_file,
-        test_context as test_context,
-        test_runtime as test_runtime,
+        clean_container,
+        reset_settings,
+        sample_data,
+        settings,
+        settings_factory,
+        temp_dir,
+        temp_file,
+        test_context,
+        test_runtime,
     )
 _LAZY_IMPORTS = merge_lazy_imports(
     ("._enforcement_parts",),

@@ -13,29 +13,17 @@ from flext_core.lazy import (
 
 if TYPE_CHECKING:
     from flext_tests._models._filesystem_parts.filesystem_part_02 import (
-        FlextTestsFilesystemModelsMixin as FlextTestsFilesystemModelsMixin,
+        FlextTestsFilesystemModelsMixin,
     )
     from flext_tests._models._matchers_parts.matchers_part_03 import (
-        FlextTestsMatchersModelsMixin as FlextTestsMatchersModelsMixin,
+        FlextTestsMatchersModelsMixin,
     )
-    from flext_tests._models.base import (
-        FlextTestsBaseModelsMixin as FlextTestsBaseModelsMixin,
-    )
-    from flext_tests._models.batch import (
-        FlextTestsBatchModelsMixin as FlextTestsBatchModelsMixin,
-    )
-    from flext_tests._models.docker import (
-        FlextTestsDockerModelsMixin as FlextTestsDockerModelsMixin,
-    )
-    from flext_tests._models.domains import (
-        FlextTestsDomainModelsMixin as FlextTestsDomainModelsMixin,
-    )
-    from flext_tests._models.make import (
-        FlextTestsMakeModelsMixin as FlextTestsMakeModelsMixin,
-    )
-    from flext_tests._models.validator import (
-        FlextTestsValidatorModelsMixin as FlextTestsValidatorModelsMixin,
-    )
+    from flext_tests._models.base import FlextTestsBaseModelsMixin
+    from flext_tests._models.batch import FlextTestsBatchModelsMixin
+    from flext_tests._models.docker import FlextTestsDockerModelsMixin
+    from flext_tests._models.domains import FlextTestsDomainModelsMixin
+    from flext_tests._models.make import FlextTestsMakeModelsMixin
+    from flext_tests._models.validator import FlextTestsValidatorModelsMixin
 _LAZY_IMPORTS = merge_lazy_imports(
     (
         "._filesystem_parts",

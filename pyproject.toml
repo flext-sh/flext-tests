@@ -223,7 +223,6 @@ warn_untyped_fields = true
 # [MANAGED] pyrefly
 [tool.pyrefly]
 disable-project-excludes-heuristics = true
-fallback-python-interpreter-name = "python"
 ignore-errors-in-generated-code = true
 project-excludes = [
   "**/*_pb2*.py",

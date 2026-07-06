@@ -12,30 +12,18 @@ from flext_core.lazy import (
 )
 
 if TYPE_CHECKING:
-    from flext_tests._utilities._files._assertions import (
-        FlextTestsFilesAssertionsMixin as FlextTestsFilesAssertionsMixin,
-    )
-    from flext_tests._utilities._files._batch import (
-        FlextTestsFilesBatchMixin as FlextTestsFilesBatchMixin,
-    )
+    from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
+    from flext_tests._utilities._files._batch import FlextTestsFilesBatchMixin
     from flext_tests._utilities._files._comparison_parts.comparison_part_02 import (
-        FlextTestsFilesComparisonMixin as FlextTestsFilesComparisonMixin,
+        FlextTestsFilesComparisonMixin,
     )
-    from flext_tests._utilities._files._contexts import (
-        FlextTestsFilesContextsMixin as FlextTestsFilesContextsMixin,
-    )
+    from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
     from flext_tests._utilities._files._creation_parts.creation_part_03 import (
-        FlextTestsFilesCreationMixin as FlextTestsFilesCreationMixin,
+        FlextTestsFilesCreationMixin,
     )
-    from flext_tests._utilities._files._info import (
-        FlextTestsFilesInfoMixin as FlextTestsFilesInfoMixin,
-    )
-    from flext_tests._utilities._files._lifecycle import (
-        FlextTestsFilesLifecycleMixin as FlextTestsFilesLifecycleMixin,
-    )
-    from flext_tests._utilities._files._reading import (
-        FlextTestsFilesReadingMixin as FlextTestsFilesReadingMixin,
-    )
+    from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
+    from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
+    from flext_tests._utilities._files._reading import FlextTestsFilesReadingMixin
 _LAZY_IMPORTS = merge_lazy_imports(
     (
         "._comparison_parts",

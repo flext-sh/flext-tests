@@ -13,23 +13,13 @@ from flext_core.lazy import (
 
 if TYPE_CHECKING:
     from flext_tests._constants._validator_parts.validator_part_03 import (
-        FlextTestsConstantsValidator as FlextTestsConstantsValidator,
+        FlextTestsConstantsValidator,
     )
-    from flext_tests._constants.data_cases import (
-        FlextTestsConstantsDataCases as FlextTestsConstantsDataCases,
-    )
-    from flext_tests._constants.docker import (
-        FlextTestsConstantsDocker as FlextTestsConstantsDocker,
-    )
-    from flext_tests._constants.files import (
-        FlextTestsConstantsFiles as FlextTestsConstantsFiles,
-    )
-    from flext_tests._constants.make import (
-        FlextTestsConstantsMake as FlextTestsConstantsMake,
-    )
-    from flext_tests._constants.matcher import (
-        FlextTestsConstantsMatcher as FlextTestsConstantsMatcher,
-    )
+    from flext_tests._constants.data_cases import FlextTestsConstantsDataCases
+    from flext_tests._constants.docker import FlextTestsConstantsDocker
+    from flext_tests._constants.files import FlextTestsConstantsFiles
+    from flext_tests._constants.make import FlextTestsConstantsMake
+    from flext_tests._constants.matcher import FlextTestsConstantsMatcher
 _LAZY_IMPORTS = merge_lazy_imports(
     ("._validator_parts",),
     build_lazy_import_map(
