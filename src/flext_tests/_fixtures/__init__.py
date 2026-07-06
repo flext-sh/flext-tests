@@ -12,56 +12,18 @@ from flext_core.lazy import (
 )
 
 if TYPE_CHECKING:
-    from flext_tests._fixtures._enforcement_parts.build import build_items
-    from flext_tests._fixtures._enforcement_parts.config import (
-        SessionConfig,
-        resolve_config,
-    )
-    from flext_tests._fixtures._enforcement_parts.discovery import (
-        collected_project_names,
-        collected_validator_targets,
-        load_infra_report,
-    )
-    from flext_tests._fixtures._enforcement_parts.validators import (
-        build_tests_validator_items,
-        dispatch_infra_detector,
-    )
+    from flext_tests._fixtures._enforcement_parts.config import SessionConfig
     from flext_tests._fixtures.enforcement import (
         EnforcementBuildContext,
         EnforcementCollector,
         EnforcementContribution,
         EnforcementItem,
         EnforcementViolationError,
-        active_rules,
-        builder_for,
-        builders,
-        clear,
-        discover_workspace_root,
-        get,
-        register,
-        split_csv,
-        warning_categories,
     )
     from flext_tests._fixtures.markdown_validation import (
         MarkdownCodeBlockCollector,
         MarkdownCodeBlockItem,
         MarkdownValidationError,
-    )
-    from flext_tests._fixtures.project_metadata import (
-        project_metadata,
-        project_namespace_config,
-        project_tool_flext,
-    )
-    from flext_tests._fixtures.settings import (
-        clean_container,
-        reset_settings,
-        sample_data,
-        settings,
-        settings_factory,
-        temp_dir,
-        temp_file,
-        test_context,
-        test_runtime,
     )
 _LAZY_IMPORTS = merge_lazy_imports(
     ("._enforcement_parts",),

@@ -5,7 +5,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import install_lazy_exports
+from flext_core.lazy import (
+    build_lazy_import_map,
+    install_lazy_exports,
+    merge_lazy_imports,
+)
 from flext_tests.__version__ import (
     __author__,
     __author_email__,
@@ -16,94 +20,195 @@ from flext_tests.__version__ import (
     __version__,
     __version_info__,
 )
-from flext_tests._exports import (
-    FLEXT_TESTS_LAZY_IMPORTS,
-    FLEXT_TESTS_PUBLIC_EXPORTS,
-)
 
 if TYPE_CHECKING:
     from flext_infra import d, e, h, r, x
+    from flext_tests._fixtures._enforcement_parts.config import SessionConfig
     from flext_tests._fixtures.enforcement import (
+        EnforcementBuildContext,
         EnforcementCollector,
+        EnforcementContribution,
         EnforcementItem,
         EnforcementViolationError,
-        active_rules,
-        discover_workspace_root,
-        split_csv,
     )
     from flext_tests._fixtures.markdown_validation import (
         MarkdownCodeBlockCollector,
         MarkdownCodeBlockItem,
         MarkdownValidationError,
     )
-    from flext_tests._fixtures.project_metadata import (
-        project_metadata,
-        project_namespace_config,
-        project_tool_flext,
-    )
-    from flext_tests._fixtures.settings import (
-        clean_container,
-        reset_settings,
-        sample_data,
-        settings,
-        settings_factory,
-        temp_dir,
-        temp_file,
-        test_context,
-        test_runtime,
-    )
-    from flext_tests._utilities.matchers import tm
     from flext_tests.base import FlextService, FlextTestsCase, FlextTestsServiceBase, s
     from flext_tests.constants import FlextTestsConstants, c
-    from flext_tests.docker import tk
-    from flext_tests.domains import td
-    from flext_tests.files import FlextTestsFiles, tf
+    from flext_tests.docker import FlextTestsDocker
+    from flext_tests.domains import FlextTestsDomains
+    from flext_tests.files import FlextTestsFiles
     from flext_tests.models import FlextTestsModels, m
     from flext_tests.protocols import FlextTestsProtocols, p
     from flext_tests.settings import FlextTestsSettings
+    from flext_tests.tmatchers import FlextTestsMatchersUtilities
     from flext_tests.typings import FlextTestsTypes, t
     from flext_tests.utilities import FlextTestsUtilities, u
-    from flext_tests.validator import tv
-
-
-_LAZY_IMPORTS = {
-    name: target
-    for name, target in FLEXT_TESTS_LAZY_IMPORTS.items()
-    if name in FLEXT_TESTS_PUBLIC_EXPORTS
-}
-
-
-_EAGER_EXPORTS = (
-    __author__,
-    __author_email__,
-    __description__,
-    __license__,
-    __title__,
-    __url__,
-    __version__,
-    __version_info__,
+    from flext_tests.validator import FlextTestsValidator
+_LAZY_IMPORTS = merge_lazy_imports(
+    (
+        "._docker_parts",
+        "._domains_parts",
+    ),
+    build_lazy_import_map(
+        {
+            "._fixtures._enforcement_parts.build": ("build_items",),
+            "._fixtures._enforcement_parts.config": (
+                "SessionConfig",
+                "resolve_config",
+            ),
+            "._fixtures._enforcement_parts.discovery": (
+                "collected_project_names",
+                "collected_validator_targets",
+                "load_infra_report",
+            ),
+            "._fixtures._enforcement_parts.validators": (
+                "build_tests_validator_items",
+                "dispatch_infra_detector",
+            ),
+            "._fixtures.enforcement": (
+                "EnforcementBuildContext",
+                "EnforcementCollector",
+                "EnforcementContribution",
+                "EnforcementItem",
+                "EnforcementViolationError",
+                "active_rules",
+                "builder_for",
+                "builders",
+                "clear",
+                "discover_workspace_root",
+                "get",
+                "register",
+                "split_csv",
+                "warning_categories",
+            ),
+            "._fixtures.markdown_validation": (
+                "MarkdownCodeBlockCollector",
+                "MarkdownCodeBlockItem",
+                "MarkdownValidationError",
+            ),
+            "._fixtures.project_metadata": (
+                "project_metadata",
+                "project_namespace_config",
+                "project_tool_flext",
+            ),
+            "._fixtures.settings": (
+                "clean_container",
+                "reset_settings",
+                "sample_data",
+                "settings",
+                "settings_factory",
+                "temp_dir",
+                "temp_file",
+                "test_context",
+                "test_runtime",
+            ),
+            ".base": (
+                "FlextService",
+                "FlextTestsCase",
+                "FlextTestsServiceBase",
+                "s",
+            ),
+            ".constants": (
+                "FlextTestsConstants",
+                "c",
+            ),
+            ".docker": (
+                "FlextTestsDocker",
+                "tk",
+            ),
+            ".domains": (
+                "FlextTestsDomains",
+                "td",
+            ),
+            ".files": (
+                "FlextTestsFiles",
+                "tf",
+            ),
+            ".models": (
+                "FlextTestsModels",
+                "m",
+            ),
+            ".protocols": (
+                "FlextTestsProtocols",
+                "p",
+            ),
+            ".settings": ("FlextTestsSettings",),
+            ".tmatchers": (
+                "FlextTestsMatchersUtilities",
+                "tm",
+            ),
+            ".typings": (
+                "FlextTestsTypes",
+                "t",
+            ),
+            ".utilities": (
+                "FlextTestsUtilities",
+                "u",
+            ),
+            ".validator": (
+                "FlextTestsValidator",
+                "tv",
+            ),
+            "flext_infra": (
+                "d",
+                "e",
+                "h",
+                "r",
+                "x",
+            ),
+        },
+    ),
+    exclude_names=(
+        "cleanup_submodule_namespace",
+        "install_lazy_exports",
+        "lazy_getattr",
+        "logger",
+        "merge_lazy_imports",
+        "output",
+        "output_reporting",
+        "pytest_addoption",
+        "pytest_collect_file",
+        "pytest_collection_modifyitems",
+        "pytest_configure",
+        "pytest_runtest_setup",
+        "pytest_runtest_teardown",
+        "pytest_sessionfinish",
+        "pytest_sessionstart",
+        "pytest_terminal_summary",
+        "pytest_warning_recorded",
+    ),
+    module_name=__name__,
 )
 
 
-_PUBLIC_EXPORTS: tuple[str, ...] = FLEXT_TESTS_PUBLIC_EXPORTS
-
 __all__: tuple[str, ...] = (
+    "EnforcementBuildContext",
     "EnforcementCollector",
+    "EnforcementContribution",
     "EnforcementItem",
     "EnforcementViolationError",
     "FlextService",
     "FlextTestsCase",
     "FlextTestsConstants",
+    "FlextTestsDocker",
+    "FlextTestsDomains",
     "FlextTestsFiles",
+    "FlextTestsMatchersUtilities",
     "FlextTestsModels",
     "FlextTestsProtocols",
     "FlextTestsServiceBase",
     "FlextTestsSettings",
     "FlextTestsTypes",
     "FlextTestsUtilities",
+    "FlextTestsValidator",
     "MarkdownCodeBlockCollector",
     "MarkdownCodeBlockItem",
     "MarkdownValidationError",
+    "SessionConfig",
     "__author__",
     "__author_email__",
     "__description__",
@@ -113,19 +218,31 @@ __all__: tuple[str, ...] = (
     "__version__",
     "__version_info__",
     "active_rules",
+    "build_items",
+    "build_tests_validator_items",
+    "builder_for",
+    "builders",
     "c",
     "clean_container",
+    "clear",
+    "collected_project_names",
+    "collected_validator_targets",
     "d",
     "discover_workspace_root",
+    "dispatch_infra_detector",
     "e",
+    "get",
     "h",
+    "load_infra_report",
     "m",
     "p",
     "project_metadata",
     "project_namespace_config",
     "project_tool_flext",
     "r",
+    "register",
     "reset_settings",
+    "resolve_config",
     "s",
     "sample_data",
     "settings",
@@ -142,6 +259,7 @@ __all__: tuple[str, ...] = (
     "tm",
     "tv",
     "u",
+    "warning_categories",
     "x",
 )
 
@@ -150,5 +268,5 @@ install_lazy_exports(
     __name__,
     globals(),
     _LAZY_IMPORTS,
-    public_exports=_PUBLIC_EXPORTS,
+    public_exports=__all__,
 )
