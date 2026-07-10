@@ -88,7 +88,6 @@ if TYPE_CHECKING:
     from flext_tests.files import FlextTestsFiles as FlextTestsFiles, tf as tf
     from flext_tests.models import FlextTestsModels as FlextTestsModels, m as m
     from flext_tests.protocols import FlextTestsProtocols as FlextTestsProtocols, p as p
-    from flext_tests.settings import FlextTestsSettings as FlextTestsSettings
     from flext_tests.tmatchers import (
         FlextTestsMatchersUtilities as FlextTestsMatchersUtilities,
         tm as tm,
@@ -107,6 +106,7 @@ _LAZY_IMPORTS = merge_lazy_imports(
     ),
     build_lazy_import_map(
         {
+            "._settings": ("FlextTestsSettings", "settings"),
             "._fixtures._enforcement_parts.build": ("build_items",),
             "._fixtures._enforcement_parts.config": (
                 "SessionConfig",
@@ -196,7 +196,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
                 "FlextTestsProtocols",
                 "p",
             ),
-            ".settings": ("FlextTestsSettings",),
             ".tmatchers": (
                 "FlextTestsMatchersUtilities",
                 "tm",
@@ -250,6 +249,8 @@ _LAZY_IMPORTS = merge_lazy_imports(
 
 
 __all__: tuple[str, ...] = (
+    "FlextTestsSettings",
+    "settings",
     "EnforcementBuildContext",
     "EnforcementCollector",
     "EnforcementContribution",
@@ -265,7 +266,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsModels",
     "FlextTestsProtocols",
     "FlextTestsServiceBase",
-    "FlextTestsSettings",
     "FlextTestsTypes",
     "FlextTestsUtilities",
     "FlextTestsValidator",

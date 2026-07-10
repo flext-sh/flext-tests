@@ -6,7 +6,7 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from unittest.mock import patch
 
-from flext_core import FlextSettings
+from flext_core import FlextSettings, settings
 from flext_tests.typings import t
 
 
@@ -24,7 +24,6 @@ class FlextTestsConfigHelpersUtilitiesMixin:
             Test FlextSettings singleton with overrides applied
 
         """
-        settings = FlextSettings.fetch_global()
         if not kwargs:
             return settings
         candidate = settings.model_copy(update=kwargs, deep=True)

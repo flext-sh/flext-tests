@@ -4,25 +4,31 @@ from __future__ import annotations
 
 from typing import ClassVar
 
+from pydantic import BaseModel, Field
+from pydantic_settings import SettingsConfigDict
+
 from flext_core import FlextSettings
-from flext_tests import m
 
 
 class FlextTestsSettings(FlextSettings):
     """FLEXT settings extended with the test runtime namespace."""
 
-    model_config: ClassVar[m.SettingsConfigDict] = m.SettingsConfigDict(
+    model_config: ClassVar[SettingsConfigDict] = SettingsConfigDict(
         env_prefix="FLEXT_TESTS_",
         extra="ignore",
     )
 
-    class TestsSettings(m.SettingsValue):
+    class TestsSettings(BaseModel):
         """Namespaced test runtime settings branch."""
 
-    Tests: TestsSettings = m.Field(
+    Tests: TestsSettings = Field(
         default_factory=TestsSettings,
         description="Namespaced FLEXT tests settings branch.",
     )
 
 
-__all__: list[str] = ["FlextTestsSettings"]
+
+settings: FlextTestsSettings = FlextTestsSettings.fetch_global()
+"""Pre-instantiated project settings singleton — ``from flext_tests import settings``."""
+
+__all__: list[str] = ["FlextTestsSettings", "settings"]

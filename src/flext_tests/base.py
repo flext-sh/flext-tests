@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Self
 from flext_core import FlextContainer, FlextService
 from flext_core.models import m
 from flext_tests import p, t
-from flext_tests.settings import FlextTestsSettings
+from flext_tests._settings import FlextTestsSettings
 
 if TYPE_CHECKING:
     from collections.abc import Generator
