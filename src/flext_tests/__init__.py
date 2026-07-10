@@ -76,6 +76,10 @@ if TYPE_CHECKING:
         test_context as test_context,
         test_runtime as test_runtime,
     )
+    from flext_tests._settings import (
+        FlextTestsSettings as FlextTestsSettings,
+        settings as settings,
+    )
     from flext_tests.base import (
         FlextService as FlextService,
         FlextTestsCase as FlextTestsCase,
