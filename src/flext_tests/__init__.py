@@ -249,8 +249,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
 
 
 __all__: tuple[str, ...] = (
-    "FlextTestsSettings",
-    "settings",
     "EnforcementBuildContext",
     "EnforcementCollector",
     "EnforcementContribution",
@@ -266,6 +264,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsModels",
     "FlextTestsProtocols",
     "FlextTestsServiceBase",
+    "FlextTestsSettings",
     "FlextTestsTypes",
     "FlextTestsUtilities",
     "FlextTestsValidator",

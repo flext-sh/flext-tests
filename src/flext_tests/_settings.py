@@ -27,7 +27,6 @@ class FlextTestsSettings(FlextSettings):
     )
 
 
-
 settings: FlextTestsSettings = FlextTestsSettings.fetch_global()
 """Pre-instantiated project settings singleton — ``from flext_tests import settings``."""
 
