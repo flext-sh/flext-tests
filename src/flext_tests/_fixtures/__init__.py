@@ -51,7 +51,6 @@ if TYPE_CHECKING:
     )
     from flext_tests._fixtures.project_metadata import (
         project_metadata as project_metadata,
-        project_namespace_config as project_namespace_config,
         project_tool_flext as project_tool_flext,
     )
     from flext_tests._fixtures.settings import (
@@ -107,7 +106,6 @@ _LAZY_IMPORTS = merge_lazy_imports(
             ),
             ".project_metadata": (
                 "project_metadata",
-                "project_namespace_config",
                 "project_tool_flext",
             ),
             ".settings": (
