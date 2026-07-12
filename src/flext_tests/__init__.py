@@ -69,7 +69,9 @@ if TYPE_CHECKING:
         clean_container as clean_container,
         reset_settings as reset_settings,
         sample_data as sample_data,
-        settings as settings,
+        # NOTE (multi-agent): fixture `settings` intentionally NOT re-exported
+        # at root — it collides (F811) with the canonical settings singleton
+        # below; the fixture stays registered via conftest pytest_plugins.
         settings_factory as settings_factory,
         temp_dir as temp_dir,
         temp_file as temp_file,
