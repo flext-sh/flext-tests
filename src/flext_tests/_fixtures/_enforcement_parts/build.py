@@ -75,13 +75,15 @@ def _load_infra_report_if_needed(
     """Load the workspace infra report only when a rule needs it."""
     if not any(rule.source.kind == "flext_infra_detector" for rule in rules):
         return None
+    # NOTE (multi-agent, mro-wkii.17.21): detector failures must stop collection;
+    # replacing them with None would silently disable the active enforcement rule.
     return load_infra_report(
         workspace_root,
         project_names=collected_project_names(
             items=collected_items,
             workspace_root=workspace_root,
         ),
-    ).unwrap_or(None)
+    ).unwrap()
 
 
 __all__: list[str] = ["build_items"]

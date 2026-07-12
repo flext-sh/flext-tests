@@ -216,24 +216,42 @@ class TestsFlextTestsEnforcementPlugin:
         result.stdout.no_fnmatch_line("*flext-enforce*")
         result.stdout.no_fnmatch_line("runtime warnings captured:*")
 
-    def test_external_pytest11_plugins_are_loaded_in_subprocess(
+    def test_infra_report_boundary_runs_in_subprocess(
         self,
         pytester: pytest.Pytester,
     ) -> None:
-        """Auto-registered pytest11 contributions from flext-core/infra load."""
+        """Return the real infra report through the public Result boundary."""
+        # NOTE (multi-agent, mro-wkii.17.21): exercise only the installed public
+        # boundary; private plugin registration is an implementation detail.
         pytester.makeini("[pytest]\n")
         pytester.makepyfile(
-            test_plugins=(
-                "from flext_tests._fixtures._enforcement_parts.registry import builders\n"
+            test_public_boundary=(
+                "from pathlib import Path\n"
+                "\n"
+                "from flext_tests import load_infra_report\n"
                 "\n"
                 "\n"
-                "def test_flext_core_plugin_is_registered() -> None:\n"
-                "    assert 'flext_core_runtime_warning' in builders()\n"
-                "\n"
-                "\n"
-                "def test_flext_infra_plugin_is_registered() -> None:\n"
-                "    assert 'flext_infra_detector' in builders()\n"
+                "class TestsPublicInfraReportBoundary:\n"
+                "    def test_public_boundary_wraps_direct_report(\n"
+                "        self,\n"
+                "        tmp_path: Path,\n"
+                "    ) -> None:\n"
+                "        project = tmp_path / 'flext-contract-probe'\n"
+                "        package = project / 'src' / 'flext_contract_probe'\n"
+                "        package.mkdir(parents=True)\n"
+                "        (package / '__init__.py').write_text('', encoding='utf-8')\n"
+                "        (project / 'pyproject.toml').write_text(\n"
+                "            '[project]\\n'\n"
+                "            'name = \\\"flext-contract-probe\\\"\\n'\n"
+                "            'version = \\\"0.1.0\\\"\\n',\n"
+                "            encoding='utf-8',\n"
+                "        )\n"
+                "        report = load_infra_report(\n"
+                "            project,\n"
+                "            project_names=(project.name,),\n"
+                "        ).unwrap()\n"
+                "        assert report.workspace == str(project.resolve())\n"
             ),
         )
         result = pytester.runpytest_subprocess()
-        result.assert_outcomes(passed=2)
+        result.assert_outcomes(passed=1)

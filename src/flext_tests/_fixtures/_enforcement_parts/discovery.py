@@ -31,7 +31,11 @@ def load_infra_report(
             import_result.error or "import flext_infra namespace enforcer failed",
         )
     refactor = import_result.value
-    enforcer_cls: object = getattr(refactor, "FlextInfraNamespaceEnforcer", None)
+    enforcer_cls: p.Tests.NamespaceEnforcerFactory | None = getattr(
+        refactor,
+        "FlextInfraNamespaceEnforcer",
+        None,
+    )
     if not callable(enforcer_cls):
         return r[p.AttributeProbe].fail("FlextInfraNamespaceEnforcer not found")
     enforcer_result = u.try_(
@@ -43,10 +47,12 @@ def load_infra_report(
         return r[p.AttributeProbe].fail(
             enforcer_result.error or "build flext_infra namespace enforcer failed",
         )
-    enforcer: object = enforcer_result.value
+    enforcer: p.Tests.NamespaceEnforcer = enforcer_result.value
     if not isinstance(enforcer, p.Tests.NamespaceEnforcer):
         return r[p.AttributeProbe].fail("FlextInfraNamespaceEnforcer contract invalid")
-    return u.guard_result(
+    # NOTE (multi-agent, mro-wkii.17.21): adapt the direct report exactly once
+    # through the canonical value-returning exception boundary.
+    return u.try_(
         lambda: enforcer.enforce(project_names=project_names),
         catch=c.EXC_BROAD_RUNTIME,
         op_name="run flext_infra namespace enforcement",
