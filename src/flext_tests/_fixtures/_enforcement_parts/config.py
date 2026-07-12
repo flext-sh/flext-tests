@@ -12,6 +12,8 @@ from flext_tests._fixtures._enforcement_parts import registry
 
 
 class SessionConfig:
+    """Session-scoped stash slot holding the resolved enforcement configuration."""
+
     stash_config: ClassVar[pytest.StashKey[m.Tests.EnforcementDispatcherConfig]] = (
         pytest.StashKey()
     )
@@ -30,6 +32,7 @@ def discover_workspace_root(start: Path) -> Path | None:
 
 
 def split_csv(raw: str | None) -> frozenset[str]:
+    """Split a comma-separated option value into a normalized frozen set."""
     if not raw:
         return frozenset()
     return frozenset(part.strip() for part in raw.split(",") if part.strip())
@@ -118,6 +121,7 @@ def resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfig
 def active_rules(
     cfg: m.Tests.EnforcementDispatcherConfig,
 ) -> tuple[m.EnforcementRuleSpec, ...]:
+    """Return enabled catalog rules after applying include/exclude filters."""
     catalog = u.build_canonical_catalog()
     rules: list[m.EnforcementRuleSpec] = []
     for rule in catalog.rules:

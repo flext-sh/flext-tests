@@ -9,7 +9,7 @@
 - Keywords: `builders`, `factories`, `flext`, `test-infrastructure`, `testing`
 - Main facades: _none_
 - Alias exports: `c`, `d`, `e`, `h`, `m`, `p`, `r`, `s`, `t`, `u`, `x`
-- Public symbol exports: `test_runtime`, `MarkdownValidationError`, `FlextTestsCase`, `FlextTestsSettings`, `FlextTestsUtilities`, `clean_container`, `tv`, `EnforcementViolationError`, `FlextTestsValidator`, `td` (+23 more)
+- Public symbol exports: `resolve_config`, `FlextTestsModels`, `build_items`, `clear`, `build_tests_validator_items`, `FlextTestsValidator`, `EnforcementBuildContext`, `builder_for`, `discover_workspace_root`, `clean_container` (+44 more)
 - Exported module shortcuts: `project_metadata`, `settings`
 - Generated module pages: `11`
 
