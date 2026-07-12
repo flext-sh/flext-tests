@@ -131,7 +131,7 @@ def settings() -> FlextTestsSettings:
 
 @pytest.fixture
 def settings_factory() -> Callable[..., FlextSettings]:
-    """Factory fixture for creating project-specific settings in tests.
+    """Create project-specific settings instances in tests.
 
     Usage in test::
 

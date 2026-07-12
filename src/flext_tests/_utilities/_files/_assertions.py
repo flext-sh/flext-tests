@@ -37,6 +37,8 @@ class FlextTestsFilesAssertionsMixin(FlextTestsFilesBatchMixin):
         Args:
             path: File or directory path to check
             msg: Custom error message
+            options: Pre-built assertion parameters; when provided, the
+                keyword flags below are ignored
             is_file: Assert is file (True) or not file (False)
             is_dir: Assert is directory (True) or not directory (False)
             not_empty: Assert file/dir is not empty (True) or empty (False)
