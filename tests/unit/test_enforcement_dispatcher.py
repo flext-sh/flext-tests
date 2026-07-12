@@ -32,7 +32,7 @@ class TestsFlextTestsEnforcementDispatcher:
 
     @pytest.fixture
     def workspace(self, tmp_path: Path) -> Path:
-        """A directory carrying every FLEXT workspace marker."""
+        """Create a directory carrying every FLEXT workspace marker."""
         root = tmp_path / "ws"
         root.mkdir()
         for marker in c.Tests.ENFORCEMENT_WORKSPACE_MARKERS:
