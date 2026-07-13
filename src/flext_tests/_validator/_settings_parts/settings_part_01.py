@@ -2,13 +2,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from collections.abc import MutableSequence
+from pathlib import Path
 
 from flext_tests import c, m, t, u
-
-if TYPE_CHECKING:
-    from collections.abc import MutableSequence
-    from pathlib import Path
 
 
 class FlextValidatorSettings:

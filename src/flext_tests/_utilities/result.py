@@ -2,14 +2,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from types import EllipsisType
 
-from flext_tests import c
-
-if TYPE_CHECKING:
-    from types import EllipsisType
-
-    from flext_tests import p
+from flext_tests import c, p
 
 
 class FlextTestsResultUtilitiesMixin:

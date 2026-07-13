@@ -3,13 +3,10 @@
 from __future__ import annotations
 
 import ast
-from typing import TYPE_CHECKING
+from pathlib import Path
 
-from flext_cli import u as cli_u
+from flext_cli import u
 from flext_tests import c, p, r, t
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 class FlextTestsMakeParsingUtilitiesMixin:
@@ -37,7 +34,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
                 payload.append(content)
         if not payload:
             return r[t.Tests.MakeTomlTable].fail(f"{path}: sem header flext-command")
-        mapping = cli_u.Cli.toml_mapping_from_text("\n".join(payload))
+        mapping = u.Cli.toml_mapping_from_text("\n".join(payload))
         if mapping is None:
             return r[t.Tests.MakeTomlTable].fail(f"{path}: header TOML invalido")
         try:

@@ -2,17 +2,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from collections.abc import MutableSequence
+from pathlib import Path
 
 from flext_cli import u as cli_u
 from flext_tests import c, m, p, r, t, u
 from flext_tests._validator._settings_parts.settings_part_01 import (
     FlextValidatorSettings as FlextValidatorSettingsPart01,
 )
-
-if TYPE_CHECKING:
-    from collections.abc import MutableSequence
-    from pathlib import Path
 
 
 class FlextValidatorSettings(FlextValidatorSettingsPart01):

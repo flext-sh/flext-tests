@@ -5,15 +5,12 @@ Comprehensive metadata extraction and optional content parsing.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from pathlib import Path
 
-from flext_cli import u as cli_u
-from flext_tests import c, m, p, r, t, u
+from flext_cli import u
+from flext_tests import c, m, p, r, t
 from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
 from flext_tests._utilities._files._reading import FlextTestsFilesReadingMixin
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
@@ -97,7 +94,7 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
             first_line=first_line,
             fmt=fmt,
             valid=True,
-            modified=cli_u.from_timestamp(stat.st_mtime),
+            modified=u.from_timestamp(stat.st_mtime),
             permissions=permissions,
             is_readonly=is_readonly,
             sha256=sha256,
@@ -161,7 +158,7 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
                     case _:
                         pass
             case "csv":
-                csv_outcome = cli_u.Cli.csv_loads(text)
+                csv_outcome = u.Cli.csv_loads(text)
                 rows: list[list[str]] = csv_outcome.value if csv_outcome.success else []
                 if rows:
                     row_count = len(rows)

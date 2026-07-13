@@ -2,16 +2,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from collections.abc import MutableSequence
+from pathlib import Path
 
 from flext_tests import t, u
 from flext_tests._validator._markdown_parts.markdown_part_01 import (
     FlextValidatorMarkdown as FlextValidatorMarkdownPart01,
 )
-
-if TYPE_CHECKING:
-    from collections.abc import MutableSequence
-    from pathlib import Path
 
 
 class FlextValidatorMarkdown(FlextValidatorMarkdownPart01):

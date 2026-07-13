@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from pathlib import Path
 
 from flext_tests import m, p, r, t
 from flext_tests._utilities._make_parts.make_registry_part_01 import (
@@ -10,9 +10,6 @@ from flext_tests._utilities._make_parts.make_registry_part_01 import (
 )
 from flext_tests._utilities.make_contract import FlextTestsMakeContractUtilitiesMixin
 from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixinPart01):

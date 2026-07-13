@@ -2,14 +2,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from pathlib import Path
 
 import flext_tests.constants as tests_constants
 import flext_tests.models as tests_models
 import flext_tests.typings as tests_typings
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 class FlextTestsValidatorUtilitiesMixin:

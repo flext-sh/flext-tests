@@ -9,12 +9,10 @@ from __future__ import annotations
 import shutil
 import tempfile
 from pathlib import Path
-from typing import TYPE_CHECKING, Self
+from types import TracebackType
+from typing import Self
 
 from flext_tests import c, t
-
-if TYPE_CHECKING:
-    from types import TracebackType
 
 
 class FlextTestsFilesLifecycleMixin:

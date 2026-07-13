@@ -6,12 +6,10 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
+from pathlib import Path
+from typing import ClassVar
 
-if TYPE_CHECKING:
-    from pathlib import Path
-
-    from flext_tests import t
+from flext_tests import t
 
 
 class FlextTestsFixturesDSLMixin:

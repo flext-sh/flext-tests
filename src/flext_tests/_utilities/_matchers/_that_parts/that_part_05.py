@@ -3,17 +3,13 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import TYPE_CHECKING
 
 from flext_core import u
-from flext_tests import c, m, t
+from flext_tests import c, m, p, t
 from flext_tests._utilities._matchers._that_parts.that_part_04 import (
     FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixinPart04,
 )
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-
-if TYPE_CHECKING:
-    from flext_tests import p
 
 
 class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart04):

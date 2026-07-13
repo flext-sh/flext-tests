@@ -7,9 +7,9 @@ from __future__ import annotations
 
 import os
 import warnings
+from collections.abc import Generator
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from flext_core import u
 from flext_tests import (
@@ -18,9 +18,6 @@ from flext_tests import (
     t,
 )
 from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
-
-if TYPE_CHECKING:
-    from collections.abc import Generator
 
 
 class FlextTestsMatchersScopeMixin:

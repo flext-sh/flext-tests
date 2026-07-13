@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import MutableSequence
 from pathlib import Path
-from typing import TYPE_CHECKING, override
+from typing import override
 
 from flext_tests import (
     m,
@@ -21,9 +22,6 @@ from flext_tests._validator.markdown import FlextValidatorMarkdown
 from flext_tests._validator.settings import FlextValidatorSettings
 from flext_tests._validator.tests import FlextValidatorTests
 from flext_tests._validator.types import FlextValidatorTypes
-
-if TYPE_CHECKING:
-    from collections.abc import MutableSequence
 
 
 class FlextTestsValidator(FlextTestsValidatorPart01):

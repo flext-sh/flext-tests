@@ -5,13 +5,11 @@ Generalized file/directory existence and property checks.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from pathlib import Path
 
-from flext_tests import c, m, u
+from flext_infra import u
+from flext_tests import c, m
 from flext_tests._utilities._files._batch import FlextTestsFilesBatchMixin
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 class FlextTestsFilesAssertionsMixin(FlextTestsFilesBatchMixin):

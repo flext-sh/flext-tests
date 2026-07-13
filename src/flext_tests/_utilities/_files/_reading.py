@@ -5,15 +5,13 @@ Read content by format and optional Pydantic model validation.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, overload
+from pathlib import Path
+from typing import overload
 
 from flext_cli import u
 from flext_tests import c, m, p, r, t
 from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):

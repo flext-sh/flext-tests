@@ -2,16 +2,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from collections.abc import Callable
 
 from flext_tests import c, m, t
 from flext_tests._utilities._matchers._that_parts.that_part_02 import (
     FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixinPart02,
 )
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
 
 
 class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart02):

@@ -12,8 +12,7 @@ from collections.abc import Callable, MutableSequence
 from pathlib import Path
 from typing import ClassVar
 
-from flext_core import r
-from flext_tests import m, p, t
+from flext_tests import m, p, r, t
 
 
 class FlextTestsValidatorModels:

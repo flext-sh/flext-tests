@@ -2,15 +2,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from pathlib import Path
 
 from flext_tests import m, p, r, t
 from flext_tests._utilities._make_parts.make_parsing_part_01 import (
     FlextTestsMakeParsingUtilitiesMixin as FlextTestsMakeParsingUtilitiesMixinPart01,
 )
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 class FlextTestsMakeParsingUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixinPart01):

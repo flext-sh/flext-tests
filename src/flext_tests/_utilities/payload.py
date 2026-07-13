@@ -16,13 +16,10 @@ from collections.abc import (
 from datetime import datetime, tzinfo
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, TypeIs
+from typing import TypeIs
 
 from flext_infra import u
-from flext_tests import c, m, t
-
-if TYPE_CHECKING:
-    from flext_tests import p
+from flext_tests import c, m, p, t
 
 type _DeepPredicate = Callable[[t.Tests.TestobjectSerializable], bool]
 
