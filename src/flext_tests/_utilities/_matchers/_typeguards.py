@@ -6,7 +6,9 @@ via MRO from ``flext_tests._utilities.matchers``.
 
 from __future__ import annotations
 
-from flext_infra import u
+from typing import TypeIs
+
+from flext_infra import m, u
 from flext_tests import c, p, t
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
@@ -57,6 +59,19 @@ class FlextTestsMatchersTypeGuardsMixin:
                 raise AssertionError(msg or default_msg)
             ne_payload = None
         return (eq_payload, ne_payload)
+
+    # NOTE (multi-agent): general_value moved here from t.Tests typings facet
+    # (declaration purity - typings must not hold runtime guard behavior; mro-i6nq.11).
+    @staticmethod
+    def general_value(value: t.Tests.Testobject) -> TypeIs[t.Tests.Testobject]:
+        """Return True when value is a supported general test object."""
+        if value is None:
+            return True
+        if isinstance(value, (str, int, float, bool, bytes)):
+            return True
+        if isinstance(value, m.BaseModel):
+            return True
+        return isinstance(value, (list, dict))
 
 
 __all__: list[str] = ["FlextTestsMatchersTypeGuardsMixin"]

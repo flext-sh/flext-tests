@@ -21,9 +21,6 @@ if TYPE_CHECKING:
     from flext_tests._typings.files import (
         FlextTestsFilesTypesMixin as FlextTestsFilesTypesMixin,
     )
-    from flext_tests._typings.guards import (
-        FlextTestsGuardsTypesMixin as FlextTestsGuardsTypesMixin,
-    )
     from flext_tests._typings.make import (
         FlextTestsMakeTypesMixin as FlextTestsMakeTypesMixin,
     )

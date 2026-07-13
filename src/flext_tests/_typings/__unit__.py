@@ -21,12 +21,6 @@ LAZY_MODULES: dict[str, tuple[str, ...]] = {
 
     ),
 
-    ".guards": (
-
-        "FlextTestsGuardsTypesMixin",
-
-    ),
-
     ".make": (
 
         "FlextTestsMakeTypesMixin",
@@ -56,8 +50,6 @@ PUBLIC_EXPORTS: tuple[str, ...] = (
     "FlextTestsBaseTypesMixin",
 
     "FlextTestsFilesTypesMixin",
-
-    "FlextTestsGuardsTypesMixin",
 
     "FlextTestsMakeTypesMixin",
 

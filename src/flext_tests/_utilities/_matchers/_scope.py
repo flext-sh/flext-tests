@@ -13,6 +13,9 @@ from pathlib import Path
 
 from flext_core import u
 from flext_tests import c, m, t
+from flext_tests._utilities._matchers._typeguards import (
+    FlextTestsMatchersTypeGuardsMixin,
+)
 from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
 
 
@@ -80,7 +83,7 @@ class FlextTestsMatchersScopeMixin:
                         container_dict = {
                             k: v
                             for k, v in (params.container or {}).items()
-                            if t.Tests.general_value(v)
+                            if FlextTestsMatchersTypeGuardsMixin.general_value(v)
                         }
                         context_map: t.MappingKV[
                             str, t.Tests.TestobjectSerializable

@@ -10,6 +10,7 @@ from pathlib import Path
 from flext_cli import u
 from flext_tests import c, m, p, r, t
 from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
+from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
 
 
 class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
@@ -60,7 +61,7 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
         """Build a ``FileInfo`` model for an existing path."""
         stat = params.path.stat()
         size = stat.st_size
-        size_human = c.Tests.format_size(size)
+        size_human = FlextTestsFilesUtilitiesMixin.format_size(size)
         text, lines, is_empty, first_line, encoding = self._read_info_text(
             params.path, size
         )

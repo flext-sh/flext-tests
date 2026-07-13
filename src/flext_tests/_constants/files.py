@@ -101,34 +101,3 @@ class FlextTestsConstantsFiles:
     ERROR_READ: Final[str] = "Read error: {error}"
     ERROR_COMPARE: Final[str] = "Compare error: {error}"
     ERROR_INFO: Final[str] = "Info error: {error}"
-
-    @classmethod
-    def format_size(cls, size: int) -> str:
-        """Format size in human-readable format.
-
-        Args:
-            size: Size in bytes.
-
-        Returns:
-            Human-readable size string like "1.2 KB".
-
-        """
-        for unit in cls.SIZE_UNITS:
-            if size < cls.SIZE_THRESHOLD:
-                return f"{size:.1f} {unit}" if unit != "B" else f"{size} {unit}"
-            size //= cls.SIZE_THRESHOLD
-        return f"{size:.1f} PB"
-
-    @classmethod
-    def format_for_extension(cls, extension: str) -> str:
-        """Get format from file extension.
-
-        Args:
-            extension: File extension (e.g., ".json").
-
-        Returns:
-            Format string or "text" as default.
-
-        """
-        format_name = cls.EXT_TO_FMT.get(extension.lower())
-        return format_name if isinstance(format_name, str) else "text"
