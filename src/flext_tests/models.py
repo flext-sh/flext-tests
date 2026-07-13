@@ -17,9 +17,7 @@ from flext_tests._models.domains import FlextTestsDomainModelsMixin
 from flext_tests._models.filesystem import FlextTestsFilesystemModelsMixin
 from flext_tests._models.make import FlextTestsMakeModelsMixin
 from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
-from flext_tests._models.validator import (
-    FlextTestsValidatorModelsMixin,
-)
+from flext_tests._models.validator import FlextTestsValidatorModelsMixin
 
 
 class FlextTestsModels(m):

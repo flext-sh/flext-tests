@@ -45,9 +45,7 @@ class EnforcementItem(pytest.Item):
     def _format_violation(violation: p.AttributeProbe) -> str:
         rule_id = getattr(violation, "rule_id", "")
         file_path = getattr(violation, "file_path", None) or getattr(
-            violation,
-            "file",
-            "",
+            violation, "file", ""
         )
         line = getattr(violation, "line_number", None) or getattr(violation, "line", "")
         description = (
@@ -67,9 +65,7 @@ class EnforcementItem(pytest.Item):
 
     @override
     def repr_failure(
-        self,
-        excinfo: pytest.ExceptionInfo[BaseException],
-        style: str | None = None,
+        self, excinfo: pytest.ExceptionInfo[BaseException], style: str | None = None
     ) -> str:
         _ = style
         return str(excinfo.value)

@@ -21,11 +21,7 @@ LAZY_MODULES: dict[str, tuple[str, ...]] = {
         "collected_validator_targets",
         "load_infra_report",
     ),
-    ".items": (
-        "EnforcementCollector",
-        "EnforcementItem",
-        "EnforcementViolationError",
-    ),
+    ".items": ("EnforcementCollector", "EnforcementItem", "EnforcementViolationError"),
     ".registry": (
         "EnforcementBuildContext",
         "EnforcementContribution",
@@ -36,10 +32,7 @@ LAZY_MODULES: dict[str, tuple[str, ...]] = {
         "register",
         "warning_categories",
     ),
-    ".validators": (
-        "build_tests_validator_items",
-        "dispatch_infra_detector",
-    ),
+    ".validators": ("build_tests_validator_items", "dispatch_infra_detector"),
 }
 
 

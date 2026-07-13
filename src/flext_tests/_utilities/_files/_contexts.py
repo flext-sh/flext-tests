@@ -21,10 +21,7 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
     @contextmanager
     def files(
         cls,
-        content: t.MappingKV[
-            str,
-            t.Tests.FileContentPlain,
-        ],
+        content: t.MappingKV[str, t.Tests.FileContentPlain],
         *,
         directory: Path | None = None,
         ext: str | None = None,
@@ -56,13 +53,12 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
                 data: t.Tests.FileContentPlain = data_raw
                 filename = name if "." in name else f"{name}{default_ext}"
                 if "." not in name and isinstance(
-                    data,
-                    (Mapping, m.BaseModel, m.ConfigMap, m.Dict),
+                    data, (Mapping, m.BaseModel, m.ConfigMap, m.Dict)
                 ):
                     filename = f"{name}.json"
                 else:
                     is_nested_sequence = "." not in name and manager._is_nested_rows(
-                        data,
+                        data
                     )
                     if is_nested_sequence:
                         filename = f"{name}.csv"

@@ -83,7 +83,7 @@ class FlextValidatorSettings:
                     "CONFIG-001",
                     "ignore_errors = true",
                     "(global)",
-                ),
+                )
             )
         overrides_raw: t.Tests.TomlValue = mypy_config.get("overrides", [])
         if not isinstance(overrides_raw, list):
@@ -103,7 +103,7 @@ class FlextValidatorSettings:
                         "CONFIG-001",
                         f"ignore_errors = true (module: {module})",
                         c.Tests.VALIDATOR_MSG_CONFIG_IGNORE.format(module=module),
-                    ),
+                    )
                 )
         for code, key in (
             ("CONFIG-003", "disallow_incomplete_defs"),
@@ -116,11 +116,8 @@ class FlextValidatorSettings:
                 line_num = u.Tests.find_line_number(lines, key)
                 violations.append(
                     cls._create_config_violation(
-                        file_path,
-                        line_num,
-                        code,
-                        f"{key} = false",
-                    ),
+                        file_path, line_num, code, f"{key} = false"
+                    )
                 )
         return violations
 
@@ -146,19 +143,14 @@ class FlextValidatorSettings:
             line_num = u.Tests.find_line_number(lines, "reportPrivateUsage")
             return [
                 cls._create_config_violation(
-                    file_path,
-                    line_num,
-                    "CONFIG-005",
-                    "reportPrivateUsage = false",
-                ),
+                    file_path, line_num, "CONFIG-005", "reportPrivateUsage = false"
+                )
             ]
         return []
 
     @classmethod
     def _scan_file(
-        cls,
-        file_path: Path,
-        approved: t.MappingKV[str, t.StrSequence],
+        cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single pyproject.toml for settings violations."""
         violations: MutableSequence[m.Tests.Violation] = []
@@ -171,7 +163,7 @@ class FlextValidatorSettings:
                     "CONFIG-UNREADABLE",
                     (),
                     read.error or "could not read file",
-                ),
+                )
             ]
         content = read.value
         mapping = cli_u.Cli.toml_mapping_from_text(content)
@@ -183,7 +175,7 @@ class FlextValidatorSettings:
                     "CONFIG-INVALID-TOML",
                     (),
                     "invalid TOML - could not parse pyproject",
-                ),
+                )
             ]
         data = cls.to_toml_dict(mapping)
         lines = content.splitlines()
@@ -210,7 +202,7 @@ class FlextValidatorSettings:
                 validator_name=c.Tests.VALIDATOR_CONFIG_KEY,
                 files_scanned=len(files),
                 violations=violations,
-            ),
+            )
         )
 
     @classmethod

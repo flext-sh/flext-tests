@@ -11,9 +11,7 @@ from flext_tests import m, p, t
 from flext_tests._settings import FlextTestsSettings
 
 
-class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](
-    s[TDomainResult],
-):
+class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
     """Base service for test packages with the ``Tests`` settings namespace."""
 
     @classmethod
@@ -52,8 +50,7 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](
     @classmethod
     @contextmanager
     def isolated_test_runtime(
-        cls,
-        **overrides: t.SettingsOverride | None,
+        cls, **overrides: t.SettingsOverride | None
     ) -> Generator[Self]:
         """Yield one isolated service/settings/container cycle for a test body."""
         settings_type = cls.test_settings_type()

@@ -25,7 +25,7 @@ class FlextTestsValidatorUtilitiesMixin:
     def path_pattern_matches(value: str, pattern: str) -> bool:
         """Check whether one validator path pattern matches value."""
         compiled = tests_constants.c.Tests.VALIDATOR_APPROVED_PATH_REGEX_BY_PATTERN.get(
-            pattern,
+            pattern
         )
         return compiled.search(value) is not None if compiled else False
 
@@ -203,8 +203,7 @@ class FlextTestsValidatorUtilitiesMixin:
 
     @staticmethod
     def except_block_only_pass(
-        lines: tests_typings.t.StrSequence,
-        line_number: int,
+        lines: tests_typings.t.StrSequence, line_number: int
     ) -> bool:
         """Check whether one ``except`` block body contains only pass or ellipsis."""
         header_index = line_number - 1
@@ -212,7 +211,7 @@ class FlextTestsValidatorUtilitiesMixin:
             return False
         header_line = lines[header_index]
         header_match = tests_constants.c.Tests.VALIDATOR_EXCEPT_HEADER_RE.match(
-            header_line,
+            header_line
         )
         if header_match is None:
             return False
@@ -238,7 +237,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return (
             len(body_lines) == 1
             and tests_constants.c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(
-                body_lines[0],
+                body_lines[0]
             )
             is not None
         )

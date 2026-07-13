@@ -41,12 +41,7 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 class MarkdownCodeBlockItem(pytest.Item):
     """Pytest item representing a markdown file to validate."""
 
-    def __init__(
-        self,
-        name: str,
-        parent: pytest.Collector,
-        md_path: Path,
-    ) -> None:
+    def __init__(self, name: str, parent: pytest.Collector, md_path: Path) -> None:
         super().__init__(name, parent)
         self.md_path = md_path
 
@@ -71,9 +66,7 @@ class MarkdownCodeBlockItem(pytest.Item):
 
     @override
     def repr_failure(
-        self,
-        excinfo: pytest.ExceptionInfo[BaseException],
-        style: str | None = None,
+        self, excinfo: pytest.ExceptionInfo[BaseException], style: str | None = None
     ) -> str:
         """Represent test failure."""
         _ = style
@@ -93,16 +86,13 @@ class MarkdownCodeBlockCollector(pytest.File):
         """Collect markdown file as a test item."""
         return [
             MarkdownCodeBlockItem.from_parent(
-                self,
-                name=self.path.name,
-                md_path=self.path,
-            ),
+                self, name=self.path.name, md_path=self.path
+            )
         ]
 
 
 def pytest_collect_file(
-    parent: pytest.Collector,
-    file_path: Path,
+    parent: pytest.Collector, file_path: Path
 ) -> MarkdownCodeBlockCollector | None:
     """Collect .md files when the markdown docs option is enabled."""
     if not parent.config.getoption(c.Tests.VALIDATOR_MD_OPTION_DOCS, default=False):

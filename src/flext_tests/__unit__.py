@@ -8,60 +8,19 @@ lazy (PEP 562) import access; sibling ``__all__`` discovery is the upstream sour
 from __future__ import annotations
 
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
-    "._config": ("config",),
-    "._settings": ("settings",),
-    ".base": (
-        "FlextTestsCase",
-        "FlextTestsServiceBase",
-        "s",
-    ),
-    ".constants": (
-        "FlextTestsConstants",
-        "c",
-    ),
-    ".docker": (
-        "FlextTestsDocker",
-        "tk",
-    ),
-    ".domains": (
-        "FlextTestsDomains",
-        "td",
-    ),
-    ".files": (
-        "FlextTestsFiles",
-        "tf",
-    ),
-    ".models": (
-        "FlextTestsModels",
-        "m",
-    ),
-    ".protocols": (
-        "FlextTestsProtocols",
-        "p",
-    ),
-    ".tmatchers": (
-        "FlextTestsMatchersUtilities",
-        "tm",
-    ),
-    ".typings": (
-        "FlextTestsTypes",
-        "t",
-    ),
-    ".utilities": (
-        "FlextTestsUtilities",
-        "u",
-    ),
-    ".validator": (
-        "FlextTestsValidator",
-        "tv",
-    ),
-    "flext_infra": (
-        "d",
-        "e",
-        "h",
-        "r",
-        "x",
-    ),
+    "._config": ("FlextTestsConfig", "config"),
+    "._settings": ("FlextTestsSettings", "settings"),
+    ".base": ("FlextTestsCase", "FlextTestsServiceBase", "s"),
+    ".constants": ("FlextTestsConstants", "c"),
+    ".docker": ("FlextTestsDocker", "tk"),
+    ".files": ("FlextTestsFiles", "tf"),
+    ".models": ("FlextTestsModels", "m"),
+    ".protocols": ("FlextTestsProtocols", "p"),
+    ".tmatchers": ("FlextTestsMatchersUtilities", "tm"),
+    ".typings": ("FlextTestsTypes", "t"),
+    ".utilities": ("FlextTestsUtilities", "u"),
+    ".validator": ("FlextTestsValidator", "tv"),
+    "flext_infra": ("d", "e", "h", "r", "x"),
 }
 
 
@@ -76,14 +35,15 @@ EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
 
 PUBLIC_EXPORTS: tuple[str, ...] = (
     "FlextTestsCase",
+    "FlextTestsConfig",
     "FlextTestsConstants",
     "FlextTestsDocker",
-    "FlextTestsDomains",
     "FlextTestsFiles",
     "FlextTestsMatchersUtilities",
     "FlextTestsModels",
     "FlextTestsProtocols",
     "FlextTestsServiceBase",
+    "FlextTestsSettings",
     "FlextTestsTypes",
     "FlextTestsUtilities",
     "FlextTestsValidator",
@@ -106,7 +66,6 @@ PUBLIC_EXPORTS: tuple[str, ...] = (
     "s",
     "settings",
     "t",
-    "td",
     "tf",
     "tk",
     "tm",

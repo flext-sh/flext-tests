@@ -18,9 +18,7 @@ if TYPE_CHECKING:
 
 
 def pytest_collection_modifyitems(
-    session: pytest.Session,
-    config: pytest.Config,
-    items: list[pytest.Item],
+    session: pytest.Session, config: pytest.Config, items: list[pytest.Item]
 ) -> None:
     """Append dispatcher items to the collection when active."""
     cfg = resolve_config(config)
@@ -61,9 +59,7 @@ def pytest_sessionstart(session: pytest.Session) -> None:
 
 
 def pytest_terminal_summary(
-    terminalreporter: pytest.TerminalReporter,
-    exitstatus: int,
-    config: pytest.Config,
+    terminalreporter: pytest.TerminalReporter, exitstatus: int, config: pytest.Config
 ) -> None:
     """Print the per-kind breakdown at the end of the session."""
     _ = exitstatus
@@ -76,12 +72,12 @@ def pytest_terminal_summary(
         kinds[rule.source.kind] = kinds.get(rule.source.kind, 0) + 1
     terminalreporter.write_sep("-", "flext-enforce", yellow=True)
     terminalreporter.write_line(
-        f"catalog active: {len(active)} rules across {len(kinds)} source kinds",
+        f"catalog active: {len(active)} rules across {len(kinds)} source kinds"
     )
     for kind in sorted(kinds):
         terminalreporter.write_line(f"  {kind}: {kinds[kind]}")
     terminalreporter.write_line(
-        f"runtime warnings captured: {sum(cfg.warning_counter.values())}",
+        f"runtime warnings captured: {sum(cfg.warning_counter.values())}"
     )
 
 

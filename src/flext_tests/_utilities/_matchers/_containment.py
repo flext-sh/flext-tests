@@ -7,11 +7,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 
-from flext_tests import (
-    c,
-    p,
-    t,
-)
+from flext_tests import c, p, t
 from flext_tests._utilities._matchers._assertions import (
     FlextTestsMatchersAssertionsMixin,
 )
@@ -52,10 +48,10 @@ class FlextTestsMatchersContainmentMixin:
                         )
                 else:
                     check_val = FlextTestsPayloadUtilities.to_normalized_value(
-                        FlextTestsPayloadUtilities.to_payload(item),
+                        FlextTestsPayloadUtilities.to_payload(item)
                     )
                     target_raw = FlextTestsPayloadUtilities.to_normalized_value(
-                        FlextTestsPayloadUtilities.to_payload(value),
+                        FlextTestsPayloadUtilities.to_payload(value)
                     )
                     if not isinstance(target_raw, (Mapping, list, str)):
                         FlextTestsMatchersAssertionsMixin.raise_match_assertion(
@@ -98,10 +94,10 @@ class FlextTestsMatchersContainmentMixin:
                         )
                 else:
                     check_val = FlextTestsPayloadUtilities.to_normalized_value(
-                        FlextTestsPayloadUtilities.to_payload(item),
+                        FlextTestsPayloadUtilities.to_payload(item)
                     )
                     target_raw_2 = FlextTestsPayloadUtilities.to_normalized_value(
-                        FlextTestsPayloadUtilities.to_payload(value),
+                        FlextTestsPayloadUtilities.to_payload(value)
                     )
                     if not isinstance(target_raw_2, (Mapping, list, str)):
                         FlextTestsMatchersAssertionsMixin.raise_match_assertion(

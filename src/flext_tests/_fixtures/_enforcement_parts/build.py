@@ -39,18 +39,12 @@ def build_items(
         return []
     rules = active_rules(cfg)
     validator_targets = collected_validator_targets(
-        items=collected_items,
-        workspace_root=workspace_root,
+        items=collected_items, workspace_root=workspace_root
     )
-    infra_report = _load_infra_report_if_needed(
-        rules,
-        workspace_root,
-        collected_items,
-    )
+    infra_report = _load_infra_report_if_needed(rules, workspace_root, collected_items)
 
     collector = EnforcementCollector.from_parent(
-        parent=session,
-        name="flext-enforcement",
+        parent=session, name="flext-enforcement"
     )
     context = EnforcementBuildContext(
         infra_report=infra_report,
@@ -80,8 +74,7 @@ def _load_infra_report_if_needed(
     return load_infra_report(
         workspace_root,
         project_names=collected_project_names(
-            items=collected_items,
-            workspace_root=workspace_root,
+            items=collected_items, workspace_root=workspace_root
         ),
     ).unwrap()
 

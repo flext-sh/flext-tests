@@ -23,9 +23,7 @@ class FlextTestsMatchersAssertionsMixin:
         item: p.AttributeProbe,
     ) -> Never:
         """Raise AssertionError with ``msg`` or formatted ``template``."""
-        raise AssertionError(
-            msg or template.format(container=container, item=item),
-        )
+        raise AssertionError(msg or template.format(container=container, item=item))
 
     @staticmethod
     def assert_len_match(
@@ -46,22 +44,22 @@ class FlextTestsMatchersAssertionsMixin:
                     if min_len <= payload_len <= max_len:
                         return
         actual_len = len(sized) if isinstance(sized, Sized) else 0
-        if isinstance(length_spec, int):
-            raise AssertionError(
-                msg
-                or c.Tests.ERR_LEN_EXACT_FAILED.format(
-                    expected=length_spec,
-                    actual=actual_len,
-                ),
-            )
-        raise AssertionError(
-            msg
-            or c.Tests.ERR_LEN_RANGE_FAILED.format(
-                min=length_spec[0],
-                max=length_spec[1],
-                actual=actual_len,
-            ),
-        )
+        # mro-j47u: both declared matcher forms fail with assertion semantics.
+        match length_spec:
+            case int() as exact_length:
+                raise AssertionError(
+                    msg
+                    or c.Tests.ERR_LEN_EXACT_FAILED.format(
+                        expected=exact_length, actual=actual_len
+                    )
+                )
+            case (min_length, max_length):
+                raise AssertionError(
+                    msg
+                    or c.Tests.ERR_LEN_RANGE_FAILED.format(
+                        min=min_length, max=max_length, actual=actual_len
+                    )
+                )
 
 
 __all__: list[str] = ["FlextTestsMatchersAssertionsMixin"]

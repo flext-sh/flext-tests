@@ -16,9 +16,7 @@ if TYPE_CHECKING:
 
 class FlextTestsGuardsTypesMixin:
     @staticmethod
-    def general_value(
-        value: tb.Testobject,
-    ) -> TypeIs[tb.Testobject]:
+    def general_value(value: tb.Testobject) -> TypeIs[tb.Testobject]:
         if value is None:
             return True
         if isinstance(value, (str, int, float, bool, bytes)):

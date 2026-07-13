@@ -20,18 +20,13 @@ if TYPE_CHECKING:
 
 
 def _iter_infra_violations(
-    report: p.AttributeProbe,
-    field: str,
-    *,
-    match_missing: bool,
+    report: p.AttributeProbe, field: str, *, match_missing: bool
 ) -> Iterable[tuple[str, p.AttributeProbe]]:
     """Yield ``(project_name, violation)`` from a workspace report."""
     projects = getattr(report, "projects", ())
     for project in projects:
         project_name = getattr(project, "project", "") or getattr(
-            project,
-            "project_name",
-            "",
+            project, "project_name", ""
         )
         entries = getattr(project, field, ())
         if match_missing:
@@ -43,8 +38,7 @@ def _iter_infra_violations(
 
 
 def dispatch_infra_detector(
-    rule: m.EnforcementRuleSpec,
-    report: p.AttributeProbe,
+    rule: m.EnforcementRuleSpec, report: p.AttributeProbe
 ) -> dict[str, list[p.AttributeProbe]]:
     """Legacy helper kept for existing tests; new code uses the flext-infra plugin."""
     source = rule.source
@@ -52,9 +46,7 @@ def dispatch_infra_detector(
     match_missing = bool(getattr(source, "match_missing", False))
     grouped: dict[str, list[p.AttributeProbe]] = {}
     for project, entry in _iter_infra_violations(
-        report,
-        field,
-        match_missing=match_missing,
+        report, field, match_missing=match_missing
     ):
         grouped.setdefault(project, []).append(entry)
     return grouped
@@ -70,11 +62,7 @@ def build_tests_validator_items(
     targets = context.validator_targets
     if workspace_root is None:
         return []
-    grouped = _collect_tests_validator_violations(
-        rule,
-        workspace_root,
-        targets,
-    )
+    grouped = _collect_tests_validator_violations(rule, workspace_root, targets)
     return _items_from_grouped(collector, rule, grouped)
 
 
@@ -95,15 +83,13 @@ def _items_from_grouped(
                 rule=rule,
                 project=project,
                 violations=violations,
-            ),
+            )
         )
     return items
 
 
 def _collect_tests_validator_violations(
-    rule: m.EnforcementRuleSpec,
-    workspace_root: Path,
-    targets: t.SequenceOf[Path],
+    rule: m.EnforcementRuleSpec, workspace_root: Path, targets: t.SequenceOf[Path]
 ) -> dict[str, list[p.AttributeProbe]]:
     result: dict[str, list[p.AttributeProbe]] = {}
     try:
@@ -122,8 +108,7 @@ def _collect_tests_validator_violations(
     wanted_ids = frozenset(getattr(rule.source, "rule_ids", ()))
     for target in targets:
         dispatch_target = _validator_dispatch_target(
-            method_name=method_name,
-            target=target,
+            method_name=method_name, target=target
         )
         if dispatch_target is None:
             continue
@@ -137,11 +122,7 @@ def _collect_tests_validator_violations(
     return result
 
 
-def _validator_dispatch_target(
-    *,
-    method_name: str,
-    target: Path,
-) -> Path | None:
+def _validator_dispatch_target(*, method_name: str, target: Path) -> Path | None:
     """Return the concrete path to pass to one validator method."""
     if method_name != "validate_config":
         return target
@@ -174,11 +155,7 @@ def _merge_tests_validator_result(
         result.setdefault(project, []).append(violation)
 
 
-def _violation_project(
-    *,
-    violation: p.AttributeProbe,
-    workspace_root: Path,
-) -> str:
+def _violation_project(*, violation: p.AttributeProbe, workspace_root: Path) -> str:
     """Return the owning workspace segment for one validator violation."""
     file_path = getattr(violation, "file_path", None)
     if file_path is None:
@@ -190,7 +167,4 @@ def _violation_project(
     return rel.parts[0] if rel.parts else "workspace"
 
 
-__all__: list[str] = [
-    "build_tests_validator_items",
-    "dispatch_infra_detector",
-]
+__all__: list[str] = ["build_tests_validator_items", "dispatch_infra_detector"]

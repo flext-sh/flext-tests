@@ -34,27 +34,23 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
         """Validate parameter values for one command invocation."""
         for param in command.params:
             value = FlextTestsMakeContractUtilitiesMixin.make_param_value(
-                param,
-                command,
-                env,
+                param, command, env
             )
             if require_required and param.required and not value:
                 return r[bool].fail(
                     f"{command.verb} WHAT={command.what}: required parameter "
-                    f"missing: {param.name}; exemplo: {command.example}",
+                    f"missing: {param.name}; exemplo: {command.example}"
                 )
             if value and param.choices and value not in param.choices:
                 valid = "|".join(param.choices)
                 return r[bool].fail(
                     f"{command.verb} WHAT={command.what}: {param.name}={value!r} "
-                    f"invalido; validos: {valid}",
+                    f"invalido; validos: {valid}"
                 )
         return r[bool].ok(True)
 
     @staticmethod
-    def make_validate_command_contract(
-        command: m.Tests.MakeCommand,
-    ) -> p.Result[bool]:
+    def make_validate_command_contract(command: m.Tests.MakeCommand) -> p.Result[bool]:
         """Validate one command against the generic dispatcher contract."""
         param_by_name = {param.name: param for param in command.params}
         if command.mutates:
@@ -62,7 +58,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
                 param = param_by_name.get(name)
                 if param is None or not param.required:
                     return r[bool].fail(
-                        f"{command.path}: parameter {name} must be required",
+                        f"{command.path}: parameter {name} must be required"
                     )
             apply_param = param_by_name.get(c.Tests.MAKE_APPLY_PARAM)
             if (
@@ -70,38 +66,37 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
                 and c.Tests.MAKE_DISPATCH_ENV_VALUE not in apply_param.choices
             ):
                 return r[bool].fail(
-                    f"{command.path}: APPLY must declare choices containing Y",
+                    f"{command.path}: APPLY must declare choices containing Y"
                 )
         if command.path.suffix not in c.Tests.MAKE_COMMAND_SUFFIXES:
             return r[bool].fail(
-                f"{command.path}: command must use a .py or .sh extension",
+                f"{command.path}: command must use a .py or .sh extension"
             )
         if command.path.name != f"{command.what}.py" and command.path.suffix != ".sh":
             return r[bool].fail(
-                f"{command.path}: command must use a .py or .sh extension",
+                f"{command.path}: command must use a .py or .sh extension"
             )
         if not command.summary.strip():
             return r[bool].fail(f"{command.path}: campo summary cannot be empty")
         if command.target and command.path.suffix != ".py":
             return r[bool].fail(
-                f"{command.path}: header-only target must use a .py file",
+                f"{command.path}: header-only target must use a .py file"
             )
         if command.target_env and not command.target:
             return r[bool].fail(f"{command.path}: target_env exige target")
         if command.target:
             body_result = FlextTestsMakeParsingUtilitiesMixin.make_has_executable_body(
-                command.path,
+                command.path
             )
             if body_result.failure:
                 return r[bool].fail(body_result.error or "target body check failed")
             if body_result.value:
                 return r[bool].fail(
-                    f"{command.path}: commands with a target must be header-only",
+                    f"{command.path}: commands with a target must be header-only"
                 )
         condition_result = (
             FlextTestsMakeContractUtilitiesMixin.make_validate_mutation_conditions(
-                command,
-                param_by_name,
+                command, param_by_name
             )
         )
         if condition_result.failure:
@@ -110,8 +105,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
 
     @staticmethod
     def make_validate_mutation_conditions(
-        command: m.Tests.MakeCommand,
-        param_by_name: t.MappingKV[str, m.Tests.MakeParam],
+        command: m.Tests.MakeCommand, param_by_name: t.MappingKV[str, m.Tests.MakeParam]
     ) -> p.Result[bool]:
         """Validate conditional mutation predicates against declared parameters."""
         if not command.mutates_when:
@@ -122,14 +116,14 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
             or c.Tests.MAKE_DISPATCH_ENV_VALUE not in apply_param.choices
         ):
             return r[bool].fail(
-                f"{command.path}: mutates_when exige APPLY com choice Y",
+                f"{command.path}: mutates_when exige APPLY com choice Y"
             )
         for condition in command.mutates_when:
             param = param_by_name.get(condition.name)
             if param is None:
                 return r[bool].fail(
                     f"{command.path}: mutates_when references a missing parameter "
-                    f"{condition.name}",
+                    f"{condition.name}"
                 )
             if param.choices:
                 missing = tuple(
@@ -138,7 +132,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
                 if missing:
                     return r[bool].fail(
                         f"{command.path}: mutates_when.{condition.name} possui "
-                        f"valores fora de choices: {','.join(missing)}",
+                        f"valores fora de choices: {','.join(missing)}"
                     )
         return r[bool].ok(True)
 
@@ -146,32 +140,29 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
     def make_validate_registry(registry: m.Tests.MakeRegistry) -> p.Result[bool]:
         """Validate the complete discovered command registry."""
         if not registry.commands_by_verb:
-            return r[bool].fail(
-                "no command found in scripts/cmd/<verb>/<what>",
-            )
+            return r[bool].fail("no command found in scripts/cmd/<verb>/<what>")
         for verb, commands in sorted(registry.commands_by_verb.items()):
             if c.Tests.MAKE_DEFAULT_COMMAND not in commands:
                 return r[bool].fail(
-                    f"verb '{verb}' missing WHAT={c.Tests.MAKE_DEFAULT_COMMAND}",
+                    f"verb '{verb}' missing WHAT={c.Tests.MAKE_DEFAULT_COMMAND}"
                 )
             domains = {command.domain for command in commands.values()}
             if len(domains) != 1:
                 valid = ", ".join(sorted(domains))
                 return r[bool].fail(
-                    f"verb '{verb}' declares more than one domain: {valid}",
+                    f"verb '{verb}' declares more than one domain: {valid}"
                 )
             for command in commands.values():
                 command_result = FlextTestsMakeContractUtilitiesMixin.make_validate_registered_command(
-                    command,
+                    command
                 )
                 if command_result.failure:
                     return r[bool].fail(
-                        command_result.error or "command contract invalid",
+                        command_result.error or "command contract invalid"
                     )
             choices_result = (
                 FlextTestsMakeContractUtilitiesMixin.make_validate_all_choices(
-                    verb,
-                    commands,
+                    verb, commands
                 )
             )
             if choices_result.failure:
@@ -186,16 +177,15 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
         if command.what != c.Tests.MAKE_DEFAULT_COMMAND and command.aliases:
             return r[bool].fail(
                 f"{command.path}: aliases podem ser declarados apenas em "
-                f"WHAT={c.Tests.MAKE_DEFAULT_COMMAND}",
+                f"WHAT={c.Tests.MAKE_DEFAULT_COMMAND}"
             )
         return FlextTestsMakeContractUtilitiesMixin.make_validate_command_contract(
-            command,
+            command
         )
 
     @staticmethod
     def make_validate_all_choices(
-        verb: str,
-        commands: t.MappingKV[str, m.Tests.MakeCommand],
+        verb: str, commands: t.MappingKV[str, m.Tests.MakeCommand]
     ) -> p.Result[bool]:
         """Validate WHAT choices declared by the verb default command."""
         all_command = commands[c.Tests.MAKE_DEFAULT_COMMAND]
@@ -214,7 +204,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
         if declared != actual:
             return r[bool].fail(
                 f"{all_command.path}: WHAT choices diverge from the promoted commands "
-                f"para {verb}: declared={','.join(declared)} actual={','.join(actual)}",
+                f"para {verb}: declared={','.join(declared)} actual={','.join(actual)}"
             )
         return r[bool].ok(True)
 
@@ -225,8 +215,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
 
     @staticmethod
     def make_registry_resolve_verb(
-        registry: m.Tests.MakeRegistry,
-        verb: str,
+        registry: m.Tests.MakeRegistry, verb: str
     ) -> p.Result[str]:
         """Resolve one verb or alias to its canonical verb."""
         resolved = registry.aliases_by_name.get(verb, verb)
@@ -236,32 +225,27 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
 
     @staticmethod
     def make_registry_commands(
-        registry: m.Tests.MakeRegistry,
-        verb: str,
+        registry: m.Tests.MakeRegistry, verb: str
     ) -> p.Result[t.MappingKV[str, m.Tests.MakeCommand]]:
         """Return commands registered for one verb."""
         resolved = FlextTestsMakeContractUtilitiesMixin.make_registry_resolve_verb(
-            registry,
-            verb,
+            registry, verb
         )
         if resolved.failure:
             return r[t.MappingKV[str, m.Tests.MakeCommand]].fail(
-                resolved.error or "verb unknown",
+                resolved.error or "verb unknown"
             )
         return r[t.MappingKV[str, m.Tests.MakeCommand]].ok(
-            registry.commands_by_verb[resolved.value],
+            registry.commands_by_verb[resolved.value]
         )
 
     @staticmethod
     def make_registry_command(
-        registry: m.Tests.MakeRegistry,
-        verb: str,
-        what: str,
+        registry: m.Tests.MakeRegistry, verb: str, what: str
     ) -> p.Result[m.Tests.MakeCommand]:
         """Return one command by verb and WHAT value."""
         commands_result = FlextTestsMakeContractUtilitiesMixin.make_registry_commands(
-            registry,
-            verb,
+            registry, verb
         )
         if commands_result.failure:
             return r[m.Tests.MakeCommand].fail(commands_result.error or "verb unknown")
@@ -270,14 +254,13 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
         if command is None:
             valid = " ".join(sorted(commands))
             return r[m.Tests.MakeCommand].fail(
-                f"WHAT='{what}' invalido para {verb}. Validos: {valid}",
+                f"WHAT='{what}' invalido para {verb}. Validos: {valid}"
             )
         return r[m.Tests.MakeCommand].ok(command)
 
     @staticmethod
     def make_registry_aliases_for(
-        registry: m.Tests.MakeRegistry,
-        verb: str,
+        registry: m.Tests.MakeRegistry, verb: str
     ) -> t.StrSequence:
         """Return aliases that resolve to one canonical verb."""
         return tuple(
@@ -285,7 +268,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
                 alias
                 for alias, target in registry.aliases_by_name.items()
                 if target == verb
-            ),
+            )
         )
 
 

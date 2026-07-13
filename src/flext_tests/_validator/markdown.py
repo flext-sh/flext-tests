@@ -29,9 +29,7 @@ class FlextValidatorMarkdown:
 
     @classmethod
     def _scan_file(
-        cls,
-        file_path: Path,
-        approved: t.MappingKV[str, t.StrSequence],
+        cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single markdown file for Python code block violations."""
         violations: MutableSequence[m.Tests.Violation] = []
@@ -45,7 +43,7 @@ class FlextValidatorMarkdown:
                     "MD-UNREADABLE",
                     (),
                     read.error or "could not read file",
-                ),
+                )
             ]
 
         content = read.value
@@ -65,33 +63,18 @@ class FlextValidatorMarkdown:
                         "MD-001",
                         lines,
                         c.Tests.VALIDATOR_MSG_MD_SYNTAX.format(msg="invalid Python"),
-                    ),
+                    )
                 )
                 continue
 
             cls._check_forbidden_imports(
-                file_path,
-                code,
-                lines,
-                block_start,
-                approved,
-                violations,
+                file_path, code, lines, block_start, approved, violations
             )
             cls._check_object_annotations(
-                file_path,
-                code,
-                lines,
-                block_start,
-                approved,
-                violations,
+                file_path, code, lines, block_start, approved, violations
             )
             cls._check_future_annotations(
-                file_path,
-                code,
-                lines,
-                block_start,
-                approved,
-                violations,
+                file_path, code, lines, block_start, approved, violations
             )
 
         return violations
@@ -122,9 +105,9 @@ class FlextValidatorMarkdown:
                             "MD-002",
                             lines,
                             c.Tests.VALIDATOR_MSG_MD_FORBIDDEN_IMPORT.format(
-                                import_name=f"from typing import {name}",
+                                import_name=f"from typing import {name}"
                             ),
-                        ),
+                        )
                     )
 
     @classmethod
@@ -149,9 +132,9 @@ class FlextValidatorMarkdown:
                         "MD-004",
                         lines,
                         c.Tests.VALIDATOR_MSG_MD_FORBIDDEN_ANNOTATION.format(
-                            annotation="object",
+                            annotation="object"
                         ),
-                    ),
+                    )
                 )
 
     @classmethod
@@ -181,14 +164,11 @@ class FlextValidatorMarkdown:
                     "MD-003",
                     lines,
                     c.Tests.VALIDATOR_MSG_MD_MISSING_FUTURE,
-                ),
+                )
             )
 
     @classmethod
-    def collect_markdown_files(
-        cls,
-        project_root: Path,
-    ) -> t.SequenceOf[Path]:
+    def collect_markdown_files(cls, project_root: Path) -> t.SequenceOf[Path]:
         """Collect all .md files that may contain Python code blocks."""
         md_files: MutableSequence[Path] = []
         for search_dir in (
@@ -198,7 +178,7 @@ class FlextValidatorMarkdown:
         ):
             if search_dir.is_dir():
                 md_files.extend(
-                    u.Infra.iter_matching_files(search_dir, includes=["*.md"]),
+                    u.Infra.iter_matching_files(search_dir, includes=["*.md"])
                 )
         return md_files
 

@@ -69,9 +69,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
     @staticmethod
     def make_require_string(
-        data: t.Tests.MakeTomlTable,
-        key: str,
-        path: Path,
+        data: t.Tests.MakeTomlTable, key: str, path: Path
     ) -> p.Result[str]:
         """Return one required non-empty string field."""
         value = data.get(key)
@@ -81,9 +79,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
     @staticmethod
     def make_require_optional_string(
-        data: t.Tests.MakeTomlTable,
-        key: str,
-        path: Path,
+        data: t.Tests.MakeTomlTable, key: str, path: Path
     ) -> p.Result[str]:
         """Return one optional string field."""
         value = data.get(key, "")
@@ -93,9 +89,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
     @staticmethod
     def make_require_bool(
-        data: t.Tests.MakeTomlTable,
-        key: str,
-        path: Path,
+        data: t.Tests.MakeTomlTable, key: str, path: Path
     ) -> p.Result[bool]:
         """Return one required boolean field."""
         value = data.get(key)
@@ -105,34 +99,25 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
     @staticmethod
     def make_parse_aliases(
-        value: t.Tests.MakeTomlValue | None,
-        path: Path,
+        value: t.Tests.MakeTomlValue | None, path: Path
     ) -> p.Result[t.StrSequence]:
         """Parse optional command aliases."""
         return FlextTestsMakeParsingUtilitiesMixin.make_parse_string_value_list(
-            value,
-            "aliases",
-            path,
+            value, "aliases", path
         )
 
     @staticmethod
     def make_parse_string_list(
-        data: t.Tests.MakeTomlTable,
-        field: str,
-        path: Path,
+        data: t.Tests.MakeTomlTable, field: str, path: Path
     ) -> p.Result[t.StrSequence]:
         """Parse one optional string-list field from a TOML table."""
         return FlextTestsMakeParsingUtilitiesMixin.make_parse_string_value_list(
-            data.get(field),
-            field,
-            path,
+            data.get(field), field, path
         )
 
     @staticmethod
     def make_parse_string_value_list(
-        value: t.Tests.MakeTomlValue | None,
-        field: str,
-        path: Path,
+        value: t.Tests.MakeTomlValue | None, field: str, path: Path
     ) -> p.Result[t.StrSequence]:
         """Parse one optional string-list value."""
         if value is None:
@@ -148,116 +133,101 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
     @staticmethod
     def make_parse_params(
-        value: t.Tests.MakeTomlValue | None,
-        path: Path,
+        value: t.Tests.MakeTomlValue | None, path: Path
     ) -> p.Result[t.SequenceOf[m.Tests.MakeParam]]:
         """Parse command parameter declarations."""
         if value is None:
             return r[t.SequenceOf[m.Tests.MakeParam]].ok(())
         if not isinstance(value, list):
             return r[t.SequenceOf[m.Tests.MakeParam]].fail(
-                f"{path}: params must contain a list",
+                f"{path}: params must contain a list"
             )
         params: list[m.Tests.MakeParam] = []
         for item in value:
             if not isinstance(item, dict):
                 return r[t.SequenceOf[m.Tests.MakeParam]].fail(
-                    f"{path}: params must contain TOML objects",
+                    f"{path}: params must contain TOML objects"
                 )
             parsed = t.Tests.MAKE_TOML_TABLE_ADAPTER.validate_python(item)
             param_result = FlextTestsMakeParsingUtilitiesMixin.make_parse_param(
-                parsed,
-                path,
+                parsed, path
             )
             if param_result.failure:
                 return r[t.SequenceOf[m.Tests.MakeParam]].fail(
-                    param_result.error or "param invalid",
+                    param_result.error or "param invalid"
                 )
             params.append(param_result.value)
         return r[t.SequenceOf[m.Tests.MakeParam]].ok(tuple(params))
 
     @staticmethod
     def make_parse_mutation_conditions(
-        value: t.Tests.MakeTomlValue | None,
-        path: Path,
+        value: t.Tests.MakeTomlValue | None, path: Path
     ) -> p.Result[t.SequenceOf[m.Tests.MakeMutationCondition]]:
         """Parse optional conditional mutation predicates."""
         if value is None:
             return r[t.SequenceOf[m.Tests.MakeMutationCondition]].ok(())
         if not isinstance(value, list):
             return r[t.SequenceOf[m.Tests.MakeMutationCondition]].fail(
-                f"{path}: mutates_when must contain a list",
+                f"{path}: mutates_when must contain a list"
             )
         conditions: list[m.Tests.MakeMutationCondition] = []
         for item in value:
             if not isinstance(item, dict):
                 return r[t.SequenceOf[m.Tests.MakeMutationCondition]].fail(
-                    f"{path}: mutates_when must contain TOML objects",
+                    f"{path}: mutates_when must contain TOML objects"
                 )
             parsed = t.Tests.MAKE_TOML_TABLE_ADAPTER.validate_python(item)
             condition_result = (
                 FlextTestsMakeParsingUtilitiesMixin.make_parse_mutation_condition(
-                    parsed,
-                    path,
+                    parsed, path
                 )
             )
             if condition_result.failure:
                 return r[t.SequenceOf[m.Tests.MakeMutationCondition]].fail(
-                    condition_result.error or "mutation condition invalid",
+                    condition_result.error or "mutation condition invalid"
                 )
             conditions.append(condition_result.value)
         return r[t.SequenceOf[m.Tests.MakeMutationCondition]].ok(tuple(conditions))
 
     @staticmethod
     def make_parse_mutation_condition(
-        data: t.Tests.MakeTomlTable,
-        path: Path,
+        data: t.Tests.MakeTomlTable, path: Path
     ) -> p.Result[m.Tests.MakeMutationCondition]:
         """Parse one conditional mutation predicate."""
         name_result = FlextTestsMakeParsingUtilitiesMixin.make_require_string(
-            data,
-            "name",
-            path,
+            data, "name", path
         )
         values_result = FlextTestsMakeParsingUtilitiesMixin.make_parse_string_list(
-            data,
-            "values",
-            path,
+            data, "values", path
         )
         if name_result.failure:
             return r[m.Tests.MakeMutationCondition].fail(
-                name_result.error or "condition name missing",
+                name_result.error or "condition name missing"
             )
         if values_result.failure:
             return r[m.Tests.MakeMutationCondition].fail(
-                values_result.error or "condition values invalid",
+                values_result.error or "condition values invalid"
             )
         if not values_result.value:
             return r[m.Tests.MakeMutationCondition].fail(
-                f"{path}: mutates_when.values cannot be empty",
+                f"{path}: mutates_when.values cannot be empty"
             )
         return r[m.Tests.MakeMutationCondition].ok(
             m.Tests.MakeMutationCondition(
-                name=name_result.value,
-                values=values_result.value,
-            ),
+                name=name_result.value, values=values_result.value
+            )
         )
 
     @staticmethod
     def make_parse_param(
-        data: t.Tests.MakeTomlTable,
-        path: Path,
+        data: t.Tests.MakeTomlTable, path: Path
     ) -> p.Result[m.Tests.MakeParam]:
         """Parse one command parameter object."""
         name_result = FlextTestsMakeParsingUtilitiesMixin.make_require_string(
-            data,
-            "name",
-            path,
+            data, "name", path
         )
         help_result = FlextTestsMakeParsingUtilitiesMixin.make_require_string(
-            data,
-            "help",
-            path,
+            data, "help", path
         )
         if name_result.failure:
             return r[m.Tests.MakeParam].fail(name_result.error or "param name missing")
@@ -267,14 +237,12 @@ class FlextTestsMakeParsingUtilitiesMixin:
         default_raw = data.get("default", "")
         if not isinstance(required_raw, bool):
             return r[m.Tests.MakeParam].fail(
-                f"{path}: params.required must be a boolean",
+                f"{path}: params.required must be a boolean"
             )
         if not isinstance(default_raw, str):
             return r[m.Tests.MakeParam].fail(f"{path}: params.default must be a string")
         choices_result = FlextTestsMakeParsingUtilitiesMixin.make_parse_string_list(
-            data,
-            "choices",
-            path,
+            data, "choices", path
         )
         if choices_result.failure:
             return r[m.Tests.MakeParam].fail(choices_result.error or "choices invalid")
@@ -285,13 +253,12 @@ class FlextTestsMakeParsingUtilitiesMixin:
                 required=required_raw,
                 default=default_raw,
                 choices=choices_result.value,
-            ),
+            )
         )
 
     @staticmethod
     def make_parse_string_map(
-        value: t.Tests.MakeTomlValue | None,
-        path: Path,
+        value: t.Tests.MakeTomlValue | None, path: Path
     ) -> p.Result[t.StrPairSequence]:
         """Parse an optional string-to-string mapping."""
         if value is None:
@@ -304,11 +271,11 @@ class FlextTestsMakeParsingUtilitiesMixin:
         for key, item in sorted(value.items()):
             if not key.strip():
                 return r[t.StrPairSequence].fail(
-                    f"{path}: target_env possui chave invalida",
+                    f"{path}: target_env possui chave invalida"
                 )
             if not isinstance(item, str):
                 return r[t.StrPairSequence].fail(
-                    f"{path}: target_env.{key} must be a string",
+                    f"{path}: target_env.{key} must be a string"
                 )
             items.append((key.strip(), item))
         return r[t.StrPairSequence].ok(tuple(items))

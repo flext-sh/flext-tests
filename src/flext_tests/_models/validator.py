@@ -19,35 +19,29 @@ class FlextTestsValidatorModelsMixin:
         """A detected architecture violation."""
 
         file_path: Annotated[
-            Path,
-            u.Field(description="Path to the offending source file."),
+            Path, u.Field(description="Path to the offending source file.")
         ]
         line_number: Annotated[
-            int,
-            u.Field(description="1-based line number of the violation."),
+            int, u.Field(description="1-based line number of the violation.")
         ]
         rule_id: Annotated[
-            str,
-            u.Field(description="Stable identifier for the rule that fired."),
+            str, u.Field(description="Stable identifier for the rule that fired.")
         ]
         severity: Annotated[
             c.Tests.ValidatorSeverity,
             u.Field(description="Severity level assigned by the rule."),
         ]
         description: Annotated[
-            str,
-            u.Field(description="Human-readable violation description."),
+            str, u.Field(description="Human-readable violation description.")
         ]
         code_snippet: Annotated[
-            str,
-            u.Field(description="Source excerpt surrounding the violation."),
+            str, u.Field(description="Source excerpt surrounding the violation.")
         ] = ""
 
         @u.field_validator("severity", mode="before")
         @classmethod
         def _coerce_severity(
-            cls,
-            value: c.Tests.ValidatorSeverity | str,
+            cls, value: c.Tests.ValidatorSeverity | str
         ) -> c.Tests.ValidatorSeverity:
             if isinstance(value, c.Tests.ValidatorSeverity):
                 return value
@@ -69,8 +63,7 @@ class FlextTestsValidatorModelsMixin:
             u.Field(description="All violations detected during the scan."),
         ]
         passed: Annotated[
-            bool,
-            u.Field(description="True when the scan found no violations."),
+            bool, u.Field(description="True when the scan found no violations.")
         ]
 
         @classmethod
@@ -96,8 +89,7 @@ class FlextTestsValidatorModelsMixin:
             u.Field(description="Whether the dispatcher is active for this session."),
         ]
         strict: Annotated[
-            bool,
-            u.Field(description="Promote runtime warnings to failures when true."),
+            bool, u.Field(description="Promote runtime warnings to failures when true.")
         ]
         include: Annotated[
             frozenset[str],
@@ -114,7 +106,7 @@ class FlextTestsValidatorModelsMixin:
         warning_counter: Annotated[
             MutableMapping[str, int],
             u.Field(
-                description="Captured runtime warning counts keyed by dotted category.",
+                description="Captured runtime warning counts keyed by dotted category."
             ),
         ] = u.Field(default_factory=dict)
 

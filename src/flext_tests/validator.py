@@ -72,9 +72,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
 
     @classmethod
     def all(
-        cls,
-        path: Path,
-        options: FlextTestsValidator.AllValidationOptions | None = None,
+        cls, path: Path, options: FlextTestsValidator.AllValidationOptions | None = None
     ) -> p.Result[m.Tests.ScanResult]:
         """Run all validations and combine results."""
         all_options = options or cls.AllValidationOptions()

@@ -22,12 +22,7 @@ class FlextTestsValueFactoryProtocolsMixin:
 
         """
 
-        def __call__(
-            self,
-            *,
-            name: str,
-            value: tb.Testobject,
-        ) -> TEntity:
+        def __call__(self, *, name: str, value: tb.Testobject) -> TEntity:
             """Build a typed entity instance."""
             ...
 

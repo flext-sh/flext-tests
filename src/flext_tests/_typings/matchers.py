@@ -6,9 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    Callable,
-)
+from collections.abc import Callable
 from typing import TypeAliasType
 
 from flext_infra import m, t
@@ -67,8 +65,7 @@ class FlextTestsMatchersTypesMixin:
         | t.MappingKV[str, FlextTestsMatchersTypesMixin.MatcherKwargValue]
     )
     type DeepSpec = t.MappingKV[
-        str,
-        Callable[[tb.TestobjectSerializable], bool] | tb.TestobjectSerializable,
+        str, Callable[[tb.TestobjectSerializable], bool] | tb.TestobjectSerializable
     ]
     type PathMatchSpec = t.MappingKV[str, FlextTestsMatchersTypesMixin.MatchRuleSpec]
     type ItemSelector = int | str
@@ -80,8 +77,7 @@ class FlextTestsMatchersTypesMixin:
         ]
     )
     type AttributeMatchSpec = t.MappingKV[
-        str,
-        FlextTestsMatchersTypesMixin.MatchRuleSpec,
+        str, FlextTestsMatchersTypesMixin.MatchRuleSpec
     ]
     type PathSpec = str | t.StrSequence
     type PredicateSpec = Callable[[tb.Testobject], bool]

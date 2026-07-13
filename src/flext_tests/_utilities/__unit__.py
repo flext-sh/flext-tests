@@ -8,34 +8,16 @@ lazy (PEP 562) import access; sibling ``__all__`` discovery is the upstream sour
 from __future__ import annotations
 
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
-    "._files._assertions": ("FlextTestsFilesAssertionsMixin",),
-    "._files._batch": ("FlextTestsFilesBatchMixin",),
-    "._files._comparison_parts.comparison_part_02": ("FlextTestsFilesComparisonMixin",),
-    "._files._contexts": ("FlextTestsFilesContextsMixin",),
-    "._files._creation_parts.creation_part_03": ("FlextTestsFilesCreationMixin",),
-    "._files._info": ("FlextTestsFilesInfoMixin",),
-    "._files._lifecycle": ("FlextTestsFilesLifecycleMixin",),
-    "._files._reading": ("FlextTestsFilesReadingMixin",),
-    "._make_parts.make_contract_part_02": ("FlextTestsMakeContractUtilitiesMixin",),
-    "._make_parts.make_parsing_part_02": ("FlextTestsMakeParsingUtilitiesMixin",),
-    "._make_parts.make_registry_part_03": ("FlextTestsMakeRegistryUtilitiesMixin",),
-    "._make_parts.make_rendering_part_02": ("FlextTestsMakeRenderingUtilitiesMixin",),
-    "._matchers._assertions": ("FlextTestsMatchersAssertionsMixin",),
-    "._matchers._containment": ("FlextTestsMatchersContainmentMixin",),
-    "._matchers._result_parts.result_part_03": ("FlextTestsMatchersResultMixin",),
-    "._matchers._scope": ("FlextTestsMatchersScopeMixin",),
-    "._matchers._that_parts.that_part_06": ("FlextTestsMatchersThatMixin",),
-    "._matchers._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
     ".container": ("FlextTestsContainerHelpersUtilitiesMixin",),
     ".files": ("FlextTestsFilesUtilitiesMixin",),
-    ".fixtures_dsl": ("FlextTestsFixturesDSLMixin",),
     ".generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
     ".handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
     ".make": ("FlextTestsMakeUtilitiesMixin",),
-    ".matchers": (
-        "FlextTestsMatchersUtilities",
-        "tm",
-    ),
+    ".make_contract": ("FlextTestsMakeContractUtilitiesMixin",),
+    ".make_parsing": ("FlextTestsMakeParsingUtilitiesMixin",),
+    ".make_registry": ("FlextTestsMakeRegistryUtilitiesMixin",),
+    ".make_rendering": ("FlextTestsMakeRenderingUtilitiesMixin",),
+    ".matchers": ("FlextTestsMatchersUtilities", "tm"),
     ".payload": ("FlextTestsPayloadUtilities",),
     ".result": ("FlextTestsResultUtilitiesMixin",),
     ".settings": ("FlextTestsConfigHelpersUtilitiesMixin",),
@@ -47,11 +29,7 @@ LAZY_MODULES: dict[str, tuple[str, ...]] = {
 LAZY_ALIAS_GROUPS: dict[str, tuple[tuple[str, str], ...]] = {}
 
 
-CHILD_MODULE_PATHS: tuple[str, ...] = (
-    "._files",
-    "._make_parts",
-    "._matchers",
-)
+CHILD_MODULE_PATHS: tuple[str, ...] = ("._files", "._matchers")
 
 
 EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
@@ -60,16 +38,7 @@ EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
 PUBLIC_EXPORTS: tuple[str, ...] = (
     "FlextTestsConfigHelpersUtilitiesMixin",
     "FlextTestsContainerHelpersUtilitiesMixin",
-    "FlextTestsFilesAssertionsMixin",
-    "FlextTestsFilesBatchMixin",
-    "FlextTestsFilesComparisonMixin",
-    "FlextTestsFilesContextsMixin",
-    "FlextTestsFilesCreationMixin",
-    "FlextTestsFilesInfoMixin",
-    "FlextTestsFilesLifecycleMixin",
-    "FlextTestsFilesReadingMixin",
     "FlextTestsFilesUtilitiesMixin",
-    "FlextTestsFixturesDSLMixin",
     "FlextTestsGenericHelpersUtilitiesMixin",
     "FlextTestsHandlerHelpersUtilitiesMixin",
     "FlextTestsMakeContractUtilitiesMixin",
@@ -77,19 +46,12 @@ PUBLIC_EXPORTS: tuple[str, ...] = (
     "FlextTestsMakeRegistryUtilitiesMixin",
     "FlextTestsMakeRenderingUtilitiesMixin",
     "FlextTestsMakeUtilitiesMixin",
-    "FlextTestsMatchersAssertionsMixin",
-    "FlextTestsMatchersContainmentMixin",
-    "FlextTestsMatchersResultMixin",
-    "FlextTestsMatchersScopeMixin",
-    "FlextTestsMatchersThatMixin",
-    "FlextTestsMatchersTypeGuardsMixin",
     "FlextTestsMatchersUtilities",
     "FlextTestsPayloadUtilities",
     "FlextTestsResultUtilitiesMixin",
     "FlextTestsTestContextUtilitiesMixin",
     "FlextTestsValidatorUtilitiesMixin",
     "_files",
-    "_make_parts",
     "_matchers",
     "tm",
 )

@@ -44,20 +44,17 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         for line_number, line in enumerate(lines, start=1):
             names: set[str] = set()
             if c.Tests.VALIDATOR_LEGACY_FACTORY_RE.search(line) and u.Tests.code_match(
-                line,
-                c.Tests.VALIDATOR_LEGACY_FACTORY_RE,
+                line, c.Tests.VALIDATOR_LEGACY_FACTORY_RE
             ):
                 names.update(
-                    cls._match_names(line, c.Tests.VALIDATOR_LEGACY_FACTORY_RE),
+                    cls._match_names(line, c.Tests.VALIDATOR_LEGACY_FACTORY_RE)
                 )
             if c.Tests.VALIDATOR_TYPE_ALIAS_RE.search(line) and u.Tests.code_match(
-                line,
-                c.Tests.VALIDATOR_TYPE_ALIAS_RE,
+                line, c.Tests.VALIDATOR_TYPE_ALIAS_RE
             ):
                 names.add("TypeAlias")
             if c.Tests.VALIDATOR_GENERIC_BASE_RE.search(line) and u.Tests.code_match(
-                line,
-                c.Tests.VALIDATOR_GENERIC_BASE_RE,
+                line, c.Tests.VALIDATOR_GENERIC_BASE_RE
             ):
                 names.add("Generic")
             violations.extend(emit(line_number, name) for name in sorted(names))
@@ -86,10 +83,8 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                         line_number,
                         "TYPE-005",
                         lines,
-                        c.Tests.VALIDATOR_MSG_TYPE_LEGACY_ANNOTATION.format(
-                            name=name,
-                        ),
-                    ),
+                        c.Tests.VALIDATOR_MSG_TYPE_LEGACY_ANNOTATION.format(name=name),
+                    )
                 )
         return violations
 
@@ -107,11 +102,8 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         for line_number, line in enumerate(lines, start=1):
             if c.Tests.VALIDATOR_FUNCTION_DEF_RE.match(line) is not None:
                 if c.Tests.VALIDATOR_OBJECT_RETURN_RE.search(
-                    line,
-                ) and u.Tests.code_match(
-                    line,
-                    c.Tests.VALIDATOR_OBJECT_RETURN_RE,
-                ):
+                    line
+                ) and u.Tests.code_match(line, c.Tests.VALIDATOR_OBJECT_RETURN_RE):
                     violations.append(
                         u.Tests.create_violation(
                             file_path,
@@ -119,9 +111,9 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                             "TYPE-006",
                             lines,
                             c.Tests.VALIDATOR_MSG_TYPE_OBJECT_ANNOTATION.format(
-                                location="return type",
+                                location="return type"
                             ),
-                        ),
+                        )
                     )
                 for match in c.Tests.VALIDATOR_OBJECT_ARG_RE.finditer(line):
                     violations.append(
@@ -131,9 +123,9 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                             "TYPE-006",
                             lines,
                             c.Tests.VALIDATOR_MSG_TYPE_OBJECT_ANNOTATION.format(
-                                location=f"argument '{match.group('arg')}'",
+                                location=f"argument '{match.group('arg')}'"
                             ),
-                        ),
+                        )
                     )
                 continue
             if not c.Tests.VALIDATOR_OBJECT_VAR_RE.search(line):
@@ -147,9 +139,9 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                     "TYPE-006",
                     lines,
                     c.Tests.VALIDATOR_MSG_TYPE_OBJECT_ANNOTATION.format(
-                        location="variable annotation",
+                        location="variable annotation"
                     ),
-                ),
+                )
             )
         return violations
 
@@ -175,9 +167,9 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                     "TYPE-007",
                     lines,
                     c.Tests.VALIDATOR_MSG_TYPE_BOOL_IS_HELPER.format(
-                        name=match.group("name"),
+                        name=match.group("name")
                     ),
-                ),
+                )
             )
         return violations
 
@@ -195,8 +187,7 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         for line_number, line in enumerate(lines, start=1):
             if c.Tests.VALIDATOR_FUNCTION_DEF_RE.match(line) is not None:
                 if c.Tests.VALIDATOR_ANY_RETURN_RE.search(line) and u.Tests.code_match(
-                    line,
-                    c.Tests.VALIDATOR_ANY_RETURN_RE,
+                    line, c.Tests.VALIDATOR_ANY_RETURN_RE
                 ):
                     violations.append(
                         u.Tests.create_violation(
@@ -205,7 +196,7 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                             "TYPE-002",
                             lines,
                             c.Tests.VALIDATOR_MSG_TYPE_ANY_RETURN,
-                        ),
+                        )
                     )
                 for match in c.Tests.VALIDATOR_ANY_ARG_RE.finditer(line):
                     violations.append(
@@ -215,9 +206,9 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                             "TYPE-002",
                             lines,
                             c.Tests.VALIDATOR_MSG_TYPE_ANY_ARG.format(
-                                arg=match.group("arg"),
+                                arg=match.group("arg")
                             ),
-                        ),
+                        )
                     )
                 continue
             if not c.Tests.VALIDATOR_ANY_VAR_RE.search(line):
@@ -226,12 +217,8 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                 continue
             violations.append(
                 u.Tests.create_violation(
-                    file_path,
-                    line_number,
-                    "TYPE-002",
-                    lines,
-                    "in variable annotation",
-                ),
+                    file_path, line_number, "TYPE-002", lines, "in variable annotation"
+                )
             )
         return violations
 
@@ -244,10 +231,7 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Detect unapproved cast usage."""
         if u.Tests.approved(
-            "TYPE-003",
-            file_path,
-            approved,
-            c.Tests.VALIDATOR_APPROVED_CAST_PATTERNS,
+            "TYPE-003", file_path, approved, c.Tests.VALIDATOR_APPROVED_CAST_PATTERNS
         ):
             return []
         return [
@@ -277,9 +261,7 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
     @classmethod
     @override
     def _scan_file(
-        cls,
-        file_path: Path,
-        approved: t.MappingKV[str, t.StrSequence],
+        cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single file for type violations."""
         violations: MutableSequence[m.Tests.Violation] = []
@@ -292,21 +274,21 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                     "TYPE-UNREADABLE",
                     (),
                     read.error or "could not read file",
-                ),
+                )
             ]
         lines = read.value.splitlines()
         violations.extend(cls._check_type_ignore(file_path, lines, approved))
         violations.extend(cls._check_any_types(file_path, lines, approved))
         violations.extend(cls._check_cast_usage(file_path, lines, approved))
         violations.extend(
-            cls._check_legacy_typing_factories(file_path, lines, approved),
+            cls._check_legacy_typing_factories(file_path, lines, approved)
         )
         violations.extend(
-            cls._check_legacy_typing_annotations(file_path, lines, approved),
+            cls._check_legacy_typing_annotations(file_path, lines, approved)
         )
         violations.extend(cls._check_object_annotations(file_path, lines, approved))
         violations.extend(
-            cls._check_bool_returning_is_helpers(file_path, lines, approved),
+            cls._check_bool_returning_is_helpers(file_path, lines, approved)
         )
         return violations
 

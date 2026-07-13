@@ -12,11 +12,7 @@ from contextlib import contextmanager, nullcontext
 from pathlib import Path
 
 from flext_core import u
-from flext_tests import (
-    c,
-    m,
-    t,
-)
+from flext_tests import c, m, t
 from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
 
 
@@ -59,7 +55,9 @@ class FlextTestsMatchersScopeMixin:
                 try:
                     params = m.Tests.ScopeParams.model_validate(kwargs)
                 except c.EXC_BASIC_TYPE as exc:
-                    raise ValueError(f"Parameter validation failed: {exc}") from exc
+                    # mro-j47u: keep validation context without inline exception text.
+                    message = f"Parameter validation failed: {exc}"
+                    raise ValueError(message) from exc
                 original_cwd: Path | None = None
                 env_context = (
                     FlextTestsConfigHelpersUtilitiesMixin.env_vars_context(params.env)
@@ -85,8 +83,7 @@ class FlextTestsMatchersScopeMixin:
                             if t.Tests.general_value(v)
                         }
                         context_map: t.MappingKV[
-                            str,
-                            t.Tests.TestobjectSerializable,
+                            str, t.Tests.TestobjectSerializable
                         ] = {}
                         if params.context:
                             context_map = dict(params.context)
@@ -111,7 +108,7 @@ class FlextTestsMatchersScopeMixin:
                             ) as e:
                                 warnings.warn(
                                     c.Tests.ERR_SCOPE_CLEANUP_FAILED.format(
-                                        error=str(e),
+                                        error=str(e)
                                     ),
                                     RuntimeWarning,
                                     stacklevel=2,

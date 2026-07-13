@@ -43,7 +43,4 @@ def project_tool_flext() -> p.ProjectToolFlext:
     return u.read_project_metadata(_find_project_root()).unwrap().flext
 
 
-__all__: list[str] = [
-    "project_metadata",
-    "project_tool_flext",
-]
+__all__: list[str] = ["project_metadata", "project_tool_flext"]

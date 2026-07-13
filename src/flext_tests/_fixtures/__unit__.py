@@ -9,10 +9,7 @@ from __future__ import annotations
 
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
     "._enforcement_parts.build": ("build_items",),
-    "._enforcement_parts.config": (
-        "SessionConfig",
-        "resolve_config",
-    ),
+    "._enforcement_parts.config": ("SessionConfig", "resolve_config"),
     "._enforcement_parts.discovery": (
         "collected_project_names",
         "collected_validator_targets",
@@ -43,10 +40,7 @@ LAZY_MODULES: dict[str, tuple[str, ...]] = {
         "MarkdownCodeBlockItem",
         "MarkdownValidationError",
     ),
-    ".project_metadata": (
-        "project_metadata",
-        "project_tool_flext",
-    ),
+    ".project_metadata": ("project_metadata", "project_tool_flext"),
     ".settings": (
         "clean_container",
         "reset_settings",

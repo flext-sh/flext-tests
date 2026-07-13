@@ -111,7 +111,7 @@ class FlextTestsBaseTypesMixin:
     )
     DICT_ADAPTER: m.TypeAdapter[m.Dict] = m.TypeAdapter(m.Dict)
     SCALAR_MAPPING_ADAPTER: m.TypeAdapter[t.ScalarMapping] = m.TypeAdapter(
-        t.ScalarMapping,
+        t.ScalarMapping
     )
     CONTAINER_MAPPING_SEQUENCE_ADAPTER: m.TypeAdapter[t.SequenceOf[t.JsonMapping]] = (
         m.TypeAdapter(t.SequenceOf[t.JsonMapping])
@@ -120,7 +120,7 @@ class FlextTestsBaseTypesMixin:
         m.TypeAdapter(t.MappingKV[str, t.StrMapping])
     )
     INTEGER_SEQUENCE_ADAPTER: m.TypeAdapter[Sequence[int]] = m.TypeAdapter(
-        Sequence[int],
+        Sequence[int]
     )
     STR_SEQUENCE_MAPPING_ADAPTER: m.TypeAdapter[t.MappingKV[str, t.StrSequence]] = (
         m.TypeAdapter(t.MappingKV[str, t.StrSequence])

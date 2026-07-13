@@ -78,6 +78,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
     def _extract_content(
         self,
         content: t.Tests.FileContentPlain | p.ResultLike[t.Tests.FileContentPlain],
+        *,
         extract_result: bool,
     ) -> t.Tests.FileContentPlain:
         """Extract actual content from a result-like wrapper or return as-is."""
@@ -88,13 +89,13 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         if self._is_file_result(content):
             if content.failure:
                 error_msg = content.error or "r failure"
-                raise ValueError(f"Cannot create file from failed r: {error_msg}")
+                msg = f"Cannot create file from failed r: {error_msg}"
+                raise ValueError(msg)
             return self._coerce_file_content(content.value)
         return self._coerce_file_content(content)
 
     def _is_nested_rows(
-        self,
-        value: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable,
+        self, value: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable
     ) -> TypeIs[Sequence[t.StrSequence]]:
         if not isinstance(value, Sequence) or isinstance(value, str | bytes):
             return False
@@ -130,7 +131,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                 _ = file_path.write_bytes(
                     actual_content
                     if isinstance(actual_content, bytes)
-                    else str(actual_content).encode(params.enc),
+                    else str(actual_content).encode(params.enc)
                 )
             case c.Tests.FILE_FORMAT_JSON | c.Tests.FILE_FORMAT_YAML:
                 json_payload = self._build_json_payload(actual_content)
@@ -146,8 +147,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                 u.Cli.files_write_csv(
                     file_path,
                     self._build_csv_rows(
-                        actual_content=actual_content,
-                        headers=params.headers,
+                        actual_content=actual_content, headers=params.headers
                     ),
                 )
             case _:
@@ -178,12 +178,12 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             else None
         )
         fallback_value = FlextTestsPayloadUtilities.to_normalized_value(
-            FlextTestsPayloadUtilities.to_payload(actual_content),
+            FlextTestsPayloadUtilities.to_payload(actual_content)
         )
         raw_payload: t.JsonValue = (
             {
                 k: FlextTestsPayloadUtilities.to_normalized_value(
-                    FlextTestsPayloadUtilities.to_payload(v),
+                    FlextTestsPayloadUtilities.to_payload(v)
                 )
                 for k, v in mapping_content.items()
             }
@@ -212,8 +212,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         if headers:
             csv_rows.append(list(headers))
         if isinstance(actual_content, Sequence) and not isinstance(
-            actual_content,
-            t.STR_BYTES_TYPES,
+            actual_content, t.STR_BYTES_TYPES
         ):
             csv_rows.extend(
                 list(row)
@@ -239,7 +238,10 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         extract_result: bool = True,
     ) -> Path:
         """Create file with auto-detection or explicit format."""
-        content_to_validate = self._extract_content(content, extract_result)
+        # mro-j47u: result extraction is an explicit file-boundary choice.
+        content_to_validate = self._extract_content(
+            content, extract_result=extract_result
+        )
         try:
             params = m.Tests.CreateParams.model_validate({
                 "content": content_to_validate,
@@ -254,7 +256,8 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                 "extract_result": extract_result,
             })
         except c.EXC_BASIC_TYPE as exc:
-            raise ValueError(f"Invalid parameters for file creation: {exc}") from None
+            msg = f"Invalid parameters for file creation: {exc}"
+            raise ValueError(msg) from None
         target_dir = self._resolve_directory(params.directory)
         file_path: Path = target_dir / params.name
         actual_content: (
@@ -273,8 +276,8 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         if isinstance(actual_content, m.BaseModel):
             actual_content = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(
                 FlextTestsPayloadUtilities.to_payload(
-                    actual_content.model_dump(mode="json"),
-                ),
+                    actual_content.model_dump(mode="json")
+                )
             )
         actual_fmt = u.Cli.files_detect_format_from_content(
             actual_content

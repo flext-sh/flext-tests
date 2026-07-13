@@ -22,24 +22,20 @@ class FlextTestsDockerModelsMixin:
             u.Field(description="Optional managed container name for inspection."),
         ] = None
         compose_file: Annotated[
-            Path | None,
-            u.Field(description="Resolved docker-compose file path."),
+            Path | None, u.Field(description="Resolved docker-compose file path.")
         ] = None
         service: Annotated[
-            str,
-            u.Field(description="Compose service name to start."),
+            str, u.Field(description="Compose service name to start.")
         ] = ""
         host: Annotated[
-            str,
-            u.Field(min_length=1, description="Host used for readiness checks."),
+            str, u.Field(min_length=1, description="Host used for readiness checks.")
         ] = c.LOCALHOST
         port: Annotated[
             int | None,
             u.Field(description="Optional host port used for readiness checks."),
         ] = None
         startup_timeout: Annotated[
-            int,
-            u.Field(ge=1, description="Maximum wait time for readiness checks."),
+            int, u.Field(ge=1, description="Maximum wait time for readiness checks.")
         ] = 30
         force_recreate: Annotated[
             bool,
@@ -49,25 +45,16 @@ class FlextTestsDockerModelsMixin:
     class ContainerInfo(m.Value):
         """Container information model."""
 
-        name: Annotated[
-            str,
-            u.Field(min_length=1, description="Container name."),
-        ]
+        name: Annotated[str, u.Field(min_length=1, description="Container name.")]
         status: Annotated[
-            c.Tests.ContainerStatus,
-            u.Field(description="Runtime lifecycle status."),
+            c.Tests.ContainerStatus, u.Field(description="Runtime lifecycle status.")
         ]
         ports: Annotated[
-            t.StrMapping,
-            u.Field(description="Port mapping (internal → external)."),
+            t.StrMapping, u.Field(description="Port mapping (internal → external).")
         ]
-        image: Annotated[
-            str,
-            u.Field(min_length=1, description="Source image tag."),
-        ]
+        image: Annotated[str, u.Field(min_length=1, description="Source image tag.")]
         container_id: Annotated[
-            str,
-            u.Field(description="Docker-assigned container identifier."),
+            str, u.Field(description="Docker-assigned container identifier.")
         ] = ""
 
     class User(m.Value):
@@ -75,40 +62,28 @@ class FlextTestsDockerModelsMixin:
 
         id: Annotated[str, u.Field(description="Opaque user identifier.")]
         unique_id: Annotated[
-            str | None,
-            u.Field(description="Optional unique user identifier."),
+            str | None, u.Field(description="Optional unique user identifier.")
         ] = None
         name: Annotated[str, u.Field(description="Display name.")]
         email: Annotated[str, u.Field(description="Primary email address.")]
         active: Annotated[
-            bool,
-            u.Field(description="True when the account is active."),
+            bool, u.Field(description="True when the account is active.")
         ] = True
 
     class Config(m.Value):
         """Test configuration model - immutable value object."""
 
         service_type: Annotated[
-            str,
-            u.Field(description="Service kind under test."),
+            str, u.Field(description="Service kind under test.")
         ] = "api"
         environment: Annotated[
-            str,
-            u.Field(description="Target environment label."),
+            str, u.Field(description="Target environment label.")
         ] = "test"
-        debug: Annotated[
-            bool,
-            u.Field(description="Enable verbose debug output."),
-        ] = True
-        log_level: Annotated[
-            str,
-            u.Field(description="Logging level name."),
-        ] = "DEBUG"
-        timeout: Annotated[
-            int,
-            u.Field(description="Request timeout in seconds."),
-        ] = 30
+        debug: Annotated[bool, u.Field(description="Enable verbose debug output.")] = (
+            True
+        )
+        log_level: Annotated[str, u.Field(description="Logging level name.")] = "DEBUG"
+        timeout: Annotated[int, u.Field(description="Request timeout in seconds.")] = 30
         max_retries: Annotated[
-            int,
-            u.Field(description="Retry budget on transient failure."),
+            int, u.Field(description="Retry budget on transient failure.")
         ] = 3

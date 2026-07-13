@@ -5,10 +5,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import (
-    build_lazy_import_map,
-    install_lazy_exports,
-)
+from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 # mro-i6nq.10: The package consumes its manifest's public-export contract.
 from flext_tests.__unit__ import (
@@ -29,8 +26,14 @@ from flext_tests.__version__ import (
 
 if TYPE_CHECKING:
     from flext_infra import d as d, e as e, h as h, r as r, x as x
-    from flext_tests._config import config as config
-    from flext_tests._settings import settings as settings
+    from flext_tests._config import (
+        FlextTestsConfig as FlextTestsConfig,
+        config as config,
+    )
+    from flext_tests._settings import (
+        FlextTestsSettings as FlextTestsSettings,
+        settings as settings,
+    )
     from flext_tests.base import (
         FlextTestsCase as FlextTestsCase,
         FlextTestsServiceBase as FlextTestsServiceBase,
@@ -38,7 +41,6 @@ if TYPE_CHECKING:
     )
     from flext_tests.constants import FlextTestsConstants as FlextTestsConstants, c as c
     from flext_tests.docker import FlextTestsDocker as FlextTestsDocker, tk as tk
-    from flext_tests.domains import FlextTestsDomains as FlextTestsDomains, td as td
     from flext_tests.files import FlextTestsFiles as FlextTestsFiles, tf as tf
     from flext_tests.models import FlextTestsModels as FlextTestsModels, m as m
     from flext_tests.protocols import FlextTestsProtocols as FlextTestsProtocols, p as p
@@ -58,16 +60,9 @@ if TYPE_CHECKING:
 
 
 _LAZY_IMPORTS = build_lazy_import_map(
-    _LAZY_MODULES,
-    alias_groups=_LAZY_ALIAS_GROUPS,
-    sort_keys=False,
+    _LAZY_MODULES, alias_groups=_LAZY_ALIAS_GROUPS, sort_keys=False
 )
 
 
 # mro-i6nq.10: The installer publishes __all__ from the manifest's literal ABI.
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    public_exports=_PUBLIC_EXPORTS,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=_PUBLIC_EXPORTS)

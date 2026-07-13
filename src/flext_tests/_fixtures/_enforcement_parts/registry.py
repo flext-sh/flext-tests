@@ -78,9 +78,7 @@ def warning_categories() -> frozenset[type[Warning]]:
     return frozenset(categories)
 
 
-def builder_for(
-    source_kind: str,
-) -> EnforcementContribution | None:
+def builder_for(source_kind: str) -> EnforcementContribution | None:
     """Return the first contribution matching ``source_kind`` that has a builder."""
     for contribution in _REGISTRY.values():
         if contribution.source_kind == source_kind and contribution.builder is not None:

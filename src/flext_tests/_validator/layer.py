@@ -8,9 +8,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    MutableSequence,
-)
+from collections.abc import MutableSequence
 from pathlib import Path
 
 from flext_tests import c, m, p, r, t, u
@@ -40,16 +38,14 @@ class FlextValidatorLayer:
         """Return imported module stems referenced by one import line."""
         from_match = c.Tests.VALIDATOR_FROM_IMPORT_LINE_RE.match(line)
         if from_match is not None and u.Tests.code_match(
-            line,
-            c.Tests.VALIDATOR_FROM_IMPORT_LINE_RE,
+            line, c.Tests.VALIDATOR_FROM_IMPORT_LINE_RE
         ):
             module = from_match.group("module").lstrip(".")
             return (cls._extract_module_name(module),) if module else ()
 
         import_match = c.Tests.VALIDATOR_IMPORT_LINE_RE.match(line)
         if import_match is None or not u.Tests.code_match(
-            line,
-            c.Tests.VALIDATOR_IMPORT_LINE_RE,
+            line, c.Tests.VALIDATOR_IMPORT_LINE_RE
         ):
             return ()
 
@@ -84,7 +80,7 @@ class FlextValidatorLayer:
                     "LAYER-UNREADABLE",
                     (),
                     read.error or "could not read file",
-                ),
+                )
             ]
         lines = read.value.splitlines()
         for line_number, line in enumerate(lines, start=1):
@@ -135,7 +131,7 @@ class FlextValidatorLayer:
                 validator_name=c.Tests.VALIDATOR_LAYER_KEY,
                 files_scanned=len(files),
                 violations=violations,
-            ),
+            )
         )
 
 

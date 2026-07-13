@@ -60,11 +60,7 @@ class FlextTestsEnforcementProtocolsMixin:
 
         # NOTE (multi-agent, mro-wkii.17.21): Result wrapping belongs to the
         # flext-tests boundary; the external enforcer returns its report directly.
-        def enforce(
-            self,
-            *,
-            project_names: t.StrSequence,
-        ) -> p.AttributeProbe:
+        def enforce(self, *, project_names: t.StrSequence) -> p.AttributeProbe:
             """Run namespace enforcement for the selected projects."""
             ...
 
@@ -72,9 +68,7 @@ class FlextTestsEnforcementProtocolsMixin:
         """Construct the external namespace enforcer boundary."""
 
         def __call__(
-            self,
-            *,
-            workspace_root: Path,
+            self, *, workspace_root: Path
         ) -> FlextTestsEnforcementProtocolsMixin.NamespaceEnforcer:
             """Construct an enforcer for one workspace root."""
             ...

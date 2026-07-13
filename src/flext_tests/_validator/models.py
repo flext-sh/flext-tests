@@ -47,7 +47,7 @@ class FlextTestsValidatorModels:
                         validator_name=validator_name,
                         files_scanned=len(files),
                         violations=violations,
-                    ),
+                    )
                 )
 
         class ScannerMixin:
@@ -63,9 +63,7 @@ class FlextTestsValidatorModels:
 
             @classmethod
             def _scan_file(
-                cls,
-                file_path: Path,
-                approved: t.MappingKV[str, t.StrSequence],
+                cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
             ) -> t.SequenceOf[m.Tests.Violation]:
                 """Subclass MUST override: scan one file and yield violations."""
                 raise NotImplementedError

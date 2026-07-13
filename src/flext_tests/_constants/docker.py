@@ -10,9 +10,7 @@ from enum import StrEnum, unique
 from typing import TYPE_CHECKING, Final
 
 if TYPE_CHECKING:
-    from collections.abc import (
-        Mapping,
-    )
+    from collections.abc import Mapping
 
     from flext_infra import t
 

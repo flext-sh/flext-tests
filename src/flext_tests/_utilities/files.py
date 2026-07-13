@@ -27,9 +27,7 @@ class FlextTestsFilesUtilitiesMixin:
     ) -> str:
         """Detect format by content shape + name; honors explicit ``fmt``."""
         detected_format: str = u.Cli.files_detect_format_from_content(
-            content,
-            name,
-            fmt,
+            content, name, fmt
         )
         return detected_format
 

@@ -6,9 +6,7 @@ from pathlib import Path
 
 from flext_infra import u
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities._files._creation import (
-    FlextTestsFilesCreationMixin,
-)
+from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
@@ -29,10 +27,7 @@ class FlextTestsFilesComparisonMixin:
         )
 
     def _try_parse_both(
-        self,
-        content1: str,
-        content2: str,
-        fmt: str,
+        self, content1: str, content2: str, fmt: str
     ) -> p.Result[FlextTestsFilesComparisonMixin.ParsedPair]:
         """Try to parse both contents as dicts in given format."""
         parse = (
@@ -44,7 +39,7 @@ class FlextTestsFilesComparisonMixin:
         )
         if parse is None:
             return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
-                f"unsupported comparison format: {fmt}",
+                f"unsupported comparison format: {fmt}"
             )
         parsed_result = u.try_(
             lambda: (parse(content1), parse(content2)),
@@ -53,20 +48,20 @@ class FlextTestsFilesComparisonMixin:
         )
         if parsed_result.failure:
             return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
-                parsed_result.error or "parse comparison contents failed",
+                parsed_result.error or "parse comparison contents failed"
             )
         r1, r2 = parsed_result.value
         d1 = r1.value if r1.success else None
         d2 = r2.value if r2.success else None
         if FlextTestsFilesCreationMixin.is_mapping(
-            d1,
+            d1
         ) and FlextTestsFilesCreationMixin.is_mapping(d2):
             return r[FlextTestsFilesComparisonMixin.ParsedPair].ok((
                 FlextTestsFilesCreationMixin.to_payload_mapping(d1),
                 FlextTestsFilesCreationMixin.to_payload_mapping(d2),
             ))
         return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
-            "comparison contents are not both mappings",
+            "comparison contents are not both mappings"
         )
 
     def _apply_key_filtering(
@@ -129,13 +124,9 @@ class FlextTestsFilesComparisonMixin:
         except c.EXC_BASIC_TYPE as exc:
             return r[bool].fail(f"Invalid parameters for file comparison: {exc}")
         if not params.file1.exists():
-            return r[bool].fail(
-                c.Tests.ERROR_FILE_NOT_FOUND.format(path=params.file1),
-            )
+            return r[bool].fail(c.Tests.ERROR_FILE_NOT_FOUND.format(path=params.file1))
         if not params.file2.exists():
-            return r[bool].fail(
-                c.Tests.ERROR_FILE_NOT_FOUND.format(path=params.file2),
-            )
+            return r[bool].fail(c.Tests.ERROR_FILE_NOT_FOUND.format(path=params.file2))
         try:
             result = self._compare_existing(params)
         except OSError as e:
@@ -151,7 +142,7 @@ class FlextTestsFilesComparisonMixin:
         match params.mode:
             case "size":
                 return r[bool].ok(
-                    params.file1.stat().st_size == params.file2.stat().st_size,
+                    params.file1.stat().st_size == params.file2.stat().st_size
                 )
             case "hash":
                 hash1 = u.Cli.sha256_file(params.file1)
@@ -196,14 +187,12 @@ class FlextTestsFilesComparisonMixin:
     ) -> p.Result[bool] | None:
         """Try to parse and deeply compare content as JSON or YAML."""
         parsed = self._try_parse_both(content1_raw, content2_raw, "json").unwrap_or(
-            None,
+            None
         )
         if parsed is None:
-            parsed = self._try_parse_both(
-                content1_raw,
-                content2_raw,
-                "yaml",
-            ).unwrap_or(None)
+            parsed = self._try_parse_both(content1_raw, content2_raw, "yaml").unwrap_or(
+                None
+            )
         if parsed is None:
             return None
         dict1, dict2 = parsed

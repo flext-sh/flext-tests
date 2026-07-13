@@ -29,7 +29,7 @@ class FlextTestsConfigHelpersUtilitiesMixin:
         candidate = settings.model_copy(update=kwargs, deep=True)
         computed_fields = set(type(candidate).model_computed_fields)
         return FlextSettings.model_validate(
-            candidate.model_dump(exclude=computed_fields),
+            candidate.model_dump(exclude=computed_fields)
         )
 
     @staticmethod

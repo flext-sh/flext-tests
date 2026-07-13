@@ -18,8 +18,7 @@ class FlextTestsProtocols(p):
     """Protocols for FLEXT tests - extends p."""
 
     class Tests(
-        FlextTestsEnforcementProtocolsMixin,
-        FlextTestsValueFactoryProtocolsMixin,
+        FlextTestsEnforcementProtocolsMixin, FlextTestsValueFactoryProtocolsMixin
     ):
         """Test-specific protocols namespace.
 

@@ -14,8 +14,7 @@ class FlextTestsSettings(FlextSettings):
     """FLEXT settings extended with the test runtime namespace."""
 
     model_config: ClassVar[SettingsConfigDict] = SettingsConfigDict(
-        env_prefix="FLEXT_TESTS_",
-        extra="ignore",
+        env_prefix="FLEXT_TESTS_", extra="ignore"
     )
 
     class TestsSettings(BaseModel):

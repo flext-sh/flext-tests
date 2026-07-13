@@ -40,10 +40,7 @@ def split_csv(raw: str | None) -> frozenset[str]:
 
 def pytest_addoption(parser: pytest.Parser) -> None:
     """Register CLI options for the enforcement dispatcher."""
-    group = parser.getgroup(
-        "flext-enforce",
-        "FLEXT cross-layer enforcement catalog",
-    )
+    group = parser.getgroup("flext-enforce", "FLEXT cross-layer enforcement catalog")
     group.addoption(
         "--flext-enforce",
         action="store_true",

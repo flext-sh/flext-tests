@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import (
-    Callable,
-)
+from collections.abc import Callable
 
 
 class FlextTestsContainerHelpersUtilitiesMixin:
@@ -36,9 +34,7 @@ class FlextTestsContainerHelpersUtilitiesMixin:
         return (factory, count_value)
 
     @staticmethod
-    def create_factory[TFactory](
-        return_value: TFactory,
-    ) -> Callable[[], TFactory]:
+    def create_factory[TFactory](return_value: TFactory) -> Callable[[], TFactory]:
         """Create a factory function that returns a fixed value.
 
         Args:

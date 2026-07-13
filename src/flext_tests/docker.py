@@ -25,13 +25,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     docker: ClassVar[WhalesDockerClient] = WhalesDockerClient(client_type="docker")
 
     workspace_root: Annotated[
-        Path,
-        u.Field(description="Workspace root used to resolve compose files."),
+        Path, u.Field(description="Workspace root used to resolve compose files.")
     ] = u.Field(default_factory=Path.cwd)
 
     worker_id: Annotated[
-        str,
-        u.Field(description="Worker identifier used to isolate persisted state."),
+        str, u.Field(description="Worker identifier used to isolate persisted state.")
     ] = "master"
 
     docker_client: Annotated[
@@ -61,8 +59,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     @staticmethod
     def _resolve_shared_target_config(
-        container_name: str,
-        workspace_root: Path,
+        container_name: str, workspace_root: Path
     ) -> m.Tests.ContainerConfig:
         """Resolve one shared-container entry into the canonical target config."""
         settings = c.Tests.SHARED_CONTAINERS.get(container_name)
@@ -81,13 +78,12 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         if not compose_path.is_absolute():
             compose_path = workspace_root / compose_path
         return target.model_copy(
-            update={"container_name": container_name, "compose_file": compose_path},
+            update={"container_name": container_name, "compose_file": compose_path}
         )
 
     @staticmethod
     def _resolve_readiness_port(
-        target: m.Tests.ContainerConfig,
-        info: m.Tests.ContainerInfo,
+        target: m.Tests.ContainerConfig, info: m.Tests.ContainerInfo
     ) -> int | None:
         """Resolve the host port used by a target readiness check."""
         if target.port is None:
@@ -140,8 +136,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 self.client_error = None
             except (DockerException, OSError, TypeError, ValueError) as error:
                 self.logger.exception(
-                    "Failed to initialize Docker client",
-                    error=str(error),
+                    "Failed to initialize Docker client", error=str(error)
                 )
                 self.client_error = str(error)
         return self.docker_client
@@ -200,7 +195,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         if state_file is None:
             return
         data: t.MappingKV[str, t.StrSequence] = {
-            "dirty_containers": tuple(self.dirty_container_names),
+            "dirty_containers": tuple(self.dirty_container_names)
         }
         write = u.Cli.json_write(state_file, data)
         if write.failure:
@@ -227,9 +222,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         compose_path = self._compose_path(compose_file)
         try:
             cleanup_result = self._run_compose_up(
-                compose_path,
-                service,
-                force_recreate=force_recreate,
+                compose_path, service, force_recreate=force_recreate
             )
         except self._compose_exception_types() as exc:
             self.logger.exception("Compose up failed")
@@ -269,11 +262,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             self.docker.client_config.compose_files = original_files
 
     def _run_compose_up(
-        self,
-        compose_path: Path,
-        service: str | None,
-        *,
-        force_recreate: bool,
+        self, compose_path: Path, service: str | None, *, force_recreate: bool
     ) -> p.Result[str]:
         """Run compose up with temporary compose-file binding."""
         original_files = self.docker.client_config.compose_files
@@ -284,11 +273,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 if down_result.failure:
                     return down_result
             services = [service] if service else []
-            self.docker.compose.up(
-                services=services,
-                detach=True,
-                remove_orphans=True,
-            )
+            self.docker.compose.up(services=services, detach=True, remove_orphans=True)
         finally:
             self.docker.client_config.compose_files = original_files
         return r[str].ok("Compose up successful")
@@ -303,8 +288,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return r[str].ok("Compose recreate cleanup successful")
 
     def fetch_container_info(
-        self,
-        container_name: str,
+        self, container_name: str
     ) -> p.Result[m.Tests.ContainerInfo]:
         """Fetch container information."""
         client = self.client
@@ -315,17 +299,16 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             container = client.containers.get(container_name)
         except NotFound:
             return r[m.Tests.ContainerInfo].fail(
-                f"Container {container_name} not found",
+                f"Container {container_name} not found"
             )
         except c.EXC_BROAD_RUNTIME as exc:
             return r[m.Tests.ContainerInfo].fail(str(exc))
         return r[m.Tests.ContainerInfo].ok(
-            self._container_info_from_sdk(container_name, container),
+            self._container_info_from_sdk(container_name, container)
         )
 
     def fetch_container_status(
-        self,
-        container_name: str,
+        self, container_name: str
     ) -> p.Result[m.Tests.ContainerInfo]:
         """Fetch container status."""
         return self.fetch_container_info(container_name)
@@ -345,9 +328,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return self._start_sdk_container(container_name, container)
 
     def start_compose_stack(
-        self,
-        compose_file: str,
-        network_name: str | None = None,
+        self, compose_file: str, network_name: str | None = None
     ) -> p.Result[str]:
         """Start a Docker Compose stack."""
         _ = network_name
@@ -357,10 +338,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return r[str].ok("Stack started successfully")
 
     def wait_for_port_ready(
-        self,
-        host: str,
-        port: int,
-        max_wait: int = 30,
+        self, host: str, port: int, max_wait: int = 30
     ) -> p.Result[bool]:
         """Wait until a TCP port is accepting connections."""
         waited = 0.0
@@ -374,21 +352,19 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return r[bool].ok(value=False)
 
     def _container_info_from_sdk(
-        self,
-        container_name: str,
-        container: Container,
+        self, container_name: str, container: Container
     ) -> m.Tests.ContainerInfo:
         """Build canonical container info from a Docker SDK container."""
         ports_raw: t.MappingKV[str, t.Tests.TestobjectSerializable] = (
             t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
-                container.ports,
+                container.ports
             )
         )
         ports: t.MutableStrMapping = {}
         empty_bindings: t.SequenceOf[t.StrMapping] = []
         for container_port, host_bindings in ports_raw.items():
             normalized_bindings = self._normalize_bindings(host_bindings).unwrap_or(
-                empty_bindings,
+                empty_bindings
             )
             host_port = self._extract_host_port(normalized_bindings)
             if host_port:
@@ -406,8 +382,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     @staticmethod
     def _start_sdk_container(
-        container_name: str,
-        container: Container,
+        container_name: str, container: Container
     ) -> p.Result[bool]:
         """Start a Docker SDK container when it is not already running."""
         try:
@@ -432,8 +407,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             workspace_root=resolved_root,
             worker_id=worker_id or "master",
             target_config=cls._resolve_shared_target_config(
-                container_name,
-                resolved_root,
+                container_name, resolved_root
             ),
         )
 
@@ -454,9 +428,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return cls(
             workspace_root=resolved_root,
             worker_id="master",
-            target_config=base_target.model_copy(
-                update={"compose_file": compose_path},
-            ),
+            target_config=base_target.model_copy(update={"compose_file": compose_path}),
         )
 
     @classmethod
@@ -468,23 +440,17 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         workspace_root: Path | None = None,
     ) -> Self:
         """Build a DSL-configured service for a compose stack target."""
-        return cls.compose(
-            compose_file,
-            target=target,
-            workspace_root=workspace_root,
-        )
+        return cls.compose(compose_file, target=target, workspace_root=workspace_root)
 
     def up(self) -> p.Result[str]:
         """Start the configured compose target using the DSL state."""
         target = self.target_config
         if target is None:
             return r[str].fail(
-                "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...).",
+                "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...)."
             )
         if target.compose_file is None:
-            return r[str].fail(
-                "Docker target has no compose file configured.",
-            )
+            return r[str].fail("Docker target has no compose file configured.")
         return self.compose_up(
             str(target.compose_file),
             service=target.service or None,
@@ -496,30 +462,25 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         target = self.target_config
         if target is None:
             return r[str].fail(
-                "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...).",
+                "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...)."
             )
         if target.compose_file is None:
-            return r[str].fail(
-                "Docker target has no compose file configured.",
-            )
+            return r[str].fail("Docker target has no compose file configured.")
         return self.compose_down(str(target.compose_file))
 
     def ready(
-        self,
-        *,
-        port: int | None = None,
-        max_wait: int | None = None,
+        self, *, port: int | None = None, max_wait: int | None = None
     ) -> p.Result[bool]:
         """Run a readiness check against the configured target."""
         target = self.target_config
         if target is None:
             return r[bool].fail(
-                "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...).",
+                "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...)."
             )
         resolved_port = target.port if port is None else port
         if resolved_port is None:
             return r[bool].fail(
-                f"Docker target {target.container_name} has no configured readiness port.",
+                f"Docker target {target.container_name} has no configured readiness port."
             )
         return self.wait_for_port_ready(
             target.host,
@@ -533,21 +494,17 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         for container_name in list(self.dirty_container_names):
             if container_name not in c.Tests.SHARED_CONTAINERS:
                 self.logger.warning(
-                    "Removing stale dirty container entry",
-                    container=container_name,
+                    "Removing stale dirty container entry", container=container_name
                 )
                 _ = self.mark_container_clean(container_name)
                 continue
             target = self._resolve_shared_target_config(
-                container_name,
-                self.workspace_root,
+                container_name, self.workspace_root
             )
             self.logger.info("Recreating dirty container", container=container_name)
             _ = self.compose_down(str(target.compose_file))
             result = self.compose_up(
-                str(target.compose_file),
-                target.service,
-                force_recreate=True,
+                str(target.compose_file), target.service, force_recreate=True
             )
             if result.success:
                 _ = self.mark_container_clean(container_name)
@@ -560,11 +517,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         target = self.target_config
         if target is None:
             return r[m.Tests.ContainerInfo].fail(
-                "Docker target not configured. Use tk.shared(...).execute() or tk.compose(...).execute().",
+                "Docker target not configured. Use tk.shared(...).execute() or tk.compose(...).execute()."
             )
         if not target.container_name:
             return r[m.Tests.ContainerInfo].fail(
-                "Docker target has no inspection container configured. Use up()/down()/ready() for stack-only lifecycles.",
+                "Docker target has no inspection container configured. Use up()/down()/ready() for stack-only lifecycles."
             )
         container_name = target.container_name
 
@@ -574,9 +531,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return self._ensure_target_ready(target, container_name)
 
     def _ensure_target_started(
-        self,
-        target: m.Tests.ContainerConfig,
-        container_name: str,
+        self, target: m.Tests.ContainerConfig, container_name: str
     ) -> str | None:
         """Start or recreate the configured target when required."""
         if target.force_recreate or self.container_dirty(container_name):
@@ -600,17 +555,14 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         if start_result.success:
             return None
         compose_result = self.compose_up(
-            str(target.compose_file),
-            service=target.service or None,
+            str(target.compose_file), service=target.service or None
         )
         if compose_result.failure:
             return compose_result.error or "Failed to start Docker target"
         return None
 
     def _ensure_target_ready(
-        self,
-        target: m.Tests.ContainerConfig,
-        container_name: str,
+        self, target: m.Tests.ContainerConfig, container_name: str
     ) -> p.Result[m.Tests.ContainerInfo]:
         """Fetch target info and run configured readiness checks."""
         container_info_result = self.fetch_container_info(container_name)
@@ -622,20 +574,18 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         ready_port = self._resolve_readiness_port(target, container_info_result.value)
         if ready_port is None:
             return r[m.Tests.ContainerInfo].fail(
-                f"Docker target {target.container_name} has no resolved host port for readiness check",
+                f"Docker target {target.container_name} has no resolved host port for readiness check"
             )
         ready_result = self.wait_for_port_ready(
-            target.host,
-            ready_port,
-            max_wait=target.startup_timeout,
+            target.host, ready_port, max_wait=target.startup_timeout
         )
         if ready_result.failure:
             return r[m.Tests.ContainerInfo].fail(
-                ready_result.error or "Docker target readiness check failed",
+                ready_result.error or "Docker target readiness check failed"
             )
         if not ready_result.value:
             return r[m.Tests.ContainerInfo].fail(
-                f"Container {target.container_name} did not become ready on {target.host}:{ready_port}",
+                f"Container {target.container_name} did not become ready on {target.host}:{ready_port}"
             )
         return container_info_result
 

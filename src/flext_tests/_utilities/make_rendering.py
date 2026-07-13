@@ -73,8 +73,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
         for verb in FlextTestsMakeRegistryUtilitiesMixin.make_registry_verbs(registry):
             command = registry.commands_by_verb[verb][c.Tests.MAKE_DEFAULT_COMMAND]
             aliases = FlextTestsMakeRegistryUtilitiesMixin.make_registry_aliases_for(
-                registry,
-                verb,
+                registry, verb
             )
             suffix = f" (alias: {', '.join(aliases)})" if aliases else ""
             lines.append(f"  {verb:14} [{command.domain:12}] {command.summary}{suffix}")
@@ -89,20 +88,17 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
     @staticmethod
     def make_render_verb_help(
-        registry: m.Tests.MakeRegistry,
-        requested_verb: str,
+        registry: m.Tests.MakeRegistry, requested_verb: str
     ) -> p.Result[str]:
         """Render help for one promoted verb."""
         verb_result = FlextTestsMakeRegistryUtilitiesMixin.make_registry_resolve_verb(
-            registry,
-            requested_verb,
+            registry, requested_verb
         )
         if verb_result.failure:
             return r[str].fail(verb_result.error or "verb unknown")
         verb = verb_result.value
         aliases = FlextTestsMakeRegistryUtilitiesMixin.make_registry_aliases_for(
-            registry,
-            verb,
+            registry, verb
         )
         alias_suffix = f" (alias: {', '.join(aliases)})" if aliases else ""
         lines = [
@@ -124,7 +120,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             for what, command in command_params:
                 rendered = (
                     FlextTestsMakeRenderingUtilitiesMixin.make_format_params_inline(
-                        command.params,
+                        command.params
                     )
                 )
                 lines.append(f"  {what:20} {rendered}")
@@ -142,8 +138,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             lines.extend(f"  - {rule}" for rule in rules)
         examples = sorted({
             FlextTestsMakeRenderingUtilitiesMixin.make_example_for(
-                command,
-                requested_verb,
+                command, requested_verb
             )
             for command in commands.values()
         })
@@ -154,15 +149,11 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
     @staticmethod
     def make_render_command_help(
-        registry: m.Tests.MakeRegistry,
-        requested_verb: str,
-        what: str,
+        registry: m.Tests.MakeRegistry, requested_verb: str, what: str
     ) -> p.Result[str]:
         """Render help for one promoted command."""
         command_result = FlextTestsMakeRegistryUtilitiesMixin.make_registry_command(
-            registry,
-            requested_verb,
-            what,
+            registry, requested_verb, what
         )
         if command_result.failure:
             return r[str].fail(command_result.error or "command unknown")
@@ -178,7 +169,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
         elif command.mutates_when:
             conditions = (
                 FlextTestsMakeRenderingUtilitiesMixin.make_format_mutation_conditions(
-                    command.mutates_when,
+                    command.mutates_when
                 )
             )
             lines.append(f"Mutaction condicional: {conditions}.")
@@ -190,7 +181,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
                 default = f" default={param.default}" if param.default else ""
                 choices = f" choices={','.join(param.choices)}" if param.choices else ""
                 lines.append(
-                    f"  {param.name:24} {param.help}{required}{default}{choices}",
+                    f"  {param.name:24} {param.help}{required}{default}{choices}"
                 )
         if command.rules:
             lines.extend(("", "Regras:"))
@@ -221,15 +212,13 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             lines.extend(("", "Current parameters:"))
             for param in command.params:
                 value = FlextTestsMakeRegistryUtilitiesMixin.make_param_value(
-                    param,
-                    command,
-                    env,
+                    param, command, env
                 )
                 shown = value or "<missing>"
                 required = "required" if param.required else "opcional"
                 choices = f" choices={','.join(param.choices)}" if param.choices else ""
                 lines.append(
-                    f"  {param.name:24} {shown:20} {required}{choices} - {param.help}",
+                    f"  {param.name:24} {shown:20} {required}{choices} - {param.help}"
                 )
         lines.extend((
             "",

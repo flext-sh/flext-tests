@@ -19,30 +19,17 @@ from __future__ import annotations
 from pathlib import Path
 from typing import ClassVar, override
 
-from flext_tests import (
-    m,
-    p,
-    r,
-    s,
-    t,
-)
+from flext_tests import m, p, r, s, t
 from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
 from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
 
 
-class FlextTestsFiles(
-    s,
-    FlextTestsFilesInfoMixin,
-    FlextTestsFilesComparisonMixin,
-):
+class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixin):
     """Manages test files for FLEXT ecosystem testing."""
 
     FileInfo: ClassVar[type[m.Tests.FileInfo]] = m.Tests.FileInfo
 
-    def __init__(
-        self,
-        base_dir: Path | None = None,
-    ) -> None:
+    def __init__(self, base_dir: Path | None = None) -> None:
         """Initialize file manager with optional base directory."""
         super().__init__()
         self._initialize_file_lifecycle(base_dir)

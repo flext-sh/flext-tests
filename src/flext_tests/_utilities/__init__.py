@@ -21,73 +21,12 @@ from flext_tests._utilities.__unit__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_tests._utilities import (
-        _files as _files,
-        _make_parts as _make_parts,
-        _matchers as _matchers,
-    )
-    from flext_tests._utilities._files._assertions import (
-        FlextTestsFilesAssertionsMixin as FlextTestsFilesAssertionsMixin,
-    )
-    from flext_tests._utilities._files._batch import (
-        FlextTestsFilesBatchMixin as FlextTestsFilesBatchMixin,
-    )
-    from flext_tests._utilities._files._comparison_parts.comparison_part_02 import (
-        FlextTestsFilesComparisonMixin as FlextTestsFilesComparisonMixin,
-    )
-    from flext_tests._utilities._files._contexts import (
-        FlextTestsFilesContextsMixin as FlextTestsFilesContextsMixin,
-    )
-    from flext_tests._utilities._files._creation_parts.creation_part_03 import (
-        FlextTestsFilesCreationMixin as FlextTestsFilesCreationMixin,
-    )
-    from flext_tests._utilities._files._info import (
-        FlextTestsFilesInfoMixin as FlextTestsFilesInfoMixin,
-    )
-    from flext_tests._utilities._files._lifecycle import (
-        FlextTestsFilesLifecycleMixin as FlextTestsFilesLifecycleMixin,
-    )
-    from flext_tests._utilities._files._reading import (
-        FlextTestsFilesReadingMixin as FlextTestsFilesReadingMixin,
-    )
-    from flext_tests._utilities._make_parts.make_contract_part_02 import (
-        FlextTestsMakeContractUtilitiesMixin as FlextTestsMakeContractUtilitiesMixin,
-    )
-    from flext_tests._utilities._make_parts.make_parsing_part_02 import (
-        FlextTestsMakeParsingUtilitiesMixin as FlextTestsMakeParsingUtilitiesMixin,
-    )
-    from flext_tests._utilities._make_parts.make_registry_part_03 import (
-        FlextTestsMakeRegistryUtilitiesMixin as FlextTestsMakeRegistryUtilitiesMixin,
-    )
-    from flext_tests._utilities._make_parts.make_rendering_part_02 import (
-        FlextTestsMakeRenderingUtilitiesMixin as FlextTestsMakeRenderingUtilitiesMixin,
-    )
-    from flext_tests._utilities._matchers._assertions import (
-        FlextTestsMatchersAssertionsMixin as FlextTestsMatchersAssertionsMixin,
-    )
-    from flext_tests._utilities._matchers._containment import (
-        FlextTestsMatchersContainmentMixin as FlextTestsMatchersContainmentMixin,
-    )
-    from flext_tests._utilities._matchers._result_parts.result_part_03 import (
-        FlextTestsMatchersResultMixin as FlextTestsMatchersResultMixin,
-    )
-    from flext_tests._utilities._matchers._scope import (
-        FlextTestsMatchersScopeMixin as FlextTestsMatchersScopeMixin,
-    )
-    from flext_tests._utilities._matchers._that_parts.that_part_06 import (
-        FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixin,
-    )
-    from flext_tests._utilities._matchers._typeguards import (
-        FlextTestsMatchersTypeGuardsMixin as FlextTestsMatchersTypeGuardsMixin,
-    )
+    from flext_tests._utilities import _files as _files, _matchers as _matchers
     from flext_tests._utilities.container import (
         FlextTestsContainerHelpersUtilitiesMixin as FlextTestsContainerHelpersUtilitiesMixin,
     )
     from flext_tests._utilities.files import (
         FlextTestsFilesUtilitiesMixin as FlextTestsFilesUtilitiesMixin,
-    )
-    from flext_tests._utilities.fixtures_dsl import (
-        FlextTestsFixturesDSLMixin as FlextTestsFixturesDSLMixin,
     )
     from flext_tests._utilities.generic import (
         FlextTestsGenericHelpersUtilitiesMixin as FlextTestsGenericHelpersUtilitiesMixin,
@@ -97,6 +36,18 @@ if TYPE_CHECKING:
     )
     from flext_tests._utilities.make import (
         FlextTestsMakeUtilitiesMixin as FlextTestsMakeUtilitiesMixin,
+    )
+    from flext_tests._utilities.make_contract import (
+        FlextTestsMakeContractUtilitiesMixin as FlextTestsMakeContractUtilitiesMixin,
+    )
+    from flext_tests._utilities.make_parsing import (
+        FlextTestsMakeParsingUtilitiesMixin as FlextTestsMakeParsingUtilitiesMixin,
+    )
+    from flext_tests._utilities.make_registry import (
+        FlextTestsMakeRegistryUtilitiesMixin as FlextTestsMakeRegistryUtilitiesMixin,
+    )
+    from flext_tests._utilities.make_rendering import (
+        FlextTestsMakeRenderingUtilitiesMixin as FlextTestsMakeRenderingUtilitiesMixin,
     )
     from flext_tests._utilities.matchers import (
         FlextTestsMatchersUtilities as FlextTestsMatchersUtilities,
@@ -125,9 +76,7 @@ if TYPE_CHECKING:
 _LAZY_IMPORTS = merge_lazy_imports(
     _CHILD_MODULE_PATHS,
     build_lazy_import_map(
-        _LAZY_MODULES,
-        alias_groups=_LAZY_ALIAS_GROUPS,
-        sort_keys=False,
+        _LAZY_MODULES, alias_groups=_LAZY_ALIAS_GROUPS, sort_keys=False
     ),
     exclude_names=_EXCLUDED_LAZY_NAMES,
     module_name=__name__,
@@ -135,9 +84,4 @@ _LAZY_IMPORTS = merge_lazy_imports(
 
 
 # mro-i6nq.10: The installer publishes __all__ from the manifest's literal ABI.
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    public_exports=_PUBLIC_EXPORTS,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=_PUBLIC_EXPORTS)

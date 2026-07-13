@@ -22,10 +22,7 @@ class FlextTestsFilesLifecycleMixin:
     _created_files: list[Path] | None = None
     _created_dirs: list[Path] | None = None
 
-    def __init__(
-        self,
-        base_dir: Path | None = None,
-    ) -> None:
+    def __init__(self, base_dir: Path | None = None) -> None:
         """Initialize file manager with optional base directory.
 
         Args:

@@ -10,9 +10,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_infra import u
-from flext_tests._utilities.container import (
-    FlextTestsContainerHelpersUtilitiesMixin,
-)
+from flext_tests._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
 from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
 from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
 from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin

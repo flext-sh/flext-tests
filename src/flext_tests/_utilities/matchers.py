@@ -16,15 +16,9 @@ from flext_tests._utilities._matchers._assertions import (
 from flext_tests._utilities._matchers._containment import (
     FlextTestsMatchersContainmentMixin,
 )
-from flext_tests._utilities._matchers._result import (
-    FlextTestsMatchersResultMixin,
-)
-from flext_tests._utilities._matchers._scope import (
-    FlextTestsMatchersScopeMixin,
-)
-from flext_tests._utilities._matchers._that import (
-    FlextTestsMatchersThatMixin,
-)
+from flext_tests._utilities._matchers._result import FlextTestsMatchersResultMixin
+from flext_tests._utilities._matchers._scope import FlextTestsMatchersScopeMixin
+from flext_tests._utilities._matchers._that import FlextTestsMatchersThatMixin
 from flext_tests._utilities._matchers._typeguards import (
     FlextTestsMatchersTypeGuardsMixin,
 )

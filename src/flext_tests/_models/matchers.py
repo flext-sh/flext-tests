@@ -19,17 +19,14 @@ class FlextTestsMatchersModelsMixin:
         """Matcher parameters for successful result assertions."""
 
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
-            populate_by_name=True,
-            arbitrary_types_allowed=True,
+            populate_by_name=True, arbitrary_types_allowed=True
         )
 
         eq: Annotated[
-            t.Tests.MatcherEqTarget | None,
-            u.Field(description="Expected value."),
+            t.Tests.MatcherEqTarget | None, u.Field(description="Expected value.")
         ] = None
         ne: Annotated[
-            t.Tests.MatcherEqTarget | None,
-            u.Field(description="Value must not equal."),
+            t.Tests.MatcherEqTarget | None, u.Field(description="Value must not equal.")
         ] = None
         is_: Annotated[
             type[object] | tuple[type[object], ...] | None,
@@ -41,20 +38,17 @@ class FlextTestsMatchersModelsMixin:
         none: Annotated[bool | None, u.Field(description="None check.")] = None
         empty: Annotated[bool | None, u.Field(description="Empty check.")] = None
         gt: Annotated[
-            t.Tests.ComparableScalar | None,
-            u.Field(description="Greater than."),
+            t.Tests.ComparableScalar | None, u.Field(description="Greater than.")
         ] = None
         gte: Annotated[
             t.Tests.ComparableScalar | None,
             u.Field(description="Greater than or equal."),
         ] = None
         lt: Annotated[
-            t.Tests.ComparableScalar | None,
-            u.Field(description="Less than."),
+            t.Tests.ComparableScalar | None, u.Field(description="Less than.")
         ] = None
         lte: Annotated[
-            t.Tests.ComparableScalar | None,
-            u.Field(description="Less than or equal."),
+            t.Tests.ComparableScalar | None, u.Field(description="Less than or equal.")
         ] = None
         has: Annotated[
             t.Tests.ContainmentSpec | None,
@@ -66,24 +60,19 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Unified non-containment check."),
         ] = None
         starts: Annotated[
-            str | None,
-            u.Field(description="String starts with prefix."),
+            str | None, u.Field(description="String starts with prefix.")
         ] = None
-        ends: Annotated[
-            str | None,
-            u.Field(description="String ends with suffix."),
-        ] = None
+        ends: Annotated[str | None, u.Field(description="String ends with suffix.")] = (
+            None
+        )
         match: Annotated[
-            t.Infra.RegexPattern | None,
-            u.Field(description="Compiled regex pattern."),
+            t.Infra.RegexPattern | None, u.Field(description="Compiled regex pattern.")
         ] = None
         len: Annotated[
-            t.Tests.LengthSpec | None,
-            u.Field(description="Length spec."),
+            t.Tests.LengthSpec | None, u.Field(description="Length spec.")
         ] = None
         deep: Annotated[
-            t.Tests.DeepSpec | None,
-            u.Field(description="Deep structural matching."),
+            t.Tests.DeepSpec | None, u.Field(description="Deep structural matching.")
         ] = None
         path: Annotated[
             t.Tests.PathSpec | None,
@@ -131,13 +120,11 @@ class FlextTestsMatchersModelsMixin:
             ),
         ] = None
         starts: Annotated[
-            str | None,
-            u.Field(description="Error starts with prefix."),
+            str | None, u.Field(description="Error starts with prefix.")
         ] = None
-        ends: Annotated[
-            str | None,
-            u.Field(description="Error ends with suffix."),
-        ] = None
+        ends: Annotated[str | None, u.Field(description="Error ends with suffix.")] = (
+            None
+        )
         match: Annotated[
             t.Infra.RegexPattern | None,
             u.Field(description="Error matches compiled regex."),
@@ -156,18 +143,15 @@ class FlextTestsMatchersModelsMixin:
         """Generic matcher parameters for value assertions."""
 
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
-            populate_by_name=True,
-            arbitrary_types_allowed=True,
+            populate_by_name=True, arbitrary_types_allowed=True
         )
 
         msg: Annotated[str | None, u.Field(description="Message.")] = None
         eq: Annotated[
-            t.Tests.TestobjectSerializable | None,
-            u.Field(description="Equals."),
+            t.Tests.TestobjectSerializable | None, u.Field(description="Equals.")
         ] = None
         ne: Annotated[
-            t.Tests.TestobjectSerializable | None,
-            u.Field(description="Not equals."),
+            t.Tests.TestobjectSerializable | None, u.Field(description="Not equals.")
         ] = None
         is_: Annotated[
             type[object] | tuple[type[object], ...] | None,
@@ -176,33 +160,27 @@ class FlextTestsMatchersModelsMixin:
         not_: Annotated[
             type[object] | tuple[type[object], ...] | None,
             u.Field(
-                validation_alias=t.AliasChoices("not_", "not"),
-                description="Not type.",
+                validation_alias=t.AliasChoices("not_", "not"), description="Not type."
             ),
         ] = None
         none: Annotated[bool | None, u.Field(description="None check.")] = None
         empty: Annotated[bool | None, u.Field(description="Empty check.")] = None
         gt: Annotated[
-            t.Tests.ComparableScalar | None,
-            u.Field(description="Greater than."),
+            t.Tests.ComparableScalar | None, u.Field(description="Greater than.")
         ] = None
         gte: Annotated[
-            t.Tests.ComparableScalar | None,
-            u.Field(description="Greater/equal."),
+            t.Tests.ComparableScalar | None, u.Field(description="Greater/equal.")
         ] = None
         lt: Annotated[
-            t.Tests.ComparableScalar | None,
-            u.Field(description="Less than."),
+            t.Tests.ComparableScalar | None, u.Field(description="Less than.")
         ] = None
         lte: Annotated[
-            t.Tests.ComparableScalar | None,
-            u.Field(description="Less/equal."),
+            t.Tests.ComparableScalar | None, u.Field(description="Less/equal.")
         ] = None
         len: Annotated[
             t.Tests.LengthSpec | None,
             u.Field(
-                validation_alias=t.AliasChoices("len", "length"),
-                description="Length.",
+                validation_alias=t.AliasChoices("len", "length"), description="Length."
             ),
         ] = None
         length_gt: Annotated[int | None, u.Field(description="Length >.")] = None
@@ -230,12 +208,10 @@ class FlextTestsMatchersModelsMixin:
             None
         )
         first: Annotated[
-            t.Tests.TestobjectSerializable | None,
-            u.Field(description="First item."),
+            t.Tests.TestobjectSerializable | None, u.Field(description="First item.")
         ] = None
         last: Annotated[
-            t.Tests.TestobjectSerializable | None,
-            u.Field(description="Last item."),
+            t.Tests.TestobjectSerializable | None, u.Field(description="Last item.")
         ] = None
         all_: Annotated[
             t.Tests.SequencePredicate | None,
@@ -253,33 +229,27 @@ class FlextTestsMatchersModelsMixin:
         unique: Annotated[bool | None, u.Field(description="Unique.")] = None
         keys: Annotated[t.Tests.KeySpec | None, u.Field(description="Keys.")] = None
         lacks_keys: Annotated[
-            t.Tests.KeySpec | None,
-            u.Field(description="No keys."),
+            t.Tests.KeySpec | None, u.Field(description="No keys.")
         ] = None
         values: Annotated[
             t.SequenceOf[t.Tests.TestobjectSerializable] | None,
             u.Field(description="Values."),
         ] = None
         kv: Annotated[
-            t.Tests.KeyValueSpec | None,
-            u.Field(description="Key-values."),
+            t.Tests.KeyValueSpec | None, u.Field(description="Key-values.")
         ] = None
         attrs: Annotated[
-            t.Tests.AttributeSpec | None,
-            u.Field(description="Attrs."),
+            t.Tests.AttributeSpec | None, u.Field(description="Attrs.")
         ] = None
         methods: Annotated[
-            t.Tests.AttributeSpec | None,
-            u.Field(description="Methods."),
+            t.Tests.AttributeSpec | None, u.Field(description="Methods.")
         ] = None
         attr_eq: Annotated[
-            t.Tests.AttributeValueSpec | None,
-            u.Field(description="Attr equals."),
+            t.Tests.AttributeValueSpec | None, u.Field(description="Attr equals.")
         ] = None
         ok: Annotated[bool | None, u.Field(description="Result ok.")] = None
         error: Annotated[
-            str | t.StrSequence | None,
-            u.Field(description="Result error."),
+            str | t.StrSequence | None, u.Field(description="Result error.")
         ] = None
         deep: Annotated[t.Tests.DeepSpec | None, u.Field(description="Deep spec.")] = (
             None
@@ -357,16 +327,14 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Initial context values."),
         ] = None
         cleanup: Annotated[
-            t.Tests.CleanupSpec | None,
-            u.Field(description="Cleanup functions."),
+            t.Tests.CleanupSpec | None, u.Field(description="Cleanup functions.")
         ] = None
         env: Annotated[
             t.Tests.EnvironmentSpec | None,
             u.Field(description="Temporary environment variables."),
         ] = None
         cwd: Annotated[
-            Path | str | None,
-            u.Field(description="Temporary working directory."),
+            Path | str | None, u.Field(description="Temporary working directory.")
         ] = None
 
         @u.field_validator("cwd", mode="before")
@@ -408,8 +376,7 @@ class FlextTestsMatchersModelsMixin:
         """Container for chained result assertions."""
 
         result: Annotated[
-            p.Result[TResult],
-            u.Field(description="Result being chained."),
+            p.Result[TResult], u.Field(description="Result being chained.")
         ]
 
     class TestScope(m.ArbitraryTypesModel):
