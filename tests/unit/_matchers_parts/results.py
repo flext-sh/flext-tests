@@ -9,8 +9,7 @@ import pytest
 from flext_tests import r, tm
 
 if TYPE_CHECKING:
-    from tests.protocols import p
-    from tests.typings import t
+    from tests import p, t
 
 
 class MatchersResultsMixin:
@@ -76,8 +75,7 @@ class MatchersResultsMixin:
         data = {"key1": "value1"}
         expected = {"key1": "wrong_value"}
         with pytest.raises(
-            AssertionError,
-            match="expected 'wrong_value', got 'value1'",
+            AssertionError, match="expected 'wrong_value', got 'value1'"
         ):
             tm.that(data, kv=expected)
 

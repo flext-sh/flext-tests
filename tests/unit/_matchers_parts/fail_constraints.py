@@ -5,10 +5,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_tests import r, tm
-from tests.models import m
+from tests import m
 
 if TYPE_CHECKING:
-    from tests.protocols import p
+    from tests import p
 
 
 class MatchersFailConstraintsMixin:
@@ -65,8 +65,7 @@ class MatchersFailConstraintsMixin:
     def test_fail_with_data_parameter(self) -> None:
         """Test tm.fail() with data parameter."""
         result: p.Result[str] = r[str].fail(
-            "error",
-            error_data=m.ConfigMap(root={"field": "email"}),
+            "error", error_data=m.ConfigMap(root={"field": "email"})
         )
         error = tm.fail(result, data={"field": "email"})
         tm.that(error, eq="error")

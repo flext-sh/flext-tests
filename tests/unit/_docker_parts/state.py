@@ -5,9 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_tests import tk, tm
-from tests.constants import c
-from tests.models import m
-from tests.utilities import u
+from tests import c, m, u
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -57,7 +55,7 @@ class DockerStateMixin:
 
     def test_init(self, docker_manager: tk) -> None:
         """Test tk initialization."""
-        assert isinstance(docker_manager, tk)
+        tm.that(docker_manager, is_=tk)
         tm.that(docker_manager.workspace_root, none=False)
         tm.that(docker_manager.dirty_containers, is_=tuple)
 
@@ -75,9 +73,7 @@ class DockerStateMixin:
         tm.that(client1 is client2, eq=True)
 
     def test_dirty_state_persists_between_instances(
-        self,
-        tmp_path: Path,
-        monkeypatch: pytest.MonkeyPatch,
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Test dirty-state persistence through public API across instances."""
         monkeypatch.setenv("HOME", str(tmp_path))

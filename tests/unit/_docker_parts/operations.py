@@ -6,8 +6,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from flext_tests import tk, tm
-from tests.constants import c
-from tests.utilities import u
+from tests import c, u
 
 if TYPE_CHECKING:
     import pytest
@@ -16,10 +15,7 @@ if TYPE_CHECKING:
 class DockerOperationsMixin:
     """Docker operation tests."""
 
-    def test_compose_up_returns_flext_result(
-        self,
-        docker_manager: tk,
-    ) -> None:
+    def test_compose_up_returns_flext_result(self, docker_manager: tk) -> None:
         """Test compose_up returns a valid public Result contract."""
         result = docker_manager.compose_up("missing-compose.yml")
         tm.that(result.success or result.failure, eq=True)
@@ -28,27 +24,18 @@ class DockerOperationsMixin:
         else:
             tm.that(result.error, is_=str)
 
-    def test_compose_down_returns_flext_result(
-        self,
-        docker_manager: tk,
-    ) -> None:
+    def test_compose_down_returns_flext_result(self, docker_manager: tk) -> None:
         """Test compose_down failure behavior for missing compose file."""
         result = docker_manager.compose_down("missing-compose.yml")
         _ = u.Tests.assert_failure(result)
 
-    def test_start_existing_container_not_found(
-        self,
-        docker_manager: tk,
-    ) -> None:
+    def test_start_existing_container_not_found(self, docker_manager: tk) -> None:
         """Test starting a container returns a failure result when unavailable."""
         result = docker_manager.start_existing_container("nonexistent_container")
         _ = u.Tests.assert_failure(result)
         tm.that(result.error, is_=str)
 
-    def test_fetch_container_info_not_found(
-        self,
-        docker_manager: tk,
-    ) -> None:
+    def test_fetch_container_info_not_found(self, docker_manager: tk) -> None:
         """Test fetching container info returns a failure result when unavailable."""
         result = docker_manager.fetch_container_info("nonexistent_container")
         _ = u.Tests.assert_failure(result)
@@ -59,23 +46,13 @@ class DockerOperationsMixin:
         result = docker_manager.fetch_container_status("nonexistent")
         _ = u.Tests.assert_failure(result)
 
-    def test_wait_for_port_ready_immediate(
-        self,
-        docker_manager: tk,
-    ) -> None:
+    def test_wait_for_port_ready_immediate(self, docker_manager: tk) -> None:
         """Test wait_for_port_ready returns quickly for unavailable port."""
-        result = docker_manager.wait_for_port_ready(
-            c.LOOPBACK_IP,
-            59999,
-            max_wait=1,
-        )
+        result = docker_manager.wait_for_port_ready(c.LOOPBACK_IP, 59999, max_wait=1)
         _ = u.Tests.assert_success(result)
         tm.that(result.value is False, eq=True)
 
-    def test_start_compose_stack_returns_result(
-        self,
-        docker_manager: tk,
-    ) -> None:
+    def test_start_compose_stack_returns_result(self, docker_manager: tk) -> None:
         """Test start_compose_stack returns a valid public Result contract."""
         result = docker_manager.start_compose_stack("missing-compose.yml")
         tm.that(result.success or result.failure, eq=True)
@@ -84,10 +61,7 @@ class DockerOperationsMixin:
         else:
             tm.that(result.error, is_=str)
 
-    def test_cleanup_dirty_containers_empty(
-        self,
-        docker_manager: tk,
-    ) -> None:
+    def test_cleanup_dirty_containers_empty(self, docker_manager: tk) -> None:
         """Test cleanup with no dirty containers."""
         _ = docker_manager.mark_container_clean("container1")
         _ = docker_manager.mark_container_clean("container2")
@@ -96,9 +70,7 @@ class DockerOperationsMixin:
         tm.that(result.value, empty=True)
 
     def test_cleanup_dirty_containers_removes_stale_shared_entry(
-        self,
-        tmp_path: Path,
-        monkeypatch: pytest.MonkeyPatch,
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Test cleanup purges retired shared containers from persisted state."""
         monkeypatch.setenv("HOME", str(tmp_path))
@@ -122,9 +94,7 @@ class DockerOperationsMixin:
         tm.that(manager.worker_id, eq="worker_1")
 
     def test_worker_id_isolates_persisted_dirty_state(
-        self,
-        tmp_path: Path,
-        monkeypatch: pytest.MonkeyPatch,
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Test different worker_id values isolate persisted dirty state."""
         monkeypatch.setenv("HOME", str(tmp_path))

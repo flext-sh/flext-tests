@@ -9,7 +9,7 @@ import pytest
 from flext_tests import r, tm
 
 if TYPE_CHECKING:
-    from tests.protocols import p
+    from tests import p
 
 
 class MatchersScopeErrorsMixin:

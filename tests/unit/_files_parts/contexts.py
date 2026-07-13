@@ -4,14 +4,9 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from flext_tests import tf, tm
-from tests.models import m
-from tests.utilities import u
-
-if TYPE_CHECKING:
-    from tests.typings import t
+from tests import m, t, u
 
 
 class FilesContextsMixin:

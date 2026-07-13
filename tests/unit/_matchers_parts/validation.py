@@ -5,8 +5,7 @@ from __future__ import annotations
 import pytest
 
 from flext_tests import r, tm
-from tests.constants import c
-from tests.typings import t
+from tests import c, t
 
 
 class MatchersValidationMixin:
@@ -33,11 +32,7 @@ class MatchersValidationMixin:
 
     def test_assert_settings_valid_passes(self) -> None:
         """Test tm.that() with keys parameter for settings validation."""
-        settings = {
-            "service_type": "api",
-            "environment": "test",
-            "timeout": 30,
-        }
+        settings = {"service_type": "api", "environment": "test", "timeout": 30}
         tm.that(settings, keys=["service_type", "environment", "timeout"])
         tm.that(settings["timeout"], is_=int, gt=0)
 
@@ -55,11 +50,7 @@ class MatchersValidationMixin:
 
     def test_assert_settings_valid_zero_timeout(self) -> None:
         """Test tm.that() with zero timeout."""
-        settings = {
-            "service_type": "api",
-            "environment": "test",
-            "timeout": 0,
-        }
+        settings = {"service_type": "api", "environment": "test", "timeout": 0}
         with pytest.raises(AssertionError, match="Assertion failed"):
             tm.that(settings["timeout"], is_=int, gt=0)
 
@@ -89,11 +80,7 @@ class MatchersValidationMixin:
 
     def test_that_with_eq_mapping_parameter(self) -> None:
         """Test tm.that() with structural mapping equality."""
-        payload = {
-            "service": "api",
-            "enabled": True,
-            "retries": 2,
-        }
+        payload = {"service": "api", "enabled": True, "retries": 2}
         tm.that(payload, eq={"service": "api", "enabled": True, "retries": 2})
 
     def test_that_with_ne_sequence_parameter_fails(self) -> None:

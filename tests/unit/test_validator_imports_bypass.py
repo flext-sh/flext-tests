@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_tests import m, tm, tv
-from tests.utilities import u
+from tests import u
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -25,8 +25,7 @@ class TestsFlextTestsValidatorImportsBypass:
         return file_path
 
     def test_imports_flags_indented_imports_importerror_sys_path_and_internal_modules(
-        self,
-        tmp_path: Path,
+        self, tmp_path: Path
     ) -> None:
         file_path = self._write_source(
             tmp_path,
@@ -56,10 +55,7 @@ def load() -> None:
         tm.that("IMPORT-004" in rule_ids, eq=True)
         tm.that("IMPORT-006" in rule_ids, eq=True)
 
-    def test_imports_allows_top_level_public_imports_only(
-        self,
-        tmp_path: Path,
-    ) -> None:
+    def test_imports_allows_top_level_public_imports_only(self, tmp_path: Path) -> None:
         file_path = self._write_source(
             tmp_path,
             "imports_clean.py",
@@ -80,8 +76,7 @@ def render() -> str:
         tm.that(result.violations, empty=True)
 
     def test_bypass_flags_noqa_pragma_and_exception_swallowing(
-        self,
-        tmp_path: Path,
+        self, tmp_path: Path
     ) -> None:
         file_path = self._write_source(
             tmp_path,
@@ -116,8 +111,7 @@ def ignore_specific() -> None:
         tm.that(rule_ids.count("BYPASS-003") >= 2, eq=True)
 
     def test_bypass_ignores_suppression_text_inside_strings(
-        self,
-        tmp_path: Path,
+        self, tmp_path: Path
     ) -> None:
         file_path = self._write_source(
             tmp_path,

@@ -5,11 +5,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_tests import tf, tm
-from tests.models import m
-from tests.utilities import u
+from tests import m, u
 
-if TYPE_CHECKING:
-    from pathlib import Path
+from pathlib import Path
 
 
 class FilesInfoMetadataMixin:
@@ -44,7 +42,7 @@ class FilesInfoMetadataMixin:
         result = manager.info(path, compute_hash=True)
         _ = u.Tests.assert_success(result)
         info = result.value
-        assert info.sha256 is not None
+        tm.that(info.sha256, none=False)
         tm.that(len(info.sha256), eq=64)
 
     def test_info_format_detection(self, tmp_path: Path) -> None:

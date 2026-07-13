@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from flext_tests import tm
-from tests.constants import c
+from tests import c
 from tests.unit._matchers_parts.predicates import MatchersPredicates
 
 
