@@ -21,20 +21,9 @@ from flext_tests._validator.__unit__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_tests._validator import (
-        _markdown_parts as _markdown_parts,
-        _orchestration_parts as _orchestration_parts,
-        _settings_parts as _settings_parts,
-        _types_parts as _types_parts,
-    )
-    from flext_tests._validator._markdown_parts.markdown_part_02 import (
-        FlextValidatorMarkdown as FlextValidatorMarkdown,
-    )
+    from flext_tests._validator import _orchestration_parts as _orchestration_parts
     from flext_tests._validator._orchestration_parts.validator_part_02 import (
         FlextTestsValidator as FlextTestsValidator,
-    )
-    from flext_tests._validator._types_parts.types_part_02 import (
-        FlextValidatorTypes as FlextValidatorTypes,
     )
     from flext_tests._validator.bypass import (
         FlextValidatorBypass as FlextValidatorBypass,
@@ -43,6 +32,9 @@ if TYPE_CHECKING:
         FlextValidatorImports as FlextValidatorImports,
     )
     from flext_tests._validator.layer import FlextValidatorLayer as FlextValidatorLayer
+    from flext_tests._validator.markdown import (
+        FlextValidatorMarkdown as FlextValidatorMarkdown,
+    )
     from flext_tests._validator.models import (
         FlextTestsValidatorModels as FlextTestsValidatorModels,
     )
@@ -50,6 +42,7 @@ if TYPE_CHECKING:
         FlextValidatorSettings as FlextValidatorSettings,
     )
     from flext_tests._validator.tests import FlextValidatorTests as FlextValidatorTests
+    from flext_tests._validator.types import FlextValidatorTypes as FlextValidatorTypes
 
     # mro-i6nq.10: Static declaration mirrors the installer-owned runtime binding.
     __all__: tuple[str, ...]

@@ -8,27 +8,22 @@ lazy (PEP 562) import access; sibling ``__all__`` discovery is the upstream sour
 from __future__ import annotations
 
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
-    "._markdown_parts.markdown_part_02": ("FlextValidatorMarkdown",),
     "._orchestration_parts.validator_part_02": ("FlextTestsValidator",),
-    "._types_parts.types_part_02": ("FlextValidatorTypes",),
     ".bypass": ("FlextValidatorBypass",),
     ".imports": ("FlextValidatorImports",),
     ".layer": ("FlextValidatorLayer",),
+    ".markdown": ("FlextValidatorMarkdown",),
     ".models": ("FlextTestsValidatorModels",),
     ".settings": ("FlextValidatorSettings",),
     ".tests": ("FlextValidatorTests",),
+    ".types": ("FlextValidatorTypes",),
 }
 
 
 LAZY_ALIAS_GROUPS: dict[str, tuple[tuple[str, str], ...]] = {}
 
 
-CHILD_MODULE_PATHS: tuple[str, ...] = (
-    "._markdown_parts",
-    "._orchestration_parts",
-    "._settings_parts",
-    "._types_parts",
-)
+CHILD_MODULE_PATHS: tuple[str, ...] = ("._orchestration_parts",)
 
 
 EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
@@ -44,8 +39,5 @@ PUBLIC_EXPORTS: tuple[str, ...] = (
     "FlextValidatorSettings",
     "FlextValidatorTests",
     "FlextValidatorTypes",
-    "_markdown_parts",
     "_orchestration_parts",
-    "_settings_parts",
-    "_types_parts",
 )
