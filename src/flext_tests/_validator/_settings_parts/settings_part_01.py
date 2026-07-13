@@ -43,7 +43,7 @@ class FlextValidatorSettings:
         extra_desc: str = "",
     ) -> m.Tests.Violation:
         """Create a settings violation."""
-        severity, desc = c.Tests.validator_rule(rule_id)
+        severity, desc = u.Tests.validator_rule(rule_id)
         description = f"{desc}: {extra_desc}" if extra_desc else desc
         return m.Tests.Violation(
             file_path=file_path,

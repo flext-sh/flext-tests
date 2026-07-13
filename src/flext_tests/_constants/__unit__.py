@@ -8,19 +8,19 @@ lazy (PEP 562) import access; sibling ``__all__`` discovery is the upstream sour
 from __future__ import annotations
 
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
-    "._validator_parts.validator_part_03": ("FlextTestsConstantsValidator",),
     ".data_cases": ("FlextTestsConstantsDataCases",),
     ".docker": ("FlextTestsConstantsDocker",),
     ".files": ("FlextTestsConstantsFiles",),
     ".make": ("FlextTestsConstantsMake",),
     ".matcher": ("FlextTestsConstantsMatcher",),
+    ".validator": ("FlextTestsConstantsValidator",),
 }
 
 
 LAZY_ALIAS_GROUPS: dict[str, tuple[tuple[str, str], ...]] = {}
 
 
-CHILD_MODULE_PATHS: tuple[str, ...] = ("._validator_parts",)
+CHILD_MODULE_PATHS: tuple[str, ...] = ()
 
 
 EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
@@ -33,5 +33,4 @@ PUBLIC_EXPORTS: tuple[str, ...] = (
     "FlextTestsConstantsMake",
     "FlextTestsConstantsMatcher",
     "FlextTestsConstantsValidator",
-    "_validator_parts",
 )

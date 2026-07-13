@@ -126,7 +126,7 @@ class FlextValidatorLayer:
         """
         violations: MutableSequence[m.Tests.Violation] = []
         approved = approved_exceptions or {}
-        hierarchy = layer_hierarchy or c.Tests.layer_dict()
+        hierarchy = layer_hierarchy or u.Tests.layer_dict()
         for file_path in files:
             file_violations = cls._scan_file(file_path, approved, hierarchy)
             violations.extend(file_violations)

@@ -1,4 +1,4 @@
-"""Extracted mixin for flext_tests."""
+"""Validator utilities mixin for flext-tests."""
 
 from __future__ import annotations
 
@@ -11,6 +11,48 @@ import flext_tests.typings as tests_typings
 
 class FlextTestsValidatorUtilitiesMixin:
     """Validator utilities for architecture validation."""
+
+    # NOTE (multi-agent): validator_rule/path_pattern_matches/layer_dict moved
+    # here from c.Tests constants facet (declaration purity, mro-i6nq.11).
+    @staticmethod
+    def validator_rule(rule_id: str) -> tests_typings.t.StrPair:
+        """Resolve one validator rule (severity, description) by rule id."""
+        attr_name = "VALIDATOR_RULE_" + rule_id.replace("-", "_")
+        rule: tests_typings.t.StrPair = getattr(tests_constants.c.Tests, attr_name)
+        return rule
+
+    @staticmethod
+    def path_pattern_matches(value: str, pattern: str) -> bool:
+        """Check whether one validator path pattern matches value."""
+        compiled = tests_constants.c.Tests.VALIDATOR_APPROVED_PATH_REGEX_BY_PATTERN.get(
+            pattern,
+        )
+        return compiled.search(value) is not None if compiled else False
+
+    @staticmethod
+    def layer_dict() -> tests_typings.t.IntMapping:
+        """Return the architecture layer hierarchy as a mapping."""
+        constants = tests_constants.c.Tests
+        return {
+            "constants": constants.LAYER_CONSTANTS,
+            "typings": constants.LAYER_TYPINGS,
+            "protocols": constants.LAYER_PROTOCOLS,
+            "settings": constants.LAYER_CONFIG,
+            "runtime": constants.LAYER_RUNTIME,
+            "exceptions": constants.LAYER_EXCEPTIONS,
+            "result": constants.LAYER_RESULT,
+            "loggings": constants.LAYER_LOGGINGS,
+            "models": constants.LAYER_MODELS,
+            "utilities": constants.LAYER_UTILITIES,
+            "mixins": constants.LAYER_MIXINS,
+            "container": constants.LAYER_CONTAINER,
+            "service": constants.LAYER_SERVICE,
+            "context": constants.LAYER_CONTEXT,
+            "handlers": constants.LAYER_HANDLERS,
+            "dispatcher": constants.LAYER_DISPATCHER,
+            "registry": constants.LAYER_REGISTRY,
+            "decorators": constants.LAYER_DECORATORS,
+        }
 
     @staticmethod
     def create_violation(
@@ -34,7 +76,7 @@ class FlextTestsValidatorUtilitiesMixin:
             Violation model instance
 
         """
-        severity, desc = tests_constants.c.Tests.validator_rule(rule_id)
+        severity, desc = FlextTestsValidatorUtilitiesMixin.validator_rule(rule_id)
         description = f"{desc}: {extra_desc}" if extra_desc else desc
         line = lines[line_number - 1] if line_number <= len(lines) else ""
         return tests_models.m.Tests.Violation(
@@ -88,7 +130,7 @@ class FlextTestsValidatorUtilitiesMixin:
         patterns = tuple(approved.get(rule_id, ())) + tuple(extra_patterns)
         file_str = str(file_path)
         return any(
-            tests_constants.c.Tests.path_pattern_matches(file_str, pattern)
+            FlextTestsValidatorUtilitiesMixin.path_pattern_matches(file_str, pattern)
             for pattern in patterns
         )
 
