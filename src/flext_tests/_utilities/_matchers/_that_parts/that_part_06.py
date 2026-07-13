@@ -4,16 +4,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from flext_tests import c, m, t
 from flext_tests._utilities._matchers._that_parts.that_part_05 import (
     FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixinPart05,
 )
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-from flext_tests.constants import c
-from flext_tests.models import m
-from flext_tests.typings import t
 
 if TYPE_CHECKING:
-    from flext_tests.protocols import p
+    from flext_tests import p
 
 
 class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart05):

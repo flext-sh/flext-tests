@@ -5,8 +5,7 @@ from __future__ import annotations
 import sys
 from typing import TYPE_CHECKING, Annotated, ClassVar
 
-from flext_infra.models import m
-from flext_infra.utilities import u
+from flext_infra import m, u
 from flext_tests import t
 from flext_tests._models._matchers_parts.matchers_part_01 import (
     FlextTestsMatchersModelsMixin as FlextTestsMatchersModelsMixinPart01,

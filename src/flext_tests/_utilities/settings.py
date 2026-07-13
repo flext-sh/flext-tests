@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from unittest.mock import patch
 
 from flext_core import FlextSettings, settings
-from flext_tests.typings import t
+from flext_tests import t
 
 
 class FlextTestsConfigHelpersUtilitiesMixin:

@@ -19,12 +19,10 @@ from pathlib import Path
 from typing import TYPE_CHECKING, TypeIs
 
 from flext_infra import u
-from flext_tests.constants import c
-from flext_tests.models import m
-from flext_tests.typings import t
+from flext_tests import c, m, t
 
 if TYPE_CHECKING:
-    from flext_tests.protocols import p
+    from flext_tests import p
 
 type _DeepPredicate = Callable[[t.Tests.TestobjectSerializable], bool]
 

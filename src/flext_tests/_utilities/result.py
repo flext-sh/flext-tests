@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_tests.constants import c
+from flext_tests import c
 
 if TYPE_CHECKING:
     from types import EllipsisType
 
-    from flext_tests.protocols import p
+    from flext_tests import p
 
 
 class FlextTestsResultUtilitiesMixin:

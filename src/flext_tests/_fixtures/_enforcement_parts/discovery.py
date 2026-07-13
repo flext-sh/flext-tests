@@ -6,8 +6,7 @@ from importlib import import_module
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from flext_tests import c, p, r, t
-from flext_tests.utilities import u
+from flext_tests import c, p, r, t, u
 
 if TYPE_CHECKING:
     import pytest

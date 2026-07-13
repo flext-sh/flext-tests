@@ -13,9 +13,7 @@ from pathlib import Path
 from typing import ClassVar
 
 from flext_core import r
-from flext_tests.models import m
-from flext_tests.protocols import p
-from flext_tests.typings import t
+from flext_tests import m, p, t
 
 
 class FlextTestsValidatorModels:

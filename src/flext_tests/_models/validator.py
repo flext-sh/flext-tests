@@ -10,10 +10,8 @@ from collections.abc import MutableMapping
 from pathlib import Path
 from typing import Annotated, Self
 
-from flext_infra.models import m
-from flext_infra.utilities import u
-from flext_tests.constants import c
-from flext_tests.typings import t
+from flext_infra import m, u
+from flext_tests import c, t
 
 
 class FlextTestsValidatorModelsMixin:

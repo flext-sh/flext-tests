@@ -12,7 +12,7 @@ from flext_tests._utilities._files._creation import (
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 if TYPE_CHECKING:
-    from flext_tests.protocols import p
+    from flext_tests import p
 
 
 class FlextTestsFilesComparisonMixin:

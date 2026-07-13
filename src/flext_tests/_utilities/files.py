@@ -8,8 +8,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_cli import u as cli_u
-from flext_tests.models import m
-from flext_tests.typings import t
+from flext_tests import m, t
 
 
 class FlextTestsFilesUtilitiesMixin:

@@ -4,8 +4,7 @@ from __future__ import annotations
 
 from typing import Annotated, ClassVar
 
-from flext_infra.models import m
-from flext_infra.utilities import u
+from flext_infra import m, u
 from flext_tests import t
 
 

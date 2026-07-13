@@ -6,11 +6,10 @@ from pathlib import Path
 from typing import Annotated
 
 from flext_infra import m, u
+from flext_tests import c, t
 from flext_tests._models._filesystem_parts.filesystem_part_01 import (
     FlextTestsFilesystemModelsMixin as FlextTestsFilesystemModelsMixinPart01,
 )
-from flext_tests.constants import c
-from flext_tests.typings import t
 
 
 class FlextTestsFilesystemModelsMixin(FlextTestsFilesystemModelsMixinPart01):

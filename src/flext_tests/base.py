@@ -5,8 +5,7 @@ from __future__ import annotations
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Self
 
-from flext_core import FlextContainer, FlextService
-from flext_core.models import m
+from flext_core import FlextContainer, FlextService, m
 from flext_tests import p, t
 from flext_tests._settings import FlextTestsSettings
 

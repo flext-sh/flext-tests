@@ -5,14 +5,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_core import r
-from flext_tests.typings import t
+from flext_tests import t
 
 if TYPE_CHECKING:
     from collections.abc import (
         MutableSequence,
     )
 
-    from flext_tests.protocols import p
+    from flext_tests import p
 
 
 class FlextTestsGenericHelpersUtilitiesMixin:

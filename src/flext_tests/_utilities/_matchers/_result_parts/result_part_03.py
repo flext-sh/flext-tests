@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import overload
 
-from flext_core.protocols import p
+from flext_core import p
 from flext_tests import c, m, t
 from flext_tests._utilities._matchers._assertions import (
     FlextTestsMatchersAssertionsMixin,
