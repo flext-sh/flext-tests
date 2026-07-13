@@ -10,9 +10,9 @@ from __future__ import annotations
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
     "._assertions": ("FlextTestsMatchersAssertionsMixin",),
     "._containment": ("FlextTestsMatchersContainmentMixin",),
-    "._result_parts.result_part_03": ("FlextTestsMatchersResultMixin",),
+    "._result": ("FlextTestsMatchersResultMixin",),
     "._scope": ("FlextTestsMatchersScopeMixin",),
-    "._that_parts.that_part_06": ("FlextTestsMatchersThatMixin",),
+    "._that": ("FlextTestsMatchersThatMixin",),
     "._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
 }
 
@@ -20,10 +20,7 @@ LAZY_MODULES: dict[str, tuple[str, ...]] = {
 LAZY_ALIAS_GROUPS: dict[str, tuple[tuple[str, str], ...]] = {}
 
 
-CHILD_MODULE_PATHS: tuple[str, ...] = (
-    "._result_parts",
-    "._that_parts",
-)
+CHILD_MODULE_PATHS: tuple[str, ...] = ()
 
 
 EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
@@ -36,6 +33,4 @@ PUBLIC_EXPORTS: tuple[str, ...] = (
     "FlextTestsMatchersScopeMixin",
     "FlextTestsMatchersThatMixin",
     "FlextTestsMatchersTypeGuardsMixin",
-    "_result_parts",
-    "_that_parts",
 )
