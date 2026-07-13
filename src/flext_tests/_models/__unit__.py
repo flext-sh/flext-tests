@@ -8,13 +8,13 @@ lazy (PEP 562) import access; sibling ``__all__`` discovery is the upstream sour
 from __future__ import annotations
 
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
-    "._filesystem_parts.filesystem_part_02": ("FlextTestsFilesystemModelsMixin",),
-    "._matchers_parts.matchers_part_03": ("FlextTestsMatchersModelsMixin",),
     ".base": ("FlextTestsBaseModelsMixin",),
     ".batch": ("FlextTestsBatchModelsMixin",),
     ".docker": ("FlextTestsDockerModelsMixin",),
     ".domains": ("FlextTestsDomainModelsMixin",),
+    ".filesystem": ("FlextTestsFilesystemModelsMixin",),
     ".make": ("FlextTestsMakeModelsMixin",),
+    ".matchers": ("FlextTestsMatchersModelsMixin",),
     ".validator": ("FlextTestsValidatorModelsMixin",),
 }
 
@@ -22,10 +22,7 @@ LAZY_MODULES: dict[str, tuple[str, ...]] = {
 LAZY_ALIAS_GROUPS: dict[str, tuple[tuple[str, str], ...]] = {}
 
 
-CHILD_MODULE_PATHS: tuple[str, ...] = (
-    "._filesystem_parts",
-    "._matchers_parts",
-)
+CHILD_MODULE_PATHS: tuple[str, ...] = ()
 
 
 EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
@@ -40,6 +37,4 @@ PUBLIC_EXPORTS: tuple[str, ...] = (
     "FlextTestsMakeModelsMixin",
     "FlextTestsMatchersModelsMixin",
     "FlextTestsValidatorModelsMixin",
-    "_filesystem_parts",
-    "_matchers_parts",
 )
