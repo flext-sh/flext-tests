@@ -8,43 +8,12 @@ lazy (PEP 562) import access; sibling ``__all__`` discovery is the upstream sour
 from __future__ import annotations
 
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
-
-    "._assertions": (
-
-        "FlextTestsMatchersAssertionsMixin",
-
-    ),
-
-    "._containment": (
-
-        "FlextTestsMatchersContainmentMixin",
-
-    ),
-
-    "._result": (
-
-        "FlextTestsMatchersResultMixin",
-
-    ),
-
-    "._scope": (
-
-        "FlextTestsMatchersScopeMixin",
-
-    ),
-
-    "._that": (
-
-        "FlextTestsMatchersThatMixin",
-
-    ),
-
-    "._typeguards": (
-
-        "FlextTestsMatchersTypeGuardsMixin",
-
-    ),
-
+    "._assertions": ("FlextTestsMatchersAssertionsMixin",),
+    "._containment": ("FlextTestsMatchersContainmentMixin",),
+    "._result": ("FlextTestsMatchersResultMixin",),
+    "._scope": ("FlextTestsMatchersScopeMixin",),
+    "._that": ("FlextTestsMatchersThatMixin",),
+    "._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
 }
 
 
@@ -58,17 +27,10 @@ EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
 
 
 PUBLIC_EXPORTS: tuple[str, ...] = (
-
     "FlextTestsMatchersAssertionsMixin",
-
     "FlextTestsMatchersContainmentMixin",
-
     "FlextTestsMatchersResultMixin",
-
     "FlextTestsMatchersScopeMixin",
-
     "FlextTestsMatchersThatMixin",
-
     "FlextTestsMatchersTypeGuardsMixin",
-
 )

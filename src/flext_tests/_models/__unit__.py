@@ -8,55 +8,14 @@ lazy (PEP 562) import access; sibling ``__all__`` discovery is the upstream sour
 from __future__ import annotations
 
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
-
-    ".base": (
-
-        "FlextTestsBaseModelsMixin",
-
-    ),
-
-    ".batch": (
-
-        "FlextTestsBatchModelsMixin",
-
-    ),
-
-    ".docker": (
-
-        "FlextTestsDockerModelsMixin",
-
-    ),
-
-    ".domains": (
-
-        "FlextTestsDomainModelsMixin",
-
-    ),
-
-    ".filesystem": (
-
-        "FlextTestsFilesystemModelsMixin",
-
-    ),
-
-    ".make": (
-
-        "FlextTestsMakeModelsMixin",
-
-    ),
-
-    ".matchers": (
-
-        "FlextTestsMatchersModelsMixin",
-
-    ),
-
-    ".validator": (
-
-        "FlextTestsValidatorModelsMixin",
-
-    ),
-
+    ".base": ("FlextTestsBaseModelsMixin",),
+    ".batch": ("FlextTestsBatchModelsMixin",),
+    ".docker": ("FlextTestsDockerModelsMixin",),
+    ".domains": ("FlextTestsDomainModelsMixin",),
+    ".filesystem": ("FlextTestsFilesystemModelsMixin",),
+    ".make": ("FlextTestsMakeModelsMixin",),
+    ".matchers": ("FlextTestsMatchersModelsMixin",),
+    ".validator": ("FlextTestsValidatorModelsMixin",),
 }
 
 
@@ -70,21 +29,12 @@ EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
 
 
 PUBLIC_EXPORTS: tuple[str, ...] = (
-
     "FlextTestsBaseModelsMixin",
-
     "FlextTestsBatchModelsMixin",
-
     "FlextTestsDockerModelsMixin",
-
     "FlextTestsDomainModelsMixin",
-
     "FlextTestsFilesystemModelsMixin",
-
     "FlextTestsMakeModelsMixin",
-
     "FlextTestsMatchersModelsMixin",
-
     "FlextTestsValidatorModelsMixin",
-
 )

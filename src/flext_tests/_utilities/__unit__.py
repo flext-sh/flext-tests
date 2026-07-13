@@ -8,265 +8,78 @@ lazy (PEP 562) import access; sibling ``__all__`` discovery is the upstream sour
 from __future__ import annotations
 
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
-
-    "._files._assertions": (
-
-        "FlextTestsFilesAssertionsMixin",
-
-    ),
-
-    "._files._batch": (
-
-        "FlextTestsFilesBatchMixin",
-
-    ),
-
-    "._files._comparison": (
-
-        "FlextTestsFilesComparisonMixin",
-
-    ),
-
-    "._files._contexts": (
-
-        "FlextTestsFilesContextsMixin",
-
-    ),
-
-    "._files._creation": (
-
-        "FlextTestsFilesCreationMixin",
-
-    ),
-
-    "._files._info": (
-
-        "FlextTestsFilesInfoMixin",
-
-    ),
-
-    "._files._lifecycle": (
-
-        "FlextTestsFilesLifecycleMixin",
-
-    ),
-
-    "._files._reading": (
-
-        "FlextTestsFilesReadingMixin",
-
-    ),
-
-    "._matchers._assertions": (
-
-        "FlextTestsMatchersAssertionsMixin",
-
-    ),
-
-    "._matchers._containment": (
-
-        "FlextTestsMatchersContainmentMixin",
-
-    ),
-
-    "._matchers._result": (
-
-        "FlextTestsMatchersResultMixin",
-
-    ),
-
-    "._matchers._scope": (
-
-        "FlextTestsMatchersScopeMixin",
-
-    ),
-
-    "._matchers._that": (
-
-        "FlextTestsMatchersThatMixin",
-
-    ),
-
-    "._matchers._typeguards": (
-
-        "FlextTestsMatchersTypeGuardsMixin",
-
-    ),
-
-    ".container": (
-
-        "FlextTestsContainerHelpersUtilitiesMixin",
-
-    ),
-
-    ".files": (
-
-        "FlextTestsFilesUtilitiesMixin",
-
-    ),
-
-    ".generic": (
-
-        "FlextTestsGenericHelpersUtilitiesMixin",
-
-    ),
-
-    ".handler": (
-
-        "FlextTestsHandlerHelpersUtilitiesMixin",
-
-    ),
-
-    ".make": (
-
-        "FlextTestsMakeUtilitiesMixin",
-
-    ),
-
-    ".make_contract": (
-
-        "FlextTestsMakeContractUtilitiesMixin",
-
-    ),
-
-    ".make_parsing": (
-
-        "FlextTestsMakeParsingUtilitiesMixin",
-
-    ),
-
-    ".make_registry": (
-
-        "FlextTestsMakeRegistryUtilitiesMixin",
-
-    ),
-
-    ".make_rendering": (
-
-        "FlextTestsMakeRenderingUtilitiesMixin",
-
-    ),
-
-    ".matchers": (
-
-        "FlextTestsMatchersUtilities",
-
-        "tm",
-
-    ),
-
-    ".payload": (
-
-        "FlextTestsPayloadUtilities",
-
-    ),
-
-    ".result": (
-
-        "FlextTestsResultUtilitiesMixin",
-
-    ),
-
-    ".settings": (
-
-        "FlextTestsConfigHelpersUtilitiesMixin",
-
-    ),
-
-    ".testcontext": (
-
-        "FlextTestsTestContextUtilitiesMixin",
-
-    ),
-
-    ".validator": (
-
-        "FlextTestsValidatorUtilitiesMixin",
-
-    ),
-
+    "._files._assertions": ("FlextTestsFilesAssertionsMixin",),
+    "._files._batch": ("FlextTestsFilesBatchMixin",),
+    "._files._comparison": ("FlextTestsFilesComparisonMixin",),
+    "._files._contexts": ("FlextTestsFilesContextsMixin",),
+    "._files._creation": ("FlextTestsFilesCreationMixin",),
+    "._files._info": ("FlextTestsFilesInfoMixin",),
+    "._files._lifecycle": ("FlextTestsFilesLifecycleMixin",),
+    "._files._reading": ("FlextTestsFilesReadingMixin",),
+    "._matchers._assertions": ("FlextTestsMatchersAssertionsMixin",),
+    "._matchers._containment": ("FlextTestsMatchersContainmentMixin",),
+    "._matchers._result": ("FlextTestsMatchersResultMixin",),
+    "._matchers._scope": ("FlextTestsMatchersScopeMixin",),
+    "._matchers._that": ("FlextTestsMatchersThatMixin",),
+    "._matchers._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
+    ".container": ("FlextTestsContainerHelpersUtilitiesMixin",),
+    ".files": ("FlextTestsFilesUtilitiesMixin",),
+    ".generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
+    ".handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
+    ".make": ("FlextTestsMakeUtilitiesMixin",),
+    ".make_contract": ("FlextTestsMakeContractUtilitiesMixin",),
+    ".make_parsing": ("FlextTestsMakeParsingUtilitiesMixin",),
+    ".make_registry": ("FlextTestsMakeRegistryUtilitiesMixin",),
+    ".make_rendering": ("FlextTestsMakeRenderingUtilitiesMixin",),
+    ".matchers": ("FlextTestsMatchersUtilities", "tm"),
+    ".payload": ("FlextTestsPayloadUtilities",),
+    ".result": ("FlextTestsResultUtilitiesMixin",),
+    ".settings": ("FlextTestsConfigHelpersUtilitiesMixin",),
+    ".testcontext": ("FlextTestsTestContextUtilitiesMixin",),
+    ".validator": ("FlextTestsValidatorUtilitiesMixin",),
 }
 
 
 LAZY_ALIAS_GROUPS: dict[str, tuple[tuple[str, str], ...]] = {}
 
 
-CHILD_MODULE_PATHS: tuple[str, ...] = (
-
-    "._files",
-
-    "._matchers",
-
-)
+CHILD_MODULE_PATHS: tuple[str, ...] = ("._files", "._matchers")
 
 
 EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
 
 
 PUBLIC_EXPORTS: tuple[str, ...] = (
-
     "FlextTestsConfigHelpersUtilitiesMixin",
-
     "FlextTestsContainerHelpersUtilitiesMixin",
-
     "FlextTestsFilesAssertionsMixin",
-
     "FlextTestsFilesBatchMixin",
-
     "FlextTestsFilesComparisonMixin",
-
     "FlextTestsFilesContextsMixin",
-
     "FlextTestsFilesCreationMixin",
-
     "FlextTestsFilesInfoMixin",
-
     "FlextTestsFilesLifecycleMixin",
-
     "FlextTestsFilesReadingMixin",
-
     "FlextTestsFilesUtilitiesMixin",
-
     "FlextTestsGenericHelpersUtilitiesMixin",
-
     "FlextTestsHandlerHelpersUtilitiesMixin",
-
     "FlextTestsMakeContractUtilitiesMixin",
-
     "FlextTestsMakeParsingUtilitiesMixin",
-
     "FlextTestsMakeRegistryUtilitiesMixin",
-
     "FlextTestsMakeRenderingUtilitiesMixin",
-
     "FlextTestsMakeUtilitiesMixin",
-
     "FlextTestsMatchersAssertionsMixin",
-
     "FlextTestsMatchersContainmentMixin",
-
     "FlextTestsMatchersResultMixin",
-
     "FlextTestsMatchersScopeMixin",
-
     "FlextTestsMatchersThatMixin",
-
     "FlextTestsMatchersTypeGuardsMixin",
-
     "FlextTestsMatchersUtilities",
-
     "FlextTestsPayloadUtilities",
-
     "FlextTestsResultUtilitiesMixin",
-
     "FlextTestsTestContextUtilitiesMixin",
-
     "FlextTestsValidatorUtilitiesMixin",
-
     "_files",
-
     "_matchers",
-
     "tm",
-
 )

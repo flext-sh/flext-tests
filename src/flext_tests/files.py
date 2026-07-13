@@ -19,7 +19,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import ClassVar, override
 
-from flext_tests import m, p, r, s, t
+from flext_tests import m, p, r, s
 from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
 from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
 
@@ -35,13 +35,15 @@ class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixi
         self._initialize_file_lifecycle(base_dir)
 
     @override
-    def execute(self) -> p.Result[t.JsonValue]:
-        """Execute service - returns success for file manager.
+    def execute(self) -> p.Result[p.Base]:
+        """Execute is not the file-manager API surface.
 
-        FlextTestsFiles is a utility service that doesn't have a specific
-        execution result. Returns success by default.
+        FlextTestsFiles is a utility service whose real API is its file
+        methods (create, compare, info, ...); execute has no domain result.
         """
-        return r[t.JsonValue].ok("")
+        return r[p.Base].fail(
+            "Use specific file methods: create, compare, read, info, ..."
+        )
 
 
 tf = FlextTestsFiles
