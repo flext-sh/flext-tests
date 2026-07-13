@@ -14,7 +14,10 @@ from flext_tests._docker_parts.docker_part_03 import (
 )
 
 if TYPE_CHECKING:
-    from docker.containers import Container
+    # NOTE (multi-agent, mro-f8vk / kimi): in docker SDK 7.x Container lives
+    # in docker.models.containers; docker.containers does not exist (checked
+    # installed package + docker-stubs).
+    from docker.models.containers import Container
 
 
 class FlextTestsDocker(FlextTestsDockerPart03):
