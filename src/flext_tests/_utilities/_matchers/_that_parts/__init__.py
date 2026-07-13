@@ -1,26 +1,42 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""That Parts package."""
+"""Flext Tests. Utilities. Matchers. That Parts package."""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import build_lazy_import_map, install_lazy_exports
+from flext_core.lazy import (
+    build_lazy_import_map,
+    install_lazy_exports,
+)
+
+# mro-i6nq.10: The package consumes its manifest's public-export contract.
+from flext_tests._utilities._matchers._that_parts.__unit__ import (
+    LAZY_ALIAS_GROUPS as _LAZY_ALIAS_GROUPS,
+    LAZY_MODULES as _LAZY_MODULES,
+    PUBLIC_EXPORTS as _PUBLIC_EXPORTS,
+)
 
 if TYPE_CHECKING:
     from flext_tests._utilities._matchers._that_parts.that_part_06 import (
         FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixin,
     )
+
+    # mro-i6nq.10: Static declaration mirrors the installer-owned runtime binding.
+    __all__: tuple[str, ...]
+
+
 _LAZY_IMPORTS = build_lazy_import_map(
-    {
-        ".that_part_06": ("FlextTestsMatchersThatMixin",),
-    },
+    _LAZY_MODULES,
+    alias_groups=_LAZY_ALIAS_GROUPS,
+    sort_keys=False,
 )
 
 
+# mro-i6nq.10: The installer publishes __all__ from the manifest's literal ABI.
 install_lazy_exports(
     __name__,
     globals(),
     _LAZY_IMPORTS,
-    publish_all=False,
+    public_exports=_PUBLIC_EXPORTS,
 )

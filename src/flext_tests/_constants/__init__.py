@@ -1,5 +1,5 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""Constants package."""
+"""Flext Tests. Constants package."""
 
 from __future__ import annotations
 
@@ -11,7 +11,17 @@ from flext_core.lazy import (
     merge_lazy_imports,
 )
 
+# mro-i6nq.10: The package consumes its manifest's public-export contract.
+from flext_tests._constants.__unit__ import (
+    CHILD_MODULE_PATHS as _CHILD_MODULE_PATHS,
+    EXCLUDED_LAZY_NAMES as _EXCLUDED_LAZY_NAMES,
+    LAZY_ALIAS_GROUPS as _LAZY_ALIAS_GROUPS,
+    LAZY_MODULES as _LAZY_MODULES,
+    PUBLIC_EXPORTS as _PUBLIC_EXPORTS,
+)
+
 if TYPE_CHECKING:
+    from flext_tests._constants import _validator_parts as _validator_parts
     from flext_tests._constants._validator_parts.validator_part_03 import (
         FlextTestsConstantsValidator as FlextTestsConstantsValidator,
     )
@@ -30,45 +40,27 @@ if TYPE_CHECKING:
     from flext_tests._constants.matcher import (
         FlextTestsConstantsMatcher as FlextTestsConstantsMatcher,
     )
+
+    # mro-i6nq.10: Static declaration mirrors the installer-owned runtime binding.
+    __all__: tuple[str, ...]
+
+
 _LAZY_IMPORTS = merge_lazy_imports(
-    ("._validator_parts",),
+    _CHILD_MODULE_PATHS,
     build_lazy_import_map(
-        {
-            "._validator_parts": ("_validator_parts",),
-            "._validator_parts.validator_part_03": ("FlextTestsConstantsValidator",),
-            ".data_cases": ("FlextTestsConstantsDataCases",),
-            ".docker": ("FlextTestsConstantsDocker",),
-            ".files": ("FlextTestsConstantsFiles",),
-            ".make": ("FlextTestsConstantsMake",),
-            ".matcher": ("FlextTestsConstantsMatcher",),
-        },
+        _LAZY_MODULES,
+        alias_groups=_LAZY_ALIAS_GROUPS,
+        sort_keys=False,
     ),
-    exclude_names=(
-        "cleanup_submodule_namespace",
-        "install_lazy_exports",
-        "lazy_getattr",
-        "logger",
-        "merge_lazy_imports",
-        "output",
-        "output_reporting",
-        "pytest_addoption",
-        "pytest_collect_file",
-        "pytest_collection_modifyitems",
-        "pytest_configure",
-        "pytest_runtest_setup",
-        "pytest_runtest_teardown",
-        "pytest_sessionfinish",
-        "pytest_sessionstart",
-        "pytest_terminal_summary",
-        "pytest_warning_recorded",
-    ),
+    exclude_names=_EXCLUDED_LAZY_NAMES,
     module_name=__name__,
 )
 
 
+# mro-i6nq.10: The installer publishes __all__ from the manifest's literal ABI.
 install_lazy_exports(
     __name__,
     globals(),
     _LAZY_IMPORTS,
-    publish_all=False,
+    public_exports=_PUBLIC_EXPORTS,
 )

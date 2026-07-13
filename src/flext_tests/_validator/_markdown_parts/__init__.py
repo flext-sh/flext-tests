@@ -1,26 +1,42 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""Markdown Parts package."""
+"""Flext Tests. Validator. Markdown Parts package."""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import build_lazy_import_map, install_lazy_exports
+from flext_core.lazy import (
+    build_lazy_import_map,
+    install_lazy_exports,
+)
+
+# mro-i6nq.10: The package consumes its manifest's public-export contract.
+from flext_tests._validator._markdown_parts.__unit__ import (
+    LAZY_ALIAS_GROUPS as _LAZY_ALIAS_GROUPS,
+    LAZY_MODULES as _LAZY_MODULES,
+    PUBLIC_EXPORTS as _PUBLIC_EXPORTS,
+)
 
 if TYPE_CHECKING:
     from flext_tests._validator._markdown_parts.markdown_part_02 import (
         FlextValidatorMarkdown as FlextValidatorMarkdown,
     )
+
+    # mro-i6nq.10: Static declaration mirrors the installer-owned runtime binding.
+    __all__: tuple[str, ...]
+
+
 _LAZY_IMPORTS = build_lazy_import_map(
-    {
-        ".markdown_part_02": ("FlextValidatorMarkdown",),
-    },
+    _LAZY_MODULES,
+    alias_groups=_LAZY_ALIAS_GROUPS,
+    sort_keys=False,
 )
 
 
+# mro-i6nq.10: The installer publishes __all__ from the manifest's literal ABI.
 install_lazy_exports(
     __name__,
     globals(),
     _LAZY_IMPORTS,
-    publish_all=False,
+    public_exports=_PUBLIC_EXPORTS,
 )

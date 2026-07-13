@@ -1,5 +1,5 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""Fixtures package."""
+"""Flext Tests. Fixtures package."""
 
 from __future__ import annotations
 
@@ -11,7 +11,17 @@ from flext_core.lazy import (
     merge_lazy_imports,
 )
 
+# mro-i6nq.10: The package consumes its manifest's public-export contract.
+from flext_tests._fixtures.__unit__ import (
+    CHILD_MODULE_PATHS as _CHILD_MODULE_PATHS,
+    EXCLUDED_LAZY_NAMES as _EXCLUDED_LAZY_NAMES,
+    LAZY_ALIAS_GROUPS as _LAZY_ALIAS_GROUPS,
+    LAZY_MODULES as _LAZY_MODULES,
+    PUBLIC_EXPORTS as _PUBLIC_EXPORTS,
+)
+
 if TYPE_CHECKING:
+    from flext_tests._fixtures import _enforcement_parts as _enforcement_parts
     from flext_tests._fixtures._enforcement_parts.build import (
         build_items as build_items,
     )
@@ -64,89 +74,27 @@ if TYPE_CHECKING:
         test_context as test_context,
         test_runtime as test_runtime,
     )
+
+    # mro-i6nq.10: Static declaration mirrors the installer-owned runtime binding.
+    __all__: tuple[str, ...]
+
+
 _LAZY_IMPORTS = merge_lazy_imports(
-    ("._enforcement_parts",),
+    _CHILD_MODULE_PATHS,
     build_lazy_import_map(
-        {
-            "._enforcement_parts": ("_enforcement_parts",),
-            "._enforcement_parts.build": ("build_items",),
-            "._enforcement_parts.config": (
-                "SessionConfig",
-                "resolve_config",
-            ),
-            "._enforcement_parts.discovery": (
-                "collected_project_names",
-                "collected_validator_targets",
-                "load_infra_report",
-            ),
-            "._enforcement_parts.validators": (
-                "build_tests_validator_items",
-                "dispatch_infra_detector",
-            ),
-            ".enforcement": (
-                "EnforcementBuildContext",
-                "EnforcementCollector",
-                "EnforcementContribution",
-                "EnforcementItem",
-                "EnforcementViolationError",
-                "active_rules",
-                "builder_for",
-                "builders",
-                "clear",
-                "discover_workspace_root",
-                "get",
-                "register",
-                "split_csv",
-                "warning_categories",
-            ),
-            ".markdown_validation": (
-                "MarkdownCodeBlockCollector",
-                "MarkdownCodeBlockItem",
-                "MarkdownValidationError",
-            ),
-            ".project_metadata": (
-                "project_metadata",
-                "project_tool_flext",
-            ),
-            ".settings": (
-                "clean_container",
-                "reset_settings",
-                "sample_data",
-                "settings",
-                "settings_factory",
-                "temp_dir",
-                "temp_file",
-                "test_context",
-                "test_runtime",
-            ),
-        },
+        _LAZY_MODULES,
+        alias_groups=_LAZY_ALIAS_GROUPS,
+        sort_keys=False,
     ),
-    exclude_names=(
-        "cleanup_submodule_namespace",
-        "install_lazy_exports",
-        "lazy_getattr",
-        "logger",
-        "merge_lazy_imports",
-        "output",
-        "output_reporting",
-        "pytest_addoption",
-        "pytest_collect_file",
-        "pytest_collection_modifyitems",
-        "pytest_configure",
-        "pytest_runtest_setup",
-        "pytest_runtest_teardown",
-        "pytest_sessionfinish",
-        "pytest_sessionstart",
-        "pytest_terminal_summary",
-        "pytest_warning_recorded",
-    ),
+    exclude_names=_EXCLUDED_LAZY_NAMES,
     module_name=__name__,
 )
 
 
+# mro-i6nq.10: The installer publishes __all__ from the manifest's literal ABI.
 install_lazy_exports(
     __name__,
     globals(),
     _LAZY_IMPORTS,
-    publish_all=False,
+    public_exports=_PUBLIC_EXPORTS,
 )
