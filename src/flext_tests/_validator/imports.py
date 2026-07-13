@@ -13,10 +13,9 @@ from pathlib import Path
 from typing import override
 
 from flext_tests import c, m, t, u
-from flext_tests._validator.models import FlextTestsValidatorModels
 
 
-class FlextValidatorImports(FlextTestsValidatorModels.Tests.ScannerMixin):
+class FlextValidatorImports(u.Tests.ValidatorScannerMixin):
     """Import validation methods for FlextTestsValidator."""
 
     _VALIDATOR_KEY = c.Tests.VALIDATOR_IMPORTS_KEY

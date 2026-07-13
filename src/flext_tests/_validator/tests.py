@@ -13,10 +13,9 @@ from pathlib import Path
 from typing import override
 
 from flext_tests import c, m, t, u
-from flext_tests._validator.models import FlextTestsValidatorModels
 
 
-class FlextValidatorTests(FlextTestsValidatorModels.Tests.ScannerMixin):
+class FlextValidatorTests(u.Tests.ValidatorScannerMixin):
     """Test validation methods for FlextTestsValidator.
 
     Uses c.Tests.Validator, m.Tests.Validator, u.Tests.Validator.

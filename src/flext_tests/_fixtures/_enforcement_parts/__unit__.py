@@ -8,31 +8,75 @@ lazy (PEP 562) import access; sibling ``__all__`` discovery is the upstream sour
 from __future__ import annotations
 
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
-    ".build": ("build_items",),
+
+    ".build": (
+
+        "build_items",
+
+    ),
+
     ".config": (
+
         "SessionConfig",
+
         "active_rules",
+
         "discover_workspace_root",
+
         "resolve_config",
+
         "split_csv",
+
     ),
+
     ".discovery": (
+
         "collected_project_names",
+
         "collected_validator_targets",
+
         "load_infra_report",
+
     ),
-    ".items": ("EnforcementCollector", "EnforcementItem", "EnforcementViolationError"),
+
+    ".items": (
+
+        "EnforcementCollector",
+
+        "EnforcementItem",
+
+        "EnforcementViolationError",
+
+    ),
+
     ".registry": (
+
         "EnforcementBuildContext",
+
         "EnforcementContribution",
+
         "builder_for",
+
         "builders",
+
         "clear",
+
         "get",
+
         "register",
+
         "warning_categories",
+
     ),
-    ".validators": ("build_tests_validator_items", "dispatch_infra_detector"),
+
+    ".validators": (
+
+        "build_tests_validator_items",
+
+        "dispatch_infra_detector",
+
+    ),
+
 }
 
 
@@ -46,27 +90,51 @@ EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
 
 
 PUBLIC_EXPORTS: tuple[str, ...] = (
+
     "EnforcementBuildContext",
+
     "EnforcementCollector",
+
     "EnforcementContribution",
+
     "EnforcementItem",
+
     "EnforcementViolationError",
+
     "SessionConfig",
+
     "active_rules",
+
     "build_items",
+
     "build_tests_validator_items",
+
     "builder_for",
+
     "builders",
+
     "clear",
+
     "collected_project_names",
+
     "collected_validator_targets",
+
     "discover_workspace_root",
+
     "dispatch_infra_detector",
+
     "get",
+
     "hooks",
+
     "load_infra_report",
+
     "register",
+
     "resolve_config",
+
     "split_csv",
+
     "warning_categories",
+
 )

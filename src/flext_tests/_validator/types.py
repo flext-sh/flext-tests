@@ -7,10 +7,9 @@ from pathlib import Path
 from typing import override
 
 from flext_tests import c, m, t, u
-from flext_tests._validator.models import FlextTestsValidatorModels
 
 
-class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
+class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
     """Scan for forbidden typing constructs."""
 
     _VALIDATOR_KEY = c.Tests.VALIDATOR_TYPES_KEY

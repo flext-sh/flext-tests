@@ -8,14 +8,49 @@ lazy (PEP 562) import access; sibling ``__all__`` discovery is the upstream sour
 from __future__ import annotations
 
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
-    ".bypass": ("FlextValidatorBypass",),
-    ".imports": ("FlextValidatorImports",),
-    ".layer": ("FlextValidatorLayer",),
-    ".markdown": ("FlextValidatorMarkdown",),
-    ".models": ("FlextTestsValidatorModels",),
-    ".settings": ("FlextValidatorSettings",),
-    ".tests": ("FlextValidatorTests",),
-    ".types": ("FlextValidatorTypes",),
+
+    ".bypass": (
+
+        "FlextValidatorBypass",
+
+    ),
+
+    ".imports": (
+
+        "FlextValidatorImports",
+
+    ),
+
+    ".layer": (
+
+        "FlextValidatorLayer",
+
+    ),
+
+    ".markdown": (
+
+        "FlextValidatorMarkdown",
+
+    ),
+
+    ".settings": (
+
+        "FlextValidatorSettings",
+
+    ),
+
+    ".tests": (
+
+        "FlextValidatorTests",
+
+    ),
+
+    ".types": (
+
+        "FlextValidatorTypes",
+
+    ),
+
 }
 
 
@@ -29,12 +64,19 @@ EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
 
 
 PUBLIC_EXPORTS: tuple[str, ...] = (
-    "FlextTestsValidatorModels",
+
     "FlextValidatorBypass",
+
     "FlextValidatorImports",
+
     "FlextValidatorLayer",
+
     "FlextValidatorMarkdown",
+
     "FlextValidatorSettings",
+
     "FlextValidatorTests",
+
     "FlextValidatorTypes",
+
 )

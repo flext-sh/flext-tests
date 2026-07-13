@@ -127,7 +127,7 @@ class FlextValidatorLayer:
             file_violations = cls._scan_file(file_path, approved, hierarchy)
             violations.extend(file_violations)
         return r[m.Tests.ScanResult].ok(
-            m.Tests.ScanResult.create(
+            m.Tests.ScanResult(
                 validator_name=c.Tests.VALIDATOR_LAYER_KEY,
                 files_scanned=len(files),
                 violations=violations,

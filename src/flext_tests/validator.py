@@ -130,7 +130,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
             all_violations.extend(scan_result.violations)
             total_files = max(total_files, scan_result.files_scanned)
         return r[m.Tests.ScanResult].ok(
-            m.Tests.ScanResult.create(
+            m.Tests.ScanResult(
                 validator_name="all",
                 files_scanned=total_files,
                 violations=all_violations,

@@ -8,14 +8,55 @@ lazy (PEP 562) import access; sibling ``__all__`` discovery is the upstream sour
 from __future__ import annotations
 
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
-    "._assertions": ("FlextTestsFilesAssertionsMixin",),
-    "._batch": ("FlextTestsFilesBatchMixin",),
-    "._comparison": ("FlextTestsFilesComparisonMixin",),
-    "._contexts": ("FlextTestsFilesContextsMixin",),
-    "._creation": ("FlextTestsFilesCreationMixin",),
-    "._info": ("FlextTestsFilesInfoMixin",),
-    "._lifecycle": ("FlextTestsFilesLifecycleMixin",),
-    "._reading": ("FlextTestsFilesReadingMixin",),
+
+    "._assertions": (
+
+        "FlextTestsFilesAssertionsMixin",
+
+    ),
+
+    "._batch": (
+
+        "FlextTestsFilesBatchMixin",
+
+    ),
+
+    "._comparison": (
+
+        "FlextTestsFilesComparisonMixin",
+
+    ),
+
+    "._contexts": (
+
+        "FlextTestsFilesContextsMixin",
+
+    ),
+
+    "._creation": (
+
+        "FlextTestsFilesCreationMixin",
+
+    ),
+
+    "._info": (
+
+        "FlextTestsFilesInfoMixin",
+
+    ),
+
+    "._lifecycle": (
+
+        "FlextTestsFilesLifecycleMixin",
+
+    ),
+
+    "._reading": (
+
+        "FlextTestsFilesReadingMixin",
+
+    ),
+
 }
 
 
@@ -29,12 +70,21 @@ EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
 
 
 PUBLIC_EXPORTS: tuple[str, ...] = (
+
     "FlextTestsFilesAssertionsMixin",
+
     "FlextTestsFilesBatchMixin",
+
     "FlextTestsFilesComparisonMixin",
+
     "FlextTestsFilesContextsMixin",
+
     "FlextTestsFilesCreationMixin",
+
     "FlextTestsFilesInfoMixin",
+
     "FlextTestsFilesLifecycleMixin",
+
     "FlextTestsFilesReadingMixin",
+
 )

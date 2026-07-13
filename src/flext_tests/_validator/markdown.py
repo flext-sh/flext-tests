@@ -6,7 +6,6 @@ from collections.abc import MutableSequence
 from pathlib import Path
 
 from flext_tests import c, m, p, t, u
-from flext_tests._validator.models import FlextTestsValidatorModels
 
 
 class FlextValidatorMarkdown:
@@ -20,7 +19,7 @@ class FlextValidatorMarkdown:
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate Python code blocks in markdown files."""
-        return FlextTestsValidatorModels.Tests.ScanCommon.run_scan(
+        return u.Tests.validator_run_scan(
             files=list(paths),
             approved_exceptions=approved_exceptions,
             validator_name=c.Tests.VALIDATOR_MARKDOWN_KEY,

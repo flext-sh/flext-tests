@@ -8,98 +8,201 @@ lazy (PEP 562) import access; sibling ``__all__`` discovery is the upstream sour
 from __future__ import annotations
 
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
-    "._enforcement_parts.build": ("build_items",),
-    "._enforcement_parts.config": ("SessionConfig", "resolve_config"),
+
+    "._enforcement_parts.build": (
+
+        "build_items",
+
+    ),
+
+    "._enforcement_parts.config": (
+
+        "SessionConfig",
+
+        "resolve_config",
+
+    ),
+
     "._enforcement_parts.discovery": (
+
         "collected_project_names",
+
         "collected_validator_targets",
+
         "load_infra_report",
+
     ),
+
     "._enforcement_parts.validators": (
+
         "build_tests_validator_items",
+
         "dispatch_infra_detector",
+
     ),
+
     ".enforcement": (
+
         "EnforcementBuildContext",
+
         "EnforcementCollector",
+
         "EnforcementContribution",
+
         "EnforcementItem",
+
         "EnforcementViolationError",
+
         "active_rules",
+
         "builder_for",
+
         "builders",
+
         "clear",
+
         "discover_workspace_root",
+
         "get",
+
         "register",
+
         "split_csv",
+
         "warning_categories",
+
     ),
+
     ".markdown_validation": (
+
         "MarkdownCodeBlockCollector",
+
         "MarkdownCodeBlockItem",
+
         "MarkdownValidationError",
+
     ),
-    ".project_metadata": ("project_metadata", "project_tool_flext"),
+
+    ".project_metadata": (
+
+        "project_metadata",
+
+        "project_tool_flext",
+
+    ),
+
     ".settings": (
+
         "clean_container",
+
         "reset_settings",
+
         "sample_data",
+
         "settings",
+
         "settings_factory",
+
         "temp_dir",
+
         "temp_file",
+
         "test_context",
+
         "test_runtime",
+
     ),
+
 }
 
 
 LAZY_ALIAS_GROUPS: dict[str, tuple[tuple[str, str], ...]] = {}
 
 
-CHILD_MODULE_PATHS: tuple[str, ...] = ("._enforcement_parts",)
+CHILD_MODULE_PATHS: tuple[str, ...] = (
+
+    "._enforcement_parts",
+
+)
 
 
 EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
 
 
 PUBLIC_EXPORTS: tuple[str, ...] = (
+
     "EnforcementBuildContext",
+
     "EnforcementCollector",
+
     "EnforcementContribution",
+
     "EnforcementItem",
+
     "EnforcementViolationError",
+
     "MarkdownCodeBlockCollector",
+
     "MarkdownCodeBlockItem",
+
     "MarkdownValidationError",
+
     "SessionConfig",
+
     "_enforcement_parts",
+
     "active_rules",
+
     "build_items",
+
     "build_tests_validator_items",
+
     "builder_for",
+
     "builders",
+
     "clean_container",
+
     "clear",
+
     "collected_project_names",
+
     "collected_validator_targets",
+
     "discover_workspace_root",
+
     "dispatch_infra_detector",
+
     "get",
+
     "load_infra_report",
+
     "project_metadata",
+
     "project_tool_flext",
+
     "register",
+
     "reset_settings",
+
     "resolve_config",
+
     "sample_data",
+
     "settings",
+
     "settings_factory",
+
     "split_csv",
+
     "temp_dir",
+
     "temp_file",
+
     "test_context",
+
     "test_runtime",
+
     "warning_categories",
+
 )

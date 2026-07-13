@@ -8,19 +8,119 @@ lazy (PEP 562) import access; sibling ``__all__`` discovery is the upstream sour
 from __future__ import annotations
 
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
-    "._config": ("FlextTestsConfig", "config"),
-    "._settings": ("FlextTestsSettings", "settings"),
-    ".base": ("FlextTestsCase", "FlextTestsServiceBase", "s"),
-    ".constants": ("FlextTestsConstants", "c"),
-    ".docker": ("FlextTestsDocker", "tk"),
-    ".files": ("FlextTestsFiles", "tf"),
-    ".models": ("FlextTestsModels", "m"),
-    ".protocols": ("FlextTestsProtocols", "p"),
-    ".tmatchers": ("FlextTestsMatchersUtilities", "tm"),
-    ".typings": ("FlextTestsTypes", "t"),
-    ".utilities": ("FlextTestsUtilities", "u"),
-    ".validator": ("FlextTestsValidator", "tv"),
-    "flext_infra": ("d", "e", "h", "r", "x"),
+
+    "._config": (
+
+        "FlextTestsConfig",
+
+        "config",
+
+    ),
+
+    "._settings": (
+
+        "FlextTestsSettings",
+
+        "settings",
+
+    ),
+
+    ".base": (
+
+        "FlextTestsCase",
+
+        "FlextTestsServiceBase",
+
+        "s",
+
+    ),
+
+    ".constants": (
+
+        "FlextTestsConstants",
+
+        "c",
+
+    ),
+
+    ".docker": (
+
+        "FlextTestsDocker",
+
+        "tk",
+
+    ),
+
+    ".files": (
+
+        "FlextTestsFiles",
+
+        "tf",
+
+    ),
+
+    ".models": (
+
+        "FlextTestsModels",
+
+        "m",
+
+    ),
+
+    ".protocols": (
+
+        "FlextTestsProtocols",
+
+        "p",
+
+    ),
+
+    ".tmatchers": (
+
+        "FlextTestsMatchersUtilities",
+
+        "tm",
+
+    ),
+
+    ".typings": (
+
+        "FlextTestsTypes",
+
+        "t",
+
+    ),
+
+    ".utilities": (
+
+        "FlextTestsUtilities",
+
+        "u",
+
+    ),
+
+    ".validator": (
+
+        "FlextTestsValidator",
+
+        "tv",
+
+    ),
+
+    "flext_infra": (
+
+        "d",
+
+        "e",
+
+        "h",
+
+        "r",
+
+        "x",
+
+    ),
+
 }
 
 
@@ -34,42 +134,81 @@ EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
 
 
 PUBLIC_EXPORTS: tuple[str, ...] = (
+
     "FlextTestsCase",
+
     "FlextTestsConfig",
+
     "FlextTestsConstants",
+
     "FlextTestsDocker",
+
     "FlextTestsFiles",
+
     "FlextTestsMatchersUtilities",
+
     "FlextTestsModels",
+
     "FlextTestsProtocols",
+
     "FlextTestsServiceBase",
+
     "FlextTestsSettings",
+
     "FlextTestsTypes",
+
     "FlextTestsUtilities",
+
     "FlextTestsValidator",
+
     "__author__",
+
     "__author_email__",
+
     "__description__",
+
     "__license__",
+
     "__title__",
+
     "__url__",
+
     "__version__",
+
     "__version_info__",
+
     "c",
+
     "config",
+
     "d",
+
     "e",
+
     "h",
+
     "m",
+
     "p",
+
     "r",
+
     "s",
+
     "settings",
+
     "t",
+
     "tf",
+
     "tk",
+
     "tm",
+
     "tv",
+
     "u",
+
     "x",
+
 )

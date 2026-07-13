@@ -8,8 +8,19 @@ lazy (PEP 562) import access; sibling ``__all__`` discovery is the upstream sour
 from __future__ import annotations
 
 LAZY_MODULES: dict[str, tuple[str, ...]] = {
-    ".enforcement": ("FlextTestsEnforcementProtocolsMixin",),
-    ".valuefactory": ("FlextTestsValueFactoryProtocolsMixin",),
+
+    ".enforcement": (
+
+        "FlextTestsEnforcementProtocolsMixin",
+
+    ),
+
+    ".valuefactory": (
+
+        "FlextTestsValueFactoryProtocolsMixin",
+
+    ),
+
 }
 
 
@@ -23,6 +34,9 @@ EXCLUDED_LAZY_NAMES: tuple[str, ...] = ()
 
 
 PUBLIC_EXPORTS: tuple[str, ...] = (
+
     "FlextTestsEnforcementProtocolsMixin",
+
     "FlextTestsValueFactoryProtocolsMixin",
+
 )

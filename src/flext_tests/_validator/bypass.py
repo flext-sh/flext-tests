@@ -13,10 +13,9 @@ from pathlib import Path
 from typing import override
 
 from flext_tests import c, m, t, u
-from flext_tests._validator.models import FlextTestsValidatorModels
 
 
-class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):
+class FlextValidatorBypass(u.Tests.ValidatorScannerMixin):
     """Bypass validation methods for FlextTestsValidator.
 
     Uses c.Tests.Validator for constants and m.Tests.Validator for models.

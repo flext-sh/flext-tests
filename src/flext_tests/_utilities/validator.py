@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable, MutableSequence
 from pathlib import Path
+from typing import ClassVar
 
 import flext_tests.constants as tests_constants
 import flext_tests.models as tests_models
 import flext_tests.typings as tests_typings
+from flext_tests import p, r
 
 
 class FlextTestsValidatorUtilitiesMixin:
@@ -241,3 +244,66 @@ class FlextTestsValidatorUtilitiesMixin:
             )
             is not None
         )
+
+    # NOTE (multi-agent): scanner behavior moved here from _validator/models.py
+    # (declaration purity - a models-named module must not hold scan behavior;
+    # mro-i6nq.11). Scanners inherit ValidatorScannerMixin.
+    @staticmethod
+    def validator_run_scan(
+        *,
+        files: tests_typings.t.SequenceOf[Path],
+        approved_exceptions: tests_typings.t.MappingKV[str, tests_typings.t.StrSequence]
+        | None,
+        validator_name: str,
+        scan_file: Callable[
+            [Path, tests_typings.t.MappingKV[str, tests_typings.t.StrSequence]],
+            tests_typings.t.SequenceOf[tests_models.m.Tests.Violation],
+        ],
+    ) -> p.Result[tests_models.m.Tests.ScanResult]:
+        """Run one validator scan across files and build a ScanResult."""
+        violations: MutableSequence[tests_models.m.Tests.Violation] = []
+        approved = approved_exceptions or {}
+        for file_path in files:
+            violations.extend(scan_file(file_path, approved))
+        return r[tests_models.m.Tests.ScanResult].ok(
+            tests_models.m.Tests.ScanResult(
+                validator_name=validator_name,
+                files_scanned=len(files),
+                violations=violations,
+            )
+        )
+
+    class ValidatorScannerMixin:
+        """MRO mixin: validator classes inherit scan(...) for free.
+
+        Each consumer declares _VALIDATOR_KEY and a _scan_file
+        classmethod; scan delegates to validator_run_scan.
+        """
+
+        _VALIDATOR_KEY: ClassVar[str]
+
+        @classmethod
+        def _scan_file(
+            cls,
+            file_path: Path,
+            approved: tests_typings.t.MappingKV[str, tests_typings.t.StrSequence],
+        ) -> tests_typings.t.SequenceOf[tests_models.m.Tests.Violation]:
+            """Subclass MUST override: scan one file and yield violations."""
+            raise NotImplementedError
+
+        @classmethod
+        def scan(
+            cls,
+            files: tests_typings.t.SequenceOf[Path],
+            approved_exceptions: tests_typings.t.MappingKV[
+                str, tests_typings.t.StrSequence
+            ]
+            | None = None,
+        ) -> p.Result[tests_models.m.Tests.ScanResult]:
+            """Scan files for violations using the consumer's _scan_file."""
+            return FlextTestsValidatorUtilitiesMixin.validator_run_scan(
+                files=files,
+                approved_exceptions=approved_exceptions,
+                validator_name=cls._VALIDATOR_KEY,
+                scan_file=cls._scan_file,
+            )

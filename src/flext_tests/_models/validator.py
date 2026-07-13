@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from collections.abc import MutableMapping
 from pathlib import Path
-from typing import Annotated, Self
+from typing import Annotated
 
 from flext_infra import m, u
 from flext_tests import c, t
@@ -62,24 +62,12 @@ class FlextTestsValidatorModelsMixin:
             t.SequenceOf[FlextTestsValidatorModelsMixin.Violation],
             u.Field(description="All violations detected during the scan."),
         ]
-        passed: Annotated[
-            bool, u.Field(description="True when the scan found no violations.")
-        ]
 
-        @classmethod
-        def create(
-            cls,
-            validator_name: str,
-            files_scanned: int,
-            violations: t.SequenceOf[FlextTestsValidatorModelsMixin.Violation],
-        ) -> Self:
-            """Create a ScanResult from violations."""
-            return cls(
-                validator_name=validator_name,
-                files_scanned=files_scanned,
-                violations=violations,
-                passed=not violations,
-            )
+        @u.computed_field()
+        @property
+        def passed(self) -> bool:
+            """True when the scan found no violations."""
+            return not self.violations
 
     class EnforcementDispatcherConfig(m.Value):
         """Resolved runtime configuration for the pytest enforcement dispatcher."""
