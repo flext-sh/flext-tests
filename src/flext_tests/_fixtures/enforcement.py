@@ -9,6 +9,7 @@ from flext_tests._fixtures._enforcement_parts.config import (
     pytest_configure,
     split_csv,
 )
+from flext_tests._fixtures._enforcement_parts.discovery import load_infra_report
 from flext_tests._fixtures._enforcement_parts.hooks import (
     pytest_collection_modifyitems,
     pytest_sessionstart,
@@ -43,6 +44,7 @@ __all__: list[str] = [
     "clear",
     "discover_workspace_root",
     "get",
+    "load_infra_report",
     "pytest_addoption",
     "pytest_collection_modifyitems",
     "pytest_configure",

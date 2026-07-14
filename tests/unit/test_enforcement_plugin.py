@@ -20,11 +20,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from flext_tests import m, tm
-from flext_tests._fixtures.enforcement import (
-    active_rules,
-    discover_workspace_root,
-    split_csv,
-)
+from flext_tests.enforcement import active_rules, discover_workspace_root, split_csv
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -105,8 +101,8 @@ class TestsFlextTestsEnforcementPlugin:
     def test_active_rules_returns_only_enabled_rules(self) -> None:
         """The unfiltered result contains exclusively enabled catalog rules."""
         rules = active_rules(self._config())
-        assert rules
-        assert all(rule.enabled for rule in rules)
+        tm.that(rules, empty=False)
+        tm.that(all(rule.enabled for rule in rules), eq=True)
 
     def test_active_rules_include_restricts_to_allow_list(self) -> None:
         """An include allow-list narrows the result to the requested id only."""
@@ -195,6 +191,19 @@ class TestsFlextTestsEnforcementPlugin:
         result.assert_outcomes(passed=1, warnings=1)
         result.stdout.no_fnmatch_line("*flext-enforce*")
         result.stdout.no_fnmatch_line("runtime warnings captured:*")
+
+    def test_fixture_plugins_are_registered_for_assertion_rewriting(
+        self, pytester: pytest.Pytester
+    ) -> None:
+        """Installed fixture plugins load with strict assertion-rewrite warnings."""
+        pytester.makeini("[pytest]\n")
+        pytester.makepyfile(
+            test_plugin="def test_plugin_loaded() -> None:\n    assert True\n"
+        )
+        result = pytester.runpytest_subprocess(
+            "-W", "error::pytest.PytestAssertRewriteWarning"
+        )
+        result.assert_outcomes(passed=1)
 
     def test_infra_report_boundary_runs_in_subprocess(
         self, pytester: pytest.Pytester
