@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
-from flext_tests import r, tm
+from flext_tests import tm
 from tests.unit._matchers_parts.predicates import MatchersPredicates
 
-if TYPE_CHECKING:
-    from tests import p, t
+from tests import p, t ,r 
 
 
 class MatchersThatAttrsMixin:

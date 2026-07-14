@@ -12,11 +12,7 @@ class FlextTestsDomains:
     """Test domain objects and fixtures."""
 
     @staticmethod
-    def fixture_filename(
-        group: str,
-        kind: str,
-        file_extension: str = ".ldif",
-    ) -> str:
+    def fixture_filename(group: str, kind: str, file_extension: str = ".ldif") -> str:
         """Build the canonical fixture filename for a group and kind."""
         return f"{group}_{kind}_fixtures{file_extension}"
 
@@ -48,10 +44,7 @@ class FlextTestsDomains:
     ) -> Path:
         """Return the on-disk fixture path, raising if it is missing."""
         file_path = cls._resolve_fixture_path(
-            group,
-            kind,
-            fixtures_root=fixtures_root,
-            file_extension=file_extension,
+            group, kind, fixtures_root=fixtures_root, file_extension=file_extension
         )
         if not file_path.exists():
             msg = f"Fixture file not found: {file_path}"
@@ -70,11 +63,8 @@ class FlextTestsDomains:
         """Read and return the text content of a fixture file."""
         text_result: p.Result[str] = cli_u.Cli.files_read_text(
             cls.fixture_path(
-                group,
-                kind,
-                fixtures_root=fixtures_root,
-                file_extension=file_extension,
-            ),
+                group, kind, fixtures_root=fixtures_root, file_extension=file_extension
+            )
         )
         if text_result.failure:
             raise ValueError(text_result.error or "Fixture file read failed")
@@ -92,17 +82,12 @@ class FlextTestsDomains:
     ) -> bool:
         """Return whether the fixture file exists on disk."""
         return cls._resolve_fixture_path(
-            group,
-            kind,
-            fixtures_root=fixtures_root,
-            file_extension=file_extension,
+            group, kind, fixtures_root=fixtures_root, file_extension=file_extension
         ).exists()
 
     @classmethod
     def available_fixture_servers(
-        cls,
-        *,
-        fixtures_root: Path | None = None,
+        cls, *, fixtures_root: Path | None = None
     ) -> t.StrSequence:
         """List fixture server group directories under the root."""
         fixtures_root = fixtures_root or Path.cwd()
@@ -113,7 +98,7 @@ class FlextTestsDomains:
                 directory.name
                 for directory in fixtures_root.iterdir()
                 if directory.is_dir()
-            ),
+            )
         )
 
     @classmethod
@@ -136,7 +121,7 @@ class FlextTestsDomains:
                 name[len(prefix) : -len(suffix)]
                 for name in sorted(entry.name for entry in server_dir.iterdir())
                 if name.startswith(prefix) and name.endswith(suffix)
-            ),
+            )
         )
 
     @classmethod
@@ -156,9 +141,7 @@ class FlextTestsDomains:
                 file_extension=file_extension,
             )
             for fixture_type in cls.available_fixture_types(
-                group,
-                fixtures_root=fixtures_root,
-                file_extension=file_extension,
+                group, fixtures_root=fixtures_root, file_extension=file_extension
             )
         }
 
@@ -218,9 +201,7 @@ class FlextTestsDomains:
     ) -> p.Result[t.Tests.TestobjectSerializable]:
         """Create a generic failed result for test flows."""
         return r[t.Tests.TestobjectSerializable].fail(
-            message,
-            error_code=error_code,
-            error_data=error_data,
+            message, error_code=error_code, error_data=error_data
         )
 
     @staticmethod
@@ -240,10 +221,7 @@ class FlextTestsDomains:
         """Bound fixture loader for one fixture root and extension."""
 
         def __init__(
-            self,
-            fixtures_root: Path,
-            *,
-            file_extension: str = ".ldif",
+            self, fixtures_root: Path, *, file_extension: str = ".ldif"
         ) -> None:
             """Store the fixtures root and default file extension."""
             self._fixtures_root: Path = fixtures_root
@@ -279,7 +257,7 @@ class FlextTestsDomains:
         def available_fixture_servers(self) -> t.StrSequence:
             """List fixture server group directories under the root."""
             return FlextTestsDomains.available_fixture_servers(
-                fixtures_root=self._fixtures_root,
+                fixtures_root=self._fixtures_root
             )
 
         def available_fixture_types(self, group: str) -> t.StrSequence:
@@ -330,10 +308,7 @@ class FlextTestsDomains:
 
     @classmethod
     def bind(
-        cls,
-        fixtures_root: Path,
-        *,
-        file_extension: str = ".ldif",
+        cls, fixtures_root: Path, *, file_extension: str = ".ldif"
     ) -> BoundFixtures:
         """Return a BoundFixtures view anchored at the given root."""
         return cls.BoundFixtures(fixtures_root, file_extension=file_extension)
