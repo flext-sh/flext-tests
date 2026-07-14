@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from flext_tests import tm
 from tests import c
 from tests.unit._matchers_parts.predicates import MatchersPredicates
@@ -34,6 +36,16 @@ class MatchersThatCollectionsMixin:
         """Test tm.that() with none parameter."""
         tm.that("test", none=False)
         tm.that(None, none=True)
+
+    def test_not_none_returns_the_narrowed_value(self) -> None:
+        """not_none returns the original value with its optional removed."""
+        value: str | None = "test"
+        tm.that(tm.not_none(value), eq="test")
+
+    def test_not_none_rejects_none_with_context(self) -> None:
+        """not_none raises the caller-provided assertion context for None."""
+        with pytest.raises(AssertionError, match="missing channel"):
+            tm.not_none(None, msg="missing channel")
 
     def test_that_with_empty_parameter(self) -> None:
         """Test tm.that() with empty parameter."""

@@ -26,7 +26,8 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
         """Batch file operations with error handling.
 
         Args:
-            items: t.MappingKV[str, t.FileContent] or t.SequenceOf[tuple[str, t.FileContent]]
+            items: Mapping of file names to content or a sequence of name-content
+                pairs.
             directory: Target directory for create operations
             operation: "create", "read", or "delete"
             model: Optional model class for read operations
@@ -53,7 +54,9 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
         files_dict: MutableMapping[str, t.Tests.TestobjectSerializable] = dict(
             params.files
         )
-        error_mode_str = "collect" if params.on_error == "collect" else "fail"
+        error_mode_str = (
+            "collect" if params.on_error is c.Tests.ErrorMode.COLLECT else "fail"
+        )
 
         def process_one(
             name_and_content: tuple[str, t.Tests.TestobjectSerializable],
@@ -63,7 +66,7 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
             path = Path(content) if isinstance(content, (Path, str)) else Path(name)
             result: p.Result[Path]
             match params.operation:
-                case "create":
+                case c.Tests.Operation.CREATE:
                     try:
                         payload = (
                             {
@@ -82,21 +85,19 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
                         )
                     except (OSError, TypeError, ValueError, AttributeError) as e:
                         result = r[Path].fail(f"Failed to create {name}: {e}")
-                case "read":
+                case c.Tests.Operation.READ:
                     read_result = self.read(path, model_cls=None)
                     result = (
                         r[Path].ok(path)
                         if read_result.success
                         else r[Path].fail(read_result.error or f"Failed to read {name}")
                     )
-                case "delete":
+                case c.Tests.Operation.DELETE:
                     try:
                         path.unlink(missing_ok=True)
                         result = r[Path].ok(path)
                     except OSError as e:
                         result = r[Path].fail(f"Failed to delete {name}: {e}")
-                case _:
-                    result = r[Path].fail(f"Unknown operation: {params.operation}")
             return result
 
         items_list = list(files_dict.items())

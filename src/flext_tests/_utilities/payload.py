@@ -9,11 +9,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from datetime import datetime, tzinfo
 from enum import Enum
 from pathlib import Path
-from typing import TypeIs
+from typing import TypeIs, assert_never
 
 from flext_infra import u
 from flext_tests import c, m, p, t
@@ -81,8 +81,6 @@ class FlextTestsPayloadUtilities:
         """Flatten to pure Container via canonical runtime helper."""
         to_n = FlextTestsPayloadUtilities.to_normalized_value
         match value:
-            case m.RootModel():
-                result = to_n(value.root)
             case m.BaseModel():
                 result = str(value)
             case bytes():
@@ -95,13 +93,13 @@ class FlextTestsPayloadUtilities:
                 result = u.normalize_to_metadata({
                     key: to_n(item) for key, item in value.items()
                 })
-            case list() | tuple() | set() | frozenset():
+            case Sequence() | frozenset():
                 normalized_items = [to_n(item) for item in value]
-                if isinstance(value, (set, frozenset)):
+                if isinstance(value, frozenset):
                     normalized_items = sorted(normalized_items, key=repr)
                 result = u.normalize_to_metadata(normalized_items)
             case _:
-                result = str(value)
+                assert_never(value)
         return result
 
     @staticmethod
