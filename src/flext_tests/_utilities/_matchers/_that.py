@@ -142,10 +142,10 @@ class FlextTestsMatchersThatMixin:
                     or is_sequence_wrapper
                 ):
                     return
-                raise AssertionError(
-                    params.msg
-                    or f"Assertion failed: {c.Tests.ERR_TYPE_FAILED.format(expected=params.is_, actual=value_type_name)}"
+                type_error = c.Tests.ERR_TYPE_FAILED.format(
+                    expected=params.is_, actual=value_type_name
                 )
+                raise AssertionError(params.msg or f"Assertion failed: {type_error}")
 
             @staticmethod
             def _is_type_only(
@@ -266,7 +266,8 @@ class FlextTestsMatchersThatMixin:
                         ne_value,
                         msg=params.msg,
                         default_msg=(
-                            f"Assertion failed: {subject_payload!r} did not satisfy constraints"
+                            f"Assertion failed: {subject_payload!r} "
+                            "did not satisfy constraints"
                         ),
                     )
                 )
@@ -294,7 +295,10 @@ class FlextTestsMatchersThatMixin:
                 if not u.chk(chk_plain, guard):
                     raise AssertionError(
                         params.msg
-                        or f"Assertion failed: {subject_payload!r} did not satisfy constraints"
+                        or (
+                            f"Assertion failed: {subject_payload!r} "
+                            "did not satisfy constraints"
+                        )
                     )
                 if (
                     params.match is not None
@@ -335,9 +339,8 @@ class FlextTestsMatchersThatMixin:
                 if not isinstance(subject_payload, t.SEQUENCE_PAIR_TYPES):
                     return ()
                 try:
-                    return t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
-                        subject_payload
-                    )
+                    sequence_adapter = t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER
+                    return sequence_adapter.validate_python(subject_payload)
                 except c.ValidationError:
                     return ()
 
@@ -355,7 +358,10 @@ class FlextTestsMatchersThatMixin:
                     if seq_value[0] != params.first:
                         raise AssertionError(
                             params.msg
-                            or f"First item: expected {params.first!r}, got {seq_value[0]!r}"
+                            or (
+                                f"First item: expected {params.first!r}, "
+                                f"got {seq_value[0]!r}"
+                            )
                         )
                 if params.last is not None:
                     if not seq_value:
@@ -365,7 +371,10 @@ class FlextTestsMatchersThatMixin:
                     if seq_value[-1] != params.last:
                         raise AssertionError(
                             params.msg
-                            or f"Last item: expected {params.last!r}, got {seq_value[-1]!r}"
+                            or (
+                                f"Last item: expected {params.last!r}, "
+                                f"got {seq_value[-1]!r}"
+                            )
                         )
 
             @classmethod
@@ -544,7 +553,10 @@ class FlextTestsMatchersThatMixin:
                         if expected_val not in value_list:
                             raise AssertionError(
                                 params.msg
-                                or f"Expected value {expected_val!r} not found in mapping"
+                                or (
+                                    f"Expected value {expected_val!r} "
+                                    "not found in mapping"
+                                )
                             )
                 if params.kv is not None:
                     cls._validate_kv(mapping_value, params)
@@ -580,7 +592,10 @@ class FlextTestsMatchersThatMixin:
                     if actual_obj != expected_val:
                         raise AssertionError(
                             params.msg
-                            or f"Key {key!r}: expected {expected_val!r}, got {actual_obj!r}"
+                            or (
+                                f"Key {key!r}: expected {expected_val!r}, "
+                                f"got {actual_obj!r}"
+                            )
                         )
 
             @classmethod
@@ -641,7 +656,10 @@ class FlextTestsMatchersThatMixin:
                         case _:
                             raise AssertionError(
                                 params.msg
-                                or f"Attribute name must be str, got {type(attr).__name__}"
+                                or (
+                                    "Attribute name must be str, "
+                                    f"got {type(attr).__name__}"
+                                )
                             )
                     if not hasattr(subject, attr):
                         raise AssertionError(
@@ -651,8 +669,20 @@ class FlextTestsMatchersThatMixin:
                     if actual_val != expected_val:
                         raise AssertionError(
                             params.msg
-                            or f"Attribute {attr}: expected {expected_val!r}, got {actual_val!r}"
+                            or (
+                                f"Attribute {attr}: expected {expected_val!r}, "
+                                f"got {actual_val!r}"
+                            )
                         )
+
+            # NOTE (multi-agent, mro-wkii.17 / agent: codex): combine runtime
+            # assertion with generic narrowing so all analyzers retain T.
+            @staticmethod
+            def not_none[T](value: T | None, *, msg: str | None = None) -> T:
+                """Assert and return a non-None value without changing identity."""
+                if value is None:
+                    raise AssertionError(msg or "Expected a non-None value")
+                return value
 
             @classmethod
             def that(
@@ -694,13 +724,17 @@ class FlextTestsMatchersThatMixin:
                     case m.BaseModel():
                         deep_value = subject_payload
                     case dict():
-                        deep_value = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
-                            subject_payload
+                        mapping_adapter = (
+                            t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER
                         )
+                        deep_value = mapping_adapter.validate_python(subject_payload)
                     case _:
                         raise AssertionError(
                             params.msg
-                            or f"Deep matching requires dict or model, got {type(subject_payload).__name__}"
+                            or (
+                                "Deep matching requires dict or model, got "
+                                f"{type(subject_payload).__name__}"
+                            )
                         )
                 match_result = FlextTestsPayloadUtilities.deep_match(
                     deep_value, params.deep
@@ -797,7 +831,10 @@ class FlextTestsMatchersThatMixin:
             case m.BaseModel() | Mapping():
                 pass
             case _:
-                message = f"Path assertions require dict or model, got {type(subject).__name__}"
+                message = (
+                    "Path assertions require dict or model, got "
+                    f"{type(subject).__name__}"
+                )
                 raise AssertionError(message)
         extracted = u.extract(FlextTestsPayloadUtilities.to_config_map(subject), path)
         if extracted.failure:
@@ -845,7 +882,10 @@ class FlextTestsMatchersThatMixin:
             case _:
                 raise AssertionError(
                     inherited_msg
-                    or f"Item assertions require a sequence, got {type(subject).__name__}"
+                    or (
+                        "Item assertions require a sequence, got "
+                        f"{type(subject).__name__}"
+                    )
                 )
         match rules:
             case Sequence() if not isinstance(rules, t.STR_BINARY_TYPES):
