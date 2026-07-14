@@ -15,10 +15,7 @@ from .enforcement import (
     clear as clear,
     discover_workspace_root as discover_workspace_root,
     get as get,
-<<<<<<< HEAD
     load_infra_report as load_infra_report,
-=======
->>>>>>> origin/0.12.0-dev
     register as register,
     split_csv as split_csv,
     warning_categories as warning_categories,
@@ -60,10 +57,7 @@ __all__: tuple[str, ...] = (
     "clear",
     "discover_workspace_root",
     "get",
-<<<<<<< HEAD
     "load_infra_report",
-=======
->>>>>>> origin/0.12.0-dev
     "project_metadata",
     "project_tool_flext",
     "register",
