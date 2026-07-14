@@ -26,6 +26,10 @@ if TYPE_CHECKING:
         FlextTestsConfig as FlextTestsConfig,
         config as config,
     )
+    from flext_tests._fixtures._enforcement_parts.discovery import (
+        load_infra_report as load_infra_report,
+    )
+    from flext_tests._fixtures.settings import reset_settings as reset_settings
     from flext_tests._settings import (
         FlextTestsSettings as FlextTestsSettings,
         settings as settings,
@@ -37,6 +41,7 @@ if TYPE_CHECKING:
     )
     from flext_tests.constants import FlextTestsConstants as FlextTestsConstants, c as c
     from flext_tests.docker import FlextTestsDocker as FlextTestsDocker, tk as tk
+    from flext_tests.domains import FlextTestsDomains as FlextTestsDomains, td as td
     from flext_tests.files import FlextTestsFiles as FlextTestsFiles, tf as tf
     from flext_tests.models import FlextTestsModels as FlextTestsModels, m as m
     from flext_tests.protocols import FlextTestsProtocols as FlextTestsProtocols, p as p

@@ -128,14 +128,11 @@ class TestsFlextTestsValidatorTypes:
         return file_path
 
     def test_types_passes_clean_modern_typing_with_metadata(
-        self,
-        tmp_path: Path,
+        self, tmp_path: Path
     ) -> None:
         # Arrange
         file_path = self._write_source(
-            tmp_path,
-            "modern_typing.py",
-            _MODERN_TYPING_SOURCE,
+            tmp_path, "modern_typing.py", _MODERN_TYPING_SOURCE
         )
 
         # Act
@@ -153,11 +150,7 @@ class TestsFlextTestsValidatorTypes:
         ids=[rule_id for _, _, rule_id in _OFFENDING_SOURCES],
     )
     def test_types_flags_offending_source_with_rule(
-        self,
-        tmp_path: Path,
-        name: str,
-        source: str,
-        rule_id: str,
+        self, tmp_path: Path, name: str, source: str, rule_id: str
     ) -> None:
         # Arrange
         file_path = self._write_source(tmp_path, name, source)
@@ -171,8 +164,7 @@ class TestsFlextTestsValidatorTypes:
         tm.that(rule_ids, contains=rule_id)
 
     def test_types_violation_exposes_public_location_and_snippet(
-        self,
-        tmp_path: Path,
+        self, tmp_path: Path
     ) -> None:
         # Arrange
         file_path = self._write_source(
@@ -195,8 +187,7 @@ class TestsFlextTestsValidatorTypes:
         tm.that(violation.description, empty=False)
 
     def test_types_approved_exception_suppresses_named_rule(
-        self,
-        tmp_path: Path,
+        self, tmp_path: Path
     ) -> None:
         # Arrange — `service.py` matches a canonical approval path pattern.
         file_path = self._write_source(
@@ -214,20 +205,14 @@ class TestsFlextTestsValidatorTypes:
 
         # Act — approving TYPE-006 for service.py must clear that rule.
         approved: m.Tests.ScanResult = u.Tests.assert_success(
-            tv.types(
-                file_path,
-                approved_exceptions={"TYPE-006": (r"service\.py$",)},
-            ),
+            tv.types(file_path, approved_exceptions={"TYPE-006": (r"service\.py$",)})
         )
 
         # Assert
         tm.that(approved.passed, eq=True)
         tm.that(approved.violations, empty=True)
 
-    def test_types_is_idempotent_for_the_same_source(
-        self,
-        tmp_path: Path,
-    ) -> None:
+    def test_types_is_idempotent_for_the_same_source(self, tmp_path: Path) -> None:
         # Arrange
         file_path = self._write_source(
             tmp_path,

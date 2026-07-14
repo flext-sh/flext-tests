@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
-from flext_tests import r, tm
+from flext_tests import tm
 from tests.unit._matchers_parts.predicates import MatchersPredicates
 
-if TYPE_CHECKING:
-    from tests import p
-    from tests import t
+from tests import p, t ,r 
 
 
 class MatchersThatAttrsMixin:
@@ -61,8 +59,7 @@ class MatchersThatAttrsMixin:
 
         obj = TestClass()
         tm.that(
-            cast("t.JsonValue", obj),
-            attr_eq={"attr1": "value1", "attr2": "value2"},
+            cast("t.JsonValue", obj), attr_eq={"attr1": "value1", "attr2": "value2"}
         )
 
     def test_that_with_ok_parameter(self) -> None:
@@ -78,7 +75,7 @@ class MatchersThatAttrsMixin:
     def test_that_with_deep_parameter(self) -> None:
         """Test tm.that() with deep parameter."""
         data: t.MappingKV[str, t.Tests.TestobjectSerializable] = {
-            "user": {"name": "John", "age": 30},
+            "user": {"name": "John", "age": 30}
         }
         tm.that(data, deep={"user.name": "John"})
 

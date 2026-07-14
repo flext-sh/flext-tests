@@ -2,15 +2,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import pytest
 
-from flext_tests import r, tm
-
-if TYPE_CHECKING:
-    from tests import p
-    from tests import t
+from flext_tests import tm
+from tests import p, r, t
 
 
 class MatchersResultsMixin:
@@ -76,8 +71,7 @@ class MatchersResultsMixin:
         data = {"key1": "value1"}
         expected = {"key1": "wrong_value"}
         with pytest.raises(
-            AssertionError,
-            match="expected 'wrong_value', got 'value1'",
+            AssertionError, match="expected 'wrong_value', got 'value1'"
         ):
             tm.that(data, kv=expected)
 

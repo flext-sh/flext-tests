@@ -25,10 +25,7 @@ class DockerTargetsMixin:
         """Test execute rejects stack targets without inspection container."""
         manager = tk.stack(
             "docker-compose.stack.yml",
-            target=m.Tests.ContainerConfig(
-                host=c.LOOPBACK_IP,
-                port=25432,
-            ),
+            target=m.Tests.ContainerConfig(host=c.LOOPBACK_IP, port=25432),
             workspace_root=tmp_path,
         )
         result = manager.execute()
@@ -58,9 +55,7 @@ class DockerTargetsMixin:
         manager = tk.stack(
             "docker-compose.stack.yml",
             target=m.Tests.ContainerConfig(
-                container_name="stack-main",
-                service="stack-main",
-                port=59999,
+                container_name="stack-main", service="stack-main", port=59999
             ),
             workspace_root=tmp_path,
         )

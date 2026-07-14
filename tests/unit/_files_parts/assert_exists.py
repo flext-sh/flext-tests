@@ -91,11 +91,7 @@ class FilesAssertExistsMixin:
         _ = path.write_text("content")
         path.chmod(420)
         _ = tf.assert_exists(
-            path,
-            is_file=True,
-            not_empty=True,
-            readable=True,
-            writable=True,
+            path, is_file=True, not_empty=True, readable=True, writable=True
         )
 
     def test_assert_exists_is_file_false(self, tmp_path: Path) -> None:

@@ -21,6 +21,7 @@ from pathlib import Path
 import pytest
 
 from flext_tests import m, tk
+from flext_tests import m, tk, tm
 from tests import c
 
 
@@ -37,8 +38,7 @@ class TestsFlextTestsDockerIntegration:
 
     @pytest.mark.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))
     def test_shared_resolves_target_config_from_shared_catalog(
-        self,
-        container_name: str,
+        self, container_name: str
     ) -> None:
         """``tk.shared`` maps a catalog entry onto the public target config."""
         settings = c.Tests.SHARED_CONTAINERS[container_name]
@@ -47,16 +47,15 @@ class TestsFlextTestsDockerIntegration:
         docker = tk.shared(container_name, workspace_root=root)
 
         target = docker.target_config
-        assert target is not None
-        assert target.container_name == container_name
-        assert target.service == settings["service"]
-        assert target.port == settings["port"]
-        assert target.host == settings["host"]
+        tm.that(target, none=False)
+        tm.that(target.container_name, eq=container_name)
+        tm.that(target.service, eq=settings["service"])
+        tm.that(target.port, eq=settings["port"])
+        tm.that(target.host, eq=settings["host"])
 
     @pytest.mark.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))
     def test_shared_resolves_compose_file_against_workspace_root(
-        self,
-        container_name: str,
+        self, container_name: str
     ) -> None:
         """Relative catalog compose files resolve to an absolute workspace path."""
         settings = c.Tests.SHARED_CONTAINERS[container_name]
@@ -64,10 +63,10 @@ class TestsFlextTestsDockerIntegration:
 
         target = tk.shared(container_name, workspace_root=root).target_config
 
-        assert target is not None
-        assert target.compose_file is not None
+        tm.that(target, none=False)
+        tm.that(target.compose_file, none=False)
         assert target.compose_file.is_absolute()
-        assert target.compose_file == root / str(settings["compose_file"])
+        tm.that(target.compose_file, eq=root / str(settings["compose_file"]))
 
     def test_shared_rejects_unknown_container_with_value_error(self) -> None:
         """An unknown shared name is a caller contract error, not a silent value."""
@@ -80,20 +79,19 @@ class TestsFlextTestsDockerIntegration:
 
         target = tk.compose("docker/custom.yml", workspace_root=root).target_config
 
-        assert target is not None
-        assert target.compose_file == root / "docker" / "custom.yml"
+        tm.that(target, none=False)
+        tm.that(target.compose_file, eq=root / "docker" / "custom.yml")
 
     def test_compose_preserves_absolute_file_unchanged(self) -> None:
         """An absolute compose file is used verbatim by ``tk.compose``."""
         absolute = Path("/opt/stacks/custom.yml")
 
         target = tk.compose(
-            absolute,
-            workspace_root=Path("/tmp/flext-docker-contract"),
+            absolute, workspace_root=Path("/tmp/flext-docker-contract")
         ).target_config
 
-        assert target is not None
-        assert target.compose_file == absolute
+        tm.that(target, none=False)
+        tm.that(target.compose_file, eq=absolute)
 
     @pytest.mark.parametrize(
         "operation",
@@ -106,9 +104,9 @@ class TestsFlextTestsDockerIntegration:
 
         result = getattr(docker, operation)()
 
-        assert result.failure
-        assert result.error is not None
-        assert "not configured" in result.error
+        tm.fail(result)
+        tm.that(result.error, none=False)
+        tm.that(result.error, has="not configured")
 
     def test_execute_reports_failure_for_stack_without_inspection_container(
         self,
@@ -116,15 +114,14 @@ class TestsFlextTestsDockerIntegration:
         """A compose-only target (no container name) cannot be inspected by execute."""
         config = m.Tests.ContainerConfig(compose_file=Path("/tmp/stack.yml"))
         docker = tk(
-            workspace_root=Path("/tmp/flext-docker-contract"),
-            target_config=config,
+            workspace_root=Path("/tmp/flext-docker-contract"), target_config=config
         )
 
         result = docker.execute()
 
-        assert result.failure
-        assert result.error is not None
-        assert "no inspection container" in result.error
+        tm.fail(result)
+        tm.that(result.error, none=False)
+        tm.that(result.error, has="no inspection container")
 
     # ------------------------------------------------------------------
     # Real shared-container behavior (requires a live Docker daemon)
@@ -135,17 +132,16 @@ class TestsFlextTestsDockerIntegration:
     def test_execute_shared_oracle_container_returns_running_info(self) -> None:
         """The DSL starts the shared Oracle container and reports it running."""
         docker = tk.shared(
-            "flext-oracle-db-test",
-            workspace_root=self._workspace_root(),
+            "flext-oracle-db-test", workspace_root=self._workspace_root()
         )
-        assert docker.client is not None, docker.client_error or "Docker unavailable"
+        tm.that(docker.client, none=False)
 
         result = docker.execute()
 
-        assert result.success, result.error
+        tm.ok(result)
         container = result.unwrap()
-        assert container.name == "flext-oracle-db-test"
-        assert container.status == c.Tests.ContainerStatus.RUNNING
+        tm.that(container.name, eq="flext-oracle-db-test")
+        tm.that(container.status, eq=c.Tests.ContainerStatus.RUNNING)
         assert container.container_id
         assert container.image
 
@@ -154,17 +150,16 @@ class TestsFlextTestsDockerIntegration:
     def test_execute_shared_oracle_container_is_idempotent(self) -> None:
         """Repeated DSL execution keeps the shared Oracle container running."""
         docker = tk.shared(
-            "flext-oracle-db-test",
-            workspace_root=self._workspace_root(),
+            "flext-oracle-db-test", workspace_root=self._workspace_root()
         )
-        assert docker.client is not None, docker.client_error or "Docker unavailable"
+        tm.that(docker.client, none=False)
 
         first = docker.execute()
         second = docker.execute()
 
-        assert first.success, first.error
-        assert second.success, second.error
+        tm.ok(first)
+        tm.ok(second)
         first_info = first.unwrap()
         second_info = second.unwrap()
-        assert first_info.name == second_info.name == "flext-oracle-db-test"
-        assert second_info.status == c.Tests.ContainerStatus.RUNNING
+        tm.that(first_info.name, eq=second_info.name)
+        tm.that(second_info.status, eq=c.Tests.ContainerStatus.RUNNING)

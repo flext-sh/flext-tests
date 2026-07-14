@@ -19,7 +19,7 @@ from pathlib import Path
 import pytest
 from _pytest.config.argparsing import Parser
 
-from flext_tests import c, m, u
+from flext_tests import c, m, tm, u
 from flext_tests._fixtures import enforcement as dispatcher
 
 
@@ -59,15 +59,10 @@ class TestsFlextTestsEnforcementDispatcher:
 
     @staticmethod
     def _cfg(
-        *,
-        include: frozenset[str] = frozenset(),
-        exclude: frozenset[str] = frozenset(),
+        *, include: frozenset[str] = frozenset(), exclude: frozenset[str] = frozenset()
     ) -> m.Tests.EnforcementDispatcherConfig:
         return m.Tests.EnforcementDispatcherConfig(
-            active=True,
-            strict=False,
-            include=include,
-            exclude=exclude,
+            active=True, strict=False, include=include, exclude=exclude
         )
 
     # ------------------------------------------------------------------ #
@@ -78,16 +73,16 @@ class TestsFlextTestsEnforcementDispatcher:
         nested = workspace / "flext-core" / "src" / "pkg"
         nested.mkdir(parents=True)
 
-        assert dispatcher.discover_workspace_root(nested) == workspace
+        tm.that(dispatcher.discover_workspace_root(nested), eq=workspace)
 
     def test_returns_workspace_itself_when_start_is_root(self, workspace: Path) -> None:
-        assert dispatcher.discover_workspace_root(workspace) == workspace
+        tm.that(dispatcher.discover_workspace_root(workspace), eq=workspace)
 
     def test_returns_none_when_no_marker_present(self, tmp_path: Path) -> None:
         stray = tmp_path / "unrelated" / "deep"
         stray.mkdir(parents=True)
 
-        assert dispatcher.discover_workspace_root(stray) is None
+        tm.that(dispatcher.discover_workspace_root(stray), none=True)
 
     def test_returns_none_when_a_single_marker_is_missing(self, tmp_path: Path) -> None:
         partial = tmp_path / "partial"
@@ -96,7 +91,7 @@ class TestsFlextTestsEnforcementDispatcher:
         for marker in list(c.Tests.ENFORCEMENT_WORKSPACE_MARKERS)[:-1]:
             (partial / marker).mkdir(parents=True, exist_ok=True)
 
-        assert dispatcher.discover_workspace_root(partial) is None
+        tm.that(dispatcher.discover_workspace_root(partial), none=True)
 
     def test_sub_project_root_resolves_to_workspace_not_itself(
         self, workspace: Path
@@ -107,8 +102,8 @@ class TestsFlextTestsEnforcementDispatcher:
         sub = workspace / "flext-core"
         discovered = dispatcher.discover_workspace_root(sub)
 
-        assert discovered == workspace
-        assert discovered != sub
+        tm.that(discovered, eq=workspace)
+        tm.that(discovered, ne=sub)
 
     # ------------------------------------------------------------------ #
     # split_csv                                                          #
@@ -116,15 +111,15 @@ class TestsFlextTestsEnforcementDispatcher:
 
     @pytest.mark.parametrize("raw", ["", None])
     def test_split_csv_empty_input_yields_empty_set(self, raw: str | None) -> None:
-        assert dispatcher.split_csv(raw) == frozenset()
+        tm.that(dispatcher.split_csv(raw), eq=frozenset())
 
     def test_split_csv_strips_whitespace_and_drops_blank_fields(self) -> None:
         got = dispatcher.split_csv("ENFORCE-001, ENFORCE-002 ,,ENFORCE-003")
 
-        assert got == frozenset({"ENFORCE-001", "ENFORCE-002", "ENFORCE-003"})
+        tm.that(got, eq=frozenset({"ENFORCE-001", "ENFORCE-002", "ENFORCE-003"}))
 
     def test_split_csv_deduplicates_repeated_ids(self) -> None:
-        assert dispatcher.split_csv("A, A ,A") == frozenset({"A"})
+        tm.that(dispatcher.split_csv("A, A ,A"), eq=frozenset({"A"}))
 
     # ------------------------------------------------------------------ #
     # active_rules                                                       #
@@ -145,14 +140,14 @@ class TestsFlextTestsEnforcementDispatcher:
     def test_include_narrows_to_the_listed_ids(self) -> None:
         active = dispatcher.active_rules(self._cfg(include=frozenset({"ENFORCE-001"})))
 
-        assert {r.id for r in active} == {"ENFORCE-001"}
+        tm.that({r.id for r in active}, eq={"ENFORCE-001"})
 
     def test_include_of_unknown_id_yields_no_rules(self) -> None:
         active = dispatcher.active_rules(
             self._cfg(include=frozenset({"ENFORCE-DOES-NOT-EXIST"}))
         )
 
-        assert active == ()
+        tm.that(active, eq=())
 
     def test_exclude_removes_the_listed_id(self) -> None:
         ids = {
@@ -162,23 +157,22 @@ class TestsFlextTestsEnforcementDispatcher:
             )
         }
 
-        assert "ENFORCE-001" not in ids
+        tm.that(ids, lacks="ENFORCE-001")
 
     def test_exclude_takes_precedence_over_include(self) -> None:
         active = dispatcher.active_rules(
             self._cfg(
-                include=frozenset({"ENFORCE-001"}),
-                exclude=frozenset({"ENFORCE-001"}),
+                include=frozenset({"ENFORCE-001"}), exclude=frozenset({"ENFORCE-001"})
             )
         )
 
-        assert active == ()
+        tm.that(active, eq=())
 
     def test_active_rules_is_idempotent(self) -> None:
         first = dispatcher.active_rules(self._cfg())
         second = dispatcher.active_rules(self._cfg())
 
-        assert [r.id for r in first] == [r.id for r in second]
+        tm.that([r.id for r in first], eq=[r.id for r in second])
 
     # ------------------------------------------------------------------ #
     # EnforcementItem / EnforcementCollector / EnforcementViolationError #
@@ -205,14 +199,12 @@ class TestsFlextTestsEnforcementDispatcher:
             item.runtest()
 
         message = str(excinfo.value)
-        assert rule.id in message
-        assert "flext-core" in message
-        assert str(violation.line_number) in message
+        tm.that(message, has=rule.id)
+        tm.that(message, has="flext-core")
+        tm.that(message, has=str(violation.line_number))
 
     def test_runtest_is_a_noop_when_no_violations(
-        self,
-        request: pytest.FixtureRequest,
-        rule: m.EnforcementRuleSpec,
+        self, request: pytest.FixtureRequest, rule: m.EnforcementRuleSpec
     ) -> None:
         collector = dispatcher.EnforcementCollector.from_parent(
             request.session, name="flext-enforce"
@@ -225,7 +217,7 @@ class TestsFlextTestsEnforcementDispatcher:
             violations=[],
         )
 
-        assert item.runtest() is None
+        tm.that(item.runtest(), none=True)
 
     def test_collector_collects_every_added_item(
         self,
@@ -249,7 +241,7 @@ class TestsFlextTestsEnforcementDispatcher:
         for item in items:
             collector.add(item)
 
-        assert list(collector.collect()) == items
+        tm.that(list(collector.collect()), eq=items)
 
     def test_collector_is_empty_before_any_item_is_added(
         self, request: pytest.FixtureRequest
@@ -258,7 +250,7 @@ class TestsFlextTestsEnforcementDispatcher:
             request.session, name="flext-enforce"
         )
 
-        assert list(collector.collect()) == []
+        tm.that(list(collector.collect()), eq=[])
 
     def test_violation_error_is_an_exception(self) -> None:
         assert issubclass(dispatcher.EnforcementViolationError, Exception)
@@ -281,10 +273,10 @@ class TestsFlextTestsEnforcementDispatcher:
             "--flext-enforce-rules",
             "A,B",
         ])
-        assert enabled.flext_enforce is True
-        assert enabled.flext_enforce_strict is True
-        assert enabled.flext_enforce_rules == "A,B"
+        tm.that(enabled.flext_enforce, eq=True)
+        tm.that(enabled.flext_enforce_strict, eq=True)
+        tm.that(enabled.flext_enforce_rules, eq="A,B")
 
         defaults = parser.parse([])
-        assert defaults.flext_enforce is False
-        assert defaults.flext_enforce_rules == ""
+        tm.that(defaults.flext_enforce, eq=False)
+        tm.that(defaults.flext_enforce_rules, eq="")

@@ -15,19 +15,13 @@ class MatchersOkConstraintsMixin:
     def test_ok_with_is_parameter(self) -> None:
         """Test tm.ok() with is_ parameter."""
         result = r[str].ok("test")
-        value = tm.ok(
-            result,
-            where=MatchersPredicates.is_string,
-        )
+        value = tm.ok(result, where=MatchersPredicates.is_string)
         tm.that(value, eq="test")
 
     def test_ok_with_is_tuple_parameter(self) -> None:
         """Test tm.ok() with is_ tuple parameter."""
         result = r[str].ok("test")
-        value = tm.ok(
-            result,
-            where=MatchersPredicates.is_string_or_bytes,
-        )
+        value = tm.ok(result, where=MatchersPredicates.is_string_or_bytes)
         tm.that(value, eq="test")
 
     def test_ok_with_has_parameter(self) -> None:

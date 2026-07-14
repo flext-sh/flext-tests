@@ -17,9 +17,7 @@ from pathlib import Path
 import pytest
 
 from flext_tests import tk, tm
-from tests import c
-from tests import m
-from tests import u
+from tests import c, m, u
 
 
 @pytest.fixture
@@ -56,9 +54,7 @@ class TestsFlextTestsDocker:
         ],
     )
     def test_container_status_exposes_stable_wire_value(
-        self,
-        member: c.Tests.ContainerStatus,
-        expected_value: str,
+        self, member: c.Tests.ContainerStatus, expected_value: str
     ) -> None:
         """Each ContainerStatus member serializes to its documented string."""
         tm.that(member.value, eq=expected_value)
@@ -94,7 +90,7 @@ class TestsFlextTestsDocker:
 
     def test_new_manager_exposes_public_identity(self, docker_manager: tk) -> None:
         """A constructed manager reports its workspace and dirty tuple."""
-        assert isinstance(docker_manager, tk)
+        tm.that(docker_manager, is_=tk)
         tm.that(docker_manager.workspace_root, none=False)
         tm.that(docker_manager.dirty_containers, is_=tuple)
 
@@ -155,9 +151,7 @@ class TestsFlextTestsDocker:
         tm.that(dirty, has="container2")
 
     def test_dirty_state_persists_across_instances(
-        self,
-        tmp_path: Path,
-        monkeypatch: pytest.MonkeyPatch,
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Dirty state survives a fresh manager for the same worker_id."""
         monkeypatch.setenv("HOME", str(tmp_path))
@@ -168,9 +162,7 @@ class TestsFlextTestsDocker:
         tm.that(reloaded.container_dirty("container1"), eq=True)
 
     def test_worker_id_isolates_persisted_dirty_state(
-        self,
-        tmp_path: Path,
-        monkeypatch: pytest.MonkeyPatch,
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Distinct worker_id values do not share persisted dirty state."""
         monkeypatch.setenv("HOME", str(tmp_path))
@@ -194,22 +186,20 @@ class TestsFlextTestsDocker:
         """shared() resolves the Oracle catalog entry into a target config."""
         manager = tk.shared("flext-oracle-db-test", workspace_root=tmp_path)
         target = manager.target_config
-        assert target is not None
+        tm.that(target, none=False)
         tm.that(target.container_name, eq="flext-oracle-db-test")
         tm.that(
-            target.compose_file,
-            eq=tmp_path / "docker" / "docker-compose.oracle-db.yml",
+            target.compose_file, eq=tmp_path / "docker" / "docker-compose.oracle-db.yml"
         )
 
     def test_shared_resolves_openldap_target(self, tmp_path: Path) -> None:
         """shared() resolves the OpenLDAP catalog entry, incl. service/port."""
         manager = tk.shared("flext-openldap-test", workspace_root=tmp_path)
         target = manager.target_config
-        assert target is not None
+        tm.that(target, none=False)
         tm.that(target.container_name, eq="flext-openldap-test")
         tm.that(
-            target.compose_file,
-            eq=tmp_path / "docker" / "docker-compose.openldap.yml",
+            target.compose_file, eq=tmp_path / "docker" / "docker-compose.openldap.yml"
         )
         tm.that(target.service, eq="openldap")
         tm.that(target.port, eq=3390)
@@ -224,14 +214,12 @@ class TestsFlextTestsDocker:
         manager = tk.compose(
             "docker-compose.yml",
             target=m.Tests.ContainerConfig(
-                container_name="service-test",
-                service="service-test",
-                port=5432,
+                container_name="service-test", service="service-test", port=5432
             ),
             workspace_root=tmp_path,
         )
         target = manager.target_config
-        assert target is not None
+        tm.that(target, none=False)
         tm.that(target.container_name, eq="service-test")
         tm.that(target.compose_file, eq=tmp_path / "docker-compose.yml")
         tm.that(target.port, eq=5432)
@@ -241,14 +229,12 @@ class TestsFlextTestsDocker:
         manager = tk.stack(
             "docker-compose.stack.yml",
             target=m.Tests.ContainerConfig(
-                container_name="stack-main",
-                service="stack-main",
-                port=3389,
+                container_name="stack-main", service="stack-main", port=3389
             ),
             workspace_root=tmp_path,
         )
         target = manager.target_config
-        assert target is not None
+        tm.that(target, none=False)
         tm.that(target.container_name, eq="stack-main")
         tm.that(target.compose_file, eq=tmp_path / "docker-compose.stack.yml")
         tm.that(target.service, eq="stack-main")
@@ -262,7 +248,7 @@ class TestsFlextTestsDocker:
             workspace_root=tmp_path,
         )
         target = manager.target_config
-        assert target is not None
+        tm.that(target, none=False)
         tm.that(target.container_name, eq=None)
         tm.that(target.port, eq=25432)
 
@@ -310,9 +296,7 @@ class TestsFlextTestsDocker:
         manager = tk.stack(
             "docker-compose.stack.yml",
             target=m.Tests.ContainerConfig(
-                container_name="stack-main",
-                service="stack-main",
-                port=59999,
+                container_name="stack-main", service="stack-main", port=59999
             ),
             workspace_root=tmp_path,
         )
@@ -355,18 +339,14 @@ class TestsFlextTestsDocker:
         result = docker_manager.fetch_container_status("nonexistent")
         _ = u.Tests.assert_failure(result)
 
-    def test_wait_for_closed_port_reports_not_ready(
-        self,
-        docker_manager: tk,
-    ) -> None:
+    def test_wait_for_closed_port_reports_not_ready(self, docker_manager: tk) -> None:
         """wait_for_port_ready() succeeds with False for a closed port."""
         result = docker_manager.wait_for_port_ready(c.LOOPBACK_IP, 59999, max_wait=1)
         _ = u.Tests.assert_success(result)
         tm.that(result.value is False, eq=True)
 
     def test_start_compose_stack_returns_result_contract(
-        self,
-        docker_manager: tk,
+        self, docker_manager: tk
     ) -> None:
         """start_compose_stack() returns a well-formed result."""
         result = docker_manager.start_compose_stack("missing-compose.yml")
@@ -377,8 +357,7 @@ class TestsFlextTestsDocker:
             tm.that(result.error, is_=str)
 
     def test_cleanup_with_no_dirty_containers_is_empty(
-        self,
-        docker_manager: tk,
+        self, docker_manager: tk
     ) -> None:
         """cleanup_dirty_containers() returns an empty set when nothing is dirty."""
         _ = docker_manager.mark_container_clean("container1")
@@ -388,9 +367,7 @@ class TestsFlextTestsDocker:
         tm.that(result.value, empty=True)
 
     def test_cleanup_purges_stale_shared_entry(
-        self,
-        tmp_path: Path,
-        monkeypatch: pytest.MonkeyPatch,
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Cleanup drops a dirty container absent from the shared catalog."""
         monkeypatch.setenv("HOME", str(tmp_path))

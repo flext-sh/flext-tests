@@ -6,8 +6,7 @@ from collections.abc import Mapping
 from typing import cast
 
 from flext_tests import r, tm
-from tests import c
-from tests import t
+from tests import c, t
 
 
 class MatchersDataDrivenMixin:
@@ -16,11 +15,7 @@ class MatchersDataDrivenMixin:
     def test_that_with_paths_data_driven_rules(self) -> None:
         """Validate multiple dotted paths with a single declarative matcher call."""
         payload: t.JsonMapping = {
-            "user": {
-                "name": "John",
-                "age": 33,
-                "email": "john@example.com",
-            },
+            "user": {"name": "John", "age": 33, "email": "john@example.com"},
             "status": "active",
         }
         tm.that(
@@ -77,10 +72,7 @@ class MatchersDataDrivenMixin:
         })
         value = tm.ok(
             result,
-            paths={
-                "meta.version": {"starts": "v"},
-                "meta.count": {"eq": 3},
-            },
+            paths={"meta.version": {"starts": "v"}, "meta.count": {"eq": 3}},
             where=lambda data: isinstance(data, Mapping),
         )
         tm.that(value, is_=dict)

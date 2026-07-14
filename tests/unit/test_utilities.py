@@ -49,10 +49,7 @@ class TestsFlextTestsUtilities:
         ],
     )
     def test_assertion_helper_returns_unwrapped_payload(
-        self,
-        result: p.Result[str],
-        assertion: str,
-        expected: str,
+        self, result: p.Result[str], assertion: str, expected: str
     ) -> None:
         """A matching assertion returns the success value / error string."""
         actual = (
@@ -80,10 +77,7 @@ class TestsFlextTestsUtilities:
         ],
     )
     def test_assertion_helper_raises_on_mismatched_outcome(
-        self,
-        result: p.Result[str],
-        assertion: str,
-        match: str,
+        self, result: p.Result[str], assertion: str, match: str
     ) -> None:
         """A mismatched outcome raises AssertionError with a diagnostic message."""
         assertion_fn = (
@@ -129,18 +123,14 @@ class TestsFlextTestsUtilities:
         ]
         # No AssertionError expected.
         u.Tests.assert_result_chain(
-            chain,
-            expected_successes=2,
-            expected_failures=1,
-            first_failure_index=1,
+            chain, expected_successes=2, expected_failures=1, first_failure_index=1
         )
 
     def test_assert_result_chain_treats_zero_alias_count_as_explicit(self) -> None:
         """Explicit expected_success_count=0 is honored, not treated as unset."""
         with pytest.raises(AssertionError, match="Expected 0 successes, got 1"):
             u.Tests.assert_result_chain(
-                [r[str].ok("success")],
-                expected_success_count=0,
+                [r[str].ok("success")], expected_success_count=0
             )
 
     def test_assert_result_chain_reports_wrong_first_failure_index(self) -> None:
@@ -176,9 +166,7 @@ class TestsFlextTestsUtilities:
     def test_create_parametrized_cases_builds_success_and_failure_rows(self) -> None:
         """Values and errors produce aligned (result, is_success, value, error) rows."""
         cases = u.Tests.create_parametrized_cases(
-            success_values=("ok",),
-            failure_errors=("boom",),
-            error_codes=("E1",),
+            success_values=("ok",), failure_errors=("boom",), error_codes=("E1",)
         )
 
         tm.that(len(cases), eq=2)
@@ -196,9 +184,7 @@ class TestsFlextTestsUtilities:
     def test_create_parametrized_cases_preserves_empty_error_codes(self) -> None:
         """An explicit empty error-code sequence leaves the failure code unset."""
         cases = u.Tests.create_parametrized_cases(
-            success_values=(),
-            failure_errors=("boom",),
-            error_codes=(),
+            success_values=(), failure_errors=("boom",), error_codes=()
         )
 
         tm.that(len(cases), eq=1)
@@ -250,10 +236,7 @@ SIDE_EFFECT = "detected"
         ],
     )
     def test_make_has_executable_body_classifies_command_source(
-        self,
-        tmp_path: Path,
-        source: str,
-        expected_body: bool,
+        self, tmp_path: Path, source: str, expected_body: bool
     ) -> None:
         """Executable statements outside the metadata header are detected."""
         script = tmp_path / "command.py"
@@ -263,8 +246,7 @@ SIDE_EFFECT = "detected"
         tm.that(u.Tests.assert_success(result), eq=expected_body)
 
     def test_make_has_executable_body_fails_for_missing_file(
-        self,
-        tmp_path: Path,
+        self, tmp_path: Path
     ) -> None:
         """A missing path yields a failure result rather than raising."""
         missing = tmp_path / "does_not_exist.py"
@@ -273,8 +255,7 @@ SIDE_EFFECT = "detected"
         tm.that(error, has="command body read")
 
     def test_make_has_executable_body_fails_for_invalid_python(
-        self,
-        tmp_path: Path,
+        self, tmp_path: Path
     ) -> None:
         """Unparseable Python yields a failure result naming the file."""
         broken = tmp_path / "broken.py"

@@ -2,17 +2,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from pathlib import Path
 
 from flext_tests import tf, tm
-from tests import c
-from tests import m
-from tests import u
-
-if TYPE_CHECKING:
-    from pathlib import Path
-
-    from tests import t
+from tests import c, m, t, u
 
 
 class FilesFormatsMixin:

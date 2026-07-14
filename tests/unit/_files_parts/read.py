@@ -5,9 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_tests import tf, tm
-from tests import c
-from tests import m
-from tests import u
+from tests import c, m, u
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -52,7 +50,7 @@ class FilesReadMixin:
         result = manager.read(path)
         _ = u.Tests.assert_success(result)
         read_value = result.value
-        assert isinstance(read_value, m.ConfigMap)
+        tm.that(read_value, is_=m.ConfigMap)
         tm.that(read_value.model_dump() == content.model_dump(), eq=True)
 
     def test_read_csv_file(self, tmp_path: Path) -> None:

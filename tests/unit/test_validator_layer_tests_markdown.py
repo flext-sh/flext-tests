@@ -82,17 +82,13 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
 
     # ---- layer validator -------------------------------------------------
 
-    def test_layer_flags_every_import_from_a_higher_layer(
-        self,
-        tmp_path: Path,
-    ) -> None:
+    def test_layer_flags_every_import_from_a_higher_layer(self, tmp_path: Path) -> None:
         file_path = self._write(tmp_path, "utilities.py", _HIGHER_LAYER_SOURCE)
 
         result: m.Tests.ScanResult = u.Tests.assert_success(
             tv.layer(
-                file_path,
-                layer_hierarchy={"utilities": 5, "service": 6, "handlers": 7},
-            ),
+                file_path, layer_hierarchy={"utilities": 5, "service": 6, "handlers": 7}
+            )
         )
 
         layer_violations = [v for v in result.violations if v.rule_id == "LAYER-001"]
@@ -105,13 +101,12 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
             tm.that(len(violation.description) >= 1, eq=True)
 
     def test_layer_passes_when_no_higher_layer_imports_exist(
-        self,
-        tmp_path: Path,
+        self, tmp_path: Path
     ) -> None:
         file_path = self._write(tmp_path, "utilities.py", _CLEAN_LAYER_SOURCE)
 
         result: m.Tests.ScanResult = u.Tests.assert_success(
-            tv.layer(file_path, layer_hierarchy={"utilities": 5}),
+            tv.layer(file_path, layer_hierarchy={"utilities": 5})
         )
 
         tm.that(result.passed, eq=True)
@@ -122,9 +117,7 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
 
     @pytest.mark.parametrize("expected_rule", ["TEST-001", "TEST-002", "TEST-003"])
     def test_tests_reports_each_forbidden_test_pattern(
-        self,
-        tmp_path: Path,
-        expected_rule: str,
+        self, tmp_path: Path, expected_rule: str
     ) -> None:
         file_path = self._write(tmp_path, "test_example.py", _MOCK_HEAVY_TEST_SOURCE)
 
@@ -135,8 +128,7 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
         tm.that(expected_rule in rule_ids, eq=True)
 
     def test_tests_violations_carry_severity_from_the_public_enum(
-        self,
-        tmp_path: Path,
+        self, tmp_path: Path
     ) -> None:
         file_path = self._write(tmp_path, "test_example.py", _MOCK_HEAVY_TEST_SOURCE)
 
@@ -146,10 +138,7 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
         for violation in result.violations:
             tm.that(violation.severity in allowed, eq=True)
 
-    def test_tests_passes_for_a_clean_test_module(
-        self,
-        tmp_path: Path,
-    ) -> None:
+    def test_tests_passes_for_a_clean_test_module(self, tmp_path: Path) -> None:
         file_path = self._write(tmp_path, "test_clean.py", _CLEAN_TEST_SOURCE)
 
         result: m.Tests.ScanResult = u.Tests.assert_success(tv.tests(file_path))
@@ -162,9 +151,7 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
 
     @pytest.mark.parametrize("expected_rule", ["MD-001", "MD-002", "MD-003", "MD-004"])
     def test_markdown_reports_each_forbidden_code_block_pattern(
-        self,
-        tmp_path: Path,
-        expected_rule: str,
+        self, tmp_path: Path, expected_rule: str
     ) -> None:
         self._write(tmp_path, "README.md", _BAD_MARKDOWN)
 
@@ -174,10 +161,7 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
         tm.that(result.passed, eq=False)
         tm.that(expected_rule in rule_ids, eq=True)
 
-    def test_markdown_passes_for_a_clean_code_block(
-        self,
-        tmp_path: Path,
-    ) -> None:
+    def test_markdown_passes_for_a_clean_code_block(self, tmp_path: Path) -> None:
         self._write(tmp_path, "README.md", _CLEAN_MARKDOWN)
 
         result: m.Tests.ScanResult = u.Tests.assert_success(tv.markdown(tmp_path))
@@ -189,8 +173,7 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
     # ---- cross-validator invariant --------------------------------------
 
     def test_passed_flag_is_consistent_with_violation_presence(
-        self,
-        tmp_path: Path,
+        self, tmp_path: Path
     ) -> None:
         dirty = self._write(tmp_path, "test_example.py", _MOCK_HEAVY_TEST_SOURCE)
         clean = self._write(tmp_path, "test_clean.py", _CLEAN_TEST_SOURCE)
