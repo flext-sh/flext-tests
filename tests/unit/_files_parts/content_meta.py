@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING
 
 from flext_cli import u as cli_u
 from flext_tests import tf, tm
-from tests.models import m
-from tests.utilities import u
+from tests import m
+from tests import u
 
 if TYPE_CHECKING:
     from pathlib import Path

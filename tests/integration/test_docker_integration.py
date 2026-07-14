@@ -21,7 +21,7 @@ from pathlib import Path
 import pytest
 
 from flext_tests import m, tk
-from tests.constants import c
+from tests import c
 
 
 class TestsFlextTestsDockerIntegration:

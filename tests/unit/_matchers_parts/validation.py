@@ -5,8 +5,8 @@ from __future__ import annotations
 import pytest
 
 from flext_tests import r, tm
-from tests.constants import c
-from tests.typings import t
+from tests import c
+from tests import t
 
 
 class MatchersValidationMixin:

@@ -9,8 +9,8 @@ from flext_tests import tf, tm
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from tests.models import m
-    from tests.typings import t
+    from tests import m
+    from tests import t
 
 
 class FilesCreationMixin:

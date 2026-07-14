@@ -17,9 +17,9 @@ from pathlib import Path
 import pytest
 
 from flext_tests import tk, tm
-from tests.constants import c
-from tests.models import m
-from tests.utilities import u
+from tests import c
+from tests import m
+from tests import u
 
 
 @pytest.fixture

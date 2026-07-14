@@ -8,7 +8,7 @@ from unittest.mock import patch
 import pytest
 
 from flext_tests import FlextTestsDocker, c as flext_tests_c, m, tk, tm
-from tests.constants import c
+from tests import c
 
 
 class DockerBuildersMixin:

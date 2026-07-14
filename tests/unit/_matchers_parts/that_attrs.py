@@ -8,8 +8,8 @@ from flext_tests import r, tm
 from tests.unit._matchers_parts.predicates import MatchersPredicates
 
 if TYPE_CHECKING:
-    from tests.protocols import p
-    from tests.typings import t
+    from tests import p
+    from tests import t
 
 
 class MatchersThatAttrsMixin:

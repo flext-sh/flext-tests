@@ -8,11 +8,7 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 # mro-i6nq.10: The package consumes its manifest's public-export contract.
-from flext_tests.__unit__ import (
-    LAZY_ALIAS_GROUPS as _LAZY_ALIAS_GROUPS,
-    LAZY_MODULES as _LAZY_MODULES,
-    PUBLIC_EXPORTS as _PUBLIC_EXPORTS,
-)
+from flext_tests.__unit__ import PUBLIC_EXPORTS as _PUBLIC_EXPORTS
 from flext_tests.__version__ import (
     __author__ as __author__,
     __author_email__ as __author_email__,
