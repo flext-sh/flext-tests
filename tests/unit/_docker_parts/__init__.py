@@ -3,32 +3,14 @@
 
 from __future__ import annotations
 
-from flext_core.lazy import build_lazy_import_map, install_lazy_exports
+from .builders import DockerBuildersMixin
+from .operations import DockerOperationsMixin
+from .state import DockerStateMixin
+from .targets import DockerTargetsMixin
 
-_LAZY_IMPORTS = build_lazy_import_map({
-    ".builders": ("DockerBuildersMixin",),
-    ".operations": ("DockerOperationsMixin",),
-    ".state": ("DockerStateMixin",),
-    ".targets": ("DockerTargetsMixin",),
-    "flext_tests": (
-        "c",
-        "d",
-        "e",
-        "h",
-        "m",
-        "p",
-        "r",
-        "s",
-        "t",
-        "td",
-        "tf",
-        "tk",
-        "tm",
-        "tv",
-        "u",
-        "x",
-    ),
-})
-
-
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)
+__all__: tuple[str, ...] = (
+    "DockerBuildersMixin",
+    "DockerOperationsMixin",
+    "DockerStateMixin",
+    "DockerTargetsMixin",
+)
