@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     from tests.models import TestsFlextTestsModels as TestsFlextTestsModels, m as m
     from tests.protocols import (
         TestsFlextTestsProtocols as TestsFlextTestsProtocols,
-        p as p,
+        p,
     )
     from tests.typings import TestsFlextTestsTypes as TestsFlextTestsTypes, t as t
     from tests.unit._docker_parts.builders import (
@@ -123,7 +123,7 @@ if TYPE_CHECKING:
     )
     from tests.utilities import (
         TestsFlextTestsUtilities as TestsFlextTestsUtilities,
-        u as u,
+        u,
     )
 _LAZY_IMPORTS = merge_lazy_imports(
     (".integration", ".unit"),
