@@ -43,8 +43,6 @@ def load_infra_report(
             enforcer_result.error or "build flext_infra namespace enforcer failed"
         )
     enforcer: p.Tests.NamespaceEnforcer = enforcer_result.value
-    if not isinstance(enforcer, p.Tests.NamespaceEnforcer):
-        return r[p.AttributeProbe].fail("FlextInfraNamespaceEnforcer contract invalid")
     # NOTE (multi-agent, mro-wkii.17.21): adapt the direct report exactly once
     # through the canonical value-returning exception boundary.
     return u.try_(
