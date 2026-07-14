@@ -23,7 +23,8 @@ class FlextTestsMatchersTypeGuardsMixin:
         """Check runtime type compatibility using canonical parent guards."""
         if isinstance(expected_type, tuple):
             return any(u.instance_of(value, item) for item in expected_type)
-        return u.instance_of(value, expected_type)
+        matched: bool = u.instance_of(value, expected_type)
+        return matched
 
     @staticmethod
     def prepare_eq_ne_payloads(

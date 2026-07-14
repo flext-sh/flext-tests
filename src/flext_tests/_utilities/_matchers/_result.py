@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, MutableMapping
-from typing import overload
-
 from flext_core import u
 from flext_tests import c, m, p, t
 from flext_tests._utilities._matchers._assertions import (
@@ -293,18 +291,6 @@ class FlextTestsMatchersResultMixin:
                         expected=params.is_, actual=type(result_value).__name__
                     )
                 )
-
-            @staticmethod
-            @overload
-            def ok[TResult: t.Tests.TestResultValue](
-                result: p.ResultLike[TResult],
-            ) -> TResult: ...
-
-            @staticmethod
-            @overload
-            def ok[TResult: t.Tests.TestResultValue](
-                result: p.ResultLike[TResult], **kwargs: t.Tests.MatcherKwargValue
-            ) -> TResult | t.Tests.TestobjectSerializable: ...
 
             @staticmethod
             def ok[TResult: t.Tests.TestResultValue](

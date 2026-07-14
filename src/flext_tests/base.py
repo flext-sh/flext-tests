@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Self
+from typing import Self, TypeIs
 
 from flext_core import FlextContainer, s
 from flext_tests import m, p, t
@@ -14,13 +14,20 @@ from flext_tests._settings import FlextTestsSettings
 class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
     """Base service for test packages with the ``Tests`` settings namespace."""
 
+    @staticmethod
+    def _is_test_settings_type(
+        settings_type: t.SettingsClass,
+    ) -> TypeIs[type[FlextTestsSettings]]:
+        """Narrow the configured settings class to the tests-owned subtype."""
+        return issubclass(settings_type, FlextTestsSettings)
+
     @classmethod
     def test_settings_type(cls) -> type[FlextTestsSettings]:
         """Return the concrete test settings type declared by the service MRO."""
         settings_type = cls._runtime_bootstrap_options().settings_type
         if settings_type is None:
             return FlextTestsSettings
-        if not issubclass(settings_type, FlextTestsSettings):
+        if not cls._is_test_settings_type(settings_type):
             msg = (
                 f"{cls.__name__} must bootstrap a FlextTestsSettings subclass, "
                 f"got {settings_type.__name__}"

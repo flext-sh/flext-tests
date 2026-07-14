@@ -151,7 +151,7 @@ def settings_factory() -> Callable[..., FlextSettings]:
 
 
 @pytest.fixture
-def test_context() -> FlextContext:
+def test_context() -> p.Context:
     """Provide the canonical FlextContext fixture for test runtimes."""
     return FlextContext()
 

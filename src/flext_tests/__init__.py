@@ -6,9 +6,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
-
-# mro-i6nq.10: The package consumes its manifest's public-export contract.
-from flext_tests.__unit__ import PUBLIC_EXPORTS as _PUBLIC_EXPORTS
 from flext_tests.__version__ import (
     __author__ as __author__,
     __author_email__ as __author_email__,
@@ -26,10 +23,6 @@ if TYPE_CHECKING:
         FlextTestsConfig as FlextTestsConfig,
         config as config,
     )
-    from flext_tests._fixtures._enforcement_parts.discovery import (
-        load_infra_report as load_infra_report,
-    )
-    from flext_tests._fixtures.settings import reset_settings as reset_settings
     from flext_tests._settings import (
         FlextTestsSettings as FlextTestsSettings,
         settings as settings,
@@ -56,14 +49,74 @@ if TYPE_CHECKING:
         tv as tv,
     )
 
-    # mro-i6nq.10: Static declaration mirrors the installer-owned runtime binding.
-    __all__: tuple[str, ...]
+
+_LAZY_MODULES: dict[str, tuple[str, ...]] = {
+    "._config": ("FlextTestsConfig", "config"),
+    "._settings": ("FlextTestsSettings", "settings"),
+    ".base": ("FlextTestsCase", "FlextTestsServiceBase", "s"),
+    ".constants": ("FlextTestsConstants", "c"),
+    ".docker": ("FlextTestsDocker", "tk"),
+    ".domains": ("FlextTestsDomains", "td"),
+    ".files": ("FlextTestsFiles", "tf"),
+    ".models": ("FlextTestsModels", "m"),
+    ".protocols": ("FlextTestsProtocols", "p"),
+    ".tmatchers": ("FlextTestsMatchersUtilities", "tm"),
+    ".typings": ("FlextTestsTypes", "t"),
+    ".utilities": ("FlextTestsUtilities", "u"),
+    ".validator": ("FlextTestsValidator", "tv"),
+    "flext_infra": ("d", "e", "h", "r", "x"),
+}
+
+
+_LAZY_ALIAS_GROUPS: dict[str, tuple[tuple[str, str], ...]] = {}
 
 
 _LAZY_IMPORTS = build_lazy_import_map(
     _LAZY_MODULES, alias_groups=_LAZY_ALIAS_GROUPS, sort_keys=False
 )
 
+__all__: tuple[str, ...] = (
+    "FlextTestsCase",
+    "FlextTestsConfig",
+    "FlextTestsConstants",
+    "FlextTestsDocker",
+    "FlextTestsDomains",
+    "FlextTestsFiles",
+    "FlextTestsMatchersUtilities",
+    "FlextTestsModels",
+    "FlextTestsProtocols",
+    "FlextTestsServiceBase",
+    "FlextTestsSettings",
+    "FlextTestsTypes",
+    "FlextTestsUtilities",
+    "FlextTestsValidator",
+    "__author__",
+    "__author_email__",
+    "__description__",
+    "__license__",
+    "__title__",
+    "__url__",
+    "__version__",
+    "__version_info__",
+    "c",
+    "config",
+    "d",
+    "e",
+    "h",
+    "m",
+    "p",
+    "r",
+    "s",
+    "settings",
+    "t",
+    "td",
+    "tf",
+    "tk",
+    "tm",
+    "tv",
+    "u",
+    "x",
+)
 
-# mro-i6nq.10: The installer publishes __all__ from the manifest's literal ABI.
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=_PUBLIC_EXPORTS)
+
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)
