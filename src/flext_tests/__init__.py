@@ -198,26 +198,6 @@ if TYPE_CHECKING:
 
 _LAZY_MODULES: dict[str, tuple[str, ...]] = {
     "._config": ("FlextTestsConfig", "config"),
-<<<<<<< HEAD
-=======
-    "._constants.data_cases": ("FlextTestsConstantsDataCases",),
-    "._constants.docker": ("FlextTestsConstantsDocker",),
-    "._constants.files": ("FlextTestsConstantsFiles",),
-    "._constants.make": ("FlextTestsConstantsMake",),
-    "._constants.matcher": ("FlextTestsConstantsMatcher",),
-    "._constants.validator": ("FlextTestsConstantsValidator",),
-    "._fixtures._enforcement_parts.build": ("build_items",),
-    "._fixtures._enforcement_parts.config": ("SessionConfig", "resolve_config"),
-    "._fixtures._enforcement_parts.discovery": (
-        "collected_project_names",
-        "collected_validator_targets",
-        "load_infra_report",
-    ),
-    "._fixtures._enforcement_parts.validators": (
-        "build_tests_validator_items",
-        "dispatch_infra_detector",
-    ),
->>>>>>> origin/0.12.0-dev
     "._fixtures.enforcement": (
         "EnforcementBuildContext",
         "EnforcementCollector",
@@ -230,85 +210,12 @@ _LAZY_MODULES: dict[str, tuple[str, ...]] = {
         "clear",
         "discover_workspace_root",
         "get",
-<<<<<<< HEAD
         "load_infra_report",
-=======
->>>>>>> origin/0.12.0-dev
         "register",
         "split_csv",
         "warning_categories",
     ),
-<<<<<<< HEAD
     "._settings": ("FlextTestsSettings", "settings"),
-=======
-    "._fixtures.markdown_validation": (
-        "MarkdownCodeBlockCollector",
-        "MarkdownCodeBlockItem",
-        "MarkdownValidationError",
-    ),
-    "._fixtures.project_metadata": ("project_metadata", "project_tool_flext"),
-    "._fixtures.settings": (
-        "clean_container",
-        "reset_settings",
-        "sample_data",
-        "settings_factory",
-        "temp_dir",
-        "temp_file",
-        "test_context",
-        "test_runtime",
-    ),
-    "._models.base": ("FlextTestsBaseModelsMixin",),
-    "._models.batch": ("FlextTestsBatchModelsMixin",),
-    "._models.docker": ("FlextTestsDockerModelsMixin",),
-    "._models.domains": ("FlextTestsDomainModelsMixin",),
-    "._models.filesystem": ("FlextTestsFilesystemModelsMixin",),
-    "._models.make": ("FlextTestsMakeModelsMixin",),
-    "._models.matchers": ("FlextTestsMatchersModelsMixin",),
-    "._models.validator": ("FlextTestsValidatorModelsMixin",),
-    "._protocols.enforcement": ("FlextTestsEnforcementProtocolsMixin",),
-    "._protocols.valuefactory": ("FlextTestsValueFactoryProtocolsMixin",),
-    "._settings": ("FlextTestsSettings", "settings"),
-    "._typings.base": ("FlextTestsBaseTypesMixin",),
-    "._typings.files": ("FlextTestsFilesTypesMixin",),
-    "._typings.make": ("FlextTestsMakeTypesMixin",),
-    "._typings.matchers": ("FlextTestsMatchersTypesMixin",),
-    "._utilities._files._assertions": ("FlextTestsFilesAssertionsMixin",),
-    "._utilities._files._batch": ("FlextTestsFilesBatchMixin",),
-    "._utilities._files._comparison": ("FlextTestsFilesComparisonMixin",),
-    "._utilities._files._contexts": ("FlextTestsFilesContextsMixin",),
-    "._utilities._files._creation": ("FlextTestsFilesCreationMixin",),
-    "._utilities._files._info": ("FlextTestsFilesInfoMixin",),
-    "._utilities._files._lifecycle": ("FlextTestsFilesLifecycleMixin",),
-    "._utilities._files._reading": ("FlextTestsFilesReadingMixin",),
-    "._utilities._matchers._assertions": ("FlextTestsMatchersAssertionsMixin",),
-    "._utilities._matchers._containment": ("FlextTestsMatchersContainmentMixin",),
-    "._utilities._matchers._result": ("FlextTestsMatchersResultMixin",),
-    "._utilities._matchers._scope": ("FlextTestsMatchersScopeMixin",),
-    "._utilities._matchers._that": ("FlextTestsMatchersThatMixin",),
-    "._utilities._matchers._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
-    "._utilities.container": ("FlextTestsContainerHelpersUtilitiesMixin",),
-    "._utilities.files": ("FlextTestsFilesUtilitiesMixin",),
-    "._utilities.fixtures_dsl": ("FlextTestsFixturesDSLMixin",),
-    "._utilities.generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
-    "._utilities.handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
-    "._utilities.make": ("FlextTestsMakeUtilitiesMixin",),
-    "._utilities.make_contract": ("FlextTestsMakeContractUtilitiesMixin",),
-    "._utilities.make_parsing": ("FlextTestsMakeParsingUtilitiesMixin",),
-    "._utilities.make_registry": ("FlextTestsMakeRegistryUtilitiesMixin",),
-    "._utilities.make_rendering": ("FlextTestsMakeRenderingUtilitiesMixin",),
-    "._utilities.payload": ("FlextTestsPayloadUtilities",),
-    "._utilities.result": ("FlextTestsResultUtilitiesMixin",),
-    "._utilities.settings": ("FlextTestsConfigHelpersUtilitiesMixin",),
-    "._utilities.testcontext": ("FlextTestsTestContextUtilitiesMixin",),
-    "._utilities.validator": ("FlextTestsValidatorUtilitiesMixin",),
-    "._validator.bypass": ("FlextValidatorBypass",),
-    "._validator.imports": ("FlextValidatorImports",),
-    "._validator.layer": ("FlextValidatorLayer",),
-    "._validator.markdown": ("FlextValidatorMarkdown",),
-    "._validator.settings": ("FlextValidatorSettings",),
-    "._validator.tests": ("FlextValidatorTests",),
-    "._validator.types": ("FlextValidatorTypes",),
->>>>>>> origin/0.12.0-dev
     ".base": ("FlextTestsCase", "FlextTestsServiceBase", "s"),
     ".constants": ("FlextTestsConstants", "c"),
     ".docker": ("FlextTestsDocker", "tk"),
@@ -332,14 +239,11 @@ _LAZY_IMPORTS = build_lazy_import_map(
 )
 
 __all__: tuple[str, ...] = (
-<<<<<<< HEAD
     "EnforcementBuildContext",
     "EnforcementCollector",
     "EnforcementContribution",
     "EnforcementItem",
     "EnforcementViolationError",
-=======
->>>>>>> origin/0.12.0-dev
     "FlextTestsCase",
     "FlextTestsConfig",
     "FlextTestsConstants",
@@ -362,7 +266,6 @@ __all__: tuple[str, ...] = (
     "__url__",
     "__version__",
     "__version_info__",
-<<<<<<< HEAD
     "active_rules",
     "builder_for",
     "builders",
@@ -382,18 +285,6 @@ __all__: tuple[str, ...] = (
     "s",
     "settings",
     "split_csv",
-=======
-    "c",
-    "config",
-    "d",
-    "e",
-    "h",
-    "m",
-    "p",
-    "r",
-    "s",
-    "settings",
->>>>>>> origin/0.12.0-dev
     "t",
     "td",
     "tf",
@@ -401,10 +292,7 @@ __all__: tuple[str, ...] = (
     "tm",
     "tv",
     "u",
-<<<<<<< HEAD
     "warning_categories",
-=======
->>>>>>> origin/0.12.0-dev
     "x",
 )
 
