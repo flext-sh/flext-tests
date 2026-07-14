@@ -3,16 +3,13 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Protocol, runtime_checkable
+from pathlib import Path
+from typing import Protocol, runtime_checkable
+
+import pytest
 
 from flext_infra import p
-
-if TYPE_CHECKING:
-    from pathlib import Path
-
-    import pytest
-
-    from flext_tests import m, t
+from flext_tests import m, t
 
 
 class FlextTestsEnforcementProtocolsMixin:

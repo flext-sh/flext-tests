@@ -8,8 +8,8 @@ import pytest
 
 from flext_tests import tf
 
-if TYPE_CHECKING:
-    from pathlib import Path
+from pathlib import Path
+
 
 
 class FilesAssertExistsMixin:

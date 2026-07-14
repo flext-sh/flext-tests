@@ -2,19 +2,15 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import pytest
 
+from flext_tests import p
 from flext_tests._fixtures._enforcement_parts.build import build_items
 from flext_tests._fixtures._enforcement_parts.config import (
     SessionConfig,
     active_rules,
     resolve_config,
 )
-
-if TYPE_CHECKING:
-    import pytest
-
-    from flext_tests import p
 
 
 def pytest_collection_modifyitems(

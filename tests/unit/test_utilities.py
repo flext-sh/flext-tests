@@ -18,10 +18,10 @@ import pytest
 from flext_tests import r, tm
 from tests import u
 
-if TYPE_CHECKING:
-    from pathlib import Path
+from pathlib import Path
 
-    from tests import p
+from tests import p
+
 
 
 class TestsFlextTestsUtilities:

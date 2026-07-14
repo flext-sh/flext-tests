@@ -2,21 +2,15 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterable
 from importlib import import_module
 from pathlib import Path
-from typing import TYPE_CHECKING
+
+import pytest
 
 from flext_tests import c, m, p, t
 from flext_tests._fixtures._enforcement_parts.items import EnforcementItem
-
-if TYPE_CHECKING:
-    from collections.abc import Callable, Iterable
-
-    import pytest
-
-    from flext_tests._fixtures._enforcement_parts.registry import (
-        EnforcementBuildContext,
-    )
+from flext_tests._fixtures._enforcement_parts.registry import EnforcementBuildContext
 
 
 def _iter_infra_violations(

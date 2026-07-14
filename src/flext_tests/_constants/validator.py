@@ -5,10 +5,9 @@ from __future__ import annotations
 import re
 from enum import StrEnum, unique
 from types import MappingProxyType
-from typing import TYPE_CHECKING, ClassVar, Final
+from typing import ClassVar, Final
 
-if TYPE_CHECKING:
-    from flext_infra import t
+from flext_infra import t
 
 
 class FlextTestsConstantsValidator:

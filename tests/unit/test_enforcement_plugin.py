@@ -22,8 +22,8 @@ import pytest
 from flext_tests import m, tm
 from flext_tests.enforcement import active_rules, discover_workspace_root, split_csv
 
-if TYPE_CHECKING:
-    from pathlib import Path
+from pathlib import Path
+
 
 
 class TestsFlextTestsEnforcementPlugin:

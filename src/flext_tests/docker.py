@@ -6,17 +6,15 @@ import socket
 import time
 from collections.abc import MutableSet, Sequence
 from pathlib import Path
-from typing import TYPE_CHECKING, Annotated, ClassVar, Self, override
+from typing import Annotated, ClassVar, Self, override
 
 from docker import DockerClient as DockerSDKClient, from_env as docker_from_env
 from docker.errors import DockerException, NotFound
+from docker.models.containers import Container
 from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
 from flext_tests import c, m, p, r, s, t, u
-
-if TYPE_CHECKING:
-    from docker.models.containers import Container
 
 
 class FlextTestsDocker(s[m.Tests.ContainerInfo]):
@@ -103,8 +101,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             return ""
         if not bindings:
             return ""
-        host_port = bindings[0].get("HostPort", "")
-        return host_port if isinstance(host_port, str) else str(host_port)
+        return bindings[0].get("HostPort", "")
 
     @staticmethod
     def _normalize_bindings(

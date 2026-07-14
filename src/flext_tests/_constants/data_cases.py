@@ -9,10 +9,9 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Final
+from typing import Final
 
-if TYPE_CHECKING:
-    from flext_infra import t
+from flext_infra import t
 
 
 class FlextTestsConstantsDataCases:

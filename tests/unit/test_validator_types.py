@@ -18,8 +18,8 @@ import pytest
 from flext_tests import m, tm, tv
 from tests import u
 
-if TYPE_CHECKING:
-    from pathlib import Path
+from pathlib import Path
+
 
 _MODERN_TYPING_SOURCE = """from __future__ import annotations
 

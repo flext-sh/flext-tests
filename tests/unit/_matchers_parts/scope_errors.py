@@ -8,8 +8,8 @@ import pytest
 
 from flext_tests import r, tm
 
-if TYPE_CHECKING:
-    from tests import p
+from tests import p
+
 
 
 class MatchersScopeErrorsMixin:

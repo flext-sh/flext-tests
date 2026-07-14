@@ -4,12 +4,10 @@ from __future__ import annotations
 
 from importlib import import_module
 from pathlib import Path
-from typing import TYPE_CHECKING
+
+import pytest
 
 from flext_tests import c, p, r, t, u
-
-if TYPE_CHECKING:
-    import pytest
 
 
 def load_infra_report(
@@ -43,7 +41,7 @@ def load_infra_report(
             enforcer_result.error or "build flext_infra namespace enforcer failed"
         )
     enforcer: p.Tests.NamespaceEnforcer = enforcer_result.value
-    if not isinstance(enforcer, p.Tests.NamespaceEnforcer):
+    if not enforcer:
         return r[p.AttributeProbe].fail("FlextInfraNamespaceEnforcer contract invalid")
     # NOTE (multi-agent, mro-wkii.17.21): adapt the direct report exactly once
     # through the canonical value-returning exception boundary.

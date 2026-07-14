@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from pathlib import Path
 
+import pytest
+
+from flext_tests import m, p, t
 from flext_tests._fixtures._enforcement_parts.config import active_rules
 from flext_tests._fixtures._enforcement_parts.discovery import (
     collected_project_names,
@@ -18,13 +21,6 @@ from flext_tests._fixtures._enforcement_parts.registry import (
 from flext_tests._fixtures._enforcement_parts.validators import (
     build_tests_validator_items,
 )
-
-if TYPE_CHECKING:
-    from pathlib import Path
-
-    import pytest
-
-    from flext_tests import m, p, t
 
 
 def build_items(

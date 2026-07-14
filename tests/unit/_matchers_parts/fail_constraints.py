@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING
 from flext_tests import r, tm
 from tests import m
 
-if TYPE_CHECKING:
-    from tests import p
+from tests import p
+
 
 
 class MatchersFailConstraintsMixin:

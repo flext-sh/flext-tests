@@ -8,15 +8,12 @@ from their own ``pytest11`` entry-point modules.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from collections.abc import Callable, Sequence
+from pathlib import Path
 
-if TYPE_CHECKING:
-    from collections.abc import Callable, Sequence
-    from pathlib import Path
+import pytest
 
-    import pytest
-
-    from flext_tests import m, p
+from flext_tests import m, p
 
 
 class EnforcementBuildContext:
@@ -48,7 +45,6 @@ class EnforcementContribution:
     ) -> None:
         self.source_kind = source_kind
         self.builder = builder
-        self.configure = configure
         self.warning_categories = tuple(warning_categories)
 
 
