@@ -20,6 +20,9 @@ from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
 from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
 from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
 from flext_tests._utilities.validator import FlextTestsValidatorUtilitiesMixin
+from flext_tests._utilities.workspace_cleanup import (
+    FlextTestsWorkspaceCleanupUtilitiesMixin,
+)
 
 
 class FlextTestsUtilities(u):
@@ -40,6 +43,8 @@ class FlextTestsUtilities(u):
         FlextTestsMakeUtilitiesMixin,
         FlextTestsValidatorUtilitiesMixin,
         FlextTestsMatchersUtilities.Tests,
+        # NOTE (multi-agent): compose guarded cleanup planning/apply into u.Tests.
+        FlextTestsWorkspaceCleanupUtilitiesMixin,
     ):
         """Test utilities namespace."""
 
