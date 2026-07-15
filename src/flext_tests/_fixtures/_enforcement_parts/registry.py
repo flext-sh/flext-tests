@@ -45,6 +45,7 @@ class EnforcementContribution:
     ) -> None:
         self.source_kind = source_kind
         self.builder = builder
+        self.configure = configure
         self.warning_categories = tuple(warning_categories)
 
 
