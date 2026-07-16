@@ -12,28 +12,6 @@ from flext_tests import c, m, p, r, t, u
 class FlextValidatorSettings:
     """Scan pyproject and config for policy violations."""
 
-    @staticmethod
-    def to_toml_value(value: t.JsonValue) -> t.Tests.TomlValue:
-        """Project a JsonValue into a TOML-compatible value."""
-        if value is None:
-            return ""
-        if isinstance(value, dict):
-            return {
-                key: FlextValidatorSettings.to_toml_value(item)
-                for key, item in value.items()
-            }
-        if isinstance(value, list):
-            return [FlextValidatorSettings.to_toml_value(item) for item in value]
-        return value
-
-    @staticmethod
-    def to_toml_dict(mapping: t.JsonMapping) -> t.Tests.TomlDict:
-        """Recursively convert a JsonMapping to a TOML-compatible dictionary."""
-        return {
-            key: FlextValidatorSettings.to_toml_value(value)
-            for key, value in mapping.items()
-        }
-
     @classmethod
     def _create_config_violation(
         cls,
@@ -59,7 +37,7 @@ class FlextValidatorSettings:
     def _check_mypy_settings(
         cls,
         file_path: Path,
-        data: t.Tests.TomlDict,
+        data: t.Tests.TomlMapping,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
@@ -125,7 +103,7 @@ class FlextValidatorSettings:
     def _check_pyright_settings(
         cls,
         file_path: Path,
-        data: t.Tests.TomlDict,
+        data: t.Tests.TomlMapping,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
@@ -177,10 +155,11 @@ class FlextValidatorSettings:
                     "invalid TOML - could not parse pyproject",
                 )
             ]
-        data = cls.to_toml_dict(mapping)
         lines = content.splitlines()
-        violations.extend(cls._check_mypy_settings(file_path, data, lines, approved))
-        violations.extend(cls._check_pyright_settings(file_path, data, lines, approved))
+        violations.extend(cls._check_mypy_settings(file_path, mapping, lines, approved))
+        violations.extend(
+            cls._check_pyright_settings(file_path, mapping, lines, approved)
+        )
         return violations
 
     @classmethod

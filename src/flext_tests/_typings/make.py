@@ -14,18 +14,12 @@ from flext_infra import m, t
 class FlextTestsMakeTypesMixin:
     """Type aliases for registry-driven Make command metadata."""
 
-    type MakeTomlValue = t.JsonValue
-    type MakeTomlTable = t.JsonMapping
-    type MutableMakeTomlTable = t.MutableJsonMapping
     type DispatchMain = Callable[[tuple[str, ...]], int]
-    type TomlValue = (
-        t.Primitives
-        | list[FlextTestsMakeTypesMixin.TomlValue]
-        | dict[str, FlextTestsMakeTypesMixin.TomlValue]
-    )
-    type TomlDict = dict[str, FlextTestsMakeTypesMixin.TomlValue]
+    type TomlValue = t.JsonValue
+    type TomlMapping = t.JsonMapping
+    type MutableTomlMapping = t.MutableJsonMapping
 
-    MAKE_TOML_TABLE_ADAPTER: m.TypeAdapter[MakeTomlTable] = m.TypeAdapter(MakeTomlTable)
+    TOML_MAPPING_ADAPTER: m.TypeAdapter[TomlMapping] = m.TypeAdapter(TomlMapping)
 
 
 __all__: list[str] = ["FlextTestsMakeTypesMixin"]
