@@ -18,6 +18,7 @@ from flext_tests._models.filesystem import FlextTestsFilesystemModelsMixin
 from flext_tests._models.make import FlextTestsMakeModelsMixin
 from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
 from flext_tests._models.validator import FlextTestsValidatorModelsMixin
+from flext_tests._models.workspace_cleanup import FlextTestsWorkspaceCleanupModelsMixin
 
 
 class FlextTestsModels(m):
@@ -32,6 +33,8 @@ class FlextTestsModels(m):
         FlextTestsMakeModelsMixin,
         FlextTestsValidatorModelsMixin,
         FlextTestsMatchersModelsMixin,
+        # NOTE (multi-agent): expose the approved typed cleanup contract through m.Tests.
+        FlextTestsWorkspaceCleanupModelsMixin,
     ):
         """Test-specific models namespace."""
 

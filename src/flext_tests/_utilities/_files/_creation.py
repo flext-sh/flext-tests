@@ -38,13 +38,10 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
 
     @staticmethod
     def _to_string_rows(
-        value: t.SequenceOf[t.Tests.TestobjectSerializable],
+        value: t.SequenceOf[t.SequenceOf[t.Tests.TestobjectSerializable]],
     ) -> t.SequenceOf[t.StrSequence]:
-        return [
-            [str(cell) for cell in row]
-            for row in value
-            if isinstance(row, t.SEQUENCE_PAIR_TYPES)
-        ]
+        """Convert rows already validated as nested sequences to strings."""
+        return [[str(cell) for cell in row] for row in value]
 
     def _coerce_file_content(
         self,
@@ -68,10 +65,8 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             case _ if self.is_mapping(unwrapped):
                 return FlextTestsPayloadUtilities.to_config_map(unwrapped)
             case _ if self._is_nested_rows(unwrapped):
-                sequence_value: t.SequenceOf[t.Tests.TestobjectSerializable] = (
-                    unwrapped if isinstance(unwrapped, t.SEQUENCE_PAIR_TYPES) else ()
-                )
-                return self._to_string_rows(sequence_value)
+                # NOTE (multi-agent): retain the validated nested-row contract.
+                return self._to_string_rows(unwrapped)
             case _:
                 return str(unwrapped)
 
@@ -96,7 +91,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
 
     def _is_nested_rows(
         self, value: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable
-    ) -> TypeIs[Sequence[t.StrSequence]]:
+    ) -> TypeIs[Sequence[Sequence[t.Tests.TestobjectSerializable]]]:
         if not isinstance(value, Sequence) or isinstance(value, str | bytes):
             return False
         try:
