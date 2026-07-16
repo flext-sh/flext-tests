@@ -32,7 +32,7 @@ class FlextTestsMatchersResultMixin:
             """Matcher assertion helpers."""
 
             @staticmethod
-            def check[TResult](result: p.Result[TResult]) -> m.Tests.Chain[TResult]:
+            def check[TResult](result: p.Result[TResult]) -> p.Tests.Chain[TResult]:
                 """Start chained assertions on result."""
                 return m.Tests.Chain(result=result)
 

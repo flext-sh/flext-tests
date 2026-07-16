@@ -22,7 +22,7 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
         model: type[TModel] | None = None,
         on_error: c.Tests.ErrorMode = c.Tests.ErrorMode.COLLECT,
         parallel: bool = False,
-    ) -> p.Result[m.Tests.BatchResult]:
+    ) -> p.Result[p.Tests.BatchResult]:
         """Batch file operations with error handling.
 
         Args:
@@ -35,7 +35,7 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
             parallel: Run operations in parallel (not implemented yet)
 
         Returns:
-            r[m.Tests.BatchResult] with results and errors
+            r[p.Tests.BatchResult] with results and errors
 
         """
         try:
@@ -48,7 +48,7 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
                 "parallel": parallel,
             })
         except c.EXC_BASIC_TYPE as exc:
-            return r[m.Tests.BatchResult].fail(
+            return r[p.Tests.BatchResult].fail(
                 f"Invalid parameters for batch operation: {exc}"
             )
         files_dict: MutableMapping[str, t.Tests.TestobjectSerializable] = dict(
@@ -113,7 +113,7 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
             results_dict[name] = rtype.fail(err_msg)
             failed_dict[name] = err_msg
             if error_mode_str == "fail":
-                return r[m.Tests.BatchResult].fail(err_msg)
+                return r[p.Tests.BatchResult].fail(err_msg)
 
         summary = m.Tests.BatchResult.model_validate({
             "succeeded": len(items_list) - len(failed_dict),
@@ -122,7 +122,7 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
             "results": dict(results_dict),
             "errors": dict(failed_dict),
         })
-        return r[m.Tests.BatchResult].ok(summary)
+        return r[p.Tests.BatchResult].ok(summary)
 
 
 __all__: list[str] = ["FlextTestsFilesBatchMixin"]

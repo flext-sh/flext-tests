@@ -134,18 +134,18 @@ class FlextTestsMakeParsingUtilitiesMixin:
     @staticmethod
     def make_parse_params(
         value: t.Tests.TomlValue | None, path: Path
-    ) -> p.Result[t.SequenceOf[m.Tests.MakeParam]]:
+    ) -> p.Result[t.SequenceOf[p.Tests.MakeParam]]:
         """Parse command parameter declarations."""
         if value is None:
-            return r[t.SequenceOf[m.Tests.MakeParam]].ok(())
+            return r[t.SequenceOf[p.Tests.MakeParam]].ok(())
         if not isinstance(value, list):
-            return r[t.SequenceOf[m.Tests.MakeParam]].fail(
+            return r[t.SequenceOf[p.Tests.MakeParam]].fail(
                 f"{path}: params must contain a list"
             )
-        params: list[m.Tests.MakeParam] = []
+        params: list[p.Tests.MakeParam] = []
         for item in value:
             if not isinstance(item, dict):
-                return r[t.SequenceOf[m.Tests.MakeParam]].fail(
+                return r[t.SequenceOf[p.Tests.MakeParam]].fail(
                     f"{path}: params must contain TOML objects"
                 )
             parsed = t.Tests.TOML_MAPPING_ADAPTER.validate_python(item)
@@ -153,27 +153,27 @@ class FlextTestsMakeParsingUtilitiesMixin:
                 parsed, path
             )
             if param_result.failure:
-                return r[t.SequenceOf[m.Tests.MakeParam]].fail(
+                return r[t.SequenceOf[p.Tests.MakeParam]].fail(
                     param_result.error or "param invalid"
                 )
             params.append(param_result.value)
-        return r[t.SequenceOf[m.Tests.MakeParam]].ok(tuple(params))
+        return r[t.SequenceOf[p.Tests.MakeParam]].ok(tuple(params))
 
     @staticmethod
     def make_parse_mutation_conditions(
         value: t.Tests.TomlValue | None, path: Path
-    ) -> p.Result[t.SequenceOf[m.Tests.MakeMutationCondition]]:
+    ) -> p.Result[t.SequenceOf[p.Tests.MakeMutationCondition]]:
         """Parse optional conditional mutation predicates."""
         if value is None:
-            return r[t.SequenceOf[m.Tests.MakeMutationCondition]].ok(())
+            return r[t.SequenceOf[p.Tests.MakeMutationCondition]].ok(())
         if not isinstance(value, list):
-            return r[t.SequenceOf[m.Tests.MakeMutationCondition]].fail(
+            return r[t.SequenceOf[p.Tests.MakeMutationCondition]].fail(
                 f"{path}: mutates_when must contain a list"
             )
-        conditions: list[m.Tests.MakeMutationCondition] = []
+        conditions: list[p.Tests.MakeMutationCondition] = []
         for item in value:
             if not isinstance(item, dict):
-                return r[t.SequenceOf[m.Tests.MakeMutationCondition]].fail(
+                return r[t.SequenceOf[p.Tests.MakeMutationCondition]].fail(
                     f"{path}: mutates_when must contain TOML objects"
                 )
             parsed = t.Tests.TOML_MAPPING_ADAPTER.validate_python(item)
@@ -183,16 +183,16 @@ class FlextTestsMakeParsingUtilitiesMixin:
                 )
             )
             if condition_result.failure:
-                return r[t.SequenceOf[m.Tests.MakeMutationCondition]].fail(
+                return r[t.SequenceOf[p.Tests.MakeMutationCondition]].fail(
                     condition_result.error or "mutation condition invalid"
                 )
             conditions.append(condition_result.value)
-        return r[t.SequenceOf[m.Tests.MakeMutationCondition]].ok(tuple(conditions))
+        return r[t.SequenceOf[p.Tests.MakeMutationCondition]].ok(tuple(conditions))
 
     @staticmethod
     def make_parse_mutation_condition(
         data: t.Tests.TomlMapping, path: Path
-    ) -> p.Result[m.Tests.MakeMutationCondition]:
+    ) -> p.Result[p.Tests.MakeMutationCondition]:
         """Parse one conditional mutation predicate."""
         name_result = FlextTestsMakeParsingUtilitiesMixin.make_require_string(
             data, "name", path
@@ -201,18 +201,18 @@ class FlextTestsMakeParsingUtilitiesMixin:
             data, "values", path
         )
         if name_result.failure:
-            return r[m.Tests.MakeMutationCondition].fail(
+            return r[p.Tests.MakeMutationCondition].fail(
                 name_result.error or "condition name missing"
             )
         if values_result.failure:
-            return r[m.Tests.MakeMutationCondition].fail(
+            return r[p.Tests.MakeMutationCondition].fail(
                 values_result.error or "condition values invalid"
             )
         if not values_result.value:
-            return r[m.Tests.MakeMutationCondition].fail(
+            return r[p.Tests.MakeMutationCondition].fail(
                 f"{path}: mutates_when.values cannot be empty"
             )
-        return r[m.Tests.MakeMutationCondition].ok(
+        return r[p.Tests.MakeMutationCondition].ok(
             m.Tests.MakeMutationCondition(
                 name=name_result.value, values=values_result.value
             )
@@ -221,7 +221,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
     @staticmethod
     def make_parse_param(
         data: t.Tests.TomlMapping, path: Path
-    ) -> p.Result[m.Tests.MakeParam]:
+    ) -> p.Result[p.Tests.MakeParam]:
         """Parse one command parameter object."""
         name_result = FlextTestsMakeParsingUtilitiesMixin.make_require_string(
             data, "name", path
@@ -230,23 +230,23 @@ class FlextTestsMakeParsingUtilitiesMixin:
             data, "help", path
         )
         if name_result.failure:
-            return r[m.Tests.MakeParam].fail(name_result.error or "param name missing")
+            return r[p.Tests.MakeParam].fail(name_result.error or "param name missing")
         if help_result.failure:
-            return r[m.Tests.MakeParam].fail(help_result.error or "param help missing")
+            return r[p.Tests.MakeParam].fail(help_result.error or "param help missing")
         required_raw = data.get("required", False)
         default_raw = data.get("default", "")
         if not isinstance(required_raw, bool):
-            return r[m.Tests.MakeParam].fail(
+            return r[p.Tests.MakeParam].fail(
                 f"{path}: params.required must be a boolean"
             )
         if not isinstance(default_raw, str):
-            return r[m.Tests.MakeParam].fail(f"{path}: params.default must be a string")
+            return r[p.Tests.MakeParam].fail(f"{path}: params.default must be a string")
         choices_result = FlextTestsMakeParsingUtilitiesMixin.make_parse_string_list(
             data, "choices", path
         )
         if choices_result.failure:
-            return r[m.Tests.MakeParam].fail(choices_result.error or "choices invalid")
-        return r[m.Tests.MakeParam].ok(
+            return r[p.Tests.MakeParam].fail(choices_result.error or "choices invalid")
+        return r[p.Tests.MakeParam].ok(
             m.Tests.MakeParam(
                 name=name_result.value,
                 help=help_result.value,

@@ -109,7 +109,7 @@ class FlextTestsBaseTypesMixin:
         t.SequenceOf[TestobjectSerializable],
         config=m.ConfigDict(arbitrary_types_allowed=True),
     )
-    DICT_ADAPTER: m.TypeAdapter[m.Dict] = m.TypeAdapter(m.Dict)
+    DICT_ADAPTER: m.TypeAdapter[p.Dict] = m.TypeAdapter(m.Dict)
     SCALAR_MAPPING_ADAPTER: m.TypeAdapter[t.ScalarMapping] = m.TypeAdapter(
         t.ScalarMapping
     )

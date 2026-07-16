@@ -32,7 +32,7 @@ class TestsFlextTestsWorkspaceCleanup:
         return path
 
     @staticmethod
-    def _request(root: Path, *residues: str) -> m.Tests.WorkspaceCleanupRequest:
+    def _request(root: Path, *residues: str) -> p.Tests.WorkspaceCleanupRequest:
         policy = m.Tests.WorkspaceCleanupPolicy(
             residues=tuple(Path(residue) for residue in residues)
         )

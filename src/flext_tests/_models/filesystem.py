@@ -131,7 +131,7 @@ class FlextTestsFilesystemModelsMixin:
 
         path: Annotated[Path, u.Field(description="Path to file to read.")]
         model_cls: Annotated[
-            type[m.BaseModel] | None,
+            type[p.BaseModel] | None,
             u.Field(description="Optional Pydantic model class."),
         ] = None
         fmt: Annotated[
@@ -201,7 +201,7 @@ class FlextTestsFilesystemModelsMixin:
             bool, u.Field(description="Parse content and include metadata.")
         ] = False
         validate_model: Annotated[
-            type[m.BaseModel] | None,
+            type[p.BaseModel] | None,
             u.Field(description="Pydantic model to validate content against."),
         ] = None
 

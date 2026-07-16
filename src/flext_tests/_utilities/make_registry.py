@@ -39,7 +39,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
     @staticmethod
     def _make_command_from_data(
         path: Path, data: t.Tests.TomlMapping, verb: str, what: str
-    ) -> p.Result[m.Tests.MakeCommand]:
+    ) -> p.Result[p.Tests.MakeCommand]:
         """Build a command model from validated TOML header data."""
         values: t.MutableStrMapping = {}
         for field in ("domain", "summary", "description", "example"):
@@ -47,7 +47,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
                 data, field, path
             )
             if value_result.failure:
-                return r[m.Tests.MakeCommand].fail(
+                return r[p.Tests.MakeCommand].fail(
                     value_result.error or f"{field} missing"
                 )
             values[field] = value_result.value
@@ -87,7 +87,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             target_env_result,
         ):
             if result.failure:
-                return r[m.Tests.MakeCommand].fail(
+                return r[p.Tests.MakeCommand].fail(
                     result.error or "command metadata invalid"
                 )
 
@@ -111,16 +111,16 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             FlextTestsMakeContractUtilitiesMixin.make_validate_command_contract(command)
         )
         if contract_result.failure:
-            return r[m.Tests.MakeCommand].fail(
+            return r[p.Tests.MakeCommand].fail(
                 contract_result.error or "command contract invalid"
             )
-        return r[m.Tests.MakeCommand].ok(command)
+        return r[p.Tests.MakeCommand].ok(command)
 
     @classmethod
-    def make_discover(cls, scripts_dir: Path) -> p.Result[m.Tests.MakeRegistry]:
+    def make_discover(cls, scripts_dir: Path) -> p.Result[p.Tests.MakeRegistry]:
         """Discover and validate promoted commands under ``scripts/cmd``."""
         if not scripts_dir.exists():
-            return r[m.Tests.MakeRegistry].fail("diretorio scripts/cmd missing")
+            return r[p.Tests.MakeRegistry].fail("diretorio scripts/cmd missing")
 
         commands_by_verb: t.MutableMappingKV[
             str, t.MutableMappingKV[str, m.Tests.MakeCommand]
@@ -137,14 +137,14 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
                     continue
                 load_result = cls.make_load_command(path, verb_dir.name)
                 if load_result.failure:
-                    return r[m.Tests.MakeRegistry].fail(
+                    return r[p.Tests.MakeRegistry].fail(
                         load_result.error or "command load failed"
                     )
                 add_result = cls._make_add_command(
                     commands_by_verb, aliases_by_name, load_result.value
                 )
                 if add_result.failure:
-                    return r[m.Tests.MakeRegistry].fail(
+                    return r[p.Tests.MakeRegistry].fail(
                         add_result.error or "command registration failed"
                     )
 
@@ -155,29 +155,29 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             registry
         )
         if validate_result.failure:
-            return r[m.Tests.MakeRegistry].fail(
+            return r[p.Tests.MakeRegistry].fail(
                 validate_result.error or "registry validation failed"
             )
-        return r[m.Tests.MakeRegistry].ok(registry)
+        return r[p.Tests.MakeRegistry].ok(registry)
 
     @classmethod
     def make_load_command(
         cls, path: Path, expected_verb: str
-    ) -> p.Result[m.Tests.MakeCommand]:
+    ) -> p.Result[p.Tests.MakeCommand]:
         """Load one promoted command from its flext-command TOML header."""
         if path.name == "__pycache__":
-            return r[m.Tests.MakeCommand].fail(f"{path}: cache publico invalido")
+            return r[p.Tests.MakeCommand].fail(f"{path}: cache publico invalido")
         if path.is_dir():
-            return r[m.Tests.MakeCommand].fail(
+            return r[p.Tests.MakeCommand].fail(
                 f"{path}: diretorio publico cannot estar aninhado"
             )
         if path.suffix not in c.Tests.MAKE_COMMAND_SUFFIXES:
-            return r[m.Tests.MakeCommand].fail(
+            return r[p.Tests.MakeCommand].fail(
                 f"{path}: file publico must be .sh ou .py"
             )
         data_result = FlextTestsMakeParsingUtilitiesMixin.make_header_data(path)
         if data_result.failure:
-            return r[m.Tests.MakeCommand].fail(
+            return r[p.Tests.MakeCommand].fail(
                 data_result.error or "header load failed"
             )
         data = data_result.value
@@ -188,17 +188,17 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             data, "what", path
         )
         if verb_result.failure:
-            return r[m.Tests.MakeCommand].fail(verb_result.error or "verb missing")
+            return r[p.Tests.MakeCommand].fail(verb_result.error or "verb missing")
         if what_result.failure:
-            return r[m.Tests.MakeCommand].fail(what_result.error or "what missing")
+            return r[p.Tests.MakeCommand].fail(what_result.error or "what missing")
         verb = verb_result.value
         what = what_result.value
         if verb != expected_verb:
-            return r[m.Tests.MakeCommand].fail(
+            return r[p.Tests.MakeCommand].fail(
                 f"{path}: header verb={verb} diverge do diretorio {expected_verb}"
             )
         if what != path.stem:
-            return r[m.Tests.MakeCommand].fail(
+            return r[p.Tests.MakeCommand].fail(
                 f"{path}: header what={what} diverge do file {path.stem}"
             )
         return cls._make_command_from_data(path, data, verb, what)

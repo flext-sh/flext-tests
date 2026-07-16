@@ -92,7 +92,7 @@ class TestsFlextTestsEnforcementPlugin:
     @staticmethod
     def _config(
         *, include: frozenset[str] = frozenset(), exclude: frozenset[str] = frozenset()
-    ) -> m.Tests.EnforcementDispatcherConfig:
+    ) -> p.Tests.EnforcementDispatcherConfig:
         """Build a resolved dispatcher config for catalog filtering."""
         return m.Tests.EnforcementDispatcherConfig(
             active=True, strict=False, include=include, exclude=exclude

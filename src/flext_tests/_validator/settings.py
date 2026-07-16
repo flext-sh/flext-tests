@@ -20,7 +20,7 @@ class FlextValidatorSettings:
         rule_id: str,
         code_snippet: str,
         extra_desc: str = "",
-    ) -> m.Tests.Violation:
+    ) -> p.Tests.Violation:
         """Create a settings violation."""
         severity, desc = u.Tests.validator_rule(rule_id)
         description = f"{desc}: {extra_desc}" if extra_desc else desc
@@ -40,9 +40,9 @@ class FlextValidatorSettings:
         data: t.Tests.TomlMapping,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Check mypy configuration for violations."""
-        violations: MutableSequence[m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
         tool_data: t.Tests.TomlValue = data.get("tool", {})
         if not isinstance(tool_data, dict):
             return violations
@@ -106,7 +106,7 @@ class FlextValidatorSettings:
         data: t.Tests.TomlMapping,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Check pyright configuration for violations."""
         tool_data: t.Tests.TomlValue = data.get("tool", {})
         if not isinstance(tool_data, dict):
@@ -129,9 +129,9 @@ class FlextValidatorSettings:
     @classmethod
     def _scan_file(
         cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Scan a single pyproject.toml for settings violations."""
-        violations: MutableSequence[m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
         read = u.Cli.files_read_text(file_path)
         if read.failure:
             return [
@@ -167,16 +167,16 @@ class FlextValidatorSettings:
         cls,
         files: t.SequenceOf[Path],
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
-    ) -> p.Result[m.Tests.ScanResult]:
+    ) -> p.Result[p.Tests.ScanResult]:
         """Scan pyproject.toml files for settings violations."""
-        violations: MutableSequence[m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
         approved = approved_exceptions or {}
         for file_path in files:
             if file_path.name != "pyproject.toml":
                 continue
             file_violations = cls._scan_file(file_path, approved)
             violations.extend(file_violations)
-        return r[m.Tests.ScanResult].ok(
+        return r[p.Tests.ScanResult].ok(
             m.Tests.ScanResult(
                 validator_name=c.Tests.VALIDATOR_CONFIG_KEY,
                 files_scanned=len(files),
@@ -189,7 +189,7 @@ class FlextValidatorSettings:
         cls,
         pyproject_path: Path,
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
-    ) -> p.Result[m.Tests.ScanResult]:
+    ) -> p.Result[p.Tests.ScanResult]:
         """Validate a single pyproject.toml file."""
         return cls.scan([pyproject_path], approved_exceptions)
 

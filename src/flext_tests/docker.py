@@ -17,7 +17,7 @@ from python_on_whales.exceptions import DockerException as WhalesDockerException
 from flext_tests import c, m, p, r, s, t, u
 
 
-class FlextTestsDocker(s[m.Tests.ContainerInfo]):
+class FlextTestsDocker(s[p.Tests.ContainerInfo]):
     """Manage Docker containers for FLEXT tests."""
 
     docker: ClassVar[WhalesDockerClient] = WhalesDockerClient(client_type="docker")
@@ -58,7 +58,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     @staticmethod
     def _resolve_shared_target_config(
         container_name: str, workspace_root: Path
-    ) -> m.Tests.ContainerConfig:
+    ) -> p.Tests.ContainerConfig:
         """Resolve one shared-container entry into the canonical target config."""
         settings = c.Tests.SHARED_CONTAINERS.get(container_name)
         if settings is None:
@@ -286,27 +286,27 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     def fetch_container_info(
         self, container_name: str
-    ) -> p.Result[m.Tests.ContainerInfo]:
+    ) -> p.Result[p.Tests.ContainerInfo]:
         """Fetch container information."""
         client = self.client
         if client is None:
             error = self.client_error or "Docker daemon unavailable"
-            return r[m.Tests.ContainerInfo].fail(error)
+            return r[p.Tests.ContainerInfo].fail(error)
         try:
             container = client.containers.get(container_name)
         except NotFound:
-            return r[m.Tests.ContainerInfo].fail(
+            return r[p.Tests.ContainerInfo].fail(
                 f"Container {container_name} not found"
             )
         except c.EXC_BROAD_RUNTIME as exc:
-            return r[m.Tests.ContainerInfo].fail(str(exc))
-        return r[m.Tests.ContainerInfo].ok(
+            return r[p.Tests.ContainerInfo].fail(str(exc))
+        return r[p.Tests.ContainerInfo].ok(
             self._container_info_from_sdk(container_name, container)
         )
 
     def fetch_container_status(
         self, container_name: str
-    ) -> p.Result[m.Tests.ContainerInfo]:
+    ) -> p.Result[p.Tests.ContainerInfo]:
         """Fetch container status."""
         return self.fetch_container_info(container_name)
 
@@ -350,7 +350,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     def _container_info_from_sdk(
         self, container_name: str, container: Container
-    ) -> m.Tests.ContainerInfo:
+    ) -> p.Tests.ContainerInfo:
         """Build canonical container info from a Docker SDK container."""
         ports_raw: t.MappingKV[str, t.Tests.TestobjectSerializable] = (
             t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
@@ -509,22 +509,22 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return r[t.StrSequence].ok(tuple(cleaned))
 
     @override
-    def execute(self) -> p.Result[m.Tests.ContainerInfo]:
+    def execute(self) -> p.Result[p.Tests.ContainerInfo]:
         """Ensure the configured container is available with a single DSL call."""
         target = self.target_config
         if target is None:
-            return r[m.Tests.ContainerInfo].fail(
+            return r[p.Tests.ContainerInfo].fail(
                 "Docker target not configured. Use tk.shared(...).execute() or tk.compose(...).execute()."
             )
         if not target.container_name:
-            return r[m.Tests.ContainerInfo].fail(
+            return r[p.Tests.ContainerInfo].fail(
                 "Docker target has no inspection container configured. Use up()/down()/ready() for stack-only lifecycles."
             )
         container_name = target.container_name
 
         error_msg = self._ensure_target_started(target, container_name)
         if error_msg is not None:
-            return r[m.Tests.ContainerInfo].fail(error_msg)
+            return r[p.Tests.ContainerInfo].fail(error_msg)
         return self._ensure_target_ready(target, container_name)
 
     def _ensure_target_started(
@@ -560,7 +560,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     def _ensure_target_ready(
         self, target: m.Tests.ContainerConfig, container_name: str
-    ) -> p.Result[m.Tests.ContainerInfo]:
+    ) -> p.Result[p.Tests.ContainerInfo]:
         """Fetch target info and run configured readiness checks."""
         container_info_result = self.fetch_container_info(container_name)
         if container_info_result.failure:
@@ -570,18 +570,18 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
         ready_port = self._resolve_readiness_port(target, container_info_result.value)
         if ready_port is None:
-            return r[m.Tests.ContainerInfo].fail(
+            return r[p.Tests.ContainerInfo].fail(
                 f"Docker target {target.container_name} has no resolved host port for readiness check"
             )
         ready_result = self.wait_for_port_ready(
             target.host, ready_port, max_wait=target.startup_timeout
         )
         if ready_result.failure:
-            return r[m.Tests.ContainerInfo].fail(
+            return r[p.Tests.ContainerInfo].fail(
                 ready_result.error or "Docker target readiness check failed"
             )
         if not ready_result.value:
-            return r[m.Tests.ContainerInfo].fail(
+            return r[p.Tests.ContainerInfo].fail(
                 f"Container {target.container_name} did not become ready on {target.host}:{ready_port}"
             )
         return container_info_result

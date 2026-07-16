@@ -6,7 +6,7 @@ from collections.abc import MutableSequence
 from pathlib import Path
 from typing import override
 
-from flext_tests import c, m, t, u
+from flext_tests import c, t, u
 
 
 class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
@@ -25,12 +25,12 @@ class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
         file_path: Path,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Detect pre-PEP 695 typing factories and Generic base syntax."""
         if u.Tests.approved("TYPE-004", file_path, approved):
             return []
 
-        def emit(line_number: int, name: str) -> m.Tests.Violation:
+        def emit(line_number: int, name: str) -> p.Tests.Violation:
             return u.Tests.create_violation(
                 file_path,
                 line_number,
@@ -39,7 +39,7 @@ class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
                 c.Tests.VALIDATOR_MSG_TYPE_LEGACY_FACTORY.format(name=name),
             )
 
-        violations: MutableSequence[m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
         for line_number, line in enumerate(lines, start=1):
             names: set[str] = set()
             if c.Tests.VALIDATOR_LEGACY_FACTORY_RE.search(line) and u.Tests.code_match(
@@ -65,11 +65,11 @@ class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
         file_path: Path,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Detect legacy annotation constructs."""
         if u.Tests.approved("TYPE-005", file_path, approved):
             return []
-        violations: MutableSequence[m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
         for line_number, line in enumerate(lines, start=1):
             if not c.Tests.VALIDATOR_LEGACY_ANNOTATION_RE.search(line):
                 continue
@@ -93,11 +93,11 @@ class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
         file_path: Path,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Detect forbidden object annotations in governed code."""
         if u.Tests.approved("TYPE-006", file_path, approved):
             return []
-        violations: MutableSequence[m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
         for line_number, line in enumerate(lines, start=1):
             if c.Tests.VALIDATOR_FUNCTION_DEF_RE.match(line) is not None:
                 if c.Tests.VALIDATOR_OBJECT_RETURN_RE.search(
@@ -150,11 +150,11 @@ class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
         file_path: Path,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Detect is_* helpers still returning bool."""
         if u.Tests.approved("TYPE-007", file_path, approved):
             return []
-        violations: MutableSequence[m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
         for line_number, line in enumerate(lines, start=1):
             match = c.Tests.VALIDATOR_BOOL_IS_HELPER_RE.match(line)
             if match is None:
@@ -178,11 +178,11 @@ class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
         file_path: Path,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Detect wildcard type annotations."""
         if u.Tests.approved("TYPE-002", file_path, approved):
             return []
-        violations: MutableSequence[m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
         for line_number, line in enumerate(lines, start=1):
             if c.Tests.VALIDATOR_FUNCTION_DEF_RE.match(line) is not None:
                 if c.Tests.VALIDATOR_ANY_RETURN_RE.search(line) and u.Tests.code_match(
@@ -227,7 +227,7 @@ class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
         file_path: Path,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Detect unapproved cast usage."""
         if u.Tests.approved(
             "TYPE-003", file_path, approved, c.Tests.VALIDATOR_APPROVED_CAST_PATTERNS
@@ -246,7 +246,7 @@ class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
         file_path: Path,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Detect type: ignore comments in code."""
         if u.Tests.approved("TYPE-001", file_path, approved):
             return []
@@ -261,9 +261,9 @@ class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
     @override
     def _scan_file(
         cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Scan a single file for type violations."""
-        violations: MutableSequence[m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
         read = u.Cli.files_read_text(file_path)
         if read.failure:
             return [

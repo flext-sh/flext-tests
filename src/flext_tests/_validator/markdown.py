@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import MutableSequence
 from pathlib import Path
 
-from flext_tests import c, m, p, t, u
+from flext_tests import c, p, t, u
 
 
 class FlextValidatorMarkdown:
@@ -17,7 +17,7 @@ class FlextValidatorMarkdown:
         paths: t.SequenceOf[Path],
         *,
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
-    ) -> p.Result[m.Tests.ScanResult]:
+    ) -> p.Result[p.Tests.ScanResult]:
         """Validate Python code blocks in markdown files."""
         return u.Tests.validator_run_scan(
             files=list(paths),
@@ -29,9 +29,9 @@ class FlextValidatorMarkdown:
     @classmethod
     def _scan_file(
         cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Scan a single markdown file for Python code block violations."""
-        violations: MutableSequence[m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
 
         read = u.Cli.files_read_text(file_path)
         if read.failure:
@@ -86,7 +86,7 @@ class FlextValidatorMarkdown:
         lines: t.StrSequence,
         block_start: int,
         approved: t.MappingKV[str, t.StrSequence],
-        violations: MutableSequence[m.Tests.Violation],
+        violations: MutableSequence[p.Tests.Violation],
     ) -> None:
         """Check for forbidden typing imports via line scanning."""
         if u.Tests.approved("MD-002", file_path, approved):
@@ -117,7 +117,7 @@ class FlextValidatorMarkdown:
         lines: t.StrSequence,
         block_start: int,
         approved: t.MappingKV[str, t.StrSequence],
-        violations: MutableSequence[m.Tests.Violation],
+        violations: MutableSequence[p.Tests.Violation],
     ) -> None:
         """Check for 'object' used as type annotation."""
         if u.Tests.approved("MD-004", file_path, approved):
@@ -144,7 +144,7 @@ class FlextValidatorMarkdown:
         lines: t.StrSequence,
         block_start: int,
         approved: t.MappingKV[str, t.StrSequence],
-        violations: MutableSequence[m.Tests.Violation],
+        violations: MutableSequence[p.Tests.Violation],
     ) -> None:
         """Check for missing future annotations import."""
         if u.Tests.approved("MD-003", file_path, approved):

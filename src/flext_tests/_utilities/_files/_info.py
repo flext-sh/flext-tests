@@ -23,8 +23,8 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
         compute_hash: bool = False,
         detect_fmt: bool = True,
         parse_content: bool = False,
-        validate_model: type[m.BaseModel] | None = None,
-    ) -> p.Result[m.Tests.FileInfo]:
+        validate_model: type[p.BaseModel] | None = None,
+    ) -> p.Result[p.Tests.FileInfo]:
         """Get comprehensive file information.
 
         Args:
@@ -47,17 +47,17 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
                 "validate_model": validate_model,
             })
         except c.EXC_BASIC_TYPE as exc:
-            return r[m.Tests.FileInfo].fail(f"Invalid parameters for file info: {exc}")
+            return r[p.Tests.FileInfo].fail(f"Invalid parameters for file info: {exc}")
         if not params.path.exists():
-            return r[m.Tests.FileInfo].ok(
+            return r[p.Tests.FileInfo].ok(
                 m.Tests.FileInfo(exists=False, path=params.path)
             )
         try:
-            return r[m.Tests.FileInfo].ok(self._build_file_info(params))
+            return r[p.Tests.FileInfo].ok(self._build_file_info(params))
         except OSError as e:
-            return r[m.Tests.FileInfo].fail(c.Tests.ERROR_INFO.format(error=e))
+            return r[p.Tests.FileInfo].fail(c.Tests.ERROR_INFO.format(error=e))
 
-    def _build_file_info(self, params: m.Tests.InfoParams) -> m.Tests.FileInfo:
+    def _build_file_info(self, params: m.Tests.InfoParams) -> p.Tests.FileInfo:
         """Build a ``FileInfo`` model for an existing path."""
         stat = params.path.stat()
         size = stat.st_size
@@ -107,8 +107,8 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
             return ("", 0, size == 0, "", c.Tests.DEFAULT_BINARY_ENCODING)
 
     def _parse_content_metadata(
-        self, text: str, fmt: str, validate_model: type[m.BaseModel] | None = None
-    ) -> m.Tests.ContentMeta:
+        self, text: str, fmt: str, validate_model: type[p.BaseModel] | None = None
+    ) -> p.Tests.ContentMeta:
         """Parse file content and extract metadata.
 
         Uses Pydantic model_validate for validation and format-specific parsing

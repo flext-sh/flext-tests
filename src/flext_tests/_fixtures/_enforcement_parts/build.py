@@ -58,7 +58,7 @@ def build_items(
 
 
 def _load_infra_report_if_needed(
-    rules: tuple[m.EnforcementRuleSpec, ...],
+    rules: tuple[p.EnforcementRuleSpec, ...],
     workspace_root: Path,
     collected_items: t.SequenceOf[pytest.Item],
 ) -> p.AttributeProbe | None:

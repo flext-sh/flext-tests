@@ -52,7 +52,7 @@ class FlextTestsMatchersThatMixin:
             @staticmethod
             def _filtered_params(
                 kwargs: dict[str, t.Tests.MatcherKwargValue],
-            ) -> m.Tests.ThatParams:
+            ) -> p.Tests.ThatParams:
                 """Validate kwargs after removing values Pydantic cannot serialize."""
                 non_serializable_keys = frozenset({
                     "eq",

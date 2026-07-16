@@ -110,7 +110,7 @@ class FlextTestsPayloadUtilities:
             | t.MappingKV[str, t.JsonPayload]
             | t.JsonMapping
         ),
-    ) -> m.ConfigMap:
+    ) -> p.ConfigMap:
         """Convert a model or payload mapping to the canonical ConfigMap shape."""
         source = (
             value.model_dump(mode="python") if isinstance(value, m.BaseModel) else value
@@ -132,7 +132,7 @@ class FlextTestsPayloadUtilities:
         spec: t.Tests.DeepSpec,
         *,
         path_sep: str = ".",
-    ) -> m.Tests.DeepMatchResult:
+    ) -> p.Tests.DeepMatchResult:
         """Match t.JsonValue against deep specification.
 
         Uses u.extract() for path extraction.

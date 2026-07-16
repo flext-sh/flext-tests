@@ -32,7 +32,7 @@ class FlextTestsMatchersScopeMixin:
             @contextmanager
             def scope(
                 **kwargs: t.Tests.TestobjectSerializable,
-            ) -> Generator[m.Tests.TestScope]:
+            ) -> Generator[p.Tests.TestScope]:
                 """Enhanced isolated test execution scope.
 
                 Provides isolated configuration, container, and context for tests.

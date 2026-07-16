@@ -242,21 +242,21 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
     @staticmethod
     def make_registry_command(
         registry: m.Tests.MakeRegistry, verb: str, what: str
-    ) -> p.Result[m.Tests.MakeCommand]:
+    ) -> p.Result[p.Tests.MakeCommand]:
         """Return one command by verb and WHAT value."""
         commands_result = FlextTestsMakeContractUtilitiesMixin.make_registry_commands(
             registry, verb
         )
         if commands_result.failure:
-            return r[m.Tests.MakeCommand].fail(commands_result.error or "verb unknown")
+            return r[p.Tests.MakeCommand].fail(commands_result.error or "verb unknown")
         commands = commands_result.value
         command = commands.get(what)
         if command is None:
             valid = " ".join(sorted(commands))
-            return r[m.Tests.MakeCommand].fail(
+            return r[p.Tests.MakeCommand].fail(
                 f"WHAT='{what}' invalido para {verb}. Validos: {valid}"
             )
-        return r[m.Tests.MakeCommand].ok(command)
+        return r[p.Tests.MakeCommand].ok(command)
 
     @staticmethod
     def make_registry_aliases_for(

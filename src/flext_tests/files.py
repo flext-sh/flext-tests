@@ -27,7 +27,7 @@ from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
 class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixin):
     """Manages test files for FLEXT ecosystem testing."""
 
-    FileInfo: ClassVar[type[m.Tests.FileInfo]] = m.Tests.FileInfo
+    FileInfo: ClassVar[type[p.Tests.FileInfo]] = m.Tests.FileInfo
 
     def __init__(self, base_dir: Path | None = None) -> None:
         """Initialize file manager with optional base directory."""

@@ -12,7 +12,7 @@ from collections.abc import MutableSequence
 from pathlib import Path
 from typing import override
 
-from flext_tests import c, m, t, u
+from flext_tests import c, t, u
 
 
 class FlextValidatorTests(u.Tests.ValidatorScannerMixin):
@@ -58,11 +58,11 @@ class FlextValidatorTests(u.Tests.ValidatorScannerMixin):
         file_path: Path,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Detect Mock and MagicMock usage."""
         if u.Tests.approved("TEST-002", file_path, approved):
             return []
-        violations: MutableSequence[m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
         mock_names = c.Tests.VALIDATOR_APPROVED_MOCK_NAMES
         for line_number, line in enumerate(lines, start=1):
             from_match = c.Tests.VALIDATOR_FROM_IMPORT_LINE_RE.match(line)
@@ -103,11 +103,11 @@ class FlextValidatorTests(u.Tests.ValidatorScannerMixin):
         file_path: Path,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Detect monkeypatch usage in function parameters and calls."""
         if u.Tests.approved("TEST-001", file_path, approved):
             return []
-        violations: MutableSequence[m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
         for line_number, func_name, signature in cls._function_signatures(lines):
             if "monkeypatch" not in signature:
                 continue
@@ -143,7 +143,7 @@ class FlextValidatorTests(u.Tests.ValidatorScannerMixin):
         file_path: Path,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Detect @patch decorator usage."""
         if u.Tests.approved("TEST-003", file_path, approved):
             return []
@@ -158,9 +158,9 @@ class FlextValidatorTests(u.Tests.ValidatorScannerMixin):
     @override
     def _scan_file(
         cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Scan a single file for test violations."""
-        violations: MutableSequence[m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
         read = u.Cli.files_read_text(file_path)
         if read.failure:
             return [

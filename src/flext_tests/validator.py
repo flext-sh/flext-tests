@@ -18,12 +18,12 @@ from flext_tests._validator.tests import FlextValidatorTests
 from flext_tests._validator.types import FlextValidatorTypes
 
 
-class FlextTestsValidator(s[m.Tests.ScanResult]):
+class FlextTestsValidator(s[p.Tests.ScanResult]):
     """FLEXT architecture validator orchestrating all scanners."""
 
-    Violation: ClassVar[type[m.Tests.Violation]] = m.Tests.Violation
+    Violation: ClassVar[type[p.Tests.Violation]] = m.Tests.Violation
 
-    ScanResult: ClassVar[type[m.Tests.ScanResult]] = m.Tests.ScanResult
+    ScanResult: ClassVar[type[p.Tests.ScanResult]] = m.Tests.ScanResult
 
     class AllValidationOptions(m.Value):
         """Options envelope for aggregate validation runs."""
@@ -66,19 +66,19 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         return files
 
     @override
-    def execute(self) -> p.Result[m.Tests.ScanResult]:
+    def execute(self) -> p.Result[p.Tests.ScanResult]:
         """Execute validator service with default current-path scope."""
         return self.all(Path.cwd())
 
     @classmethod
     def all(
         cls, path: Path, options: FlextTestsValidator.AllValidationOptions | None = None
-    ) -> p.Result[m.Tests.ScanResult]:
+    ) -> p.Result[p.Tests.ScanResult]:
         """Run all validations and combine results."""
         all_options = options or cls.AllValidationOptions()
-        all_violations: MutableSequence[m.Tests.Violation] = []
+        all_violations: MutableSequence[p.Tests.Violation] = []
         total_files = 0
-        validators: MutableSequence[tuple[str, p.Result[m.Tests.ScanResult]]] = [
+        validators: MutableSequence[tuple[str, p.Result[p.Tests.ScanResult]]] = [
             (
                 "imports",
                 cls.imports(
@@ -123,13 +123,13 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
             ))
         for name, result in validators:
             if result.failure:
-                return r[m.Tests.ScanResult].fail(
+                return r[p.Tests.ScanResult].fail(
                     f"Validator '{name}' failed: {result.error}"
                 )
             scan_result = result.value
             all_violations.extend(scan_result.violations)
             total_files = max(total_files, scan_result.files_scanned)
-        return r[m.Tests.ScanResult].ok(
+        return r[p.Tests.ScanResult].ok(
             m.Tests.ScanResult(
                 validator_name="all",
                 files_scanned=total_files,
@@ -143,7 +143,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         path: Path,
         exclude_patterns: t.StrSequence | None = None,
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
-    ) -> p.Result[m.Tests.ScanResult]:
+    ) -> p.Result[p.Tests.ScanResult]:
         """Validate bypass patterns in Python files."""
         files = cls._discover_files(path, exclude_patterns)
         return FlextValidatorBypass.scan(files, approved_exceptions)
@@ -154,7 +154,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         path: Path,
         exclude_patterns: t.StrSequence | None = None,
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
-    ) -> p.Result[m.Tests.ScanResult]:
+    ) -> p.Result[p.Tests.ScanResult]:
         """Validate imports in Python files."""
         files = cls._discover_files(path, exclude_patterns)
         return FlextValidatorImports.scan(files, approved_exceptions)
@@ -166,7 +166,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         exclude_patterns: t.StrSequence | None = None,
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
         layer_hierarchy: t.IntMapping | None = None,
-    ) -> p.Result[m.Tests.ScanResult]:
+    ) -> p.Result[p.Tests.ScanResult]:
         """Validate layer dependencies in Python files."""
         files = cls._discover_files(path, exclude_patterns)
         return FlextValidatorLayer.scan(files, approved_exceptions, layer_hierarchy)
@@ -177,7 +177,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         path: Path,
         exclude_patterns: t.StrSequence | None = None,
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
-    ) -> p.Result[m.Tests.ScanResult]:
+    ) -> p.Result[p.Tests.ScanResult]:
         """Validate test patterns in Python files."""
         files = cls._discover_files(path, exclude_patterns)
         return FlextValidatorTests.scan(files, approved_exceptions)
@@ -188,7 +188,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         path: Path,
         exclude_patterns: t.StrSequence | None = None,
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
-    ) -> p.Result[m.Tests.ScanResult]:
+    ) -> p.Result[p.Tests.ScanResult]:
         """Validate type annotations in Python files."""
         files = cls._discover_files(path, exclude_patterns)
         return FlextValidatorTypes.scan(files, approved_exceptions)
@@ -198,7 +198,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         cls,
         pyproject_path: Path,
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
-    ) -> p.Result[m.Tests.ScanResult]:
+    ) -> p.Result[p.Tests.ScanResult]:
         """Validate pyproject.toml configuration."""
         return FlextValidatorSettings.validate(pyproject_path, approved_exceptions)
 
@@ -207,7 +207,7 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         cls,
         project_root: Path,
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
-    ) -> p.Result[m.Tests.ScanResult]:
+    ) -> p.Result[p.Tests.ScanResult]:
         """Validate Python code blocks in markdown files."""
         md_files = FlextValidatorMarkdown.collect_markdown_files(project_root)
         return FlextValidatorMarkdown.markdown(

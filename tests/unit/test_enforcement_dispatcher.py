@@ -40,12 +40,12 @@ class TestsFlextTestsEnforcementDispatcher:
         return root
 
     @pytest.fixture
-    def rule(self) -> m.EnforcementRuleSpec:
+    def rule(self) -> p.EnforcementRuleSpec:
         """First enabled rule from the canonical catalog."""
         return next(r for r in u.build_canonical_catalog().rules if r.enabled)
 
     @pytest.fixture
-    def violation(self, rule: m.EnforcementRuleSpec) -> m.Violation:
+    def violation(self, rule: m.EnforcementRuleSpec) -> p.Violation:
         return m.Violation(
             qualname="flext_core.x.Y",
             layer="core",
@@ -60,7 +60,7 @@ class TestsFlextTestsEnforcementDispatcher:
     @staticmethod
     def _cfg(
         *, include: frozenset[str] = frozenset(), exclude: frozenset[str] = frozenset()
-    ) -> m.Tests.EnforcementDispatcherConfig:
+    ) -> p.Tests.EnforcementDispatcherConfig:
         return m.Tests.EnforcementDispatcherConfig(
             active=True, strict=False, include=include, exclude=exclude
         )

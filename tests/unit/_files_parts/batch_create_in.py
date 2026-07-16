@@ -121,7 +121,7 @@ class FilesBatchCreateInMixin:
 
     def test_create_in_with_flextresult(self, tmp_path: Path) -> None:
         """Test create_in() with r content extraction."""
-        result = r[m.ConfigMap].ok(m.ConfigMap(root={"status": "success"}))
+        result = r[p.ConfigMap].ok(m.ConfigMap(root={"status": "success"}))
         path = tf(base_dir=tmp_path).create(result, "result.json")
         tm.that(path.exists(), eq=True)
         empty_content: t.JsonMapping = {}

@@ -12,7 +12,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
     """Render Make command help and output."""
 
     @staticmethod
-    def make_format_params_inline(params: Iterable[m.Tests.MakeParam]) -> str:
+    def make_format_params_inline(params: Iterable[p.Tests.MakeParam]) -> str:
         """Render command params in one compact inline form."""
         parts: list[str] = []
         for param in params:
@@ -48,7 +48,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
     @staticmethod
     def make_format_mutation_conditions(
-        conditions: Iterable[m.Tests.MakeMutationCondition],
+        conditions: Iterable[p.Tests.MakeMutationCondition],
     ) -> str:
         """Render conditional mutation predicates compactly."""
         return "; ".join(

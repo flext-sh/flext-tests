@@ -17,7 +17,7 @@ class FlextTestsHandlerHelpersUtilitiesMixin:
         command_timeout: int | None = None,
         max_command_retries: int | None = None,
         metadata: m.Metadata | None = None,
-    ) -> m.Handler:
+    ) -> p.Handler:
         """Create a handler configuration model using canonical model defaults."""
         resolved_handler_type = handler_type or c.HandlerType.COMMAND
         return m.Handler.model_validate({

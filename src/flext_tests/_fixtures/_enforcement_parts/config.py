@@ -14,7 +14,7 @@ from flext_tests._fixtures._enforcement_parts import registry
 class SessionConfig:
     """Session-scoped stash slot holding the resolved enforcement configuration."""
 
-    stash_config: ClassVar[pytest.StashKey[m.Tests.EnforcementDispatcherConfig]] = (
+    stash_config: ClassVar[pytest.StashKey[p.Tests.EnforcementDispatcherConfig]] = (
         pytest.StashKey()
     )
     value: ClassVar[pytest.Config | None] = None
@@ -82,7 +82,7 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     )
 
 
-def resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfig:
+def resolve_config(config: pytest.Config) -> p.Tests.EnforcementDispatcherConfig:
     """Build and cache the dispatcher's resolved configuration."""
     stashed = config.stash.get(SessionConfig.stash_config, None)
     if stashed is not None:
@@ -117,10 +117,10 @@ def resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfig
 
 def active_rules(
     cfg: m.Tests.EnforcementDispatcherConfig,
-) -> tuple[m.EnforcementRuleSpec, ...]:
+) -> tuple[p.EnforcementRuleSpec, ...]:
     """Return enabled catalog rules after applying include/exclude filters."""
     catalog = u.build_canonical_catalog()
-    rules: list[m.EnforcementRuleSpec] = []
+    rules: list[p.EnforcementRuleSpec] = []
     for rule in catalog.rules:
         if not rule.enabled:
             continue

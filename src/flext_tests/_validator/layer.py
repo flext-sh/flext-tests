@@ -62,11 +62,11 @@ class FlextValidatorLayer:
         file_path: Path,
         approved: t.MappingKV[str, t.StrSequence],
         hierarchy: t.IntMapping,
-    ) -> t.SequenceOf[m.Tests.Violation]:
+    ) -> t.SequenceOf[p.Tests.Violation]:
         """Scan a single file for layer violations."""
         if u.Tests.approved("LAYER-001", file_path, approved):
             return []
-        violations: MutableSequence[m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
         current_module = file_path.stem
         current_layer = hierarchy.get(current_module)
         if current_layer is None:
@@ -108,7 +108,7 @@ class FlextValidatorLayer:
         files: t.SequenceOf[Path],
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
         layer_hierarchy: t.IntMapping | None = None,
-    ) -> p.Result[m.Tests.ScanResult]:
+    ) -> p.Result[p.Tests.ScanResult]:
         """Scan files for layer violations.
 
         Args:
@@ -120,13 +120,13 @@ class FlextValidatorLayer:
             r with ScanResult containing all violations found
 
         """
-        violations: MutableSequence[m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
         approved = approved_exceptions or {}
         hierarchy = layer_hierarchy or u.Tests.layer_dict()
         for file_path in files:
             file_violations = cls._scan_file(file_path, approved, hierarchy)
             violations.extend(file_violations)
-        return r[m.Tests.ScanResult].ok(
+        return r[p.Tests.ScanResult].ok(
             m.Tests.ScanResult(
                 validator_name=c.Tests.VALIDATOR_LAYER_KEY,
                 files_scanned=len(files),
