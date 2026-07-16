@@ -136,7 +136,7 @@ class TestsFlextTestsValidatorTypes:
         )
 
         # Act
-        result: m.Tests.ScanResult = u.Tests.assert_success(tv.types(file_path))
+        result: p.Tests.ScanResult = u.Tests.assert_success(tv.types(file_path))
 
         # Assert — a compliant file passes with no violations and correct metadata.
         tm.that(result.passed, eq=True)
@@ -156,7 +156,7 @@ class TestsFlextTestsValidatorTypes:
         file_path = self._write_source(tmp_path, name, source)
 
         # Act
-        result: m.Tests.ScanResult = u.Tests.assert_success(tv.types(file_path))
+        result: p.Tests.ScanResult = u.Tests.assert_success(tv.types(file_path))
         rule_ids = {violation.rule_id for violation in result.violations}
 
         # Assert — the offending construct fails the scan and names its rule.
@@ -174,7 +174,7 @@ class TestsFlextTestsValidatorTypes:
         )
 
         # Act
-        result: m.Tests.ScanResult = u.Tests.assert_success(tv.types(file_path))
+        result: p.Tests.ScanResult = u.Tests.assert_success(tv.types(file_path))
         violation = next(
             item for item in result.violations if item.rule_id == "TYPE-006"
         )
@@ -197,14 +197,14 @@ class TestsFlextTestsValidatorTypes:
             "def build(value: object) -> str:\n"
             "    return str(value)\n",
         )
-        baseline: m.Tests.ScanResult = u.Tests.assert_success(tv.types(file_path))
+        baseline: p.Tests.ScanResult = u.Tests.assert_success(tv.types(file_path))
         tm.that(
             {violation.rule_id for violation in baseline.violations},
             contains="TYPE-006",
         )
 
         # Act — approving TYPE-006 for service.py must clear that rule.
-        approved: m.Tests.ScanResult = u.Tests.assert_success(
+        approved: p.Tests.ScanResult = u.Tests.assert_success(
             tv.types(file_path, approved_exceptions={"TYPE-006": (r"service\.py$",)})
         )
 
@@ -221,8 +221,8 @@ class TestsFlextTestsValidatorTypes:
         )
 
         # Act — two independent scans of the same file.
-        first: m.Tests.ScanResult = u.Tests.assert_success(tv.types(file_path))
-        second: m.Tests.ScanResult = u.Tests.assert_success(tv.types(file_path))
+        first: p.Tests.ScanResult = u.Tests.assert_success(tv.types(file_path))
+        second: p.Tests.ScanResult = u.Tests.assert_success(tv.types(file_path))
 
         # Assert — the observable outcome is stable across runs.
         tm.that(first.passed, eq=second.passed)

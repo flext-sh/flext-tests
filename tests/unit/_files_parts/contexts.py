@@ -37,7 +37,7 @@ class FilesContextsMixin:
         """Test files() handles mixed content types."""
         with tf.files({
             "text": "plain text",
-            "json": m.ConfigMap(root={"key": "value"}),
+            "json": p.ConfigMap(root={"key": "value"}),
             "csv": [["a", "b"], ["1", "2"]],
         }) as paths:
             tm.that(paths["text"].read_text(), eq="plain text")

@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from flext_tests import r, tm
-from tests import t
+from tests import p, t
 from tests.unit._matchers_parts.predicates import MatchersPredicates
 
 

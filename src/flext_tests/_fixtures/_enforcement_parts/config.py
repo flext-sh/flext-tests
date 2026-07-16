@@ -7,7 +7,7 @@ from typing import ClassVar
 
 import pytest
 
-from flext_tests import c, m, u
+from flext_tests import c, m, p, u
 from flext_tests._fixtures._enforcement_parts import registry
 
 
@@ -116,7 +116,7 @@ def resolve_config(config: pytest.Config) -> p.Tests.EnforcementDispatcherConfig
 
 
 def active_rules(
-    cfg: m.Tests.EnforcementDispatcherConfig,
+    cfg: p.Tests.EnforcementDispatcherConfig,
 ) -> tuple[p.EnforcementRuleSpec, ...]:
     """Return enabled catalog rules after applying include/exclude filters."""
     catalog = u.build_canonical_catalog()

@@ -19,7 +19,7 @@ class FlextTestsMakeTypesMixin:
     type TomlMapping = t.JsonMapping
     type MutableTomlMapping = t.MutableJsonMapping
 
-    TOML_MAPPING_ADAPTER: m.TypeAdapter[TomlMapping] = m.TypeAdapter(TomlMapping)
+    TOML_MAPPING_ADAPTER: p.TypeAdapter[TomlMapping] = m.TypeAdapter(TomlMapping)
 
 
 __all__: list[str] = ["FlextTestsMakeTypesMixin"]

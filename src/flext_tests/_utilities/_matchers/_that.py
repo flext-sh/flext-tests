@@ -75,7 +75,7 @@ class FlextTestsMatchersThatMixin:
 
             @classmethod
             def _validate_declared_types(
-                cls, value: p.AttributeProbe, params: m.Tests.ThatParams
+                cls, value: p.AttributeProbe, params: p.Tests.ThatParams
             ) -> None:
                 """Validate ``is_`` and ``not_`` against the original value."""
                 value_type_name = type(value).__name__
@@ -103,7 +103,7 @@ class FlextTestsMatchersThatMixin:
             @staticmethod
             def _validate_is_type(
                 value: p.AttributeProbe,
-                params: m.Tests.ThatParams,
+                params: p.Tests.ThatParams,
                 value_type_name: str,
             ) -> None:
                 """Validate ``is_`` including FLEXT wrapper/model shortcuts."""
@@ -149,7 +149,7 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _is_type_only(
-                params: m.Tests.ThatParams,
+                params: p.Tests.ThatParams,
                 raw_eq: t.Tests.MatcherKwargValue | None,
                 raw_ne: t.Tests.MatcherKwargValue | None,
             ) -> bool:
@@ -181,7 +181,7 @@ class FlextTestsMatchersThatMixin:
 
             @classmethod
             def _result_subject(
-                cls, subject: p.AttributeProbe, params: m.Tests.ThatParams
+                cls, subject: p.AttributeProbe, params: p.Tests.ThatParams
             ) -> p.AttributeProbe:
                 """Return the value to validate after result-aware unwrapping."""
                 if not isinstance(subject, r):
@@ -203,7 +203,7 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _ok_value(
-                result_obj: p.Result[p.AttributeProbe], params: m.Tests.ThatParams
+                result_obj: p.Result[p.AttributeProbe], params: p.Tests.ThatParams
             ) -> p.AttributeProbe:
                 """Validate result ok/fail expectation and return success value."""
                 if params.ok and not result_obj.success:
@@ -219,7 +219,7 @@ class FlextTestsMatchersThatMixin:
                 return getattr(result_obj, "value", "") if result_obj.success else ""
 
             @staticmethod
-            def _has_scalar_validation(params: m.Tests.ThatParams) -> bool:
+            def _has_scalar_validation(params: p.Tests.ThatParams) -> bool:
                 """Return whether scalar guard validation is requested."""
                 return any(
                     getattr(params, name) is not None
@@ -242,7 +242,7 @@ class FlextTestsMatchersThatMixin:
             def _validate_scalar(
                 cls,
                 subject_payload: t.Tests.TestobjectSerializable,
-                params: m.Tests.ThatParams,
+                params: p.Tests.ThatParams,
                 raw_eq: t.Tests.MatcherKwargValue | None,
                 raw_ne: t.Tests.MatcherKwargValue | None,
                 kwargs: dict[str, t.Tests.MatcherKwargValue],
@@ -315,7 +315,7 @@ class FlextTestsMatchersThatMixin:
             @staticmethod
             def _validate_common(
                 subject_payload: t.Tests.TestobjectSerializable,
-                params: m.Tests.ThatParams,
+                params: p.Tests.ThatParams,
                 *,
                 effective_has: t.Tests.MatcherKwargValue | None,
             ) -> None:
@@ -347,7 +347,7 @@ class FlextTestsMatchersThatMixin:
             @staticmethod
             def _validate_sequence_edges(
                 seq_value: t.SequenceOf[t.Tests.TestobjectSerializable],
-                params: m.Tests.ThatParams,
+                params: p.Tests.ThatParams,
             ) -> None:
                 """Validate first/last sequence predicates."""
                 if params.first is not None:
@@ -381,7 +381,7 @@ class FlextTestsMatchersThatMixin:
             def _validate_sequence(
                 cls,
                 subject_payload: t.Tests.TestobjectSerializable,
-                params: m.Tests.ThatParams,
+                params: p.Tests.ThatParams,
             ) -> None:
                 """Validate sequence-specific predicates."""
                 seq_value = cls._sequence_value(subject_payload)
@@ -397,7 +397,7 @@ class FlextTestsMatchersThatMixin:
             def _validate_sequence_quantifiers(
                 cls,
                 seq_value: t.SequenceOf[t.Tests.TestobjectSerializable],
-                params: m.Tests.ThatParams,
+                params: p.Tests.ThatParams,
             ) -> None:
                 """Validate all_/any_ sequence predicates."""
                 if params.all_ is not None:
@@ -408,7 +408,7 @@ class FlextTestsMatchersThatMixin:
             @staticmethod
             def _validate_all(
                 seq_value: t.SequenceOf[t.Tests.TestobjectSerializable],
-                params: m.Tests.ThatParams,
+                params: p.Tests.ThatParams,
             ) -> None:
                 """Validate that all sequence items match a predicate/type."""
                 if isinstance(params.all_, type):
@@ -449,7 +449,7 @@ class FlextTestsMatchersThatMixin:
             @staticmethod
             def _validate_any(
                 seq_value: t.SequenceOf[t.Tests.TestobjectSerializable],
-                params: m.Tests.ThatParams,
+                params: p.Tests.ThatParams,
             ) -> None:
                 """Validate that any sequence item matches a predicate/type."""
                 if isinstance(params.any_, type):
@@ -467,7 +467,7 @@ class FlextTestsMatchersThatMixin:
             def _validate_sequence_order(
                 cls,
                 seq_value: t.SequenceOf[t.Tests.TestobjectSerializable],
-                params: m.Tests.ThatParams,
+                params: p.Tests.ThatParams,
             ) -> None:
                 """Validate sorted/unique sequence predicates."""
                 sorted_param = params.sorted
@@ -527,7 +527,7 @@ class FlextTestsMatchersThatMixin:
             def _validate_mapping(
                 cls,
                 subject_payload: t.Tests.TestobjectSerializable,
-                params: m.Tests.ThatParams,
+                params: p.Tests.ThatParams,
             ) -> None:
                 """Validate mapping-specific predicates."""
                 mapping_value = cls._mapping_value(subject_payload)
@@ -564,7 +564,7 @@ class FlextTestsMatchersThatMixin:
             @staticmethod
             def _validate_kv(
                 mapping_value: t.MappingKV[str, t.Tests.TestobjectSerializable],
-                params: m.Tests.ThatParams,
+                params: p.Tests.ThatParams,
             ) -> None:
                 """Validate key-value mapping predicates."""
                 kv_items: t.SequenceOf[tuple[p.AttributeProbe, p.AttributeProbe]] = ()
@@ -600,7 +600,7 @@ class FlextTestsMatchersThatMixin:
 
             @classmethod
             def _validate_attrs(
-                cls, subject: p.AttributeProbe, params: m.Tests.ThatParams
+                cls, subject: p.AttributeProbe, params: p.Tests.ThatParams
             ) -> None:
                 """Validate attrs/methods/attr_eq predicates."""
                 if params.attrs is not None:
@@ -638,7 +638,7 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _validate_attr_eq(
-                subject: p.AttributeProbe, params: m.Tests.ThatParams
+                subject: p.AttributeProbe, params: p.Tests.ThatParams
             ) -> None:
                 """Validate attribute equality predicates."""
                 attr_items: t.SequenceOf[tuple[p.AttributeProbe, p.AttributeProbe]] = ()
@@ -715,7 +715,7 @@ class FlextTestsMatchersThatMixin:
             @staticmethod
             def _validate_deep(
                 subject_payload: t.Tests.TestobjectSerializable,
-                params: m.Tests.ThatParams,
+                params: p.Tests.ThatParams,
             ) -> None:
                 """Validate deep structural constraints."""
                 if params.deep is None:
@@ -751,7 +751,7 @@ class FlextTestsMatchersThatMixin:
             def _validate_rule_sets(
                 subject: p.AttributeProbe,
                 subject_payload: t.Tests.TestobjectSerializable,
-                params: m.Tests.ThatParams,
+                params: p.Tests.ThatParams,
             ) -> None:
                 """Validate path, item, attribute, and predicate rule sets."""
                 if params.paths is not None:

@@ -6,8 +6,8 @@ import datetime
 from pathlib import Path
 from typing import Annotated
 
-from flext_infra import m, u
-from flext_tests import c, t
+from flext_infra import m, p, u
+from flext_tests import c, p, t
 
 
 class FlextTestsFilesystemModelsMixin:

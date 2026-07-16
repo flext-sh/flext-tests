@@ -18,7 +18,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             str, t.MutableMappingKV[str, m.Tests.MakeCommand]
         ],
         aliases_by_name: t.MutableMappingKV[str, str],
-        command: m.Tests.MakeCommand,
+        command: p.Tests.MakeCommand,
     ) -> p.Result[bool]:
         """Add one command to mutable registry assembly state."""
         by_what = commands_by_verb.setdefault(command.verb, {})

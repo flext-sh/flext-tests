@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from flext_tests import c, m, p, r, t
+from flext_tests import c, p, r, t
 from flext_tests._utilities.make_registry import FlextTestsMakeRegistryUtilitiesMixin
 
 
@@ -29,7 +29,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
         return ", ".join(parts)
 
     @staticmethod
-    def make_mutation_marker(command: m.Tests.MakeCommand) -> str:
+    def make_mutation_marker(command: p.Tests.MakeCommand) -> str:
         """Return the compact mutation marker for verb help."""
         if command.mutates:
             return " [mutates]"
@@ -38,7 +38,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
         return ""
 
     @staticmethod
-    def make_mutation_label(command: m.Tests.MakeCommand) -> str:
+    def make_mutation_label(command: p.Tests.MakeCommand) -> str:
         """Return the reader-facing mutation label for command help."""
         if command.mutates:
             return "sim"
@@ -57,7 +57,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
         )
 
     @staticmethod
-    def make_example_for(command: m.Tests.MakeCommand, requested_verb: str) -> str:
+    def make_example_for(command: p.Tests.MakeCommand, requested_verb: str) -> str:
         """Return the example adjusted for an alias-preserving verb."""
         example: str = command.example
         canonical = f"make {command.verb}"
@@ -67,7 +67,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
         return example
 
     @staticmethod
-    def make_render_global_help(registry: m.Tests.MakeRegistry) -> str:
+    def make_render_global_help(registry: p.Tests.MakeRegistry) -> str:
         """Render top-level dispatcher help."""
         lines = ["flext - make <verb> WHAT=<action> [PARAM=value ...]", ""]
         for verb in FlextTestsMakeRegistryUtilitiesMixin.make_registry_verbs(registry):
@@ -88,7 +88,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
     @staticmethod
     def make_render_verb_help(
-        registry: m.Tests.MakeRegistry, requested_verb: str
+        registry: p.Tests.MakeRegistry, requested_verb: str
     ) -> p.Result[str]:
         """Render help for one promoted verb."""
         verb_result = FlextTestsMakeRegistryUtilitiesMixin.make_registry_resolve_verb(
@@ -149,7 +149,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
     @staticmethod
     def make_render_command_help(
-        registry: m.Tests.MakeRegistry, requested_verb: str, what: str
+        registry: p.Tests.MakeRegistry, requested_verb: str, what: str
     ) -> p.Result[str]:
         """Render help for one promoted command."""
         command_result = FlextTestsMakeRegistryUtilitiesMixin.make_registry_command(
@@ -195,7 +195,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
     @staticmethod
     def make_render_dry_run(
-        command: m.Tests.MakeCommand,
+        command: p.Tests.MakeCommand,
         requested_verb: str,
         what: str,
         env: t.MappingKV[str, str],

@@ -9,7 +9,7 @@ from typing import Protocol, runtime_checkable
 import pytest
 
 from flext_infra import p
-from flext_tests import m, t
+from flext_tests import p, t
 
 
 class FlextTestsEnforcementProtocolsMixin:
@@ -44,8 +44,8 @@ class FlextTestsEnforcementProtocolsMixin:
         def __call__(
             self,
             session: pytest.Session,
-            cfg: m.Tests.EnforcementDispatcherConfig,
-            rule: m.EnforcementRuleSpec,
+            cfg: p.Tests.EnforcementDispatcherConfig,
+            rule: p.EnforcementRuleSpec,
             context: FlextTestsEnforcementProtocolsMixin.EnforcementBuildContext,
         ) -> list[pytest.Item]:
             """Build pytest items for one enforcement rule."""

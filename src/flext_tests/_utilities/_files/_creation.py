@@ -118,7 +118,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             | t.MappingKV[str, t.Tests.TestobjectSerializable]
         ),
         actual_fmt: str,
-        params: m.Tests.CreateParams,
+        params: p.Tests.CreateParams,
     ) -> None:
         """Write normalized content using the selected output format."""
         match actual_fmt:

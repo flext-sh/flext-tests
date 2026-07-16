@@ -19,7 +19,7 @@ from pathlib import Path
 import pytest
 from _pytest.config.argparsing import Parser
 
-from flext_tests import c, m, tm, u
+from flext_tests import c, m, tm, p, u
 from flext_tests._fixtures import enforcement as dispatcher
 
 
@@ -45,7 +45,7 @@ class TestsFlextTestsEnforcementDispatcher:
         return next(r for r in u.build_canonical_catalog().rules if r.enabled)
 
     @pytest.fixture
-    def violation(self, rule: m.EnforcementRuleSpec) -> p.Violation:
+    def violation(self, rule: p.EnforcementRuleSpec) -> p.Violation:
         return m.Violation(
             qualname="flext_core.x.Y",
             layer="core",
@@ -181,8 +181,8 @@ class TestsFlextTestsEnforcementDispatcher:
     def test_runtest_raises_violation_error_when_violations_present(
         self,
         request: pytest.FixtureRequest,
-        rule: m.EnforcementRuleSpec,
-        violation: m.Violation,
+        rule: p.EnforcementRuleSpec,
+        violation: p.Violation,
     ) -> None:
         collector = dispatcher.EnforcementCollector.from_parent(
             request.session, name="flext-enforce"
@@ -204,7 +204,7 @@ class TestsFlextTestsEnforcementDispatcher:
         tm.that(message, has=str(violation.line_number))
 
     def test_runtest_is_a_noop_when_no_violations(
-        self, request: pytest.FixtureRequest, rule: m.EnforcementRuleSpec
+        self, request: pytest.FixtureRequest, rule: p.EnforcementRuleSpec
     ) -> None:
         collector = dispatcher.EnforcementCollector.from_parent(
             request.session, name="flext-enforce"
@@ -222,8 +222,8 @@ class TestsFlextTestsEnforcementDispatcher:
     def test_collector_collects_every_added_item(
         self,
         request: pytest.FixtureRequest,
-        rule: m.EnforcementRuleSpec,
-        violation: m.Violation,
+        rule: p.EnforcementRuleSpec,
+        violation: p.Violation,
     ) -> None:
         collector = dispatcher.EnforcementCollector.from_parent(
             request.session, name="flext-enforce"

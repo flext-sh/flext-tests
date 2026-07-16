@@ -81,7 +81,7 @@ class FlextTestsDocker(s[p.Tests.ContainerInfo]):
 
     @staticmethod
     def _resolve_readiness_port(
-        target: m.Tests.ContainerConfig, info: m.Tests.ContainerInfo
+        target: p.Tests.ContainerConfig, info: p.Tests.ContainerInfo
     ) -> int | None:
         """Resolve the host port used by a target readiness check."""
         if target.port is None:
@@ -413,7 +413,7 @@ class FlextTestsDocker(s[p.Tests.ContainerInfo]):
         cls,
         compose_file: str | Path,
         *,
-        target: m.Tests.ContainerConfig | None = None,
+        target: p.Tests.ContainerConfig | None = None,
         workspace_root: Path | None = None,
     ) -> Self:
         """Build a DSL-configured service for an explicit compose target."""
@@ -433,7 +433,7 @@ class FlextTestsDocker(s[p.Tests.ContainerInfo]):
         cls,
         compose_file: str | Path,
         *,
-        target: m.Tests.ContainerConfig | None = None,
+        target: p.Tests.ContainerConfig | None = None,
         workspace_root: Path | None = None,
     ) -> Self:
         """Build a DSL-configured service for a compose stack target."""
@@ -528,7 +528,7 @@ class FlextTestsDocker(s[p.Tests.ContainerInfo]):
         return self._ensure_target_ready(target, container_name)
 
     def _ensure_target_started(
-        self, target: m.Tests.ContainerConfig, container_name: str
+        self, target: p.Tests.ContainerConfig, container_name: str
     ) -> str | None:
         """Start or recreate the configured target when required."""
         if target.force_recreate or self.container_dirty(container_name):
@@ -559,7 +559,7 @@ class FlextTestsDocker(s[p.Tests.ContainerInfo]):
         return None
 
     def _ensure_target_ready(
-        self, target: m.Tests.ContainerConfig, container_name: str
+        self, target: p.Tests.ContainerConfig, container_name: str
     ) -> p.Result[p.Tests.ContainerInfo]:
         """Fetch target info and run configured readiness checks."""
         container_info_result = self.fetch_container_info(container_name)

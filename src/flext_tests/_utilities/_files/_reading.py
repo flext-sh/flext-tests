@@ -18,7 +18,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
     """Read test files with format detection and model loading."""
 
     @staticmethod
-    def _validate_model_content[TModelRead: m.BaseModel](
+    def _validate_model_content[TModelRead: p.BaseModel](
         model_cls: type[TModelRead], content: t.Tests.FileContentPlain
     ) -> p.Result[TModelRead]:
         try:
@@ -28,7 +28,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
             return r[TModelRead].fail(f"Failed to validate model: {ex}")
 
     @staticmethod
-    def _read_fail[TModelRead: m.BaseModel](
+    def _read_fail[TModelRead: p.BaseModel](
         error: str, model_cls: type[TModelRead] | None
     ) -> p.Result[t.Tests.ReadContent] | p.Result[TModelRead]:
         """Dispatch a single read-failure message to the correct result type."""
@@ -49,7 +49,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
     ) -> p.Result[t.Tests.ReadContent]: ...
 
     @overload
-    def read[TModelRead: m.BaseModel](
+    def read[TModelRead: p.BaseModel](
         self,
         path: Path,
         *,
@@ -60,7 +60,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         has_headers: bool = True,
     ) -> p.Result[TModelRead]: ...
 
-    def read[TModelRead: m.BaseModel](
+    def read[TModelRead: p.BaseModel](
         self,
         path: Path,
         *,
@@ -137,7 +137,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         return result
 
     def _read_content_by_format(
-        self, path: Path, actual_fmt: str, params: m.Tests.ReadParams
+        self, path: Path, actual_fmt: str, params: p.Tests.ReadParams
     ) -> t.Tests.ReadContent:
         """Read file content using format-specific parsing."""
         content: t.Tests.ReadContent

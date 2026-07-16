@@ -18,7 +18,7 @@ class FilesBatchCreateInMixin:
             {"file1.txt": "content1", "file2.txt": "content2", "file3.txt": "content3"},
             directory=tmp_path,
         )
-        batch_result: m.Tests.BatchResult = u.Tests.assert_success(result)
+        batch_result: p.Tests.BatchResult = u.Tests.assert_success(result)
         tm.that(batch_result.total, eq=3)
         tm.that(batch_result.success_count, eq=3)
         tm.that(batch_result.failure_count, eq=0)
@@ -31,7 +31,7 @@ class FilesBatchCreateInMixin:
             {"settings1.json": {"key": "value1"}, "settings2.json": {"key": "value2"}},
             directory=tmp_path,
         )
-        batch_result: m.Tests.BatchResult = u.Tests.assert_success(result)
+        batch_result: p.Tests.BatchResult = u.Tests.assert_success(result)
         tm.that(batch_result.success_count, eq=2)
         settings1 = tmp_path / "settings1.json"
         tm.that(settings1.exists(), eq=True)
@@ -144,7 +144,7 @@ class FilesBatchCreateInMixin:
 
     def test_create_in_json_indent(self, tmp_path: Path) -> None:
         """Test create_in() with custom JSON indentation."""
-        content: m.ConfigMap = m.ConfigMap(root={"key": "value", "nested": {"a": 1}})
+        content: p.ConfigMap = m.ConfigMap(root={"key": "value", "nested": {"a": 1}})
         path = tf(base_dir=tmp_path).create(content, "settings.json", indent=4)
         tm.that(path.exists(), eq=True)
         text = path.read_text()

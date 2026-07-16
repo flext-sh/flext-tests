@@ -57,7 +57,7 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
         except OSError as e:
             return r[p.Tests.FileInfo].fail(c.Tests.ERROR_INFO.format(error=e))
 
-    def _build_file_info(self, params: m.Tests.InfoParams) -> p.Tests.FileInfo:
+    def _build_file_info(self, params: p.Tests.InfoParams) -> p.Tests.FileInfo:
         """Build a ``FileInfo`` model for an existing path."""
         stat = params.path.stat()
         size = stat.st_size
@@ -72,7 +72,7 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
         permissions = stat.st_mode
         is_readonly = not permissions & 128
         sha256 = u.Cli.sha256_file(params.path) if params.compute_hash else None
-        content_meta: m.Tests.ContentMeta | None = None
+        content_meta: p.Tests.ContentMeta | None = None
         if params.parse_content or params.validate_model:
             content_meta = self._parse_content_metadata(
                 text=text, fmt=fmt, validate_model=params.validate_model

@@ -85,7 +85,7 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
     def test_layer_flags_every_import_from_a_higher_layer(self, tmp_path: Path) -> None:
         file_path = self._write(tmp_path, "utilities.py", _HIGHER_LAYER_SOURCE)
 
-        result: m.Tests.ScanResult = u.Tests.assert_success(
+        result: p.Tests.ScanResult = u.Tests.assert_success(
             tv.layer(
                 file_path, layer_hierarchy={"utilities": 5, "service": 6, "handlers": 7}
             )
@@ -105,7 +105,7 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
     ) -> None:
         file_path = self._write(tmp_path, "utilities.py", _CLEAN_LAYER_SOURCE)
 
-        result: m.Tests.ScanResult = u.Tests.assert_success(
+        result: p.Tests.ScanResult = u.Tests.assert_success(
             tv.layer(file_path, layer_hierarchy={"utilities": 5})
         )
 
@@ -121,7 +121,7 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
     ) -> None:
         file_path = self._write(tmp_path, "test_example.py", _MOCK_HEAVY_TEST_SOURCE)
 
-        result: m.Tests.ScanResult = u.Tests.assert_success(tv.tests(file_path))
+        result: p.Tests.ScanResult = u.Tests.assert_success(tv.tests(file_path))
         rule_ids = {violation.rule_id for violation in result.violations}
 
         tm.that(result.passed, eq=False)
@@ -132,7 +132,7 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
     ) -> None:
         file_path = self._write(tmp_path, "test_example.py", _MOCK_HEAVY_TEST_SOURCE)
 
-        result: m.Tests.ScanResult = u.Tests.assert_success(tv.tests(file_path))
+        result: p.Tests.ScanResult = u.Tests.assert_success(tv.tests(file_path))
 
         allowed = set(c.Tests.ValidatorSeverity)
         for violation in result.violations:
@@ -141,7 +141,7 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
     def test_tests_passes_for_a_clean_test_module(self, tmp_path: Path) -> None:
         file_path = self._write(tmp_path, "test_clean.py", _CLEAN_TEST_SOURCE)
 
-        result: m.Tests.ScanResult = u.Tests.assert_success(tv.tests(file_path))
+        result: p.Tests.ScanResult = u.Tests.assert_success(tv.tests(file_path))
 
         tm.that(result.passed, eq=True)
         tm.that(len(result.violations), eq=0)
@@ -155,7 +155,7 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
     ) -> None:
         self._write(tmp_path, "README.md", _BAD_MARKDOWN)
 
-        result: m.Tests.ScanResult = u.Tests.assert_success(tv.markdown(tmp_path))
+        result: p.Tests.ScanResult = u.Tests.assert_success(tv.markdown(tmp_path))
         rule_ids = {violation.rule_id for violation in result.violations}
 
         tm.that(result.passed, eq=False)
@@ -164,7 +164,7 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
     def test_markdown_passes_for_a_clean_code_block(self, tmp_path: Path) -> None:
         self._write(tmp_path, "README.md", _CLEAN_MARKDOWN)
 
-        result: m.Tests.ScanResult = u.Tests.assert_success(tv.markdown(tmp_path))
+        result: p.Tests.ScanResult = u.Tests.assert_success(tv.markdown(tmp_path))
 
         tm.that(result.passed, eq=True)
         tm.that(len(result.violations), eq=0)
@@ -178,8 +178,8 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
         dirty = self._write(tmp_path, "test_example.py", _MOCK_HEAVY_TEST_SOURCE)
         clean = self._write(tmp_path, "test_clean.py", _CLEAN_TEST_SOURCE)
 
-        dirty_result: m.Tests.ScanResult = u.Tests.assert_success(tv.tests(dirty))
-        clean_result: m.Tests.ScanResult = u.Tests.assert_success(tv.tests(clean))
+        dirty_result: p.Tests.ScanResult = u.Tests.assert_success(tv.tests(dirty))
+        clean_result: p.Tests.ScanResult = u.Tests.assert_success(tv.tests(clean))
 
         # Invariant: passed is True exactly when there are no violations.
         tm.that(dirty_result.passed, eq=len(dirty_result.violations) == 0)

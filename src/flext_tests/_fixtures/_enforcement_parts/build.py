@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import m, p, t
+from flext_tests import p, t
 from flext_tests._fixtures._enforcement_parts.config import active_rules
 from flext_tests._fixtures._enforcement_parts.discovery import (
     collected_project_names,
@@ -25,7 +25,7 @@ from flext_tests._fixtures._enforcement_parts.validators import (
 
 def build_items(
     session: pytest.Session,
-    cfg: m.Tests.EnforcementDispatcherConfig,
+    cfg: p.Tests.EnforcementDispatcherConfig,
     *,
     collected_items: t.SequenceOf[pytest.Item],
 ) -> list[pytest.Item]:

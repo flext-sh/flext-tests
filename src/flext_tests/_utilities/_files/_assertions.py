@@ -19,7 +19,7 @@ class FlextTestsFilesAssertionsMixin(FlextTestsFilesBatchMixin):
     def assert_exists(
         path: Path,
         msg: str | None = None,
-        options: m.Tests.AssertExistsParams | None = None,
+        options: p.Tests.AssertExistsParams | None = None,
         *,
         is_file: bool | None = None,
         is_dir: bool | None = None,

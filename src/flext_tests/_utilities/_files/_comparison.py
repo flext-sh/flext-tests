@@ -19,7 +19,7 @@ class FlextTestsFilesComparisonMixin:
     ]
 
     @staticmethod
-    def _read_both(params: m.Tests.CompareParams) -> t.StrPair:
+    def _read_both(params: p.Tests.CompareParams) -> t.StrPair:
         enc = c.Tests.DEFAULT_ENCODING
         return (
             params.file1.read_text(encoding=enc),
@@ -133,7 +133,7 @@ class FlextTestsFilesComparisonMixin:
             result = r[bool].fail(c.Tests.ERROR_COMPARE.format(error=e))
         return result
 
-    def _compare_existing(self, params: m.Tests.CompareParams) -> p.Result[bool]:
+    def _compare_existing(self, params: p.Tests.CompareParams) -> p.Result[bool]:
         """Compare two existing files using the requested comparison mode."""
         if params.pattern is not None:
             text1 = params.file1.read_text(encoding=c.Tests.DEFAULT_ENCODING)
@@ -153,7 +153,7 @@ class FlextTestsFilesComparisonMixin:
             case _:
                 return self._compare_content(params)
 
-    def _compare_content(self, params: m.Tests.CompareParams) -> p.Result[bool]:
+    def _compare_content(self, params: p.Tests.CompareParams) -> p.Result[bool]:
         """Compare file content with optional deep/structured comparison."""
         c1, c2 = self._read_both(params)
         if params.deep:
@@ -166,7 +166,7 @@ class FlextTestsFilesComparisonMixin:
             c1, c2 = c1.lower(), c2.lower()
         return r[bool].ok(c1 == c2)
 
-    def _compare_lines(self, params: m.Tests.CompareParams) -> p.Result[bool]:
+    def _compare_lines(self, params: p.Tests.CompareParams) -> p.Result[bool]:
         """Compare files line by line with optional normalization."""
         c1, c2 = self._read_both(params)
         lines1, lines2 = c1.splitlines(), c2.splitlines()

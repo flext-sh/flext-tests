@@ -46,7 +46,7 @@ def load() -> None:
 """,
         )
 
-        result: m.Tests.ScanResult = u.Tests.assert_success(tv.imports(file_path))
+        result: p.Tests.ScanResult = u.Tests.assert_success(tv.imports(file_path))
         rule_ids = {violation.rule_id for violation in result.violations}
 
         tm.that(result.passed, eq=False)
@@ -70,7 +70,7 @@ def render() -> str:
 """,
         )
 
-        result: m.Tests.ScanResult = u.Tests.assert_success(tv.imports(file_path))
+        result: p.Tests.ScanResult = u.Tests.assert_success(tv.imports(file_path))
 
         tm.that(result.passed, eq=True)
         tm.that(result.violations, empty=True)
@@ -102,7 +102,7 @@ def ignore_specific() -> None:
 """,
         )
 
-        result: m.Tests.ScanResult = u.Tests.assert_success(tv.bypass(file_path))
+        result: p.Tests.ScanResult = u.Tests.assert_success(tv.bypass(file_path))
         rule_ids = [violation.rule_id for violation in result.violations]
 
         tm.that(result.passed, eq=False)
@@ -124,7 +124,7 @@ def render() -> str:
 """,
         )
 
-        result: m.Tests.ScanResult = u.Tests.assert_success(tv.bypass(file_path))
+        result: p.Tests.ScanResult = u.Tests.assert_success(tv.bypass(file_path))
 
         tm.that(result.passed, eq=True)
         tm.that(result.violations, empty=True)

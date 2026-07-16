@@ -5,11 +5,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_tests import tf, tm
-from tests import c, m, u
+from tests import c, m, p, u
 
 from pathlib import Path
 
-from tests import t
+from tests import p, t
 
 
 
@@ -36,7 +36,7 @@ class FilesReadMixin:
         """Test read() returns dict content for .json files."""
         manager = tf(base_dir=tmp_path)
         content_root: dict[str, t.JsonPayload] = {"key": "value", "number": 42}
-        content: m.ConfigMap = m.ConfigMap(root=content_root)
+        content: p.ConfigMap = m.ConfigMap(root=content_root)
         path = manager.create(content, "settings.json")
         result = manager.read(path)
         _ = u.Tests.assert_success(result)
@@ -45,7 +45,7 @@ class FilesReadMixin:
     def test_read_yaml_file(self, tmp_path: Path) -> None:
         """Test read() returns dict content for .yaml files."""
         manager = tf(base_dir=tmp_path)
-        content: m.ConfigMap = m.ConfigMap(root={"name": "test", "enabled": True})
+        content: p.ConfigMap = m.ConfigMap(root={"name": "test", "enabled": True})
         path = manager.create(content, "settings.yaml")
         result = manager.read(path)
         _ = u.Tests.assert_success(result)

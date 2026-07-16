@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_tests import tf, tm
-from tests import c, m, t, u
+from tests import c, m, p, t, u
 
 
 class FilesFormatsMixin:
@@ -29,7 +29,7 @@ class FilesFormatsMixin:
     def test_create_json_auto_detect_from_dict(self, tmp_path: Path) -> None:
         """Test create() auto-detects JSON from dict content."""
         manager = tf(base_dir=tmp_path)
-        content: m.ConfigMap = m.ConfigMap(root={"key": "value", "number": 42})
+        content: p.ConfigMap = m.ConfigMap(root={"key": "value", "number": 42})
         path = manager.create(content, "settings.json")
         tm.that(path.exists(), eq=True)
         empty_data: t.JsonMapping = {}
@@ -39,7 +39,7 @@ class FilesFormatsMixin:
     def test_create_yaml_auto_detect_from_extension(self, tmp_path: Path) -> None:
         """Test create() auto-detects YAML from .yaml extension."""
         manager = tf(base_dir=tmp_path)
-        content: m.ConfigMap = m.ConfigMap(root={"name": "test", "enabled": True})
+        content: p.ConfigMap = m.ConfigMap(root={"name": "test", "enabled": True})
         path = manager.create(content, "settings.yaml")
         tm.that(path.exists(), eq=True)
         empty_data: t.JsonMapping = {}

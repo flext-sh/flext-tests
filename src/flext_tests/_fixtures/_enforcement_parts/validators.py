@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import c, m, p, t
+from flext_tests import c, p, t
 from flext_tests._fixtures._enforcement_parts.items import EnforcementItem
 from flext_tests._fixtures._enforcement_parts.registry import EnforcementBuildContext
 
@@ -32,7 +32,7 @@ def _iter_infra_violations(
 
 
 def dispatch_infra_detector(
-    rule: m.EnforcementRuleSpec, report: p.AttributeProbe
+    rule: p.EnforcementRuleSpec, report: p.AttributeProbe
 ) -> dict[str, list[p.AttributeProbe]]:
     """Legacy helper kept for existing tests; new code uses the flext-infra plugin."""
     source = rule.source
@@ -48,7 +48,7 @@ def dispatch_infra_detector(
 
 def build_tests_validator_items(
     collector: pytest.Collector,
-    rule: m.EnforcementRuleSpec,
+    rule: p.EnforcementRuleSpec,
     context: EnforcementBuildContext,
 ) -> list[EnforcementItem]:
     """Build enforcement items from flext-tests validator methods."""
@@ -62,7 +62,7 @@ def build_tests_validator_items(
 
 def _items_from_grouped(
     collector: pytest.Collector,
-    rule: m.EnforcementRuleSpec,
+    rule: p.EnforcementRuleSpec,
     grouped: dict[str, list[p.AttributeProbe]],
 ) -> list[EnforcementItem]:
     """Convert grouped violations into enforcement items."""
@@ -83,7 +83,7 @@ def _items_from_grouped(
 
 
 def _collect_tests_validator_violations(
-    rule: m.EnforcementRuleSpec, workspace_root: Path, targets: t.SequenceOf[Path]
+    rule: p.EnforcementRuleSpec, workspace_root: Path, targets: t.SequenceOf[Path]
 ) -> dict[str, list[p.AttributeProbe]]:
     result: dict[str, list[p.AttributeProbe]] = {}
     try:

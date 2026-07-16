@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from flext_tests import tk, tm
-from tests import c, m, u
+from tests import c, m, p, u
 from pathlib import Path
 
 import pytest

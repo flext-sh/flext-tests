@@ -11,8 +11,8 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
 
     @staticmethod
     def make_param_value(
-        param: m.Tests.MakeParam,
-        command: m.Tests.MakeCommand,
+        param: p.Tests.MakeParam,
+        command: p.Tests.MakeCommand,
         env: t.MappingKV[str, str],
     ) -> str:
         """Return the current environment-backed value for one parameter."""
@@ -26,7 +26,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
 
     @staticmethod
     def make_validate_invocation(
-        command: m.Tests.MakeCommand,
+        command: p.Tests.MakeCommand,
         env: t.MappingKV[str, str],
         *,
         require_required: bool = True,
@@ -50,7 +50,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
         return r[bool].ok(True)
 
     @staticmethod
-    def make_validate_command_contract(command: m.Tests.MakeCommand) -> p.Result[bool]:
+    def make_validate_command_contract(command: p.Tests.MakeCommand) -> p.Result[bool]:
         """Validate one command against the generic dispatcher contract."""
         param_by_name = {param.name: param for param in command.params}
         if command.mutates:
@@ -105,7 +105,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
 
     @staticmethod
     def make_validate_mutation_conditions(
-        command: m.Tests.MakeCommand, param_by_name: t.MappingKV[str, m.Tests.MakeParam]
+        command: p.Tests.MakeCommand, param_by_name: t.MappingKV[str, m.Tests.MakeParam]
     ) -> p.Result[bool]:
         """Validate conditional mutation predicates against declared parameters."""
         if not command.mutates_when:
@@ -137,7 +137,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
         return r[bool].ok(True)
 
     @staticmethod
-    def make_validate_registry(registry: m.Tests.MakeRegistry) -> p.Result[bool]:
+    def make_validate_registry(registry: p.Tests.MakeRegistry) -> p.Result[bool]:
         """Validate the complete discovered command registry."""
         if not registry.commands_by_verb:
             return r[bool].fail("no command found in scripts/cmd/<verb>/<what>")
@@ -171,7 +171,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
 
     @staticmethod
     def make_validate_registered_command(
-        command: m.Tests.MakeCommand,
+        command: p.Tests.MakeCommand,
     ) -> p.Result[bool]:
         """Validate one command inside a complete registry."""
         if command.what != c.Tests.MAKE_DEFAULT_COMMAND and command.aliases:
@@ -209,13 +209,13 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
         return r[bool].ok(True)
 
     @staticmethod
-    def make_registry_verbs(registry: m.Tests.MakeRegistry) -> t.StrSequence:
+    def make_registry_verbs(registry: p.Tests.MakeRegistry) -> t.StrSequence:
         """Return promoted verbs in display order."""
         return tuple(sorted(registry.commands_by_verb))
 
     @staticmethod
     def make_registry_resolve_verb(
-        registry: m.Tests.MakeRegistry, verb: str
+        registry: p.Tests.MakeRegistry, verb: str
     ) -> p.Result[str]:
         """Resolve one verb or alias to its canonical verb."""
         resolved = registry.aliases_by_name.get(verb, verb)
@@ -225,7 +225,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
 
     @staticmethod
     def make_registry_commands(
-        registry: m.Tests.MakeRegistry, verb: str
+        registry: p.Tests.MakeRegistry, verb: str
     ) -> p.Result[t.MappingKV[str, m.Tests.MakeCommand]]:
         """Return commands registered for one verb."""
         resolved = FlextTestsMakeContractUtilitiesMixin.make_registry_resolve_verb(
@@ -241,7 +241,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
 
     @staticmethod
     def make_registry_command(
-        registry: m.Tests.MakeRegistry, verb: str, what: str
+        registry: p.Tests.MakeRegistry, verb: str, what: str
     ) -> p.Result[p.Tests.MakeCommand]:
         """Return one command by verb and WHAT value."""
         commands_result = FlextTestsMakeContractUtilitiesMixin.make_registry_commands(
@@ -260,7 +260,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
 
     @staticmethod
     def make_registry_aliases_for(
-        registry: m.Tests.MakeRegistry, verb: str
+        registry: p.Tests.MakeRegistry, verb: str
     ) -> t.StrSequence:
         """Return aliases that resolve to one canonical verb."""
         return tuple(

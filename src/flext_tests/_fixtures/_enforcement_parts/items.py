@@ -8,7 +8,7 @@ from typing import override
 
 import pytest
 
-from flext_tests import m, p, t
+from flext_tests import p, t
 
 
 class EnforcementItem(pytest.Item):
@@ -19,7 +19,7 @@ class EnforcementItem(pytest.Item):
         name: str,
         parent: pytest.Collector,
         *,
-        rule: m.EnforcementRuleSpec,
+        rule: p.EnforcementRuleSpec,
         project: str,
         violations: t.SequenceOf[p.Violation | p.AttributeProbe],
     ) -> None:
