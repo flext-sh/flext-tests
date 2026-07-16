@@ -9,7 +9,7 @@ from typing import Protocol, runtime_checkable
 import pytest
 
 from flext_infra import p
-from flext_tests import p, t
+from flext_tests import t
 
 
 class FlextTestsEnforcementProtocolsMixin:

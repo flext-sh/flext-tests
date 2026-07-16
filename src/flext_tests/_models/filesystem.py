@@ -1,4 +1,8 @@
-"""Filesystem models for flext-tests."""
+"""Filesystem models for flext-tests.
+
+Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -6,7 +10,7 @@ import datetime
 from pathlib import Path
 from typing import Annotated
 
-from flext_infra import m, p, u
+from flext_infra import m, u
 from flext_tests import c, p, t
 
 

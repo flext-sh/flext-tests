@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import TypeIs
 
 from flext_infra import m, p, u
-from flext_tests import c, p, t
+from flext_tests import c, t
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 

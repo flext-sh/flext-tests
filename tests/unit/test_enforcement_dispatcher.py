@@ -19,7 +19,7 @@ from pathlib import Path
 import pytest
 from _pytest.config.argparsing import Parser
 
-from flext_tests import c, m, tm, p, u
+from flext_tests import c, m, p, tm, p, u
 from flext_tests._fixtures import enforcement as dispatcher
 
 

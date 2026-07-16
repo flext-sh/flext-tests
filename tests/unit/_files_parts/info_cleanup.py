@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_tests import tf, tm
-from tests import m, t, u
+from tests import m, p, t, u
 
 
 class FilesInfoCleanupMixin:

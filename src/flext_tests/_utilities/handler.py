@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flext_tests import c, m
+from flext_tests import c, m, p
 
 
 class FlextTestsHandlerHelpersUtilitiesMixin:

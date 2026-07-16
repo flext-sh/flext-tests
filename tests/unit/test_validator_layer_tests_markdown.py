@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import c, m, tm, tv
+from flext_tests import c, m, p, tm, tv
 from tests import u
 
 from pathlib import Path

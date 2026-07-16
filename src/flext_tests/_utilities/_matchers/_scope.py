@@ -12,7 +12,7 @@ from contextlib import contextmanager, nullcontext
 from pathlib import Path
 
 from flext_core import u
-from flext_tests import c, m, t
+from flext_tests import c, m, p, t
 from flext_tests._utilities._matchers._typeguards import (
     FlextTestsMatchersTypeGuardsMixin,
 )

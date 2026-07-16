@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_tests import m, tm, tv
+from flext_tests import m, p, tm, tv
 from tests import u
 
 from pathlib import Path
@@ -62,7 +62,7 @@ def load() -> None:
             """from __future__ import annotations
 
 from flext_core import r
-from flext_tests import m, t
+from flext_tests import m, p, t
 
 
 def render() -> str:

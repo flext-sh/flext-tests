@@ -12,7 +12,7 @@ from collections.abc import MutableSequence
 from pathlib import Path
 from typing import override
 
-from flext_tests import c, t, u
+from flext_tests import c, p, t, u
 
 
 class FlextValidatorTests(u.Tests.ValidatorScannerMixin):

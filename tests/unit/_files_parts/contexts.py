@@ -6,7 +6,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from flext_tests import tf, tm
-from tests import m, t, u
+from tests import m, p, t, u
 
 
 class FilesContextsMixin:
