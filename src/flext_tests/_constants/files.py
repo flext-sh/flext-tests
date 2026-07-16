@@ -31,9 +31,9 @@ class FlextTestsConstantsFiles:
     FILE_FORMAT_AUTO: Final[FileFormat] = Format.AUTO
     FILE_FORMAT_TEXT: Final[FileFormat] = Format.TEXT
     FILE_FORMAT_BIN: Final[FileFormat] = Format.BIN
-    FILE_FORMAT_JSON: Final[FileFormat] = Format.JSON
-    FILE_FORMAT_YAML: Final[FileFormat] = Format.YAML
-    FILE_FORMAT_CSV: Final[FileFormat] = Format.CSV
+    JSON_FILE_FORMAT: Final[FileFormat] = Format.JSON
+    YAML_FILE_FORMAT: Final[FileFormat] = Format.YAML
+    CSV_FILE_FORMAT: Final[FileFormat] = Format.CSV
     FILE_FORMAT_UNKNOWN: Final[FileFormat] = Format.UNKNOWN
 
     @unique
@@ -85,8 +85,8 @@ class FlextTestsConstantsFiles:
     DEFAULT_FILENAME: Final[str] = "file"
     DEFAULT_ENCODING: Final[str] = infra_c.DEFAULT_ENCODING
     DEFAULT_BINARY_ENCODING: Final[str] = "binary"
-    DEFAULT_JSON_INDENT: Final[int] = 2
-    DEFAULT_CSV_DELIMITER: Final[str] = ","
+    JSON_DEFAULT_INDENT: Final[int] = 2
+    CSV_DEFAULT_DELIMITER: Final[str] = ","
     DEFAULT_EXTENSION: Final[str] = ".txt"
     PERMISSION_READONLY_FILE: Final[int] = 292
     PERMISSION_WRITABLE_FILE: Final[int] = 420

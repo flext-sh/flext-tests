@@ -128,9 +128,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                     if isinstance(actual_content, bytes)
                     else str(actual_content).encode(params.enc)
                 )
-            case c.Tests.FILE_FORMAT_JSON | c.Tests.FILE_FORMAT_YAML:
+            case c.Tests.JSON_FILE_FORMAT | c.Tests.YAML_FILE_FORMAT:
                 json_payload = self._build_json_payload(actual_content)
-                if actual_fmt == c.Tests.FILE_FORMAT_JSON:
+                if actual_fmt == c.Tests.JSON_FILE_FORMAT:
                     u.Cli.json_write(
                         file_path,
                         json_payload,
@@ -138,8 +138,8 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                     )
                 else:
                     u.Cli.yaml_dump(file_path, json_payload, indent=params.indent)
-            case c.Tests.FILE_FORMAT_CSV:
-                u.Cli.files_write_csv(
+            case c.Tests.CSV_FILE_FORMAT:
+                u.Cli.csv_write_files(
                     file_path,
                     self._build_csv_rows(
                         actual_content=actual_content, headers=params.headers
@@ -226,8 +226,8 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         *,
         fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
         enc: str = c.Tests.DEFAULT_ENCODING,
-        indent: int = c.Tests.DEFAULT_JSON_INDENT,
-        delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
+        indent: int = c.Tests.JSON_DEFAULT_INDENT,
+        delim: str = c.Tests.CSV_DEFAULT_DELIMITER,
         headers: t.StrSequence | None = None,
         readonly: bool = False,
         extract_result: bool = True,

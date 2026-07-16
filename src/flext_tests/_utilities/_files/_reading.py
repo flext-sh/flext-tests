@@ -44,7 +44,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         model_cls: None = None,
         fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
         enc: str = c.Tests.DEFAULT_ENCODING,
-        delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
+        delim: str = c.Tests.CSV_DEFAULT_DELIMITER,
         has_headers: bool = True,
     ) -> p.Result[t.Tests.ReadContent]: ...
 
@@ -56,7 +56,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         model_cls: type[TModelRead],
         fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
         enc: str = c.Tests.DEFAULT_ENCODING,
-        delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
+        delim: str = c.Tests.CSV_DEFAULT_DELIMITER,
         has_headers: bool = True,
     ) -> p.Result[TModelRead]: ...
 
@@ -67,7 +67,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         model_cls: type[TModelRead] | None = None,
         fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
         enc: str = c.Tests.DEFAULT_ENCODING,
-        delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
+        delim: str = c.Tests.CSV_DEFAULT_DELIMITER,
         has_headers: bool = True,
     ) -> p.Result[t.Tests.ReadContent] | p.Result[TModelRead]:
         """Read file with auto-detection or explicit format.
@@ -144,7 +144,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         match actual_fmt:
             case _ if actual_fmt == c.Tests.FILE_FORMAT_BIN:
                 content = path.read_bytes()
-            case _ if actual_fmt == c.Tests.FILE_FORMAT_JSON:
+            case _ if actual_fmt == c.Tests.JSON_FILE_FORMAT:
                 text = path.read_text(encoding=params.enc)
                 parsed_json = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_json(
                     text.encode()
@@ -154,7 +154,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                     if FlextTestsFilesCreationMixin.is_mapping(parsed_json)
                     else text
                 )
-            case _ if actual_fmt == c.Tests.FILE_FORMAT_YAML:
+            case _ if actual_fmt == c.Tests.YAML_FILE_FORMAT:
                 text = path.read_text(encoding=params.enc)
                 parsed_yaml_result = u.Cli.yaml_parse(text)
                 parsed_yaml = (
@@ -165,8 +165,8 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                     if isinstance(parsed_yaml, dict)
                     else text
                 )
-            case _ if actual_fmt == c.Tests.FILE_FORMAT_CSV:
-                csv_result = u.Cli.files_read_csv_with_headers(path)
+            case _ if actual_fmt == c.Tests.CSV_FILE_FORMAT:
+                csv_result = u.Cli.csv_read_files_with_headers(path)
                 csv_rows_m = csv_result.value if csv_result.success else ()
                 if csv_rows_m:
                     keys = list(csv_rows_m[0].keys())

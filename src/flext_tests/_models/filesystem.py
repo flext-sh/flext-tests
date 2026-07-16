@@ -108,9 +108,9 @@ class FlextTestsFilesystemModelsMixin:
         )
         indent: Annotated[
             t.NonNegativeInt, u.Field(description="JSON/YAML indentation.")
-        ] = c.Tests.DEFAULT_JSON_INDENT
+        ] = c.Tests.JSON_DEFAULT_INDENT
         delim: Annotated[str, u.Field(description="CSV delimiter.")] = (
-            c.Tests.DEFAULT_CSV_DELIMITER
+            c.Tests.CSV_DEFAULT_DELIMITER
         )
         headers: Annotated[
             t.StrSequence | None, u.Field(description="CSV headers.")
@@ -150,7 +150,7 @@ class FlextTestsFilesystemModelsMixin:
         )
         delim: Annotated[
             str, u.Field(min_length=1, max_length=1, description="CSV delimiter.")
-        ] = c.Tests.DEFAULT_CSV_DELIMITER
+        ] = c.Tests.CSV_DEFAULT_DELIMITER
         has_headers: Annotated[bool, u.Field(description="CSV has headers.")] = True
 
         @u.field_validator("path", mode="before")
@@ -252,10 +252,10 @@ class FlextTestsFilesystemModelsMixin:
         )
         indent: Annotated[
             t.NonNegativeInt, u.Field(description="JSON indentation level.")
-        ] = c.Tests.DEFAULT_JSON_INDENT
+        ] = c.Tests.JSON_DEFAULT_INDENT
         delim: Annotated[
             str, u.Field(min_length=1, max_length=1, description="CSV delimiter.")
-        ] = c.Tests.DEFAULT_CSV_DELIMITER
+        ] = c.Tests.CSV_DEFAULT_DELIMITER
         headers: Annotated[
             t.StrSequence | None, u.Field(description="CSV column headers.")
         ] = None
