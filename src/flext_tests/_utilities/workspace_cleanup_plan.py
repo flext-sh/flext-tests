@@ -25,6 +25,15 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
         if lexical_result.failure:
             return r[p.Tests.WorkspaceCleanupCandidate].fail(lexical_result.error)
         path = lexical_result.value
+        protected_result = cls._reject_protected(root, relative_path)
+        if protected_result.failure:
+            return r[p.Tests.WorkspaceCleanupCandidate].fail(protected_result.error)
+        ancestor_result = cls._reject_symlink_ancestor(root, relative_path)
+        if ancestor_result.failure:
+            return r[p.Tests.WorkspaceCleanupCandidate].fail(ancestor_result.error)
+        node_result = cls._reject_unsafe_node(path, relative_path)
+        if node_result.failure:
+            return r[p.Tests.WorkspaceCleanupCandidate].fail(node_result.error)
         ignored_result = cls._ignored(root, relative_path)
         if ignored_result.failure:
             return r[p.Tests.WorkspaceCleanupCandidate].fail(ignored_result.error)

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from flext_tests import c, m, p, tm, u
@@ -211,3 +212,82 @@ class TestsFlextTestsWorkspaceCleanup:
 
         _ = u.Tests.assert_failure(result, "cleanup deletion failed")
         tm.that(blocked.exists(), eq=True)
+
+    def test_plan_rejects_protected_git_directory(self, tmp_path: Path) -> None:
+        """Refuse a residue that targets the resolved Git directory."""
+        root = self._repository(tmp_path, ".git/\n")
+
+        result = u.Tests.workspace_cleanup_plan(self._request(root, ".git"))
+
+        _ = u.Tests.assert_failure(result, "protected")
+        tm.that((root / ".git").exists(), eq=True)
+
+    def test_plan_rejects_protected_beads_directory(self, tmp_path: Path) -> None:
+        """Refuse a residue that targets the .beads durable store."""
+        root = self._repository(tmp_path, ".beads/\n")
+        _ = self._write(root / ".beads" / "issues.jsonl")
+
+        result = u.Tests.workspace_cleanup_plan(self._request(root, ".beads"))
+
+        _ = u.Tests.assert_failure(result, "protected")
+        tm.that((root / ".beads" / "issues.jsonl").exists(), eq=True)
+
+    def test_plan_rejects_internal_symlink_candidate(self, tmp_path: Path) -> None:
+        """Refuse an ignored symlink even when its target stays inside the worktree."""
+        root = self._repository(tmp_path, "link\n")
+        _ = self._write(root / "real" / "artifact.bin")
+        (root / "link").symlink_to(root / "real", target_is_directory=True)
+
+        result = u.Tests.workspace_cleanup_plan(self._request(root, "link"))
+
+        _ = u.Tests.assert_failure(result, "symlink")
+        tm.that((root / "link").is_symlink(), eq=True)
+        tm.that((root / "real" / "artifact.bin").exists(), eq=True)
+
+    def test_plan_rejects_symlink_ancestor(self, tmp_path: Path) -> None:
+        """Refuse a residue whose ancestor path component is a symlink."""
+        root = self._repository(tmp_path, "linkdir/\n")
+        _ = self._write(root / "realdir" / "artifact.bin")
+        (root / "linkdir").symlink_to(root / "realdir", target_is_directory=True)
+
+        result = u.Tests.workspace_cleanup_plan(
+            self._request(root, "linkdir/artifact.bin")
+        )
+
+        _ = u.Tests.assert_failure(result, "symlink")
+        tm.that((root / "realdir" / "artifact.bin").exists(), eq=True)
+
+    def test_plan_rejects_hardlinked_file(self, tmp_path: Path) -> None:
+        """Refuse an ignored regular file that shares its inode with another link."""
+        root = self._repository(tmp_path, "*.tmp\n")
+        target = self._write(root / "artifact.tmp")
+        os.link(target, root / "artifact.hardlink")
+
+        result = u.Tests.workspace_cleanup_plan(self._request(root, "artifact.tmp"))
+
+        _ = u.Tests.assert_failure(result, "hardlink")
+        tm.that((root / "artifact.tmp").exists(), eq=True)
+
+    def test_plan_rejects_non_regular_file(self, tmp_path: Path) -> None:
+        """Refuse an ignored filesystem node that is not a regular file."""
+        root = self._repository(tmp_path, "*.pipe\n")
+        os.mkfifo(root / "artifact.pipe")
+
+        result = u.Tests.workspace_cleanup_plan(self._request(root, "artifact.pipe"))
+
+        _ = u.Tests.assert_failure(result, "regular file")
+        tm.that((root / "artifact.pipe").exists(), eq=True)
+
+    def test_apply_rejects_hardlink_created_after_dry_run(self, tmp_path: Path) -> None:
+        """Reject apply when a hardlink appears after the dry-run fingerprint."""
+        root = self._repository(tmp_path, "*.tmp\n")
+        target = self._write(root / "artifact.tmp")
+        plan = u.Tests.assert_success(
+            u.Tests.workspace_cleanup_plan(self._request(root, "artifact.tmp"))
+        )
+        os.link(target, root / "artifact.hardlink")
+
+        result = u.Tests.workspace_cleanup_apply(plan)
+
+        _ = u.Tests.assert_failure(result, "hardlink")
+        tm.that((root / "artifact.tmp").exists(), eq=True)
