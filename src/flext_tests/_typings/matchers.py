@@ -43,8 +43,14 @@ class FlextTestsMatchersTypesMixin:
         str, FlextTestsMatchersTypesMixin.MatcherCallRuleLeaf
     ]
     type MatcherCallRuleValue = MatcherCallRuleLeaf | MatcherCallRuleKwargs
+    type MatcherJsonTarget = (
+        t.JsonPayload
+        | t.MappingKV[str, t.JsonPayload]
+        | t.SequenceOf[t.JsonPayload]
+    )
     type MatcherCallKwargValue = (
         MatcherCallRuleLeaf
+        | MatcherJsonTarget
         | AbstractSet[tb.TestobjectSerializable]
         | t.MappingKV[int, MatcherCallRuleValue]
         | t.MappingKV[str, MatcherCallRuleValue]
