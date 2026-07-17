@@ -11,15 +11,12 @@ from collections.abc import Callable
 from flext_infra import m, p, t
 
 
-class FlextTestsMakeTypesMixin:
+class FlextTestsTypesMake:
     """Type aliases for registry-driven Make command metadata."""
 
     type DispatchMain = Callable[[tuple[str, ...]], int]
-    type TomlValue = t.JsonValue
-    type TomlMapping = t.JsonMapping
-    type MutableTomlMapping = t.MutableJsonMapping
 
-    TOML_MAPPING_ADAPTER: p.TypeAdapter[TomlMapping] = m.TypeAdapter(TomlMapping)
+    TOML_MAPPING_ADAPTER: p.TypeAdapter[t.JsonMapping] = m.TypeAdapter(t.JsonMapping)
 
 
-__all__: list[str] = ["FlextTestsMakeTypesMixin"]
+__all__: list[str] = ["FlextTestsTypesMake"]

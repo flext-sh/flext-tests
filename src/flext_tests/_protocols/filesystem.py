@@ -9,14 +9,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Protocol, runtime_checkable
+from datetime import datetime
+from pathlib import Path
+from typing import Protocol, runtime_checkable
 
-if TYPE_CHECKING:
-    from datetime import datetime
-    from pathlib import Path
-
-    from flext_infra import p
-    from flext_tests import t
+from flext_infra import p
+from flext_tests import t
 
 
 class FlextTestsFilesystemProtocolsMixin:

@@ -38,7 +38,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
 
     @staticmethod
     def _make_command_from_data(
-        path: Path, data: t.Tests.TomlMapping, verb: str, what: str
+        path: Path, data: t.JsonMapping, verb: str, what: str
     ) -> p.Result[p.Tests.MakeCommand]:
         """Build a command model from validated TOML header data."""
         values: t.MutableStrMapping = {}

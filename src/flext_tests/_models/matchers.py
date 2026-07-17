@@ -56,7 +56,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Unified containment check."),
         ] = None
         lacks: Annotated[
-            t.Tests.ExclusionSpec | None,
+            str | t.StrSequence | None,
             u.Field(description="Unified non-containment check."),
         ] = None
         starts: Annotated[
@@ -75,7 +75,7 @@ class FlextTestsMatchersModelsMixin:
             t.Tests.DeepSpec | None, u.Field(description="Deep structural matching.")
         ] = None
         path: Annotated[
-            t.Tests.PathSpec | None,
+            str | t.StrSequence | None,
             u.Field(description="Extract nested value via dot notation."),
         ] = None
         paths: Annotated[
@@ -106,14 +106,14 @@ class FlextTestsMatchersModelsMixin:
 
         msg: Annotated[str | None, u.Field(description="Custom error message.")] = None
         has: Annotated[
-            t.Tests.ExclusionSpec | None,
+            str | t.StrSequence | None,
             u.Field(
                 validation_alias=t.AliasChoices("has", "contains"),
                 description="Error contains substrings.",
             ),
         ] = None
         lacks: Annotated[
-            t.Tests.ExclusionSpec | None,
+            str | t.StrSequence | None,
             u.Field(
                 validation_alias=t.AliasChoices("lacks", "excludes"),
                 description="Error does not contain substrings.",
@@ -130,11 +130,11 @@ class FlextTestsMatchersModelsMixin:
         ] = None
         code: Annotated[str | None, u.Field(description="Error code equals.")] = None
         code_has: Annotated[
-            t.Tests.ErrorCodeSpec | None,
+            str | t.StrSequence | None,
             u.Field(description="Error code contains substrings."),
         ] = None
         data: Annotated[
-            t.Tests.ErrorDataSpec | None,
+            t.JsonMapping | None,
             u.Field(description="Error data contains key-value pairs."),
         ] = None
 
@@ -195,7 +195,7 @@ class FlextTestsMatchersModelsMixin:
             ),
         ] = None
         lacks: Annotated[
-            t.Tests.ExclusionSpec | None,
+            str | t.StrSequence | None,
             u.Field(
                 validation_alias=t.AliasChoices("lacks", "excludes"),
                 description="Lacks.",
@@ -235,11 +235,11 @@ class FlextTestsMatchersModelsMixin:
         kv: Annotated[
             t.Tests.KeyValueSpec | None, u.Field(description="Key-values.")
         ] = None
-        attrs: Annotated[
-            t.Tests.AttributeSpec | None, u.Field(description="Attrs.")
-        ] = None
+        attrs: Annotated[str | t.StrSequence | None, u.Field(description="Attrs.")] = (
+            None
+        )
         methods: Annotated[
-            t.Tests.AttributeSpec | None, u.Field(description="Methods.")
+            str | t.StrSequence | None, u.Field(description="Methods.")
         ] = None
         attr_eq: Annotated[
             t.Tests.AttributeValueSpec | None, u.Field(description="Attr equals.")
@@ -327,8 +327,7 @@ class FlextTestsMatchersModelsMixin:
             t.Tests.CleanupSpec | None, u.Field(description="Cleanup functions.")
         ] = None
         env: Annotated[
-            t.Tests.EnvironmentSpec | None,
-            u.Field(description="Temporary environment variables."),
+            t.StrMapping | None, u.Field(description="Temporary environment variables.")
         ] = None
         cwd: Annotated[
             Path | str | None, u.Field(description="Temporary working directory.")

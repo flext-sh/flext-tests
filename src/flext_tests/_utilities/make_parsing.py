@@ -13,12 +13,12 @@ class FlextTestsMakeParsingUtilitiesMixin:
     """Parse Make command definitions and parameters."""
 
     @staticmethod
-    def make_header_data(path: Path) -> p.Result[t.Tests.TomlMapping]:
+    def make_header_data(path: Path) -> p.Result[t.JsonMapping]:
         """Return parsed TOML metadata from one command header."""
         try:
             lines = path.read_text(encoding="utf-8").splitlines()[:220]
         except OSError as exc:
-            return r[t.Tests.TomlMapping].fail_op("command header read", exc)
+            return r[t.JsonMapping].fail_op("command header read", exc)
 
         in_header = False
         payload: list[str] = []
@@ -33,15 +33,15 @@ class FlextTestsMakeParsingUtilitiesMixin:
             if in_header:
                 payload.append(content)
         if not payload:
-            return r[t.Tests.TomlMapping].fail(f"{path}: sem header flext-command")
+            return r[t.JsonMapping].fail(f"{path}: sem header flext-command")
         mapping = u.Cli.toml_mapping_from_text("\n".join(payload))
         if mapping is None:
-            return r[t.Tests.TomlMapping].fail(f"{path}: header TOML invalido")
+            return r[t.JsonMapping].fail(f"{path}: header TOML invalido")
         try:
             table = t.Tests.TOML_MAPPING_ADAPTER.validate_python(mapping)
         except (TypeError, ValueError) as exc:
-            return r[t.Tests.TomlMapping].fail(f"{path}: header TOML invalido: {exc}")
-        return r[t.Tests.TomlMapping].ok(table)
+            return r[t.JsonMapping].fail(f"{path}: header TOML invalido: {exc}")
+        return r[t.JsonMapping].ok(table)
 
     @staticmethod
     def make_has_executable_body(path: Path) -> p.Result[bool]:
@@ -68,9 +68,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
         return r[bool].ok(len(body) > 1 if has_module_docstring else True)
 
     @staticmethod
-    def make_require_string(
-        data: t.Tests.TomlMapping, key: str, path: Path
-    ) -> p.Result[str]:
+    def make_require_string(data: t.JsonMapping, key: str, path: Path) -> p.Result[str]:
         """Return one required non-empty string field."""
         value = data.get(key)
         if not isinstance(value, str) or not value.strip():
@@ -79,7 +77,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
     @staticmethod
     def make_require_optional_string(
-        data: t.Tests.TomlMapping, key: str, path: Path
+        data: t.JsonMapping, key: str, path: Path
     ) -> p.Result[str]:
         """Return one optional string field."""
         value = data.get(key, "")
@@ -88,9 +86,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
         return r[str].ok(value.strip())
 
     @staticmethod
-    def make_require_bool(
-        data: t.Tests.TomlMapping, key: str, path: Path
-    ) -> p.Result[bool]:
+    def make_require_bool(data: t.JsonMapping, key: str, path: Path) -> p.Result[bool]:
         """Return one required boolean field."""
         value = data.get(key)
         if not isinstance(value, bool):
@@ -99,7 +95,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
     @staticmethod
     def make_parse_aliases(
-        value: t.Tests.TomlValue | None, path: Path
+        value: t.JsonValue | None, path: Path
     ) -> p.Result[t.StrSequence]:
         """Parse optional command aliases."""
         return FlextTestsMakeParsingUtilitiesMixin.make_parse_string_value_list(
@@ -108,7 +104,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
     @staticmethod
     def make_parse_string_list(
-        data: t.Tests.TomlMapping, field: str, path: Path
+        data: t.JsonMapping, field: str, path: Path
     ) -> p.Result[t.StrSequence]:
         """Parse one optional string-list field from a TOML table."""
         return FlextTestsMakeParsingUtilitiesMixin.make_parse_string_value_list(
@@ -117,7 +113,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
     @staticmethod
     def make_parse_string_value_list(
-        value: t.Tests.TomlValue | None, field: str, path: Path
+        value: t.JsonValue | None, field: str, path: Path
     ) -> p.Result[t.StrSequence]:
         """Parse one optional string-list value."""
         if value is None:
@@ -133,7 +129,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
     @staticmethod
     def make_parse_params(
-        value: t.Tests.TomlValue | None, path: Path
+        value: t.JsonValue | None, path: Path
     ) -> p.Result[t.SequenceOf[p.Tests.MakeParam]]:
         """Parse command parameter declarations."""
         if value is None:
@@ -161,7 +157,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
     @staticmethod
     def make_parse_mutation_conditions(
-        value: t.Tests.TomlValue | None, path: Path
+        value: t.JsonValue | None, path: Path
     ) -> p.Result[t.SequenceOf[p.Tests.MakeMutationCondition]]:
         """Parse optional conditional mutation predicates."""
         if value is None:
@@ -191,7 +187,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
     @staticmethod
     def make_parse_mutation_condition(
-        data: t.Tests.TomlMapping, path: Path
+        data: t.JsonMapping, path: Path
     ) -> p.Result[p.Tests.MakeMutationCondition]:
         """Parse one conditional mutation predicate."""
         name_result = FlextTestsMakeParsingUtilitiesMixin.make_require_string(
@@ -220,7 +216,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
     @staticmethod
     def make_parse_param(
-        data: t.Tests.TomlMapping, path: Path
+        data: t.JsonMapping, path: Path
     ) -> p.Result[p.Tests.MakeParam]:
         """Parse one command parameter object."""
         name_result = FlextTestsMakeParsingUtilitiesMixin.make_require_string(
@@ -258,7 +254,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
     @staticmethod
     def make_parse_string_map(
-        value: t.Tests.TomlValue | None, path: Path
+        value: t.JsonValue | None, path: Path
     ) -> p.Result[t.StrPairSequence]:
         """Parse an optional string-to-string mapping."""
         if value is None:

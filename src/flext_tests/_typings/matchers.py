@@ -78,10 +78,8 @@ class FlextTestsMatchersTypesMixin:
     type AttributeMatchSpec = t.MappingKV[
         str, FlextTestsMatchersTypesMixin.MatchRuleSpec
     ]
-    type PathSpec = str | t.StrSequence
     type PredicateSpec = Callable[[tb.Testobject], bool]
     type ContainmentSpec = tb.Testobject | t.SequenceOf[tb.TestobjectSerializable]
-    type ExclusionSpec = str | t.StrSequence
     type SequencePredicate = type[object] | Callable[[tb.Testobject], bool]
     type SortKey = bool | Callable[[tb.Testobject], tb.Testobject]
     type KeySpec = t.StrSequence | set[str]
@@ -89,12 +87,8 @@ class FlextTestsMatchersTypesMixin:
         tuple[str, tb.TestobjectSerializable]
         | t.MappingKV[str, tb.TestobjectSerializable]
     )
-    type AttributeSpec = str | t.StrSequence
     type AttributeValueSpec = (
         tuple[str, tb.TestobjectSerializable]
         | t.MappingKV[str, tb.TestobjectSerializable]
     )
-    type ErrorCodeSpec = str | t.StrSequence
-    type ErrorDataSpec = p.ConfigMap
     type CleanupSpec = t.SequenceOf[Callable[[], None]]
-    type EnvironmentSpec = t.StrMapping
