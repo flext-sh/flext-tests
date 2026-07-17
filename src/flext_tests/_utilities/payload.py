@@ -87,7 +87,7 @@ class FlextTestsPayloadUtilities:
                 result = value.decode(errors="ignore")
             case type() | tzinfo():
                 result = str(value)
-            case datetime() | Path() | None | str() | int() | float() | bool():
+            case datetime() | Path() | None | str() | int() | float():
                 result = u.normalize_to_metadata(value)
             case Mapping():
                 result = u.normalize_to_metadata({

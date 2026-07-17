@@ -32,25 +32,6 @@ class FlextTestsMatchersTypesMixin:
     ``union_mode`` on nullable schemas, so the alias stays non-nullable.
     """
 
-    type MatchRuleLeaf = (
-        tb.Testobject | type[object] | tuple[type[object], ...] | TypeAliasType
-    )
-    type MatchRuleKwargs = t.MappingKV[
-        str,
-        Callable[..., tb.Testobject] | tb.TestobjectSerializable | t.Infra.RegexPattern,
-    ]
-    type MatchRuleValue = MatchRuleLeaf | MatchRuleKwargs
-    type MatcherKwargValue = (
-        MatchRuleLeaf
-        | m.BaseModel
-        | set[tb.TestobjectSerializable]
-        | t.Infra.RegexPattern
-        | Callable[..., tb.Testobject]
-        | MatchRuleKwargs
-        | t.MappingKV[int, MatchRuleValue]
-        | t.MappingKV[str, MatchRuleValue]
-        | t.MappingKV[FlextTestsMatchersTypesMixin.ItemSelector, MatchRuleValue]
-    )
     type MatcherCallRuleLeaf = (
         tb.TestobjectSerializable
         | TypeAliasType

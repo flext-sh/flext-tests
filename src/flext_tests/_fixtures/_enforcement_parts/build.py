@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from flext_tests import m
 from flext_tests._fixtures._enforcement_parts.config import active_rules
 from flext_tests._fixtures._enforcement_parts.discovery import (
     collected_project_names,
@@ -11,10 +12,7 @@ from flext_tests._fixtures._enforcement_parts.discovery import (
     load_infra_report,
 )
 from flext_tests._fixtures._enforcement_parts.items import EnforcementCollector
-from flext_tests._fixtures._enforcement_parts.registry import (
-    EnforcementBuildContext,
-    builder_for,
-)
+from flext_tests._fixtures._enforcement_parts.namespace import NamespaceDetectorBuilder
 from flext_tests._fixtures._enforcement_parts.validators import (
     build_tests_validator_items,
 )
@@ -24,7 +22,7 @@ if TYPE_CHECKING:
 
     import pytest
 
-    from flext_tests import m, p, t
+    from flext_tests import p, t
 
 
 def build_items(
@@ -46,16 +44,16 @@ def build_items(
     collector = EnforcementCollector.from_parent(
         parent=session, name="flext-enforcement"
     )
-    context = EnforcementBuildContext(
+    context = m.Tests.EnforcementBuildContext(
         infra_report=infra_report,
         validator_targets=validator_targets,
         workspace_root=workspace_root,
     )
+    namespace_builder = NamespaceDetectorBuilder()
     items: list[pytest.Item] = []
     for rule in rules:
-        contribution = builder_for(rule.source.kind)
-        if contribution is not None and contribution.builder is not None:
-            items.extend(contribution.builder(session, cfg, rule, context))
+        if rule.source.kind == m.EnforcementSourceKind.FLEXT_INFRA_DETECTOR.value:
+            items.extend(namespace_builder(session, cfg, rule, context))
         elif rule.source.kind == "flext_tests_validator":
             items.extend(build_tests_validator_items(collector, rule, context))
     return items

@@ -18,28 +18,6 @@ if TYPE_CHECKING:
 class FlextTestsEnforcementProtocolsMixin:
     """Protocols for enforcement dispatch boundaries."""
 
-    class EnforcementBuildContext(Protocol):
-        """Shared context contract passed to enforcement contribution builders.
-
-        Members are read-only (covariant) so a concrete context exposing
-        ``validator_targets: tuple[Path, ...]`` satisfies ``Sequence[Path]``.
-        """
-
-        @property
-        def infra_report(self) -> p.AttributeProbe | None:
-            """Optional infra namespace report shared with builders."""
-            ...
-
-        @property
-        def validator_targets(self) -> t.SequenceOf[Path]:
-            """Validator target paths collected for the current session."""
-            ...
-
-        @property
-        def workspace_root(self) -> Path | None:
-            """Resolved workspace root when discovery succeeded."""
-            ...
-
     class EnforcementBuilder(ABC):
         """Callable contract implemented by enforcement contribution builders."""
 
@@ -49,7 +27,7 @@ class FlextTestsEnforcementProtocolsMixin:
             session: pytest.Session,
             cfg: m.Tests.EnforcementDispatcherConfig,
             rule: m.EnforcementRuleSpec,
-            context: FlextTestsEnforcementProtocolsMixin.EnforcementBuildContext,
+            context: m.Tests.EnforcementBuildContext,
         ) -> list[pytest.Item]:
             """Build pytest items for one enforcement rule."""
             ...

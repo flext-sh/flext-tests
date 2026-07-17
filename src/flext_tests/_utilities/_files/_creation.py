@@ -58,7 +58,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         match unwrapped:
             case str() | bytes():
                 return unwrapped
-            case m.ConfigMap() | m.Dict():
+            case m.ConfigMap():
                 return FlextTestsPayloadUtilities.to_config_map(unwrapped.root)
             case m.BaseModel():
                 return unwrapped

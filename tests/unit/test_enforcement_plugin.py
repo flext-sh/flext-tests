@@ -15,6 +15,7 @@ Two behavioral surfaces are exercised through the module's public API only:
 
 from __future__ import annotations
 
+from importlib.metadata import entry_points
 from typing import TYPE_CHECKING
 
 import pytest
@@ -32,6 +33,15 @@ if TYPE_CHECKING:
 
 class TestsFlextTestsEnforcementPlugin:
     """Public contract of the enforcement dispatcher facade."""
+
+    def test_flext_pytest11_entrypoints_have_one_package_owner(self) -> None:
+        """Only the two flext-tests plugins participate in pytest autoload."""
+        names = {
+            entry.name
+            for entry in entry_points(group="pytest11")
+            if entry.name.startswith("flext_")
+        }
+        tm.that(names, eq={"flext_tests", "flext_tests_enforcement"})
 
     # ---- split_csv: pure CSV parsing contract --------------------------------
 

@@ -39,7 +39,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def fail[TResult](
-                result: p.ResultLike[TResult], **kwargs: t.Tests.MatcherKwargValue
+                result: p.ResultLike[TResult], **kwargs: t.Tests.MatcherCallKwargValue
             ) -> str:
                 """Assert that a result failed and validate its error payload."""
                 try:
@@ -303,12 +303,12 @@ class FlextTestsMatchersResultMixin:
             @staticmethod
             @overload
             def ok[TResult: t.Tests.TestResultValue](
-                result: p.ResultLike[TResult], **kwargs: t.Tests.MatcherKwargValue
+                result: p.ResultLike[TResult], **kwargs: t.Tests.MatcherCallKwargValue
             ) -> TResult | t.Tests.TestobjectSerializable: ...
 
             @staticmethod
             def ok[TResult: t.Tests.TestResultValue](
-                result: p.ResultLike[TResult], **kwargs: t.Tests.MatcherKwargValue
+                result: p.ResultLike[TResult], **kwargs: t.Tests.MatcherCallKwargValue
             ) -> TResult | t.Tests.TestobjectSerializable:
                 # mro-j47u: matchers observe the protocol and preserve source identity.
                 try:

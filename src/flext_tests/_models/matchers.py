@@ -351,7 +351,7 @@ class FlextTestsMatchersModelsMixin:
         path: Annotated[str, u.Field(description="Path where matching occurred.")]
         expected: Annotated[
             t.Tests.TestobjectSerializable
-            | Callable[[t.Tests.Testobject], bool]
+            | Callable[[t.Tests.TestobjectSerializable], bool]
             | None,
             u.Field(description="Expected value or predicate."),
         ]

@@ -65,8 +65,15 @@ class MatchersOkConstraintsMixin:
         """Test tm.ok() with deep predicate parameter."""
         data: t.JsonMapping = {"user": {"email": "test@example.com"}}
         result = r[t.JsonMapping].ok(data)
-        value = tm.ok(result, deep={"user.email": "test@example.com"})
+        value = tm.ok(result, deep={"user.email": MatchersPredicates.is_string})
         tm.that(value, eq=data)
+
+    def test_ok_with_missing_deep_predicate_path_fails_cleanly(self) -> None:
+        """Report a missing predicate path through the public matcher contract."""
+        data: t.JsonMapping = {"user": {"email": "test@example.com"}}
+        result = r[t.JsonMapping].ok(data)
+        with pytest.raises(AssertionError, match=r"Path not found: user.missing"):
+            tm.ok(result, deep={"user.missing": MatchersPredicates.is_string})
 
     def test_ok_with_path_parameter(self) -> None:
         """Test tm.ok() with path parameter."""

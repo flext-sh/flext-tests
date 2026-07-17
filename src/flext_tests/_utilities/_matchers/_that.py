@@ -150,8 +150,8 @@ class FlextTestsMatchersThatMixin:
             @staticmethod
             def _is_type_only(
                 params: m.Tests.ThatParams,
-                raw_eq: t.Tests.MatcherKwargValue | None,
-                raw_ne: t.Tests.MatcherKwargValue | None,
+                raw_eq: t.Tests.MatcherCallKwargValue | None,
+                raw_ne: t.Tests.MatcherCallKwargValue | None,
             ) -> bool:
                 """Return whether only type checks were requested."""
                 if params.is_ is None and params.not_ is None:
@@ -317,7 +317,7 @@ class FlextTestsMatchersThatMixin:
                 subject_payload: t.Tests.TestobjectSerializable,
                 params: m.Tests.ThatParams,
                 *,
-                effective_has: t.Tests.MatcherKwargValue | None,
+                effective_has: p.AttributeProbe | None,
             ) -> None:
                 """Validate containment and length predicates."""
                 FlextTestsMatchersContainmentMixin.check_has_lacks(

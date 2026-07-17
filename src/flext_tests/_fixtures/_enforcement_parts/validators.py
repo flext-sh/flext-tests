@@ -14,10 +14,6 @@ if TYPE_CHECKING:
 
     import pytest
 
-    from flext_tests._fixtures._enforcement_parts.registry import (
-        EnforcementBuildContext,
-    )
-
 
 def _iter_infra_violations(
     report: p.AttributeProbe, field: str, *, match_missing: bool
@@ -40,7 +36,7 @@ def _iter_infra_violations(
 def dispatch_infra_detector(
     rule: m.EnforcementRuleSpec, report: p.AttributeProbe
 ) -> dict[str, list[p.AttributeProbe]]:
-    """Legacy helper kept for existing tests; new code uses the flext-infra plugin."""
+    """Group namespace-detector violations by owning project."""
     source = rule.source
     field = getattr(source, "violation_field", "")
     match_missing = bool(getattr(source, "match_missing", False))
@@ -55,7 +51,7 @@ def dispatch_infra_detector(
 def build_tests_validator_items(
     collector: pytest.Collector,
     rule: m.EnforcementRuleSpec,
-    context: EnforcementBuildContext,
+    context: m.Tests.EnforcementBuildContext,
 ) -> list[EnforcementItem]:
     """Build enforcement items from flext-tests validator methods."""
     workspace_root = context.workspace_root

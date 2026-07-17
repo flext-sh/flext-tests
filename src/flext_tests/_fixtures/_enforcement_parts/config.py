@@ -8,7 +8,6 @@ from typing import ClassVar
 import pytest
 
 from flext_tests import c, m, u
-from flext_tests._fixtures._enforcement_parts import registry
 
 
 class SessionConfig:
@@ -147,9 +146,6 @@ def pytest_configure(config: pytest.Config) -> None:
             "error" if cfg.strict and rule.promote_to_error_when_strict else "default"
         )
         config.addinivalue_line("filterwarnings", f"{action}::{category}")
-    for contribution in registry.builders().values():
-        if contribution.configure is not None:
-            contribution.configure(config, cfg)
 
 
 __all__: list[str] = [

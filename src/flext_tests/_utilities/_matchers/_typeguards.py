@@ -28,8 +28,8 @@ class FlextTestsMatchersTypeGuardsMixin:
     @staticmethod
     def prepare_eq_ne_payloads(
         actual_payload: t.Tests.TestobjectSerializable,
-        eq_value: t.Tests.MatcherKwargValue | t.Tests.TestobjectSerializable | None,
-        ne_value: t.Tests.MatcherKwargValue | t.Tests.TestobjectSerializable | None,
+        eq_value: p.AttributeProbe | None,
+        ne_value: p.AttributeProbe | None,
         *,
         msg: str | None,
         default_msg: str,

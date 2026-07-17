@@ -58,20 +58,12 @@ if TYPE_CHECKING:
         dispatch_infra_detector as dispatch_infra_detector,
     )
     from flext_tests._fixtures.enforcement import (
-        EnforcementBuildContext as EnforcementBuildContext,
         EnforcementCollector as EnforcementCollector,
-        EnforcementContribution as EnforcementContribution,
         EnforcementItem as EnforcementItem,
         EnforcementViolationError as EnforcementViolationError,
         active_rules as active_rules,
-        builder_for as builder_for,
-        builders as builders,
-        clear as clear,
         discover_workspace_root as discover_workspace_root,
-        get as get,
-        register as register,
         split_csv as split_csv,
-        warning_categories as warning_categories,
     )
     from flext_tests._fixtures.markdown_validation import (
         MarkdownCodeBlockCollector as MarkdownCodeBlockCollector,
@@ -298,20 +290,12 @@ _LAZY_MODULES: dict[str, tuple[str, ...]] = {
         "dispatch_infra_detector",
     ),
     "._fixtures.enforcement": (
-        "EnforcementBuildContext",
         "EnforcementCollector",
-        "EnforcementContribution",
         "EnforcementItem",
         "EnforcementViolationError",
         "active_rules",
-        "builder_for",
-        "builders",
-        "clear",
         "discover_workspace_root",
-        "get",
-        "register",
         "split_csv",
-        "warning_categories",
     ),
     "._fixtures.markdown_validation": (
         "MarkdownCodeBlockCollector",
