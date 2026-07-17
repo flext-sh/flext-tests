@@ -51,6 +51,24 @@ class FlextTestsMatchersTypesMixin:
         | t.MappingKV[str, MatchRuleValue]
         | t.MappingKV[FlextTestsMatchersTypesMixin.ItemSelector, MatchRuleValue]
     )
+    type MatcherCallRuleLeaf = (
+        tb.TestobjectSerializable
+        | TypeAliasType
+        | tuple[type[object], ...]
+        | t.Infra.RegexPattern
+        | Callable[..., tb.TestobjectSerializable]
+    )
+    type MatcherCallRuleKwargs = t.MappingKV[
+        str, FlextTestsMatchersTypesMixin.MatcherCallRuleLeaf
+    ]
+    type MatcherCallRuleValue = MatcherCallRuleLeaf | MatcherCallRuleKwargs
+    type MatcherCallKwargValue = (
+        MatcherCallRuleLeaf
+        | set[tb.TestobjectSerializable]
+        | t.MappingKV[int, MatcherCallRuleValue]
+        | t.MappingKV[str, MatcherCallRuleValue]
+        | t.MappingKV[FlextTestsMatchersTypesMixin.ItemSelector, MatcherCallRuleValue]
+    )
     type LengthSpec = int | tuple[int, int]
     type ComparableScalar = float | int | str
     """Comparable scalar arms for matcher ``gt``/``gte``/``lt``/``lte`` fields.
@@ -58,12 +76,7 @@ class FlextTestsMatchersTypesMixin:
     Centralized to satisfy AGENTS.md § Model governance rule against
     inline 3+-arm unions in Pydantic field annotations.
     """
-    type MatchRuleSpec = (
-        tb.Testobject
-        | type[object]
-        | tuple[type[object], ...]
-        | t.MappingKV[str, FlextTestsMatchersTypesMixin.MatcherKwargValue]
-    )
+    type MatchRuleSpec = MatcherCallRuleValue | set[tb.TestobjectSerializable]
     type DeepSpec = t.MappingKV[
         str, Callable[[tb.TestobjectSerializable], bool] | tb.TestobjectSerializable
     ]
