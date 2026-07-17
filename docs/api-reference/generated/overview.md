@@ -3,7 +3,7 @@
 # flext-tests API Overview
 
 - Package: `flext_tests`
-- Version: `0.12.0`
+- Version: `0.20.0`
 - Description: FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem
 - Doc summary: Flext Tests package.
 - Classifiers: `Development Status :: 3 - Alpha`, `Framework :: Pydantic :: 2`, `Framework :: Pydantic`, `Framework :: Pytest`, `Intended Audience :: Developers`, `Operating System :: OS Independent` (+4 more)
