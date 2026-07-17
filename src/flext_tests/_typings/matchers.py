@@ -44,9 +44,7 @@ class FlextTestsMatchersTypesMixin:
     ]
     type MatcherCallRuleValue = MatcherCallRuleLeaf | MatcherCallRuleKwargs
     type MatcherJsonTarget = (
-        t.JsonPayload
-        | t.MappingKV[str, t.JsonPayload]
-        | t.SequenceOf[t.JsonPayload]
+        t.JsonPayload | t.MappingKV[str, t.JsonPayload] | t.SequenceOf[t.JsonPayload]
     )
     type MatcherCallKwargValue = (
         MatcherCallRuleLeaf
