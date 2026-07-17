@@ -29,7 +29,7 @@ class FlextTestsMatchersModelsMixin:
             t.Tests.MatcherEqTarget | None, u.Field(description="Value must not equal.")
         ] = None
         is_: Annotated[
-            type[object] | tuple[type[object], ...] | None,
+            type[p.AttributeProbe] | tuple[type[p.AttributeProbe], ...] | None,
             u.Field(
                 validation_alias=t.AliasChoices("is_", "is"),
                 description="Runtime type check.",
@@ -153,11 +153,11 @@ class FlextTestsMatchersModelsMixin:
             t.Tests.TestobjectSerializable | None, u.Field(description="Not equals.")
         ] = None
         is_: Annotated[
-            type[object] | tuple[type[object], ...] | None,
+            type[p.AttributeProbe] | tuple[type[p.AttributeProbe], ...] | None,
             u.Field(validation_alias=t.AliasChoices("is_", "is"), description="Type."),
         ] = None
         not_: Annotated[
-            type[object] | tuple[type[object], ...] | None,
+            type[p.AttributeProbe] | tuple[type[p.AttributeProbe], ...] | None,
             u.Field(
                 validation_alias=t.AliasChoices("not_", "not"), description="Not type."
             ),
@@ -347,7 +347,7 @@ class FlextTestsMatchersModelsMixin:
         path: Annotated[str, u.Field(description="Path where matching occurred.")]
         expected: Annotated[
             t.Tests.TestobjectSerializable
-            | Callable[[t.Tests.Testobject], bool]
+            | Callable[[t.Tests.TestobjectSerializable], bool]
             | None,
             u.Field(description="Expected value or predicate."),
         ]
@@ -362,10 +362,10 @@ class FlextTestsMatchersModelsMixin:
         """Centralized TypeAdapters for test data validation."""
 
         DICT_ADAPTER: ClassVar[
-            m.TypeAdapter[Mapping[str, t.Tests.TestobjectSerializable]]
+            p.TypeAdapter[Mapping[str, t.Tests.TestobjectSerializable]]
         ] = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER
         LIST_ADAPTER: ClassVar[
-            m.TypeAdapter[Sequence[t.Tests.TestobjectSerializable]]
+            p.TypeAdapter[Sequence[t.Tests.TestobjectSerializable]]
         ] = t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER
 
     class Chain[TResult](m.Value):

@@ -2,14 +2,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from pathlib import Path
 
 import pytest
 
 from flext_tests import tf
-
-from pathlib import Path
-
 
 
 class FilesAssertExistsMixin:

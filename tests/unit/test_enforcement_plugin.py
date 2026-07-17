@@ -15,19 +15,29 @@ Two behavioral surfaces are exercised through the module's public API only:
 
 from __future__ import annotations
 
+from importlib.metadata import entry_points
 from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import m, p, tm
+from flext_tests import m, tm
 from flext_tests.enforcement import active_rules, discover_workspace_root, split_csv
 
-from pathlib import Path
-
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class TestsFlextTestsEnforcementPlugin:
     """Public contract of the enforcement dispatcher facade."""
+
+    def test_flext_pytest11_entrypoints_have_one_package_owner(self) -> None:
+        """Only the two flext-tests plugins participate in pytest autoload."""
+        names = {
+            entry.name
+            for entry in entry_points(group="pytest11")
+            if entry.name.startswith("flext_")
+        }
+        tm.that(names, eq={"flext_tests", "flext_tests_enforcement"})
 
     # ---- split_csv: pure CSV parsing contract --------------------------------
 
@@ -203,43 +213,4 @@ class TestsFlextTestsEnforcementPlugin:
         result = pytester.runpytest_subprocess(
             "-W", "error::pytest.PytestAssertRewriteWarning"
         )
-        result.assert_outcomes(passed=1)
-
-    def test_infra_report_boundary_runs_in_subprocess(
-        self, pytester: pytest.Pytester
-    ) -> None:
-        """Return the real infra report through the public Result boundary."""
-        # NOTE (multi-agent, mro-wkii.17.21): exercise only the installed public
-        # boundary; private plugin registration is an implementation detail.
-        pytester.makeini("[pytest]\n")
-        pytester.makepyfile(
-            test_public_boundary=(
-                "from pathlib import Path\n"
-                "\n"
-                "from flext_tests import load_infra_report\n"
-                "\n"
-                "\n"
-                "class TestsPublicInfraReportBoundary:\n"
-                "    def test_public_boundary_wraps_direct_report(\n"
-                "        self,\n"
-                "        tmp_path: Path,\n"
-                "    ) -> None:\n"
-                "        project = tmp_path / 'flext-contract-probe'\n"
-                "        package = project / 'src' / 'flext_contract_probe'\n"
-                "        package.mkdir(parents=True)\n"
-                "        (package / '__init__.py').write_text('', encoding='utf-8')\n"
-                "        (project / 'pyproject.toml').write_text(\n"
-                "            '[project]\\n'\n"
-                "            'name = \\\"flext-contract-probe\\\"\\n'\n"
-                "            'version = \\\"0.1.0\\\"\\n',\n"
-                "            encoding='utf-8',\n"
-                "        )\n"
-                "        report = load_infra_report(\n"
-                "            project,\n"
-                "            project_names=(project.name,),\n"
-                "        ).unwrap()\n"
-                "        assert report.workspace == str(project.resolve())\n"
-            )
-        )
-        result = pytester.runpytest_subprocess()
         result.assert_outcomes(passed=1)

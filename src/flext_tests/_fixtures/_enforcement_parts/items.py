@@ -21,7 +21,7 @@ class EnforcementItem(pytest.Item):
         *,
         rule: p.EnforcementRuleSpec,
         project: str,
-        violations: t.SequenceOf[p.Violation | p.AttributeProbe],
+        violations: t.SequenceOf[p.Tests.Violation | p.AttributeProbe],
     ) -> None:
         super().__init__(name, parent)
         self._rule = rule

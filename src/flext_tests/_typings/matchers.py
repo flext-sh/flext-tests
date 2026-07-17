@@ -6,16 +6,16 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Set as AbstractSet
 from typing import TypeAliasType
 
-from flext_infra import p, t
+from flext_infra import m, t
 from flext_tests._typings.base import FlextTestsBaseTypesMixin as tb
 
 
 class FlextTestsMatchersTypesMixin:
     type MatcherEqTarget = (
-        p.BaseModel
+        m.BaseModel
         | t.MappingKV[str, tb.TestobjectSerializable]
         | t.SequenceOf[tb.TestobjectSerializable]
         | bytes
@@ -32,23 +32,27 @@ class FlextTestsMatchersTypesMixin:
     ``union_mode`` on nullable schemas, so the alias stays non-nullable.
     """
 
-    type MatchRuleLeaf = (
-        tb.Testobject | type[object] | tuple[type[object], ...] | TypeAliasType
-    )
-    type MatchRuleKwargs = t.MappingKV[
-        str, Callable[..., tb.Testobject] | tb.TestobjectSerializable | t.RegexPattern
-    ]
-    type MatchRuleValue = MatchRuleLeaf | MatchRuleKwargs
-    type MatcherKwargValue = (
-        MatchRuleLeaf
-        | p.BaseModel
-        | set[tb.TestobjectSerializable]
+    type MatcherCallRuleLeaf = (
+        tb.TestobjectSerializable
+        | TypeAliasType
+        | tuple[type[object], ...]
         | t.RegexPattern
-        | Callable[..., tb.Testobject]
-        | MatchRuleKwargs
-        | t.MappingKV[int, MatchRuleValue]
-        | t.MappingKV[str, MatchRuleValue]
-        | t.MappingKV[FlextTestsMatchersTypesMixin.ItemSelector, MatchRuleValue]
+        | Callable[..., tb.TestobjectSerializable]
+    )
+    type MatcherCallRuleKwargs = t.MappingKV[
+        str, FlextTestsMatchersTypesMixin.MatcherCallRuleLeaf
+    ]
+    type MatcherCallRuleValue = MatcherCallRuleLeaf | MatcherCallRuleKwargs
+    type MatcherJsonTarget = (
+        t.JsonPayload | t.MappingKV[str, t.JsonPayload] | t.SequenceOf[t.JsonPayload]
+    )
+    type MatcherCallKwargValue = (
+        MatcherCallRuleLeaf
+        | MatcherJsonTarget
+        | AbstractSet[tb.TestobjectSerializable]
+        | t.MappingKV[int, MatcherCallRuleValue]
+        | t.MappingKV[str, MatcherCallRuleValue]
+        | t.MappingKV[FlextTestsMatchersTypesMixin.ItemSelector, MatcherCallRuleValue]
     )
     type LengthSpec = int | tuple[int, int]
     type ComparableScalar = float | int | str
@@ -57,12 +61,7 @@ class FlextTestsMatchersTypesMixin:
     Centralized to satisfy AGENTS.md § Model governance rule against
     inline 3+-arm unions in Pydantic field annotations.
     """
-    type MatchRuleSpec = (
-        tb.Testobject
-        | type[object]
-        | tuple[type[object], ...]
-        | t.MappingKV[str, FlextTestsMatchersTypesMixin.MatcherKwargValue]
-    )
+    type MatchRuleSpec = MatcherCallRuleValue | set[tb.TestobjectSerializable]
     type DeepSpec = t.MappingKV[
         str, Callable[[tb.TestobjectSerializable], bool] | tb.TestobjectSerializable
     ]

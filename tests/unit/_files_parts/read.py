@@ -2,15 +2,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-from flext_tests import tf, tm
-from tests import c, m, p, u
-
 from pathlib import Path
 
-from tests import p, t
-
+from flext_tests import tf, tm
+from tests import c, m, p, t, u
 
 
 class FilesReadMixin:

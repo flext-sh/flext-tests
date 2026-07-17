@@ -47,7 +47,7 @@ class FlextTestsPayloadUtilities:
                 | bytes()
                 | datetime()
                 | Path()
-                | m.BaseModel()
+                | p.BaseModel()
             ):
                 result = value
             case Mapping():
@@ -81,13 +81,13 @@ class FlextTestsPayloadUtilities:
         """Flatten to pure Container via canonical runtime helper."""
         to_n = FlextTestsPayloadUtilities.to_normalized_value
         match value:
-            case m.BaseModel():
+            case p.BaseModel():
                 result = str(value)
             case bytes():
                 result = value.decode(errors="ignore")
             case type() | tzinfo():
                 result = str(value)
-            case datetime() | Path() | None | str() | int() | float() | bool():
+            case datetime() | Path() | None | str() | int() | float():
                 result = u.normalize_to_metadata(value)
             case Mapping():
                 result = u.normalize_to_metadata({
@@ -105,7 +105,7 @@ class FlextTestsPayloadUtilities:
     @staticmethod
     def to_config_map(
         value: (
-            m.BaseModel
+            p.BaseModel
             | t.MappingKV[str, t.Tests.TestobjectSerializable]
             | t.MappingKV[str, t.JsonPayload]
             | t.JsonMapping
@@ -113,13 +113,13 @@ class FlextTestsPayloadUtilities:
     ) -> p.ConfigMap:
         """Convert a model or payload mapping to the canonical ConfigMap shape."""
         source = (
-            value.model_dump(mode="python") if isinstance(value, m.BaseModel) else value
+            value.model_dump(mode="python") if isinstance(value, p.BaseModel) else value
         )
         return m.ConfigMap.model_validate({
             key: (
                 payload
                 if isinstance(
-                    payload := FlextTestsPayloadUtilities.to_payload(item), m.BaseModel
+                    payload := FlextTestsPayloadUtilities.to_payload(item), p.BaseModel
                 )
                 else FlextTestsPayloadUtilities.to_normalized_value(payload)
             )

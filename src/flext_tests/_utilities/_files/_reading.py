@@ -173,7 +173,8 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                     data_rows = [[row.get(k, "") for k in keys] for row in csv_rows_m]
                     content = data_rows if params.has_headers else [keys, *data_rows]
                 else:
-                    content = []
+                    empty_rows: list[t.StrSequence] = []
+                    content = empty_rows
             case _:
                 content = path.read_text(encoding=params.enc)
         return content

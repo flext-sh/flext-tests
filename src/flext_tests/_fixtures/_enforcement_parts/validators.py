@@ -2,15 +2,17 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable
 from importlib import import_module
 from pathlib import Path
-
-import pytest
+from typing import TYPE_CHECKING
 
 from flext_tests import c, p, t
 from flext_tests._fixtures._enforcement_parts.items import EnforcementItem
-from flext_tests._fixtures._enforcement_parts.registry import EnforcementBuildContext
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable
+
+    import pytest
 
 
 def _iter_infra_violations(
@@ -34,7 +36,7 @@ def _iter_infra_violations(
 def dispatch_infra_detector(
     rule: p.EnforcementRuleSpec, report: p.AttributeProbe
 ) -> dict[str, list[p.AttributeProbe]]:
-    """Legacy helper kept for existing tests; new code uses the flext-infra plugin."""
+    """Group namespace-detector violations by owning project."""
     source = rule.source
     field = getattr(source, "violation_field", "")
     match_missing = bool(getattr(source, "match_missing", False))
@@ -49,7 +51,7 @@ def dispatch_infra_detector(
 def build_tests_validator_items(
     collector: pytest.Collector,
     rule: p.EnforcementRuleSpec,
-    context: EnforcementBuildContext,
+    context: p.Tests.EnforcementBuildContext,
 ) -> list[EnforcementItem]:
     """Build enforcement items from flext-tests validator methods."""
     workspace_root = context.workspace_root

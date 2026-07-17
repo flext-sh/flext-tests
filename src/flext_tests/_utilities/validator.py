@@ -64,7 +64,7 @@ class FlextTestsValidatorUtilitiesMixin:
         rule_id: str,
         lines: tests_typings.t.StrSequence,
         extra_desc: str = "",
-    ) -> tests_models.m.Tests.Violation:
+    ) -> p.Tests.Violation:
         """Create a violation model using c.Tests.
 
         Args:
@@ -257,21 +257,20 @@ class FlextTestsValidatorUtilitiesMixin:
         validator_name: str,
         scan_file: Callable[
             [Path, tests_typings.t.MappingKV[str, tests_typings.t.StrSequence]],
-            tests_typings.t.SequenceOf[tests_models.m.Tests.Violation],
+            tests_typings.t.SequenceOf[p.Tests.Violation],
         ],
-    ) -> p.Result[tests_models.m.Tests.ScanResult]:
+    ) -> p.Result[p.Tests.ScanResult]:
         """Run one validator scan across files and build a ScanResult."""
-        violations: MutableSequence[tests_models.m.Tests.Violation] = []
+        violations: MutableSequence[p.Tests.Violation] = []
         approved = approved_exceptions or {}
         for file_path in files:
             violations.extend(scan_file(file_path, approved))
-        return r[tests_models.m.Tests.ScanResult].ok(
-            tests_models.m.Tests.ScanResult(
-                validator_name=validator_name,
-                files_scanned=len(files),
-                violations=violations,
-            )
+        result: p.Tests.ScanResult = tests_models.m.Tests.ScanResult(
+            validator_name=validator_name,
+            files_scanned=len(files),
+            violations=violations,
         )
+        return r[p.Tests.ScanResult].ok(result)
 
     class ValidatorScannerMixin:
         """MRO mixin: validator classes inherit scan(...) for free.
@@ -287,7 +286,7 @@ class FlextTestsValidatorUtilitiesMixin:
             cls,
             file_path: Path,
             approved: tests_typings.t.MappingKV[str, tests_typings.t.StrSequence],
-        ) -> tests_typings.t.SequenceOf[tests_models.m.Tests.Violation]:
+        ) -> tests_typings.t.SequenceOf[p.Tests.Violation]:
             """Subclass MUST override: scan one file and yield violations."""
             raise NotImplementedError
 
@@ -299,7 +298,7 @@ class FlextTestsValidatorUtilitiesMixin:
                 str, tests_typings.t.StrSequence
             ]
             | None = None,
-        ) -> p.Result[tests_models.m.Tests.ScanResult]:
+        ) -> p.Result[p.Tests.ScanResult]:
             """Scan files for violations using the consumer's _scan_file."""
             return FlextTestsValidatorUtilitiesMixin.validator_run_scan(
                 files=files,

@@ -58,7 +58,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         match unwrapped:
             case str() | bytes():
                 return unwrapped
-            case m.ConfigMap() | m.Dict():
+            case m.ConfigMap():
                 return FlextTestsPayloadUtilities.to_config_map(unwrapped.root)
             case m.BaseModel():
                 return unwrapped
@@ -112,9 +112,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         actual_content: (
             str
             | bytes
-            | m.ConfigMap
+            | p.ConfigMap
             | t.SequenceOf[t.StrSequence]
-            | m.BaseModel
+            | p.BaseModel
             | t.MappingKV[str, t.Tests.TestobjectSerializable]
         ),
         actual_fmt: str,
@@ -153,9 +153,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         actual_content: (
             str
             | bytes
-            | m.ConfigMap
+            | p.ConfigMap
             | t.SequenceOf[t.StrSequence]
-            | m.BaseModel
+            | p.BaseModel
             | t.MappingKV[str, t.Tests.TestobjectSerializable]
         ),
     ) -> t.JsonValue:
@@ -195,9 +195,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         actual_content: (
             str
             | bytes
-            | m.ConfigMap
+            | p.ConfigMap
             | t.SequenceOf[t.StrSequence]
-            | m.BaseModel
+            | p.BaseModel
             | t.MappingKV[str, t.Tests.TestobjectSerializable]
         ),
         headers: t.StrSequence | None,
@@ -258,9 +258,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         actual_content: (
             str
             | bytes
-            | m.ConfigMap
+            | p.ConfigMap
             | t.SequenceOf[t.StrSequence]
-            | m.BaseModel
+            | p.BaseModel
             | t.MappingKV[str, t.Tests.TestobjectSerializable]
         ) = self._coerce_file_content(params.content)
         if isinstance(actual_content, m.ConfigMap):

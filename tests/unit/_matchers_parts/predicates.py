@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from tests import p, t
+from tests import t
 
 
 class MatchersPredicates:

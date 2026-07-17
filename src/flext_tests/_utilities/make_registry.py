@@ -15,7 +15,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
     @staticmethod
     def _make_add_command(
         commands_by_verb: t.MutableMappingKV[
-            str, t.MutableMappingKV[str, m.Tests.MakeCommand]
+            str, t.MutableMappingKV[str, p.Tests.MakeCommand]
         ],
         aliases_by_name: t.MutableMappingKV[str, str],
         command: p.Tests.MakeCommand,
@@ -123,7 +123,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             return r[p.Tests.MakeRegistry].fail("diretorio scripts/cmd missing")
 
         commands_by_verb: t.MutableMappingKV[
-            str, t.MutableMappingKV[str, m.Tests.MakeCommand]
+            str, t.MutableMappingKV[str, p.Tests.MakeCommand]
         ] = {}
         aliases_by_name: t.MutableMappingKV[str, str] = {}
         for verb_dir in sorted(scripts_dir.iterdir(), key=lambda item: item.name):

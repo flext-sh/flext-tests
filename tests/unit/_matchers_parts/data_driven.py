@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from typing import cast
 
 from flext_tests import r, tm
-from tests import c, p, t
+from tests import c, t
 
 
 class MatchersDataDrivenMixin:

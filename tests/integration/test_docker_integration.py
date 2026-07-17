@@ -20,8 +20,7 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import m, p, tk
-from flext_tests import m, p, tk, tm
+from flext_tests import m, tk, tm
 from tests import c
 
 

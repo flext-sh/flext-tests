@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flext_tests import c, m, p, r, t
+from flext_tests import c, p, r, t
 from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
 
 
@@ -105,7 +105,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
 
     @staticmethod
     def make_validate_mutation_conditions(
-        command: p.Tests.MakeCommand, param_by_name: t.MappingKV[str, m.Tests.MakeParam]
+        command: p.Tests.MakeCommand, param_by_name: t.MappingKV[str, p.Tests.MakeParam]
     ) -> p.Result[bool]:
         """Validate conditional mutation predicates against declared parameters."""
         if not command.mutates_when:
@@ -185,7 +185,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
 
     @staticmethod
     def make_validate_all_choices(
-        verb: str, commands: t.MappingKV[str, m.Tests.MakeCommand]
+        verb: str, commands: t.MappingKV[str, p.Tests.MakeCommand]
     ) -> p.Result[bool]:
         """Validate WHAT choices declared by the verb default command."""
         all_command = commands[c.Tests.MAKE_DEFAULT_COMMAND]
@@ -226,16 +226,16 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
     @staticmethod
     def make_registry_commands(
         registry: p.Tests.MakeRegistry, verb: str
-    ) -> p.Result[t.MappingKV[str, m.Tests.MakeCommand]]:
+    ) -> p.Result[t.MappingKV[str, p.Tests.MakeCommand]]:
         """Return commands registered for one verb."""
         resolved = FlextTestsMakeContractUtilitiesMixin.make_registry_resolve_verb(
             registry, verb
         )
         if resolved.failure:
-            return r[t.MappingKV[str, m.Tests.MakeCommand]].fail(
+            return r[t.MappingKV[str, p.Tests.MakeCommand]].fail(
                 resolved.error or "verb unknown"
             )
-        return r[t.MappingKV[str, m.Tests.MakeCommand]].ok(
+        return r[t.MappingKV[str, p.Tests.MakeCommand]].ok(
             registry.commands_by_verb[resolved.value]
         )
 

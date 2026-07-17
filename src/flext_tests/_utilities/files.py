@@ -8,7 +8,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_cli import u
-from flext_tests import c, m, t
+from flext_tests import c, p, t
 
 
 class FlextTestsFilesUtilitiesMixin:
@@ -18,8 +18,8 @@ class FlextTestsFilesUtilitiesMixin:
     def detect_format(
         content: str
         | bytes
-        | m.ConfigMap
-        | m.Dict
+        | p.ConfigMap
+        | p.Dict
         | t.MappingKV[str, t.Tests.TestobjectSerializable]
         | t.SequenceOf[t.StrSequence],
         name: str,

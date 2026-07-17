@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from flext_tests import c, m, p, tm, p, u
+from flext_tests import c, m, p, tm, u
 
 
 class TestsFlextTestsWorkspaceCleanup:

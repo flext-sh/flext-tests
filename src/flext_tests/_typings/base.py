@@ -35,7 +35,7 @@ class FlextTestsBaseTypesMixin:
         | datetime
         | tzinfo
         | Path
-        | m.BaseModel
+        | p.BaseModel
         | type[object]
         | frozenset[str]
     )

@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from flext_tests import tk, tm
 from tests import c, u
-
-import pytest
 
 
 class DockerOperationsMixin:

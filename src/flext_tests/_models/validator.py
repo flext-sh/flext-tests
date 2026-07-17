@@ -8,13 +8,30 @@ from __future__ import annotations
 
 from collections.abc import MutableMapping
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, ClassVar
 
-from flext_infra import m, u
+from flext_infra import m, p, u
 from flext_tests import c, t
 
 
 class FlextTestsValidatorModelsMixin:
+    class EnforcementBuildContext(m.ArbitraryTypesModel):
+        """Validated immutable inputs shared by enforcement item builders."""
+
+        model_config: ClassVar[t.ConfigDict] = m.ConfigDict(frozen=True)
+
+        infra_report: Annotated[
+            p.AttributeProbe | None,
+            u.Field(description="Optional namespace report for detector rules."),
+        ] = None
+        validator_targets: Annotated[
+            tuple[Path, ...],
+            u.Field(description="Validator targets collected for this session."),
+        ] = ()
+        workspace_root: Annotated[
+            Path | None, u.Field(description="Resolved FLEXT workspace root.")
+        ] = None
+
     class Violation(m.Value):
         """A detected architecture violation."""
 
@@ -101,4 +118,5 @@ class FlextTestsValidatorModelsMixin:
 
 FlextTestsValidatorModelsMixin.Violation.model_rebuild()
 FlextTestsValidatorModelsMixin.ScanResult.model_rebuild()
+FlextTestsValidatorModelsMixin.EnforcementBuildContext.model_rebuild()
 FlextTestsValidatorModelsMixin.EnforcementDispatcherConfig.model_rebuild()

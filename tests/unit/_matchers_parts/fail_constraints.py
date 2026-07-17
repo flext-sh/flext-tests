@@ -2,13 +2,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from flext_tests import r, tm
-from tests import m
-
-from tests import p
-
+from tests import m, p
 
 
 class MatchersFailConstraintsMixin:

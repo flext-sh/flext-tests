@@ -3,39 +3,56 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from pathlib import Path
-from typing import Protocol, runtime_checkable
-
-import pytest
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from flext_infra import p
-from flext_tests import t
+
+if TYPE_CHECKING:
+    from collections.abc import MutableMapping
+    from pathlib import Path
+
+    import pytest
+
+    from flext_tests import t
 
 
 class FlextTestsEnforcementProtocolsMixin:
     """Protocols for enforcement dispatch boundaries."""
 
+    @runtime_checkable
     class EnforcementBuildContext(Protocol):
-        """Shared context contract passed to enforcement contribution builders.
-
-        Members are read-only (covariant) so a concrete context exposing
-        ``validator_targets: tuple[Path, ...]`` satisfies ``Sequence[Path]``.
-        """
+        """Immutable inputs shared by enforcement contribution builders."""
 
         @property
-        def infra_report(self) -> p.AttributeProbe | None:
-            """Optional infra namespace report shared with builders."""
-            ...
+        def infra_report(self) -> p.AttributeProbe | None: ...
 
         @property
-        def validator_targets(self) -> t.SequenceOf[Path]:
-            """Validator target paths collected for the current session."""
-            ...
+        def validator_targets(self) -> tuple[Path, ...]: ...
 
         @property
-        def workspace_root(self) -> Path | None:
-            """Resolved workspace root when discovery succeeded."""
-            ...
+        def workspace_root(self) -> Path | None: ...
+
+    @runtime_checkable
+    class EnforcementDispatcherConfig(Protocol):
+        """Resolved runtime configuration for enforcement dispatch."""
+
+        @property
+        def active(self) -> bool: ...
+
+        @property
+        def strict(self) -> bool: ...
+
+        @property
+        def include(self) -> frozenset[str]: ...
+
+        @property
+        def exclude(self) -> frozenset[str]: ...
+
+        @property
+        def workspace_root(self) -> Path | None: ...
+
+        @property
+        def warning_counter(self) -> MutableMapping[str, int]: ...
 
     class EnforcementBuilder(ABC):
         """Callable contract implemented by enforcement contribution builders."""
@@ -44,7 +61,7 @@ class FlextTestsEnforcementProtocolsMixin:
         def __call__(
             self,
             session: pytest.Session,
-            cfg: p.Tests.EnforcementDispatcherConfig,
+            cfg: FlextTestsEnforcementProtocolsMixin.EnforcementDispatcherConfig,
             rule: p.EnforcementRuleSpec,
             context: FlextTestsEnforcementProtocolsMixin.EnforcementBuildContext,
         ) -> list[pytest.Item]:

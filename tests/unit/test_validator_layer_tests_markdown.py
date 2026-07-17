@@ -6,15 +6,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from pathlib import Path
 
 import pytest
 
-from flext_tests import c, m, p, tm, tv
+from flext_tests import c, p, tm, tv
 from tests import u
-
-from pathlib import Path
-
 
 _HIGHER_LAYER_SOURCE = """from __future__ import annotations
 

@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from flext_tests import tf, tm
-from tests import m, p, u
-
 from pathlib import Path
+
+from flext_tests import tf, tm
+from tests import m, u
 
 
 class FilesInfoMetadataMixin:

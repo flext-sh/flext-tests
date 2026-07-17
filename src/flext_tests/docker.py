@@ -51,7 +51,7 @@ class FlextTestsDocker(s[p.Tests.ContainerInfo]):
     ] = None
 
     target_config: Annotated[
-        m.Tests.ContainerConfig | None,
+        p.Tests.ContainerConfig | None,
         u.Field(description="Configured Docker target used by the public DSL."),
     ] = None
 
