@@ -197,6 +197,7 @@ class FlextTestsMatchersModelsMixin:
         ] = None
         lacks: Annotated[
             t.Tests.ExclusionSpec | None,
+            m.SkipValidation,
             u.Field(
                 validation_alias=t.AliasChoices("lacks", "excludes"),
                 description="Lacks.",
