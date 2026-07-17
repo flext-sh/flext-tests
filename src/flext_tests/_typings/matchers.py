@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Set as AbstractSet
 from typing import TypeAliasType
 
 from flext_infra import m, t
@@ -64,7 +64,7 @@ class FlextTestsMatchersTypesMixin:
     type MatcherCallRuleValue = MatcherCallRuleLeaf | MatcherCallRuleKwargs
     type MatcherCallKwargValue = (
         MatcherCallRuleLeaf
-        | set[tb.TestobjectSerializable]
+        | AbstractSet[tb.TestobjectSerializable]
         | t.MappingKV[int, MatcherCallRuleValue]
         | t.MappingKV[str, MatcherCallRuleValue]
         | t.MappingKV[FlextTestsMatchersTypesMixin.ItemSelector, MatcherCallRuleValue]
