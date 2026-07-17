@@ -37,11 +37,11 @@ class TestsFlextTestsDockerIntegration:
 
     @pytest.mark.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))
     def test_shared_resolves_target_config_from_shared_catalog(
-        self, container_name: str
+        self, container_name: str, tmp_path: Path
     ) -> None:
         """``tk.shared`` maps a catalog entry onto the public target config."""
         settings = c.Tests.SHARED_CONTAINERS[container_name]
-        root = Path("/tmp/flext-docker-contract")
+        root = tmp_path
 
         docker = tk.shared(container_name, workspace_root=root)
 
@@ -54,40 +54,42 @@ class TestsFlextTestsDockerIntegration:
 
     @pytest.mark.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))
     def test_shared_resolves_compose_file_against_workspace_root(
-        self, container_name: str
+        self, container_name: str, tmp_path: Path
     ) -> None:
         """Relative catalog compose files resolve to an absolute workspace path."""
         settings = c.Tests.SHARED_CONTAINERS[container_name]
-        root = Path("/tmp/flext-docker-contract")
+        root = tmp_path
 
         target = tk.shared(container_name, workspace_root=root).target_config
 
         tm.that(target, none=False)
         tm.that(target.compose_file, none=False)
-        assert target.compose_file.is_absolute()
+        tm.that(target.compose_file.is_absolute(), eq=True)
         tm.that(target.compose_file, eq=root / str(settings["compose_file"]))
 
-    def test_shared_rejects_unknown_container_with_value_error(self) -> None:
+    def test_shared_rejects_unknown_container_with_value_error(
+        self, tmp_path: Path
+    ) -> None:
         """An unknown shared name is a caller contract error, not a silent value."""
         with pytest.raises(ValueError, match="Unknown shared container: not-a-name"):
-            tk.shared("not-a-name", workspace_root=Path("/tmp/flext-docker-contract"))
+            tk.shared("not-a-name", workspace_root=tmp_path)
 
-    def test_compose_resolves_relative_file_against_workspace_root(self) -> None:
+    def test_compose_resolves_relative_file_against_workspace_root(
+        self, tmp_path: Path
+    ) -> None:
         """``tk.compose`` anchors a relative compose file to the workspace root."""
-        root = Path("/tmp/flext-docker-contract")
+        root = tmp_path
 
         target = tk.compose("docker/custom.yml", workspace_root=root).target_config
 
         tm.that(target, none=False)
         tm.that(target.compose_file, eq=root / "docker" / "custom.yml")
 
-    def test_compose_preserves_absolute_file_unchanged(self) -> None:
+    def test_compose_preserves_absolute_file_unchanged(self, tmp_path: Path) -> None:
         """An absolute compose file is used verbatim by ``tk.compose``."""
-        absolute = Path("/opt/stacks/custom.yml")
+        absolute = tmp_path / "stacks" / "custom.yml"
 
-        target = tk.compose(
-            absolute, workspace_root=Path("/tmp/flext-docker-contract")
-        ).target_config
+        target = tk.compose(absolute, workspace_root=tmp_path).target_config
 
         tm.that(target, none=False)
         tm.that(target.compose_file, eq=absolute)
@@ -97,9 +99,11 @@ class TestsFlextTestsDockerIntegration:
         ["execute", "up", "down", "ready"],
         ids=["execute", "up", "down", "ready"],
     )
-    def test_unconfigured_target_fails_with_guidance(self, operation: str) -> None:
+    def test_unconfigured_target_fails_with_guidance(
+        self, operation: str, tmp_path: Path
+    ) -> None:
         """Every DSL verb reports a failure result when no target is configured."""
-        docker = tk(workspace_root=Path("/tmp/flext-docker-contract"))
+        docker = tk(workspace_root=tmp_path)
 
         result = getattr(docker, operation)()
 
@@ -108,13 +112,11 @@ class TestsFlextTestsDockerIntegration:
         tm.that(result.error, has="not configured")
 
     def test_execute_reports_failure_for_stack_without_inspection_container(
-        self,
+        self, tmp_path: Path
     ) -> None:
         """A compose-only target (no container name) cannot be inspected by execute."""
-        config = m.Tests.ContainerConfig(compose_file=Path("/tmp/stack.yml"))
-        docker = tk(
-            workspace_root=Path("/tmp/flext-docker-contract"), target_config=config
-        )
+        config = m.Tests.ContainerConfig(compose_file=tmp_path / "stack.yml")
+        docker = tk(workspace_root=tmp_path, target_config=config)
 
         result = docker.execute()
 
@@ -141,8 +143,8 @@ class TestsFlextTestsDockerIntegration:
         container = result.unwrap()
         tm.that(container.name, eq="flext-oracle-db-test")
         tm.that(container.status, eq=c.Tests.ContainerStatus.RUNNING)
-        assert container.container_id
-        assert container.image
+        tm.that(container.container_id, empty=False)
+        tm.that(container.image, empty=False)
 
     @pytest.mark.integration
     @pytest.mark.docker

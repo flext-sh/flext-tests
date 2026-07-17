@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import m, tm
+from flext_tests import m, p, tm
 from flext_tests.enforcement import active_rules, discover_workspace_root, split_csv
 
 if TYPE_CHECKING:

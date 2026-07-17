@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from tests import t
 
+_GREATER_THAN_TWO_THRESHOLD = 2
+
 
 class MatchersPredicates:
     """Shared boolean predicates used as ``where=``/``all_=``/``any_=`` callables."""
@@ -30,4 +32,4 @@ class MatchersPredicates:
 
     @staticmethod
     def greater_than_two(value: t.Tests.TestobjectSerializable) -> bool:
-        return isinstance(value, int) and value > 2
+        return isinstance(value, int) and value > _GREATER_THAN_TWO_THRESHOLD
