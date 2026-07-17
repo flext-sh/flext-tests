@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from collections.abc import Generator
 
 
-class FlextTestsServiceBase[TDomainResult: p.ModelBase = p.ModelBase](s[TDomainResult]):
+class FlextTestsServiceBase[TDomainResult: p.BaseModel = p.BaseModel](s[TDomainResult]):
     """Base service for test packages with the ``Tests`` settings namespace."""
 
     @staticmethod
@@ -83,7 +83,7 @@ class FlextTestsServiceBase[TDomainResult: p.ModelBase = p.ModelBase](s[TDomainR
 class FlextTestsCase:
     """Pytest class MRO surface populated by the shared test runtime fixture."""
 
-    service: FlextTestsServiceBase[p.ModelBase]
+    service: FlextTestsServiceBase[p.BaseModel]
     settings: FlextTestsSettings
     logger: p.Logger
     c: type

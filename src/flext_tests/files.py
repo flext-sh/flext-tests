@@ -37,13 +37,13 @@ class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixi
         self._initialize_file_lifecycle(base_dir)
 
     @override
-    def execute(self) -> p.Result[p.ModelBase]:
+    def execute(self) -> p.Result[p.BaseModel]:
         """Execute is not the file-manager API surface.
 
         FlextTestsFiles is a utility service whose real API is its file
         methods (create, compare, info, ...); execute has no domain result.
         """
-        return r[p.ModelBase].fail(
+        return r[p.BaseModel].fail(
             "Use specific file methods: create, compare, read, info, ..."
         )
 
