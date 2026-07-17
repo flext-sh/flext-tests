@@ -2,7 +2,7 @@
 
 # flext-tests Documentation
 
-- Version: `0.12.0-dev`
+- Version: `0.12.0`
 - Project class: `test`
 - Package: `flext_tests`
 - Description: FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem

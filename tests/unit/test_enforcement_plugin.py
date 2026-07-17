@@ -132,13 +132,13 @@ class TestsFlextTestsEnforcementPlugin:
             test_violation=(
                 "import warnings\n"
                 "\n"
-                "from flext_core import FlextMroViolation\n"
+                "from flext_core import e\n"
                 "\n"
                 "\n"
                 "def test_emits_runtime_enforcement_warning() -> None:\n"
                 "    warnings.warn(\n"
                 '        "synthetic MRO violation",\n'
-                "        FlextMroViolation,\n"
+                "        e.MroViolation,\n"
                 "        stacklevel=2,\n"
                 "    )\n"
             )

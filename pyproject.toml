@@ -22,26 +22,26 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "docker>=7.1",
-  "factory-boy>=3.3.3",
-  "faker>=40.15.0",
-  "flext-cli",
-  "flext-core",
-  "flext-infra",
-  "hypothesis>=6.152.4",
-  "pytest-benchmark>=5.2.3",
-  "pytest-clarity>=1.0.1",
-  "pytest-cov>=7.1.0",
-  "pytest-deadfixtures>=3.1.0",
-  "pytest-env>=1.6.0",
-  "pytest-mock>=3.15.1",
-  "pytest-randomly>=4.1.0",
-  "pytest-reportlog>=1.0.0",
-  "pytest-sugar>=1.1.1",
-  "pytest-timeout>=2.4.0",
-  "pytest-xdist>=3.8.0",
-  "pytest>=9.0.3",
-  "python-on-whales>=0.7",
+    "docker>=7.1",
+    "factory-boy>=3.3.3",
+    "faker>=40.15.0",
+    "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@0.12.0-dev",
+    "flext-core @ git+https://github.com/flext-sh/flext-core.git@0.12.0-dev",
+    "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
+    "hypothesis>=6.152.4",
+    "pytest-benchmark>=5.2.3",
+    "pytest-clarity>=1.0.1",
+    "pytest-cov>=7.1.0",
+    "pytest-deadfixtures>=3.1.0",
+    "pytest-env>=1.6.0",
+    "pytest-mock>=3.15.1",
+    "pytest-randomly>=4.1.0",
+    "pytest-reportlog>=1.0.0",
+    "pytest-sugar>=1.1.1",
+    "pytest-timeout>=2.4.0",
+    "pytest-xdist>=3.8.0",
+    "pytest>=9.0.3",
+    "python-on-whales>=0.7",
 ]
 description = "FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem"
 keywords = [ "builders", "factories", "flext", "test-infrastructure", "testing" ]
@@ -49,7 +49,7 @@ license = "MIT"
 name = "flext-tests"
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
-version = "0.12.0"
+version = "0.12.0.rc0"
 
 [[project.authors]]
 email = "team@flext.sh"

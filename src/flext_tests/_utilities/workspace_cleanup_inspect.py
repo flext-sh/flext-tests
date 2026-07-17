@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import stat
 from pathlib import Path
 
 from flext_cli import u
@@ -15,6 +16,34 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
     FlextTestsWorkspaceCleanupPathsUtilitiesMixin
 ):
     """Classify residues and fingerprint their exact filesystem state."""
+
+    @staticmethod
+    def _reject_unsafe_node(lexical: Path, relative_path: Path) -> p.Result[bool]:
+        """Refuse symlinks, hardlinked files, and non-regular filesystem nodes."""
+        try:
+            info = lexical.lstat()
+        except OSError as exc:
+            return r[bool].fail(
+                f"cleanup residue inspection failed: {relative_path}: {exc}"
+            )
+        mode = info.st_mode
+        if stat.S_ISLNK(mode):
+            return r[bool].fail(
+                f"cleanup residue is a symlink and cannot be removed safely: "
+                f"{relative_path}"
+            )
+        if stat.S_ISDIR(mode):
+            return r[bool].ok(True)
+        if not stat.S_ISREG(mode):
+            return r[bool].fail(
+                f"cleanup residue is not a regular file: {relative_path}"
+            )
+        if info.st_nlink > 1:
+            return r[bool].fail(
+                f"cleanup residue is a hardlink shared with other paths: "
+                f"{relative_path}"
+            )
+        return r[bool].ok(True)
 
     @classmethod
     def _ignored(cls, root: Path, relative_path: Path) -> p.Result[bool]:
@@ -113,6 +142,9 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
                 str(stat.st_size),
                 str(stat.st_mtime_ns),
                 str(stat.st_ctime_ns),
+                str(stat.st_nlink),
+                str(stat.st_dev),
+                str(stat.st_ino),
                 payload,
             ))
         )
