@@ -2,16 +2,18 @@
 
 from __future__ import annotations
 
-from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Self, TypeIs
+from typing import TYPE_CHECKING, Self, TypeIs
 
 from flext_core import FlextContainer, s
 from flext_tests import m, p, t
 from flext_tests._settings import FlextTestsSettings
 
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
-class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
+
+class FlextTestsServiceBase[TDomainResult: p.ModelBase = p.ModelBase](s[TDomainResult]):
     """Base service for test packages with the ``Tests`` settings namespace."""
 
     @staticmethod
@@ -81,7 +83,7 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
 class FlextTestsCase:
     """Pytest class MRO surface populated by the shared test runtime fixture."""
 
-    service: FlextTestsServiceBase[p.Base]
+    service: FlextTestsServiceBase[p.ModelBase]
     settings: FlextTestsSettings
     logger: p.Logger
     c: type

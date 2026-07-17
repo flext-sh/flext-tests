@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 import fnmatch
-from collections.abc import MutableSequence
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, ClassVar, override
+from typing import TYPE_CHECKING, Annotated, ClassVar, override
 
 from flext_tests import c, m, p, r, s, t, u
 from flext_tests._validator.bypass import FlextValidatorBypass
@@ -16,6 +15,9 @@ from flext_tests._validator.markdown import FlextValidatorMarkdown
 from flext_tests._validator.settings import FlextValidatorSettings
 from flext_tests._validator.tests import FlextValidatorTests
 from flext_tests._validator.types import FlextValidatorTypes
+
+if TYPE_CHECKING:
+    from collections.abc import MutableSequence
 
 
 class FlextTestsValidator(s[p.Tests.ScanResult]):

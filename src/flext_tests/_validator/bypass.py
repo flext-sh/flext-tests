@@ -8,11 +8,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import MutableSequence
-from pathlib import Path
-from typing import override
+from typing import TYPE_CHECKING, override
 
 from flext_tests import c, p, t, u
+
+if TYPE_CHECKING:
+    from collections.abc import MutableSequence
+    from pathlib import Path
 
 
 class FlextValidatorBypass(u.Tests.ValidatorScannerMixin):

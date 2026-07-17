@@ -5,12 +5,15 @@ Comprehensive metadata extraction and optional content parsing.
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_cli import u
 from flext_tests import c, m, p, r, t
 from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
 from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):

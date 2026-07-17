@@ -4,10 +4,12 @@ from __future__ import annotations
 
 from importlib import import_module
 from pathlib import Path
-
-import pytest
+from typing import TYPE_CHECKING
 
 from flext_tests import c, p, r, t, u
+
+if TYPE_CHECKING:
+    import pytest
 
 
 def load_infra_report(

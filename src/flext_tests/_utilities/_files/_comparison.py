@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_infra import u
 from flext_tests import c, m, p, r, t
 from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsFilesComparisonMixin:

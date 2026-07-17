@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from flext_tests import t
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from flext_tests import t
 
 
 # NOTE (multi-agent): keep runtime Make result specializations protocol-first.

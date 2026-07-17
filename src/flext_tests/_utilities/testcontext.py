@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import fcntl
-import types
-from pathlib import Path
-from typing import TextIO
+from typing import TYPE_CHECKING, TextIO
+
+if TYPE_CHECKING:
+    import types
+    from pathlib import Path
 
 
 class FlextTestsTestContextUtilitiesMixin:

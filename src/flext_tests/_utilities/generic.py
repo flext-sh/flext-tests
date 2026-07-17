@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-from collections.abc import MutableSequence
+from typing import TYPE_CHECKING
 
 from flext_tests import p, r, t
+
+if TYPE_CHECKING:
+    from collections.abc import MutableSequence
 
 
 class FlextTestsGenericHelpersUtilitiesMixin:

@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_cli import u
 from flext_tests import m, p, r
 from flext_tests._utilities.workspace_cleanup_inspect import (
     FlextTestsWorkspaceCleanupInspectUtilitiesMixin,
 )
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(

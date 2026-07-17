@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
-from pathlib import Path
-from typing import override
+from typing import TYPE_CHECKING, override
 
 import pytest
 
-from flext_tests import p, t
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+    from pathlib import Path
+
+    from flext_tests import p, t
 
 
 class EnforcementItem(pytest.Item):

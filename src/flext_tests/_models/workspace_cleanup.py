@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Annotated, Literal
+from typing import TYPE_CHECKING, Annotated, Literal
 
 from flext_infra import m, u
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsWorkspaceCleanupModelsMixin:

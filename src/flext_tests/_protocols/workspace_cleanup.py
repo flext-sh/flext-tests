@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Literal, Protocol
+from typing import TYPE_CHECKING, Literal, Protocol
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsWorkspaceCleanupProtocolsMixin:

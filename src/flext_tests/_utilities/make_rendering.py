@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 from flext_tests import c, p, r, t
 from flext_tests._utilities.make_registry import FlextTestsMakeRegistryUtilitiesMixin
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin):

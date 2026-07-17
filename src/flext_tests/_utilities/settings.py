@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
-from collections.abc import Generator
 from contextlib import contextmanager
+from typing import TYPE_CHECKING
 from unittest.mock import patch
 
 from flext_core import FlextSettings, settings
-from flext_tests import t
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from flext_tests import t
 
 
 class FlextTestsConfigHelpersUtilitiesMixin:

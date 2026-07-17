@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, MutableSequence
-from pathlib import Path
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import flext_tests.constants as tests_constants
 import flext_tests.models as tests_models
 import flext_tests.typings as tests_typings
 from flext_tests import p, r
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, MutableSequence
+    from pathlib import Path
 
 
 class FlextTestsValidatorUtilitiesMixin:

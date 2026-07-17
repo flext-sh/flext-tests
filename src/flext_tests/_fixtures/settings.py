@@ -13,9 +13,8 @@ flext-cli, and other project conftest.py files.
 from __future__ import annotations
 
 import importlib
-from collections.abc import Callable, Iterator
-from pathlib import Path
 from types import ModuleType
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -23,6 +22,10 @@ from flext_core import FlextContainer, FlextContext, FlextSettings
 from flext_tests import c, e, m, p, r, s, t, u
 from flext_tests._settings import FlextTestsSettings
 from flext_tests.base import FlextTestsCase
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterator
+    from pathlib import Path
 
 
 def _reset_runtime_state() -> None:

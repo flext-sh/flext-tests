@@ -16,12 +16,14 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import ClassVar, override
+from typing import TYPE_CHECKING, ClassVar, override
 
 from flext_tests import m, p, r, s
 from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
 from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixin):
@@ -35,13 +37,13 @@ class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixi
         self._initialize_file_lifecycle(base_dir)
 
     @override
-    def execute(self) -> p.Result[p.Base]:
+    def execute(self) -> p.Result[p.ModelBase]:
         """Execute is not the file-manager API surface.
 
         FlextTestsFiles is a utility service whose real API is its file
         methods (create, compare, info, ...); execute has no domain result.
         """
-        return r[p.Base].fail(
+        return r[p.ModelBase].fail(
             "Use specific file methods: create, compare, read, info, ..."
         )
 

@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_tests import c, m, p, r, t
 from flext_tests._utilities.make_contract import FlextTestsMakeContractUtilitiesMixin
 from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin):

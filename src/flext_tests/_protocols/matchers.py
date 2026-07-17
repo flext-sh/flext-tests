@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from flext_infra import p
-from flext_tests import t
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from flext_infra import p
+    from flext_tests import t
 
 
 class FlextTestsMatcherProtocolsMixin:
