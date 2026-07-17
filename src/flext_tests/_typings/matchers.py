@@ -9,13 +9,13 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TypeAliasType
 
-from flext_infra import m, t
+from flext_infra import p, t
 from flext_tests._typings.base import FlextTestsBaseTypesMixin as tb
 
 
 class FlextTestsMatchersTypesMixin:
     type MatcherEqTarget = (
-        m.BaseModel
+        p.BaseModel
         | t.MappingKV[str, tb.TestobjectSerializable]
         | t.SequenceOf[tb.TestobjectSerializable]
         | bytes
@@ -37,14 +37,14 @@ class FlextTestsMatchersTypesMixin:
     )
     type MatchRuleKwargs = t.MappingKV[
         str,
-        Callable[..., tb.Testobject] | tb.TestobjectSerializable | t.Infra.RegexPattern,
+        Callable[..., tb.Testobject] | tb.TestobjectSerializable | t.RegexPattern,
     ]
     type MatchRuleValue = MatchRuleLeaf | MatchRuleKwargs
     type MatcherKwargValue = (
         MatchRuleLeaf
-        | m.BaseModel
+        | p.BaseModel
         | set[tb.TestobjectSerializable]
-        | t.Infra.RegexPattern
+        | t.RegexPattern
         | Callable[..., tb.Testobject]
         | MatchRuleKwargs
         | t.MappingKV[int, MatchRuleValue]
@@ -96,6 +96,6 @@ class FlextTestsMatchersTypesMixin:
         | t.MappingKV[str, tb.TestobjectSerializable]
     )
     type ErrorCodeSpec = str | t.StrSequence
-    type ErrorDataSpec = m.ConfigMap
+    type ErrorDataSpec = p.ConfigMap
     type CleanupSpec = t.SequenceOf[Callable[[], None]]
     type EnvironmentSpec = t.StrMapping
