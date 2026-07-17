@@ -126,8 +126,7 @@ class FlextTestsMatchersModelsMixin:
             None
         )
         match: Annotated[
-            t.RegexPattern | None,
-            u.Field(description="Error matches compiled regex."),
+            t.RegexPattern | None, u.Field(description="Error matches compiled regex.")
         ] = None
         code: Annotated[str | None, u.Field(description="Error code equals.")] = None
         code_has: Annotated[
@@ -204,9 +203,7 @@ class FlextTestsMatchersModelsMixin:
         ] = None
         starts: Annotated[str | None, u.Field(description="Prefix.")] = None
         ends: Annotated[str | None, u.Field(description="Suffix.")] = None
-        match: Annotated[t.RegexPattern | None, u.Field(description="Regex.")] = (
-            None
-        )
+        match: Annotated[t.RegexPattern | None, u.Field(description="Regex.")] = None
         first: Annotated[
             t.Tests.TestobjectSerializable | None, u.Field(description="First item.")
         ] = None

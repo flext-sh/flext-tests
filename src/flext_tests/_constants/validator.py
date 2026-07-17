@@ -148,9 +148,7 @@ class FlextTestsConstantsValidator:
     VALIDATOR_TYPE_IGNORE_RE: ClassVar[t.RegexPattern] = re.compile(
         r"#\s*type:\s*ignore"
     )
-    VALIDATOR_NOQA_RE: ClassVar[t.RegexPattern] = re.compile(
-        r"#\s*noqa", re.IGNORECASE
-    )
+    VALIDATOR_NOQA_RE: ClassVar[t.RegexPattern] = re.compile(r"#\s*noqa", re.IGNORECASE)
     VALIDATOR_PRAGMA_NO_COVER_RE: ClassVar[t.RegexPattern] = re.compile(
         r"#\s*pragma:\s*no\s*cover", re.IGNORECASE
     )

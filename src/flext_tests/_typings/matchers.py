@@ -36,8 +36,7 @@ class FlextTestsMatchersTypesMixin:
         tb.Testobject | type[object] | tuple[type[object], ...] | TypeAliasType
     )
     type MatchRuleKwargs = t.MappingKV[
-        str,
-        Callable[..., tb.Testobject] | tb.TestobjectSerializable | t.RegexPattern,
+        str, Callable[..., tb.Testobject] | tb.TestobjectSerializable | t.RegexPattern
     ]
     type MatchRuleValue = MatchRuleLeaf | MatchRuleKwargs
     type MatcherKwargValue = (
