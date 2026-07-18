@@ -114,9 +114,3 @@ class FlextTestsValidatorModelsMixin:
                 description="Captured runtime warning counts keyed by dotted category."
             ),
         ] = u.Field(default_factory=dict)
-
-
-FlextTestsValidatorModelsMixin.Violation.model_rebuild()
-FlextTestsValidatorModelsMixin.ScanResult.model_rebuild()
-FlextTestsValidatorModelsMixin.EnforcementBuildContext.model_rebuild()
-FlextTestsValidatorModelsMixin.EnforcementDispatcherConfig.model_rebuild()

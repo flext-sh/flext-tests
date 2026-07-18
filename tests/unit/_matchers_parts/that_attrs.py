@@ -5,9 +5,8 @@ from __future__ import annotations
 from typing import cast
 
 from flext_tests import tm
+from tests import p, r, t
 from tests.unit._matchers_parts.predicates import MatchersPredicates
-
-from tests import p, t ,r 
 
 
 class MatchersThatAttrsMixin:
