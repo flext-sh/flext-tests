@@ -13,13 +13,13 @@ from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
     """Batch create/read/delete file operations."""
 
-    def batch_files[TModel: p.BaseModel](
+    def batch_files[TModel: t.BaseModelType](
         self,
         items: t.Tests.BatchFiles,
         *,
         directory: Path | None = None,
         operation: c.Tests.Operation = c.Tests.Operation.CREATE,
-        model: type[TModel] | None = None,
+        model: t.ModelClass[TModel] | None = None,
         on_error: c.Tests.ErrorMode = c.Tests.ErrorMode.COLLECT,
         parallel: bool = False,
     ) -> p.Result[p.Tests.BatchResult]:

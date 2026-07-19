@@ -41,7 +41,7 @@ class FlextTestsBatchModelsMixin:
             ),
         ]
         model: Annotated[
-            type[p.BaseModel] | None,
+            t.ModelClass[t.BaseModelType] | None,
             u.Field(description="Optional model class for read operations"),
         ] = None
         on_error: Annotated[

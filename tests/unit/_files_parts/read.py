@@ -37,6 +37,19 @@ class FilesReadMixin:
         _ = u.Tests.assert_success(result)
         tm.that(result.value, eq=content_root)
 
+    def test_read_json_file_into_model(self, tmp_path: Path) -> None:
+        """Test read() validates serialized content into the requested model."""
+        manager = tf(base_dir=tmp_path)
+        expected = m.Tests.ContentMeta(key_count=2, model_valid=True)
+        path = tmp_path / "content-meta.json"
+        _ = path.write_text(expected.model_dump_json())
+
+        result = manager.read(path, model_cls=m.Tests.ContentMeta)
+
+        actual = u.Tests.assert_success(result)
+        tm.that(actual, is_=m.Tests.ContentMeta)
+        tm.that(actual, eq=expected)
+
     def test_read_yaml_file(self, tmp_path: Path) -> None:
         """Test read() returns dict content for .yaml files."""
         manager = tf(base_dir=tmp_path)

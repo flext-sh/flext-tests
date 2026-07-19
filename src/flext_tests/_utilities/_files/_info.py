@@ -26,7 +26,7 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
         compute_hash: bool = False,
         detect_fmt: bool = True,
         parse_content: bool = False,
-        validate_model: type[p.BaseModel] | None = None,
+        validate_model: t.ModelClass[t.BaseModelType] | None = None,
     ) -> p.Result[p.Tests.FileInfo]:
         """Get comprehensive file information.
 
@@ -110,7 +110,10 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
             return ("", 0, size == 0, "", c.Tests.DEFAULT_BINARY_ENCODING)
 
     def _parse_content_metadata(
-        self, text: str, fmt: str, validate_model: type[p.BaseModel] | None = None
+        self,
+        text: str,
+        fmt: str,
+        validate_model: t.ModelClass[t.BaseModelType] | None = None,
     ) -> p.Tests.ContentMeta:
         """Parse file content and extract metadata.
 

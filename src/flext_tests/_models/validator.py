@@ -6,14 +6,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated, ClassVar
+from collections.abc import MutableMapping
+from pathlib import Path
+from typing import Annotated, ClassVar
 
 from flext_infra import m, p, u
 from flext_tests import c, t
-
-if TYPE_CHECKING:
-    from collections.abc import MutableMapping
-    from pathlib import Path
 
 
 class FlextTestsValidatorModelsMixin:
@@ -116,9 +114,3 @@ class FlextTestsValidatorModelsMixin:
                 description="Captured runtime warning counts keyed by dotted category."
             ),
         ] = u.Field(default_factory=dict)
-
-
-FlextTestsValidatorModelsMixin.Violation.model_rebuild()
-FlextTestsValidatorModelsMixin.ScanResult.model_rebuild()
-FlextTestsValidatorModelsMixin.EnforcementBuildContext.model_rebuild()
-FlextTestsValidatorModelsMixin.EnforcementDispatcherConfig.model_rebuild()

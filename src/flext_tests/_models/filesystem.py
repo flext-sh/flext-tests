@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Annotated
 
 from flext_infra import m, u
-from flext_tests import c, p, t
+from flext_tests import c, t
 
 if TYPE_CHECKING:
     import datetime
@@ -137,7 +137,7 @@ class FlextTestsFilesystemModelsMixin:
 
         path: Annotated[Path, u.Field(description="Path to file to read.")]
         model_cls: Annotated[
-            type[p.BaseModel] | None,
+            t.ModelClass[t.BaseModelType] | None,
             u.Field(description="Optional Pydantic model class."),
         ] = None
         fmt: Annotated[
@@ -207,7 +207,7 @@ class FlextTestsFilesystemModelsMixin:
             bool, u.Field(description="Parse content and include metadata.")
         ] = False
         validate_model: Annotated[
-            type[p.BaseModel] | None,
+            t.ModelClass[t.BaseModelType] | None,
             u.Field(description="Pydantic model to validate content against."),
         ] = None
 

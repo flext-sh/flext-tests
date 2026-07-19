@@ -20,18 +20,21 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
     """Read test files with format detection and model loading."""
 
     @staticmethod
-    def _validate_model_content[TModelRead: p.BaseModel](
-        model_cls: type[TModelRead], content: t.Tests.FileContentPlain
+    def _validate_model_content[TModelRead: t.BaseModelType](
+        model_cls: t.ModelClass[TModelRead], content: t.Tests.FileContentPlain
     ) -> p.Result[TModelRead]:
         try:
-            model_instance: TModelRead = model_cls.model_validate(content)
+            validation_input = (
+                content.root if isinstance(content, m.ConfigMap) else content
+            )
+            model_instance: TModelRead = model_cls.model_validate(validation_input)
             return r[TModelRead].ok(model_instance)
         except c.EXC_BASIC_TYPE as ex:
             return r[TModelRead].fail(f"Failed to validate model: {ex}")
 
     @staticmethod
-    def _read_fail[TModelRead: p.BaseModel](
-        error: str, model_cls: type[TModelRead] | None
+    def _read_fail[TModelRead: t.BaseModelType](
+        error: str, model_cls: t.ModelClass[TModelRead] | None
     ) -> p.Result[t.Tests.ReadContent] | p.Result[TModelRead]:
         """Dispatch a single read-failure message to the correct result type."""
         if model_cls is not None:
@@ -51,22 +54,22 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
     ) -> p.Result[t.Tests.ReadContent]: ...
 
     @overload
-    def read[TModelRead: p.BaseModel](
+    def read[TModelRead: t.BaseModelType](
         self,
         path: Path,
         *,
-        model_cls: type[TModelRead],
+        model_cls: t.ModelClass[TModelRead],
         fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
         enc: str = c.Tests.DEFAULT_ENCODING,
         delim: str = c.Tests.CSV_DEFAULT_DELIMITER,
         has_headers: bool = True,
     ) -> p.Result[TModelRead]: ...
 
-    def read[TModelRead: p.BaseModel](
+    def read[TModelRead: t.BaseModelType](
         self,
         path: Path,
         *,
-        model_cls: type[TModelRead] | None = None,
+        model_cls: t.ModelClass[TModelRead] | None = None,
         fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
         enc: str = c.Tests.DEFAULT_ENCODING,
         delim: str = c.Tests.CSV_DEFAULT_DELIMITER,

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from collections.abc import Generator
 
 
-class FlextTestsServiceBase[TDomainResult: p.BaseModel = p.BaseModel](s[TDomainResult]):
+class FlextTestsServiceBase[TDomainResult = p.BaseModel](s[TDomainResult]):
     """Base service for test packages with the ``Tests`` settings namespace."""
 
     @staticmethod
