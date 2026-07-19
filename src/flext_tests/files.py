@@ -17,7 +17,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
-from typing import ClassVar, Self, override
+from typing import Annotated, ClassVar, Self, override
 
 from flext_tests import m, p, r, s, t, u
 from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
@@ -28,9 +28,12 @@ class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixi
     """Manages test files for FLEXT ecosystem testing."""
 
     FileInfo: ClassVar[type[m.Tests.FileInfo]] = m.Tests.FileInfo
-    base_dir: Path | None = u.Field(
-        default=None, description="Base directory used for file operations."
-    )
+    base_dir: Annotated[
+        Path | None,
+        m.BeforeValidator(
+            lambda value: Path(value) if isinstance(value, str) else value
+        ),
+    ] = u.Field(default=None, description="Base directory used for file operations.")
 
     @override
     def model_post_init(self, __context: t.JsonValue | None, /) -> None:
