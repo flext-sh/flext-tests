@@ -71,6 +71,10 @@ class MatchersThatCollectionsMixin:
         """Test tm.that() with lacks parameter."""
         tm.that(["a", "b", "c"], lacks="d")
 
+    def test_that_with_lacks_preserves_whitespace_only_string(self) -> None:
+        """Keep whitespace-only exclusion needles unchanged by model parsing."""
+        tm.that("a\n\nb", lacks="\n\n\n\n")
+
     def test_that_with_first_parameter(self) -> None:
         """Test tm.that() with first parameter."""
         tm.that(["a", "b", "c"], first="a")

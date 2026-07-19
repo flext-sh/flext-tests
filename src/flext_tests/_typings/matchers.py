@@ -7,7 +7,10 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Callable, Set as AbstractSet
-from typing import TypeAliasType
+from typing import TYPE_CHECKING, TypeAliasType
+
+if TYPE_CHECKING:
+    from _pytest.python_api import ApproxBase
 
 from flext_infra import m, t
 from flext_tests._typings.base import FlextTestsBaseTypesMixin as tb
@@ -50,6 +53,7 @@ class FlextTestsMatchersTypesMixin:
         MatcherCallRuleLeaf
         | MatcherJsonTarget
         | AbstractSet[tb.TestobjectSerializable]
+        | ApproxBase
         | t.MappingKV[int, MatcherCallRuleValue]
         | t.MappingKV[str, MatcherCallRuleValue]
         | t.MappingKV[FlextTestsMatchersTypesMixin.ItemSelector, MatcherCallRuleValue]

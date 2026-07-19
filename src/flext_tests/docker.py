@@ -589,8 +589,6 @@ class FlextTestsDocker(s[p.Tests.ContainerInfo]):
         return container_info_result
 
 
-FlextTestsDocker.model_rebuild()
-
 tk = FlextTestsDocker
 
 

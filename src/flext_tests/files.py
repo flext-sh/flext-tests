@@ -16,25 +16,33 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar, override
+from pathlib import Path
+from typing import ClassVar, Self, override
 
-from flext_tests import m, p, r, s
+from flext_tests import m, p, r, s, t, u
 from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
 from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixin):
     """Manages test files for FLEXT ecosystem testing."""
 
     FileInfo: ClassVar[type[p.Tests.FileInfo]] = m.Tests.FileInfo
+    base_dir: Path | None = u.Field(
+        default=None, description="Base directory used for file operations."
+    )
 
-    def __init__(self, base_dir: Path | None = None) -> None:
-        """Initialize file manager with optional base directory."""
-        super().__init__()
-        self._initialize_file_lifecycle(base_dir)
+    @override
+    def model_post_init(self, __context: t.JsonValue | None, /) -> None:
+        """Initialize private file-manager lifecycle state."""
+        super().model_post_init(__context)
+        self._initialize_file_lifecycle()
+
+    @classmethod
+    @override
+    def _create_file_manager(cls, base_dir: Path | None) -> Self:
+        """Construct a validated file manager for class-level contexts."""
+        return cls(base_dir=base_dir)
 
     @override
     def execute(self) -> p.Result[p.BaseModel]:

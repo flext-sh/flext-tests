@@ -289,8 +289,6 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         )
         if params.readonly:
             file_path.chmod(c.Tests.PERMISSION_READONLY_FILE)
-        if self._created_files is None:
-            self._created_files = list[Path]()
         self._created_files.append(file_path)
         return file_path
 

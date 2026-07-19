@@ -51,6 +51,25 @@ class FilesModelsMixin:
         tm.that(manager.created_files, empty=True)
         tm.that(manager.created_dirs, empty=True)
 
+    def test_file_manager_preserves_operations_with_explicit_base_dir(
+        self, tmp_path: Path
+    ) -> None:
+        """Characterize the public file-manager operations."""
+        manager = tf(base_dir=tmp_path)
+        first = manager.create("content", "first.txt")
+        second = manager.create("content", "second.txt")
+
+        tm.that(manager.info(first).value.exists, eq=True)
+        tm.that(manager.compare(first, second).value, eq=True)
+
+    def test_model_validation_owns_file_manager_base_dir(self, tmp_path: Path) -> None:
+        """Keep base_dir in the canonical service model contract."""
+        manager = tf.model_validate({"base_dir": tmp_path})
+
+        tm.that(manager.base_dir, eq=tmp_path)
+        tm.that(manager.model_dump()["base_dir"], eq=tmp_path)
+        tm.that(manager.model_copy().base_dir, eq=tmp_path)
+
     def test_temporary_directory(self) -> None:
         """Test temporary_directory context manager."""
         manager = tf()
