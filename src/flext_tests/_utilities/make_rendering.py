@@ -83,6 +83,10 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             "Usage: make <verb> WHAT=<action> to execute.",
             "Usage: make <verb> WHAT=<verb>/<action> for action help.",
             "Mutating commands require APPLY=Y.",
+            "",
+            "Custom hooks: define pre-<verb>, post-<verb>, pre-<verb>-<what>, or",
+            "post-<verb>-<what> in workspace_custom.mk to append work at the start",
+            "or end of any verb, for all or some WHATs.",
         ))
         return "\n".join(lines)
 
