@@ -32,6 +32,13 @@ class FlextTestsConstantsDocker:
             "host": "localhost",
             "startup_timeout": 900,
         },
+        "flext-kind-test": {
+            "compose_file": "docker/docker-compose.kubernetes.yml",
+            "service": "kind",
+            "port": 6443,
+            "host": "localhost",
+            "startup_timeout": 120,
+        },
     }
 
     @unique
