@@ -65,8 +65,10 @@ class FilesModelsMixin:
     def test_model_validation_owns_file_manager_base_dir(self, tmp_path: Path) -> None:
         """Keep base_dir in the canonical service model contract."""
         manager = tf.model_validate({"base_dir": tmp_path})
+        from_string = tf.model_validate({"base_dir": str(tmp_path)})
 
         tm.that(manager.base_dir, eq=tmp_path)
+        tm.that(from_string.base_dir, eq=tmp_path)
         tm.that(manager.model_dump()["base_dir"], eq=tmp_path)
         tm.that(manager.model_copy().base_dir, eq=tmp_path)
 
