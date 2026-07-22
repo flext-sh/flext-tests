@@ -264,6 +264,7 @@ class FlextTestsConstantsValidator:
         "**/.git/**",
         "**/htmlcov/**",
         "**/*.pyc",
+        "**/.hypothesis/**",
     )
     VALIDATOR_INCLUDE_PATTERNS: Final[t.StrSequence] = ("**/*.py",)
     VALIDATOR_IMPORTS_KEY: Final[str] = "imports"
