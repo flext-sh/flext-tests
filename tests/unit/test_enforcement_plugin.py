@@ -20,11 +20,12 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import m, tm
-from flext_tests._fixtures.enforcement import (
+from flext_tests import (
     active_rules,
     discover_workspace_root,
+    m,
     split_csv,
+    tm,
 )
 
 if TYPE_CHECKING:
@@ -33,6 +34,12 @@ if TYPE_CHECKING:
 
 class TestsFlextTestsEnforcementPlugin:
     """Public contract of the enforcement dispatcher facade."""
+
+    # Several tests here spawn a nested pytest via runpytest_subprocess() that
+    # cold-imports flext_infra (82k LOC): real work ~9s (import 6.3s + run 2.8s),
+    # exceeding the global --timeout=10 under load. Class-level ceiling override —
+    # not a suppression of a hang (profiled: completes in ~9s). Fast tests unaffected.
+    pytestmark = pytest.mark.timeout(60)
 
     def test_flext_pytest11_entrypoints_have_one_package_owner(self) -> None:
         """Only the two flext-tests plugins participate in pytest autoload."""
