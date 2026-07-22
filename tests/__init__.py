@@ -33,10 +33,7 @@ if TYPE_CHECKING:
         TestsFlextTestsDockerIntegration as TestsFlextTestsDockerIntegration,
     )
     from tests.models import TestsFlextTestsModels as TestsFlextTestsModels, m as m
-    from tests.protocols import (
-        TestsFlextTestsProtocols as TestsFlextTestsProtocols,
-        p,
-    )
+    from tests.protocols import TestsFlextTestsProtocols as TestsFlextTestsProtocols, p
     from tests.typings import TestsFlextTestsTypes as TestsFlextTestsTypes, t as t
     from tests.unit._docker_parts.builders import (
         DockerBuildersMixin as DockerBuildersMixin,
@@ -121,10 +118,7 @@ if TYPE_CHECKING:
     from tests.unit.test_validator_types import (
         TestsFlextTestsValidatorTypes as TestsFlextTestsValidatorTypes,
     )
-    from tests.utilities import (
-        TestsFlextTestsUtilities as TestsFlextTestsUtilities,
-        u,
-    )
+    from tests.utilities import TestsFlextTestsUtilities as TestsFlextTestsUtilities, u
 _LAZY_IMPORTS = merge_lazy_imports(
     (".integration", ".unit"),
     build_lazy_import_map({
