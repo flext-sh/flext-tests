@@ -206,9 +206,9 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
     ) -> str:
         """Render dry-run output for one mutating command."""
         lines = [
-            "DRY-RUN: nenhuma mutaction executada.",
-            f"Command: make {requested_verb} WHAT={what}",
-            f"Dominio: {command.domain}",
+            "DRY-RUN: nenhuma mutacao executada.",
+            f"Comando: make {requested_verb} WHAT={what}",
+            f"Domínio: {command.domain}",
             f"Resumo: {command.summary}",
             "Regra: command mutador exige APPLY=Y.",
         ]

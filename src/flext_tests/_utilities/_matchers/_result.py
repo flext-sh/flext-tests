@@ -49,13 +49,13 @@ class FlextTestsMatchersResultMixin:
                     msg = f"Parameter validation failed: {exc}"
                     raise ValueError(msg) from exc
                 err: str = FlextTestsResultUtilitiesMixin.assert_failure(result)
-                FlextTestsMatchersResultMixin.Tests.Matchers._fail_text(err, params)
-                FlextTestsMatchersResultMixin.Tests.Matchers._fail_code(result, params)
-                FlextTestsMatchersResultMixin.Tests.Matchers._fail_data(result, params)
+                FlextTestsMatchersResultMixin.Tests.Matchers.fail_text(err, params)
+                FlextTestsMatchersResultMixin.Tests.Matchers.fail_code(result, params)
+                FlextTestsMatchersResultMixin.Tests.Matchers.fail_data(result, params)
                 return err
 
             @staticmethod
-            def _fail_text(err: str, params: m.Tests.FailParams) -> None:
+            def fail_text(err: str, params: m.Tests.FailParams) -> None:
                 """Validate textual error constraints."""
                 if not any(
                     getattr(params, name)
@@ -90,7 +90,7 @@ class FlextTestsMatchersResultMixin:
                     )
 
             @staticmethod
-            def _fail_code[TResult](
+            def fail_code[TResult](
                 result: p.ResultObservable[TResult], params: m.Tests.FailParams
             ) -> None:
                 """Validate error code constraints."""
@@ -119,7 +119,7 @@ class FlextTestsMatchersResultMixin:
                         )
 
             @staticmethod
-            def _fail_data[TResult](
+            def fail_data[TResult](
                 result: p.ResultObservable[TResult], params: m.Tests.FailParams
             ) -> None:
                 """Validate structured error data constraints."""
@@ -149,7 +149,7 @@ class FlextTestsMatchersResultMixin:
                         )
 
             @staticmethod
-            def _ok_extract_path(
+            def ok_extract_path(
                 result_value: t.Tests.TestResultValue, params: m.Tests.OkParams
             ) -> tuple[t.Tests.TestResultValue, t.Tests.TestobjectSerializable | None]:
                 """Apply optional path extraction to a successful result value."""
@@ -191,7 +191,7 @@ class FlextTestsMatchersResultMixin:
                 return extracted_payload, extracted_payload
 
             @staticmethod
-            def _ok_has_scalar_validation(params: m.Tests.OkParams) -> bool:
+            def ok_has_scalar_validation(params: m.Tests.OkParams) -> bool:
                 """Return whether scalar guard validation is requested."""
                 return any(
                     getattr(params, name) is not None
@@ -211,12 +211,12 @@ class FlextTestsMatchersResultMixin:
                 )
 
             @staticmethod
-            def _ok_validate_scalar[TResult: t.Tests.TestResultValue](
+            def ok_validate_scalar[TResult: t.Tests.TestResultValue](
                 result_value: TResult | t.Tests.TestobjectSerializable,
                 params: m.Tests.OkParams,
             ) -> TResult | t.Tests.TestobjectSerializable:
                 """Validate scalar predicates for a successful result."""
-                if not FlextTestsMatchersResultMixin.Tests.Matchers._ok_has_scalar_validation(
+                if not FlextTestsMatchersResultMixin.Tests.Matchers.ok_has_scalar_validation(
                     params
                 ):
                     return result_value
@@ -272,7 +272,7 @@ class FlextTestsMatchersResultMixin:
                 return result_value
 
             @staticmethod
-            def _ok_validate_type[TResult: t.Tests.TestResultValue](
+            def ok_validate_type[TResult: t.Tests.TestResultValue](
                 result_value: TResult | t.Tests.TestobjectSerializable,
                 params: m.Tests.OkParams,
             ) -> TResult | t.Tests.TestobjectSerializable:
@@ -325,17 +325,17 @@ class FlextTestsMatchersResultMixin:
                     )
                 )
                 result_value, extracted_payload = (
-                    FlextTestsMatchersResultMixin.Tests.Matchers._ok_extract_path(
+                    FlextTestsMatchersResultMixin.Tests.Matchers.ok_extract_path(
                         result_value, params
                     )
                 )
                 result_value = (
-                    FlextTestsMatchersResultMixin.Tests.Matchers._ok_validate_scalar(
+                    FlextTestsMatchersResultMixin.Tests.Matchers.ok_validate_scalar(
                         result_value, params
                     )
                 )
                 result_value = (
-                    FlextTestsMatchersResultMixin.Tests.Matchers._ok_validate_type(
+                    FlextTestsMatchersResultMixin.Tests.Matchers.ok_validate_type(
                         result_value, params
                     )
                 )
@@ -343,11 +343,11 @@ class FlextTestsMatchersResultMixin:
                     result_value, params.has, params.lacks, params.msg
                 )
                 result_payload = (
-                    FlextTestsMatchersResultMixin.Tests.Matchers._ok_payload(
+                    FlextTestsMatchersResultMixin.Tests.Matchers.ok_payload(
                         result, result_value, extracted_payload, params
                     )
                 )
-                FlextTestsMatchersResultMixin.Tests.Matchers._ok_validate_structured(
+                FlextTestsMatchersResultMixin.Tests.Matchers.ok_validate_structured(
                     result, result_value, result_payload, params
                 )
                 if result_value is None:
@@ -358,7 +358,7 @@ class FlextTestsMatchersResultMixin:
                 return result_payload
 
             @staticmethod
-            def _ok_payload[TResult: t.Tests.TestResultValue](
+            def ok_payload[TResult: t.Tests.TestResultValue](
                 result: p.ResultObservable[TResult],
                 result_value: t.Tests.TestResultValue,
                 extracted_payload: t.Tests.TestobjectSerializable | None,
@@ -371,7 +371,7 @@ class FlextTestsMatchersResultMixin:
                 return FlextTestsPayloadUtilities.to_payload(result_value)
 
             @staticmethod
-            def _ok_validate_structured[TResult: t.Tests.TestResultValue](
+            def ok_validate_structured[TResult: t.Tests.TestResultValue](
                 result: p.ResultObservable[TResult],
                 result_value: t.Tests.TestResultValue,
                 result_payload: t.Tests.TestobjectSerializable,
@@ -385,7 +385,7 @@ class FlextTestsMatchersResultMixin:
                         msg=params.msg,
                     )
                 if params.deep is not None:
-                    FlextTestsMatchersResultMixin.Tests.Matchers._ok_validate_deep(
+                    FlextTestsMatchersResultMixin.Tests.Matchers.ok_validate_deep(
                         result_value, params
                     )
                 if params.paths is not None:
@@ -407,7 +407,7 @@ class FlextTestsMatchersResultMixin:
                     )
 
             @staticmethod
-            def _ok_validate_deep[TResult: t.Tests.TestResultValue](
+            def ok_validate_deep[TResult: t.Tests.TestResultValue](
                 result_value: TResult | t.Tests.TestobjectSerializable,
                 params: m.Tests.OkParams,
             ) -> TResult | t.Tests.TestobjectSerializable:
