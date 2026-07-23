@@ -71,6 +71,12 @@ class FlextTestsMakeModelsMixin:
         target: Annotated[
             str, u.Field(description="Optional Make target for header-only commands.")
         ] = ""
+        surface: Annotated[
+            str,
+            u.Field(
+                description="Declared surface-validation route for Python commands."
+            ),
+        ] = ""
         target_env: Annotated[
             t.StrPairSequence,
             u.Field(description="Environment overrides for target dispatch."),

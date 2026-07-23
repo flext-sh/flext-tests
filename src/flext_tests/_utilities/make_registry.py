@@ -77,6 +77,11 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
         target_env_result = FlextTestsMakeParsingUtilitiesMixin.make_parse_string_map(
             data.get("target_env"), path
         )
+        surface_result = (
+            FlextTestsMakeParsingUtilitiesMixin.make_require_optional_string(
+                data, "surface", path
+            )
+        )
         for result in (
             mutates_result,
             mutates_when_result,
@@ -85,6 +90,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             rules_result,
             target_result,
             target_env_result,
+            surface_result,
         ):
             if result.failure:
                 return r[m.Tests.MakeCommand].fail(
@@ -106,6 +112,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             rules=rules_result.value,
             target=target_result.value,
             target_env=target_env_result.value,
+            surface=surface_result.value,
         )
         contract_result = (
             FlextTestsMakeContractUtilitiesMixin.make_validate_command_contract(command)

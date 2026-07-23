@@ -263,3 +263,28 @@ SIDE_EFFECT = "detected"
         result = u.Tests.make_has_executable_body(broken)
         error = u.Tests.assert_failure(result)
         tm.that(error, has="broken.py")
+
+    def test_make_load_command_parses_declared_surface(self, tmp_path: Path) -> None:
+        """A promoted command may declare its validated surface route."""
+        verb_dir = tmp_path / "check"
+        verb_dir.mkdir()
+        script = verb_dir / "lint.py"
+        script.write_text(
+            "#!/usr/bin/env python3\n"
+            '"""Header-only surface command."""\n'
+            "# /// flext-command\n"
+            '# verb = "check"\n'
+            '# what = "lint"\n'
+            '# domain = "quality"\n'
+            '# summary = "Run lint gates"\n'
+            '# description = "Runs lint gates."\n'
+            '# example = "make check WHAT=lint"\n'
+            "# mutates = false\n"
+            '# surface = "make _check_default CHECK_GATES=lint,pyrefly"\n'
+            "# ///\n",
+            encoding="utf-8",
+        )
+
+        command = u.Tests.assert_success(u.Tests.make_load_command(script, "check"))
+
+        tm.that(command.surface, eq="make _check_default CHECK_GATES=lint,pyrefly")
