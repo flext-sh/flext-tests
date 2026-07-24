@@ -699,11 +699,7 @@ class FlextTestsMatchersThatMixin:
             @overload
             @classmethod
             def that(
-                cls,
-                value: object,
-                *,
-                eq: None,
-                **kwargs: t.Tests.MatcherCallKwargValue,
+                cls, value: object, *, eq: None, **kwargs: t.Tests.MatcherCallKwargValue
             ) -> TypeIs[None]: ...
             @overload
             @classmethod
@@ -717,11 +713,7 @@ class FlextTestsMatchersThatMixin:
             @overload
             @classmethod
             def that[E](
-                cls,
-                value: E | None,
-                *,
-                eq: E,
-                **kwargs: t.Tests.MatcherCallKwargValue,
+                cls, value: E | None, *, eq: E, **kwargs: t.Tests.MatcherCallKwargValue
             ) -> TypeIs[E]: ...
             @overload
             @classmethod
