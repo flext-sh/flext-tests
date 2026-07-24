@@ -76,7 +76,7 @@ def render(value: Any) -> str:
 
 _NOTEST_MARKDOWN = """# Example
 
-```python notest
+```python
 from typing import Optional
 
 
