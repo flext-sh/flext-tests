@@ -55,9 +55,7 @@ class FlextValidatorMarkdown:
             is_notest = c.Tests.VALIDATOR_MD_NOTEST_MARKER in info
 
             if not is_notest:
-                cls._check_syntax(
-                    file_path, code, lines, block_start, violations
-                )
+                cls._check_syntax(file_path, code, lines, block_start, violations)
 
             cls._check_forbidden_imports(
                 file_path, code, lines, block_start, approved, violations
