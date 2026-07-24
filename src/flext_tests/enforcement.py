@@ -8,6 +8,7 @@ from flext_tests._fixtures.enforcement import (
     EnforcementViolationError,
     active_rules,
     discover_workspace_root,
+    pytest_addoption,
     split_csv,
 )
 
@@ -17,5 +18,6 @@ __all__: list[str] = [
     "EnforcementViolationError",
     "active_rules",
     "discover_workspace_root",
+    "pytest_addoption",
     "split_csv",
 ]
