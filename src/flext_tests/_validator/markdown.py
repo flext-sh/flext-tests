@@ -49,22 +49,15 @@ class FlextValidatorMarkdown:
         lines = content.splitlines()
 
         for match in c.Tests.VALIDATOR_MD_PYTHON_BLOCK_RE.finditer(content):
-            code = match.group(1)
+            info = match.group("info")
+            code = match.group("code")
             block_start = content[: match.start()].count("\n") + 1
+            is_notest = c.Tests.VALIDATOR_MD_NOTEST_MARKER in info
 
-            try:
-                compile(code, str(file_path), "exec")
-            except SyntaxError:
-                violations.append(
-                    u.Tests.create_violation(
-                        file_path,
-                        block_start,
-                        "MD-001",
-                        lines,
-                        c.Tests.VALIDATOR_MSG_MD_SYNTAX.format(msg="invalid Python"),
-                    )
+            if not is_notest:
+                cls._check_syntax(
+                    file_path, code, lines, block_start, violations
                 )
-                continue
 
             cls._check_forbidden_imports(
                 file_path, code, lines, block_start, approved, violations
@@ -72,11 +65,37 @@ class FlextValidatorMarkdown:
             cls._check_object_annotations(
                 file_path, code, lines, block_start, approved, violations
             )
+            cls._check_any_annotations(
+                file_path, code, lines, block_start, approved, violations
+            )
             cls._check_future_annotations(
                 file_path, code, lines, block_start, approved, violations
             )
 
         return violations
+
+    @classmethod
+    def _check_syntax(
+        cls,
+        file_path: Path,
+        code: str,
+        lines: t.StrSequence,
+        block_start: int,
+        violations: MutableSequence[m.Tests.Violation],
+    ) -> None:
+        """Check that a Python code block is syntactically valid."""
+        try:
+            compile(code, str(file_path), "exec")
+        except SyntaxError:
+            violations.append(
+                u.Tests.create_violation(
+                    file_path,
+                    block_start,
+                    "MD-001",
+                    lines,
+                    c.Tests.VALIDATOR_MSG_MD_SYNTAX.format(msg="invalid Python"),
+                )
+            )
 
     @classmethod
     def _check_forbidden_imports(
@@ -132,6 +151,33 @@ class FlextValidatorMarkdown:
                         lines,
                         c.Tests.VALIDATOR_MSG_MD_FORBIDDEN_ANNOTATION.format(
                             annotation="object"
+                        ),
+                    )
+                )
+
+    @classmethod
+    def _check_any_annotations(
+        cls,
+        file_path: Path,
+        code: str,
+        lines: t.StrSequence,
+        block_start: int,
+        approved: t.MappingKV[str, t.StrSequence],
+        violations: MutableSequence[m.Tests.Violation],
+    ) -> None:
+        """Check for 'Any' used as type annotation."""
+        if u.Tests.approved("MD-005", file_path, approved):
+            return
+        for line_offset, code_line in enumerate(code.splitlines()):
+            if c.Tests.VALIDATOR_MD_ANY_ANNOTATION_RE.search(code_line):
+                violations.append(
+                    u.Tests.create_violation(
+                        file_path,
+                        block_start + line_offset + 1,
+                        "MD-005",
+                        lines,
+                        c.Tests.VALIDATOR_MSG_MD_FORBIDDEN_ANNOTATION.format(
+                            annotation="Any"
                         ),
                     )
                 )

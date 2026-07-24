@@ -112,6 +112,10 @@ class FlextTestsConstantsValidator:
         "HIGH",
         "Forbidden type annotation in markdown code block",
     )
+    VALIDATOR_RULE_MD_005: Final[t.StrPair] = (
+        "HIGH",
+        "Forbidden Any annotation in markdown code block",
+    )
 
     VALIDATOR_MSG_LAYER_VIOLATION: Final[str] = (
         "'{current}' L{current_level} -> '{imported}' L{imported_level}"
@@ -234,11 +238,16 @@ class FlextTestsConstantsValidator:
         r"^[ \t]*@(?:[A-Za-z_]\w*\.)*patch(?:\b|\s*\(|\.)"
     )
     VALIDATOR_MD_OPTION_DOCS: Final[str] = "--markdown-docs"
+    VALIDATOR_MD_NOTEST_MARKER: Final[str] = "notest"
     VALIDATOR_MD_PYTHON_BLOCK_RE: ClassVar[t.Infra.RegexPattern] = re.compile(
-        r"^```python\s*$\n(.*?)^```\s*$", re.MULTILINE | re.DOTALL
+        r"^```(?P<info>python\S*(?:\s+notest)?)\s*$\n(?P<code>.*?)^```\s*$",
+        re.MULTILINE | re.DOTALL,
     )
     VALIDATOR_MD_OBJECT_ANNOTATION_RE: ClassVar[t.Infra.RegexPattern] = re.compile(
         r"(?::\s*object\b|->.*\bobject\b)"
+    )
+    VALIDATOR_MD_ANY_ANNOTATION_RE: ClassVar[t.Infra.RegexPattern] = re.compile(
+        r"(?::\s*Any\b|->.*\bAny\b)"
     )
     VALIDATOR_MD_FUTURE_ANNOTATIONS_MARKER: Final[str] = (
         "from __future__ import annotations"

@@ -61,6 +61,37 @@ def render(value: object) -> Optional[str]:
 ```
 """
 
+_BAD_MARKDOWN_ANY = """# Example
+
+```python
+from __future__ import annotations
+
+from typing import Any
+
+
+def render(value: Any) -> str:
+    return ""
+```
+"""
+
+_NOTEST_MARKDOWN = """# Example
+
+```python notest
+from typing import Optional
+
+
+def broken(
+```
+
+```python notest
+from typing import Optional
+
+
+def render(value: object) -> Optional[str]:
+    return None
+```
+"""
+
 _CLEAN_MARKDOWN = """# Example
 
 ```python
@@ -169,6 +200,27 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
         tm.that(result.passed, eq=True)
         tm.that(len(result.violations), eq=0)
         tm.that(result.validator_name, eq="markdown")
+
+    def test_markdown_reports_any_annotation(self, tmp_path: Path) -> None:
+        self._write(tmp_path, "README.md", _BAD_MARKDOWN_ANY)
+
+        result: m.Tests.ScanResult = u.Tests.assert_success(tv.markdown(tmp_path))
+        rule_ids = {violation.rule_id for violation in result.violations}
+
+        tm.that(result.passed, eq=False)
+        tm.that("MD-005" in rule_ids, eq=True)
+
+    def test_markdown_ignores_notest_blocks_for_syntax(self, tmp_path: Path) -> None:
+        self._write(tmp_path, "README.md", _NOTEST_MARKDOWN)
+
+        result: m.Tests.ScanResult = u.Tests.assert_success(tv.markdown(tmp_path))
+        rule_ids = {violation.rule_id for violation in result.violations}
+
+        # Syntax errors (MD-001) must not be reported for notest blocks.
+        tm.that("MD-001" not in rule_ids, eq=True)
+        # Other lint rules still apply.
+        tm.that("MD-002" in rule_ids, eq=True)
+        tm.that("MD-004" in rule_ids, eq=True)
 
     # ---- cross-validator invariant --------------------------------------
 
