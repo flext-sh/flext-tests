@@ -61,6 +61,8 @@ class MatchersScopeErrorsMixin:
 
     def test_scope_invalid_parameter_type(self) -> None:
         """Test tm.scope() with invalid parameter type raises ValueError."""
-        with pytest.raises(ValueError, match="Parameter validation failed"):
-            with tm.scope(env="invalid"):
-                pass
+        with (
+            pytest.raises(ValueError, match="Parameter validation failed"),
+            tm.scope(env="invalid"),
+        ):
+            pass

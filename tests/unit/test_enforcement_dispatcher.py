@@ -17,10 +17,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from _pytest.config.argparsing import Parser
 
-from flext_tests import c, m, tm, u
-from flext_tests._fixtures import enforcement as dispatcher
+from flext_tests import c, enforcement as dispatcher, m, tm, u
 
 
 class TestsFlextTestsEnforcementDispatcher:
@@ -261,10 +259,10 @@ class TestsFlextTestsEnforcementDispatcher:
 
     @pytest.mark.filterwarnings("ignore::pytest.PytestDeprecationWarning")
     def test_addoption_registers_flext_enforce_cli_options(self) -> None:
-        # Constructing a bare Parser is the only observable way to assert the
+        # Constructing a bare pytest.Parser is the only observable way to assert the
         # hook registers its options; pytest flags the private-class use with a
         # deprecation warning that is external to the unit under test.
-        parser = Parser()
+        parser = pytest.Parser()
         dispatcher.pytest_addoption(parser)
 
         enabled = parser.parse([

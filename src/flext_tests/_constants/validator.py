@@ -141,7 +141,7 @@ class FlextTestsConstantsValidator:
         "bool-returning is_* helper '{name}'"
     )
     VALIDATOR_MSG_BYPASS_BARE_EXCEPT: Final[str] = "bare except"
-    VALIDATOR_MSG_BYPASS_ONLY_PASS: Final[str] = "except with only pass"
+    VALIDATOR_MSG_BYPASS_TRIVIAL_BODY: Final[str] = "except with a trivial body"
     VALIDATOR_MSG_MD_SYNTAX: Final[str] = "SyntaxError in code block: {msg}"
     VALIDATOR_MSG_MD_FORBIDDEN_IMPORT: Final[str] = "Forbidden import: {import_name}"
     VALIDATOR_MSG_MD_MISSING_FUTURE: Final[str] = (

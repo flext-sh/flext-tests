@@ -236,7 +236,7 @@ SIDE_EFFECT = "detected"
         ],
     )
     def test_make_has_executable_body_classifies_command_source(
-        self, tmp_path: Path, source: str, expected_body: bool
+        self, tmp_path: Path, source: str, *, expected_body: bool
     ) -> None:
         """Executable statements outside the metadata header are detected."""
         script = tmp_path / "command.py"

@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 import pytest
 
-from flext_tests import FlextTestsDocker, c as flext_tests_c, m, tk, tm
+from flext_tests import c as flext_tests_c, m, tk, tm
 from tests import c
 
 
@@ -89,14 +89,16 @@ class DockerBuildersMixin:
         tm.that(target.container_name, eq=None)
         tm.that(target.port, eq=25432)
 
-    def test_resolve_shared_target_raises_on_missing_compose_file(self) -> None:
+    def test_resolve_shared_target_raises_on_missing_compose_file(
+        self, tmp_path: Path
+    ) -> None:
         broken = {
             name: {**config} for name, config in c.Tests.SHARED_CONTAINERS.items()
         }
         del broken["flext-oracle-db-test"]["compose_file"]
 
-        with patch.object(flext_tests_c.Tests, "SHARED_CONTAINERS", broken):
-            with pytest.raises(ValueError, match="missing compose_file"):
-                FlextTestsDocker._resolve_shared_target_config(
-                    "flext-oracle-db-test", Path("/tmp")
-                )
+        with (
+            patch.object(flext_tests_c.Tests, "SHARED_CONTAINERS", broken),
+            pytest.raises(ValueError, match="missing compose_file"),
+        ):
+            tk.shared("flext-oracle-db-test", workspace_root=tmp_path)

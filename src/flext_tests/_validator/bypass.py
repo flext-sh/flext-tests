@@ -56,7 +56,7 @@ class FlextValidatorBypass(u.Tests.ValidatorScannerMixin):
                     line_number,
                     "BYPASS-003",
                     lines,
-                    c.Tests.VALIDATOR_MSG_BYPASS_ONLY_PASS,
+                    c.Tests.VALIDATOR_MSG_BYPASS_TRIVIAL_BODY,
                 )
             )
         return violations

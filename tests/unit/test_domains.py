@@ -129,7 +129,7 @@ class TestsFlextTestsDomains:
         ],
     )
     def test_default_handler_case_specs_flag_failures_consistently(
-        self, handler_id: str, should_fail: bool
+        self, handler_id: str, *, should_fail: bool
     ) -> None:
         """Only the ``fail_*`` handler specs carry the ``should_fail`` marker."""
         spec = next(
@@ -187,7 +187,7 @@ class TestsFlextTestsDomains:
         ],
     )
     def test_fixture_exists_reports_presence(
-        self, fixtures_root: Path, group: str, kind: str, expected: bool
+        self, fixtures_root: Path, group: str, kind: str, *, expected: bool
     ) -> None:
         """``fixture_exists`` mirrors on-disk presence without raising."""
         assert td.fixture_exists(group, kind, fixtures_root=fixtures_root) is expected
