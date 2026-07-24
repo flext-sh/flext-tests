@@ -466,7 +466,7 @@ exclude = [
   "vendor",
 ]
 extraPaths = [".", "src"]
-include = ["src", "tests"]
+include = ["src", "examples", "scripts", "tests"]
 pythonPlatform = "Linux"
 pythonVersion = "3.13"
 reportArgumentType = "none"
