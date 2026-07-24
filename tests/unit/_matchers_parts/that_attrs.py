@@ -4,9 +4,8 @@ from __future__ import annotations
 
 from typing import cast
 
-from flext_tests import r, tm
-from tests.protocols import p
-from tests.typings import t
+from flext_tests import tm
+from tests import p, r, t
 from tests.unit._matchers_parts.predicates import MatchersPredicates
 
 
@@ -59,8 +58,7 @@ class MatchersThatAttrsMixin:
 
         obj = TestClass()
         tm.that(
-            cast("t.JsonValue", obj),
-            attr_eq={"attr1": "value1", "attr2": "value2"},
+            cast("t.JsonValue", obj), attr_eq={"attr1": "value1", "attr2": "value2"}
         )
 
     def test_that_with_ok_parameter(self) -> None:

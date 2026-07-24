@@ -17,44 +17,46 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
-from typing import ClassVar, override
+from typing import Annotated, ClassVar, Self, override
 
-from flext_tests import (
-    m,
-    p,
-    r,
-    s,
-    t,
-)
+from flext_tests import m, p, r, s, t, u
 from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
 from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
 
 
-class FlextTestsFiles(
-    s,
-    FlextTestsFilesInfoMixin,
-    FlextTestsFilesComparisonMixin,
-):
+class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixin):
     """Manages test files for FLEXT ecosystem testing."""
 
     FileInfo: ClassVar[type[m.Tests.FileInfo]] = m.Tests.FileInfo
-
-    def __init__(
-        self,
-        base_dir: Path | None = None,
-    ) -> None:
-        """Initialize file manager with optional base directory."""
-        super().__init__()
-        self._initialize_file_lifecycle(base_dir)
+    base_dir: Annotated[
+        Path | None,
+        m.BeforeValidator(
+            lambda value: Path(value) if isinstance(value, str) else value
+        ),
+    ] = u.Field(default=None, description="Base directory used for file operations.")
 
     @override
-    def execute(self) -> p.Result[t.JsonValue]:
-        """Execute service - returns success for file manager.
+    def model_post_init(self, __context: t.JsonValue | None, /) -> None:
+        """Initialize private file-manager lifecycle state."""
+        super().model_post_init(__context)
+        self._initialize_file_lifecycle()
 
-        FlextTestsFiles is a utility service that doesn't have a specific
-        execution result. Returns success by default.
+    @classmethod
+    @override
+    def _create_file_manager(cls, base_dir: Path | None) -> Self:
+        """Construct a validated file manager for class-level contexts."""
+        return cls(base_dir=base_dir)
+
+    @override
+    def execute(self) -> p.Result[p.Base]:
+        """Execute is not the file-manager API surface.
+
+        FlextTestsFiles is a utility service whose real API is its file
+        methods (create, compare, info, ...); execute has no domain result.
         """
-        return r[t.JsonValue].ok("")
+        return r[p.Base].fail(
+            "Use specific file methods: create, compare, read, info, ..."
+        )
 
 
 tf = FlextTestsFiles

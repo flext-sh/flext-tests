@@ -10,8 +10,8 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated
 
-from flext_infra import m
-from flext_tests import c, p, t, u
+from flext_infra import m, u
+from flext_tests import c, p, t
 
 
 class FlextTestsBatchModelsMixin:
@@ -23,15 +23,10 @@ class FlextTestsBatchModelsMixin:
                 t.MappingKV[str, t.Tests.TestobjectSerializable]
                 | t.SequenceOf[tuple[str, t.Tests.TestobjectSerializable]]
             ),
-            u.Field(
-                description="Mapping or Sequence of files to process",
-            ),
+            u.Field(description="Mapping or Sequence of files to process"),
         ]
         directory: Annotated[
-            Path | None,
-            u.Field(
-                description="Target directory for create operations",
-            ),
+            Path | None, u.Field(description="Target directory for create operations")
         ] = None
         operation: Annotated[
             c.Tests.Operation,
@@ -45,9 +40,7 @@ class FlextTestsBatchModelsMixin:
         ]
         model: Annotated[
             type[m.BaseModel] | None,
-            u.Field(
-                description="Optional model class for read operations",
-            ),
+            u.Field(description="Optional model class for read operations"),
         ] = None
         on_error: Annotated[
             c.Tests.ErrorMode,
@@ -59,42 +52,28 @@ class FlextTestsBatchModelsMixin:
                 description="Error handling mode: stop, skip, or collect",
             ),
         ]
-        parallel: Annotated[
-            bool,
-            u.Field(
-                description="Run operations in parallel",
-            ),
-        ] = False
+        parallel: Annotated[bool, u.Field(description="Run operations in parallel")] = (
+            False
+        )
 
     class BatchResult(m.Value):
         """Result of batch file operations."""
 
         succeeded: Annotated[
-            int,
-            u.Field(
-                ge=0,
-                description="Number of successful operations",
-            ),
+            int, u.Field(ge=0, description="Number of successful operations")
         ]
         failed: Annotated[
-            t.NonNegativeInt,
-            u.Field(description="Number of failed operations"),
+            t.NonNegativeInt, u.Field(description="Number of failed operations")
         ]
         total: Annotated[
-            t.NonNegativeInt,
-            u.Field(description="Total number of operations"),
+            t.NonNegativeInt, u.Field(description="Total number of operations")
         ]
         results: Annotated[
             t.MappingKV[str, p.ResultLike[t.Tests.TestResultValue]],
-            u.Field(
-                description="Mapping of file names to operation results",
-            ),
+            u.Field(description="Mapping of file names to operation results"),
         ] = u.Field(default_factory=lambda: MappingProxyType({}))
         errors: Annotated[
-            t.StrMapping,
-            u.Field(
-                description="Mapping of file names to error messages",
-            ),
+            t.StrMapping, u.Field(description="Mapping of file names to error messages")
         ] = u.Field(default_factory=lambda: MappingProxyType({}))
 
         @u.computed_field()

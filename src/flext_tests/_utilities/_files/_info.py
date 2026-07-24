@@ -7,10 +7,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_cli import u as cli_u
-from flext_tests import c, m, p, r, t, u
+from flext_cli import u
+from flext_tests import c, m, p, r, t
 from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
-from flext_tests._utilities._files._reading import FlextTestsFilesReadingMixin
+from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
 
 
 class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
@@ -50,21 +50,18 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
             return r[m.Tests.FileInfo].fail(f"Invalid parameters for file info: {exc}")
         if not params.path.exists():
             return r[m.Tests.FileInfo].ok(
-                m.Tests.FileInfo(exists=False, path=params.path),
+                m.Tests.FileInfo(exists=False, path=params.path)
             )
         try:
             return r[m.Tests.FileInfo].ok(self._build_file_info(params))
         except OSError as e:
             return r[m.Tests.FileInfo].fail(c.Tests.ERROR_INFO.format(error=e))
 
-    def _build_file_info(
-        self,
-        params: m.Tests.InfoParams,
-    ) -> m.Tests.FileInfo:
+    def _build_file_info(self, params: m.Tests.InfoParams) -> m.Tests.FileInfo:
         """Build a ``FileInfo`` model for an existing path."""
         stat = params.path.stat()
         size = stat.st_size
-        size_human = c.Tests.format_size(size)
+        size_human = FlextTestsFilesUtilitiesMixin.format_size(size)
         text, lines, is_empty, first_line, encoding = self._read_info_text(
             params.path, size
         )
@@ -78,9 +75,7 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
         content_meta: m.Tests.ContentMeta | None = None
         if params.parse_content or params.validate_model:
             content_meta = self._parse_content_metadata(
-                text=text,
-                fmt=fmt,
-                validate_model=params.validate_model,
+                text=text, fmt=fmt, validate_model=params.validate_model
             )
         return m.Tests.FileInfo(
             exists=True,
@@ -93,24 +88,17 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
             first_line=first_line,
             fmt=fmt,
             valid=True,
-            modified=cli_u.from_timestamp(stat.st_mtime),
+            modified=u.from_timestamp(stat.st_mtime),
             permissions=permissions,
             is_readonly=is_readonly,
             sha256=sha256,
             content_meta=content_meta,
         )
 
-    def _read_info_text(
-        self,
-        path: Path,
-        size: int,
-    ) -> tuple[str, int, bool, str, str]:
+    def _read_info_text(self, path: Path, size: int) -> tuple[str, int, bool, str, str]:
         """Read text metadata for a file, falling back to binary defaults."""
         try:
-            text = path.read_text(
-                encoding=c.Tests.DEFAULT_ENCODING,
-                errors="replace",
-            )
+            text = path.read_text(encoding=c.Tests.DEFAULT_ENCODING, errors="replace")
             lines = text.count("\n") + 1 if text else 0
             is_empty = not text.strip()
             first_line = text.split("\n")[0] if text else ""
@@ -119,10 +107,7 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
             return ("", 0, size == 0, "", c.Tests.DEFAULT_BINARY_ENCODING)
 
     def _parse_content_metadata(
-        self,
-        text: str,
-        fmt: str,
-        validate_model: type[m.BaseModel] | None = None,
+        self, text: str, fmt: str, validate_model: type[m.BaseModel] | None = None
     ) -> m.Tests.ContentMeta:
         """Parse file content and extract metadata.
 
@@ -157,7 +142,7 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
                     case _:
                         pass
             case "csv":
-                csv_outcome = cli_u.Cli.csv_loads(text)
+                csv_outcome = u.Cli.csv_loads(text)
                 rows: list[list[str]] = csv_outcome.value if csv_outcome.success else []
                 if rows:
                     row_count = len(rows)
@@ -166,9 +151,9 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
                 pass
         if validate_model is not None:
             if parsed_mapping is not None:
-                model_valid = FlextTestsFilesReadingMixin._validate_model_content(
-                    validate_model,
-                    parsed_mapping,
+                # mro-j47u: consume the composed reading capability through self.
+                model_valid = self._validate_model_content(
+                    validate_model, parsed_mapping
                 ).success
             elif fmt in {"json", "yaml"} and text.strip():
                 model_valid = False

@@ -20,9 +20,7 @@ from enum import Enum
 from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
 
-from flext_infra.models import m
-from flext_infra.protocols import p
-from flext_infra.typings import t
+from flext_infra import m, p, t
 
 
 class FlextTestsBaseTypesMixin:
@@ -38,7 +36,7 @@ class FlextTestsBaseTypesMixin:
         | tzinfo
         | Path
         | m.BaseModel
-        | type
+        | type[object]
         | frozenset[str]
     )
     type TestobjectCollection = (
@@ -63,7 +61,6 @@ class FlextTestsBaseTypesMixin:
         | p.Registry
         | p.AttributeProbe
         | p.ResultLike[FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | t.Cli.TyperRunner
         | t.Infra.RegexMatch
         | bt.UnionType
         | FrameType

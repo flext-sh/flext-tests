@@ -7,8 +7,8 @@ from unittest.mock import patch
 
 import pytest
 
-from flext_tests import FlextTestsDocker, c as flext_tests_c, m, tk, tm
-from tests.constants import c
+from flext_tests import c as flext_tests_c, m, tk, tm
+from tests import c
 
 
 class DockerBuildersMixin:
@@ -24,11 +24,10 @@ class DockerBuildersMixin:
         manager = tk.shared("flext-oracle-db-test", workspace_root=tmp_path)
         tm.that(manager.target_config, none=False)
         target = manager.target_config
-        assert target is not None
+        tm.that(target, none=False)
         tm.that(target.container_name, eq="flext-oracle-db-test")
         tm.that(
-            target.compose_file,
-            eq=tmp_path / "docker" / "docker-compose.oracle-db.yml",
+            target.compose_file, eq=tmp_path / "docker" / "docker-compose.oracle-db.yml"
         )
 
     def test_shared_builder_resolves_openldap_target(self, tmp_path: Path) -> None:
@@ -36,11 +35,10 @@ class DockerBuildersMixin:
         manager = tk.shared("flext-openldap-test", workspace_root=tmp_path)
         tm.that(manager.target_config, none=False)
         target = manager.target_config
-        assert target is not None
+        tm.that(target, none=False)
         tm.that(target.container_name, eq="flext-openldap-test")
         tm.that(
-            target.compose_file,
-            eq=tmp_path / "docker" / "docker-compose.openldap.yml",
+            target.compose_file, eq=tmp_path / "docker" / "docker-compose.openldap.yml"
         )
         tm.that(target.service, eq="openldap")
         tm.that(target.port, eq=3390)
@@ -50,15 +48,13 @@ class DockerBuildersMixin:
         manager = tk.compose(
             "docker-compose.yml",
             target=m.Tests.ContainerConfig(
-                container_name="service-test",
-                service="service-test",
-                port=5432,
+                container_name="service-test", service="service-test", port=5432
             ),
             workspace_root=tmp_path,
         )
         tm.that(manager.target_config, none=False)
         target = manager.target_config
-        assert target is not None
+        tm.that(target, none=False)
         tm.that(target.container_name, eq="service-test")
         tm.that(target.compose_file, eq=tmp_path / "docker-compose.yml")
         tm.that(target.port, eq=5432)
@@ -68,15 +64,13 @@ class DockerBuildersMixin:
         manager = tk.stack(
             "docker-compose.stack.yml",
             target=m.Tests.ContainerConfig(
-                container_name="stack-main",
-                service="stack-main",
-                port=3389,
+                container_name="stack-main", service="stack-main", port=3389
             ),
             workspace_root=tmp_path,
         )
         tm.that(manager.target_config, none=False)
         target = manager.target_config
-        assert target is not None
+        tm.that(target, none=False)
         tm.that(target.container_name, eq="stack-main")
         tm.that(target.compose_file, eq=tmp_path / "docker-compose.stack.yml")
         tm.that(target.service, eq="stack-main")
@@ -86,27 +80,25 @@ class DockerBuildersMixin:
         """Test stack() supports lifecycle-only stacks without inspection target."""
         manager = tk.stack(
             "docker-compose.stack.yml",
-            target=m.Tests.ContainerConfig(
-                host=c.LOOPBACK_IP,
-                port=25432,
-            ),
+            target=m.Tests.ContainerConfig(host=c.LOOPBACK_IP, port=25432),
             workspace_root=tmp_path,
         )
         tm.that(manager.target_config, none=False)
         target = manager.target_config
-        assert target is not None
+        tm.that(target, none=False)
         tm.that(target.container_name, eq=None)
         tm.that(target.port, eq=25432)
 
-    def test_resolve_shared_target_raises_on_missing_compose_file(self) -> None:
+    def test_resolve_shared_target_raises_on_missing_compose_file(
+        self, tmp_path: Path
+    ) -> None:
         broken = {
             name: {**config} for name, config in c.Tests.SHARED_CONTAINERS.items()
         }
         del broken["flext-oracle-db-test"]["compose_file"]
 
-        with patch.object(flext_tests_c.Tests, "SHARED_CONTAINERS", broken):
-            with pytest.raises(ValueError, match="missing compose_file"):
-                FlextTestsDocker._resolve_shared_target_config(
-                    "flext-oracle-db-test",
-                    Path("/tmp"),
-                )
+        with (
+            patch.object(flext_tests_c.Tests, "SHARED_CONTAINERS", broken),
+            pytest.raises(ValueError, match="missing compose_file"),
+        ):
+            tk.shared("flext-oracle-db-test", workspace_root=tmp_path)

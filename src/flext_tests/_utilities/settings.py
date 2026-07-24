@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-from collections.abc import (
-    Generator,
-)
+from collections.abc import Generator
 from contextlib import contextmanager
 from unittest.mock import patch
 
-from flext_core import FlextSettings
-from flext_tests.typings import t
+from flext_core import FlextSettings, settings
+from flext_tests import t
 
 
 class FlextTestsConfigHelpersUtilitiesMixin:
@@ -26,13 +24,12 @@ class FlextTestsConfigHelpersUtilitiesMixin:
             Test FlextSettings singleton with overrides applied
 
         """
-        settings = FlextSettings.fetch_global()
         if not kwargs:
             return settings
         candidate = settings.model_copy(update=kwargs, deep=True)
         computed_fields = set(type(candidate).model_computed_fields)
         return FlextSettings.model_validate(
-            candidate.model_dump(exclude=computed_fields),
+            candidate.model_dump(exclude=computed_fields)
         )
 
     @staticmethod

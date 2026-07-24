@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import pytest
 
 from flext_tests import r, tm
-from tests.protocols import p
+
+if TYPE_CHECKING:
+    from tests import p
 
 
 class MatchersScopeErrorsMixin:
@@ -57,6 +61,8 @@ class MatchersScopeErrorsMixin:
 
     def test_scope_invalid_parameter_type(self) -> None:
         """Test tm.scope() with invalid parameter type raises ValueError."""
-        with pytest.raises(ValueError, match="Parameter validation failed"):
-            with tm.scope(env="invalid"):
-                pass
+        with (
+            pytest.raises(ValueError, match="Parameter validation failed"),
+            tm.scope(env="invalid"),
+        ):
+            pass

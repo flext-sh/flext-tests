@@ -12,32 +12,23 @@ from pathlib import Path
 from types import TracebackType
 from typing import Self
 
-from flext_tests import c, t
+from flext_tests import c, t, u
 
 
 class FlextTestsFilesLifecycleMixin:
     """File-manager lifecycle: init, context manager, cleanup, base_dir."""
 
-    _base_dir: Path | None = None
-    _created_files: list[Path] | None = None
-    _created_dirs: list[Path] | None = None
+    base_dir: Path | None
+    _created_files: list[Path] = u.PrivateAttr(default_factory=list)
+    _created_dirs: list[Path] = u.PrivateAttr(default_factory=list)
 
-    def __init__(
-        self,
-        base_dir: Path | None = None,
-    ) -> None:
-        """Initialize file manager with optional base directory.
+    @classmethod
+    def _create_file_manager(cls, base_dir: Path | None) -> Self:
+        """Construct the concrete validated file manager."""
+        raise NotImplementedError
 
-        Args:
-            base_dir: Optional base directory for file operations.
-                     If not provided, temporary directories are used.
-
-        """
-        self._initialize_file_lifecycle(base_dir)
-
-    def _initialize_file_lifecycle(self, base_dir: Path | None) -> None:
+    def _initialize_file_lifecycle(self) -> None:
         """Initialize file-manager lifecycle state."""
-        self._base_dir = base_dir
         self._created_files = list[Path]()
         self._created_dirs = list[Path]()
 
@@ -55,42 +46,35 @@ class FlextTestsFilesLifecycleMixin:
         self.cleanup()
 
     @property
-    def base_dir(self) -> Path | None:
-        """Get base directory."""
-        return self._base_dir
-
-    @property
     def created_dirs(self) -> t.SequenceOf[Path]:
-        """Get list of created directories."""
-        return self._created_dirs or []
+        """The list of created directories."""
+        return self._created_dirs
 
     @property
     def created_files(self) -> t.SequenceOf[Path]:
-        """Get list of created files."""
-        return self._created_files or []
+        """The list of created files."""
+        return self._created_files
 
     def cleanup(self) -> None:
         """Cleanup all tracked files and directories created by this manager."""
-        if self._created_files is not None:
-            for path in reversed(self._created_files):
-                if not path.exists():
-                    continue
-                try:
-                    path.chmod(c.Tests.PERMISSION_WRITABLE_FILE)
-                    path.unlink(missing_ok=True)
-                except OSError:
-                    pass
-            self._created_files.clear()
-        if self._created_dirs is not None:
-            for path in reversed(self._created_dirs):
-                if not path.exists():
-                    continue
-                try:
-                    path.chmod(c.Tests.PERMISSION_WRITABLE_DIR)
-                    shutil.rmtree(path)
-                except OSError:
-                    pass
-            self._created_dirs.clear()
+        for path in reversed(self._created_files):
+            if not path.exists():
+                continue
+            try:
+                path.chmod(c.Tests.PERMISSION_WRITABLE_FILE)
+                path.unlink(missing_ok=True)
+            except OSError:
+                pass
+        self._created_files.clear()
+        for path in reversed(self._created_dirs):
+            if not path.exists():
+                continue
+            try:
+                path.chmod(c.Tests.PERMISSION_WRITABLE_DIR)
+                shutil.rmtree(path)
+            except OSError:
+                pass
+        self._created_dirs.clear()
 
     def _resolve_directory(self, directory: Path | None) -> Path:
         """Resolve target directory for file creation."""
@@ -99,10 +83,7 @@ class FlextTestsFilesLifecycleMixin:
             target_dir.mkdir(parents=True, exist_ok=True)
             return target_dir
         temp_dir = Path(tempfile.mkdtemp())
-        created_dirs = self._created_dirs
-        if created_dirs is None:
-            created_dirs = self._created_dirs = list[Path]()
-        created_dirs.append(temp_dir)
+        self._created_dirs.append(temp_dir)
         return temp_dir
 
 

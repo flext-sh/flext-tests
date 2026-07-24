@@ -2,18 +2,21 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable
 from importlib import import_module
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_tests import c, m, p, t
+from flext_tests._fixtures._enforcement_parts.items import EnforcementItem
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable
+
+    import pytest
 
 
 def _iter_infra_violations(
-    report: p.AttributeProbe,
-    field: str,
-    *,
-    match_missing: bool,
+    report: p.AttributeProbe, field: str, *, match_missing: bool
 ) -> Iterable[tuple[str, p.AttributeProbe]]:
     """Yield ``(project_name, violation)`` from a workspace report."""
     projects = getattr(report, "projects", ())
@@ -30,10 +33,10 @@ def _iter_infra_violations(
             yield str(project_name), entry
 
 
-def _dispatch_infra_detector(
-    rule: m.EnforcementRuleSpec,
-    report: p.AttributeProbe,
+def dispatch_infra_detector(
+    rule: m.EnforcementRuleSpec, report: p.AttributeProbe
 ) -> dict[str, list[p.AttributeProbe]]:
+    """Group namespace-detector violations by owning project."""
     source = rule.source
     field = getattr(source, "violation_field", "")
     match_missing = bool(getattr(source, "match_missing", False))
@@ -45,10 +48,44 @@ def _dispatch_infra_detector(
     return grouped
 
 
-def _dispatch_tests_validator(
+def build_tests_validator_items(
+    collector: pytest.Collector,
     rule: m.EnforcementRuleSpec,
-    workspace_root: Path,
-    targets: t.SequenceOf[Path],
+    context: m.Tests.EnforcementBuildContext,
+) -> list[EnforcementItem]:
+    """Build enforcement items from flext-tests validator methods."""
+    workspace_root = context.workspace_root
+    targets = context.validator_targets
+    if workspace_root is None:
+        return []
+    grouped = _collect_tests_validator_violations(rule, workspace_root, targets)
+    return _items_from_grouped(collector, rule, grouped)
+
+
+def _items_from_grouped(
+    collector: pytest.Collector,
+    rule: m.EnforcementRuleSpec,
+    grouped: dict[str, list[p.AttributeProbe]],
+) -> list[EnforcementItem]:
+    """Convert grouped violations into enforcement items."""
+    items: list[EnforcementItem] = []
+    for project, violations in grouped.items():
+        if not violations:
+            continue
+        items.append(
+            EnforcementItem.from_parent(
+                collector,
+                name=f"{rule.id}[{project}]",
+                rule=rule,
+                project=project,
+                violations=violations,
+            )
+        )
+    return items
+
+
+def _collect_tests_validator_violations(
+    rule: m.EnforcementRuleSpec, workspace_root: Path, targets: t.SequenceOf[Path]
 ) -> dict[str, list[p.AttributeProbe]]:
     result: dict[str, list[p.AttributeProbe]] = {}
     try:
@@ -67,8 +104,7 @@ def _dispatch_tests_validator(
     wanted_ids = frozenset(getattr(rule.source, "rule_ids", ()))
     for target in targets:
         dispatch_target = _validator_dispatch_target(
-            method_name=method_name,
-            target=target,
+            method_name=method_name, target=target
         )
         if dispatch_target is None:
             continue
@@ -82,11 +118,7 @@ def _dispatch_tests_validator(
     return result
 
 
-def _validator_dispatch_target(
-    *,
-    method_name: str,
-    target: Path,
-) -> Path | None:
+def _validator_dispatch_target(*, method_name: str, target: Path) -> Path | None:
     """Return the concrete path to pass to one validator method."""
     if method_name != "validate_config":
         return target
@@ -119,11 +151,7 @@ def _merge_tests_validator_result(
         result.setdefault(project, []).append(violation)
 
 
-def _violation_project(
-    *,
-    violation: p.AttributeProbe,
-    workspace_root: Path,
-) -> str:
+def _violation_project(*, violation: p.AttributeProbe, workspace_root: Path) -> str:
     """Return the owning workspace segment for one validator violation."""
     file_path = getattr(violation, "file_path", None)
     if file_path is None:
@@ -135,7 +163,4 @@ def _violation_project(
     return rel.parts[0] if rel.parts else "workspace"
 
 
-__all__: list[str] = [
-    "_dispatch_infra_detector",
-    "_dispatch_tests_validator",
-]
+__all__: list[str] = ["build_tests_validator_items", "dispatch_infra_detector"]

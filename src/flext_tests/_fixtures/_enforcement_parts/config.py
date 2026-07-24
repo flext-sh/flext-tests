@@ -10,7 +10,9 @@ import pytest
 from flext_tests import c, m, u
 
 
-class _SessionConfig:
+class SessionConfig:
+    """Session-scoped stash slot holding the resolved enforcement configuration."""
+
     stash_config: ClassVar[pytest.StashKey[m.Tests.EnforcementDispatcherConfig]] = (
         pytest.StashKey()
     )
@@ -29,6 +31,7 @@ def discover_workspace_root(start: Path) -> Path | None:
 
 
 def split_csv(raw: str | None) -> frozenset[str]:
+    """Split a comma-separated option value into a normalized frozen set."""
     if not raw:
         return frozenset()
     return frozenset(part.strip() for part in raw.split(",") if part.strip())
@@ -36,10 +39,7 @@ def split_csv(raw: str | None) -> frozenset[str]:
 
 def pytest_addoption(parser: pytest.Parser) -> None:
     """Register CLI options for the enforcement dispatcher."""
-    group = parser.getgroup(
-        "flext-enforce",
-        "FLEXT cross-layer enforcement catalog",
-    )
+    group = parser.getgroup("flext-enforce", "FLEXT cross-layer enforcement catalog")
     group.addoption(
         "--flext-enforce",
         action="store_true",
@@ -81,9 +81,9 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     )
 
 
-def _resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfig:
+def resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfig:
     """Build and cache the dispatcher's resolved configuration."""
-    stashed = config.stash.get(_SessionConfig.stash_config, None)
+    stashed = config.stash.get(SessionConfig.stash_config, None)
     if stashed is not None:
         return stashed
 
@@ -110,13 +110,14 @@ def _resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfi
         exclude=exclude,
         workspace_root=workspace_root,
     )
-    config.stash[_SessionConfig.stash_config] = resolved
+    config.stash[SessionConfig.stash_config] = resolved
     return resolved
 
 
 def active_rules(
     cfg: m.Tests.EnforcementDispatcherConfig,
 ) -> tuple[m.EnforcementRuleSpec, ...]:
+    """Return enabled catalog rules after applying include/exclude filters."""
     catalog = u.build_canonical_catalog()
     rules: list[m.EnforcementRuleSpec] = []
     for rule in catalog.rules:
@@ -132,7 +133,7 @@ def active_rules(
 
 def pytest_configure(config: pytest.Config) -> None:
     """Register filterwarnings for every active runtime-warning rule."""
-    cfg = _resolve_config(config)
+    cfg = resolve_config(config)
     if not cfg.active:
         return
     for rule in active_rules(cfg):
@@ -148,11 +149,11 @@ def pytest_configure(config: pytest.Config) -> None:
 
 
 __all__: list[str] = [
-    "_SessionConfig",
-    "_resolve_config",
+    "SessionConfig",
     "active_rules",
     "discover_workspace_root",
     "pytest_addoption",
     "pytest_configure",
+    "resolve_config",
     "split_csv",
 ]

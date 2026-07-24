@@ -8,17 +8,14 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    MutableSequence,
-)
+from collections.abc import MutableSequence
 from pathlib import Path
 from typing import override
 
 from flext_tests import c, m, t, u
-from flext_tests._validator.models import FlextTestsValidatorModels
 
 
-class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):
+class FlextValidatorBypass(u.Tests.ValidatorScannerMixin):
     """Bypass validation methods for FlextTestsValidator.
 
     Uses c.Tests.Validator for constants and m.Tests.Validator for models.
@@ -46,7 +43,7 @@ class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):
                         "BYPASS-003",
                         lines,
                         c.Tests.VALIDATOR_MSG_BYPASS_BARE_EXCEPT,
-                    ),
+                    )
                 )
                 continue
             if c.Tests.VALIDATOR_EXCEPT_HEADER_RE.match(line) is None:
@@ -59,8 +56,8 @@ class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):
                     line_number,
                     "BYPASS-003",
                     lines,
-                    c.Tests.VALIDATOR_MSG_BYPASS_ONLY_PASS,
-                ),
+                    c.Tests.VALIDATOR_MSG_BYPASS_TRIVIAL_BODY,
+                )
             )
         return violations
 
@@ -79,12 +76,7 @@ class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):
             if c.Tests.VALIDATOR_NOQA_RE.search(line) and u.Tests.real_comment(
                 line, c.Tests.VALIDATOR_NOQA_RE
             ):
-                violation = u.Tests.create_violation(
-                    file_path,
-                    i,
-                    "BYPASS-001",
-                    lines,
-                )
+                violation = u.Tests.create_violation(file_path, i, "BYPASS-001", lines)
                 violations.append(violation)
         return violations
 
@@ -108,21 +100,14 @@ class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):
             if c.Tests.VALIDATOR_PRAGMA_NO_COVER_RE.search(
                 line
             ) and u.Tests.real_comment(line, c.Tests.VALIDATOR_PRAGMA_NO_COVER_RE):
-                violation = u.Tests.create_violation(
-                    file_path,
-                    i,
-                    "BYPASS-002",
-                    lines,
-                )
+                violation = u.Tests.create_violation(file_path, i, "BYPASS-002", lines)
                 violations.append(violation)
         return violations
 
     @override
     @classmethod
     def _scan_file(
-        cls,
-        file_path: Path,
-        approved: t.MappingKV[str, t.StrSequence],
+        cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single file for bypass violations."""
         violations: MutableSequence[m.Tests.Violation] = []
@@ -135,14 +120,12 @@ class FlextValidatorBypass(FlextTestsValidatorModels.Tests.ScannerMixin):
                     "BYPASS-UNREADABLE",
                     (),
                     read.error or "could not read file",
-                ),
+                )
             ]
         lines = read.value.splitlines()
         violations.extend(cls._check_noqa(file_path, lines, approved))
         violations.extend(cls._check_pragma_no_cover(file_path, lines, approved))
-        violations.extend(
-            cls._check_exception_swallowing(file_path, lines, approved),
-        )
+        violations.extend(cls._check_exception_swallowing(file_path, lines, approved))
         return violations
 
 

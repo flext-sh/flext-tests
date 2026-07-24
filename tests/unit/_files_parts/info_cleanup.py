@@ -5,9 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_tests import tf, tm
-from tests.models import m
-from tests.typings import t
-from tests.utilities import u
+from tests import m, t, u
 
 
 class FilesInfoCleanupMixin:
@@ -127,8 +125,7 @@ class FilesInfoCleanupMixin:
     def test_temporary_files_classmethod(self) -> None:
         """Test files classmethod context manager."""
         files: t.MappingKV[
-            str,
-            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
+            str, str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel
         ] = {"file1": "content1", "file2": "content2"}
         with tf.files(files) as created:
             tm.that(len(created), eq=2)
@@ -142,8 +139,7 @@ class FilesInfoCleanupMixin:
     def test_temporary_files_custom_extension(self) -> None:
         """Test files with custom extension."""
         files: t.MappingKV[
-            str,
-            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
+            str, str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel
         ] = {"file1": "content1"}
         with tf.files(files, ext=".md") as created:
             tm.that(created["file1"].name, eq="file1.md")
@@ -152,8 +148,7 @@ class FilesInfoCleanupMixin:
         """Test creating files in nested directory."""
         nested_dir = tmp_path / "nested" / "subdir"
         files: t.MappingKV[
-            str,
-            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
+            str, str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel
         ] = {"file1": "content1"}
         with tf.files(files, directory=nested_dir) as created:
             tm.that(created["file1"].parent, eq=nested_dir)

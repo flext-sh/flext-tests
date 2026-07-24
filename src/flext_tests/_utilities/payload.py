@@ -9,24 +9,27 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    Mapping,
-)
+from collections.abc import Callable, Mapping, Sequence
 from datetime import datetime, tzinfo
 from enum import Enum
 from pathlib import Path
+from typing import TypeIs, assert_never
 
 from flext_infra import u
 from flext_tests import c, m, p, t
+
+type _DeepPredicate = Callable[[t.Tests.TestobjectSerializable], bool]
 
 
 class FlextTestsPayloadUtilities:
     """Namespace class for shared payload conversion helpers in flext_tests."""
 
     @staticmethod
-    def to_payload(
-        value: p.AttributeProbe,
-    ) -> t.Tests.TestobjectSerializable:
+    def _is_deep_predicate(value: p.AttributeProbe) -> TypeIs[_DeepPredicate]:
+        return callable(value)
+
+    @staticmethod
+    def to_payload(value: p.AttributeProbe) -> t.Tests.TestobjectSerializable:
         """Recursively flatten any runtime value to ``TestobjectSerializable``."""
         to_p = FlextTestsPayloadUtilities.to_payload
         match value:
@@ -51,17 +54,19 @@ class FlextTestsPayloadUtilities:
                 normalized_map = {str(k): to_p(v) for k, v in value.items()}
                 try:
                     validated_map = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(
-                        normalized_map,
+                        normalized_map
                     )
                 except c.ValidationError:
                     result = normalized_map
                 else:
                     result = {k: to_p(v) for k, v in validated_map.items()}
-            case list() | tuple() | set():
+            case list() | tuple() | set() | frozenset():
                 normalized_seq = [to_p(item) for item in value]
+                if isinstance(value, (set, frozenset)):
+                    normalized_seq = sorted(normalized_seq, key=repr)
                 try:
                     validated_seq = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
-                        normalized_seq,
+                        normalized_seq
                     )
                 except c.ValidationError:
                     result = normalized_seq
@@ -72,30 +77,29 @@ class FlextTestsPayloadUtilities:
         return result
 
     @staticmethod
-    def to_normalized_value(
-        value: t.Tests.TestobjectSerializable,
-    ) -> t.JsonValue:
+    def to_normalized_value(value: t.Tests.TestobjectSerializable) -> t.JsonValue:
         """Flatten to pure Container via canonical runtime helper."""
         to_n = FlextTestsPayloadUtilities.to_normalized_value
         match value:
-            case m.RootModel():
-                result = to_n(value.root)
             case m.BaseModel():
                 result = str(value)
             case bytes():
                 result = value.decode(errors="ignore")
             case type() | tzinfo():
                 result = str(value)
-            case datetime() | Path() | None | str() | int() | float() | bool():
+            case datetime() | Path() | None | str() | int() | float():
                 result = u.normalize_to_metadata(value)
             case Mapping():
                 result = u.normalize_to_metadata({
                     key: to_n(item) for key, item in value.items()
                 })
-            case list() | tuple() | frozenset():
-                result = u.normalize_to_metadata([to_n(item) for item in value])
+            case Sequence() | frozenset():
+                normalized_items = [to_n(item) for item in value]
+                if isinstance(value, frozenset):
+                    normalized_items = sorted(normalized_items, key=repr)
+                result = u.normalize_to_metadata(normalized_items)
             case _:
-                result = str(value)
+                assert_never(value)
         return result
 
     @staticmethod
@@ -115,8 +119,7 @@ class FlextTestsPayloadUtilities:
             key: (
                 payload
                 if isinstance(
-                    payload := FlextTestsPayloadUtilities.to_payload(item),
-                    m.BaseModel,
+                    payload := FlextTestsPayloadUtilities.to_payload(item), m.BaseModel
                 )
                 else FlextTestsPayloadUtilities.to_normalized_value(payload)
             )
@@ -159,7 +162,7 @@ class FlextTestsPayloadUtilities:
                 )
             actual = result.value
             actual_payload = to_payload(actual)
-            if callable(expected):
+            if FlextTestsPayloadUtilities._is_deep_predicate(expected):
                 if not expected(actual_payload):
                     return m.Tests.DeepMatchResult(
                         path=path,

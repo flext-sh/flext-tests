@@ -6,13 +6,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    Mapping,
-)
 from enum import StrEnum, unique
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
-from flext_tests import t
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+
+    from flext_infra import t
 
 
 class FlextTestsConstantsDocker:
@@ -30,6 +30,14 @@ class FlextTestsConstantsDocker:
             "service": "oracle-db",
             "port": 1521,
             "host": "localhost",
+            "startup_timeout": 900,
+        },
+        "flext-kind-test": {
+            "compose_file": "docker/docker-compose.kubernetes.yml",
+            "service": "kind",
+            "port": 6443,
+            "host": "localhost",
+            "startup_timeout": 120,
         },
     }
 

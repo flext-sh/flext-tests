@@ -3,44 +3,42 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-from flext_core.lazy import build_lazy_import_map, install_lazy_exports
-
-if TYPE_CHECKING:
-    from flext_tests._fixtures._enforcement_parts.config import (
-        active_rules as active_rules,
-        discover_workspace_root as discover_workspace_root,
-        split_csv as split_csv,
-    )
-    from flext_tests._fixtures._enforcement_parts.items import (
-        EnforcementCollector as EnforcementCollector,
-        EnforcementItem as EnforcementItem,
-        EnforcementViolationError as EnforcementViolationError,
-    )
-_LAZY_IMPORTS = build_lazy_import_map(
-    {
-        ".build": ("build",),
-        ".config": (
-            "active_rules",
-            "discover_workspace_root",
-            "split_csv",
-        ),
-        ".discovery": ("discovery",),
-        ".hooks": ("hooks",),
-        ".items": (
-            "EnforcementCollector",
-            "EnforcementItem",
-            "EnforcementViolationError",
-        ),
-        ".validators": ("validators",),
-    },
+from .build import build_items as build_items
+from .config import (
+    SessionConfig as SessionConfig,
+    active_rules as active_rules,
+    discover_workspace_root as discover_workspace_root,
+    resolve_config as resolve_config,
+    split_csv as split_csv,
+)
+from .discovery import (
+    collected_project_names as collected_project_names,
+    collected_validator_targets as collected_validator_targets,
+    load_infra_report as load_infra_report,
+)
+from .items import (
+    EnforcementCollector as EnforcementCollector,
+    EnforcementItem as EnforcementItem,
+    EnforcementViolationError as EnforcementViolationError,
+)
+from .validators import (
+    build_tests_validator_items as build_tests_validator_items,
+    dispatch_infra_detector as dispatch_infra_detector,
 )
 
-
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
+__all__: tuple[str, ...] = (
+    "EnforcementCollector",
+    "EnforcementItem",
+    "EnforcementViolationError",
+    "SessionConfig",
+    "active_rules",
+    "build_items",
+    "build_tests_validator_items",
+    "collected_project_names",
+    "collected_validator_targets",
+    "discover_workspace_root",
+    "dispatch_infra_detector",
+    "load_infra_report",
+    "resolve_config",
+    "split_csv",
 )

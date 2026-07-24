@@ -9,7 +9,7 @@ from __future__ import annotations
 from enum import StrEnum, unique
 from typing import Final
 
-from flext_tests import c, t
+from flext_infra import c as infra_c, t
 
 
 class FlextTestsConstantsFiles:
@@ -61,9 +61,14 @@ class FlextTestsConstantsFiles:
         SKIP = "skip"
         COLLECT = "collect"
 
-    KNOWN_FORMATS: Final[frozenset[str]] = frozenset(
-        {"auto", "text", "bin", "json", "yaml", "csv"},
-    )
+    KNOWN_FORMATS: Final[frozenset[str]] = frozenset({
+        "auto",
+        "text",
+        "bin",
+        "json",
+        "yaml",
+        "csv",
+    })
     EXT_TO_FMT: Final[t.StrMapping] = {
         ".txt": "text",
         ".log": "text",
@@ -78,7 +83,7 @@ class FlextTestsConstantsFiles:
         ".tsv": "csv",
     }
     DEFAULT_FILENAME: Final[str] = "file"
-    DEFAULT_ENCODING: Final[str] = c.DEFAULT_ENCODING
+    DEFAULT_ENCODING: Final[str] = infra_c.DEFAULT_ENCODING
     DEFAULT_BINARY_ENCODING: Final[str] = "binary"
     DEFAULT_JSON_INDENT: Final[int] = 2
     DEFAULT_CSV_DELIMITER: Final[str] = ","
@@ -96,34 +101,3 @@ class FlextTestsConstantsFiles:
     ERROR_READ: Final[str] = "Read error: {error}"
     ERROR_COMPARE: Final[str] = "Compare error: {error}"
     ERROR_INFO: Final[str] = "Info error: {error}"
-
-    @classmethod
-    def format_size(cls, size: int) -> str:
-        """Format size in human-readable format.
-
-        Args:
-            size: Size in bytes.
-
-        Returns:
-            Human-readable size string like "1.2 KB".
-
-        """
-        for unit in cls.SIZE_UNITS:
-            if size < cls.SIZE_THRESHOLD:
-                return f"{size:.1f} {unit}" if unit != "B" else f"{size} {unit}"
-            size //= cls.SIZE_THRESHOLD
-        return f"{size:.1f} PB"
-
-    @classmethod
-    def format_for_extension(cls, extension: str) -> str:
-        """Get format from file extension.
-
-        Args:
-            extension: File extension (e.g., ".json").
-
-        Returns:
-            Format string or "text" as default.
-
-        """
-        format_name = cls.EXT_TO_FMT.get(extension.lower())
-        return format_name if isinstance(format_name, str) else "text"

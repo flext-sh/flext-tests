@@ -5,10 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_tests import tf, tm
-from tests.constants import c
-from tests.models import m
-from tests.typings import t
-from tests.utilities import u
+from tests import c, m, t, u
 
 
 class FilesFormatsMixin:

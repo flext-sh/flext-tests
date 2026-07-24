@@ -8,20 +8,14 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    MutableSequence,
-)
+from collections.abc import MutableSequence
 from pathlib import Path
-from typing import TYPE_CHECKING, override
+from typing import override
 
-from flext_tests import c, t, u
-from flext_tests._validator.models import FlextTestsValidatorModels
-
-if TYPE_CHECKING:
-    from flext_tests import m
+from flext_tests import c, m, t, u
 
 
-class FlextValidatorTests(FlextTestsValidatorModels.Tests.ScannerMixin):
+class FlextValidatorTests(u.Tests.ValidatorScannerMixin):
     """Test validation methods for FlextTestsValidator.
 
     Uses c.Tests.Validator, m.Tests.Validator, u.Tests.Validator.
@@ -73,13 +67,12 @@ class FlextValidatorTests(FlextTestsValidatorModels.Tests.ScannerMixin):
         for line_number, line in enumerate(lines, start=1):
             from_match = c.Tests.VALIDATOR_FROM_IMPORT_LINE_RE.match(line)
             if from_match is not None and u.Tests.code_match(
-                line,
-                c.Tests.VALIDATOR_FROM_IMPORT_LINE_RE,
+                line, c.Tests.VALIDATOR_FROM_IMPORT_LINE_RE
             ):
                 module = from_match.group("module")
                 if "mock" in module.lower():
                     for imported_name in u.Tests.split_import_targets(
-                        from_match.group("names"),
+                        from_match.group("names")
                     ):
                         if imported_name not in mock_names:
                             continue
@@ -90,7 +83,7 @@ class FlextValidatorTests(FlextTestsValidatorModels.Tests.ScannerMixin):
                                 "TEST-002",
                                 lines,
                                 f"import {imported_name}",
-                            ),
+                            )
                         )
             for match in c.Tests.VALIDATOR_MOCK_CALL_RE.finditer(line):
                 violations.append(
@@ -100,7 +93,7 @@ class FlextValidatorTests(FlextTestsValidatorModels.Tests.ScannerMixin):
                         "TEST-002",
                         lines,
                         f"{match.group('name')}()",
-                    ),
+                    )
                 )
         return violations
 
@@ -124,16 +117,13 @@ class FlextValidatorTests(FlextTestsValidatorModels.Tests.ScannerMixin):
                     line_number,
                     "TEST-001",
                     lines,
-                    c.Tests.VALIDATOR_MSG_TEST_MONKEYPATCH.format(
-                        func=func_name,
-                    ),
-                ),
+                    c.Tests.VALIDATOR_MSG_TEST_MONKEYPATCH.format(func=func_name),
+                )
             )
         for line_number, line in enumerate(lines, start=1):
             match = c.Tests.VALIDATOR_MONKEYPATCH_ACCESS_RE.search(line)
             if match is None or not u.Tests.code_match(
-                line,
-                c.Tests.VALIDATOR_MONKEYPATCH_ACCESS_RE,
+                line, c.Tests.VALIDATOR_MONKEYPATCH_ACCESS_RE
             ):
                 continue
             violations.append(
@@ -143,7 +133,7 @@ class FlextValidatorTests(FlextTestsValidatorModels.Tests.ScannerMixin):
                     "TEST-001",
                     lines,
                     f"monkeypatch.{match.group('attr')}",
-                ),
+                )
             )
         return violations
 
@@ -158,12 +148,7 @@ class FlextValidatorTests(FlextTestsValidatorModels.Tests.ScannerMixin):
         if u.Tests.approved("TEST-003", file_path, approved):
             return []
         return [
-            u.Tests.create_violation(
-                file_path,
-                line_number,
-                "TEST-003",
-                lines,
-            )
+            u.Tests.create_violation(file_path, line_number, "TEST-003", lines)
             for line_number, line in enumerate(lines, start=1)
             if c.Tests.VALIDATOR_PATCH_DECORATOR_RE.match(line) is not None
             and u.Tests.code_match(line, c.Tests.VALIDATOR_PATCH_DECORATOR_RE)
@@ -172,9 +157,7 @@ class FlextValidatorTests(FlextTestsValidatorModels.Tests.ScannerMixin):
     @classmethod
     @override
     def _scan_file(
-        cls,
-        file_path: Path,
-        approved: t.MappingKV[str, t.StrSequence],
+        cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single file for test violations."""
         violations: MutableSequence[m.Tests.Violation] = []
@@ -187,7 +170,7 @@ class FlextValidatorTests(FlextTestsValidatorModels.Tests.ScannerMixin):
                     "TEST-UNREADABLE",
                     (),
                     read.error or "could not read file",
-                ),
+                )
             ]
         lines = read.value.splitlines()
         violations.extend(cls._check_monkeypatch(file_path, lines, approved))

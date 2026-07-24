@@ -2,29 +2,31 @@
 
 from __future__ import annotations
 
-import pytest
+from typing import TYPE_CHECKING
 
-from flext_tests import p
-from flext_tests._fixtures._enforcement_parts.build import _build_items
+from flext_tests._fixtures._enforcement_parts.build import build_items
 from flext_tests._fixtures._enforcement_parts.config import (
-    _resolve_config,
-    _SessionConfig,
+    SessionConfig,
     active_rules,
+    resolve_config,
 )
+
+if TYPE_CHECKING:
+    import pytest
+
+    from flext_tests import p
 
 
 def pytest_collection_modifyitems(
-    session: pytest.Session,
-    config: pytest.Config,
-    items: list[pytest.Item],
+    session: pytest.Session, config: pytest.Config, items: list[pytest.Item]
 ) -> None:
     """Append dispatcher items to the collection when active."""
-    cfg = _resolve_config(config)
+    cfg = resolve_config(config)
     if not cfg.active:
         return
     if hasattr(config, "workerinput"):
         return
-    generated = _build_items(session, cfg, collected_items=items)
+    generated = build_items(session, cfg, collected_items=items)
     if not generated:
         return
     items.extend(generated)
@@ -38,9 +40,9 @@ def pytest_warning_recorded(
 ) -> None:
     """Track runtime enforcement warnings."""
     _ = when, nodeid, location
-    if _SessionConfig.value is None:
+    if SessionConfig.value is None:
         return
-    cfg = _resolve_config(_SessionConfig.value)
+    cfg = resolve_config(SessionConfig.value)
     if not cfg.active:
         return
     category = getattr(warning_message, "category", None)
@@ -53,17 +55,15 @@ def pytest_warning_recorded(
 
 def pytest_sessionstart(session: pytest.Session) -> None:
     """Expose the session config for warning-capture plumbing."""
-    _SessionConfig.value = session.config
+    SessionConfig.value = session.config
 
 
 def pytest_terminal_summary(
-    terminalreporter: pytest.TerminalReporter,
-    exitstatus: int,
-    config: pytest.Config,
+    terminalreporter: pytest.TerminalReporter, exitstatus: int, config: pytest.Config
 ) -> None:
     """Print the per-kind breakdown at the end of the session."""
     _ = exitstatus
-    cfg = _resolve_config(config)
+    cfg = resolve_config(config)
     if not cfg.active:
         return
     active = active_rules(cfg)
