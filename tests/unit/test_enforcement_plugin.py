@@ -20,13 +20,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import (
-    active_rules,
-    discover_workspace_root,
-    m,
-    split_csv,
-    tm,
-)
+from flext_tests import active_rules, discover_workspace_root, m, split_csv, tm
 
 if TYPE_CHECKING:
     from pathlib import Path
