@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
+from typing import Literal, TypeIs, overload
 
 from flext_core import u
 from flext_tests import c, m, p, r, t
@@ -684,12 +685,68 @@ class FlextTestsMatchersThatMixin:
                     raise AssertionError(msg or "Expected a non-None value")
                 return value
 
+            # NOTE (mro-li3p): TypeIs overloads turn statement-style calls into
+            # implicit asserts for static analyzers; runtime stays fail-closed.
+            @overload
+            @classmethod
+            def that[T](
+                cls,
+                value: T | None,
+                *,
+                none: Literal[False],
+                **kwargs: t.Tests.MatcherCallKwargValue,
+            ) -> TypeIs[T]: ...
+            @overload
+            @classmethod
+            def that(
+                cls,
+                value: object,
+                *,
+                eq: None,
+                **kwargs: t.Tests.MatcherCallKwargValue,
+            ) -> TypeIs[None]: ...
+            @overload
+            @classmethod
+            def that[T](
+                cls,
+                value: T | None,
+                *,
+                ne: None,
+                **kwargs: t.Tests.MatcherCallKwargValue,
+            ) -> TypeIs[T]: ...
+            @overload
+            @classmethod
+            def that[E](
+                cls,
+                value: E | None,
+                *,
+                eq: E,
+                **kwargs: t.Tests.MatcherCallKwargValue,
+            ) -> TypeIs[E]: ...
+            @overload
+            @classmethod
+            def that[T](
+                cls,
+                value: object,
+                *,
+                is_: type[T],
+                **kwargs: t.Tests.MatcherCallKwargValue,
+            ) -> TypeIs[T]: ...
+            @overload
+            @classmethod
+            def that(
+                cls, value: p.AttributeProbe, **kwargs: t.Tests.MatcherCallKwargValue
+            ) -> None: ...
             @classmethod
             def that(
                 cls, value: p.AttributeProbe, **kwargs: t.Tests.MatcherCallKwargValue
             ) -> None:
                 """Assert a value against universal matcher constraints."""
                 params, raw_eq, raw_ne, raw_has, raw_contains = cls._that_params(kwargs)
+                if "eq" in kwargs and kwargs["eq"] is None and params.none is None:
+                    params = params.model_copy(update={"none": True})
+                if "ne" in kwargs and kwargs["ne"] is None and params.none is None:
+                    params = params.model_copy(update={"none": False})
                 cls._validate_declared_types(value, params)
                 if cls._is_type_only(params, raw_eq, raw_ne):
                     return

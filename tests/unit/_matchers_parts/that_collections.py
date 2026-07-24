@@ -37,6 +37,33 @@ class MatchersThatCollectionsMixin:
         tm.that("test", none=False)
         tm.that(None, none=True)
 
+    def test_that_none_false_rejects_none(self) -> None:
+        """none=False narrowing is fail-closed for None values."""
+        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+            tm.that(None, none=False)
+
+    def test_that_is_type_rejects_none(self) -> None:
+        """is_=type narrowing is fail-closed for None values."""
+        with pytest.raises(AssertionError, match=r"Expected type .* but got NoneType"):
+            tm.that(None, is_=dict)
+
+    def test_that_eq_value_rejects_none(self) -> None:
+        """eq=<value> narrowing is fail-closed for None values."""
+        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+            tm.that(None, eq="x")
+
+    def test_that_eq_none_requires_none(self) -> None:
+        """eq=None asserts the value is None instead of passing silently."""
+        tm.that(None, eq=None)
+        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+            tm.that("x", eq=None)
+
+    def test_that_ne_none_requires_value(self) -> None:
+        """ne=None asserts the value is not None instead of passing silently."""
+        tm.that("x", ne=None)
+        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+            tm.that(None, ne=None)
+
     def test_not_none_returns_the_narrowed_value(self) -> None:
         """not_none returns the original value with its optional removed."""
         value: str | None = "test"
