@@ -756,15 +756,6 @@ paths = ["src"]
 verbose = false
 
 # [MANAGED] yamlfix
-[tool.uv.sources.flext-cli]
-workspace = true
-
-[tool.uv.sources.flext-core]
-workspace = true
-
-[tool.uv.sources.flext-infra]
-workspace = true
-
 [tool.yamlfix]
 explicit_start = false
 line_length = 88
