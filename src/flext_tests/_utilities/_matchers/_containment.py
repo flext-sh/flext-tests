@@ -7,11 +7,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 
-from flext_tests import (
-    c,
-    p,
-    t,
-)
+from flext_tests import c, p, t
 from flext_tests._utilities._matchers._assertions import (
     FlextTestsMatchersAssertionsMixin,
 )
@@ -24,22 +20,20 @@ class FlextTestsMatchersContainmentMixin:
     @staticmethod
     def check_has_lacks(
         value: p.AttributeProbe,
-        has: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.JsonValue | None,
-        lacks: t.Tests.ContainmentSpec | t.Tests.MatcherKwargValue | t.JsonValue | None,
+        has: p.AttributeProbe | None,
+        lacks: p.AttributeProbe | None,
         msg: str | None,
         *,
         as_str: bool = False,
     ) -> None:
         """Shared has/lacks containment check for ok(), fail(), and that()."""
         if has is not None:
-            items: t.SequenceOf[
-                t.Tests.TestobjectSerializable | t.Tests.MatcherKwargValue | t.JsonValue
-            ] = (
+            has_items = (
                 list(has)
                 if isinstance(has, Sequence) and not isinstance(has, t.STR_BINARY_TYPES)
                 else [has]
             )
-            for item in items:
+            for item in has_items:
                 if as_str:
                     check_str = str(item)
                     target = str(value)
@@ -52,10 +46,10 @@ class FlextTestsMatchersContainmentMixin:
                         )
                 else:
                     check_val = FlextTestsPayloadUtilities.to_normalized_value(
-                        FlextTestsPayloadUtilities.to_payload(item),
+                        FlextTestsPayloadUtilities.to_payload(item)
                     )
                     target_raw = FlextTestsPayloadUtilities.to_normalized_value(
-                        FlextTestsPayloadUtilities.to_payload(value),
+                        FlextTestsPayloadUtilities.to_payload(value)
                     )
                     if not isinstance(target_raw, (Mapping, list, str)):
                         FlextTestsMatchersAssertionsMixin.raise_match_assertion(
@@ -79,13 +73,13 @@ class FlextTestsMatchersContainmentMixin:
                             item=item,
                         )
         if lacks is not None:
-            items = (
+            lacks_items = (
                 list(lacks)
                 if isinstance(lacks, Sequence)
                 and not isinstance(lacks, t.STR_BINARY_TYPES)
                 else [lacks]
             )
-            for item in items:
+            for item in lacks_items:
                 if as_str:
                     check_str = str(item)
                     target = str(value)
@@ -98,10 +92,10 @@ class FlextTestsMatchersContainmentMixin:
                         )
                 else:
                     check_val = FlextTestsPayloadUtilities.to_normalized_value(
-                        FlextTestsPayloadUtilities.to_payload(item),
+                        FlextTestsPayloadUtilities.to_payload(item)
                     )
                     target_raw_2 = FlextTestsPayloadUtilities.to_normalized_value(
-                        FlextTestsPayloadUtilities.to_payload(value),
+                        FlextTestsPayloadUtilities.to_payload(value)
                     )
                     if not isinstance(target_raw_2, (Mapping, list, str)):
                         FlextTestsMatchersAssertionsMixin.raise_match_assertion(

@@ -4,11 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_tests import r, tf, tm
-from tests.constants import c
-from tests.models import m
-from tests.typings import t
-from tests.utilities import u
+from flext_tests import tf, tm
+from tests import c, m, r, t, u
 
 
 class FilesBatchCreateInMixin:
@@ -23,8 +20,8 @@ class FilesBatchCreateInMixin:
         )
         batch_result: m.Tests.BatchResult = u.Tests.assert_success(result)
         tm.that(batch_result.total, eq=3)
-        assert batch_result.success_count == 3
-        assert batch_result.failure_count == 0
+        tm.that(batch_result.success_count, eq=3)
+        tm.that(batch_result.failure_count, eq=0)
         tm.that(batch_result.succeeded, eq=3)
 
     def test_batch_create_json_files(self, tmp_path: Path) -> None:
@@ -35,7 +32,7 @@ class FilesBatchCreateInMixin:
             directory=tmp_path,
         )
         batch_result: m.Tests.BatchResult = u.Tests.assert_success(result)
-        assert batch_result.success_count == 2
+        tm.that(batch_result.success_count, eq=2)
         settings1 = tmp_path / "settings1.json"
         tm.that(settings1.exists(), eq=True)
         tm.that(u.Cli.json_read(settings1).unwrap_or({})["key"], eq="value1")
@@ -83,8 +80,7 @@ class FilesBatchCreateInMixin:
     def test_create_in_yaml_content(self, tmp_path: Path) -> None:
         """Test create_in() for YAML file."""
         path = tf(base_dir=tmp_path).create(
-            m.ConfigMap(root={"setting": True}),
-            "settings.yaml",
+            m.ConfigMap(root={"setting": True}), "settings.yaml"
         )
         tm.that(path.exists(), eq=True)
         empty_content: t.JsonMapping = {}
@@ -109,20 +105,15 @@ class FilesBatchCreateInMixin:
     def test_create_in_format_detection(self, tmp_path: Path) -> None:
         """Test create_in() format auto-detection from extension."""
         path1 = tf(base_dir=tmp_path).create(
-            m.ConfigMap(root={"key": "value"}),
-            "settings.json",
+            m.ConfigMap(root={"key": "value"}), "settings.json"
         )
         tm.that(path1.exists(), eq=True)
         tm.that(u.Cli.json_read(path1).unwrap_or({}), eq={"key": "value"})
         path2 = tf(base_dir=tmp_path).create(
-            m.ConfigMap(root={"key": "value"}),
-            "settings.yaml",
+            m.ConfigMap(root={"key": "value"}), "settings.yaml"
         )
         tm.that(path2.exists(), eq=True)
-        tm.that(
-            u.Cli.yaml_parse(path2.read_text()).unwrap_or({}),
-            eq={"key": "value"},
-        )
+        tm.that(u.Cli.yaml_parse(path2.read_text()).unwrap_or({}), eq={"key": "value"})
         path3 = tf(base_dir=tmp_path).create([["a", "b"], ["1", "2"]], "data.csv")
         tm.that(path3.exists(), eq=True)
         lines = path3.read_text().strip().split("\n")
@@ -153,9 +144,7 @@ class FilesBatchCreateInMixin:
 
     def test_create_in_json_indent(self, tmp_path: Path) -> None:
         """Test create_in() with custom JSON indentation."""
-        content: m.ConfigMap = m.ConfigMap(
-            root={"key": "value", "nested": {"a": 1}},
-        )
+        content: m.ConfigMap = m.ConfigMap(root={"key": "value", "nested": {"a": 1}})
         path = tf(base_dir=tmp_path).create(content, "settings.json", indent=4)
         tm.that(path.exists(), eq=True)
         text = path.read_text()

@@ -31,11 +31,12 @@ class FlextTestsTestContextUtilitiesMixin:
             self._fd = self._file_obj.fileno()
             fcntl.flock(self._fd, fcntl.LOCK_EX)
 
+        # mro-j47u (codex): these dunder arguments are contract-only.
         def __exit__(
             self,
-            exc_type: type[BaseException] | None,
-            exc_val: BaseException | None,
-            exc_tb: types.TracebackType | None,
+            _exc_type: type[BaseException] | None,
+            _exc_val: BaseException | None,
+            _exc_tb: types.TracebackType | None,
         ) -> None:
             """Release file lock and clean up the lock file."""
             if self._fd is not None:

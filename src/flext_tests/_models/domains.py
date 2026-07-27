@@ -9,5 +9,3 @@ from __future__ import annotations
 
 class FlextTestsDomainModelsMixin:
     """Domain-model namespace mixin."""
-
-    pass

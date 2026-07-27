@@ -12,7 +12,7 @@ class FlextTestsResultUtilitiesMixin:
 
     @staticmethod
     def assert_failure[TResult](
-        result: p.Result[TResult], expected_error: str | None = None
+        result: p.ResultObservable[TResult], expected_error: str | None = None
     ) -> str:
         """Assert result is failure and return error message."""
         if result.success:
@@ -29,19 +29,19 @@ class FlextTestsResultUtilitiesMixin:
 
     @staticmethod
     def assert_success[TResult](
-        result: p.Result[TResult],
+        result: p.ResultObservable[TResult],
         error_msg: str | None = None,
         *,
         expected_value: TResult | EllipsisType = ...,
     ) -> TResult:
         """Assert result is success, optionally validate the value, and return it."""
+        # mro-p68a.17.3.2.1.7: observation stays covariant across result payloads.
         if not result.success:
             raise AssertionError(
                 error_msg or c.Tests.ERR_OK_FAILED.format(error=result.error)
             )
         value: TResult = result.value
         if expected_value is not ... and value != expected_value:
-            raise AssertionError(
-                f"Expected success value {expected_value!r} but got {value!r}"
-            )
+            msg = f"Expected success value {expected_value!r} but got {value!r}"
+            raise AssertionError(msg)
         return value

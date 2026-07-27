@@ -6,14 +6,12 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from typing import Self
 
-from flext_core import FlextContainer, FlextService
+from flext_core import FlextContainer, s
 from flext_tests import m, p, t
-from flext_tests.settings import FlextTestsSettings
+from flext_tests._settings import FlextTestsSettings
 
 
-class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](
-    FlextService[TDomainResult]
-):
+class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
     """Base service for test packages with the ``Tests`` settings namespace."""
 
     @classmethod
@@ -52,8 +50,7 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](
     @classmethod
     @contextmanager
     def isolated_test_runtime(
-        cls,
-        **overrides: t.SettingsOverride | None,
+        cls, **overrides: t.SettingsOverride | None
     ) -> Generator[Self]:
         """Yield one isolated service/settings/container cycle for a test body."""
         settings_type = cls.test_settings_type()
@@ -78,7 +75,7 @@ class FlextTestsCase:
     """Pytest class MRO surface populated by the shared test runtime fixture."""
 
     service: FlextTestsServiceBase[p.Base]
-    settings: p.Settings
+    settings: FlextTestsSettings
     logger: p.Logger
     c: type
     e: type
@@ -91,4 +88,4 @@ class FlextTestsCase:
 
 s = FlextTestsServiceBase
 
-__all__: list[str] = ["FlextService", "FlextTestsCase", "FlextTestsServiceBase", "s"]
+__all__: list[str] = ["FlextTestsCase", "FlextTestsServiceBase", "s"]

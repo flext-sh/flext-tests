@@ -52,7 +52,8 @@ class FlextTestsFixturesDSLMixin:
     def path(cls, group: str, kind: str) -> Path:
         fp = cls._resolve_path(group, kind)
         if not fp.exists():
-            raise FileNotFoundError(f"Fixture not found: {fp}")
+            msg = f"Fixture not found: {fp}"
+            raise FileNotFoundError(msg)
         return fp
 
     @classmethod
@@ -83,7 +84,7 @@ class FlextTestsFixturesDSLMixin:
                 name[len(prefix) : -len(suffix)]
                 for name in sorted(e.name for e in server_dir.iterdir())
                 if name.startswith(prefix) and name.endswith(suffix)
-            ),
+            )
         )
 
     @classmethod
