@@ -6,7 +6,7 @@ from typing import ClassVar
 
 import pytest
 
-from flext_tests import FlextTestsConfig, c, config, enforcement, tm, u
+from flext_tests import FlextTestsConfig, c, config, tm, u
 
 
 class TestsFlextTestsEnforcementTimeoutPolicy:
@@ -27,39 +27,24 @@ class TestsFlextTestsEnforcementTimeoutPolicy:
             eq=True,
         )
 
-    def test_typed_owner_roundtrips_arbitrary_policy_into_consumer(
-        self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
-        """Alternative valid policy data controls the same production consumer."""
-        parsed = FlextTestsConfig.model_validate({
-            "Tests": {
-                "enforcement": {
-                    "pytest_timeout": {
-                        "allow_timeout_func_only": True,
-                        "required_configured_cap_count": 1,
-                        "timeout_owned_ini_keys": [c.Tests.PYTEST_TIMEOUT_INI],
-                    }
-                }
-            }
-        })
-        policy = parsed.Tests.enforcement.pytest_timeout
-        u.Tests.pytester_make_timeout_ini(
-            pytester, policy_seconds=self.policy_seconds, func_only=True
+    def test_typed_owner_rejects_func_only_weakening(self) -> None:
+        """Schema-invalid policy cannot enable fixture-only timeout coverage."""
+        payload = config.model_dump()
+        payload["Tests"]["enforcement"]["pytest_timeout"]["allow_timeout_func_only"] = (
+            True
         )
-        with monkeypatch.context() as environment:
-            environment.setenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", "1")
-            pytest_config = pytester.parseconfig("-p", "pytest_timeout")
-        enforcement.PytestTimeoutPolicy.configure(pytest_config, policy)
-        tm.that(
-            policy.model_dump(),
-            eq={
-                "allow_timeout_func_only": True,
-                "required_configured_cap_count": 1,
-                "timeout_owned_ini_keys": frozenset({
-                    c.Tests.PytestTimeoutIniKey.TIMEOUT
-                }),
-            },
-        )
+        with pytest.raises(ValueError, match="allow_timeout_func_only"):
+            FlextTestsConfig.model_validate(payload)
+
+    def test_typed_owner_rejects_unprotected_timeout_ini(self) -> None:
+        """Schema-invalid policy cannot leave a timeout-owned INI replaceable."""
+        payload = config.model_dump()
+        policy = payload["Tests"]["enforcement"]["pytest_timeout"]
+        protected = set(policy["timeout_owned_ini_keys"])
+        protected.remove(c.Tests.PytestTimeoutIniKey.ADDOPTS)
+        policy["timeout_owned_ini_keys"] = protected
+        with pytest.raises(ValueError, match="timeout_owned_ini_keys"):
+            FlextTestsConfig.model_validate(payload)
 
     @pytest.mark.parametrize("ratio", [None, 1.0, 0.5])
     def test_accepts_no_cli_override_exact_or_below_policy(
@@ -71,7 +56,11 @@ class TestsFlextTestsEnforcementTimeoutPolicy:
         """No override and non-weakening CLI values preserve the configured ceiling."""
         u.Tests.pytester_make_timeout_ini(pytester, policy_seconds=self.policy_seconds)
         u.Tests.pytester_make_timeout_test(pytester)
-        args = () if ratio is None else (f"--timeout={self.policy_seconds * ratio}",)
+        args = (
+            ()
+            if ratio is None
+            else (f"{c.Tests.PYTEST_TIMEOUT_OPTION}={self.policy_seconds * ratio}",)
+        )
         u.Tests.pytester_run_enforcement(pytester, monkeypatch, *args).assert_outcomes(
             passed=1
         )
@@ -85,7 +74,9 @@ class TestsFlextTestsEnforcementTimeoutPolicy:
         u.Tests.pytester_make_timeout_test(pytester)
         u.Tests.pytester_assert_usage_error(
             u.Tests.pytester_run_enforcement(
-                pytester, monkeypatch, f"--timeout={self.policy_seconds * ratio}"
+                pytester,
+                monkeypatch,
+                f"{c.Tests.PYTEST_TIMEOUT_OPTION}={self.policy_seconds * ratio}",
             )
         )
 
@@ -122,11 +113,10 @@ class TestsFlextTestsEnforcementTimeoutPolicy:
         [
             "0",
             f"{policy_seconds * 2}",
-            "1.0, timeout=1.0",
-            "1.0, 'signal', method='thread'",
+            f"1.0, {c.Tests.PYTEST_TIMEOUT_MARKER}=1.0",
+            f"1.0, 'signal', {c.Tests.PYTEST_TIMEOUT_MARKER_METHOD_KEY}='thread'",
             "1.0, 'signal', False",
-            "1.0, func_only=True",
-            "1.0, disable_debugger_detection=True",
+            f"1.0, {c.Tests.PYTEST_TIMEOUT_MARKER_FUNC_ONLY_KEY}=True",
             "1.0, unsupported=True",
         ],
     )
@@ -196,10 +186,18 @@ class TestsFlextTestsEnforcementTimeoutPolicy:
     @pytest.mark.parametrize(
         "override",
         [
-            ("-o", "timeout=5.0"),
-            ("--override-ini=timeout=5.0",),
-            ("-o", "addopts=--timeout=5.0"),
-            ("--override-ini=timeout_func_only=true",),
+            (c.Tests.PYTEST_OVERRIDE_INI_SHORT_OPTION, f"{key.value}=invalid")
+            for key in sorted(
+                config.Tests.enforcement.pytest_timeout.timeout_owned_ini_keys,
+                key=lambda item: item.value,
+            )
+        ]
+        + [
+            (f"{c.Tests.PYTEST_OVERRIDE_INI_LONG_OPTION}={key.value}=invalid",)
+            for key in sorted(
+                config.Tests.enforcement.pytest_timeout.timeout_owned_ini_keys,
+                key=lambda item: item.value,
+            )
         ],
     )
     def test_rejects_override_ini_forms(
@@ -222,10 +220,15 @@ class TestsFlextTestsEnforcementTimeoutPolicy:
         u.Tests.pytester_make_timeout_ini(pytester, policy_seconds=self.policy_seconds)
         u.Tests.pytester_make_timeout_test(pytester)
         u.Tests.pytester_run_enforcement(
-            pytester, monkeypatch, "-o", "console_output_style=classic"
+            pytester,
+            monkeypatch,
+            c.Tests.PYTEST_OVERRIDE_INI_SHORT_OPTION,
+            "console_output_style=classic",
         ).assert_outcomes(passed=1)
 
-    @pytest.mark.parametrize("variable", ["PYTEST_TIMEOUT", "PYTEST_ADDOPTS"])
+    @pytest.mark.parametrize(
+        "variable", [c.Tests.PYTEST_TIMEOUT_ENV, c.Tests.PYTEST_ADDOPTS_ENV]
+    )
     def test_rejects_environment_timeout_above_policy(
         self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch, variable: str
     ) -> None:
@@ -234,7 +237,10 @@ class TestsFlextTestsEnforcementTimeoutPolicy:
         u.Tests.pytester_make_timeout_test(pytester)
         value = str(self.policy_seconds * 2)
         monkeypatch.setenv(
-            variable, value if variable == "PYTEST_TIMEOUT" else f"--timeout={value}"
+            variable,
+            value
+            if variable == c.Tests.PYTEST_TIMEOUT_ENV
+            else f"{c.Tests.PYTEST_TIMEOUT_OPTION}={value}",
         )
         u.Tests.pytester_assert_usage_error(
             u.Tests.pytester_run_enforcement(pytester, monkeypatch)
@@ -253,7 +259,7 @@ class TestsFlextTestsEnforcementTimeoutPolicy:
             "@pytest.hookimpl(tryfirst=True)\n"
             "def pytest_collection_modifyitems(items):\n"
             "    for item in items:\n"
-            "        item.add_marker(pytest.mark.timeout(0))\n"
+            f"        item.add_marker(pytest.mark.{c.Tests.PYTEST_TIMEOUT_MARKER}(0))\n"
         )
         u.Tests.pytester_assert_usage_error(
             u.Tests.pytester_run_enforcement(pytester, monkeypatch)

@@ -275,6 +275,8 @@ class FlextTestsConstantsValidator:
     PYTEST_ADDOPTS_ENV: Final[str] = "PYTEST_ADDOPTS"
     PYTEST_ADDOPTS_INI: Final[str] = PytestTimeoutIniKey.ADDOPTS.value
     PYTEST_OVERRIDE_INI_DEST: Final[str] = "override_ini"
+    PYTEST_OVERRIDE_INI_LONG_OPTION: Final[str] = "--override-ini"
+    PYTEST_OVERRIDE_INI_SHORT_OPTION: Final[str] = "-o"
     PYTEST_TIMEOUT_ENV: Final[str] = "PYTEST_TIMEOUT"
     PYTEST_TIMEOUT_FUNC_ONLY_INI: Final[str] = (
         PytestTimeoutIniKey.TIMEOUT_FUNC_ONLY.value

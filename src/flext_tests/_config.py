@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 from flext_cli import FlextCliConfig
 from flext_tests._constants.validator import FlextTestsConstantsValidator
@@ -24,8 +24,20 @@ class _PytestTimeoutPolicy(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     required_configured_cap_count: Literal[1]
-    allow_timeout_func_only: bool
+    allow_timeout_func_only: Literal[False]
     timeout_owned_ini_keys: frozenset[FlextTestsConstantsValidator.PytestTimeoutIniKey]
+
+    @field_validator("timeout_owned_ini_keys")
+    @classmethod
+    def _require_all_timeout_owned_ini_keys(
+        cls, value: frozenset[FlextTestsConstantsValidator.PytestTimeoutIniKey]
+    ) -> frozenset[FlextTestsConstantsValidator.PytestTimeoutIniKey]:
+        """Reject policy data that leaves any timeout-owned INI replaceable."""
+        required = frozenset(FlextTestsConstantsValidator.PytestTimeoutIniKey)
+        if value != required:
+            msg = "timeout_owned_ini_keys must protect every pytest timeout INI key"
+            raise ValueError(msg)
+        return value
 
 
 class _EnforcementConfig(BaseModel):
