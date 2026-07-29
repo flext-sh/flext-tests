@@ -14,9 +14,7 @@ from flext_tests._typings.base import FlextTestsBaseTypesMixin as tb
 
 class FlextTestsGuardsTypesMixin:
     @staticmethod
-    def general_value(
-        value: tb.Testobject,
-    ) -> TypeIs[tb.Testobject]:
+    def general_value(value: tb.Testobject) -> TypeIs[tb.Testobject]:
         if value is None:
             return True
         if isinstance(value, (str, int, float, bool, bytes)):
