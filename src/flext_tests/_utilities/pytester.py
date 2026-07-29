@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
 from flext_tests import m, tm
+
+if TYPE_CHECKING:
+    from flext_tests import p
 
 
 class FlextTestsPytesterUtilitiesMixin:
@@ -22,7 +26,7 @@ class FlextTestsPytesterUtilitiesMixin:
     @staticmethod
     def enforcement_dispatcher_config(
         *, include: frozenset[str] = frozenset(), exclude: frozenset[str] = frozenset()
-    ) -> m.Tests.EnforcementDispatcherConfig:
+    ) -> p.Tests.EnforcementDispatcherConfig:
         """Build a resolved enforcement dispatcher config."""
         return m.Tests.EnforcementDispatcherConfig(
             active=True, strict=False, include=include, exclude=exclude

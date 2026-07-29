@@ -3,18 +3,21 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import pytest
 
 from flext_tests import c, m, u
 from flext_tests._fixtures._enforcement_parts.timeout_policy import PytestTimeoutPolicy
 
+if TYPE_CHECKING:
+    from flext_tests import p
+
 
 class SessionConfig:
     """Session-scoped stash slot holding the resolved enforcement configuration."""
 
-    stash_config: ClassVar[pytest.StashKey[m.Tests.EnforcementDispatcherConfig]] = (
+    stash_config: ClassVar[pytest.StashKey[p.Tests.EnforcementDispatcherConfig]] = (
         pytest.StashKey()
     )
     stash_previous_config: ClassVar[pytest.StashKey[pytest.Config | None]] = (
@@ -85,7 +88,7 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     )
 
 
-def resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfig:
+def resolve_config(config: pytest.Config) -> p.Tests.EnforcementDispatcherConfig:
     """Build and cache the dispatcher's resolved configuration."""
     stashed = config.stash.get(SessionConfig.stash_config, None)
     if stashed is not None:
@@ -119,7 +122,7 @@ def resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfig
 
 
 def active_rules(
-    cfg: m.Tests.EnforcementDispatcherConfig,
+    cfg: p.Tests.EnforcementDispatcherConfig,
 ) -> tuple[m.EnforcementRuleSpec, ...]:
     """Return enabled catalog rules after applying include/exclude filters."""
     catalog = u.build_canonical_catalog()

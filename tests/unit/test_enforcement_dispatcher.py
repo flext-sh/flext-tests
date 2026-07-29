@@ -55,14 +55,6 @@ class TestsFlextTestsEnforcementDispatcher:
             line_number=42,
         )
 
-    @staticmethod
-    def _cfg(
-        *, include: frozenset[str] = frozenset(), exclude: frozenset[str] = frozenset()
-    ) -> m.Tests.EnforcementDispatcherConfig:
-        return m.Tests.EnforcementDispatcherConfig(
-            active=True, strict=False, include=include, exclude=exclude
-        )
-
     # ------------------------------------------------------------------ #
     # discover_workspace_root                                            #
     # ------------------------------------------------------------------ #
@@ -124,25 +116,32 @@ class TestsFlextTestsEnforcementDispatcher:
     # ------------------------------------------------------------------ #
 
     def test_active_rules_returns_only_enabled_rules(self) -> None:
-        active = dispatcher.active_rules(self._cfg())
+        active = dispatcher.active_rules(u.Tests.enforcement_dispatcher_config())
 
         assert active
         assert all(r.enabled for r in active)
 
     def test_active_rules_excludes_disabled_skill_pointer_rules(self) -> None:
         # ENFORCE-034..038 ship disabled by default.
-        ids = {r.id for r in dispatcher.active_rules(self._cfg())}
+        ids = {
+            r.id
+            for r in dispatcher.active_rules(u.Tests.enforcement_dispatcher_config())
+        }
 
         assert ids.isdisjoint({"ENFORCE-034", "ENFORCE-035", "ENFORCE-038"})
 
     def test_include_narrows_to_the_listed_ids(self) -> None:
-        active = dispatcher.active_rules(self._cfg(include=frozenset({"ENFORCE-001"})))
+        active = dispatcher.active_rules(
+            u.Tests.enforcement_dispatcher_config(include=frozenset({"ENFORCE-001"}))
+        )
 
         tm.that({r.id for r in active}, eq={"ENFORCE-001"})
 
     def test_include_of_unknown_id_yields_no_rules(self) -> None:
         active = dispatcher.active_rules(
-            self._cfg(include=frozenset({"ENFORCE-DOES-NOT-EXIST"}))
+            u.Tests.enforcement_dispatcher_config(
+                include=frozenset({"ENFORCE-DOES-NOT-EXIST"})
+            )
         )
 
         tm.that(active, eq=())
@@ -151,7 +150,9 @@ class TestsFlextTestsEnforcementDispatcher:
         ids = {
             r.id
             for r in dispatcher.active_rules(
-                self._cfg(exclude=frozenset({"ENFORCE-001"}))
+                u.Tests.enforcement_dispatcher_config(
+                    exclude=frozenset({"ENFORCE-001"})
+                )
             )
         }
 
@@ -159,7 +160,7 @@ class TestsFlextTestsEnforcementDispatcher:
 
     def test_exclude_takes_precedence_over_include(self) -> None:
         active = dispatcher.active_rules(
-            self._cfg(
+            u.Tests.enforcement_dispatcher_config(
                 include=frozenset({"ENFORCE-001"}), exclude=frozenset({"ENFORCE-001"})
             )
         )
@@ -167,8 +168,8 @@ class TestsFlextTestsEnforcementDispatcher:
         tm.that(active, eq=())
 
     def test_active_rules_is_idempotent(self) -> None:
-        first = dispatcher.active_rules(self._cfg())
-        second = dispatcher.active_rules(self._cfg())
+        first = dispatcher.active_rules(u.Tests.enforcement_dispatcher_config())
+        second = dispatcher.active_rules(u.Tests.enforcement_dispatcher_config())
 
         tm.that([r.id for r in first], eq=[r.id for r in second])
 

@@ -21,7 +21,7 @@ class NamespaceDetectorBuilder(p.Tests.EnforcementBuilder):
     def __call__(
         self,
         session: pytest.Session,
-        cfg: m.Tests.EnforcementDispatcherConfig,
+        cfg: p.Tests.EnforcementDispatcherConfig,
         rule: m.EnforcementRuleSpec,
         context: m.Tests.EnforcementBuildContext,
     ) -> list[pytest.Item]:

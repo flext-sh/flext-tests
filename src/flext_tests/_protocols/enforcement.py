@@ -18,6 +18,39 @@ if TYPE_CHECKING:
 class FlextTestsEnforcementProtocolsMixin:
     """Protocols for enforcement dispatch boundaries."""
 
+    class EnforcementDispatcherConfig(Protocol):
+        """Read-only shape consumed by the enforcement dispatcher."""
+
+        @property
+        def active(self) -> bool:
+            """Whether enforcement is active."""
+            ...
+
+        @property
+        def strict(self) -> bool:
+            """Whether runtime warnings are promoted."""
+            ...
+
+        @property
+        def include(self) -> frozenset[str]:
+            """Rule identifiers explicitly included."""
+            ...
+
+        @property
+        def exclude(self) -> frozenset[str]:
+            """Rule identifiers explicitly excluded."""
+            ...
+
+        @property
+        def workspace_root(self) -> Path | None:
+            """Resolved workspace root."""
+            ...
+
+        @property
+        def warning_counter(self) -> t.MutableIntMapping:
+            """Captured warning counts by dotted category."""
+            ...
+
     class EnforcementBuilder(ABC):
         """Callable contract implemented by enforcement contribution builders."""
 
@@ -25,7 +58,7 @@ class FlextTestsEnforcementProtocolsMixin:
         def __call__(
             self,
             session: pytest.Session,
-            cfg: m.Tests.EnforcementDispatcherConfig,
+            cfg: FlextTestsEnforcementProtocolsMixin.EnforcementDispatcherConfig,
             rule: m.EnforcementRuleSpec,
             context: m.Tests.EnforcementBuildContext,
         ) -> list[pytest.Item]:

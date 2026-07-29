@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 def build_items(
     session: pytest.Session,
-    cfg: m.Tests.EnforcementDispatcherConfig,
+    cfg: p.Tests.EnforcementDispatcherConfig,
     *,
     collected_items: t.SequenceOf[pytest.Item],
 ) -> list[pytest.Item]:
