@@ -2,13 +2,57 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
-from flext_tests import tm
+from flext_tests import m, tm
 
 
 class FlextTestsPytesterUtilitiesMixin:
     """Compose reusable pytester operations under ``u.Tests``."""
+
+    @staticmethod
+    def pytester_stamp_workspace_markers(root: Path) -> None:
+        """Write the marker set that identifies a FLEXT workspace root."""
+        (root / "AGENTS.md").write_text("# sandbox workspace stub", encoding="utf-8")
+        (root / "flext-core").mkdir()
+        (root / "flext-tests").mkdir()
+
+    @staticmethod
+    def enforcement_dispatcher_config(
+        *, include: frozenset[str] = frozenset(), exclude: frozenset[str] = frozenset()
+    ) -> m.Tests.EnforcementDispatcherConfig:
+        """Build a resolved enforcement dispatcher config."""
+        return m.Tests.EnforcementDispatcherConfig(
+            active=True, strict=False, include=include, exclude=exclude
+        )
+
+    @staticmethod
+    def pytester_make_enforcement_violation(pytester: pytest.Pytester) -> None:
+        """Write a sandbox item that emits one runtime enforcement warning."""
+        pytester.makepyfile(
+            test_violation=(
+                "import warnings\n"
+                "\n"
+                "from flext_core import e\n"
+                "\n"
+                "\n"
+                "def test_emits_runtime_enforcement_warning() -> None:\n"
+                "    warnings.warn(\n"
+                '        "synthetic MRO violation",\n'
+                "        e.MroViolation,\n"
+                "        stacklevel=2,\n"
+                "    )\n"
+            )
+        )
+
+    @classmethod
+    def pytester_make_enforcement_workspace(cls, pytester: pytest.Pytester) -> None:
+        """Shape a sandbox workspace and install one warning-emitting item."""
+        pytester.makeini("[pytest]\naddopts = --timeout=2.5\n")
+        cls.pytester_stamp_workspace_markers(pytester.path)
+        cls.pytester_make_enforcement_violation(pytester)
 
     @staticmethod
     def pytester_run_installed_subprocess(

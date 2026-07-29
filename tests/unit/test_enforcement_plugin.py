@@ -7,8 +7,8 @@ Two behavioral surfaces are exercised through the module's public API only:
   invariants.
 * The end-to-end pytest11 pipeline (entry-point load -> ``pytest_configure``
   filterwarnings -> ``pytest_warning_recorded`` -> ``pytest_terminal_summary``)
-  is driven inside a ``pytester`` in-process sandbox and asserted on observable
-  outcomes plus the terminal summary the plugin promises to print.
+  uses one default-autoload subprocess plus fast isolated in-process sandboxes.
+  A separate subprocess consumes the installed public infra-report boundary.
 """
 
 from __future__ import annotations
@@ -22,7 +22,6 @@ from flext_tests import (
     SessionConfig,
     active_rules,
     discover_workspace_root,
-    m,
     split_csv,
     tm,
     u,
@@ -73,23 +72,16 @@ class TestsFlextTestsEnforcementPlugin:
 
     # ---- discover_workspace_root: filesystem marker walk ---------------------
 
-    @staticmethod
-    def _stamp_workspace_markers(root: Path) -> None:
-        """Write the marker set that identifies a FLEXT workspace root."""
-        (root / "AGENTS.md").write_text("# sandbox workspace stub")
-        (root / "flext-core").mkdir()
-        (root / "flext-tests").mkdir()
-
     def test_discover_workspace_root_returns_marked_root(self, tmp_path: Path) -> None:
         """A directory carrying every marker is reported as the workspace root."""
-        self._stamp_workspace_markers(tmp_path)
+        u.Tests.pytester_stamp_workspace_markers(tmp_path)
         tm.that(discover_workspace_root(tmp_path), eq=tmp_path)
 
     def test_discover_workspace_root_walks_upward_from_nested_start(
         self, tmp_path: Path
     ) -> None:
         """Discovery climbs parents until the marked root is found."""
-        self._stamp_workspace_markers(tmp_path)
+        u.Tests.pytester_stamp_workspace_markers(tmp_path)
         nested = tmp_path / "pkg" / "sub"
         nested.mkdir(parents=True)
         tm.that(discover_workspace_root(nested), eq=tmp_path)
@@ -104,75 +96,49 @@ class TestsFlextTestsEnforcementPlugin:
 
     # ---- active_rules: catalog filtering contract ----------------------------
 
-    @staticmethod
-    def _config(
-        *, include: frozenset[str] = frozenset(), exclude: frozenset[str] = frozenset()
-    ) -> m.Tests.EnforcementDispatcherConfig:
-        """Build a resolved dispatcher config for catalog filtering."""
-        return m.Tests.EnforcementDispatcherConfig(
-            active=True, strict=False, include=include, exclude=exclude
-        )
-
     def test_active_rules_returns_only_enabled_rules(self) -> None:
         """The unfiltered result contains exclusively enabled catalog rules."""
-        rules = active_rules(self._config())
+        rules = active_rules(u.Tests.enforcement_dispatcher_config())
         tm.that(rules, empty=False)
         tm.that(all(rule.enabled for rule in rules), eq=True)
 
     def test_active_rules_include_restricts_to_allow_list(self) -> None:
         """An include allow-list narrows the result to the requested id only."""
-        baseline = active_rules(self._config())
+        baseline = active_rules(u.Tests.enforcement_dispatcher_config())
         chosen = baseline[0].id
-        restricted = active_rules(self._config(include=frozenset({chosen})))
+        restricted = active_rules(
+            u.Tests.enforcement_dispatcher_config(include=frozenset({chosen}))
+        )
         tm.that({rule.id for rule in restricted}, eq={chosen})
 
     def test_active_rules_exclude_removes_blocked_rule(self) -> None:
         """An exclude block-list drops exactly the named id from the result."""
-        baseline = active_rules(self._config())
+        baseline = active_rules(u.Tests.enforcement_dispatcher_config())
         blocked = baseline[0].id
-        remaining = active_rules(self._config(exclude=frozenset({blocked})))
+        remaining = active_rules(
+            u.Tests.enforcement_dispatcher_config(exclude=frozenset({blocked}))
+        )
         tm.that({rule.id for rule in remaining}, lacks=blocked)
         tm.that(len(remaining), eq=len(baseline) - 1)
 
     def test_active_rules_include_unknown_id_yields_empty(self) -> None:
         """An allow-list of unknown ids selects no rules (no silent fallback)."""
-        tm.that(active_rules(self._config(include=frozenset({"ENFORCE-000"}))), eq=())
-
-    # ---- end-to-end pytest11 pipeline via pytester ---------------------------
-
-    @staticmethod
-    def _write_violation_module(pytester: pytest.Pytester) -> None:
-        """Write a sandbox test that emits one runtime enforcement warning."""
-        pytester.makepyfile(
-            test_violation=(
-                "import warnings\n"
-                "\n"
-                "from flext_core import e\n"
-                "\n"
-                "\n"
-                "def test_emits_runtime_enforcement_warning() -> None:\n"
-                "    warnings.warn(\n"
-                '        "synthetic MRO violation",\n'
-                "        e.MroViolation,\n"
-                "        stacklevel=2,\n"
-                "    )\n"
-            )
+        tm.that(
+            active_rules(
+                u.Tests.enforcement_dispatcher_config(
+                    include=frozenset({"ENFORCE-000"})
+                )
+            ),
+            eq=(),
         )
 
-    @classmethod
-    def _make_workspace_sandbox(cls, pytester: pytest.Pytester) -> None:
-        """Shape the sandbox as a FLEXT workspace root so auto-activation fires."""
-        pytester.makeini("[pytest]\naddopts = --timeout=2.5\n")
-        (pytester.path / "AGENTS.md").write_text("# sandbox workspace stub")
-        (pytester.path / "flext-core").mkdir()
-        (pytester.path / "flext-tests").mkdir()
-        cls._write_violation_module(pytester)
+    # ---- end-to-end pytest11 pipeline via pytester ---------------------------
 
     def test_dispatcher_records_warning_and_prints_summary(
         self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Non-strict run captures the warning and reports it in the summary."""
-        self._make_workspace_sandbox(pytester)
+        u.Tests.pytester_make_enforcement_workspace(pytester)
         result = u.Tests.pytester_run_installed_subprocess(
             pytester, monkeypatch, "--flext-enforce-rules=ENFORCE-022"
         )
@@ -188,7 +154,7 @@ class TestsFlextTestsEnforcementPlugin:
         self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """--flext-enforce-strict promotes the configured warning to a failure."""
-        self._make_workspace_sandbox(pytester)
+        u.Tests.pytester_make_enforcement_workspace(pytester)
         result = u.Tests.pytester_run_enforcement(
             pytester,
             monkeypatch,
@@ -206,7 +172,7 @@ class TestsFlextTestsEnforcementPlugin:
     ) -> None:
         """Without workspace markers the dispatcher stays silent and passive."""
         pytester.makeini("[pytest]\naddopts = --timeout=2.5\n")
-        self._write_violation_module(pytester)
+        u.Tests.pytester_make_enforcement_violation(pytester)
         result = u.Tests.pytester_run_enforcement(pytester, monkeypatch)
         result.assert_outcomes(passed=1, warnings=1)
         result.stdout.no_fnmatch_line("*flext-enforce*")
@@ -226,7 +192,7 @@ class TestsFlextTestsEnforcementPlugin:
         tm.that(SessionConfig.value is outer_config, eq=True)
 
     def test_infra_report_boundary_runs_in_subprocess(
-        self, pytester: pytest.Pytester
+        self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Exercise the installed public infra-report boundary in a subprocess."""
         pytester.makeini("[pytest]\naddopts = --timeout=2.5\n")
@@ -259,4 +225,6 @@ class TestsFlextTestsEnforcementPlugin:
                 "        assert report.workspace == str(project.resolve())\n"
             )
         )
-        pytester.runpytest_subprocess().assert_outcomes(passed=1)
+        u.Tests.pytester_run_installed_subprocess(
+            pytester, monkeypatch
+        ).assert_outcomes(passed=1)
