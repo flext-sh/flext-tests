@@ -1,4 +1,4 @@
-"""Regression tests for the public flext_tests facade surface."""
+"""Public facade import regressions."""
 
 from __future__ import annotations
 

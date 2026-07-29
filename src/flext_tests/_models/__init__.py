@@ -1,77 +1,61 @@
-# AUTO-GENERATED FILE — Regenerate with: make gen
-"""Models package."""
+# @generated AUTO-GENERATED FILE — Regenerate with: make gen
+"""Flext Tests. Models package."""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import (
-    build_lazy_import_map,
-    install_lazy_exports,
-    merge_lazy_imports,
-)
+from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    pass
-    from flext_tests._models._filesystem_parts.filesystem_part_02 import (
+    from .base import FlextTestsBaseModelsMixin as FlextTestsBaseModelsMixin
+    from .batch import FlextTestsBatchModelsMixin as FlextTestsBatchModelsMixin
+    from .docker import FlextTestsDockerModelsMixin as FlextTestsDockerModelsMixin
+    from .domains import FlextTestsDomainModelsMixin as FlextTestsDomainModelsMixin
+    from .filesystem import (
         FlextTestsFilesystemModelsMixin as FlextTestsFilesystemModelsMixin,
     )
-    from flext_tests._models._matchers_parts.matchers_part_03 import (
-        FlextTestsMatchersModelsMixin as FlextTestsMatchersModelsMixin,
-    )
-    from flext_tests._models.base import (
-        FlextTestsBaseModelsMixin as FlextTestsBaseModelsMixin,
-    )
-    from flext_tests._models.batch import (
-        FlextTestsBatchModelsMixin as FlextTestsBatchModelsMixin,
-    )
-    from flext_tests._models.docker import (
-        FlextTestsDockerModelsMixin as FlextTestsDockerModelsMixin,
-    )
-    from flext_tests._models.domains import (
-        FlextTestsDomainModelsMixin as FlextTestsDomainModelsMixin,
-    )
-    from flext_tests._models.make import (
-        FlextTestsMakeModelsMixin as FlextTestsMakeModelsMixin,
-    )
-    from flext_tests._models.validator import (
+    from .make import FlextTestsMakeModelsMixin as FlextTestsMakeModelsMixin
+    from .matchers import FlextTestsMatchersModelsMixin as FlextTestsMatchersModelsMixin
+    from .validator import (
         FlextTestsValidatorModelsMixin as FlextTestsValidatorModelsMixin,
     )
-_LAZY_IMPORTS = merge_lazy_imports(
-    ("._filesystem_parts", "._matchers_parts"),
-    build_lazy_import_map({
-        "._filesystem_parts": ("_filesystem_parts",),
-        "._filesystem_parts.filesystem_part_02": ("FlextTestsFilesystemModelsMixin",),
-        "._matchers_parts": ("_matchers_parts",),
-        "._matchers_parts.matchers_part_03": ("FlextTestsMatchersModelsMixin",),
-        ".base": ("FlextTestsBaseModelsMixin",),
-        ".batch": ("FlextTestsBatchModelsMixin",),
-        ".docker": ("FlextTestsDockerModelsMixin",),
-        ".domains": ("FlextTestsDomainModelsMixin",),
-        ".make": ("FlextTestsMakeModelsMixin",),
-        ".validator": ("FlextTestsValidatorModelsMixin",),
-    }),
-    exclude_names=(
-        "cleanup_submodule_namespace",
-        "install_lazy_exports",
-        "lazy_getattr",
-        "logger",
-        "merge_lazy_imports",
-        "output",
-        "output_reporting",
-        "pytest_addoption",
-        "pytest_collect_file",
-        "pytest_collection_modifyitems",
-        "pytest_configure",
-        "pytest_runtest_setup",
-        "pytest_runtest_teardown",
-        "pytest_sessionfinish",
-        "pytest_sessionstart",
-        "pytest_terminal_summary",
-        "pytest_warning_recorded",
-    ),
-    module_name=__name__,
+    from .workspace_cleanup import (
+        FlextTestsWorkspaceCleanupModelsMixin as FlextTestsWorkspaceCleanupModelsMixin,
+    )
+
+_LAZY_MODULES: dict[str, tuple[str, ...]] = {
+    ".base": ("FlextTestsBaseModelsMixin",),
+    ".batch": ("FlextTestsBatchModelsMixin",),
+    ".docker": ("FlextTestsDockerModelsMixin",),
+    ".domains": ("FlextTestsDomainModelsMixin",),
+    ".filesystem": ("FlextTestsFilesystemModelsMixin",),
+    ".make": ("FlextTestsMakeModelsMixin",),
+    ".matchers": ("FlextTestsMatchersModelsMixin",),
+    ".validator": ("FlextTestsValidatorModelsMixin",),
+    ".workspace_cleanup": ("FlextTestsWorkspaceCleanupModelsMixin",),
+}
+
+
+_LAZY_ALIAS_GROUPS: dict[str, tuple[tuple[str, str], ...]] = {}
+
+
+_LAZY_IMPORTS = build_lazy_import_map(
+    _LAZY_MODULES, alias_groups=_LAZY_ALIAS_GROUPS, sort_keys=False
 )
 
+_PUBLIC_EXPORTS: tuple[str, ...] = (
+    "FlextTestsBaseModelsMixin",
+    "FlextTestsBatchModelsMixin",
+    "FlextTestsDockerModelsMixin",
+    "FlextTestsDomainModelsMixin",
+    "FlextTestsFilesystemModelsMixin",
+    "FlextTestsMakeModelsMixin",
+    "FlextTestsMatchersModelsMixin",
+    "FlextTestsValidatorModelsMixin",
+    "FlextTestsWorkspaceCleanupModelsMixin",
+)
 
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)
+__all__: tuple[str, ...] = tuple(_PUBLIC_EXPORTS)
+
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)

@@ -1,79 +1,52 @@
-# AUTO-GENERATED FILE — Regenerate with: make gen
-"""Validator package."""
+# @generated AUTO-GENERATED FILE — Regenerate with: make gen
+"""Flext Tests. Validator package."""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import (
-    build_lazy_import_map,
-    install_lazy_exports,
-    merge_lazy_imports,
-)
+from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    pass
-    from flext_tests._validator._markdown_parts.markdown_part_02 import (
-        FlextValidatorMarkdown as FlextValidatorMarkdown,
-    )
-    from flext_tests._validator._orchestration_parts.validator_part_02 import (
-        FlextTestsValidator as FlextTestsValidator,
-    )
-    from flext_tests._validator._types_parts.types_part_02 import (
-        FlextValidatorTypes as FlextValidatorTypes,
-    )
-    from flext_tests._validator.bypass import (
-        FlextValidatorBypass as FlextValidatorBypass,
-    )
-    from flext_tests._validator.imports import (
-        FlextValidatorImports as FlextValidatorImports,
-    )
-    from flext_tests._validator.layer import FlextValidatorLayer as FlextValidatorLayer
-    from flext_tests._validator.models import (
-        FlextTestsValidatorModels as FlextTestsValidatorModels,
-    )
-    from flext_tests._validator.settings import (
-        FlextValidatorSettings as FlextValidatorSettings,
-    )
-    from flext_tests._validator.tests import FlextValidatorTests as FlextValidatorTests
-_LAZY_IMPORTS = merge_lazy_imports(
-    ("._markdown_parts", "._orchestration_parts", "._settings_parts", "._types_parts"),
-    build_lazy_import_map({
-        "._markdown_parts": ("_markdown_parts",),
-        "._markdown_parts.markdown_part_02": ("FlextValidatorMarkdown",),
-        "._orchestration_parts": ("_orchestration_parts",),
-        "._orchestration_parts.validator_part_02": ("FlextTestsValidator",),
-        "._settings_parts": ("_settings_parts",),
-        "._types_parts": ("_types_parts",),
-        "._types_parts.types_part_02": ("FlextValidatorTypes",),
-        ".bypass": ("FlextValidatorBypass",),
-        ".imports": ("FlextValidatorImports",),
-        ".layer": ("FlextValidatorLayer",),
-        ".models": ("FlextTestsValidatorModels",),
-        ".settings": ("FlextValidatorSettings",),
-        ".tests": ("FlextValidatorTests",),
-    }),
-    exclude_names=(
-        "cleanup_submodule_namespace",
-        "install_lazy_exports",
-        "lazy_getattr",
-        "logger",
-        "merge_lazy_imports",
-        "output",
-        "output_reporting",
-        "pytest_addoption",
-        "pytest_collect_file",
-        "pytest_collection_modifyitems",
-        "pytest_configure",
-        "pytest_runtest_setup",
-        "pytest_runtest_teardown",
-        "pytest_sessionfinish",
-        "pytest_sessionstart",
-        "pytest_terminal_summary",
-        "pytest_warning_recorded",
-    ),
-    module_name=__name__,
+    from . import _types_parts as _types_parts
+    from .bypass import FlextValidatorBypass as FlextValidatorBypass
+    from .imports import FlextValidatorImports as FlextValidatorImports
+    from .layer import FlextValidatorLayer as FlextValidatorLayer
+    from .markdown import FlextValidatorMarkdown as FlextValidatorMarkdown
+    from .settings import FlextValidatorSettings as FlextValidatorSettings
+    from .tests import FlextValidatorTests as FlextValidatorTests
+    from .types import FlextValidatorTypes as FlextValidatorTypes
+
+_LAZY_MODULES: dict[str, tuple[str, ...]] = {
+    "._types_parts": ("_types_parts",),
+    ".bypass": ("FlextValidatorBypass",),
+    ".imports": ("FlextValidatorImports",),
+    ".layer": ("FlextValidatorLayer",),
+    ".markdown": ("FlextValidatorMarkdown",),
+    ".settings": ("FlextValidatorSettings",),
+    ".tests": ("FlextValidatorTests",),
+    ".types": ("FlextValidatorTypes",),
+}
+
+
+_LAZY_ALIAS_GROUPS: dict[str, tuple[tuple[str, str], ...]] = {}
+
+
+_LAZY_IMPORTS = build_lazy_import_map(
+    _LAZY_MODULES, alias_groups=_LAZY_ALIAS_GROUPS, sort_keys=False
 )
 
+_PUBLIC_EXPORTS: tuple[str, ...] = (
+    "FlextValidatorBypass",
+    "FlextValidatorImports",
+    "FlextValidatorLayer",
+    "FlextValidatorMarkdown",
+    "FlextValidatorSettings",
+    "FlextValidatorTests",
+    "FlextValidatorTypes",
+    "_types_parts",
+)
 
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)
+__all__: tuple[str, ...] = tuple(_PUBLIC_EXPORTS)
+
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)

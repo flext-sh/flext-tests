@@ -31,13 +31,13 @@ class FlextTestsMatchersThatMixin:
             # mro-j47u: cls dispatch preserves overrides on the composed matcher MRO.
             @classmethod
             def _that_params(
-                cls, kwargs: dict[str, t.Tests.MatcherCallKwargValue]
+                cls, kwargs: dict[str, t.Tests.MatcherKwargValue]
             ) -> tuple[
                 m.Tests.ThatParams,
-                t.Tests.MatcherCallKwargValue | None,
-                t.Tests.MatcherCallKwargValue | None,
-                t.Tests.MatcherCallKwargValue | None,
-                t.Tests.MatcherCallKwargValue | None,
+                t.Tests.MatcherKwargValue | None,
+                t.Tests.MatcherKwargValue | None,
+                t.Tests.MatcherKwargValue | None,
+                t.Tests.MatcherKwargValue | None,
             ]:
                 """Validate matcher kwargs and retain raw non-serializable values."""
                 raw_eq = kwargs.get("eq") if "eq" in kwargs else None
@@ -52,7 +52,7 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _filtered_params(
-                kwargs: dict[str, t.Tests.MatcherCallKwargValue],
+                kwargs: dict[str, t.Tests.MatcherKwargValue],
             ) -> m.Tests.ThatParams:
                 """Validate kwargs after removing values Pydantic cannot serialize."""
                 non_serializable_keys = frozenset({
@@ -151,8 +151,8 @@ class FlextTestsMatchersThatMixin:
             @staticmethod
             def _is_type_only(
                 params: m.Tests.ThatParams,
-                raw_eq: t.Tests.MatcherCallKwargValue | None,
-                raw_ne: t.Tests.MatcherCallKwargValue | None,
+                raw_eq: t.Tests.MatcherKwargValue | None,
+                raw_ne: t.Tests.MatcherKwargValue | None,
             ) -> bool:
                 """Return whether only type checks were requested."""
                 if params.is_ is None and params.not_ is None:
@@ -244,9 +244,9 @@ class FlextTestsMatchersThatMixin:
                 cls,
                 subject_payload: t.Tests.TestobjectSerializable,
                 params: m.Tests.ThatParams,
-                raw_eq: t.Tests.MatcherCallKwargValue | None,
-                raw_ne: t.Tests.MatcherCallKwargValue | None,
-                kwargs: Mapping[str, t.Tests.MatcherCallKwargValue],
+                raw_eq: t.Tests.MatcherKwargValue | None,
+                raw_ne: t.Tests.MatcherKwargValue | None,
+                kwargs: Mapping[str, t.Tests.MatcherKwargValue],
             ) -> None:
                 """Validate scalar predicates."""
                 if not cls._has_scalar_validation(params):
@@ -694,44 +694,36 @@ class FlextTestsMatchersThatMixin:
                 value: T | None,
                 *,
                 none: Literal[False],
-                **kwargs: t.Tests.MatcherCallKwargValue,
+                **kwargs: t.Tests.MatcherKwargValue,
             ) -> TypeIs[T]: ...
             @overload
             @classmethod
             def that(
-                cls, value: object, *, eq: None, **kwargs: t.Tests.MatcherCallKwargValue
+                cls, value: object, *, eq: None, **kwargs: t.Tests.MatcherKwargValue
             ) -> TypeIs[None]: ...
             @overload
             @classmethod
             def that[T](
-                cls,
-                value: T | None,
-                *,
-                ne: None,
-                **kwargs: t.Tests.MatcherCallKwargValue,
+                cls, value: T | None, *, ne: None, **kwargs: t.Tests.MatcherKwargValue
             ) -> TypeIs[T]: ...
             @overload
             @classmethod
             def that[E](
-                cls, value: E | None, *, eq: E, **kwargs: t.Tests.MatcherCallKwargValue
+                cls, value: E | None, *, eq: E, **kwargs: t.Tests.MatcherKwargValue
             ) -> TypeIs[E]: ...
             @overload
             @classmethod
             def that[T](
-                cls,
-                value: object,
-                *,
-                is_: type[T],
-                **kwargs: t.Tests.MatcherCallKwargValue,
+                cls, value: object, *, is_: type[T], **kwargs: t.Tests.MatcherKwargValue
             ) -> TypeIs[T]: ...
             @overload
             @classmethod
             def that(
-                cls, value: p.AttributeProbe, **kwargs: t.Tests.MatcherCallKwargValue
+                cls, value: p.AttributeProbe, **kwargs: t.Tests.MatcherKwargValue
             ) -> None: ...
             @classmethod
             def that(
-                cls, value: p.AttributeProbe, **kwargs: t.Tests.MatcherCallKwargValue
+                cls, value: p.AttributeProbe, **kwargs: t.Tests.MatcherKwargValue
             ) -> None:
                 """Assert a value against universal matcher constraints."""
                 params, raw_eq, raw_ne, raw_has, raw_contains = cls._that_params(kwargs)
@@ -824,7 +816,7 @@ class FlextTestsMatchersThatMixin:
     @staticmethod
     def _rule_kwargs(
         rule: t.Tests.MatchRuleSpec,
-    ) -> dict[str, t.Tests.MatcherCallKwargValue]:
+    ) -> dict[str, t.Tests.MatcherKwargValue]:
         if isinstance(rule, Mapping):
             raw_mapping = dict(rule)
             matcher_rule_keys = frozenset(
