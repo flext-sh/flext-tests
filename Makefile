@@ -9,8 +9,8 @@ SHELL := /bin/sh
 .DEFAULT_GOAL := help
 
 PROJECT_NAME := flext-tests
-MAKE_PROFILE := workspace-member
-WORKSPACE_ROOT_REL := ..
+MAKE_PROFILE := standalone
+WORKSPACE_ROOT_REL := .
 WORKSPACE_MEMBERS := flext-api flext-auth flext-cli flext-core flext-db-oracle flext-dbt-ldap flext-dbt-ldif flext-dbt-oracle flext-dbt-oracle-wms flext-grpc flext-infra flext-ldap flext-ldif flext-meltano flext-observability flext-oracle-oic flext-oracle-wms flext-plugin flext-quality flext-tap-ldap flext-tap-ldif flext-tap-oracle flext-tap-oracle-oic flext-tap-oracle-wms flext-target-ldap flext-target-ldif flext-target-oracle flext-target-oracle-oic flext-target-oracle-wms flext-tests flext-web
 WORKSPACE_EDITABLES := $(PROJECT_NAME):.
 UV_LINK_MODE := copy
@@ -54,7 +54,7 @@ CALLER_PATH := $(PATH)
 CALLER_VIRTUAL_ENV := $(patsubst %/,%,$(VIRTUAL_ENV))
 FLEXT_INFRA_BOOTSTRAP_REQUIREMENT := flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev
 FLEXT_INFRA_BOOTSTRAP_TOOL_ARGS := --with "pyrefly>=1.1.1" --with "ruff>=0.15.12"
-FLEXT_INFRA_SOURCE_ROOT_REL := ../flext-infra
+FLEXT_INFRA_SOURCE_ROOT_REL := flext-infra
 
 # === MYPY RESOURCE LIMIT ===
 # mro-0ftd.3.11: every Mypy process inherits validated memory and time caps.
@@ -293,7 +293,7 @@ setup:
 	@$(SELF_MAKE) _builtin_setup_environment
 
 _builtin_help_usage:
-	@printf '%s\n' 'flext-tests [workspace-member]' '';
+	@printf '%s\n' 'flext-tests [standalone]' '';
 
 
 	@printf '  %-10s WHAT=%s\n' 'help' 'usage';
