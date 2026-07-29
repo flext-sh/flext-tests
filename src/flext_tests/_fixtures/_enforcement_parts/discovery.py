@@ -135,9 +135,18 @@ def _collected_validator_targets(
     return tuple(sorted(targets))
 
 
+collected_project_names = _collected_project_names
+collected_validator_targets = _collected_validator_targets
+load_infra_report = _load_infra_report
+project_name_for_path = _project_name_for_path
+
 __all__: list[str] = [
     "_collected_project_names",
     "_collected_validator_targets",
     "_load_infra_report",
     "_project_name_for_path",
+    "collected_project_names",
+    "collected_validator_targets",
+    "load_infra_report",
+    "project_name_for_path",
 ]
