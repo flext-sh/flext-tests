@@ -1,5 +1,5 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""Protocols package."""
+"""Result Parts package."""
 
 from __future__ import annotations
 
@@ -9,12 +9,12 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
     pass
-    from flext_tests._protocols.valuefactory import (
-        FlextTestsValueFactoryProtocolsMixin as FlextTestsValueFactoryProtocolsMixin,
+    from flext_tests._utilities._matchers._result_parts.result_part_03 import (
+        FlextTestsMatchersResultMixin as FlextTestsMatchersResultMixin,
     )
 _LAZY_IMPORTS = build_lazy_import_map(
     {
-        ".valuefactory": ("FlextTestsValueFactoryProtocolsMixin",),
+        ".result_part_03": ("FlextTestsMatchersResultMixin",),
     },
 )
 
