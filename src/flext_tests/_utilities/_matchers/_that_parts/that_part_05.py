@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from flext_tests.utilities import u
 from collections.abc import Mapping, Sequence
 
 from flext_tests._utilities._matchers._that_parts.that_part_04 import (
@@ -12,7 +13,6 @@ from flext_tests.constants import c
 from flext_tests.models import m
 from flext_tests.protocols import p
 from flext_tests.typings import t
-from flext_tests.utilities import u
 
 
 class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart04):

@@ -9,29 +9,16 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_infra import c
-from flext_tests import t
-from flext_tests._constants.data_cases import (
-    FlextTestsConstantsDataCases,
-)
-from flext_tests._constants.docker import (
-    FlextTestsConstantsDocker,
-)
-from flext_tests._constants.files import (
-    FlextTestsConstantsFiles,
-)
-from flext_tests._constants.make import (
-    FlextTestsConstantsMake,
-)
-from flext_tests._constants.matcher import (
-    FlextTestsConstantsMatcher,
-)
-from flext_tests._constants.validator import (
-    FlextTestsConstantsValidator,
-)
+from flext_infra import c as infra_c
+from flext_tests._constants.data_cases import FlextTestsConstantsDataCases
+from flext_tests._constants.docker import FlextTestsConstantsDocker
+from flext_tests._constants.files import FlextTestsConstantsFiles
+from flext_tests._constants.make import FlextTestsConstantsMake
+from flext_tests._constants.matcher import FlextTestsConstantsMatcher
+from flext_tests._constants.validator import FlextTestsConstantsValidator
 
 
-class FlextTestsConstants(c):
+class FlextTestsConstants(infra_c):
     """Constants for FLEXT tests - extends FlextCliConstants.
 
     Architecture layer: Layer 0 foundation constants with test extensions.
@@ -55,4 +42,4 @@ class FlextTestsConstants(c):
 
 c = FlextTestsConstants
 
-__all__: t.StrSequence = ("FlextTestsConstants", "c")
+__all__: tuple[str, ...] = ("FlextTestsConstants", "c")

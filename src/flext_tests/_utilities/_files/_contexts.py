@@ -21,10 +21,7 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
     @contextmanager
     def files(
         cls,
-        content: t.MappingKV[
-            str,
-            t.Tests.FileContentPlain,
-        ],
+        content: t.MappingKV[str, t.Tests.FileContentPlain],
         *,
         directory: Path | None = None,
         ext: str | None = None,
@@ -46,9 +43,7 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
             Dict mapping names to paths.
 
         """
-        manager = cls()
-        if directory is not None:
-            manager._base_dir = directory
+        manager = cls._create_file_manager(directory)
         with manager:
             paths: MutableMapping[str, Path] = {}
             default_ext = ext or c.Tests.DEFAULT_EXTENSION
@@ -56,13 +51,12 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
                 data: t.Tests.FileContentPlain = data_raw
                 filename = name if "." in name else f"{name}{default_ext}"
                 if "." not in name and isinstance(
-                    data,
-                    (Mapping, m.BaseModel, m.ConfigMap, m.Dict),
+                    data, (Mapping, m.BaseModel, m.ConfigMap, m.Dict)
                 ):
                     filename = f"{name}.json"
                 else:
-                    is_nested_sequence = "." not in name and manager._is_nested_rows(
-                        data,
+                    is_nested_sequence = "." not in name and cls._is_nested_rows(
+                        manager, data
                     )
                     if is_nested_sequence:
                         filename = f"{name}.csv"
@@ -71,7 +65,7 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
                 except c.EXC_VALIDATION_TYPE_VALUE:
                     validated_kwargs = m.Tests.CreateKwargsParams()
                 path = manager.create(
-                    manager._coerce_file_content(data),
+                    cls._coerce_file_content(manager, data),
                     filename,
                     directory=validated_kwargs.directory,
                     fmt=validated_kwargs.fmt,

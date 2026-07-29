@@ -12,6 +12,7 @@ from flext_tests._validator._types_parts.types_part_01 import (
 )
 
 if TYPE_CHECKING:
+    pass
     from flext_tests import m
 
 

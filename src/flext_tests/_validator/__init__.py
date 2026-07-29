@@ -12,6 +12,7 @@ from flext_core.lazy import (
 )
 
 if TYPE_CHECKING:
+    pass
     from flext_tests._validator._markdown_parts.markdown_part_02 import (
         FlextValidatorMarkdown as FlextValidatorMarkdown,
     )

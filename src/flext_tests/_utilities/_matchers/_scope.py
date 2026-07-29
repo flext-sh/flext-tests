@@ -16,7 +16,6 @@ from flext_tests import (
     c,
     m,
     t,
-    u,
 )
 from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
 

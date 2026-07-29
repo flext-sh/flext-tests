@@ -12,6 +12,7 @@ from flext_core.lazy import (
 )
 
 if TYPE_CHECKING:
+    pass
     from flext_tests._constants._validator_parts.validator_part_03 import (
         FlextTestsConstantsValidator as FlextTestsConstantsValidator,
     )

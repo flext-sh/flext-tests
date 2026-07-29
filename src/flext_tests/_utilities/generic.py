@@ -2,17 +2,15 @@
 
 from __future__ import annotations
 
-from collections.abc import (
-    MutableSequence,
-)
+from collections.abc import MutableSequence
 
-from flext_core import r
-from flext_tests.protocols import p
-from flext_tests.typings import t
+from flext_tests import p, r, t
 
 
 class FlextTestsGenericHelpersUtilitiesMixin:
     """Generic helpers for test data creation."""
+
+    # mro-j47u: explicit raises preserve assertion behavior under optimized Python.
 
     @staticmethod
     def assert_result_chain[T](
@@ -49,30 +47,32 @@ class FlextTestsGenericHelpersUtilitiesMixin:
         )
         successes = sum(1 for res in results if res.success)
         failures = sum(1 for res in results if res.failure)
-        if successes_expected is not None:
-            assert successes == successes_expected, (
-                f"Expected {successes_expected} successes, got {successes}"
-            )
-        if failures_expected is not None:
-            assert failures == failures_expected, (
-                f"Expected {failures_expected} failures, got {failures}"
-            )
+        if successes_expected is not None and successes != successes_expected:
+            message = f"Expected {successes_expected} successes, got {successes}"
+            raise AssertionError(message)
+        if failures_expected is not None and failures != failures_expected:
+            message = f"Expected {failures_expected} failures, got {failures}"
+            raise AssertionError(message)
         if first_failure_index is not None:
             actual_first_failure = next(
-                (i for i, res in enumerate(results) if res.failure),
-                None,
+                (i for i, res in enumerate(results) if res.failure), None
             )
-            assert actual_first_failure == first_failure_index, (
-                f"Expected first failure at index {first_failure_index}, got {actual_first_failure}"
-            )
+            if actual_first_failure != first_failure_index:
+                message = (
+                    f"Expected first failure at index {first_failure_index}, "
+                    f"got {actual_first_failure}"
+                )
+                raise AssertionError(message)
         elif failures == 0:
             actual_first_failure = next(
-                (i for i, res in enumerate(results) if res.failure),
-                None,
+                (i for i, res in enumerate(results) if res.failure), None
             )
-            assert actual_first_failure is None, (
-                f"Expected no failures but found first failure at index {actual_first_failure}"
-            )
+            if actual_first_failure is not None:
+                message = (
+                    "Expected no failures but found first failure at index "
+                    f"{actual_first_failure}"
+                )
+                raise AssertionError(message)
 
     @staticmethod
     def create_parametrized_cases(
@@ -118,8 +118,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
             for i, error in enumerate(failure_errors):
                 error_code = codes[i] if i < len(codes) else None
                 result = r[t.Tests.TestobjectSerializable].fail(
-                    error,
-                    error_code=error_code,
+                    error, error_code=error_code
                 )
                 cases.append((result, False, None, error))
         return cases

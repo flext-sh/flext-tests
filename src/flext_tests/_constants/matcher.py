@@ -9,9 +9,10 @@ from __future__ import annotations
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import ClassVar, Final
+from typing import TYPE_CHECKING, ClassVar, Final
 
-from flext_tests import t
+if TYPE_CHECKING:
+    from flext_infra import t
 
 
 class FlextTestsConstantsMatcher:

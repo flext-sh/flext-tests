@@ -12,6 +12,7 @@ from flext_core.lazy import (
 )
 
 if TYPE_CHECKING:
+    pass
     from flext_tests._utilities._matchers._assertions import (
         FlextTestsMatchersAssertionsMixin as FlextTestsMatchersAssertionsMixin,
     )

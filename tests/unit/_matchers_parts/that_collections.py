@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import pytest
+
 from flext_tests import tm
-from tests.constants import c
+from tests import c
 from tests.unit._matchers_parts.predicates import MatchersPredicates
 
 
@@ -35,6 +37,43 @@ class MatchersThatCollectionsMixin:
         tm.that("test", none=False)
         tm.that(None, none=True)
 
+    def test_that_none_false_rejects_none(self) -> None:
+        """none=False narrowing is fail-closed for None values."""
+        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+            tm.that(None, none=False)
+
+    def test_that_is_type_rejects_none(self) -> None:
+        """is_=type narrowing is fail-closed for None values."""
+        with pytest.raises(AssertionError, match=r"Expected type .* but got NoneType"):
+            tm.that(None, is_=dict)
+
+    def test_that_eq_value_rejects_none(self) -> None:
+        """eq=<value> narrowing is fail-closed for None values."""
+        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+            tm.that(None, eq="x")
+
+    def test_that_eq_none_requires_none(self) -> None:
+        """eq=None asserts the value is None instead of passing silently."""
+        tm.that(None, eq=None)
+        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+            tm.that("x", eq=None)
+
+    def test_that_ne_none_requires_value(self) -> None:
+        """ne=None asserts the value is not None instead of passing silently."""
+        tm.that("x", ne=None)
+        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+            tm.that(None, ne=None)
+
+    def test_not_none_returns_the_narrowed_value(self) -> None:
+        """not_none returns the original value with its optional removed."""
+        value: str | None = "test"
+        tm.that(tm.not_none(value), eq="test")
+
+    def test_not_none_rejects_none_with_context(self) -> None:
+        """not_none raises the caller-provided assertion context for None."""
+        with pytest.raises(AssertionError, match="missing channel"):
+            tm.not_none(None, msg="missing channel")
+
     def test_that_with_empty_parameter(self) -> None:
         """Test tm.that() with empty parameter."""
         tm.that(["a"], empty=False)
@@ -58,6 +97,10 @@ class MatchersThatCollectionsMixin:
     def test_that_with_lacks_parameter(self) -> None:
         """Test tm.that() with lacks parameter."""
         tm.that(["a", "b", "c"], lacks="d")
+
+    def test_that_with_lacks_preserves_whitespace_only_string(self) -> None:
+        """Keep whitespace-only exclusion needles unchanged by model parsing."""
+        tm.that("a\n\nb", lacks="\n\n\n\n")
 
     def test_that_with_first_parameter(self) -> None:
         """Test tm.that() with first parameter."""

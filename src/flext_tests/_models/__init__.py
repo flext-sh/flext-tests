@@ -12,6 +12,7 @@ from flext_core.lazy import (
 )
 
 if TYPE_CHECKING:
+    pass
     from flext_tests._models._filesystem_parts.filesystem_part_02 import (
         FlextTestsFilesystemModelsMixin as FlextTestsFilesystemModelsMixin,
     )

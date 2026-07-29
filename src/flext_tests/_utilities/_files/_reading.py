@@ -19,8 +19,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
 
     @staticmethod
     def _validate_model_content[TModelRead: m.BaseModel](
-        model_cls: type[TModelRead],
-        content: t.Tests.FileContentPlain,
+        model_cls: type[TModelRead], content: t.Tests.FileContentPlain
     ) -> p.Result[TModelRead]:
         try:
             model_instance: TModelRead = model_cls.model_validate(content)
@@ -30,8 +29,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
 
     @staticmethod
     def _read_fail[TModelRead: m.BaseModel](
-        error: str,
-        model_cls: type[TModelRead] | None,
+        error: str, model_cls: type[TModelRead] | None
     ) -> p.Result[t.Tests.ReadContent] | p.Result[TModelRead]:
         """Dispatch a single read-failure message to the correct result type."""
         if model_cls is not None:
@@ -105,8 +103,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         else:
             if not params.path.exists():
                 result = self._read_fail(
-                    c.Tests.ERROR_FILE_NOT_FOUND.format(path=params.path),
-                    model_cls,
+                    c.Tests.ERROR_FILE_NOT_FOUND.format(path=params.path), model_cls
                 )
             else:
                 actual_fmt = u.Cli.files_detect_format_from_path(
@@ -140,10 +137,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         return result
 
     def _read_content_by_format(
-        self,
-        path: Path,
-        actual_fmt: str,
-        params: m.Tests.ReadParams,
+        self, path: Path, actual_fmt: str, params: m.Tests.ReadParams
     ) -> t.Tests.ReadContent:
         """Read file content using format-specific parsing."""
         content: t.Tests.ReadContent
@@ -153,7 +147,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
             case _ if actual_fmt == c.Tests.FILE_FORMAT_JSON:
                 text = path.read_text(encoding=params.enc)
                 parsed_json = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_json(
-                    text.encode(),
+                    text.encode()
                 )
                 content = (
                     FlextTestsPayloadUtilities.to_config_map(parsed_json)

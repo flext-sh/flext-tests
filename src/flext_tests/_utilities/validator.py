@@ -1,16 +1,61 @@
-"""Extracted mixin for flext_tests."""
+"""Validator utilities mixin for flext-tests."""
 
 from __future__ import annotations
 
+from collections.abc import Callable, MutableSequence
 from pathlib import Path
+from typing import ClassVar
 
 import flext_tests.constants as tests_constants
 import flext_tests.models as tests_models
 import flext_tests.typings as tests_typings
+from flext_tests import p, r
 
 
 class FlextTestsValidatorUtilitiesMixin:
     """Validator utilities for architecture validation."""
+
+    # NOTE (multi-agent): validator_rule/path_pattern_matches/layer_dict moved
+    # here from c.Tests constants facet (declaration purity, mro-i6nq.11).
+    @staticmethod
+    def validator_rule(rule_id: str) -> tests_typings.t.StrPair:
+        """Resolve one validator rule (severity, description) by rule id."""
+        attr_name = "VALIDATOR_RULE_" + rule_id.replace("-", "_")
+        rule: tests_typings.t.StrPair = getattr(tests_constants.c.Tests, attr_name)
+        return rule
+
+    @staticmethod
+    def path_pattern_matches(value: str, pattern: str) -> bool:
+        """Check whether one validator path pattern matches value."""
+        compiled = tests_constants.c.Tests.VALIDATOR_APPROVED_PATH_REGEX_BY_PATTERN.get(
+            pattern
+        )
+        return compiled.search(value) is not None if compiled else False
+
+    @staticmethod
+    def layer_dict() -> tests_typings.t.IntMapping:
+        """Return the architecture layer hierarchy as a mapping."""
+        constants = tests_constants.c.Tests
+        return {
+            "constants": constants.LAYER_CONSTANTS,
+            "typings": constants.LAYER_TYPINGS,
+            "protocols": constants.LAYER_PROTOCOLS,
+            "settings": constants.LAYER_CONFIG,
+            "runtime": constants.LAYER_RUNTIME,
+            "exceptions": constants.LAYER_EXCEPTIONS,
+            "result": constants.LAYER_RESULT,
+            "loggings": constants.LAYER_LOGGINGS,
+            "models": constants.LAYER_MODELS,
+            "utilities": constants.LAYER_UTILITIES,
+            "mixins": constants.LAYER_MIXINS,
+            "container": constants.LAYER_CONTAINER,
+            "service": constants.LAYER_SERVICE,
+            "context": constants.LAYER_CONTEXT,
+            "handlers": constants.LAYER_HANDLERS,
+            "dispatcher": constants.LAYER_DISPATCHER,
+            "registry": constants.LAYER_REGISTRY,
+            "decorators": constants.LAYER_DECORATORS,
+        }
 
     @staticmethod
     def create_violation(
@@ -34,7 +79,7 @@ class FlextTestsValidatorUtilitiesMixin:
             Violation model instance
 
         """
-        severity, desc = tests_constants.c.Tests.validator_rule(rule_id)
+        severity, desc = FlextTestsValidatorUtilitiesMixin.validator_rule(rule_id)
         description = f"{desc}: {extra_desc}" if extra_desc else desc
         line = lines[line_number - 1] if line_number <= len(lines) else ""
         return tests_models.m.Tests.Violation(
@@ -88,7 +133,7 @@ class FlextTestsValidatorUtilitiesMixin:
         patterns = tuple(approved.get(rule_id, ())) + tuple(extra_patterns)
         file_str = str(file_path)
         return any(
-            tests_constants.c.Tests.path_pattern_matches(file_str, pattern)
+            FlextTestsValidatorUtilitiesMixin.path_pattern_matches(file_str, pattern)
             for pattern in patterns
         )
 
@@ -199,3 +244,66 @@ class FlextTestsValidatorUtilitiesMixin:
             )
             is not None
         )
+
+    # NOTE (multi-agent): scanner behavior moved here from _validator/models.py
+    # (declaration purity - a models-named module must not hold scan behavior;
+    # mro-i6nq.11). Scanners inherit ValidatorScannerMixin.
+    @staticmethod
+    def validator_run_scan(
+        *,
+        files: tests_typings.t.SequenceOf[Path],
+        approved_exceptions: tests_typings.t.MappingKV[str, tests_typings.t.StrSequence]
+        | None,
+        validator_name: str,
+        scan_file: Callable[
+            [Path, tests_typings.t.MappingKV[str, tests_typings.t.StrSequence]],
+            tests_typings.t.SequenceOf[tests_models.m.Tests.Violation],
+        ],
+    ) -> p.Result[tests_models.m.Tests.ScanResult]:
+        """Run one validator scan across files and build a ScanResult."""
+        violations: MutableSequence[tests_models.m.Tests.Violation] = []
+        approved = approved_exceptions or {}
+        for file_path in files:
+            violations.extend(scan_file(file_path, approved))
+        return r[tests_models.m.Tests.ScanResult].ok(
+            tests_models.m.Tests.ScanResult(
+                validator_name=validator_name,
+                files_scanned=len(files),
+                violations=violations,
+            )
+        )
+
+    class ValidatorScannerMixin:
+        """MRO mixin: validator classes inherit scan(...) for free.
+
+        Each consumer declares _VALIDATOR_KEY and a _scan_file
+        classmethod; scan delegates to validator_run_scan.
+        """
+
+        _VALIDATOR_KEY: ClassVar[str]
+
+        @classmethod
+        def _scan_file(
+            cls,
+            file_path: Path,
+            approved: tests_typings.t.MappingKV[str, tests_typings.t.StrSequence],
+        ) -> tests_typings.t.SequenceOf[tests_models.m.Tests.Violation]:
+            """Subclass MUST override: scan one file and yield violations."""
+            raise NotImplementedError
+
+        @classmethod
+        def scan(
+            cls,
+            files: tests_typings.t.SequenceOf[Path],
+            approved_exceptions: tests_typings.t.MappingKV[
+                str, tests_typings.t.StrSequence
+            ]
+            | None = None,
+        ) -> p.Result[tests_models.m.Tests.ScanResult]:
+            """Scan files for violations using the consumer's _scan_file."""
+            return FlextTestsValidatorUtilitiesMixin.validator_run_scan(
+                files=files,
+                approved_exceptions=approved_exceptions,
+                validator_name=cls._VALIDATOR_KEY,
+                scan_file=cls._scan_file,
+            )

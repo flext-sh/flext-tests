@@ -12,6 +12,7 @@ from flext_core.lazy import (
 )
 
 if TYPE_CHECKING:
+    pass
     from flext_tests._fixtures.enforcement import (
         EnforcementCollector as EnforcementCollector,
         EnforcementItem as EnforcementItem,

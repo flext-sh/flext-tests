@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
+    pass
     from flext_tests._utilities._files._creation_parts.creation_part_03 import (
         FlextTestsFilesCreationMixin as FlextTestsFilesCreationMixin,
     )
