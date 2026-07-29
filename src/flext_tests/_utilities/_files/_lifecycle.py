@@ -12,7 +12,9 @@ from pathlib import Path
 from types import TracebackType
 from typing import Self
 
-from flext_tests import c, t, u
+from flext_core import u
+from flext_tests.constants import c
+from flext_tests.typings import t
 
 
 class FlextTestsFilesLifecycleMixin:

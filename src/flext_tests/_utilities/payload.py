@@ -1,6 +1,5 @@
 """Shared payload conversion helpers for flext_tests.
 
-from flext_tests.utilities import u
 Low-level module with no dependency on flext_tests.utilities,
 importable by both utilities.py and matchers.py without cycles.
 
@@ -17,7 +16,12 @@ from datetime import datetime, tzinfo
 from enum import Enum
 from pathlib import Path
 
-from flext_tests import c, m, p, t
+from flext_core import u
+
+from flext_tests.constants import c
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
 class FlextTestsPayloadUtilities:

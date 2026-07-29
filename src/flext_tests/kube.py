@@ -9,7 +9,12 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Annotated, ClassVar, Self, override
 
-from flext_tests import c, m, p, r, t, u
+from flext_infra import r
+from flext_tests.constants import c
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.typings import t
+from flext_tests.utilities import u
 from flext_tests.docker import FlextTestsDocker
 
 

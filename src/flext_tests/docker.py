@@ -13,7 +13,13 @@ from docker.errors import DockerException, NotFound
 from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
-from flext_tests import c, m, p, r, s, t, u
+from flext_infra import r
+from flext_tests.base import s
+from flext_tests.constants import c
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.typings import t
+from flext_tests.utilities import u
 
 if TYPE_CHECKING:
     from docker.models.containers import Container

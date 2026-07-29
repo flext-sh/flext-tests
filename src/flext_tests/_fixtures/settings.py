@@ -19,7 +19,13 @@ from typing import TYPE_CHECKING
 import pytest
 
 from flext_core import FlextContainer, FlextContext, FlextSettings
-from flext_tests import c, e, m, p, r, s, t, u
+from flext_infra import e, r
+from flext_tests.base import s
+from flext_tests.constants import c
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.typings import t
+from flext_tests.utilities import u
 from flext_tests._settings import FlextTestsSettings
 from flext_tests.base import FlextTestsCase
 

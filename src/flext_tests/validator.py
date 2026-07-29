@@ -8,7 +8,13 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated, ClassVar, override
 
-from flext_tests import c, m, p, r, s, t, u
+from flext_infra import r
+from flext_tests.base import s
+from flext_tests.constants import c
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.typings import t
+from flext_tests.utilities import u
 from flext_tests._validator.bypass import FlextValidatorBypass
 from flext_tests._validator.imports import FlextValidatorImports
 from flext_tests._validator.layer import FlextValidatorLayer

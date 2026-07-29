@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from collections.abc import MutableSequence
 
-from flext_tests import p, r, t
+from flext_infra import r
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
 class FlextTestsGenericHelpersUtilitiesMixin:

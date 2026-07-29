@@ -5,7 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_cli import u
-from flext_tests import m, p, r
+from flext_infra import r
+from flext_tests.models import m
+from flext_tests.protocols import p
 from flext_tests._utilities.workspace_cleanup_inspect import (
     FlextTestsWorkspaceCleanupInspectUtilitiesMixin,
 )

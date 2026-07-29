@@ -9,7 +9,8 @@ from types import MappingProxyType
 from typing import Annotated, ClassVar
 
 from flext_infra import m, u
-from flext_tests import p, t
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
 class FlextTestsMatchersModelsMixin:

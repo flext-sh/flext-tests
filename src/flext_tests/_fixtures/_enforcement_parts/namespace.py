@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_tests import m, p
+from flext_tests.models import m
+from flext_tests.protocols import p
 from flext_tests._fixtures._enforcement_parts.items import (
     EnforcementCollector,
     EnforcementItem,

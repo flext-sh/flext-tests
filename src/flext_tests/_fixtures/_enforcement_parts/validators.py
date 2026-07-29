@@ -6,7 +6,10 @@ from importlib import import_module
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from flext_tests import c, m, p, t
+from flext_tests.constants import c
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.typings import t
 from flext_tests._fixtures._enforcement_parts.items import EnforcementItem
 
 if TYPE_CHECKING:

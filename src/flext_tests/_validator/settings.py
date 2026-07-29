@@ -6,7 +6,12 @@ from collections.abc import MutableSequence
 from pathlib import Path
 
 from flext_cli import u as cli_u
-from flext_tests import c, m, p, r, t, u
+from flext_infra import r
+from flext_tests.constants import c
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.typings import t
+from flext_tests.utilities import u
 
 
 class FlextValidatorSettings:

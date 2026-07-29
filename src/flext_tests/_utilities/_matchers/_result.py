@@ -6,7 +6,10 @@ from collections.abc import Mapping, MutableMapping
 from typing import overload
 
 from flext_core import u
-from flext_tests import c, m, p, t
+from flext_tests.constants import c
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.typings import t
 from flext_tests._utilities._matchers._assertions import (
     FlextTestsMatchersAssertionsMixin,
 )

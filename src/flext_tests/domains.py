@@ -5,7 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_cli import u as cli_u
-from flext_tests import p, r, t
+from flext_infra import r
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
 class FlextTestsDomains:

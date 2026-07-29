@@ -9,7 +9,8 @@ from typing import ClassVar
 import flext_tests.constants as tests_constants
 import flext_tests.models as tests_models
 import flext_tests.typings as tests_typings
-from flext_tests import p, r
+from flext_infra import r
+from flext_tests.protocols import p
 
 
 class FlextTestsValidatorUtilitiesMixin:

@@ -7,7 +7,9 @@ from contextlib import contextmanager
 from typing import Self
 
 from flext_core import FlextContainer, s
-from flext_tests import m, p, t
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.typings import t
 from flext_tests._settings import FlextTestsSettings
 
 

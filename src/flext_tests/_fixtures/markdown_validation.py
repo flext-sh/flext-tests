@@ -18,7 +18,8 @@ from typing import TYPE_CHECKING, override
 
 import pytest
 
-from flext_tests import c, u
+from flext_tests.constants import c
+from flext_tests.utilities import u
 from flext_tests._validator.markdown import FlextValidatorMarkdown
 
 if TYPE_CHECKING:
