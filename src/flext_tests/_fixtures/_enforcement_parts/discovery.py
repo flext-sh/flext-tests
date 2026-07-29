@@ -2,18 +2,20 @@
 
 from __future__ import annotations
 
+from flext_tests.utilities import u
 from importlib import import_module
 from pathlib import Path
-from typing import TYPE_CHECKING
 
-from flext_tests import c, p, r, t, u
+import pytest
 
-if TYPE_CHECKING:
-    import pytest
+from flext_core import r
+from flext_tests import c, p, t
 
 
-def load_infra_report(
-    workspace_root: Path, *, project_names: t.StrSequence
+def _load_infra_report(
+    workspace_root: Path,
+    *,
+    project_names: t.StrSequence,
 ) -> p.Result[p.AttributeProbe]:
     """Return a workspace enforcement report when available."""
     if not project_names:
@@ -25,28 +27,16 @@ def load_infra_report(
     )
     if import_result.failure:
         return r[p.AttributeProbe].fail(
-            import_result.error or "import flext_infra namespace enforcer failed"
+            import_result.error or "import flext_infra namespace enforcer failed",
         )
     refactor = import_result.value
-    enforcer_cls: p.Tests.NamespaceEnforcerFactory | None = getattr(
-        refactor, "FlextInfraNamespaceEnforcer", None
-    )
-    if not callable(enforcer_cls):
+    enforcer_cls = getattr(refactor, "FlextInfraNamespaceEnforcer", None)
+    if enforcer_cls is None:
         return r[p.AttributeProbe].fail("FlextInfraNamespaceEnforcer not found")
-    enforcer_result = u.try_(
-        lambda: enforcer_cls(workspace_root=workspace_root),
-        catch=c.EXC_BROAD_RUNTIME,
-        op_name="build flext_infra namespace enforcer",
-    )
-    if enforcer_result.failure:
-        return r[p.AttributeProbe].fail(
-            enforcer_result.error or "build flext_infra namespace enforcer failed"
-        )
-    enforcer: p.Tests.NamespaceEnforcer = enforcer_result.value
-    # NOTE (multi-agent, mro-wkii.17.21): adapt the direct report exactly once
-    # through the canonical value-returning exception boundary.
     return u.try_(
-        lambda: enforcer.enforce(project_names=project_names),
+        lambda: enforcer_cls(workspace_root=workspace_root).enforce(
+            project_names=project_names,
+        ),
         catch=c.EXC_BROAD_RUNTIME,
         op_name="run flext_infra namespace enforcement",
     )
@@ -63,7 +53,11 @@ def _item_path(item: pytest.Item) -> Path | None:
     return Path(str(fspath)).resolve()
 
 
-def _project_name_for_path(*, path: Path, workspace_root: Path) -> p.Result[str]:
+def _project_name_for_path(
+    *,
+    path: Path,
+    workspace_root: Path,
+) -> p.Result[str]:
     """Return the owning FLEXT project name for one workspace path."""
     relative_result = u.try_(
         lambda: path.relative_to(workspace_root),
@@ -72,7 +66,7 @@ def _project_name_for_path(*, path: Path, workspace_root: Path) -> p.Result[str]
     )
     if relative_result.failure:
         return r[str].fail(
-            relative_result.error or "path is not relative to workspace root"
+            relative_result.error or "path is not relative to workspace root",
         )
     relative_path = relative_result.value
     if not relative_path.parts:
@@ -88,22 +82,25 @@ def _project_name_for_path(*, path: Path, workspace_root: Path) -> p.Result[str]
     return r[str].ok(project_name)
 
 
-def _project_name_for_item(*, item: pytest.Item, workspace_root: Path) -> str | None:
+def _project_name_for_item(
+    *,
+    item: pytest.Item,
+    workspace_root: Path,
+) -> str | None:
     """Return the owning FLEXT project name for one collected item."""
     item_path = _item_path(item)
     if item_path is None:
         return None
-    project_name_result = _project_name_for_path(
-        path=item_path, workspace_root=workspace_root
-    )
-    if project_name_result.failure:
-        return None
-    project_name: str = project_name_result.value
-    return project_name
+    return _project_name_for_path(
+        path=item_path,
+        workspace_root=workspace_root,
+    ).unwrap_or(None)
 
 
-def collected_project_names(
-    *, items: t.SequenceOf[pytest.Item], workspace_root: Path
+def _collected_project_names(
+    *,
+    items: t.SequenceOf[pytest.Item],
+    workspace_root: Path,
 ) -> t.StrSequence:
     """Return sorted FLEXT project names represented by collected pytest items."""
     project_names = {
@@ -111,7 +108,8 @@ def collected_project_names(
         for item in items
         if (
             project_name := _project_name_for_item(
-                item=item, workspace_root=workspace_root
+                item=item,
+                workspace_root=workspace_root,
             )
         )
         is not None
@@ -120,23 +118,27 @@ def collected_project_names(
 
 
 def _validator_target_for_item(
-    *, item: pytest.Item, workspace_root: Path
+    *,
+    item: pytest.Item,
+    workspace_root: Path,
 ) -> Path | None:
     """Return the validation target represented by one collected item."""
     item_path = _item_path(item)
     if item_path is None:
         return None
-    project_name_result = _project_name_for_path(
-        path=item_path, workspace_root=workspace_root
-    )
-    if project_name_result.success:
-        project_name: str = project_name_result.value
+    project_name = _project_name_for_path(
+        path=item_path,
+        workspace_root=workspace_root,
+    ).unwrap_or(None)
+    if project_name is not None:
         return workspace_root / project_name
     return item_path
 
 
-def collected_validator_targets(
-    *, items: t.SequenceOf[pytest.Item], workspace_root: Path
+def _collected_validator_targets(
+    *,
+    items: t.SequenceOf[pytest.Item],
+    workspace_root: Path,
 ) -> t.SequenceOf[Path]:
     """Return sorted validation targets represented by collected pytest items."""
     targets = {
@@ -144,7 +146,8 @@ def collected_validator_targets(
         for item in items
         if (
             target := _validator_target_for_item(
-                item=item, workspace_root=workspace_root
+                item=item,
+                workspace_root=workspace_root,
             )
         )
         is not None
@@ -153,7 +156,8 @@ def collected_validator_targets(
 
 
 __all__: list[str] = [
-    "collected_project_names",
-    "collected_validator_targets",
-    "load_infra_report",
+    "_collected_project_names",
+    "_collected_validator_targets",
+    "_load_infra_report",
+    "_project_name_for_path",
 ]

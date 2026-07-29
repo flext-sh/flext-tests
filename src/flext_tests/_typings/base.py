@@ -1,5 +1,7 @@
 """Base tests typing primitives.
 
+from flext_tests.models import m
+from flext_tests.protocols import p
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 """
@@ -20,7 +22,8 @@ from enum import Enum
 from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
 
-from flext_infra import m, p, t
+from flext_cli import t
+from flext_infra import t as it
 
 
 class FlextTestsBaseTypesMixin:
@@ -36,7 +39,7 @@ class FlextTestsBaseTypesMixin:
         | tzinfo
         | Path
         | m.BaseModel
-        | type[object]
+        | type
         | frozenset[str]
     )
     type TestobjectCollection = (
@@ -61,7 +64,8 @@ class FlextTestsBaseTypesMixin:
         | p.Registry
         | p.AttributeProbe
         | p.ResultLike[FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | t.Infra.RegexMatch
+        | t.Cli.TyperRunner
+        | it.Infra.RegexMatch
         | bt.UnionType
         | FrameType
         | ModuleType
