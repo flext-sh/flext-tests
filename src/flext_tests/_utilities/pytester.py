@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from importlib.metadata import entry_points
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -15,6 +16,26 @@ if TYPE_CHECKING:
 
 class FlextTestsPytesterUtilitiesMixin:
     """Compose reusable pytester operations under ``u.Tests``."""
+
+    @staticmethod
+    def pytester_enforcement_plugin_name() -> str:
+        """Resolve the enforcement route from installed pytest11 metadata."""
+        from flext_tests import active_rules
+
+        package_root = active_rules.__module__.partition(".")[0]
+        matches = tuple(
+            entry.name
+            for entry in entry_points(group="pytest11")
+            if entry.module.partition(".")[0] == package_root
+            and getattr(entry.load(), "active_rules", None) is active_rules
+        )
+        if len(matches) != 1:
+            message = (
+                "installed pytest11 metadata must expose exactly one FLEXT "
+                "enforcement plugin"
+            )
+            raise RuntimeError(message)
+        return matches[0]
 
     @staticmethod
     def pytester_stamp_workspace_markers(root: Path) -> None:
@@ -52,9 +73,13 @@ class FlextTestsPytesterUtilitiesMixin:
         )
 
     @classmethod
-    def pytester_make_enforcement_workspace(cls, pytester: pytest.Pytester) -> None:
-        """Shape a sandbox workspace and install one warning-emitting item."""
-        pytester.makeini("[pytest]\naddopts = --timeout=2.5\n")
+    def pytester_make_enforcement_workspace(
+        cls, pytester: pytest.Pytester, *, policy_seconds: float
+    ) -> None:
+        """Shape a sandbox workspace with an explicit generated timeout policy."""
+        cls.pytester_make_timeout_ini(
+            pytester, policy_seconds=policy_seconds, func_only=False
+        )
         cls.pytester_stamp_workspace_markers(pytester.path)
         cls.pytester_make_enforcement_violation(pytester)
 
@@ -67,15 +92,19 @@ class FlextTestsPytesterUtilitiesMixin:
             environment.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
             return pytester.runpytest_subprocess(*args)
 
-    @staticmethod
+    @classmethod
     def pytester_run_enforcement(
-        pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch, *args: str
+        cls, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch, *args: str
     ) -> pytest.RunResult:
         """Run only pytest-timeout and the installed enforcement entry point."""
         with monkeypatch.context() as environment:
             environment.setenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", "1")
             return pytester.runpytest_inprocess(
-                "-p", "pytest_timeout", "-p", "flext_tests_enforcement", *args
+                "-p",
+                "pytest_timeout",
+                "-p",
+                cls.pytester_enforcement_plugin_name(),
+                *args,
             )
 
     @staticmethod

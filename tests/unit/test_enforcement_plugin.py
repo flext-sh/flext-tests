@@ -14,7 +14,7 @@ Two behavioral surfaces are exercised through the module's public API only:
 from __future__ import annotations
 
 from importlib.metadata import entry_points
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 import pytest
 
@@ -34,14 +34,17 @@ if TYPE_CHECKING:
 class TestsFlextTestsEnforcementPlugin:
     """Public contract of the enforcement dispatcher facade."""
 
-    def test_flext_pytest11_entrypoints_have_one_package_owner(self) -> None:
-        """Only the two flext-tests plugins participate in pytest autoload."""
-        names = {
+    policy_seconds: ClassVar[float] = 2.5
+
+    def test_enforcement_entrypoint_has_one_installed_metadata_owner(self) -> None:
+        """Installed metadata exposes one route for the enforcement facade."""
+        route_name = u.Tests.pytester_enforcement_plugin_name()
+        matches = tuple(
             entry.name
             for entry in entry_points(group="pytest11")
-            if entry.name.startswith("flext_")
-        }
-        tm.that(names, eq={"flext_tests", "flext_tests_enforcement"})
+            if entry.name == route_name
+        )
+        tm.that(matches, eq=(route_name,))
 
     # ---- split_csv: pure CSV parsing contract --------------------------------
 
@@ -138,7 +141,9 @@ class TestsFlextTestsEnforcementPlugin:
         self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Non-strict run captures the warning and reports it in the summary."""
-        u.Tests.pytester_make_enforcement_workspace(pytester)
+        u.Tests.pytester_make_enforcement_workspace(
+            pytester, policy_seconds=self.policy_seconds
+        )
         result = u.Tests.pytester_run_installed_subprocess(
             pytester, monkeypatch, "--flext-enforce-rules=ENFORCE-022"
         )
@@ -154,7 +159,9 @@ class TestsFlextTestsEnforcementPlugin:
         self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """--flext-enforce-strict promotes the configured warning to a failure."""
-        u.Tests.pytester_make_enforcement_workspace(pytester)
+        u.Tests.pytester_make_enforcement_workspace(
+            pytester, policy_seconds=self.policy_seconds
+        )
         result = u.Tests.pytester_run_enforcement(
             pytester,
             monkeypatch,
@@ -171,7 +178,7 @@ class TestsFlextTestsEnforcementPlugin:
         self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Without workspace markers the dispatcher stays silent and passive."""
-        pytester.makeini("[pytest]\naddopts = --timeout=2.5\n")
+        u.Tests.pytester_make_timeout_ini(pytester, policy_seconds=self.policy_seconds)
         u.Tests.pytester_make_enforcement_violation(pytester)
         result = u.Tests.pytester_run_enforcement(pytester, monkeypatch)
         result.assert_outcomes(passed=1, warnings=1)
@@ -184,7 +191,7 @@ class TestsFlextTestsEnforcementPlugin:
         """A nested pytest lifecycle restores the caller's warning config."""
         outer_config = SessionConfig.value
         tm.that(outer_config, none=False)
-        pytester.makeini("[pytest]\naddopts = --timeout=2.5\n")
+        u.Tests.pytester_make_timeout_ini(pytester, policy_seconds=self.policy_seconds)
         pytester.makepyfile("def test_nested_probe() -> None:\n    pass\n")
         u.Tests.pytester_run_enforcement(pytester, monkeypatch).assert_outcomes(
             passed=1
@@ -195,7 +202,7 @@ class TestsFlextTestsEnforcementPlugin:
         self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Exercise the installed public infra-report boundary in a subprocess."""
-        pytester.makeini("[pytest]\naddopts = --timeout=2.5\n")
+        u.Tests.pytester_make_timeout_ini(pytester, policy_seconds=self.policy_seconds)
         pytester.makepyfile(
             test_public_boundary=(
                 "from pathlib import Path\n"
