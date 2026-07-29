@@ -1,6 +1,5 @@
 """Types extraction for flext_tests.
 
-from flext_tests.models import m
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 """
@@ -9,6 +8,7 @@ from __future__ import annotations
 
 from typing import TypeIs
 
+from flext_core import m
 from flext_tests._typings.base import FlextTestsBaseTypesMixin as tb
 
 
