@@ -5,7 +5,7 @@ Asserts the observable public contract of
 catalog rule filtering, and the collection-item / collector / error trio.
 
 End-to-end pytest *lifecycle* hooks (``pytest_configure``,
-``pytest_sessionstart``, ``pytest_terminal_summary``,
+``pytest_sessionstart``, ``pytest_sessionfinish``, ``pytest_terminal_summary``,
 ``pytest_warning_recorded``, ``pytest_collection_modifyitems``) require a live
 pytest session and are exercised via ``pytester`` in the E2E suite, not here.
 ``pytest_addoption`` is the one hook whose contract (registering CLI options)
