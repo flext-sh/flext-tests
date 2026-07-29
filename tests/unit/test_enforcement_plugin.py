@@ -13,7 +13,6 @@ Two behavioral surfaces are exercised through the module's public API only:
 
 from __future__ import annotations
 
-import os
 from importlib.metadata import entry_points
 from typing import TYPE_CHECKING
 
@@ -23,10 +22,10 @@ from flext_tests import (
     SessionConfig,
     active_rules,
     discover_workspace_root,
-    load_infra_report,
     m,
     split_csv,
     tm,
+    u,
 )
 
 if TYPE_CHECKING:
@@ -35,22 +34,6 @@ if TYPE_CHECKING:
 
 class TestsFlextTestsEnforcementPlugin:
     """Public contract of the enforcement dispatcher facade."""
-
-    @staticmethod
-    def _run_pytest(pytester: pytest.Pytester, *args: str) -> pytest.RunResult:
-        """Run only the real plugins owned by this behavioral sandbox."""
-        variable = "PYTEST_DISABLE_PLUGIN_AUTOLOAD"
-        previous = os.environ.get(variable)
-        os.environ[variable] = "1"
-        try:
-            return pytester.runpytest_inprocess(
-                "-p", "pytest_timeout", "-p", "flext_tests_enforcement", *args
-            )
-        finally:
-            if previous is None:
-                os.environ.pop(variable, None)
-            else:
-                os.environ[variable] = previous
 
     def test_flext_pytest11_entrypoints_have_one_package_owner(self) -> None:
         """Only the two flext-tests plugins participate in pytest autoload."""
@@ -186,11 +169,13 @@ class TestsFlextTestsEnforcementPlugin:
         cls._write_violation_module(pytester)
 
     def test_dispatcher_records_warning_and_prints_summary(
-        self, pytester: pytest.Pytester
+        self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Non-strict run captures the warning and reports it in the summary."""
         self._make_workspace_sandbox(pytester)
-        result = self._run_pytest(pytester, "--flext-enforce-rules=ENFORCE-022")
+        result = u.Tests.pytester_run_installed_subprocess(
+            pytester, monkeypatch, "--flext-enforce-rules=ENFORCE-022"
+        )
         result.assert_outcomes(passed=1, warnings=1)
         result.stdout.fnmatch_lines([
             "*flext-enforce*",
@@ -200,12 +185,15 @@ class TestsFlextTestsEnforcementPlugin:
         ])
 
     def test_strict_mode_promotes_warning_to_failure(
-        self, pytester: pytest.Pytester
+        self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """--flext-enforce-strict promotes the configured warning to a failure."""
         self._make_workspace_sandbox(pytester)
-        result = self._run_pytest(
-            pytester, "--flext-enforce-rules=ENFORCE-022", "--flext-enforce-strict"
+        result = u.Tests.pytester_run_enforcement(
+            pytester,
+            monkeypatch,
+            "--flext-enforce-rules=ENFORCE-022",
+            "--flext-enforce-strict",
         )
         result.assert_outcomes(failed=1)
         result.stdout.fnmatch_lines([
@@ -214,36 +202,61 @@ class TestsFlextTestsEnforcementPlugin:
         ])
 
     def test_dispatcher_inactive_outside_workspace(
-        self, pytester: pytest.Pytester
+        self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Without workspace markers the dispatcher stays silent and passive."""
         pytester.makeini("[pytest]\naddopts = --timeout=2.5\n")
         self._write_violation_module(pytester)
-        result = self._run_pytest(pytester)
+        result = u.Tests.pytester_run_enforcement(pytester, monkeypatch)
         result.assert_outcomes(passed=1, warnings=1)
         result.stdout.no_fnmatch_line("*flext-enforce*")
         result.stdout.no_fnmatch_line("runtime warnings captured:*")
 
     def test_nested_session_restores_outer_config(
-        self, pytester: pytest.Pytester
+        self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """A nested pytest lifecycle restores the caller's warning config."""
         outer_config = SessionConfig.value
         tm.that(outer_config, none=False)
         pytester.makeini("[pytest]\naddopts = --timeout=2.5\n")
         pytester.makepyfile("def test_nested_probe() -> None:\n    pass\n")
-        self._run_pytest(pytester).assert_outcomes(passed=1)
+        u.Tests.pytester_run_enforcement(pytester, monkeypatch).assert_outcomes(
+            passed=1
+        )
         tm.that(SessionConfig.value is outer_config, eq=True)
 
-    def test_infra_report_boundary_returns_real_report(self, tmp_path: Path) -> None:
-        """Return the real infra report through the public Result boundary."""
-        project = tmp_path / "flext-contract-probe"
-        package = project / "src" / "flext_contract_probe"
-        package.mkdir(parents=True)
-        (package / "__init__.py").write_text("", encoding="utf-8")
-        (project / "pyproject.toml").write_text(
-            '[project]\nname = "flext-contract-probe"\nversion = "0.1.0"\n',
-            encoding="utf-8",
+    def test_infra_report_boundary_runs_in_subprocess(
+        self, pytester: pytest.Pytester
+    ) -> None:
+        """Exercise the installed public infra-report boundary in a subprocess."""
+        pytester.makeini("[pytest]\naddopts = --timeout=2.5\n")
+        pytester.makepyfile(
+            test_public_boundary=(
+                "from pathlib import Path\n"
+                "\n"
+                "from flext_tests import load_infra_report\n"
+                "\n"
+                "\n"
+                "class TestsPublicInfraReportBoundary:\n"
+                "    def test_public_boundary_wraps_direct_report(\n"
+                "        self,\n"
+                "        tmp_path: Path,\n"
+                "    ) -> None:\n"
+                "        project = tmp_path / 'flext-contract-probe'\n"
+                "        package = project / 'src' / 'flext_contract_probe'\n"
+                "        package.mkdir(parents=True)\n"
+                "        (package / '__init__.py').write_text('', encoding='utf-8')\n"
+                "        (project / 'pyproject.toml').write_text(\n"
+                "            '[project]\\n'\n"
+                "            'name = \\\"flext-contract-probe\\\"\\n'\n"
+                "            'version = \\\"0.1.0\\\"\\n',\n"
+                "            encoding='utf-8',\n"
+                "        )\n"
+                "        report = load_infra_report(\n"
+                "            project,\n"
+                "            project_names=(project.name,),\n"
+                "        ).unwrap()\n"
+                "        assert report.workspace == str(project.resolve())\n"
+            )
         )
-        report = load_infra_report(project, project_names=(project.name,)).unwrap()
-        tm.that(report, attr_eq=("workspace", str(project.resolve())))
+        pytester.runpytest_subprocess().assert_outcomes(passed=1)

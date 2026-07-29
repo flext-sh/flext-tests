@@ -16,6 +16,7 @@ from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixi
 from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
 from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
 from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
+from flext_tests._utilities.pytester import FlextTestsPytesterUtilitiesMixin
 from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
 from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
 from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
@@ -40,6 +41,7 @@ class FlextTestsUtilities(u):
         FlextTestsContainerHelpersUtilitiesMixin,
         FlextTestsHandlerHelpersUtilitiesMixin,
         FlextTestsFilesUtilitiesMixin,
+        FlextTestsPytesterUtilitiesMixin,
         FlextTestsMakeUtilitiesMixin,
         FlextTestsValidatorUtilitiesMixin,
         FlextTestsMatchersUtilities.Tests,

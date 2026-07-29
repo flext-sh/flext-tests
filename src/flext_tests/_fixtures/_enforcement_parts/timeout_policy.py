@@ -9,6 +9,8 @@ from typing import ClassVar, Never
 
 import pytest
 
+from flext_tests import t
+
 
 class PytestTimeoutPolicy:
     """Validate that pytest-timeout cannot be weakened by a test run."""
@@ -21,8 +23,12 @@ class PytestTimeoutPolicy:
     def configure(cls, config: pytest.Config) -> None:
         """Resolve and validate the configured per-item timeout ceiling."""
         overrides = tuple(str(value) for value in config.getoption("override_ini"))
-        if overrides:
-            cls._fail("-o/--override-ini is forbidden by the timeout policy")
+        timeout_owned_keys = {"addopts", "timeout", "timeout_func_only"}
+        for override in overrides:
+            if override.partition("=")[0].strip() in timeout_owned_keys:
+                cls._fail(
+                    f"-o/--override-ini cannot replace timeout-owned key {override!r}"
+                )
         configured_tokens = cls._tokens(config.getini("addopts"))
         configured_values = cls._timeout_values(
             configured_tokens, source="configured addopts"
@@ -73,7 +79,7 @@ class PytestTimeoutPolicy:
             cls._fail(f"{nodeid}: timeout marker requires an argument")
         if len(marker.args) > cls._marker_positional_limit:
             cls._fail(f"{nodeid}: timeout marker has too many positional arguments")
-        known = {"disable_debugger_detection", "func_only", "method", "timeout"}
+        known = {"func_only", "method", "timeout"}
         unknown = set(marker.kwargs).difference(known)
         if unknown:
             cls._fail(
@@ -85,6 +91,8 @@ class PytestTimeoutPolicy:
             cls._fail(f"{nodeid}: timeout marker defines method twice")
         timeout = marker.args[0] if marker.args else marker.kwargs.get("timeout")
         if timeout is not None:
+            if isinstance(timeout, bool) or not isinstance(timeout, (str, int, float)):
+                cls._fail(f"{nodeid}: timeout marker must be a positive finite number")
             cls._at_most(timeout, ceiling=ceiling, source=f"{nodeid} timeout marker")
         func_only = marker.kwargs.get("func_only")
         if func_only is not None and not isinstance(func_only, bool):
@@ -118,25 +126,29 @@ class PytestTimeoutPolicy:
         return tuple(values)
 
     @staticmethod
-    def _tokens(raw: object) -> tuple[str, ...]:
+    def _tokens(raw: t.Tests.PytestOptionSource) -> tuple[str, ...]:
         if raw is None:
             return ()
-        if isinstance(raw, (list, tuple)):
-            return tuple(str(value) for value in raw)
+        if not isinstance(raw, str):
+            return tuple(raw)
         try:
-            return tuple(shlex.split(str(raw)))
+            return tuple(shlex.split(raw))
         except ValueError as exc:
             message = f"invalid pytest option string: {exc}"
             raise pytest.UsageError(message) from exc
 
     @classmethod
-    def _at_most(cls, raw: object, *, ceiling: float, source: str) -> None:
+    def _at_most(
+        cls, raw: t.Tests.PytestTimeoutValue, *, ceiling: float, source: str
+    ) -> None:
         value = cls._positive_seconds(raw, source=source)
         if value > ceiling:
             cls._fail(f"{source}: timeout {value:g}s exceeds policy {ceiling:g}s")
 
     @classmethod
-    def _positive_seconds(cls, raw: object, *, source: str) -> float:
+    def _positive_seconds(
+        cls, raw: t.Tests.PytestTimeoutValue, *, source: str
+    ) -> float:
         if isinstance(raw, bool):
             cls._fail(f"{source}: timeout must be a positive finite number")
         try:

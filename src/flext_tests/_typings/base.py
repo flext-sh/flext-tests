@@ -26,6 +26,8 @@ from flext_infra import m, p, t
 class FlextTestsBaseTypesMixin:
     """Base generic primitives extending Flext core aliases."""
 
+    type PytestOptionSource = str | t.StrSequence | None
+    type PytestTimeoutValue = str | int | float
     type TestobjectAtom = (
         str
         | int
