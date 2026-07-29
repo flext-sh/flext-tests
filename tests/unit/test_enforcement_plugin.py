@@ -21,6 +21,7 @@ import pytest
 from flext_tests import (
     SessionConfig,
     active_rules,
+    c,
     discover_workspace_root,
     split_csv,
     tm,
@@ -93,8 +94,8 @@ class TestsFlextTestsEnforcementPlugin:
         self, tmp_path: Path
     ) -> None:
         """A tree missing any marker yields None rather than a false root."""
-        (tmp_path / "AGENTS.md").write_text("stub")
-        # flext-core / flext-tests markers deliberately absent.
+        (tmp_path / c.Tests.ENFORCEMENT_WORKSPACE_MARKERS[0]).mkdir()
+        # Every remaining configured marker is deliberately absent.
         tm.that(discover_workspace_root(tmp_path), none=True)
 
     # ---- active_rules: catalog filtering contract ----------------------------

@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import c, enforcement as dispatcher, m, tm, u
+from flext_tests import c, enforcement as dispatcher, m, p, tm, u
 
 
 class TestsFlextTestsEnforcementDispatcher:
@@ -38,12 +38,14 @@ class TestsFlextTestsEnforcementDispatcher:
         return root
 
     @pytest.fixture
-    def rule(self) -> m.EnforcementRuleSpec:
+    def rule(self) -> p.Tests.EnforcementRuleSpec:
         """First enabled rule from the canonical catalog."""
         return next(r for r in u.build_canonical_catalog().rules if r.enabled)
 
     @pytest.fixture
-    def violation(self, rule: m.EnforcementRuleSpec) -> m.Violation:
+    def violation(
+        self, rule: p.Tests.EnforcementRuleSpec
+    ) -> p.Tests.EnforcementViolation:
         return m.Violation(
             qualname="flext_core.x.Y",
             layer="core",
@@ -180,8 +182,8 @@ class TestsFlextTestsEnforcementDispatcher:
     def test_runtest_raises_violation_error_when_violations_present(
         self,
         request: pytest.FixtureRequest,
-        rule: m.EnforcementRuleSpec,
-        violation: m.Violation,
+        rule: p.Tests.EnforcementRuleSpec,
+        violation: p.Tests.EnforcementViolation,
     ) -> None:
         collector = dispatcher.EnforcementCollector.from_parent(
             request.session, name="flext-enforce"
@@ -203,7 +205,7 @@ class TestsFlextTestsEnforcementDispatcher:
         tm.that(message, has=str(violation.line_number))
 
     def test_runtest_is_a_noop_when_no_violations(
-        self, request: pytest.FixtureRequest, rule: m.EnforcementRuleSpec
+        self, request: pytest.FixtureRequest, rule: p.Tests.EnforcementRuleSpec
     ) -> None:
         collector = dispatcher.EnforcementCollector.from_parent(
             request.session, name="flext-enforce"
@@ -221,8 +223,8 @@ class TestsFlextTestsEnforcementDispatcher:
     def test_collector_collects_every_added_item(
         self,
         request: pytest.FixtureRequest,
-        rule: m.EnforcementRuleSpec,
-        violation: m.Violation,
+        rule: p.Tests.EnforcementRuleSpec,
+        violation: p.Tests.EnforcementViolation,
     ) -> None:
         collector = dispatcher.EnforcementCollector.from_parent(
             request.session, name="flext-enforce"

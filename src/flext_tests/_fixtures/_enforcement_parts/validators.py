@@ -6,7 +6,7 @@ from importlib import import_module
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from flext_tests import c, m, p, t
+from flext_tests import c, p, t
 from flext_tests._fixtures._enforcement_parts.items import EnforcementItem
 
 if TYPE_CHECKING:
@@ -34,7 +34,7 @@ def _iter_infra_violations(
 
 
 def dispatch_infra_detector(
-    rule: m.EnforcementRuleSpec, report: p.AttributeProbe
+    rule: p.Tests.EnforcementRuleSpec, report: p.AttributeProbe
 ) -> dict[str, list[p.AttributeProbe]]:
     """Group namespace-detector violations by owning project."""
     source = rule.source
@@ -50,8 +50,8 @@ def dispatch_infra_detector(
 
 def build_tests_validator_items(
     collector: pytest.Collector,
-    rule: m.EnforcementRuleSpec,
-    context: m.Tests.EnforcementBuildContext,
+    rule: p.Tests.EnforcementRuleSpec,
+    context: p.Tests.EnforcementBuildContext,
 ) -> list[EnforcementItem]:
     """Build enforcement items from flext-tests validator methods."""
     workspace_root = context.workspace_root
@@ -64,7 +64,7 @@ def build_tests_validator_items(
 
 def _items_from_grouped(
     collector: pytest.Collector,
-    rule: m.EnforcementRuleSpec,
+    rule: p.Tests.EnforcementRuleSpec,
     grouped: dict[str, list[p.AttributeProbe]],
 ) -> list[EnforcementItem]:
     """Convert grouped violations into enforcement items."""
@@ -85,7 +85,7 @@ def _items_from_grouped(
 
 
 def _collect_tests_validator_violations(
-    rule: m.EnforcementRuleSpec, workspace_root: Path, targets: t.SequenceOf[Path]
+    rule: p.Tests.EnforcementRuleSpec, workspace_root: Path, targets: t.SequenceOf[Path]
 ) -> dict[str, list[p.AttributeProbe]]:
     result: dict[str, list[p.AttributeProbe]] = {}
     try:

@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
     from pathlib import Path
 
-    from flext_tests import m, p, t
+    from flext_tests import p, t
 
 
 class EnforcementItem(pytest.Item):
@@ -21,9 +21,9 @@ class EnforcementItem(pytest.Item):
         name: str,
         parent: pytest.Collector,
         *,
-        rule: m.EnforcementRuleSpec,
+        rule: p.Tests.EnforcementRuleSpec,
         project: str,
-        violations: t.SequenceOf[m.Violation | p.AttributeProbe],
+        violations: t.SequenceOf[p.Tests.EnforcementViolation | p.AttributeProbe],
     ) -> None:
         super().__init__(name, parent)
         self._rule = rule
@@ -42,7 +42,9 @@ class EnforcementItem(pytest.Item):
         raise EnforcementViolationError("\n".join([header, *detail_lines]))
 
     @staticmethod
-    def _format_violation(violation: p.AttributeProbe) -> str:
+    def _format_violation(
+        violation: p.Tests.EnforcementViolation | p.AttributeProbe,
+    ) -> str:
         rule_id = getattr(violation, "rule_id", "")
         file_path = getattr(violation, "file_path", None) or getattr(
             violation, "file", ""

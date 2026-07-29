@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_tests import m, p
+from flext_tests import p
 from flext_tests._fixtures._enforcement_parts.items import (
     EnforcementCollector,
     EnforcementItem,
@@ -22,8 +22,8 @@ class NamespaceDetectorBuilder(p.Tests.EnforcementBuilder):
         self,
         session: pytest.Session,
         cfg: p.Tests.EnforcementDispatcherConfig,
-        rule: m.EnforcementRuleSpec,
-        context: m.Tests.EnforcementBuildContext,
+        rule: p.Tests.EnforcementRuleSpec,
+        context: p.Tests.EnforcementBuildContext,
     ) -> list[pytest.Item]:
         """Return one synthetic item per project carrying violations."""
         _ = cfg

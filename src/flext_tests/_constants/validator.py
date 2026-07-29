@@ -23,6 +23,14 @@ class FlextTestsConstantsValidator:
         MEDIUM = "MEDIUM"
         LOW = "LOW"
 
+    @unique
+    class PytestTimeoutIniKey(StrEnum):
+        """Immutable pytest INI keys addressable by timeout policy."""
+
+        ADDOPTS = "addopts"
+        TIMEOUT = "timeout"
+        TIMEOUT_FUNC_ONLY = "timeout_func_only"
+
     VALIDATOR_RULE_IMPORT_001: Final[t.StrPair] = (
         "HIGH",
         "Lazy import (not at module top)",
@@ -264,6 +272,24 @@ class FlextTestsConstantsValidator:
         "flext-core",
         "flext-tests",
     )
+    PYTEST_ADDOPTS_ENV: Final[str] = "PYTEST_ADDOPTS"
+    PYTEST_ADDOPTS_INI: Final[str] = PytestTimeoutIniKey.ADDOPTS.value
+    PYTEST_OVERRIDE_INI_DEST: Final[str] = "override_ini"
+    PYTEST_TIMEOUT_ENV: Final[str] = "PYTEST_TIMEOUT"
+    PYTEST_TIMEOUT_FUNC_ONLY_INI: Final[str] = (
+        PytestTimeoutIniKey.TIMEOUT_FUNC_ONLY.value
+    )
+    PYTEST_TIMEOUT_INI: Final[str] = PytestTimeoutIniKey.TIMEOUT.value
+    PYTEST_TIMEOUT_MARKER: Final[str] = "timeout"
+    PYTEST_TIMEOUT_MARKER_ALLOWED_KEYS: Final[frozenset[str]] = frozenset({
+        "func_only",
+        "method",
+        "timeout",
+    })
+    PYTEST_TIMEOUT_MARKER_FUNC_ONLY_KEY: Final[str] = "func_only"
+    PYTEST_TIMEOUT_MARKER_METHOD_KEY: Final[str] = "method"
+    PYTEST_TIMEOUT_MARKER_POSITIONAL_LIMIT: Final[int] = 2
+    PYTEST_TIMEOUT_OPTION: Final[str] = "--timeout"
     VALIDATOR_EXCLUDE_PATTERNS: Final[t.StrSequence] = (
         "**/.venv/**",
         "**/venv/**",

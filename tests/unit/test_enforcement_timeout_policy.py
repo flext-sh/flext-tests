@@ -6,13 +6,60 @@ from typing import ClassVar
 
 import pytest
 
-from flext_tests import u
+from flext_tests import FlextTestsConfig, c, config, enforcement, tm, u
 
 
 class TestsFlextTestsEnforcementTimeoutPolicy:
     """Exercise timeout enforcement through the installed pytest11 plugin."""
 
     policy_seconds: ClassVar[float] = 2.5
+
+    def test_project_config_import_roundtrips_typed_policy(self) -> None:
+        """Loaded YAML survives a typed model round-trip without local expectations."""
+        roundtripped = FlextTestsConfig.model_validate(config.model_dump())
+        policy = roundtripped.Tests.enforcement.pytest_timeout
+        tm.that(roundtripped, eq=config)
+        tm.that(
+            all(
+                isinstance(key, c.Tests.PytestTimeoutIniKey)
+                for key in policy.timeout_owned_ini_keys
+            ),
+            eq=True,
+        )
+
+    def test_typed_owner_roundtrips_arbitrary_policy_into_consumer(
+        self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Alternative valid policy data controls the same production consumer."""
+        parsed = FlextTestsConfig.model_validate({
+            "Tests": {
+                "enforcement": {
+                    "pytest_timeout": {
+                        "allow_timeout_func_only": True,
+                        "required_configured_cap_count": 1,
+                        "timeout_owned_ini_keys": [c.Tests.PYTEST_TIMEOUT_INI],
+                    }
+                }
+            }
+        })
+        policy = parsed.Tests.enforcement.pytest_timeout
+        u.Tests.pytester_make_timeout_ini(
+            pytester, policy_seconds=self.policy_seconds, func_only=True
+        )
+        with monkeypatch.context() as environment:
+            environment.setenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", "1")
+            pytest_config = pytester.parseconfig("-p", "pytest_timeout")
+        enforcement.PytestTimeoutPolicy.configure(pytest_config, policy)
+        tm.that(
+            policy.model_dump(),
+            eq={
+                "allow_timeout_func_only": True,
+                "required_configured_cap_count": 1,
+                "timeout_owned_ini_keys": frozenset({
+                    c.Tests.PytestTimeoutIniKey.TIMEOUT
+                }),
+            },
+        )
 
     @pytest.mark.parametrize("ratio", [None, 1.0, 0.5])
     def test_accepts_no_cli_override_exact_or_below_policy(

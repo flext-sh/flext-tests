@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import m, tm
+from flext_tests import c, m, tm
 
 if TYPE_CHECKING:
     from flext_tests import p
@@ -40,9 +40,8 @@ class FlextTestsPytesterUtilitiesMixin:
     @staticmethod
     def pytester_stamp_workspace_markers(root: Path) -> None:
         """Write the marker set that identifies a FLEXT workspace root."""
-        (root / "AGENTS.md").write_text("# sandbox workspace stub", encoding="utf-8")
-        (root / "flext-core").mkdir()
-        (root / "flext-tests").mkdir()
+        for marker in c.Tests.ENFORCEMENT_WORKSPACE_MARKERS:
+            (root / marker).mkdir()
 
     @staticmethod
     def enforcement_dispatcher_config(
@@ -120,13 +119,16 @@ class FlextTestsPytesterUtilitiesMixin:
         """Configure a sandbox timeout ceiling without production-value coupling."""
         lines = ["[pytest]"]
         if include_addopts:
-            addopts = f"--timeout={policy_seconds}"
+            addopts = f"{c.Tests.PYTEST_TIMEOUT_OPTION}={policy_seconds}"
             if duplicate_addopts:
-                addopts = f"{addopts} --timeout {policy_seconds}"
-            lines.append(f"addopts = {addopts}")
+                addopts = f"{addopts} {c.Tests.PYTEST_TIMEOUT_OPTION} {policy_seconds}"
+            lines.append(f"{c.Tests.PYTEST_ADDOPTS_INI} = {addopts}")
         if timeout_ini is not None:
-            lines.append(f"timeout = {timeout_ini}")
-        lines.append(f"timeout_func_only = {'true' if func_only else 'false'}")
+            lines.append(f"{c.Tests.PYTEST_TIMEOUT_INI} = {timeout_ini}")
+        lines.append(
+            f"{c.Tests.PYTEST_TIMEOUT_FUNC_ONLY_INI} = "
+            f"{'true' if func_only else 'false'}"
+        )
         pytester.makeini("\n".join(lines))
 
     @staticmethod
@@ -134,7 +136,11 @@ class FlextTestsPytesterUtilitiesMixin:
         pytester: pytest.Pytester, *, marker: str | None = None
     ) -> None:
         """Write one trivial sandbox item with an optional timeout marker."""
-        decorator = f"@pytest.mark.timeout({marker})\n" if marker else ""
+        decorator = (
+            f"@pytest.mark.{c.Tests.PYTEST_TIMEOUT_MARKER}({marker})\n"
+            if marker
+            else ""
+        )
         pytester.makepyfile(
             f"import pytest\n\n{decorator}def test_policy_probe() -> None:\n    pass\n"
         )

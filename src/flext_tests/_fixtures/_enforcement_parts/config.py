@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 import pytest
 
-from flext_tests import c, m, u
+from flext_tests import c, config as project_config, m, u
 from flext_tests._fixtures._enforcement_parts.timeout_policy import PytestTimeoutPolicy
 
 if TYPE_CHECKING:
@@ -123,10 +123,10 @@ def resolve_config(config: pytest.Config) -> p.Tests.EnforcementDispatcherConfig
 
 def active_rules(
     cfg: p.Tests.EnforcementDispatcherConfig,
-) -> tuple[m.EnforcementRuleSpec, ...]:
+) -> tuple[p.Tests.EnforcementRuleSpec, ...]:
     """Return enabled catalog rules after applying include/exclude filters."""
     catalog = u.build_canonical_catalog()
-    rules: list[m.EnforcementRuleSpec] = []
+    rules: list[p.Tests.EnforcementRuleSpec] = []
     for rule in catalog.rules:
         if not rule.enabled:
             continue
@@ -141,7 +141,9 @@ def active_rules(
 @pytest.hookimpl(tryfirst=True)
 def pytest_configure(config: pytest.Config) -> None:
     """Register filterwarnings for every active runtime-warning rule."""
-    PytestTimeoutPolicy.configure(config)
+    PytestTimeoutPolicy.configure(
+        config, project_config.Tests.enforcement.pytest_timeout
+    )
     cfg = resolve_config(config)
     if not cfg.active:
         return

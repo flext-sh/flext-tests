@@ -21,11 +21,13 @@ from flext_tests._fixtures._enforcement_parts.items import (
     EnforcementItem,
     EnforcementViolationError,
 )
+from flext_tests._fixtures._enforcement_parts.timeout_policy import PytestTimeoutPolicy
 
 __all__: list[str] = [
     "EnforcementCollector",
     "EnforcementItem",
     "EnforcementViolationError",
+    "PytestTimeoutPolicy",
     "active_rules",
     "discover_workspace_root",
     "pytest_addoption",
