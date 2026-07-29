@@ -12,16 +12,9 @@ if TYPE_CHECKING:
     from flext_tests._utilities._matchers._that_parts.that_part_06 import (
         FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixin,
     )
-_LAZY_IMPORTS = build_lazy_import_map(
-    {
-        ".that_part_06": ("FlextTestsMatchersThatMixin",),
-    },
-)
+_LAZY_IMPORTS = build_lazy_import_map({
+    ".that_part_06": ("FlextTestsMatchersThatMixin",)
+})
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

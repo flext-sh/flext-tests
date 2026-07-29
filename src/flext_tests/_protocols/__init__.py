@@ -12,16 +12,9 @@ if TYPE_CHECKING:
     from flext_tests._protocols.valuefactory import (
         FlextTestsValueFactoryProtocolsMixin as FlextTestsValueFactoryProtocolsMixin,
     )
-_LAZY_IMPORTS = build_lazy_import_map(
-    {
-        ".valuefactory": ("FlextTestsValueFactoryProtocolsMixin",),
-    },
-)
+_LAZY_IMPORTS = build_lazy_import_map({
+    ".valuefactory": ("FlextTestsValueFactoryProtocolsMixin",)
+})
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

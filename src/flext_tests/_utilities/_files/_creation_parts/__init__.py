@@ -12,16 +12,9 @@ if TYPE_CHECKING:
     from flext_tests._utilities._files._creation_parts.creation_part_03 import (
         FlextTestsFilesCreationMixin as FlextTestsFilesCreationMixin,
     )
-_LAZY_IMPORTS = build_lazy_import_map(
-    {
-        ".creation_part_03": ("FlextTestsFilesCreationMixin",),
-    },
-)
+_LAZY_IMPORTS = build_lazy_import_map({
+    ".creation_part_03": ("FlextTestsFilesCreationMixin",)
+})
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

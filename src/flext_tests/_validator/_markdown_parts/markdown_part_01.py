@@ -34,9 +34,7 @@ class FlextValidatorMarkdown:
 
     @classmethod
     def _scan_file(
-        cls,
-        file_path: Path,
-        approved: t.MappingKV[str, t.StrSequence],
+        cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single markdown file for Python code block violations."""
         violations: MutableSequence[m.Tests.Violation] = []
@@ -50,7 +48,7 @@ class FlextValidatorMarkdown:
                     "MD-UNREADABLE",
                     (),
                     read.error or "could not read file",
-                ),
+                )
             ]
 
         content = read.value
@@ -75,28 +73,13 @@ class FlextValidatorMarkdown:
                 continue
 
             cls._check_forbidden_imports(
-                file_path,
-                code,
-                lines,
-                block_start,
-                approved,
-                violations,
+                file_path, code, lines, block_start, approved, violations
             )
             cls._check_object_annotations(
-                file_path,
-                code,
-                lines,
-                block_start,
-                approved,
-                violations,
+                file_path, code, lines, block_start, approved, violations
             )
             cls._check_future_annotations(
-                file_path,
-                code,
-                lines,
-                block_start,
-                approved,
-                violations,
+                file_path, code, lines, block_start, approved, violations
             )
 
         return violations
@@ -127,7 +110,7 @@ class FlextValidatorMarkdown:
                             "MD-002",
                             lines,
                             c.Tests.VALIDATOR_MSG_MD_FORBIDDEN_IMPORT.format(
-                                import_name=f"from typing import {name}",
+                                import_name=f"from typing import {name}"
                             ),
                         )
                     )
@@ -154,7 +137,7 @@ class FlextValidatorMarkdown:
                         "MD-004",
                         lines,
                         c.Tests.VALIDATOR_MSG_MD_FORBIDDEN_ANNOTATION.format(
-                            annotation="object",
+                            annotation="object"
                         ),
                     )
                 )

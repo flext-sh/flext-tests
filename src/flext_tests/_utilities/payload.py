@@ -1,6 +1,5 @@
 """Shared payload conversion helpers for flext_tests.
 
-from flext_tests.utilities import u
 Low-level module with no dependency on flext_tests.utilities,
 importable by both utilities.py and matchers.py without cycles.
 
@@ -10,13 +9,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    Mapping,
-)
+from collections.abc import Mapping
 from datetime import datetime, tzinfo
 from enum import Enum
 from pathlib import Path
 
+from flext_infra import u
 from flext_tests import c, m, p, t
 
 
@@ -24,9 +22,7 @@ class FlextTestsPayloadUtilities:
     """Namespace class for shared payload conversion helpers in flext_tests."""
 
     @staticmethod
-    def to_payload(
-        value: p.AttributeProbe,
-    ) -> t.Tests.TestobjectSerializable:
+    def to_payload(value: p.AttributeProbe) -> t.Tests.TestobjectSerializable:
         """Recursively flatten any runtime value to ``TestobjectSerializable``."""
         to_p = FlextTestsPayloadUtilities.to_payload
         match value:
@@ -51,7 +47,7 @@ class FlextTestsPayloadUtilities:
                 normalized_map = {str(k): to_p(v) for k, v in value.items()}
                 try:
                     validated_map = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(
-                        normalized_map,
+                        normalized_map
                     )
                 except c.ValidationError:
                     result = normalized_map
@@ -61,7 +57,7 @@ class FlextTestsPayloadUtilities:
                 normalized_seq = [to_p(item) for item in value]
                 try:
                     validated_seq = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
-                        normalized_seq,
+                        normalized_seq
                     )
                 except c.ValidationError:
                     result = normalized_seq
@@ -72,9 +68,7 @@ class FlextTestsPayloadUtilities:
         return result
 
     @staticmethod
-    def to_normalized_value(
-        value: t.Tests.TestobjectSerializable,
-    ) -> t.JsonValue:
+    def to_normalized_value(value: t.Tests.TestobjectSerializable) -> t.JsonValue:
         """Flatten to pure Container via canonical runtime helper."""
         to_n = FlextTestsPayloadUtilities.to_normalized_value
         match value:
@@ -115,8 +109,7 @@ class FlextTestsPayloadUtilities:
             key: (
                 payload
                 if isinstance(
-                    payload := FlextTestsPayloadUtilities.to_payload(item),
-                    m.BaseModel,
+                    payload := FlextTestsPayloadUtilities.to_payload(item), m.BaseModel
                 )
                 else FlextTestsPayloadUtilities.to_normalized_value(payload)
             )

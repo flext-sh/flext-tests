@@ -12,16 +12,7 @@ if TYPE_CHECKING:
     from flext_tests._domains_parts.domains_part_03 import (
         FlextTestsDomains as FlextTestsDomains,
     )
-_LAZY_IMPORTS = build_lazy_import_map(
-    {
-        ".domains_part_03": ("FlextTestsDomains",),
-    },
-)
+_LAZY_IMPORTS = build_lazy_import_map({".domains_part_03": ("FlextTestsDomains",)})
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

@@ -37,29 +37,22 @@ if TYPE_CHECKING:
     )
     from flext_tests._validator.tests import FlextValidatorTests as FlextValidatorTests
 _LAZY_IMPORTS = merge_lazy_imports(
-    (
-        "._markdown_parts",
-        "._orchestration_parts",
-        "._settings_parts",
-        "._types_parts",
-    ),
-    build_lazy_import_map(
-        {
-            "._markdown_parts": ("_markdown_parts",),
-            "._markdown_parts.markdown_part_02": ("FlextValidatorMarkdown",),
-            "._orchestration_parts": ("_orchestration_parts",),
-            "._orchestration_parts.validator_part_02": ("FlextTestsValidator",),
-            "._settings_parts": ("_settings_parts",),
-            "._types_parts": ("_types_parts",),
-            "._types_parts.types_part_02": ("FlextValidatorTypes",),
-            ".bypass": ("FlextValidatorBypass",),
-            ".imports": ("FlextValidatorImports",),
-            ".layer": ("FlextValidatorLayer",),
-            ".models": ("FlextTestsValidatorModels",),
-            ".settings": ("FlextValidatorSettings",),
-            ".tests": ("FlextValidatorTests",),
-        },
-    ),
+    ("._markdown_parts", "._orchestration_parts", "._settings_parts", "._types_parts"),
+    build_lazy_import_map({
+        "._markdown_parts": ("_markdown_parts",),
+        "._markdown_parts.markdown_part_02": ("FlextValidatorMarkdown",),
+        "._orchestration_parts": ("_orchestration_parts",),
+        "._orchestration_parts.validator_part_02": ("FlextTestsValidator",),
+        "._settings_parts": ("_settings_parts",),
+        "._types_parts": ("_types_parts",),
+        "._types_parts.types_part_02": ("FlextValidatorTypes",),
+        ".bypass": ("FlextValidatorBypass",),
+        ".imports": ("FlextValidatorImports",),
+        ".layer": ("FlextValidatorLayer",),
+        ".models": ("FlextTestsValidatorModels",),
+        ".settings": ("FlextValidatorSettings",),
+        ".tests": ("FlextValidatorTests",),
+    }),
     exclude_names=(
         "cleanup_submodule_namespace",
         "install_lazy_exports",
@@ -83,9 +76,4 @@ _LAZY_IMPORTS = merge_lazy_imports(
 )
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

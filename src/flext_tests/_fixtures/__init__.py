@@ -44,40 +44,38 @@ if TYPE_CHECKING:
     )
 _LAZY_IMPORTS = merge_lazy_imports(
     ("._enforcement_parts",),
-    build_lazy_import_map(
-        {
-            "._enforcement_parts": ("_enforcement_parts",),
-            ".enforcement": (
-                "EnforcementCollector",
-                "EnforcementItem",
-                "EnforcementViolationError",
-                "active_rules",
-                "discover_workspace_root",
-                "split_csv",
-            ),
-            ".markdown_validation": (
-                "MarkdownCodeBlockCollector",
-                "MarkdownCodeBlockItem",
-                "MarkdownValidationError",
-            ),
-            ".project_metadata": (
-                "project_metadata",
-                "project_namespace_config",
-                "project_tool_flext",
-            ),
-            ".settings": (
-                "clean_container",
-                "reset_settings",
-                "sample_data",
-                "settings",
-                "settings_factory",
-                "temp_dir",
-                "temp_file",
-                "test_context",
-                "test_runtime",
-            ),
-        },
-    ),
+    build_lazy_import_map({
+        "._enforcement_parts": ("_enforcement_parts",),
+        ".enforcement": (
+            "EnforcementCollector",
+            "EnforcementItem",
+            "EnforcementViolationError",
+            "active_rules",
+            "discover_workspace_root",
+            "split_csv",
+        ),
+        ".markdown_validation": (
+            "MarkdownCodeBlockCollector",
+            "MarkdownCodeBlockItem",
+            "MarkdownValidationError",
+        ),
+        ".project_metadata": (
+            "project_metadata",
+            "project_namespace_config",
+            "project_tool_flext",
+        ),
+        ".settings": (
+            "clean_container",
+            "reset_settings",
+            "sample_data",
+            "settings",
+            "settings_factory",
+            "temp_dir",
+            "temp_file",
+            "test_context",
+            "test_runtime",
+        ),
+    }),
     exclude_names=(
         "cleanup_submodule_namespace",
         "install_lazy_exports",
@@ -101,9 +99,4 @@ _LAZY_IMPORTS = merge_lazy_imports(
 )
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

@@ -33,17 +33,15 @@ if TYPE_CHECKING:
     )
 _LAZY_IMPORTS = merge_lazy_imports(
     ("._validator_parts",),
-    build_lazy_import_map(
-        {
-            "._validator_parts": ("_validator_parts",),
-            "._validator_parts.validator_part_03": ("FlextTestsConstantsValidator",),
-            ".data_cases": ("FlextTestsConstantsDataCases",),
-            ".docker": ("FlextTestsConstantsDocker",),
-            ".files": ("FlextTestsConstantsFiles",),
-            ".make": ("FlextTestsConstantsMake",),
-            ".matcher": ("FlextTestsConstantsMatcher",),
-        },
-    ),
+    build_lazy_import_map({
+        "._validator_parts": ("_validator_parts",),
+        "._validator_parts.validator_part_03": ("FlextTestsConstantsValidator",),
+        ".data_cases": ("FlextTestsConstantsDataCases",),
+        ".docker": ("FlextTestsConstantsDocker",),
+        ".files": ("FlextTestsConstantsFiles",),
+        ".make": ("FlextTestsConstantsMake",),
+        ".matcher": ("FlextTestsConstantsMatcher",),
+    }),
     exclude_names=(
         "cleanup_submodule_namespace",
         "install_lazy_exports",
@@ -67,9 +65,4 @@ _LAZY_IMPORTS = merge_lazy_imports(
 )
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

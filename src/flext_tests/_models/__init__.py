@@ -38,26 +38,19 @@ if TYPE_CHECKING:
         FlextTestsValidatorModelsMixin as FlextTestsValidatorModelsMixin,
     )
 _LAZY_IMPORTS = merge_lazy_imports(
-    (
-        "._filesystem_parts",
-        "._matchers_parts",
-    ),
-    build_lazy_import_map(
-        {
-            "._filesystem_parts": ("_filesystem_parts",),
-            "._filesystem_parts.filesystem_part_02": (
-                "FlextTestsFilesystemModelsMixin",
-            ),
-            "._matchers_parts": ("_matchers_parts",),
-            "._matchers_parts.matchers_part_03": ("FlextTestsMatchersModelsMixin",),
-            ".base": ("FlextTestsBaseModelsMixin",),
-            ".batch": ("FlextTestsBatchModelsMixin",),
-            ".docker": ("FlextTestsDockerModelsMixin",),
-            ".domains": ("FlextTestsDomainModelsMixin",),
-            ".make": ("FlextTestsMakeModelsMixin",),
-            ".validator": ("FlextTestsValidatorModelsMixin",),
-        },
-    ),
+    ("._filesystem_parts", "._matchers_parts"),
+    build_lazy_import_map({
+        "._filesystem_parts": ("_filesystem_parts",),
+        "._filesystem_parts.filesystem_part_02": ("FlextTestsFilesystemModelsMixin",),
+        "._matchers_parts": ("_matchers_parts",),
+        "._matchers_parts.matchers_part_03": ("FlextTestsMatchersModelsMixin",),
+        ".base": ("FlextTestsBaseModelsMixin",),
+        ".batch": ("FlextTestsBatchModelsMixin",),
+        ".docker": ("FlextTestsDockerModelsMixin",),
+        ".domains": ("FlextTestsDomainModelsMixin",),
+        ".make": ("FlextTestsMakeModelsMixin",),
+        ".validator": ("FlextTestsValidatorModelsMixin",),
+    }),
     exclude_names=(
         "cleanup_submodule_namespace",
         "install_lazy_exports",
@@ -81,9 +74,4 @@ _LAZY_IMPORTS = merge_lazy_imports(
 )
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

@@ -26,76 +26,50 @@ from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
 class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
     class Tests:
         class Matchers(FlextTestsMatchersResultMixinPart02.Tests.Matchers):
-            @staticmethod
+            @classmethod
             @overload
             def ok[TResult: t.Tests.TestResultValue](
-                result: core_p.Result[TResult],
+                cls, result: core_p.Result[TResult]
             ) -> TResult: ...
 
-            @staticmethod
+            @classmethod
             @overload
             def ok[TResult: t.Tests.TestResultValue](
-                result: core_p.Result[TResult],
-                **kwargs: t.Tests.MatcherKwargValue,
+                cls, result: core_p.Result[TResult], **kwargs: t.Tests.MatcherKwargValue
             ) -> TResult | t.Tests.TestobjectSerializable: ...
 
-            @staticmethod
+            @classmethod
             def ok[TResult: t.Tests.TestResultValue](
-                result: core_p.Result[TResult],
-                **kwargs: t.Tests.MatcherKwargValue,
+                cls, result: core_p.Result[TResult], **kwargs: t.Tests.MatcherKwargValue
             ) -> TResult | t.Tests.TestobjectSerializable:
                 try:
                     params = m.Tests.OkParams.model_validate(kwargs)
                 except c.EXC_BASIC_TYPE as exc:
-                    raise ValueError(f"Parameter validation failed: {exc}") from exc
+                    message = f"Parameter validation failed: {exc}"
+                    raise ValueError(message) from exc
                 result_value: t.Tests.TestResultValue = (
                     FlextTestsResultUtilitiesMixin.assert_success(
-                        result,
-                        error_msg=params.msg,
+                        result, error_msg=params.msg
                     )
                 )
-                result_value, extracted_payload = (
-                    FlextTestsMatchersResultMixin.Tests.Matchers._ok_extract_path(
-                        result_value,
-                        params,
-                    )
+                result_value, extracted_payload = cls._ok_extract_path(
+                    result_value, params
                 )
-                result_value = (
-                    FlextTestsMatchersResultMixin.Tests.Matchers._ok_validate_scalar(
-                        result_value,
-                        params,
-                    )
-                )
-                result_value = (
-                    FlextTestsMatchersResultMixin.Tests.Matchers._ok_validate_type(
-                        result_value,
-                        params,
-                    )
-                )
+                result_value = cls._ok_validate_scalar(result_value, params)
+                result_value = cls._ok_validate_type(result_value, params)
                 FlextTestsMatchersContainmentMixin.check_has_lacks(
-                    result_value,
-                    params.has,
-                    params.lacks,
-                    params.msg,
+                    result_value, params.has, params.lacks, params.msg
                 )
-                result_payload = (
-                    FlextTestsMatchersResultMixin.Tests.Matchers._ok_payload(
-                        result,
-                        result_value,
-                        extracted_payload,
-                        params,
-                    )
+                result_payload = cls._ok_payload(
+                    result, result_value, extracted_payload, params
                 )
-                FlextTestsMatchersResultMixin.Tests.Matchers._ok_validate_structured(
-                    result,
-                    result_value,
-                    result_payload,
-                    params,
+                cls._ok_validate_structured(
+                    result, result_value, result_payload, params
                 )
                 if result_value is None:
                     raise AssertionError(
                         params.msg
-                        or "Value is None but validation passed - this should not happen",
+                        or "Value is None but validation passed - this should not happen"
                     )
                 return result_payload
 
@@ -112,8 +86,9 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
                     return extracted_payload
                 return FlextTestsPayloadUtilities.to_payload(result_value)
 
-            @staticmethod
+            @classmethod
             def _ok_validate_structured[TResult: t.Tests.TestResultValue](
+                cls,
                 result: core_p.Result[TResult],
                 result_value: t.Tests.TestResultValue,
                 result_payload: t.Tests.TestobjectSerializable,
@@ -127,32 +102,23 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
                         msg=params.msg,
                     )
                 if params.deep is not None:
-                    FlextTestsMatchersResultMixin.Tests.Matchers._ok_validate_deep(
-                        result_value,
-                        params,
-                    )
+                    cls._ok_validate_deep(result_value, params)
                 if params.paths is not None:
                     FlextTestsMatchersRulesMixin.apply_path_rules(
-                        result_payload,
-                        params.paths,
-                        inherited_msg=params.msg,
+                        result_payload, params.paths, inherited_msg=params.msg
                     )
                 if params.items is not None:
                     FlextTestsMatchersRulesMixin.apply_item_rules(
-                        result_payload,
-                        params.items,
-                        inherited_msg=params.msg,
+                        result_payload, params.items, inherited_msg=params.msg
                     )
                 if params.attrs_match is not None:
                     FlextTestsMatchersRulesMixin.apply_attribute_rules(
-                        result.value,
-                        params.attrs_match,
-                        inherited_msg=params.msg,
+                        result.value, params.attrs_match, inherited_msg=params.msg
                     )
                 if params.where is not None and (not params.where(result_payload)):
                     raise AssertionError(
                         params.msg
-                        or c.Tests.ERR_PREDICATE_FAILED.format(value=result_payload),
+                        or c.Tests.ERR_PREDICATE_FAILED.format(value=result_payload)
                     )
 
             @staticmethod
@@ -164,10 +130,11 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
                 if deep_spec is None:
                     return result_value
                 if not isinstance(result_value, (m.BaseModel, Mapping)):
-                    raise AssertionError(
-                        params.msg
-                        or f"Deep matching requires dict or model, got {type(result_value).__name__}",
+                    message = params.msg or (
+                        "Deep matching requires dict or model, got "
+                        f"{type(result_value).__name__}"
                     )
+                    raise TypeError(message)
                 deep_input: (
                     m.BaseModel | t.MappingKV[str, t.Tests.TestobjectSerializable]
                 )
@@ -176,23 +143,21 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
                 else:
                     try:
                         deep_input = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
-                            result_value,
+                            result_value
                         )
                     except c.ValidationError as exc:
                         raise AssertionError(
-                            params.msg or f"Deep matching payload is invalid: {exc}",
+                            params.msg or f"Deep matching payload is invalid: {exc}"
                         ) from exc
                 match_result = FlextTestsPayloadUtilities.deep_match(
-                    deep_input,
-                    deep_spec,
+                    deep_input, deep_spec
                 )
                 if not match_result.matched:
                     raise AssertionError(
                         params.msg
                         or c.Tests.ERR_DEEP_PATH_FAILED.format(
-                            path=match_result.path,
-                            reason=match_result.reason,
-                        ),
+                            path=match_result.path, reason=match_result.reason
+                        )
                     )
                 return result_value
 

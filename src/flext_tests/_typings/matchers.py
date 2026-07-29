@@ -1,19 +1,15 @@
 """Types extraction for flext_tests.
 
-from flext_tests.models import m
-from flext_tests.typings import t
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
 
-from collections.abc import (
-    Callable,
-)
+from collections.abc import Callable
 from typing import TypeAliasType
 
-from flext_infra import t as it
+from flext_infra import m, t
 from flext_tests._typings.base import FlextTestsBaseTypesMixin as tb
 
 
@@ -39,16 +35,14 @@ class FlextTestsMatchersTypesMixin:
     type MatchRuleLeaf = tb.Testobject | type | tuple[type, ...] | TypeAliasType
     type MatchRuleKwargs = t.MappingKV[
         str,
-        Callable[..., tb.Testobject]
-        | tb.TestobjectSerializable
-        | it.Infra.RegexPattern,
+        Callable[..., tb.Testobject] | tb.TestobjectSerializable | t.Infra.RegexPattern,
     ]
     type MatchRuleValue = MatchRuleLeaf | MatchRuleKwargs
     type MatcherKwargValue = (
         MatchRuleLeaf
         | m.BaseModel
         | set[tb.TestobjectSerializable]
-        | it.Infra.RegexPattern
+        | t.Infra.RegexPattern
         | Callable[..., tb.Testobject]
         | MatchRuleKwargs
         | t.MappingKV[int, MatchRuleValue]
@@ -69,8 +63,7 @@ class FlextTestsMatchersTypesMixin:
         | t.MappingKV[str, FlextTestsMatchersTypesMixin.MatcherKwargValue]
     )
     type DeepSpec = t.MappingKV[
-        str,
-        Callable[[tb.Testobject], bool] | tb.TestobjectSerializable,
+        str, Callable[[tb.Testobject], bool] | tb.TestobjectSerializable
     ]
     type PathMatchSpec = t.MappingKV[str, FlextTestsMatchersTypesMixin.MatchRuleSpec]
     type ItemSelector = int | str
@@ -82,8 +75,7 @@ class FlextTestsMatchersTypesMixin:
         ]
     )
     type AttributeMatchSpec = t.MappingKV[
-        str,
-        FlextTestsMatchersTypesMixin.MatchRuleSpec,
+        str, FlextTestsMatchersTypesMixin.MatchRuleSpec
     ]
     type PathSpec = str | t.StrSequence
     type PredicateSpec = Callable[[tb.Testobject], bool]

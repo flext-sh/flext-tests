@@ -32,22 +32,17 @@ if TYPE_CHECKING:
         FlextTestsMatchersTypeGuardsMixin as FlextTestsMatchersTypeGuardsMixin,
     )
 _LAZY_IMPORTS = merge_lazy_imports(
-    (
-        "._result_parts",
-        "._that_parts",
-    ),
-    build_lazy_import_map(
-        {
-            "._assertions": ("FlextTestsMatchersAssertionsMixin",),
-            "._containment": ("FlextTestsMatchersContainmentMixin",),
-            "._result_parts": ("_result_parts",),
-            "._result_parts.result_part_03": ("FlextTestsMatchersResultMixin",),
-            "._scope": ("FlextTestsMatchersScopeMixin",),
-            "._that_parts": ("_that_parts",),
-            "._that_parts.that_part_06": ("FlextTestsMatchersThatMixin",),
-            "._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
-        },
-    ),
+    ("._result_parts", "._that_parts"),
+    build_lazy_import_map({
+        "._assertions": ("FlextTestsMatchersAssertionsMixin",),
+        "._containment": ("FlextTestsMatchersContainmentMixin",),
+        "._result_parts": ("_result_parts",),
+        "._result_parts.result_part_03": ("FlextTestsMatchersResultMixin",),
+        "._scope": ("FlextTestsMatchersScopeMixin",),
+        "._that_parts": ("_that_parts",),
+        "._that_parts.that_part_06": ("FlextTestsMatchersThatMixin",),
+        "._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
+    }),
     exclude_names=(
         "cleanup_submodule_namespace",
         "install_lazy_exports",
@@ -71,9 +66,4 @@ _LAZY_IMPORTS = merge_lazy_imports(
 )
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

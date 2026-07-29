@@ -12,16 +12,9 @@ if TYPE_CHECKING:
     from flext_tests._validator._markdown_parts.markdown_part_02 import (
         FlextValidatorMarkdown as FlextValidatorMarkdown,
     )
-_LAZY_IMPORTS = build_lazy_import_map(
-    {
-        ".markdown_part_02": ("FlextValidatorMarkdown",),
-    },
-)
+_LAZY_IMPORTS = build_lazy_import_map({
+    ".markdown_part_02": ("FlextValidatorMarkdown",)
+})
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

@@ -1,7 +1,5 @@
 """Typing aliases for the generic Make command framework.
 
-from flext_tests.models import m
-from flext_tests.typings import t
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 """
@@ -10,6 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
+from flext_infra import m, t
 
 
 class FlextTestsMakeTypesMixin:

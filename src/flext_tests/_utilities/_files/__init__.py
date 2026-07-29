@@ -38,26 +38,19 @@ if TYPE_CHECKING:
         FlextTestsFilesReadingMixin as FlextTestsFilesReadingMixin,
     )
 _LAZY_IMPORTS = merge_lazy_imports(
-    (
-        "._comparison_parts",
-        "._creation_parts",
-    ),
-    build_lazy_import_map(
-        {
-            "._assertions": ("FlextTestsFilesAssertionsMixin",),
-            "._batch": ("FlextTestsFilesBatchMixin",),
-            "._comparison_parts": ("_comparison_parts",),
-            "._comparison_parts.comparison_part_02": (
-                "FlextTestsFilesComparisonMixin",
-            ),
-            "._contexts": ("FlextTestsFilesContextsMixin",),
-            "._creation_parts": ("_creation_parts",),
-            "._creation_parts.creation_part_03": ("FlextTestsFilesCreationMixin",),
-            "._info": ("FlextTestsFilesInfoMixin",),
-            "._lifecycle": ("FlextTestsFilesLifecycleMixin",),
-            "._reading": ("FlextTestsFilesReadingMixin",),
-        },
-    ),
+    ("._comparison_parts", "._creation_parts"),
+    build_lazy_import_map({
+        "._assertions": ("FlextTestsFilesAssertionsMixin",),
+        "._batch": ("FlextTestsFilesBatchMixin",),
+        "._comparison_parts": ("_comparison_parts",),
+        "._comparison_parts.comparison_part_02": ("FlextTestsFilesComparisonMixin",),
+        "._contexts": ("FlextTestsFilesContextsMixin",),
+        "._creation_parts": ("_creation_parts",),
+        "._creation_parts.creation_part_03": ("FlextTestsFilesCreationMixin",),
+        "._info": ("FlextTestsFilesInfoMixin",),
+        "._lifecycle": ("FlextTestsFilesLifecycleMixin",),
+        "._reading": ("FlextTestsFilesReadingMixin",),
+    }),
     exclude_names=(
         "cleanup_submodule_namespace",
         "install_lazy_exports",
@@ -81,9 +74,4 @@ _LAZY_IMPORTS = merge_lazy_imports(
 )
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

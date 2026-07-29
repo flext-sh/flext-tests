@@ -30,20 +30,20 @@ class FlextTestsMatchersResultMixin:
                 """Start chained assertions on result."""
                 return m.Tests.Chain(result=result)
 
-            @staticmethod
+            @classmethod
             def fail[TResult](
-                result: p.Result[TResult],
-                **kwargs: t.Tests.MatcherKwargValue,
+                cls, result: p.Result[TResult], **kwargs: t.Tests.MatcherKwargValue
             ) -> str:
                 """Assert that a result failed and validate its error payload."""
                 try:
                     params = m.Tests.FailParams.model_validate(kwargs)
                 except c.EXC_BASIC_TYPE as exc:
-                    raise ValueError(f"Parameter validation failed: {exc}") from exc
+                    message = f"Parameter validation failed: {exc}"
+                    raise ValueError(message) from exc
                 err: str = FlextTestsResultUtilitiesMixin.assert_failure(result)
-                FlextTestsMatchersResultMixin.Tests.Matchers._fail_text(err, params)
-                FlextTestsMatchersResultMixin.Tests.Matchers._fail_code(result, params)
-                FlextTestsMatchersResultMixin.Tests.Matchers._fail_data(result, params)
+                cls._fail_text(err, params)
+                cls._fail_code(result, params)
+                cls._fail_data(result, params)
                 return err
 
             @staticmethod
@@ -55,11 +55,7 @@ class FlextTestsMatchersResultMixin:
                 ):
                     return
                 FlextTestsMatchersContainmentMixin.check_has_lacks(
-                    err,
-                    params.has,
-                    params.lacks,
-                    params.msg,
-                    as_str=True,
+                    err, params.has, params.lacks, params.msg, as_str=True
                 )
                 if params.starts is not None and (
                     not u.chk(err, m.GuardCheckSpec(starts=params.starts))
@@ -67,42 +63,35 @@ class FlextTestsMatchersResultMixin:
                     raise AssertionError(
                         params.msg
                         or c.Tests.ERR_NOT_STARTSWITH.format(
-                            text=err,
-                            prefix=params.starts,
-                        ),
+                            text=err, prefix=params.starts
+                        )
                     )
                 if params.ends is not None and (
                     not u.chk(err, m.GuardCheckSpec(ends=params.ends))
                 ):
                     raise AssertionError(
                         params.msg
-                        or c.Tests.ERR_NOT_ENDSWITH.format(
-                            text=err,
-                            suffix=params.ends,
-                        ),
+                        or c.Tests.ERR_NOT_ENDSWITH.format(text=err, suffix=params.ends)
                     )
                 if params.match is not None and params.match.search(err) is None:
                     raise AssertionError(
                         params.msg
                         or c.Tests.ERR_NOT_MATCHES.format(
-                            text=err,
-                            pattern=params.match.pattern,
-                        ),
+                            text=err, pattern=params.match.pattern
+                        )
                     )
 
             @staticmethod
             def _fail_code[TResult](
-                result: p.Result[TResult],
-                params: m.Tests.FailParams,
+                result: p.Result[TResult], params: m.Tests.FailParams
             ) -> None:
                 """Validate error code constraints."""
                 if params.code is not None and result.error_code != params.code:
                     raise AssertionError(
                         params.msg
                         or c.Tests.ERR_ERROR_CODE_MISMATCH.format(
-                            expected=params.code,
-                            actual=result.error_code,
-                        ),
+                            expected=params.code, actual=result.error_code
+                        )
                     )
                 if params.code_has is None:
                     return
@@ -117,15 +106,13 @@ class FlextTestsMatchersResultMixin:
                         raise AssertionError(
                             params.msg
                             or c.Tests.ERR_ERROR_CODE_NOT_CONTAINS.format(
-                                expected=item,
-                                actual=actual_code,
-                            ),
+                                expected=item, actual=actual_code
+                            )
                         )
 
             @staticmethod
             def _fail_data[TResult](
-                result: p.Result[TResult],
-                params: m.Tests.FailParams,
+                result: p.Result[TResult], params: m.Tests.FailParams
             ) -> None:
                 """Validate structured error data constraints."""
                 if params.data is None:
@@ -141,7 +128,7 @@ class FlextTestsMatchersResultMixin:
                     if key not in actual_data:
                         raise AssertionError(
                             params.msg
-                            or c.Tests.ERR_ERROR_DATA_KEY_MISSING.format(key=key),
+                            or c.Tests.ERR_ERROR_DATA_KEY_MISSING.format(key=key)
                         )
                     if actual_data[key] != expected_value:
                         raise AssertionError(
@@ -150,7 +137,7 @@ class FlextTestsMatchersResultMixin:
                                 key=key,
                                 expected=expected_value,
                                 actual=actual_data[key],
-                            ),
+                            )
                         )
 
 

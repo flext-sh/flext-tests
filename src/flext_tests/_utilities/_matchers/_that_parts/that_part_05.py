@@ -33,9 +33,7 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart04):
                     *(
                         candidate
                         for candidate in getattr(
-                            field_info.validation_alias,
-                            "choices",
-                            (),
+                            field_info.validation_alias, "choices", ()
                         )
                         if isinstance(candidate, str)
                     ),
@@ -76,16 +74,16 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart04):
         path: str,
     ) -> t.Tests.TestobjectSerializable:
         if not isinstance(subject, (m.BaseModel, Mapping)):
-            raise AssertionError(
-                f"Path assertions require dict or model, got {type(subject).__name__}",
+            message = (
+                f"Path assertions require dict or model, got {type(subject).__name__}"
             )
+            raise TypeError(message)
         extracted = u.extract(FlextTestsPayloadUtilities.to_config_map(subject), path)
         if extracted.failure:
             raise AssertionError(
                 c.Tests.ERR_SCOPE_PATH_NOT_FOUND.format(
-                    path=path,
-                    error=extracted.error,
-                ),
+                    path=path, error=extracted.error
+                )
             )
         return FlextTestsPayloadUtilities.to_payload(extracted.value)
 
@@ -107,9 +105,8 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart04):
                     inherited_msg=inherited_msg,
                 )
             except AssertionError as exc:
-                raise AssertionError(
-                    inherited_msg or f"Path rule '{path}' failed: {exc}",
-                ) from exc
+                message = inherited_msg or f"Path rule '{path}' failed: {exc}"
+                raise AssertionError(message) from exc
 
     @classmethod
     def apply_item_rules(
@@ -121,24 +118,23 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart04):
         inherited_msg: str | None = None,
     ) -> None:
         if not isinstance(subject, Sequence) or isinstance(subject, t.STR_BINARY_TYPES):
-            raise AssertionError(
-                inherited_msg
-                or f"Item assertions require a sequence, got {type(subject).__name__}",
+            message = inherited_msg or (
+                f"Item assertions require a sequence, got {type(subject).__name__}"
             )
+            raise TypeError(message)
         sequence_value = list(subject)
         if isinstance(rules, Sequence) and not isinstance(rules, t.STR_BINARY_TYPES):
             for index, rule in enumerate(rules):
                 cls._apply_rule(
-                    sequence_value[index],
-                    rule,
-                    inherited_msg=inherited_msg,
+                    sequence_value[index], rule, inherited_msg=inherited_msg
                 )
             return
         if not isinstance(rules, Mapping):
-            raise AssertionError(
+            message = (
                 inherited_msg
-                or "Item assertions must be a sequence or selector mapping",
+                or "Item assertions must be a sequence or selector mapping"
             )
+            raise TypeError(message)
         for selector, rule in rules.items():
             if selector in {"*", "all"}:
                 for item in sequence_value:
@@ -152,15 +148,12 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart04):
                 else int(selector)
             )
             cls._apply_rule(
-                sequence_value[target_index],
-                rule,
-                inherited_msg=inherited_msg,
+                sequence_value[target_index], rule, inherited_msg=inherited_msg
             )
 
     @staticmethod
     def _resolve_attribute_path(
-        subject: p.AttributeProbe,
-        attr_path: str,
+        subject: p.AttributeProbe, attr_path: str
     ) -> p.AttributeProbe:
         current: p.AttributeProbe = subject
         for segment in attr_path.split("."):
@@ -168,7 +161,8 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart04):
                 current = current[segment]
                 continue
             if not hasattr(current, segment):
-                raise AssertionError(f"Object missing attribute path: {attr_path}")
+                message = f"Object missing attribute path: {attr_path}"
+                raise AssertionError(message)
             current = getattr(current, segment)
         return current
 
@@ -184,14 +178,14 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart04):
             try:
                 cls._apply_rule(
                     FlextTestsPayloadUtilities.to_payload(
-                        cls._resolve_attribute_path(subject, attr_path),
+                        cls._resolve_attribute_path(subject, attr_path)
                     ),
                     rule,
                     inherited_msg=inherited_msg,
                 )
             except AssertionError as exc:
                 raise AssertionError(
-                    inherited_msg or f"Attribute rule '{attr_path}' failed: {exc}",
+                    inherited_msg or f"Attribute rule '{attr_path}' failed: {exc}"
                 ) from exc
 
 

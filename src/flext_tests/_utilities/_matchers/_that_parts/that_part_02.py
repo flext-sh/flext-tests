@@ -58,7 +58,9 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart01Subject):
                     return
                 chk_payload = (
                     None
-                    if params.none is True and subject_payload == ""
+                    if params.none is True
+                    and isinstance(subject_payload, str)
+                    and not subject_payload
                     else subject_payload
                 )
                 eq_value = raw_eq if "eq" in kwargs else params.eq
@@ -108,9 +110,8 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart01Subject):
                     raise AssertionError(
                         params.msg
                         or c.Tests.ERR_NOT_MATCHES.format(
-                            text=subject_payload,
-                            pattern=params.match.pattern,
-                        ),
+                            text=subject_payload, pattern=params.match.pattern
+                        )
                     )
 
             @staticmethod
@@ -122,10 +123,7 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart01Subject):
             ) -> None:
                 """Validate containment and length predicates."""
                 FlextTestsMatchersContainmentMixin.check_has_lacks(
-                    subject_payload,
-                    effective_has,
-                    params.lacks,
-                    params.msg,
+                    subject_payload, effective_has, params.lacks, params.msg
                 )
                 if params.len is not None:
                     FlextTestsMatchersAssertionsMixin.assert_len_match(
@@ -144,7 +142,7 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart01Subject):
                     return ()
                 try:
                     return t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER.validate_python(
-                        subject_payload,
+                        subject_payload
                     )
                 except c.ValidationError:
                     return ()
@@ -163,7 +161,7 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart01Subject):
                     if seq_value[0] != params.first:
                         raise AssertionError(
                             params.msg
-                            or f"First item: expected {params.first!r}, got {seq_value[0]!r}",
+                            or f"First item: expected {params.first!r}, got {seq_value[0]!r}"
                         )
                 if params.last is not None:
                     if not seq_value:
@@ -173,7 +171,7 @@ class FlextTestsMatchersThatMixin(FlextTestsMatchersThatMixinPart01Subject):
                     if seq_value[-1] != params.last:
                         raise AssertionError(
                             params.msg
-                            or f"Last item: expected {params.last!r}, got {seq_value[-1]!r}",
+                            or f"Last item: expected {params.last!r}, got {seq_value[-1]!r}"
                         )
 
 

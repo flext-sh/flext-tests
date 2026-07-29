@@ -12,16 +12,9 @@ if TYPE_CHECKING:
     from flext_tests._constants._validator_parts.validator_part_03 import (
         FlextTestsConstantsValidator as FlextTestsConstantsValidator,
     )
-_LAZY_IMPORTS = build_lazy_import_map(
-    {
-        ".validator_part_03": ("FlextTestsConstantsValidator",),
-    },
-)
+_LAZY_IMPORTS = build_lazy_import_map({
+    ".validator_part_03": ("FlextTestsConstantsValidator",)
+})
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)

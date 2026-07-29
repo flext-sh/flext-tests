@@ -19,29 +19,14 @@ if TYPE_CHECKING:
         EnforcementItem as EnforcementItem,
         EnforcementViolationError as EnforcementViolationError,
     )
-_LAZY_IMPORTS = build_lazy_import_map(
-    {
-        ".build": ("build",),
-        ".config": (
-            "active_rules",
-            "discover_workspace_root",
-            "split_csv",
-        ),
-        ".discovery": ("discovery",),
-        ".hooks": ("hooks",),
-        ".items": (
-            "EnforcementCollector",
-            "EnforcementItem",
-            "EnforcementViolationError",
-        ),
-        ".validators": ("validators",),
-    },
-)
+_LAZY_IMPORTS = build_lazy_import_map({
+    ".build": ("build",),
+    ".config": ("active_rules", "discover_workspace_root", "split_csv"),
+    ".discovery": ("discovery",),
+    ".hooks": ("hooks",),
+    ".items": ("EnforcementCollector", "EnforcementItem", "EnforcementViolationError"),
+    ".validators": ("validators",),
+})
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)
