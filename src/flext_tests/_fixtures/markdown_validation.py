@@ -19,6 +19,8 @@ from typing import TYPE_CHECKING, override
 import pytest
 
 from flext_tests import c
+from flext_tests import u
+from flext_tests._validator.markdown import FlextValidatorMarkdown
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -47,8 +49,6 @@ class MarkdownCodeBlockItem(pytest.Item):
     @override
     def runtest(self) -> None:
         """Run markdown code block validation."""
-        from flext_tests._validator.markdown import FlextValidatorMarkdown
-
         result = FlextValidatorMarkdown.markdown([self.md_path])
         if result.failure:
             msg = f"Markdown validation failed: {result.error}"
@@ -99,8 +99,6 @@ def pytest_collect_file(
     if not parent.config.getoption(c.Tests.VALIDATOR_MD_OPTION_DOCS, default=False):
         return None
     if file_path.suffix == ".md" and file_path.stat().st_size > 0:
-        from flext_tests import u
-
         content = u.Cli.files_read_text(file_path).unwrap()
         if c.Tests.VALIDATOR_MD_PYTHON_BLOCK_RE.search(content):
             return MarkdownCodeBlockCollector.from_parent(parent, path=file_path)
