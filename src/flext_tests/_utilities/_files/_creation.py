@@ -47,7 +47,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         self,
         value: t.Tests.FileContentPlain
         | p.Result[t.Tests.FileContentPlain]
-        | t.Tests.TestobjectSerializable
+        | t.Tests.TestobjectSerializable,
     ) -> t.Tests.FileContentPlain:
         unwrapped: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable = (
             value.unwrap_or(c.DEFAULT_EMPTY_STRING)
