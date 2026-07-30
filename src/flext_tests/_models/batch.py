@@ -69,7 +69,7 @@ class FlextTestsBatchModelsMixin:
             t.NonNegativeInt, u.Field(description="Total number of operations")
         ]
         results: Annotated[
-            t.MappingKV[str, p.ResultLike[t.Tests.TestResultValue]],
+            t.MappingKV[str, p.Result[t.Tests.TestResultValue]],
             u.Field(description="Mapping of file names to operation results"),
         ] = u.Field(default_factory=lambda: MappingProxyType({}))
         errors: Annotated[

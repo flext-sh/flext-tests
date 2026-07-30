@@ -8,8 +8,7 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from . import _files as _files
-    from . import _matchers as _matchers
+    from . import _files as _files, _matchers as _matchers
     from ._files._assertions import (
         FlextTestsFilesAssertionsMixin as FlextTestsFilesAssertionsMixin,
     )
@@ -72,8 +71,10 @@ if TYPE_CHECKING:
     from .make_rendering import (
         FlextTestsMakeRenderingUtilitiesMixin as FlextTestsMakeRenderingUtilitiesMixin,
     )
-    from .matchers import FlextTestsMatchersUtilities as FlextTestsMatchersUtilities
-    from .matchers import tm as tm
+    from .matchers import (
+        FlextTestsMatchersUtilities as FlextTestsMatchersUtilities,
+        tm as tm,
+    )
     from .payload import FlextTestsPayloadUtilities as FlextTestsPayloadUtilities
     from .result import FlextTestsResultUtilitiesMixin as FlextTestsResultUtilitiesMixin
     from .settings import (

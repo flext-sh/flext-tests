@@ -8,7 +8,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated, ClassVar, override
 
-from flext_tests import c, m, p, r, s, t, u
+from flext_tests import c, m, p, r, t, u
 from flext_tests._validator.bypass import FlextValidatorBypass
 from flext_tests._validator.imports import FlextValidatorImports
 from flext_tests._validator.layer import FlextValidatorLayer
@@ -18,7 +18,7 @@ from flext_tests._validator.tests import FlextValidatorTests
 from flext_tests._validator.types import FlextValidatorTypes
 
 
-class FlextTestsValidator(s[m.Tests.ScanResult]):
+class FlextTestsValidator:
     """FLEXT architecture validator orchestrating all scanners."""
 
     Violation: ClassVar[type[m.Tests.Violation]] = m.Tests.Violation

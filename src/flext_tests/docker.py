@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from docker.models.containers import Container
 
 
-class FlextTestsDocker(s[m.Tests.ContainerInfo]):
+class FlextTestsDocker(s):
     """Manage Docker containers for FLEXT tests."""
 
     docker: ClassVar[WhalesDockerClient] = WhalesDockerClient(client_type="docker")

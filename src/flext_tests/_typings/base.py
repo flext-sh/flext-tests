@@ -62,7 +62,7 @@ class FlextTestsBaseTypesMixin:
         | p.Context
         | p.Registry
         | p.AttributeProbe
-        | p.ResultLike[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | p.Result[FlextTestsBaseTypesMixin.TestobjectSerializable]
         | it.Infra.RegexMatch
         | bt.UnionType
         | FrameType
@@ -81,7 +81,7 @@ class FlextTestsBaseTypesMixin:
 
     type Testobject = (
         FlextTestsBaseTypesMixin.TestResultValue
-        | p.ResultLike[FlextTestsBaseTypesMixin.TestResultValue]
+        | p.Result[FlextTestsBaseTypesMixin.TestResultValue]
     )
 
     TESTOBJECT_SEQUENCE_ADAPTER: m.TypeAdapter[
