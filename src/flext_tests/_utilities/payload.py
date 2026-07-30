@@ -53,7 +53,7 @@ class FlextTestsPayloadUtilities:
                     result = normalized_map
                 else:
                     result = {k: to_p(v) for k, v in validated_map.items()}
-            case list() | tuple() | set():
+            case list() | tuple() | set() | frozenset():
                 normalized_seq = [to_p(item) for item in value]
                 try:
                     validated_seq = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(

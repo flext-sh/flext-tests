@@ -30,6 +30,7 @@ if TYPE_CHECKING:
         FlextTestsCase as FlextTestsCase,
         FlextTestsServiceBase as FlextTestsServiceBase,
     )
+    from ._fixtures.settings import reset_settings as reset_settings
 
     s: type[FlextTestsServiceBase]
     from .constants import FlextTestsConstants as FlextTestsConstants
@@ -60,6 +61,7 @@ _LAZY_MODULES: dict[str, tuple[str, ...]] = {
     "._config": ("FlextTestsConfig", "config"),
     "._settings": ("FlextTestsSettings", "settings"),
     ".base": ("FlextTestsCase", "FlextTestsServiceBase", "s"),
+    "._fixtures.settings": ("reset_settings",),
     ".constants": ("FlextTestsConstants", "c"),
     ".docker": ("FlextTestsDocker", "tk"),
     ".domains": ("FlextTestsDomains", "td"),
@@ -112,6 +114,7 @@ _PUBLIC_EXPORTS: tuple[str, ...] = (
     "m",
     "p",
     "r",
+    "reset_settings",
     "s",
     "settings",
     "t",
