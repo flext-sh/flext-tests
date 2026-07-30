@@ -10,6 +10,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Mapping
+import contextlib
 from datetime import datetime, tzinfo
 from enum import Enum
 from pathlib import Path
@@ -55,6 +56,9 @@ class FlextTestsPayloadUtilities:
                     result = {k: to_p(v) for k, v in validated_map.items()}
             case list() | tuple() | set() | frozenset():
                 normalized_seq = [to_p(item) for item in value]
+                if isinstance(value, (set, frozenset)):
+                    with contextlib.suppress(TypeError):
+                        normalized_seq = sorted(normalized_seq)
                 try:
                     validated_seq = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
                         normalized_seq
@@ -86,8 +90,12 @@ class FlextTestsPayloadUtilities:
                 result = u.normalize_to_metadata({
                     key: to_n(item) for key, item in value.items()
                 })
-            case list() | tuple() | frozenset():
-                result = u.normalize_to_metadata([to_n(item) for item in value])
+            case list() | tuple() | set() | frozenset():
+                normalized_seq = [to_n(item) for item in value]
+                if isinstance(value, (set, frozenset)):
+                    with contextlib.suppress(TypeError):
+                        normalized_seq = sorted(normalized_seq)
+                result = u.normalize_to_metadata(normalized_seq)
             case _:
                 result = str(value)
         return result
