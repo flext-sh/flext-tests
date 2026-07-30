@@ -48,9 +48,8 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         value: t.Tests.FileContentPlain
         | p.Result[t.Tests.FileContentPlain]
         | t.Tests.TestobjectSerializable
-        | None,
     ) -> t.Tests.FileContentPlain:
-        unwrapped: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable | None = (
+        unwrapped: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable = (
             value.unwrap_or(c.DEFAULT_EMPTY_STRING)
             if isinstance(value, p.Result)
             else value

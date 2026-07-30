@@ -7,14 +7,13 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from flext_tests import c, t, u
-from flext_tests._validator.models import FlextTestsValidatorModels
 
 if TYPE_CHECKING:
     pass
     from flext_tests import m
 
 
-class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
+class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
     """Type validation checks for FlextTestsValidator."""
 
     _VALIDATOR_KEY = c.Tests.VALIDATOR_TYPES_KEY

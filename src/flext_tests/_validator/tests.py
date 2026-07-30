@@ -13,17 +13,16 @@ from pathlib import Path
 from typing import TYPE_CHECKING, override
 
 from flext_tests import c, t, u
-from flext_tests._validator.models import FlextTestsValidatorModels
 
 if TYPE_CHECKING:
     pass
     from flext_tests import m
 
 
-class FlextValidatorTests(FlextTestsValidatorModels.Tests.ScannerMixin):
+class FlextValidatorTests(u.Tests.ValidatorScannerMixin):
     """Test validation methods for FlextTestsValidator.
 
-    Uses c.Tests.Validator, m.Tests.Validator, u.Tests.Validator.
+    Uses c.Tests.Validator and u.Tests.ValidatorScannerMixin.
     """
 
     _VALIDATOR_KEY = c.Tests.VALIDATOR_TESTS_KEY
