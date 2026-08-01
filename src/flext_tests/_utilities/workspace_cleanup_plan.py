@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Literal
 
 from flext_cli import u
 from flext_tests import m, p, r
@@ -15,6 +16,15 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
     FlextTestsWorkspaceCleanupInspectUtilitiesMixin
 ):
     """Build and apply exact ignored-residue plans with stale-drift protection."""
+
+    @staticmethod
+    def _candidate_sort_key(candidate: p.Tests.WorkspaceCleanupCandidate) -> str:
+        """Return the deterministic path key for cleanup plan ordering."""
+        relative_path = candidate.relative_path
+        if not isinstance(relative_path, Path):
+            msg = "cleanup candidate relative_path must be a Path"
+            raise TypeError(msg)
+        return relative_path.as_posix()
 
     @classmethod
     def _candidate(
@@ -43,7 +53,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
         fingerprint_result = cls._path_fingerprint(path)
         if fingerprint_result.failure:
             return r[p.Tests.WorkspaceCleanupCandidate].fail(fingerprint_result.error)
-        kind = (
+        kind: Literal["file", "directory", "symlink"] = (
             "symlink" if path.is_symlink() else "directory" if path.is_dir() else "file"
         )
         candidate = m.Tests.WorkspaceCleanupCandidate(
@@ -106,9 +116,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
             if candidate_result.failure:
                 return r[p.Tests.WorkspaceCleanupPlan].fail(candidate_result.error)
             candidates.append(candidate_result.value)
-        ordered = tuple(
-            sorted(candidates, key=lambda item: item.relative_path.as_posix())
-        )
+        ordered = tuple(sorted(candidates, key=cls._candidate_sort_key))
         nested_result = cls._reject_nested(ordered)
         if nested_result.failure:
             return r[p.Tests.WorkspaceCleanupPlan].fail(nested_result.error)

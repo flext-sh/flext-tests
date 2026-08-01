@@ -37,50 +37,6 @@ def split_csv(raw: str | None) -> frozenset[str]:
     return frozenset(part.strip() for part in raw.split(",") if part.strip())
 
 
-def pytest_addoption(parser: pytest.Parser) -> None:
-    """Register CLI options for the enforcement dispatcher."""
-    group = parser.getgroup("flext-enforce", "FLEXT cross-layer enforcement catalog")
-    group.addoption(
-        "--flext-enforce",
-        action="store_true",
-        default=False,
-        help=(
-            "Force-enable the FLEXT enforcement dispatcher (default: auto - "
-            "enabled when the pytest rootdir is the workspace root)."
-        ),
-    )
-    group.addoption(
-        "--no-flext-enforce",
-        action="store_true",
-        default=False,
-        help="Disable the FLEXT enforcement dispatcher.",
-    )
-    group.addoption(
-        "--flext-enforce-strict",
-        action="store_true",
-        default=False,
-        help="Promote runtime enforcement warnings to pytest failures.",
-    )
-    group.addoption(
-        "--flext-enforce-rules",
-        action="store",
-        default="",
-        help="Comma-separated ENFORCE-NNN allow list.",
-    )
-    group.addoption(
-        "--flext-enforce-exclude-rules",
-        action="store",
-        default="",
-        help="Comma-separated ENFORCE-NNN block list.",
-    )
-    group.addoption(
-        "--flext-enforce-workspace-root",
-        action="store",
-        default="",
-        help="Override workspace root auto-detection with an explicit path.",
-    )
-
-
 def resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfig:
     """Build and cache the dispatcher's resolved configuration."""
     stashed = config.stash.get(SessionConfig.stash_config, None)
@@ -152,7 +108,6 @@ __all__: list[str] = [
     "SessionConfig",
     "active_rules",
     "discover_workspace_root",
-    "pytest_addoption",
     "pytest_configure",
     "resolve_config",
     "split_csv",

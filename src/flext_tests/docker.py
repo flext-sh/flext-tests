@@ -103,7 +103,8 @@ class FlextTestsDocker(s):
             return ""
         if not bindings:
             return ""
-        return bindings[0].get("HostPort", "")
+        host_port = bindings[0].get("HostPort", "")
+        return host_port if isinstance(host_port, str) else ""
 
     @staticmethod
     def _normalize_bindings(

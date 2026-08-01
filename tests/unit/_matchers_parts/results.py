@@ -6,9 +6,10 @@ from typing import assert_type
 
 import pytest
 
+from flext_core import p as core_p
 from flext_core import r as core_r
 from flext_tests import tm
-from tests import p, r, t
+from tests import r, t
 
 
 class MatchersResultsMixin:
@@ -16,32 +17,35 @@ class MatchersResultsMixin:
 
     def test_assert_result_success_passes(self) -> None:
         """Test tm.ok() with successful result."""
-        result = r[str].ok("success")
+        result: core_p.Result[str] = r[str].ok("success")
         value: t.Tests.TestobjectSerializable = tm.ok(result)
         tm.that(value, eq="success")
 
     def test_ok_preserves_generic_result_payload(self) -> None:
-        """The no-matcher overload preserves the result payload type."""
+        """The no-matcher overload preserves the producer's payload type."""
         result = core_r[str].ok("success")
         assert_type(result.value, str)
         assert_type(tm.ok(result), str)
         tm.that(tm.ok(result, eq="success"), eq="success")
+        tm.that(
+            tm.ok(r[t.JsonMapping].ok({"meta": {"id": "x"}}), path="meta.id"), eq="x"
+        )
 
     def test_assert_result_success_fails(self) -> None:
         """Test tm.ok() with failed result."""
-        result: p.Result[str] = r[str].fail("error")
+        result: core_p.Result[str] = r[str].fail("error")
         with pytest.raises(AssertionError, match="Expected success but got failure"):
             tm.ok(result)
 
     def test_assert_result_success_custom_message(self) -> None:
         """Test tm.ok() with custom error message."""
-        result: p.Result[str] = r[str].fail("error")
+        result: core_p.Result[str] = r[str].fail("error")
         with pytest.raises(AssertionError, match="Custom message"):
             tm.ok(result, msg="Custom message")
 
     def test_assert_result_failure_passes(self) -> None:
         """Test tm.fail() with failed result."""
-        result: p.Result[str] = r[str].fail("error")
+        result: core_p.Result[str] = r[str].fail("error")
         error = tm.fail(result)
         tm.that(error, eq="error")
 
@@ -53,13 +57,13 @@ class MatchersResultsMixin:
 
     def test_assert_result_failure_with_expected_error(self) -> None:
         """Test tm.fail() with expected error substring."""
-        result: p.Result[str] = r[str].fail("Database connection failed")
+        result: core_p.Result[str] = r[str].fail("Database connection failed")
         error = tm.fail(result, contains="connection")
         tm.that(error, has="connection")
 
     def test_assert_result_failure_expected_error_not_found(self) -> None:
         """Test tm.fail() when expected error substring not found."""
-        result: p.Result[str] = r[str].fail("Database error")
+        result: core_p.Result[str] = r[str].fail("Database error")
         with pytest.raises(AssertionError, match=r"Expected.*to contain 'connection'"):
             tm.fail(result, contains="connection")
 

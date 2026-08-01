@@ -45,8 +45,7 @@ class TestsFlextTestsDockerIntegration:
 
         docker = tk.shared(container_name, workspace_root=root)
 
-        target = docker.target_config
-        tm.that(target, none=False)
+        target = tm.not_none(docker.target_config)
         tm.that(target.container_name, eq=container_name)
         tm.that(target.service, eq=settings["service"])
         tm.that(target.port, eq=settings["port"])
@@ -60,12 +59,13 @@ class TestsFlextTestsDockerIntegration:
         settings = c.Tests.SHARED_CONTAINERS[container_name]
         root = tmp_path / "flext-docker-contract"
 
-        target = tk.shared(container_name, workspace_root=root).target_config
+        target = tm.not_none(
+            tk.shared(container_name, workspace_root=root).target_config
+        )
+        compose_file = tm.not_none(target.compose_file)
 
-        tm.that(target, none=False)
-        tm.that(target.compose_file, none=False)
-        assert target.compose_file.is_absolute()
-        tm.that(target.compose_file, eq=root / str(settings["compose_file"]))
+        assert compose_file.is_absolute()
+        tm.that(compose_file, eq=root / str(settings["compose_file"]))
 
     def test_shared_rejects_unknown_container_with_value_error(
         self, tmp_path: Path
@@ -80,20 +80,20 @@ class TestsFlextTestsDockerIntegration:
         """``tk.compose`` anchors a relative compose file to the workspace root."""
         root = tmp_path / "flext-docker-contract"
 
-        target = tk.compose("docker/custom.yml", workspace_root=root).target_config
-
-        tm.that(target, none=False)
+        target = tm.not_none(
+            tk.compose("docker/custom.yml", workspace_root=root).target_config
+        )
         tm.that(target.compose_file, eq=root / "docker" / "custom.yml")
 
     def test_compose_preserves_absolute_file_unchanged(self, tmp_path: Path) -> None:
         """An absolute compose file is used verbatim by ``tk.compose``."""
         absolute = Path("/opt/stacks/custom.yml")
 
-        target = tk.compose(
-            absolute, workspace_root=tmp_path / "flext-docker-contract"
-        ).target_config
-
-        tm.that(target, none=False)
+        target = tm.not_none(
+            tk.compose(
+                absolute, workspace_root=tmp_path / "flext-docker-contract"
+            ).target_config
+        )
         tm.that(target.compose_file, eq=absolute)
 
     @pytest.mark.parametrize(

@@ -13,6 +13,11 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
     """Build and resolve the Make command registry."""
 
     @staticmethod
+    def _path_name(path: Path) -> str:
+        """Return the stable basename used for registry discovery ordering."""
+        return path.name
+
+    @staticmethod
     def _make_add_command(
         commands_by_verb: t.MutableMappingKV[
             str, t.MutableMappingKV[str, m.Tests.MakeCommand]
@@ -133,13 +138,13 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             str, t.MutableMappingKV[str, m.Tests.MakeCommand]
         ] = {}
         aliases_by_name: t.MutableMappingKV[str, str] = {}
-        for verb_dir in sorted(scripts_dir.iterdir(), key=lambda item: item.name):
+        for verb_dir in sorted(scripts_dir.iterdir(), key=cls._path_name):
             if (
                 not verb_dir.is_dir()
                 or verb_dir.name in c.Tests.MAKE_IGNORED_COMMAND_DIRS
             ):
                 continue
-            for path in sorted(verb_dir.iterdir(), key=lambda item: item.name):
+            for path in sorted(verb_dir.iterdir(), key=cls._path_name):
                 if path.name == "__pycache__":
                     continue
                 load_result = cls.make_load_command(path, verb_dir.name)
