@@ -106,17 +106,6 @@ class FlextTestsDocker(s):
         host_port = bindings[0].get("HostPort", "")
         return host_port if isinstance(host_port, str) else ""
 
-    @staticmethod
-    def _normalize_bindings(
-        bindings: t.Tests.TestobjectSerializable | None,
-    ) -> p.Result[t.SequenceOf[t.StrMapping]]:
-        """Validate Docker SDK port bindings into a typed sequence."""
-        return u.try_(
-            lambda: t.Tests.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(bindings),
-            catch=c.ValidationError,
-            op_name="normalize Docker port bindings",
-        )
-
     @override
     def model_post_init(self, __context: t.JsonValue | None, /) -> None:
         """Initialize private runtime state after model validation."""
@@ -207,7 +196,6 @@ class FlextTestsDocker(s):
         try:
             self._run_compose_down(compose_path)
         except self._compose_exception_types() as exc:
-            self.logger.warning("Compose down failed", error=str(exc))
             return r[str].fail_op("Compose down", exc)
         return r[str].ok("Compose down successful")
 
@@ -361,10 +349,9 @@ class FlextTestsDocker(s):
             )
         )
         ports: t.MutableStrMapping = {}
-        empty_bindings: t.SequenceOf[t.StrMapping] = []
         for container_port, host_bindings in ports_raw.items():
-            normalized_bindings = self._normalize_bindings(host_bindings).unwrap_or(
-                empty_bindings
+            normalized_bindings = (
+                t.Tests.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(host_bindings)
             )
             host_port = self._extract_host_port(normalized_bindings)
             if host_port:

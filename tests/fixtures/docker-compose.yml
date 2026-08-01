@@ -3,6 +3,7 @@ version: "3.8"
 services:
   web:
     image: nginx:latest
+    container_name: flext-tests-web-test
     ports:
       - "8080:80"
     environment:

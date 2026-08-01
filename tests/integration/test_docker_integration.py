@@ -29,7 +29,7 @@ class TestsFlextTestsDockerIntegration:
 
     @staticmethod
     def _workspace_root() -> Path:
-        return Path(__file__).resolve().parents[3]
+        return Path(__file__).resolve().parents[2]
 
     # ------------------------------------------------------------------
     # Pure DSL-contract behavior (no Docker daemon required)
@@ -64,7 +64,7 @@ class TestsFlextTestsDockerIntegration:
         )
         compose_file = tm.not_none(target.compose_file)
 
-        assert compose_file.is_absolute()
+        tm.that(compose_file.is_absolute(), eq=True)
         tm.that(compose_file, eq=root / str(settings["compose_file"]))
 
     def test_shared_rejects_unknown_container_with_value_error(
@@ -134,10 +134,18 @@ class TestsFlextTestsDockerIntegration:
 
     @pytest.mark.integration
     @pytest.mark.docker
-    def test_execute_shared_oracle_container_returns_running_info(self) -> None:
-        """The DSL starts the shared Oracle container and reports it running."""
-        docker = tk.shared(
-            "flext-oracle-db-test", workspace_root=self._workspace_root()
+    def test_execute_local_container_returns_running_info(self) -> None:
+        """The DSL starts the repository-owned container and reports it running."""
+        root = self._workspace_root()
+        target = m.Tests.ContainerConfig(
+            container_name="flext-tests-web-test",
+            service="web",
+            port=8080,
+        )
+        docker = tk.compose(
+            root / "tests/fixtures/docker-compose.yml",
+            target=target,
+            workspace_root=root,
         )
         tm.that(docker.client, none=False)
 
@@ -145,17 +153,25 @@ class TestsFlextTestsDockerIntegration:
 
         tm.ok(result)
         container = result.unwrap()
-        tm.that(container.name, eq="flext-oracle-db-test")
+        tm.that(container.name, eq="flext-tests-web-test")
         tm.that(container.status, eq=c.Tests.ContainerStatus.RUNNING)
-        assert container.container_id
-        assert container.image
+        tm.that(container.container_id, empty=False)
+        tm.that(container.image, empty=False)
 
     @pytest.mark.integration
     @pytest.mark.docker
-    def test_execute_shared_oracle_container_is_idempotent(self) -> None:
-        """Repeated DSL execution keeps the shared Oracle container running."""
-        docker = tk.shared(
-            "flext-oracle-db-test", workspace_root=self._workspace_root()
+    def test_execute_local_container_is_idempotent(self) -> None:
+        """Repeated DSL execution keeps the repository-owned container running."""
+        root = self._workspace_root()
+        target = m.Tests.ContainerConfig(
+            container_name="flext-tests-web-test",
+            service="web",
+            port=8080,
+        )
+        docker = tk.compose(
+            root / "tests/fixtures/docker-compose.yml",
+            target=target,
+            workspace_root=root,
         )
         tm.that(docker.client, none=False)
 

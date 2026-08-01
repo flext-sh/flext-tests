@@ -29,11 +29,15 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 
 def pytest_configure(config: pytest.Config) -> None:
     """Register fixture plugins after startup instrumentation is active."""
-    from flext_tests._fixtures import markdown_validation, settings
+    from flext_tests._fixtures import settings
 
-    for plugin in (markdown_validation, settings):
-        if plugin not in config.pluginmanager.get_plugins():
-            config.pluginmanager.register(plugin, plugin.__name__)
+    if settings not in config.pluginmanager.get_plugins():
+        config.pluginmanager.register(settings, settings.__name__)
+    if find_spec("pytest_markdown_docs") is None:
+        from flext_tests._fixtures import markdown_validation
+
+        if markdown_validation not in config.pluginmanager.get_plugins():
+            config.pluginmanager.register(markdown_validation, markdown_validation.__name__)
 
 
 # Enforcement dispatcher (flext_tests._fixtures.enforcement) is loaded via

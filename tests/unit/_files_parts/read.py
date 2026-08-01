@@ -49,8 +49,7 @@ class FilesReadMixin:
         path = manager.create(content, "settings.yaml")
         result = manager.read(path)
         _ = u.Tests.assert_success(result)
-        read_value = result.value
-        assert isinstance(read_value, m.ConfigMap)
+        read_value = m.ConfigMap.model_validate(result.value)
         tm.that(read_value.model_dump() == content.model_dump(), eq=True)
 
     def test_read_csv_file(self, tmp_path: Path) -> None:
