@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping, MutableMapping
 from typing import overload
 
+from flext_core import p as core_p
 from flext_core import u
 from flext_tests import c, m, p, t
 from flext_tests._utilities._matchers._assertions import (
@@ -39,7 +40,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def fail[TResult](
-                result: p.ResultObservable[TResult], **kwargs: t.Tests.MatcherKwargValue
+                result: core_p.Result[TResult], **kwargs: t.Tests.MatcherKwargValue
             ) -> str:
                 """Assert that a result failed and validate its error payload."""
                 try:
@@ -90,7 +91,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def fail_code[TResult](
-                result: p.ResultObservable[TResult], params: m.Tests.FailParams
+                result: core_p.Result[TResult], params: m.Tests.FailParams
             ) -> None:
                 """Validate error code constraints."""
                 if params.code is not None and result.error_code != params.code:
@@ -119,7 +120,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def fail_data[TResult](
-                result: p.ResultObservable[TResult], params: m.Tests.FailParams
+                result: core_p.Result[TResult], params: m.Tests.FailParams
             ) -> None:
                 """Validate structured error data constraints."""
                 if params.data is None:
@@ -297,18 +298,18 @@ class FlextTestsMatchersResultMixin:
             @staticmethod
             @overload
             def ok[TResult: t.Tests.TestResultValue](
-                result: p.ResultObservable[TResult],
+                result: core_p.Result[TResult],
             ) -> TResult: ...
 
             @staticmethod
             @overload
             def ok[TResult: t.Tests.TestResultValue](
-                result: p.ResultObservable[TResult], **kwargs: t.Tests.MatcherKwargValue
+                result: core_p.Result[TResult], **kwargs: t.Tests.MatcherKwargValue
             ) -> TResult | t.Tests.TestobjectSerializable: ...
 
             @staticmethod
             def ok[TResult: t.Tests.TestResultValue](
-                result: p.ResultObservable[TResult], **kwargs: t.Tests.MatcherKwargValue
+                result: core_p.Result[TResult], **kwargs: t.Tests.MatcherKwargValue
             ) -> TResult | t.Tests.TestobjectSerializable:
                 # mro-j47u: matchers observe the protocol and preserve source identity.
                 try:
@@ -356,7 +357,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def ok_payload[TResult: t.Tests.TestResultValue](
-                result: p.ResultObservable[TResult],
+                result: core_p.Result[TResult],
                 result_value: t.Tests.TestResultValue,
                 extracted_payload: t.Tests.TestobjectSerializable | None,
                 params: m.Tests.OkParams,
@@ -369,7 +370,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def ok_validate_structured[TResult: t.Tests.TestResultValue](
-                result: p.ResultObservable[TResult],
+                result: core_p.Result[TResult],
                 result_value: t.Tests.TestResultValue,
                 result_payload: t.Tests.TestobjectSerializable,
                 params: m.Tests.OkParams,

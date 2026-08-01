@@ -80,7 +80,7 @@ class FlextTestsValidatorModelsMixin:
             u.Field(description="All violations detected during the scan."),
         ]
 
-        @u.computed_field()
+        @u.computed_field
         @property
         def passed(self) -> bool:
             """True when the scan found no violations."""

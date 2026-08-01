@@ -5,7 +5,6 @@ from __future__ import annotations
 from flext_tests._fixtures._enforcement_parts.config import (
     active_rules,
     discover_workspace_root,
-    pytest_addoption,
     pytest_configure,
     split_csv,
 )
@@ -20,6 +19,7 @@ from flext_tests._fixtures._enforcement_parts.items import (
     EnforcementItem,
     EnforcementViolationError,
 )
+from flext_tests.enforcement_plugin import pytest_addoption
 
 __all__: list[str] = [
     "EnforcementCollector",

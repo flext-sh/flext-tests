@@ -10,7 +10,6 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Mapping
-import contextlib
 from datetime import datetime, tzinfo
 from enum import Enum
 from pathlib import Path
@@ -21,6 +20,11 @@ from flext_tests import c, m, p, t
 
 class FlextTestsPayloadUtilities:
     """Namespace class for shared payload conversion helpers in flext_tests."""
+
+    @staticmethod
+    def _stable_sort_key(value: object) -> tuple[str, str]:
+        """Return a total deterministic key for heterogeneous payload values."""
+        return type(value).__name__, str(value)
 
     @staticmethod
     def to_payload(value: p.AttributeProbe) -> t.Tests.TestobjectSerializable:
@@ -57,8 +61,9 @@ class FlextTestsPayloadUtilities:
             case list() | tuple() | set() | frozenset():
                 normalized_seq = [to_p(item) for item in value]
                 if isinstance(value, (set, frozenset)):
-                    with contextlib.suppress(TypeError):
-                        normalized_seq = sorted(normalized_seq)
+                    normalized_seq = sorted(
+                        normalized_seq, key=FlextTestsPayloadUtilities._stable_sort_key
+                    )
                 try:
                     validated_seq = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
                         normalized_seq
@@ -93,8 +98,9 @@ class FlextTestsPayloadUtilities:
             case list() | tuple() | set() | frozenset():
                 normalized_seq = [to_n(item) for item in value]
                 if isinstance(value, (set, frozenset)):
-                    with contextlib.suppress(TypeError):
-                        normalized_seq = sorted(normalized_seq)
+                    normalized_seq = sorted(
+                        normalized_seq, key=FlextTestsPayloadUtilities._stable_sort_key
+                    )
                 result = u.normalize_to_metadata(normalized_seq)
             case _:
                 result = str(value)

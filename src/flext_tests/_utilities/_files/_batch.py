@@ -98,6 +98,10 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
                         result = r[Path].ok(path)
                     except OSError as e:
                         result = r[Path].fail(f"Failed to delete {name}: {e}")
+                case _:
+                    result = r[Path].fail(
+                        f"Unsupported batch operation: {params.operation!r}"
+                    )
             return result
 
         items_list = list(files_dict.items())

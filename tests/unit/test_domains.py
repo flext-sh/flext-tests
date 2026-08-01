@@ -59,9 +59,13 @@ class TestsFlextTestsDomains:
 
     def test_create_result_ok_is_chainable_as_result_monad(self) -> None:
         """The OK builder returns a real ``r[T]`` that supports ``.map``."""
+
+        def bracket(value: str) -> str:
+            return f"[{value}]"
+
         result = td.create_result_ok("payload")
 
-        tm.that(result.map(lambda value: f"[{value}]").unwrap(), eq="[payload]")
+        tm.that(result.map(bracket).unwrap(), eq="[payload]")
 
     def test_create_result_failure_carries_error_message_code_and_data(self) -> None:
         """A generic failure exposes message, code and structured data."""

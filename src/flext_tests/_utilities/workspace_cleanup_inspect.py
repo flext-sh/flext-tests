@@ -152,15 +152,13 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
     @classmethod
     def _path_fingerprint(cls, path: Path) -> p.Result[str]:
         """Fingerprint one residue tree without following symbolic links."""
+
+        def relative_path_key(item: Path) -> str:
+            return item.relative_to(path).as_posix()
+
         try:
             entries = (
-                (
-                    path,
-                    *sorted(
-                        path.rglob("*"),
-                        key=lambda item: item.relative_to(path).as_posix(),
-                    ),
-                )
+                (path, *sorted(path.rglob("*"), key=relative_path_key))
                 if path.is_dir() and not path.is_symlink()
                 else (path,)
             )
