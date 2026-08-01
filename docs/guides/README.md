@@ -1,8 +1,9 @@
 <!-- AUTO-GENERATED — DO NOT EDIT MANUALLY -->
 
-# flext-tests Guides
+# flext-tests guides
 
-Curated operational guides live here. Keep API behavior in generated reference pages sourced from code and docstrings.
+Curated operational guides live here. API behavior belongs in generated
+reference pages sourced from public exports and docstrings.
 
-- [Back to project docs](../index.md)
-- [API Reference](../api-reference/README.md)
+- [Project documentation](../index.md)
+- [API reference](../api-reference/README.md)

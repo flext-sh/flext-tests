@@ -185,8 +185,7 @@ class TestsFlextTestsDocker:
     def test_shared_resolves_oracle_target(self, tmp_path: Path) -> None:
         """shared() resolves the Oracle catalog entry into a target config."""
         manager = tk.shared("flext-oracle-db-test", workspace_root=tmp_path)
-        target = manager.target_config
-        tm.that(target, none=False)
+        target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq="flext-oracle-db-test")
         tm.that(
             target.compose_file, eq=tmp_path / "docker" / "docker-compose.oracle-db.yml"
@@ -195,8 +194,7 @@ class TestsFlextTestsDocker:
     def test_shared_resolves_openldap_target(self, tmp_path: Path) -> None:
         """shared() resolves the OpenLDAP catalog entry, incl. service/port."""
         manager = tk.shared("flext-openldap-test", workspace_root=tmp_path)
-        target = manager.target_config
-        tm.that(target, none=False)
+        target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq="flext-openldap-test")
         tm.that(
             target.compose_file, eq=tmp_path / "docker" / "docker-compose.openldap.yml"
@@ -218,8 +216,7 @@ class TestsFlextTestsDocker:
             ),
             workspace_root=tmp_path,
         )
-        target = manager.target_config
-        tm.that(target, none=False)
+        target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq="service-test")
         tm.that(target.compose_file, eq=tmp_path / "docker-compose.yml")
         tm.that(target.port, eq=5432)
@@ -233,8 +230,7 @@ class TestsFlextTestsDocker:
             ),
             workspace_root=tmp_path,
         )
-        target = manager.target_config
-        tm.that(target, none=False)
+        target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq="stack-main")
         tm.that(target.compose_file, eq=tmp_path / "docker-compose.stack.yml")
         tm.that(target.service, eq="stack-main")
@@ -247,8 +243,7 @@ class TestsFlextTestsDocker:
             target=m.Tests.ContainerConfig(host=c.LOOPBACK_IP, port=25432),
             workspace_root=tmp_path,
         )
-        target = manager.target_config
-        tm.that(target, none=False)
+        target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq=None)
         tm.that(target.port, eq=25432)
 

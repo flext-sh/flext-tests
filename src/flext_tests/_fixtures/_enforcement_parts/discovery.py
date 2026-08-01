@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from flext_core import p as core_p
 from flext_core import r
 from flext_tests import c, p, t
 from flext_tests.utilities import u
@@ -51,7 +52,7 @@ def _item_path(item: pytest.Item) -> Path | None:
     return Path(str(fspath)).resolve()
 
 
-def _project_name_for_path(*, path: Path, workspace_root: Path) -> p.Result[str]:
+def _project_name_for_path(*, path: Path, workspace_root: Path) -> core_p.Result[str]:
     """Return the owning FLEXT project name for one workspace path."""
     relative_result = u.try_(
         lambda: path.relative_to(workspace_root),
@@ -81,9 +82,10 @@ def _project_name_for_item(*, item: pytest.Item, workspace_root: Path) -> str | 
     item_path = _item_path(item)
     if item_path is None:
         return None
-    return _project_name_for_path(
+    project_name_result = _project_name_for_path(
         path=item_path, workspace_root=workspace_root
-    ).unwrap_or(None)
+    )
+    return project_name_result.value if project_name_result.success else None
 
 
 def _collected_project_names(
@@ -110,11 +112,11 @@ def _validator_target_for_item(
     item_path = _item_path(item)
     if item_path is None:
         return None
-    project_name = _project_name_for_path(
+    project_name_result = _project_name_for_path(
         path=item_path, workspace_root=workspace_root
-    ).unwrap_or(None)
-    if project_name is not None:
-        return workspace_root / project_name
+    )
+    if project_name_result.success:
+        return workspace_root / project_name_result.value
     return item_path
 
 

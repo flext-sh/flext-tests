@@ -40,8 +40,8 @@ class FilesInfoMetadataMixin:
         result = manager.info(path, compute_hash=True)
         _ = u.Tests.assert_success(result)
         info = result.value
-        tm.that(info.sha256, none=False)
-        tm.that(len(info.sha256), eq=64)
+        sha256 = tm.not_none(info.sha256)
+        tm.that(len(sha256), eq=64)
 
     def test_info_format_detection(self, tmp_path: Path) -> None:
         """Test info() detects file format."""

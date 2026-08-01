@@ -67,17 +67,17 @@ never allowed to hardcode, freeze, or implicitly assume the values that exist to
 11. **Historical material is evidence only.** Archives, generated or tool homes,
     backups, sessions, caches, and legacy trees are never live authority.
 12. **Stop only for a real blocker.** Ask one precise question only when authority
-   conflicts or an action would be destructive; otherwise continue to the
-   observable stop condition.
+    conflicts or an action would be destructive; otherwise continue to the
+    observable stop condition.
 13. **Short validated slices.** Deliver in small, independently validated
-   units that merge to the integration branch quickly — one Bead, one
-   reviewable PR, hours not days. Mega-lanes and long-lived WIP are defects;
-   the orchestrator splits any unit that cannot merge green within a session.
+    units that merge to the integration branch quickly — one Bead, one
+    reviewable PR, hours not days. Mega-lanes and long-lived WIP are defects;
+    the orchestrator splits any unit that cannot merge green within a session.
 14. **Living documentation.** Project knowledge is durable, never rebuilt
-   per session. On entering a project, read its docs first and validate key
-   claims quickly against live reality. Every change that produces new
-   understanding or behavior updates the affected docs in the SAME change;
-   stale docs are defects filed as beads, never worked around.
+    per session. On entering a project, read its docs first and validate key
+    claims quickly against live reality. Every change that produces new
+    understanding or behavior updates the affected docs in the SAME change;
+    stale docs are defects filed as beads, never worked around.
 15. **Runtime reality precedes implementation and tests.** Establish the correct
     behavior from the official external contract and the real consumer first. For
     generated or deployed artifacts, validate the staged artifact with that real
@@ -95,8 +95,8 @@ never allowed to hardcode, freeze, or implicitly assume the values that exist to
     See P0 above: tests of `config`/`settings` validate contracts and behavior
     for arbitrary valid values and read expected config-owned values from the
     same typed SSOT the consumer receives; they never freeze today's configured
-    scalar, identifier, path, endpoint, model, ranking, or default. Goldens may lock
-    structure, never mutable config/settings values.
+    scalar, identifier, path, endpoint, model, ranking, or default. Goldens may
+    lock structure, never mutable config/settings values.
 16. **Parametrized config, generators, and managed binaries.** config, settings,
     and templates are the sole source of configuration and business rules; the
     correct generator produces every derived surface (never hand-edit a
@@ -172,26 +172,32 @@ never allowed to hardcode, freeze, or implicitly assume the values that exist to
 <!-- /UNIVERSAL-GOVERNANCE -->
 <!-- END AI-HUB MANAGED UNIVERSAL CORE -->
 
-> **General FLEXT law & workspace conventions live in the root [`../AGENTS.md`](../AGENTS.md) — read it first.** The full **testing law** lives there (behavior-only, no mocks, unified conftest, thin nested class). This file adds ONLY `flext-tests`-specific knowledge.
+> **General FLEXT law and workspace conventions** live in the
+> [workspace AGENTS.md][workspace-agents]. Read it first. The full testing law
+> lives there. This file adds only `flext-tests`-specific knowledge.
 >
-> **Standalone / independent mode:** if this package is checked out on its own (imported as a dependency, vendored, or cloned solo) there is no parent workspace, so `../AGENTS.md` does not resolve. Then read the root law from the raw file on the SAME branch/release the project is on: <https://raw.githubusercontent.com/flext-sh/flext/0.12.0-dev/AGENTS.md> (pin the branch/tag to your working line, never `main`).
+> **Standalone mode:** when no parent workspace exists, use the same pinned
+> integration line through the link above, never a floating `main` reference.
+
+[workspace-agents]: https://github.com/flext-sh/flext/blob/0.12.0-dev/AGENTS.md
 
 **Package:** `flext_tests` · deps: `flext-cli`, `flext-core`, `flext-infra`
 
 ## Overview
 
-Shared test infrastructure for the whole ecosystem: typed matchers/fixtures/builders + the generic `make` framework (ADR-004). Consumed by every package's test suite.
+Shared test infrastructure for typed matchers, fixtures, builders, and the
+generic Make framework. Every FLEXT package test suite consumes it.
 
 ## Structure
 
-```
+```text
 src/flext_tests/
 ├── base.py                 # FlextTestsServiceBase, FlextTestsCase
 ├── tmatchers.py            # public tm (matchers)
 ├── conftest_plugin.py      # pytest11 plugin registration
 ├── enforcement.py files.py domains.py docker.py
 ├── _validator/ _fixtures/ _domains_parts/ _docker_parts/
-├── constants.py typings.py protocols.py models.py utilities.py   # AUTO-GENERATED facets (expose tm/tv/tt + c/t/p/m/u)
+├── constants.py typings.py protocols.py models.py utilities.py
 └── _constants/ _models/ _protocols/ _typings/ _utilities/
 ```
 
@@ -207,12 +213,15 @@ There is **no runtime `api.py`** — this is test tooling.
 
 ## Conventions (specific to this package)
 
-- Assert via `tm.*`, never bare `assert`. Tests are behavior-only through public facades; **no mocks / `patch` / `monkeypatch`** of the SUT.
-- Also exposes `c/t/p/m/u` for building typed fixtures; provides `FlextTestsMakeUtilitiesMixin` (Make domain).
+- Assert via `tm.*`, never bare `assert`. Tests are behavior-only through
+  public facades, without mocks or patching the system under test.
+- Use `c/t/p/m/u` for typed fixtures and
+  `FlextTestsMakeUtilitiesMixin` for the Make domain.
 
 ## Anti-Patterns / Gotchas
 
-- `conftest_plugin.py` is a pytest11 entry point — every package gets its fixtures/enforcement via it; don't duplicate them locally.
+- `conftest_plugin.py` is the pytest11 entry point. Packages receive fixtures
+  and enforcement through it and never duplicate them locally.
 
 ## Commands
 

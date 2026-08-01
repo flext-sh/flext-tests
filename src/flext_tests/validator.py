@@ -41,7 +41,9 @@ class FlextTestsValidator:
         approved_exceptions: Annotated[
             t.MappingKV[str, t.StrSequence],
             u.Field(description="Rule-to-path allowlist for approved exceptions."),
-        ] = u.Field(default_factory=lambda: MappingProxyType({}))
+        ] = u.Field(
+            default_factory=lambda: MappingProxyType(dict[str, t.StrSequence]())
+        )
         include_tests_validation: Annotated[
             bool,
             u.Field(
