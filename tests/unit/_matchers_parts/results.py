@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from typing import assert_type
+
 import pytest
 
+from flext_core import r as core_r
 from flext_tests import tm
 from tests import p, r, t
 
@@ -16,6 +19,13 @@ class MatchersResultsMixin:
         result = r[str].ok("success")
         value: t.Tests.TestobjectSerializable = tm.ok(result)
         tm.that(value, eq="success")
+
+    def test_ok_preserves_generic_result_payload(self) -> None:
+        """The no-matcher overload preserves the result payload type."""
+        result = core_r[str].ok("success")
+        assert_type(result.value, str)
+        assert_type(tm.ok(result), str)
+        tm.that(tm.ok(result, eq="success"), eq="success")
 
     def test_assert_result_success_fails(self) -> None:
         """Test tm.ok() with failed result."""
