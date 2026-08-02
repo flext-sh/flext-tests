@@ -121,8 +121,8 @@ _ALLOWED_WHATS_worktree := list add update remove
 CHECK_GATES_ALLOWED := lint pyrefly mypy pyright security markdown smells
 CHECK_GATES_DEFAULT := lint pyrefly mypy pyright security markdown smells
 DOCS_ACTIONS := generate fix audit build validate
-SERIALIZED_VERBS := check test gen fmt fix
-SERIALIZED_TARGETS := _serialized_check _serialized_test _serialized_gen _serialized_fmt _serialized_fix
+SERIALIZED_VERBS := check test gen fmt fix deps clean worktree
+SERIALIZED_TARGETS := _serialized_check _serialized_test _serialized_gen _serialized_fmt _serialized_fix _serialized_deps _serialized_clean _serialized_worktree
 # End SECTION: verb dispatch
 
 # === SECTION: lint/type paths (managed) ===
@@ -167,9 +167,12 @@ _DEFAULT_release := status
 _DEFAULT_gen := check
 _DEFAULT_worktree := list
 
+_APPLY_WHAT_deps := upgrade
 _APPLY_WHAT_fmt := all
 _APPLY_WHAT_fix := all
+_APPLY_WHAT_clean := generated
 _APPLY_WHAT_gen := all
+_APPLY_WHAT_worktree := update
 
 
 # === SECTION: profile routing (managed) ===
@@ -369,6 +372,27 @@ _serialized_fix:
 	$(call _dispatch,fix)
 
 
+deps: _builtin_require_environment
+	@$(PROJECT_FLEXT_INFRA) workspace serialize-make --workspace "$(PROJECT_ROOT)" --makefile "$(SELF_MAKEFILE)" --verb "deps" --selector-value "$(WHAT)" --apply-token "$(APPLY)"
+
+_serialized_deps:
+	$(call _dispatch,deps)
+
+
+clean: _builtin_require_environment
+	@$(PROJECT_FLEXT_INFRA) workspace serialize-make --workspace "$(PROJECT_ROOT)" --makefile "$(SELF_MAKEFILE)" --verb "clean" --selector-value "$(WHAT)" --apply-token "$(APPLY)"
+
+_serialized_clean:
+	$(call _dispatch,clean)
+
+
+worktree: _builtin_require_environment
+	@$(PROJECT_FLEXT_INFRA) workspace serialize-make --workspace "$(PROJECT_ROOT)" --makefile "$(SELF_MAKEFILE)" --verb "worktree" --selector-value "$(WHAT)" --apply-token "$(APPLY)"
+
+_serialized_worktree:
+	$(call _dispatch,worktree)
+
+
 
 # `setup` keeps its own recipe (it must not require the environment it is about
 # to build), but it still runs the pre-/post-setup lifecycle hooks so a project
@@ -396,7 +420,7 @@ _builtin_help_usage:
 
 
 
-	@printf '  %-10s WHAT=%s\n' 'deps' 'check|lock|upgrade';
+	@printf '  %-10s WHAT=%s APPLY=Y\n' 'deps' 'check|lock|upgrade';
 
 
 
@@ -432,7 +456,7 @@ _builtin_help_usage:
 
 
 
-	@printf '  %-10s WHAT=%s\n' 'clean' 'generated';
+	@printf '  %-10s WHAT=%s APPLY=Y\n' 'clean' 'generated';
 
 
 
@@ -444,7 +468,7 @@ _builtin_help_usage:
 
 
 
-	@printf '  %-10s WHAT=%s\n' 'worktree' 'list|add|update|remove';
+	@printf '  %-10s WHAT=%s APPLY=Y\n' 'worktree' 'list|add|update|remove';
 
 
 	@printf '  %-10s %s\n' 'WORKSPACE' 'target repository (default: current project)';
