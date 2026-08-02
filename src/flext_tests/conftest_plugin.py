@@ -37,7 +37,9 @@ def pytest_configure(config: pytest.Config) -> None:
         from flext_tests._fixtures import markdown_validation
 
         if markdown_validation not in config.pluginmanager.get_plugins():
-            config.pluginmanager.register(markdown_validation, markdown_validation.__name__)
+            config.pluginmanager.register(
+                markdown_validation, markdown_validation.__name__
+            )
 
 
 # Enforcement dispatcher (flext_tests._fixtures.enforcement) is loaded via

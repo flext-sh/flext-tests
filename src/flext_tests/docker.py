@@ -350,8 +350,8 @@ class FlextTestsDocker(s):
         )
         ports: t.MutableStrMapping = {}
         for container_port, host_bindings in ports_raw.items():
-            normalized_bindings = (
-                t.Tests.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(host_bindings)
+            normalized_bindings = t.Tests.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(
+                host_bindings
             )
             host_port = self._extract_host_port(normalized_bindings)
             if host_port:

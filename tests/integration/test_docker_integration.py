@@ -138,9 +138,7 @@ class TestsFlextTestsDockerIntegration:
         """The DSL starts the repository-owned container and reports it running."""
         root = self._workspace_root()
         target = m.Tests.ContainerConfig(
-            container_name="flext-tests-web-test",
-            service="web",
-            port=8080,
+            container_name="flext-tests-web-test", service="web", port=8080
         )
         docker = tk.compose(
             root / "tests/fixtures/docker-compose.yml",
@@ -164,9 +162,7 @@ class TestsFlextTestsDockerIntegration:
         """Repeated DSL execution keeps the repository-owned container running."""
         root = self._workspace_root()
         target = m.Tests.ContainerConfig(
-            container_name="flext-tests-web-test",
-            service="web",
-            port=8080,
+            container_name="flext-tests-web-test", service="web", port=8080
         )
         docker = tk.compose(
             root / "tests/fixtures/docker-compose.yml",
