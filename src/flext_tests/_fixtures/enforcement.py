@@ -11,6 +11,7 @@ from flext_tests._fixtures._enforcement_parts.config import (
 )
 from flext_tests._fixtures._enforcement_parts.hooks import (
     pytest_collection_modifyitems,
+    pytest_sessionfinish,
     pytest_sessionstart,
     pytest_terminal_summary,
     pytest_warning_recorded,
@@ -30,6 +31,7 @@ __all__: list[str] = [
     "pytest_addoption",
     "pytest_collection_modifyitems",
     "pytest_configure",
+    "pytest_sessionfinish",
     "pytest_sessionstart",
     "pytest_terminal_summary",
     "pytest_warning_recorded",

@@ -10,8 +10,8 @@ from collections.abc import MutableMapping
 from pathlib import Path
 from typing import Annotated, ClassVar
 
-from flext_infra import m, p, u
-from flext_tests import c, t
+from flext_core import m, p, t, u
+from flext_tests._constants.validator import FlextTestsConstantsValidator
 
 
 class FlextTestsValidatorModelsMixin:
@@ -45,7 +45,7 @@ class FlextTestsValidatorModelsMixin:
             str, u.Field(description="Stable identifier for the rule that fired.")
         ]
         severity: Annotated[
-            c.Tests.ValidatorSeverity,
+            FlextTestsConstantsValidator.ValidatorSeverity,
             u.Field(description="Severity level assigned by the rule."),
         ]
         description: Annotated[
@@ -58,11 +58,11 @@ class FlextTestsValidatorModelsMixin:
         @u.field_validator("severity", mode="before")
         @classmethod
         def _coerce_severity(
-            cls, value: c.Tests.ValidatorSeverity | str
-        ) -> c.Tests.ValidatorSeverity:
-            if isinstance(value, c.Tests.ValidatorSeverity):
+            cls, value: FlextTestsConstantsValidator.ValidatorSeverity | str
+        ) -> FlextTestsConstantsValidator.ValidatorSeverity:
+            if isinstance(value, FlextTestsConstantsValidator.ValidatorSeverity):
                 return value
-            return c.Tests.ValidatorSeverity(value.upper())
+            return FlextTestsConstantsValidator.ValidatorSeverity(value.upper())
 
     class ScanResult(m.Value):
         """Result of a validation scan."""

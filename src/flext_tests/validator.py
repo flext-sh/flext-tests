@@ -209,7 +209,16 @@ class FlextTestsValidator(s[m.Tests.ScanResult]):
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate Python code blocks in markdown files."""
-        md_files = FlextValidatorMarkdown.collect_markdown_files(project_root)
+        md_files: MutableSequence[Path] = []
+        for search_dir in (
+            project_root,
+            project_root / ".claude" / "skills",
+            project_root / "docs",
+        ):
+            if search_dir.is_dir():
+                md_files.extend(
+                    u.Infra.iter_matching_files(search_dir, includes=["*.md"])
+                )
         return FlextValidatorMarkdown.markdown(
             md_files, approved_exceptions=approved_exceptions
         )
