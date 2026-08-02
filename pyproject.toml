@@ -10,7 +10,7 @@ requires = ["hatchling"]
 
 [dependency-groups]
 codegen = [
-  "flext-infra",
+    "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
 ]
 dev = [
   "autoflake>=2.3.1",
@@ -105,26 +105,26 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "docker>=7.1",
-  "factory-boy>=3.3.3",
-  "faker>=40.15.0",
-  "flext-cli",
-  "flext-core",
-  "flext-infra",
-  "hypothesis>=6.152.4",
-  "pytest>=9.0.3",
-  "pytest-benchmark>=5.2.3",
-  "pytest-clarity>=1.0.1",
-  "pytest-cov>=7.1.0",
-  "pytest-deadfixtures>=3.1.0",
-  "pytest-env>=1.6.0",
-  "pytest-mock>=3.15.1",
-  "pytest-randomly>=4.1.0",
-  "pytest-reportlog>=1.0.0",
-  "pytest-sugar>=1.1.1",
-  "pytest-timeout>=2.4.0",
-  "pytest-xdist>=3.8.0",
-  "python-on-whales>=0.7",
+    "docker>=7.1",
+    "factory-boy>=3.3.3",
+    "faker>=40.15.0",
+    "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@0.12.0-dev",
+    "flext-core @ git+https://github.com/flext-sh/flext-core.git@0.12.0-dev",
+    "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
+    "hypothesis>=6.152.4",
+    "pytest>=9.0.3",
+    "pytest-benchmark>=5.2.3",
+    "pytest-clarity>=1.0.1",
+    "pytest-cov>=7.1.0",
+    "pytest-deadfixtures>=3.1.0",
+    "pytest-env>=1.6.0",
+    "pytest-mock>=3.15.1",
+    "pytest-randomly>=4.1.0",
+    "pytest-reportlog>=1.0.0",
+    "pytest-sugar>=1.1.1",
+    "pytest-timeout>=2.4.0",
+    "pytest-xdist>=3.8.0",
+    "python-on-whales>=0.7",
 ]
 description = "FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem"
 keywords = ["builders", "factories", "flext", "test-infrastructure", "testing"]
@@ -265,7 +265,6 @@ project-excludes = [
   "vendor/**",
 ]
 project-includes = ["src/**/*.py*", "tests/**/*.py*"]
-python-interpreter-path = "../.venv/bin/python"
 python-version = "3.13"
 search-path = [
     ".",
@@ -668,7 +667,6 @@ sort_first = ["build-system", "dependency-groups", "project", "tool"]
 
 [tool.uv]
 link-mode = "copy"
-required-version = "==0.11.29"
 
 [tool.vulture]
 exclude = ["*/_protocols/*"]

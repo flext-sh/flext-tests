@@ -4,23 +4,26 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import pytest
+
 from flext_tests._fixtures._enforcement_parts.build import build_items
 from flext_tests._fixtures._enforcement_parts.config import (
     SessionConfig,
     active_rules,
     resolve_config,
 )
+from flext_tests._fixtures._enforcement_parts.timeout_policy import PytestTimeoutPolicy
 
 if TYPE_CHECKING:
-    import pytest
-
     from flext_tests import p
 
 
+@pytest.hookimpl(trylast=True)
 def pytest_collection_modifyitems(
     session: pytest.Session, config: pytest.Config, items: list[pytest.Item]
 ) -> None:
     """Append dispatcher items to the collection when active."""
+    PytestTimeoutPolicy.validate_items(config, items)
     cfg = resolve_config(config)
     if not cfg.active:
         return
@@ -53,8 +56,18 @@ def pytest_warning_recorded(
     counter[dotted] = counter.get(dotted, 0) + 1
 
 
+def pytest_sessionfinish(session: pytest.Session, exitstatus: pytest.ExitCode) -> None:
+    """Restore the config active before this pytest session started."""
+    _ = exitstatus
+    if SessionConfig.value is session.config:
+        SessionConfig.value = session.config.stash.get(
+            SessionConfig.stash_previous_config, None
+        )
+
+
 def pytest_sessionstart(session: pytest.Session) -> None:
     """Expose the session config for warning-capture plumbing."""
+    session.config.stash[SessionConfig.stash_previous_config] = SessionConfig.value
     SessionConfig.value = session.config
 
 
@@ -83,6 +96,7 @@ def pytest_terminal_summary(
 
 __all__: list[str] = [
     "pytest_collection_modifyitems",
+    "pytest_sessionfinish",
     "pytest_sessionstart",
     "pytest_terminal_summary",
     "pytest_warning_recorded",
