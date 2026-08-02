@@ -66,6 +66,10 @@ class MatchersDataDrivenMixin:
 
     def test_ok_with_composed_data_driven_validations(self) -> None:
         """Validate result payload with path extraction plus composed rules."""
+
+        def is_mapping(data: t.Tests.TestobjectSerializable) -> bool:
+            return isinstance(data, Mapping)
+
         result = r[t.JsonMapping].ok({
             "meta": {"version": "v1", "count": 3},
             "items": ["a", "b", "c"],
@@ -73,6 +77,6 @@ class MatchersDataDrivenMixin:
         value = tm.ok(
             result,
             paths={"meta.version": {"starts": "v"}, "meta.count": {"eq": 3}},
-            where=lambda data: isinstance(data, Mapping),
+            where=is_mapping,
         )
         tm.that(value, is_=dict)

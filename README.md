@@ -2,15 +2,18 @@
 
 # flext-tests
 
-**Version**: `0.12.0` | **Python**: 3.13+ | **Project class**: `test`
+FLEXT shared test infrastructure for typed matchers, fixtures, builders,
+factories, and enforcement plugins.
 
-> **Alpha (0.12.0).** This package is alpha quality. Every package in the workspace must be re-checked and re-validated at 0.12.0 before any promotion beyond alpha; treat interfaces as unstable.
+- Version: `0.12.0`
+- Python: 3.13+
+- Project class: `test`
+- Package: `flext_tests`
 
-## Purpose
+This alpha package is consumed by FLEXT project test suites. Interfaces remain
+unstable until the full 0.12.0 workspace is revalidated.
 
-FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem
-
-## Module Map
+## Public surface
 
 ::: flext_tests
     options:
@@ -19,30 +22,22 @@ FLEXT Test Infrastructure - Shared test utilities, builders, factories, and vali
       show_root_toc_entry: false
       show_source: false
 
-## Collection Rules
+## Documentation
 
-Read [`/flext/AGENTS.md`](../AGENTS.md) §9 — Agent Execution Pre-requisites — for the canonical pre-change checklist (parent MRO chain, Scope bootstrap, skill loading, zero-debt baseline, slot registry verification).
+- [Project documentation](docs/index.md)
+- [API reference](docs/api-reference/README.md)
+- [Generated API overview](docs/api-reference/generated/overview.md)
 
-## Operation Flow
+## Validation
 
-- Public surface: see [`docs/index.md`](docs/index.md) and [`docs/api-reference/README.md`](docs/api-reference/README.md).
-- Generated module overview: [`docs/api-reference/generated/overview.md`](docs/api-reference/generated/overview.md).
-- Settings env prefix: see project `pyproject.toml` `[tool.flext]` and `FlextSettings` ConfigDict.
+Run the canonical lifecycle from the repository root:
 
-## Integration Points
+```bash
+make setup
+make gen APPLY=Y
+make fmt APPLY=Y
+make check
+make test
+```
 
-- Parent MRO chain: read this project's `pyproject.toml` `dependencies` array filtered by `flext-*`. The MRO cascade is encoded in the inheritance lists of the facade classes listed under Module Map above.
-- Public extensions exposed by this project: `FlextTestsCase`, `FlextTestsConfig`, `FlextTestsConstants`, `FlextTestsDocker`, `FlextTestsDomains`, `FlextTestsFiles` (+8 more).
-- Library abstraction boundaries: see AGENTS.md §2.7.
-
-## Quality Gates
-
-Canonical `make` verbs (`check`, `test`, `val`, `docs`) — see `AGENTS.md` §5 (Make Contract) and the [`flext-quality-gates`](../.agents/skills/flext-quality-gates/SKILL.md) skill for selectors and thresholds.
-
-## Governance Pointer
-
-- Engineering law: [`/flext/AGENTS.md`](../AGENTS.md)
-- Governance + ADRs: [`/flext/docs/GOVERNANCE.md`](../docs/GOVERNANCE.md)
-- Skills index: [`/flext/.agents/skills/`](../.agents/skills/)
-- Onboarding: [`/flext/docs/guides/onboarding.md`](../docs/guides/onboarding.md)
-- Full project portal: [`docs/index.md`](docs/index.md).
+See [AGENTS.md](AGENTS.md) for project governance.

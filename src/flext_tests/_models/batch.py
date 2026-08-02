@@ -71,26 +71,30 @@ class FlextTestsBatchModelsMixin:
         results: Annotated[
             t.MappingKV[str, p.Result[t.Tests.TestResultValue]],
             u.Field(description="Mapping of file names to operation results"),
-        ] = u.Field(default_factory=lambda: MappingProxyType({}))
+        ] = u.Field(
+            default_factory=lambda: MappingProxyType(
+                dict[str, p.Result[t.Tests.TestResultValue]]()
+            )
+        )
         errors: Annotated[
             t.StrMapping, u.Field(description="Mapping of file names to error messages")
-        ] = u.Field(default_factory=lambda: MappingProxyType({}))
+        ] = u.Field(default_factory=lambda: MappingProxyType(dict[str, str]()))
 
-        @u.computed_field()
+        @u.computed_field
         @property
         def failure_count(self) -> int:
             """Alias for failed count."""
             failed_count: int = self.failed
             return failed_count
 
-        @u.computed_field()
+        @u.computed_field
         @property
         def success_count(self) -> int:
             """Alias for succeeded count."""
             succeeded_count: int = self.succeeded
             return succeeded_count
 
-        @u.computed_field()
+        @u.computed_field
         @property
         def success_rate(self) -> float:
             """Compute success rate as percentage."""

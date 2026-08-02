@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from types import EllipsisType
 
-from flext_tests import c, p
+from flext_core import p
+from flext_tests import c
 
 
 class FlextTestsResultUtilitiesMixin:

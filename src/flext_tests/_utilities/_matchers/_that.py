@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
-from typing import Literal, TypeIs, overload
 
 from flext_core import u
 from flext_tests import c, m, p, r, t
@@ -475,17 +474,17 @@ class FlextTestsMatchersThatMixin:
                 if sorted_param is not None:
                     value_list = list(seq_value)
                     if sorted_param is True:
-                        sorted_list = sorted(
-                            value_list,
-                            key=lambda item: (type(item).__name__, str(item)),
-                        )
+                        sorted_list = sorted(value_list, key=cls._default_sort_key)
                         if value_list != sorted_list:
                             raise AssertionError(params.msg or "Sequence is not sorted")
                     elif callable(sorted_param):
-                        sorted_list = sorted(
-                            value_list,
-                            key=lambda item: cls._comparable_key(sorted_param, item),
-                        )
+
+                        def user_sort_key(
+                            item: t.Tests.TestobjectSerializable,
+                        ) -> t.StrPair:
+                            return cls._comparable_key(sorted_param, item)
+
+                        sorted_list = sorted(value_list, key=user_sort_key)
                         if value_list != sorted_list:
                             raise AssertionError(
                                 params.msg or "Sequence is not sorted by key function"
@@ -498,6 +497,11 @@ class FlextTestsMatchersThatMixin:
                     raise AssertionError(
                         params.msg or "Sequence contains duplicate items"
                     )
+
+            @staticmethod
+            def _default_sort_key(item: object) -> t.StrPair:
+                """Return a deterministic key for heterogeneous matcher values."""
+                return type(item).__name__, str(item)
 
             @staticmethod
             def _comparable_key(
@@ -685,42 +689,6 @@ class FlextTestsMatchersThatMixin:
                     raise AssertionError(msg or "Expected a non-None value")
                 return value
 
-            # NOTE (mro-li3p): TypeIs overloads turn statement-style calls into
-            # implicit asserts for static analyzers; runtime stays fail-closed.
-            @overload
-            @classmethod
-            def that[T](
-                cls,
-                value: T | None,
-                *,
-                none: Literal[False],
-                **kwargs: t.Tests.MatcherKwargValue,
-            ) -> TypeIs[T]: ...
-            @overload
-            @classmethod
-            def that(
-                cls, value: object, *, eq: None, **kwargs: t.Tests.MatcherKwargValue
-            ) -> TypeIs[None]: ...
-            @overload
-            @classmethod
-            def that[T](
-                cls, value: T | None, *, ne: None, **kwargs: t.Tests.MatcherKwargValue
-            ) -> TypeIs[T]: ...
-            @overload
-            @classmethod
-            def that[E](
-                cls, value: E | None, *, eq: E, **kwargs: t.Tests.MatcherKwargValue
-            ) -> TypeIs[E]: ...
-            @overload
-            @classmethod
-            def that[T](
-                cls, value: object, *, is_: type[T], **kwargs: t.Tests.MatcherKwargValue
-            ) -> TypeIs[T]: ...
-            @overload
-            @classmethod
-            def that(
-                cls, value: p.AttributeProbe, **kwargs: t.Tests.MatcherKwargValue
-            ) -> None: ...
             @classmethod
             def that(
                 cls, value: p.AttributeProbe, **kwargs: t.Tests.MatcherKwargValue

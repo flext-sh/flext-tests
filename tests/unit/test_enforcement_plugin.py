@@ -20,7 +20,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import active_rules, discover_workspace_root, m, split_csv, tm
+from flext_tests import m, tm
+from flext_tests.enforcement import active_rules, discover_workspace_root, split_csv
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -43,6 +44,27 @@ class TestsFlextTestsEnforcementPlugin:
             if entry.name.startswith("flext_")
         }
         tm.that(names, eq={"flext_tests", "flext_tests_enforcement"})
+
+    def test_flext_pytest11_entrypoint_load_defers_fixture_imports(
+        self, pytester: pytest.Pytester
+    ) -> None:
+        """Cold entry-point discovery does not pre-import measured product code."""
+        probe = (
+            "from importlib.metadata import entry_points\n"
+            "import sys\n"
+            "entries = {entry.name: entry for entry in entry_points(group='pytest11')}\n"
+            "entries['flext_tests'].load()\n"
+            "entries['flext_tests_enforcement'].load()\n"
+            "eager = sorted(\n"
+            "    name for name in sys.modules\n"
+            "    if name.startswith('flext_tests._fixtures')\n"
+            ")\n"
+            "if eager:\n"
+            "    raise RuntimeError(f'eager fixture imports: {eager}')\n"
+        )
+        completed = pytester.runpython_c(probe)
+        tm.that(completed.ret, eq=0)
+        tm.that(completed.errlines, eq=[])
 
     # ---- split_csv: pure CSV parsing contract --------------------------------
 
@@ -218,7 +240,7 @@ class TestsFlextTestsEnforcementPlugin:
             test_public_boundary=(
                 "from pathlib import Path\n"
                 "\n"
-                "from flext_tests import load_infra_report\n"
+                "from flext_tests.enforcement import load_infra_report\n"
                 "\n"
                 "\n"
                 "class TestsPublicInfraReportBoundary:\n"

@@ -26,7 +26,8 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
                 f"got {settings_type.__name__}"
             )
             raise TypeError(msg)
-        return settings_type
+        concrete_settings_type: type[FlextTestsSettings] = settings_type
+        return concrete_settings_type
 
     @classmethod
     def fetch_logger(cls) -> p.Logger:
