@@ -143,7 +143,13 @@ extra_checks = true
 follow_imports = "normal"
 ignore_missing_imports = true
 local_partial_types = true
-mypy_path = [".", "src"]
+mypy_path = [
+  "src",
+  ".",
+  "../flext-cli/src",
+  "../flext-core/src",
+  "../flext-infra/src",
+]
 namespace_packages = true
 no_implicit_reexport = true
 plugins = ["pydantic.mypy"]
@@ -163,6 +169,7 @@ disable_error_code = ["unreachable"]
 module = ["dcdoc._utilities._charts._matplotlib_renderer._renders_spec"]
 
 # [MANAGED] pydantic-mypy
+
 [tool.pydantic-mypy]
 init_forbid_extra = true
 init_typed = true
@@ -190,7 +197,13 @@ project-excludes = [
 ]
 project-includes = ["src/**/*.py*", "tests/**/*.py*"]
 python-version = "3.13"
-search-path = [".", "src"]
+search-path = [
+  "src",
+  ".",
+  "../flext-cli/src",
+  "../flext-core/src",
+  "../flext-infra/src",
+]
 use-ignore-files = false
 
 [tool.pyrefly.errors]
@@ -341,7 +354,7 @@ reportUnusedImport = "error"
 reportUnusedVariable = "error"
 typeCheckingMode = "strict"
 venv = ".venv"
-venvPath = "."
+venvPath = ".."
 
 [[tool.pyright.executionEnvironments]]
 extraPaths = ["src"]
@@ -379,6 +392,7 @@ reportUnusedImport = "none"
 root = "tests"
 
 # [MANAGED] pytest
+
 [tool.pytest.ini_options]
 addopts = [
   "--benchmark-disable",
