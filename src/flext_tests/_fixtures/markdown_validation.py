@@ -18,7 +18,8 @@ from typing import TYPE_CHECKING, override
 
 import pytest
 
-from flext_tests import c, u
+from flext_cli import u
+from flext_tests._constants.validator import FlextTestsConstantsValidator
 from flext_tests._validator.markdown import FlextValidatorMarkdown
 
 if TYPE_CHECKING:
@@ -31,7 +32,7 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         return
     group = parser.getgroup("markdown", "Markdown code block validation")
     group.addoption(
-        c.Tests.VALIDATOR_MD_OPTION_DOCS,
+        FlextTestsConstantsValidator.VALIDATOR_MD_OPTION_DOCS,
         action="store_true",
         default=False,
         help="Validate Python code blocks in .md files",
@@ -95,11 +96,13 @@ def pytest_collect_file(
     parent: pytest.Collector, file_path: Path
 ) -> MarkdownCodeBlockCollector | None:
     """Collect .md files when the markdown docs option is enabled."""
-    if not parent.config.getoption(c.Tests.VALIDATOR_MD_OPTION_DOCS, default=False):
+    if not parent.config.getoption(
+        FlextTestsConstantsValidator.VALIDATOR_MD_OPTION_DOCS, default=False
+    ):
         return None
     if file_path.suffix == ".md" and file_path.stat().st_size > 0:
         content = u.Cli.files_read_text(file_path).unwrap()
-        if c.Tests.VALIDATOR_MD_PYTHON_BLOCK_RE.search(content):
+        if FlextTestsConstantsValidator.VALIDATOR_MD_PYTHON_BLOCK_RE.search(content):
             return MarkdownCodeBlockCollector.from_parent(parent, path=file_path)
     return None
 
