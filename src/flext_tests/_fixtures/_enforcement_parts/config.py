@@ -8,12 +8,16 @@ from typing import ClassVar
 import pytest
 
 from flext_tests import c, m, u
+from flext_tests._fixtures._enforcement_parts.timeout_policy import PytestTimeoutPolicy
 
 
 class SessionConfig:
     """Session-scoped stash slot holding the resolved enforcement configuration."""
 
     stash_config: ClassVar[pytest.StashKey[m.Tests.EnforcementDispatcherConfig]] = (
+        pytest.StashKey()
+    )
+    stash_previous_config: ClassVar[pytest.StashKey[pytest.Config | None]] = (
         pytest.StashKey()
     )
     value: ClassVar[pytest.Config | None] = None
@@ -131,8 +135,10 @@ def active_rules(
     return tuple(rules)
 
 
+@pytest.hookimpl(tryfirst=True)
 def pytest_configure(config: pytest.Config) -> None:
     """Register filterwarnings for every active runtime-warning rule."""
+    PytestTimeoutPolicy.configure(config)
     cfg = resolve_config(config)
     if not cfg.active:
         return
