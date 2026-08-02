@@ -49,7 +49,7 @@ def test_example() -> None:
 
 _BAD_MARKDOWN = """# Example
 
-```python
+```python notest
 def broken(
 ```
 

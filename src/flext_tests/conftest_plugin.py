@@ -11,7 +11,8 @@ autouse runtime setup, and shared helper fixtures.
 
 from __future__ import annotations
 
-pytest_plugins: tuple[str, str] = (
+pytest_plugins: tuple[str, str, str] = (
+    "flext_tests._fixtures._enforcement_parts.sharding",
     "flext_tests._fixtures.markdown_validation",
     "flext_tests._fixtures.settings",
 )
