@@ -7,15 +7,11 @@
 name: CI
 
 # === SECTION: triggers (managed) ===
-# Source: config:repository_branch
-on:
+# Source: typed integration lane -> main promotion policy
+"on":
   pull_request:
     branches:
-      - 0.12.0-dev
-  push:
-    branches:
-      - 0.12.0-dev
-  workflow_dispatch:
+      - main
 # End SECTION: triggers
 
 # === SECTION: permissions (managed) ===
@@ -25,31 +21,51 @@ permissions:
 # End SECTION: permissions
 
 jobs:
+  lane-policy:
+    name: integration-lane-policy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require typed integration lane
+        run: |
+          if [ "$GITHUB_HEAD_REF" != "0.12.0-dev" ]; then
+            printf 'ERROR: PR head must be 0.12.0-dev, got %s\n' "$GITHUB_HEAD_REF" >&2
+            exit 2
+          fi
+
   # === SECTION: ci job (managed) ===
   # Source: template + config:github_actions.*
   ci:
     name: ci
+    needs: lane-policy
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
       - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
-          submodules: recursive
+          submodules: false
           fetch-depth: 0
 
       - name: Install mise toolchain
-        uses: jdx/mise-action@dba19683ed58901619b14f395a24841710cb4925 # v4.1.0
+        uses: jdx/mise-action@dba19683ed58901619b14f395a24841710cb4925  # v4.1.0
 
       - name: Install uv
-        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9  # v9.0.0
 
-      - name: Setup (blocking)
-        run: make setup
 
-      - name: Check (blocking)
-        run: make check
+      - name: setup (blocking)
+        run: make setup CI=Y
 
-      - name: Test (blocking)
-        run: make test
+      - name: fix (blocking)
+        run: make fix APPLY=Y CI=Y
+
+      - name: fmt (blocking)
+        run: make fmt APPLY=Y CI=Y
+
+      - name: check (blocking)
+        run: make check CI=Y
+
+      - name: test (blocking)
+        run: make test CI=Y
+
     # End SECTION: ci job

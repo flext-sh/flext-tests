@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import assert_type
+
 import pytest
 
 from flext_tests import r, tm
@@ -46,6 +48,7 @@ class MatchersOkConstraintsMixin:
         """Test tm.ok() with len exact parameter."""
         result = r[t.StrSequence].ok(["a", "b", "c"])
         value = tm.ok(result, len=3)
+        assert_type(value, t.StrSequence)
         tm.that(value, eq=["a", "b", "c"])
 
     def test_ok_with_len_range_parameter(self) -> None:
@@ -80,6 +83,7 @@ class MatchersOkConstraintsMixin:
         data: t.JsonMapping = {"user": {"name": "John"}}
         result = r[t.JsonMapping].ok(data)
         value = tm.ok(result, path="user.name", eq="John")
+        assert_type(value, t.Tests.TestobjectSerializable)
         tm.that(value, eq="John")
 
     def test_ok_with_where_parameter(self) -> None:

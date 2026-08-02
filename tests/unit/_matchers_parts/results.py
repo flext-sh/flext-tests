@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import assert_type
+
 import pytest
 
 from flext_tests import tm
@@ -16,6 +18,16 @@ class MatchersResultsMixin:
         result = r[str].ok("success")
         value: t.Tests.TestobjectSerializable = tm.ok(result)
         tm.that(value, eq="success")
+
+    def test_assert_result_success_preserves_payload_type_and_identity(self) -> None:
+        """Return the exact successful payload when no path is requested."""
+        payload: tuple[str, int] = ("success", 1)
+        result: p.Result[tuple[str, int]] = r[tuple[str, int]].ok(payload)
+
+        value = tm.ok(result)
+
+        assert_type(value, tuple[str, int])
+        tm.that(value is payload, eq=True)
 
     def test_assert_result_success_fails(self) -> None:
         """Test tm.ok() with failed result."""
