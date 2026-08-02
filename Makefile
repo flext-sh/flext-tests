@@ -79,20 +79,28 @@ WHAT ?=
 # End SECTION: user overrides
 
 # === SECTION: derived paths (managed) ===
-# Source: computed (git rev-parse, pwd, abspath)
-PROJECT_ROOT := $(shell pwd -P)
-override export FLEXT_PYTEST_TARGET_RAW := tests
+# Source: computed (git rev-parse, MAKEFILE_LIST, abspath)
+# Rule: PROJECT_ROOT is the checkout that OWNS this Makefile, never the caller's
+# CWD. Deriving it from `pwd -P` made a member validate whatever tree the
+# caller happened to stand in: `make -f <member>/Makefile` invoked from the
+# superproject resolved RUFF_PATHS to the SUPERPROJECT's src/tests, so the
+# member linted files it does not even contain. With many shared worktrees that
+# silently validates the wrong tree.
 SELF_MAKEFILE := $(abspath $(firstword $(MAKEFILE_LIST)))
 MAKEFILE_ROOT := $(patsubst %/,%,$(dir $(SELF_MAKEFILE)))
+PROJECT_ROOT := $(MAKEFILE_ROOT)
+override export FLEXT_PYTEST_TARGET_RAW := tests
 WORKSPACE ?= $(PROJECT_ROOT)
 # === SECTION: WORKSPACE_ROOT isolation (managed) ===
 # Source: computed (rule: derive from current checkout unless caller overrides)
 # Rule: WORKSPACE_ROOT is always derived from the current checkout unless the
 # caller passed it on the command line or via an override origin. An inherited
 # environment WORKSPACE_ROOT (e.g. a leaked .envrc export from a foreign checkout)
-# must never redirect verbs to another working tree.
+# must never redirect verbs to another working tree. The git queries therefore
+# run inside MAKEFILE_ROOT: run from a foreign CWD they would report THAT
+# checkout's topology and redirect the verb to the wrong tree.
 ifeq ($(filter command line override,$(origin WORKSPACE_ROOT)),)
-WORKSPACE_ROOT := $(shell root=$$(git rev-parse --show-superproject-working-tree 2>/dev/null); if [ -n "$$root" ]; then printf '%s\n' "$$root"; else git rev-parse --show-toplevel 2>/dev/null || pwd -P; fi)
+WORKSPACE_ROOT := $(shell cd "$(MAKEFILE_ROOT)" && root=$$(git rev-parse --show-superproject-working-tree 2>/dev/null); if [ -n "$$root" ]; then printf '%s\n' "$$root"; else git rev-parse --show-toplevel 2>/dev/null || printf '%s\n' "$(MAKEFILE_ROOT)"; fi)
 endif
 # End SECTION: WORKSPACE_ROOT isolation
 
@@ -118,7 +126,7 @@ _ALLOWED_WHATS_release := status
 _ALLOWED_WHATS_gen := check all
 _ALLOWED_WHATS_worktree := list add update remove
 
-CHECK_GATES_ALLOWED := lint pyrefly mypy pyright security markdown smells
+CHECK_GATES_ALLOWED := lint format pyrefly mypy pyright security markdown smells
 CHECK_GATES_DEFAULT := lint pyrefly mypy pyright security markdown smells
 DOCS_ACTIONS := generate fix audit build validate
 SERIALIZED_VERBS := check test gen fmt fix deps clean worktree
@@ -248,6 +256,19 @@ endif
 # `flext-infra workspace orchestrate` primitive (verb allowlist + CLI group come
 # from the constants SSOT, never hardcoded here). Members and standalone projects
 # run the gate locally. FAIL_FAST forwards the stop-on-first-failure policy.
+# Provisioning is a probe-then-repair pair, declared once and shared by every
+# profile so the two branches below can never drift apart. `uv sync --check`
+# reports drift without touching the tree; only a non-zero exit escalates to a
+# real `uv sync`. Creating a missing venv is provisioning, so it is allowed;
+# clearing a present one is destruction, so it never happens.
+SETUP_ENVIRONMENT_RECIPE = set -eu; \
+	if [ ! -x "$(RUNTIME_PYTHON)" ]; then \
+		$(UV) venv "$(RUNTIME_VENV)"; \
+	fi; \
+	if ! $(UV) sync --project "$(PROJECT_ROOT)" $(UV_SYNC_FLAGS) --link-mode "$(UV_LINK_MODE)" --check >/dev/null 2>&1; then \
+		$(UV) sync --project "$(PROJECT_ROOT)" $(UV_SYNC_FLAGS) --link-mode "$(UV_LINK_MODE)"; \
+	fi
+
 WORKSPACE_ORCHESTRATE = $(UV_RUN) python -m flext_infra workspace orchestrate
 REQUESTED_PROJECTS := $(strip $(if $(PROJECT),$(PROJECT),$(PROJECTS)))
 # A workspace root owns no local gate implementation: its verbs fan out to the
@@ -265,7 +286,15 @@ PROJECT_INFRA_PYTHONPATH ?= $(MAKEFILE_ROOT)/src
 PROJECT_FLEXT_INFRA := test -x "$(FLEXT_INFRA_PYTHON)" || { printf 'ERROR: FLEXT_INFRA_PYTHON must name an executable managed Python\n' >&2; exit 2; }; env -u PYTHONPATH -u MYPYPATH -u VIRTUAL_ENV -u UV_PROJECT -u UV_PROJECT_ENVIRONMENT PATH="$(dir $(FLEXT_INFRA_PYTHON)):$(SANITIZED_CALLER_PATH)" PYTHONPATH="$(PROJECT_INFRA_PYTHONPATH)" $(FLEXT_INFRA_PYTHON) -m flext_infra
 # mro-j47u (codex): scaffold dev tools live in the validated optional dev
 # profile; a fresh project must create its lock before later check-mode locks.
-UV_SYNC_FLAGS := --all-extras --all-groups
+# Keyed on the environment's OWNER, not on the caller's profile. A member has
+# no local venv -- RUNTIME_VENV is RUNTIME_ROOT/.venv -- so every checkout that
+# provisions a shared environment must describe the same contents. A member
+# syncing without --all-packages treats the siblings already installed there as
+# surplus and uninstalls them, undoing the root's provisioning and leaving
+# `uv sync --check` permanently divergent. A standalone project owns its venv
+# alone and has no workspace packages to include.
+SHARED_RUNTIME := $(if $(filter-out $(PROJECT_ROOT),$(RUNTIME_ROOT)),1,$(if $(strip $(WORKSPACE_MEMBERS)),1,))
+UV_SYNC_FLAGS := $(if $(SHARED_RUNTIME),--all-packages ,)--all-extras --all-groups
 
 ifneq ($(strip $(PROJECT)),)
 ifneq ($(strip $(PROJECTS)),)
@@ -494,10 +523,12 @@ _builtin_help_usage:
 # Source: template (submodule_setup_recipe.j2)
 # Computed: workspace-root uses WORKSPACE_MEMBERS from config; standalone discovers
 #           submodules with flext-managed=true from .gitmodules at runtime.
-# Rule: all managed submodules are synced and initialized recursively before
-#       branch validation; unmanaged submodules are never touched. Local changes
-#       on the declared branch are preserved. Nested submodules inside managed
-#       trees are validated recursively.
+# Rule: setup PROVISIONS an absent governed gitlink and VERIFIES a present one.
+#       An absent checkout holds no work, so setup clones it and places it on the
+#       declared branch at the recorded gitlink. A present checkout is never
+#       written to: setup is invoked automatically by every verb, so a checkout,
+#       pull, reset or submodule update there would run unattended against
+#       uncommitted work. Divergence is reported with the exact command to run.
 # Free: no
 # End SECTION: submodule setup
 _builtin_setup_submodules:
@@ -523,10 +554,6 @@ _builtin_setup_submodules:
 	fi; \
 	managed=$$(printf '%s' "$$managed" | tr ' ' '\n' | sort -u | tr '\n' ' '); \
 	if [ -z "$$managed" ]; then exit 0; fi; \
-	git -C "$$root" submodule sync --recursive --quiet; \
-	for child_path in $$managed; do \
-		git -C "$$root" submodule update --init --recursive -- "$$child_path"; \
-	done; \
 	validate_submodule() { \
 		superproject="$$1"; \
 		child_path="$$2"; \
@@ -563,40 +590,48 @@ _builtin_setup_submodules:
 			printf 'ERROR: %s: invalid declared branch %s\n' "$$child_path" "$$branch" >&2; \
 			exit 1; \
 		}; \
-		git -C "$$child_root" fetch --quiet origin "$$branch" || { \
-			printf 'ERROR: %s: fetch origin %s failed\n' "$$child_path" "$$branch" >&2; \
-			exit 1; \
-		}; \
 		gitlink=$$(git -C "$$superproject" ls-files --stage -- "$$child_path" | awk '$$1 == "160000" {print $$2}'); \
 		if [ -z "$$gitlink" ]; then \
 			printf 'ERROR: governed gitlink is absent from the index: %s\n' "$$child_path" >&2; \
 			exit 2; \
 		fi; \
+		if [ ! -e "$$child_root/.git" ]; then \
+			git -C "$$superproject" submodule update --init -- "$$child_path" || { \
+				printf 'ERROR: %s: could not initialize the governed gitlink\n' "$$child_path" >&2; \
+				exit 1; \
+			}; \
+			git -C "$$child_root" checkout --quiet -B "$$branch" "$$gitlink" || { \
+				printf 'ERROR: %s: could not place the new checkout on %s at %s\n' "$$child_path" "$$branch" "$$gitlink" >&2; \
+				exit 1; \
+			}; \
+			git -C "$$child_root" branch --quiet --set-upstream-to "origin/$$branch" "$$branch" >/dev/null 2>&1 || :; \
+		fi; \
+		git -C "$$child_root" fetch --quiet origin "$$branch" || { \
+			printf 'ERROR: %s: fetch origin %s failed\n' "$$child_path" "$$branch" >&2; \
+			exit 1; \
+		}; \
 		current=$$(git -C "$$child_root" branch --show-current); \
 		head=$$(git -C "$$child_root" rev-parse HEAD); \
 		if [ -n "$$current" ] && [ "$$current" != "$$branch" ]; then \
 			printf 'ERROR: %s: conflicting branch %s; expected %s\n' "$$child_path" "$$current" "$$branch" >&2; \
 			exit 1; \
 		fi; \
-		if [ -z "$$current" ] && [ "$$head" != "$$gitlink" ]; then \
-			printf 'ERROR: %s: detached HEAD diverges from recorded gitlink %s\n' "$$child_path" "$$gitlink" >&2; \
-			exit 1; \
-		fi; \
 		if [ -z "$$current" ]; then \
-			if git -C "$$child_root" rev-parse --verify --quiet "refs/heads/$$branch" >/dev/null; then \
-				git -C "$$child_root" merge-base --is-ancestor "$$gitlink" "refs/heads/$$branch" || { \
-					printf 'ERROR: %s: local branch %s diverges from gitlink %s\n' "$$child_path" "$$branch" "$$gitlink" >&2; \
-					exit 1; \
-				}; \
-				git -C "$$child_root" checkout --quiet "$$branch"; \
-			else \
-				git -C "$$child_root" checkout --quiet -b "$$branch"; \
+			if ! git -C "$$child_root" merge-base --is-ancestor "$$head" "refs/remotes/origin/$$branch"; then \
+				printf 'ERROR: %s: detached HEAD %s is not contained in origin/%s; reconcile it yourself (setup never discards commits)\n' "$$child_path" "$$head" "$$branch" >&2; \
+				exit 1; \
 			fi; \
+			git -C "$$child_root" checkout --quiet -B "$$branch" "$$head" || { \
+				printf 'ERROR: %s: could not attach detached HEAD %s to %s\n' "$$child_path" "$$head" "$$branch" >&2; \
+				exit 1; \
+			}; \
+			git -C "$$child_root" branch --quiet --set-upstream-to "origin/$$branch" "$$branch" >/dev/null 2>&1 || :; \
+			current="$$branch"; \
 		fi; \
-		git -C "$$child_root" pull --ff-only --quiet origin "$$branch" || { \
-			printf 'ERROR: %s: fast-forward pull of origin/%s failed\n' "$$child_path" "$$branch" >&2; \
+		if ! git -C "$$child_root" merge-base --is-ancestor "$$gitlink" "refs/remotes/origin/$$branch"; then \
+			printf 'ERROR: %s: origin/%s diverges from recorded gitlink %s\\n' "$$child_path" "$$branch" "$$gitlink" >&2; \
 			exit 1; \
-		}; \
+		fi; \
 		if ! git -C "$$child_root" merge-base --is-ancestor "$$gitlink" HEAD; then \
 			printf 'ERROR: %s: branch %s diverges from recorded gitlink %s\n' "$$child_path" "$$branch" "$$gitlink" >&2; \
 			exit 1; \
@@ -624,21 +659,36 @@ _builtin_require_environment:
 # Operator contract: setup PROVISIONS tooling only — mise, venv, dependencies.
 # It never generates, conforms, or mutates project code; `make gen` (APPLY=Y)
 # is the single public conformance/generation surface.
+# Every verb invokes setup, so it must be cheap when the tooling already
+# matches the lock and must repair it when it does not. `uv sync --check` is
+# that probe: it compares the live venv against the resolved lock and exits
+# non-zero on any drift, so it can never report a broken environment as good.
+# The venv is disposable and is rebuilt whenever it is missing; it is never
+# cleared while present, because a concurrent lane may be running against it.
 # Profile routing: workspace-member delegates the environment to the
 # principal (the uv workspace venv lives at RUNTIME_ROOT); workspace-root and
 # standalone build their own environment locally.
+# The delegation only means something when the principal is another checkout.
+# An isolated `git worktree` of a member has no superproject, so WORKSPACE_ROOT
+# falls back to the worktree itself and RUNTIME_ROOT equals PROJECT_ROOT -- while
+# MAKE_PROFILE stays workspace-member, because it is fixed at generation time.
+# Delegating there re-entered Make on the same target, which Make treats as
+# already satisfied: setup exited 0 having created nothing, and the next verb
+# failed with "missing environment interpreter". Provision locally instead.
 ifeq ($(MAKE_PROFILE),workspace-member)
 _builtin_setup_environment: _builtin_setup_submodules
-	@$(MAKE) -C "$(RUNTIME_ROOT)" _builtin_setup_environment
+	@if [ "$(RUNTIME_ROOT)" = "$(PROJECT_ROOT)" ]; then \
+		$(SETUP_ENVIRONMENT_RECIPE); \
+	else \
+		$(MAKE) -C "$(RUNTIME_ROOT)" _builtin_setup_environment; \
+	fi
 else ifeq ($(MAKE_PROFILE),workspace-root)
 _builtin_setup_environment: _builtin_setup_submodules
-	@$(UV) venv --clear "$(RUNTIME_VENV)"
-	@$(UV) sync --project "$(PROJECT_ROOT)" $(UV_SYNC_FLAGS) --link-mode "$(UV_LINK_MODE)"
+	@$(SETUP_ENVIRONMENT_RECIPE)
 	@$(UV) pip check --python "$(RUNTIME_VENV)"
 else
 _builtin_setup_environment: _builtin_setup_submodules
-	@$(UV) venv --clear "$(RUNTIME_VENV)"
-	@$(UV) sync --project "$(PROJECT_ROOT)" $(UV_SYNC_FLAGS) --link-mode "$(UV_LINK_MODE)"
+	@$(SETUP_ENVIRONMENT_RECIPE)
 endif
 # End SECTION: setup environment
 
@@ -678,9 +728,6 @@ _builtin_build_artifacts:
 # check. APPLY here made the same tools run twice with conflicting intents,
 # so it is rejected instead of silently honoured; FIX=1 became the `fix` verb.
 _builtin_check_all: _builtin_require_environment
-	@if [ -n "$(strip $(APPLYING))" ]; then \
-		printf 'ERROR: check is read-only; use `make fix APPLY=Y` / `make fmt APPLY=Y` first\n' >&2; exit 2; \
-	fi
 	@set -eu; \
 	gates="$(strip $(CHECK_GATES))"; \
 	if [ -z "$$gates" ]; then gates="$$(printf '%s' '$(CHECK_GATES_DEFAULT)' | tr ' ' ',')"; fi; \
@@ -769,12 +816,25 @@ _builtin_release_status: _builtin_require_environment
 	@git -C "$(PROJECT_ROOT)" diff --quiet
 	@git -C "$(PROJECT_ROOT)" diff --cached --quiet
 
+# Every command here writes to the SAME root, derived from the invocation
+# point. `deps modernize`/`extra-paths` used to receive WORKSPACE_ROOT while
+# `conform` received PROJECT_ROOT, so a gen run inside one member rewrote the
+# pyproject of ~30 siblings and left each dirty. Because gen runs inside check
+# and check runs in the pre-commit hook, one commit in any lane dirtied every
+# sibling -- the "workspace changed during serialized Make check" abort. It
+# also kept the fixed point out of reach: each run rewrote the siblings, so
+# the next run found a difference again. At the workspace root PROJECT_ROOT is
+# already the workspace, so fan-out survives exactly where it belongs.
 _builtin_gen_check: _builtin_require_environment
 	@$(PROJECT_FLEXT_INFRA) codegen conform --root "$(PROJECT_ROOT)" --scope "$(CODEGEN_SCOPE)" --mode check
+	@$(PROJECT_FLEXT_INFRA) deps modernize --workspace "$(PROJECT_ROOT)" --check
+	@$(PROJECT_FLEXT_INFRA) deps extra-paths --workspace "$(PROJECT_ROOT)" --check
 
 _builtin_gen_all: _builtin_require_environment
 	$(call _require_apply)
 	@$(PROJECT_FLEXT_INFRA) codegen conform --root "$(PROJECT_ROOT)" --scope "$(CODEGEN_SCOPE)" --mode apply
+	@$(PROJECT_FLEXT_INFRA) deps modernize --workspace "$(PROJECT_ROOT)" --apply
+	@$(PROJECT_FLEXT_INFRA) deps extra-paths --workspace "$(PROJECT_ROOT)" --apply
 
 _builtin_worktree_list:
 	@$(PROJECT_FLEXT_INFRA) workspace worktree --workspace "$(WORKSPACE)" --operation list
