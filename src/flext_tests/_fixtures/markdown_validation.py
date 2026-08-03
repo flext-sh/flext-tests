@@ -26,16 +26,24 @@ if TYPE_CHECKING:
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
-    """Add the markdown docs option if pytest-markdown-docs is not installed."""
+    """Add the markdown docs option if pytest-markdown-docs is not installed.
+
+    Idempotent: ``conftest_plugin`` may register options during ``pytest_addoption``
+    and again via historic hooks when the module is registered in configure.
+    """
     if find_spec("pytest_markdown_docs") is not None:
         return
     group = parser.getgroup("markdown", "Markdown code block validation")
-    group.addoption(
-        c.Tests.VALIDATOR_MD_OPTION_DOCS,
-        action="store_true",
-        default=False,
-        help="Validate Python code blocks in .md files",
-    )
+    try:
+        group.addoption(
+            c.Tests.VALIDATOR_MD_OPTION_DOCS,
+            action="store_true",
+            default=False,
+            help="Validate Python code blocks in .md files",
+        )
+    except ValueError:
+        # Option already registered by the early conftest_plugin path or a peer.
+        return
 
 
 class MarkdownCodeBlockItem(pytest.Item):
