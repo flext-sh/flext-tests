@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
-from typing import Literal, TypeIs, overload
 
 from flext_core import u
 from flext_tests import c, m, p, r, t
@@ -31,13 +30,13 @@ class FlextTestsMatchersThatMixin:
             # mro-j47u: cls dispatch preserves overrides on the composed matcher MRO.
             @classmethod
             def _that_params(
-                cls, kwargs: dict[str, t.Tests.MatcherCallKwargValue]
+                cls, kwargs: dict[str, t.Tests.MatcherKwargValue]
             ) -> tuple[
                 m.Tests.ThatParams,
-                t.Tests.MatcherCallKwargValue | None,
-                t.Tests.MatcherCallKwargValue | None,
-                t.Tests.MatcherCallKwargValue | None,
-                t.Tests.MatcherCallKwargValue | None,
+                t.Tests.MatcherKwargValue | None,
+                t.Tests.MatcherKwargValue | None,
+                t.Tests.MatcherKwargValue | None,
+                t.Tests.MatcherKwargValue | None,
             ]:
                 """Validate matcher kwargs and retain raw non-serializable values."""
                 raw_eq = kwargs.get("eq") if "eq" in kwargs else None
@@ -52,7 +51,7 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _filtered_params(
-                kwargs: dict[str, t.Tests.MatcherCallKwargValue],
+                kwargs: dict[str, t.Tests.MatcherKwargValue],
             ) -> m.Tests.ThatParams:
                 """Validate kwargs after removing values Pydantic cannot serialize."""
                 non_serializable_keys = frozenset({
@@ -151,8 +150,8 @@ class FlextTestsMatchersThatMixin:
             @staticmethod
             def _is_type_only(
                 params: m.Tests.ThatParams,
-                raw_eq: t.Tests.MatcherCallKwargValue | None,
-                raw_ne: t.Tests.MatcherCallKwargValue | None,
+                raw_eq: t.Tests.MatcherKwargValue | None,
+                raw_ne: t.Tests.MatcherKwargValue | None,
             ) -> bool:
                 """Return whether only type checks were requested."""
                 if params.is_ is None and params.not_ is None:
@@ -244,9 +243,9 @@ class FlextTestsMatchersThatMixin:
                 cls,
                 subject_payload: t.Tests.TestobjectSerializable,
                 params: m.Tests.ThatParams,
-                raw_eq: t.Tests.MatcherCallKwargValue | None,
-                raw_ne: t.Tests.MatcherCallKwargValue | None,
-                kwargs: Mapping[str, t.Tests.MatcherCallKwargValue],
+                raw_eq: t.Tests.MatcherKwargValue | None,
+                raw_ne: t.Tests.MatcherKwargValue | None,
+                kwargs: Mapping[str, t.Tests.MatcherKwargValue],
             ) -> None:
                 """Validate scalar predicates."""
                 if not cls._has_scalar_validation(params):
@@ -475,17 +474,17 @@ class FlextTestsMatchersThatMixin:
                 if sorted_param is not None:
                     value_list = list(seq_value)
                     if sorted_param is True:
-                        sorted_list = sorted(
-                            value_list,
-                            key=lambda item: (type(item).__name__, str(item)),
-                        )
+                        sorted_list = sorted(value_list, key=cls._default_sort_key)
                         if value_list != sorted_list:
                             raise AssertionError(params.msg or "Sequence is not sorted")
                     elif callable(sorted_param):
-                        sorted_list = sorted(
-                            value_list,
-                            key=lambda item: cls._comparable_key(sorted_param, item),
-                        )
+
+                        def user_sort_key(
+                            item: t.Tests.TestobjectSerializable,
+                        ) -> t.StrPair:
+                            return cls._comparable_key(sorted_param, item)
+
+                        sorted_list = sorted(value_list, key=user_sort_key)
                         if value_list != sorted_list:
                             raise AssertionError(
                                 params.msg or "Sequence is not sorted by key function"
@@ -498,6 +497,11 @@ class FlextTestsMatchersThatMixin:
                     raise AssertionError(
                         params.msg or "Sequence contains duplicate items"
                     )
+
+            @staticmethod
+            def _default_sort_key(item: object) -> t.StrPair:
+                """Return a deterministic key for heterogeneous matcher values."""
+                return type(item).__name__, str(item)
 
             @staticmethod
             def _comparable_key(
@@ -685,53 +689,9 @@ class FlextTestsMatchersThatMixin:
                     raise AssertionError(msg or "Expected a non-None value")
                 return value
 
-            # NOTE (mro-li3p): TypeIs overloads turn statement-style calls into
-            # implicit asserts for static analyzers; runtime stays fail-closed.
-            @overload
-            @classmethod
-            def that[T](
-                cls,
-                value: T | None,
-                *,
-                none: Literal[False],
-                **kwargs: t.Tests.MatcherCallKwargValue,
-            ) -> TypeIs[T]: ...
-            @overload
             @classmethod
             def that(
-                cls, value: object, *, eq: None, **kwargs: t.Tests.MatcherCallKwargValue
-            ) -> TypeIs[None]: ...
-            @overload
-            @classmethod
-            def that[T](
-                cls,
-                value: T | None,
-                *,
-                ne: None,
-                **kwargs: t.Tests.MatcherCallKwargValue,
-            ) -> TypeIs[T]: ...
-            @overload
-            @classmethod
-            def that[E](
-                cls, value: E | None, *, eq: E, **kwargs: t.Tests.MatcherCallKwargValue
-            ) -> TypeIs[E]: ...
-            @overload
-            @classmethod
-            def that[T](
-                cls,
-                value: object,
-                *,
-                is_: type[T],
-                **kwargs: t.Tests.MatcherCallKwargValue,
-            ) -> TypeIs[T]: ...
-            @overload
-            @classmethod
-            def that(
-                cls, value: p.AttributeProbe, **kwargs: t.Tests.MatcherCallKwargValue
-            ) -> None: ...
-            @classmethod
-            def that(
-                cls, value: p.AttributeProbe, **kwargs: t.Tests.MatcherCallKwargValue
+                cls, value: p.AttributeProbe, **kwargs: t.Tests.MatcherKwargValue
             ) -> None:
                 """Assert a value against universal matcher constraints."""
                 params, raw_eq, raw_ne, raw_has, raw_contains = cls._that_params(kwargs)
@@ -824,7 +784,7 @@ class FlextTestsMatchersThatMixin:
     @staticmethod
     def _rule_kwargs(
         rule: t.Tests.MatchRuleSpec,
-    ) -> dict[str, t.Tests.MatcherCallKwargValue]:
+    ) -> dict[str, t.Tests.MatcherKwargValue]:
         if isinstance(rule, Mapping):
             raw_mapping = dict(rule)
             matcher_rule_keys = frozenset(

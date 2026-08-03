@@ -1,6 +1,5 @@
 """Test-scope context manager for matchers.
 
-from flext_tests.utilities import u
 Exposes ``Tests.Matchers.scope`` for isolated test execution scopes.
 """
 
@@ -12,11 +11,8 @@ from collections.abc import Generator
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
 
-from flext_tests import (
-    c,
-    m,
-    t,
-)
+from flext_core import u
+from flext_tests import c, m, t
 from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
 
 
@@ -59,7 +55,8 @@ class FlextTestsMatchersScopeMixin:
                 try:
                     params = m.Tests.ScopeParams.model_validate(kwargs)
                 except c.EXC_BASIC_TYPE as exc:
-                    raise ValueError(f"Parameter validation failed: {exc}") from exc
+                    message = f"Parameter validation failed: {exc}"
+                    raise ValueError(message) from exc
                 original_cwd: Path | None = None
                 env_context = (
                     FlextTestsConfigHelpersUtilitiesMixin.env_vars_context(params.env)
@@ -110,7 +107,7 @@ class FlextTestsMatchersScopeMixin:
                             ) as e:
                                 warnings.warn(
                                     c.Tests.ERR_SCOPE_CLEANUP_FAILED.format(
-                                        error=str(e),
+                                        error=str(e)
                                     ),
                                     RuntimeWarning,
                                     stacklevel=2,

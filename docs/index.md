@@ -1,22 +1,18 @@
 <!-- AUTO-GENERATED — DO NOT EDIT MANUALLY -->
 
-# flext-tests Documentation
+# flext-tests documentation
 
-- Version: `0.12.0`
-- Project class: `test`
-- Package: `flext_tests`
-- Description: FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem
+`flext-tests` provides the shared FLEXT test infrastructure, including typed
+matchers, fixtures, builders, factories, and enforcement plugins.
 
-This project portal is generated from `pyproject.toml`, package exports, and real docstrings.
-
-## Start Here
+## Start here
 
 - [Guides](guides/README.md)
-- [API Reference](api-reference/README.md)
-- [Generated API Overview](api-reference/generated/overview.md)
-- [Generated Module Index](api-reference/generated/modules/index.md)
+- [API reference](api-reference/README.md)
+- [Generated API overview](api-reference/generated/overview.md)
+- [Generated module index](api-reference/generated/modules/index.md)
 
-## Public Surface Summary
+## Public surface
 
 ::: flext_tests
     options:
@@ -25,17 +21,11 @@ This project portal is generated from `pyproject.toml`, package exports, and rea
       show_root_toc_entry: false
       show_source: false
 
-## Collection Rules
+## Governance
 
-Read [`/flext/AGENTS.md`](https://github.com/flext-sh/flext/blob/main/AGENTS.md) §9 — Agent Execution Pre-requisites — for the canonical pre-change checklist (parent MRO chain, Scope bootstrap, skill loading, zero-debt baseline, slot registry verification).
+- [Project engineering law](../AGENTS.md)
+- [Workspace engineering law][workspace-law]
+- [Workspace governance][workspace-governance]
 
-## Quality Gates
-
-Canonical `make` verbs (`check`, `test`, `val`, `docs`) — see `AGENTS.md` §5 (Make Contract) and the [`flext-quality-gates`](https://github.com/flext-sh/flext/blob/main/.agents/skills/flext-quality-gates/SKILL.md) skill for selectors and thresholds.
-
-## Governance Pointer
-
-- Engineering law: [`/flext/AGENTS.md`](https://github.com/flext-sh/flext/blob/main/AGENTS.md)
-- Governance + ADRs: [`/flext/docs/GOVERNANCE.md`](https://github.com/flext-sh/flext/blob/main/docs/GOVERNANCE.md)
-- Skills index: [`/flext/.agents/skills/`](https://github.com/flext-sh/flext/tree/main/.agents/skills/)
-- Onboarding: [`/flext/docs/guides/onboarding.md`](https://github.com/flext-sh/flext/blob/main/docs/guides/onboarding.md)
+[workspace-law]: https://github.com/flext-sh/flext/blob/0.12.0-dev/AGENTS.md
+[workspace-governance]: https://github.com/flext-sh/flext/blob/0.12.0-dev/docs/GOVERNANCE.md

@@ -98,10 +98,14 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
                         result = r[Path].ok(path)
                     except OSError as e:
                         result = r[Path].fail(f"Failed to delete {name}: {e}")
+                case _:
+                    result = r[Path].fail(
+                        f"Unsupported batch operation: {params.operation!r}"
+                    )
             return result
 
         items_list = list(files_dict.items())
-        results_dict: MutableMapping[str, p.ResultLike[t.Tests.TestResultValue]] = {}
+        results_dict: MutableMapping[str, p.Result[t.Tests.TestResultValue]] = {}
         failed_dict: t.MutableStrMapping = {}
         rtype = r[Path | t.Tests.TestobjectSerializable]
         for name, _ in items_list:

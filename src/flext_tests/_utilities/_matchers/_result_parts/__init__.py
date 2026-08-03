@@ -1,5 +1,5 @@
-# AUTO-GENERATED FILE — Regenerate with: make gen
-"""Result Parts package."""
+# @generated AUTO-GENERATED FILE — Regenerate with: make gen
+"""Flext Tests. Utilities. Matchers. Result Parts package."""
 
 from __future__ import annotations
 
@@ -8,20 +8,24 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    pass
-    from flext_tests._utilities._matchers._result_parts.result_part_03 import (
+    from .result_part_03 import (
         FlextTestsMatchersResultMixin as FlextTestsMatchersResultMixin,
     )
+
+_LAZY_MODULES: dict[str, tuple[str, ...]] = {
+    ".result_part_03": ("FlextTestsMatchersResultMixin",)
+}
+
+
+_LAZY_ALIAS_GROUPS: dict[str, tuple[tuple[str, str], ...]] = {}
+
+
 _LAZY_IMPORTS = build_lazy_import_map(
-    {
-        ".result_part_03": ("FlextTestsMatchersResultMixin",),
-    },
+    _LAZY_MODULES, alias_groups=_LAZY_ALIAS_GROUPS, sort_keys=False
 )
 
+_PUBLIC_EXPORTS: tuple[str, ...] = ("FlextTestsMatchersResultMixin",)
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
-)
+__all__: tuple[str, ...] = tuple(_PUBLIC_EXPORTS)
+
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)

@@ -20,12 +20,9 @@ class FilesContentMetaMixin:
         result = manager.info(path, parse_content=True)
         _ = u.Tests.assert_success(result)
         info = result.value
-        tm.that(info.content_meta, none=False)
-        if info.content_meta is None:
-            error_msg = "Expected content_meta to be not None"
-            raise TypeError(error_msg)
-        tm.that(info.content_meta.key_count, eq=2)
-        tm.that(info.content_meta.item_count, none=True)
+        content_meta = tm.not_none(info.content_meta)
+        tm.that(content_meta.key_count, eq=2)
+        tm.that(content_meta.item_count, none=True)
 
     def test_info_parse_content_json_list(self, tmp_path: Path) -> None:
         """Test info() with parse_content=True for JSON list."""
@@ -36,9 +33,9 @@ class FilesContentMetaMixin:
         result = manager.info(path, parse_content=True)
         _ = u.Tests.assert_success(result)
         info = result.value
-        tm.that(info.content_meta, none=False)
-        tm.that(info.content_meta.key_count, none=True)
-        tm.that(info.content_meta.item_count, eq=5)
+        content_meta = tm.not_none(info.content_meta)
+        tm.that(content_meta.key_count, none=True)
+        tm.that(content_meta.item_count, eq=5)
 
     def test_info_parse_content_yaml_dict(self, tmp_path: Path) -> None:
         """Test info() with parse_content=True for YAML dict."""
@@ -49,8 +46,8 @@ class FilesContentMetaMixin:
         result = manager.info(path, parse_content=True)
         _ = u.Tests.assert_success(result)
         info = result.value
-        tm.that(info.content_meta, none=False)
-        tm.that(info.content_meta.key_count, eq=3)
+        content_meta = tm.not_none(info.content_meta)
+        tm.that(content_meta.key_count, eq=3)
 
     def test_info_parse_content_csv(self, tmp_path: Path) -> None:
         """Test info() with parse_content=True for CSV."""
@@ -61,9 +58,9 @@ class FilesContentMetaMixin:
         result = manager.info(path, parse_content=True, detect_fmt=True)
         _ = u.Tests.assert_success(result)
         info = result.value
-        tm.that(info.content_meta, none=False)
-        tm.that(info.content_meta.row_count, eq=3)
-        tm.that(info.content_meta.column_count, eq=3)
+        content_meta = tm.not_none(info.content_meta)
+        tm.that(content_meta.row_count, eq=3)
+        tm.that(content_meta.column_count, eq=3)
 
     def test_info_validate_model_success(self, tmp_path: Path) -> None:
         """Test info() with validate_model for valid model."""
@@ -79,9 +76,9 @@ class FilesContentMetaMixin:
         result = manager.info(path, validate_model=SimpleModel)
         _ = u.Tests.assert_success(result)
         info = result.value
-        tm.that(info.content_meta, none=False)
-        tm.that(info.content_meta.model_valid is True, eq=True)
-        tm.that(info.content_meta.model_name, eq="SimpleModel")
+        content_meta = tm.not_none(info.content_meta)
+        tm.that(content_meta.model_valid is True, eq=True)
+        tm.that(content_meta.model_name, eq="SimpleModel")
 
     def test_info_validate_model_failure(self, tmp_path: Path) -> None:
         """Test info() with validate_model for invalid model."""
@@ -96,6 +93,6 @@ class FilesContentMetaMixin:
         result = manager.info(path, validate_model=StrictModel)
         _ = u.Tests.assert_success(result)
         info = result.value
-        tm.that(info.content_meta, none=False)
-        tm.that(info.content_meta.model_valid is False, eq=True)
-        tm.that(info.content_meta.model_name, eq="StrictModel")
+        content_meta = tm.not_none(info.content_meta)
+        tm.that(content_meta.model_valid is False, eq=True)
+        tm.that(content_meta.model_name, eq="StrictModel")

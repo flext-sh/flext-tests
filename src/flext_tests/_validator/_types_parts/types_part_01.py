@@ -7,14 +7,13 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from flext_tests import c, t, u
-from flext_tests._validator.models import FlextTestsValidatorModels
 
 if TYPE_CHECKING:
     pass
     from flext_tests import m
 
 
-class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
+class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
     """Type validation checks for FlextTestsValidator."""
 
     _VALIDATOR_KEY = c.Tests.VALIDATOR_TYPES_KEY
@@ -48,20 +47,17 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
         for line_number, line in enumerate(lines, start=1):
             names: set[str] = set()
             if c.Tests.VALIDATOR_LEGACY_FACTORY_RE.search(line) and u.Tests.code_match(
-                line,
-                c.Tests.VALIDATOR_LEGACY_FACTORY_RE,
+                line, c.Tests.VALIDATOR_LEGACY_FACTORY_RE
             ):
                 names.update(
                     cls._match_names(line, c.Tests.VALIDATOR_LEGACY_FACTORY_RE)
                 )
             if c.Tests.VALIDATOR_TYPE_ALIAS_RE.search(line) and u.Tests.code_match(
-                line,
-                c.Tests.VALIDATOR_TYPE_ALIAS_RE,
+                line, c.Tests.VALIDATOR_TYPE_ALIAS_RE
             ):
                 names.add("TypeAlias")
             if c.Tests.VALIDATOR_GENERIC_BASE_RE.search(line) and u.Tests.code_match(
-                line,
-                c.Tests.VALIDATOR_GENERIC_BASE_RE,
+                line, c.Tests.VALIDATOR_GENERIC_BASE_RE
             ):
                 names.add("Generic")
             violations.extend(emit(line_number, name) for name in sorted(names))
@@ -90,10 +86,8 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                         line_number,
                         "TYPE-005",
                         lines,
-                        c.Tests.VALIDATOR_MSG_TYPE_LEGACY_ANNOTATION.format(
-                            name=name,
-                        ),
-                    ),
+                        c.Tests.VALIDATOR_MSG_TYPE_LEGACY_ANNOTATION.format(name=name),
+                    )
                 )
         return violations
 
@@ -112,10 +106,7 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
             if c.Tests.VALIDATOR_FUNCTION_DEF_RE.match(line) is not None:
                 if c.Tests.VALIDATOR_OBJECT_RETURN_RE.search(
                     line
-                ) and u.Tests.code_match(
-                    line,
-                    c.Tests.VALIDATOR_OBJECT_RETURN_RE,
-                ):
+                ) and u.Tests.code_match(line, c.Tests.VALIDATOR_OBJECT_RETURN_RE):
                     violations.append(
                         u.Tests.create_violation(
                             file_path,
@@ -123,9 +114,9 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                             "TYPE-006",
                             lines,
                             c.Tests.VALIDATOR_MSG_TYPE_OBJECT_ANNOTATION.format(
-                                location="return type",
+                                location="return type"
                             ),
-                        ),
+                        )
                     )
                 for match in c.Tests.VALIDATOR_OBJECT_ARG_RE.finditer(line):
                     violations.append(
@@ -135,9 +126,9 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                             "TYPE-006",
                             lines,
                             c.Tests.VALIDATOR_MSG_TYPE_OBJECT_ANNOTATION.format(
-                                location=f"argument '{match.group('arg')}'",
+                                location=f"argument '{match.group('arg')}'"
                             ),
-                        ),
+                        )
                     )
                 continue
             if not c.Tests.VALIDATOR_OBJECT_VAR_RE.search(line):
@@ -151,9 +142,9 @@ class FlextValidatorTypes(FlextTestsValidatorModels.Tests.ScannerMixin):
                     "TYPE-006",
                     lines,
                     c.Tests.VALIDATOR_MSG_TYPE_OBJECT_ANNOTATION.format(
-                        location="variable annotation",
+                        location="variable annotation"
                     ),
-                ),
+                )
             )
         return violations
 

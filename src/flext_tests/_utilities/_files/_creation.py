@@ -16,10 +16,10 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
 
     @staticmethod
     def _is_file_result(
-        value: t.Tests.FileContentPlain | p.ResultLike[t.Tests.FileContentPlain],
-    ) -> TypeIs[p.ResultLike[t.Tests.FileContentPlain]]:
+        value: t.Tests.FileContentPlain | p.Result[t.Tests.FileContentPlain],
+    ) -> TypeIs[p.Result[t.Tests.FileContentPlain]]:
         """Narrow file input to a result-like wrapper."""
-        return isinstance(value, p.ResultLike)
+        return isinstance(value, p.Result)
 
     @staticmethod
     def is_mapping(
@@ -46,13 +46,12 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
     def _coerce_file_content(
         self,
         value: t.Tests.FileContentPlain
-        | p.ResultLike[t.Tests.FileContentPlain]
-        | t.Tests.TestobjectSerializable
-        | None,
+        | p.Result[t.Tests.FileContentPlain]
+        | t.Tests.TestobjectSerializable,
     ) -> t.Tests.FileContentPlain:
-        unwrapped: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable | None = (
+        unwrapped: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable = (
             value.unwrap_or(c.DEFAULT_EMPTY_STRING)
-            if isinstance(value, p.ResultLike)
+            if isinstance(value, p.Result)
             else value
         )
         match unwrapped:
@@ -72,7 +71,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
 
     def _extract_content(
         self,
-        content: t.Tests.FileContentPlain | p.ResultLike[t.Tests.FileContentPlain],
+        content: t.Tests.FileContentPlain | p.Result[t.Tests.FileContentPlain],
         *,
         extract_result: bool,
     ) -> t.Tests.FileContentPlain:
@@ -220,7 +219,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
 
     def create(
         self,
-        content: t.Tests.FileContentPlain | p.ResultLike[t.Tests.FileContentPlain],
+        content: t.Tests.FileContentPlain | p.Result[t.Tests.FileContentPlain],
         name: str = c.Tests.DEFAULT_FILENAME,
         directory: Path | None = None,
         *,

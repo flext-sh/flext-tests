@@ -386,15 +386,27 @@ class FlextTestsMatchersModelsMixin:
         settings: Annotated[
             t.MappingKV[str, t.Tests.TestobjectSerializable],
             u.Field(description="Configuration dictionary."),
-        ] = u.Field(default_factory=lambda: MappingProxyType({}))
+        ] = u.Field(
+            default_factory=lambda: MappingProxyType(
+                dict[str, t.Tests.TestobjectSerializable]()
+            )
+        )
         container: Annotated[
             t.MappingKV[str, t.Tests.TestobjectSerializable],
             u.Field(description="Container/service mappings."),
-        ] = u.Field(default_factory=lambda: MappingProxyType({}))
+        ] = u.Field(
+            default_factory=lambda: MappingProxyType(
+                dict[str, t.Tests.TestobjectSerializable]()
+            )
+        )
         context: Annotated[
             t.MappingKV[str, t.Tests.TestobjectSerializable],
             u.Field(description="Context values."),
-        ] = u.Field(default_factory=lambda: MappingProxyType({}))
+        ] = u.Field(
+            default_factory=lambda: MappingProxyType(
+                dict[str, t.Tests.TestobjectSerializable]()
+            )
+        )
 
 
 __all__: list[str] = ["FlextTestsMatchersModelsMixin"]

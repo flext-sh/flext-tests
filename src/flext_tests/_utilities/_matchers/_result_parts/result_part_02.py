@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from flext_tests.utilities import u
 from collections.abc import Mapping
 
 from flext_tests import c, m, t
@@ -13,6 +12,7 @@ from flext_tests._utilities._matchers._typeguards import (
     FlextTestsMatchersTypeGuardsMixin,
 )
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests.utilities import u
 
 
 class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
@@ -26,12 +26,8 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
 
             @staticmethod
             def _ok_extract_path(
-                result_value: t.Tests.TestResultValue,
-                params: m.Tests.OkParams,
-            ) -> tuple[
-                t.Tests.TestResultValue,
-                t.Tests.TestobjectSerializable | None,
-            ]:
+                result_value: t.Tests.TestResultValue, params: m.Tests.OkParams
+            ) -> tuple[t.Tests.TestResultValue, t.Tests.TestobjectSerializable | None]:
                 """Apply optional path extraction to a successful result value."""
                 if params.path is None:
                     return result_value, None
@@ -41,26 +37,26 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
                     else ".".join(params.path)
                 )
                 if not isinstance(result_value, (m.BaseModel, Mapping)):
-                    raise AssertionError(
-                        params.msg
-                        or f"Path extraction requires dict or model, got {type(result_value).__name__}",
+                    message = params.msg or (
+                        "Path extraction requires dict or model, got "
+                        f"{type(result_value).__name__}"
                     )
+                    raise TypeError(message)
                 try:
                     extract_data = FlextTestsPayloadUtilities.to_config_map(
                         result_value
                     )
                 except c.ValidationError as exc:
                     raise AssertionError(
-                        params.msg or f"Path extraction payload is invalid: {exc}",
+                        params.msg or f"Path extraction payload is invalid: {exc}"
                     ) from exc
                 extracted = u.extract(extract_data, path_str)
                 if extracted.failure:
                     raise AssertionError(
                         params.msg
                         or c.Tests.ERR_SCOPE_PATH_NOT_FOUND.format(
-                            path=path_str,
-                            error=extracted.error,
-                        ),
+                            path=path_str, error=extracted.error
+                        )
                     )
                 extracted_payload = FlextTestsPayloadUtilities.to_payload(
                     extracted.value
@@ -87,15 +83,14 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
                     )
                 )
 
-            @staticmethod
+            @classmethod
             def _ok_validate_scalar[TResult: t.Tests.TestResultValue](
+                cls,
                 result_value: TResult | t.Tests.TestobjectSerializable,
                 params: m.Tests.OkParams,
             ) -> TResult | t.Tests.TestobjectSerializable:
                 """Validate scalar predicates for a successful result."""
-                if not FlextTestsMatchersResultMixin.Tests.Matchers._ok_has_scalar_validation(
-                    params
-                ):
+                if not cls._ok_has_scalar_validation(params):
                     return result_value
                 is_type = params.is_ if not isinstance(params.is_, tuple) else None
                 result_payload = FlextTestsPayloadUtilities.to_payload(result_value)
@@ -143,9 +138,8 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
                     raise AssertionError(
                         params.msg
                         or c.Tests.ERR_NOT_MATCHES.format(
-                            text=result_payload,
-                            pattern=params.match.pattern,
-                        ),
+                            text=result_payload, pattern=params.match.pattern
+                        )
                     )
                 return result_value
 
@@ -160,8 +154,7 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
                     and isinstance(params.is_, tuple)
                     and not any(
                         FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(
-                            result_value,
-                            expected_type,
+                            result_value, expected_type
                         )
                         for expected_type in params.is_
                     )
@@ -170,9 +163,8 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
                 raise AssertionError(
                     params.msg
                     or c.Tests.ERR_TYPE_FAILED.format(
-                        expected=params.is_,
-                        actual=type(result_value).__name__,
-                    ),
+                        expected=params.is_, actual=type(result_value).__name__
+                    )
                 )
 
 

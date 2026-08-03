@@ -12,6 +12,7 @@ from __future__ import annotations
 from flext_infra import u
 from flext_tests._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
 from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
+from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
 from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
 from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
 from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
@@ -43,6 +44,7 @@ class FlextTestsUtilities(u):
         FlextTestsMakeUtilitiesMixin,
         FlextTestsValidatorUtilitiesMixin,
         FlextTestsMatchersUtilities.Tests,
+        FlextTestsFixturesDSLMixin,
         # NOTE (multi-agent): compose guarded cleanup planning/apply into u.Tests.
         FlextTestsWorkspaceCleanupUtilitiesMixin,
     ):
@@ -51,4 +53,4 @@ class FlextTestsUtilities(u):
 
 u = FlextTestsUtilities
 
-__all__: list[str] = ["FlextTestsUtilities", "u"]
+__all__: list[str] = ["FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"]

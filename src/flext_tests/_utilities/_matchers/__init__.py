@@ -1,79 +1,55 @@
-# AUTO-GENERATED FILE — Regenerate with: make gen
-"""Matchers package."""
+# @generated AUTO-GENERATED FILE — Regenerate with: make gen
+"""Flext Tests. Utilities. Matchers package."""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import (
-    build_lazy_import_map,
-    install_lazy_exports,
-    merge_lazy_imports,
-)
+from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    pass
-    from flext_tests._utilities._matchers._assertions import (
+    from . import _result_parts as _result_parts
+    from ._assertions import (
         FlextTestsMatchersAssertionsMixin as FlextTestsMatchersAssertionsMixin,
     )
-    from flext_tests._utilities._matchers._containment import (
+    from ._containment import (
         FlextTestsMatchersContainmentMixin as FlextTestsMatchersContainmentMixin,
     )
-    from flext_tests._utilities._matchers._result_parts.result_part_03 import (
-        FlextTestsMatchersResultMixin as FlextTestsMatchersResultMixin,
-    )
-    from flext_tests._utilities._matchers._scope import (
-        FlextTestsMatchersScopeMixin as FlextTestsMatchersScopeMixin,
-    )
-    from flext_tests._utilities._matchers._that_parts.that_part_06 import (
-        FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixin,
-    )
-    from flext_tests._utilities._matchers._typeguards import (
+    from ._result import FlextTestsMatchersResultMixin as FlextTestsMatchersResultMixin
+    from ._scope import FlextTestsMatchersScopeMixin as FlextTestsMatchersScopeMixin
+    from ._that import FlextTestsMatchersThatMixin as FlextTestsMatchersThatMixin
+    from ._typeguards import (
         FlextTestsMatchersTypeGuardsMixin as FlextTestsMatchersTypeGuardsMixin,
     )
-_LAZY_IMPORTS = merge_lazy_imports(
-    (
-        "._result_parts",
-        "._that_parts",
-    ),
-    build_lazy_import_map(
-        {
-            "._assertions": ("FlextTestsMatchersAssertionsMixin",),
-            "._containment": ("FlextTestsMatchersContainmentMixin",),
-            "._result_parts": ("_result_parts",),
-            "._result_parts.result_part_03": ("FlextTestsMatchersResultMixin",),
-            "._scope": ("FlextTestsMatchersScopeMixin",),
-            "._that_parts": ("_that_parts",),
-            "._that_parts.that_part_06": ("FlextTestsMatchersThatMixin",),
-            "._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
-        },
-    ),
-    exclude_names=(
-        "cleanup_submodule_namespace",
-        "install_lazy_exports",
-        "lazy_getattr",
-        "logger",
-        "merge_lazy_imports",
-        "output",
-        "output_reporting",
-        "pytest_addoption",
-        "pytest_collect_file",
-        "pytest_collection_modifyitems",
-        "pytest_configure",
-        "pytest_runtest_setup",
-        "pytest_runtest_teardown",
-        "pytest_sessionfinish",
-        "pytest_sessionstart",
-        "pytest_terminal_summary",
-        "pytest_warning_recorded",
-    ),
-    module_name=__name__,
-)
+
+_LAZY_MODULES: dict[str, tuple[str, ...]] = {
+    "._assertions": ("FlextTestsMatchersAssertionsMixin",),
+    "._containment": ("FlextTestsMatchersContainmentMixin",),
+    "._result": ("FlextTestsMatchersResultMixin",),
+    "._result_parts": ("_result_parts",),
+    "._scope": ("FlextTestsMatchersScopeMixin",),
+    "._that": ("FlextTestsMatchersThatMixin",),
+    "._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
+}
 
 
-install_lazy_exports(
-    __name__,
-    globals(),
-    _LAZY_IMPORTS,
-    publish_all=False,
+_LAZY_ALIAS_GROUPS: dict[str, tuple[tuple[str, str], ...]] = {}
+
+
+_LAZY_IMPORTS = build_lazy_import_map(
+    _LAZY_MODULES, alias_groups=_LAZY_ALIAS_GROUPS, sort_keys=False
 )
+
+_PUBLIC_EXPORTS: tuple[str, ...] = (
+    "FlextTestsMatchersAssertionsMixin",
+    "FlextTestsMatchersContainmentMixin",
+    "FlextTestsMatchersResultMixin",
+    "FlextTestsMatchersScopeMixin",
+    "FlextTestsMatchersThatMixin",
+    "FlextTestsMatchersTypeGuardsMixin",
+    "_result_parts",
+)
+
+__all__: tuple[str, ...] = tuple(_PUBLIC_EXPORTS)
+
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)

@@ -1,12 +1,12 @@
 """Type-guard helpers for matchers — Group A.
 
-from flext_tests.utilities import u
 Static methods used internally by ``FlextTestsMatchersUtilities``. Composed
 via MRO from ``flext_tests._utilities.matchers``.
 """
 
 from __future__ import annotations
 
+from flext_infra import u
 from flext_tests import c, p, t
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
@@ -16,8 +16,7 @@ class FlextTestsMatchersTypeGuardsMixin:
 
     @staticmethod
     def matches_runtime_type(
-        value: p.AttributeProbe,
-        expected_type: type | tuple[type, ...],
+        value: p.AttributeProbe, expected_type: type | tuple[type, ...]
     ) -> bool:
         """Check runtime type compatibility using canonical parent guards."""
         if isinstance(expected_type, tuple):
@@ -33,8 +32,7 @@ class FlextTestsMatchersTypeGuardsMixin:
         msg: str | None,
         default_msg: str,
     ) -> tuple[
-        t.Tests.TestobjectSerializable | None,
-        t.Tests.TestobjectSerializable | None,
+        t.Tests.TestobjectSerializable | None, t.Tests.TestobjectSerializable | None
     ]:
         eq_payload = (
             FlextTestsPayloadUtilities.to_payload(eq_value)
@@ -47,15 +45,13 @@ class FlextTestsMatchersTypeGuardsMixin:
             else None
         )
         if eq_payload is not None and not isinstance(
-            eq_payload,
-            c.Tests.MATCHER_GUARD_EQ_TYPES,
+            eq_payload, c.Tests.MATCHER_GUARD_EQ_TYPES
         ):
             if actual_payload != eq_payload:
                 raise AssertionError(msg or default_msg)
             eq_payload = None
         if ne_payload is not None and not isinstance(
-            ne_payload,
-            c.Tests.MATCHER_GUARD_EQ_TYPES,
+            ne_payload, c.Tests.MATCHER_GUARD_EQ_TYPES
         ):
             if actual_payload == ne_payload:
                 raise AssertionError(msg or default_msg)

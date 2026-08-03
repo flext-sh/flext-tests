@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 
-from flext_tests.protocols import p
 from flext_core import r
 from flext_tests import c, m, t, u
-from flext_tests._utilities._files._creation import (
-    FlextTestsFilesCreationMixin,
-)
+from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests.protocols import p
 
 
 class FlextTestsFilesComparisonMixin:
@@ -28,10 +26,7 @@ class FlextTestsFilesComparisonMixin:
         )
 
     def _try_parse_both(
-        self,
-        content1: str,
-        content2: str,
-        fmt: str,
+        self, content1: str, content2: str, fmt: str
     ) -> p.Result[FlextTestsFilesComparisonMixin.ParsedPair]:
         """Try to parse both contents as dicts in given format."""
         parse = (
@@ -43,7 +38,7 @@ class FlextTestsFilesComparisonMixin:
         )
         if parse is None:
             return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
-                f"unsupported comparison format: {fmt}",
+                f"unsupported comparison format: {fmt}"
             )
         parsed_result = u.try_(
             lambda: (parse(content1), parse(content2)),
@@ -52,7 +47,7 @@ class FlextTestsFilesComparisonMixin:
         )
         if parsed_result.failure:
             return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
-                parsed_result.error or "parse comparison contents failed",
+                parsed_result.error or "parse comparison contents failed"
             )
         r1, r2 = parsed_result.value
         d1 = r1.value if r1.success else None
@@ -65,7 +60,7 @@ class FlextTestsFilesComparisonMixin:
                 FlextTestsFilesCreationMixin.to_payload_mapping(d2),
             ))
         return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
-            "comparison contents are not both mappings",
+            "comparison contents are not both mappings"
         )
 
     def _apply_key_filtering(
