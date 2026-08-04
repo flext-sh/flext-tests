@@ -83,6 +83,22 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart01):
                     )
                 )
 
+            @staticmethod
+            def _ok_preserves_result_identity(params: m.Tests.OkParams) -> bool:
+                """True when no structural extraction kwargs are set (return TResult)."""
+                return all(
+                    getattr(params, name) is None
+                    for name in (
+                        "path",
+                        "len",
+                        "deep",
+                        "paths",
+                        "items",
+                        "attrs_match",
+                        "where",
+                    )
+                )
+
             @classmethod
             def _ok_validate_scalar[TResult: t.Tests.TestResultValue](
                 cls,

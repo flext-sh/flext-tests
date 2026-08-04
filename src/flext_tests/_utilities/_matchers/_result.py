@@ -211,6 +211,22 @@ class FlextTestsMatchersResultMixin:
                 )
 
             @staticmethod
+            def ok_preserves_result_identity(params: m.Tests.OkParams) -> bool:
+                """True when no structural extraction kwargs are set (return TResult)."""
+                return all(
+                    getattr(params, name) is None
+                    for name in (
+                        "path",
+                        "len",
+                        "deep",
+                        "paths",
+                        "items",
+                        "attrs_match",
+                        "where",
+                    )
+                )
+
+            @staticmethod
             def ok_validate_scalar[TResult: t.Tests.TestResultValue](
                 result_value: TResult | t.Tests.TestobjectSerializable,
                 params: m.Tests.OkParams,
@@ -355,16 +371,10 @@ class FlextTestsMatchersResultMixin:
                     )
                 # Preserve source identity for the no-kwargs overload (TResult).
                 # Structural matchers still observe via result_payload above.
-                if (
-                    params.path is None
-                    and params.len is None
-                    and params.deep is None
-                    and params.paths is None
-                    and params.items is None
-                    and params.attrs_match is None
-                    and params.where is None
+                if FlextTestsMatchersResultMixin.Tests.Matchers.ok_preserves_result_identity(
+                    params
                 ):
-                    return cast(TResult, result_value)
+                    return cast("TResult", result_value)
                 return result_payload
 
             @staticmethod
