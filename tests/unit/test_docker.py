@@ -287,7 +287,7 @@ class TestsFlextTestsDocker:
         tm.that(result.error, has="Docker target not configured")
 
     def test_ready_uses_configured_target_port(self, tmp_path: Path) -> None:
-        """ready() probes the configured target port and reports not-ready."""
+        """ready() fails closed when the configured target port is unreachable."""
         manager = tk.stack(
             "docker-compose.stack.yml",
             target=m.Tests.ContainerConfig(
@@ -296,8 +296,8 @@ class TestsFlextTestsDocker:
             workspace_root=tmp_path,
         )
         result = manager.ready(max_wait=1)
-        _ = u.Tests.assert_success(result)
-        tm.that(result.value is False, eq=True)
+        _ = u.Tests.assert_failure(result)
+        tm.that(result.error or "", has="not ready")
 
     # ------------------------------------------------------------------ #
     # Operations return honest r[T] outcomes (no hidden failures)        #
