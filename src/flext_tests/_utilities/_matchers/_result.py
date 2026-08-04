@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, MutableMapping
-from typing import overload
+from typing import cast, overload
 
 from flext_core import p as core_p
 from flext_core import u
@@ -353,6 +353,18 @@ class FlextTestsMatchersResultMixin:
                         params.msg
                         or "Value is None but validation passed - this should not happen"
                     )
+                # Preserve source identity for the no-kwargs overload (TResult).
+                # Structural matchers still observe via result_payload above.
+                if (
+                    params.path is None
+                    and params.len is None
+                    and params.deep is None
+                    and params.paths is None
+                    and params.items is None
+                    and params.attrs_match is None
+                    and params.where is None
+                ):
+                    return cast(TResult, result_value)
                 return result_payload
 
             @staticmethod
