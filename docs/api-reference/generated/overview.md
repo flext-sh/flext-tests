@@ -16,11 +16,16 @@
   Developers`, `Operating System :: OS Independent` (+4 more)
 - Project class: `test`
 - Keywords: `builders`, `factories`, `flext`, `test-infrastructure`, `testing`
-- Main facades: _none_
-- Alias exports: _none_
-- Public symbol exports: _none_
+- Main facades: `FlextTestsCase`, `FlextTestsConfig`, `FlextTestsConstants`,
+  `FlextTestsDocker`, `FlextTestsDomains`, `FlextTestsFiles`,
+  `FlextTestsMatchersUtilities`, `FlextTestsModels` (+6 more)
+- Alias exports: `c`, `d`, `e`, `h`, `m`, `p`, `r`, `s`, `t`, `u`, `x`
+- Public symbol exports: `FlextTestsCase`, `FlextTestsConfig`,
+  `FlextTestsConstants`, `FlextTestsDocker`, `FlextTestsDomains`,
+  `FlextTestsFiles`, `FlextTestsMatchersUtilities`, `FlextTestsModels`,
+  `FlextTestsProtocols`, `FlextTestsServiceBase` (+12 more)
 - Exported module shortcuts: _none_
-- Generated module pages: `0`
+- Generated module pages: `11`
 
 ## Next Pages
 
