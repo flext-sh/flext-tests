@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import overload
+from typing import cast, overload
 
 from flext_tests import c, m, t
 from flext_tests._utilities._matchers._assertions import (
@@ -71,6 +71,16 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
                         params.msg
                         or "Value is None but validation passed - this should not happen"
                     )
+                if (
+                    params.path is None
+                    and params.len is None
+                    and params.deep is None
+                    and params.paths is None
+                    and params.items is None
+                    and params.attrs_match is None
+                    and params.where is None
+                ):
+                    return cast(TResult, result_value)
                 return result_payload
 
             @staticmethod
