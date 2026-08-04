@@ -1,9 +1,15 @@
 # AGENTS.md — flext-tests
 
-> **Parent workspace law** lives in [`../AGENTS.md`](../AGENTS.md) — read it first.
-> Universal engineering core: `~/.agents/UNIVERSAL_CORE.md`. Composition: global skills + parent/root `AGENTS.md` + this scope delta. Do not re-embed universal law.
+> **Parent workspace law** lives in
+> [`flext/AGENTS.md`](https://github.com/flext-sh/flext/blob/0.12.0-dev/AGENTS.md)
+> — read it first.
+> Universal engineering core: `~/.agents/UNIVERSAL_CORE.md`.
+> Composition: global skills + parent/root `AGENTS.md` + this scope delta.
+> Do not re-embed universal law.
 >
-> **Standalone / independent mode:** when `../AGENTS.md` does not resolve, pin the parent raw `AGENTS.md` URL to the same branch/release as this package (never `main`).
+> **Standalone / independent mode:** when the sibling `AGENTS.md` does not
+> resolve, pin the parent raw URL to the same branch/release as this package
+> (never `main`).
 
 <!-- AIHUB-AGENTS-SCOPE-LOCAL-BEGIN -->
 **Package:** `flext_tests` · deps: `flext-cli`, `flext-core`, `flext-infra`
@@ -54,4 +60,5 @@ There is **no runtime `api.py`** — this is test tooling.
 make check PROJECT=flext-tests
 make test  PROJECT=flext-tests       # tests/{unit,integration,fixtures}
 ```
+
 <!-- AIHUB-AGENTS-SCOPE-LOCAL-END -->
