@@ -350,9 +350,7 @@ class FlextTestsDocker(s):
         fail closed as a Result instead of hanging into pytest case-timeouts.
         """
         probe_budget = (
-            max_wait
-            if max_wait is not None
-            else c.Tests.DOCKER_PROBE_MAX_WAIT_SECONDS
+            max_wait if max_wait is not None else c.Tests.DOCKER_PROBE_MAX_WAIT_SECONDS
         )
         waited = 0.0
         while waited < probe_budget:
