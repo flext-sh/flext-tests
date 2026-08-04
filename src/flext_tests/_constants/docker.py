@@ -21,10 +21,11 @@ class FlextTestsConstantsDocker:
     # Exact Make CI token (flext-infra config.codegen.make.ci); never treat
     # GitHub's CI=true as docker-disable.
     ENV_CI: Final[str] = "CI"
-    CI_MAKE_TOKEN: Final[str] = "Y"
+    CI_MAKE_VALUE: Final[str] = "Y"
     DOCKER_CI_SKIP_REASON: Final[str] = "docker disabled under CI=Y"
-    # Must stay below flext-infra tooling.tools.pytest.case-timeout-seconds so
-    # unreachable containers skip instead of becoming pytest-timeout ERRORs.
+    # Default probe ceiling for callers that omit max_wait. Under CI=Y the
+    # Docker lifecycle skips before probing. Outside CI, shared-container
+    # startup_timeout remains the SSOT for long boots (Oracle/kind).
     DOCKER_PROBE_MAX_WAIT_SECONDS: Final[int] = 8
 
     SHARED_CONTAINERS: Final[Mapping[str, t.HeaderMapping]] = {
@@ -33,21 +34,20 @@ class FlextTestsConstantsDocker:
             "service": "openldap",
             "port": 3390,
             "host": "localhost",
-            "startup_timeout": 8,
         },
         "flext-oracle-db-test": {
             "compose_file": "docker/docker-compose.oracle-db.yml",
             "service": "oracle-db",
             "port": 1521,
             "host": "localhost",
-            "startup_timeout": 8,
+            "startup_timeout": 900,
         },
         "flext-kind-test": {
             "compose_file": "docker/docker-compose.kubernetes.yml",
             "service": "kind",
             "port": 6443,
             "host": "localhost",
-            "startup_timeout": 8,
+            "startup_timeout": 120,
         },
     }
 

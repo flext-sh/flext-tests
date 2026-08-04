@@ -36,6 +36,30 @@ class TestsFlextTestsDocker:
     """Behavioral contract of the Docker control facade (tk)."""
 
     # ------------------------------------------------------------------ #
+    # CI=Y disables Docker lifecycle (exact Make token, not CI=true)     #
+    # ------------------------------------------------------------------ #
+
+    def test_ci_disables_docker_only_for_exact_make_token(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """ci_disables_docker() is true only for CI=Y, not GitHub CI=true."""
+        monkeypatch.delenv(c.Tests.ENV_CI, raising=False)
+        tm.that(tk.ci_disables_docker(), eq=False)
+        monkeypatch.setenv(c.Tests.ENV_CI, "true")
+        tm.that(tk.ci_disables_docker(), eq=False)
+        monkeypatch.setenv(c.Tests.ENV_CI, c.Tests.CI_MAKE_VALUE)
+        tm.that(tk.ci_disables_docker(), eq=True)
+
+    def test_compose_up_skips_under_ci_y(
+        self, docker_manager: tk, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """compose_up() pytest.skips under exact CI=Y before touching Docker."""
+        monkeypatch.setenv(c.Tests.ENV_CI, c.Tests.CI_MAKE_VALUE)
+        with pytest.raises(pytest.skip.Exception) as skipped:
+            _ = docker_manager.compose_up("missing-compose.yml")
+        tm.that(str(skipped.value), has=c.Tests.DOCKER_CI_SKIP_REASON)
+
+    # ------------------------------------------------------------------ #
     # ContainerStatus enum + ContainerInfo model public state            #
     # ------------------------------------------------------------------ #
 

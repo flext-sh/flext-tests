@@ -62,7 +62,7 @@ class FlextTestsDocker(s):
     @staticmethod
     def ci_disables_docker() -> bool:
         """True when Make CI token is exact CI=Y (not GitHub CI=true)."""
-        return os.environ.get(c.Tests.ENV_CI) == c.Tests.CI_MAKE_TOKEN
+        return os.environ.get(c.Tests.ENV_CI) == c.Tests.CI_MAKE_VALUE
 
     @classmethod
     def skip_if_ci_disables_docker(cls) -> None:
@@ -341,15 +341,19 @@ class FlextTestsDocker(s):
         return r[str].ok("Stack started successfully")
 
     def wait_for_port_ready(
-        self, host: str, port: int, max_wait: int = 30
+        self, host: str, port: int, max_wait: int | None = None
     ) -> p.Result[bool]:
         """Wait until a TCP port is accepting connections.
 
-        Caps ``max_wait`` at ``DOCKER_PROBE_MAX_WAIT_SECONDS`` so unavailable
-        services fail closed as a Result (callers skip) instead of hanging past
-        the pytest case timeout and becoming setup ERRORs.
+        Uses ``max_wait`` when provided (shared-container startup budgets).
+        When omitted, uses ``DOCKER_PROBE_MAX_WAIT_SECONDS`` so quick probes
+        fail closed as a Result instead of hanging into pytest case-timeouts.
         """
-        probe_budget = min(max_wait, c.Tests.DOCKER_PROBE_MAX_WAIT_SECONDS)
+        probe_budget = (
+            max_wait
+            if max_wait is not None
+            else c.Tests.DOCKER_PROBE_MAX_WAIT_SECONDS
+        )
         waited = 0.0
         while waited < probe_budget:
             try:
