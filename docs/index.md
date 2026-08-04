@@ -1,18 +1,32 @@
+# flext-tests Documentation
+
+<!-- TOC START -->
+- [Start Here](#start-here)
+- [Public Surface Summary](#public-surface-summary)
+- [Collection Rules](#collection-rules)
+- [Quality Gates](#quality-gates)
+- [Governance Pointer](#governance-pointer)
+<!-- TOC END -->
+
 <!-- AUTO-GENERATED — DO NOT EDIT MANUALLY -->
 
-# flext-tests documentation
+- Version: `0.12.0rc0`
+- Project class: `test`
+- Package: `flext_tests`
+- Description: FLEXT Test Infrastructure - Shared test utilities, builders,
+  factories, and validation for the FLEXT ecosystem
 
-`flext-tests` provides the shared FLEXT test infrastructure, including typed
-matchers, fixtures, builders, factories, and enforcement plugins.
+This project portal is generated from `pyproject.toml`, package exports, and
+real docstrings.
 
-## Start here
+## Start Here
 
 - [Guides](guides/README.md)
-- [API reference](api-reference/README.md)
-- [Generated API overview](api-reference/generated/overview.md)
-- [Generated module index](api-reference/generated/modules/index.md)
+- [API Reference](api-reference/README.md)
+- [Generated API Overview](api-reference/generated/overview.md)
+- [Generated Module Index](api-reference/generated/modules/index.md)
 
-## Public surface
+## Public Surface Summary
 
 ::: flext_tests
     options:
@@ -21,11 +35,28 @@ matchers, fixtures, builders, factories, and enforcement plugins.
       show_root_toc_entry: false
       show_source: false
 
-## Governance
+## Collection Rules
 
-- [Project engineering law](../AGENTS.md)
-- [Workspace engineering law][workspace-law]
-- [Workspace governance][workspace-governance]
+Read [`/flext/AGENTS.md`](https://github.com/flext-sh/flext/blob/0.12.0-dev/AGENTS.md)
+§9 — Agent Execution Pre-requisites — for the canonical pre-change checklist
+(parent MRO chain, Scope bootstrap, skill loading, zero-debt baseline,
+slot registry verification).
 
-[workspace-law]: https://github.com/flext-sh/flext/blob/0.12.0-dev/AGENTS.md
-[workspace-governance]: https://github.com/flext-sh/flext/blob/0.12.0-dev/docs/GOVERNANCE.md
+## Quality Gates
+
+Canonical `make` verbs (`check`, `test`, `fmt WHAT=apply APPLY=Y`, `val`,
+`docs`) — see
+[`/flext/AGENTS.md`](https://github.com/flext-sh/flext/blob/0.12.0-dev/AGENTS.md)
+`Build & Test` and `Required Python quality gates`; selector routing is owned
+universally by [`make-check`](~/.agents/skills/make-check/SKILL.md).
+
+## Governance Pointer
+
+- Engineering law:
+  [`/flext/AGENTS.md`](https://github.com/flext-sh/flext/blob/0.12.0-dev/AGENTS.md)
+- Governance + ADRs:
+  [`/flext/docs/GOVERNANCE.md`](https://github.com/flext-sh/flext/blob/0.12.0-dev/docs/GOVERNANCE.md)
+- Skills index:
+  [`/flext/.agents/skills/`](https://github.com/flext-sh/flext/tree/0.12.0-dev/.agents/skills/)
+- Onboarding:
+  [`/flext/docs/guides/onboarding.md`](https://github.com/flext-sh/flext/blob/0.12.0-dev/docs/guides/onboarding.md)

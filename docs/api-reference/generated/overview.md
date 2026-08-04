@@ -1,18 +1,28 @@
+# flext-tests API Overview
+
+<!-- TOC START -->
+- [Next Pages](#next-pages)
+<!-- TOC END -->
+
 <!-- AUTO-GENERATED — DO NOT EDIT MANUALLY -->
 
-# flext-tests API overview
-
 - Package: `flext_tests`
-- Version: `0.12.0`
+- Version: `0.12.0rc0`
+- Description: FLEXT Test Infrastructure - Shared test utilities, builders,
+  factories, and validation for the FLEXT ecosystem
+- Doc summary: Flext Tests package.
+- Classifiers: `Development Status :: 3 - Alpha`, `Framework :: Pydantic :: 2`,
+  `Framework :: Pydantic`, `Framework :: Pytest`, `Intended Audience ::
+  Developers`, `Operating System :: OS Independent` (+4 more)
 - Project class: `test`
-- Summary: shared FLEXT test infrastructure
-- Primary aliases: `c`, `d`, `e`, `h`, `m`, `p`, `r`, `s`, `t`, `u`, `x`
+- Keywords: `builders`, `factories`, `flext`, `test-infrastructure`, `testing`
+- Main facades: _none_
+- Alias exports: _none_
+- Public symbol exports: _none_
+- Exported module shortcuts: _none_
+- Generated module pages: `0`
 
-Primary facades include `FlextTestsCase`, `FlextTestsConfig`,
-`FlextTestsConstants`, `FlextTestsDocker`, `FlextTestsDomains`,
-`FlextTestsFiles`, `FlextTestsMatchersUtilities`, and `FlextTestsModels`.
-
-## Next pages
+## Next Pages
 
 - [Public API](public-api.md)
-- [Module index](modules/index.md)
+- [Module Index](modules/index.md)
