@@ -47,10 +47,10 @@ class DockerOperationsMixin:
         _ = u.Tests.assert_failure(result)
 
     def test_wait_for_port_ready_immediate(self, docker_manager: tk) -> None:
-        """Test wait_for_port_ready returns quickly for unavailable port."""
+        """Test wait_for_port_ready fails closed quickly for unavailable port."""
         result = docker_manager.wait_for_port_ready(c.LOOPBACK_IP, 59999, max_wait=1)
-        _ = u.Tests.assert_success(result)
-        tm.that(result.value is False, eq=True)
+        _ = u.Tests.assert_failure(result)
+        tm.that(result.error or "", has="not ready")
 
     def test_start_compose_stack_returns_result(self, docker_manager: tk) -> None:
         """Test start_compose_stack returns a valid public Result contract."""

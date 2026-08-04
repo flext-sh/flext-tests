@@ -335,10 +335,10 @@ class TestsFlextTestsDocker:
         _ = u.Tests.assert_failure(result)
 
     def test_wait_for_closed_port_reports_not_ready(self, docker_manager: tk) -> None:
-        """wait_for_port_ready() succeeds with False for a closed port."""
+        """wait_for_port_ready() fails closed for a closed port within probe budget."""
         result = docker_manager.wait_for_port_ready(c.LOOPBACK_IP, 59999, max_wait=1)
-        _ = u.Tests.assert_success(result)
-        tm.that(result.value is False, eq=True)
+        _ = u.Tests.assert_failure(result)
+        tm.that(result.error or "", has="not ready")
 
     def test_start_compose_stack_returns_result_contract(
         self, docker_manager: tk
