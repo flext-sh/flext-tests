@@ -107,7 +107,7 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
         items_list = list(files_dict.items())
         results_dict: MutableMapping[str, p.Result[t.Tests.TestResultValue]] = {}
         failed_dict: t.MutableStrMapping = {}
-        rtype = r[Path | t.Tests.TestobjectSerializable]
+        rtype = r[t.Tests.TestResultValue]
         for name, _ in items_list:
             op_result = process_one((name, files_dict[name]))
             if op_result.success:

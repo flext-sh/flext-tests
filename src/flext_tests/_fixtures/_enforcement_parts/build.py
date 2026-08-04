@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING
 from flext_tests import m
 from flext_tests._fixtures._enforcement_parts.config import active_rules
 from flext_tests._fixtures._enforcement_parts.discovery import (
-    _collected_project_names,
-    _collected_validator_targets,
-    _load_infra_report,
+    collected_project_names,
+    collected_validator_targets,
+    load_infra_report,
 )
 from flext_tests._fixtures._enforcement_parts.items import EnforcementCollector
 from flext_tests._fixtures._enforcement_parts.namespace import NamespaceDetectorBuilder
@@ -36,7 +36,7 @@ def build_items(
     if workspace_root is None:
         return []
     rules = active_rules(cfg)
-    validator_targets = _collected_validator_targets(
+    validator_targets = collected_validator_targets(
         items=collected_items, workspace_root=workspace_root
     )
     infra_report = _load_infra_report_if_needed(rules, workspace_root, collected_items)
@@ -69,9 +69,9 @@ def _load_infra_report_if_needed(
         return None
     # NOTE (multi-agent, mro-wkii.17.21): detector failures must stop collection;
     # replacing them with None would silently disable the active enforcement rule.
-    return _load_infra_report(
+    return load_infra_report(
         workspace_root,
-        project_names=_collected_project_names(
+        project_names=collected_project_names(
             items=collected_items, workspace_root=workspace_root
         ),
     ).unwrap()
