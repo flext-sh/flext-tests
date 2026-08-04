@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import os
 import socket
 import time
 from collections.abc import MutableSet, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated, ClassVar, Self, override
 
+import pytest
 from docker import DockerClient as DockerSDKClient, from_env as docker_from_env
 from docker.errors import DockerException, NotFound
 from python_on_whales import DockerClient as WhalesDockerClient
@@ -56,6 +58,17 @@ class FlextTestsDocker(s):
         m.Tests.ContainerConfig | None,
         u.Field(description="Configured Docker target used by the public DSL."),
     ] = None
+
+    @staticmethod
+    def ci_disables_docker() -> bool:
+        """True when Make CI token is exact CI=Y (not GitHub CI=true)."""
+        return os.environ.get(c.Tests.ENV_CI) == c.Tests.CI_MAKE_VALUE
+
+    @classmethod
+    def skip_if_ci_disables_docker(cls) -> None:
+        """Fail-closed skip for any Docker lifecycle entry under CI=Y."""
+        if cls.ci_disables_docker():
+            pytest.skip(c.Tests.DOCKER_CI_SKIP_REASON)
 
     @staticmethod
     def _resolve_shared_target_config(
@@ -192,6 +205,7 @@ class FlextTestsDocker(s):
 
     def compose_down(self, compose_file: str) -> p.Result[str]:
         """Stop services using docker-compose via python_on_whales."""
+        self.skip_if_ci_disables_docker()
         compose_path = self._compose_path(compose_file)
         try:
             self._run_compose_down(compose_path)
@@ -207,6 +221,7 @@ class FlextTestsDocker(s):
         force_recreate: bool = False,
     ) -> p.Result[str]:
         """Start services using docker-compose via python_on_whales."""
+        self.skip_if_ci_disables_docker()
         compose_path = self._compose_path(compose_file)
         try:
             cleanup_result = self._run_compose_up(
@@ -326,18 +341,30 @@ class FlextTestsDocker(s):
         return r[str].ok("Stack started successfully")
 
     def wait_for_port_ready(
-        self, host: str, port: int, max_wait: int = 30
+        self, host: str, port: int, max_wait: int | None = None
     ) -> p.Result[bool]:
-        """Wait until a TCP port is accepting connections."""
+        """Wait until a TCP port is accepting connections.
+
+        Uses ``max_wait`` when provided (shared-container startup budgets).
+        When omitted, uses ``DOCKER_PROBE_MAX_WAIT_SECONDS`` so quick probes
+        fail closed as a Result instead of hanging into pytest case-timeouts.
+        """
+        probe_budget = (
+            max_wait
+            if max_wait is not None
+            else c.Tests.DOCKER_PROBE_MAX_WAIT_SECONDS
+        )
         waited = 0.0
-        while waited < max_wait:
+        while waited < probe_budget:
             try:
                 with socket.create_connection((host, port), timeout=1):
                     return r[bool].ok(value=True)
             except (ConnectionRefusedError, TimeoutError, OSError):
                 time.sleep(0.5)
                 waited += 0.5
-        return r[bool].ok(value=False)
+        return r[bool].fail(
+            f"TCP {host}:{port} not ready within {probe_budget}s probe budget"
+        )
 
     def _container_info_from_sdk(
         self, container_name: str, container: Container
@@ -501,6 +528,7 @@ class FlextTestsDocker(s):
     @override
     def execute(self) -> p.Result[m.Tests.ContainerInfo]:
         """Ensure the configured container is available with a single DSL call."""
+        self.skip_if_ci_disables_docker()
         target = self.target_config
         if target is None:
             return r[m.Tests.ContainerInfo].fail(

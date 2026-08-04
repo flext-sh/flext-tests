@@ -18,6 +18,16 @@ if TYPE_CHECKING:
 class FlextTestsConstantsDocker:
     """Docker test infrastructure constants mixin."""
 
+    # Exact Make CI token (flext-infra config.codegen.make.ci); never treat
+    # GitHub's CI=true as docker-disable.
+    ENV_CI: Final[str] = "CI"
+    CI_MAKE_VALUE: Final[str] = "Y"
+    DOCKER_CI_SKIP_REASON: Final[str] = "docker disabled under CI=Y"
+    # Default probe ceiling for callers that omit max_wait. Under CI=Y the
+    # Docker lifecycle skips before probing. Outside CI, shared-container
+    # startup_timeout remains the SSOT for long boots (Oracle/kind).
+    DOCKER_PROBE_MAX_WAIT_SECONDS: Final[int] = 8
+
     SHARED_CONTAINERS: Final[Mapping[str, t.HeaderMapping]] = {
         "flext-openldap-test": {
             "compose_file": "docker/docker-compose.openldap.yml",

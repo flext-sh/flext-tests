@@ -36,6 +36,30 @@ class TestsFlextTestsDocker:
     """Behavioral contract of the Docker control facade (tk)."""
 
     # ------------------------------------------------------------------ #
+    # CI=Y disables Docker lifecycle (exact Make token, not CI=true)     #
+    # ------------------------------------------------------------------ #
+
+    def test_ci_disables_docker_only_for_exact_make_token(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """ci_disables_docker() is true only for CI=Y, not GitHub CI=true."""
+        monkeypatch.delenv(c.Tests.ENV_CI, raising=False)
+        tm.that(tk.ci_disables_docker(), eq=False)
+        monkeypatch.setenv(c.Tests.ENV_CI, "true")
+        tm.that(tk.ci_disables_docker(), eq=False)
+        monkeypatch.setenv(c.Tests.ENV_CI, c.Tests.CI_MAKE_VALUE)
+        tm.that(tk.ci_disables_docker(), eq=True)
+
+    def test_compose_up_skips_under_ci_y(
+        self, docker_manager: tk, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """compose_up() pytest.skips under exact CI=Y before touching Docker."""
+        monkeypatch.setenv(c.Tests.ENV_CI, c.Tests.CI_MAKE_VALUE)
+        with pytest.raises(pytest.skip.Exception) as skipped:
+            _ = docker_manager.compose_up("missing-compose.yml")
+        tm.that(str(skipped.value), has=c.Tests.DOCKER_CI_SKIP_REASON)
+
+    # ------------------------------------------------------------------ #
     # ContainerStatus enum + ContainerInfo model public state            #
     # ------------------------------------------------------------------ #
 
@@ -287,7 +311,7 @@ class TestsFlextTestsDocker:
         tm.that(result.error, has="Docker target not configured")
 
     def test_ready_uses_configured_target_port(self, tmp_path: Path) -> None:
-        """ready() probes the configured target port and reports not-ready."""
+        """ready() fails closed when the configured target port is unreachable."""
         manager = tk.stack(
             "docker-compose.stack.yml",
             target=m.Tests.ContainerConfig(
@@ -296,8 +320,8 @@ class TestsFlextTestsDocker:
             workspace_root=tmp_path,
         )
         result = manager.ready(max_wait=1)
-        _ = u.Tests.assert_success(result)
-        tm.that(result.value is False, eq=True)
+        _ = u.Tests.assert_failure(result)
+        tm.that(result.error or "", has="not ready")
 
     # ------------------------------------------------------------------ #
     # Operations return honest r[T] outcomes (no hidden failures)        #
@@ -335,10 +359,10 @@ class TestsFlextTestsDocker:
         _ = u.Tests.assert_failure(result)
 
     def test_wait_for_closed_port_reports_not_ready(self, docker_manager: tk) -> None:
-        """wait_for_port_ready() succeeds with False for a closed port."""
+        """wait_for_port_ready() fails closed for a closed port within probe budget."""
         result = docker_manager.wait_for_port_ready(c.LOOPBACK_IP, 59999, max_wait=1)
-        _ = u.Tests.assert_success(result)
-        tm.that(result.value is False, eq=True)
+        _ = u.Tests.assert_failure(result)
+        tm.that(result.error or "", has="not ready")
 
     def test_start_compose_stack_returns_result_contract(
         self, docker_manager: tk

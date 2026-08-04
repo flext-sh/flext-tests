@@ -71,16 +71,8 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
                         params.msg
                         or "Value is None but validation passed - this should not happen"
                     )
-                if (
-                    params.path is None
-                    and params.len is None
-                    and params.deep is None
-                    and params.paths is None
-                    and params.items is None
-                    and params.attrs_match is None
-                    and params.where is None
-                ):
-                    return cast(TResult, result_value)
+                if cls._ok_preserves_result_identity(params):
+                    return cast("TResult", result_value)
                 return result_payload
 
             @staticmethod
