@@ -70,16 +70,12 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                 return str(unwrapped)
 
     def _extract_content[ContentT: t.Tests.FileContentPlain](
-        self,
-        content: ContentT | p.Result[ContentT],
-        *,
-        extract_result: bool,
+        self, content: ContentT | p.Result[ContentT], *, extract_result: bool
     ) -> t.Tests.FileContentPlain:
         """Extract actual content from a result-like wrapper or return as-is."""
         # ContentT <: FileContentPlain; invariant p.Result needs an explicit adapter.
         file_content = cast(
-            "t.Tests.FileContentPlain | p.Result[t.Tests.FileContentPlain]",
-            content,
+            "t.Tests.FileContentPlain | p.Result[t.Tests.FileContentPlain]", content
         )
         if not extract_result:
             return self._coerce_file_content(file_content)
