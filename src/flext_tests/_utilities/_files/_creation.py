@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import TypeIs
+from typing import TypeIs, cast
 
 from flext_tests import c, m, p, t, u
 from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
@@ -69,24 +69,29 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             case _:
                 return str(unwrapped)
 
-    def _extract_content(
+    def _extract_content[ContentT: t.Tests.FileContentPlain](
         self,
-        content: t.Tests.FileContentPlain | p.Result[t.Tests.FileContentPlain],
+        content: ContentT | p.Result[ContentT],
         *,
         extract_result: bool,
     ) -> t.Tests.FileContentPlain:
         """Extract actual content from a result-like wrapper or return as-is."""
+        # ContentT <: FileContentPlain; invariant p.Result needs an explicit adapter.
+        file_content = cast(
+            "t.Tests.FileContentPlain | p.Result[t.Tests.FileContentPlain]",
+            content,
+        )
         if not extract_result:
-            return self._coerce_file_content(content)
+            return self._coerce_file_content(file_content)
         if isinstance(content, bytes):
             return content
-        if self._is_file_result(content):
-            if content.failure:
-                error_msg = content.error or "r failure"
+        if self._is_file_result(file_content):
+            if file_content.failure:
+                error_msg = file_content.error or "r failure"
                 msg = f"Cannot create file from failed r: {error_msg}"
                 raise ValueError(msg)
-            return self._coerce_file_content(content.value)
-        return self._coerce_file_content(content)
+            return self._coerce_file_content(file_content.value)
+        return self._coerce_file_content(file_content)
 
     def _is_nested_rows(
         self, value: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable
@@ -217,9 +222,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             csv_rows.append([str(actual_content)])
         return csv_rows
 
-    def create(
+    def create[ContentT: t.Tests.FileContentPlain](
         self,
-        content: t.Tests.FileContentPlain | p.Result[t.Tests.FileContentPlain],
+        content: ContentT | p.Result[ContentT],
         name: str = c.Tests.DEFAULT_FILENAME,
         directory: Path | None = None,
         *,
