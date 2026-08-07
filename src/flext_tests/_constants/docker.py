@@ -28,6 +28,21 @@ class FlextTestsConstantsDocker:
     # startup_timeout remains the SSOT for long boots (Oracle/kind).
     DOCKER_PROBE_MAX_WAIT_SECONDS: Final[int] = 8
 
+    # Connectivity markers auto-skip when their service is unreachable
+    # (AGENTS.md: "tests that need external/docker services skip when
+    # unreachable"). Each marker maps to the shared container whose declared
+    # host/port is probed once per session. A marker absent from this map is
+    # never skipped, so adding one is a deliberate data change.
+    CONNECTIVITY_MARKER_CONTAINERS: Final[Mapping[str, str]] = {
+        "oracle": "flext-oracle-db-test",
+        "ldap": "flext-openldap-test",
+        "kubernetes": "flext-kind-test",
+    }
+    UNREACHABLE_SKIP_REASON: Final[str] = (
+        "{marker} service unreachable at {host}:{port}; start it to run these tests"
+    )
+    CONNECTIVITY_PROBE_TIMEOUT_SECONDS: Final[float] = 1.5
+
     SHARED_CONTAINERS: Final[Mapping[str, t.HeaderMapping]] = {
         "flext-openldap-test": {
             "compose_file": "docker/docker-compose.openldap.yml",
