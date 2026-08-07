@@ -48,6 +48,8 @@ There is **no runtime `api.py`** — this is test tooling.
   public facades, without mocks or patching the system under test.
 - Use `c/t/p/m/u` for typed fixtures and
   `FlextTestsMakeUtilitiesMixin` for the Make domain.
+- Config/settings canonical pattern: ADR-012.
+- Codemod governance (ast-grep + make mod): ADR-014.
 
 ## Anti-Patterns / Gotchas
 
