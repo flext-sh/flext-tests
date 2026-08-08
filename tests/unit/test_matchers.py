@@ -10,6 +10,7 @@ from __future__ import annotations
 from tests.unit._matchers_parts.data_driven import MatchersDataDrivenMixin
 from tests.unit._matchers_parts.fail_constraints import MatchersFailConstraintsMixin
 from tests.unit._matchers_parts.ok_constraints import MatchersOkConstraintsMixin
+from tests.unit._matchers_parts.rejects_assignment import MatchersRejectsAssignmentMixin
 from tests.unit._matchers_parts.results import MatchersResultsMixin
 from tests.unit._matchers_parts.scope_errors import MatchersScopeErrorsMixin
 from tests.unit._matchers_parts.that_attrs import MatchersThatAttrsMixin
@@ -27,6 +28,7 @@ class TestsFlextTestsMatchers(
     MatchersThatCollectionsMixin,
     MatchersThatAttrsMixin,
     MatchersScopeErrorsMixin,
+    MatchersRejectsAssignmentMixin,
     MatchersDataDrivenMixin,
 ):
     """Test suite for tm class."""
