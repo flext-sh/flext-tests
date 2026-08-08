@@ -303,3 +303,6 @@ CLAUDE.local.md
 !config/
 !config/workspace.yaml
 !custom.mk
+
+# Beads / Dolt files (added by bd init)
+*.gate.lock*
