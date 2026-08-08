@@ -15,7 +15,6 @@ from typing import TYPE_CHECKING, override
 from flext_tests import c, t, u
 
 if TYPE_CHECKING:
-    pass
     from flext_tests import m
 
 
