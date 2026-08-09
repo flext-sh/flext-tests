@@ -85,6 +85,27 @@ class TestsFlextTestsDockerIntegration:
         )
         tm.that(target.compose_file, eq=root / "docker" / "custom.yml")
 
+    def test_sibling_compose_files_use_distinct_projects(self, tmp_path: Path) -> None:
+        """Each compose file binds to its own project name.
+
+        Compose derives the project from the parent directory when none is set,
+        so sibling stacks in ``docker/`` would share one project and
+        ``remove_orphans`` would delete another suite's container.
+        """
+        root = tmp_path / "flext-docker-contract"
+        manager = tk.compose("docker/docker-compose.oracle-db.yml", workspace_root=root)
+        sibling = tk.compose("docker/docker-compose.openldap.yml", workspace_root=root)
+
+        oracle_project = manager.compose_project_name(
+            root / "docker" / "docker-compose.oracle-db.yml"
+        )
+        openldap_project = sibling.compose_project_name(
+            root / "docker" / "docker-compose.openldap.yml"
+        )
+
+        tm.that(oracle_project, eq="docker-compose-oracle-db")
+        tm.that(openldap_project, eq="docker-compose-openldap")
+
     def test_compose_preserves_absolute_file_unchanged(self, tmp_path: Path) -> None:
         """An absolute compose file is used verbatim by ``tk.compose``."""
         absolute = Path("/opt/stacks/custom.yml")
