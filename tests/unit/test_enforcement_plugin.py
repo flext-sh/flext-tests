@@ -30,11 +30,12 @@ if TYPE_CHECKING:
 class TestsFlextTestsEnforcementPlugin:
     """Public contract of the enforcement dispatcher facade."""
 
-    # Several tests here spawn a nested pytest via runpytest_subprocess() that
-    # cold-imports flext_infra (82k LOC): real work ~9s (import 6.3s + run 2.8s),
-    # exceeding the global --timeout=10 under load. Class-level ceiling override —
-    # not a suppression of a hang (profiled: completes in ~9s). Fast tests unaffected.
-    pytestmark = pytest.mark.timeout(60)
+    # Several tests here spawn a nested pytest via runpytest_subprocess(). That
+    # child pays the full pytest11 autoload cost (21 installed plugins), measured
+    # at 17-63s wall clock depending on cache warmth and host load, against ~3s of
+    # actual test work. The canonical per-case budget owned by the flext-infra
+    # codegen SSOT (90s) covers that; no class-level ceiling override is applied
+    # here, so a real hang is still caught by the canonical budget.
 
     def test_flext_pytest11_entrypoints_have_one_package_owner(self) -> None:
         """Only the two flext-tests plugins participate in pytest autoload."""
