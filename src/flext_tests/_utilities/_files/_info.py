@@ -102,9 +102,10 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
             lines = text.count("\n") + 1 if text else 0
             is_empty = not text.strip()
             first_line = text.split("\n")[0] if text else ""
-            return (text, lines, is_empty, first_line, c.Tests.DEFAULT_ENCODING)
         except UnicodeDecodeError:
             return ("", 0, size == 0, "", c.Tests.DEFAULT_BINARY_ENCODING)
+        else:
+            return (text, lines, is_empty, first_line, c.Tests.DEFAULT_ENCODING)
 
     def _parse_content_metadata(
         self, text: str, fmt: str, validate_model: type[m.BaseModel] | None = None

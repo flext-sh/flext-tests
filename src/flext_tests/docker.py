@@ -5,7 +5,8 @@ from __future__ import annotations
 import os
 import socket
 import time
-from collections.abc import MutableSet, Sequence
+from collections.abc import Generator, MutableSet, Sequence
+from contextlib import contextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated, ClassVar, Self, override
 
@@ -255,30 +256,49 @@ class FlextTestsDocker(s):
             WhalesDockerException,
         )
 
+    @staticmethod
+    def compose_project_name(compose_path: Path) -> str:
+        """Derive one compose project per compose file.
+
+        Compose derives the project name from the directory when none is given,
+        so every file under the shared ``docker/`` directory lands in the same
+        project. ``remove_orphans`` then treats a sibling suite's container as
+        garbage and deletes it, which makes parallel test runs kill each other's
+        databases. Binding each compose file to its own project keeps
+        ``remove_orphans`` scoped to the services that file actually declares.
+        """
+        return compose_path.stem.replace(".", "-").replace("_", "-")
+
+    @contextmanager
+    def _compose_binding(self, compose_path: Path) -> Generator[None]:
+        """Bind compose file and its dedicated project for one operation."""
+        config = self.docker.client_config
+        original_files = config.compose_files
+        original_project = config.compose_project_name
+        try:
+            config.compose_files = [str(compose_path)]
+            config.compose_project_name = self.compose_project_name(compose_path)
+            yield
+        finally:
+            config.compose_files = original_files
+            config.compose_project_name = original_project
+
     def _run_compose_down(self, compose_path: Path) -> None:
         """Run compose down with temporary compose-file binding."""
-        original_files = self.docker.client_config.compose_files
-        try:
-            self.docker.client_config.compose_files = [str(compose_path)]
+        with self._compose_binding(compose_path):
             self.docker.compose.down(volumes=True, remove_orphans=True)
-        finally:
-            self.docker.client_config.compose_files = original_files
 
     def _run_compose_up(
         self, compose_path: Path, service: str | None, *, force_recreate: bool
     ) -> p.Result[str]:
         """Run compose up with temporary compose-file binding."""
-        original_files = self.docker.client_config.compose_files
-        try:
-            self.docker.client_config.compose_files = [str(compose_path)]
+        with self._compose_binding(compose_path):
             if force_recreate:
                 down_result = self._compose_down_current_file()
                 if down_result.failure:
                     return down_result
             services = [service] if service else []
             self.docker.compose.up(services=services, detach=True, remove_orphans=True)
-        finally:
-            self.docker.client_config.compose_files = original_files
         return r[str].ok("Compose up successful")
 
     def _compose_down_current_file(self) -> p.Result[str]:

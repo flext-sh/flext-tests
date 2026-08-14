@@ -29,10 +29,14 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 
 def pytest_configure(config: pytest.Config) -> None:
     """Register fixture plugins after startup instrumentation is active."""
-    from flext_tests._fixtures import settings
+    from flext_tests._fixtures import connectivity, settings
 
     if settings not in config.pluginmanager.get_plugins():
         config.pluginmanager.register(settings, settings.__name__)
+    # Connectivity-bound tests skip - never fail - when their external service
+    # is unreachable (AGENTS.md external/docker skip rule).
+    if connectivity not in config.pluginmanager.get_plugins():
+        config.pluginmanager.register(connectivity, connectivity.__name__)
     if find_spec("pytest_markdown_docs") is None:
         from flext_tests._fixtures import markdown_validation
 
