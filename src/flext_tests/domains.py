@@ -186,11 +186,9 @@ class FlextTestsDomains:
         ]
 
     @staticmethod
-    def create_result_ok(
-        value: t.Tests.TestobjectSerializable,
-    ) -> p.Result[t.Tests.TestobjectSerializable]:
+    def create_result_ok[ValueT](value: ValueT) -> p.Result[ValueT]:
         """Create a generic successful result for test flows."""
-        return r[t.Tests.TestobjectSerializable].ok(value)
+        return r[ValueT].ok(value)
 
     @staticmethod
     def create_result_failure(
