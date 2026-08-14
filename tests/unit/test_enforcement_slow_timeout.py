@@ -96,6 +96,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
 
         self._run_pytest(pytester).assert_outcomes(passed=1)
 
+    @pytest.mark.slow
     @pytest.mark.parametrize("invalid_timeout", ["0", "nan", "not-a-number"])
     def test_invalid_slow_budget_fails_closed(
         self, pytester: pytest.Pytester, invalid_timeout: str
@@ -111,6 +112,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
             "*FLEXT slow timeout policy:*must be a positive finite number*"
         ])
 
+    @pytest.mark.slow
     def test_explicit_timeout_marker_fails_closed(
         self, pytester: pytest.Pytester
     ) -> None:
@@ -132,6 +134,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
             "*FLEXT slow timeout policy:*explicit pytest.mark.timeout is forbidden*"
         ])
 
+    @pytest.mark.slow
     def test_configured_policy_requires_pytest_timeout(
         self, pytester: pytest.Pytester
     ) -> None:
