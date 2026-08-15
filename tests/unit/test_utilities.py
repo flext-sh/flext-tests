@@ -27,6 +27,19 @@ if TYPE_CHECKING:
 class TestsFlextTestsUtilities:
     """Behavioral contract for u.Tests result/data/make helpers."""
 
+    def test_file_lock_preserves_shared_inode_between_holders(
+        self, tmp_path: Path
+    ) -> None:
+        """Sequential holders coordinate through one persistent lock inode."""
+        lock_path = tmp_path / "shared.lock"
+
+        with u.Tests.FileLock(lock_path):
+            first_inode = lock_path.stat().st_ino
+        with u.Tests.FileLock(lock_path):
+            second_inode = lock_path.stat().st_ino
+
+        tm.that(second_inode, eq=first_inode)
+
     # ------------------------------------------------------------------
     # assert_success / assert_failure — return values on the happy path
     # ------------------------------------------------------------------

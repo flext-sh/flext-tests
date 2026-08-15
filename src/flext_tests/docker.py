@@ -297,8 +297,18 @@ class FlextTestsDocker(s):
                 down_result = self._compose_down_current_file()
                 if down_result.failure:
                     return down_result
-            services = [service] if service else []
-            self.docker.compose.up(services=services, detach=True, remove_orphans=True)
+            # python-on-whales treats an EMPTY service list as a no-op and
+            # returns without running compose at all; only None means "every
+            # service in the file". Passing [] here silently started nothing.
+            services = [service] if service else None
+            # `wait` blocks until every started service reports healthy (or
+            # running, when it declares no healthcheck). Without it compose
+            # returns as soon as the containers are created, so a cold boot
+            # hands back a stack whose database is still initializing and every
+            # readiness probe races first-run setup.
+            self.docker.compose.up(
+                services=services, detach=True, remove_orphans=True, wait=True
+            )
         return r[str].ok("Compose up successful")
 
     def _compose_down_current_file(self) -> p.Result[str]:

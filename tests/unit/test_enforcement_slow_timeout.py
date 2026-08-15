@@ -52,6 +52,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
             else:
                 os.environ[variable] = previous
 
+    @pytest.mark.slow
     def test_configured_budget_applies_only_to_explicit_slow_items(
         self, pytester: pytest.Pytester
     ) -> None:
@@ -78,6 +79,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
 
         self._run_pytest(pytester).assert_outcomes(passed=2)
 
+    @pytest.mark.slow
     def test_absent_slow_budget_keeps_the_stricter_global_policy(
         self, pytester: pytest.Pytester
     ) -> None:

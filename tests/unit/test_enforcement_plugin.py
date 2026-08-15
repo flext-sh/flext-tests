@@ -188,6 +188,7 @@ class TestsFlextTestsEnforcementPlugin:
         (pytester.path / "flext-tests").mkdir()
         cls._write_violation_module(pytester)
 
+    @pytest.mark.slow
     def test_dispatcher_records_warning_and_prints_summary(
         self, pytester: pytest.Pytester
     ) -> None:
@@ -202,6 +203,7 @@ class TestsFlextTestsEnforcementPlugin:
             "runtime warnings captured: 1",
         ])
 
+    @pytest.mark.slow
     def test_strict_mode_promotes_warning_to_failure(
         self, pytester: pytest.Pytester
     ) -> None:
@@ -216,6 +218,7 @@ class TestsFlextTestsEnforcementPlugin:
             "runtime warnings captured: 0",
         ])
 
+    @pytest.mark.slow
     def test_dispatcher_inactive_outside_workspace(
         self, pytester: pytest.Pytester
     ) -> None:
@@ -227,6 +230,7 @@ class TestsFlextTestsEnforcementPlugin:
         result.stdout.no_fnmatch_line("*flext-enforce*")
         result.stdout.no_fnmatch_line("runtime warnings captured:*")
 
+    @pytest.mark.slow
     def test_infra_report_boundary_runs_in_subprocess(
         self, pytester: pytest.Pytester
     ) -> None:

@@ -27,7 +27,7 @@ class FlextTestsTestContextUtilitiesMixin:
         def __enter__(self) -> None:
             """Acquire exclusive file lock."""
             self.lock_file.parent.mkdir(parents=True, exist_ok=True)
-            self._file_obj = self.lock_file.open("w")
+            self._file_obj = self.lock_file.open("a")
             self._fd = self._file_obj.fileno()
             fcntl.flock(self._fd, fcntl.LOCK_EX)
 
@@ -38,9 +38,8 @@ class FlextTestsTestContextUtilitiesMixin:
             _exc_val: BaseException | None,
             _exc_tb: types.TracebackType | None,
         ) -> None:
-            """Release file lock and clean up the lock file."""
+            """Release the lock while preserving its shared inode."""
             if self._fd is not None:
                 fcntl.flock(self._fd, fcntl.LOCK_UN)
             if self._file_obj is not None:
                 self._file_obj.close()
-            self.lock_file.unlink(missing_ok=True)
