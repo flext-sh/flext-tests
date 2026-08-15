@@ -14,9 +14,16 @@ if TYPE_CHECKING:
 
     from flext_tests import p
 
+SLOW_TIMEOUT_INI_OPTION = "flext_slow_timeout_seconds"
+
 
 def pytest_addoption(parser: pytest.Parser) -> None:
     """Register the enforcement dispatcher's stable command-line contract."""
+    parser.addini(
+        SLOW_TIMEOUT_INI_OPTION,
+        "Config-owned timeout in seconds for items explicitly marked slow.",
+        default="",
+    )
     group = parser.getgroup("flext-enforce", "FLEXT cross-layer enforcement catalog")
     group.addoption(
         "--flext-enforce",
@@ -106,6 +113,7 @@ def pytest_terminal_summary(
 
 
 __all__: list[str] = [
+    "SLOW_TIMEOUT_INI_OPTION",
     "pytest_addoption",
     "pytest_collection_modifyitems",
     "pytest_configure",

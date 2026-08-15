@@ -30,12 +30,9 @@ if TYPE_CHECKING:
 class TestsFlextTestsEnforcementPlugin:
     """Public contract of the enforcement dispatcher facade."""
 
-    # Several tests here spawn a nested pytest via runpytest_subprocess(). That
-    # child pays the full pytest11 autoload cost (21 installed plugins), measured
-    # at 17-63s wall clock depending on cache warmth and host load, against ~3s of
-    # actual test work. The canonical per-case budget owned by the flext-infra
-    # codegen SSOT (90s) covers that; no class-level ceiling override is applied
-    # here, so a real hang is still caught by the canonical budget.
+    # Subprocess cases are reserved for contracts whose behavior is entry-point
+    # discovery itself; ordinary dispatcher behavior stays in-process or loads
+    # only its explicit owner plugins.
 
     def test_flext_pytest11_entrypoints_have_one_package_owner(self) -> None:
         """Only the two flext-tests plugins participate in pytest autoload."""
@@ -191,6 +188,7 @@ class TestsFlextTestsEnforcementPlugin:
         (pytester.path / "flext-tests").mkdir()
         cls._write_violation_module(pytester)
 
+    @pytest.mark.slow
     def test_dispatcher_records_warning_and_prints_summary(
         self, pytester: pytest.Pytester
     ) -> None:
@@ -205,6 +203,7 @@ class TestsFlextTestsEnforcementPlugin:
             "runtime warnings captured: 1",
         ])
 
+    @pytest.mark.slow
     def test_strict_mode_promotes_warning_to_failure(
         self, pytester: pytest.Pytester
     ) -> None:
@@ -219,6 +218,7 @@ class TestsFlextTestsEnforcementPlugin:
             "runtime warnings captured: 0",
         ])
 
+    @pytest.mark.slow
     def test_dispatcher_inactive_outside_workspace(
         self, pytester: pytest.Pytester
     ) -> None:
@@ -230,6 +230,7 @@ class TestsFlextTestsEnforcementPlugin:
         result.stdout.no_fnmatch_line("*flext-enforce*")
         result.stdout.no_fnmatch_line("runtime warnings captured:*")
 
+    @pytest.mark.slow
     def test_infra_report_boundary_runs_in_subprocess(
         self, pytester: pytest.Pytester
     ) -> None:
