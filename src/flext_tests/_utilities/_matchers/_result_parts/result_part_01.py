@@ -32,7 +32,7 @@ class FlextTestsMatchersResultMixin:
 
             @classmethod
             def fail[TResult](
-                cls, result: p.Result[TResult], **kwargs: t.Tests.MatcherKwargValue
+                cls, result: p.ResultView[TResult], **kwargs: t.Tests.MatcherKwargValue
             ) -> str:
                 """Assert that a result failed and validate its error payload."""
                 try:
@@ -83,7 +83,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def _fail_code[TResult](
-                result: p.Result[TResult], params: m.Tests.FailParams
+                result: p.ResultView[TResult], params: m.Tests.FailParams
             ) -> None:
                 """Validate error code constraints."""
                 if params.code is not None and result.error_code != params.code:
@@ -112,7 +112,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def _fail_data[TResult](
-                result: p.Result[TResult], params: m.Tests.FailParams
+                result: p.ResultView[TResult], params: m.Tests.FailParams
             ) -> None:
                 """Validate structured error data constraints."""
                 if params.data is None:

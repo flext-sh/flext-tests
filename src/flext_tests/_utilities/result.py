@@ -13,7 +13,7 @@ class FlextTestsResultUtilitiesMixin:
 
     @staticmethod
     def assert_failure[TResult](
-        result: p.Result[TResult], expected_error: str | None = None
+        result: p.ResultView[TResult], expected_error: str | None = None
     ) -> str:
         """Assert result is failure and return error message."""
         if result.success:
@@ -30,7 +30,7 @@ class FlextTestsResultUtilitiesMixin:
 
     @staticmethod
     def assert_success[TResult](
-        result: p.Result[TResult],
+        result: p.ResultView[TResult],
         error_msg: str | None = None,
         *,
         expected_value: TResult | EllipsisType = ...,

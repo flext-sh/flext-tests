@@ -696,9 +696,7 @@ class FlextTestsMatchersThatMixin:
                 return value
 
             @classmethod
-            def that(
-                cls, value: p.AttributeProbe, **kwargs: t.Tests.MatcherKwargValue
-            ) -> None:
+            def that(cls, value: object, **kwargs: t.Tests.MatcherKwargValue) -> None:
                 """Assert a value against universal matcher constraints."""
                 params, raw_eq, raw_ne, raw_has, raw_contains = cls._that_params(kwargs)
                 if "eq" in kwargs and kwargs["eq"] is None and params.none is None:
@@ -788,42 +786,19 @@ class FlextTestsMatchersThatMixin:
                     )
 
     @staticmethod
-    def _rule_kwargs(
-        rule: t.Tests.MatchRuleSpec,
-    ) -> dict[str, t.Tests.MatcherKwargValue]:
-        if isinstance(rule, Mapping):
-            raw_mapping = dict(rule)
-            matcher_rule_keys = frozenset(
-                alias
-                for model in (m.Tests.ThatParams, m.Tests.OkParams, m.Tests.FailParams)
-                for field_name, field_info in model.model_fields.items()
-                for alias in (
-                    field_name,
-                    *(
-                        candidate
-                        for candidate in getattr(
-                            field_info.validation_alias, "choices", ()
-                        )
-                        if isinstance(candidate, str)
-                    ),
-                )
-            )
-            if raw_mapping and set(raw_mapping).issubset(matcher_rule_keys):
-                return dict(raw_mapping)
-            return {"eq": FlextTestsPayloadUtilities.to_payload(rule)}
-        if isinstance(rule, type) or (
-            isinstance(rule, tuple) and all(isinstance(item, type) for item in rule)
-        ):
-            return {"is_": rule}
-        if callable(rule):
-            return {"where": rule}
-        return {"eq": rule}
+    def _rule_kwargs(rule: object) -> dict[str, t.Tests.MatcherKwargValue]:
+        parsed = m.Tests.MatchRule.parse(rule)
+        return {
+            key: getattr(parsed, key)
+            for key in type(parsed).model_fields
+            if key in parsed.model_fields_set or getattr(parsed, key) is not None
+        }
 
     @classmethod
     def _apply_rule(
         cls,
         subject: t.Tests.TestobjectSerializable | m.BaseModel | p.AttributeProbe,
-        rule: t.Tests.MatchRuleSpec,
+        rule: m.Tests.MatchRule,
         *,
         inherited_msg: str | None = None,
     ) -> None:
@@ -866,7 +841,7 @@ class FlextTestsMatchersThatMixin:
         subject: t.Tests.TestobjectSerializable
         | m.BaseModel
         | t.MappingKV[str, t.Tests.TestobjectSerializable],
-        rules: t.Tests.PathMatchSpec,
+        rules: Mapping[str, m.Tests.MatchRule],
         *,
         inherited_msg: str | None = None,
     ) -> None:
@@ -887,7 +862,7 @@ class FlextTestsMatchersThatMixin:
         cls,
         subject: t.Tests.TestobjectSerializable
         | t.SequenceOf[t.Tests.TestobjectSerializable],
-        rules: t.Tests.ItemMatchSpec,
+        rules: Sequence[m.Tests.MatchRule] | Mapping[str | int, m.Tests.MatchRule],
         *,
         inherited_msg: str | None = None,
     ) -> None:
@@ -903,7 +878,7 @@ class FlextTestsMatchersThatMixin:
                     )
                 )
         match rules:
-            case Sequence() if not isinstance(rules, t.STR_BINARY_TYPES):
+            case Sequence():
                 for index, rule in enumerate(rules):
                     cls._apply_rule(
                         sequence_value[index], rule, inherited_msg=inherited_msg
@@ -951,7 +926,7 @@ class FlextTestsMatchersThatMixin:
     def apply_attribute_rules(
         cls,
         subject: p.AttributeProbe,
-        rules: t.Tests.AttributeMatchSpec,
+        rules: Mapping[str, m.Tests.MatchRule],
         *,
         inherited_msg: str | None = None,
     ) -> None:

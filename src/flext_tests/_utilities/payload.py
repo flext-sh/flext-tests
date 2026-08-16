@@ -95,12 +95,8 @@ class FlextTestsPayloadUtilities:
                 result = u.normalize_to_metadata({
                     key: to_n(item) for key, item in value.items()
                 })
-            case list() | tuple() | set() | frozenset():
+            case list() | tuple():
                 normalized_seq = [to_n(item) for item in value]
-                if isinstance(value, (set, frozenset)):
-                    normalized_seq = sorted(
-                        normalized_seq, key=FlextTestsPayloadUtilities._stable_sort_key
-                    )
                 result = u.normalize_to_metadata(normalized_seq)
             case _:
                 result = str(value)

@@ -23,7 +23,7 @@ class MatchersResultsMixin:
 
     def test_ok_preserves_generic_result_payload(self) -> None:
         """The no-matcher overload preserves the producer's payload type."""
-        result = core_r[str].ok("success")
+        result: core_p.Result[str] = core_r[str].ok("success")
         assert_type(result.value, str)
         assert_type(tm.ok(result), str)
         tm.that(tm.ok(result), eq="success")
