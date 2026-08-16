@@ -6,10 +6,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Set as AbstractSet
 from typing import TypeAliasType
 
-from flext_core import m, t
+from _pytest.python_api import ApproxBase
+from flext_core import m, p, t
 from flext_infra import t as it
 from flext_tests._typings.base import FlextTestsBaseTypesMixin as tb
 
@@ -25,6 +26,7 @@ class FlextTestsMatchersTypesMixin:
         | float
         | bool
         | TypeAliasType
+        | ApproxBase
     )
     """Expected-value target for ``Ok``/``Fail`` matcher ``eq`` / ``ne`` fields.
 
@@ -42,6 +44,17 @@ class FlextTestsMatchersTypesMixin:
     ]
     type MatchRuleValue = MatchRuleLeaf | MatchRuleKwargs
     type MatcherKwargValue = (
+        p.AttributeProbe
+        | ApproxBase
+        | TypeAliasType
+        | tuple[type, ...]
+        | it.Infra.RegexPattern
+        | Callable[..., p.AttributeProbe]
+        | AbstractSet[p.AttributeProbe]
+        | t.SequenceOf[p.AttributeProbe]
+        | t.MappingKV[int | str, p.AttributeProbe]
+    )
+    type MatcherRuntimeValue = (
         MatchRuleLeaf
         | m.BaseModel
         | set[tb.TestobjectSerializable]

@@ -142,7 +142,7 @@ class TestsFlextTestsDomains:
             if entry["handler_id"] == handler_id
         )
 
-        assert bool(spec.get("should_fail", False)) is should_fail
+        assert spec.get("should_fail", False) is should_fail
 
     # --- fixture path + loading ------------------------------------------
 

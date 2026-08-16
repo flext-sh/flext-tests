@@ -6,6 +6,7 @@ via MRO from ``flext_tests._utilities.matchers``.
 
 from __future__ import annotations
 
+from _pytest.python_api import ApproxBase
 from flext_infra import u
 from flext_tests import c, p, t
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
@@ -26,14 +27,22 @@ class FlextTestsMatchersTypeGuardsMixin:
     @staticmethod
     def prepare_eq_ne_payloads(
         actual_payload: t.Tests.TestobjectSerializable,
-        eq_value: t.Tests.MatcherKwargValue | t.Tests.TestobjectSerializable | None,
-        ne_value: t.Tests.MatcherKwargValue | t.Tests.TestobjectSerializable | None,
+        eq_value: p.AttributeProbe | None,
+        ne_value: p.AttributeProbe | None,
         *,
         msg: str | None,
         default_msg: str,
     ) -> tuple[
         t.Tests.TestobjectSerializable | None, t.Tests.TestobjectSerializable | None
     ]:
+        if isinstance(eq_value, ApproxBase):
+            if actual_payload != eq_value:
+                raise AssertionError(msg or default_msg)
+            eq_value = None
+        if isinstance(ne_value, ApproxBase):
+            if actual_payload == ne_value:
+                raise AssertionError(msg or default_msg)
+            ne_value = None
         eq_payload = (
             FlextTestsPayloadUtilities.to_payload(eq_value)
             if eq_value is not None
