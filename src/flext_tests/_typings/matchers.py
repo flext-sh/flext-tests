@@ -54,7 +54,6 @@ class FlextTestsMatchersTypesMixin:
     Centralized to satisfy AGENTS.md § Model governance rule against
     inline 3+-arm unions in Pydantic field annotations.
     """
-    type MatchRuleSpec = MatchRuleLeaf
     type DeepSpec = t.MappingKV[
         str, Callable[[tb.Testobject], bool] | tb.TestobjectSerializable
     ]

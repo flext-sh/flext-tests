@@ -5,6 +5,8 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import cast
 
+import pytest
+
 from flext_tests import r, tm
 from tests import c, t
 
@@ -28,6 +30,20 @@ class MatchersDataDrivenMixin:
             },
         )
 
+    def test_path_rule_preserves_explicit_none_constraint(self) -> None:
+        payload: t.JsonMapping = {"value": None}
+
+        tm.that(payload, paths={"value": {"eq": None}})
+        with pytest.raises(AssertionError):
+            tm.that({"value": "present"}, paths={"value": {"eq": None}})
+
+    def test_path_rule_accepts_excludes_alias(self) -> None:
+        payload: t.JsonMapping = {"value": "allowed"}
+
+        tm.that(payload, paths={"value": {"excludes": "blocked"}})
+        with pytest.raises(AssertionError):
+            tm.that({"value": "blocked"}, paths={"value": {"excludes": "blocked"}})
+
     def test_that_with_items_data_driven_rules(self) -> None:
         """Validate indexed, first/last and all-item rules declaratively."""
         rows: t.StrSequence = ["alpha", "beta", "gamma"]
@@ -40,6 +56,10 @@ class MatchersDataDrivenMixin:
                 "all": {"is_": str},
             },
         )
+
+    def test_item_rules_reject_string_rule_container(self) -> None:
+        with pytest.raises(ValueError, match="Parameter validation failed"):
+            tm.that(["alpha"], items="alpha")
 
     def test_that_with_attrs_match_data_driven_rules(self) -> None:
         """Validate nested attributes using one declarative attrs_match spec."""

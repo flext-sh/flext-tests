@@ -789,9 +789,9 @@ class FlextTestsMatchersThatMixin:
     def _rule_kwargs(rule: object) -> dict[str, t.Tests.MatcherKwargValue]:
         parsed = m.Tests.MatchRule.parse(rule)
         return {
-            key: value
+            key: getattr(parsed, key)
             for key in type(parsed).model_fields
-            if (value := getattr(parsed, key)) is not None
+            if key in parsed.model_fields_set or getattr(parsed, key) is not None
         }
 
     @classmethod

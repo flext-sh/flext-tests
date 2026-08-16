@@ -48,7 +48,10 @@ class FlextTestsMatchersModelsMixin:
         lacks: Annotated[
             t.Tests.ExclusionSpec | None,
             m.SkipValidation,
-            u.Field(description="Forbidden contained value."),
+            u.Field(
+                validation_alias=t.AliasChoices("lacks", "excludes"),
+                description="Forbidden contained value.",
+            ),
         ] = None
         none: Annotated[bool | None, u.Field(description="Expected null state.")] = None
         empty: Annotated[bool | None, u.Field(description="Expected empty state.")] = (
