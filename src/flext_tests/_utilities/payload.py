@@ -77,19 +77,19 @@ class FlextTestsPayloadUtilities:
         return result
 
     @staticmethod
-    def to_normalized_value(value: t.Tests.TestobjectSerializable) -> t.JsonValue:
+    def to_normalized_value(value: t.Tests.NormalizationInput) -> t.JsonValue:
         """Flatten to pure Container via canonical runtime helper."""
         to_n = FlextTestsPayloadUtilities.to_normalized_value
         match value:
             case m.RootModel():
-                result = to_n(value.root)
+                result = to_n(FlextTestsPayloadUtilities.to_payload(value.root))
             case m.BaseModel():
                 result = str(value)
             case bytes():
                 result = value.decode(errors="ignore")
             case type() | tzinfo():
                 result = str(value)
-            case datetime() | Path() | None | str() | int() | float() | bool():
+            case bool() | datetime() | Path() | None | str() | int() | float():
                 result = u.normalize_to_metadata(value)
             case Mapping():
                 result = u.normalize_to_metadata({

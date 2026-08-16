@@ -19,6 +19,7 @@ from datetime import datetime, timezone, tzinfo
 from enum import Enum
 from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
+from typing import NotRequired, TypedDict
 
 from flext_cli import t
 from flext_core import m, p
@@ -46,6 +47,25 @@ class FlextTestsBaseTypesMixin:
         | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
     )
     type TestobjectSerializable = TestobjectAtom | TestobjectCollection | None
+    type TestobjectHashable = (
+        str | int | float | bool | bytes | datetime | tzinfo | Path | type | None
+    )
+    type NormalizationInput = (
+        TestobjectAtom
+        | m.RootModel[FlextTestsBaseTypesMixin.NormalizationInput]
+        | t.SequenceOf[FlextTestsBaseTypesMixin.NormalizationInput]
+        | t.MappingKV[str, FlextTestsBaseTypesMixin.NormalizationInput]
+        | set[FlextTestsBaseTypesMixin.TestobjectHashable]
+        | None
+    )
+
+    class HandlerCaseSpec(TypedDict):
+        handler_id: str
+        handler_type: str
+        description: str
+        expected_result: NotRequired[str]
+        should_fail: NotRequired[bool]
+        error_message: NotRequired[str]
 
     type TestResultValue = (
         FlextTestsBaseTypesMixin.TestobjectSerializable
@@ -68,8 +88,8 @@ class FlextTestsBaseTypesMixin:
         | FrameType
         | ModuleType
         | GenericAlias
-        | set[FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | AbstractSet[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | set[FlextTestsBaseTypesMixin.TestobjectHashable]
+        | AbstractSet[FlextTestsBaseTypesMixin.TestobjectHashable]
         | ValuesView[FlextTestsBaseTypesMixin.TestobjectSerializable]
         | KeysView[str]
         | ItemsView[str, FlextTestsBaseTypesMixin.TestobjectSerializable]

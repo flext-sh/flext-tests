@@ -83,6 +83,22 @@ class MatchersValidationMixin:
         payload = {"service": "api", "enabled": True, "retries": 2}
         tm.that(payload, eq={"service": "api", "enabled": True, "retries": 2})
 
+    def test_public_matcher_boundary_accepts_supported_value_shapes(self) -> None:
+        values: tuple[t.JsonValue, ...] = (
+            "scalar",
+            {"service": "api"},
+            ["api", "worker"],
+            {"services": ["api", {"workers": [1, 2]}]},
+        )
+        for value in values:
+            tm.that(value, eq=value)
+            tm.that(tm.ok(r[t.JsonValue].ok(value), eq=value), eq=value)
+
+    def test_public_matcher_boundary_accepts_approximation(self) -> None:
+        expected = pytest.approx(1.5)
+        tm.that(1.5, eq=expected)
+        tm.that(tm.ok(r[float].ok(1.5), eq=expected), eq=expected)
+
     def test_that_with_ne_sequence_parameter_fails(self) -> None:
         """Test tm.that() with structural sequence inequality failure."""
         with pytest.raises(AssertionError, match="did not satisfy constraints"):

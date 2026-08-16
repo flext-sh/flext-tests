@@ -20,7 +20,7 @@ class FlextTestsHandlerHelpersUtilitiesMixin:
     ) -> m.Handler:
         """Create a handler configuration model using canonical model defaults."""
         resolved_handler_type = handler_type or c.HandlerType.COMMAND
-        return m.Handler.model_validate({
+        handler: m.Handler = m.Handler.model_validate({
             "handler_id": handler_id,
             "handler_name": handler_name,
             "handler_type": resolved_handler_type,
@@ -37,3 +37,4 @@ class FlextTestsHandlerHelpersUtilitiesMixin:
             ),
             **({"metadata": metadata} if metadata is not None else {}),
         })
+        return handler

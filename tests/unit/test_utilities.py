@@ -163,7 +163,9 @@ class TestsFlextTestsUtilities:
 
     def test_create_result_from_value_fails_on_none_without_default(self) -> None:
         """None without a default yields a failure carrying the given message."""
-        result = u.Tests.create_result_from_value(None, error_on_none="was none")
+        result: p.Result[str] = u.Tests.create_result_from_value(
+            None, error_on_none="was none"
+        )
         error = u.Tests.assert_failure(result)
         tm.that(error, has="was none")
 
