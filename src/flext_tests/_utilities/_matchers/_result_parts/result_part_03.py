@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import cast, overload
+from typing import overload
 
 from flext_tests import c, m, t
 from flext_tests._utilities._matchers._assertions import (
@@ -46,6 +46,8 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
                 result: core_p.ResultView[TResult],
                 **kwargs: t.Tests.MatcherKwargValue,
             ) -> TResult | t.Tests.TestobjectSerializable:
+                if not kwargs:
+                    return FlextTestsResultUtilitiesMixin.assert_success(result)
                 try:
                     params = m.Tests.OkParams.model_validate(kwargs)
                 except c.EXC_BASIC_TYPE as exc:
@@ -75,8 +77,6 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
                         params.msg
                         or "Value is None but validation passed - this should not happen"
                     )
-                if cls._ok_preserves_result_identity(params):
-                    return cast("TResult", result_value)
                 return result_payload
 
             @staticmethod

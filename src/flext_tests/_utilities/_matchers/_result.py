@@ -328,6 +328,8 @@ class FlextTestsMatchersResultMixin:
                 result: core_p.ResultView[TResult], **kwargs: t.Tests.MatcherKwargValue
             ) -> TResult | t.Tests.TestobjectSerializable:
                 # mro-j47u: matchers observe the protocol and preserve source identity.
+                if not kwargs:
+                    return FlextTestsResultUtilitiesMixin.assert_success(result)
                 try:
                     params = m.Tests.OkParams.model_validate(kwargs)
                 except c.EXC_BASIC_TYPE as exc:
