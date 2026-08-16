@@ -81,26 +81,20 @@ class FlextTestsPayloadUtilities:
         """Flatten to pure Container via canonical runtime helper."""
         to_n = FlextTestsPayloadUtilities.to_normalized_value
         match value:
-            case m.RootModel():
-                result = to_n(value.root)
             case m.BaseModel():
                 result = str(value)
             case bytes():
                 result = value.decode(errors="ignore")
             case type() | tzinfo():
                 result = str(value)
-            case datetime() | Path() | None | str() | int() | float() | bool():
+            case None | str() | bool() | int() | float() | datetime() | Path():
                 result = u.normalize_to_metadata(value)
             case Mapping():
                 result = u.normalize_to_metadata({
                     key: to_n(item) for key, item in value.items()
                 })
-            case list() | tuple() | set() | frozenset():
+            case list() | tuple():
                 normalized_seq = [to_n(item) for item in value]
-                if isinstance(value, (set, frozenset)):
-                    normalized_seq = sorted(
-                        normalized_seq, key=FlextTestsPayloadUtilities._stable_sort_key
-                    )
                 result = u.normalize_to_metadata(normalized_seq)
             case _:
                 result = str(value)

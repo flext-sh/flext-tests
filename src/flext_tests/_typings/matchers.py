@@ -33,25 +33,20 @@ class FlextTestsMatchersTypesMixin:
     ``union_mode`` on nullable schemas, so the alias stays non-nullable.
     """
 
-    type MatchRuleLeaf = tb.Testobject | type | tuple[type, ...] | TypeAliasType
+    type MatchRuleLeaf = (
+        tb.TestobjectSerializable
+        | m.BaseModel
+        | type
+        | tuple[type, ...]
+        | TypeAliasType
+        | Callable[..., tb.Testobject]
+    )
     type MatchRuleKwargs = t.MappingKV[
         str,
         Callable[..., tb.Testobject]
         | tb.TestobjectSerializable
         | it.Infra.RegexPattern,
     ]
-    type MatchRuleValue = MatchRuleLeaf | MatchRuleKwargs
-    type MatcherKwargValue = (
-        MatchRuleLeaf
-        | m.BaseModel
-        | set[tb.TestobjectSerializable]
-        | it.Infra.RegexPattern
-        | Callable[..., tb.Testobject]
-        | MatchRuleKwargs
-        | t.MappingKV[int, MatchRuleValue]
-        | t.MappingKV[str, MatchRuleValue]
-        | t.MappingKV[FlextTestsMatchersTypesMixin.ItemSelector, MatchRuleValue]
-    )
     type LengthSpec = int | tuple[int, int]
     type ComparableScalar = float | int | str
     """Comparable scalar arms for matcher ``gt``/``gte``/``lt``/``lte`` fields.
@@ -59,27 +54,17 @@ class FlextTestsMatchersTypesMixin:
     Centralized to satisfy AGENTS.md § Model governance rule against
     inline 3+-arm unions in Pydantic field annotations.
     """
-    type MatchRuleSpec = (
-        tb.Testobject
-        | type
-        | tuple[type, ...]
-        | t.MappingKV[str, FlextTestsMatchersTypesMixin.MatcherKwargValue]
-    )
+    type MatchRuleSpec = MatchRuleLeaf
     type DeepSpec = t.MappingKV[
         str, Callable[[tb.Testobject], bool] | tb.TestobjectSerializable
     ]
-    type PathMatchSpec = t.MappingKV[str, FlextTestsMatchersTypesMixin.MatchRuleSpec]
+    type PathMatchSpec = t.MappingKV[str, m.BaseModel]
     type ItemSelector = int | str
     type ItemMatchSpec = (
-        t.SequenceOf[FlextTestsMatchersTypesMixin.MatchRuleSpec]
-        | t.MappingKV[
-            FlextTestsMatchersTypesMixin.ItemSelector,
-            FlextTestsMatchersTypesMixin.MatchRuleSpec,
-        ]
+        t.SequenceOf[m.BaseModel]
+        | t.MappingKV[FlextTestsMatchersTypesMixin.ItemSelector, m.BaseModel]
     )
-    type AttributeMatchSpec = t.MappingKV[
-        str, FlextTestsMatchersTypesMixin.MatchRuleSpec
-    ]
+    type AttributeMatchSpec = t.MappingKV[str, m.BaseModel]
     type PathSpec = str | t.StrSequence
     type PredicateSpec = Callable[[tb.Testobject], bool]
     type ContainmentSpec = tb.Testobject | t.SequenceOf[tb.TestobjectSerializable]
@@ -100,3 +85,24 @@ class FlextTestsMatchersTypesMixin:
     type ErrorDataSpec = m.ConfigMap
     type CleanupSpec = t.SequenceOf[Callable[[], None]]
     type EnvironmentSpec = t.StrMapping
+    type MatcherKwargValue = (
+        MatcherEqTarget
+        | MatchRuleLeaf
+        | MatchRuleKwargs
+        | LengthSpec
+        | ComparableScalar
+        | PathSpec
+        | PredicateSpec
+        | ContainmentSpec
+        | ExclusionSpec
+        | SequencePredicate
+        | SortKey
+        | KeySpec
+        | KeyValueSpec
+        | AttributeSpec
+        | AttributeValueSpec
+        | ErrorCodeSpec
+        | ErrorDataSpec
+        | bool
+        | None
+    )

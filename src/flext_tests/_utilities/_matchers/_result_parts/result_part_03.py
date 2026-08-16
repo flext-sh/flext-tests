@@ -29,18 +29,22 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
             @classmethod
             @overload
             def ok[TResult: t.Tests.TestResultValue](
-                cls, result: core_p.Result[TResult]
+                cls, result: core_p.ResultView[TResult]
             ) -> TResult: ...
 
             @classmethod
             @overload
             def ok[TResult: t.Tests.TestResultValue](
-                cls, result: core_p.Result[TResult], **kwargs: t.Tests.MatcherKwargValue
+                cls,
+                result: core_p.ResultView[TResult],
+                **kwargs: t.Tests.MatcherKwargValue,
             ) -> TResult | t.Tests.TestobjectSerializable: ...
 
             @classmethod
             def ok[TResult: t.Tests.TestResultValue](
-                cls, result: core_p.Result[TResult], **kwargs: t.Tests.MatcherKwargValue
+                cls,
+                result: core_p.ResultView[TResult],
+                **kwargs: t.Tests.MatcherKwargValue,
             ) -> TResult | t.Tests.TestobjectSerializable:
                 try:
                     params = m.Tests.OkParams.model_validate(kwargs)
@@ -77,7 +81,7 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
 
             @staticmethod
             def _ok_payload[TResult: t.Tests.TestResultValue](
-                result: core_p.Result[TResult],
+                result: core_p.ResultView[TResult],
                 result_value: t.Tests.TestResultValue,
                 extracted_payload: t.Tests.TestobjectSerializable | None,
                 params: m.Tests.OkParams,
@@ -91,7 +95,7 @@ class FlextTestsMatchersResultMixin(FlextTestsMatchersResultMixinPart02):
             @classmethod
             def _ok_validate_structured[TResult: t.Tests.TestResultValue](
                 cls,
-                result: core_p.Result[TResult],
+                result: core_p.ResultView[TResult],
                 result_value: t.Tests.TestResultValue,
                 result_payload: t.Tests.TestobjectSerializable,
                 params: m.Tests.OkParams,

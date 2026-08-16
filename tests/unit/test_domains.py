@@ -110,16 +110,16 @@ class TestsFlextTestsDomains:
         """The shared handler specs cover the documented success/fail ids."""
         specs = td.default_handler_case_specs()
 
-        handler_ids = {spec["handler_id"] for spec in specs}
+        handler_ids = [str(spec["handler_id"]) for spec in specs]
         tm.that(
             handler_ids,
-            eq={
+            eq=[
                 "success_command",
                 "success_query",
                 "success_event",
                 "fail_command",
                 "fail_query",
-            },
+            ],
         )
 
     @pytest.mark.parametrize(

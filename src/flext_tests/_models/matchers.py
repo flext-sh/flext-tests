@@ -15,6 +15,116 @@ from flext_tests import p, t
 class FlextTestsMatchersModelsMixin:
     """Matcher model group (result, that, scope, and chain parameters)."""
 
+    class MatchRule(m.Value):
+        """One nominal matcher rule parsed from a scalar, type, predicate, or mapping."""
+
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
+            frozen=True, arbitrary_types_allowed=True, populate_by_name=True
+        )
+
+        eq: Annotated[
+            t.Tests.MatcherEqTarget | None,
+            m.SkipValidation,
+            u.Field(description="Expected equality value."),
+        ] = None
+        ne: Annotated[
+            t.Tests.MatcherEqTarget | None,
+            m.SkipValidation,
+            u.Field(description="Expected inequality value."),
+        ] = None
+        is_: Annotated[
+            type[object] | tuple[type[object], ...] | None,
+            m.SkipValidation,
+            u.Field(
+                validation_alias=t.AliasChoices("is_", "is"),
+                description="Expected runtime type.",
+            ),
+        ] = None
+        has: Annotated[
+            t.Tests.ContainmentSpec | None,
+            m.SkipValidation,
+            u.Field(description="Required contained value."),
+        ] = None
+        lacks: Annotated[
+            t.Tests.ExclusionSpec | None,
+            m.SkipValidation,
+            u.Field(description="Forbidden contained value."),
+        ] = None
+        none: Annotated[bool | None, u.Field(description="Expected null state.")] = None
+        empty: Annotated[bool | None, u.Field(description="Expected empty state.")] = (
+            None
+        )
+        gt: Annotated[
+            t.Tests.ComparableScalar | None,
+            u.Field(description="Exclusive lower bound."),
+        ] = None
+        gte: Annotated[
+            t.Tests.ComparableScalar | None,
+            u.Field(description="Inclusive lower bound."),
+        ] = None
+        lt: Annotated[
+            t.Tests.ComparableScalar | None,
+            u.Field(description="Exclusive upper bound."),
+        ] = None
+        lte: Annotated[
+            t.Tests.ComparableScalar | None,
+            u.Field(description="Inclusive upper bound."),
+        ] = None
+        starts: Annotated[
+            str | None, u.Field(description="Required string prefix.")
+        ] = None
+        ends: Annotated[str | None, u.Field(description="Required string suffix.")] = (
+            None
+        )
+        match: Annotated[
+            t.Infra.RegexPattern | None,
+            m.SkipValidation,
+            u.Field(description="Required regular expression."),
+        ] = None
+        len: Annotated[
+            t.Tests.LengthSpec | None, u.Field(description="Required length.")
+        ] = None
+        where: Annotated[
+            t.Tests.PredicateSpec | None,
+            m.SkipValidation,
+            u.Field(description="Predicate applied to the subject."),
+        ] = None
+        msg: Annotated[
+            str | None, u.Field(description="Inherited assertion message.")
+        ] = None
+
+        @classmethod
+        def parse(cls, value: object) -> FlextTestsMatchersModelsMixin.MatchRule:
+            """Parse one public matcher rule into its nominal representation."""
+            if isinstance(value, cls):
+                return value
+            if isinstance(value, Mapping):
+                rule_keys = frozenset({*cls.model_fields, "is", "excludes"})
+                if value and set(value).issubset(rule_keys):
+                    return cls.model_validate(value)
+                return cls(eq=value)
+            if isinstance(value, type) or (
+                isinstance(value, tuple)
+                and all(isinstance(item, type) for item in value)
+            ):
+                return cls(is_=value)
+            if callable(value):
+                return cls(where=value)
+            return cls(
+                eq=t.Tests.TESTOBJECT_SERIALIZABLE_ADAPTER.validate_python(value)
+            )
+
+        @classmethod
+        def parse_rule_fields(cls, value: object) -> object:
+            """Parse paths, items, and attribute rule collections before validation."""
+            if value is None:
+                return None
+            if isinstance(value, Mapping):
+                return {key: cls.parse(rule) for key, rule in value.items()}
+            if isinstance(value, Sequence) and not isinstance(value, str | bytes):
+                return [cls.parse(rule) for rule in value]
+            return value
+
     class OkParams(m.Value):
         """Matcher parameters for successful result assertions."""
 
@@ -79,18 +189,17 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Extract nested value via dot notation."),
         ] = None
         paths: Annotated[
-            t.Tests.PathMatchSpec | None,
-            m.SkipValidation,
+            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
             u.Field(description="Multiple path-based assertions."),
         ] = None
         items: Annotated[
-            t.Tests.ItemMatchSpec | None,
-            m.SkipValidation,
+            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
+            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
+            | None,
             u.Field(description="Sequence item assertions by selector."),
         ] = None
         attrs_match: Annotated[
-            t.Tests.AttributeMatchSpec | None,
-            m.SkipValidation,
+            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
             u.Field(description="Attribute assertions by attribute path."),
         ] = None
         where: Annotated[
@@ -98,6 +207,12 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Custom predicate function."),
         ] = None
         msg: Annotated[str | None, u.Field(description="Custom error message.")] = None
+
+        @u.field_validator("paths", "items", "attrs_match", mode="before")
+        @classmethod
+        def parse_rules(cls, value: object) -> object:
+            """Parse public rule collections into nominal rules."""
+            return FlextTestsMatchersModelsMixin.MatchRule.parse_rule_fields(value)
 
     class FailParams(m.Value):
         """Matcher parameters for failure result assertions."""
@@ -256,18 +371,17 @@ class FlextTestsMatchersModelsMixin:
             None
         )
         paths: Annotated[
-            t.Tests.PathMatchSpec | None,
-            m.SkipValidation,
+            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
             u.Field(description="Paths."),
         ] = None
         items: Annotated[
-            t.Tests.ItemMatchSpec | None,
-            m.SkipValidation,
+            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
+            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
+            | None,
             u.Field(description="Items."),
         ] = None
         attrs_match: Annotated[
-            t.Tests.AttributeMatchSpec | None,
-            m.SkipValidation,
+            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
             u.Field(description="Attr rules."),
         ] = None
         where: Annotated[
@@ -275,6 +389,12 @@ class FlextTestsMatchersModelsMixin:
             m.SkipValidation,
             u.Field(description="Predicate."),
         ] = None
+
+        @u.field_validator("paths", "items", "attrs_match", mode="before")
+        @classmethod
+        def parse_rules(cls, value: object) -> object:
+            """Parse public rule collections into nominal rules."""
+            return FlextTestsMatchersModelsMixin.MatchRule.parse_rule_fields(value)
 
         @u.model_validator(mode="after")
         def normalize_legacy_parameters(

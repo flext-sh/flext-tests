@@ -84,6 +84,12 @@ class FlextTestsBaseTypesMixin:
         | p.Result[FlextTestsBaseTypesMixin.TestResultValue]
     )
 
+    TESTOBJECT_SERIALIZABLE_ADAPTER: m.TypeAdapter[TestobjectSerializable] = (
+        m.TypeAdapter(
+            TestobjectSerializable, config=m.ConfigDict(arbitrary_types_allowed=True)
+        )
+    )
+
     TESTOBJECT_SEQUENCE_ADAPTER: m.TypeAdapter[
         t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
     ] = m.TypeAdapter(

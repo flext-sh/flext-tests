@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 import socket
 import time
-from collections.abc import Generator, MutableSet, Sequence
+from collections.abc import Generator, MutableSet
 from contextlib import contextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated, ClassVar, Self, override
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from docker.models.containers import Container
 
 
-class FlextTestsDocker(s):
+class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     """Manage Docker containers for FLEXT tests."""
 
     docker: ClassVar[WhalesDockerClient] = WhalesDockerClient(client_type="docker")
@@ -113,12 +113,7 @@ class FlextTestsDocker(s):
     @staticmethod
     def _extract_host_port(bindings: t.SequenceOf[t.StrMapping] | None) -> str:
         """Extract the first Docker HostPort value from normalized bindings."""
-        if not isinstance(bindings, Sequence) or isinstance(bindings, str | bytes):
-            return ""
-        if not bindings:
-            return ""
-        host_port = bindings[0].get("HostPort", "")
-        return host_port if isinstance(host_port, str) else ""
+        return bindings[0].get("HostPort", "") if bindings else ""
 
     @override
     def model_post_init(self, __context: t.JsonValue | None, /) -> None:

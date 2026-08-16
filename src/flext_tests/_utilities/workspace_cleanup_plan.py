@@ -18,41 +18,37 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
     """Build and apply exact ignored-residue plans with stale-drift protection."""
 
     @staticmethod
-    def _candidate_sort_key(candidate: p.Tests.WorkspaceCleanupCandidate) -> str:
+    def _candidate_sort_key(candidate: m.Tests.WorkspaceCleanupCandidate) -> str:
         """Return the deterministic path key for cleanup plan ordering."""
-        relative_path = candidate.relative_path
-        if not isinstance(relative_path, Path):
-            msg = "cleanup candidate relative_path must be a Path"
-            raise TypeError(msg)
-        return relative_path.as_posix()
+        return candidate.relative_path.as_posix()
 
     @classmethod
     def _candidate(
         cls, root: Path, relative_path: Path
-    ) -> p.Result[p.Tests.WorkspaceCleanupCandidate]:
+    ) -> p.Result[m.Tests.WorkspaceCleanupCandidate]:
         """Validate and describe one existing cleanup candidate."""
         lexical_result = cls._lexical_path(root, relative_path)
         if lexical_result.failure:
-            return r[p.Tests.WorkspaceCleanupCandidate].fail(lexical_result.error)
+            return r[m.Tests.WorkspaceCleanupCandidate].fail(lexical_result.error)
         path = lexical_result.value
         protected_result = cls._reject_protected(root, relative_path)
         if protected_result.failure:
-            return r[p.Tests.WorkspaceCleanupCandidate].fail(protected_result.error)
+            return r[m.Tests.WorkspaceCleanupCandidate].fail(protected_result.error)
         ancestor_result = cls._reject_symlink_ancestor(root, relative_path)
         if ancestor_result.failure:
-            return r[p.Tests.WorkspaceCleanupCandidate].fail(ancestor_result.error)
+            return r[m.Tests.WorkspaceCleanupCandidate].fail(ancestor_result.error)
         node_result = cls._reject_unsafe_node(path, relative_path)
         if node_result.failure:
-            return r[p.Tests.WorkspaceCleanupCandidate].fail(node_result.error)
+            return r[m.Tests.WorkspaceCleanupCandidate].fail(node_result.error)
         ignored_result = cls._ignored(root, relative_path)
         if ignored_result.failure:
-            return r[p.Tests.WorkspaceCleanupCandidate].fail(ignored_result.error)
+            return r[m.Tests.WorkspaceCleanupCandidate].fail(ignored_result.error)
         clean_result = cls._untracked_and_clean(root, relative_path)
         if clean_result.failure:
-            return r[p.Tests.WorkspaceCleanupCandidate].fail(clean_result.error)
+            return r[m.Tests.WorkspaceCleanupCandidate].fail(clean_result.error)
         fingerprint_result = cls._path_fingerprint(path)
         if fingerprint_result.failure:
-            return r[p.Tests.WorkspaceCleanupCandidate].fail(fingerprint_result.error)
+            return r[m.Tests.WorkspaceCleanupCandidate].fail(fingerprint_result.error)
         kind: Literal["file", "directory", "symlink"] = (
             "symlink" if path.is_symlink() else "directory" if path.is_dir() else "file"
         )
@@ -62,7 +58,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
             kind=kind,
             fingerprint=fingerprint_result.value,
         )
-        return r[p.Tests.WorkspaceCleanupCandidate].ok(candidate)
+        return r[m.Tests.WorkspaceCleanupCandidate].ok(candidate)
 
     @staticmethod
     def _reject_nested(
@@ -95,7 +91,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
             return r[p.Tests.WorkspaceCleanupPlan].fail(root_result.error)
         root = root_result.value
         relative_paths: set[Path] = set()
-        candidates: list[p.Tests.WorkspaceCleanupCandidate] = []
+        candidates: list[m.Tests.WorkspaceCleanupCandidate] = []
         for declared in request.policy.residues:
             relative_result = cls._relative_path(declared)
             if relative_result.failure:
