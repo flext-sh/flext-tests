@@ -31,13 +31,14 @@ class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
             return []
 
         def emit(line_number: int, name: str) -> m.Tests.Violation:
-            return u.Tests.create_violation(
+            violation: m.Tests.Violation = u.Tests.create_violation(
                 file_path,
                 line_number,
                 "TYPE-004",
                 lines,
                 c.Tests.VALIDATOR_MSG_TYPE_LEGACY_FACTORY.format(name=name),
             )
+            return violation
 
         violations: MutableSequence[m.Tests.Violation] = []
         for line_number, line in enumerate(lines, start=1):

@@ -146,9 +146,7 @@ class FlextTestsDomains:
         }
 
     @staticmethod
-    def default_handler_case_specs() -> t.SequenceOf[
-        t.MappingKV[str, t.Tests.TestobjectSerializable]
-    ]:
+    def default_handler_case_specs() -> t.SequenceOf[t.Tests.HandlerCaseSpec]:
         """Create shared handler test-case specs for service-base tests."""
         return [
             {
