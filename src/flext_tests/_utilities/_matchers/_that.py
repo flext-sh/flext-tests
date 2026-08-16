@@ -340,13 +340,13 @@ class FlextTestsMatchersThatMixin:
                     return ()
                 try:
                     sequence_adapter = t.Tests.TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER
-                    sequence: t.SequenceOf[t.Tests.TestobjectSerializable] = (
+                    validated: t.SequenceOf[t.Tests.TestobjectSerializable] = (
                         sequence_adapter.validate_python(subject_payload)
                     )
                 except c.ValidationError:
                     return ()
                 else:
-                    return sequence
+                    return validated
 
             @staticmethod
             def _validate_sequence_edges(
@@ -524,7 +524,7 @@ class FlextTestsMatchersThatMixin:
                 if not isinstance(subject_payload, Mapping):
                     return dict[str, t.Tests.TestobjectSerializable]()
                 try:
-                    mapping: t.MappingKV[str, t.Tests.TestobjectSerializable] = (
+                    validated: t.MappingKV[str, t.Tests.TestobjectSerializable] = (
                         t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
                             subject_payload
                         )
@@ -532,7 +532,7 @@ class FlextTestsMatchersThatMixin:
                 except c.ValidationError:
                     return dict[str, t.Tests.TestobjectSerializable]()
                 else:
-                    return mapping
+                    return validated
 
             @classmethod
             def _validate_mapping(

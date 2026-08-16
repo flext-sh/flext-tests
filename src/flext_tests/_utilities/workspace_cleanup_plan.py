@@ -62,7 +62,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
 
     @staticmethod
     def _reject_nested(
-        candidates: tuple[p.Tests.WorkspaceCleanupCandidate, ...],
+        candidates: tuple[m.Tests.WorkspaceCleanupCandidate, ...],
     ) -> p.Result[bool]:
         """Reject overlapping parent and child cleanup targets."""
         for index, parent in enumerate(candidates):

@@ -110,7 +110,7 @@ class TestsFlextTestsDomains:
         """The shared handler specs cover the documented success/fail ids."""
         specs = td.default_handler_case_specs()
 
-        handler_ids = [str(spec["handler_id"]) for spec in specs]
+        handler_ids = [spec["handler_id"] for spec in specs]
         tm.that(
             handler_ids,
             eq=[
@@ -142,7 +142,7 @@ class TestsFlextTestsDomains:
             if entry["handler_id"] == handler_id
         )
 
-        assert bool(spec.get("should_fail", False)) is should_fail
+        assert spec.get("should_fail", False) is should_fail
 
     # --- fixture path + loading ------------------------------------------
 

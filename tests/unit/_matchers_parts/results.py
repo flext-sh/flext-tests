@@ -26,7 +26,7 @@ class MatchersResultsMixin:
         result = core_r[str].ok("success")
         assert_type(result.value, str)
         assert_type(tm.ok(result), str)
-        tm.that(tm.ok(result, eq="success"), eq="success")
+        tm.that(tm.ok(result), eq="success")
         tm.that(
             tm.ok(r[t.JsonMapping].ok({"meta": {"id": "x"}}), path="meta.id"), eq="x"
         )

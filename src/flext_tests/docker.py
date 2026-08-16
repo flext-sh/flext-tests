@@ -113,7 +113,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     @staticmethod
     def _extract_host_port(bindings: t.SequenceOf[t.StrMapping] | None) -> str:
         """Extract the first Docker HostPort value from normalized bindings."""
-        return bindings[0].get("HostPort", "") if bindings else ""
+        if not bindings:
+            return ""
+        return bindings[0].get("HostPort", "")
 
     @override
     def model_post_init(self, __context: t.JsonValue | None, /) -> None:
