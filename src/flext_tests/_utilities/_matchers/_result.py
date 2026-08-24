@@ -313,9 +313,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             @overload
-            def ok[TResult: t.Tests.TestResultValue](
-                result: core_p.ResultView[TResult],
-            ) -> TResult: ...
+            def ok[TResult](result: core_p.ResultView[TResult]) -> TResult: ...
 
             @staticmethod
             @overload
@@ -324,12 +322,15 @@ class FlextTestsMatchersResultMixin:
             ) -> TResult | t.Tests.TestobjectSerializable: ...
 
             @staticmethod
-            def ok[TResult: t.Tests.TestResultValue](
+            def ok[TResult](
                 result: core_p.ResultView[TResult], **kwargs: t.Tests.MatcherKwargValue
             ) -> TResult | t.Tests.TestobjectSerializable:
                 # mro-j47u: matchers observe the protocol and preserve source identity.
                 if not kwargs:
                     return FlextTestsResultUtilitiesMixin.assert_success(result)
+                structured_result = cast(
+                    "core_p.ResultView[t.Tests.TestResultValue]", result
+                )
                 try:
                     params = m.Tests.OkParams.model_validate(kwargs)
                 except c.EXC_BASIC_TYPE as exc:
@@ -337,7 +338,7 @@ class FlextTestsMatchersResultMixin:
                     raise ValueError(msg) from exc
                 result_value: t.Tests.TestResultValue = (
                     FlextTestsResultUtilitiesMixin.assert_success(
-                        result, error_msg=params.msg
+                        structured_result, error_msg=params.msg
                     )
                 )
                 result_value, extracted_payload = (
