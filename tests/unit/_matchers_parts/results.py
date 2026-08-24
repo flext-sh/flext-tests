@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import assert_type
 
 import pytest
+from pydantic import BaseModel
 
 from flext_core import p as core_p
 from flext_core import r as core_r
@@ -30,6 +31,20 @@ class MatchersResultsMixin:
         tm.that(
             tm.ok(r[t.JsonMapping].ok({"meta": {"id": "x"}}), path="meta.id"), eq="x"
         )
+
+    def test_ok_preserves_arbitrary_result_payload(self) -> None:
+        """The no-matcher overload accepts payloads outside the matcher union."""
+
+        class Payload(BaseModel):
+            value: str
+
+        payload = Payload(value="typed")
+        result = core_r[Payload].ok(payload)
+
+        resolved = tm.ok(result)
+
+        assert_type(resolved, Payload)
+        tm.that(resolved, eq=payload)
 
     def test_assert_result_success_fails(self) -> None:
         """Test tm.ok() with failed result."""
