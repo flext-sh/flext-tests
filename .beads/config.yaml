@@ -9,7 +9,7 @@
 # toolchain.beads.server (machine-wide shared Dolt server facts).
 # Owned ledger config: the workspace root owns this tracker; conform
 # initializes and verifies it against the pinned binary.
-issue-prefix: "mro"
+issue-prefix: "flext"
 
 # Dolt server connection (Gas Town town server on :3307).
 # The `flext` database lives there; a repository-local server is never used.
