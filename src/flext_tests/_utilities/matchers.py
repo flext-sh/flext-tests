@@ -27,25 +27,20 @@ from flext_tests._utilities._matchers._typeguards import (
 )
 
 
-class FlextTestsMatchersUtilities(
-    FlextTestsMatchersContainmentMixin,
-    FlextTestsMatchersImmutabilityMixin,
-    FlextTestsMatchersResultMixin,
-    FlextTestsMatchersScopeMixin,
-    FlextTestsMatchersThatMixin,
-    FlextTestsMatchersTypeGuardsMixin,
-    FlextTestsMatchersAssertionsMixin,
-):
+class FlextTestsMatchersUtilities:
     """Namespace for test matcher utilities used in flext-tests."""
 
     class Tests:
         """Container for test utility storages and aliases."""
 
         class Matchers(
-            FlextTestsMatchersResultMixin.Tests.Matchers,
+            FlextTestsMatchersContainmentMixin,
             FlextTestsMatchersImmutabilityMixin.Tests.Matchers,
+            FlextTestsMatchersResultMixin.Tests.Matchers,
             FlextTestsMatchersScopeMixin.Tests.Matchers,
             FlextTestsMatchersThatMixin.Tests.Matchers,
+            FlextTestsMatchersTypeGuardsMixin,
+            FlextTestsMatchersAssertionsMixin,
         ):
             """Test matchers with powerful generalist methods."""
 

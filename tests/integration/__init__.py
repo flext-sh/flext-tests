@@ -1,31 +1,67 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""Integration package."""
+"""Tests.integration package."""
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+from types import MappingProxyType
+
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
-_LAZY_IMPORTS = build_lazy_import_map({
-    ".test_docker_integration": ("TestsFlextTestsDockerIntegration",),
-    "flext_tests": (
-        "c",
-        "d",
-        "e",
-        "h",
-        "m",
-        "p",
-        "r",
-        "s",
-        "t",
-        "td",
-        "tf",
-        "tk",
-        "tm",
-        "tv",
-        "u",
-        "x",
-    ),
-})
+if TYPE_CHECKING:
+    from flext_tests import c, d, e, h, m, p, r, s, t, td, tf, tk, tm, tv, u, x
 
+    from .test_docker_integration import TestsFlextTestsDockerIntegration
+    from .test_kube_shared_container import TestsFlextTestsKubeSharedContainer
+__all__: tuple[str, ...] = (
+    "TestsFlextTestsDockerIntegration",
+    "TestsFlextTestsKubeSharedContainer",
+    "c",
+    "d",
+    "e",
+    "h",
+    "m",
+    "p",
+    "r",
+    "s",
+    "t",
+    "td",
+    "tf",
+    "tk",
+    "tm",
+    "tv",
+    "u",
+    "x",
+)
 
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, publish_all=False)
+_LAZY_IMPORTS = MappingProxyType(
+    build_lazy_import_map(
+        MappingProxyType({
+            ".test_docker_integration": ("TestsFlextTestsDockerIntegration",),
+            ".test_kube_shared_container": ("TestsFlextTestsKubeSharedContainer",),
+            "flext_tests": (
+                "c",
+                "d",
+                "e",
+                "h",
+                "m",
+                "p",
+                "r",
+                "s",
+                "t",
+                "td",
+                "tf",
+                "tk",
+                "tm",
+                "tv",
+                "u",
+                "x",
+            ),
+        }),
+        alias_groups=MappingProxyType({}),
+        sort_keys=False,
+    )
+)
+
+install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)
