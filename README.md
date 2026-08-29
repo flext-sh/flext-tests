@@ -37,7 +37,7 @@ validation for the FLEXT ecosystem
 Read
 [`/flext/AGENTS.md`](https://github.com/flext-sh/flext/blob/0.12.0-dev/AGENTS.md)
 §9 — Agent Execution Pre-requisites — for the canonical pre-change checklist
-(parent MRO chain, Scope bootstrap, skill loading, zero-debt baseline,
+(parent FLEXT chain, Scope bootstrap, skill loading, zero-debt baseline,
 slot registry verification).
 
 ## Operation Flow
@@ -51,12 +51,12 @@ slot registry verification).
 
 ## Integration Points
 
-- Parent MRO chain: read this project's `pyproject.toml` `dependencies` array
-  filtered by `flext-*`. The MRO cascade is encoded in the inheritance lists of
-  the facade classes listed under Module Map above.
+- Parent FLEXT chain: read this project's `pyproject.toml` `dependencies` array
+  filtered by `flext-*`. The FLEXT cascade is encoded in the inheritance lists
+  of the facade classes listed under Module Map above.
 - Public extensions exposed by this project: `FlextTestsCase`,
   `FlextTestsConfig`, `FlextTestsConstants`, `FlextTestsDocker`,
-  `FlextTestsDomains`, `FlextTestsFiles` (+8 more).
+  `FlextTestsDomains`, `FlextTestsFiles` (+10 more).
 - Library abstraction boundaries: see AGENTS.md §2.7.
 
 ## Quality Gates
@@ -65,7 +65,7 @@ Canonical `make` verbs (`check`, `test`, `fmt WHAT=apply APPLY=Y`, `val`,
 `docs`) — see
 [`/flext/AGENTS.md`](https://github.com/flext-sh/flext/blob/0.12.0-dev/AGENTS.md)
 `Build & Test` and `Required Python quality gates`; selector routing is owned
-universally by [`make-check`](~/.agents/skills/make-check/SKILL.md).
+universally by `config.AiHub.paths.agents_home`/`skills/make-check/SKILL.md`.
 
 ## Governance Pointer
 

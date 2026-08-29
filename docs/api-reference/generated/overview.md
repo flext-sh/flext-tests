@@ -18,14 +18,14 @@
 - Keywords: `builders`, `factories`, `flext`, `test-infrastructure`, `testing`
 - Main facades: `FlextTestsCase`, `FlextTestsConfig`, `FlextTestsConstants`,
   `FlextTestsDocker`, `FlextTestsDomains`, `FlextTestsFiles`,
-  `FlextTestsMatchersUtilities`, `FlextTestsModels` (+6 more)
+  `FlextTestsFixturesDSLMixin`, `FlextTestsKube` (+8 more)
 - Alias exports: `c`, `d`, `e`, `h`, `m`, `p`, `r`, `s`, `t`, `u`, `x`
-- Public symbol exports: `FlextTestsCase`, `FlextTestsConfig`,
-  `FlextTestsConstants`, `FlextTestsDocker`, `FlextTestsDomains`,
-  `FlextTestsFiles`, `FlextTestsMatchersUtilities`, `FlextTestsModels`,
-  `FlextTestsProtocols`, `FlextTestsServiceBase` (+12 more)
+- Public symbol exports: `SLOW_TIMEOUT_INI_OPTION`, `EnforcementCollector`,
+  `EnforcementItem`, `EnforcementViolationError`, `FlextTestsCase`,
+  `FlextTestsConfig`, `FlextTestsConstants`, `FlextTestsDocker`,
+  `FlextTestsDomains`, `FlextTestsFiles` (+22 more)
 - Exported module shortcuts: _none_
-- Generated module pages: `11`
+- Generated module pages: `14`
 
 ## Next Pages
 
