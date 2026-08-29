@@ -1,0 +1,4 @@
+version: 1
+workspace: flext-tests
+database: flext-tests
+issue_prefix: flext-tests
