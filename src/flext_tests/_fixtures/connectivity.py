@@ -50,13 +50,14 @@ def _unreachable_reason(marker: str) -> str | None:
 
         manager = FlextTestsDocker()
         client = manager.client
+        docker_reason: str | None
         if client is None:
-            reason = c.Tests.DOCKER_UNREACHABLE_SKIP_REASON
+            docker_reason = c.Tests.DOCKER_UNREACHABLE_SKIP_REASON
         else:
             client.close()
-            reason = None
-        _probe_cache[marker] = reason
-        return reason
+            docker_reason = None
+        _probe_cache[marker] = docker_reason
+        return docker_reason
     reason: str | None = None
     container = c.Tests.CONNECTIVITY_MARKER_CONTAINERS.get(marker)
     endpoint = None if container is None else _endpoint(container)

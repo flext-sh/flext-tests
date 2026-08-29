@@ -143,8 +143,6 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 ):
                     raise FileNotFoundError(adapter.socket_path)
                 _ = client.ping()
-                self.docker_client = client
-                self.client_error = None
             except (DockerException, OSError, TypeError, ValueError) as error:
                 if client is not None:
                     client.close()
@@ -152,6 +150,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                     "Failed to initialize Docker client", error=str(error)
                 )
                 self.client_error = str(error)
+            else:
+                self.docker_client = client
+                self.client_error = None
         return self.docker_client
 
     @property
