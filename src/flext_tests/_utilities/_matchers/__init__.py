@@ -10,7 +10,6 @@ from types import MappingProxyType
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from . import _result_parts as _result_parts
     from ._assertions import FlextTestsMatchersAssertionsMixin
     from ._containment import FlextTestsMatchersContainmentMixin
     from ._immutability import FlextTestsMatchersImmutabilityMixin
@@ -26,7 +25,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsMatchersScopeMixin",
     "FlextTestsMatchersThatMixin",
     "FlextTestsMatchersTypeGuardsMixin",
-    "_result_parts",
 )
 
 _LAZY_IMPORTS = MappingProxyType(
@@ -36,7 +34,6 @@ _LAZY_IMPORTS = MappingProxyType(
             "._containment": ("FlextTestsMatchersContainmentMixin",),
             "._immutability": ("FlextTestsMatchersImmutabilityMixin",),
             "._result": ("FlextTestsMatchersResultMixin",),
-            "._result_parts": ("_result_parts",),
             "._scope": ("FlextTestsMatchersScopeMixin",),
             "._that": ("FlextTestsMatchersThatMixin",),
             "._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
