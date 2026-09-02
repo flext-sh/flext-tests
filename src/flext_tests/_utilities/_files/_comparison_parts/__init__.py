@@ -10,12 +10,12 @@ from types import MappingProxyType
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from .comparison_part_01 import FlextTestsFilesComparisonMixin
+    from .comparison_part_02 import FlextTestsFilesComparisonMixin
 __all__: tuple[str, ...] = ("FlextTestsFilesComparisonMixin",)
 
 _LAZY_IMPORTS = MappingProxyType(
     build_lazy_import_map(
-        MappingProxyType({".comparison_part_01": ("FlextTestsFilesComparisonMixin",)}),
+        MappingProxyType({".comparison_part_02": ("FlextTestsFilesComparisonMixin",)}),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
     )
