@@ -766,7 +766,7 @@ dependencies = [
 
 [[package]]
 name = "flext-tests"
-version = "0.12.0rc0"
+version = "0.12.0"
 source = { editable = "." }
 dependencies = [
     { name = "docker" },
