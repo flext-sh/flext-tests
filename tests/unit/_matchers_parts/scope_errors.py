@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from typing import TYPE_CHECKING
 
 import pytest
@@ -41,6 +42,19 @@ class MatchersScopeErrorsMixin:
         """Test tm.scope() with context parameter."""
         with tm.scope(context={"user_id": 123}) as scope:
             tm.that(scope.context["user_id"], eq=123)
+
+    def test_scope_applies_removes_and_restores_real_environment(self) -> None:
+        """Environment scope restores both overridden and removed names."""
+        present_key = "FLEXT_TEST_SCOPE_PRESENT"
+        removed_key = "FLEXT_TEST_SCOPE_REMOVED"
+        with tm.scope(env={removed_key: "outer"}):
+            with tm.scope(
+                env={present_key: "inner"}, remove_env_keys=(removed_key,)
+            ):
+                tm.that(os.environ[present_key], eq="inner")
+                tm.that(removed_key in os.environ, eq=False)
+            tm.that(os.environ[removed_key], eq="outer")
+            tm.that(present_key in os.environ, eq=False)
 
     def test_ok_invalid_parameter_type(self) -> None:
         """Test tm.ok() with invalid parameter type raises ValueError."""

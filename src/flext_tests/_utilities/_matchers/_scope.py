@@ -43,6 +43,7 @@ class FlextTestsMatchersScopeMixin:
                         - context: Initial context values
                         - cleanup: Sequence of cleanup functions to call on exit
                         - env: Temporary environment variables (restored on exit)
+                        - remove_env_keys: Environment names removed inside the scope
                         - cwd: Temporary working directory (restored on exit)
 
                 Yields:
@@ -59,8 +60,10 @@ class FlextTestsMatchersScopeMixin:
                     raise ValueError(message) from exc
                 original_cwd: Path | None = None
                 env_context = (
-                    FlextTestsConfigHelpersUtilitiesMixin.env_vars_context(params.env)
-                    if params.env is not None
+                    FlextTestsConfigHelpersUtilitiesMixin.env_vars_context(
+                        params.env, params.remove_env_keys
+                    )
+                    if params.env is not None or params.remove_env_keys
                     else nullcontext()
                 )
                 try:

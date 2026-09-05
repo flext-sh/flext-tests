@@ -457,6 +457,10 @@ class FlextTestsMatchersModelsMixin:
             t.Tests.EnvironmentSpec | None,
             u.Field(description="Temporary environment variables."),
         ] = None
+        remove_env_keys: Annotated[
+            t.StrSequence,
+            u.Field(description="Environment variables absent inside the scope."),
+        ] = ()
         cwd: Annotated[
             Path | str | None, u.Field(description="Temporary working directory.")
         ] = None
