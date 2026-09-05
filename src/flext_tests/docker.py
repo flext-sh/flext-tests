@@ -172,7 +172,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             self.logger.info("Container marked clean", container=container_name)
             return r[bool].ok(value=True)
         except c.EXC_OS_TYPE as exc:
-            return r[bool].fail(f"Failed to mark clean: {exc}")
+            return r[bool].fail(f"Failed to mark clean: {exc}", exception=exc)
 
     def mark_container_dirty(self, container_name: str) -> p.Result[bool]:
         """Mark a container as dirty for recreation on next use."""
@@ -182,7 +182,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             self.logger.info("Container marked dirty", container=container_name)
             return r[bool].ok(value=True)
         except c.EXC_OS_TYPE as exc:
-            return r[bool].fail(f"Failed to mark dirty: {exc}")
+            return r[bool].fail(f"Failed to mark dirty: {exc}", exception=exc)
 
     def _load_dirty_state(self) -> None:
         """Load dirty container state from persistent storage."""
@@ -346,7 +346,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 f"Container {container_name} not found"
             )
         except c.EXC_BROAD_RUNTIME as exc:
-            return r[m.Tests.ContainerInfo].fail(str(exc))
+            return r[m.Tests.ContainerInfo].fail(str(exc), exception=exc)
         return r[m.Tests.ContainerInfo].ok(
             self._container_info_from_sdk(container_name, container)
         )
@@ -634,9 +634,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             target.host, ready_port, max_wait=target.startup_timeout
         )
         if ready_result.failure:
-            return r[m.Tests.ContainerInfo].fail(
-                ready_result.error or "Docker target readiness check failed"
-            )
+            return r[m.Tests.ContainerInfo].from_failure(ready_result)
         if not ready_result.value:
             return r[m.Tests.ContainerInfo].fail(
                 f"Container {target.container_name} did not become ready on {target.host}:{ready_port}"

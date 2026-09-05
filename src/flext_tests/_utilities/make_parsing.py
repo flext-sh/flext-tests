@@ -153,9 +153,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
                 parsed, path
             )
             if param_result.failure:
-                return r[t.SequenceOf[m.Tests.MakeParam]].fail(
-                    param_result.error or "param invalid"
-                )
+                return r[t.SequenceOf[m.Tests.MakeParam]].from_failure(param_result)
             params.append(param_result.value)
         return r[t.SequenceOf[m.Tests.MakeParam]].ok(tuple(params))
 
@@ -183,9 +181,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
                 )
             )
             if condition_result.failure:
-                return r[t.SequenceOf[m.Tests.MakeMutationCondition]].fail(
-                    condition_result.error or "mutation condition invalid"
-                )
+                return r[t.SequenceOf[m.Tests.MakeMutationCondition]].from_failure(condition_result)
             conditions.append(condition_result.value)
         return r[t.SequenceOf[m.Tests.MakeMutationCondition]].ok(tuple(conditions))
 
@@ -201,13 +197,9 @@ class FlextTestsMakeParsingUtilitiesMixin:
             data, "values", path
         )
         if name_result.failure:
-            return r[m.Tests.MakeMutationCondition].fail(
-                name_result.error or "condition name missing"
-            )
+            return r[m.Tests.MakeMutationCondition].from_failure(name_result)
         if values_result.failure:
-            return r[m.Tests.MakeMutationCondition].fail(
-                values_result.error or "condition values invalid"
-            )
+            return r[m.Tests.MakeMutationCondition].from_failure(values_result)
         if not values_result.value:
             return r[m.Tests.MakeMutationCondition].fail(
                 f"{path}: mutates_when.values cannot be empty"
@@ -230,9 +222,9 @@ class FlextTestsMakeParsingUtilitiesMixin:
             data, "help", path
         )
         if name_result.failure:
-            return r[m.Tests.MakeParam].fail(name_result.error or "param name missing")
+            return r[m.Tests.MakeParam].from_failure(name_result)
         if help_result.failure:
-            return r[m.Tests.MakeParam].fail(help_result.error or "param help missing")
+            return r[m.Tests.MakeParam].from_failure(help_result)
         required_raw = data.get("required", False)
         default_raw = data.get("default", "")
         if not isinstance(required_raw, bool):
@@ -245,7 +237,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
             data, "choices", path
         )
         if choices_result.failure:
-            return r[m.Tests.MakeParam].fail(choices_result.error or "choices invalid")
+            return r[m.Tests.MakeParam].from_failure(choices_result)
         return r[m.Tests.MakeParam].ok(
             m.Tests.MakeParam(
                 name=name_result.value,

@@ -99,7 +99,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             registry, requested_verb
         )
         if verb_result.failure:
-            return r[str].fail(verb_result.error or "verb unknown")
+            return r[str].from_failure(verb_result)
         verb = verb_result.value
         aliases = FlextTestsMakeRegistryUtilitiesMixin.make_registry_aliases_for(
             registry, verb
@@ -160,7 +160,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             registry, requested_verb, what
         )
         if command_result.failure:
-            return r[str].fail(command_result.error or "command unknown")
+            return r[str].from_failure(command_result)
         command = command_result.value
         lines = [
             f"make {requested_verb} WHAT={what}",

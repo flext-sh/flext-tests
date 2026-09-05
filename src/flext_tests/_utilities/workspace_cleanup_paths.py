@@ -41,7 +41,7 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
         try:
             root = request.workspace_root.resolve(strict=True)
         except OSError as exc:
-            return r[Path].fail(f"cleanup workspace root resolution failed: {exc}")
+            return r[Path].fail(f"cleanup workspace root resolution failed: {exc}", exception=exc)
         if not root.is_dir():
             return r[Path].fail(f"cleanup workspace root is not a directory: {root}")
         git_result = cls._git(root, ("rev-parse", "--show-toplevel"))
@@ -56,7 +56,7 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
         try:
             git_root = Path(raw_root).resolve(strict=True)
         except OSError as exc:
-            return r[Path].fail(f"git root resolution failed: {exc}")
+            return r[Path].fail(f"git root resolution failed: {exc}", exception=exc)
         if git_root != root:
             return r[Path].fail(
                 f"cleanup root must equal the Git worktree root: {root} != {git_root}"
