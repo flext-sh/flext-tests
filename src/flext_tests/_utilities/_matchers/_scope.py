@@ -6,6 +6,7 @@ Exposes ``Tests.Matchers.scope`` for isolated test execution scopes.
 from __future__ import annotations
 
 import os
+import sys
 import warnings
 from collections.abc import Generator
 from contextlib import contextmanager, nullcontext
@@ -44,6 +45,7 @@ class FlextTestsMatchersScopeMixin:
                         - cleanup: Sequence of cleanup functions to call on exit
                         - env: Temporary environment variables (restored on exit)
                         - remove_env_keys: Environment names removed inside the scope
+                        - python_paths: Import roots prepended inside the scope
                         - cwd: Temporary working directory (restored on exit)
 
                 Yields:
@@ -66,8 +68,10 @@ class FlextTestsMatchersScopeMixin:
                     if params.env is not None or params.remove_env_keys
                     else nullcontext()
                 )
+                original_python_path = tuple(sys.path)
                 try:
                     with env_context:
+                        sys.path[:0] = list(params.python_paths)
                         if params.cwd is not None:
                             original_cwd = Path.cwd()
                             cwd_path = (
@@ -95,6 +99,7 @@ class FlextTestsMatchersScopeMixin:
                             "context": context_map,
                         })
                 finally:
+                    sys.path[:] = original_python_path
                     if original_cwd is not None:
                         os.chdir(original_cwd)
                     if params.cleanup is not None:

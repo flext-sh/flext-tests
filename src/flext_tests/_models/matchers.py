@@ -461,6 +461,10 @@ class FlextTestsMatchersModelsMixin:
             t.StrSequence,
             u.Field(description="Environment variables absent inside the scope."),
         ] = ()
+        python_paths: Annotated[
+            t.StrSequence,
+            u.Field(description="Import roots prepended inside the scope."),
+        ] = ()
         cwd: Annotated[
             Path | str | None, u.Field(description="Temporary working directory.")
         ] = None
