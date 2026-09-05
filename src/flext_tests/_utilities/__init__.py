@@ -3,15 +3,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from types import MappingProxyType
+from typing import TYPE_CHECKING
 
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from . import _files as _files
-    from . import _matchers as _matchers
+    from . import _files as _files, _matchers as _matchers
     from ._files._assertions import FlextTestsFilesAssertionsMixin
     from ._files._batch import FlextTestsFilesBatchMixin
     from ._files._comparison import FlextTestsFilesComparisonMixin
