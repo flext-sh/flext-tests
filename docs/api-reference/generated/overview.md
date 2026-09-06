@@ -7,7 +7,7 @@
 <!-- AUTO-GENERATED — DO NOT EDIT MANUALLY -->
 
 - Package: `flext_tests`
-- Version: `0.12.0rc0`
+- Version: `0.12.0`
 - Description: FLEXT Test Infrastructure - Shared test utilities, builders,
   factories, and validation for the FLEXT ecosystem
 - Doc summary: Flext Tests package.

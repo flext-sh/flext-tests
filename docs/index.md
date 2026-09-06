@@ -10,7 +10,7 @@
 
 <!-- AUTO-GENERATED — DO NOT EDIT MANUALLY -->
 
-- Version: `0.12.0rc0`
+- Version: `0.12.0`
 - Project class: `test`
 - Package: `flext_tests`
 - Description: FLEXT Test Infrastructure - Shared test utilities, builders,
