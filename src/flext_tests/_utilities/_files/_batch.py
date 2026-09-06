@@ -49,7 +49,7 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
             })
         except c.EXC_BASIC_TYPE as exc:
             return r[m.Tests.BatchResult].fail(
-                f"Invalid parameters for batch operation: {exc}"
+                f"Invalid parameters for batch operation: {exc}", exception=exc
             )
         files_dict: MutableMapping[str, t.Tests.TestobjectSerializable] = dict(
             params.files

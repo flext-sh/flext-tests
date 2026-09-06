@@ -133,14 +133,10 @@ class FlextTestsKube(FlextTestsDocker):
             )
         up_result = self.cluster_up()
         if up_result.failure:
-            return r[m.Tests.ContainerInfo].fail(
-                up_result.error or "Kind cluster start failed"
-            )
+            return r[m.Tests.ContainerInfo].from_failure(up_result)
         nodes_result = self.nodes_ready()
         if nodes_result.failure:
-            return r[m.Tests.ContainerInfo].fail(
-                nodes_result.error or "Kind nodes readiness check failed"
-            )
+            return r[m.Tests.ContainerInfo].from_failure(nodes_result)
         container_name = target.container_name
         if not container_name:
             return r[m.Tests.ContainerInfo].ok(
