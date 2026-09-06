@@ -47,7 +47,9 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
                 "validate_model": validate_model,
             })
         except c.EXC_BASIC_TYPE as exc:
-            return r[m.Tests.FileInfo].fail(f"Invalid parameters for file info: {exc}", exception=exc)
+            return r[m.Tests.FileInfo].fail(
+                f"Invalid parameters for file info: {exc}", exception=exc
+            )
         if not params.path.exists():
             return r[m.Tests.FileInfo].ok(
                 m.Tests.FileInfo(exists=False, path=params.path)

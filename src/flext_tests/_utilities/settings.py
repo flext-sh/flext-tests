@@ -43,7 +43,9 @@ class FlextTestsConfigHelpersUtilitiesMixin:
         try:
             for var in vars_to_clear or ():
                 os.environ.pop(var, None)
-            os.environ.update({key: str(value) for key, value in (env_vars or {}).items()})
+            os.environ.update({
+                key: str(value) for key, value in (env_vars or {}).items()
+            })
             yield
         finally:
             os.environ.clear()

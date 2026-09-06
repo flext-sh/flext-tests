@@ -181,7 +181,9 @@ class FlextTestsMakeParsingUtilitiesMixin:
                 )
             )
             if condition_result.failure:
-                return r[t.SequenceOf[m.Tests.MakeMutationCondition]].from_failure(condition_result)
+                return r[t.SequenceOf[m.Tests.MakeMutationCondition]].from_failure(
+                    condition_result
+                )
             conditions.append(condition_result.value)
         return r[t.SequenceOf[m.Tests.MakeMutationCondition]].ok(tuple(conditions))
 

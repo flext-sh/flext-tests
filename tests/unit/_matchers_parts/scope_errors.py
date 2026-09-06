@@ -48,9 +48,7 @@ class MatchersScopeErrorsMixin:
         present_key = "FLEXT_TEST_SCOPE_PRESENT"
         removed_key = "FLEXT_TEST_SCOPE_REMOVED"
         with tm.scope(env={removed_key: "outer"}):
-            with tm.scope(
-                env={present_key: "inner"}, remove_env_keys=(removed_key,)
-            ):
+            with tm.scope(env={present_key: "inner"}, remove_env_keys=(removed_key,)):
                 tm.that(os.environ[present_key], eq="inner")
                 tm.that(removed_key in os.environ, eq=False)
             tm.that(os.environ[removed_key], eq="outer")
