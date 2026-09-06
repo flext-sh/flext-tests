@@ -6,7 +6,7 @@ import fnmatch
 from collections.abc import MutableSequence
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, ClassVar, override
+from typing import Annotated, ClassVar
 
 from flext_tests import c, m, p, r, t, u
 from flext_tests._validator.bypass import FlextValidatorBypass
@@ -67,7 +67,6 @@ class FlextTestsValidator:
         ]
         return files
 
-    @override
     def execute(self) -> p.Result[m.Tests.ScanResult]:
         """Execute validator service with default current-path scope."""
         return self.all(Path.cwd())

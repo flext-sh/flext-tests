@@ -46,8 +46,8 @@ class FlextTestsFilesComparisonMixin:
             op_name="parse comparison contents",
         )
         if parsed_result.failure:
-            return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
-                parsed_result.error or "parse comparison contents failed"
+            return r[FlextTestsFilesComparisonMixin.ParsedPair].from_failure(
+                parsed_result
             )
         r1, r2 = parsed_result.value
         d1 = r1.value if r1.success else None

@@ -12,7 +12,9 @@ from typing import TYPE_CHECKING, Annotated, ClassVar, Self, override
 
 import pytest
 from docker import DockerClient as DockerSDKClient, from_env as docker_from_env
+from docker.constants import DEFAULT_DOCKER_API_VERSION
 from docker.errors import DockerException, NotFound
+from docker.transport import UnixHTTPAdapter
 from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
@@ -130,15 +132,27 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     @property
     def client(self) -> DockerSDKClient | None:
         """Docker client with lazy initialization."""
-        if self.docker_client is None:
+        if self.docker_client is None and self.client_error is None:
+            client: DockerSDKClient | None = None
             try:
-                self.docker_client = docker_from_env()
-                self.client_error = None
+                client = docker_from_env(version=DEFAULT_DOCKER_API_VERSION)
+                adapter = client.api.get_adapter(client.api.base_url)
+                if (
+                    isinstance(adapter, UnixHTTPAdapter)
+                    and not Path(adapter.socket_path).exists()
+                ):
+                    raise FileNotFoundError(adapter.socket_path)
+                _ = client.ping()
             except (DockerException, OSError, TypeError, ValueError) as error:
+                if client is not None:
+                    client.close()
                 self.logger.exception(
                     "Failed to initialize Docker client", error=str(error)
                 )
                 self.client_error = str(error)
+            else:
+                self.docker_client = client
+                self.client_error = None
         return self.docker_client
 
     @property
@@ -158,7 +172,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             self.logger.info("Container marked clean", container=container_name)
             return r[bool].ok(value=True)
         except c.EXC_OS_TYPE as exc:
-            return r[bool].fail(f"Failed to mark clean: {exc}")
+            return r[bool].fail(f"Failed to mark clean: {exc}", exception=exc)
 
     def mark_container_dirty(self, container_name: str) -> p.Result[bool]:
         """Mark a container as dirty for recreation on next use."""
@@ -168,7 +182,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             self.logger.info("Container marked dirty", container=container_name)
             return r[bool].ok(value=True)
         except c.EXC_OS_TYPE as exc:
-            return r[bool].fail(f"Failed to mark dirty: {exc}")
+            return r[bool].fail(f"Failed to mark dirty: {exc}", exception=exc)
 
     def _load_dirty_state(self) -> None:
         """Load dirty container state from persistent storage."""
@@ -332,7 +346,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 f"Container {container_name} not found"
             )
         except c.EXC_BROAD_RUNTIME as exc:
-            return r[m.Tests.ContainerInfo].fail(str(exc))
+            return r[m.Tests.ContainerInfo].fail(str(exc), exception=exc)
         return r[m.Tests.ContainerInfo].ok(
             self._container_info_from_sdk(container_name, container)
         )
@@ -620,9 +634,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             target.host, ready_port, max_wait=target.startup_timeout
         )
         if ready_result.failure:
-            return r[m.Tests.ContainerInfo].fail(
-                ready_result.error or "Docker target readiness check failed"
-            )
+            return r[m.Tests.ContainerInfo].from_failure(ready_result)
         if not ready_result.value:
             return r[m.Tests.ContainerInfo].fail(
                 f"Container {target.container_name} did not become ready on {target.host}:{ready_port}"

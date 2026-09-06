@@ -25,7 +25,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
             model_instance: TModelRead = model_cls.model_validate(content)
             return r[TModelRead].ok(model_instance)
         except c.EXC_BASIC_TYPE as ex:
-            return r[TModelRead].fail(f"Failed to validate model: {ex}")
+            return r[TModelRead].fail(f"Failed to validate model: {ex}", exception=ex)
 
     @staticmethod
     def _read_fail[TModelRead: m.BaseModel](

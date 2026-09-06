@@ -23,6 +23,10 @@ class FlextTestsConstantsDocker:
     ENV_CI: Final[str] = "CI"
     CI_MAKE_VALUE: Final[str] = "Y"
     DOCKER_CI_SKIP_REASON: Final[str] = "docker disabled under CI=Y"
+    DOCKER_CONNECTIVITY_MARKER: Final[str] = "docker"
+    DOCKER_UNREACHABLE_SKIP_REASON: Final[str] = (
+        "Docker daemon unreachable; start it to run Docker integration tests"
+    )
     # Default probe ceiling for callers that omit max_wait. Under CI=Y the
     # Docker lifecycle skips before probing. Outside CI, shared-container
     # startup_timeout remains the SSOT for long boots (Oracle/kind).
@@ -38,6 +42,10 @@ class FlextTestsConstantsDocker:
         "ldap": "flext-openldap-test",
         "kubernetes": "flext-kind-test",
     }
+    CONNECTIVITY_MARKERS: Final[tuple[str, ...]] = (
+        DOCKER_CONNECTIVITY_MARKER,
+        *CONNECTIVITY_MARKER_CONTAINERS,
+    )
     UNREACHABLE_SKIP_REASON: Final[str] = (
         "{marker} service unreachable at {host}:{port}; start it to run these tests"
     )
