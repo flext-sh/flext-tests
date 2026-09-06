@@ -18,7 +18,7 @@ class FlextTestsValidatorModelsMixin:
     class EnforcementBuildContext(m.ArbitraryTypesModel):
         """Validated immutable inputs shared by enforcement item builders."""
 
-        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(frozen=True)
+        model_config: ClassVar[t.ConfigDict] = m.ConfigDict(frozen=True)
 
         infra_report: Annotated[
             p.AttributeProbe | None,

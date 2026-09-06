@@ -25,9 +25,7 @@ def _load_infra_report(
         op_name="import flext_infra namespace enforcer",
     )
     if import_result.failure:
-        return r[p.AttributeProbe].fail(
-            import_result.error or "import flext_infra namespace enforcer failed"
-        )
+        return r[p.AttributeProbe].from_failure(import_result)
     refactor = import_result.value
     enforcer_cls = getattr(refactor, "FlextInfraNamespaceEnforcer", None)
     if enforcer_cls is None:
@@ -60,9 +58,7 @@ def _project_name_for_path(*, path: Path, workspace_root: Path) -> core_p.Result
         op_name="resolve relative workspace path",
     )
     if relative_result.failure:
-        return r[str].fail(
-            relative_result.error or "path is not relative to workspace root"
-        )
+        return r[str].from_failure(relative_result)
     relative_path = relative_result.value
     if not relative_path.parts:
         return r[str].fail("path has no parts relative to workspace root")

@@ -97,7 +97,7 @@ class FlextTestsBatchModelsMixin:
         @u.computed_field
         @property
         def success_rate(self) -> float:
-            """Compute success rate as percentage."""
+            """Success rate as percentage."""
             total: int = self.total
             if total == 0:
                 return 0.0

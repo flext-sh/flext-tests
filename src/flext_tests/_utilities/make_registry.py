@@ -52,9 +52,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
                 data, field, path
             )
             if value_result.failure:
-                return r[m.Tests.MakeCommand].fail(
-                    value_result.error or f"{field} missing"
-                )
+                return r[m.Tests.MakeCommand].from_failure(value_result)
             values[field] = value_result.value
 
         mutates_result = FlextTestsMakeParsingUtilitiesMixin.make_require_bool(
@@ -98,9 +96,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             surface_result,
         ):
             if result.failure:
-                return r[m.Tests.MakeCommand].fail(
-                    result.error or "command metadata invalid"
-                )
+                return r[m.Tests.MakeCommand].from_failure(result)
 
         command = m.Tests.MakeCommand(
             verb=verb,
@@ -123,9 +119,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             FlextTestsMakeContractUtilitiesMixin.make_validate_command_contract(command)
         )
         if contract_result.failure:
-            return r[m.Tests.MakeCommand].fail(
-                contract_result.error or "command contract invalid"
-            )
+            return r[m.Tests.MakeCommand].from_failure(contract_result)
         return r[m.Tests.MakeCommand].ok(command)
 
     @classmethod
@@ -149,16 +143,12 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
                     continue
                 load_result = cls.make_load_command(path, verb_dir.name)
                 if load_result.failure:
-                    return r[m.Tests.MakeRegistry].fail(
-                        load_result.error or "command load failed"
-                    )
+                    return r[m.Tests.MakeRegistry].from_failure(load_result)
                 add_result = cls._make_add_command(
                     commands_by_verb, aliases_by_name, load_result.value
                 )
                 if add_result.failure:
-                    return r[m.Tests.MakeRegistry].fail(
-                        add_result.error or "command registration failed"
-                    )
+                    return r[m.Tests.MakeRegistry].from_failure(add_result)
 
         registry = m.Tests.MakeRegistry(
             commands_by_verb=commands_by_verb, aliases_by_name=aliases_by_name
@@ -167,9 +157,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             registry
         )
         if validate_result.failure:
-            return r[m.Tests.MakeRegistry].fail(
-                validate_result.error or "registry validation failed"
-            )
+            return r[m.Tests.MakeRegistry].from_failure(validate_result)
         return r[m.Tests.MakeRegistry].ok(registry)
 
     @classmethod
@@ -189,9 +177,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             )
         data_result = FlextTestsMakeParsingUtilitiesMixin.make_header_data(path)
         if data_result.failure:
-            return r[m.Tests.MakeCommand].fail(
-                data_result.error or "header load failed"
-            )
+            return r[m.Tests.MakeCommand].from_failure(data_result)
         data = data_result.value
         verb_result = FlextTestsMakeParsingUtilitiesMixin.make_require_string(
             data, "verb", path
@@ -200,9 +186,9 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             data, "what", path
         )
         if verb_result.failure:
-            return r[m.Tests.MakeCommand].fail(verb_result.error or "verb missing")
+            return r[m.Tests.MakeCommand].from_failure(verb_result)
         if what_result.failure:
-            return r[m.Tests.MakeCommand].fail(what_result.error or "what missing")
+            return r[m.Tests.MakeCommand].from_failure(what_result)
         verb = verb_result.value
         what = what_result.value
         if verb != expected_verb:
