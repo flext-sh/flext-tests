@@ -7,8 +7,7 @@ from typing import assert_type
 import pytest
 from pydantic import BaseModel
 
-from flext_core import p as core_p
-from flext_core import r as core_r
+from flext_core import p as core_p, r as core_r
 from flext_tests import tm
 from tests import r, t
 
