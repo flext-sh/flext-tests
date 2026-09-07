@@ -31,7 +31,6 @@ __all__: tuple[str, ...] = (
     "integration",
     "m",
     "p",
-    "pytest_plugins",
     "r",
     "s",
     "t",
@@ -48,7 +47,6 @@ __all__: tuple[str, ...] = (
 _LAZY_IMPORTS = MappingProxyType(
     build_lazy_import_map(
         MappingProxyType({
-            ".conftest": ("pytest_plugins",),
             ".constants": ("TestsFlextTestsConstants", "c"),
             ".integration": ("integration",),
             ".models": ("TestsFlextTestsModels", "m"),

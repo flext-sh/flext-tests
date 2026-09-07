@@ -50,7 +50,7 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
         if git_result.failure:
             return r[Path].fail(git_result.error)
         output = git_result.value
-        if output.exit_code != c.Cli.EXIT_CODE_SUCCESS:
+        if output.outcome.raw_return_code != c.Cli.EXIT_CODE_SUCCESS:
             return r[Path].fail(cls._command_error("git root discovery", output))
         raw_root = output.stdout.strip()
         if not raw_root:
@@ -104,7 +104,7 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
             if git_result.failure:
                 return r[bool].fail(git_result.error)
             output = git_result.value
-            if output.exit_code != c.Cli.EXIT_CODE_SUCCESS:
+            if output.outcome.raw_return_code != c.Cli.EXIT_CODE_SUCCESS:
                 return r[bool].fail(cls._command_error("git dir discovery", output))
             raw = output.stdout.strip()
             if not raw:

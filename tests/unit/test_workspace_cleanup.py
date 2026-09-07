@@ -15,7 +15,7 @@ class TestsFlextTestsWorkspaceCleanup:
     def _git(repository: Path, *arguments: str) -> p.Cli.CommandOutput:
         result = u.Cli.run_raw((c.Infra.GIT, *arguments), cwd=repository)
         output = u.Tests.assert_success(result)
-        tm.that(output.exit_code, eq=c.Cli.EXIT_CODE_SUCCESS)
+        tm.that(output.outcome.raw_return_code, eq=c.Cli.EXIT_CODE_SUCCESS)
         return output
 
     @classmethod
