@@ -24,7 +24,7 @@ from tests import c, m, u
 def docker_manager(tmp_path: Path) -> tk:
     """Create a tk instance with a known-clean container baseline."""
     fixtures_dir = Path(__file__).parent.parent.parent / "fixtures"
-    manager = tk(workspace_root=fixtures_dir, worker_id=f"test-{tmp_path.name}")
+    manager = tk(repository_root=fixtures_dir, worker_id=f"test-{tmp_path.name}")
     _ = manager.mark_container_clean("container1")
     _ = manager.mark_container_clean("container2")
     _ = manager.mark_container_clean("test_container")
@@ -115,7 +115,7 @@ class TestsFlextTestsDocker:
     def test_new_manager_exposes_public_identity(self, docker_manager: tk) -> None:
         """A constructed manager reports its workspace and dirty tuple."""
         tm.that(docker_manager, is_=tk)
-        tm.that(docker_manager.workspace_root, none=False)
+        tm.that(docker_manager.repository_root, none=False)
         tm.that(docker_manager.dirty_containers, is_=tuple)
 
     def test_default_worker_id_is_master(self) -> None:
@@ -126,13 +126,13 @@ class TestsFlextTestsDocker:
         """A supplied worker_id surfaces unchanged."""
         tm.that(tk(worker_id="worker_1").worker_id, eq="worker_1")
 
-    def test_default_workspace_root_is_cwd(self) -> None:
-        """Absent an override, workspace_root defaults to the cwd."""
-        tm.that(tk().workspace_root, eq=Path.cwd())
+    def test_default_repository_root_is_cwd(self) -> None:
+        """Absent an override, repository_root defaults to the cwd."""
+        tm.that(tk().repository_root, eq=Path.cwd())
 
-    def test_custom_workspace_root_is_retained(self, tmp_path: Path) -> None:
-        """A supplied workspace_root surfaces unchanged."""
-        tm.that(tk(workspace_root=tmp_path).workspace_root, eq=tmp_path)
+    def test_custom_repository_root_is_retained(self, tmp_path: Path) -> None:
+        """A supplied repository_root surfaces unchanged."""
+        tm.that(tk(repository_root=tmp_path).repository_root, eq=tmp_path)
 
     def test_client_property_is_stable_across_reads(self) -> None:
         """The lazily-resolved client is the same object on repeated reads."""
@@ -208,7 +208,7 @@ class TestsFlextTestsDocker:
 
     def test_shared_resolves_oracle_target(self, tmp_path: Path) -> None:
         """shared() resolves the Oracle catalog entry into a target config."""
-        manager = tk.shared("flext-oracle-db-test", workspace_root=tmp_path)
+        manager = tk.shared("flext-oracle-db-test", repository_root=tmp_path)
         target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq="flext-oracle-db-test")
         tm.that(
@@ -217,7 +217,7 @@ class TestsFlextTestsDocker:
 
     def test_shared_resolves_openldap_target(self, tmp_path: Path) -> None:
         """shared() resolves the OpenLDAP catalog entry, incl. service/port."""
-        manager = tk.shared("flext-openldap-test", workspace_root=tmp_path)
+        manager = tk.shared("flext-openldap-test", repository_root=tmp_path)
         target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq="flext-openldap-test")
         tm.that(
@@ -238,7 +238,7 @@ class TestsFlextTestsDocker:
             target=m.Tests.ContainerConfig(
                 container_name="service-test", service="service-test", port=5432
             ),
-            workspace_root=tmp_path,
+            repository_root=tmp_path,
         )
         target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq="service-test")
@@ -252,7 +252,7 @@ class TestsFlextTestsDocker:
             target=m.Tests.ContainerConfig(
                 container_name="stack-main", service="stack-main", port=3389
             ),
-            workspace_root=tmp_path,
+            repository_root=tmp_path,
         )
         target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq="stack-main")
@@ -265,7 +265,7 @@ class TestsFlextTestsDocker:
         manager = tk.stack(
             "docker-compose.stack.yml",
             target=m.Tests.ContainerConfig(host=c.LOOPBACK_IP, port=25432),
-            workspace_root=tmp_path,
+            repository_root=tmp_path,
         )
         target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq=None)
@@ -286,7 +286,7 @@ class TestsFlextTestsDocker:
         manager = tk.stack(
             "docker-compose.stack.yml",
             target=m.Tests.ContainerConfig(host=c.LOOPBACK_IP, port=25432),
-            workspace_root=tmp_path,
+            repository_root=tmp_path,
         )
         result = manager.execute()
         _ = u.Tests.assert_failure(result)
@@ -317,7 +317,7 @@ class TestsFlextTestsDocker:
             target=m.Tests.ContainerConfig(
                 container_name="stack-main", service="stack-main", port=59999
             ),
-            workspace_root=tmp_path,
+            repository_root=tmp_path,
         )
         result = manager.ready(max_wait=1)
         _ = u.Tests.assert_failure(result)
@@ -390,7 +390,7 @@ class TestsFlextTestsDocker:
     ) -> None:
         """Cleanup drops a dirty container absent from the shared catalog."""
         monkeypatch.setenv("HOME", str(tmp_path))
-        manager = tk(workspace_root=tmp_path, worker_id="stale-container")
+        manager = tk(repository_root=tmp_path, worker_id="stale-container")
         _ = manager.mark_container_dirty("algar-oud-test")
         result = manager.cleanup_dirty_containers()
         _ = u.Tests.assert_success(result)

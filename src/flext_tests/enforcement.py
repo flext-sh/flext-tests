@@ -8,7 +8,7 @@ from flext_tests._fixtures.enforcement import (
     EnforcementItem,
     EnforcementViolationError,
     active_rules,
-    discover_workspace_root,
+    discover_repository_root,
     pytest_addoption,
     split_csv,
 )
@@ -18,7 +18,7 @@ __all__: list[str] = [
     "EnforcementItem",
     "EnforcementViolationError",
     "active_rules",
-    "discover_workspace_root",
+    "discover_repository_root",
     "load_infra_report",
     "pytest_addoption",
     "split_csv",

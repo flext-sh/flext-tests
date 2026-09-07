@@ -25,7 +25,7 @@ class DockerTargetsMixin:
         manager = tk.stack(
             "docker-compose.stack.yml",
             target=m.Tests.ContainerConfig(host=c.LOOPBACK_IP, port=25432),
-            workspace_root=tmp_path,
+            repository_root=tmp_path,
         )
         result = manager.execute()
         _ = u.Tests.assert_failure(result)
@@ -56,7 +56,7 @@ class DockerTargetsMixin:
             target=m.Tests.ContainerConfig(
                 container_name="stack-main", service="stack-main", port=59999
             ),
-            workspace_root=tmp_path,
+            repository_root=tmp_path,
         )
         result = manager.ready(max_wait=1)
         _ = u.Tests.assert_success(result)

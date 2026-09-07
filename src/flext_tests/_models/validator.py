@@ -28,7 +28,7 @@ class FlextTestsValidatorModelsMixin:
             tuple[Path, ...],
             u.Field(description="Validator targets collected for this session."),
         ] = ()
-        workspace_root: Annotated[
+        repository_root: Annotated[
             Path | None, u.Field(description="Resolved FLEXT workspace root.")
         ] = None
 
@@ -104,7 +104,7 @@ class FlextTestsValidatorModelsMixin:
             frozenset[str],
             u.Field(description="Optional block-list of enforcement rule IDs."),
         ] = frozenset()
-        workspace_root: Annotated[
+        repository_root: Annotated[
             Path | None,
             u.Field(description="Resolved FLEXT workspace root for the session."),
         ] = None

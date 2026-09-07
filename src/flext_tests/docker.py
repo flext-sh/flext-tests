@@ -29,7 +29,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     docker: ClassVar[WhalesDockerClient] = WhalesDockerClient(client_type="docker")
 
-    workspace_root: Annotated[
+    repository_root: Annotated[
         Path, u.Field(description="Workspace root used to resolve compose files.")
     ] = u.Field(default_factory=Path.cwd)
 
@@ -75,7 +75,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     @staticmethod
     def _resolve_shared_target_config(
-        container_name: str, workspace_root: Path
+        container_name: str, repository_root: Path
     ) -> m.Tests.ContainerConfig:
         """Resolve one shared-container entry into the canonical target config."""
         settings = c.Tests.SHARED_CONTAINERS.get(container_name)
@@ -92,7 +92,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         })
         compose_path = Path(str(compose_file_raw))
         if not compose_path.is_absolute():
-            compose_path = workspace_root / compose_path
+            compose_path = repository_root / compose_path
         return target.model_copy(
             update={"container_name": container_name, "compose_file": compose_path}
         )
@@ -252,7 +252,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return (
             compose_path
             if compose_path.is_absolute()
-            else self.workspace_root / compose_file
+            else self.repository_root / compose_file
         )
 
     @staticmethod
@@ -451,13 +451,13 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         cls,
         container_name: str,
         *,
-        workspace_root: Path | None = None,
+        repository_root: Path | None = None,
         worker_id: str | None = None,
     ) -> Self:
         """Build a DSL-configured service from a shared container constant."""
-        resolved_root = workspace_root or Path.cwd()
+        resolved_root = repository_root or Path.cwd()
         return cls(
-            workspace_root=resolved_root,
+            repository_root=resolved_root,
             worker_id=worker_id or "master",
             target_config=cls._resolve_shared_target_config(
                 container_name, resolved_root
@@ -470,16 +470,16 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         compose_file: str | Path,
         *,
         target: m.Tests.ContainerConfig | None = None,
-        workspace_root: Path | None = None,
+        repository_root: Path | None = None,
     ) -> Self:
         """Build a DSL-configured service for an explicit compose target."""
-        resolved_root = workspace_root or Path.cwd()
+        resolved_root = repository_root or Path.cwd()
         compose_path = Path(compose_file)
         if not compose_path.is_absolute():
             compose_path = resolved_root / compose_path
         base_target = target or m.Tests.ContainerConfig()
         return cls(
-            workspace_root=resolved_root,
+            repository_root=resolved_root,
             worker_id="master",
             target_config=base_target.model_copy(update={"compose_file": compose_path}),
         )
@@ -490,10 +490,10 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         compose_file: str | Path,
         *,
         target: m.Tests.ContainerConfig | None = None,
-        workspace_root: Path | None = None,
+        repository_root: Path | None = None,
     ) -> Self:
         """Build a DSL-configured service for a compose stack target."""
-        return cls.compose(compose_file, target=target, workspace_root=workspace_root)
+        return cls.compose(compose_file, target=target, repository_root=repository_root)
 
     def up(self) -> p.Result[str]:
         """Start the configured compose target using the DSL state."""
@@ -552,7 +552,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 _ = self.mark_container_clean(container_name)
                 continue
             target = self._resolve_shared_target_config(
-                container_name, self.workspace_root
+                container_name, self.repository_root
             )
             self.logger.info("Recreating dirty container", container=container_name)
             _ = self.compose_down(str(target.compose_file))

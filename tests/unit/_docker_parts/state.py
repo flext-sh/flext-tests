@@ -56,7 +56,7 @@ class DockerStateMixin:
     def test_init(self, docker_manager: tk) -> None:
         """Test tk initialization."""
         tm.that(docker_manager, is_=tk)
-        tm.that(docker_manager.workspace_root, none=False)
+        tm.that(docker_manager.repository_root, none=False)
         tm.that(docker_manager.dirty_containers, is_=tuple)
 
     def test_client_initialization(self) -> None:
