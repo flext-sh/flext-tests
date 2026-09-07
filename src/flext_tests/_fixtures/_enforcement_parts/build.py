@@ -32,14 +32,14 @@ def build_items(
     collected_items: t.SequenceOf[pytest.Item],
 ) -> list[pytest.Item]:
     """Build synthetic enforcement items for active collection-time rules."""
-    workspace_root = cfg.workspace_root
-    if workspace_root is None:
+    repository_root = cfg.repository_root
+    if repository_root is None:
         return []
     rules = active_rules(cfg)
     validator_targets = collected_validator_targets(
-        items=collected_items, workspace_root=workspace_root
+        items=collected_items, repository_root=repository_root
     )
-    infra_report = _load_infra_report_if_needed(rules, workspace_root, collected_items)
+    infra_report = _load_infra_report_if_needed(rules, repository_root, collected_items)
 
     collector = EnforcementCollector.from_parent(
         parent=session, name="flext-enforcement"
@@ -47,7 +47,7 @@ def build_items(
     context = m.Tests.EnforcementBuildContext(
         infra_report=infra_report,
         validator_targets=validator_targets,
-        workspace_root=workspace_root,
+        repository_root=repository_root,
     )
     namespace_builder = NamespaceDetectorBuilder()
     items: list[pytest.Item] = []
@@ -61,20 +61,20 @@ def build_items(
 
 def _load_infra_report_if_needed(
     rules: tuple[m.EnforcementRuleSpec, ...],
-    workspace_root: Path,
+    repository_root: Path,
     collected_items: t.SequenceOf[pytest.Item],
 ) -> p.AttributeProbe | None:
     """Load the workspace infra report only when a rule needs it."""
     if not any(rule.source.kind == "flext_infra_detector" for rule in rules):
         return None
     project_names = collected_project_names(
-        items=collected_items, workspace_root=workspace_root
+        items=collected_items, repository_root=repository_root
     )
     if not project_names:
         return None
     # NOTE (multi-agent, mro-wkii.17.21): detector failures must stop collection;
     # replacing them with None would silently disable the active enforcement rule.
-    return load_infra_report(workspace_root, project_names=project_names).unwrap()
+    return load_infra_report(repository_root, project_names=project_names).unwrap()
 
 
 __all__: list[str] = ["build_items"]

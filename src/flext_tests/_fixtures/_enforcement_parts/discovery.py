@@ -7,14 +7,13 @@ from pathlib import Path
 
 import pytest
 
-from flext_core import p as core_p
-from flext_core import r
+from flext_core import p as core_p, r
 from flext_tests import c, p, t
 from flext_tests.utilities import u
 
 
 def _load_infra_report(
-    workspace_root: Path, *, project_names: t.StrSequence
+    repository_root: Path, *, project_names: t.StrSequence
 ) -> p.Result[p.AttributeProbe]:
     """Return a workspace enforcement report when available."""
     if not project_names:
@@ -31,7 +30,7 @@ def _load_infra_report(
     if enforcer_cls is None:
         return r[p.AttributeProbe].fail("FlextInfraNamespaceEnforcer not found")
     return u.try_(
-        lambda: enforcer_cls(workspace_root=workspace_root).enforce(
+        lambda: enforcer_cls(repository_root=repository_root).enforce(
             project_names=project_names
         ),
         catch=c.EXC_BROAD_RUNTIME,
@@ -50,10 +49,10 @@ def _item_path(item: pytest.Item) -> Path | None:
     return Path(str(fspath)).resolve()
 
 
-def _project_name_for_path(*, path: Path, workspace_root: Path) -> core_p.Result[str]:
+def _project_name_for_path(*, path: Path, repository_root: Path) -> core_p.Result[str]:
     """Return the owning FLEXT project name for one workspace path."""
     relative_result = u.try_(
-        lambda: path.relative_to(workspace_root),
+        lambda: path.relative_to(repository_root),
         catch=ValueError,
         op_name="resolve relative workspace path",
     )
@@ -63,7 +62,7 @@ def _project_name_for_path(*, path: Path, workspace_root: Path) -> core_p.Result
     if not relative_path.parts:
         return r[str].fail("path has no parts relative to workspace root")
     project_name = relative_path.parts[0]
-    project_root = workspace_root / project_name
+    project_root = repository_root / project_name
     if not (
         project_name.startswith("flext-")
         and project_root.is_dir()
@@ -73,19 +72,19 @@ def _project_name_for_path(*, path: Path, workspace_root: Path) -> core_p.Result
     return r[str].ok(project_name)
 
 
-def _project_name_for_item(*, item: pytest.Item, workspace_root: Path) -> str | None:
+def _project_name_for_item(*, item: pytest.Item, repository_root: Path) -> str | None:
     """Return the owning FLEXT project name for one collected item."""
     item_path = _item_path(item)
     if item_path is None:
         return None
     project_name_result = _project_name_for_path(
-        path=item_path, workspace_root=workspace_root
+        path=item_path, repository_root=repository_root
     )
     return project_name_result.value if project_name_result.success else None
 
 
 def _collected_project_names(
-    *, items: t.SequenceOf[pytest.Item], workspace_root: Path
+    *, items: t.SequenceOf[pytest.Item], repository_root: Path
 ) -> t.StrSequence:
     """Return sorted FLEXT project names represented by collected pytest items."""
     project_names = {
@@ -93,7 +92,7 @@ def _collected_project_names(
         for item in items
         if (
             project_name := _project_name_for_item(
-                item=item, workspace_root=workspace_root
+                item=item, repository_root=repository_root
             )
         )
         is not None
@@ -102,22 +101,22 @@ def _collected_project_names(
 
 
 def _validator_target_for_item(
-    *, item: pytest.Item, workspace_root: Path
+    *, item: pytest.Item, repository_root: Path
 ) -> Path | None:
     """Return the validation target represented by one collected item."""
     item_path = _item_path(item)
     if item_path is None:
         return None
     project_name_result = _project_name_for_path(
-        path=item_path, workspace_root=workspace_root
+        path=item_path, repository_root=repository_root
     )
     if project_name_result.success:
-        return workspace_root / project_name_result.value
+        return repository_root / project_name_result.value
     return item_path
 
 
 def _collected_validator_targets(
-    *, items: t.SequenceOf[pytest.Item], workspace_root: Path
+    *, items: t.SequenceOf[pytest.Item], repository_root: Path
 ) -> t.SequenceOf[Path]:
     """Return sorted validation targets represented by collected pytest items."""
     targets = {
@@ -125,7 +124,7 @@ def _collected_validator_targets(
         for item in items
         if (
             target := _validator_target_for_item(
-                item=item, workspace_root=workspace_root
+                item=item, repository_root=repository_root
             )
         )
         is not None

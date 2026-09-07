@@ -6,7 +6,8 @@ from typing import ClassVar
 
 from pydantic_settings import SettingsConfigDict
 
-from flext_core import FlextSettings, m
+from flext_core import FlextSettings
+from flext_tests import m
 
 
 class FlextTestsSettings(FlextSettings):

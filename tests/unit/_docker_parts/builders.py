@@ -21,7 +21,7 @@ class DockerBuildersMixin:
 
     def test_shared_builder_resolves_target_config(self, tmp_path: Path) -> None:
         """Test shared() builds a resolved container target from constants."""
-        manager = tk.shared("flext-oracle-db-test", workspace_root=tmp_path)
+        manager = tk.shared("flext-oracle-db-test", repository_root=tmp_path)
         target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq="flext-oracle-db-test")
         tm.that(
@@ -30,7 +30,7 @@ class DockerBuildersMixin:
 
     def test_shared_builder_resolves_openldap_target(self, tmp_path: Path) -> None:
         """Test shared() resolves the centralized OpenLDAP container target."""
-        manager = tk.shared("flext-openldap-test", workspace_root=tmp_path)
+        manager = tk.shared("flext-openldap-test", repository_root=tmp_path)
         target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq="flext-openldap-test")
         tm.that(
@@ -46,7 +46,7 @@ class DockerBuildersMixin:
             target=m.Tests.ContainerConfig(
                 container_name="service-test", service="service-test", port=5432
             ),
-            workspace_root=tmp_path,
+            repository_root=tmp_path,
         )
         target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq="service-test")
@@ -60,7 +60,7 @@ class DockerBuildersMixin:
             target=m.Tests.ContainerConfig(
                 container_name="stack-main", service="stack-main", port=3389
             ),
-            workspace_root=tmp_path,
+            repository_root=tmp_path,
         )
         target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq="stack-main")
@@ -73,7 +73,7 @@ class DockerBuildersMixin:
         manager = tk.stack(
             "docker-compose.stack.yml",
             target=m.Tests.ContainerConfig(host=c.LOOPBACK_IP, port=25432),
-            workspace_root=tmp_path,
+            repository_root=tmp_path,
         )
         target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq=None)
@@ -91,4 +91,4 @@ class DockerBuildersMixin:
             patch.object(flext_tests_c.Tests, "SHARED_CONTAINERS", broken),
             pytest.raises(ValueError, match="missing compose_file"),
         ):
-            tk.shared("flext-oracle-db-test", workspace_root=tmp_path)
+            tk.shared("flext-oracle-db-test", repository_root=tmp_path)

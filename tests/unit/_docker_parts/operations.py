@@ -74,7 +74,7 @@ class DockerOperationsMixin:
     ) -> None:
         """Test cleanup purges retired shared containers from persisted state."""
         monkeypatch.setenv("HOME", str(tmp_path))
-        manager = tk(workspace_root=tmp_path, worker_id="stale-container")
+        manager = tk(repository_root=tmp_path, worker_id="stale-container")
         _ = manager.mark_container_dirty("algar-oud-test")
 
         result = manager.cleanup_dirty_containers()
@@ -105,12 +105,12 @@ class DockerOperationsMixin:
         manager_a_reload = tk(worker_id="worker_a")
         tm.that(manager_a_reload.container_dirty("container-x"), eq=True)
 
-    def test_default_workspace_root(self) -> None:
-        """Test default workspace_root is cwd."""
+    def test_default_repository_root(self) -> None:
+        """Test default repository_root is cwd."""
         manager = tk()
-        tm.that(manager.workspace_root, eq=Path.cwd())
+        tm.that(manager.repository_root, eq=Path.cwd())
 
-    def test_custom_workspace_root(self, tmp_path: Path) -> None:
-        """Test custom workspace_root."""
-        manager = tk(workspace_root=tmp_path)
-        tm.that(manager.workspace_root, eq=tmp_path)
+    def test_custom_repository_root(self, tmp_path: Path) -> None:
+        """Test custom repository_root."""
+        manager = tk(repository_root=tmp_path)
+        tm.that(manager.repository_root, eq=tmp_path)

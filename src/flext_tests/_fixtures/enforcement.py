@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from flext_tests._fixtures._enforcement_parts.config import (
     active_rules,
-    discover_workspace_root,
+    discover_repository_root,
     pytest_configure,
     split_csv,
 )
@@ -26,7 +26,7 @@ __all__: list[str] = [
     "EnforcementItem",
     "EnforcementViolationError",
     "active_rules",
-    "discover_workspace_root",
+    "discover_repository_root",
     "pytest_addoption",
     "pytest_collection_modifyitems",
     "pytest_configure",

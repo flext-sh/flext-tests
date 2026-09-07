@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from .config import (
         SessionConfig,
         active_rules,
-        discover_workspace_root,
+        discover_repository_root,
         resolve_config,
         split_csv,
     )
@@ -37,7 +37,7 @@ __all__: tuple[str, ...] = (
     "build_tests_validator_items",
     "collected_project_names",
     "collected_validator_targets",
-    "discover_workspace_root",
+    "discover_repository_root",
     "dispatch_infra_detector",
     "load_infra_report",
     "project_name_for_path",
@@ -52,7 +52,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ".config": (
                 "SessionConfig",
                 "active_rules",
-                "discover_workspace_root",
+                "discover_repository_root",
                 "resolve_config",
                 "split_csv",
             ),

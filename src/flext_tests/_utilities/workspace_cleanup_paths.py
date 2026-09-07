@@ -34,12 +34,12 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
     })
 
     @classmethod
-    def _workspace_root(
+    def _repository_root(
         cls, request: p.Tests.WorkspaceCleanupRequest
     ) -> p.Result[Path]:
         """Require the request root to be the exact enclosing Git worktree root."""
         try:
-            root = request.workspace_root.resolve(strict=True)
+            root = request.repository_root.resolve(strict=True)
         except OSError as exc:
             return r[Path].fail(
                 f"cleanup workspace root resolution failed: {exc}", exception=exc
