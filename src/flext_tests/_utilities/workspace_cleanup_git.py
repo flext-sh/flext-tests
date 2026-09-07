@@ -35,7 +35,7 @@ class FlextTestsWorkspaceCleanupGitUtilitiesMixin:
         if not detail:
             detail = output.stdout.strip()
         if not detail:
-            detail = f"exit code {output.exit_code}"
+            detail = f"exit code {output.outcome.raw_return_code}"
         return f"{operation} failed: {detail}"
 
 
