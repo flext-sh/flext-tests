@@ -86,7 +86,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
             return r[p.Tests.WorkspaceCleanupPlan].fail(
                 "cleanup request must be the canonical WorkspaceCleanupRequest model"
             )
-        root_result = cls._workspace_root(request)
+        root_result = cls._repository_root(request)
         if root_result.failure:
             return r[p.Tests.WorkspaceCleanupPlan].fail(root_result.error)
         root = root_result.value
@@ -138,7 +138,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
             return r[p.Tests.WorkspaceCleanupReport].fail(
                 "cleanup plan is stale: candidates changed since dry-run"
             )
-        root_result = cls._workspace_root(plan.request)
+        root_result = cls._repository_root(plan.request)
         if root_result.failure:
             return r[p.Tests.WorkspaceCleanupReport].fail(
                 f"cleanup plan is stale: {root_result.error}"

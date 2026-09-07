@@ -54,11 +54,11 @@ def build_tests_validator_items(
     context: m.Tests.EnforcementBuildContext,
 ) -> list[EnforcementItem]:
     """Build enforcement items from flext-tests validator methods."""
-    workspace_root = context.workspace_root
+    repository_root = context.repository_root
     targets = context.validator_targets
-    if workspace_root is None:
+    if repository_root is None:
         return []
-    grouped = _collect_tests_validator_violations(rule, workspace_root, targets)
+    grouped = _collect_tests_validator_violations(rule, repository_root, targets)
     return _items_from_grouped(collector, rule, grouped)
 
 
@@ -85,7 +85,7 @@ def _items_from_grouped(
 
 
 def _collect_tests_validator_violations(
-    rule: m.EnforcementRuleSpec, workspace_root: Path, targets: t.SequenceOf[Path]
+    rule: m.EnforcementRuleSpec, repository_root: Path, targets: t.SequenceOf[Path]
 ) -> dict[str, list[p.AttributeProbe]]:
     result: dict[str, list[p.AttributeProbe]] = {}
     try:
@@ -113,7 +113,7 @@ def _collect_tests_validator_violations(
             result=result,
             rule_ids=wanted_ids,
             target=dispatch_target,
-            workspace_root=workspace_root,
+            repository_root=repository_root,
         )
     return result
 
@@ -132,7 +132,7 @@ def _merge_tests_validator_result(
     result: dict[str, list[p.AttributeProbe]],
     rule_ids: frozenset[str],
     target: Path,
-    workspace_root: Path,
+    repository_root: Path,
 ) -> None:
     """Execute one validator and merge matching violations into ``result``."""
     try:
@@ -147,17 +147,19 @@ def _merge_tests_validator_result(
     for violation in getattr(scan, "violations", ()):
         if rule_ids and getattr(violation, "rule_id", "") not in rule_ids:
             continue
-        project = _violation_project(violation=violation, workspace_root=workspace_root)
+        project = _violation_project(
+            violation=violation, repository_root=repository_root
+        )
         result.setdefault(project, []).append(violation)
 
 
-def _violation_project(*, violation: p.AttributeProbe, workspace_root: Path) -> str:
+def _violation_project(*, violation: p.AttributeProbe, repository_root: Path) -> str:
     """Return the owning workspace segment for one validator violation."""
     file_path = getattr(violation, "file_path", None)
     if file_path is None:
         return "workspace"
     try:
-        rel = Path(file_path).resolve().relative_to(workspace_root)
+        rel = Path(file_path).resolve().relative_to(repository_root)
     except ValueError:
         return "workspace"
     return rel.parts[0] if rel.parts else "workspace"

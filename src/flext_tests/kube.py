@@ -36,12 +36,12 @@ class FlextTestsKube(FlextTestsDocker):
 
     @classmethod
     def kind(
-        cls, *, workspace_root: Path | None = None, worker_id: str | None = None
+        cls, *, repository_root: Path | None = None, worker_id: str | None = None
     ) -> Self:
         """Build a DSL-configured service for the shared kind cluster."""
-        resolved_root = workspace_root or Path.cwd()
+        resolved_root = repository_root or Path.cwd()
         return cls(
-            workspace_root=resolved_root,
+            repository_root=resolved_root,
             worker_id=worker_id or "master",
             target_config=cls._resolve_shared_target_config(
                 cls.KIND_CONTAINER_NAME, resolved_root

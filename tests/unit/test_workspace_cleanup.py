@@ -37,7 +37,7 @@ class TestsFlextTestsWorkspaceCleanup:
         policy = m.Tests.WorkspaceCleanupPolicy(
             residues=tuple(Path(residue) for residue in residues)
         )
-        return m.Tests.WorkspaceCleanupRequest(workspace_root=root, policy=policy)
+        return m.Tests.WorkspaceCleanupRequest(repository_root=root, policy=policy)
 
     def test_plan_is_deterministic_and_retains_source_request(
         self, tmp_path: Path

@@ -19,7 +19,7 @@ class FlextTestsWorkspaceCleanupProtocolsMixin:
         """Runtime cleanup request surface."""
 
         @property
-        def workspace_root(self) -> Path: ...
+        def repository_root(self) -> Path: ...
 
         @property
         def policy(

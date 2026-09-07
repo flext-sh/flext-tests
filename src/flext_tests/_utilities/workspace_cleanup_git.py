@@ -13,14 +13,14 @@ class FlextTestsWorkspaceCleanupGitUtilitiesMixin:
 
     @staticmethod
     def _git(
-        workspace_root: Path,
+        repository_root: Path,
         arguments: tuple[str, ...],
         *,
         input_data: bytes | None = None,
     ) -> p.Result[p.Cli.CommandOutput]:
         """Execute Git through ``u.Cli.run_raw`` (cwd-bound raw owner)."""
         result = u.Cli.run_raw(
-            [c.Infra.GIT, *arguments], cwd=workspace_root, input_data=input_data
+            [c.Infra.GIT, *arguments], cwd=repository_root, input_data=input_data
         )
         if result.failure and result.error is None:
             return r[p.Cli.CommandOutput].fail(
