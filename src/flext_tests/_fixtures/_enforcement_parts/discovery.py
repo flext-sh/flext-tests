@@ -7,8 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from flext_core import p as core_p
-from flext_core import r
+from flext_core import p as core_p, r
 from flext_tests import c, p, t
 from flext_tests.utilities import u
 
