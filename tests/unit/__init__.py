@@ -3,19 +3,18 @@
 
 from __future__ import annotations
 
-from types import MappingProxyType
 from typing import TYPE_CHECKING
+
+from types import MappingProxyType
 
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
+    from . import _docker_parts as _docker_parts
+    from . import _files_parts as _files_parts
+    from . import _matchers_parts as _matchers_parts
     from flext_tests import c, d, e, h, m, p, r, s, t, td, tf, tk, tm, tv, u, x
 
-    from . import (
-        _docker_parts as _docker_parts,
-        _files_parts as _files_parts,
-        _matchers_parts as _matchers_parts,
-    )
     from .test_matchers import TestsFlextTestsMatchers
     from .test_public_facade import TestsFlextTestsPublicFacade
 __all__: tuple[str, ...] = (
