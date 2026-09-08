@@ -20,12 +20,12 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import m, tk, tm
+from flext_tests import FlextTestsDocker, m, tm
 from tests import c
 
 
 class TestsFlextTestsDockerIntegration:
-    """Public DSL contract of ``FlextTestsDocker`` (``tk``)."""
+    """Public DSL contract of ``FlextTestsDocker`` (``FlextTestsDocker``)."""
 
     @staticmethod
     def _repository_root() -> Path:
@@ -39,11 +39,11 @@ class TestsFlextTestsDockerIntegration:
     def test_shared_resolves_target_config_from_shared_catalog(
         self, container_name: str, tmp_path: Path
     ) -> None:
-        """``tk.shared`` maps a catalog entry onto the public target config."""
+        """``FlextTestsDocker.shared`` maps a catalog entry onto the public target config."""
         settings = c.Tests.SHARED_CONTAINERS[container_name]
         root = tmp_path / "flext-docker-contract"
 
-        docker = tk.shared(container_name, repository_root=root)
+        docker = FlextTestsDocker.shared(container_name, repository_root=root)
 
         target = tm.not_none(docker.target_config)
         tm.that(target.container_name, eq=container_name)
@@ -60,7 +60,7 @@ class TestsFlextTestsDockerIntegration:
         root = tmp_path / "flext-docker-contract"
 
         target = tm.not_none(
-            tk.shared(container_name, repository_root=root).target_config
+            FlextTestsDocker.shared(container_name, repository_root=root).target_config
         )
         compose_file = tm.not_none(target.compose_file)
 
@@ -72,16 +72,20 @@ class TestsFlextTestsDockerIntegration:
     ) -> None:
         """An unknown shared name is a caller contract error, not a silent value."""
         with pytest.raises(ValueError, match="Unknown shared container: not-a-name"):
-            tk.shared("not-a-name", repository_root=tmp_path / "flext-docker-contract")
+            FlextTestsDocker.shared(
+                "not-a-name", repository_root=tmp_path / "flext-docker-contract"
+            )
 
     def test_compose_resolves_relative_file_against_repository_root(
         self, tmp_path: Path
     ) -> None:
-        """``tk.compose`` anchors a relative compose file to the workspace root."""
+        """``FlextTestsDocker.compose`` anchors a relative compose file to the workspace root."""
         root = tmp_path / "flext-docker-contract"
 
         target = tm.not_none(
-            tk.compose("docker/custom.yml", repository_root=root).target_config
+            FlextTestsDocker.compose(
+                "docker/custom.yml", repository_root=root
+            ).target_config
         )
         tm.that(target.compose_file, eq=root / "docker" / "custom.yml")
 
@@ -93,10 +97,12 @@ class TestsFlextTestsDockerIntegration:
         ``remove_orphans`` would delete another suite's container.
         """
         root = tmp_path / "flext-docker-contract"
-        manager = tk.compose(
+        manager = FlextTestsDocker.compose(
             "docker/docker-compose.oracle-db.yml", repository_root=root
         )
-        sibling = tk.compose("docker/docker-compose.openldap.yml", repository_root=root)
+        sibling = FlextTestsDocker.compose(
+            "docker/docker-compose.openldap.yml", repository_root=root
+        )
 
         oracle_project = manager.compose_project_name(
             root / "docker" / "docker-compose.oracle-db.yml"
@@ -109,11 +115,11 @@ class TestsFlextTestsDockerIntegration:
         tm.that(openldap_project, eq="docker-compose-openldap")
 
     def test_compose_preserves_absolute_file_unchanged(self, tmp_path: Path) -> None:
-        """An absolute compose file is used verbatim by ``tk.compose``."""
+        """An absolute compose file is used verbatim by ``FlextTestsDocker.compose``."""
         absolute = Path("/opt/stacks/custom.yml")
 
         target = tm.not_none(
-            tk.compose(
+            FlextTestsDocker.compose(
                 absolute, repository_root=tmp_path / "flext-docker-contract"
             ).target_config
         )
@@ -128,7 +134,7 @@ class TestsFlextTestsDockerIntegration:
         self, operation: str, tmp_path: Path
     ) -> None:
         """Every DSL verb reports a failure result when no target is configured."""
-        docker = tk(repository_root=tmp_path / "flext-docker-contract")
+        docker = FlextTestsDocker(repository_root=tmp_path / "flext-docker-contract")
 
         result = getattr(docker, operation)()
 
@@ -141,7 +147,7 @@ class TestsFlextTestsDockerIntegration:
     ) -> None:
         """A compose-only target (no container name) cannot be inspected by execute."""
         config = m.Tests.ContainerConfig(compose_file=tmp_path / "stack.yml")
-        docker = tk(
+        docker = FlextTestsDocker(
             repository_root=tmp_path / "flext-docker-contract", target_config=config
         )
 
@@ -163,7 +169,7 @@ class TestsFlextTestsDockerIntegration:
         target = m.Tests.ContainerConfig(
             container_name="flext-tests-web-test", service="web", port=8080
         )
-        docker = tk.compose(
+        docker = FlextTestsDocker.compose(
             root / "tests/fixtures/docker-compose.yml",
             target=target,
             repository_root=root,
@@ -187,7 +193,7 @@ class TestsFlextTestsDockerIntegration:
         target = m.Tests.ContainerConfig(
             container_name="flext-tests-web-test", service="web", port=8080
         )
-        docker = tk.compose(
+        docker = FlextTestsDocker.compose(
             root / "tests/fixtures/docker-compose.yml",
             target=target,
             repository_root=root,

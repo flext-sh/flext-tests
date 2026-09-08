@@ -14,7 +14,8 @@ from pathlib import Path
 
 from flext_core import u
 from flext_tests import c, m, t
-from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
+
+from ..settings import FlextTestsConfigHelpersUtilitiesMixin
 
 
 class FlextTestsMatchersScopeMixin:

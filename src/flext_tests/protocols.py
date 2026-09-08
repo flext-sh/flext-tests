@@ -10,11 +10,10 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_infra import p
-from flext_tests._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
-from flext_tests._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
-from flext_tests._protocols.workspace_cleanup import (
-    FlextTestsWorkspaceCleanupProtocolsMixin,
-)
+
+from ._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
+from ._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
+from ._protocols.workspace_cleanup import FlextTestsWorkspaceCleanupProtocols
 
 
 class FlextTestsProtocols(p):
@@ -24,7 +23,7 @@ class FlextTestsProtocols(p):
         FlextTestsEnforcementProtocolsMixin,
         FlextTestsValueFactoryProtocolsMixin,
         # NOTE (multi-agent): publish read-only cleanup contracts under p.Tests.
-        FlextTestsWorkspaceCleanupProtocolsMixin,
+        FlextTestsWorkspaceCleanupProtocols,
     ):
         """Test-specific protocols namespace.
 

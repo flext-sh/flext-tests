@@ -23,7 +23,7 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     """Register the local markdown fallback without eager product imports."""
     if find_spec("pytest_markdown_docs") is not None:
         return
-    from flext_tests._fixtures.markdown_validation import pytest_addoption as register
+    from ._fixtures.markdown_validation import pytest_addoption as register
 
     register(parser)
 
@@ -44,7 +44,7 @@ def pytest_configure(config: pytest.Config) -> None:
     if connectivity not in config.pluginmanager.get_plugins():
         config.pluginmanager.register(connectivity, connectivity.__name__)
     if find_spec("pytest_markdown_docs") is None:
-        from flext_tests._fixtures import markdown_validation
+        from ._fixtures import markdown_validation
 
         if markdown_validation not in config.pluginmanager.get_plugins():
             config.pluginmanager.register(

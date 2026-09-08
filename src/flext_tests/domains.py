@@ -310,7 +310,6 @@ class FlextTestsDomains:
         return cls.BoundFixtures(fixtures_root, file_extension=file_extension)
 
 
-td = FlextTestsDomains
-
+td: type[FlextTestsDomains] = FlextTestsDomains
 
 __all__: list[str] = ["FlextTestsDomains", "td"]

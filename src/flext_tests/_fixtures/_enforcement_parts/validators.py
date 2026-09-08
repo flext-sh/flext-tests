@@ -7,7 +7,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from flext_tests import c, m, p, t
-from flext_tests._fixtures._enforcement_parts.items import EnforcementItem
+
+from .items import EnforcementItem
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable

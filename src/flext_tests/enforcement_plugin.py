@@ -68,7 +68,7 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 
 def pytest_configure(config: pytest.Config) -> None:
     """Resolve enforcement only after startup instrumentation is active."""
-    from flext_tests._fixtures._enforcement_parts.config import pytest_configure
+    from ._fixtures._enforcement_parts.config import pytest_configure
 
     pytest_configure(config)
 
@@ -77,9 +77,7 @@ def pytest_collection_modifyitems(
     session: pytest.Session, config: pytest.Config, items: list[pytest.Item]
 ) -> None:
     """Delegate collection-time enforcement."""
-    from flext_tests._fixtures._enforcement_parts.hooks import (
-        pytest_collection_modifyitems,
-    )
+    from ._fixtures._enforcement_parts.hooks import pytest_collection_modifyitems
 
     pytest_collection_modifyitems(session, config, items)
 
@@ -91,14 +89,14 @@ def pytest_warning_recorded(
     location: tuple[str, int, str] | None,
 ) -> None:
     """Delegate runtime-warning capture."""
-    from flext_tests._fixtures._enforcement_parts.hooks import pytest_warning_recorded
+    from ._fixtures._enforcement_parts.hooks import pytest_warning_recorded
 
     pytest_warning_recorded(warning_message, when, nodeid, location)
 
 
 def pytest_sessionstart(session: pytest.Session) -> None:
     """Delegate session initialization."""
-    from flext_tests._fixtures._enforcement_parts.hooks import pytest_sessionstart
+    from ._fixtures._enforcement_parts.hooks import pytest_sessionstart
 
     pytest_sessionstart(session)
 
@@ -107,7 +105,7 @@ def pytest_terminal_summary(
     terminalreporter: pytest.TerminalReporter, exitstatus: int, config: pytest.Config
 ) -> None:
     """Delegate the enforcement summary."""
-    from flext_tests._fixtures._enforcement_parts.hooks import pytest_terminal_summary
+    from ._fixtures._enforcement_parts.hooks import pytest_terminal_summary
 
     pytest_terminal_summary(terminalreporter, exitstatus, config)
 

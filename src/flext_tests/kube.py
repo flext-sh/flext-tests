@@ -53,7 +53,7 @@ class FlextTestsKube(FlextTestsDocker):
         target = self.target_config
         if target is None:
             return r[str].fail(
-                "Kubernetes target not configured. Use tkube.kind(...) first."
+                "Kubernetes target not configured. Use FlextTestsKube.kind(...) first."
             )
         if target.compose_file is None:
             return r[str].fail("Kubernetes target has no compose file configured.")
@@ -82,7 +82,7 @@ class FlextTestsKube(FlextTestsDocker):
         target = self.target_config
         if target is None:
             return r[str].fail(
-                "Kubernetes target not configured. Use tkube.kind(...) first."
+                "Kubernetes target not configured. Use FlextTestsKube.kind(...) first."
             )
         if target.compose_file is None:
             return r[str].fail("Kubernetes target has no compose file configured.")
@@ -93,7 +93,7 @@ class FlextTestsKube(FlextTestsDocker):
         target = self.target_config
         if target is None or target.compose_file is None:
             return r[bool].fail(
-                "Kubernetes target not configured. Use tkube.kind(...) first."
+                "Kubernetes target not configured. Use FlextTestsKube.kind(...) first."
             )
         try:
             output = self._run_kubectl(["get", "nodes", "--no-headers"])
@@ -129,7 +129,7 @@ class FlextTestsKube(FlextTestsDocker):
         target = self.target_config
         if target is None:
             return r[m.Tests.ContainerInfo].fail(
-                "Kubernetes target not configured. Use tkube.kind(...).execute()."
+                "Kubernetes target not configured. Use FlextTestsKube.kind(...).execute()."
             )
         up_result = self.cluster_up()
         if up_result.failure:
@@ -150,7 +150,4 @@ class FlextTestsKube(FlextTestsDocker):
         return self.fetch_container_info(container_name)
 
 
-tkube = FlextTestsKube
-
-
-__all__: list[str] = ["FlextTestsKube", "tkube"]
+__all__: list[str] = ["FlextTestsKube"]

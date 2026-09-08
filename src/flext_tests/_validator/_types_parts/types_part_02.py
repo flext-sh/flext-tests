@@ -7,9 +7,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, override
 
 from flext_tests import c, t, u
-from flext_tests._validator._types_parts.types_part_01 import (
-    FlextValidatorTypes as FlextValidatorTypesPart01,
-)
+
+from .types_part_01 import FlextValidatorTypes as FlextValidatorTypesPart01
 
 if TYPE_CHECKING:
     from flext_tests import m

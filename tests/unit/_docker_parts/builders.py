@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
-from flext_tests import c as flext_tests_c, m, tk, tm
+from flext_tests import FlextTestsDocker, m, tm
 from tests import c
 
 
@@ -21,7 +20,9 @@ class DockerBuildersMixin:
 
     def test_shared_builder_resolves_target_config(self, tmp_path: Path) -> None:
         """Test shared() builds a resolved container target from constants."""
-        manager = tk.shared("flext-oracle-db-test", repository_root=tmp_path)
+        manager = FlextTestsDocker.shared(
+            "flext-oracle-db-test", repository_root=tmp_path
+        )
         target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq="flext-oracle-db-test")
         tm.that(
@@ -30,7 +31,9 @@ class DockerBuildersMixin:
 
     def test_shared_builder_resolves_openldap_target(self, tmp_path: Path) -> None:
         """Test shared() resolves the centralized OpenLDAP container target."""
-        manager = tk.shared("flext-openldap-test", repository_root=tmp_path)
+        manager = FlextTestsDocker.shared(
+            "flext-openldap-test", repository_root=tmp_path
+        )
         target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq="flext-openldap-test")
         tm.that(
@@ -41,7 +44,7 @@ class DockerBuildersMixin:
 
     def test_compose_builder_resolves_target_config(self, tmp_path: Path) -> None:
         """Test compose() builds a resolved explicit container target."""
-        manager = tk.compose(
+        manager = FlextTestsDocker.compose(
             "docker-compose.yml",
             target=m.Tests.ContainerConfig(
                 container_name="service-test", service="service-test", port=5432
@@ -55,7 +58,7 @@ class DockerBuildersMixin:
 
     def test_stack_builder_resolves_target_config(self, tmp_path: Path) -> None:
         """Test stack() builds a resolved explicit compose-stack target."""
-        manager = tk.stack(
+        manager = FlextTestsDocker.stack(
             "docker-compose.stack.yml",
             target=m.Tests.ContainerConfig(
                 container_name="stack-main", service="stack-main", port=3389
@@ -70,7 +73,7 @@ class DockerBuildersMixin:
 
     def test_stack_builder_allows_stack_only_target(self, tmp_path: Path) -> None:
         """Test stack() supports lifecycle-only stacks without inspection target."""
-        manager = tk.stack(
+        manager = FlextTestsDocker.stack(
             "docker-compose.stack.yml",
             target=m.Tests.ContainerConfig(host=c.LOOPBACK_IP, port=25432),
             repository_root=tmp_path,
@@ -79,16 +82,11 @@ class DockerBuildersMixin:
         tm.that(target.container_name, eq=None)
         tm.that(target.port, eq=25432)
 
-    def test_resolve_shared_target_raises_on_missing_compose_file(
+    def test_resolve_shared_target_raises_on_unknown_container(
         self, tmp_path: Path
     ) -> None:
-        broken = {
-            name: {**config} for name, config in c.Tests.SHARED_CONTAINERS.items()
-        }
-        del broken["flext-oracle-db-test"]["compose_file"]
-
-        with (
-            patch.object(flext_tests_c.Tests, "SHARED_CONTAINERS", broken),
-            pytest.raises(ValueError, match="missing compose_file"),
-        ):
-            tk.shared("flext-oracle-db-test", repository_root=tmp_path)
+        """Unknown shared containers fail loud against the real constants SSOT."""
+        with pytest.raises(ValueError, match="Unknown shared container"):
+            FlextTestsDocker.shared(
+                "no-such-shared-container", repository_root=tmp_path
+            )

@@ -5,17 +5,16 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_tests import m
-from flext_tests._fixtures._enforcement_parts.config import active_rules
-from flext_tests._fixtures._enforcement_parts.discovery import (
+
+from .config import active_rules
+from .discovery import (
     collected_project_names,
     collected_validator_targets,
     load_infra_report,
 )
-from flext_tests._fixtures._enforcement_parts.items import EnforcementCollector
-from flext_tests._fixtures._enforcement_parts.namespace import NamespaceDetectorBuilder
-from flext_tests._fixtures._enforcement_parts.validators import (
-    build_tests_validator_items,
-)
+from .items import EnforcementCollector
+from .namespace import NamespaceDetectorBuilder
+from .validators import build_tests_validator_items
 
 if TYPE_CHECKING:
     from pathlib import Path

@@ -9,8 +9,9 @@ from pathlib import Path
 
 from flext_cli import u
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
-from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
+
+from ..files import FlextTestsFilesUtilitiesMixin
+from ._assertions import FlextTestsFilesAssertionsMixin
 
 
 class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):

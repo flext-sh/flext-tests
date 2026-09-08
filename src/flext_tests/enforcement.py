@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from flext_tests._fixtures._enforcement_parts.discovery import load_infra_report
-from flext_tests._fixtures.enforcement import (
+from ._fixtures._enforcement_parts.discovery import load_infra_report
+from ._fixtures.enforcement import (
     EnforcementCollector,
     EnforcementItem,
     EnforcementViolationError,

@@ -13,7 +13,8 @@ from _pytest.python_api import ApproxBase
 
 from flext_core import m, p, t
 from flext_infra import t as it
-from flext_tests._typings.base import FlextTestsBaseTypesMixin as tb
+
+from .base import FlextTestsBaseTypesMixin as tb
 
 
 class FlextTestsMatchersTypesMixin:

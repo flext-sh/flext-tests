@@ -13,7 +13,7 @@ class FlextValidatorSettings:
     """Scan pyproject and config for policy violations."""
 
     @staticmethod
-    def to_toml_value(value: t.JsonValue) -> t.Tests.TomlValue:
+    def to_toml_value(value: t.JsonValue) -> t.Tests.MakeTomlValue:
         """Project a JsonValue into a TOML-compatible value."""
         if value is None:
             return ""
@@ -27,7 +27,7 @@ class FlextValidatorSettings:
         return value
 
     @staticmethod
-    def to_toml_dict(mapping: t.JsonMapping) -> t.Tests.TomlDict:
+    def to_toml_dict(mapping: t.JsonMapping) -> t.Tests.MakeTomlTable:
         """Recursively convert a JsonMapping to a TOML-compatible dictionary."""
         return {
             key: FlextValidatorSettings.to_toml_value(value)
@@ -59,16 +59,16 @@ class FlextValidatorSettings:
     def _check_mypy_settings(
         cls,
         file_path: Path,
-        data: t.Tests.TomlDict,
+        data: t.Tests.MakeTomlTable,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Check mypy configuration for violations."""
         violations: MutableSequence[m.Tests.Violation] = []
-        tool_data: t.Tests.TomlValue = data.get("tool", {})
+        tool_data: t.Tests.MakeTomlValue = data.get("tool", {})
         if not isinstance(tool_data, dict):
             return violations
-        mypy_config: t.Tests.TomlValue = tool_data.get("mypy", {})
+        mypy_config: t.Tests.MakeTomlValue = tool_data.get("mypy", {})
         if not isinstance(mypy_config, dict):
             return violations
         if (
@@ -85,7 +85,7 @@ class FlextValidatorSettings:
                     "(global)",
                 )
             )
-        overrides_raw: t.Tests.TomlValue = mypy_config.get("overrides", [])
+        overrides_raw: t.Tests.MakeTomlValue = mypy_config.get("overrides", [])
         if not isinstance(overrides_raw, list):
             return violations
         for override in overrides_raw:
@@ -93,7 +93,9 @@ class FlextValidatorSettings:
                 continue
             module = str(override.get("module", "unknown"))
             approved_rule = u.Tests.approved("CONFIG-001", file_path, approved)
-            ignore_errors_raw: t.Tests.TomlValue = override.get("ignore_errors", False)
+            ignore_errors_raw: t.Tests.MakeTomlValue = override.get(
+                "ignore_errors", False
+            )
             if ignore_errors_raw is True and (not approved_rule):
                 line_num = u.Tests.find_line_number(lines, f'module = "{module}"')
                 violations.append(
@@ -125,15 +127,15 @@ class FlextValidatorSettings:
     def _check_pyright_settings(
         cls,
         file_path: Path,
-        data: t.Tests.TomlDict,
+        data: t.Tests.MakeTomlTable,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Check pyright configuration for violations."""
-        tool_data: t.Tests.TomlValue = data.get("tool", {})
+        tool_data: t.Tests.MakeTomlValue = data.get("tool", {})
         if not isinstance(tool_data, dict):
             return []
-        pyright_config: t.Tests.TomlValue = tool_data.get("pyright", {})
+        pyright_config: t.Tests.MakeTomlValue = tool_data.get("pyright", {})
         if not isinstance(pyright_config, dict):
             return []
         if (

@@ -7,20 +7,13 @@ from typing import cast, overload
 
 from flext_core import p as core_p, u
 from flext_tests import c, m, p, t
-from flext_tests._utilities._matchers._assertions import (
-    FlextTestsMatchersAssertionsMixin,
-)
-from flext_tests._utilities._matchers._containment import (
-    FlextTestsMatchersContainmentMixin,
-)
-from flext_tests._utilities._matchers._that import (
-    FlextTestsMatchersThatMixin as FlextTestsMatchersRulesMixin,
-)
-from flext_tests._utilities._matchers._typeguards import (
-    FlextTestsMatchersTypeGuardsMixin,
-)
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
+
+from ..payload import FlextTestsPayloadUtilities
+from ..result import FlextTestsResultUtilitiesMixin
+from ._assertions import FlextTestsMatchersAssertionsMixin
+from ._containment import FlextTestsMatchersContainmentMixin
+from ._that import FlextTestsMatchersThatMixin as FlextTestsMatchersRulesMixin
+from ._typeguards import FlextTestsMatchersTypeGuardsMixin
 
 
 class FlextTestsMatchersResultMixin:

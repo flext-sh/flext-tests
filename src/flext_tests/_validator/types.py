@@ -12,6 +12,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_tests._validator._types_parts import FlextValidatorTypes
+from ._types_parts import FlextValidatorTypes
 
 __all__: list[str] = ["FlextValidatorTypes"]

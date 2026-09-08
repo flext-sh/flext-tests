@@ -7,13 +7,10 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests._fixtures._enforcement_parts.build import build_items
-from flext_tests._fixtures._enforcement_parts.config import (
-    SessionConfig,
-    active_rules,
-    resolve_config,
-)
 from flext_tests.enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
+
+from .build import build_items
+from .config import SessionConfig, active_rules, resolve_config
 
 if TYPE_CHECKING:
     from flext_tests import p

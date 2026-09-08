@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Literal, Protocol
 
 
-class FlextTestsWorkspaceCleanupProtocolsMixin:
+class FlextTestsWorkspaceCleanupProtocols:
     """Structural contracts for cleanup models crossing public interfaces."""
 
     class WorkspaceCleanupPolicy(Protocol):
@@ -24,7 +24,7 @@ class FlextTestsWorkspaceCleanupProtocolsMixin:
         @property
         def policy(
             self,
-        ) -> FlextTestsWorkspaceCleanupProtocolsMixin.WorkspaceCleanupPolicy: ...
+        ) -> FlextTestsWorkspaceCleanupProtocols.WorkspaceCleanupPolicy: ...
 
     class WorkspaceCleanupCandidate(Protocol):
         """Validated cleanup candidate surface."""
@@ -48,25 +48,23 @@ class FlextTestsWorkspaceCleanupProtocolsMixin:
         @property
         def request(
             self,
-        ) -> FlextTestsWorkspaceCleanupProtocolsMixin.WorkspaceCleanupRequest: ...
+        ) -> FlextTestsWorkspaceCleanupProtocols.WorkspaceCleanupRequest: ...
 
         @property
         def candidates(
             self,
         ) -> tuple[
-            FlextTestsWorkspaceCleanupProtocolsMixin.WorkspaceCleanupCandidate, ...
+            FlextTestsWorkspaceCleanupProtocols.WorkspaceCleanupCandidate, ...
         ]: ...
 
     class WorkspaceCleanupReport(Protocol):
         """Applied cleanup report surface."""
 
         @property
-        def plan(
-            self,
-        ) -> FlextTestsWorkspaceCleanupProtocolsMixin.WorkspaceCleanupPlan: ...
+        def plan(self) -> FlextTestsWorkspaceCleanupProtocols.WorkspaceCleanupPlan: ...
 
         @property
         def removed(self) -> tuple[Path, ...]: ...
 
 
-__all__: tuple[str, ...] = ("FlextTestsWorkspaceCleanupProtocolsMixin",)
+__all__: tuple[str, ...] = ("FlextTestsWorkspaceCleanupProtocols",)

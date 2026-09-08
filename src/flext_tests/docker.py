@@ -500,7 +500,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         target = self.target_config
         if target is None:
             return r[str].fail(
-                "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...)."
+                "Docker target not configured. Use FlextTestsDocker.shared(...), FlextTestsDocker.compose(...), or FlextTestsDocker.stack(...)."
             )
         if target.compose_file is None:
             return r[str].fail("Docker target has no compose file configured.")
@@ -515,7 +515,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         target = self.target_config
         if target is None:
             return r[str].fail(
-                "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...)."
+                "Docker target not configured. Use FlextTestsDocker.shared(...), FlextTestsDocker.compose(...), or FlextTestsDocker.stack(...)."
             )
         if target.compose_file is None:
             return r[str].fail("Docker target has no compose file configured.")
@@ -528,7 +528,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         target = self.target_config
         if target is None:
             return r[bool].fail(
-                "Docker target not configured. Use tk.shared(...), tk.compose(...), or tk.stack(...)."
+                "Docker target not configured. Use FlextTestsDocker.shared(...), FlextTestsDocker.compose(...), or FlextTestsDocker.stack(...)."
             )
         resolved_port = target.port if port is None else port
         if resolved_port is None:
@@ -571,7 +571,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         target = self.target_config
         if target is None:
             return r[m.Tests.ContainerInfo].fail(
-                "Docker target not configured. Use tk.shared(...).execute() or tk.compose(...).execute()."
+                "Docker target not configured. Use FlextTestsDocker.shared(...).execute() or FlextTestsDocker.compose(...).execute()."
             )
         if not target.container_name:
             return r[m.Tests.ContainerInfo].fail(
@@ -642,7 +642,6 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return container_info_result
 
 
-tk = FlextTestsDocker
-
+tk: type[FlextTestsDocker] = FlextTestsDocker
 
 __all__: list[str] = ["FlextTestsDocker", "tk"]

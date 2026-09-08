@@ -5,9 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_tests import c, p, r
-from flext_tests._utilities.workspace_cleanup_git import (
-    FlextTestsWorkspaceCleanupGitUtilitiesMixin,
-)
+
+from .workspace_cleanup_git import FlextTestsWorkspaceCleanupGitUtilitiesMixin
 
 
 class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(

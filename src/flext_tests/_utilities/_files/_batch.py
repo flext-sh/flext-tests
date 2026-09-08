@@ -6,8 +6,9 @@ from collections.abc import Mapping, MutableMapping
 from pathlib import Path
 
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+
+from ..payload import FlextTestsPayloadUtilities
+from ._contexts import FlextTestsFilesContextsMixin
 
 
 class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):

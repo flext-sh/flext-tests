@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     )
     from .enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
     from .files import FlextTestsFiles, tf
-    from .kube import FlextTestsKube, tkube
+    from .kube import FlextTestsKube
     from .models import FlextTestsModels, FlextTestsModels as m
     from .protocols import FlextTestsProtocols, FlextTestsProtocols as p
     from .tmatchers import FlextTestsMatchersUtilities, tm
@@ -98,7 +98,6 @@ __all__: tuple[str, ...] = (
     "td",
     "tf",
     "tk",
-    "tkube",
     "tm",
     "tv",
     "u",
@@ -125,7 +124,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ),
             ".enforcement_plugin": ("SLOW_TIMEOUT_INI_OPTION",),
             ".files": ("FlextTestsFiles", "tf"),
-            ".kube": ("FlextTestsKube", "tkube"),
+            ".kube": ("FlextTestsKube",),
             ".models": ("FlextTestsModels", "m"),
             ".protocols": ("FlextTestsProtocols", "p"),
             ".tmatchers": ("FlextTestsMatchersUtilities", "tm"),

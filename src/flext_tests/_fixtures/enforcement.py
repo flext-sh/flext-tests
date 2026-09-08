@@ -2,24 +2,25 @@
 
 from __future__ import annotations
 
-from flext_tests._fixtures._enforcement_parts.config import (
+from flext_tests.enforcement_plugin import pytest_addoption
+
+from ._enforcement_parts.config import (
     active_rules,
     discover_repository_root,
     pytest_configure,
     split_csv,
 )
-from flext_tests._fixtures._enforcement_parts.hooks import (
+from ._enforcement_parts.hooks import (
     pytest_collection_modifyitems,
     pytest_sessionstart,
     pytest_terminal_summary,
     pytest_warning_recorded,
 )
-from flext_tests._fixtures._enforcement_parts.items import (
+from ._enforcement_parts.items import (
     EnforcementCollector,
     EnforcementItem,
     EnforcementViolationError,
 )
-from flext_tests.enforcement_plugin import pytest_addoption
 
 __all__: list[str] = [
     "EnforcementCollector",

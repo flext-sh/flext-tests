@@ -7,8 +7,9 @@ from pathlib import Path
 from typing import TypeIs, cast
 
 from flext_tests import c, m, p, t, u
-from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+
+from ..payload import FlextTestsPayloadUtilities
+from ._lifecycle import FlextTestsFilesLifecycleMixin
 
 
 class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):

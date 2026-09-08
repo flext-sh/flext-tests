@@ -5,8 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities.make_contract import FlextTestsMakeContractUtilitiesMixin
-from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
+
+from .make_contract import FlextTestsMakeContractUtilitiesMixin
+from .make_parsing import FlextTestsMakeParsingUtilitiesMixin
 
 
 class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin):

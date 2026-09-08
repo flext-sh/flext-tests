@@ -7,9 +7,8 @@ from typing import Literal
 
 from flext_cli import u
 from flext_tests import m, p, r
-from flext_tests._utilities.workspace_cleanup_inspect import (
-    FlextTestsWorkspaceCleanupInspectUtilitiesMixin,
-)
+
+from .workspace_cleanup_inspect import FlextTestsWorkspaceCleanupInspectUtilitiesMixin
 
 
 class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
