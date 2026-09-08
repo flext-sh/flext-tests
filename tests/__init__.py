@@ -11,7 +11,7 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 if TYPE_CHECKING:
     from flext_tests import FlextTestsConstants, d, e, h, r, s, td, tf, tk, tm, tv, x
 
-    from . import integration as integration, unit as unit
+    from . import integration, unit
     from .constants import TestsFlextTestsConstants, TestsFlextTestsConstants as c
     from .models import TestsFlextTestsModels, TestsFlextTestsModels as m
     from .protocols import TestsFlextTestsProtocols, TestsFlextTestsProtocols as p
