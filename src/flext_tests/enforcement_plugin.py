@@ -90,10 +90,7 @@ def pytest_warning_recorded(
 ) -> None:
     """Track runtime enforcement warnings."""
     _ = when, nodeid, location
-    from flext_tests._fixtures._enforcement_parts.config import (
-        SessionConfig,
-        resolve_config,
-    )
+    from ._fixtures._enforcement_parts.config import SessionConfig, resolve_config
 
     if SessionConfig.value is None:
         return
