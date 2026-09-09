@@ -10,9 +10,9 @@ from collections.abc import Callable, Set as AbstractSet
 from typing import TypeAliasType
 
 from _pytest.python_api import ApproxBase
+from flext_infra import t as it
 
 from flext_core import m, p, t
-from flext_infra import t as it
 
 from .base import FlextTestsBaseTypesMixin as tb
 

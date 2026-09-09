@@ -22,8 +22,9 @@ from types import FrameType, GenericAlias, ModuleType
 from typing import NotRequired, TypedDict
 
 from flext_cli import t
-from flext_core import m, p
 from flext_infra import t as it
+
+from flext_core import m, p
 
 
 class FlextTestsBaseTypesMixin:

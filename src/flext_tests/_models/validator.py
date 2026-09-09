@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Annotated, ClassVar
 
 from flext_infra import m, p, u
+
 from flext_tests import c, t
 
 
