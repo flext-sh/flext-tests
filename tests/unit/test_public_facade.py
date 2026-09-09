@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from importlib import import_module
+from importlib.metadata import entry_points
 from pathlib import Path
 
 import pytest
@@ -18,6 +19,19 @@ class TestsFlextTestsPublicFacade:
 
         tm.that(m.__name__, eq="FlextTestsModels")
         tm.that(u.__name__, eq="FlextTestsUtilities")
+
+    def test_selected_enforcement_plugin_uses_its_declared_identity(
+        self, pytestconfig: pytest.Config
+    ) -> None:
+        from flext_infra import config
+
+        plugin = config.Infra.tooling.tools.pytest.enforcement_plugin
+        entries = entry_points(group="pytest11", name=plugin)
+        tm.that(len(entries), eq=1)
+        tm.that(
+            pytestconfig.pluginmanager.get_plugin(plugin) is next(iter(entries)).load(),
+            eq=True,
+        )
 
     def test_consumer_facade_imports_without_container_lifecycle(self) -> None:
         import flext_tests
