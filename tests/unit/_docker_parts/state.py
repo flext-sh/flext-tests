@@ -4,29 +4,37 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import pytest
+
 from flext_tests import FlextTestsDocker, tm
 from tests import c, m, u
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    import pytest
-
 
 class DockerStateMixin:
     """Docker state and model tests."""
 
-    def test_container_status_values(self) -> None:
-        """Test c.Tests.ContainerStatus enum values."""
-        tm.that(c.Tests.ContainerStatus.CREATED.value, eq="created")
-        tm.that(c.Tests.ContainerStatus.RUNNING.value, eq="running")
-        tm.that(c.Tests.ContainerStatus.EXITED.value, eq="exited")
-        tm.that(c.Tests.ContainerStatus.PAUSED.value, eq="paused")
-        tm.that(c.Tests.ContainerStatus.REMOVING.value, eq="removing")
-        tm.that(c.Tests.ContainerStatus.DEAD.value, eq="dead")
-        tm.that(c.Tests.ContainerStatus.STOPPED.value, eq="stopped")
-        tm.that(c.Tests.ContainerStatus.NOT_FOUND.value, eq="not_found")
-        tm.that(c.Tests.ContainerStatus.ERROR.value, eq="error")
+    @pytest.mark.parametrize(
+        ("member", "expected_value"),
+        [
+            (c.Tests.ContainerStatus.CREATED, "created"),
+            (c.Tests.ContainerStatus.RUNNING, "running"),
+            (c.Tests.ContainerStatus.EXITED, "exited"),
+            (c.Tests.ContainerStatus.PAUSED, "paused"),
+            (c.Tests.ContainerStatus.REMOVING, "removing"),
+            (c.Tests.ContainerStatus.DEAD, "dead"),
+            (c.Tests.ContainerStatus.STOPPED, "stopped"),
+            (c.Tests.ContainerStatus.NOT_FOUND, "not_found"),
+            (c.Tests.ContainerStatus.ERROR, "error"),
+        ],
+    )
+    def test_container_status_exposes_stable_wire_value(
+        self, member: c.Tests.ContainerStatus, expected_value: str
+    ) -> None:
+        """Each ContainerStatus member serializes to its documented string."""
+        tm.that(member.value, eq=expected_value)
 
     def test_container_info_creation(self) -> None:
         """Test container info model creation with required fields."""

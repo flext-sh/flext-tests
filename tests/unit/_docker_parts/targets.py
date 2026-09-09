@@ -65,5 +65,5 @@ class DockerTargetsMixin:
             repository_root=tmp_path,
         )
         result = manager.ready(max_wait=1)
-        _ = u.Tests.assert_success(result)
-        tm.that(result.value is False, eq=True)
+        _ = u.Tests.assert_failure(result)
+        tm.that(result.error or "", has="not ready")
