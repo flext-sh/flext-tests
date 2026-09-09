@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flext_tests.enforcement_plugin import pytest_addoption
+from flext_tests.enforcement_plugin import pytest_addoption, pytest_warning_recorded
 
 from ._enforcement_parts.config import (
     active_rules,
@@ -14,7 +14,6 @@ from ._enforcement_parts.hooks import (
     pytest_collection_modifyitems,
     pytest_sessionstart,
     pytest_terminal_summary,
-    pytest_warning_recorded,
 )
 from ._enforcement_parts.items import (
     EnforcementCollector,

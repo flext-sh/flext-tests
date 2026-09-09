@@ -6,6 +6,8 @@ from collections.abc import Callable, MutableSequence
 from pathlib import Path
 from typing import ClassVar
 
+from flext_cli import u as _cli_u
+
 import flext_tests.constants as tests_constants
 import flext_tests.models as tests_models
 import flext_tests.typings as tests_typings
@@ -90,6 +92,34 @@ class FlextTestsValidatorUtilitiesMixin:
             description=description,
             code_snippet=line.strip(),
         )
+
+    @staticmethod
+    def read_scan_file(
+        file_path: Path, unreadable_code: str
+    ) -> tuple[str | None, tuple[tests_models.m.Tests.Violation, ...]]:
+        """Read one file for scanning.
+
+        Centralizes the file-read + unreadable-violation boilerplate every
+        scanner repeats: on success returns ``(content, ())``; on failure
+        returns ``(None, (unreadable_violation,))``.  The ``unreadable_code``
+        is owned by the caller (e.g. ``BYPASS-UNREADABLE``) so this helper
+        stays a zero-knowledge shared surface.
+        """
+        read = _cli_u.Cli.files_read_text(file_path)
+        if read.failure:
+            return (
+                None,
+                (
+                    FlextTestsValidatorUtilitiesMixin.create_violation(
+                        file_path,
+                        0,
+                        unreadable_code,
+                        (),
+                        read.error or "could not read file",
+                    ),
+                ),
+            )
+        return read.value, ()
 
     @staticmethod
     def find_line_number(lines: tests_typings.t.StrSequence, pattern: str) -> int:
@@ -274,13 +304,22 @@ class FlextTestsValidatorUtilitiesMixin:
         )
 
     class ValidatorScannerMixin:
-        """MRO mixin: validator classes inherit scan(...) for free.
+        """MRO mixin: validator classes inherit the scan pipeline for free.
 
-        Each consumer declares _VALIDATOR_KEY and a _scan_file
-        classmethod; scan delegates to validator_run_scan.
+        ``_scan_file`` is the Template Method: it reads the file via
+        ``read_scan_file`` (centralizing the unreadable-violation boilerplate)
+        and then delegates to ``_scan_content``, which each consumer
+        overrides with its domain-specific checks.  This eliminates the
+        repeated file-read scaffolding across every scanner.
+
+        ``_scan_file`` also splits ``content`` into ``lines`` so that
+        consumer ``_scan_content`` overrides share only their check
+        invocations — no shared ``violations`` list or ``splitlines`` call
+        is repeated, keeping jscpd below the clone threshold.
         """
 
         _VALIDATOR_KEY: ClassVar[str]
+        _UNREADABLE_CODE: ClassVar[str]
 
         @classmethod
         def _scan_file(
@@ -288,7 +327,30 @@ class FlextTestsValidatorUtilitiesMixin:
             file_path: Path,
             approved: tests_typings.t.MappingKV[str, tests_typings.t.StrSequence],
         ) -> tests_typings.t.SequenceOf[tests_models.m.Tests.Violation]:
-            """Subclass MUST override: scan one file and yield violations."""
+            """Read one file, then delegate to ``_scan_content``.
+
+            Subclasses never reimplement file reading; they own only
+            ``_scan_content`` and ``_UNREADABLE_CODE``.
+            """
+            content, unreadable = (
+                FlextTestsValidatorUtilitiesMixin.read_scan_file(
+                    file_path, cls._UNREADABLE_CODE
+                )
+            )
+            if content is None:
+                return unreadable
+            return cls._scan_content(
+                file_path, content.splitlines(), approved
+            )
+
+        @classmethod
+        def _scan_content(
+            cls,
+            file_path: Path,
+            lines: tests_typings.t.StrSequence,
+            approved: tests_typings.t.MappingKV[str, tests_typings.t.StrSequence],
+        ) -> tests_typings.t.SequenceOf[tests_models.m.Tests.Violation]:
+            """Hook: scan parsed lines; subclass MUST override."""
             raise NotImplementedError
 
         @classmethod

@@ -7,7 +7,7 @@ from pathlib import Path
 
 from flext_cli import u as cli_u
 
-from flext_tests import c, m, p, r, t, u
+from flext_tests import c, m, p, t, u
 
 
 class FlextValidatorSettings:
@@ -156,19 +156,11 @@ class FlextValidatorSettings:
         cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single pyproject.toml for settings violations."""
-        violations: MutableSequence[m.Tests.Violation] = []
-        read = u.Cli.files_read_text(file_path)
-        if read.failure:
-            return [
-                u.Tests.create_violation(
-                    file_path,
-                    0,
-                    "CONFIG-UNREADABLE",
-                    (),
-                    read.error or "could not read file",
-                )
-            ]
-        content = read.value
+        content, unreadable = u.Tests.read_scan_file(
+            file_path, "CONFIG-UNREADABLE"
+        )
+        if content is None:
+            return unreadable
         mapping = cli_u.Cli.toml_mapping_from_text(content)
         if mapping is None:
             return [
@@ -182,9 +174,10 @@ class FlextValidatorSettings:
             ]
         data = cls.to_toml_dict(mapping)
         lines = content.splitlines()
-        violations.extend(cls._check_mypy_settings(file_path, data, lines, approved))
-        violations.extend(cls._check_pyright_settings(file_path, data, lines, approved))
-        return violations
+        return (
+            *cls._check_mypy_settings(file_path, data, lines, approved),
+            *cls._check_pyright_settings(file_path, data, lines, approved),
+        )
 
     @classmethod
     def scan(
@@ -193,19 +186,11 @@ class FlextValidatorSettings:
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
     ) -> p.Result[m.Tests.ScanResult]:
         """Scan pyproject.toml files for settings violations."""
-        violations: MutableSequence[m.Tests.Violation] = []
-        approved = approved_exceptions or {}
-        for file_path in files:
-            if file_path.name != "pyproject.toml":
-                continue
-            file_violations = cls._scan_file(file_path, approved)
-            violations.extend(file_violations)
-        return r[m.Tests.ScanResult].ok(
-            m.Tests.ScanResult(
-                validator_name=c.Tests.VALIDATOR_CONFIG_KEY,
-                files_scanned=len(files),
-                violations=violations,
-            )
+        return u.Tests.validator_run_scan(
+            files=[f for f in files if f.name == "pyproject.toml"],
+            approved_exceptions=approved_exceptions,
+            validator_name=c.Tests.VALIDATOR_CONFIG_KEY,
+            scan_file=cls._scan_file,
         )
 
     @classmethod

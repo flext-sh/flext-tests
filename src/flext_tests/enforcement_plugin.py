@@ -88,10 +88,24 @@ def pytest_warning_recorded(
     nodeid: str,
     location: tuple[str, int, str] | None,
 ) -> None:
-    """Delegate runtime-warning capture."""
-    from ._fixtures._enforcement_parts.hooks import pytest_warning_recorded
+    """Track runtime enforcement warnings."""
+    _ = when, nodeid, location
+    from flext_tests._fixtures._enforcement_parts.config import (
+        SessionConfig,
+        resolve_config,
+    )
 
-    pytest_warning_recorded(warning_message, when, nodeid, location)
+    if SessionConfig.value is None:
+        return
+    cfg = resolve_config(SessionConfig.value)
+    if not cfg.active:
+        return
+    category = getattr(warning_message, "category", None)
+    if category is None:
+        return
+    dotted = f"{category.__module__}.{category.__qualname__}"
+    counter = cfg.warning_counter
+    counter[dotted] = counter.get(dotted, 0) + 1
 
 
 def pytest_sessionstart(session: pytest.Session) -> None:

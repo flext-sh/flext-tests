@@ -132,37 +132,22 @@ class FlextValidatorTypes(FlextValidatorTypesPart01):
 
     @classmethod
     @override
-    def _scan_file(
-        cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
+    def _scan_content(
+        cls,
+        file_path: Path,
+        lines: t.StrSequence,
+        approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single file for type violations."""
-        violations: MutableSequence[m.Tests.Violation] = []
-        read = u.Cli.files_read_text(file_path)
-        if read.failure:
-            return [
-                u.Tests.create_violation(
-                    file_path,
-                    0,
-                    "TYPE-UNREADABLE",
-                    (),
-                    read.error or "could not read file",
-                )
-            ]
-        lines = read.value.splitlines()
-        violations.extend(cls._check_type_ignore(file_path, lines, approved))
-        violations.extend(cls._check_any_types(file_path, lines, approved))
-        violations.extend(cls._check_cast_usage(file_path, lines, approved))
-        violations.extend(
-            cls._check_legacy_typing_factories(file_path, lines, approved)
+        return (
+            *cls._check_type_ignore(file_path, lines, approved),
+            *cls._check_any_types(file_path, lines, approved),
+            *cls._check_cast_usage(file_path, lines, approved),
+            *cls._check_legacy_typing_factories(file_path, lines, approved),
+            *cls._check_legacy_typing_annotations(file_path, lines, approved),
+            *cls._check_object_annotations(file_path, lines, approved),
+            *cls._check_bool_returning_is_helpers(file_path, lines, approved),
         )
-        violations.extend(
-            cls._check_legacy_typing_annotations(file_path, lines, approved)
-        )
-        violations.extend(cls._check_object_annotations(file_path, lines, approved))
-        violations.extend(
-            cls._check_bool_returning_is_helpers(file_path, lines, approved)
-        )
-        return violations
 
 
 __all__: list[str] = ["FlextValidatorTypes"]

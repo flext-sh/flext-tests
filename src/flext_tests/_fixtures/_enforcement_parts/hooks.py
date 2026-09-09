@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING
 
 import pytest
 
@@ -11,9 +10,6 @@ from flext_tests.enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
 
 from .build import build_items
 from .config import SessionConfig, active_rules, resolve_config
-
-if TYPE_CHECKING:
-    from flext_tests import p
 
 
 def _apply_slow_timeout_policy(config: pytest.Config, items: list[pytest.Item]) -> None:
@@ -69,27 +65,6 @@ def pytest_collection_modifyitems(
     items.extend(generated)
 
 
-def pytest_warning_recorded(
-    warning_message: p.AttributeProbe,
-    when: str,
-    nodeid: str,
-    location: tuple[str, int, str] | None,
-) -> None:
-    """Track runtime enforcement warnings."""
-    _ = when, nodeid, location
-    if SessionConfig.value is None:
-        return
-    cfg = resolve_config(SessionConfig.value)
-    if not cfg.active:
-        return
-    category = getattr(warning_message, "category", None)
-    if category is None:
-        return
-    dotted = f"{category.__module__}.{category.__qualname__}"
-    counter = cfg.warning_counter
-    counter[dotted] = counter.get(dotted, 0) + 1
-
-
 def pytest_sessionstart(session: pytest.Session) -> None:
     """Expose the session config for warning-capture plumbing."""
     SessionConfig.value = session.config
@@ -122,5 +97,4 @@ __all__: list[str] = [
     "pytest_collection_modifyitems",
     "pytest_sessionstart",
     "pytest_terminal_summary",
-    "pytest_warning_recorded",
 ]

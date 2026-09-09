@@ -15,6 +15,7 @@ from ._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
 from ._utilities.files import FlextTestsFilesUtilitiesMixin
 from ._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
 from ._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
+from ._utilities.governance import ModuleGovernanceMixin
 from ._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
 from ._utilities.make import FlextTestsMakeUtilitiesMixin
 from ._utilities.matchers import FlextTestsMatchersUtilities
@@ -46,10 +47,11 @@ class FlextTestsUtilities(u):
         FlextTestsFixturesDSLMixin,
         # NOTE (multi-agent): compose guarded cleanup planning/apply into u.Tests.
         FlextTestsWorkspaceCleanupUtilitiesMixin,
+        ModuleGovernanceMixin,
     ):
         """Test utilities namespace."""
 
 
 u = FlextTestsUtilities
 
-__all__: list[str] = ["FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"]
+__all__: list[str] = ["FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "ModuleGovernanceMixin", "u"]
