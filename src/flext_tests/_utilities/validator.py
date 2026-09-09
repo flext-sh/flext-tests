@@ -332,16 +332,12 @@ class FlextTestsValidatorUtilitiesMixin:
             Subclasses never reimplement file reading; they own only
             ``_scan_content`` and ``_UNREADABLE_CODE``.
             """
-            content, unreadable = (
-                FlextTestsValidatorUtilitiesMixin.read_scan_file(
-                    file_path, cls._UNREADABLE_CODE
-                )
+            content, unreadable = FlextTestsValidatorUtilitiesMixin.read_scan_file(
+                file_path, cls._UNREADABLE_CODE
             )
             if content is None:
                 return unreadable
-            return cls._scan_content(
-                file_path, content.splitlines(), approved
-            )
+            return cls._scan_content(file_path, content.splitlines(), approved)
 
         @classmethod
         def _scan_content(

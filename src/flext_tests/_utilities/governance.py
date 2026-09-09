@@ -100,9 +100,7 @@ class ModuleGovernanceMixin:
             return None
 
     @staticmethod
-    def _module_top_level_attrs(
-        module: ModuleType,
-    ) -> Iterator[tuple[str, object]]:
+    def _module_top_level_attrs(module: ModuleType) -> Iterator[tuple[str, object]]:
         """Yield only the symbols defined directly on this module (no re-exports)."""
         module_name = module.__name__
         for name, value in vars(module).items():

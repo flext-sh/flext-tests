@@ -156,9 +156,7 @@ class FlextValidatorSettings:
         cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single pyproject.toml for settings violations."""
-        content, unreadable = u.Tests.read_scan_file(
-            file_path, "CONFIG-UNREADABLE"
-        )
+        content, unreadable = u.Tests.read_scan_file(file_path, "CONFIG-UNREADABLE")
         if content is None:
             return unreadable
         mapping = cli_u.Cli.toml_mapping_from_text(content)

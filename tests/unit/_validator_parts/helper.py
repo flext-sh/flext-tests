@@ -14,9 +14,7 @@ class ValidatorTestFilesMixin:
     """Mixin providing shared file-writing helpers for validator tests."""
 
     @staticmethod
-    def _write_source(
-        tmp_path: Path, name: str, source: str
-    ) -> Path:
+    def _write_source(tmp_path: Path, name: str, source: str) -> Path:
         """Write ``source`` to ``tmp_path / name`` and return the path."""
         file_path = tmp_path / name
         file_path.write_text(source, encoding="utf-8")
