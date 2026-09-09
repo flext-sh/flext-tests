@@ -11,7 +11,7 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 if TYPE_CHECKING:
     from flext_tests import c, d, e, h, m, p, r, s, t, td, tf, tk, tm, tv, u, x
 
-    from . import _docker_parts, _files_parts, _matchers_parts
+    from . import _docker_parts, _files_parts, _matchers_parts, _validator_parts
     from .test_matchers import TestsFlextTestsMatchers
     from .test_public_facade import TestsFlextTestsPublicFacade
 __all__: tuple[str, ...] = (
@@ -20,6 +20,7 @@ __all__: tuple[str, ...] = (
     "_docker_parts",
     "_files_parts",
     "_matchers_parts",
+    "_validator_parts",
     "c",
     "d",
     "e",
@@ -44,6 +45,7 @@ _LAZY_IMPORTS = MappingProxyType(
             "._docker_parts": ("_docker_parts",),
             "._files_parts": ("_files_parts",),
             "._matchers_parts": ("_matchers_parts",),
+            "._validator_parts": ("_validator_parts",),
             ".test_matchers": ("TestsFlextTestsMatchers",),
             ".test_public_facade": ("TestsFlextTestsPublicFacade",),
             "flext_tests": (
