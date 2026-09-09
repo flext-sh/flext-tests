@@ -476,6 +476,8 @@ DOCS_PROJECT_ARGS := $(foreach project,$(SELECTED_PROJECTS),--projects $(project
 # PYTHONPATH would make `make test` in a linked worktree execute that primary
 # tree instead of this checkout. Prefer PROJECT_ROOT/src so the Makefile owner
 # always wins over the shared editable (terminus T4 / path-purity).
+# Preserve the Make-owned UV_PROJECT_ENVIRONMENT used by setup. --project alone
+# can select a parent uv workspace's default venv, even for a standalone member.
 UV_RUN := env -u MYPYPATH -u VIRTUAL_ENV -u UV_PROJECT -u PROJECT_ROOT PYTHONPATH="$(PROJECT_ROOT)/src" $(UV) run --project "$(RUNTIME_ROOT)" --no-sync
 PROJECT_INFRA_PYTHONPATH ?= $(MAKEFILE_ROOT)/src
 PROJECT_FLEXT_INFRA := if [ ! -x "$(FLEXT_INFRA_PYTHON)" ]; then printf 'ERROR: FLEXT_INFRA_PYTHON must name an executable managed Python\n' >&2; exit 2; fi; env -u PYTHONPATH -u MYPYPATH -u VIRTUAL_ENV -u UV_PROJECT -u UV_PROJECT_ENVIRONMENT PATH="$(dir $(FLEXT_INFRA_PYTHON)):$(SANITIZED_CALLER_PATH)" PYTHONPATH="$(PROJECT_INFRA_PYTHONPATH)" $(FLEXT_INFRA_PYTHON) -m flext_infra
@@ -489,7 +491,11 @@ PROJECT_FLEXT_INFRA := if [ ! -x "$(FLEXT_INFRA_PYTHON)" ]; then printf 'ERROR: 
 # `uv sync --check` permanently divergent. A standalone project owns its venv
 # alone and has no workspace packages to include.
 SHARED_RUNTIME := $(if $(filter-out $(PROJECT_ROOT),$(RUNTIME_ROOT)),1,$(if $(strip $(WORKSPACE_SUBPROJECTS)),1,))
-UV_SYNC_FLAGS := $(if $(SHARED_RUNTIME),--all-packages ,)--all-extras --all-groups
+# CI provisions strictly from the committed lock: internal flext dependencies
+# are plain distribution names resolved by the workspace overlay, which a
+# hosted checkout does not have, so resolution there is unsatisfiable by
+# design. The committed lock carries the direct Git provenance for them.
+UV_SYNC_FLAGS := $(if $(SHARED_RUNTIME),--all-packages ,)--all-extras --all-groups $(if $(CI),--frozen ,)
 
 -include custom.mk
 SELF_MAKE := $(MAKE) --no-print-directory -f "$(SELF_MAKEFILE)"
