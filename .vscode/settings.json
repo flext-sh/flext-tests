@@ -54,9 +54,7 @@
     "**/dist": true,
     "**/node_modules": true,
     "**/site": true,
-    "**/target": true,
-    "**/.code-review-graph": true,
-    "**/.codegraph": true
+    "**/target": true
   },
   "files.watcherExclude": {
     "**/__pycache__/**": true,
@@ -98,9 +96,7 @@
     "**/build/**": true,
     "**/dist/**": true,
     "**/node_modules/**": true,
-    "**/target/**": true,
-    "**/.code-review-graph/**": true,
-    "**/.codegraph/**": true
+    "**/target/**": true
   },
   "search.exclude": {
     "**/__pycache__": true,
@@ -141,9 +137,7 @@
     "**/dist": true,
     "**/node_modules": true,
     "**/site": true,
-    "**/target": true,
-    "**/.code-review-graph": true,
-    "**/.codegraph": true
+    "**/target": true
   },
   "python.analysis.diagnosticSeverityOverrides": {
     "reportUntypedBaseClass": "none"
