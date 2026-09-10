@@ -4,9 +4,10 @@ name: Docs
 "on":
   push:
     branches:
-      - main
+      - dev
+      - develop
       - 0.12.0-dev
-      - 0.20.0-dev
+      - main
     paths:
       - "docs/**"
       - "mkdocs.yml"
@@ -30,19 +31,26 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           submodules: false
           fetch-depth: 0
+
+      - name: Install mise toolchain
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c  # v4.3.0
+
 
       - name: Sync workspace toolchain
         run: make setup
 
       - name: Generation drift (blocking)
-        run: make conform APPLY=Y
+        run: make gen WHAT=check
 
-      - name: Docs lifecycle (blocking)
-        run: make docs APPLY=Y
+      - name: Docs audit (blocking)
+        run: make docs WHAT=audit
+
+      - name: Docs validate (blocking)
+        run: make docs WHAT=validate
 
       # Failure diagnostics execute only after the original Make step has
       # already propagated its exact status to Actions.
@@ -67,7 +75,7 @@ jobs:
 
       - name: Upload docs reports on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
         with:
           name: docs-reports
           # Structured docs reports only — omit raw docs log trees that may carry
@@ -81,7 +89,7 @@ jobs:
             apps/*/.reports/**/audit-report.md
             apps/*/.reports/**/validate-summary.json
             apps/*/.reports/**/validate-report.md
-          if-no-files-found: error
+          if-no-files-found: ignore
           retention-days: 7
 
   build:
@@ -93,16 +101,20 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           submodules: false
           fetch-depth: 0
+
+      - name: Install mise toolchain
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c  # v4.3.0
+
 
       - name: Sync workspace toolchain
         run: make setup
 
       - name: Build site
-        run: make docs APPLY=Y
+        run: make docs WHAT=build
 
       - name: Verify byte-identical repository
         run: |
@@ -114,11 +126,11 @@ jobs:
       # work when deploy is skipped (deploy already gates on refs/heads/main).
       - name: Configure Pages
         if: github.ref == 'refs/heads/main'
-        uses: actions/configure-pages@v6
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d  # v6.0.0
 
       - name: Upload site artifact
         if: github.ref == 'refs/heads/main'
-        uses: actions/upload-pages-artifact@v5
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9  # v5.0.0
         with:
           path: .reports/docs/site
 
@@ -137,4 +149,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128  # v5.0.0

@@ -8,7 +8,11 @@
 FROM fedora:41
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-# === SECTION: base packages (dnf) ===
+
+# === SECTION: base packages (managed) ===
+# Source: template (distro-specific seed contract)
+# The seed is the whole host contract: curl fetches mise, git is what uv shells
+# out to for the flext-infra git+https requirement, make invokes the verbs.
 RUN dnf install -y \
       bash ca-certificates curl git make libatomic \
     && dnf clean all \
@@ -16,21 +20,25 @@ RUN dnf install -y \
 # End SECTION: base packages
 
 # === SECTION: managed tool bootstrap (managed) ===
-# Source: generated bin/mise + .mise.toml
-# The canonical make setup verb below owns the official newest-Mise bootstrap
-# and every latest tool installation as the same unprivileged runtime user.
-# The setup RUN receives Mise's credential only through a BuildKit secret.
-# Never persist build credentials in ARG, ENV, layers, or image configuration.
+# Source: generated bin/mise + .mise.toml + mise.lock
+# The official launcher and locked tools are installed by the same unprivileged
+# user that executes project verbs, so trust and XDG state have one owner.
 ENV HOME=/home/runner \
     XDG_DATA_HOME=/home/runner/.local/share \
     XDG_CACHE_HOME=/home/runner/.cache \
     XDG_STATE_HOME=/home/runner/.local/state \
-    MISE_DATA_DIR=/home/runner/.local/share/mise
+    MISE_DATA_DIR=/home/runner/.local/share/mise \
+    MISE_CACHE_DIR=/home/runner/.cache/mise \
+    MISE_STATE_DIR=/home/runner/.local/state/mise \
+    MISE_TRUSTED_CONFIG_PATHS=/workspace
 WORKDIR /workspace
 RUN --mount=type=bind,source=.,target=/source,ro \
     cp -R /source/. /workspace/ \
     && chown -R runner:runner /workspace
 USER runner
+RUN mkdir -p /workspace/.test-tmp \
+    && ./bin/mise trust .mise.toml \
+    && ./bin/mise install --locked --yes
 ENV PATH="/home/runner/.local/share/mise/shims:${PATH}"
 # End SECTION: managed tool bootstrap
 
@@ -43,8 +51,7 @@ ENV PATH="/home/runner/.local/share/mise/shims:${PATH}"
 # mentioned uv.lock/flext-core, which turned the proof into a bypass -- a
 # broken bootstrap still produced a green image.
 ENV CI=Y
-RUN --mount=type=secret,id=github_token,env=MISE_GITHUB_TOKEN,required=true \
-    make setup APPLY=Y
+RUN make setup
 # End SECTION: bootstrap proof
 
 ENTRYPOINT []
