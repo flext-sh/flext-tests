@@ -63,7 +63,7 @@ flext_tests_enforcement = "flext_tests.enforcement_plugin"
 
 [dependency-groups]
 codegen = [
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@e3cd887be",
+  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
 ]
 dev = [
   "actionlint-py>=1.7.12.24",
