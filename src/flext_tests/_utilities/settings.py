@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import os
 from collections.abc import Generator
 from contextlib import contextmanager
-from unittest.mock import patch
 
 from flext_core import FlextSettings, settings
 from flext_tests import t
@@ -35,12 +35,18 @@ class FlextTestsConfigHelpersUtilitiesMixin:
     @staticmethod
     @contextmanager
     def env_vars_context(
-        env_vars: t.MappingKV[str, t.Tests.TestobjectSerializable],
+        env_vars: t.MappingKV[str, t.Tests.TestobjectSerializable] | None = None,
         vars_to_clear: t.StrSequence | None = None,
     ) -> Generator[None]:
-        """Context manager for temporary environment variable changes."""
-        with patch.dict("os.environ", {}, clear=False) as environ:
+        """Apply and atomically restore a real process-environment scope."""
+        original_environment = os.environ.copy()
+        try:
             for var in vars_to_clear or ():
-                environ.pop(var, None)
-            environ.update({key: str(value) for key, value in env_vars.items()})
+                os.environ.pop(var, None)
+            os.environ.update({
+                key: str(value) for key, value in (env_vars or {}).items()
+            })
             yield
+        finally:
+            os.environ.clear()
+            os.environ.update(original_environment)

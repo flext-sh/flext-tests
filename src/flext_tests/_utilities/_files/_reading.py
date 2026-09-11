@@ -9,9 +9,11 @@ from pathlib import Path
 from typing import overload
 
 from flext_cli import u
+
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+
+from ..payload import FlextTestsPayloadUtilities
+from ._creation import FlextTestsFilesCreationMixin
 
 
 class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
@@ -25,7 +27,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
             model_instance: TModelRead = model_cls.model_validate(content)
             return r[TModelRead].ok(model_instance)
         except c.EXC_BASIC_TYPE as ex:
-            return r[TModelRead].fail(f"Failed to validate model: {ex}")
+            return r[TModelRead].fail(f"Failed to validate model: {ex}", exception=ex)
 
     @staticmethod
     def _read_fail[TModelRead: m.BaseModel](

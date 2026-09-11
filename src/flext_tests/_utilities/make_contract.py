@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
+
+from .make_parsing import FlextTestsMakeParsingUtilitiesMixin
 
 
 class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
@@ -89,7 +90,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
                 command.path
             )
             if body_result.failure:
-                return r[bool].fail(body_result.error or "target body check failed")
+                return r[bool].from_failure(body_result)
             if body_result.value:
                 return r[bool].fail(
                     f"{command.path}: commands with a target must be header-only"
@@ -100,7 +101,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
             )
         )
         if condition_result.failure:
-            return r[bool].fail(condition_result.error or "mutates_when invalid")
+            return r[bool].from_failure(condition_result)
         return r[bool].ok(True)
 
     @staticmethod
@@ -157,16 +158,14 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
                     command
                 )
                 if command_result.failure:
-                    return r[bool].fail(
-                        command_result.error or "command contract invalid"
-                    )
+                    return r[bool].from_failure(command_result)
             choices_result = (
                 FlextTestsMakeContractUtilitiesMixin.make_validate_all_choices(
                     verb, commands
                 )
             )
             if choices_result.failure:
-                return r[bool].fail(choices_result.error or "choices invalid")
+                return r[bool].from_failure(choices_result)
         return r[bool].ok(True)
 
     @staticmethod
@@ -232,9 +231,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
             registry, verb
         )
         if resolved.failure:
-            return r[t.MappingKV[str, m.Tests.MakeCommand]].fail(
-                resolved.error or "verb unknown"
-            )
+            return r[t.MappingKV[str, m.Tests.MakeCommand]].from_failure(resolved)
         return r[t.MappingKV[str, m.Tests.MakeCommand]].ok(
             registry.commands_by_verb[resolved.value]
         )
@@ -248,7 +245,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
             registry, verb
         )
         if commands_result.failure:
-            return r[m.Tests.MakeCommand].fail(commands_result.error or "verb unknown")
+            return r[m.Tests.MakeCommand].from_failure(commands_result)
         commands = commands_result.value
         command = commands.get(what)
         if command is None:

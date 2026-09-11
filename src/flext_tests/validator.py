@@ -6,16 +6,17 @@ import fnmatch
 from collections.abc import MutableSequence
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, ClassVar, override
+from typing import Annotated, ClassVar
 
 from flext_tests import c, m, p, r, t, u
-from flext_tests._validator.bypass import FlextValidatorBypass
-from flext_tests._validator.imports import FlextValidatorImports
-from flext_tests._validator.layer import FlextValidatorLayer
-from flext_tests._validator.markdown import FlextValidatorMarkdown
-from flext_tests._validator.settings import FlextValidatorSettings
-from flext_tests._validator.tests import FlextValidatorTests
-from flext_tests._validator.types import FlextValidatorTypes
+
+from ._validator.bypass import FlextValidatorBypass
+from ._validator.imports import FlextValidatorImports
+from ._validator.layer import FlextValidatorLayer
+from ._validator.markdown import FlextValidatorMarkdown
+from ._validator.settings import FlextValidatorSettings
+from ._validator.tests import FlextValidatorTests
+from ._validator.types import FlextValidatorTypes
 
 
 class FlextTestsValidator:
@@ -67,7 +68,6 @@ class FlextTestsValidator:
         ]
         return files
 
-    @override
     def execute(self) -> p.Result[m.Tests.ScanResult]:
         """Execute validator service with default current-path scope."""
         return self.all(Path.cwd())

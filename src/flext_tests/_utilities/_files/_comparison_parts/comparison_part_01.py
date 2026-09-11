@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from flext_core import r
 from flext_tests import c, m, t, u
-from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 from flext_tests.protocols import p
+
+from ...payload import FlextTestsPayloadUtilities
+from .._creation import FlextTestsFilesCreationMixin
 
 
 class FlextTestsFilesComparisonMixin:
@@ -46,8 +47,8 @@ class FlextTestsFilesComparisonMixin:
             op_name="parse comparison contents",
         )
         if parsed_result.failure:
-            return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
-                parsed_result.error or "parse comparison contents failed"
+            return r[FlextTestsFilesComparisonMixin.ParsedPair].from_failure(
+                parsed_result
             )
         r1, r2 = parsed_result.value
         d1 = r1.value if r1.success else None

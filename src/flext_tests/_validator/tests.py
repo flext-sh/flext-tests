@@ -25,6 +25,7 @@ class FlextValidatorTests(u.Tests.ValidatorScannerMixin):
     """
 
     _VALIDATOR_KEY = c.Tests.VALIDATOR_TESTS_KEY
+    _UNREADABLE_CODE = "TEST-UNREADABLE"
 
     @staticmethod
     def _function_signatures(lines: t.StrSequence) -> tuple[tuple[int, str, str], ...]:
@@ -159,27 +160,18 @@ class FlextValidatorTests(u.Tests.ValidatorScannerMixin):
 
     @classmethod
     @override
-    def _scan_file(
-        cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
+    def _scan_content(
+        cls,
+        file_path: Path,
+        lines: t.StrSequence,
+        approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single file for test violations."""
-        violations: MutableSequence[m.Tests.Violation] = []
-        read = u.Cli.files_read_text(file_path)
-        if read.failure:
-            return [
-                u.Tests.create_violation(
-                    file_path,
-                    0,
-                    "TEST-UNREADABLE",
-                    (),
-                    read.error or "could not read file",
-                )
-            ]
-        lines = read.value.splitlines()
-        violations.extend(cls._check_monkeypatch(file_path, lines, approved))
-        violations.extend(cls._check_mock_usage(file_path, lines, approved))
-        violations.extend(cls._check_patch_decorator(file_path, lines, approved))
-        return violations
+        return (
+            *cls._check_monkeypatch(file_path, lines, approved),
+            *cls._check_mock_usage(file_path, lines, approved),
+            *cls._check_patch_decorator(file_path, lines, approved),
+        )
 
 
 __all__: list[str] = ["FlextValidatorTests"]

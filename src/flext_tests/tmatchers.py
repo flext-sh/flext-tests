@@ -7,7 +7,7 @@ package can publish ``tm`` as a governed root facade alias.
 
 from __future__ import annotations
 
-from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
+from ._utilities.matchers import FlextTestsMatchersUtilities
 
 tm = FlextTestsMatchersUtilities.Tests.Matchers
 

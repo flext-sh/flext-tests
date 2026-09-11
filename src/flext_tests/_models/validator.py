@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Annotated, ClassVar
 
 from flext_infra import m, p, u
+
 from flext_tests import c, t
 
 
@@ -18,7 +19,7 @@ class FlextTestsValidatorModelsMixin:
     class EnforcementBuildContext(m.ArbitraryTypesModel):
         """Validated immutable inputs shared by enforcement item builders."""
 
-        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(frozen=True)
+        model_config: ClassVar[t.ConfigDict] = m.ConfigDict(frozen=True)
 
         infra_report: Annotated[
             p.AttributeProbe | None,
@@ -28,7 +29,7 @@ class FlextTestsValidatorModelsMixin:
             tuple[Path, ...],
             u.Field(description="Validator targets collected for this session."),
         ] = ()
-        workspace_root: Annotated[
+        repository_root: Annotated[
             Path | None, u.Field(description="Resolved FLEXT workspace root.")
         ] = None
 
@@ -104,7 +105,7 @@ class FlextTestsValidatorModelsMixin:
             frozenset[str],
             u.Field(description="Optional block-list of enforcement rule IDs."),
         ] = frozenset()
-        workspace_root: Annotated[
+        repository_root: Annotated[
             Path | None,
             u.Field(description="Resolved FLEXT workspace root for the session."),
         ] = None

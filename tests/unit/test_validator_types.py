@@ -18,6 +18,8 @@ import pytest
 from flext_tests import m, tm, tv
 from tests import u
 
+from ._validator_parts.helper import ValidatorTestFilesMixin
+
 if TYPE_CHECKING:
     from pathlib import Path
 
@@ -118,14 +120,8 @@ _OFFENDING_SOURCES: tuple[tuple[str, str, str], ...] = (
 )
 
 
-class TestsFlextTestsValidatorTypes:
+class TestsFlextTestsValidatorTypes(ValidatorTestFilesMixin):
     """Verify strict typing rules through the public `tv.types` contract."""
-
-    @staticmethod
-    def _write_source(tmp_path: Path, name: str, source: str) -> Path:
-        file_path = tmp_path / name
-        file_path.write_text(source, encoding="utf-8")
-        return file_path
 
     def test_types_passes_clean_modern_typing_with_metadata(
         self, tmp_path: Path

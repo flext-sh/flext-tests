@@ -10,15 +10,16 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_infra import m
-from flext_tests._models.base import FlextTestsBaseModelsMixin
-from flext_tests._models.batch import FlextTestsBatchModelsMixin
-from flext_tests._models.docker import FlextTestsDockerModelsMixin
-from flext_tests._models.domains import FlextTestsDomainModelsMixin
-from flext_tests._models.filesystem import FlextTestsFilesystemModelsMixin
-from flext_tests._models.make import FlextTestsMakeModelsMixin
-from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
-from flext_tests._models.validator import FlextTestsValidatorModelsMixin
-from flext_tests._models.workspace_cleanup import FlextTestsWorkspaceCleanupModelsMixin
+
+from ._models.base import FlextTestsBaseModelsMixin
+from ._models.batch import FlextTestsBatchModelsMixin
+from ._models.docker import FlextTestsDockerModelsMixin
+from ._models.domains import FlextTestsDomainModelsMixin
+from ._models.filesystem import FlextTestsFilesystemModelsMixin
+from ._models.make import FlextTestsMakeModelsMixin
+from ._models.matchers import FlextTestsMatchersModelsMixin
+from ._models.validator import FlextTestsValidatorModelsMixin
+from ._models.workspace_cleanup import FlextTestsWorkspaceCleanupModelsMixin
 
 
 class FlextTestsModels(m):

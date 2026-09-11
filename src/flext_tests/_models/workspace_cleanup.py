@@ -25,7 +25,7 @@ class FlextTestsWorkspaceCleanupModelsMixin:
     class WorkspaceCleanupRequest(m.Value):
         """Runtime root composed with the original cleanup policy object."""
 
-        workspace_root: Annotated[
+        repository_root: Annotated[
             Path, u.Field(strict=False, description="Exact Git workspace root.")
         ]
         policy: Annotated[

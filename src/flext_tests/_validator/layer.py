@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import MutableSequence
 from pathlib import Path
 
-from flext_tests import c, m, p, r, t, u
+from flext_tests import c, m, p, t, u
 
 
 class FlextValidatorLayer:
@@ -71,18 +71,10 @@ class FlextValidatorLayer:
         current_layer = hierarchy.get(current_module)
         if current_layer is None:
             return violations
-        read = u.Cli.files_read_text(file_path)
-        if read.failure:
-            return [
-                u.Tests.create_violation(
-                    file_path,
-                    0,
-                    "LAYER-UNREADABLE",
-                    (),
-                    read.error or "could not read file",
-                )
-            ]
-        lines = read.value.splitlines()
+        content, unreadable = u.Tests.read_scan_file(file_path, "LAYER-UNREADABLE")
+        if content is None:
+            return unreadable
+        lines = content.splitlines()
         for line_number, line in enumerate(lines, start=1):
             for imported_module in cls._imported_modules(line):
                 imported_layer = hierarchy.get(imported_module)
@@ -120,18 +112,12 @@ class FlextValidatorLayer:
             r with ScanResult containing all violations found
 
         """
-        violations: MutableSequence[m.Tests.Violation] = []
-        approved = approved_exceptions or {}
         hierarchy = layer_hierarchy or u.Tests.layer_dict()
-        for file_path in files:
-            file_violations = cls._scan_file(file_path, approved, hierarchy)
-            violations.extend(file_violations)
-        return r[m.Tests.ScanResult].ok(
-            m.Tests.ScanResult(
-                validator_name=c.Tests.VALIDATOR_LAYER_KEY,
-                files_scanned=len(files),
-                violations=violations,
-            )
+        return u.Tests.validator_run_scan(
+            files=files,
+            approved_exceptions=approved_exceptions,
+            validator_name=c.Tests.VALIDATOR_LAYER_KEY,
+            scan_file=lambda fp, ap: cls._scan_file(fp, ap, hierarchy),
         )
 
 

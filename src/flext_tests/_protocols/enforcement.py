@@ -46,7 +46,7 @@ class FlextTestsEnforcementProtocolsMixin:
         """Construct the external namespace enforcer boundary."""
 
         def __call__(
-            self, *, workspace_root: Path
+            self, *, repository_root: Path
         ) -> FlextTestsEnforcementProtocolsMixin.NamespaceEnforcer:
             """Construct an enforcer for one workspace root."""
             ...

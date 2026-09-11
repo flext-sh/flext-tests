@@ -2,7 +2,7 @@
 
 Two behavioral surfaces are exercised through the module's public API only:
 
-* Pure exported functions (``split_csv``, ``discover_workspace_root``,
+* Pure exported functions (``split_csv``, ``discover_repository_root``,
   ``active_rules``) are called directly and asserted on their return values and
   invariants.
 * The end-to-end pytest11 pipeline (entry-point load -> ``pytest_configure``
@@ -21,7 +21,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from flext_tests import m, tm
-from flext_tests.enforcement import active_rules, discover_workspace_root, split_csv
+from flext_tests.enforcement import active_rules, discover_repository_root, split_csv
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -91,7 +91,7 @@ class TestsFlextTestsEnforcementPlugin:
         rejoined = split_csv(",".join(sorted(first)))
         tm.that(first, eq=rejoined)
 
-    # ---- discover_workspace_root: filesystem marker walk ---------------------
+    # ---- discover_repository_root: filesystem marker walk ---------------------
 
     @staticmethod
     def _stamp_workspace_markers(root: Path) -> None:
@@ -100,27 +100,27 @@ class TestsFlextTestsEnforcementPlugin:
         (root / "flext-core").mkdir()
         (root / "flext-tests").mkdir()
 
-    def test_discover_workspace_root_returns_marked_root(self, tmp_path: Path) -> None:
+    def test_discover_repository_root_returns_marked_root(self, tmp_path: Path) -> None:
         """A directory carrying every marker is reported as the workspace root."""
         self._stamp_workspace_markers(tmp_path)
-        tm.that(discover_workspace_root(tmp_path), eq=tmp_path)
+        tm.that(discover_repository_root(tmp_path), eq=tmp_path)
 
-    def test_discover_workspace_root_walks_upward_from_nested_start(
+    def test_discover_repository_root_walks_upward_from_nested_start(
         self, tmp_path: Path
     ) -> None:
         """Discovery climbs parents until the marked root is found."""
         self._stamp_workspace_markers(tmp_path)
         nested = tmp_path / "pkg" / "sub"
         nested.mkdir(parents=True)
-        tm.that(discover_workspace_root(nested), eq=tmp_path)
+        tm.that(discover_repository_root(nested), eq=tmp_path)
 
-    def test_discover_workspace_root_returns_none_without_markers(
+    def test_discover_repository_root_returns_none_without_markers(
         self, tmp_path: Path
     ) -> None:
         """A tree missing any marker yields None rather than a false root."""
         (tmp_path / "AGENTS.md").write_text("stub")
         # flext-core / flext-tests markers deliberately absent.
-        tm.that(discover_workspace_root(tmp_path), none=True)
+        tm.that(discover_repository_root(tmp_path), none=True)
 
     # ---- active_rules: catalog filtering contract ----------------------------
 

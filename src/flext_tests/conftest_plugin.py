@@ -11,6 +11,7 @@ autouse runtime setup, and shared helper fixtures.
 
 from __future__ import annotations
 
+from importlib import import_module
 from importlib.util import find_spec
 from typing import TYPE_CHECKING
 
@@ -22,14 +23,19 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     """Register the local markdown fallback without eager product imports."""
     if find_spec("pytest_markdown_docs") is not None:
         return
-    from flext_tests._fixtures.markdown_validation import pytest_addoption as register
+    from ._fixtures.markdown_validation import pytest_addoption as register
 
     register(parser)
 
 
 def pytest_configure(config: pytest.Config) -> None:
     """Register fixture plugins after startup instrumentation is active."""
-    from flext_tests._fixtures import connectivity, settings
+    # `_fixtures/__init__` exports a fixture function named `settings`, which
+    # shadows the submodule of the same name: `from ... import settings` binds
+    # the fixture, and registering a function as a plugin silently registers no
+    # fixtures at all. `import_module` names the module unambiguously.
+    settings = import_module("flext_tests._fixtures.settings")
+    connectivity = import_module("flext_tests._fixtures.connectivity")
 
     if settings not in config.pluginmanager.get_plugins():
         config.pluginmanager.register(settings, settings.__name__)
@@ -38,7 +44,7 @@ def pytest_configure(config: pytest.Config) -> None:
     if connectivity not in config.pluginmanager.get_plugins():
         config.pluginmanager.register(connectivity, connectivity.__name__)
     if find_spec("pytest_markdown_docs") is None:
-        from flext_tests._fixtures import markdown_validation
+        from ._fixtures import markdown_validation
 
         if markdown_validation not in config.pluginmanager.get_plugins():
             config.pluginmanager.register(

@@ -16,6 +16,7 @@ class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
     """Type validation checks for FlextTestsValidator."""
 
     _VALIDATOR_KEY = c.Tests.VALIDATOR_TYPES_KEY
+    _UNREADABLE_CODE = "TYPE-UNREADABLE"
 
     @staticmethod
     def _match_names(line: str, pattern: t.Infra.RegexPattern) -> t.StrSequence:
