@@ -10,6 +10,7 @@ import types as bt
 from collections.abc import (
     ItemsView,
     KeysView,
+    Mapping,
     MutableMapping,
     Sequence,
     Set as AbstractSet,
@@ -19,7 +20,7 @@ from datetime import datetime, timezone, tzinfo
 from enum import Enum
 from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
-from typing import NotRequired, TypeAliasType, TypedDict
+from typing import NotRequired, TypedDict
 
 from flext_cli import t
 from flext_infra import t as it
@@ -49,18 +50,18 @@ class FlextTestsBaseTypesMixin:
     )
     type TestobjectSerializable = (
         TestobjectAtom
-        | list["TestobjectSerializable"]
-        | Mapping[str, "TestobjectSerializable"]
+        | list[TestobjectSerializable]
+        | Mapping[str, TestobjectSerializable]
         | None
     )
     type TestobjectHashable = (
         str | int | float | bool | bytes | datetime | tzinfo | Path | type | None
     )
-    type NormalizationInput = (  # noqa: UP040 - recursive type alias
+    type NormalizationInput = (
         "TestobjectAtom"
-        | m.RootModel["NormalizationInput"]
-        | t.SequenceOf["NormalizationInput"]
-        | t.MappingKV[str, "NormalizationInput"]
+        | m.RootModel[NormalizationInput]
+        | t.SequenceOf[NormalizationInput]
+        | t.MappingKV[str, NormalizationInput]
         | set[TestobjectHashable]
         | None
     )
