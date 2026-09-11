@@ -45,6 +45,18 @@ def _unreachable_reason(marker: str) -> str | None:
     """Return a skip reason when the marker's service cannot be reached."""
     if marker in _probe_cache:
         return _probe_cache[marker]
+    if marker == c.Tests.DOCKER_CONNECTIVITY_MARKER:
+        from flext_tests.docker import FlextTestsDocker
+
+        manager = FlextTestsDocker()
+        client = manager.client
+        if client is None:
+            reason = c.Tests.DOCKER_UNREACHABLE_SKIP_REASON
+        else:
+            client.close()
+            reason = None
+        _probe_cache[marker] = reason
+        return reason
     reason: str | None = None
     container = c.Tests.CONNECTIVITY_MARKER_CONTAINERS.get(marker)
     endpoint = None if container is None else _endpoint(container)
@@ -69,7 +81,7 @@ def pytest_collection_modifyitems(
     """Mark connectivity-bound tests as skipped when their service is down."""
     del config
     for item in items:
-        for marker in c.Tests.CONNECTIVITY_MARKER_CONTAINERS:
+        for marker in c.Tests.CONNECTIVITY_MARKERS:
             if item.get_closest_marker(marker) is None:
                 continue
             reason = _unreachable_reason(marker)

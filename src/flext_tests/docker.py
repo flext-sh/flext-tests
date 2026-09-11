@@ -12,7 +12,9 @@ from typing import TYPE_CHECKING, Annotated, ClassVar, Self, override
 
 import pytest
 from docker import DockerClient as DockerSDKClient, from_env as docker_from_env
+from docker.constants import DEFAULT_DOCKER_API_VERSION
 from docker.errors import DockerException, NotFound
+from docker.transport import UnixHTTPAdapter
 from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
@@ -130,11 +132,22 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     @property
     def client(self) -> DockerSDKClient | None:
         """Docker client with lazy initialization."""
-        if self.docker_client is None:
+        if self.docker_client is None and self.client_error is None:
+            client: DockerSDKClient | None = None
             try:
-                self.docker_client = docker_from_env()
+                client = docker_from_env(version=DEFAULT_DOCKER_API_VERSION)
+                adapter = client.api.get_adapter(client.api.base_url)
+                if (
+                    isinstance(adapter, UnixHTTPAdapter)
+                    and not Path(adapter.socket_path).exists()
+                ):
+                    raise FileNotFoundError(adapter.socket_path)
+                _ = client.ping()
+                self.docker_client = client
                 self.client_error = None
             except (DockerException, OSError, TypeError, ValueError) as error:
+                if client is not None:
+                    client.close()
                 self.logger.exception(
                     "Failed to initialize Docker client", error=str(error)
                 )
