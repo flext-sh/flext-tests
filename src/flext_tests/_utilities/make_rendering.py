@@ -83,7 +83,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             "Usage: make <verb> to list the available WHAT actions.",
             "Usage: make <verb> WHAT=<action> to execute.",
             "Usage: make <verb> WHAT=<verb>/<action> for action help.",
-            "Mutating commands require APPLY=Y.",
+            "Mutating commands require.",
             "",
             "Custom hooks: define pre-<verb>, post-<verb>, pre-<verb>-<what>, or",
             "post-<verb>-<what> in workspace_custom.mk to append work at the start",
@@ -170,7 +170,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             f"Mutaction: {FlextTestsMakeRenderingUtilitiesMixin.make_mutation_label(command)}",
         ]
         if command.mutates:
-            lines.append("Sem APPLY=Y a execucao fica em dry-run.")
+            lines.append("Sem a execucao fica em dry-run.")
         elif command.mutates_when:
             conditions = (
                 FlextTestsMakeRenderingUtilitiesMixin.make_format_mutation_conditions(
@@ -211,7 +211,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             f"Comando: make {requested_verb} WHAT={what}",
             f"Domínio: {command.domain}",
             f"Resumo: {command.summary}",
-            "Regra: command mutador exige APPLY=Y.",
+            "Regra: command mutador exige.",
         ]
         if command.params:
             lines.extend(("", "Current parameters:"))

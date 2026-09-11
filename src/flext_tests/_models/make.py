@@ -59,7 +59,7 @@ class FlextTestsMakeModelsMixin:
             u.Field(description="Conditional mutation predicates."),
         ] = ()
         aliases: Annotated[
-            t.StrSequence, u.Field(description="Verb aliases declared on WHAT=all.")
+            t.StrSequence, u.Field(description="Verb aliases declared on.")
         ] = ()
         params: Annotated[
             t.SequenceOf[FlextTestsMakeModelsMixin.MakeParam],
