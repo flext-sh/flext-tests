@@ -64,23 +64,23 @@ class TestsFlextTestsEnforcementDispatcher:
         )
 
     # ------------------------------------------------------------------ #
-    # discover_workspace_root                                            #
+    # discover_repository_root                                            #
     # ------------------------------------------------------------------ #
 
     def test_discovers_root_from_nested_descendant(self, workspace: Path) -> None:
         nested = workspace / "flext-core" / "src" / "pkg"
         nested.mkdir(parents=True)
 
-        tm.that(dispatcher.discover_workspace_root(nested), eq=workspace)
+        tm.that(dispatcher.discover_repository_root(nested), eq=workspace)
 
     def test_returns_workspace_itself_when_start_is_root(self, workspace: Path) -> None:
-        tm.that(dispatcher.discover_workspace_root(workspace), eq=workspace)
+        tm.that(dispatcher.discover_repository_root(workspace), eq=workspace)
 
     def test_returns_none_when_no_marker_present(self, tmp_path: Path) -> None:
         stray = tmp_path / "unrelated" / "deep"
         stray.mkdir(parents=True)
 
-        tm.that(dispatcher.discover_workspace_root(stray), none=True)
+        tm.that(dispatcher.discover_repository_root(stray), none=True)
 
     def test_returns_none_when_a_single_marker_is_missing(self, tmp_path: Path) -> None:
         partial = tmp_path / "partial"
@@ -89,7 +89,7 @@ class TestsFlextTestsEnforcementDispatcher:
         for marker in list(c.Tests.ENFORCEMENT_WORKSPACE_MARKERS)[:-1]:
             (partial / marker).mkdir(parents=True, exist_ok=True)
 
-        tm.that(dispatcher.discover_workspace_root(partial), none=True)
+        tm.that(dispatcher.discover_repository_root(partial), none=True)
 
     def test_sub_project_root_resolves_to_workspace_not_itself(
         self, workspace: Path
@@ -98,7 +98,7 @@ class TestsFlextTestsEnforcementDispatcher:
         # above it, and that workspace is distinguishable from the sub-project
         # (so running pytest inside a sub-project stays a no-op).
         sub = workspace / "flext-core"
-        discovered = dispatcher.discover_workspace_root(sub)
+        discovered = dispatcher.discover_repository_root(sub)
 
         tm.that(discovered, eq=workspace)
         tm.that(discovered, ne=sub)

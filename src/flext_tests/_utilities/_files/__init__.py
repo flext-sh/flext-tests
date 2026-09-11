@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from . import _comparison_parts as _comparison_parts
+    from . import _comparison_parts
     from ._assertions import FlextTestsFilesAssertionsMixin
     from ._batch import FlextTestsFilesBatchMixin
     from ._comparison import FlextTestsFilesComparisonMixin

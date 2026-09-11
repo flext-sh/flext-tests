@@ -11,6 +11,7 @@ from types import MappingProxyType
 from typing import Annotated
 
 from flext_infra import m, u
+
 from flext_tests import t
 
 

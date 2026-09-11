@@ -6,10 +6,10 @@ import stat
 from pathlib import Path
 
 from flext_cli import u
+
 from flext_tests import c, p, r
-from flext_tests._utilities.workspace_cleanup_paths import (
-    FlextTestsWorkspaceCleanupPathsUtilitiesMixin,
-)
+
+from .workspace_cleanup_paths import FlextTestsWorkspaceCleanupPathsUtilitiesMixin
 
 
 class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
@@ -56,9 +56,9 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
         if result.failure:
             return r[bool].fail(result.error)
         output = result.value
-        if output.exit_code == c.Cli.EXIT_CODE_SUCCESS:
+        if output.outcome.raw_return_code == c.Cli.EXIT_CODE_SUCCESS:
             return r[bool].ok(True)
-        if output.exit_code == c.Cli.EXIT_CODE_FAILURE:
+        if output.outcome.raw_return_code == c.Cli.EXIT_CODE_FAILURE:
             return r[bool].fail(
                 f"cleanup residue is not ignored by Git: {relative_path}"
             )
@@ -81,7 +81,7 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
         if status_result.failure:
             return r[bool].fail(status_result.error)
         status = status_result.value
-        if status.exit_code != c.Cli.EXIT_CODE_SUCCESS:
+        if status.outcome.raw_return_code != c.Cli.EXIT_CODE_SUCCESS:
             return r[bool].fail(cls._command_error("git status check", status))
         if status.stdout:
             return r[bool].fail(
@@ -94,7 +94,7 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
         if tracked_result.failure:
             return r[bool].fail(tracked_result.error)
         tracked = tracked_result.value
-        if tracked.exit_code != c.Cli.EXIT_CODE_SUCCESS:
+        if tracked.outcome.raw_return_code != c.Cli.EXIT_CODE_SUCCESS:
             return r[bool].fail(cls._command_error("git tracked-path check", tracked))
         if tracked.stdout:
             return r[bool].fail(

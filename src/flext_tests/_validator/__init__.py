@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from . import _types_parts as _types_parts
+    from . import _types_parts
     from .bypass import FlextValidatorBypass
     from .imports import FlextValidatorImports
     from .layer import FlextValidatorLayer

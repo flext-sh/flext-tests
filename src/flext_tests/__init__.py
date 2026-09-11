@@ -33,13 +33,13 @@ if TYPE_CHECKING:
         EnforcementItem,
         EnforcementViolationError,
         active_rules,
-        discover_workspace_root,
+        discover_repository_root,
         load_infra_report,
         split_csv,
     )
     from .enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
     from .files import FlextTestsFiles, tf
-    from .kube import FlextTestsKube, tkube
+    from .kube import FlextTestsKube
     from .models import FlextTestsModels, FlextTestsModels as m
     from .protocols import FlextTestsProtocols, FlextTestsProtocols as p
     from .tmatchers import FlextTestsMatchersUtilities, tm
@@ -48,6 +48,7 @@ if TYPE_CHECKING:
         FlextTestsFixturesDSLMixin,
         FlextTestsUtilities,
         FlextTestsUtilities as u,
+        ModuleGovernanceMixin,
     )
     from .validator import FlextTestsValidator, tv
 __all__: tuple[str, ...] = (
@@ -71,6 +72,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsTypes",
     "FlextTestsUtilities",
     "FlextTestsValidator",
+    "ModuleGovernanceMixin",
     "__author__",
     "__author_email__",
     "__description__",
@@ -83,7 +85,7 @@ __all__: tuple[str, ...] = (
     "c",
     "config",
     "d",
-    "discover_workspace_root",
+    "discover_repository_root",
     "e",
     "h",
     "infra_c",
@@ -98,7 +100,6 @@ __all__: tuple[str, ...] = (
     "td",
     "tf",
     "tk",
-    "tkube",
     "tm",
     "tv",
     "u",
@@ -119,18 +120,23 @@ _LAZY_IMPORTS = MappingProxyType(
                 "EnforcementItem",
                 "EnforcementViolationError",
                 "active_rules",
-                "discover_workspace_root",
+                "discover_repository_root",
                 "load_infra_report",
                 "split_csv",
             ),
             ".enforcement_plugin": ("SLOW_TIMEOUT_INI_OPTION",),
             ".files": ("FlextTestsFiles", "tf"),
-            ".kube": ("FlextTestsKube", "tkube"),
+            ".kube": ("FlextTestsKube",),
             ".models": ("FlextTestsModels", "m"),
             ".protocols": ("FlextTestsProtocols", "p"),
             ".tmatchers": ("FlextTestsMatchersUtilities", "tm"),
             ".typings": ("FlextTestsTypes", "t"),
-            ".utilities": ("FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"),
+            ".utilities": (
+                "FlextTestsFixturesDSLMixin",
+                "FlextTestsUtilities",
+                "ModuleGovernanceMixin",
+                "u",
+            ),
             ".validator": ("FlextTestsValidator", "tv"),
             "flext_infra": ("d", "e", "h", "r", "x"),
         }),

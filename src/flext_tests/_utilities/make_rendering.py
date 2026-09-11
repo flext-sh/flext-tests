@@ -5,7 +5,8 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities.make_registry import FlextTestsMakeRegistryUtilitiesMixin
+
+from .make_registry import FlextTestsMakeRegistryUtilitiesMixin
 
 
 class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin):

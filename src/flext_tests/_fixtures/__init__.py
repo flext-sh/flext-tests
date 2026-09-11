@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from . import _enforcement_parts as _enforcement_parts
+    from . import _enforcement_parts
     from ._enforcement_parts.build import build_items
     from ._enforcement_parts.config import SessionConfig, resolve_config
     from ._enforcement_parts.discovery import (
@@ -28,7 +28,7 @@ if TYPE_CHECKING:
         EnforcementItem,
         EnforcementViolationError,
         active_rules,
-        discover_workspace_root,
+        discover_repository_root,
         split_csv,
     )
     from .markdown_validation import (
@@ -64,7 +64,7 @@ __all__: tuple[str, ...] = (
     "clean_container",
     "collected_project_names",
     "collected_validator_targets",
-    "discover_workspace_root",
+    "discover_repository_root",
     "dispatch_infra_detector",
     "load_infra_report",
     "project_metadata",
@@ -104,7 +104,7 @@ _LAZY_IMPORTS = MappingProxyType(
                 "EnforcementItem",
                 "EnforcementViolationError",
                 "active_rules",
-                "discover_workspace_root",
+                "discover_repository_root",
                 "split_csv",
             ),
             ".markdown_validation": (

@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from . import _files as _files, _matchers as _matchers
+    from . import _files, _matchers
     from ._files._assertions import FlextTestsFilesAssertionsMixin
     from ._files._batch import FlextTestsFilesBatchMixin
     from ._files._comparison import FlextTestsFilesComparisonMixin
@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     from .files import FlextTestsFilesUtilitiesMixin
     from .fixtures_dsl import FlextTestsFixturesDSLMixin
     from .generic import FlextTestsGenericHelpersUtilitiesMixin
+    from .governance import ModuleGovernanceMixin
     from .handler import FlextTestsHandlerHelpersUtilitiesMixin
     from .make import FlextTestsMakeUtilitiesMixin
     from .make_contract import FlextTestsMakeContractUtilitiesMixin
@@ -85,6 +86,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsWorkspaceCleanupPathsUtilitiesMixin",
     "FlextTestsWorkspaceCleanupPlanUtilitiesMixin",
     "FlextTestsWorkspaceCleanupUtilitiesMixin",
+    "ModuleGovernanceMixin",
     "_files",
     "_matchers",
     "tm",
@@ -114,6 +116,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ".files": ("FlextTestsFilesUtilitiesMixin",),
             ".fixtures_dsl": ("FlextTestsFixturesDSLMixin",),
             ".generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
+            ".governance": ("ModuleGovernanceMixin",),
             ".handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
             ".make": ("FlextTestsMakeUtilitiesMixin",),
             ".make_contract": ("FlextTestsMakeContractUtilitiesMixin",),

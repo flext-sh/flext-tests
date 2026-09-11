@@ -5,11 +5,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_tests import m, p
-from flext_tests._fixtures._enforcement_parts.items import (
-    EnforcementCollector,
-    EnforcementItem,
-)
-from flext_tests._fixtures._enforcement_parts.validators import dispatch_infra_detector
+
+from .items import EnforcementCollector, EnforcementItem
+from .validators import dispatch_infra_detector
 
 if TYPE_CHECKING:
     import pytest

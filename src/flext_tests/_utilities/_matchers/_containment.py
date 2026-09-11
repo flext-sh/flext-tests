@@ -8,10 +8,9 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 
 from flext_tests import c, p, t
-from flext_tests._utilities._matchers._assertions import (
-    FlextTestsMatchersAssertionsMixin,
-)
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+
+from ..payload import FlextTestsPayloadUtilities
+from ._assertions import FlextTestsMatchersAssertionsMixin
 
 
 class FlextTestsMatchersContainmentMixin:

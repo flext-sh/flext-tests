@@ -7,15 +7,15 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from tests.unit._matchers_parts.data_driven import MatchersDataDrivenMixin
-from tests.unit._matchers_parts.fail_constraints import MatchersFailConstraintsMixin
-from tests.unit._matchers_parts.ok_constraints import MatchersOkConstraintsMixin
-from tests.unit._matchers_parts.rejects_assignment import MatchersRejectsAssignmentMixin
-from tests.unit._matchers_parts.results import MatchersResultsMixin
-from tests.unit._matchers_parts.scope_errors import MatchersScopeErrorsMixin
-from tests.unit._matchers_parts.that_attrs import MatchersThatAttrsMixin
-from tests.unit._matchers_parts.that_collections import MatchersThatCollectionsMixin
-from tests.unit._matchers_parts.validation import MatchersValidationMixin
+from ._matchers_parts.data_driven import MatchersDataDrivenMixin
+from ._matchers_parts.fail_constraints import MatchersFailConstraintsMixin
+from ._matchers_parts.ok_constraints import MatchersOkConstraintsMixin
+from ._matchers_parts.rejects_assignment import MatchersRejectsAssignmentMixin
+from ._matchers_parts.results import MatchersResultsMixin
+from ._matchers_parts.scope_errors import MatchersScopeErrorsMixin
+from ._matchers_parts.that_attrs import MatchersThatAttrsMixin
+from ._matchers_parts.that_collections import MatchersThatCollectionsMixin
+from ._matchers_parts.validation import MatchersValidationMixin
 
 __all__ = ["TestsFlextTestsMatchers"]
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_infra import c, u
+
 from flext_tests import p, r
 
 
@@ -13,14 +14,14 @@ class FlextTestsWorkspaceCleanupGitUtilitiesMixin:
 
     @staticmethod
     def _git(
-        workspace_root: Path,
+        repository_root: Path,
         arguments: tuple[str, ...],
         *,
         input_data: bytes | None = None,
     ) -> p.Result[p.Cli.CommandOutput]:
         """Execute Git through ``u.Cli.run_raw`` (cwd-bound raw owner)."""
         result = u.Cli.run_raw(
-            [c.Infra.GIT, *arguments], cwd=workspace_root, input_data=input_data
+            [c.Infra.GIT, *arguments], cwd=repository_root, input_data=input_data
         )
         if result.failure and result.error is None:
             return r[p.Cli.CommandOutput].fail(
@@ -35,7 +36,7 @@ class FlextTestsWorkspaceCleanupGitUtilitiesMixin:
         if not detail:
             detail = output.stdout.strip()
         if not detail:
-            detail = f"exit code {output.exit_code}"
+            detail = f"exit code {output.outcome.raw_return_code}"
         return f"{operation} failed: {detail}"
 
 

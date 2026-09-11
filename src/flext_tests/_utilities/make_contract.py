@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
+
+from .make_parsing import FlextTestsMakeParsingUtilitiesMixin
 
 
 class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):

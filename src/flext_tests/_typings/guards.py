@@ -9,7 +9,8 @@ from __future__ import annotations
 from typing import TypeIs
 
 from flext_core import m
-from flext_tests._typings.base import FlextTestsBaseTypesMixin as tb
+
+from .base import FlextTestsBaseTypesMixin as tb
 
 
 class FlextTestsGuardsTypesMixin:

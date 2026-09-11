@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from flext_tests._fixtures._enforcement_parts.discovery import load_infra_report
-from flext_tests._fixtures.enforcement import (
+from ._fixtures._enforcement_parts.discovery import load_infra_report
+from ._fixtures.enforcement import (
     EnforcementCollector,
     EnforcementItem,
     EnforcementViolationError,
     active_rules,
-    discover_workspace_root,
+    discover_repository_root,
     pytest_addoption,
     split_csv,
 )
@@ -18,7 +18,7 @@ __all__: list[str] = [
     "EnforcementItem",
     "EnforcementViolationError",
     "active_rules",
-    "discover_workspace_root",
+    "discover_repository_root",
     "load_infra_report",
     "pytest_addoption",
     "split_csv",
