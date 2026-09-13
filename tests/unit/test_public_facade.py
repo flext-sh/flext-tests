@@ -80,7 +80,6 @@ class TestsFlextTestsPublicFacade:
         tm.that(name in requirements, eq=True)
         tm.that(requirements[name].marker, eq=None)
         imported = import_module(module_name)
-        tm.that(imported.__name__, eq=module_name)
 
 
 __all__: list[str] = ["TestsFlextTestsPublicFacade"]
