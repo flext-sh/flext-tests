@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from importlib import import_module
 from importlib.metadata import entry_points
 from pathlib import Path
@@ -79,7 +80,8 @@ class TestsFlextTestsPublicFacade:
         name = canonicalize_name(distribution_name)
         tm.that(name in requirements, eq=True)
         tm.that(requirements[name].marker, eq=None)
-        imported = import_module(module_name)
+        import_module(module_name)
+        tm.that(module_name in sys.modules, eq=True)
 
 
 __all__: list[str] = ["TestsFlextTestsPublicFacade"]
