@@ -19,7 +19,7 @@ class FlextTestsMatchersModelsMixin:
     class MatchRule(m.Value):
         """One nominal matcher rule parsed from a scalar, type, predicate, or mapping."""
 
-        model_config: ClassVar[t.ConfigDict] = m.ConfigDict(
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
             frozen=True, arbitrary_types_allowed=True, populate_by_name=True
         )
 
@@ -132,7 +132,7 @@ class FlextTestsMatchersModelsMixin:
     class OkParams(m.Value):
         """Matcher parameters for successful result assertions."""
 
-        model_config: ClassVar[t.ConfigDict] = m.ConfigDict(
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
             populate_by_name=True, arbitrary_types_allowed=True
         )
 
@@ -221,7 +221,7 @@ class FlextTestsMatchersModelsMixin:
     class FailParams(m.Value):
         """Matcher parameters for failure result assertions."""
 
-        model_config: ClassVar[t.ConfigDict] = m.ConfigDict(populate_by_name=True)
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
 
         msg: Annotated[str | None, u.Field(description="Custom error message.")] = None
         has: Annotated[
@@ -261,7 +261,7 @@ class FlextTestsMatchersModelsMixin:
     class ThatParams(m.Value):
         """Generic matcher parameters for value assertions."""
 
-        model_config: ClassVar[t.ConfigDict] = m.ConfigDict(
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
             populate_by_name=True, arbitrary_types_allowed=True
         )
 
@@ -405,7 +405,11 @@ class FlextTestsMatchersModelsMixin:
             self,
         ) -> FlextTestsMatchersModelsMixin.ThatParams:
             """Normalize legacy aliases into canonical matcher fields."""
-            updates: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
+            # Why: precise union of the two fields actually assigned below
+            # ("has" <- self.error: str | StrSequence; "len" <- LengthSpec
+            # tuple); TestobjectSerializable rejected tuple[int, int] once the
+            # recursive-alias fix made mypy/pyrefly evaluate it for real.
+            updates: MutableMapping[str, t.Tests.LengthSpec | str | t.StrSequence] = {}
             if self.error is not None and self.has is None:
                 updates["has"] = self.error
             if self.len is None and any(
@@ -437,7 +441,7 @@ class FlextTestsMatchersModelsMixin:
     class ScopeParams(m.Value):
         """Parameters for temporary test scope configuration."""
 
-        model_config: ClassVar[t.ConfigDict] = m.ConfigDict(populate_by_name=True)
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
 
         settings: Annotated[
             t.MappingKV[str, t.Tests.TestobjectSerializable] | None,

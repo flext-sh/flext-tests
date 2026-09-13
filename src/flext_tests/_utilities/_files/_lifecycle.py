@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import shutil
 import tempfile
+import warnings
 from pathlib import Path
 from types import TracebackType
 from typing import Self
@@ -63,8 +64,13 @@ class FlextTestsFilesLifecycleMixin:
             try:
                 path.chmod(c.Tests.PERMISSION_WRITABLE_FILE)
                 path.unlink(missing_ok=True)
-            except OSError:
-                pass
+            except OSError as exc:
+                # Why: best-effort teardown cleanup; a leftover temp file is
+                # observable (not silently swallowed) but never fails the
+                # test that triggered teardown.
+                warnings.warn(
+                    f"cleanup: failed to remove file {path}: {exc}", stacklevel=2
+                )
         self._created_files.clear()
         for path in reversed(self._created_dirs):
             if not path.exists():
@@ -72,8 +78,10 @@ class FlextTestsFilesLifecycleMixin:
             try:
                 path.chmod(c.Tests.PERMISSION_WRITABLE_DIR)
                 shutil.rmtree(path)
-            except OSError:
-                pass
+            except OSError as exc:
+                warnings.warn(
+                    f"cleanup: failed to remove directory {path}: {exc}", stacklevel=2
+                )
         self._created_dirs.clear()
 
     def _resolve_directory(self, directory: Path | None) -> Path:

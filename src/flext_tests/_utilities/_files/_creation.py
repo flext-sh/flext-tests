@@ -91,7 +91,13 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         return self._coerce_file_content(file_content)
 
     def _is_nested_rows(
-        self, value: t.Tests.FileContentPlain | t.Tests.TestobjectSerializable
+        self,
+        value: t.Tests.FileContentPlain
+        | t.Tests.TestobjectSerializable
+        # Why: TypeIs narrowing must be a subtype of the input union; add the
+        # narrowed shape explicitly (mypy/pyrefly now evaluate the finite
+        # TestobjectSerializable alias for real, exposing the mismatch).
+        | Sequence[Sequence[t.Tests.TestobjectSerializable]],
     ) -> TypeIs[Sequence[Sequence[t.Tests.TestobjectSerializable]]]:
         if not isinstance(value, Sequence) or isinstance(value, str | bytes):
             return False
