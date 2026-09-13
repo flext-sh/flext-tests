@@ -80,27 +80,36 @@ class FlextTestsPayloadUtilities:
     @staticmethod
     def to_normalized_value(value: t.Tests.NormalizationInput) -> t.JsonValue:
         """Flatten to pure Container via canonical runtime helper."""
+        # Why: an isinstance chain instead of `match` — NormalizationInput
+        # unions `frozenset[str]` (via TestobjectAtom) with `set[...]` and
+        # `list | tuple`; mypy's match-pattern narrowing on that combination
+        # reports a spurious "frozenset and tuple cannot coexist" unreachable
+        # error (a mypy pattern-matching limitation, not a real defect).
         to_n = FlextTestsPayloadUtilities.to_normalized_value
-        match value:
-            case m.RootModel():
-                result = to_n(FlextTestsPayloadUtilities.to_payload(value.root))
-            case m.BaseModel():
-                result = str(value)
-            case bytes():
-                result = value.decode(errors="ignore")
-            case type() | tzinfo():
-                result = str(value)
-            case bool() | datetime() | Path() | None | str() | int() | float():
-                result = u.normalize_to_metadata(value)
-            case Mapping():
-                result = u.normalize_to_metadata({
-                    key: to_n(item) for key, item in value.items()
-                })
-            case list() | tuple():
-                normalized_seq = [to_n(item) for item in value]
-                result = u.normalize_to_metadata(normalized_seq)
-            case _:
-                result = str(value)
+        result: t.JsonValue
+        if isinstance(value, m.RootModel):
+            result = to_n(FlextTestsPayloadUtilities.to_payload(value.root))
+        elif isinstance(value, m.BaseModel):
+            result = str(value)
+        elif isinstance(value, bytes):
+            result = value.decode(errors="ignore")
+        elif isinstance(value, type | tzinfo):
+            result = str(value)
+        elif isinstance(value, bool | datetime | Path | str | int | float) or (
+            value is None
+        ):
+            result = u.normalize_to_metadata(value)
+        elif isinstance(value, Mapping):
+            result = u.normalize_to_metadata({
+                key: to_n(item) for key, item in value.items()
+            })
+        else:
+            # Why: mypy proves the isinstance chain above already exhausts
+            # `NormalizationInput`; an explicit `elif isinstance(value, (list,
+            # tuple, set, frozenset))` here is unreachable dead code by its
+            # own analysis, so the sequence branch is the exhaustive tail.
+            normalized_seq = [to_n(item) for item in value]
+            result = u.normalize_to_metadata(normalized_seq)
         return result
 
     @staticmethod

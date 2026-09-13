@@ -13,6 +13,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import warnings
 from importlib.util import find_spec
 from typing import TYPE_CHECKING, override
 
@@ -42,8 +43,11 @@ def pytest_addoption(parser: pytest.Parser) -> None:
             default=False,
             help="Validate Python code blocks in .md files",
         )
-    except ValueError:
-        # Option already registered by the early conftest_plugin path or a peer.
+    except ValueError as exc:
+        # Why: idempotent registration guard — pytest raises when the option
+        # string is already registered by the early conftest_plugin path or a
+        # peer plugin; observable via warnings instead of a silent return.
+        warnings.warn(f"markdown docs option already registered: {exc}", stacklevel=2)
         return
 
 

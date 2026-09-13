@@ -113,16 +113,17 @@ class FlextTestsFilesComparisonMixin(FlextTestsFilesComparisonMixinPart1):
         exclude_keys: t.StrSequence | None,
     ) -> p.Result[bool] | None:
         """Try to parse and deeply compare content as JSON or YAML."""
-        parsed = self._try_parse_both(content1_raw, content2_raw, "json").unwrap_or(
-            None
-        )
-        if parsed is None:
-            parsed = self._try_parse_both(content1_raw, content2_raw, "yaml").unwrap_or(
-                None
-            )
-        if parsed is None:
-            return None
-        dict1, dict2 = parsed
+        # Why: format probing, not error swallowing — try json, then yaml;
+        # each attempt is read via explicit success/failure branches instead
+        # of `unwrap_or(sentinel)` (silent-failure-unwrap-or).
+        json_result = self._try_parse_both(content1_raw, content2_raw, "json")
+        if json_result.failure:
+            yaml_result = self._try_parse_both(content1_raw, content2_raw, "yaml")
+            if yaml_result.failure:
+                return None
+            dict1, dict2 = yaml_result.value
+        else:
+            dict1, dict2 = json_result.value
         filter_keys_set = set(keys) if keys is not None else None
         exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
         left_result = u.transform(
