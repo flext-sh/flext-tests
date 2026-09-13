@@ -35,7 +35,7 @@ class FilesBatchCreateInMixin:
         tm.that(batch_result.success_count, eq=2)
         settings1 = tmp_path / "settings1.json"
         tm.that(settings1.exists(), eq=True)
-        tm.that(u.Cli.json_read(settings1).unwrap_or({})["key"], eq="value1")
+        tm.that(u.Cli.json_read(settings1).unwrap()["key"], eq="value1")
 
     def test_batch_on_error_collect(self, tmp_path: Path) -> None:
         """Test batch with on_error='collect' continues on failures."""
@@ -108,12 +108,12 @@ class FilesBatchCreateInMixin:
             m.ConfigMap(root={"key": "value"}), "settings.json"
         )
         tm.that(path1.exists(), eq=True)
-        tm.that(u.Cli.json_read(path1).unwrap_or({}), eq={"key": "value"})
+        tm.that(u.Cli.json_read(path1).unwrap(), eq={"key": "value"})
         path2 = FlextTestsFiles(base_dir=tmp_path).create(
             m.ConfigMap(root={"key": "value"}), "settings.yaml"
         )
         tm.that(path2.exists(), eq=True)
-        tm.that(u.Cli.yaml_parse(path2.read_text()).unwrap_or({}), eq={"key": "value"})
+        tm.that(u.Cli.yaml_parse(path2.read_text()).unwrap(), eq={"key": "value"})
         path3 = FlextTestsFiles(base_dir=tmp_path).create(
             [["a", "b"], ["1", "2"]], "data.csv"
         )
