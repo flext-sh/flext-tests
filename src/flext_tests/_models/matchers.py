@@ -405,7 +405,11 @@ class FlextTestsMatchersModelsMixin:
             self,
         ) -> FlextTestsMatchersModelsMixin.ThatParams:
             """Normalize legacy aliases into canonical matcher fields."""
-            updates: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
+            # Why: precise union of the two fields actually assigned below
+            # ("has" <- self.error: str | StrSequence; "len" <- LengthSpec
+            # tuple); TestobjectSerializable rejected tuple[int, int] once the
+            # recursive-alias fix made mypy/pyrefly evaluate it for real.
+            updates: MutableMapping[str, t.Tests.LengthSpec | str | t.StrSequence] = {}
             if self.error is not None and self.has is None:
                 updates["has"] = self.error
             if self.len is None and any(

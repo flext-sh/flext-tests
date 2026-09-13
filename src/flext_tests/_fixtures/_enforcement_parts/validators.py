@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import warnings
 from importlib import import_module
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -138,7 +139,11 @@ def _merge_tests_validator_result(
     """Execute one validator and merge matching violations into ``result``."""
     try:
         call_result = method(target)
-    except c.EXC_BROAD_RUNTIME:
+    except c.EXC_BROAD_RUNTIME as exc:
+        # Why: one of several dispatched validators; a validator that is not
+        # applicable to `target` is skipped, but the skip is now observable
+        # instead of a silent sentinel return.
+        warnings.warn(f"validator {method!r} failed for {target}: {exc}", stacklevel=2)
         return
     if getattr(call_result, "failure", False):
         return

@@ -10,7 +10,6 @@ import types as bt
 from collections.abc import (
     ItemsView,
     KeysView,
-    Mapping,
     MutableMapping,
     Sequence,
     Set as AbstractSet,
@@ -48,20 +47,19 @@ class FlextTestsBaseTypesMixin:
         t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
         | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
     )
-    type TestobjectSerializable = (
-        TestobjectAtom
-        | list[TestobjectSerializable]
-        | Mapping[str, TestobjectSerializable]
-        | None
-    )
+    # Why: codemod [recursive-type-alias] forbids a self-recursive `type`
+    # statement with a container RHS (unbounded mypy expansion). t.JsonValue
+    # already carries recursive list/mapping depth via pydantic's own
+    # fixpoint-safe engine, so the container recursion is delegated to it
+    # instead of a second self-referential `list[...]`/`Mapping[...]` RHS.
+    type TestobjectSerializable = TestobjectAtom | t.JsonValue
     type TestobjectHashable = (
         str | int | float | bool | bytes | datetime | tzinfo | Path | type | None
     )
     type NormalizationInput = (
-        "TestobjectAtom"
-        | m.RootModel[NormalizationInput]
-        | t.SequenceOf[NormalizationInput]
-        | t.MappingKV[str, NormalizationInput]
+        TestobjectAtom
+        | m.RootModel[t.JsonValue]
+        | t.JsonValue
         | set[TestobjectHashable]
         | None
     )
