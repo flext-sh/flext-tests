@@ -151,7 +151,7 @@ class ModuleGovernanceMixin:
                         str(module_path.relative_to(self._package_root().parent))
                     )
                     break
-        assert not violations, (  # ruff: ignore[assert]
+        assert not violations, (
             f"Module-level logger assignments are forbidden: {violations}"
         )
 
@@ -173,7 +173,7 @@ class ModuleGovernanceMixin:
                     f"{module_path.relative_to(self._package_root().parent)}: "
                     f"{unexpected_functions}"
                 )
-        assert not violations, (  # ruff: ignore[assert]
+        assert not violations, (
             "Top-level functions are forbidden outside approved entrypoints: "
             f"{violations}"
         )
