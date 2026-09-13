@@ -5,9 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_tests import c, p, r
-from flext_tests._utilities.workspace_cleanup_git import (
-    FlextTestsWorkspaceCleanupGitUtilitiesMixin,
-)
+
+from .workspace_cleanup_git import FlextTestsWorkspaceCleanupGitUtilitiesMixin
 
 
 class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
@@ -34,21 +33,23 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
     })
 
     @classmethod
-    def _workspace_root(
+    def _repository_root(
         cls, request: p.Tests.WorkspaceCleanupRequest
     ) -> p.Result[Path]:
         """Require the request root to be the exact enclosing Git worktree root."""
         try:
-            root = request.workspace_root.resolve(strict=True)
+            root = request.repository_root.resolve(strict=True)
         except OSError as exc:
-            return r[Path].fail(f"cleanup workspace root resolution failed: {exc}")
+            return r[Path].fail(
+                f"cleanup workspace root resolution failed: {exc}", exception=exc
+            )
         if not root.is_dir():
             return r[Path].fail(f"cleanup workspace root is not a directory: {root}")
         git_result = cls._git(root, ("rev-parse", "--show-toplevel"))
         if git_result.failure:
             return r[Path].fail(git_result.error)
         output = git_result.value
-        if output.exit_code != c.Cli.EXIT_CODE_SUCCESS:
+        if output.outcome.raw_return_code != c.Cli.EXIT_CODE_SUCCESS:
             return r[Path].fail(cls._command_error("git root discovery", output))
         raw_root = output.stdout.strip()
         if not raw_root:
@@ -56,7 +57,7 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
         try:
             git_root = Path(raw_root).resolve(strict=True)
         except OSError as exc:
-            return r[Path].fail(f"git root resolution failed: {exc}")
+            return r[Path].fail(f"git root resolution failed: {exc}", exception=exc)
         if git_root != root:
             return r[Path].fail(
                 f"cleanup root must equal the Git worktree root: {root} != {git_root}"
@@ -102,7 +103,7 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
             if git_result.failure:
                 return r[bool].fail(git_result.error)
             output = git_result.value
-            if output.exit_code != c.Cli.EXIT_CODE_SUCCESS:
+            if output.outcome.raw_return_code != c.Cli.EXIT_CODE_SUCCESS:
                 return r[bool].fail(cls._command_error("git dir discovery", output))
             raw = output.stdout.strip()
             if not raw:

@@ -15,7 +15,7 @@ class TestsFlextTestsWorkspaceCleanup:
     def _git(repository: Path, *arguments: str) -> p.Cli.CommandOutput:
         result = u.Cli.run_raw((c.Infra.GIT, *arguments), cwd=repository)
         output = u.Tests.assert_success(result)
-        tm.that(output.exit_code, eq=c.Cli.EXIT_CODE_SUCCESS)
+        tm.that(output.outcome.raw_return_code, eq=c.Cli.EXIT_CODE_SUCCESS)
         return output
 
     @classmethod
@@ -37,7 +37,7 @@ class TestsFlextTestsWorkspaceCleanup:
         policy = m.Tests.WorkspaceCleanupPolicy(
             residues=tuple(Path(residue) for residue in residues)
         )
-        return m.Tests.WorkspaceCleanupRequest(workspace_root=root, policy=policy)
+        return m.Tests.WorkspaceCleanupRequest(repository_root=root, policy=policy)
 
     def test_plan_is_deterministic_and_retains_source_request(
         self, tmp_path: Path

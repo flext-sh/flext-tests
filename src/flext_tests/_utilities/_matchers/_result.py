@@ -5,23 +5,15 @@ from __future__ import annotations
 from collections.abc import Mapping, MutableMapping
 from typing import cast, overload
 
-from flext_core import p as core_p
-from flext_core import u
+from flext_core import p as core_p, u
 from flext_tests import c, m, p, t
-from flext_tests._utilities._matchers._assertions import (
-    FlextTestsMatchersAssertionsMixin,
-)
-from flext_tests._utilities._matchers._containment import (
-    FlextTestsMatchersContainmentMixin,
-)
-from flext_tests._utilities._matchers._that import (
-    FlextTestsMatchersThatMixin as FlextTestsMatchersRulesMixin,
-)
-from flext_tests._utilities._matchers._typeguards import (
-    FlextTestsMatchersTypeGuardsMixin,
-)
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
+
+from ..payload import FlextTestsPayloadUtilities
+from ..result import FlextTestsResultUtilitiesMixin
+from ._assertions import FlextTestsMatchersAssertionsMixin
+from ._containment import FlextTestsMatchersContainmentMixin
+from ._that import FlextTestsMatchersThatMixin as FlextTestsMatchersRulesMixin
+from ._typeguards import FlextTestsMatchersTypeGuardsMixin
 
 
 class FlextTestsMatchersResultMixin:
@@ -313,9 +305,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             @overload
-            def ok[TResult: t.Tests.TestResultValue](
-                result: core_p.ResultView[TResult],
-            ) -> TResult: ...
+            def ok[TResult](result: core_p.ResultView[TResult]) -> TResult: ...
 
             @staticmethod
             @overload
@@ -324,12 +314,15 @@ class FlextTestsMatchersResultMixin:
             ) -> TResult | t.Tests.TestobjectSerializable: ...
 
             @staticmethod
-            def ok[TResult: t.Tests.TestResultValue](
+            def ok[TResult](
                 result: core_p.ResultView[TResult], **kwargs: t.Tests.MatcherKwargValue
             ) -> TResult | t.Tests.TestobjectSerializable:
                 # mro-j47u: matchers observe the protocol and preserve source identity.
                 if not kwargs:
                     return FlextTestsResultUtilitiesMixin.assert_success(result)
+                structured_result = cast(
+                    "core_p.ResultView[t.Tests.TestResultValue]", result
+                )
                 try:
                     params = m.Tests.OkParams.model_validate(kwargs)
                 except c.EXC_BASIC_TYPE as exc:
@@ -337,7 +330,7 @@ class FlextTestsMatchersResultMixin:
                     raise ValueError(msg) from exc
                 result_value: t.Tests.TestResultValue = (
                     FlextTestsResultUtilitiesMixin.assert_success(
-                        result, error_msg=params.msg
+                        structured_result, error_msg=params.msg
                     )
                 )
                 result_value, extracted_payload = (

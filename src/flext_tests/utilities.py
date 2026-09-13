@@ -10,20 +10,20 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_infra import u
-from flext_tests._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
-from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
-from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
-from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
-from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
-from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
-from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
-from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
-from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
-from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
-from flext_tests._utilities.validator import FlextTestsValidatorUtilitiesMixin
-from flext_tests._utilities.workspace_cleanup import (
-    FlextTestsWorkspaceCleanupUtilitiesMixin,
-)
+
+from ._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
+from ._utilities.files import FlextTestsFilesUtilitiesMixin
+from ._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
+from ._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
+from ._utilities.governance import ModuleGovernanceMixin
+from ._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
+from ._utilities.make import FlextTestsMakeUtilitiesMixin
+from ._utilities.matchers import FlextTestsMatchersUtilities
+from ._utilities.result import FlextTestsResultUtilitiesMixin
+from ._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
+from ._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
+from ._utilities.validator import FlextTestsValidatorUtilitiesMixin
+from ._utilities.workspace_cleanup import FlextTestsWorkspaceCleanupUtilitiesMixin
 
 
 class FlextTestsUtilities(u):
@@ -47,10 +47,16 @@ class FlextTestsUtilities(u):
         FlextTestsFixturesDSLMixin,
         # NOTE (multi-agent): compose guarded cleanup planning/apply into u.Tests.
         FlextTestsWorkspaceCleanupUtilitiesMixin,
+        ModuleGovernanceMixin,
     ):
         """Test utilities namespace."""
 
 
 u = FlextTestsUtilities
 
-__all__: list[str] = ["FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"]
+__all__: list[str] = [
+    "FlextTestsFixturesDSLMixin",
+    "FlextTestsUtilities",
+    "ModuleGovernanceMixin",
+    "u",
+]

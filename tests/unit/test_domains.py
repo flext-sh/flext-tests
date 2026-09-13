@@ -1,9 +1,9 @@
-"""Behavioral unit tests for the ``flext_tests.domains`` (``td``) facade.
+"""Behavioral unit tests for the ``flext_tests.domains`` (``FlextTestsDomains``) facade.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 
-These tests exercise only the public contract of ``td``: the values it
+These tests exercise only the public contract of ``FlextTestsDomains``: the values it
 returns, the ``r[T]`` outcomes it builds, the fixtures it discovers/loads on
 disk, and the exceptions it raises on missing inputs. No private attribute,
 internal collaborator, or implementation detail is touched.
@@ -15,11 +15,11 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import td, tm
+from flext_tests import FlextTestsDomains, tm
 
 
 class TestsFlextTestsDomains:
-    """Public-contract tests for the ``td`` test-domain facade."""
+    """Public-contract tests for the ``FlextTestsDomains`` test-domain facade."""
 
     # --- fixtures ---------------------------------------------------------
 
@@ -53,7 +53,7 @@ class TestsFlextTestsDomains:
         """A generic OK result reports success and unwraps to the input value."""
         payload: dict[str, str] = {"foo": "bar"}
 
-        result = td.create_result_ok(payload)
+        result = FlextTestsDomains.create_result_ok(payload)
 
         tm.that(tm.ok(result), eq=payload)
 
@@ -63,13 +63,13 @@ class TestsFlextTestsDomains:
         def bracket(value: str) -> str:
             return f"[{value}]"
 
-        result = td.create_result_ok("payload")
+        result = FlextTestsDomains.create_result_ok("payload")
 
         tm.that(result.map(bracket).unwrap(), eq="[payload]")
 
     def test_create_result_failure_carries_error_message_code_and_data(self) -> None:
         """A generic failure exposes message, code and structured data."""
-        result = td.create_result_failure(
+        result = FlextTestsDomains.create_result_failure(
             "failed", error_code="GENERIC_ERROR", error_data={"detail": "reason"}
         )
 
@@ -80,13 +80,13 @@ class TestsFlextTestsDomains:
 
     def test_create_result_failure_defaults_to_test_error_code(self) -> None:
         """Omitting ``error_code`` yields the documented default code."""
-        result = td.create_result_failure("boom")
+        result = FlextTestsDomains.create_result_failure("boom")
 
         tm.fail(result, has="boom", code="TEST_ERROR")
 
     def test_failure_result_does_not_expose_a_value(self) -> None:
         """A failed result is observably not a success."""
-        result = td.create_result_failure("nope")
+        result = FlextTestsDomains.create_result_failure("nope")
 
         tm.fail(result)
         tm.fail(result)
@@ -95,7 +95,7 @@ class TestsFlextTestsDomains:
 
     def test_valid_email_cases_pairs_input_with_expected_validity(self) -> None:
         """Each email case is a ``(value, is_valid)`` pair with stable verdicts."""
-        cases = dict(td.valid_email_cases())
+        cases = dict(FlextTestsDomains.valid_email_cases())
 
         tm.that(cases["test@example.com"], eq=True)
         tm.that(cases["user.name@domain.co.uk"], eq=True)
@@ -104,11 +104,14 @@ class TestsFlextTestsDomains:
 
     def test_valid_email_cases_verdicts_are_deterministic(self) -> None:
         """Repeated calls return equal case tables (pure data helper)."""
-        tm.that(list(td.valid_email_cases()), eq=list(td.valid_email_cases()))
+        tm.that(
+            list(FlextTestsDomains.valid_email_cases()),
+            eq=list(FlextTestsDomains.valid_email_cases()),
+        )
 
     def test_default_handler_case_specs_expose_expected_handler_ids(self) -> None:
         """The shared handler specs cover the documented success/fail ids."""
-        specs = td.default_handler_case_specs()
+        specs = FlextTestsDomains.default_handler_case_specs()
 
         handler_ids = [spec["handler_id"] for spec in specs]
         tm.that(
@@ -138,7 +141,7 @@ class TestsFlextTestsDomains:
         """Only the ``fail_*`` handler specs carry the ``should_fail`` marker."""
         spec = next(
             entry
-            for entry in td.default_handler_case_specs()
+            for entry in FlextTestsDomains.default_handler_case_specs()
             if entry["handler_id"] == handler_id
         )
 
@@ -148,21 +151,28 @@ class TestsFlextTestsDomains:
 
     def test_fixture_filename_follows_group_kind_extension_convention(self) -> None:
         """The filename contract is ``<group>_<kind>_fixtures<ext>``."""
-        tm.that(td.fixture_filename("oid", "schema"), eq="oid_schema_fixtures.ldif")
+        tm.that(
+            FlextTestsDomains.fixture_filename("oid", "schema"),
+            eq="oid_schema_fixtures.ldif",
+        )
         assert (
-            td.fixture_filename("oud", "acl", file_extension=".txt")
+            FlextTestsDomains.fixture_filename("oud", "acl", file_extension=".txt")
             == "oud_acl_fixtures.txt"
         )
 
     def test_load_fixture_returns_file_contents(self, fixtures_root: Path) -> None:
         """Loading an existing fixture returns its exact text."""
-        loaded = td.load_fixture("oid", "schema", fixtures_root=fixtures_root)
+        loaded = FlextTestsDomains.load_fixture(
+            "oid", "schema", fixtures_root=fixtures_root
+        )
 
         tm.that(loaded, eq="dn: cn=schema,dc=oid\n")
 
     def test_fixture_path_points_at_existing_file(self, fixtures_root: Path) -> None:
         """``fixture_path`` resolves to an existing file inside the group dir."""
-        resolved = td.fixture_path("oid", "schema", fixtures_root=fixtures_root)
+        resolved = FlextTestsDomains.fixture_path(
+            "oid", "schema", fixtures_root=fixtures_root
+        )
 
         assert resolved.exists()
         tm.that(resolved.parent.name, eq="oid")
@@ -173,12 +183,16 @@ class TestsFlextTestsDomains:
     ) -> None:
         """A missing fixture is a hard error, not a silent empty result."""
         with pytest.raises(FileNotFoundError, match="Fixture file not found"):
-            td.fixture_path("oid", "missing", fixtures_root=fixtures_root)
+            FlextTestsDomains.fixture_path(
+                "oid", "missing", fixtures_root=fixtures_root
+            )
 
     def test_load_fixture_raises_when_fixture_absent(self, fixtures_root: Path) -> None:
         """Loading an absent fixture surfaces the missing-file failure."""
         with pytest.raises(FileNotFoundError):
-            td.load_fixture("oid", "missing", fixtures_root=fixtures_root)
+            FlextTestsDomains.load_fixture(
+                "oid", "missing", fixtures_root=fixtures_root
+            )
 
     @pytest.mark.parametrize(
         ("group", "kind", "expected"),
@@ -194,7 +208,10 @@ class TestsFlextTestsDomains:
         self, fixtures_root: Path, group: str, kind: str, *, expected: bool
     ) -> None:
         """``fixture_exists`` mirrors on-disk presence without raising."""
-        assert td.fixture_exists(group, kind, fixtures_root=fixtures_root) is expected
+        assert (
+            FlextTestsDomains.fixture_exists(group, kind, fixtures_root=fixtures_root)
+            is expected
+        )
 
     # --- fixture discovery ------------------------------------------------
 
@@ -203,21 +220,27 @@ class TestsFlextTestsDomains:
     ) -> None:
         """Discovery returns each server directory name, sorted."""
         tm.that(
-            td.available_fixture_servers(fixtures_root=fixtures_root), eq=("oid", "oud")
+            FlextTestsDomains.available_fixture_servers(fixtures_root=fixtures_root),
+            eq=("oid", "oud"),
         )
 
     def test_available_fixture_servers_empty_for_missing_root(
         self, tmp_path: Path
     ) -> None:
         """A non-existent root yields an empty tuple, never an error."""
-        assert td.available_fixture_servers(fixtures_root=tmp_path / "nope") == ()
+        assert (
+            FlextTestsDomains.available_fixture_servers(fixtures_root=tmp_path / "nope")
+            == ()
+        )
 
     def test_available_fixture_types_lists_kinds_for_group(
         self, fixtures_root: Path
     ) -> None:
         """Discovery extracts the ``kind`` segment of each fixture file."""
         tm.that(
-            td.available_fixture_types("oid", fixtures_root=fixtures_root),
+            FlextTestsDomains.available_fixture_types(
+                "oid", fixtures_root=fixtures_root
+            ),
             eq=("entries", "schema"),
         )
 
@@ -225,13 +248,20 @@ class TestsFlextTestsDomains:
         self, fixtures_root: Path
     ) -> None:
         """An unknown group has no fixture types."""
-        assert td.available_fixture_types("ghost", fixtures_root=fixtures_root) == ()
+        assert (
+            FlextTestsDomains.available_fixture_types(
+                "ghost", fixtures_root=fixtures_root
+            )
+            == ()
+        )
 
     def test_load_server_fixtures_maps_every_kind_to_its_contents(
         self, fixtures_root: Path
     ) -> None:
         """All of a group's fixtures load into a kind -> text mapping."""
-        loaded = td.load_server_fixtures("oid", fixtures_root=fixtures_root)
+        loaded = FlextTestsDomains.load_server_fixtures(
+            "oid", fixtures_root=fixtures_root
+        )
 
         tm.that(
             loaded,
@@ -244,11 +274,13 @@ class TestsFlextTestsDomains:
         self, fixtures_root: Path
     ) -> None:
         """A bound loader is equivalent to passing the root each call."""
-        bound = td.bind(fixtures_root)
+        bound = FlextTestsDomains.bind(fixtures_root)
 
         tm.that(
             bound.load_fixture("oid", "schema"),
-            eq=td.load_fixture("oid", "schema", fixtures_root=fixtures_root),
+            eq=FlextTestsDomains.load_fixture(
+                "oid", "schema", fixtures_root=fixtures_root
+            ),
         )
         tm.that(bound.available_fixture_servers(), eq=("oid", "oud"))
         tm.that(bound.fixture_exists("oud", "schema"), eq=True)
@@ -257,7 +289,7 @@ class TestsFlextTestsDomains:
         self, fixtures_root: Path
     ) -> None:
         """``load_all`` returns the full server -> kind -> text structure."""
-        bound = td.bind(fixtures_root)
+        bound = FlextTestsDomains.bind(fixtures_root)
 
         tm.that(
             bound.load_all(),
@@ -274,7 +306,7 @@ class TestsFlextTestsDomains:
         self, fixtures_root: Path
     ) -> None:
         """``load_fixture_kind`` gathers a single kind from every server."""
-        bound = td.bind(fixtures_root)
+        bound = FlextTestsDomains.bind(fixtures_root)
 
         tm.that(
             bound.load_fixture_kind("schema"),
@@ -285,7 +317,7 @@ class TestsFlextTestsDomains:
         self, fixtures_root: Path
     ) -> None:
         """Per-group params expose ``(kind, content)`` tuples."""
-        bound = td.bind(fixtures_root)
+        bound = FlextTestsDomains.bind(fixtures_root)
 
         tm.that(
             bound.pytest_params_for_group("oid"),
@@ -299,7 +331,7 @@ class TestsFlextTestsDomains:
         self, fixtures_root: Path
     ) -> None:
         """The flattened params expose ``(group, kind, content)`` triples."""
-        bound = td.bind(fixtures_root)
+        bound = FlextTestsDomains.bind(fixtures_root)
 
         tm.that(
             bound.all_pytest_params(),
@@ -316,7 +348,7 @@ class TestsFlextTestsDomains:
         group_dir.mkdir(parents=True, exist_ok=True)
         (group_dir / "oid_schema_fixtures.json").write_text("{}", encoding="utf-8")
 
-        bound = td.bind(tmp_path, file_extension=".json")
+        bound = FlextTestsDomains.bind(tmp_path, file_extension=".json")
 
         tm.that(bound.available_fixture_types("oid"), eq=("schema",))
         tm.that(bound.load_fixture("oid", "schema"), eq="{}")

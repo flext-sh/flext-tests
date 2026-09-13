@@ -109,6 +109,9 @@ class TestsFlextTestsValidatorLayerTestsMarkdown:
     def _write(base_path: Path, name: str, source: str) -> Path:
         file_path = base_path / name
         file_path.write_text(source, encoding="utf-8")
+        for arguments in (("init", "--quiet"), ("add", "--", name)):
+            output = tm.ok(u.Cli.run_raw((c.Infra.GIT, *arguments), cwd=base_path))
+            tm.that(output.outcome.raw_return_code, eq=c.Cli.EXIT_CODE_SUCCESS)
         return file_path
 
     # ---- layer validator -------------------------------------------------

@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from flext_tests import tk, tm
+from flext_tests import FlextTestsDocker, tm
 from tests import c, u
 
 if TYPE_CHECKING:
@@ -15,7 +15,9 @@ if TYPE_CHECKING:
 class DockerOperationsMixin:
     """Docker operation tests."""
 
-    def test_compose_up_returns_flext_result(self, docker_manager: tk) -> None:
+    def test_compose_up_returns_flext_result(
+        self, docker_manager: FlextTestsDocker
+    ) -> None:
         """Test compose_up returns a valid public Result contract."""
         result = docker_manager.compose_up("missing-compose.yml")
         tm.that(result.success or result.failure, eq=True)
@@ -24,35 +26,45 @@ class DockerOperationsMixin:
         else:
             tm.that(result.error, is_=str)
 
-    def test_compose_down_returns_flext_result(self, docker_manager: tk) -> None:
+    def test_compose_down_returns_flext_result(
+        self, docker_manager: FlextTestsDocker
+    ) -> None:
         """Test compose_down failure behavior for missing compose file."""
         result = docker_manager.compose_down("missing-compose.yml")
         _ = u.Tests.assert_failure(result)
 
-    def test_start_existing_container_not_found(self, docker_manager: tk) -> None:
+    def test_start_existing_container_not_found(
+        self, docker_manager: FlextTestsDocker
+    ) -> None:
         """Test starting a container returns a failure result when unavailable."""
         result = docker_manager.start_existing_container("nonexistent_container")
         _ = u.Tests.assert_failure(result)
         tm.that(result.error, is_=str)
 
-    def test_fetch_container_info_not_found(self, docker_manager: tk) -> None:
+    def test_fetch_container_info_not_found(
+        self, docker_manager: FlextTestsDocker
+    ) -> None:
         """Test fetching container info returns a failure result when unavailable."""
         result = docker_manager.fetch_container_info("nonexistent_container")
         _ = u.Tests.assert_failure(result)
         tm.that(result.error, is_=str)
 
-    def test_fetch_container_status(self, docker_manager: tk) -> None:
+    def test_fetch_container_status(self, docker_manager: FlextTestsDocker) -> None:
         """Test fetch_container_status delegates to container lookup."""
         result = docker_manager.fetch_container_status("nonexistent")
         _ = u.Tests.assert_failure(result)
 
-    def test_wait_for_port_ready_immediate(self, docker_manager: tk) -> None:
+    def test_wait_for_port_ready_immediate(
+        self, docker_manager: FlextTestsDocker
+    ) -> None:
         """Test wait_for_port_ready fails closed quickly for unavailable port."""
         result = docker_manager.wait_for_port_ready(c.LOOPBACK_IP, 59999, max_wait=1)
         _ = u.Tests.assert_failure(result)
         tm.that(result.error or "", has="not ready")
 
-    def test_start_compose_stack_returns_result(self, docker_manager: tk) -> None:
+    def test_start_compose_stack_returns_result(
+        self, docker_manager: FlextTestsDocker
+    ) -> None:
         """Test start_compose_stack returns a valid public Result contract."""
         result = docker_manager.start_compose_stack("missing-compose.yml")
         tm.that(result.success or result.failure, eq=True)
@@ -61,7 +73,9 @@ class DockerOperationsMixin:
         else:
             tm.that(result.error, is_=str)
 
-    def test_cleanup_dirty_containers_empty(self, docker_manager: tk) -> None:
+    def test_cleanup_dirty_containers_empty(
+        self, docker_manager: FlextTestsDocker
+    ) -> None:
         """Test cleanup with no dirty containers."""
         _ = docker_manager.mark_container_clean("container1")
         _ = docker_manager.mark_container_clean("container2")
@@ -74,7 +88,9 @@ class DockerOperationsMixin:
     ) -> None:
         """Test cleanup purges retired shared containers from persisted state."""
         monkeypatch.setenv("HOME", str(tmp_path))
-        manager = tk(workspace_root=tmp_path, worker_id="stale-container")
+        manager = FlextTestsDocker(
+            repository_root=tmp_path, worker_id="stale-container"
+        )
         _ = manager.mark_container_dirty("algar-oud-test")
 
         result = manager.cleanup_dirty_containers()
@@ -85,12 +101,12 @@ class DockerOperationsMixin:
 
     def test_default_worker_id(self) -> None:
         """Test default worker_id is 'master'."""
-        manager = tk()
+        manager = FlextTestsDocker()
         tm.that(manager.worker_id, eq="master")
 
     def test_custom_worker_id(self) -> None:
         """Test custom worker_id."""
-        manager = tk(worker_id="worker_1")
+        manager = FlextTestsDocker(worker_id="worker_1")
         tm.that(manager.worker_id, eq="worker_1")
 
     def test_worker_id_isolates_persisted_dirty_state(
@@ -98,19 +114,19 @@ class DockerOperationsMixin:
     ) -> None:
         """Test different worker_id values isolate persisted dirty state."""
         monkeypatch.setenv("HOME", str(tmp_path))
-        manager_a = tk(worker_id="worker_a")
+        manager_a = FlextTestsDocker(worker_id="worker_a")
         _ = manager_a.mark_container_dirty("container-x")
-        manager_b = tk(worker_id="worker_b")
+        manager_b = FlextTestsDocker(worker_id="worker_b")
         tm.that(manager_b.container_dirty("container-x"), eq=False)
-        manager_a_reload = tk(worker_id="worker_a")
+        manager_a_reload = FlextTestsDocker(worker_id="worker_a")
         tm.that(manager_a_reload.container_dirty("container-x"), eq=True)
 
-    def test_default_workspace_root(self) -> None:
-        """Test default workspace_root is cwd."""
-        manager = tk()
-        tm.that(manager.workspace_root, eq=Path.cwd())
+    def test_default_repository_root(self) -> None:
+        """Test default repository_root is cwd."""
+        manager = FlextTestsDocker()
+        tm.that(manager.repository_root, eq=Path.cwd())
 
-    def test_custom_workspace_root(self, tmp_path: Path) -> None:
-        """Test custom workspace_root."""
-        manager = tk(workspace_root=tmp_path)
-        tm.that(manager.workspace_root, eq=tmp_path)
+    def test_custom_repository_root(self, tmp_path: Path) -> None:
+        """Test custom repository_root."""
+        manager = FlextTestsDocker(repository_root=tmp_path)
+        tm.that(manager.repository_root, eq=tmp_path)

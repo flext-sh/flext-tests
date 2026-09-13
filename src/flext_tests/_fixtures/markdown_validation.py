@@ -19,7 +19,8 @@ from typing import TYPE_CHECKING, override
 import pytest
 
 from flext_tests import c, u
-from flext_tests._validator.markdown import FlextValidatorMarkdown
+
+from .._validator.markdown import FlextValidatorMarkdown
 
 if TYPE_CHECKING:
     from pathlib import Path

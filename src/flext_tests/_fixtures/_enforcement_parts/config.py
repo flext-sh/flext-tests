@@ -19,7 +19,7 @@ class SessionConfig:
     value: ClassVar[pytest.Config | None] = None
 
 
-def discover_workspace_root(start: Path) -> Path | None:
+def discover_repository_root(start: Path) -> Path | None:
     """Walk upward from ``start`` to find the FLEXT workspace root."""
     for candidate in (start, *start.parents):
         if all(
@@ -52,19 +52,19 @@ def resolve_config(config: pytest.Config) -> m.Tests.EnforcementDispatcherConfig
     rootpath = Path(config.rootpath).resolve()
 
     if override_root:
-        workspace_root = Path(override_root).resolve()
+        repository_root = Path(override_root).resolve()
     elif forced:
-        workspace_root = discover_workspace_root(rootpath)
+        repository_root = discover_repository_root(rootpath)
     else:
-        discovered = discover_workspace_root(rootpath)
-        workspace_root = discovered if discovered == rootpath else None
+        discovered = discover_repository_root(rootpath)
+        repository_root = discovered if discovered == rootpath else None
 
     resolved = m.Tests.EnforcementDispatcherConfig(
-        active=not disabled and workspace_root is not None,
+        active=not disabled and repository_root is not None,
         strict=strict,
         include=include,
         exclude=exclude,
-        workspace_root=workspace_root,
+        repository_root=repository_root,
     )
     config.stash[SessionConfig.stash_config] = resolved
     return resolved
@@ -107,7 +107,7 @@ def pytest_configure(config: pytest.Config) -> None:
 __all__: list[str] = [
     "SessionConfig",
     "active_rules",
-    "discover_workspace_root",
+    "discover_repository_root",
     "pytest_configure",
     "resolve_config",
     "split_csv",

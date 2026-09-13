@@ -31,21 +31,11 @@ class FlextValidatorMarkdown:
         cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single markdown file for Python code block violations."""
+        content, unreadable = u.Tests.read_scan_file(file_path, "MD-UNREADABLE")
+        if content is None:
+            return unreadable
         violations: MutableSequence[m.Tests.Violation] = []
 
-        read = u.Cli.files_read_text(file_path)
-        if read.failure:
-            return [
-                u.Tests.create_violation(
-                    file_path,
-                    0,
-                    "MD-UNREADABLE",
-                    (),
-                    read.error or "could not read file",
-                )
-            ]
-
-        content = read.value
         lines = content.splitlines()
 
         for match in c.Tests.VALIDATOR_MD_PYTHON_BLOCK_RE.finditer(content):

@@ -36,12 +36,12 @@ class FlextTestsKube(FlextTestsDocker):
 
     @classmethod
     def kind(
-        cls, *, workspace_root: Path | None = None, worker_id: str | None = None
+        cls, *, repository_root: Path | None = None, worker_id: str | None = None
     ) -> Self:
         """Build a DSL-configured service for the shared kind cluster."""
-        resolved_root = workspace_root or Path.cwd()
+        resolved_root = repository_root or Path.cwd()
         return cls(
-            workspace_root=resolved_root,
+            repository_root=resolved_root,
             worker_id=worker_id or "master",
             target_config=cls._resolve_shared_target_config(
                 cls.KIND_CONTAINER_NAME, resolved_root
@@ -53,7 +53,7 @@ class FlextTestsKube(FlextTestsDocker):
         target = self.target_config
         if target is None:
             return r[str].fail(
-                "Kubernetes target not configured. Use tkube.kind(...) first."
+                "Kubernetes target not configured. Use FlextTestsKube.kind(...) first."
             )
         if target.compose_file is None:
             return r[str].fail("Kubernetes target has no compose file configured.")
@@ -82,7 +82,7 @@ class FlextTestsKube(FlextTestsDocker):
         target = self.target_config
         if target is None:
             return r[str].fail(
-                "Kubernetes target not configured. Use tkube.kind(...) first."
+                "Kubernetes target not configured. Use FlextTestsKube.kind(...) first."
             )
         if target.compose_file is None:
             return r[str].fail("Kubernetes target has no compose file configured.")
@@ -93,7 +93,7 @@ class FlextTestsKube(FlextTestsDocker):
         target = self.target_config
         if target is None or target.compose_file is None:
             return r[bool].fail(
-                "Kubernetes target not configured. Use tkube.kind(...) first."
+                "Kubernetes target not configured. Use FlextTestsKube.kind(...) first."
             )
         try:
             output = self._run_kubectl(["get", "nodes", "--no-headers"])
@@ -129,18 +129,14 @@ class FlextTestsKube(FlextTestsDocker):
         target = self.target_config
         if target is None:
             return r[m.Tests.ContainerInfo].fail(
-                "Kubernetes target not configured. Use tkube.kind(...).execute()."
+                "Kubernetes target not configured. Use FlextTestsKube.kind(...).execute()."
             )
         up_result = self.cluster_up()
         if up_result.failure:
-            return r[m.Tests.ContainerInfo].fail(
-                up_result.error or "Kind cluster start failed"
-            )
+            return r[m.Tests.ContainerInfo].from_failure(up_result)
         nodes_result = self.nodes_ready()
         if nodes_result.failure:
-            return r[m.Tests.ContainerInfo].fail(
-                nodes_result.error or "Kind nodes readiness check failed"
-            )
+            return r[m.Tests.ContainerInfo].from_failure(nodes_result)
         container_name = target.container_name
         if not container_name:
             return r[m.Tests.ContainerInfo].ok(
@@ -154,7 +150,4 @@ class FlextTestsKube(FlextTestsDocker):
         return self.fetch_container_info(container_name)
 
 
-tkube = FlextTestsKube
-
-
-__all__: list[str] = ["FlextTestsKube", "tkube"]
+__all__: list[str] = ["FlextTestsKube"]

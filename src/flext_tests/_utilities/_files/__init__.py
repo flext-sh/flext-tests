@@ -1,50 +1,24 @@
-# @generated AUTO-GENERATED FILE — Regenerate with: make gen
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Flext Tests. Utilities. Files package."""
 
 from __future__ import annotations
 
+from types import MappingProxyType
 from typing import TYPE_CHECKING
 
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from . import _comparison_parts as _comparison_parts
-    from ._assertions import (
-        FlextTestsFilesAssertionsMixin as FlextTestsFilesAssertionsMixin,
-    )
-    from ._batch import FlextTestsFilesBatchMixin as FlextTestsFilesBatchMixin
-    from ._comparison import (
-        FlextTestsFilesComparisonMixin as FlextTestsFilesComparisonMixin,
-    )
-    from ._contexts import FlextTestsFilesContextsMixin as FlextTestsFilesContextsMixin
-    from ._creation import FlextTestsFilesCreationMixin as FlextTestsFilesCreationMixin
-    from ._info import FlextTestsFilesInfoMixin as FlextTestsFilesInfoMixin
-    from ._lifecycle import (
-        FlextTestsFilesLifecycleMixin as FlextTestsFilesLifecycleMixin,
-    )
-    from ._reading import FlextTestsFilesReadingMixin as FlextTestsFilesReadingMixin
-
-_LAZY_MODULES: dict[str, tuple[str, ...]] = {
-    "._assertions": ("FlextTestsFilesAssertionsMixin",),
-    "._batch": ("FlextTestsFilesBatchMixin",),
-    "._comparison": ("FlextTestsFilesComparisonMixin",),
-    "._comparison_parts": ("_comparison_parts",),
-    "._contexts": ("FlextTestsFilesContextsMixin",),
-    "._creation": ("FlextTestsFilesCreationMixin",),
-    "._info": ("FlextTestsFilesInfoMixin",),
-    "._lifecycle": ("FlextTestsFilesLifecycleMixin",),
-    "._reading": ("FlextTestsFilesReadingMixin",),
-}
-
-
-_LAZY_ALIAS_GROUPS: dict[str, tuple[tuple[str, str], ...]] = {}
-
-
-_LAZY_IMPORTS = build_lazy_import_map(
-    _LAZY_MODULES, alias_groups=_LAZY_ALIAS_GROUPS, sort_keys=False
-)
-
-_PUBLIC_EXPORTS: tuple[str, ...] = (
+    from . import _comparison_parts
+    from ._assertions import FlextTestsFilesAssertionsMixin
+    from ._batch import FlextTestsFilesBatchMixin
+    from ._comparison import FlextTestsFilesComparisonMixin
+    from ._contexts import FlextTestsFilesContextsMixin
+    from ._creation import FlextTestsFilesCreationMixin
+    from ._info import FlextTestsFilesInfoMixin
+    from ._lifecycle import FlextTestsFilesLifecycleMixin
+    from ._reading import FlextTestsFilesReadingMixin
+__all__: tuple[str, ...] = (
     "FlextTestsFilesAssertionsMixin",
     "FlextTestsFilesBatchMixin",
     "FlextTestsFilesComparisonMixin",
@@ -56,6 +30,22 @@ _PUBLIC_EXPORTS: tuple[str, ...] = (
     "_comparison_parts",
 )
 
-__all__: tuple[str, ...] = tuple(_PUBLIC_EXPORTS)
+_LAZY_IMPORTS = MappingProxyType(
+    build_lazy_import_map(
+        MappingProxyType({
+            "._assertions": ("FlextTestsFilesAssertionsMixin",),
+            "._batch": ("FlextTestsFilesBatchMixin",),
+            "._comparison": ("FlextTestsFilesComparisonMixin",),
+            "._comparison_parts": ("_comparison_parts",),
+            "._contexts": ("FlextTestsFilesContextsMixin",),
+            "._creation": ("FlextTestsFilesCreationMixin",),
+            "._info": ("FlextTestsFilesInfoMixin",),
+            "._lifecycle": ("FlextTestsFilesLifecycleMixin",),
+            "._reading": ("FlextTestsFilesReadingMixin",),
+        }),
+        alias_groups=MappingProxyType({}),
+        sort_keys=False,
+    )
+)
 
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)

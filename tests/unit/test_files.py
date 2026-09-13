@@ -7,17 +7,17 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from tests.unit._files_parts.assert_exists import FilesAssertExistsMixin
-from tests.unit._files_parts.batch_create_in import FilesBatchCreateInMixin
-from tests.unit._files_parts.compare import FilesCompareMixin
-from tests.unit._files_parts.content_meta import FilesContentMetaMixin
-from tests.unit._files_parts.contexts import FilesContextsMixin
-from tests.unit._files_parts.creation import FilesCreationMixin
-from tests.unit._files_parts.formats import FilesFormatsMixin
-from tests.unit._files_parts.info_cleanup import FilesInfoCleanupMixin
-from tests.unit._files_parts.info_metadata import FilesInfoMetadataMixin
-from tests.unit._files_parts.models import FilesModelsMixin
-from tests.unit._files_parts.read import FilesReadMixin
+from ._files_parts.assert_exists import FilesAssertExistsMixin
+from ._files_parts.batch_create_in import FilesBatchCreateInMixin
+from ._files_parts.compare import FilesCompareMixin
+from ._files_parts.content_meta import FilesContentMetaMixin
+from ._files_parts.contexts import FilesContextsMixin
+from ._files_parts.creation import FilesCreationMixin
+from ._files_parts.formats import FilesFormatsMixin
+from ._files_parts.info_cleanup import FilesInfoCleanupMixin
+from ._files_parts.info_metadata import FilesInfoMetadataMixin
+from ._files_parts.models import FilesModelsMixin
+from ._files_parts.read import FilesReadMixin
 
 
 class TestsFlextTestsFiles(
@@ -33,4 +33,4 @@ class TestsFlextTestsFiles(
     FilesAssertExistsMixin,
     FilesBatchCreateInMixin,
 ):
-    """Test suite for tf.FileInfo model."""
+    """Test suite for FlextTestsFiles.FileInfo model."""

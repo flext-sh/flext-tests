@@ -8,7 +8,8 @@ from typing import Self
 
 from flext_core import FlextContainer, s
 from flext_tests import m, p, t
-from flext_tests._settings import FlextTestsSettings
+
+from ._settings import FlextTestsSettings
 
 
 class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):

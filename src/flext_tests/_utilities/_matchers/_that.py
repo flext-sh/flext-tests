@@ -6,16 +6,11 @@ from collections.abc import Callable, Mapping, Sequence
 
 from flext_core import u
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities._matchers._assertions import (
-    FlextTestsMatchersAssertionsMixin,
-)
-from flext_tests._utilities._matchers._containment import (
-    FlextTestsMatchersContainmentMixin,
-)
-from flext_tests._utilities._matchers._typeguards import (
-    FlextTestsMatchersTypeGuardsMixin,
-)
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+
+from ..payload import FlextTestsPayloadUtilities
+from ._assertions import FlextTestsMatchersAssertionsMixin
+from ._containment import FlextTestsMatchersContainmentMixin
+from ._typeguards import FlextTestsMatchersTypeGuardsMixin
 
 
 class FlextTestsMatchersThatMixin:

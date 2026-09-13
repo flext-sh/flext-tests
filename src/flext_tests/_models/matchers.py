@@ -9,6 +9,7 @@ from types import MappingProxyType
 from typing import Annotated, ClassVar
 
 from flext_infra import m, u
+
 from flext_tests import p, t
 
 
@@ -457,6 +458,14 @@ class FlextTestsMatchersModelsMixin:
             t.Tests.EnvironmentSpec | None,
             u.Field(description="Temporary environment variables."),
         ] = None
+        remove_env_keys: Annotated[
+            t.StrSequence,
+            u.Field(description="Environment variables absent inside the scope."),
+        ] = ()
+        python_paths: Annotated[
+            t.StrSequence,
+            u.Field(description="Import roots prepended inside the scope."),
+        ] = ()
         cwd: Annotated[
             Path | str | None, u.Field(description="Temporary working directory.")
         ] = None

@@ -6,14 +6,15 @@ from collections.abc import MutableSequence
 from pathlib import Path
 
 from flext_cli import u as cli_u
-from flext_tests import c, m, p, r, t, u
+
+from flext_tests import c, m, p, t, u
 
 
 class FlextValidatorSettings:
     """Scan pyproject and config for policy violations."""
 
     @staticmethod
-    def to_toml_value(value: t.JsonValue) -> t.Tests.TomlValue:
+    def to_toml_value(value: t.JsonValue) -> t.Tests.MakeTomlValue:
         """Project a JsonValue into a TOML-compatible value."""
         if value is None:
             return ""
@@ -27,7 +28,7 @@ class FlextValidatorSettings:
         return value
 
     @staticmethod
-    def to_toml_dict(mapping: t.JsonMapping) -> t.Tests.TomlDict:
+    def to_toml_dict(mapping: t.JsonMapping) -> t.Tests.MakeTomlTable:
         """Recursively convert a JsonMapping to a TOML-compatible dictionary."""
         return {
             key: FlextValidatorSettings.to_toml_value(value)
@@ -59,16 +60,16 @@ class FlextValidatorSettings:
     def _check_mypy_settings(
         cls,
         file_path: Path,
-        data: t.Tests.TomlDict,
+        data: t.Tests.MakeTomlTable,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Check mypy configuration for violations."""
         violations: MutableSequence[m.Tests.Violation] = []
-        tool_data: t.Tests.TomlValue = data.get("tool", {})
+        tool_data: t.Tests.MakeTomlValue = data.get("tool", {})
         if not isinstance(tool_data, dict):
             return violations
-        mypy_config: t.Tests.TomlValue = tool_data.get("mypy", {})
+        mypy_config: t.Tests.MakeTomlValue = tool_data.get("mypy", {})
         if not isinstance(mypy_config, dict):
             return violations
         if (
@@ -85,7 +86,7 @@ class FlextValidatorSettings:
                     "(global)",
                 )
             )
-        overrides_raw: t.Tests.TomlValue = mypy_config.get("overrides", [])
+        overrides_raw: t.Tests.MakeTomlValue = mypy_config.get("overrides", [])
         if not isinstance(overrides_raw, list):
             return violations
         for override in overrides_raw:
@@ -93,7 +94,9 @@ class FlextValidatorSettings:
                 continue
             module = str(override.get("module", "unknown"))
             approved_rule = u.Tests.approved("CONFIG-001", file_path, approved)
-            ignore_errors_raw: t.Tests.TomlValue = override.get("ignore_errors", False)
+            ignore_errors_raw: t.Tests.MakeTomlValue = override.get(
+                "ignore_errors", False
+            )
             if ignore_errors_raw is True and (not approved_rule):
                 line_num = u.Tests.find_line_number(lines, f'module = "{module}"')
                 violations.append(
@@ -125,15 +128,15 @@ class FlextValidatorSettings:
     def _check_pyright_settings(
         cls,
         file_path: Path,
-        data: t.Tests.TomlDict,
+        data: t.Tests.MakeTomlTable,
         lines: t.StrSequence,
         approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Check pyright configuration for violations."""
-        tool_data: t.Tests.TomlValue = data.get("tool", {})
+        tool_data: t.Tests.MakeTomlValue = data.get("tool", {})
         if not isinstance(tool_data, dict):
             return []
-        pyright_config: t.Tests.TomlValue = tool_data.get("pyright", {})
+        pyright_config: t.Tests.MakeTomlValue = tool_data.get("pyright", {})
         if not isinstance(pyright_config, dict):
             return []
         if (
@@ -153,19 +156,9 @@ class FlextValidatorSettings:
         cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single pyproject.toml for settings violations."""
-        violations: MutableSequence[m.Tests.Violation] = []
-        read = u.Cli.files_read_text(file_path)
-        if read.failure:
-            return [
-                u.Tests.create_violation(
-                    file_path,
-                    0,
-                    "CONFIG-UNREADABLE",
-                    (),
-                    read.error or "could not read file",
-                )
-            ]
-        content = read.value
+        content, unreadable = u.Tests.read_scan_file(file_path, "CONFIG-UNREADABLE")
+        if content is None:
+            return unreadable
         mapping = cli_u.Cli.toml_mapping_from_text(content)
         if mapping is None:
             return [
@@ -179,9 +172,10 @@ class FlextValidatorSettings:
             ]
         data = cls.to_toml_dict(mapping)
         lines = content.splitlines()
-        violations.extend(cls._check_mypy_settings(file_path, data, lines, approved))
-        violations.extend(cls._check_pyright_settings(file_path, data, lines, approved))
-        return violations
+        return (
+            *cls._check_mypy_settings(file_path, data, lines, approved),
+            *cls._check_pyright_settings(file_path, data, lines, approved),
+        )
 
     @classmethod
     def scan(
@@ -190,19 +184,11 @@ class FlextValidatorSettings:
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
     ) -> p.Result[m.Tests.ScanResult]:
         """Scan pyproject.toml files for settings violations."""
-        violations: MutableSequence[m.Tests.Violation] = []
-        approved = approved_exceptions or {}
-        for file_path in files:
-            if file_path.name != "pyproject.toml":
-                continue
-            file_violations = cls._scan_file(file_path, approved)
-            violations.extend(file_violations)
-        return r[m.Tests.ScanResult].ok(
-            m.Tests.ScanResult(
-                validator_name=c.Tests.VALIDATOR_CONFIG_KEY,
-                files_scanned=len(files),
-                violations=violations,
-            )
+        return u.Tests.validator_run_scan(
+            files=[f for f in files if f.name == "pyproject.toml"],
+            approved_exceptions=approved_exceptions,
+            validator_name=c.Tests.VALIDATOR_CONFIG_KEY,
+            scan_file=cls._scan_file,
         )
 
     @classmethod

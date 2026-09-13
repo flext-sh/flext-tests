@@ -10,6 +10,7 @@ import types as bt
 from collections.abc import (
     ItemsView,
     KeysView,
+    Mapping,
     MutableMapping,
     Sequence,
     Set as AbstractSet,
@@ -22,8 +23,9 @@ from types import FrameType, GenericAlias, ModuleType
 from typing import NotRequired, TypedDict
 
 from flext_cli import t
-from flext_core import m, p
 from flext_infra import t as it
+
+from flext_core import m, p
 
 
 class FlextTestsBaseTypesMixin:
@@ -46,16 +48,21 @@ class FlextTestsBaseTypesMixin:
         t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
         | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
     )
-    type TestobjectSerializable = TestobjectAtom | TestobjectCollection | None
+    type TestobjectSerializable = (
+        TestobjectAtom
+        | list[TestobjectSerializable]
+        | Mapping[str, TestobjectSerializable]
+        | None
+    )
     type TestobjectHashable = (
         str | int | float | bool | bytes | datetime | tzinfo | Path | type | None
     )
     type NormalizationInput = (
-        TestobjectAtom
-        | m.RootModel[FlextTestsBaseTypesMixin.NormalizationInput]
-        | t.SequenceOf[FlextTestsBaseTypesMixin.NormalizationInput]
-        | t.MappingKV[str, FlextTestsBaseTypesMixin.NormalizationInput]
-        | set[FlextTestsBaseTypesMixin.TestobjectHashable]
+        "TestobjectAtom"
+        | m.RootModel[NormalizationInput]
+        | t.SequenceOf[NormalizationInput]
+        | t.MappingKV[str, NormalizationInput]
+        | set[TestobjectHashable]
         | None
     )
 

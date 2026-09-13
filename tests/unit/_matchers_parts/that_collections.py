@@ -6,7 +6,8 @@ import pytest
 
 from flext_tests import tm
 from tests import c
-from tests.unit._matchers_parts.predicates import MatchersPredicates
+
+from .predicates import MatchersPredicates
 
 
 class MatchersThatCollectionsMixin:

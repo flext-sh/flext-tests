@@ -8,9 +8,11 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_cli import u
+
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
-from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
+
+from ..files import FlextTestsFilesUtilitiesMixin
+from ._assertions import FlextTestsFilesAssertionsMixin
 
 
 class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
@@ -47,7 +49,9 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
                 "validate_model": validate_model,
             })
         except c.EXC_BASIC_TYPE as exc:
-            return r[m.Tests.FileInfo].fail(f"Invalid parameters for file info: {exc}")
+            return r[m.Tests.FileInfo].fail(
+                f"Invalid parameters for file info: {exc}", exception=exc
+            )
         if not params.path.exists():
             return r[m.Tests.FileInfo].ok(
                 m.Tests.FileInfo(exists=False, path=params.path)

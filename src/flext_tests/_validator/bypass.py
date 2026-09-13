@@ -22,6 +22,7 @@ class FlextValidatorBypass(u.Tests.ValidatorScannerMixin):
     """
 
     _VALIDATOR_KEY = c.Tests.VALIDATOR_BYPASS_KEY
+    _UNREADABLE_CODE = "BYPASS-UNREADABLE"
 
     @classmethod
     def _check_exception_swallowing(
@@ -104,29 +105,20 @@ class FlextValidatorBypass(u.Tests.ValidatorScannerMixin):
                 violations.append(violation)
         return violations
 
-    @override
     @classmethod
-    def _scan_file(
-        cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
+    @override
+    def _scan_content(
+        cls,
+        file_path: Path,
+        lines: t.StrSequence,
+        approved: t.MappingKV[str, t.StrSequence],
     ) -> t.SequenceOf[m.Tests.Violation]:
         """Scan a single file for bypass violations."""
-        violations: MutableSequence[m.Tests.Violation] = []
-        read = u.Cli.files_read_text(file_path)
-        if read.failure:
-            return [
-                u.Tests.create_violation(
-                    file_path,
-                    0,
-                    "BYPASS-UNREADABLE",
-                    (),
-                    read.error or "could not read file",
-                )
-            ]
-        lines = read.value.splitlines()
-        violations.extend(cls._check_noqa(file_path, lines, approved))
-        violations.extend(cls._check_pragma_no_cover(file_path, lines, approved))
-        violations.extend(cls._check_exception_swallowing(file_path, lines, approved))
-        return violations
+        return (
+            *cls._check_noqa(file_path, lines, approved),
+            *cls._check_pragma_no_cover(file_path, lines, approved),
+            *cls._check_exception_swallowing(file_path, lines, approved),
+        )
 
 
 __all__: list[str] = ["FlextValidatorBypass"]

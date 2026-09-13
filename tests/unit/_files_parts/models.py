@@ -4,15 +4,15 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_tests import tf, tm
+from flext_tests import FlextTestsFiles, tm
 
 
 class FilesModelsMixin:
     """File model tests."""
 
     def test_file_info_exists_false(self) -> None:
-        """Test tf.FileInfo with exists=False."""
-        info = tf.FileInfo(exists=False)
+        """Test FlextTestsFiles.FileInfo with exists=False."""
+        info = FlextTestsFiles.FileInfo(exists=False)
         tm.that(info.exists is False, eq=True)
         tm.that(info.size, eq=0)
         tm.that(info.lines, eq=0)
@@ -21,8 +21,8 @@ class FilesModelsMixin:
         tm.that(info.first_line, eq="")
 
     def test_file_info_exists_true(self) -> None:
-        """Test tf.FileInfo with exists=True."""
-        info = tf.FileInfo(
+        """Test FlextTestsFiles.FileInfo with exists=True."""
+        info = FlextTestsFiles.FileInfo(
             exists=True,
             size=100,
             lines=5,
@@ -39,14 +39,14 @@ class FilesModelsMixin:
 
     def test_init_without_base_dir(self) -> None:
         """Test initialization without base directory."""
-        manager = tf()
+        manager = FlextTestsFiles()
         tm.that(manager.base_dir, none=True)
         tm.that(manager.created_files, empty=True)
         tm.that(manager.created_dirs, empty=True)
 
     def test_init_with_base_dir(self, tmp_path: Path) -> None:
         """Test initialization with base directory."""
-        manager = tf(base_dir=tmp_path)
+        manager = FlextTestsFiles(base_dir=tmp_path)
         tm.that(manager.base_dir, eq=tmp_path)
         tm.that(manager.created_files, empty=True)
         tm.that(manager.created_dirs, empty=True)
@@ -55,7 +55,7 @@ class FilesModelsMixin:
         self, tmp_path: Path
     ) -> None:
         """Characterize the public file-manager operations."""
-        manager = tf(base_dir=tmp_path)
+        manager = FlextTestsFiles(base_dir=tmp_path)
         first = manager.create("content", "first.txt")
         second = manager.create("content", "second.txt")
 
@@ -64,8 +64,8 @@ class FilesModelsMixin:
 
     def test_model_validation_owns_file_manager_base_dir(self, tmp_path: Path) -> None:
         """Keep base_dir in the canonical service model contract."""
-        manager = tf.model_validate({"base_dir": tmp_path})
-        from_string = tf.model_validate({"base_dir": str(tmp_path)})
+        manager = FlextTestsFiles.model_validate({"base_dir": tmp_path})
+        from_string = FlextTestsFiles.model_validate({"base_dir": str(tmp_path)})
 
         tm.that(manager.base_dir, eq=tmp_path)
         tm.that(from_string.base_dir, eq=tmp_path)
@@ -74,7 +74,7 @@ class FilesModelsMixin:
 
     def test_temporary_directory(self) -> None:
         """Test temporary_directory context manager."""
-        manager = tf()
+        manager = FlextTestsFiles()
         with manager.temporary_directory() as temp_dir:
             tm.that(temp_dir, is_=Path)
             tm.that(temp_dir.exists(), eq=True)

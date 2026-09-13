@@ -10,9 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_tests._utilities.workspace_cleanup_plan import (
-    FlextTestsWorkspaceCleanupPlanUtilitiesMixin,
-)
+from .workspace_cleanup_plan import FlextTestsWorkspaceCleanupPlanUtilitiesMixin
 
 
 class FlextTestsWorkspaceCleanupUtilitiesMixin(

@@ -11,6 +11,7 @@ from types import MappingProxyType
 from typing import Annotated
 
 from flext_infra import m, u
+
 from flext_tests import t
 
 
@@ -58,7 +59,7 @@ class FlextTestsMakeModelsMixin:
             u.Field(description="Conditional mutation predicates."),
         ] = ()
         aliases: Annotated[
-            t.StrSequence, u.Field(description="Verb aliases declared on WHAT=all.")
+            t.StrSequence, u.Field(description="Verb aliases declared on.")
         ] = ()
         params: Annotated[
             t.SequenceOf[FlextTestsMakeModelsMixin.MakeParam],

@@ -5,7 +5,8 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities.make_registry import FlextTestsMakeRegistryUtilitiesMixin
+
+from .make_registry import FlextTestsMakeRegistryUtilitiesMixin
 
 
 class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin):
@@ -82,7 +83,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             "Usage: make <verb> to list the available WHAT actions.",
             "Usage: make <verb> WHAT=<action> to execute.",
             "Usage: make <verb> WHAT=<verb>/<action> for action help.",
-            "Mutating commands require APPLY=Y.",
+            "Mutating commands require.",
             "",
             "Custom hooks: define pre-<verb>, post-<verb>, pre-<verb>-<what>, or",
             "post-<verb>-<what> in workspace_custom.mk to append work at the start",
@@ -99,7 +100,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             registry, requested_verb
         )
         if verb_result.failure:
-            return r[str].fail(verb_result.error or "verb unknown")
+            return r[str].from_failure(verb_result)
         verb = verb_result.value
         aliases = FlextTestsMakeRegistryUtilitiesMixin.make_registry_aliases_for(
             registry, verb
@@ -160,7 +161,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             registry, requested_verb, what
         )
         if command_result.failure:
-            return r[str].fail(command_result.error or "command unknown")
+            return r[str].from_failure(command_result)
         command = command_result.value
         lines = [
             f"make {requested_verb} WHAT={what}",
@@ -169,7 +170,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             f"Mutaction: {FlextTestsMakeRenderingUtilitiesMixin.make_mutation_label(command)}",
         ]
         if command.mutates:
-            lines.append("Sem APPLY=Y a execucao fica em dry-run.")
+            lines.append("Sem a execucao fica em dry-run.")
         elif command.mutates_when:
             conditions = (
                 FlextTestsMakeRenderingUtilitiesMixin.make_format_mutation_conditions(
@@ -210,7 +211,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             f"Comando: make {requested_verb} WHAT={what}",
             f"Domínio: {command.domain}",
             f"Resumo: {command.summary}",
-            "Regra: command mutador exige APPLY=Y.",
+            "Regra: command mutador exige.",
         ]
         if command.params:
             lines.extend(("", "Current parameters:"))

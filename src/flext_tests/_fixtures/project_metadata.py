@@ -4,8 +4,8 @@ Provides:
 - project_metadata: Fixture returning ``m.ProjectMetadata`` for the current project
 - project_tool_flext: Fixture returning ``m.ProjectToolFlext`` for the current project
 
-All fixtures derive data exclusively from the SSOT
-(``u.read_project_metadata``).
+All fixtures derive data exclusively from the SSOT owner chain
+(``read_project_document_cached`` + ``build_project_metadata``).
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -34,13 +34,15 @@ def _find_project_root() -> Path:
 @pytest.fixture
 def project_metadata() -> p.ProjectMetadata:
     """Return the canonical ``m.ProjectMetadata`` for the project under test."""
-    return u.read_project_metadata(_find_project_root()).unwrap()
+    document = u.read_project_document_cached(_find_project_root())
+    return u.build_project_metadata(_find_project_root(), document)
 
 
 @pytest.fixture
 def project_tool_flext() -> p.ProjectToolFlext:
     """Return the ``[tool.flext]`` config for the project under test."""
-    return u.read_project_metadata(_find_project_root()).unwrap().flext
+    document = u.read_project_document_cached(_find_project_root())
+    return u.build_project_metadata(_find_project_root(), document).flext
 
 
 __all__: list[str] = ["project_metadata", "project_tool_flext"]

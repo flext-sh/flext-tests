@@ -6,8 +6,9 @@ from collections.abc import Mapping, MutableMapping
 from pathlib import Path
 
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+
+from ..payload import FlextTestsPayloadUtilities
+from ._contexts import FlextTestsFilesContextsMixin
 
 
 class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
@@ -49,7 +50,7 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
             })
         except c.EXC_BASIC_TYPE as exc:
             return r[m.Tests.BatchResult].fail(
-                f"Invalid parameters for batch operation: {exc}"
+                f"Invalid parameters for batch operation: {exc}", exception=exc
             )
         files_dict: MutableMapping[str, t.Tests.TestobjectSerializable] = dict(
             params.files

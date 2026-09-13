@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from pathlib import Path
 
-from flext_tests import tf, tm
+from flext_tests import FlextTestsFiles, tm
 from tests import m, t, u
 
 
@@ -14,7 +14,7 @@ class FilesContextsMixin:
 
     def test_files_context_manager_basic(self) -> None:
         """Test files() context manager creates temporary files."""
-        with tf.files({"a": "content A", "b": "content B"}) as paths:
+        with FlextTestsFiles.files({"a": "content A", "b": "content B"}) as paths:
             tm.that(paths, has="a")
             tm.that(paths, has="b")
             tm.that(paths["a"].exists(), eq=True)
@@ -27,7 +27,7 @@ class FilesContextsMixin:
     def test_files_context_manager_json_auto_detect(self) -> None:
         """Test files() auto-detects JSON from dict content."""
         content = m.ConfigMap(root={"key": "value"})
-        with tf.files({"settings": content}) as paths:
+        with FlextTestsFiles.files({"settings": content}) as paths:
             tm.that(paths["settings"].suffix, eq=".json")
             empty_data: t.JsonMapping = {}
             data = u.Cli.json_read(paths["settings"]).unwrap_or(empty_data)
@@ -35,7 +35,7 @@ class FilesContextsMixin:
 
     def test_files_context_manager_mixed_types(self) -> None:
         """Test files() handles mixed content types."""
-        with tf.files({
+        with FlextTestsFiles.files({
             "text": "plain text",
             "json": m.ConfigMap(root={"key": "value"}),
             "csv": [["a", "b"], ["1", "2"]],
@@ -46,41 +46,41 @@ class FilesContextsMixin:
 
     def test_files_context_manager_custom_extension(self) -> None:
         """Test files() with custom default extension."""
-        with tf.files({"file1": "content"}, ext=".md") as paths:
+        with FlextTestsFiles.files({"file1": "content"}, ext=".md") as paths:
             tm.that(paths["file1"].suffix, eq=".md")
 
     def test_files_context_manager_custom_directory(self, tmp_path: Path) -> None:
         """Test files() in custom directory."""
-        with tf.files({"test": "content"}, directory=tmp_path) as paths:
+        with FlextTestsFiles.files({"test": "content"}, directory=tmp_path) as paths:
             tm.that(paths["test"].parent, eq=tmp_path)
 
     def test_tf_alias_usage(self, tmp_path: Path) -> None:
-        """Test tf alias can be used to create files."""
-        with tf(base_dir=tmp_path) as files:
+        """Test FlextTestsFiles alias can be used to create files."""
+        with FlextTestsFiles(base_dir=tmp_path) as files:
             path = files.create("test content", "test.txt")
             tm.that(path.exists(), eq=True)
 
     def test_tf_files_context_manager(self) -> None:
-        """Test tf.files() context manager works."""
-        with tf.files({"test": "content"}) as paths:
+        """Test FlextTestsFiles.files() context manager works."""
+        with FlextTestsFiles.files({"test": "content"}) as paths:
             tm.that(paths["test"].exists(), eq=True)
 
     def test_fileinfo_import_from_models(self) -> None:
-        """Test tf.FileInfo can be imported from models."""
+        """Test FlextTestsFiles.FileInfo can be imported from models."""
         info = m.Tests.FileInfo(exists=True, size=100, lines=5)
         tm.that(info.exists is True, eq=True)
         tm.that(info.size, eq=100)
         tm.that(info.lines, eq=5)
 
     def test_fileinfo_backward_compatibility(self) -> None:
-        """Test tf.FileInfo alias works for backward compatibility."""
-        info = tf.FileInfo(exists=True)
+        """Test FlextTestsFiles.FileInfo alias works for backward compatibility."""
+        info = FlextTestsFiles.FileInfo(exists=True)
         tm.that(info.exists is True, eq=True)
         info2 = m.Tests.FileInfo(exists=True)
         tm.that(info2.exists is True, eq=True)
 
     def test_fileinfo_all_fields(self) -> None:
-        """Test tf.FileInfo with all fields populated."""
+        """Test FlextTestsFiles.FileInfo with all fields populated."""
         now = datetime.now(tz=UTC)
         info = m.Tests.FileInfo(
             exists=True,
