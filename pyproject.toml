@@ -583,6 +583,7 @@ targets = ["src"]
 [tool.flext.docs]
 project_class = "test"
 
+
 [tool.flext.project.budget.boundary]
 time-seconds = 600
 memory-mb = 2048
