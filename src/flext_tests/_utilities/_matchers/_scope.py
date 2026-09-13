@@ -30,7 +30,17 @@ class FlextTestsMatchersScopeMixin:
             @staticmethod
             @contextmanager
             def scope(
-                **kwargs: t.Tests.TestobjectSerializable,
+                # Why: kwargs mirror every ScopeParams field. `dict` literals
+                # (settings={"debug": True}) are invariant under mypy, so the
+                # Mapping-typed fields must be spelled as Mapping (covariant)
+                # here too, matching ScopeParams itself, not the bare
+                # TestobjectSerializable alias; model_validate below still
+                # enforces the real per-field contract at runtime.
+                **kwargs: t.Tests.TestobjectSerializable
+                | t.MappingKV[str, t.Tests.TestobjectSerializable]
+                | t.StrSequence
+                | t.Tests.CleanupSpec
+                | t.Tests.EnvironmentSpec,
             ) -> Generator[m.Tests.TestScope]:
                 """Enhanced isolated test execution scope.
 

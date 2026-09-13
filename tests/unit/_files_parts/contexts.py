@@ -41,7 +41,7 @@ class FilesContextsMixin:
             "csv": [["a", "b"], ["1", "2"]],
         }) as paths:
             tm.that(paths["text"].read_text(), eq="plain text")
-            tm.that(u.Cli.json_read(paths["json"]).unwrap_or({}), eq={"key": "value"})
+            tm.that(u.Cli.json_read(paths["json"]).unwrap(), eq={"key": "value"})
             tm.that(len(paths["csv"].read_text().strip().split("\n")), eq=2)
 
     def test_files_context_manager_custom_extension(self) -> None:

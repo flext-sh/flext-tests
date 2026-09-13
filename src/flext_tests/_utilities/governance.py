@@ -14,7 +14,7 @@ from __future__ import annotations
 import importlib
 import inspect
 import warnings
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Final, Protocol, runtime_checkable
 
@@ -128,7 +128,12 @@ class ModuleGovernanceMixin:
         """Resolve the set of approved top-level functions for one module."""
         package_root = cls._package_root()
         key = cls._allowed_functions_lookup_key(module_path, package_root)
-        allowed_map = getattr(cls._tests_config, "ALLOWED_MODULE_FUNCTIONS", None)
+        # Why: annotate the getattr result explicitly (ALLOWED_MODULE_FUNCTIONS
+        # is an optional attribute, not part of the structural protocol) so
+        # `.get()` resolves to `frozenset[str]` instead of `Any`.
+        allowed_map: Mapping[str, frozenset[str]] | None = getattr(
+            cls._tests_config, "ALLOWED_MODULE_FUNCTIONS", None
+        )
         if allowed_map is None:
             return frozenset()
         return allowed_map.get(key, frozenset())
@@ -146,7 +151,7 @@ class ModuleGovernanceMixin:
                         str(module_path.relative_to(self._package_root().parent))
                     )
                     break
-        assert not violations, (  # ruff: ignore[assert]
+        assert not violations, (
             f"Module-level logger assignments are forbidden: {violations}"
         )
 
@@ -168,7 +173,7 @@ class ModuleGovernanceMixin:
                     f"{module_path.relative_to(self._package_root().parent)}: "
                     f"{unexpected_functions}"
                 )
-        assert not violations, (  # ruff: ignore[assert]
+        assert not violations, (
             "Top-level functions are forbidden outside approved entrypoints: "
             f"{violations}"
         )
