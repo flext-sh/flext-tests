@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, MutableMapping
-from typing import cast, overload
+from typing import overload
 
 from flext_core import p as core_p, u
 from flext_tests import c, m, p, t
@@ -31,15 +31,11 @@ class FlextTestsMatchersResultMixin:
                 return m.Tests.Chain(result=result)
 
             @staticmethod
-            def fail[TResult](
-                result: core_p.ResultView[TResult], **kwargs: t.Tests.MatcherKwargValue
+            def fail[TResult, KwargT](
+                result: core_p.ResultView[TResult], **kwargs: KwargT
             ) -> str:
                 """Assert that a result failed and validate its error payload."""
-                try:
-                    params = m.Tests.FailParams.model_validate(kwargs)
-                except c.EXC_BASIC_TYPE as exc:
-                    msg = f"Parameter validation failed: {exc}"
-                    raise ValueError(msg) from exc
+                params = m.Tests.FailParams.model_validate(kwargs)
                 err: str = FlextTestsResultUtilitiesMixin.assert_failure(result)
                 FlextTestsMatchersResultMixin.Tests.Matchers.fail_text(err, params)
                 FlextTestsMatchersResultMixin.Tests.Matchers.fail_code(result, params)
@@ -118,7 +114,7 @@ class FlextTestsMatchersResultMixin:
                 if params.data is None:
                     return
                 actual_raw = result.error_data
-                actual_data: MutableMapping[str, t.Tests.TestobjectSerializable] = {}
+                actual_data: MutableMapping[str, p.Tests.Payload] = {}
                 if actual_raw is not None:
                     actual_data = {
                         key: FlextTestsPayloadUtilities.to_payload(value)
@@ -130,7 +126,7 @@ class FlextTestsMatchersResultMixin:
                             params.msg
                             or c.Tests.ERR_ERROR_DATA_KEY_MISSING.format(key=key)
                         )
-                    if actual_data[key] != expected_value:
+                    if FlextTestsPayloadUtilities.to_match_value(actual_data[key]) != FlextTestsPayloadUtilities.to_match_value(expected_value):
                         raise AssertionError(
                             params.msg
                             or c.Tests.ERR_ERROR_DATA_VALUE_MISMATCH.format(
@@ -141,46 +137,17 @@ class FlextTestsMatchersResultMixin:
                         )
 
             @staticmethod
-            def ok_extract_path(
-                result_value: t.Tests.TestResultValue, params: m.Tests.OkParams
-            ) -> tuple[t.Tests.TestResultValue, t.Tests.TestobjectSerializable | None]:
-                """Apply optional path extraction to a successful result value."""
+            def ok_extract_path[TResult](
+                result_value: TResult, params: m.Tests.OkParams
+            ) -> tuple[TResult | p.Tests.Payload, p.Tests.Payload | None]:
+                """Extract an owned node without dumping native model leaves."""
                 if params.path is None:
                     return result_value, None
-                path_str = (
-                    params.path
-                    if isinstance(params.path, str)
-                    else ".".join(params.path)
+                path = params.path if isinstance(params.path, str) else ".".join(params.path)
+                payload = FlextTestsMatchersRulesMixin._extract_path_value(
+                    FlextTestsPayloadUtilities.to_payload(result_value), path
                 )
-                # mro-j47u: matcher type failures remain assertion failures.
-                match result_value:
-                    case m.BaseModel() | Mapping():
-                        pass
-                    case _:
-                        failure = (
-                            "Path extraction requires dict or model, got "
-                            f"{type(result_value).__name__}"
-                        )
-                        raise AssertionError(params.msg or failure)
-                try:
-                    extract_data = FlextTestsPayloadUtilities.to_config_map(
-                        result_value
-                    )
-                except c.ValidationError as exc:
-                    failure = f"Path extraction payload is invalid: {exc}"
-                    raise AssertionError(params.msg or failure) from exc
-                extracted = u.extract(extract_data, path_str)
-                if extracted.failure:
-                    raise AssertionError(
-                        params.msg
-                        or c.Tests.ERR_SCOPE_PATH_NOT_FOUND.format(
-                            path=path_str, error=extracted.error
-                        )
-                    )
-                extracted_payload = FlextTestsPayloadUtilities.to_payload(
-                    extracted.value
-                )
-                return extracted_payload, extracted_payload
+                return payload, payload
 
             @staticmethod
             def ok_has_scalar_validation(params: m.Tests.OkParams) -> bool:
@@ -219,89 +186,34 @@ class FlextTestsMatchersResultMixin:
                 )
 
             @staticmethod
-            def ok_validate_scalar[TResult: t.Tests.TestResultValue](
-                result_value: TResult | t.Tests.TestobjectSerializable,
-                params: m.Tests.OkParams,
-            ) -> TResult | t.Tests.TestobjectSerializable:
-                """Validate scalar predicates for a successful result."""
-                if not FlextTestsMatchersResultMixin.Tests.Matchers.ok_has_scalar_validation(
-                    params
-                ):
-                    return result_value
-                is_type = params.is_ if not isinstance(params.is_, tuple) else None
-                result_payload = FlextTestsPayloadUtilities.to_payload(result_value)
-                eq_payload, ne_payload = (
-                    FlextTestsMatchersTypeGuardsMixin.prepare_eq_ne_payloads(
-                        result_payload,
-                        params.eq,
-                        params.ne,
-                        msg=params.msg,
-                        default_msg=f"Value {result_value!r} did not satisfy constraints",
-                    )
-                )
-                chk_value: t.GuardInput | None = (
-                    None
-                    if result_payload is None
-                    else FlextTestsPayloadUtilities.to_normalized_value(result_payload)
-                )
-                guard = m.GuardCheckSpec.model_validate({
-                    "eq": FlextTestsPayloadUtilities.to_normalized_value(eq_payload)
-                    if eq_payload is not None
-                    else None,
-                    "ne": FlextTestsPayloadUtilities.to_normalized_value(ne_payload)
-                    if ne_payload is not None
-                    else None,
-                    "is_": is_type,
-                    "none": params.none,
-                    "empty": params.empty,
-                    "gt": params.gt,
-                    "gte": params.gte,
-                    "lt": params.lt,
-                    "lte": params.lte,
-                    "starts": params.starts,
-                    "ends": params.ends,
-                })
-                if not u.chk(chk_value, guard):
-                    raise AssertionError(
-                        params.msg
-                        or f"Value {result_value!r} did not satisfy constraints"
-                    )
-                if (
-                    params.match is not None
-                    and isinstance(result_payload, str)
-                    and params.match.search(result_payload) is None
-                ):
-                    raise AssertionError(
-                        params.msg
-                        or c.Tests.ERR_NOT_MATCHES.format(
-                            text=result_payload, pattern=params.match.pattern
-                        )
+            def ok_validate_scalar[TResult](
+                result_value: TResult, params: m.Tests.OkParams
+            ) -> TResult:
+                """Validate native equality and finite scalar constraints."""
+                if FlextTestsMatchersResultMixin.Tests.Matchers.ok_has_scalar_validation(params):
+                    FlextTestsMatchersTypeGuardsMixin.assert_scalar_match(
+                        FlextTestsPayloadUtilities.to_payload(result_value), params
                     )
                 return result_value
 
             @staticmethod
-            def ok_validate_type[TResult: t.Tests.TestResultValue](
-                result_value: TResult | t.Tests.TestobjectSerializable,
-                params: m.Tests.OkParams,
-            ) -> TResult | t.Tests.TestobjectSerializable:
-                """Validate tuple-based runtime type constraints."""
-                if not (
-                    params.is_ is not None
-                    and isinstance(params.is_, tuple)
-                    and not any(
-                        FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(
-                            result_value, expected_type
+            def ok_validate_type[TResult](
+                result_value: TResult, params: m.Tests.OkParams
+            ) -> TResult:
+                """Check the original successful value's declared runtime types."""
+                if params.is_ is not None:
+                    native = (
+                        FlextTestsPayloadUtilities.to_match_value(result_value)
+                        if isinstance(result_value, m.Tests.Payload)
+                        else result_value
+                    )
+                    if not FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(native, params.is_):
+                        raise AssertionError(
+                            params.msg or c.Tests.ERR_TYPE_FAILED.format(
+                                expected=params.is_, actual=type(native).__name__
+                            )
                         )
-                        for expected_type in params.is_
-                    )
-                ):
-                    return result_value
-                raise AssertionError(
-                    params.msg
-                    or c.Tests.ERR_TYPE_FAILED.format(
-                        expected=params.is_, actual=type(result_value).__name__
-                    )
-                )
+                return result_value
 
             @staticmethod
             @overload
@@ -309,28 +221,21 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             @overload
-            def ok[TResult: t.Tests.TestResultValue](
-                result: core_p.ResultView[TResult], **kwargs: t.Tests.MatcherKwargValue
-            ) -> TResult | t.Tests.TestobjectSerializable: ...
+            def ok[TResult, KwargT](
+                result: core_p.ResultView[TResult], **kwargs: KwargT
+            ) -> TResult | t.Tests.PayloadAtom | p.Model | p.Tests.NativeSequence | p.Tests.NativeMapping | None: ...
 
             @staticmethod
             def ok[TResult](
-                result: core_p.ResultView[TResult], **kwargs: t.Tests.MatcherKwargValue
-            ) -> TResult | t.Tests.TestobjectSerializable:
+                result: core_p.ResultView[TResult], **kwargs: KwargT
+            ) -> TResult | t.Tests.PayloadAtom | p.Model | p.Tests.NativeSequence | p.Tests.NativeMapping | None:
                 # mro-j47u: matchers observe the protocol and preserve source identity.
                 if not kwargs:
                     return FlextTestsResultUtilitiesMixin.assert_success(result)
-                structured_result = cast(
-                    "core_p.ResultView[t.Tests.TestResultValue]", result
-                )
-                try:
-                    params = m.Tests.OkParams.model_validate(kwargs)
-                except c.EXC_BASIC_TYPE as exc:
-                    msg = f"Parameter validation failed: {exc}"
-                    raise ValueError(msg) from exc
-                result_value: t.Tests.TestResultValue = (
+                params = m.Tests.OkParams.model_validate(kwargs)
+                result_value: TResult | p.Tests.Payload = (
                     FlextTestsResultUtilitiesMixin.assert_success(
-                        structured_result, error_msg=params.msg
+                        result, error_msg=params.msg
                     )
                 )
                 result_value, extracted_payload = (
@@ -348,9 +253,12 @@ class FlextTestsMatchersResultMixin:
                         result_value, params
                     )
                 )
-                FlextTestsMatchersContainmentMixin.check_has_lacks(
-                    result_value, params.has, params.lacks, params.msg
-                )
+                if params.has is not None or params.lacks is not None:
+                    FlextTestsMatchersContainmentMixin.check_has_lacks(
+                        result_value, params.has, params.lacks, params.msg
+                    )
+                if FlextTestsMatchersResultMixin.Tests.Matchers.ok_preserves_result_identity(params):
+                    return result_value
                 result_payload = (
                     FlextTestsMatchersResultMixin.Tests.Matchers.ok_payload(
                         result, result_value, extracted_payload, params
@@ -359,26 +267,15 @@ class FlextTestsMatchersResultMixin:
                 FlextTestsMatchersResultMixin.Tests.Matchers.ok_validate_structured(
                     result, result_value, result_payload, params
                 )
-                if result_value is None:
-                    raise AssertionError(
-                        params.msg
-                        or "Value is None but validation passed - this should not happen"
-                    )
-                # Preserve source identity for the no-kwargs overload (TResult).
-                # Structural matchers still observe via result_payload above.
-                if FlextTestsMatchersResultMixin.Tests.Matchers.ok_preserves_result_identity(
-                    params
-                ):
-                    return cast("TResult", result_value)
-                return result_payload
+                return FlextTestsPayloadUtilities.to_match_value(result_payload)
 
             @staticmethod
-            def ok_payload[TResult: t.Tests.TestResultValue](
+            def ok_payload[TResult](
                 result: core_p.ResultView[TResult],
-                result_value: t.Tests.TestResultValue,
-                extracted_payload: t.Tests.TestobjectSerializable | None,
+                result_value: TResult | p.Tests.Payload,
+                extracted_payload: p.Tests.Payload | None,
                 params: m.Tests.OkParams,
-            ) -> t.Tests.TestobjectSerializable:
+            ) -> p.Tests.Payload:
                 if params.path is None:
                     return FlextTestsPayloadUtilities.to_payload(result.value)
                 if extracted_payload is not None:
@@ -386,10 +283,10 @@ class FlextTestsMatchersResultMixin:
                 return FlextTestsPayloadUtilities.to_payload(result_value)
 
             @staticmethod
-            def ok_validate_structured[TResult: t.Tests.TestResultValue](
+            def ok_validate_structured[TResult](
                 result: core_p.ResultView[TResult],
-                result_value: t.Tests.TestResultValue,
-                result_payload: t.Tests.TestobjectSerializable,
+                result_value: TResult | p.Tests.Payload,
+                result_payload: p.Tests.Payload,
                 params: m.Tests.OkParams,
             ) -> None:
                 if params.len is not None:
@@ -422,42 +319,18 @@ class FlextTestsMatchersResultMixin:
                     )
 
             @staticmethod
-            def ok_validate_deep[TResult: t.Tests.TestResultValue](
-                result_value: TResult | t.Tests.TestobjectSerializable,
-                params: m.Tests.OkParams,
-            ) -> TResult | t.Tests.TestobjectSerializable:
-                deep_spec = params.deep
-                if deep_spec is None:
+            def ok_validate_deep[TResult](
+                result_value: TResult, params: m.Tests.OkParams
+            ) -> TResult:
+                """Deep matching reads the canonical owned payload tree."""
+                if params.deep is None:
                     return result_value
-                match result_value:
-                    case m.BaseModel() | Mapping():
-                        pass
-                    case _:
-                        failure = (
-                            "Deep matching requires dict or model, got "
-                            f"{type(result_value).__name__}"
-                        )
-                        raise AssertionError(params.msg or failure)
-                deep_input: (
-                    m.BaseModel | t.MappingKV[str, t.Tests.TestobjectSerializable]
-                )
-                if isinstance(result_value, m.BaseModel):
-                    deep_input = result_value
-                else:
-                    try:
-                        deep_input = t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
-                            result_value
-                        )
-                    except c.ValidationError as exc:
-                        failure = f"Deep matching payload is invalid: {exc}"
-                        raise AssertionError(params.msg or failure) from exc
                 match_result = FlextTestsPayloadUtilities.deep_match(
-                    deep_input, deep_spec
+                    FlextTestsPayloadUtilities.to_payload(result_value), params.deep
                 )
                 if not match_result.matched:
                     raise AssertionError(
-                        params.msg
-                        or c.Tests.ERR_DEEP_PATH_FAILED.format(
+                        params.msg or c.Tests.ERR_DEEP_PATH_FAILED.format(
                             path=match_result.path, reason=match_result.reason
                         )
                     )

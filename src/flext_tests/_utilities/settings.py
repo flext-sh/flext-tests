@@ -34,8 +34,8 @@ class FlextTestsConfigHelpersUtilitiesMixin:
 
     @staticmethod
     @contextmanager
-    def env_vars_context(
-        env_vars: t.MappingKV[str, t.Tests.TestobjectSerializable] | None = None,
+    def env_vars_context[ValueT](
+        env_vars: t.MappingKV[str, ValueT] | None = None,
         vars_to_clear: t.StrSequence | None = None,
     ) -> Generator[None]:
         """Apply and atomically restore a real process-environment scope."""

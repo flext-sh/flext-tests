@@ -20,7 +20,7 @@ from datetime import datetime, timezone, tzinfo
 from enum import Enum
 from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
-from typing import NotRequired, TypedDict
+from typing import Literal, NotRequired, TypedDict
 
 from flext_cli import t
 from flext_infra import t as it
@@ -30,6 +30,21 @@ from flext_core import m, p
 
 class FlextTestsBaseTypesMixin:
     """Base generic primitives extending Flext core aliases."""
+
+    type PayloadKind = Literal["atom", "list", "tuple", "set", "frozenset", "mapping"]
+    type PayloadAtom = (
+        t.InstanceOf[str]
+        | t.InstanceOf[int]
+        | t.InstanceOf[float]
+        | t.InstanceOf[bool]
+        | t.InstanceOf[bytes]
+        | t.InstanceOf[datetime]
+        | t.InstanceOf[tzinfo]
+        | t.InstanceOf[Path]
+        | t.InstanceOf[type]
+    )
+    type PayloadItems[NodeT] = tuple[NodeT, ...]
+    type PayloadEntries[NodeT] = Mapping[str, NodeT]
 
     type TestobjectAtom = (
         str

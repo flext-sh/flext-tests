@@ -75,16 +75,16 @@ class FlextTestsGenericHelpersUtilitiesMixin:
                 raise AssertionError(message)
 
     @staticmethod
-    def create_parametrized_cases(
-        success_values: t.SequenceOf[t.Tests.TestobjectSerializable],
+    def create_parametrized_cases[ValueT](
+        success_values: t.SequenceOf[ValueT],
         failure_errors: t.StrSequence | None = None,
         *,
         error_codes: t.SequenceOf[str | None] | None = None,
     ) -> t.SequenceOf[
         tuple[
-            p.Result[t.Tests.TestobjectSerializable],
+            p.Result[ValueT],
             bool,
-            t.Tests.TestobjectSerializable | None,
+            ValueT | None,
             str | None,
         ]
     ]:
@@ -102,14 +102,14 @@ class FlextTestsGenericHelpersUtilitiesMixin:
         """
         cases: MutableSequence[
             tuple[
-                p.Result[t.Tests.TestobjectSerializable],
+                p.Result[ValueT],
                 bool,
-                t.Tests.TestobjectSerializable | None,
+                ValueT | None,
                 str | None,
             ]
         ] = []
         for value in success_values:
-            result = r[t.Tests.TestobjectSerializable].ok(value)
+            result = r[ValueT].ok(value)
             cases.append((result, True, value, None))
         if failure_errors:
             codes = (
@@ -117,7 +117,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
             )
             for i, error in enumerate(failure_errors):
                 error_code = codes[i] if i < len(codes) else None
-                result = r[t.Tests.TestobjectSerializable].fail(
+                result = r[ValueT].fail(
                     error, error_code=error_code
                 )
                 cases.append((result, False, None, error))
