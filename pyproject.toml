@@ -580,7 +580,7 @@ skips = ["B101"]
 targets = ["src"]
 
 [tool.flext.docs]
-project_class = "test"
+package_name = "flext_tests"
 
 
 [tool.flext.project.budget.boundary]
@@ -619,6 +619,11 @@ memory-mb = 2048
 tokens = 1000000
 
 [tool.flext.project.budget.format]
+time-seconds = 600
+memory-mb = 2048
+tokens = 1000000
+
+[tool.flext.project.budget.index-declarations]
 time-seconds = 600
 memory-mb = 2048
 tokens = 1000000
