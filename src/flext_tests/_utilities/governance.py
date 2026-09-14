@@ -18,6 +18,8 @@ from collections.abc import Iterator, Mapping
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Final, Protocol, runtime_checkable
 
+from flext_tests import tm
+
 if TYPE_CHECKING:
     from types import ModuleType
 
@@ -151,8 +153,10 @@ class ModuleGovernanceMixin:
                         str(module_path.relative_to(self._package_root().parent))
                     )
                     break
-        assert not violations, (
-            f"Module-level logger assignments are forbidden: {violations}"
+        tm.that(
+            violations,
+            eq=[],
+            msg=f"Module-level logger assignments are forbidden: {violations}",
         )
 
     def test_package_modules_do_not_define_unapproved_top_level_functions(self) -> None:
@@ -173,7 +177,11 @@ class ModuleGovernanceMixin:
                     f"{module_path.relative_to(self._package_root().parent)}: "
                     f"{unexpected_functions}"
                 )
-        assert not violations, (
-            "Top-level functions are forbidden outside approved entrypoints: "
-            f"{violations}"
+        tm.that(
+            violations,
+            eq=[],
+            msg=(
+                "Top-level functions are forbidden outside approved entrypoints: "
+                f"{violations}"
+            ),
         )
