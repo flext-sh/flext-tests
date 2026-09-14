@@ -58,8 +58,7 @@ class FlextTestsBaseTypesMixin:
         str | int | float | bool | bytes | datetime | tzinfo | Path | type | None
     )
     type NormalizationInput = (
-        "TestobjectAtom"
-        | m.RootModel[NormalizationInput]
+        TestobjectAtom
         | t.SequenceOf[NormalizationInput]
         | t.MappingKV[str, NormalizationInput]
         | set[TestobjectHashable]
