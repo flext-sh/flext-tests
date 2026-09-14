@@ -1,4 +1,4 @@
-# FLEXT Workspace API Overview
+# flext-tests API Overview
 
 <!-- TOC START -->
 - [Next Pages](#next-pages)
@@ -6,16 +6,28 @@
 
 <!-- AUTO-GENERATED — DO NOT EDIT MANUALLY -->
 
+- Package: `flext_tests`
 - Version: `0.12.0`
 - Description: FLEXT Test Infrastructure - Shared test utilities, builders,
   factories, and validation for the FLEXT ecosystem
-- Governed projects: `0`
-- Project classes: _none_
-
-Generated from workspace discovery, `pyproject.toml`, public exports, and
-docstrings.
+- Doc summary: Flext Tests package.
+- Classifiers: `Development Status :: 3 - Alpha`, `Framework :: Pydantic :: 2`,
+  `Framework :: Pydantic`, `Framework :: Pytest`, `Intended Audience ::
+  Developers`, `Operating System :: OS Independent` (+4 more)
+- Project class: `test`
+- Keywords: `builders`, `factories`, `flext`, `test-infrastructure`, `testing`
+- Main facades: `FlextTestsCase`, `FlextTestsConfig`, `FlextTestsConstants`,
+  `FlextTestsDocker`, `FlextTestsDomains`, `FlextTestsFiles`,
+  `FlextTestsFixturesDSLMixin`, `FlextTestsKube` (+8 more)
+- Alias exports: `c`, `d`, `e`, `h`, `m`, `p`, `r`, `s`, `t`, `u`, `x`
+- Public symbol exports: `SLOW_TIMEOUT_INI_OPTION`, `EnforcementCollector`,
+  `EnforcementItem`, `EnforcementViolationError`, `FlextTestsCase`,
+  `FlextTestsConfig`, `FlextTestsConstants`, `FlextTestsDocker`,
+  `FlextTestsDomains`, `FlextTestsFiles` (+22 more)
+- Exported module shortcuts: _none_
+- Generated module pages: `14`
 
 ## Next Pages
 
-- [Workspace Module Pages](projects/index.md)
-- [Project Catalog](../../projects/generated/catalog.md)
+- [Public API](public-api.md)
+- [Module Index](modules/index.md)
