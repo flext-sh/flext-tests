@@ -20,15 +20,14 @@ from datetime import datetime, timezone, tzinfo
 from enum import Enum
 from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
-from typing import TYPE_CHECKING, Literal
+from typing import Literal
 
 from flext_cli import t
 from flext_infra import m, t as it
 
 from flext_core import p
 
-if TYPE_CHECKING:
-    from flext_tests import m as tests_m
+from .._models.domains import FlextTestsDomainModelsMixin
 
 
 class FlextTestsBaseTypesMixin:
@@ -83,7 +82,7 @@ class FlextTestsBaseTypesMixin:
         | None
     )
 
-    type HandlerCaseSpec = tests_m.Tests.HandlerCaseSpec
+    type HandlerCaseSpec = FlextTestsDomainModelsMixin.HandlerCaseSpec
 
     type TestResultValue = (
         FlextTestsBaseTypesMixin.TestobjectSerializable
