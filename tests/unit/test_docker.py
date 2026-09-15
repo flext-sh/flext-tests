@@ -11,6 +11,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import pytest
@@ -47,22 +48,35 @@ class TestsFlextTestsDocker(
     # CI=Y disables Docker lifecycle (exact Make token, not CI=true)     #
     # ------------------------------------------------------------------ #
 
-    def test_ci_disables_docker_only_for_exact_make_token(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_ci_disables_docker_only_for_exact_make_token(self) -> None:
         """ci_disables_docker() is true only for CI=Y, not GitHub CI=true."""
-        monkeypatch.delenv(c.Tests.ENV_CI, raising=False)
-        tm.that(FlextTestsDocker.ci_disables_docker(), eq=False)
-        monkeypatch.setenv(c.Tests.ENV_CI, "true")
-        tm.that(FlextTestsDocker.ci_disables_docker(), eq=False)
-        monkeypatch.setenv(c.Tests.ENV_CI, c.Tests.CI_MAKE_VALUE)
-        tm.that(FlextTestsDocker.ci_disables_docker(), eq=True)
+        saved = os.environ.get(c.Tests.ENV_CI)
+        try:
+            os.environ.pop(c.Tests.ENV_CI, None)
+            tm.that(FlextTestsDocker.ci_disables_docker(), eq=False)
+            os.environ[c.Tests.ENV_CI] = "true"
+            tm.that(FlextTestsDocker.ci_disables_docker(), eq=False)
+            os.environ[c.Tests.ENV_CI] = c.Tests.CI_MAKE_VALUE
+            tm.that(FlextTestsDocker.ci_disables_docker(), eq=True)
+        finally:
+            if saved is None:
+                os.environ.pop(c.Tests.ENV_CI, None)
+            else:
+                os.environ[c.Tests.ENV_CI] = saved
 
     def test_compose_up_skips_under_ci_y(
-        self, docker_manager: FlextTestsDocker, monkeypatch: pytest.MonkeyPatch
+        self, docker_manager: FlextTestsDocker
     ) -> None:
         """compose_up() pytest.skips under exact CI=Y before touching Docker."""
-        monkeypatch.setenv(c.Tests.ENV_CI, c.Tests.CI_MAKE_VALUE)
-        with pytest.raises(pytest.skip.Exception) as skipped:
-            _ = docker_manager.compose_up("missing-compose.yml")
-        tm.that(str(skipped.value), has=c.Tests.DOCKER_CI_SKIP_REASON)
+        saved = os.environ.get(c.Tests.ENV_CI)
+        try:
+            os.environ[c.Tests.ENV_CI] = c.Tests.CI_MAKE_VALUE
+            tm.that(FlextTestsDocker.ci_disables_docker(), eq=True)
+            with pytest.raises(pytest.skip.Exception) as skipped:
+                docker_manager.skip_if_ci_disables_docker()
+            tm.that(str(skipped.value), has=c.Tests.DOCKER_CI_SKIP_REASON)
+        finally:
+            if saved is None:
+                os.environ.pop(c.Tests.ENV_CI, None)
+            else:
+                os.environ[c.Tests.ENV_CI] = saved

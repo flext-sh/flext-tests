@@ -317,8 +317,14 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             # returns as soon as the containers are created, so a cold boot
             # hands back a stack whose database is still initializing and every
             # readiness probe races first-run setup.
+            # Whales' quiet option captures both subprocess streams so its
+            # exception carries startup diagnostics through the result boundary.
             self.docker.compose.up(
-                services=services, detach=True, remove_orphans=True, wait=True
+                services=services,
+                detach=True,
+                remove_orphans=True,
+                wait=True,
+                quiet=True,
             )
         return r[str].ok("Compose up successful")
 
