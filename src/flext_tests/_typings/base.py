@@ -10,7 +10,6 @@ import types as bt
 from collections.abc import (
     ItemsView,
     KeysView,
-    Mapping,
     MutableMapping,
     Sequence,
     Set as AbstractSet,
@@ -25,9 +24,9 @@ from typing import NotRequired, TypedDict
 from flext_cli import t
 from flext_infra import t as it
 
-from flext_core import m, p
+from flext_core import m, p, t as ct
 
-# Module-level recursive type aliases (forward references work with from __future__ import annotations)
+# Module-level finite type aliases using core JsonValue/JsonMapping (no recursion)
 type TestobjectAtom = (
     str
     | int
@@ -42,24 +41,13 @@ type TestobjectAtom = (
     | frozenset[str]
 )
 
-type TestobjectSerializable = (
-    TestobjectAtom
-    | list[TestobjectSerializable]
-    | Mapping[str, TestobjectSerializable]
-    | None
-)
+type TestobjectSerializable = ct.JsonValue
 
 type TestobjectHashable = (
     str | int | float | bool | bytes | datetime | tzinfo | Path | type | None
 )
 
-type NormalizationInput = (
-    TestobjectAtom
-    | Sequence[NormalizationInput]
-    | Mapping[str, NormalizationInput]
-    | set[TestobjectHashable]
-    | None
-)
+type NormalizationInput = ct.JsonValue
 
 
 class FlextTestsBaseTypesMixin:
