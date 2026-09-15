@@ -5,11 +5,9 @@ from __future__ import annotations
 from typing import assert_type
 
 import pytest
-from pydantic import BaseModel
-
 from flext_core import p as core_p, r as core_r
 from flext_tests import tm
-from tests import r, t
+from tests import m, r, t
 
 
 class MatchersResultsMixin:
@@ -34,7 +32,7 @@ class MatchersResultsMixin:
     def test_ok_preserves_arbitrary_result_payload(self) -> None:
         """The no-matcher overload accepts payloads outside the matcher union."""
 
-        class Payload(BaseModel):
+        class Payload(m.BaseModel):
             value: str
 
         payload = Payload(value="typed")

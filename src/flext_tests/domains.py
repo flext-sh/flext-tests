@@ -6,7 +6,7 @@ from pathlib import Path
 
 from flext_cli import u as cli_u
 
-from flext_tests import p, r, t
+from flext_tests import m, p, r, t
 
 
 class FlextTestsDomains:
@@ -150,38 +150,38 @@ class FlextTestsDomains:
     def default_handler_case_specs() -> t.SequenceOf[t.Tests.HandlerCaseSpec]:
         """Create shared handler test-case specs for service-base tests."""
         return [
-            {
-                "handler_id": "success_command",
-                "handler_type": "COMMAND",
-                "expected_result": "Handled: test",
-                "description": "Command handler success",
-            },
-            {
-                "handler_id": "success_query",
-                "handler_type": "QUERY",
-                "expected_result": "Handled: query",
-                "description": "Query handler success",
-            },
-            {
-                "handler_id": "success_event",
-                "handler_type": "EVENT",
-                "expected_result": "Handled: event",
-                "description": "Event handler success",
-            },
-            {
-                "handler_id": "fail_command",
-                "handler_type": "COMMAND",
-                "should_fail": True,
-                "error_message": "Command failed",
-                "description": "Command handler failure",
-            },
-            {
-                "handler_id": "fail_query",
-                "handler_type": "QUERY",
-                "should_fail": True,
-                "error_message": "Query failed",
-                "description": "Query handler failure",
-            },
+            m.Tests.HandlerCaseSpec(
+                handler_id="success_command",
+                handler_type="COMMAND",
+                expected_result="Handled: test",
+                description="Command handler success",
+            ),
+            m.Tests.HandlerCaseSpec(
+                handler_id="success_query",
+                handler_type="QUERY",
+                expected_result="Handled: query",
+                description="Query handler success",
+            ),
+            m.Tests.HandlerCaseSpec(
+                handler_id="success_event",
+                handler_type="EVENT",
+                expected_result="Handled: event",
+                description="Event handler success",
+            ),
+            m.Tests.HandlerCaseSpec(
+                handler_id="fail_command",
+                handler_type="COMMAND",
+                should_fail=True,
+                error_message="Command failed",
+                description="Command handler failure",
+            ),
+            m.Tests.HandlerCaseSpec(
+                handler_id="fail_query",
+                handler_type="QUERY",
+                should_fail=True,
+                error_message="Query failed",
+                description="Query handler failure",
+            ),
         ]
 
     @staticmethod

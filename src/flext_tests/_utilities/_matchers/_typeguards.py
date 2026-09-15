@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Sized
-from types import TypeAliasType
+from typing import TypeAliasType
 
 from _pytest.python_api import ApproxBase
 from flext_infra import u

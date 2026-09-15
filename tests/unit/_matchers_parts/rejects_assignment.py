@@ -5,18 +5,18 @@ from __future__ import annotations
 import enum
 
 import pytest
-from pydantic import BaseModel, ConfigDict, ValidationError
-
 from flext_tests import tm
 
+from tests import m
 
-class _Frozen(BaseModel):
-    model_config = ConfigDict(frozen=True)
+
+class _Frozen(m.BaseModel):
+    model_config = m.ConfigDict(frozen=True)
 
     host: str
 
 
-class _Mutable(BaseModel):
+class _Mutable(m.BaseModel):
     host: str
 
 
@@ -30,7 +30,7 @@ class MatchersRejectsAssignmentMixin:
     def test_rejects_assignment_on_frozen_model(self) -> None:
         """A frozen pydantic model rejects field assignment."""
         tm.rejects_assignment(
-            _Frozen(host="h"), "host", "other", expected=ValidationError
+            _Frozen(host="h"), "host", "other", expected=m.ValidationError
         )
 
     def test_rejects_assignment_matches_error_text(self) -> None:
@@ -39,7 +39,7 @@ class MatchersRejectsAssignmentMixin:
             _Frozen(host="h"),
             "host",
             "other",
-            expected=ValidationError,
+            expected=m.ValidationError,
             match="frozen_instance",
         )
 
@@ -53,5 +53,5 @@ class MatchersRejectsAssignmentMixin:
         """A target that accepts the assignment fails the matcher."""
         with pytest.raises(AssertionError):
             tm.rejects_assignment(
-                _Mutable(host="h"), "host", "other", expected=ValidationError
+                _Mutable(host="h"), "host", "other", expected=m.ValidationError
             )
