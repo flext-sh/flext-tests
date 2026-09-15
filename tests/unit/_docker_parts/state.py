@@ -2,15 +2,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import pytest
 
 from flext_tests import FlextTestsDocker, tm
 from tests import c, m, u
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 class DockerStateMixin:
@@ -80,11 +75,8 @@ class DockerStateMixin:
         client2 = manager.client
         tm.that(client1 is client2, eq=True)
 
-    def test_dirty_state_persists_between_instances(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_dirty_state_persists_between_instances(self) -> None:
         """Test dirty-state persistence through public API across instances."""
-        monkeypatch.setenv("HOME", str(tmp_path))
         worker_id = "persist-worker"
         manager = FlextTestsDocker(worker_id=worker_id)
         mark_result = manager.mark_container_dirty("container1")

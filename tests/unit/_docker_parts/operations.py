@@ -3,13 +3,9 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from flext_tests import FlextTestsDocker, tm
 from tests import c, u
-
-if TYPE_CHECKING:
-    import pytest
 
 
 class DockerOperationsMixin:
@@ -84,10 +80,9 @@ class DockerOperationsMixin:
         tm.that(result.value, empty=True)
 
     def test_cleanup_dirty_containers_removes_stale_shared_entry(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+        self, tmp_path: Path
     ) -> None:
         """Test cleanup purges retired shared containers from persisted state."""
-        monkeypatch.setenv("HOME", str(tmp_path))
         manager = FlextTestsDocker(
             repository_root=tmp_path, worker_id="stale-container"
         )
@@ -109,11 +104,8 @@ class DockerOperationsMixin:
         manager = FlextTestsDocker(worker_id="worker_1")
         tm.that(manager.worker_id, eq="worker_1")
 
-    def test_worker_id_isolates_persisted_dirty_state(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_worker_id_isolates_persisted_dirty_state(self) -> None:
         """Test different worker_id values isolate persisted dirty state."""
-        monkeypatch.setenv("HOME", str(tmp_path))
         manager_a = FlextTestsDocker(worker_id="worker_a")
         _ = manager_a.mark_container_dirty("container-x")
         manager_b = FlextTestsDocker(worker_id="worker_b")
