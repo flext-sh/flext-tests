@@ -9,6 +9,8 @@ from pathlib import Path
 
 from flext_cli import u
 
+from flext_core import m, t
+
 
 class FlextTestsFilesUtilitiesMixin:
     """Test-only format-detection facade; delegates to ``u.Cli`` canonical helpers."""

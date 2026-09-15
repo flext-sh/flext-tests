@@ -11,6 +11,8 @@ from ._assertions import FlextTestsMatchersAssertionsMixin
 from ._containment import FlextTestsMatchersContainmentMixin
 from ._typeguards import FlextTestsMatchersTypeGuardsMixin
 
+_TUPLE_NAME_VALUE_PAIR_LEN: int = 2
+
 
 class FlextTestsMatchersThatMixin:
     """Fluent matcher assertions."""
@@ -615,7 +617,7 @@ class FlextTestsMatchersThatMixin:
         """Read a mapping or one name/value pair from its owned shape."""
         if value.kind == "mapping":
             return tuple(value.entries.items())
-        if value.kind == "tuple" and len(value.items) == 2:
+        if value.kind == "tuple" and len(value.items) == _TUPLE_NAME_VALUE_PAIR_LEN:
             key, expected = value.items
             if key.kind == "atom" and isinstance(key.atom, str):
                 return ((key.atom, expected),)
@@ -660,7 +662,7 @@ class FlextTestsMatchersThatMixin:
         cls.Tests.Matchers.that(subject, **kwargs)
 
     @staticmethod
-    def _extract_path_value(subject: p.Tests.Payload, path: str) -> p.Tests.Payload:
+    def extract_path_value(subject: p.Tests.Payload, path: str) -> p.Tests.Payload:
         """Read nested payload nodes without serializing model leaves."""
         node = subject
         for segment in path.split("."):
@@ -691,7 +693,7 @@ class FlextTestsMatchersThatMixin:
         for path, rule in rules.items():
             try:
                 cls._apply_rule(
-                    cls._extract_path_value(subject, path),
+                    cls.extract_path_value(subject, path),
                     rule,
                     inherited_msg=inherited_msg,
                 )

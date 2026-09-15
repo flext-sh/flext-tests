@@ -8,12 +8,14 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated, ClassVar, TypeAliasType
 
-from _pytest.python_api import ApproxBase
+import pytest
 from flext_infra import m, u
 
 from flext_tests import p, t
 
 from .base import FlextTestsBaseModelsMixin
+
+_PYTEST_APPROX_TYPE: type = type(pytest.approx(1))
 
 
 class FlextTestsMatchersModelsMixin:
@@ -37,11 +39,11 @@ class FlextTestsMatchersModelsMixin:
         @classmethod
         def own_operand[ValueT](
             cls, value: ValueT
-        ) -> FlextTestsBaseModelsMixin.Payload | ApproxBase | TypeAliasType | None:
+        ) -> t.Tests.MatchExpectedValue:
             """Preserve explicit matcher operators and own native operands."""
             from .._utilities.payload import FlextTestsPayloadUtilities
 
-            if value is None or isinstance(value, ApproxBase | TypeAliasType):
+            if value is None or isinstance(value, _PYTEST_APPROX_TYPE | TypeAliasType):
                 return value
             return FlextTestsPayloadUtilities.to_payload(value)
 
@@ -115,11 +117,11 @@ class FlextTestsMatchersModelsMixin:
         )
 
         eq: Annotated[
-            FlextTestsBaseModelsMixin.Payload | ApproxBase | TypeAliasType | None,
+            t.Tests.MatchExpectedValue,
             u.Field(description="Expected equality value."),
         ] = None
         ne: Annotated[
-            FlextTestsBaseModelsMixin.Payload | ApproxBase | TypeAliasType | None,
+            t.Tests.MatchExpectedValue,
             u.Field(description="Expected inequality value."),
         ] = None
         is_: Annotated[
@@ -227,11 +229,11 @@ class FlextTestsMatchersModelsMixin:
         )
 
         eq: Annotated[
-            FlextTestsBaseModelsMixin.Payload | ApproxBase | TypeAliasType | None,
+            t.Tests.MatchExpectedValue,
             u.Field(description="Expected value."),
         ] = None
         ne: Annotated[
-            FlextTestsBaseModelsMixin.Payload | ApproxBase | TypeAliasType | None,
+            t.Tests.MatchExpectedValue,
             u.Field(description="Value must not equal."),
         ] = None
         is_: Annotated[
@@ -369,11 +371,11 @@ class FlextTestsMatchersModelsMixin:
 
         msg: Annotated[str | None, u.Field(description="Message.")] = None
         eq: Annotated[
-            FlextTestsBaseModelsMixin.Payload | ApproxBase | TypeAliasType | None,
+            t.Tests.MatchExpectedValue,
             u.Field(description="Equals."),
         ] = None
         ne: Annotated[
-            FlextTestsBaseModelsMixin.Payload | ApproxBase | TypeAliasType | None,
+            t.Tests.MatchExpectedValue,
             u.Field(description="Not equals."),
         ] = None
         is_: Annotated[

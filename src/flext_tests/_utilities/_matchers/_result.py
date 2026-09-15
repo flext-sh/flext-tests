@@ -150,7 +150,7 @@ class FlextTestsMatchersResultMixin:
                     if isinstance(params.path, str)
                     else ".".join(params.path)
                 )
-                payload = FlextTestsMatchersRulesMixin._extract_path_value(
+                payload = FlextTestsMatchersRulesMixin.extract_path_value(
                     FlextTestsPayloadUtilities.to_payload(result_value), path
                 )
                 return payload, payload
@@ -244,7 +244,7 @@ class FlextTestsMatchersResultMixin:
             ): ...
 
             @staticmethod
-            def ok[TResult](
+            def ok[TResult, KwargT](
                 result: core_p.ResultView[TResult], **kwargs: KwargT
             ) -> (
                 TResult
