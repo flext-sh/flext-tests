@@ -11,8 +11,6 @@ from typing import Annotated, Self
 
 from flext_infra import m, p, u
 
-from flext_tests import t
-
 
 class FlextTestsBaseModelsMixin:
     class Payload(m.ArbitraryTypesModel):

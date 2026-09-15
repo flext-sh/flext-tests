@@ -8,9 +8,6 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_cli import u
-from flext_tests.constants import FlextTestsConstants as c
-from flext_tests.models import FlextTestsModels as m
-from flext_tests.typings import FlextTestsTypes as t
 
 
 class FlextTestsFilesUtilitiesMixin:
@@ -28,6 +25,8 @@ class FlextTestsFilesUtilitiesMixin:
         fmt: str,
     ) -> str:
         """Detect format by content shape + name; honors explicit ``fmt``."""
+        from flext_tests import c, m, t
+
         detected_format: str = u.Cli.files_detect_format_from_content(
             content, name, fmt
         )
@@ -36,6 +35,8 @@ class FlextTestsFilesUtilitiesMixin:
     @staticmethod
     def detect_format_from_path(path: Path, fmt: str) -> str:
         """Detect format from path extension; honors explicit ``fmt``."""
+        from flext_tests import c, m, t
+
         detected_format: str = u.Cli.files_detect_format_from_path(path, fmt)
         return detected_format
 
@@ -44,6 +45,8 @@ class FlextTestsFilesUtilitiesMixin:
     @staticmethod
     def format_size(size: int) -> str:
         """Format a byte size in human-readable units (e.g. "1.2 KB")."""
+        from flext_tests import c, m
+
         value = size
         for unit in c.Tests.SIZE_UNITS:
             if value < c.Tests.SIZE_THRESHOLD:

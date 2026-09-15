@@ -12,6 +12,8 @@ from __future__ import annotations
 from flext_infra import p
 
 from ._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
+from ._protocols.matchers import FlextTestsMatchersProtocolsMixin
+from ._protocols.payload import FlextTestsPayloadProtocolsMixin
 from ._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
 from ._protocols.workspace_cleanup import FlextTestsWorkspaceCleanupProtocols
 
@@ -22,6 +24,9 @@ class FlextTestsProtocols(p):
     class Tests(
         FlextTestsEnforcementProtocolsMixin,
         FlextTestsValueFactoryProtocolsMixin,
+        # Owned payload and matcher capability contracts consumed by matchers.
+        FlextTestsPayloadProtocolsMixin,
+        FlextTestsMatchersProtocolsMixin,
         # NOTE (multi-agent): publish read-only cleanup contracts under p.Tests.
         FlextTestsWorkspaceCleanupProtocols,
     ):
