@@ -11,6 +11,8 @@ from typing import Annotated, Self
 
 from flext_infra import m, p, u
 
+from flext_tests import t
+
 
 class FlextTestsBaseModelsMixin:
     class Payload(m.ArbitraryTypesModel):
@@ -67,7 +69,7 @@ class FlextTestsBaseModelsMixin:
 
         name: Annotated[str, m.Field(description="Entity display name.")] = ""
         value: Annotated[
-            Payload, m.Field(description="Arbitrary serializable payload.")
+            FlextTestsBaseModelsMixin.Payload, m.Field(description="Arbitrary serializable payload.")
         ] = m.Field(
             default_factory=lambda: FlextTestsBaseModelsMixin.Payload(kind="atom")
         )
