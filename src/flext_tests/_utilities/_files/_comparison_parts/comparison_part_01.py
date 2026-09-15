@@ -54,11 +54,11 @@ class FlextTestsFilesComparisonMixin:
         d1 = r1.value if r1.success else None
         d2 = r2.value if r2.success else None
         if FlextTestsFilesCreationMixin.is_mapping(
-            d1  # type: ignore[arg-type]
-        ) and FlextTestsFilesCreationMixin.is_mapping(d2):  # type: ignore[arg-type]
+            d1
+        ) and FlextTestsFilesCreationMixin.is_mapping(d2):
             return r[FlextTestsFilesComparisonMixin.ParsedPair].ok((
-                FlextTestsFilesCreationMixin.to_payload_mapping(d1),  # type: ignore[arg-type]
-                FlextTestsFilesCreationMixin.to_payload_mapping(d2),  # type: ignore[arg-type]
+                FlextTestsFilesCreationMixin.to_payload_mapping(d1),
+                FlextTestsFilesCreationMixin.to_payload_mapping(d2),
             ))
         return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
             "comparison contents are not both mappings"
@@ -90,8 +90,8 @@ class FlextTestsFilesComparisonMixin:
             exclude_keys=exclude_keys_set,
         )
         if result1.success and result2.success:
-            filtered1 = FlextTestsFilesCreationMixin.to_payload_mapping(result1.value)  # type: ignore[arg-type]
-            filtered2 = FlextTestsFilesCreationMixin.to_payload_mapping(result2.value)  # type: ignore[arg-type]
+            filtered1 = FlextTestsFilesCreationMixin.to_payload_mapping(result1.value)
+            filtered2 = FlextTestsFilesCreationMixin.to_payload_mapping(result2.value)
             return (filtered1, filtered2)
         return (dict1, dict2)
 

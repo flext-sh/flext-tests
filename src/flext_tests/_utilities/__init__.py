@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from .files import FlextTestsFilesUtilitiesMixin
     from .fixtures_dsl import FlextTestsFixturesDSLMixin
     from .generic import FlextTestsGenericHelpersUtilitiesMixin
-    from .governance import FlextTestsUtilitiesGovernance, ModuleGovernanceMixin
+    from .governance import ModuleGovernanceMixin
     from .handler import FlextTestsHandlerHelpersUtilitiesMixin
     from .make import FlextTestsMakeUtilitiesMixin
     from .make_contract import FlextTestsMakeContractUtilitiesMixin
@@ -80,7 +80,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsPayloadUtilities",
     "FlextTestsResultUtilitiesMixin",
     "FlextTestsTestContextUtilitiesMixin",
-    "FlextTestsUtilitiesGovernance",
     "FlextTestsValidatorUtilitiesMixin",
     "FlextTestsWorkspaceCleanupGitUtilitiesMixin",
     "FlextTestsWorkspaceCleanupInspectUtilitiesMixin",
@@ -117,7 +116,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ".files": ("FlextTestsFilesUtilitiesMixin",),
             ".fixtures_dsl": ("FlextTestsFixturesDSLMixin",),
             ".generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
-            ".governance": ("FlextTestsUtilitiesGovernance", "ModuleGovernanceMixin"),
+            ".governance": ("ModuleGovernanceMixin",),
             ".handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
             ".make": ("FlextTestsMakeUtilitiesMixin",),
             ".make_contract": ("FlextTestsMakeContractUtilitiesMixin",),

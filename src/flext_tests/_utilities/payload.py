@@ -79,7 +79,7 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def to_normalized_value(value: t.Tests.NormalizationInput) -> t.JsonValue:
-        """Flatten to pure Container via canonical runtime helper."""
+        """Normalize payloads after ``to_payload`` has unwrapped root models."""
         # Why: an isinstance chain instead of `match` — NormalizationInput
         # unions `frozenset[str]` (via TestobjectAtom) with `set[...]` and
         # `list | tuple`; mypy's match-pattern narrowing on that combination
@@ -87,9 +87,7 @@ class FlextTestsPayloadUtilities:
         # error (a mypy pattern-matching limitation, not a real defect).
         to_n = FlextTestsPayloadUtilities.to_normalized_value
         result: t.JsonValue
-        if isinstance(value, m.RootModel):
-            result = to_n(FlextTestsPayloadUtilities.to_payload(value.root))
-        elif isinstance(value, m.BaseModel):
+        if isinstance(value, m.BaseModel):
             result = str(value)
         elif isinstance(value, bytes):
             result = value.decode(errors="ignore")

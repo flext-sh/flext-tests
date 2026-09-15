@@ -140,7 +140,7 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
                 parsed_value = parse_result.value if parse_result.success else None
                 match parsed_value:
                     case dict() as parsed_dict:
-                        parsed_mapping = parsed_dict  # type: ignore[assignment]
+                        parsed_mapping = parsed_dict
                         key_count = len(parsed_dict)
                     case list() as parsed_list:
                         item_count = len(parsed_list)
