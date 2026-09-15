@@ -10,32 +10,35 @@ from typing import Never
 
 from flext_tests import c, p, t
 
+from ..payload import FlextTestsPayloadUtilities
+
 
 class FlextTestsMatchersAssertionsMixin:
     """Centralized AssertionError factories with structured messages."""
 
     @staticmethod
-    def raise_match_assertion(
+    def raise_match_assertion[ContainerT, ItemT](
         template: str,
         *,
         msg: str | None,
-        container: p.AttributeProbe,
-        item: p.AttributeProbe,
+        container: ContainerT,
+        item: ItemT,
     ) -> Never:
         """Raise AssertionError with ``msg`` or formatted ``template``."""
         raise AssertionError(msg or template.format(container=container, item=item))
 
     @staticmethod
-    def assert_len_match(
+    def assert_len_match[SizedT](
         *,
-        payload: t.Tests.TestobjectSerializable,
-        sized: p.AttributeProbe,
+        payload: p.Tests.Payload,
+        sized: SizedT,
         length_spec: int | tuple[int, int],
         msg: str | None,
     ) -> None:
         """Raise AssertionError if ``payload`` length doesn't match ``length_spec``."""
-        if isinstance(payload, Sized):
-            payload_len = len(payload)
+        native = FlextTestsPayloadUtilities.to_match_value(payload)
+        if isinstance(native, Sized):
+            payload_len = len(native)
             match length_spec:
                 case int():
                     if payload_len == length_spec:

@@ -10,6 +10,8 @@ from flext_infra import m, u
 
 from flext_tests import c, t
 
+from .base import FlextTestsBaseModelsMixin
+
 
 class FlextTestsFilesystemModelsMixin:
     """Filesystem model group (info, content, and operation parameters)."""
@@ -83,7 +85,8 @@ class FlextTestsFilesystemModelsMixin:
         """Parameters for file creation operations."""
 
         content: Annotated[
-            t.Tests.FileContentPlain, u.Field(description="File content to create.")
+            FlextTestsBaseModelsMixin.Payload,
+            u.Field(description="Owned native file content to create."),
         ]
         name: Annotated[
             t.NonEmptyStr, u.Field(description="Filename for the created file.")
@@ -121,7 +124,7 @@ class FlextTestsFilesystemModelsMixin:
 
         @u.field_validator("name", mode="before")
         @classmethod
-        def normalize_name(cls, value: t.Tests.TestobjectSerializable) -> str:
+        def normalize_name[ValueT](cls, value: ValueT) -> str:
             """Normalize filename by stripping whitespace."""
             if isinstance(value, str):
                 return value.strip()

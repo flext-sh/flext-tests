@@ -6,22 +6,72 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Annotated
+from types import MappingProxyType
+from typing import Annotated, Self
 
-from flext_infra import m
+from flext_infra import m, p, u
 
 from flext_tests import t
 
 
 class FlextTestsBaseModelsMixin:
+    class Payload(m.ArbitraryTypesModel):
+        """Owned native payload tree; model leaves retain their instance identity."""
+
+        kind: Annotated[
+            t.Tests.PayloadKind, m.Field(frozen=True, description="Native value arm.")
+        ]
+        atom: Annotated[
+            t.Tests.PayloadAtom | p.Model | None,
+            m.Field(
+                frozen=True,
+                description="Native scalar or model instance; never a JSON dump.",
+            ),
+        ] = None
+        items: Annotated[
+            t.Tests.PayloadItems[Self],
+            m.Field(
+                frozen=True,
+                description="Ordered children; kind retains the source collection.",
+            ),
+        ] = ()
+        entries: Annotated[
+            t.Tests.PayloadEntries[Self],
+            m.Field(frozen=True, description="String-keyed payload children."),
+        ] = m.Field(default_factory=lambda: MappingProxyType({}))
+
+        @u.field_validator("entries", mode="after")
+        @classmethod
+        def freeze_entries(
+            cls, value: t.Tests.PayloadEntries[Self]
+        ) -> t.Tests.PayloadEntries[Self]:
+            """Own an immutable copy so caller mutation cannot invalidate the arm."""
+            return MappingProxyType(dict(value))
+
+        @u.model_validator(mode="after")
+        def validate_arm(self) -> Self:
+            """Reject data in fields belonging to a different native value arm."""
+            if self.kind == "atom":
+                if self.items or self.entries:
+                    msg = "An atom payload cannot contain children"
+                    raise ValueError(msg)
+            elif self.kind == "mapping":
+                if self.atom is not None or self.items:
+                    msg = "A mapping payload cannot contain an atom or items"
+                    raise ValueError(msg)
+            elif self.atom is not None or self.entries:
+                msg = "A collection payload cannot contain an atom or entries"
+                raise ValueError(msg)
+            return self
+
     class Entity(m.Entity):
         """Factory entity class for tests."""
 
         name: Annotated[str, m.Field(description="Entity display name.")] = ""
         value: Annotated[
-            t.Tests.TestobjectSerializable,
+            Payload,
             m.Field(description="Arbitrary serializable payload."),
-        ] = None
+        ] = m.Field(default_factory=lambda: FlextTestsBaseModelsMixin.Payload(kind="atom"))
 
     class Value(m.Value):
         """Factory value object class for tests."""

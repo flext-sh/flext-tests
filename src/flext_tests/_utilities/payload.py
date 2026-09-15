@@ -23,21 +23,24 @@ class FlextTestsPayloadUtilities:
     """Namespace class for shared payload conversion helpers in flext_tests."""
 
     @staticmethod
-    def _stable_sort_key(value: object) -> tuple[str, str]:
+    def _stable_sort_key(value: p.Tests.Payload) -> t.StrPair:
         """Return a total deterministic key for heterogeneous payload values."""
-        return type(value).__name__, str(value)
+        native = FlextTestsPayloadUtilities.to_match_value(value)
+        return type(native).__name__, str(native)
 
     @staticmethod
-    def to_payload(value: p.AttributeProbe) -> t.Tests.TestobjectSerializable:
-        """Recursively flatten any runtime value to ``TestobjectSerializable``."""
+    def to_payload[ValueT](value: ValueT) -> m.Tests.Payload:
+        """Own supported native values without serializing their model leaves."""
         to_p = FlextTestsPayloadUtilities.to_payload
         match value:
+            case m.Tests.Payload():
+                return value
             case m.RootModel():
-                result = to_p(value.root)
+                return to_p(value.root)
             case Enum():
-                result = to_p(value.value)
+                return to_p(value.value)
             case None:
-                result = None
+                return m.Tests.Payload(kind="atom", atom=None)
             case (
                 str()
                 | int()
@@ -45,37 +48,56 @@ class FlextTestsPayloadUtilities:
                 | bool()
                 | bytes()
                 | datetime()
+                | tzinfo()
                 | Path()
+                | type()
                 | m.BaseModel()
             ):
-                result = value
+                return m.Tests.Payload(kind="atom", atom=value)
             case Mapping():
-                normalized_map = {str(k): to_p(v) for k, v in value.items()}
-                try:
-                    validated_map = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_python(
-                        normalized_map
-                    )
-                except c.ValidationError:
-                    result = normalized_map
-                else:
-                    result = {k: to_p(v) for k, v in validated_map.items()}
+                entries: dict[str, m.Tests.Payload] = {}
+                for key, item in value.items():
+                    normalized_key = str(key)
+                    if normalized_key in entries:
+                        raise ValueError(
+                            f"Native payload mapping key collision: {normalized_key!r}"
+                        )
+                    entries[normalized_key] = to_p(item)
+                return m.Tests.Payload(kind="mapping", entries=entries)
             case list() | tuple() | set() | frozenset():
-                normalized_seq = [to_p(item) for item in value]
+                children = tuple(to_p(item) for item in value)
                 if isinstance(value, (set, frozenset)):
-                    normalized_seq = sorted(
-                        normalized_seq, key=FlextTestsPayloadUtilities._stable_sort_key
-                    )
-                try:
-                    validated_seq = t.Tests.TESTOBJECT_SEQUENCE_ADAPTER.validate_python(
-                        normalized_seq
-                    )
-                except c.ValidationError:
-                    result = normalized_seq
+                    children = tuple(sorted(
+                        children, key=FlextTestsPayloadUtilities._stable_sort_key
+                    ))
+                kind: t.Tests.PayloadKind
+                if isinstance(value, list):
+                    kind = "list"
+                elif isinstance(value, tuple):
+                    kind = "tuple"
+                elif isinstance(value, set):
+                    kind = "set"
                 else:
-                    result = [to_p(item) for item in validated_seq]
+                    kind = "frozenset"
+                return m.Tests.Payload(kind=kind, items=children)
             case _:
-                result = str(value)
-        return result
+                raise TypeError(f"Unsupported native payload leaf: {type(value).__name__}")
+
+    @staticmethod
+    def to_match_value(value: p.Tests.Payload) -> (
+        t.Tests.PayloadAtom
+        | p.Model
+        | p.Tests.NativeSequence
+        | p.Tests.NativeMapping
+        | None
+    ):
+        """Project a native tree into the established list/mapping match semantics."""
+        project = FlextTestsPayloadUtilities.to_match_value
+        if value.kind == "atom":
+            return value.atom
+        if value.kind == "mapping":
+            return {key: project(item) for key, item in value.entries.items()}
+        return [project(item) for item in value.items]
 
     @staticmethod
     def to_normalized_value(value: t.Tests.NormalizationInput) -> t.JsonValue:
@@ -101,14 +123,16 @@ class FlextTestsPayloadUtilities:
             result = u.normalize_to_metadata({
                 key: to_n(item) for key, item in value.items()
             })
-        else:
-            # Why: mypy proves the isinstance chain above already exhausts
-            # `NormalizationInput`; an explicit `elif isinstance(value, (list,
-            # tuple, set, frozenset))` here is unreachable dead code by its
-            # own analysis, so the sequence branch is the exhaustive tail.
-            normalized_seq = [to_n(item) for item in value]
-            result = u.normalize_to_metadata(normalized_seq)
-        return result
+        if value.kind != "atom":
+            return u.normalize_to_metadata([to_n(item) for item in value.items])
+        atom = value.atom
+        if isinstance(atom, bytes):
+            return atom.decode()
+        if isinstance(atom, m.BaseModel | type | tzinfo):
+            return str(atom)
+        if atom is None or isinstance(atom, bool | datetime | Path | str | int | float):
+            return u.normalize_to_metadata(atom)
+        raise TypeError(f"Unsupported textual payload leaf: {type(atom).__name__}")
 
     @staticmethod
     def to_config_map(
@@ -125,9 +149,10 @@ class FlextTestsPayloadUtilities:
         )
         return m.ConfigMap.model_validate({
             key: (
-                payload
+                payload.atom
                 if isinstance(
-                    payload := FlextTestsPayloadUtilities.to_payload(item), m.BaseModel
+                    (payload := FlextTestsPayloadUtilities.to_payload(item)).atom,
+                    m.BaseModel,
                 )
                 else FlextTestsPayloadUtilities.to_normalized_value(payload)
             )

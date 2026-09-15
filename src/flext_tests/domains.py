@@ -195,9 +195,9 @@ class FlextTestsDomains:
         *,
         error_code: str = "TEST_ERROR",
         error_data: t.JsonMapping | t.ConfigModelInput | None = None,
-    ) -> p.Result[t.Tests.TestobjectSerializable]:
+    ) -> p.Result[None]:
         """Create a generic failed result for test flows."""
-        return r[t.Tests.TestobjectSerializable].fail(
+        return r[None].fail(
             message, error_code=error_code, error_data=error_data
         )
 

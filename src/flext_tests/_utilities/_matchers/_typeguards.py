@@ -1,73 +1,86 @@
-"""Type-guard helpers for matchers — Group A.
-
-Static methods used internally by ``FlextTestsMatchersUtilities``. Composed
-via MRO from ``flext_tests._utilities.matchers``.
-"""
+"""Native type, equality, and scalar guards for owned matcher payloads."""
 
 from __future__ import annotations
 
+from collections.abc import Sized
+from types import TypeAliasType
+
+from _pytest.python_api import ApproxBase
 from flext_infra import u
 
-from flext_tests import c, p, t
+from flext_tests import c, m, p, t
 
-from ..._typings.matchers import ApproxBase
 from ..payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsMatchersTypeGuardsMixin:
-    """Type compatibility and equality-guard helpers."""
+    """Preserve native comparison semantics at the matcher boundary."""
 
     @staticmethod
-    def matches_runtime_type(
-        value: p.AttributeProbe, expected_type: type | tuple[type, ...]
+    def matches_runtime_type[ValueT](
+        value: ValueT, expected_type: type | tuple[type, ...]
     ) -> bool:
-        """Check runtime type compatibility using canonical parent guards."""
-        if isinstance(expected_type, tuple):
-            return any(u.instance_of(value, item) for item in expected_type)
-        return u.instance_of(value, expected_type)
+        """Check the original subject rather than its payload envelope."""
+        return isinstance(value, expected_type)
 
     @staticmethod
     def prepare_eq_ne_payloads(
-        actual_payload: t.Tests.TestobjectSerializable,
-        eq_value: p.AttributeProbe | None,
-        ne_value: p.AttributeProbe | None,
+        actual_payload: p.Tests.Payload,
+        eq_value: p.Tests.Payload | ApproxBase | TypeAliasType | None,
+        ne_value: p.Tests.Payload | ApproxBase | TypeAliasType | None,
         *,
         msg: str | None,
         default_msg: str,
-    ) -> tuple[
-        t.Tests.TestobjectSerializable | None, t.Tests.TestobjectSerializable | None
-    ]:
-        if isinstance(eq_value, ApproxBase):
-            if actual_payload != eq_value:
+    ) -> None:
+        """Compare native values directly without JSON or envelope equality."""
+        actual = FlextTestsPayloadUtilities.to_match_value(actual_payload)
+        for expected, equal in ((eq_value, True), (ne_value, False)):
+            if expected is None:
+                continue
+            operand = (
+                FlextTestsPayloadUtilities.to_match_value(expected)
+                if isinstance(expected, m.Tests.Payload)
+                else expected
+            )
+            if (actual == operand) is not equal:
                 raise AssertionError(msg or default_msg)
-            eq_value = None
-        if isinstance(ne_value, ApproxBase):
-            if actual_payload == ne_value:
-                raise AssertionError(msg or default_msg)
-            ne_value = None
-        eq_payload = (
-            FlextTestsPayloadUtilities.to_payload(eq_value)
-            if eq_value is not None
-            else None
+
+    @staticmethod
+    def assert_scalar_match(
+        payload: p.Tests.Payload, params: m.Tests.ThatParams | m.Tests.OkParams
+    ) -> None:
+        """Apply native equality then the canonical finite scalar guard."""
+        native = FlextTestsPayloadUtilities.to_match_value(payload)
+        message = params.msg or f"Value {native!r} did not satisfy constraints"
+        FlextTestsMatchersTypeGuardsMixin.prepare_eq_ne_payloads(
+            payload, params.eq, params.ne, msg=params.msg, default_msg=message
         )
-        ne_payload = (
-            FlextTestsPayloadUtilities.to_payload(ne_value)
-            if ne_value is not None
-            else None
+        if params.none is not None and (native is None) is not params.none:
+            raise AssertionError(message)
+        scalar_criteria = (
+            params.gt, params.gte, params.lt, params.lte,
+            params.empty, params.starts, params.ends,
         )
-        if eq_payload is not None and not isinstance(
-            eq_payload, c.Tests.MATCHER_GUARD_EQ_TYPES
-        ):
-            if actual_payload != eq_payload:
-                raise AssertionError(msg or default_msg)
-            eq_payload = None
-        if ne_payload is not None and not isinstance(
-            ne_payload, c.Tests.MATCHER_GUARD_EQ_TYPES
-        ):
-            if actual_payload == ne_payload:
-                raise AssertionError(msg or default_msg)
-            ne_payload = None
-        return (eq_payload, ne_payload)
+        if any(value is not None for value in scalar_criteria):
+            guard = m.GuardCheckSpec(
+                gt=params.gt, gte=params.gte, lt=params.lt, lte=params.lte,
+                empty=params.empty, starts=params.starts, ends=params.ends,
+            )
+            if isinstance(native, str | int | float | bytes) or native is None:
+                matches = u.chk(native, guard)
+            elif isinstance(native, Sized):
+                matches = u.chk(len(native), guard)
+            else:
+                raise AssertionError(message)
+            if not matches:
+                raise AssertionError(message)
+        if params.match is not None:
+            if not isinstance(native, str) or params.match.search(native) is None:
+                raise AssertionError(
+                    params.msg or c.Tests.ERR_NOT_MATCHES.format(
+                        text=native, pattern=params.match.pattern
+                    )
+                )
 
 
 __all__: list[str] = ["FlextTestsMatchersTypeGuardsMixin"]
