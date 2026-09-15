@@ -53,7 +53,9 @@ class FlextTestsUtilitiesGovernance:
         """
 
         _test_file: ClassVar[str]
-        _tests_config: ClassVar[type[_GovernanceConfigProto]]
+        _tests_config: ClassVar[
+            type[FlextTestsUtilitiesGovernance._GovernanceConfigProto]
+        ]
         _warn_on_import_error: ClassVar[bool] = True
 
         @classmethod
@@ -191,5 +193,4 @@ class FlextTestsUtilitiesGovernance:
             )
 
 
-_GovernanceConfigProto = FlextTestsUtilitiesGovernance._GovernanceConfigProto
 ModuleGovernanceMixin = FlextTestsUtilitiesGovernance.ModuleGovernanceMixin
