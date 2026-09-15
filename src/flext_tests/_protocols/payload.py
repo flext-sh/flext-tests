@@ -22,7 +22,9 @@ class FlextTestsPayloadProtocolsMixin:
             """Return the number of native values."""
             ...
 
-        def __iter__(self) -> Iterator[
+        def __iter__(
+            self,
+        ) -> Iterator[
             t.Tests.PayloadAtom
             | p.Model
             | FlextTestsPayloadProtocolsMixin.NativeSequence
@@ -32,7 +34,9 @@ class FlextTestsPayloadProtocolsMixin:
             """Iterate native values, not owned payload nodes."""
             ...
 
-        def __getitem__(self, index: int) -> (
+        def __getitem__(
+            self, index: int
+        ) -> (
             t.Tests.PayloadAtom
             | p.Model
             | FlextTestsPayloadProtocolsMixin.NativeSequence
@@ -50,7 +54,9 @@ class FlextTestsPayloadProtocolsMixin:
             """Return the number of native entries."""
             ...
 
-        def items(self) -> Iterable[
+        def items(
+            self,
+        ) -> Iterable[
             tuple[
                 str,
                 t.Tests.PayloadAtom
@@ -63,7 +69,9 @@ class FlextTestsPayloadProtocolsMixin:
             """Read native entries without dumping model leaves."""
             ...
 
-        def __getitem__(self, key: str) -> (
+        def __getitem__(
+            self, key: str
+        ) -> (
             t.Tests.PayloadAtom
             | p.Model
             | FlextTestsPayloadProtocolsMixin.NativeSequence

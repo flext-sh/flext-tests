@@ -8,7 +8,7 @@ from typing import TypeAliasType
 from _pytest.python_api import ApproxBase
 from flext_infra import u
 
-from flext_tests import c, m, p, t
+from flext_tests import c, m, p
 
 from ..payload import FlextTestsPayloadUtilities
 
@@ -58,13 +58,23 @@ class FlextTestsMatchersTypeGuardsMixin:
         if params.none is not None and (native is None) is not params.none:
             raise AssertionError(message)
         scalar_criteria = (
-            params.gt, params.gte, params.lt, params.lte,
-            params.empty, params.starts, params.ends,
+            params.gt,
+            params.gte,
+            params.lt,
+            params.lte,
+            params.empty,
+            params.starts,
+            params.ends,
         )
         if any(value is not None for value in scalar_criteria):
             guard = m.GuardCheckSpec(
-                gt=params.gt, gte=params.gte, lt=params.lt, lte=params.lte,
-                empty=params.empty, starts=params.starts, ends=params.ends,
+                gt=params.gt,
+                gte=params.gte,
+                lt=params.lt,
+                lte=params.lte,
+                empty=params.empty,
+                starts=params.starts,
+                ends=params.ends,
             )
             if isinstance(native, str | int | float | bytes) or native is None:
                 matches = u.chk(native, guard)
@@ -77,7 +87,8 @@ class FlextTestsMatchersTypeGuardsMixin:
         if params.match is not None:
             if not isinstance(native, str) or params.match.search(native) is None:
                 raise AssertionError(
-                    params.msg or c.Tests.ERR_NOT_MATCHES.format(
+                    params.msg
+                    or c.Tests.ERR_NOT_MATCHES.format(
                         text=native, pattern=params.match.pattern
                     )
                 )

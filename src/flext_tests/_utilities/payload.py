@@ -16,7 +16,7 @@ from pathlib import Path
 
 from flext_infra import u
 
-from flext_tests import c, m, p, t
+from flext_tests import m, p, t
 
 
 class FlextTestsPayloadUtilities:
@@ -59,17 +59,20 @@ class FlextTestsPayloadUtilities:
                 for key, item in value.items():
                     normalized_key = str(key)
                     if normalized_key in entries:
-                        raise ValueError(
+                        msg = (
                             f"Native payload mapping key collision: {normalized_key!r}"
                         )
+                        raise ValueError(msg)
                     entries[normalized_key] = to_p(item)
                 return m.Tests.Payload(kind="mapping", entries=entries)
             case list() | tuple() | set() | frozenset():
                 children = tuple(to_p(item) for item in value)
                 if isinstance(value, (set, frozenset)):
-                    children = tuple(sorted(
-                        children, key=FlextTestsPayloadUtilities._stable_sort_key
-                    ))
+                    children = tuple(
+                        sorted(
+                            children, key=FlextTestsPayloadUtilities._stable_sort_key
+                        )
+                    )
                 kind: t.Tests.PayloadKind
                 if isinstance(value, list):
                     kind = "list"
@@ -81,10 +84,13 @@ class FlextTestsPayloadUtilities:
                     kind = "frozenset"
                 return m.Tests.Payload(kind=kind, items=children)
             case _:
-                raise TypeError(f"Unsupported native payload leaf: {type(value).__name__}")
+                msg = f"Unsupported native payload leaf: {type(value).__name__}"
+                raise TypeError(msg)
 
     @staticmethod
-    def to_match_value(value: p.Tests.Payload) -> (
+    def to_match_value(
+        value: p.Tests.Payload,
+    ) -> (
         t.Tests.PayloadAtom
         | p.Model
         | p.Tests.NativeSequence
@@ -110,19 +116,17 @@ class FlextTestsPayloadUtilities:
         to_n = FlextTestsPayloadUtilities.to_normalized_value
         result: t.JsonValue
         if isinstance(value, m.BaseModel):
-            result = str(value)
+            str(value)
         elif isinstance(value, bytes):
-            result = value.decode(errors="ignore")
+            value.decode(errors="ignore")
         elif isinstance(value, type | tzinfo):
-            result = str(value)
+            str(value)
         elif isinstance(value, bool | datetime | Path | str | int | float) or (
             value is None
         ):
-            result = u.normalize_to_metadata(value)
+            u.normalize_to_metadata(value)
         elif isinstance(value, Mapping):
-            result = u.normalize_to_metadata({
-                key: to_n(item) for key, item in value.items()
-            })
+            u.normalize_to_metadata({key: to_n(item) for key, item in value.items()})
         if value.kind != "atom":
             return u.normalize_to_metadata([to_n(item) for item in value.items])
         atom = value.atom
@@ -132,7 +136,8 @@ class FlextTestsPayloadUtilities:
             return str(atom)
         if atom is None or isinstance(atom, bool | datetime | Path | str | int | float):
             return u.normalize_to_metadata(atom)
-        raise TypeError(f"Unsupported textual payload leaf: {type(atom).__name__}")
+        msg = f"Unsupported textual payload leaf: {type(atom).__name__}"
+        raise TypeError(msg)
 
     @staticmethod
     def to_config_map(

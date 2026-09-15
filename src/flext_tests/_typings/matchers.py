@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from _pytest.python_api import ApproxBase
 from flext_core import t
 
 

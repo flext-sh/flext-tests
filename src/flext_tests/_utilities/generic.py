@@ -80,14 +80,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
         failure_errors: t.StrSequence | None = None,
         *,
         error_codes: t.SequenceOf[str | None] | None = None,
-    ) -> t.SequenceOf[
-        tuple[
-            p.Result[ValueT],
-            bool,
-            ValueT | None,
-            str | None,
-        ]
-    ]:
+    ) -> t.SequenceOf[tuple[p.Result[ValueT], bool, ValueT | None, str | None]]:
         """Create parametrized test cases from values and errors.
 
         Args:
@@ -101,12 +94,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
 
         """
         cases: MutableSequence[
-            tuple[
-                p.Result[ValueT],
-                bool,
-                ValueT | None,
-                str | None,
-            ]
+            tuple[p.Result[ValueT], bool, ValueT | None, str | None]
         ] = []
         for value in success_values:
             result = r[ValueT].ok(value)
@@ -117,9 +105,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
             )
             for i, error in enumerate(failure_errors):
                 error_code = codes[i] if i < len(codes) else None
-                result = r[ValueT].fail(
-                    error, error_code=error_code
-                )
+                result = r[ValueT].fail(error, error_code=error_code)
                 cases.append((result, False, None, error))
         return cases
 

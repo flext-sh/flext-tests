@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
 
-from flext_core import u
 from flext_tests import c, m, p, r, t
 
 from ..payload import FlextTestsPayloadUtilities
@@ -58,9 +57,7 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _validate_is_type[SubjectT](
-                value: SubjectT,
-                params: m.Tests.ThatParams,
-                value_type_name: str,
+                value: SubjectT, params: m.Tests.ThatParams, value_type_name: str
             ) -> None:
                 """Validate ``is_`` including FLEXT wrapper/model shortcuts."""
                 is_types = (
@@ -107,7 +104,13 @@ class FlextTestsMatchersThatMixin:
             def _is_type_only(params: m.Tests.ThatParams) -> bool:
                 """Recognize checks that do not require a native payload."""
                 subject_fields = {
-                    "msg", "is_", "not_", "attrs", "methods", "attr_eq", "attrs_match"
+                    "msg",
+                    "is_",
+                    "not_",
+                    "attrs",
+                    "methods",
+                    "attr_eq",
+                    "attrs_match",
                 }
                 return all(
                     getattr(params, name) is None
@@ -124,7 +127,9 @@ class FlextTestsMatchersThatMixin:
                     return subject
                 result_obj = subject
                 if params.ok is not None:
-                    return FlextTestsPayloadUtilities.to_payload(cls._ok_value(result_obj, params))
+                    return FlextTestsPayloadUtilities.to_payload(
+                        cls._ok_value(result_obj, params)
+                    )
                 if params.has is not None:
                     err = result_obj.error or ""
                     FlextTestsMatchersContainmentMixin.check_has_lacks(
@@ -212,8 +217,7 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _validate_sequence_edges(
-                seq_value: t.SequenceOf[p.Tests.Payload],
-                params: m.Tests.ThatParams,
+                seq_value: t.SequenceOf[p.Tests.Payload], params: m.Tests.ThatParams
             ) -> None:
                 """Validate first/last sequence predicates."""
                 if params.first is not None:
@@ -221,7 +225,9 @@ class FlextTestsMatchersThatMixin:
                         raise AssertionError(
                             params.msg or "Sequence is empty, cannot check first"
                         )
-                    if FlextTestsPayloadUtilities.to_match_value(seq_value[0]) != FlextTestsPayloadUtilities.to_match_value(params.first):
+                    if FlextTestsPayloadUtilities.to_match_value(
+                        seq_value[0]
+                    ) != FlextTestsPayloadUtilities.to_match_value(params.first):
                         raise AssertionError(
                             params.msg
                             or (
@@ -234,7 +240,9 @@ class FlextTestsMatchersThatMixin:
                         raise AssertionError(
                             params.msg or "Sequence is empty, cannot check last"
                         )
-                    if FlextTestsPayloadUtilities.to_match_value(seq_value[-1]) != FlextTestsPayloadUtilities.to_match_value(params.last):
+                    if FlextTestsPayloadUtilities.to_match_value(
+                        seq_value[-1]
+                    ) != FlextTestsPayloadUtilities.to_match_value(params.last):
                         raise AssertionError(
                             params.msg
                             or (
@@ -245,9 +253,7 @@ class FlextTestsMatchersThatMixin:
 
             @classmethod
             def _validate_sequence(
-                cls,
-                subject_payload: p.Tests.Payload,
-                params: m.Tests.ThatParams,
+                cls, subject_payload: p.Tests.Payload, params: m.Tests.ThatParams
             ) -> None:
                 """Validate sequence-specific predicates."""
                 seq_value = cls._sequence_value(subject_payload)
@@ -271,19 +277,26 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _validate_all(
-                seq_value: t.SequenceOf[p.Tests.Payload],
-                params: m.Tests.ThatParams,
+                seq_value: t.SequenceOf[p.Tests.Payload], params: m.Tests.ThatParams
             ) -> None:
                 """Validate that all sequence items match a predicate/type."""
                 if isinstance(params.all_, type):
                     all_type = params.all_
-                    if all(isinstance(FlextTestsPayloadUtilities.to_match_value(item), all_type) for item in seq_value):
+                    if all(
+                        isinstance(
+                            FlextTestsPayloadUtilities.to_match_value(item), all_type
+                        )
+                        for item in seq_value
+                    ):
                         return
                     failed_idx = next(
                         (
                             index
                             for index, item in enumerate(seq_value)
-                            if not isinstance(FlextTestsPayloadUtilities.to_match_value(item), all_type)
+                            if not isinstance(
+                                FlextTestsPayloadUtilities.to_match_value(item),
+                                all_type,
+                            )
                         ),
                         None,
                     )
@@ -312,13 +325,17 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _validate_any(
-                seq_value: t.SequenceOf[p.Tests.Payload],
-                params: m.Tests.ThatParams,
+                seq_value: t.SequenceOf[p.Tests.Payload], params: m.Tests.ThatParams
             ) -> None:
                 """Validate that any sequence item matches a predicate/type."""
                 if isinstance(params.any_, type):
                     any_type = params.any_
-                    if not any(isinstance(FlextTestsPayloadUtilities.to_match_value(item), any_type) for item in seq_value):
+                    if not any(
+                        isinstance(
+                            FlextTestsPayloadUtilities.to_match_value(item), any_type
+                        )
+                        for item in seq_value
+                    ):
                         raise AssertionError(params.msg or c.Tests.ERR_ANY_ITEMS_FAILED)
                     return
                 if callable(params.any_) and not any(
@@ -343,9 +360,7 @@ class FlextTestsMatchersThatMixin:
                             raise AssertionError(params.msg or "Sequence is not sorted")
                     elif callable(sorted_param):
 
-                        def user_sort_key(
-                            item: p.Tests.Payload,
-                        ) -> t.StrPair:
+                        def user_sort_key(item: p.Tests.Payload) -> t.StrPair:
                             return cls._comparable_key(sorted_param, item)
 
                         sorted_list = sorted(value_list, key=user_sort_key)
@@ -391,9 +406,7 @@ class FlextTestsMatchersThatMixin:
 
             @classmethod
             def _validate_mapping(
-                cls,
-                subject_payload: p.Tests.Payload,
-                params: m.Tests.ThatParams,
+                cls, subject_payload: p.Tests.Payload, params: m.Tests.ThatParams
             ) -> None:
                 """Validate mapping-specific predicates."""
                 mapping_value = cls._mapping_value(subject_payload)
@@ -414,9 +427,15 @@ class FlextTestsMatchersThatMixin:
                             or c.Tests.ERR_KEYS_EXTRA.format(keys=list(present))
                         )
                 if params.values is not None:
-                    value_list = [FlextTestsPayloadUtilities.to_match_value(item) for item in mapping_value.values()]
+                    value_list = [
+                        FlextTestsPayloadUtilities.to_match_value(item)
+                        for item in mapping_value.values()
+                    ]
                     for expected_val in params.values:
-                        if FlextTestsPayloadUtilities.to_match_value(expected_val) not in value_list:
+                        if (
+                            FlextTestsPayloadUtilities.to_match_value(expected_val)
+                            not in value_list
+                        ):
                             raise AssertionError(
                                 params.msg
                                 or (
@@ -435,14 +454,21 @@ class FlextTestsMatchersThatMixin:
                 """Compare owned mapping values through native projections."""
                 if params.kv is None:
                     return
-                for key, expected in FlextTestsMatchersThatMixin._named_operands(params.kv):
+                for key, expected in FlextTestsMatchersThatMixin._named_operands(
+                    params.kv
+                ):
                     if key not in mapping_value:
-                        raise AssertionError(params.msg or f"Key {key!r} not found in mapping")
-                    actual = FlextTestsPayloadUtilities.to_match_value(mapping_value[key])
+                        raise AssertionError(
+                            params.msg or f"Key {key!r} not found in mapping"
+                        )
+                    actual = FlextTestsPayloadUtilities.to_match_value(
+                        mapping_value[key]
+                    )
                     wanted = FlextTestsPayloadUtilities.to_match_value(expected)
                     if actual != wanted:
                         raise AssertionError(
-                            params.msg or f"Key {key!r}: expected {wanted!r}, got {actual!r}"
+                            params.msg
+                            or f"Key {key!r}: expected {wanted!r}, got {actual!r}"
                         )
 
             @classmethod
@@ -490,14 +516,19 @@ class FlextTestsMatchersThatMixin:
                 """Inspect original subjects while comparing owned expectations."""
                 if params.attr_eq is None:
                     return
-                for name, expected in FlextTestsMatchersThatMixin._named_operands(params.attr_eq):
+                for name, expected in FlextTestsMatchersThatMixin._named_operands(
+                    params.attr_eq
+                ):
                     if not hasattr(subject, name):
-                        raise AssertionError(params.msg or f"Object missing attribute: {name}")
+                        raise AssertionError(
+                            params.msg or f"Object missing attribute: {name}"
+                        )
                     actual = getattr(subject, name)
                     wanted = FlextTestsPayloadUtilities.to_match_value(expected)
                     if actual != wanted:
                         raise AssertionError(
-                            params.msg or f"Attribute {name}: expected {wanted!r}, got {actual!r}"
+                            params.msg
+                            or f"Attribute {name}: expected {wanted!r}, got {actual!r}"
                         )
 
             # NOTE (multi-agent, mro-wkii.17 / agent: codex): combine runtime
@@ -546,7 +577,8 @@ class FlextTestsMatchersThatMixin:
                 )
                 if not match_result.matched:
                     raise AssertionError(
-                        params.msg or c.Tests.ERR_DEEP_PATH_FAILED.format(
+                        params.msg
+                        or c.Tests.ERR_DEEP_PATH_FAILED.format(
                             path=match_result.path, reason=match_result.reason
                         )
                     )
@@ -587,10 +619,23 @@ class FlextTestsMatchersThatMixin:
             key, expected = value.items
             if key.kind == "atom" and isinstance(key.atom, str):
                 return ((key.atom, expected),)
-        raise ValueError("Expected a mapping or a (name, value) tuple")
+        msg = "Expected a mapping or a (name, value) tuple"
+        raise ValueError(msg)
 
     @staticmethod
-    def _rule_kwargs(rule: m.Tests.MatchRule) -> Mapping[str, p.Tests.Payload | t.Tests.PayloadAtom | p.Tests.PayloadPredicate | t.Tests.LengthSpec | t.Infra.RegexPattern | type | tuple[type, ...] | None]:
+    def _rule_kwargs(
+        rule: m.Tests.MatchRule,
+    ) -> Mapping[
+        str,
+        p.Tests.Payload
+        | t.Tests.PayloadAtom
+        | p.Tests.PayloadPredicate
+        | t.Tests.LengthSpec
+        | t.Infra.RegexPattern
+        | type
+        | tuple[type, ...]
+        | None,
+    ]:
         parsed = rule
         return {
             key: getattr(parsed, key)
@@ -615,22 +660,24 @@ class FlextTestsMatchersThatMixin:
         cls.Tests.Matchers.that(subject, **kwargs)
 
     @staticmethod
-    def _extract_path_value(
-        subject: p.Tests.Payload, path: str
-    ) -> p.Tests.Payload:
+    def _extract_path_value(subject: p.Tests.Payload, path: str) -> p.Tests.Payload:
         """Read nested payload nodes without serializing model leaves."""
         node = subject
         for segment in path.split("."):
             if node.kind == "mapping":
                 if segment not in node.entries:
-                    raise AssertionError(f"Path not found: {path}")
+                    msg = f"Path not found: {path}"
+                    raise AssertionError(msg)
                 node = node.entries[segment]
             elif node.kind != "atom":
                 node = node.items[int(segment)]
             else:
                 if not hasattr(node.atom, segment):
-                    raise AssertionError(f"Path not found: {path}")
-                node = FlextTestsPayloadUtilities.to_payload(getattr(node.atom, segment))
+                    msg = f"Path not found: {path}"
+                    raise AssertionError(msg)
+                node = FlextTestsPayloadUtilities.to_payload(
+                    getattr(node.atom, segment)
+                )
         return node
 
     @classmethod
@@ -710,13 +757,10 @@ class FlextTestsMatchersThatMixin:
                 elif hasattr(current, segment):
                     current = getattr(current, segment)
                 else:
-                    raise AssertionError(f"Object missing attribute path: {attr_path}")
+                    msg = f"Object missing attribute path: {attr_path}"
+                    raise AssertionError(msg)
             try:
-                cls._apply_rule(
-                    current,
-                    rule,
-                    inherited_msg=inherited_msg,
-                )
+                cls._apply_rule(current, rule, inherited_msg=inherited_msg)
             except AssertionError as exc:
                 raise AssertionError(
                     inherited_msg or f"Attribute rule '{attr_path}' failed: {exc}"

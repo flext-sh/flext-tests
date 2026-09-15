@@ -9,7 +9,6 @@ from types import MappingProxyType
 from typing import Annotated, ClassVar, TypeAliasType
 
 from _pytest.python_api import ApproxBase
-
 from flext_infra import m, u
 
 from flext_tests import p, t
@@ -65,7 +64,8 @@ class FlextTestsMatchersModelsMixin:
                 return None
             node = FlextTestsPayloadUtilities.to_payload(value)
             if node.kind != "mapping":
-                raise ValueError("Matcher mapping requires a mapping payload")
+                msg = "Matcher mapping requires a mapping payload"
+                raise ValueError(msg)
             return node.entries
 
         @u.field_validator("values", mode="before", check_fields=False)
@@ -80,7 +80,8 @@ class FlextTestsMatchersModelsMixin:
                 return None
             node = FlextTestsPayloadUtilities.to_payload(value)
             if node.kind in {"atom", "mapping"}:
-                raise ValueError("Matcher values require a sequence payload")
+                msg = "Matcher values require a sequence payload"
+                raise ValueError(msg)
             return node.items
 
         @u.field_validator("deep", mode="before", check_fields=False)

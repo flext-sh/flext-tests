@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from flext_tests import c, p
+from flext_tests import c
 
 from ..payload import FlextTestsPayloadUtilities
 from ._assertions import FlextTestsMatchersAssertionsMixin
@@ -45,13 +45,21 @@ class FlextTestsMatchersContainmentMixin:
                     present = any(candidate == expected for candidate in target)
                 else:
                     FlextTestsMatchersAssertionsMixin.raise_match_assertion(
-                        c.Tests.ERR_CONTAINS_FAILED if required else c.Tests.ERR_LACKS_FAILED,
-                        msg=msg, container=target, item=expected,
+                        c.Tests.ERR_CONTAINS_FAILED
+                        if required
+                        else c.Tests.ERR_LACKS_FAILED,
+                        msg=msg,
+                        container=target,
+                        item=expected,
                     )
                 if present is not required:
                     FlextTestsMatchersAssertionsMixin.raise_match_assertion(
-                        c.Tests.ERR_CONTAINS_FAILED if required else c.Tests.ERR_LACKS_FAILED,
-                        msg=msg, container=target, item=expected,
+                        c.Tests.ERR_CONTAINS_FAILED
+                        if required
+                        else c.Tests.ERR_LACKS_FAILED,
+                        msg=msg,
+                        container=target,
+                        item=expected,
                     )
 
 

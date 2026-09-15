@@ -28,8 +28,12 @@ class FlextTestsMatchersProtocolsMixin:
     class DeepPredicate(Protocol):
         """Read path expectations without serializing their native leaves."""
 
-        def items(self) -> Iterable[
-            tuple[str, p.Tests.Payload | FlextTestsMatchersProtocolsMixin.PayloadPredicate]
+        def items(
+            self,
+        ) -> Iterable[
+            tuple[
+                str, p.Tests.Payload | FlextTestsMatchersProtocolsMixin.PayloadPredicate
+            ]
         ]: ...
 
 

@@ -46,7 +46,9 @@ class TestsPayload:
             entries={
                 "nested": m.Tests.Payload(
                     kind="tuple",
-                    items=tuple(m.Tests.Payload(kind="atom", atom=leaf) for leaf in leaves),
+                    items=tuple(
+                        m.Tests.Payload(kind="atom", atom=leaf) for leaf in leaves
+                    ),
                 )
             },
         )
@@ -110,7 +112,9 @@ class TestsPayload:
         with pytest.raises(c.ValidationError, match="frozen"):
             payload.entries = {}
 
-    def test_binary_file_roundtrip_preserves_non_utf8_bytes(self, tmp_path: Path) -> None:
+    def test_binary_file_roundtrip_preserves_non_utf8_bytes(
+        self, tmp_path: Path
+    ) -> None:
         content = b"\x00\xff\xfe"
         path = FlextTestsFiles(base_dir=tmp_path).create(
             content, "native.bin", fmt=c.Tests.FILE_FORMAT_BIN
@@ -131,7 +135,9 @@ class TestsPayload:
             )
         tm.that((tmp_path / "collision.json").exists(), eq=False)
 
-    def test_native_ingress_rejects_unsupported_nested_leaf(self, tmp_path: Path) -> None:
+    def test_native_ingress_rejects_unsupported_nested_leaf(
+        self, tmp_path: Path
+    ) -> None:
         with pytest.raises(TypeError, match="Unsupported native payload leaf"):
             FlextTestsFiles(base_dir=tmp_path).create(
                 {"nested": [range(3)]}, "unsupported.json"

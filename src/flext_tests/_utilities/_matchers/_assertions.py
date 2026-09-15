@@ -8,7 +8,7 @@ from __future__ import annotations
 from collections.abc import Sized
 from typing import Never
 
-from flext_tests import c, p, t
+from flext_tests import c, p
 
 from ..payload import FlextTestsPayloadUtilities
 
@@ -18,11 +18,7 @@ class FlextTestsMatchersAssertionsMixin:
 
     @staticmethod
     def raise_match_assertion[ContainerT, ItemT](
-        template: str,
-        *,
-        msg: str | None,
-        container: ContainerT,
-        item: ItemT,
+        template: str, *, msg: str | None, container: ContainerT, item: ItemT
     ) -> Never:
         """Raise AssertionError with ``msg`` or formatted ``template``."""
         raise AssertionError(msg or template.format(container=container, item=item))

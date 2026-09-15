@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping, MutableMapping
+from collections.abc import MutableMapping
 from typing import overload
 
 from flext_core import p as core_p, u
@@ -126,7 +126,9 @@ class FlextTestsMatchersResultMixin:
                             params.msg
                             or c.Tests.ERR_ERROR_DATA_KEY_MISSING.format(key=key)
                         )
-                    if FlextTestsPayloadUtilities.to_match_value(actual_data[key]) != FlextTestsPayloadUtilities.to_match_value(expected_value):
+                    if FlextTestsPayloadUtilities.to_match_value(
+                        actual_data[key]
+                    ) != FlextTestsPayloadUtilities.to_match_value(expected_value):
                         raise AssertionError(
                             params.msg
                             or c.Tests.ERR_ERROR_DATA_VALUE_MISMATCH.format(
@@ -143,7 +145,11 @@ class FlextTestsMatchersResultMixin:
                 """Extract an owned node without dumping native model leaves."""
                 if params.path is None:
                     return result_value, None
-                path = params.path if isinstance(params.path, str) else ".".join(params.path)
+                path = (
+                    params.path
+                    if isinstance(params.path, str)
+                    else ".".join(params.path)
+                )
                 payload = FlextTestsMatchersRulesMixin._extract_path_value(
                     FlextTestsPayloadUtilities.to_payload(result_value), path
                 )
@@ -190,7 +196,9 @@ class FlextTestsMatchersResultMixin:
                 result_value: TResult, params: m.Tests.OkParams
             ) -> TResult:
                 """Validate native equality and finite scalar constraints."""
-                if FlextTestsMatchersResultMixin.Tests.Matchers.ok_has_scalar_validation(params):
+                if FlextTestsMatchersResultMixin.Tests.Matchers.ok_has_scalar_validation(
+                    params
+                ):
                     FlextTestsMatchersTypeGuardsMixin.assert_scalar_match(
                         FlextTestsPayloadUtilities.to_payload(result_value), params
                     )
@@ -207,9 +215,12 @@ class FlextTestsMatchersResultMixin:
                         if isinstance(result_value, m.Tests.Payload)
                         else result_value
                     )
-                    if not FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(native, params.is_):
+                    if not FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(
+                        native, params.is_
+                    ):
                         raise AssertionError(
-                            params.msg or c.Tests.ERR_TYPE_FAILED.format(
+                            params.msg
+                            or c.Tests.ERR_TYPE_FAILED.format(
                                 expected=params.is_, actual=type(native).__name__
                             )
                         )
@@ -223,12 +234,26 @@ class FlextTestsMatchersResultMixin:
             @overload
             def ok[TResult, KwargT](
                 result: core_p.ResultView[TResult], **kwargs: KwargT
-            ) -> TResult | t.Tests.PayloadAtom | p.Model | p.Tests.NativeSequence | p.Tests.NativeMapping | None: ...
+            ) -> (
+                TResult
+                | t.Tests.PayloadAtom
+                | p.Model
+                | p.Tests.NativeSequence
+                | p.Tests.NativeMapping
+                | None
+            ): ...
 
             @staticmethod
             def ok[TResult](
                 result: core_p.ResultView[TResult], **kwargs: KwargT
-            ) -> TResult | t.Tests.PayloadAtom | p.Model | p.Tests.NativeSequence | p.Tests.NativeMapping | None:
+            ) -> (
+                TResult
+                | t.Tests.PayloadAtom
+                | p.Model
+                | p.Tests.NativeSequence
+                | p.Tests.NativeMapping
+                | None
+            ):
                 # mro-j47u: matchers observe the protocol and preserve source identity.
                 if not kwargs:
                     return FlextTestsResultUtilitiesMixin.assert_success(result)
@@ -257,7 +282,9 @@ class FlextTestsMatchersResultMixin:
                     FlextTestsMatchersContainmentMixin.check_has_lacks(
                         result_value, params.has, params.lacks, params.msg
                     )
-                if FlextTestsMatchersResultMixin.Tests.Matchers.ok_preserves_result_identity(params):
+                if FlextTestsMatchersResultMixin.Tests.Matchers.ok_preserves_result_identity(
+                    params
+                ):
                     return result_value
                 result_payload = (
                     FlextTestsMatchersResultMixin.Tests.Matchers.ok_payload(
@@ -330,7 +357,8 @@ class FlextTestsMatchersResultMixin:
                 )
                 if not match_result.matched:
                     raise AssertionError(
-                        params.msg or c.Tests.ERR_DEEP_PATH_FAILED.format(
+                        params.msg
+                        or c.Tests.ERR_DEEP_PATH_FAILED.format(
                             path=match_result.path, reason=match_result.reason
                         )
                     )

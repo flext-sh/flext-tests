@@ -67,9 +67,10 @@ class FlextTestsBaseModelsMixin:
 
         name: Annotated[str, m.Field(description="Entity display name.")] = ""
         value: Annotated[
-            Payload,
-            m.Field(description="Arbitrary serializable payload."),
-        ] = m.Field(default_factory=lambda: FlextTestsBaseModelsMixin.Payload(kind="atom"))
+            Payload, m.Field(description="Arbitrary serializable payload.")
+        ] = m.Field(
+            default_factory=lambda: FlextTestsBaseModelsMixin.Payload(kind="atom")
+        )
 
     class Value(m.Value):
         """Factory value object class for tests."""

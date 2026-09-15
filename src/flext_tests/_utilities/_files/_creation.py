@@ -75,21 +75,27 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                 content = (
                     atom
                     if actual_content.kind == "atom" and isinstance(atom, bytes)
-                    else str(FlextTestsPayloadUtilities.to_match_value(actual_content)).encode(params.enc)
+                    else str(
+                        FlextTestsPayloadUtilities.to_match_value(actual_content)
+                    ).encode(params.enc)
                 )
                 file_path.write_bytes(content)
             case c.Tests.FILE_FORMAT_JSON | c.Tests.FILE_FORMAT_YAML:
                 json_payload = self._build_json_payload(actual_content)
                 if actual_fmt == c.Tests.FILE_FORMAT_JSON:
                     u.Cli.json_write(
-                        file_path, json_payload, m.Cli.JsonWriteOptions(indent=params.indent)
+                        file_path,
+                        json_payload,
+                        m.Cli.JsonWriteOptions(indent=params.indent),
                     )
                 else:
                     u.Cli.yaml_dump(file_path, json_payload, indent=params.indent)
             case c.Tests.FILE_FORMAT_CSV:
                 u.Cli.files_write_csv(
                     file_path,
-                    self._build_csv_rows(actual_content=actual_content, headers=params.headers),
+                    self._build_csv_rows(
+                        actual_content=actual_content, headers=params.headers
+                    ),
                 )
             case _:
                 file_path.write_text(
@@ -100,7 +106,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
     @staticmethod
     def _build_json_payload(actual_content: p.Tests.Payload) -> t.JsonValue:
         """Perform JSON conversion only at the selected file output boundary."""
-        if actual_content.kind == "atom" and isinstance(actual_content.atom, m.BaseModel):
+        if actual_content.kind == "atom" and isinstance(
+            actual_content.atom, m.BaseModel
+        ):
             return t.json_value_adapter().validate_python(
                 actual_content.atom.model_dump(mode="json")
             )
@@ -120,7 +128,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         if actual_content.kind in {"list", "tuple"}:
             rows.extend(FlextTestsFilesCreationMixin._to_string_rows(actual_content))
         else:
-            rows.append([str(FlextTestsPayloadUtilities.to_match_value(actual_content))])
+            rows.append([
+                str(FlextTestsPayloadUtilities.to_match_value(actual_content))
+            ])
         return rows
 
     def create[ContentT](
@@ -138,7 +148,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         extract_result: bool = True,
     ) -> Path:
         """Create a file after validating the complete native input tree."""
-        content_to_validate = self._extract_content(content, extract_result=extract_result)
+        content_to_validate = self._extract_content(
+            content, extract_result=extract_result
+        )
         params = m.Tests.CreateParams.model_validate({
             "content": content_to_validate,
             "name": name,
@@ -159,8 +171,10 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         target_dir = self._resolve_directory(params.directory)
         file_path = target_dir / params.name
         self._write_content_by_format(
-            file_path=file_path, actual_content=actual_content,
-            actual_fmt=actual_fmt, params=params,
+            file_path=file_path,
+            actual_content=actual_content,
+            actual_fmt=actual_fmt,
+            params=params,
         )
         if params.readonly:
             file_path.chmod(c.Tests.PERMISSION_READONLY_FILE)
