@@ -33,6 +33,7 @@ class FlextTestsUtilitiesGovernance:
 
         SRC_DIR: Final[str]
         PACKAGE_DIR: Final[str]
+
     class ModuleGovernanceMixin:
         """Shared module-governance test helpers for FLEXT submodules.
 
@@ -160,7 +161,9 @@ class FlextTestsUtilitiesGovernance:
                 msg=f"Module-level logger assignments are forbidden: {violations}",
             )
 
-        def test_package_modules_do_not_define_unapproved_top_level_functions(self) -> None:
+        def test_package_modules_do_not_define_unapproved_top_level_functions(
+            self,
+        ) -> None:
             """Assert no module exposes top-level functions outside approved entrypoints."""
             violations: list[str] = []
             for module_path in self._iter_package_modules():
