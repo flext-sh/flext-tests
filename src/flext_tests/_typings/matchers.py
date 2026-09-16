@@ -15,6 +15,7 @@ class FlextTestsMatchersTypesMixin:
         import pytest
 
         from .._models.base import FlextTestsBaseModelsMixin
+
         return cast(
             "type | None",
             FlextTestsBaseModelsMixin.Payload

@@ -84,13 +84,15 @@ class FlextTestsMatchersTypeGuardsMixin:
                 raise AssertionError(message)
             if not matches:
                 raise AssertionError(message)
-        if params.match is not None and (not isinstance(native, str) or params.match.search(native) is None):
+        if params.match is not None and (
+            not isinstance(native, str) or params.match.search(native) is None
+        ):
             raise AssertionError(
-                    params.msg
-                    or c.Tests.ERR_NOT_MATCHES.format(
-                        text=native, pattern=params.match.pattern
-                    )
+                params.msg
+                or c.Tests.ERR_NOT_MATCHES.format(
+                    text=native, pattern=params.match.pattern
                 )
+            )
 
 
 __all__: list[str] = ["FlextTestsMatchersTypeGuardsMixin"]
