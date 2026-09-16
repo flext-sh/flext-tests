@@ -60,8 +60,6 @@ class FlextTestsPayloadUtilities:
                 return m.Tests.Payload(kind="atom", atom=repr(value))
             case TypeAliasType():
                 return m.Tests.Payload(kind="atom", atom=value.__name__)
-            case object():
-                return m.Tests.Payload(kind="atom", atom=repr(value))
             case Mapping():
                 entries: dict[str, m.Tests.Payload] = {}
                 for key, item in value.items():
@@ -91,6 +89,8 @@ class FlextTestsPayloadUtilities:
                 else:
                     kind = "frozenset"
                 return m.Tests.Payload(kind=kind, items=children)
+            case object():
+                return m.Tests.Payload(kind="atom", atom=repr(value))
 
     @staticmethod
     def to_match_value(
