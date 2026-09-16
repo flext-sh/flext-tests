@@ -11,7 +11,13 @@ from typing import Annotated, Self
 
 from flext_infra import m, p, u
 
-from flext_tests import t
+# Why not `from flext_tests import t`: during the facade's first import,
+# typings.py is still initializing and its module-level `t` momentarily holds
+# FlextInfraTypes, so `FlextTestsBaseTypesMixin.*` resolves against a class that never has
+# `Tests` and the AttributeError escapes pydantic's NameError-only deferral.
+# The payload aliases are ownable directly from their defining mixin — the
+# same objects `FlextTestsTypes.Tests` composes, without facade recursion.
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 
 class FlextTestsBaseModelsMixin:
@@ -19,32 +25,32 @@ class FlextTestsBaseModelsMixin:
         """Owned native payload tree; model leaves retain their instance identity."""
 
         kind: Annotated[
-            t.Tests.PayloadKind, m.Field(frozen=True, description="Native value arm.")
+            FlextTestsBaseTypesMixin.PayloadKind, m.Field(frozen=True, description="Native value arm.")
         ]
         atom: Annotated[
-            t.Tests.PayloadAtom | p.Model | None,
+            FlextTestsBaseTypesMixin.PayloadAtom | p.Model | None,
             m.Field(
                 frozen=True,
                 description="Native scalar or model instance; never a JSON dump.",
             ),
         ] = None
         items: Annotated[
-            t.Tests.PayloadItems[Self],
+            FlextTestsBaseTypesMixin.PayloadItems[Self],
             m.Field(
                 frozen=True,
                 description="Ordered children; kind retains the source collection.",
             ),
         ] = ()
         entries: Annotated[
-            t.Tests.PayloadEntries[Self],
+            FlextTestsBaseTypesMixin.PayloadEntries[Self],
             m.Field(frozen=True, description="String-keyed payload children."),
         ] = m.Field(default_factory=lambda: MappingProxyType({}))
 
         @u.field_validator("entries", mode="after")
         @classmethod
         def freeze_entries(
-            cls, value: t.Tests.PayloadEntries[Self]
-        ) -> t.Tests.PayloadEntries[Self]:
+            cls, value: FlextTestsBaseTypesMixin.PayloadEntries[Self]
+        ) -> FlextTestsBaseTypesMixin.PayloadEntries[Self]:
             """Own an immutable copy so caller mutation cannot invalidate the arm."""
             return MappingProxyType(dict(value))
 
