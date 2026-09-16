@@ -3,14 +3,11 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING, TypeAliasType, cast
+from typing import TypeAliasType, cast
 
 import pytest
 
 from flext_core import t
-
-if TYPE_CHECKING:
-    from .._models.base import FlextTestsBaseModelsMixin
 
 
 class FlextTestsMatchersTypesMixin:
