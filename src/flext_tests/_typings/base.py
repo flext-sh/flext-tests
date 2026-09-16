@@ -44,6 +44,10 @@ class FlextTestsBaseTypesMixin:
         | t.InstanceOf[tzinfo]
         | t.InstanceOf[Path]
         | t.InstanceOf[type]
+        | t.InstanceOf[BaseException]
+        # Identity-compared service atoms: containers, family namespaces,
+        # and any other singleton object the suite asserts by reference.
+        | t.InstanceOf[object]
     )
     type PayloadItems[NodeT] = tuple[NodeT, ...]
     type PayloadEntries[NodeT] = Mapping[str, NodeT]

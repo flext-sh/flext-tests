@@ -51,6 +51,7 @@ class FlextTestsPayloadUtilities:
                 | tzinfo()
                 | Path()
                 | type()
+                | BaseException()
                 | m.BaseModel()
             ):
                 return m.Tests.Payload(kind="atom", atom=value)
@@ -84,8 +85,9 @@ class FlextTestsPayloadUtilities:
                     kind = "frozenset"
                 return m.Tests.Payload(kind=kind, items=children)
             case _:
-                msg = f"Unsupported native payload leaf: {type(value).__name__}"
-                raise TypeError(msg)
+                # Total walker: any non-mapping/non-sequence value is an
+                # identity-compared atom (container singletons, namespaces).
+                return m.Tests.Payload(kind="atom", atom=value)
 
     @staticmethod
     def to_match_value(
