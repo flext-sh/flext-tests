@@ -37,9 +37,7 @@ class FlextTestsMatchersModelsMixin:
             check_fields=False,
         )
         @classmethod
-        def own_operand[ValueT](
-            cls, value: ValueT
-        ) -> t.Tests.MatchExpectedValue:
+        def own_operand[ValueT](cls, value: ValueT) -> t.Tests.MatchExpectedValue:
             """Preserve explicit matcher operators and own native operands."""
             from .._utilities.payload import FlextTestsPayloadUtilities
 
@@ -117,8 +115,7 @@ class FlextTestsMatchersModelsMixin:
         )
 
         eq: Annotated[
-            t.Tests.MatchExpectedValue,
-            u.Field(description="Expected equality value."),
+            t.Tests.MatchExpectedValue, u.Field(description="Expected equality value.")
         ] = None
         ne: Annotated[
             t.Tests.MatchExpectedValue,
@@ -229,12 +226,10 @@ class FlextTestsMatchersModelsMixin:
         )
 
         eq: Annotated[
-            t.Tests.MatchExpectedValue,
-            u.Field(description="Expected value."),
+            t.Tests.MatchExpectedValue, u.Field(description="Expected value.")
         ] = None
         ne: Annotated[
-            t.Tests.MatchExpectedValue,
-            u.Field(description="Value must not equal."),
+            t.Tests.MatchExpectedValue, u.Field(description="Value must not equal.")
         ] = None
         is_: Annotated[
             type | tuple[type, ...] | None,
@@ -370,13 +365,9 @@ class FlextTestsMatchersModelsMixin:
         )
 
         msg: Annotated[str | None, u.Field(description="Message.")] = None
-        eq: Annotated[
-            t.Tests.MatchExpectedValue,
-            u.Field(description="Equals."),
-        ] = None
+        eq: Annotated[t.Tests.MatchExpectedValue, u.Field(description="Equals.")] = None
         ne: Annotated[
-            t.Tests.MatchExpectedValue,
-            u.Field(description="Not equals."),
+            t.Tests.MatchExpectedValue, u.Field(description="Not equals.")
         ] = None
         is_: Annotated[
             type | tuple[type, ...] | None,
