@@ -5,16 +5,17 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TypeAliasType, cast
 
+import pytest
+
 from flext_core import t
+
+from .._models.base import FlextTestsBaseModelsMixin
 
 
 class FlextTestsMatchersTypesMixin:
     """Nonrecursive matcher scalar, selector, and callback shapes."""
 
     def _match_expected_value() -> type | None:
-        import pytest
-
-        from .._models.base import FlextTestsBaseModelsMixin
 
         return cast(
             "type | None",
