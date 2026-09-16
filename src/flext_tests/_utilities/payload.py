@@ -54,6 +54,8 @@ class FlextTestsPayloadUtilities:
                 | m.BaseModel()
             ):
                 return m.Tests.Payload(kind="atom", atom=value)
+            case BaseException():
+                return m.Tests.Payload(kind="atom", atom=repr(value))
             case Mapping():
                 entries: dict[str, m.Tests.Payload] = {}
                 for key, item in value.items():
