@@ -9,13 +9,14 @@ import pytest
 
 from flext_core import t
 
-from .._models.base import FlextTestsBaseModelsMixin
-
 
 class FlextTestsMatchersTypesMixin:
     """Nonrecursive matcher scalar, selector, and callback shapes."""
 
     def _match_expected_value() -> type | None:
+        # Deferred import keeps this module loadable while _models.base is
+        # still initializing (base -> flext_tests.t -> this module cycle).
+        from .._models.base import FlextTestsBaseModelsMixin
 
         return cast(
             "type | None",
