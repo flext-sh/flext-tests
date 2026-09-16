@@ -9,12 +9,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TypeAliasType
-
 from collections.abc import Mapping
 from datetime import datetime, tzinfo
 from enum import Enum
 from pathlib import Path
+from typing import TypeAliasType
 
 from flext_infra import u
 
