@@ -9,6 +9,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import TypeAliasType
+
 from collections.abc import Mapping
 from datetime import datetime, tzinfo
 from enum import Enum
@@ -56,6 +58,8 @@ class FlextTestsPayloadUtilities:
                 return m.Tests.Payload(kind="atom", atom=value)
             case BaseException():
                 return m.Tests.Payload(kind="atom", atom=repr(value))
+            case TypeAliasType():
+                return m.Tests.Payload(kind="atom", atom=value.__name__)
             case Mapping():
                 entries: dict[str, m.Tests.Payload] = {}
                 for key, item in value.items():
