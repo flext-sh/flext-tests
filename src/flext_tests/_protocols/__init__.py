@@ -10,10 +10,14 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
     from .enforcement import FlextTestsEnforcementProtocolsMixin
+    from .matchers import FlextTestsMatchersProtocolsMixin
+    from .payload import FlextTestsPayloadProtocolsMixin
     from .valuefactory import FlextTestsValueFactoryProtocolsMixin
     from .workspace_cleanup import FlextTestsWorkspaceCleanupProtocols
 __all__: tuple[str, ...] = (
     "FlextTestsEnforcementProtocolsMixin",
+    "FlextTestsMatchersProtocolsMixin",
+    "FlextTestsPayloadProtocolsMixin",
     "FlextTestsValueFactoryProtocolsMixin",
     "FlextTestsWorkspaceCleanupProtocols",
 )
@@ -22,6 +26,8 @@ _LAZY_IMPORTS = MappingProxyType(
     build_lazy_import_map(
         MappingProxyType({
             ".enforcement": ("FlextTestsEnforcementProtocolsMixin",),
+            ".matchers": ("FlextTestsMatchersProtocolsMixin",),
+            ".payload": ("FlextTestsPayloadProtocolsMixin",),
             ".valuefactory": ("FlextTestsValueFactoryProtocolsMixin",),
             ".workspace_cleanup": ("FlextTestsWorkspaceCleanupProtocols",),
         }),
