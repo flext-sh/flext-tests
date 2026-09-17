@@ -35,16 +35,16 @@ class FlextTestsBaseTypesMixin:
 
     type PayloadKind = Literal["atom", "list", "tuple", "set", "frozenset", "mapping"]
     type PayloadAtom = (
-        t.InstanceOf[str]
-        | t.InstanceOf[int]
-        | t.InstanceOf[float]
-        | t.InstanceOf[bool]
-        | t.InstanceOf[bytes]
-        | t.InstanceOf[datetime]
-        | t.InstanceOf[tzinfo]
-        | t.InstanceOf[Path]
-        | t.InstanceOf[type]
-        | t.InstanceOf[BaseException]
+        str
+        | int
+        | float
+        | bool
+        | bytes
+        | datetime
+        | tzinfo
+        | Path
+        | type
+        | BaseException
     )
     type PayloadItems[NodeT] = tuple[NodeT, ...]
     type PayloadEntries[NodeT] = Mapping[str, NodeT]
