@@ -14,6 +14,7 @@ pages sourced from code and docstrings.
 - [Getting started](getting-started.md)
 - [Make commands](make-commands.md)
 - [Migration to v0.13.0](migration-to-v0.13.0.md)
+- [Native payload](native-payload.md)
 - [Onboarding](onboarding.md)
 - [Security](security.md)
 - [Skill automation pattern](skill-automation-pattern.md)
