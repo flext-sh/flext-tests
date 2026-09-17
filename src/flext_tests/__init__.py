@@ -42,6 +42,7 @@ if TYPE_CHECKING:
     from .kube import FlextTestsKube
     from .models import FlextTestsModels, FlextTestsModels as m
     from .protocols import FlextTestsProtocols, FlextTestsProtocols as p
+    from .pytest_bootstrap import install_local_packages
     from .tmatchers import FlextTestsMatchersUtilities, tm
     from .typings import FlextTestsTypes, FlextTestsTypes as t
     from .utilities import (
@@ -89,6 +90,7 @@ __all__: tuple[str, ...] = (
     "e",
     "h",
     "infra_c",
+    "install_local_packages",
     "load_infra_report",
     "m",
     "p",
@@ -129,6 +131,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ".kube": ("FlextTestsKube",),
             ".models": ("FlextTestsModels", "m"),
             ".protocols": ("FlextTestsProtocols", "p"),
+            ".pytest_bootstrap": ("install_local_packages",),
             ".tmatchers": ("FlextTestsMatchersUtilities", "tm"),
             ".typings": ("FlextTestsTypes", "t"),
             ".utilities": (

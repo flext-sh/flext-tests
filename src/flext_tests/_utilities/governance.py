@@ -24,14 +24,6 @@ if TYPE_CHECKING:
     from types import ModuleType
 
 
-@runtime_checkable
-class _GovernanceConfigProto(Protocol):
-    """Structural type for a project ``c.<Package>.Tests`` namespace."""
-
-    SRC_DIR: Final[str]
-    PACKAGE_DIR: Final[str]
-
-
 class ModuleGovernanceMixin:
     """Shared module-governance test helpers for FLEXT submodules.
 
@@ -50,8 +42,15 @@ class ModuleGovernanceMixin:
       ``ALLOWED_MODULE_FUNCTIONS`` lookup (default: path relative to package root).
     """
 
+    @runtime_checkable
+    class _GovernanceConfigProto(Protocol):
+        """Structural type for a project ``c.<Package>.Tests`` namespace."""
+
+        SRC_DIR: Final[str]
+        PACKAGE_DIR: Final[str]
+
     _test_file: ClassVar[str]
-    _tests_config: ClassVar[type[_GovernanceConfigProto]]
+    _tests_config: ClassVar[type[ModuleGovernanceMixin._GovernanceConfigProto]]
     _warn_on_import_error: ClassVar[bool] = True
 
     @classmethod
@@ -185,3 +184,6 @@ class ModuleGovernanceMixin:
                 f"{violations}"
             ),
         )
+
+
+__all__: list[str] = ["ModuleGovernanceMixin"]
