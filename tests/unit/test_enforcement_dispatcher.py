@@ -239,7 +239,12 @@ class TestsFlextTestsEnforcementDispatcher:
         for item in items:
             collector.add(item)
 
-        tm.that(list(collector.collect()), eq=items)
+        collected = list(collector.collect())
+        tm.that(len(collected), eq=len(items))
+        for index, item in enumerate(items):
+            tm.that(collected[index].name, eq=item.name)
+            with pytest.raises(dispatcher.EnforcementViolationError):
+                collected[index].runtest()
 
     def test_collector_is_empty_before_any_item_is_added(
         self, request: pytest.FixtureRequest

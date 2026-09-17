@@ -20,9 +20,9 @@ import pytest
 
 from flext_core import FlextContainer, FlextContext, FlextSettings
 from flext_tests import c, e, m, p, r, s, t, u
-from flext_tests.base import FlextTestsCase
 
 from .._settings import FlextTestsSettings
+from ..base import FlextTestsCase
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
