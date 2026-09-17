@@ -23,7 +23,7 @@
 - Public symbol exports: `SLOW_TIMEOUT_INI_OPTION`, `EnforcementCollector`,
   `EnforcementItem`, `EnforcementViolationError`, `FlextTestsCase`,
   `FlextTestsConfig`, `FlextTestsConstants`, `FlextTestsDocker`,
-  `FlextTestsDomains`, `FlextTestsFiles` (+22 more)
+  `FlextTestsDomains`, `FlextTestsFiles` (+21 more)
 - Exported module shortcuts: _none_
 - Generated module pages: `14`
 
