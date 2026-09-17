@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from flext_tests import p
 
 
-class FlextTestsMatchersProtocolsMixin:
+class FlextTestsMatchersProtocolsMixin(Protocol):
     """Structural matcher capabilities without recursive type aliases."""
 
     @runtime_checkable

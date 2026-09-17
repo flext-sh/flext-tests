@@ -30,7 +30,7 @@ class FlextTestsPayloadUtilities:
         return type(native).__name__, str(native)
 
     @staticmethod
-    def to_payload[ValueT](value: ValueT) -> m.Tests.Payload:
+    def to_payload(value: object) -> m.Tests.Payload:
         """Own supported native values without serializing their model leaves."""
         to_p = FlextTestsPayloadUtilities.to_payload
         match value:
@@ -88,8 +88,9 @@ class FlextTestsPayloadUtilities:
                 else:
                     kind = "frozenset"
                 return m.Tests.Payload(kind=kind, items=children)
-            case object():
-                return m.Tests.Payload(kind="atom", atom=repr(value))
+            case _:
+                msg = f"Unsupported native payload leaf: {type(value).__name__}"
+                raise TypeError(msg)
 
     @staticmethod
     def to_match_value(
