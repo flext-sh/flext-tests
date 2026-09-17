@@ -49,7 +49,6 @@ if TYPE_CHECKING:
         FlextTestsFixturesDSLMixin,
         FlextTestsUtilities,
         FlextTestsUtilities as u,
-        ModuleGovernanceMixin,
     )
     from .validator import FlextTestsValidator, tv
 __all__: tuple[str, ...] = (
@@ -73,7 +72,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsTypes",
     "FlextTestsUtilities",
     "FlextTestsValidator",
-    "ModuleGovernanceMixin",
     "__author__",
     "__author_email__",
     "__description__",
@@ -134,12 +132,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ".pytest_bootstrap": ("install_local_packages",),
             ".tmatchers": ("FlextTestsMatchersUtilities", "tm"),
             ".typings": ("FlextTestsTypes", "t"),
-            ".utilities": (
-                "FlextTestsFixturesDSLMixin",
-                "FlextTestsUtilities",
-                "ModuleGovernanceMixin",
-                "u",
-            ),
+            ".utilities": ("FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"),
             ".validator": ("FlextTestsValidator", "tv"),
             "flext_infra": ("d", "e", "h", "r", "x"),
         }),

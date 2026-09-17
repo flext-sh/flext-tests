@@ -10,7 +10,8 @@ services:
       - NGINX_HOST=localhost
       - FLEXT_FIXTURE_ROLE=web-gateway
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      test:
+        ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
       interval: 10s
       timeout: 5s
       retries: 3
