@@ -10,5 +10,6 @@ from __future__ import annotations
 from ._utilities.matchers import FlextTestsMatchersUtilities
 
 tm = FlextTestsMatchersUtilities.Tests.Matchers
+"""Public test-matchers facade alias for flext_tests."""
 
 __all__: list[str] = ["FlextTestsMatchersUtilities", "tm"]

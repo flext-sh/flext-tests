@@ -649,5 +649,6 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
 
 tk: type[FlextTestsDocker] = FlextTestsDocker
+"""Docker container control facade alias for flext_tests."""
 
 __all__: list[str] = ["FlextTestsDocker", "tk"]

@@ -1,5 +1,9 @@
 # Native payload contract
 
+<!-- TOC START -->
+- [Boundary changes](#boundary-changes)
+<!-- TOC END -->
+
 `m.Tests.Payload` owns a native value tree. Its `kind` distinguishes atoms,
 lists, tuples, sets, frozensets, and mappings. Collection children are accessed
 through `items`, mapping children through `entries`, and native leaves through
