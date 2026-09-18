@@ -1,15 +1,13 @@
 # AGENTS.md — flext-tests
 
 > **Parent workspace law** lives in
-> [`flext/AGENTS.md`](https://github.com/flext-sh/flext/blob/0.12.0-dev/AGENTS.md)
-> — read it first.
-> Universal engineering core: `~/.agents/UNIVERSAL_CORE.md`.
-> Composition: global skills + parent/root `AGENTS.md` + this scope delta.
-> Do not re-embed universal law.
+> [`flext/AGENTS.md`](https://github.com/flext-sh/flext/blob/0.12.0-dev/AGENTS.md) —
+> read it first. Universal engineering core: `~/.agents/UNIVERSAL_CORE.md`. Composition:
+> global skills + parent/root `AGENTS.md` + this scope delta. Do not re-embed universal
+> law.
 >
-> **Standalone / independent mode:** when the sibling `AGENTS.md` does not
-> resolve, pin the parent raw URL to the same branch/release as this package
-> (never `main`).
+> **Standalone / independent mode:** when the sibling `AGENTS.md` does not resolve, pin
+> the parent raw URL to the same branch/release as this package (never `main`).
 
 <!-- AIHUB-AGENTS-SCOPE-LOCAL-BEGIN -->
 
@@ -17,8 +15,8 @@
 
 ## Overview
 
-Shared test infrastructure for typed matchers, fixtures, builders, and the
-generic Make framework. Every FLEXT package test suite consumes it.
+Shared test infrastructure for typed matchers, fixtures, builders, and the generic Make
+framework. Every FLEXT package test suite consumes it.
 
 ## Structure
 
@@ -45,23 +43,23 @@ There is **no runtime `api.py`** — this is test tooling.
 
 ## Conventions (specific to this package)
 
-- Assert via `tm.*`, never bare `assert`. Tests are behavior-only through
-  public facades, without mocks or patching the system under test.
-- Use `c/t/p/m/u` for typed fixtures and
-  `FlextTestsMakeUtilitiesMixin` for the Make domain.
+- Assert via `tm.*`, never bare `assert`. Tests are behavior-only through public
+  facades, without mocks or patching the system under test.
+- Use `c/t/p/m/u` for typed fixtures and `FlextTestsMakeUtilitiesMixin` for the Make
+  domain.
 - Config/settings canonical pattern: ADR-012.
 - Codemod governance (ast-grep + make mod): ADR-014.
 
 ## Anti-Patterns / Gotchas
 
-- `conftest_plugin.py` is the pytest11 entry point. Packages receive fixtures
-  and enforcement through it and never duplicate them locally.
+- `conftest_plugin.py` is the pytest11 entry point. Packages receive fixtures and
+  enforcement through it and never duplicate them locally.
 
 ## Commands
 
 ```bash
 make check PROJECT=flext-tests
-make test  PROJECT=flext-tests       # tests/{unit,integration,fixtures}
+make test PROJECT=flext-tests # tests/{unit,integration,fixtures}
 ```
 
 <!-- AIHUB-AGENTS-SCOPE-LOCAL-END -->
@@ -71,7 +69,9 @@ make test  PROJECT=flext-tests       # tests/{unit,integration,fixtures}
 
 # Generated session governance capsule
 
-This projection is derived by `agentsctl sync`; edit canonical `AGENTS.md`, `rules/`, `skills/`, or `commands/`, never this output. The operator's newest request has precedence. Provider hooks are delivery mechanisms, not policy owners.
+This projection is derived by `agentsctl sync`; edit canonical `AGENTS.md`, `rules/`,
+`skills/`, or `commands/`, never this output. The operator's newest request has
+precedence. Provider hooks are delivery mechanisms, not policy owners.
 
 ## Rule `architecture/engineering-core`
 
@@ -81,64 +81,60 @@ For every implementation:
 
 1. Research repository owners, dependencies, and canonical documentation.
 2. Remove scope without a current requirement or consumer (YAGNI).
-3. Elect one writable authority; every other copy is a generated projection
-   (SSOT).
+3. Elect one writable authority; every other copy is a generated projection (SSOT).
 4. Apply SOLID only to a responsibility or dependency boundary under change.
 5. Implement through the owner and simplify without weakening behavior.
 6. Remove duplication and god components; recheck YAGNI, SSOT, SOLID.
-7. Exercise runtime behavior, run every applicable native gate, and complete
-   the approved landing cycle before changing phase.
+7. Exercise runtime behavior, run every applicable native gate, and complete the
+   approved landing cycle before changing phase.
 
-At a cross-boundary failure, prove the producer contract and output. Fix its
-owner when invalid or the receiver when it conforms. Never alter a correct
-adjacent owner for an invalid consumer; symptom workarounds are defects.
+At a cross-boundary failure, prove the producer contract and output. Fix its owner when
+invalid or the receiver when it conforms. Never alter a correct adjacent owner for an
+invalid consumer; symptom workarounds are defects.
 
-Hardcodes, normalized failure, failover, retry, fallback, compatibility,
-partial execution, keyring, and unevidenced success are defects. Typed owners
-keep defaults. The first exception escapes its CLI with traceback and cause.
+Hardcodes, normalized failure, failover, retry, fallback, compatibility, partial
+execution, keyring, and unevidenced success are defects. Typed owners keep defaults. The
+first exception escapes its CLI with traceback and cause.
 
 Git, runtime, build, and tests are baseline. Auxiliary tracking is a capability.
-Auxiliary capabilities apply only when authorized and selected; installation
-never selects. Do not load, probe, or gate dormant capabilities. Invalid
-selected authorization, configuration, readiness, or result fails without
-fallback. Require only non-derivable values.
+Auxiliary capabilities apply only when authorized and selected; installation never
+selects. Do not load, probe, or gate dormant capabilities. Invalid selected
+authorization, configuration, readiness, or result fails without fallback. Require only
+non-derivable values.
 
-An external token validation without its token is not executed and is recorded
-as `NOT EXECUTED`, never green; it does not block offline gates, landing, or
-post-merge proof. Direct invocation selects it: the token becomes required and
-any failure escapes without skip, catch, fallback, or normalization.
+An external token validation without its token is not executed and is recorded as
+`NOT EXECUTED`, never green; it does not block offline gates, landing, or post-merge
+proof. Direct invocation selects it: the token becomes required and any failure escapes
+without skip, catch, fallback, or normalization.
 
-Compose with `generalized ownership` (rule file),
-`strict execution` (rule file),
-`runtime evidence` (rule file),
-`storage isolation` (rule file),
-`security closure` (rule file).
+Compose with `generalized ownership` (rule file), `strict execution` (rule file),
+`runtime evidence` (rule file), `storage isolation` (rule file), `security closure`
+(rule file).
 
 ## Rule `coordination/operator-precedence`
 
 # Newest operator instruction wins; adjust artifacts to it
 
 Authority order: operator request > declared orchestration contract > canonical
-tracker > ADRs > skills > docs, and newest supersedes oldest. On conflict,
-adjust the lower or older artifact to match; never override the operator to
-satisfy stale guidance.
+tracker > ADRs > skills > docs, and newest supersedes oldest. On conflict, adjust the
+lower or older artifact to match; never override the operator to satisfy stale guidance.
 
-While orchestration and tracker runtimes are suspended, do not invoke them.
-Create no substitute tracker or ledger, preserve implementation evidence only
-in separately authorized Git/PR/CI, and leave phase closure open.
+While orchestration and tracker runtimes are suspended, do not invoke them. Create no
+substitute tracker or ledger, preserve implementation evidence only in separately
+authorized Git/PR/CI, and leave phase closure open.
 
-Exact operator authorization naming targets, disposition, recovery, and
-validation survives interruption, divergence, and red gates; re-preflight and
-continue. Ask only when the effect expands beyond it or two evidenced current
-intentions conflict. State alone proves no intention, actor, or process.
+Exact operator authorization naming targets, disposition, recovery, and validation
+survives interruption, divergence, and red gates; re-preflight and continue. Ask only
+when the effect expands beyond it or two evidenced current intentions conflict. State
+alone proves no intention, actor, or process.
 
 ## Rule `ethics/professional-integrity`
 
 # Professional integrity is absolute
 
-Never lie, fabricate evidence, hide a blocker, bypass a gate, or patch a symptom
-only to make a check pass. Fix the generalized root cause with full context and
-report exact command, working directory, exit code and decisive output.
+Never lie, fabricate evidence, hide a blocker, bypass a gate, or patch a symptom only to
+make a check pass. Fix the generalized root cause with full context and report exact
+command, working directory, exit code and decisive output.
 
 ## Rule `runtime/strict-execution`
 
@@ -155,17 +151,19 @@ Every project and projected agent applies all of these policies together:
 - `no keyring` (rule file);
 - `zero residue` (rule file).
 
-The policies are cumulative. A project rule may make them narrower or reject
-more inputs; it cannot relax, catch, normalize, skip, defer, or route around any
-of them. Existing opposing behavior is a blocking violation to exterminate at
-its owner, never grandfathered compatibility.
+The policies are cumulative. A project rule may make them narrower or reject more
+inputs; it cannot relax, catch, normalize, skip, defer, or route around any of them.
+Existing opposing behavior is a blocking violation to exterminate at its owner, never
+grandfathered compatibility.
 
-Resolve gate applicability before invocation. A dormant external-token gate is
-not executed; selecting or invoking it applies every policy above.
+Resolve gate applicability before invocation. A dormant external-token gate is not
+executed; selecting or invoking it applies every policy above.
 
 ## Capability indexes
 
-Skills: caveman, context-canary, fix-forward-collaboration, governance-audit, operator-correction-learning, plan-focus-recovery, sprint-closure, strategic-compact, verification-loop
-Commands: add-language-rules, database-migration, feature-development, ghi-list, pr-list, ralph-loop, security-triage, synthesize-governance
+Skills: caveman, context-canary, fix-forward-collaboration, governance-audit,
+operator-correction-learning, plan-focus-recovery, sprint-closure, strategic-compact,
+verification-loop Commands: add-language-rules, database-migration, feature-development,
+ghi-list, pr-list, ralph-loop, security-triage, synthesize-governance
 
 <!-- AIHUB-GOVERNANCE-INSTRUCTIONS-END -->
