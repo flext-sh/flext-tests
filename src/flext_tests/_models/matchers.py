@@ -18,6 +18,12 @@ from .base import FlextTestsBaseModelsMixin
 type MatchExpectedValue = (
     FlextTestsBaseModelsMixin.Payload | ApproxBase | TypeAliasType | None
 )
+type DeepExpected = (
+    FlextTestsBaseModelsMixin.Payload
+    | Callable[[p.Tests.Payload], bool]
+    | str
+    | None
+)
 
 
 class FlextTestsMatchersModelsMixin:
@@ -193,7 +199,9 @@ class FlextTestsMatchersModelsMixin:
                 rule_keys = frozenset({*cls.model_fields, "is", "excludes"})
                 if value and set(value).issubset(rule_keys):
                     return cls.model_validate(value)
-                return cls(eq=value)
+                # Own the mapping operand here; own_operand is idempotent, so
+                # the field validator re-running on the owned payload is a no-op.
+                return cls(eq=cls.own_operand(value))
             if isinstance(value, type) or (
                 isinstance(value, tuple)
                 and all(isinstance(item, type) for item in value)
@@ -522,7 +530,11 @@ class FlextTestsMatchersModelsMixin:
                 str, t.Tests.LengthSpec | FlextTestsBaseModelsMixin.Payload | None
             ] = {}
             if self.error is not None and self.has is None:
-                updates["has"] = self.own_operand(self.error)
+                # self.error is a non-None native sequence/scalar, so owning it
+                # is exactly the payload walker; no approx/type operand applies.
+                from .._utilities.payload import FlextTestsPayloadUtilities
+
+                updates["has"] = FlextTestsPayloadUtilities.to_payload(self.error)
             if self.len is None and any(
                 v is not None
                 for v in (
@@ -596,10 +608,7 @@ class FlextTestsMatchersModelsMixin:
 
         path: Annotated[str, u.Field(description="Path where matching occurred.")]
         expected: Annotated[
-            FlextTestsBaseModelsMixin.Payload
-            | Callable[[p.Tests.Payload], bool]
-            | str
-            | None,
+            DeepExpected,
             u.Field(description="Expected value or predicate."),
         ]
         actual: Annotated[

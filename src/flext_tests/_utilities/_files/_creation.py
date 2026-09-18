@@ -153,7 +153,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
     @overload
     def create[TContentCreate](
         self,
-        content: TContentCreate,
+        content: TContentCreate | p.Result[TContentCreate],
         name: str = c.Tests.DEFAULT_FILENAME,
         directory: Path | None = None,
         *,

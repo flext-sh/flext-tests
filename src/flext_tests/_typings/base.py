@@ -33,6 +33,15 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from .._models.base import FlextTestsBaseModelsMixin
+    from .._protocols.payload import FlextTestsPayloadProtocolsMixin
+
+type _NativeMatchValue = (
+    FlextTestsBaseTypesMixin.PayloadAtom
+    | p.Model
+    | list[_NativeMatchValue]
+    | dict[str, _NativeMatchValue]
+    | None
+)
 
 
 class FlextTestsBaseTypesMixin:
@@ -75,16 +84,11 @@ class FlextTestsBaseTypesMixin:
     type TestobjectSerializable = (
         TestobjectAtom | t.JsonValue | list[TestobjectNode] | Mapping[str, TestobjectNode] | None
     )
-    type NativeMatchValue = (
-        PayloadAtom
-        | p.Model
-        | list[NativeMatchValue]
-        | dict[str, NativeMatchValue]
-        | None
-    )
+    type NativeMatchValue = _NativeMatchValue
     type DeepSpec = Mapping[
         str,
-        FlextTestsBaseModelsMixin.Payload | Callable[[p.Tests.Payload], bool],
+        FlextTestsBaseModelsMixin.Payload
+        | Callable[[FlextTestsPayloadProtocolsMixin.Payload], bool],
     ]
     type TestobjectHashable = (
         str | int | float | bool | bytes | datetime | tzinfo | Path | type | None
