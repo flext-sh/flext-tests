@@ -30,7 +30,7 @@ dependencies = [
   "pytest-timeout>=2.4.0",
   "python-on-whales>=0.81.0",
   "pyyaml>=6.0.3",
-  "structlog>=25.5.0,<26",
+  "structlog>=25.5.0,<27",
   "typing-extensions>=4.16.0",
 ]
 description = "FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem"
