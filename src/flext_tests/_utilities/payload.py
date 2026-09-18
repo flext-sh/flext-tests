@@ -30,7 +30,7 @@ class FlextTestsPayloadUtilities:
         return type(native).__name__, str(native)
 
     @staticmethod
-    def to_payload[ValueT](value: ValueT) -> m.Tests.Payload:
+    def to_payload(value: object) -> m.Tests.Payload:
         """Own supported native values without serializing their model leaves."""
         to_p = FlextTestsPayloadUtilities.to_payload
         match value:

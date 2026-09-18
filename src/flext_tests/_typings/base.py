@@ -44,6 +44,7 @@ class FlextTestsBaseTypesMixin:
         | t.InstanceOf[tzinfo]
         | t.InstanceOf[Path]
         | t.InstanceOf[type]
+        | t.InstanceOf[BaseException]
     )
     type PayloadItems[NodeT] = tuple[NodeT, ...]
     type PayloadEntries[NodeT] = Mapping[str, NodeT]
@@ -65,19 +66,17 @@ class FlextTestsBaseTypesMixin:
         t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
         | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
     )
+    type TestobjectNode = TestobjectAtom | t.JsonValue | None
     type TestobjectSerializable = (
-        TestobjectAtom
-        | list[TestobjectSerializable]
-        | Mapping[str, TestobjectSerializable]
-        | None
+        TestobjectAtom | list[TestobjectNode] | Mapping[str, TestobjectNode] | None
     )
     type TestobjectHashable = (
         str | int | float | bool | bytes | datetime | tzinfo | Path | type | None
     )
     type NormalizationInput = (
         TestobjectAtom
-        | t.SequenceOf[NormalizationInput]
-        | t.MappingKV[str, NormalizationInput]
+        | t.SequenceOf[TestobjectNode]
+        | t.MappingKV[str, TestobjectNode]
         | set[TestobjectHashable]
         | None
     )

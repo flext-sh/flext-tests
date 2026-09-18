@@ -12,6 +12,7 @@
 > (never `main`).
 
 <!-- AIHUB-AGENTS-SCOPE-LOCAL-BEGIN -->
+
 **Package:** `flext_tests` · deps: `flext-cli`, `flext-core`, `flext-infra`
 
 ## Overview
@@ -34,11 +35,11 @@ src/flext_tests/
 
 ## Code Map
 
-| Symbol | Kind | Location | Role |
-|--------|------|----------|------|
-| `tm` | facade | `tmatchers.py` | matchers — `tm.ok` / `tm.that` / `tm.fail` |
-| `FlextTestsServiceBase`, `FlextTestsCase` | classes | `base.py` | test service anchors |
-| pytest plugin | module | `conftest_plugin.py` | pytest11 entry (fixtures/enforcement) |
+| Symbol                                    | Kind    | Location             | Role                                       |
+| ----------------------------------------- | ------- | -------------------- | ------------------------------------------ |
+| `tm`                                      | facade  | `tmatchers.py`       | matchers — `tm.ok` / `tm.that` / `tm.fail` |
+| `FlextTestsServiceBase`, `FlextTestsCase` | classes | `base.py`            | test service anchors                       |
+| pytest plugin                             | module  | `conftest_plugin.py` | pytest11 entry (fixtures/enforcement)      |
 
 There is **no runtime `api.py`** — this is test tooling.
 
@@ -67,6 +68,7 @@ make test  PROJECT=flext-tests       # tests/{unit,integration,fixtures}
 
 <!-- AIHUB-GOVERNANCE-INSTRUCTIONS-BEGIN -->
 <!-- AIHUB-GOVERNANCE-CAPSULE v1 sha256:5888ee9f8147f63364a4f7cd6906e9d837f58cb8a8546844760c526ecb1a303b -->
+
 # Generated session governance capsule
 
 This projection is derived by `agentsctl sync`; edit canonical `AGENTS.md`, `rules/`, `skills/`, or `commands/`, never this output. The operator's newest request has precedence. Provider hooks are delivery mechanisms, not policy owners.
@@ -165,4 +167,5 @@ not executed; selecting or invoking it applies every policy above.
 
 Skills: caveman, context-canary, fix-forward-collaboration, governance-audit, operator-correction-learning, plan-focus-recovery, sprint-closure, strategic-compact, verification-loop
 Commands: add-language-rules, database-migration, feature-development, ghi-list, pr-list, ralph-loop, security-triage, synthesize-governance
+
 <!-- AIHUB-GOVERNANCE-INSTRUCTIONS-END -->

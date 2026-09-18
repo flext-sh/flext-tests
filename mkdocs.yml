@@ -2,7 +2,7 @@
 site_name: flext-tests Documentation
 site_description: Generated documentation for flext-tests
 site_url: https://github.com/flext-sh/flext-tests/blob/main/README.md
-repo_name: flext-sh/flext
+repo_name: flext-sh/flext-tests
 repo_url: https://github.com/flext-sh/flext-tests
 edit_uri: edit/main/flext-tests/
 docs_dir: docs
@@ -37,7 +37,6 @@ theme:
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
-
 
 plugins:
   - search

@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-import warnings
 from importlib import import_module
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from flext_tests import c, m, p, t
+from flext_tests import m, p, t
 
 from .items import EnforcementItem
 
@@ -137,14 +136,7 @@ def _merge_tests_validator_result(
     repository_root: Path,
 ) -> None:
     """Execute one validator and merge matching violations into ``result``."""
-    try:
-        call_result = method(target)
-    except c.EXC_BROAD_RUNTIME as exc:
-        # Why: one of several dispatched validators; a validator that is not
-        # applicable to `target` is skipped, but the skip is now observable
-        # instead of a silent sentinel return.
-        warnings.warn(f"validator {method!r} failed for {target}: {exc}", stacklevel=2)
-        return
+    call_result = method(target)
     if getattr(call_result, "failure", False):
         return
     scan = getattr(call_result, "value", None)
@@ -164,10 +156,7 @@ def _violation_project(*, violation: p.AttributeProbe, repository_root: Path) ->
     file_path = getattr(violation, "file_path", None)
     if file_path is None:
         return "workspace"
-    try:
-        rel = Path(file_path).resolve().relative_to(repository_root)
-    except ValueError:
-        return "workspace"
+    rel = Path(file_path).resolve().relative_to(repository_root)
     return rel.parts[0] if rel.parts else "workspace"
 
 

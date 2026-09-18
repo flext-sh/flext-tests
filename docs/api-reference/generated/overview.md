@@ -1,7 +1,9 @@
 # flext-tests API Overview
 
 <!-- TOC START -->
+
 - [Next Pages](#next-pages)
+
 <!-- TOC END -->
 
 <!-- AUTO-GENERATED — DO NOT EDIT MANUALLY -->
@@ -13,7 +15,7 @@
 - Doc summary: Flext Tests package.
 - Classifiers: `Development Status :: 3 - Alpha`, `Framework :: Pydantic :: 2`,
   `Framework :: Pydantic`, `Framework :: Pytest`, `Intended Audience ::
-  Developers`, `Operating System :: OS Independent` (+4 more)
+Developers`, `Operating System :: OS Independent` (+4 more)
 - Project class: `test`
 - Keywords: `builders`, `factories`, `flext`, `test-infrastructure`, `testing`
 - Main facades: `FlextTestsCase`, `FlextTestsConfig`, `FlextTestsConstants`,
