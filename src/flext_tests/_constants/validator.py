@@ -10,6 +10,8 @@ from typing import TYPE_CHECKING, ClassVar, Final
 if TYPE_CHECKING:
     from flext_infra import t
 
+from flext_infra import c as infra_c
+
 
 class FlextTestsConstantsValidator:
     """Architecture validator rule, message, regex, and layer constants."""
@@ -239,9 +241,11 @@ class FlextTestsConstantsValidator:
     )
     VALIDATOR_MD_OPTION_DOCS: Final[str] = "--markdown-docs"
     VALIDATOR_MD_NOTEST_MARKER: Final[str] = "notest"
-    VALIDATOR_MD_PYTHON_BLOCK_RE: ClassVar[t.Infra.RegexPattern] = re.compile(
-        r"^```(?P<info>python\S*(?:\s+notest)?)\s*$\n(?P<code>.*?)^```\s*$",
-        re.MULTILINE | re.DOTALL,
+    # Canonical fence extractor (SSOT: c.Infra.MARKDOWN_PY_FENCE_RE). The
+    # markdown-code gate and this validator must extract the same blocks, so
+    # the pattern is owned once by flext-infra and consumed here by identity.
+    VALIDATOR_MD_PYTHON_BLOCK_RE: ClassVar[t.Infra.RegexPattern] = (
+        infra_c.Infra.MARKDOWN_PY_FENCE_RE
     )
     VALIDATOR_MD_OBJECT_ANNOTATION_RE: ClassVar[t.Infra.RegexPattern] = re.compile(
         r"(?::\s*object\b|->.*\bobject\b)"

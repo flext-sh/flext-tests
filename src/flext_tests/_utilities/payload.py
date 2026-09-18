@@ -91,13 +91,7 @@ class FlextTestsPayloadUtilities:
     @staticmethod
     def to_match_value(
         value: p.Tests.Payload,
-    ) -> (
-        t.Tests.PayloadAtom
-        | p.Model
-        | p.Tests.NativeSequence
-        | p.Tests.NativeMapping
-        | None
-    ):
+    ) -> t.Tests.NativeMatchValue:
         """Project a native tree into the established list/mapping match semantics."""
         project = FlextTestsPayloadUtilities.to_match_value
         if value.kind == "atom":

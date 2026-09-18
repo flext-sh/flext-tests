@@ -6,6 +6,9 @@ from pathlib import Path
 
 from flext_tests import FlextTestsFiles, tm
 
+# The generated parts facade resolves the ``m`` facet through this module.
+from flext_tests import m as m
+
 
 class FilesModelsMixin:
     """File model tests."""

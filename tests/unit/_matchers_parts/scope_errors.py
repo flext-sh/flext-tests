@@ -30,7 +30,7 @@ class MatchersScopeErrorsMixin:
     def test_scope_with_settings(self) -> None:
         """Test tm.scope() with settings parameter."""
         with tm.scope(settings={"debug": True}) as scope:
-            tm.that(scope.settings["debug"] is True, eq=True)
+            tm.that(scope.settings["debug"].atom is True, eq=True)
 
     def test_scope_with_container(self) -> None:
         """Test tm.scope() with container parameter."""

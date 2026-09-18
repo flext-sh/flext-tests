@@ -24,15 +24,15 @@ class FlextTestsMatchersThatMixin:
             """Matcher assertion helpers."""
 
             @staticmethod
-            def _that_params[KwargT](
-                kwargs: Mapping[str, KwargT],
+            def _that_params(
+                kwargs: Mapping[str, object],
             ) -> m.Tests.ThatParams:
                 """Parse all criteria once; invalid operands are never discarded."""
                 return m.Tests.ThatParams.model_validate(kwargs)
 
             @classmethod
-            def _validate_declared_types[SubjectT](
-                cls, value: SubjectT, params: m.Tests.ThatParams
+            def _validate_declared_types(
+                cls, value: object, params: m.Tests.ThatParams
             ) -> None:
                 """Validate ``is_`` and ``not_`` against the original value."""
                 value_type_name = type(value).__name__
@@ -58,8 +58,8 @@ class FlextTestsMatchersThatMixin:
                         )
 
             @staticmethod
-            def _validate_is_type[SubjectT](
-                value: SubjectT, params: m.Tests.ThatParams, value_type_name: str
+            def _validate_is_type(
+                value: object, params: m.Tests.ThatParams, value_type_name: str
             ) -> None:
                 """Validate ``is_`` including FLEXT wrapper/model shortcuts."""
                 is_types = (
@@ -397,7 +397,7 @@ class FlextTestsMatchersThatMixin:
             ) -> t.StrPair:
                 """Wrap user key to return comparable tuple."""
                 result = FlextTestsPayloadUtilities.to_match_value(user_key_fn(item))
-                return (str(type(result).__name__), str(result))
+                return (type(result).__name__, str(result))
 
             @staticmethod
             def _mapping_value(
@@ -474,8 +474,8 @@ class FlextTestsMatchersThatMixin:
                         )
 
             @classmethod
-            def _validate_attrs[SubjectT](
-                cls, subject: SubjectT, params: m.Tests.ThatParams
+            def _validate_attrs(
+                cls, subject: object, params: m.Tests.ThatParams
             ) -> None:
                 """Validate attrs/methods/attr_eq predicates."""
                 if params.attrs is not None:
@@ -512,8 +512,8 @@ class FlextTestsMatchersThatMixin:
                     cls._validate_attr_eq(subject, params)
 
             @staticmethod
-            def _validate_attr_eq[SubjectT](
-                subject: SubjectT, params: m.Tests.ThatParams
+            def _validate_attr_eq(
+                subject: object, params: m.Tests.ThatParams
             ) -> None:
                 """Inspect original subjects while comparing owned expectations."""
                 if params.attr_eq is None:
@@ -543,7 +543,7 @@ class FlextTestsMatchersThatMixin:
                 return value
 
             @classmethod
-            def that[ValueT, KwargT](cls, value: ValueT, **kwargs: KwargT) -> None:
+            def that(cls, value: object, **kwargs: object) -> None:
                 """Assert original subjects using validated owned criteria."""
                 params = cls._that_params(kwargs)
                 if "eq" in kwargs and kwargs["eq"] is None and params.none is None:
@@ -569,7 +569,7 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _validate_deep(
-                subject_payload: p.Tests.Payload, params: m.Tests.ThatParams
+                subject_payload: m.Tests.Payload, params: m.Tests.ThatParams
             ) -> None:
                 """Apply deep constraints to the canonical owned payload."""
                 if params.deep is None:
@@ -586,8 +586,8 @@ class FlextTestsMatchersThatMixin:
                     )
 
             @staticmethod
-            def _validate_rule_sets[SubjectT](
-                subject: SubjectT,
+            def _validate_rule_sets(
+                subject: object,
                 subject_payload: p.Tests.Payload,
                 params: m.Tests.ThatParams,
             ) -> None:
@@ -646,9 +646,9 @@ class FlextTestsMatchersThatMixin:
         }
 
     @classmethod
-    def _apply_rule[SubjectT](
+    def _apply_rule(
         cls,
-        subject: SubjectT,
+        subject: object,
         rule: m.Tests.MatchRule,
         *,
         inherited_msg: str | None = None,
@@ -744,9 +744,9 @@ class FlextTestsMatchersThatMixin:
             )
 
     @classmethod
-    def apply_attribute_rules[SubjectT](
+    def apply_attribute_rules(
         cls,
-        subject: SubjectT,
+        subject: object,
         rules: Mapping[str, m.Tests.MatchRule],
         *,
         inherited_msg: str | None = None,

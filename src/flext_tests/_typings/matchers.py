@@ -3,28 +3,12 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import TypeAliasType, cast
-
-import pytest
 
 from flext_core import t
 
 
 class FlextTestsMatchersTypesMixin:
     """Nonrecursive matcher scalar, selector, and callback shapes."""
-
-    def _match_expected_value() -> type | None:
-        from .._models.base import FlextTestsBaseModelsMixin
-
-        return cast(
-            "type | None",
-            FlextTestsBaseModelsMixin.Payload
-            | type(pytest.approx(1))
-            | TypeAliasType
-            | None,
-        )
-
-    type MatchExpectedValue = _match_expected_value()
 
     type LengthSpec = int | tuple[int, int]
     type ComparableScalar = float | int | str

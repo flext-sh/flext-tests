@@ -14,10 +14,10 @@ class FlextTestsMatchersContainmentMixin:
     """Shared has/lacks checks with preserved model and binary leaves."""
 
     @staticmethod
-    def check_has_lacks[ValueT, HasT, LacksT](
-        value: ValueT,
-        has: HasT | None,
-        lacks: LacksT | None,
+    def check_has_lacks(
+        value: object,
+        has: object | None,
+        lacks: object | None,
         msg: str | None,
         *,
         as_str: bool = False,

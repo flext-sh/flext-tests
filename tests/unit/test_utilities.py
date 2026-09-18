@@ -21,7 +21,7 @@ from tests import u
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from tests import p
+    from tests import p, t
 
 
 class TestsFlextTestsUtilities:
@@ -198,8 +198,10 @@ class TestsFlextTestsUtilities:
 
     def test_create_parametrized_cases_preserves_empty_error_codes(self) -> None:
         """An explicit empty error-code sequence leaves the failure code unset."""
-        cases = u.Tests.create_parametrized_cases(
-            success_values=(), failure_errors=("boom",), error_codes=()
+        cases: t.SequenceOf[tuple[p.Result[str], bool, str | None, str | None]] = (
+            u.Tests.create_parametrized_cases(
+                success_values=(), failure_errors=("boom",), error_codes=()
+            )
         )
 
         tm.that(len(cases), eq=1)

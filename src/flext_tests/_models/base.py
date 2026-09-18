@@ -38,7 +38,11 @@ class FlextTestsBaseModelsMixin:
         entries: Annotated[
             t.Tests.PayloadEntries[Self],
             m.Field(frozen=True, description="String-keyed payload children."),
-        ] = m.Field(default_factory=lambda: MappingProxyType({}))
+        ] = m.Field(
+            default_factory=lambda: MappingProxyType(
+                dict[str, FlextTestsBaseModelsMixin.Payload]()
+            )
+        )
 
         @u.field_validator("entries", mode="after")
         @classmethod
