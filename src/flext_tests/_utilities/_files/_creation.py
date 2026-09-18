@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from pathlib import Path
-from typing import overload, cast
+from typing import cast, overload
 
 from flext_tests import c, m, p, t, u
 
@@ -204,8 +204,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         # parameter union does not model those fallback arms. The callable
         # assertion records that shape-total contract for this projection.
         detect_format = cast(
-            "Callable[[object, str, str], str]",
-            u.Cli.files_detect_format_from_content,
+            "Callable[[object, str, str], str]", u.Cli.files_detect_format_from_content
         )
         actual_fmt = detect_format(native_content, params.name, params.fmt)
         target_dir = self._resolve_directory(params.directory)

@@ -89,9 +89,7 @@ class FlextTestsPayloadUtilities:
                 raise TypeError(msg)
 
     @staticmethod
-    def to_match_value(
-        value: p.Tests.Payload,
-    ) -> t.Tests.NativeMatchValue:
+    def to_match_value(value: p.Tests.Payload) -> t.Tests.NativeMatchValue:
         """Project a native tree into the established list/mapping match semantics."""
         project = FlextTestsPayloadUtilities.to_match_value
         if value.kind == "atom":

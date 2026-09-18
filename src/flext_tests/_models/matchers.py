@@ -19,10 +19,7 @@ type MatchExpectedValue = (
     FlextTestsBaseModelsMixin.Payload | ApproxBase | TypeAliasType | None
 )
 type DeepExpected = (
-    FlextTestsBaseModelsMixin.Payload
-    | Callable[[p.Tests.Payload], bool]
-    | str
-    | None
+    FlextTestsBaseModelsMixin.Payload | Callable[[p.Tests.Payload], bool] | str | None
 )
 
 
@@ -126,8 +123,7 @@ class FlextTestsMatchersModelsMixin:
             MatchExpectedValue, u.Field(description="Expected equality value.")
         ] = None
         ne: Annotated[
-            MatchExpectedValue,
-            u.Field(description="Expected inequality value."),
+            MatchExpectedValue, u.Field(description="Expected inequality value.")
         ] = None
         is_: Annotated[
             type | tuple[type, ...] | None,
@@ -189,9 +185,7 @@ class FlextTestsMatchersModelsMixin:
         ] = None
 
         @classmethod
-        def parse(
-            cls, value: object
-        ) -> FlextTestsMatchersModelsMixin.MatchRule:
+        def parse(cls, value: object) -> FlextTestsMatchersModelsMixin.MatchRule:
             """Parse one public matcher rule into its nominal representation."""
             if isinstance(value, cls):
                 return value
@@ -236,9 +230,7 @@ class FlextTestsMatchersModelsMixin:
             populate_by_name=True, arbitrary_types_allowed=True
         )
 
-        eq: Annotated[
-            MatchExpectedValue, u.Field(description="Expected value.")
-        ] = None
+        eq: Annotated[MatchExpectedValue, u.Field(description="Expected value.")] = None
         ne: Annotated[
             MatchExpectedValue, u.Field(description="Value must not equal.")
         ] = None
@@ -378,9 +370,7 @@ class FlextTestsMatchersModelsMixin:
 
         msg: Annotated[str | None, u.Field(description="Message.")] = None
         eq: Annotated[MatchExpectedValue, u.Field(description="Equals.")] = None
-        ne: Annotated[
-            MatchExpectedValue, u.Field(description="Not equals.")
-        ] = None
+        ne: Annotated[MatchExpectedValue, u.Field(description="Not equals.")] = None
         is_: Annotated[
             type | tuple[type, ...] | None,
             u.Field(validation_alias=t.AliasChoices("is_", "is"), description="Type."),
@@ -608,8 +598,7 @@ class FlextTestsMatchersModelsMixin:
 
         path: Annotated[str, u.Field(description="Path where matching occurred.")]
         expected: Annotated[
-            DeepExpected,
-            u.Field(description="Expected value or predicate."),
+            DeepExpected, u.Field(description="Expected value or predicate.")
         ]
         actual: Annotated[
             FlextTestsBaseModelsMixin.Payload | None,

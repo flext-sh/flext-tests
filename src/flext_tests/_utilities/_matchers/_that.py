@@ -24,9 +24,7 @@ class FlextTestsMatchersThatMixin:
             """Matcher assertion helpers."""
 
             @staticmethod
-            def _that_params(
-                kwargs: Mapping[str, object],
-            ) -> m.Tests.ThatParams:
+            def _that_params(kwargs: Mapping[str, object]) -> m.Tests.ThatParams:
                 """Parse all criteria once; invalid operands are never discarded."""
                 return m.Tests.ThatParams.model_validate(kwargs)
 
@@ -512,9 +510,7 @@ class FlextTestsMatchersThatMixin:
                     cls._validate_attr_eq(subject, params)
 
             @staticmethod
-            def _validate_attr_eq(
-                subject: object, params: m.Tests.ThatParams
-            ) -> None:
+            def _validate_attr_eq(subject: object, params: m.Tests.ThatParams) -> None:
                 """Inspect original subjects while comparing owned expectations."""
                 if params.attr_eq is None:
                     return

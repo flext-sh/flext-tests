@@ -82,7 +82,11 @@ class FlextTestsBaseTypesMixin:
     )
     type TestobjectNode = TestobjectAtom | t.JsonValue | None
     type TestobjectSerializable = (
-        TestobjectAtom | t.JsonValue | list[TestobjectNode] | Mapping[str, TestobjectNode] | None
+        TestobjectAtom
+        | t.JsonValue
+        | list[TestobjectNode]
+        | Mapping[str, TestobjectNode]
+        | None
     )
     type NativeMatchValue = _NativeMatchValue
     type DeepSpec = Mapping[
