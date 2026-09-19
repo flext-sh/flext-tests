@@ -16,18 +16,22 @@ from tests import u
 if TYPE_CHECKING:
     from pathlib import Path
 
-_HIGHER_LAYER_SOURCE = """from __future__ import annotations
+
+class TestsFlextTestsValidatorLayerTestsMarkdown:
+    """Verify the public contract of the layer/tests/markdown validators."""
+
+    _HIGHER_LAYER_SOURCE = """from __future__ import annotations
 
 from app.service import Service
 import app.handlers as handlers
 """
 
-_CLEAN_LAYER_SOURCE = """from __future__ import annotations
+    _CLEAN_LAYER_SOURCE = """from __future__ import annotations
 
 value: int = 1
 """
 
-_MOCK_HEAVY_TEST_SOURCE = """from __future__ import annotations
+    _MOCK_HEAVY_TEST_SOURCE = """from __future__ import annotations
 
 from unittest.mock import Mock, patch
 
@@ -40,14 +44,14 @@ def test_example(
     Mock()
 """
 
-_CLEAN_TEST_SOURCE = """from __future__ import annotations
+    _CLEAN_TEST_SOURCE = """from __future__ import annotations
 
 
 def test_example() -> None:
     assert True
 """
 
-_BAD_MARKDOWN = """# Example
+    _BAD_MARKDOWN = """# Example
 
 ```python
 def broken(
@@ -61,7 +65,7 @@ def render(value: object) -> Optional[str]:
 ```
 """
 
-_BAD_MARKDOWN_ANY = """# Example
+    _BAD_MARKDOWN_ANY = """# Example
 
 ```python
 from __future__ import annotations
@@ -74,7 +78,7 @@ def render(value: Any) -> str:
 ```
 """
 
-_NOTEST_MARKDOWN = """# Example
+    _NOTEST_MARKDOWN = """# Example
 
 ```python notest
 from typing import Optional
@@ -92,7 +96,7 @@ def render(value: object) -> Optional[str]:
 ```
 """
 
-_CLEAN_MARKDOWN = """# Example
+    _CLEAN_MARKDOWN = """# Example
 
 ```python
 from __future__ import annotations
@@ -101,9 +105,8 @@ value: int = 1
 ```
 """
 
-
-class TestsFlextTestsValidatorLayerTestsMarkdown:
-    """Verify the public contract of the layer/tests/markdown validators."""
+    class Tests:
+        """flext-tests validator layer tests markdown test namespace."""
 
     @staticmethod
     def _write(base_path: Path, name: str, source: str) -> Path:

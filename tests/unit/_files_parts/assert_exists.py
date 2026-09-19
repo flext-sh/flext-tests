@@ -12,8 +12,11 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-class FilesAssertExistsMixin:
+class TestsFlextTestsFilesAssertExists:
     """File assert_exists tests."""
+
+    class Tests:
+        """flext-tests files assert_exists test namespace."""
 
     def test_assert_exists_file_success(self, tmp_path: Path) -> None:
         """Test assert_exists() succeeds for existing file."""

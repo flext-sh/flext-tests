@@ -13,8 +13,11 @@ if TYPE_CHECKING:
     from tests import p
 
 
-class MatchersScopeErrorsMixin:
+class TestsFlextTestsMatchersScopeErrors:
     """Matcher scope and error tests."""
+
+    class Tests:
+        """flext-tests matchers scope_errors test namespace."""
 
     def test_check_returns_chain(self) -> None:
         """Test tm.check() returns Chain t.JsonValue."""

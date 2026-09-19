@@ -5,16 +5,17 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_tests import tf, tm
-from tests import c, m, u
+from tests import c, m, t, u
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from tests import t
 
-
-class FilesReadMixin:
+class TestsFlextTestsFilesRead:
     """File read tests."""
+
+    class Tests:
+        """flext-tests files read test namespace."""
 
     def test_read_text_file(self, tmp_path: Path) -> None:
         """Test read() returns text content for .txt files."""
@@ -35,7 +36,7 @@ class FilesReadMixin:
     def test_read_json_file(self, tmp_path: Path) -> None:
         """Test read() returns dict content for .json files."""
         manager = tf(base_dir=tmp_path)
-        content_root: dict[str, t.JsonPayload] = {"key": "value", "number": 42}
+        content_root: t.MappingKV[str, t.JsonValue] = {"key": "value", "number": 42}
         content: m.ConfigMap = m.ConfigMap(root=content_root)
         path = manager.create(content, "settings.json")
         result = manager.read(path)

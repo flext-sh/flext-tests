@@ -7,11 +7,14 @@ from typing import cast
 from flext_tests import tm
 from tests import p, r, t
 
-from .predicates import MatchersPredicates
+from .predicates import TestsFlextTestsMatchersPredicates
 
 
-class MatchersThatAttrsMixin:
+class TestsFlextTestsMatchersThatAttrs:
     """Matcher that attribute tests."""
+
+    class Tests:
+        """flext-tests matchers that_attrs test namespace."""
 
     def test_that_with_attrs_parameter(self) -> None:
         """Test tm.that() with attrs parameter."""
@@ -81,7 +84,7 @@ class MatchersThatAttrsMixin:
 
     def test_that_with_where_parameter(self) -> None:
         """Test tm.that() with where parameter."""
-        tm.that(42, where=MatchersPredicates.is_positive)
+        tm.that(42, where=TestsFlextTestsMatchersPredicates.is_positive)
 
     def test_that_with_all_alias_parameter(self) -> None:
         """Test tm.that() with all alias parameter (accepts both all_ and all)."""

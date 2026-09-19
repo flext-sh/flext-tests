@@ -7,11 +7,14 @@ import pytest
 from flext_tests import tm
 from tests import c
 
-from .predicates import MatchersPredicates
+from .predicates import TestsFlextTestsMatchersPredicates
 
 
-class MatchersThatCollectionsMixin:
+class TestsFlextTestsMatchersThatCollections:
     """Matcher that collection tests."""
+
+    class Tests:
+        """flext-tests matchers that_collections test namespace."""
 
     def test_that_with_eq_parameter(self) -> None:
         """Test tm.that() with eq parameter."""
@@ -117,7 +120,7 @@ class MatchersThatCollectionsMixin:
 
     def test_that_with_all_predicate_parameter(self) -> None:
         """Test tm.that() with all_ predicate parameter."""
-        tm.that([1, 2, 3], all_=MatchersPredicates.greater_than_zero)
+        tm.that([1, 2, 3], all_=TestsFlextTestsMatchersPredicates.greater_than_zero)
 
     def test_that_with_any_type_parameter(self) -> None:
         """Test tm.that() with any_ type parameter."""
@@ -125,7 +128,7 @@ class MatchersThatCollectionsMixin:
 
     def test_that_with_any_predicate_parameter(self) -> None:
         """Test tm.that() with any_ predicate parameter."""
-        tm.that([1, 2, 3], any_=MatchersPredicates.greater_than_two)
+        tm.that([1, 2, 3], any_=TestsFlextTestsMatchersPredicates.greater_than_two)
 
     def test_that_with_sorted_parameter(self) -> None:
         """Test tm.that() with sorted parameter."""

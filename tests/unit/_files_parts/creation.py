@@ -8,8 +8,11 @@ from flext_tests import FlextTestsFiles, tm
 from tests import m, t
 
 
-class FilesCreationMixin:
+class TestsFlextTestsFilesCreation:
     """File creation tests."""
+
+    class Tests:
+        """flext-tests files creation test namespace."""
 
     def test_create_text_file_default(self, tmp_path: Path) -> None:
         """Test creating text file with default parameters."""

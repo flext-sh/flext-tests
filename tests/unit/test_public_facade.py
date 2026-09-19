@@ -15,6 +15,9 @@ from flext_tests import tm
 
 
 class TestsFlextTestsPublicFacade:
+    class Tests:
+        """flext-tests public facade test namespace."""
+
     def test_models_and_utilities_import_together(self) -> None:
         from flext_tests import m, u
 

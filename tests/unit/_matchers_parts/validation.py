@@ -8,8 +8,11 @@ from flext_tests import tm
 from tests import c, p, r, t
 
 
-class MatchersValidationMixin:
+class TestsFlextTestsMatchersValidation:
     """Matcher validation tests."""
+
+    class Tests:
+        """flext-tests matchers validation test namespace."""
 
     def test_assert_valid_email_passes(self) -> None:
         """Test tm.that() with email pattern match."""
