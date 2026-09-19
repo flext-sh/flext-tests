@@ -8,8 +8,12 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated, ClassVar, TypeAliasType
 
-from _pytest.python_api import ApproxBase
 from flext_infra import m, u
+
+try:  # pytest>=9 exposes ApproxBase only through the private module path.
+    from _pytest.python_api import ApproxBase
+except ModuleNotFoundError:  # pragma: no cover - older pytest layouts.
+    from pytest.python_api import ApproxBase  # noqa: PT013 -- required shim: older pytest publishes ApproxBase only under the private module (justified per fleet suppression law).
 
 from flext_tests import p, t
 
