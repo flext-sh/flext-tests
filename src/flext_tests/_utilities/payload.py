@@ -13,7 +13,8 @@ from collections.abc import Mapping
 from datetime import datetime, tzinfo
 from enum import Enum
 from pathlib import Path
-from types import GenericAlias, TypeAliasType, UnionType
+from types import GenericAlias, UnionType
+from typing import TypeAliasType
 
 from flext_infra import u
 
