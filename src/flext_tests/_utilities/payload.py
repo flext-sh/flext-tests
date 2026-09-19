@@ -13,7 +13,7 @@ from collections.abc import Mapping
 from datetime import datetime, tzinfo
 from enum import Enum
 from pathlib import Path
-from types import GenericAlias, UnionType
+from types import GenericAlias, TypeAliasType, UnionType
 
 from flext_infra import u
 
@@ -56,7 +56,7 @@ class FlextTestsPayloadUtilities:
                 | m.BaseModel()
             ):
                 return m.Tests.Payload(kind="atom", atom=value)
-            case GenericAlias() | UnionType():
+            case GenericAlias() | UnionType() | TypeAliasType():
                 # Typing constructs are type-level atoms: the established
                 # textual convention (mirrors the type() leaf below) keeps
                 # alias-bearing expectations comparable as strings.
