@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+from flext_infra import u
+
 from flext_tests import FlextTestsUtilities
 
 
-class TestsFlextTestsUtilities(FlextTestsUtilities):
+class TestsFlextTestsUtilities(u, FlextTestsUtilities):
     """Utilities for flext-tests tests."""
 
     class Tests(FlextTestsUtilities.Tests):

@@ -8,7 +8,7 @@ from flext_tests import tf, tm
 from tests import c, u
 
 
-class FilesCompareMixin:
+class TestsFlextTestsFilesCompareMixin:
     """File comparison tests."""
 
     def test_compare_identical_content(self, tmp_path: Path) -> None:

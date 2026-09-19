@@ -42,7 +42,7 @@ class FlextTestsMatchersModelsMixin:
             check_fields=False,
         )
         @classmethod
-        def own_operand(cls, value: object) -> MatchExpectedValue:
+        def own_operand(cls, value: p.AttributeProbe) -> MatchExpectedValue:
             """Preserve explicit matcher operators and own native operands."""
             from .._utilities.payload import FlextTestsPayloadUtilities
 
@@ -60,7 +60,7 @@ class FlextTestsMatchersModelsMixin:
         )
         @classmethod
         def own_mapping(
-            cls, value: object
+            cls, value: p.AttributeProbe
         ) -> Mapping[str, FlextTestsBaseModelsMixin.Payload] | None:
             """Own mapping leaves without changing native model identity."""
             from .._utilities.payload import FlextTestsPayloadUtilities
@@ -76,7 +76,7 @@ class FlextTestsMatchersModelsMixin:
         @u.field_validator("values", mode="before", check_fields=False)
         @classmethod
         def own_values(
-            cls, value: object
+            cls, value: p.AttributeProbe
         ) -> tuple[FlextTestsBaseModelsMixin.Payload, ...] | None:
             """Own sequence value expectations."""
             from .._utilities.payload import FlextTestsPayloadUtilities
@@ -185,7 +185,7 @@ class FlextTestsMatchersModelsMixin:
         ] = None
 
         @classmethod
-        def parse(cls, value: object) -> FlextTestsMatchersModelsMixin.MatchRule:
+        def parse(cls, value: p.AttributeProbe) -> FlextTestsMatchersModelsMixin.MatchRule:
             """Parse one public matcher rule into its nominal representation."""
             if isinstance(value, cls):
                 return value
@@ -207,9 +207,9 @@ class FlextTestsMatchersModelsMixin:
 
         @classmethod
         def parse_rule_fields(
-            cls, value: object
+            cls, value: p.AttributeProbe
         ) -> (
-            object
+            p.AttributeProbe
             | Mapping[str, FlextTestsMatchersModelsMixin.MatchRule]
             | Sequence[FlextTestsMatchersModelsMixin.MatchRule]
             | None
@@ -311,9 +311,9 @@ class FlextTestsMatchersModelsMixin:
         @u.field_validator("paths", "items", "attrs_match", mode="before")
         @classmethod
         def parse_rules(
-            cls, value: object
+            cls, value: p.AttributeProbe
         ) -> (
-            object
+            p.AttributeProbe
             | Mapping[str, FlextTestsMatchersModelsMixin.MatchRule]
             | Sequence[FlextTestsMatchersModelsMixin.MatchRule]
             | None
@@ -497,9 +497,9 @@ class FlextTestsMatchersModelsMixin:
         @u.field_validator("paths", "items", "attrs_match", mode="before")
         @classmethod
         def parse_rules(
-            cls, value: object
+            cls, value: p.AttributeProbe
         ) -> (
-            object
+            p.AttributeProbe
             | Mapping[str, FlextTestsMatchersModelsMixin.MatchRule]
             | Sequence[FlextTestsMatchersModelsMixin.MatchRule]
             | None

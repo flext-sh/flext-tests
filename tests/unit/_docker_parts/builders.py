@@ -10,7 +10,7 @@ from flext_tests import FlextTestsDocker, m, tm
 from tests import c
 
 
-class DockerBuildersMixin:
+class TestsFlextTestsDockerBuildersMixin:
     """Docker builder tests."""
 
     def test_shared_containers_attribute(self) -> None:

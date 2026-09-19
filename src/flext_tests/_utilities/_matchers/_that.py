@@ -4,18 +4,19 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
 
-from flext_tests import c, m, p, r, t
+from flext_core import r
+from flext_tests import c, m, p, t
 
 from ..payload import FlextTestsPayloadUtilities
 from ._assertions import FlextTestsMatchersAssertionsMixin
 from ._containment import FlextTestsMatchersContainmentMixin
 from ._typeguards import FlextTestsMatchersTypeGuardsMixin
 
-_TUPLE_NAME_VALUE_PAIR_LEN: int = 2
-
 
 class FlextTestsMatchersThatMixin:
     """Fluent matcher assertions."""
+
+    _TUPLE_NAME_VALUE_PAIR_LEN: int = 2
 
     class Tests:
         """Test utility namespace."""
@@ -24,13 +25,15 @@ class FlextTestsMatchersThatMixin:
             """Matcher assertion helpers."""
 
             @staticmethod
-            def _that_params(kwargs: Mapping[str, object]) -> m.Tests.ThatParams:
+            def _that_params(
+                kwargs: Mapping[str, p.AttributeProbe],
+            ) -> m.Tests.ThatParams:
                 """Parse all criteria once; invalid operands are never discarded."""
                 return m.Tests.ThatParams.model_validate(kwargs)
 
             @classmethod
             def _validate_declared_types(
-                cls, value: object, params: m.Tests.ThatParams
+                cls, value: p.AttributeProbe, params: m.Tests.ThatParams
             ) -> None:
                 """Validate ``is_`` and ``not_`` against the original value."""
                 value_type_name = type(value).__name__
@@ -57,7 +60,7 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _validate_is_type(
-                value: object, params: m.Tests.ThatParams, value_type_name: str
+                value: p.AttributeProbe, params: m.Tests.ThatParams, value_type_name: str
             ) -> None:
                 """Validate ``is_`` including FLEXT wrapper/model shortcuts."""
                 is_types = (
@@ -473,7 +476,7 @@ class FlextTestsMatchersThatMixin:
 
             @classmethod
             def _validate_attrs(
-                cls, subject: object, params: m.Tests.ThatParams
+                cls, subject: p.AttributeProbe, params: m.Tests.ThatParams
             ) -> None:
                 """Validate attrs/methods/attr_eq predicates."""
                 if params.attrs is not None:
@@ -510,7 +513,7 @@ class FlextTestsMatchersThatMixin:
                     cls._validate_attr_eq(subject, params)
 
             @staticmethod
-            def _validate_attr_eq(subject: object, params: m.Tests.ThatParams) -> None:
+            def _validate_attr_eq(subject: p.AttributeProbe, params: m.Tests.ThatParams) -> None:
                 """Inspect original subjects while comparing owned expectations."""
                 if params.attr_eq is None:
                     return
@@ -539,7 +542,7 @@ class FlextTestsMatchersThatMixin:
                 return value
 
             @classmethod
-            def that(cls, value: object, **kwargs: object) -> None:
+            def that(cls, value: p.AttributeProbe, **kwargs: p.AttributeProbe) -> None:
                 """Assert original subjects using validated owned criteria."""
                 params = cls._that_params(kwargs)
                 if "eq" in kwargs and kwargs["eq"] is None and params.none is None:
@@ -583,7 +586,7 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _validate_rule_sets(
-                subject: object,
+                subject: p.AttributeProbe,
                 subject_payload: p.Tests.Payload,
                 params: m.Tests.ThatParams,
             ) -> None:
@@ -613,7 +616,10 @@ class FlextTestsMatchersThatMixin:
         """Read a mapping or one name/value pair from its owned shape."""
         if value.kind == "mapping":
             return tuple(value.entries.items())
-        if value.kind == "tuple" and len(value.items) == _TUPLE_NAME_VALUE_PAIR_LEN:
+        if (
+            value.kind == "tuple"
+            and len(value.items) == FlextTestsMatchersThatMixin._TUPLE_NAME_VALUE_PAIR_LEN
+        ):
             key, expected = value.items
             if key.kind == "atom" and isinstance(key.atom, str):
                 return ((key.atom, expected),)
@@ -644,7 +650,7 @@ class FlextTestsMatchersThatMixin:
     @classmethod
     def _apply_rule(
         cls,
-        subject: object,
+        subject: p.AttributeProbe,
         rule: m.Tests.MatchRule,
         *,
         inherited_msg: str | None = None,
@@ -742,7 +748,7 @@ class FlextTestsMatchersThatMixin:
     @classmethod
     def apply_attribute_rules(
         cls,
-        subject: object,
+        subject: p.AttributeProbe,
         rules: Mapping[str, m.Tests.MatchRule],
         *,
         inherited_msg: str | None = None,

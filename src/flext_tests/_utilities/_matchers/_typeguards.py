@@ -18,7 +18,7 @@ class FlextTestsMatchersTypeGuardsMixin:
 
     @staticmethod
     def matches_runtime_type(
-        value: object, expected_type: type | tuple[type, ...]
+        value: p.AttributeProbe, expected_type: type | tuple[type, ...]
     ) -> bool:
         """Check the original subject rather than its payload envelope."""
         return isinstance(value, expected_type)

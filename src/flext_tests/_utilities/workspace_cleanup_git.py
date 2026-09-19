@@ -6,7 +6,8 @@ from pathlib import Path
 
 from flext_infra import c, u
 
-from flext_tests import p, r
+from flext_core import r
+from flext_tests import p
 
 
 class FlextTestsWorkspaceCleanupGitUtilitiesMixin:

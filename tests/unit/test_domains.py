@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import FlextTestsDomains, tm
+from flext_tests import FlextTestsDomains, t, tm
 
 
 class TestsFlextTestsDomains:
@@ -34,7 +34,7 @@ class TestsFlextTestsDomains:
             <root>/oid/oid_entries_fixtures.ldif
             <root>/oud/oud_schema_fixtures.ldif
         """
-        payloads: dict[tuple[str, str], str] = {
+        payloads: t.MappingKV[tuple[str, str], str] = {
             ("oid", "schema"): "dn: cn=schema,dc=oid\n",
             ("oid", "entries"): "dn: cn=alice,dc=oid\n",
             ("oud", "schema"): "dn: cn=schema,dc=oud\n",
@@ -51,7 +51,7 @@ class TestsFlextTestsDomains:
 
     def test_create_result_ok_yields_success_carrying_value(self) -> None:
         """A generic OK result reports success and unwraps to the input value."""
-        payload: dict[str, str] = {"foo": "bar"}
+        payload: t.MappingKV[str, str] = {"foo": "bar"}
 
         result = FlextTestsDomains.create_result_ok(payload)
 

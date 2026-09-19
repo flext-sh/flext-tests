@@ -24,7 +24,7 @@ class _PluginType(enum.StrEnum):
     EXTRACTORS = "extractors"
 
 
-class MatchersRejectsAssignmentMixin:
+class TestsFlextTestsMatchersRejectsAssignmentMixin:
     """Cover ``tm.rejects_assignment`` against real frozen and enum surfaces."""
 
     def test_rejects_assignment_on_frozen_model(self) -> None:

@@ -8,7 +8,7 @@ from flext_tests import tf, tm
 from tests import m, u
 
 
-class FilesContentMetaMixin:
+class TestsFlextTestsFilesContentMetaMixin:
     """File content metadata tests."""
 
     def test_info_parse_content_json_dict(self, tmp_path: Path) -> None:

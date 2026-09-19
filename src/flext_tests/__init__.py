@@ -29,9 +29,9 @@ if TYPE_CHECKING:
     from .docker import FlextTestsDocker, tk
     from .domains import FlextTestsDomains, td
     from .enforcement import (
-        EnforcementCollector,
-        EnforcementItem,
-        EnforcementViolationError,
+        FlextTestsEnforcementCollector,
+        FlextTestsEnforcementItem,
+        FlextTestsEnforcementViolationError,
         active_rules,
         discover_repository_root,
         load_infra_report,
@@ -53,9 +53,9 @@ if TYPE_CHECKING:
     from .validator import FlextTestsValidator, tv
 __all__: tuple[str, ...] = (
     "SLOW_TIMEOUT_INI_OPTION",
-    "EnforcementCollector",
-    "EnforcementItem",
-    "EnforcementViolationError",
+    "FlextTestsEnforcementCollector",
+    "FlextTestsEnforcementItem",
+    "FlextTestsEnforcementViolationError",
     "FlextTestsCase",
     "FlextTestsConfig",
     "FlextTestsConstants",
@@ -116,9 +116,9 @@ _LAZY_IMPORTS = MappingProxyType(
             ".docker": ("FlextTestsDocker", "tk"),
             ".domains": ("FlextTestsDomains", "td"),
             ".enforcement": (
-                "EnforcementCollector",
-                "EnforcementItem",
-                "EnforcementViolationError",
+                "FlextTestsEnforcementCollector",
+                "FlextTestsEnforcementItem",
+                "FlextTestsEnforcementViolationError",
                 "active_rules",
                 "discover_repository_root",
                 "load_infra_report",

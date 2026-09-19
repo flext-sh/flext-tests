@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from flext_tests import m
 
 
-class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
+class FlextTestsValidatorTypes(u.Tests.ValidatorScannerMixin):
     """Type validation checks for FlextTestsValidator."""
 
     _VALIDATOR_KEY = c.Tests.VALIDATOR_TYPES_KEY
@@ -150,4 +150,4 @@ class FlextValidatorTypes(u.Tests.ValidatorScannerMixin):
         return violations
 
 
-__all__: list[str] = ["FlextValidatorTypes"]
+__all__: list[str] = ["FlextTestsValidatorTypes"]

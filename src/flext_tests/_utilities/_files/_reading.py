@@ -10,7 +10,8 @@ from typing import overload
 
 from flext_cli import u
 
-from flext_tests import c, m, p, r, t
+from flext_core import r
+from flext_tests import c, m, p, t
 
 from ..payload import FlextTestsPayloadUtilities
 from ._creation import FlextTestsFilesCreationMixin

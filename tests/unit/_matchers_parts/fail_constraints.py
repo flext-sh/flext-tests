@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from tests import p
 
 
-class MatchersFailConstraintsMixin:
+class TestsFlextTestsMatchersFailConstraintsMixin:
     """Matcher fail constraint tests."""
 
     def test_fail_with_has_parameter(self) -> None:

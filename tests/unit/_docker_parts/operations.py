@@ -8,7 +8,7 @@ from flext_tests import FlextTestsDocker, tm
 from tests import c, u
 
 
-class DockerOperationsMixin:
+class TestsFlextTestsDockerOperationsMixin:
     """Docker operation tests."""
 
     def test_compose_up_returns_flext_result(

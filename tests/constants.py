@@ -13,10 +13,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from flext_infra import c
+
 from flext_tests import FlextTestsConstants
 
 
-class TestsFlextTestsConstants(FlextTestsConstants):
+class TestsFlextTestsConstants(c, FlextTestsConstants):
     """Test constants for flext-tests - extends FlextTestsConstants.
 
     Architecture: Extends FlextTestsConstants with flext-tests-specific constants.

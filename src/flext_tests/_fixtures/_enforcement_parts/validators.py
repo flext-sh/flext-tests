@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 from flext_tests import m, p, t
 
-from .items import EnforcementItem
+from .items import FlextTestsEnforcementItem
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
@@ -36,12 +36,12 @@ def _iter_infra_violations(
 
 def dispatch_infra_detector(
     rule: m.EnforcementRuleSpec, report: p.AttributeProbe
-) -> dict[str, list[p.AttributeProbe]]:
+) -> t.MappingKV[str, list[p.AttributeProbe]]:
     """Group namespace-detector violations by owning project."""
     source = rule.source
     field = getattr(source, "violation_field", "")
     match_missing = bool(getattr(source, "match_missing", False))
-    grouped: dict[str, list[p.AttributeProbe]] = {}
+    grouped: t.MutableMappingKV[str, list[p.AttributeProbe]] = {}
     for project, entry in _iter_infra_violations(
         report, field, match_missing=match_missing
     ):
@@ -53,7 +53,7 @@ def build_tests_validator_items(
     collector: pytest.Collector,
     rule: m.EnforcementRuleSpec,
     context: m.Tests.EnforcementBuildContext,
-) -> list[EnforcementItem]:
+) -> list[FlextTestsEnforcementItem]:
     """Build enforcement items from flext-tests validator methods."""
     repository_root = context.repository_root
     targets = context.validator_targets
@@ -66,15 +66,15 @@ def build_tests_validator_items(
 def _items_from_grouped(
     collector: pytest.Collector,
     rule: m.EnforcementRuleSpec,
-    grouped: dict[str, list[p.AttributeProbe]],
-) -> list[EnforcementItem]:
+    grouped: t.MutableMappingKV[str, list[p.AttributeProbe]],
+) -> list[FlextTestsEnforcementItem]:
     """Convert grouped violations into enforcement items."""
-    items: list[EnforcementItem] = []
+    items: list[FlextTestsEnforcementItem] = []
     for project, violations in grouped.items():
         if not violations:
             continue
         items.append(
-            EnforcementItem.from_parent(
+            FlextTestsEnforcementItem.from_parent(
                 collector,
                 name=f"{rule.id}[{project}]",
                 rule=rule,
@@ -87,8 +87,8 @@ def _items_from_grouped(
 
 def _collect_tests_validator_violations(
     rule: m.EnforcementRuleSpec, repository_root: Path, targets: t.SequenceOf[Path]
-) -> dict[str, list[p.AttributeProbe]]:
-    result: dict[str, list[p.AttributeProbe]] = {}
+) -> t.MappingKV[str, list[p.AttributeProbe]]:
+    result: t.MutableMappingKV[str, list[p.AttributeProbe]] = {}
     try:
         validator_mod = import_module("flext_tests.validator")
     except ImportError:
@@ -130,7 +130,7 @@ def _validator_dispatch_target(*, method_name: str, target: Path) -> Path | None
 def _merge_tests_validator_result(
     *,
     method: Callable[[Path], p.AttributeProbe],
-    result: dict[str, list[p.AttributeProbe]],
+    result: t.MutableMappingKV[str, list[p.AttributeProbe]],
     rule_ids: frozenset[str],
     target: Path,
     repository_root: Path,

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from flext_tests import c
+from flext_tests import c, p
 
 from ..payload import FlextTestsPayloadUtilities
 from ._assertions import FlextTestsMatchersAssertionsMixin
@@ -15,9 +15,9 @@ class FlextTestsMatchersContainmentMixin:
 
     @staticmethod
     def check_has_lacks(
-        value: object,
-        has: object | None,
-        lacks: object | None,
+        value: p.AttributeProbe,
+        has: p.AttributeProbe | None,
+        lacks: p.AttributeProbe | None,
         msg: str | None,
         *,
         as_str: bool = False,

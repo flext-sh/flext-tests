@@ -37,5 +37,4 @@ class FlextTestsMatchersUtilities:
             """Test matchers with powerful generalist methods."""
 
 
-tm = FlextTestsMatchersUtilities.Tests.Matchers
-__all__: list[str] = ["FlextTestsMatchersUtilities", "tm"]
+__all__: list[str] = ["FlextTestsMatchersUtilities"]

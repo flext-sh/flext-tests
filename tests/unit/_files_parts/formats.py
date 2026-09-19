@@ -8,7 +8,7 @@ from flext_tests import tf, tm
 from tests import c, m, t, u
 
 
-class FilesFormatsMixin:
+class TestsFlextTestsFilesFormatsMixin:
     """File format creation tests."""
 
     def test_create_text_auto_detect(self, tmp_path: Path) -> None:

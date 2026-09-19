@@ -8,7 +8,7 @@ from flext_tests import FlextTestsFiles, tm
 from tests import m, t, u
 
 
-class FilesInfoCleanupMixin:
+class TestsFlextTestsFilesInfoCleanupMixin:
     """File info and cleanup tests."""
 
     def test_get_file_info_not_exists(self, tmp_path: Path) -> None:

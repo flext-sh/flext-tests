@@ -6,6 +6,7 @@ import math
 
 import pytest
 
+from flext_tests import t
 from flext_tests.enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
 
 from .build import build_items
@@ -109,7 +110,7 @@ def pytest_terminal_summary(
     if not cfg.active:
         return
     active = active_rules(cfg)
-    kinds: dict[str, int] = {}
+    kinds: t.MutableMappingKV[str, int] = {}
     for rule in active:
         kinds[rule.source.kind] = kinds.get(rule.source.kind, 0) + 1
     terminalreporter.write_sep("-", "flext-enforce", yellow=True)

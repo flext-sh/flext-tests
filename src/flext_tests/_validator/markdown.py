@@ -8,7 +8,7 @@ from pathlib import Path
 from flext_tests import c, m, p, t, u
 
 
-class FlextValidatorMarkdown:
+class FlextTestsValidatorMarkdown:
     """Validate Python code blocks inside markdown docs."""
 
     @classmethod
@@ -216,4 +216,4 @@ class FlextValidatorMarkdown:
         return md_files
 
 
-__all__: list[str] = ["FlextValidatorMarkdown"]
+__all__: list[str] = ["FlextTestsValidatorMarkdown"]

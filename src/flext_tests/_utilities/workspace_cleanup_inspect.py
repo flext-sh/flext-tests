@@ -7,7 +7,8 @@ from pathlib import Path
 
 from flext_cli import u
 
-from flext_tests import c, p, r
+from flext_core import r
+from flext_tests import c, p
 
 from .workspace_cleanup_paths import FlextTestsWorkspaceCleanupPathsUtilitiesMixin
 

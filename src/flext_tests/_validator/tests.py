@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from flext_tests import m
 
 
-class FlextValidatorTests(u.Tests.ValidatorScannerMixin):
+class FlextTestsValidatorTests(u.Tests.ValidatorScannerMixin):
     """Test validation methods for FlextTestsValidator.
 
     Uses c.Tests.Validator and u.Tests.ValidatorScannerMixin.
@@ -174,4 +174,4 @@ class FlextValidatorTests(u.Tests.ValidatorScannerMixin):
         )
 
 
-__all__: list[str] = ["FlextValidatorTests"]
+__all__: list[str] = ["FlextTestsValidatorTests"]

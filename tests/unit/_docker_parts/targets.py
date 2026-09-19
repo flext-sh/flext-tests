@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-class DockerTargetsMixin:
+class TestsFlextTestsDockerTargetsMixin:
     """Docker target failure tests."""
 
     def test_execute_requires_target_config(
