@@ -120,7 +120,7 @@ value: int = 1
     # ---- layer validator -------------------------------------------------
 
     def test_layer_flags_every_import_from_a_higher_layer(self, tmp_path: Path) -> None:
-        file_path = self._write(tmp_path, "utilities.py", _HIGHER_LAYER_SOURCE)
+        file_path = self._write(tmp_path, "utilities.py", self._HIGHER_LAYER_SOURCE)
 
         result: m.Tests.ScanResult = u.Tests.assert_success(
             tv.layer(
@@ -140,7 +140,7 @@ value: int = 1
     def test_layer_passes_when_no_higher_layer_imports_exist(
         self, tmp_path: Path
     ) -> None:
-        file_path = self._write(tmp_path, "utilities.py", _CLEAN_LAYER_SOURCE)
+        file_path = self._write(tmp_path, "utilities.py", self._CLEAN_LAYER_SOURCE)
 
         result: m.Tests.ScanResult = u.Tests.assert_success(
             tv.layer(file_path, layer_hierarchy={"utilities": 5})
