@@ -19,8 +19,14 @@ if TYPE_CHECKING:
     from .validator import FlextTestsValidatorModelsMixin
     from .workspace_cleanup import FlextTestsWorkspaceCleanupModelsMixin
 __all__: tuple[str, ...] = (
-    "FlextTestsBaseModelsMixin", "FlextTestsBatchModelsMixin", "FlextTestsDockerModelsMixin", "FlextTestsDomainModelsMixin",
-    "FlextTestsFilesystemModelsMixin", "FlextTestsMakeModelsMixin", "FlextTestsMatchersModelsMixin", "FlextTestsValidatorModelsMixin",
+    "FlextTestsBaseModelsMixin",
+    "FlextTestsBatchModelsMixin",
+    "FlextTestsDockerModelsMixin",
+    "FlextTestsDomainModelsMixin",
+    "FlextTestsFilesystemModelsMixin",
+    "FlextTestsMakeModelsMixin",
+    "FlextTestsMatchersModelsMixin",
+    "FlextTestsValidatorModelsMixin",
     "FlextTestsWorkspaceCleanupModelsMixin",
 )
 
