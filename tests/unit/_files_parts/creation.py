@@ -11,7 +11,6 @@ from tests import m, t
 class TestsFlextTestsFilesCreation:
     """File creation tests."""
 
-
     def test_create_text_file_default(self, tmp_path: Path) -> None:
         """Test creating text file with default parameters."""
         manager = FlextTestsFiles(base_dir=tmp_path)

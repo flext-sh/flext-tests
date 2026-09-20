@@ -15,7 +15,6 @@ if TYPE_CHECKING:
 class TestsFlextTestsFilesAssertExists:
     """File assert_exists tests."""
 
-
     def test_assert_exists_file_success(self, tmp_path: Path) -> None:
         """Test assert_exists() succeeds for existing file."""
         path = tmp_path / "test.txt"

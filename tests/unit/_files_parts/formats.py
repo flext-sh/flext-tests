@@ -11,7 +11,6 @@ from tests import c, m, t, u
 class TestsFlextTestsFilesFormats:
     """File format creation tests."""
 
-
     def test_create_text_auto_detect(self, tmp_path: Path) -> None:
         """Test create() auto-detects text from str content."""
         manager = tf(base_dir=tmp_path)

@@ -11,7 +11,6 @@ from tests import m, u
 class TestsFlextTestsFilesInfoMetadata:
     """File metadata tests."""
 
-
     def test_info_existing_file(self, tmp_path: Path) -> None:
         """Test info() returns FlextTestsFiles.FileInfo for existing file."""
         manager = FlextTestsFiles(base_dir=tmp_path)

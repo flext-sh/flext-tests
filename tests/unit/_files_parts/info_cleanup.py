@@ -11,7 +11,6 @@ from tests import m, t, u
 class TestsFlextTestsFilesInfoCleanup:
     """File info and cleanup tests."""
 
-
     def test_get_file_info_not_exists(self, tmp_path: Path) -> None:
         """Test getting file info for non-existent file."""
         manager = FlextTestsFiles()

@@ -11,7 +11,6 @@ from tests import c, u
 class TestsFlextTestsDockerOperations:
     """Docker operation tests."""
 
-
     def test_compose_up_returns_flext_result(
         self, docker_manager: FlextTestsDocker
     ) -> None:

@@ -102,7 +102,7 @@ class TestsFlextTestsPayload:
     def test_arm_cannot_change_after_validation(self) -> None:
         payload = m.Tests.Payload(kind="atom", atom=1)
         with pytest.raises(c.ValidationError, match="frozen"):
-            setattr(payload, "kind", "mapping")
+            payload.kind = "mapping"
         tm.that(payload.kind, eq="atom")
         tm.that(payload.atom, eq=1)
 

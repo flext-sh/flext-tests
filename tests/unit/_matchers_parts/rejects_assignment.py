@@ -27,7 +27,6 @@ class _PluginType(enum.StrEnum):
 class TestsFlextTestsMatchersRejectsAssignment:
     """Cover ``tm.rejects_assignment`` against real frozen and enum surfaces."""
 
-
     def test_rejects_assignment_on_frozen_model(self) -> None:
         """A frozen pydantic model rejects field assignment."""
         tm.rejects_assignment(

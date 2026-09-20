@@ -13,7 +13,6 @@ from .predicates import TestsFlextTestsMatchersPredicates
 class TestsFlextTestsMatchersOkConstraints:
     """Matcher ok constraint tests."""
 
-
     def test_ok_with_is_parameter(self) -> None:
         """Test tm.ok() with is_ parameter."""
         result = r[str].ok("test")

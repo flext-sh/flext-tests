@@ -13,7 +13,6 @@ from tests import c
 class TestsFlextTestsDockerBuilders:
     """Docker builder tests."""
 
-
     def test_shared_containers_attribute(self) -> None:
         """Test canonical shared containers constant."""
         tm.that(c.Tests.SHARED_CONTAINERS, none=False)

@@ -16,7 +16,6 @@ if TYPE_CHECKING:
 class TestsFlextTestsMatchersScopeErrors:
     """Matcher scope and error tests."""
 
-
     def test_check_returns_chain(self) -> None:
         """Test tm.check() returns Chain t.JsonValue."""
         result = r[int].ok(42)

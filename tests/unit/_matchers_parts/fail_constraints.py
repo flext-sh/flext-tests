@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 class TestsFlextTestsMatchersFailConstraints:
     """Matcher fail constraint tests."""
 
-
     def test_fail_with_has_parameter(self) -> None:
         """Test tm.fail() with has parameter."""
         result: p.Result[str] = r[str].fail("Database connection failed")

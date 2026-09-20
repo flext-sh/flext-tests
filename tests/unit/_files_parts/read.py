@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 class TestsFlextTestsFilesRead:
     """File read tests."""
 
-
     def test_read_text_file(self, tmp_path: Path) -> None:
         """Test read() returns text content for .txt files."""
         manager = tf(base_dir=tmp_path)
