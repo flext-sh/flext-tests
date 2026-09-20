@@ -13,22 +13,10 @@ if TYPE_CHECKING:
 
     from .models import m
 __all__: tuple[str, ...] = (
-    "c",
-    "d",
-    "e",
-    "h",
-    "m",
-    "p",
-    "r",
-    "s",
-    "t",
-    "td",
-    "tf",
-    "tk",
-    "tm",
-    "tv",
-    "u",
-    "x",
+    "c", "d", "e", "h",
+    "m", "p", "r", "s",
+    "t", "td", "tf", "tk",
+    "tm", "tv", "u", "x",
 )
 
 _LAZY_IMPORTS = MappingProxyType(
@@ -36,21 +24,8 @@ _LAZY_IMPORTS = MappingProxyType(
         MappingProxyType({
             ".models": ("m",),
             "flext_tests": (
-                "c",
-                "d",
-                "e",
-                "h",
-                "p",
-                "r",
-                "s",
-                "t",
-                "td",
-                "tf",
-                "tk",
-                "tm",
-                "tv",
-                "u",
-                "x",
+                "c", "d", "e", "h", "p", "r", "s", "t", "td", "tf", "tk", "tm", "tv",
+                "u", "x",
             ),
         }),
         alias_groups=MappingProxyType({}),

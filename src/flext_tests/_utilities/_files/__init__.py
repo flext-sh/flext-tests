@@ -19,14 +19,8 @@ if TYPE_CHECKING:
     from ._lifecycle import FlextTestsFilesLifecycleMixin
     from ._reading import FlextTestsFilesReadingMixin
 __all__: tuple[str, ...] = (
-    "FlextTestsFilesAssertionsMixin",
-    "FlextTestsFilesBatchMixin",
-    "FlextTestsFilesComparisonMixin",
-    "FlextTestsFilesContextsMixin",
-    "FlextTestsFilesCreationMixin",
-    "FlextTestsFilesInfoMixin",
-    "FlextTestsFilesLifecycleMixin",
-    "FlextTestsFilesReadingMixin",
+    "FlextTestsFilesAssertionsMixin", "FlextTestsFilesBatchMixin", "FlextTestsFilesComparisonMixin", "FlextTestsFilesContextsMixin",
+    "FlextTestsFilesCreationMixin", "FlextTestsFilesInfoMixin", "FlextTestsFilesLifecycleMixin", "FlextTestsFilesReadingMixin",
     "_comparison_parts",
 )
 
