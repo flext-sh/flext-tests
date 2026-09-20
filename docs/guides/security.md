@@ -1,5 +1,5 @@
 <!-- AUTO-GENERATED FILE — regenerate through `make gen` from the workspace root. -->
-<!-- Source of truth: `docs/guides/security.md`; adjust that source, never this projection. -->
+<!-- Source of truth: `<workspace-root>/docs/guides/security.md`; adjust that workspace source, never this member projection. -->
 
 # flext-tests - Security Guide
 
@@ -17,12 +17,12 @@ ADRs.
 Primary references:
 
 - `docs/architecture/adr/README.md`
-- `.agents/skills/scripts-security/SKILL.md`
-- `flext-core/docs/architecture/clean-architecture.md`
+- `docs/architecture/baseline-v0.13.0.md`
+- `docs/reports/dependabot-alerts-2026-06-24.md`
 
 ## Dependabot vulnerability governance
 
-- O inventário oficial de alertas de segurança está em:
+- The official security alert inventory is at:
   - `docs/reports/dependabot-alerts-2026-06-24.md`
 - O plano atual cobre três frentes:
   - inventariar alertas por gravidade e pacote,

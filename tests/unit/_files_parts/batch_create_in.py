@@ -11,9 +11,6 @@ from tests import c, m, r, t, u
 class TestsFlextTestsFilesBatchCreateIn:
     """File batch and create_in tests."""
 
-    class Tests:
-        """flext-tests files batch create_in test namespace."""
-
     def test_batch_create_multiple_files(self, tmp_path: Path) -> None:
         """Test batch create for multiple files."""
         manager = FlextTestsFiles(base_dir=tmp_path)

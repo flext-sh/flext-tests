@@ -14,9 +14,6 @@ from tests import c, t
 class TestsFlextTestsMatchersDataDriven:
     """Matcher data driven tests."""
 
-    class Tests:
-        """flext-tests matchers data_driven test namespace."""
-
     def test_that_with_paths_data_driven_rules(self) -> None:
         """Validate multiple dotted paths with a single declarative matcher call."""
         payload: t.JsonMapping = {

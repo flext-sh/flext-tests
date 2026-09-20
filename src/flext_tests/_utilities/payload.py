@@ -53,7 +53,6 @@ class FlextTestsPayloadUtilities:
                 | tzinfo()
                 | Path()
                 | type()
-                | BaseException()
                 | m.BaseModel()
             ):
                 return m.Tests.Payload(kind="atom", atom=value)

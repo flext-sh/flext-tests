@@ -13,9 +13,6 @@ from .predicates import TestsFlextTestsMatchersPredicates
 class TestsFlextTestsMatchersThatCollections:
     """Matcher that collection tests."""
 
-    class Tests:
-        """flext-tests matchers that_collections test namespace."""
-
     def test_that_with_eq_parameter(self) -> None:
         """Test tm.that() with eq parameter."""
         tm.that(42, eq=42)

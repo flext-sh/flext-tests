@@ -1,5 +1,5 @@
 <!-- AUTO-GENERATED FILE — regenerate through `make gen` from the workspace root. -->
-<!-- Source of truth: `docs/guides/make-commands.md`; adjust that source, never this projection. -->
+<!-- Source of truth: `<workspace-root>/docs/guides/make-commands.md`; adjust that workspace source, never this member projection. -->
 
 # flext-tests - FLEXT Make Commands
 
@@ -34,6 +34,7 @@ verb is missing or broken, repair the root dispatcher owner and rerun that verb.
 Use the standard verbs directly from the workspace root:
 
 ```bash
+make setup
 make gen
 make mod
 make gen
@@ -42,7 +43,7 @@ make fix
 make fmt
 make check
 make test
-make gen
+make build
 ```
 
 The final generation pass proves the fixed point. Each verb executes its declared

@@ -11,9 +11,6 @@ from tests import c, m, u
 class TestsFlextTestsDockerState:
     """Docker state and model tests."""
 
-    class Tests:
-        """flext-tests docker state test namespace."""
-
     @pytest.mark.parametrize(
         ("member", "expected_value"),
         [
