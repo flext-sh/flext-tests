@@ -42,13 +42,13 @@ if TYPE_CHECKING:
     from .kube import FlextTestsKube
     from .models import FlextTestsModels, FlextTestsModels as m
     from .protocols import FlextTestsProtocols, FlextTestsProtocols as p
+    from .pytest_bootstrap import install_local_packages
     from .tmatchers import FlextTestsMatchersUtilities, tm
     from .typings import FlextTestsTypes, FlextTestsTypes as t
     from .utilities import (
         FlextTestsFixturesDSLMixin,
         FlextTestsUtilities,
         FlextTestsUtilities as u,
-        ModuleGovernanceMixin,
     )
     from .validator import FlextTestsValidator, tv
 __all__: tuple[str, ...] = (
@@ -72,7 +72,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsTypes",
     "FlextTestsUtilities",
     "FlextTestsValidator",
-    "ModuleGovernanceMixin",
     "__author__",
     "__author_email__",
     "__description__",
@@ -89,6 +88,7 @@ __all__: tuple[str, ...] = (
     "e",
     "h",
     "infra_c",
+    "install_local_packages",
     "load_infra_report",
     "m",
     "p",
@@ -129,14 +129,10 @@ _LAZY_IMPORTS = MappingProxyType(
             ".kube": ("FlextTestsKube",),
             ".models": ("FlextTestsModels", "m"),
             ".protocols": ("FlextTestsProtocols", "p"),
+            ".pytest_bootstrap": ("install_local_packages",),
             ".tmatchers": ("FlextTestsMatchersUtilities", "tm"),
             ".typings": ("FlextTestsTypes", "t"),
-            ".utilities": (
-                "FlextTestsFixturesDSLMixin",
-                "FlextTestsUtilities",
-                "ModuleGovernanceMixin",
-                "u",
-            ),
+            ".utilities": ("FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"),
             ".validator": ("FlextTestsValidator", "tv"),
             "flext_infra": ("d", "e", "h", "r", "x"),
         }),

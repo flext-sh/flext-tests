@@ -8,14 +8,19 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated, ClassVar, TypeAliasType
 
-import pytest
+from _pytest.python_api import ApproxBase  # ruff: ignore[import-private-name] -- ApproxBase has no public pytest path in the supported versions; justified per fleet suppression law.
 from flext_infra import m, u
 
 from flext_tests import p, t
 
 from .base import FlextTestsBaseModelsMixin
 
-_PYTEST_APPROX_TYPE: type = type(pytest.approx(1))
+type MatchExpectedValue = (
+    FlextTestsBaseModelsMixin.Payload | ApproxBase | TypeAliasType | None
+)
+type DeepExpected = (
+    FlextTestsBaseModelsMixin.Payload | Callable[[p.Tests.Payload], bool] | str | None
+)
 
 
 class FlextTestsMatchersModelsMixin:
@@ -37,11 +42,11 @@ class FlextTestsMatchersModelsMixin:
             check_fields=False,
         )
         @classmethod
-        def own_operand[ValueT](cls, value: ValueT) -> t.Tests.MatchExpectedValue:
+        def own_operand(cls, value: object) -> MatchExpectedValue:
             """Preserve explicit matcher operators and own native operands."""
             from .._utilities.payload import FlextTestsPayloadUtilities
 
-            if value is None or isinstance(value, _PYTEST_APPROX_TYPE | TypeAliasType):
+            if value is None or isinstance(value, ApproxBase | TypeAliasType):
                 return value
             return FlextTestsPayloadUtilities.to_payload(value)
 
@@ -54,8 +59,8 @@ class FlextTestsMatchersModelsMixin:
             check_fields=False,
         )
         @classmethod
-        def own_mapping[ValueT](
-            cls, value: ValueT
+        def own_mapping(
+            cls, value: object
         ) -> Mapping[str, FlextTestsBaseModelsMixin.Payload] | None:
             """Own mapping leaves without changing native model identity."""
             from .._utilities.payload import FlextTestsPayloadUtilities
@@ -70,8 +75,8 @@ class FlextTestsMatchersModelsMixin:
 
         @u.field_validator("values", mode="before", check_fields=False)
         @classmethod
-        def own_values[ValueT](
-            cls, value: ValueT
+        def own_values(
+            cls, value: object
         ) -> tuple[FlextTestsBaseModelsMixin.Payload, ...] | None:
             """Own sequence value expectations."""
             from .._utilities.payload import FlextTestsPayloadUtilities
@@ -115,11 +120,10 @@ class FlextTestsMatchersModelsMixin:
         )
 
         eq: Annotated[
-            t.Tests.MatchExpectedValue, u.Field(description="Expected equality value.")
+            MatchExpectedValue, u.Field(description="Expected equality value.")
         ] = None
         ne: Annotated[
-            t.Tests.MatchExpectedValue,
-            u.Field(description="Expected inequality value."),
+            MatchExpectedValue, u.Field(description="Expected inequality value.")
         ] = None
         is_: Annotated[
             type | tuple[type, ...] | None,
@@ -181,9 +185,7 @@ class FlextTestsMatchersModelsMixin:
         ] = None
 
         @classmethod
-        def parse[ValueT](
-            cls, value: ValueT
-        ) -> FlextTestsMatchersModelsMixin.MatchRule:
+        def parse(cls, value: object) -> FlextTestsMatchersModelsMixin.MatchRule:
             """Parse one public matcher rule into its nominal representation."""
             if isinstance(value, cls):
                 return value
@@ -191,7 +193,9 @@ class FlextTestsMatchersModelsMixin:
                 rule_keys = frozenset({*cls.model_fields, "is", "excludes"})
                 if value and set(value).issubset(rule_keys):
                     return cls.model_validate(value)
-                return cls(eq=value)
+                # Own the mapping operand here; own_operand is idempotent, so
+                # the field validator re-running on the owned payload is a no-op.
+                return cls(eq=cls.own_operand(value))
             if isinstance(value, type) or (
                 isinstance(value, tuple)
                 and all(isinstance(item, type) for item in value)
@@ -202,12 +206,13 @@ class FlextTestsMatchersModelsMixin:
             return cls(eq=cls.own_operand(value))
 
         @classmethod
-        def parse_rule_fields[ValueT](
-            cls, value: ValueT
+        def parse_rule_fields(
+            cls, value: object
         ) -> (
-            ValueT
+            object
             | Mapping[str, FlextTestsMatchersModelsMixin.MatchRule]
             | Sequence[FlextTestsMatchersModelsMixin.MatchRule]
+            | None
         ):
             """Parse paths, items, and attribute rule collections before validation."""
             if value is None:
@@ -225,11 +230,9 @@ class FlextTestsMatchersModelsMixin:
             populate_by_name=True, arbitrary_types_allowed=True
         )
 
-        eq: Annotated[
-            t.Tests.MatchExpectedValue, u.Field(description="Expected value.")
-        ] = None
+        eq: Annotated[MatchExpectedValue, u.Field(description="Expected value.")] = None
         ne: Annotated[
-            t.Tests.MatchExpectedValue, u.Field(description="Value must not equal.")
+            MatchExpectedValue, u.Field(description="Value must not equal.")
         ] = None
         is_: Annotated[
             type | tuple[type, ...] | None,
@@ -307,12 +310,13 @@ class FlextTestsMatchersModelsMixin:
 
         @u.field_validator("paths", "items", "attrs_match", mode="before")
         @classmethod
-        def parse_rules[ValueT](
-            cls, value: ValueT
+        def parse_rules(
+            cls, value: object
         ) -> (
-            ValueT
+            object
             | Mapping[str, FlextTestsMatchersModelsMixin.MatchRule]
             | Sequence[FlextTestsMatchersModelsMixin.MatchRule]
+            | None
         ):
             """Parse public rule collections into nominal rules."""
             return FlextTestsMatchersModelsMixin.MatchRule.parse_rule_fields(value)
@@ -365,10 +369,8 @@ class FlextTestsMatchersModelsMixin:
         )
 
         msg: Annotated[str | None, u.Field(description="Message.")] = None
-        eq: Annotated[t.Tests.MatchExpectedValue, u.Field(description="Equals.")] = None
-        ne: Annotated[
-            t.Tests.MatchExpectedValue, u.Field(description="Not equals.")
-        ] = None
+        eq: Annotated[MatchExpectedValue, u.Field(description="Equals.")] = None
+        ne: Annotated[MatchExpectedValue, u.Field(description="Not equals.")] = None
         is_: Annotated[
             type | tuple[type, ...] | None,
             u.Field(validation_alias=t.AliasChoices("is_", "is"), description="Type."),
@@ -494,12 +496,13 @@ class FlextTestsMatchersModelsMixin:
 
         @u.field_validator("paths", "items", "attrs_match", mode="before")
         @classmethod
-        def parse_rules[ValueT](
-            cls, value: ValueT
+        def parse_rules(
+            cls, value: object
         ) -> (
-            ValueT
+            object
             | Mapping[str, FlextTestsMatchersModelsMixin.MatchRule]
             | Sequence[FlextTestsMatchersModelsMixin.MatchRule]
+            | None
         ):
             """Parse public rule collections into nominal rules."""
             return FlextTestsMatchersModelsMixin.MatchRule.parse_rule_fields(value)
@@ -517,7 +520,11 @@ class FlextTestsMatchersModelsMixin:
                 str, t.Tests.LengthSpec | FlextTestsBaseModelsMixin.Payload | None
             ] = {}
             if self.error is not None and self.has is None:
-                updates["has"] = self.own_operand(self.error)
+                # self.error is a non-None native sequence/scalar, so owning it
+                # is exactly the payload walker; no approx/type operand applies.
+                from .._utilities.payload import FlextTestsPayloadUtilities
+
+                updates["has"] = FlextTestsPayloadUtilities.to_payload(self.error)
             if self.len is None and any(
                 v is not None
                 for v in (
@@ -591,10 +598,7 @@ class FlextTestsMatchersModelsMixin:
 
         path: Annotated[str, u.Field(description="Path where matching occurred.")]
         expected: Annotated[
-            FlextTestsBaseModelsMixin.Payload
-            | Callable[[p.Tests.Payload], bool]
-            | None,
-            u.Field(description="Expected value or predicate."),
+            DeepExpected, u.Field(description="Expected value or predicate.")
         ]
         actual: Annotated[
             FlextTestsBaseModelsMixin.Payload | None,

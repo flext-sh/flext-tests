@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import MutableMapping
-from typing import overload
+from typing import cast, overload
 
 from flext_core import p as core_p, u
 from flext_tests import c, m, p, t
@@ -31,8 +31,8 @@ class FlextTestsMatchersResultMixin:
                 return m.Tests.Chain(result=result)
 
             @staticmethod
-            def fail[TResult, KwargT](
-                result: core_p.ResultView[TResult], **kwargs: KwargT
+            def fail[TResult](
+                result: core_p.ResultView[TResult], **kwargs: object
             ) -> str:
                 """Assert that a result failed and validate its error payload."""
                 params = m.Tests.FailParams.model_validate(kwargs)
@@ -232,28 +232,14 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             @overload
-            def ok[TResult, KwargT](
-                result: core_p.ResultView[TResult], **kwargs: KwargT
-            ) -> (
-                TResult
-                | t.Tests.PayloadAtom
-                | p.Model
-                | p.Tests.NativeSequence
-                | p.Tests.NativeMapping
-                | None
-            ): ...
+            def ok[TResult](
+                result: core_p.ResultView[TResult], **kwargs: object
+            ) -> TResult | t.Tests.NativeMatchValue: ...
 
             @staticmethod
-            def ok[TResult, KwargT](
-                result: core_p.ResultView[TResult], **kwargs: KwargT
-            ) -> (
-                TResult
-                | t.Tests.PayloadAtom
-                | p.Model
-                | p.Tests.NativeSequence
-                | p.Tests.NativeMapping
-                | None
-            ):
+            def ok[TResult](
+                result: core_p.ResultView[TResult], **kwargs: object
+            ) -> TResult | t.Tests.NativeMatchValue:
                 # mro-j47u: matchers observe the protocol and preserve source identity.
                 if not kwargs:
                     return FlextTestsResultUtilitiesMixin.assert_success(result)
@@ -285,7 +271,10 @@ class FlextTestsMatchersResultMixin:
                 if FlextTestsMatchersResultMixin.Tests.Matchers.ok_preserves_result_identity(
                     params
                 ):
-                    return result_value
+                    # No structural extraction was requested, so ok_extract_path
+                    # returned the success value unchanged; the subject keeps its
+                    # TResult identity across the scalar/type validators.
+                    return cast("TResult", result_value)
                 result_payload = (
                     FlextTestsMatchersResultMixin.Tests.Matchers.ok_payload(
                         result, result_value, extracted_payload, params

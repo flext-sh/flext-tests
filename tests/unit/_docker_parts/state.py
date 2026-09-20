@@ -8,8 +8,11 @@ from flext_tests import FlextTestsDocker, tm
 from tests import c, m, u
 
 
-class DockerStateMixin:
+class TestsFlextTestsDockerState:
     """Docker state and model tests."""
+
+    class Tests:
+        """flext-tests docker state test namespace."""
 
     @pytest.mark.parametrize(
         ("member", "expected_value"),

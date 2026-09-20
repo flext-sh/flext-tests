@@ -8,8 +8,11 @@ from flext_tests import FlextTestsFiles, tm
 from tests import m, u
 
 
-class FilesInfoMetadataMixin:
+class TestsFlextTestsFilesInfoMetadata:
     """File metadata tests."""
+
+    class Tests:
+        """flext-tests files info_metadata test namespace."""
 
     def test_info_existing_file(self, tmp_path: Path) -> None:
         """Test info() returns FlextTestsFiles.FileInfo for existing file."""

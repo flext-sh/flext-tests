@@ -36,15 +36,19 @@ class FlextTestsBaseModelsMixin:
             ),
         ] = ()
         entries: Annotated[
-            t.Tests.PayloadEntries[Self],
+            t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload],
             m.Field(frozen=True, description="String-keyed payload children."),
-        ] = m.Field(default_factory=lambda: MappingProxyType({}))
+        ] = m.Field(
+            default_factory=lambda: MappingProxyType(
+                dict[str, FlextTestsBaseModelsMixin.Payload]()
+            )
+        )
 
         @u.field_validator("entries", mode="after")
         @classmethod
         def freeze_entries(
-            cls, value: t.Tests.PayloadEntries[Self]
-        ) -> t.Tests.PayloadEntries[Self]:
+            cls, value: t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload]
+        ) -> t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload]:
             """Own an immutable copy so caller mutation cannot invalidate the arm."""
             return MappingProxyType(dict(value))
 

@@ -10,8 +10,11 @@ from __future__ import annotations
 from pathlib import Path
 
 
-class ValidatorTestFilesMixin:
+class TestsFlextTestsValidatorHelper:
     """Mixin providing shared file-writing helpers for validator tests."""
+
+    class Tests:
+        """flext-tests validator helper test namespace."""
 
     @staticmethod
     def _write_source(tmp_path: Path, name: str, source: str) -> Path:
@@ -21,4 +24,4 @@ class ValidatorTestFilesMixin:
         return file_path
 
 
-__all__: list[str] = ["ValidatorTestFilesMixin"]
+__all__: list[str] = ["TestsFlextTestsValidatorHelper"]

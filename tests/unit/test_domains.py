@@ -15,11 +15,14 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import FlextTestsDomains, tm
+from flext_tests import FlextTestsDomains, t, tm
 
 
 class TestsFlextTestsDomains:
     """Public-contract tests for the ``FlextTestsDomains`` test-domain facade."""
+
+    class Tests:
+        """flext-tests domains test namespace."""
 
     # --- fixtures ---------------------------------------------------------
 
@@ -34,7 +37,7 @@ class TestsFlextTestsDomains:
             <root>/oid/oid_entries_fixtures.ldif
             <root>/oud/oud_schema_fixtures.ldif
         """
-        payloads: dict[tuple[str, str], str] = {
+        payloads: t.MappingKV[tuple[str, str], str] = {
             ("oid", "schema"): "dn: cn=schema,dc=oid\n",
             ("oid", "entries"): "dn: cn=alice,dc=oid\n",
             ("oud", "schema"): "dn: cn=schema,dc=oud\n",
@@ -51,7 +54,7 @@ class TestsFlextTestsDomains:
 
     def test_create_result_ok_yields_success_carrying_value(self) -> None:
         """A generic OK result reports success and unwraps to the input value."""
-        payload: dict[str, str] = {"foo": "bar"}
+        payload: t.StrMapping = {"foo": "bar"}
 
         result = FlextTestsDomains.create_result_ok(payload)
 
@@ -113,7 +116,7 @@ class TestsFlextTestsDomains:
         """The shared handler specs cover the documented success/fail ids."""
         specs = FlextTestsDomains.default_handler_case_specs()
 
-        handler_ids = [spec["handler_id"] for spec in specs]
+        handler_ids = [spec.handler_id for spec in specs]
         tm.that(
             handler_ids,
             eq=[
@@ -142,10 +145,10 @@ class TestsFlextTestsDomains:
         spec = next(
             entry
             for entry in FlextTestsDomains.default_handler_case_specs()
-            if entry["handler_id"] == handler_id
+            if entry.handler_id == handler_id
         )
 
-        assert spec.get("should_fail", False) is should_fail
+        assert spec.should_fail is should_fail
 
     # --- fixture path + loading ------------------------------------------
 

@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from pathlib import Path
+from typing import cast, overload
 
 from flext_tests import c, m, p, t, u
 
@@ -15,12 +16,12 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
     """Create files from one validated native payload boundary."""
 
     @staticmethod
-    def is_mapping[ValueT](value: ValueT) -> bool:
+    def is_mapping(value: object) -> bool:
         """Identify native mappings without pretending to validate their leaves."""
         return isinstance(value, Mapping)
 
     @staticmethod
-    def to_payload_mapping[ValueT](value: ValueT) -> t.MappingKV[str, m.Tests.Payload]:
+    def to_payload_mapping(value: object) -> t.MappingKV[str, m.Tests.Payload]:
         """Own a native mapping and retain every rich child value."""
         payload = FlextTestsPayloadUtilities.to_payload(value)
         if payload.kind != "mapping":
@@ -36,7 +37,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             for row in value.items
         ]
 
-    def _coerce_file_content[ValueT](self, value: ValueT) -> m.Tests.Payload:
+    def _coerce_file_content(self, value: object) -> m.Tests.Payload:
         """Own file input without dumping native models or swallowing failures."""
         return FlextTestsPayloadUtilities.to_payload(value)
 
@@ -51,7 +52,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             return self._coerce_file_content(content.value)
         return self._coerce_file_content(content)
 
-    def _is_nested_rows[ValueT](self, value: ValueT) -> bool:
+    def _is_nested_rows(self, value: object) -> bool:
         """Recognize nonempty list/tuple rows without a second recursive adapter."""
         payload = FlextTestsPayloadUtilities.to_payload(value)
         return (
@@ -133,6 +134,38 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             ])
         return rows
 
+    @overload
+    def create[TContentCreate](
+        self,
+        content: p.Result[TContentCreate],
+        name: str = c.Tests.DEFAULT_FILENAME,
+        directory: Path | None = None,
+        *,
+        fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
+        enc: str = c.Tests.DEFAULT_ENCODING,
+        indent: int = c.Tests.DEFAULT_JSON_INDENT,
+        delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
+        headers: t.StrSequence | None = None,
+        readonly: bool = False,
+        extract_result: bool = True,
+    ) -> Path: ...
+
+    @overload
+    def create[TContentCreate](
+        self,
+        content: TContentCreate | p.Result[TContentCreate],
+        name: str = c.Tests.DEFAULT_FILENAME,
+        directory: Path | None = None,
+        *,
+        fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
+        enc: str = c.Tests.DEFAULT_ENCODING,
+        indent: int = c.Tests.DEFAULT_JSON_INDENT,
+        delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
+        headers: t.StrSequence | None = None,
+        readonly: bool = False,
+        extract_result: bool = True,
+    ) -> Path: ...
+
     def create[ContentT](
         self,
         content: ContentT | p.Result[ContentT],
@@ -165,9 +198,15 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         })
         actual_content = params.content
         native_content = FlextTestsPayloadUtilities.to_match_value(actual_content)
-        actual_fmt = u.Cli.files_detect_format_from_content(
-            native_content, params.name, params.fmt
+        # files_detect_format_from_content dispatches purely on the runtime
+        # shape (bytes, model, mapping, list) and routes every other arm —
+        # scalar atoms and None — to its extension fallback; its declared
+        # parameter union does not model those fallback arms. The callable
+        # assertion records that shape-total contract for this projection.
+        detect_format = cast(
+            "Callable[[object, str, str], str]", u.Cli.files_detect_format_from_content
         )
+        actual_fmt = detect_format(native_content, params.name, params.fmt)
         target_dir = self._resolve_directory(params.directory)
         file_path = target_dir / params.name
         self._write_content_by_format(
