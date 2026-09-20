@@ -15,7 +15,7 @@ from ._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
 from ._utilities.files import FlextTestsFilesUtilitiesMixin
 from ._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
 from ._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
-from ._utilities.governance import FlextTestsUtilitiesGovernance
+from ._utilities.governance import ModuleGovernanceMixin
 from ._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
 from ._utilities.make import FlextTestsMakeUtilitiesMixin
 from ._utilities.matchers import FlextTestsMatchersUtilities
