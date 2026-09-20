@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-from ._fixtures._enforcement_parts.discovery import (
-    load_infra_report,
-)
-"""Loads infrastructure audit report data from the discovery module."""
+from ._fixtures._enforcement_parts.discovery import load_infra_report
 from ._fixtures.enforcement import (
     EnforcementCollector,
     EnforcementItem,
@@ -15,6 +12,8 @@ from ._fixtures.enforcement import (
     pytest_addoption,
     split_csv,
 )
+
+"""Loads infrastructure audit report data from the discovery module."""
 
 __all__: list[str] = [
     "EnforcementCollector",
