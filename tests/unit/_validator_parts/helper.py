@@ -13,8 +13,6 @@ from pathlib import Path
 class TestsFlextTestsValidatorHelper:
     """Mixin providing shared file-writing helpers for validator tests."""
 
-    class Tests:
-        """flext-tests validator helper test namespace."""
 
     @staticmethod
     def _write_source(tmp_path: Path, name: str, source: str) -> Path:

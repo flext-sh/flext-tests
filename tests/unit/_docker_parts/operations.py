@@ -11,8 +11,6 @@ from tests import c, u
 class TestsFlextTestsDockerOperations:
     """Docker operation tests."""
 
-    class Tests:
-        """flext-tests docker operations test namespace."""
 
     def test_compose_up_returns_flext_result(
         self, docker_manager: FlextTestsDocker

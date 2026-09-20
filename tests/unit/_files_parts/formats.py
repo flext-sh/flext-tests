@@ -11,8 +11,6 @@ from tests import c, m, t, u
 class TestsFlextTestsFilesFormats:
     """File format creation tests."""
 
-    class Tests:
-        """flext-tests files formats test namespace."""
 
     def test_create_text_auto_detect(self, tmp_path: Path) -> None:
         """Test create() auto-detects text from str content."""

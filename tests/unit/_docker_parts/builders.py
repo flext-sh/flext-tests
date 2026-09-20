@@ -13,8 +13,6 @@ from tests import c
 class TestsFlextTestsDockerBuilders:
     """Docker builder tests."""
 
-    class Tests:
-        """flext-tests docker builders test namespace."""
 
     def test_shared_containers_attribute(self) -> None:
         """Test canonical shared containers constant."""

@@ -14,8 +14,6 @@ if TYPE_CHECKING:
 class TestsFlextTestsDockerTargets:
     """Docker target failure tests."""
 
-    class Tests:
-        """flext-tests docker targets test namespace."""
 
     def test_execute_requires_target_config(
         self, docker_manager: FlextTestsDocker
