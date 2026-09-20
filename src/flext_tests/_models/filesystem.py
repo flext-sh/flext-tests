@@ -124,7 +124,7 @@ class FlextTestsFilesystemModelsMixin:
 
         @u.field_validator("name", mode="before")
         @classmethod
-        def normalize_name[ValueT](cls, value: ValueT) -> str:
+        def normalize_name(cls, value: object) -> str:
             """Normalize filename by stripping whitespace."""
             if isinstance(value, str):
                 return value.strip()

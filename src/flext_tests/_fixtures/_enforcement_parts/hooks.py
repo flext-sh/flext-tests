@@ -12,11 +12,11 @@ from .build import build_items
 from .config import SessionConfig, active_rules, resolve_config
 
 
-def _apply_slow_timeout_policy(config: pytest.Config, items: list[pytest.Item]) -> None:
-    """Apply the config-owned item budget extension to explicit slow tests."""
+def _slow_budget_seconds(config: pytest.Config) -> float | None:
+    """Return the config-owned slow item budget, or None when unconfigured."""
     raw_timeout = str(config.getini(SLOW_TIMEOUT_INI_OPTION)).strip()
     if not raw_timeout:
-        return
+        return None
     try:
         slow_timeout = float(raw_timeout)
     except ValueError as err:
@@ -37,6 +37,14 @@ def _apply_slow_timeout_policy(config: pytest.Config, items: list[pytest.Item]) 
     ):
         msg = "FLEXT slow timeout policy requires the pytest-timeout plugin"
         raise pytest.UsageError(msg)
+    return slow_timeout
+
+
+def _apply_slow_timeout_policy(config: pytest.Config, items: list[pytest.Item]) -> None:
+    """Apply the config-owned item budget extension to explicit slow tests."""
+    slow_timeout = _slow_budget_seconds(config)
+    if slow_timeout is None:
+        return
     for item in items:
         if item.get_closest_marker("timeout") is not None:
             msg = (
@@ -63,6 +71,28 @@ def pytest_collection_modifyitems(
     if not generated:
         return
     items.extend(generated)
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_runtest_protocol(item: pytest.Item, nextitem: pytest.Item | None) -> None:
+    """Re-apply the config-owned slow budget in the executing process.
+
+    Why: xdist transmits only nodeids to workers and testmon rewrites the
+    collected items on worker re-collection, so the timeout marker added at
+    controller collection time does not survive into every executing process
+    and slow items silently ran under the global case ceiling. The budget is
+    config-owned policy, so each executing process re-derives it from its own
+    config; the collection pass remains the fail-loud declaration check.
+    """
+    del nextitem
+    if item.get_closest_marker("slow") is None:
+        return
+    if item.get_closest_marker("timeout") is not None:
+        return
+    slow_timeout = _slow_budget_seconds(item.config)
+    if slow_timeout is None:
+        return
+    item.add_marker(pytest.mark.timeout(slow_timeout), append=False)
 
 
 def pytest_sessionstart(session: pytest.Session) -> None:

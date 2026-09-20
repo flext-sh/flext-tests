@@ -13,8 +13,11 @@ if TYPE_CHECKING:
     from tests import p
 
 
-class MatchersScopeErrorsMixin:
+class TestsFlextTestsMatchersScopeErrors:
     """Matcher scope and error tests."""
+
+    class Tests:
+        """flext-tests matchers scope_errors test namespace."""
 
     def test_check_returns_chain(self) -> None:
         """Test tm.check() returns Chain t.JsonValue."""
@@ -30,7 +33,7 @@ class MatchersScopeErrorsMixin:
     def test_scope_with_settings(self) -> None:
         """Test tm.scope() with settings parameter."""
         with tm.scope(settings={"debug": True}) as scope:
-            tm.that(scope.settings["debug"] is True, eq=True)
+            tm.that(scope.settings["debug"].atom is True, eq=True)
 
     def test_scope_with_container(self) -> None:
         """Test tm.scope() with container parameter."""

@@ -11,8 +11,11 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-class DockerTargetsMixin:
+class TestsFlextTestsDockerTargets:
     """Docker target failure tests."""
+
+    class Tests:
+        """flext-tests docker targets test namespace."""
 
     def test_execute_requires_target_config(
         self, docker_manager: FlextTestsDocker

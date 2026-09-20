@@ -18,11 +18,14 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import c, enforcement as dispatcher, m, tm, u
+from flext_tests import c, enforcement, m, tm, u
 
 
 class TestsFlextTestsEnforcementDispatcher:
     """Observable behavior of the enforcement dispatcher facade."""
+
+    class Tests:
+        """flext-tests enforcement dispatcher test namespace."""
 
     # ------------------------------------------------------------------ #
     # Fixtures                                                           #
@@ -71,16 +74,16 @@ class TestsFlextTestsEnforcementDispatcher:
         nested = workspace / "flext-core" / "src" / "pkg"
         nested.mkdir(parents=True)
 
-        tm.that(dispatcher.discover_repository_root(nested), eq=workspace)
+        tm.that(enforcement.discover_repository_root(nested), eq=workspace)
 
     def test_returns_workspace_itself_when_start_is_root(self, workspace: Path) -> None:
-        tm.that(dispatcher.discover_repository_root(workspace), eq=workspace)
+        tm.that(enforcement.discover_repository_root(workspace), eq=workspace)
 
     def test_returns_none_when_no_marker_present(self, tmp_path: Path) -> None:
         stray = tmp_path / "unrelated" / "deep"
         stray.mkdir(parents=True)
 
-        tm.that(dispatcher.discover_repository_root(stray), none=True)
+        tm.that(enforcement.discover_repository_root(stray), none=True)
 
     def test_returns_none_when_a_single_marker_is_missing(self, tmp_path: Path) -> None:
         partial = tmp_path / "partial"
@@ -89,7 +92,7 @@ class TestsFlextTestsEnforcementDispatcher:
         for marker in list(c.Tests.ENFORCEMENT_WORKSPACE_MARKERS)[:-1]:
             (partial / marker).mkdir(parents=True, exist_ok=True)
 
-        tm.that(dispatcher.discover_repository_root(partial), none=True)
+        tm.that(enforcement.discover_repository_root(partial), none=True)
 
     def test_sub_project_root_resolves_to_workspace_not_itself(
         self, workspace: Path
@@ -98,7 +101,7 @@ class TestsFlextTestsEnforcementDispatcher:
         # above it, and that workspace is distinguishable from the sub-project
         # (so running pytest inside a sub-project stays a no-op).
         sub = workspace / "flext-core"
-        discovered = dispatcher.discover_repository_root(sub)
+        discovered = enforcement.discover_repository_root(sub)
 
         tm.that(discovered, eq=workspace)
         tm.that(discovered, ne=sub)
@@ -109,39 +112,39 @@ class TestsFlextTestsEnforcementDispatcher:
 
     @pytest.mark.parametrize("raw", ["", None])
     def test_split_csv_empty_input_yields_empty_set(self, raw: str | None) -> None:
-        tm.that(dispatcher.split_csv(raw), eq=frozenset())
+        tm.that(enforcement.split_csv(raw), eq=frozenset())
 
     def test_split_csv_strips_whitespace_and_drops_blank_fields(self) -> None:
-        got = dispatcher.split_csv("ENFORCE-001, ENFORCE-002 ,,ENFORCE-003")
+        got = enforcement.split_csv("ENFORCE-001, ENFORCE-002 ,,ENFORCE-003")
 
         tm.that(got, eq=frozenset({"ENFORCE-001", "ENFORCE-002", "ENFORCE-003"}))
 
     def test_split_csv_deduplicates_repeated_ids(self) -> None:
-        tm.that(dispatcher.split_csv("A, A ,A"), eq=frozenset({"A"}))
+        tm.that(enforcement.split_csv("A, A ,A"), eq=frozenset({"A"}))
 
     # ------------------------------------------------------------------ #
     # active_rules                                                       #
     # ------------------------------------------------------------------ #
 
     def test_active_rules_returns_only_enabled_rules(self) -> None:
-        active = dispatcher.active_rules(self._cfg())
+        active = enforcement.active_rules(self._cfg())
 
         assert active
         assert all(r.enabled for r in active)
 
     def test_active_rules_excludes_disabled_skill_pointer_rules(self) -> None:
         # ENFORCE-034..038 ship disabled by default.
-        ids = {r.id for r in dispatcher.active_rules(self._cfg())}
+        ids = {r.id for r in enforcement.active_rules(self._cfg())}
 
         assert ids.isdisjoint({"ENFORCE-034", "ENFORCE-035", "ENFORCE-038"})
 
     def test_include_narrows_to_the_listed_ids(self) -> None:
-        active = dispatcher.active_rules(self._cfg(include=frozenset({"ENFORCE-001"})))
+        active = enforcement.active_rules(self._cfg(include=frozenset({"ENFORCE-001"})))
 
         tm.that({r.id for r in active}, eq={"ENFORCE-001"})
 
     def test_include_of_unknown_id_yields_no_rules(self) -> None:
-        active = dispatcher.active_rules(
+        active = enforcement.active_rules(
             self._cfg(include=frozenset({"ENFORCE-DOES-NOT-EXIST"}))
         )
 
@@ -150,7 +153,7 @@ class TestsFlextTestsEnforcementDispatcher:
     def test_exclude_removes_the_listed_id(self) -> None:
         ids = {
             r.id
-            for r in dispatcher.active_rules(
+            for r in enforcement.active_rules(
                 self._cfg(exclude=frozenset({"ENFORCE-001"}))
             )
         }
@@ -158,7 +161,7 @@ class TestsFlextTestsEnforcementDispatcher:
         tm.that(ids, lacks="ENFORCE-001")
 
     def test_exclude_takes_precedence_over_include(self) -> None:
-        active = dispatcher.active_rules(
+        active = enforcement.active_rules(
             self._cfg(
                 include=frozenset({"ENFORCE-001"}), exclude=frozenset({"ENFORCE-001"})
             )
@@ -167,8 +170,8 @@ class TestsFlextTestsEnforcementDispatcher:
         tm.that(active, eq=())
 
     def test_active_rules_is_idempotent(self) -> None:
-        first = dispatcher.active_rules(self._cfg())
-        second = dispatcher.active_rules(self._cfg())
+        first = enforcement.active_rules(self._cfg())
+        second = enforcement.active_rules(self._cfg())
 
         tm.that([r.id for r in first], eq=[r.id for r in second])
 
@@ -182,10 +185,10 @@ class TestsFlextTestsEnforcementDispatcher:
         rule: m.EnforcementRuleSpec,
         violation: m.Violation,
     ) -> None:
-        collector = dispatcher.EnforcementCollector.from_parent(
+        collector = enforcement.EnforcementCollector.from_parent(
             request.session, name="flext-enforce"
         )
-        item = dispatcher.EnforcementItem.from_parent(
+        item = enforcement.EnforcementItem.from_parent(
             collector,
             name=f"{rule.id}-flext-core",
             rule=rule,
@@ -193,7 +196,7 @@ class TestsFlextTestsEnforcementDispatcher:
             violations=[violation],
         )
 
-        with pytest.raises(dispatcher.EnforcementViolationError) as excinfo:
+        with pytest.raises(enforcement.EnforcementViolationError) as excinfo:
             item.runtest()
 
         message = str(excinfo.value)
@@ -204,10 +207,10 @@ class TestsFlextTestsEnforcementDispatcher:
     def test_runtest_is_a_noop_when_no_violations(
         self, request: pytest.FixtureRequest, rule: m.EnforcementRuleSpec
     ) -> None:
-        collector = dispatcher.EnforcementCollector.from_parent(
+        collector = enforcement.EnforcementCollector.from_parent(
             request.session, name="flext-enforce"
         )
-        item = dispatcher.EnforcementItem.from_parent(
+        item = enforcement.EnforcementItem.from_parent(
             collector,
             name=f"{rule.id}-clean",
             rule=rule,
@@ -223,11 +226,11 @@ class TestsFlextTestsEnforcementDispatcher:
         rule: m.EnforcementRuleSpec,
         violation: m.Violation,
     ) -> None:
-        collector = dispatcher.EnforcementCollector.from_parent(
+        collector = enforcement.EnforcementCollector.from_parent(
             request.session, name="flext-enforce"
         )
         items = [
-            dispatcher.EnforcementItem.from_parent(
+            enforcement.EnforcementItem.from_parent(
                 collector,
                 name=f"{rule.id}-{i}",
                 rule=rule,
@@ -243,20 +246,20 @@ class TestsFlextTestsEnforcementDispatcher:
         tm.that(len(collected), eq=len(items))
         for index, item in enumerate(items):
             tm.that(collected[index].name, eq=item.name)
-            with pytest.raises(dispatcher.EnforcementViolationError):
+            with pytest.raises(enforcement.EnforcementViolationError):
                 collected[index].runtest()
 
     def test_collector_is_empty_before_any_item_is_added(
         self, request: pytest.FixtureRequest
     ) -> None:
-        collector = dispatcher.EnforcementCollector.from_parent(
+        collector = enforcement.EnforcementCollector.from_parent(
             request.session, name="flext-enforce"
         )
 
         tm.that(list(collector.collect()), eq=[])
 
     def test_violation_error_is_an_exception(self) -> None:
-        assert issubclass(dispatcher.EnforcementViolationError, Exception)
+        assert issubclass(enforcement.EnforcementViolationError, Exception)
 
     # ------------------------------------------------------------------ #
     # pytest_addoption                                                   #
@@ -268,7 +271,7 @@ class TestsFlextTestsEnforcementDispatcher:
         # hook registers its options; pytest flags the private-class use with a
         # deprecation warning that is external to the unit under test.
         parser = pytest.Parser()
-        dispatcher.pytest_addoption(parser)
+        enforcement.pytest_addoption(parser)
 
         enabled = parser.parse([
             "--flext-enforce",

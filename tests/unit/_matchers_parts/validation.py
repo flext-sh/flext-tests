@@ -5,11 +5,14 @@ from __future__ import annotations
 import pytest
 
 from flext_tests import tm
-from tests import c, r, t
+from tests import c, p, r, t
 
 
-class MatchersValidationMixin:
+class TestsFlextTestsMatchersValidation:
     """Matcher validation tests."""
+
+    class Tests:
+        """flext-tests matchers validation test namespace."""
 
     def test_assert_valid_email_passes(self) -> None:
         """Test tm.that() with email pattern match."""
@@ -92,7 +95,10 @@ class MatchersValidationMixin:
         )
         for value in values:
             tm.that(value, eq=value)
-            tm.that(tm.ok(r[t.JsonValue].ok(value), eq=value), eq=value)
+            # Bind the result so ok's payload typevar solves from the family
+            # subscript instead of the outer matcher's contextual inference.
+            result: p.Result[t.JsonValue] = r[t.JsonValue].ok(value)
+            tm.that(tm.ok(result, eq=value), eq=value)
 
     def test_public_matcher_boundary_accepts_approximation(self) -> None:
         expected = pytest.approx(1.5)

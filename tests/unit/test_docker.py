@@ -19,30 +19,40 @@ import pytest
 from flext_tests import FlextTestsDocker, tm
 from tests import c
 
-from ._docker_parts.builders import DockerBuildersMixin
-from ._docker_parts.operations import DockerOperationsMixin
-from ._docker_parts.state import DockerStateMixin
-from ._docker_parts.targets import DockerTargetsMixin
-
-
-@pytest.fixture
-def docker_manager(tmp_path: Path) -> FlextTestsDocker:
-    """Create a FlextTestsDocker instance with a known-clean container baseline."""
-    fixtures_dir = Path(__file__).parent.parent.parent / "fixtures"
-    manager = FlextTestsDocker(
-        repository_root=fixtures_dir, worker_id=f"test-{tmp_path.name}"
-    )
-    _ = manager.mark_container_clean("container1")
-    _ = manager.mark_container_clean("container2")
-    _ = manager.mark_container_clean("test_container")
-    _ = manager.mark_container_clean("dirty_container")
-    return manager
+from ._docker_parts.builders import TestsFlextTestsDockerBuilders
+from ._docker_parts.operations import TestsFlextTestsDockerOperations
+from ._docker_parts.state import TestsFlextTestsDockerState
+from ._docker_parts.targets import TestsFlextTestsDockerTargets
 
 
 class TestsFlextTestsDocker(
-    DockerStateMixin, DockerBuildersMixin, DockerOperationsMixin, DockerTargetsMixin
+    TestsFlextTestsDockerState,
+    TestsFlextTestsDockerBuilders,
+    TestsFlextTestsDockerOperations,
+    TestsFlextTestsDockerTargets,
 ):
     """Behavioral contract of the Docker control facade (FlextTestsDocker)."""
+
+    class Tests:
+        """flext-tests docker test namespace."""
+
+    # ------------------------------------------------------------------ #
+    # CI=Y disables Docker lifecycle (exact Make token, not CI=true)     #
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    @pytest.fixture
+    def docker_manager(tmp_path: Path) -> FlextTestsDocker:
+        """Create a FlextTestsDocker instance with a known-clean container baseline."""
+        fixtures_dir = Path(__file__).parent.parent.parent / "fixtures"
+        manager = FlextTestsDocker(
+            repository_root=fixtures_dir, worker_id=f"test-{tmp_path.name}"
+        )
+        _ = manager.mark_container_clean("container1")
+        _ = manager.mark_container_clean("container2")
+        _ = manager.mark_container_clean("test_container")
+        _ = manager.mark_container_clean("dirty_container")
+        return manager
 
     # ------------------------------------------------------------------ #
     # CI=Y disables Docker lifecycle (exact Make token, not CI=true)     #

@@ -10,8 +10,11 @@ import pytest
 from flext_tests import FlextTestsFiles, c, m, tm, u
 
 
-class TestsPayload:
+class TestsFlextTestsPayload:
     """Payload model contracts independent of JSON projection."""
+
+    class Tests:
+        """flext-tests payload test namespace."""
 
     def test_native_atoms_preserve_identity(self) -> None:
         leaves = (

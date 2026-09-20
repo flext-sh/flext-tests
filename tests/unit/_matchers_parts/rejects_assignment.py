@@ -24,8 +24,11 @@ class _PluginType(enum.StrEnum):
     EXTRACTORS = "extractors"
 
 
-class MatchersRejectsAssignmentMixin:
+class TestsFlextTestsMatchersRejectsAssignment:
     """Cover ``tm.rejects_assignment`` against real frozen and enum surfaces."""
+
+    class Tests:
+        """flext-tests matchers rejects_assignment test namespace."""
 
     def test_rejects_assignment_on_frozen_model(self) -> None:
         """A frozen pydantic model rejects field assignment."""

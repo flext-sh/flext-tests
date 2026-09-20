@@ -13,6 +13,7 @@ from collections.abc import Mapping
 from datetime import datetime, tzinfo
 from enum import Enum
 from pathlib import Path
+from types import GenericAlias, UnionType
 from typing import TypeAliasType
 
 from flext_infra import u
@@ -55,10 +56,11 @@ class FlextTestsPayloadUtilities:
                 | m.BaseModel()
             ):
                 return m.Tests.Payload(kind="atom", atom=value)
-            case BaseException():
-                return m.Tests.Payload(kind="atom", atom=repr(value))
-            case TypeAliasType():
-                return m.Tests.Payload(kind="atom", atom=value.__name__)
+            case GenericAlias() | UnionType() | TypeAliasType():
+                # Typing constructs are type-level atoms: the established
+                # textual convention (mirrors the type() leaf below) keeps
+                # alias-bearing expectations comparable as strings.
+                return m.Tests.Payload(kind="atom", atom=str(value))
             case Mapping():
                 entries: dict[str, m.Tests.Payload] = {}
                 for key, item in value.items():
@@ -88,19 +90,12 @@ class FlextTestsPayloadUtilities:
                 else:
                     kind = "frozenset"
                 return m.Tests.Payload(kind=kind, items=children)
-            case object():
-                return m.Tests.Payload(kind="atom", atom=repr(value))
+            case _:
+                msg = f"Unsupported native payload leaf: {type(value).__name__}"
+                raise TypeError(msg)
 
     @staticmethod
-    def to_match_value(
-        value: p.Tests.Payload,
-    ) -> (
-        t.Tests.PayloadAtom
-        | p.Model
-        | p.Tests.NativeSequence
-        | p.Tests.NativeMapping
-        | None
-    ):
+    def to_match_value(value: p.Tests.Payload) -> t.Tests.NativeMatchValue:
         """Project a native tree into the established list/mapping match semantics."""
         project = FlextTestsPayloadUtilities.to_match_value
         if value.kind == "atom":

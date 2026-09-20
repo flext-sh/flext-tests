@@ -20,7 +20,7 @@ from datetime import datetime, timezone, tzinfo
 from enum import Enum
 from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 from flext_cli import t
 from flext_infra import m, t as it
@@ -28,6 +28,20 @@ from flext_infra import m, t as it
 from flext_core import p
 
 from .._models.domains import FlextTestsDomainModelsMixin
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from .._models.base import FlextTestsBaseModelsMixin
+    from .._protocols.payload import FlextTestsPayloadProtocolsMixin
+
+type _NativeMatchValue = (
+    FlextTestsBaseTypesMixin.PayloadAtom
+    | p.Model
+    | list[_NativeMatchValue]
+    | dict[str, _NativeMatchValue]
+    | None
+)
 
 
 class FlextTestsBaseTypesMixin:
@@ -68,8 +82,18 @@ class FlextTestsBaseTypesMixin:
     )
     type TestobjectNode = TestobjectAtom | t.JsonValue | None
     type TestobjectSerializable = (
-        TestobjectAtom | list[TestobjectNode] | Mapping[str, TestobjectNode] | None
+        TestobjectAtom
+        | t.JsonValue
+        | list[TestobjectNode]
+        | Mapping[str, TestobjectNode]
+        | None
     )
+    type NativeMatchValue = _NativeMatchValue
+    type DeepSpec = Mapping[
+        str,
+        FlextTestsBaseModelsMixin.Payload
+        | Callable[[FlextTestsPayloadProtocolsMixin.Payload], bool],
+    ]
     type TestobjectHashable = (
         str | int | float | bool | bytes | datetime | tzinfo | Path | type | None
     )

@@ -17,8 +17,8 @@ class FlextTestsMatchersTypeGuardsMixin:
     """Preserve native comparison semantics at the matcher boundary."""
 
     @staticmethod
-    def matches_runtime_type[ValueT](
-        value: ValueT, expected_type: type | tuple[type, ...]
+    def matches_runtime_type(
+        value: object, expected_type: type | tuple[type, ...]
     ) -> bool:
         """Check the original subject rather than its payload envelope."""
         return isinstance(value, expected_type)

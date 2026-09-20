@@ -18,12 +18,16 @@ import pytest
 from flext_tests import m, tm, tv
 from tests import u
 
-from ._validator_parts.helper import ValidatorTestFilesMixin
+from ._validator_parts.helper import TestsFlextTestsValidatorHelper
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-_MODERN_TYPING_SOURCE = """from __future__ import annotations
+
+class TestsFlextTestsValidatorTypes(TestsFlextTestsValidatorHelper):
+    """Verify strict typing rules through the public `tv.types` contract."""
+
+    _MODERN_TYPING_SOURCE = """from __future__ import annotations
 
 from typing import TypeIs, final, override
 
@@ -57,16 +61,16 @@ def narrow_scalar(value: Scalar | None) -> TypeIs[Scalar]:
     return value is not None
 """
 
-# The type-suppression comment is assembled from a fragment so this test module
-# itself stays free of a real suppression comment while the written temp file
-# still contains one.
-_SUPPRESSION_MARKER = "# type:" + " ignore"
+    # The type-suppression comment is assembled from a fragment so this test module
+    # itself stays free of a real suppression comment while the written temp file
+    # still contains one.
+    _SUPPRESSION_MARKER = "# type:" + " ignore"
 
-_TYPE_IGNORE_SOURCE = (
-    f"from __future__ import annotations\n\nvalue = 1  {_SUPPRESSION_MARKER}\n"
-)
+    _TYPE_IGNORE_SOURCE = (
+        f"from __future__ import annotations\n\nvalue = 1  {_SUPPRESSION_MARKER}\n"
+    )
 
-_ANY_SOURCE = """from __future__ import annotations
+    _ANY_SOURCE = """from __future__ import annotations
 
 from typing import Any
 
@@ -75,7 +79,7 @@ def render(value: Any) -> str:
     return str(value)
 """
 
-_CAST_SOURCE = """from __future__ import annotations
+    _CAST_SOURCE = """from __future__ import annotations
 
 from typing import cast
 
@@ -83,14 +87,14 @@ from typing import cast
 number = cast(int, '1')
 """
 
-_LEGACY_FACTORY_SOURCE = """from __future__ import annotations
+    _LEGACY_FACTORY_SOURCE = """from __future__ import annotations
 
 from typing import TypeVar
 
 T = TypeVar("T")
 """
 
-_LEGACY_ANNOTATION_SOURCE = """from __future__ import annotations
+    _LEGACY_ANNOTATION_SOURCE = """from __future__ import annotations
 
 from typing import Optional
 
@@ -99,36 +103,37 @@ def render(value: Optional[str]) -> str:
     return value or ''
 """
 
-_OBJECT_SOURCE = "from __future__ import annotations\n\n\npayload: object = 'ready'\n"
+    _OBJECT_SOURCE = (
+        "from __future__ import annotations\n\n\npayload: object = 'ready'\n"
+    )
 
-_BOOL_IS_HELPER_SOURCE = """from __future__ import annotations
+    _BOOL_IS_HELPER_SOURCE = """from __future__ import annotations
 
 
 def is_ready(value: str) -> bool:
     return bool(value)
 """
 
-# (filename, source, rule_id) — each source triggers exactly the named rule.
-_OFFENDING_SOURCES: tuple[tuple[str, str, str], ...] = (
-    ("type_ignore.py", _TYPE_IGNORE_SOURCE, "TYPE-001"),
-    ("any_annotation.py", _ANY_SOURCE, "TYPE-002"),
-    ("cast_usage.py", _CAST_SOURCE, "TYPE-003"),
-    ("legacy_factory.py", _LEGACY_FACTORY_SOURCE, "TYPE-004"),
-    ("legacy_annotation.py", _LEGACY_ANNOTATION_SOURCE, "TYPE-005"),
-    ("object_annotation.py", _OBJECT_SOURCE, "TYPE-006"),
-    ("bool_is_helper.py", _BOOL_IS_HELPER_SOURCE, "TYPE-007"),
-)
+    # (filename, source, rule_id) — each source triggers exactly the named rule.
+    _OFFENDING_SOURCES: tuple[tuple[str, str, str], ...] = (
+        ("type_ignore.py", _TYPE_IGNORE_SOURCE, "TYPE-001"),
+        ("any_annotation.py", _ANY_SOURCE, "TYPE-002"),
+        ("cast_usage.py", _CAST_SOURCE, "TYPE-003"),
+        ("legacy_factory.py", _LEGACY_FACTORY_SOURCE, "TYPE-004"),
+        ("legacy_annotation.py", _LEGACY_ANNOTATION_SOURCE, "TYPE-005"),
+        ("object_annotation.py", _OBJECT_SOURCE, "TYPE-006"),
+        ("bool_is_helper.py", _BOOL_IS_HELPER_SOURCE, "TYPE-007"),
+    )
 
-
-class TestsFlextTestsValidatorTypes(ValidatorTestFilesMixin):
-    """Verify strict typing rules through the public `tv.types` contract."""
+    class Tests:
+        """flext-tests validator types test namespace."""
 
     def test_types_passes_clean_modern_typing_with_metadata(
         self, tmp_path: Path
     ) -> None:
         # Arrange
         file_path = self._write_source(
-            tmp_path, "modern_typing.py", _MODERN_TYPING_SOURCE
+            tmp_path, "modern_typing.py", self._MODERN_TYPING_SOURCE
         )
 
         # Act

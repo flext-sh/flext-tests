@@ -20,7 +20,7 @@ import sys
 from pathlib import Path
 from typing import Final
 
-from flext_core import t
+from flext_tests.typings import t
 
 _LOCAL_PACKAGES: Final[t.StrSequence] = ("tests",)
 
