@@ -102,8 +102,11 @@ class FlextTestsPayloadUtilities:
         if value.kind == "atom":
             return value.atom
         if value.kind == "mapping":
-            return {key: project(item) for key, item in value.entries.items()}
-        return [project(item) for item in value.items]
+            # Match values intentionally carry non-JSON sentinels (exceptions,
+            # models, paths); NativeMatchValue stays JsonValue-only because
+            # pyrefly cannot resolve a class-scoped self-referential alias.
+            return {key: project(item) for key, item in value.entries.items()}  # pyrefly: ignore[bad-return]
+        return [project(item) for item in value.items]  # pyrefly: ignore[bad-return]
 
     @staticmethod
     def to_normalized_value(value: p.Tests.Payload) -> t.JsonValue:

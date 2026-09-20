@@ -80,6 +80,9 @@ class FlextTestsBaseTypesMixin:
         | Mapping[str, TestobjectNode]
         | None
     )
+    # Why not recursive: pyrefly cannot resolve a class-scoped self-referential
+    # type alias; the container arms stay JsonValue-only and the two recursive
+    # returns in payload.to_match_value carry scoped ignores instead.
     type NativeMatchValue = PayloadAtom | p.Model | t.JsonValue | None
     type DeepSpec = Mapping[
         str,
