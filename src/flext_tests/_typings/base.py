@@ -35,14 +35,6 @@ if TYPE_CHECKING:
     from .._models.base import FlextTestsBaseModelsMixin
     from .._protocols.payload import FlextTestsPayloadProtocolsMixin
 
-type _NativeMatchValue = (
-    FlextTestsBaseTypesMixin.PayloadAtom
-    | p.Model
-    | list[_NativeMatchValue]
-    | dict[str, _NativeMatchValue]
-    | None
-)
-
 
 class FlextTestsBaseTypesMixin:
     """Base generic primitives extending Flext core aliases."""
@@ -88,7 +80,7 @@ class FlextTestsBaseTypesMixin:
         | Mapping[str, TestobjectNode]
         | None
     )
-    type NativeMatchValue = _NativeMatchValue
+    type NativeMatchValue = PayloadAtom | p.Model | t.JsonValue | None
     type DeepSpec = Mapping[
         str,
         FlextTestsBaseModelsMixin.Payload
