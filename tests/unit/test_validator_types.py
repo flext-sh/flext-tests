@@ -133,7 +133,7 @@ def is_ready(value: str) -> bool:
     ) -> None:
         # Arrange
         file_path = self._write_source(
-            tmp_path, "modern_typing.py", _MODERN_TYPING_SOURCE
+            tmp_path, "modern_typing.py", self._MODERN_TYPING_SOURCE
         )
 
         # Act

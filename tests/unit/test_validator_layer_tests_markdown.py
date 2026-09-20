@@ -156,7 +156,9 @@ value: int = 1
     def test_tests_reports_each_forbidden_test_pattern(
         self, tmp_path: Path, expected_rule: str
     ) -> None:
-        file_path = self._write(tmp_path, "test_example.py", _MOCK_HEAVY_TEST_SOURCE)
+        file_path = self._write(
+            tmp_path, "test_example.py", self._MOCK_HEAVY_TEST_SOURCE
+        )
 
         result: m.Tests.ScanResult = u.Tests.assert_success(tv.tests(file_path))
         rule_ids = {violation.rule_id for violation in result.violations}
@@ -167,7 +169,9 @@ value: int = 1
     def test_tests_violations_carry_severity_from_the_public_enum(
         self, tmp_path: Path
     ) -> None:
-        file_path = self._write(tmp_path, "test_example.py", _MOCK_HEAVY_TEST_SOURCE)
+        file_path = self._write(
+            tmp_path, "test_example.py", self._MOCK_HEAVY_TEST_SOURCE
+        )
 
         result: m.Tests.ScanResult = u.Tests.assert_success(tv.tests(file_path))
 
@@ -176,7 +180,7 @@ value: int = 1
             tm.that(violation.severity in allowed, eq=True)
 
     def test_tests_passes_for_a_clean_test_module(self, tmp_path: Path) -> None:
-        file_path = self._write(tmp_path, "test_clean.py", _CLEAN_TEST_SOURCE)
+        file_path = self._write(tmp_path, "test_clean.py", self._CLEAN_TEST_SOURCE)
 
         result: m.Tests.ScanResult = u.Tests.assert_success(tv.tests(file_path))
 
@@ -190,7 +194,7 @@ value: int = 1
     def test_markdown_reports_each_forbidden_code_block_pattern(
         self, tmp_path: Path, expected_rule: str
     ) -> None:
-        self._write(tmp_path, "README.md", _BAD_MARKDOWN)
+        self._write(tmp_path, "README.md", self._BAD_MARKDOWN)
 
         result: m.Tests.ScanResult = u.Tests.assert_success(tv.markdown(tmp_path))
         rule_ids = {violation.rule_id for violation in result.violations}
@@ -199,7 +203,7 @@ value: int = 1
         tm.that(expected_rule in rule_ids, eq=True)
 
     def test_markdown_passes_for_a_clean_code_block(self, tmp_path: Path) -> None:
-        self._write(tmp_path, "README.md", _CLEAN_MARKDOWN)
+        self._write(tmp_path, "README.md", self._CLEAN_MARKDOWN)
 
         result: m.Tests.ScanResult = u.Tests.assert_success(tv.markdown(tmp_path))
 
@@ -208,7 +212,7 @@ value: int = 1
         tm.that(result.validator_name, eq="markdown")
 
     def test_markdown_reports_any_annotation(self, tmp_path: Path) -> None:
-        self._write(tmp_path, "README.md", _BAD_MARKDOWN_ANY)
+        self._write(tmp_path, "README.md", self._BAD_MARKDOWN_ANY)
 
         result: m.Tests.ScanResult = u.Tests.assert_success(tv.markdown(tmp_path))
         rule_ids = {violation.rule_id for violation in result.violations}
@@ -217,7 +221,7 @@ value: int = 1
         tm.that("MD-005" in rule_ids, eq=True)
 
     def test_markdown_ignores_notest_blocks_for_syntax(self, tmp_path: Path) -> None:
-        self._write(tmp_path, "README.md", _NOTEST_MARKDOWN)
+        self._write(tmp_path, "README.md", self._NOTEST_MARKDOWN)
 
         result: m.Tests.ScanResult = u.Tests.assert_success(tv.markdown(tmp_path))
         rule_ids = {violation.rule_id for violation in result.violations}
@@ -233,8 +237,8 @@ value: int = 1
     def test_passed_flag_is_consistent_with_violation_presence(
         self, tmp_path: Path
     ) -> None:
-        dirty = self._write(tmp_path, "test_example.py", _MOCK_HEAVY_TEST_SOURCE)
-        clean = self._write(tmp_path, "test_clean.py", _CLEAN_TEST_SOURCE)
+        dirty = self._write(tmp_path, "test_example.py", self._MOCK_HEAVY_TEST_SOURCE)
+        clean = self._write(tmp_path, "test_clean.py", self._CLEAN_TEST_SOURCE)
 
         dirty_result: m.Tests.ScanResult = u.Tests.assert_success(tv.tests(dirty))
         clean_result: m.Tests.ScanResult = u.Tests.assert_success(tv.tests(clean))

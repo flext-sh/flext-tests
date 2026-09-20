@@ -4,14 +4,16 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from flext_tests import FlextTestsFiles, tm
+
 # The generated parts facade resolves the ``m`` facet through this module.
-from flext_tests import FlextTestsFiles, FlextTestsModels, tm
+from tests import m
 
 
-class TestsFlextTestsFilesModels(FlextTestsModels):
+class TestsFlextTestsFilesModels(m):
     """File model tests."""
 
-    class TestsFlextTestsFiles(FlextTestsModels.Tests):
+    class TestsFlextTestsFiles(m.Tests):
         """File model tests."""
 
         def test_file_info_exists_false(self) -> None:
