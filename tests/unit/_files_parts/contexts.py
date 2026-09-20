@@ -12,9 +12,6 @@ from tests import m, t, u
 class TestsFlextTestsFilesContexts:
     """File context and alias tests."""
 
-    class Tests:
-        """flext-tests files contexts test namespace."""
-
     def test_files_context_manager_basic(self) -> None:
         """Test files() context manager creates temporary files."""
         with FlextTestsFiles.files({"a": "content A", "b": "content B"}) as paths:

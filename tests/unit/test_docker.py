@@ -33,9 +33,6 @@ class TestsFlextTestsDocker(
 ):
     """Behavioral contract of the Docker control facade (FlextTestsDocker)."""
 
-    class Tests:
-        """flext-tests docker test namespace."""
-
     # ------------------------------------------------------------------ #
     # CI=Y disables Docker lifecycle (exact Make token, not CI=true)     #
     # ------------------------------------------------------------------ #

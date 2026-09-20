@@ -32,6 +32,3 @@ class TestsFlextTestsMatchers(
     TestsFlextTestsMatchersDataDriven,
 ):
     """Test suite for tm class."""
-
-    class Tests:
-        """flext-tests matchers test namespace."""

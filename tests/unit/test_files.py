@@ -34,6 +34,3 @@ class TestsFlextTestsFiles(
     TestsFlextTestsFilesBatchCreateIn,
 ):
     """Test suite for FlextTestsFiles.FileInfo model."""
-
-    class Tests:
-        """flext-tests files test namespace."""
