@@ -310,5 +310,6 @@ class FlextTestsDomains:
 
 
 td: type[FlextTestsDomains] = FlextTestsDomains
+"""Test domain facade alias for flext_tests."""
 
 __all__: list[str] = ["FlextTestsDomains", "td"]

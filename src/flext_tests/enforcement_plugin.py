@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from flext_tests import p
 
 SLOW_TIMEOUT_INI_OPTION = "flext_slow_timeout_seconds"
+"""Config-owned timeout option for slow pytest items."""
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:

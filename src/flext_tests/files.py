@@ -61,5 +61,6 @@ class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixi
 
 
 tf: type[FlextTestsFiles] = FlextTestsFiles
+"""File manager facade alias for flext_tests."""
 
 __all__: list[str] = ["FlextTestsFiles", "tf"]
