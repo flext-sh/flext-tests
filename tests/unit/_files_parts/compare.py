@@ -11,9 +11,6 @@ from tests import c, u
 class TestsFlextTestsFilesCompare:
     """File comparison tests."""
 
-    class Tests:
-        """flext-tests files compare test namespace."""
-
     def test_compare_identical_content(self, tmp_path: Path) -> None:
         """Test compare() returns True for identical content."""
         manager = tf(base_dir=tmp_path)

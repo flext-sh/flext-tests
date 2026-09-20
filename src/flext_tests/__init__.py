@@ -20,7 +20,8 @@ from .__version__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_infra import c as infra_c, d, e, h, r, x
+    from flext_cli import d, e, h, r, x
+    from flext_infra import c as infra_c
 
     from ._config import FlextTestsConfig, config
     from ._settings import FlextTestsSettings, settings
@@ -134,7 +135,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ".typings": ("FlextTestsTypes", "t"),
             ".utilities": ("FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"),
             ".validator": ("FlextTestsValidator", "tv"),
-            "flext_infra": ("d", "e", "h", "r", "x"),
+            "flext_cli": ("d", "e", "h", "r", "x"),
         }),
         alias_groups=MappingProxyType({"flext_infra": (("infra_c", "c"),)}),
         sort_keys=False,

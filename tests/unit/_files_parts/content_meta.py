@@ -11,9 +11,6 @@ from tests import m, u
 class TestsFlextTestsFilesContentMeta:
     """File content metadata tests."""
 
-    class Tests:
-        """flext-tests files content_meta test namespace."""
-
     def test_info_parse_content_json_dict(self, tmp_path: Path) -> None:
         """Test info() with parse_content=True for JSON dict."""
         manager = tf(base_dir=tmp_path)

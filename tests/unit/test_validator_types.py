@@ -125,9 +125,6 @@ def is_ready(value: str) -> bool:
         ("bool_is_helper.py", _BOOL_IS_HELPER_SOURCE, "TYPE-007"),
     )
 
-    class Tests:
-        """flext-tests validator types test namespace."""
-
     def test_types_passes_clean_modern_typing_with_metadata(
         self, tmp_path: Path
     ) -> None:
