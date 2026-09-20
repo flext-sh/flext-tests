@@ -28,20 +28,12 @@ from flext_infra import m, t as it
 from flext_core import p
 
 from .._models.domains import FlextTestsDomainModelsMixin
+from .._protocols.payload import FlextTestsPayloadProtocolsMixin
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from .._models.base import FlextTestsBaseModelsMixin
-    from .._protocols.payload import FlextTestsPayloadProtocolsMixin
-
-type _NativeMatchValue = (
-    FlextTestsBaseTypesMixin.PayloadAtom
-    | p.Model
-    | list[_NativeMatchValue]
-    | dict[str, _NativeMatchValue]
-    | None
-)
 
 
 class FlextTestsBaseTypesMixin:
@@ -88,7 +80,13 @@ class FlextTestsBaseTypesMixin:
         | Mapping[str, TestobjectNode]
         | None
     )
-    type NativeMatchValue = _NativeMatchValue
+    type NativeMatchValue = (
+        FlextTestsBaseTypesMixin.PayloadAtom
+        | p.Model
+        | FlextTestsPayloadProtocolsMixin.NativeSequence
+        | FlextTestsPayloadProtocolsMixin.NativeMapping
+        | None
+    )
     type DeepSpec = Mapping[
         str,
         FlextTestsBaseModelsMixin.Payload
