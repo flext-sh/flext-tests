@@ -14,8 +14,6 @@ from tests import m, r, t
 class TestsFlextTestsMatchersResults:
     """Matcher result assertion tests."""
 
-    class Tests:
-        """flext-tests matchers results test namespace."""
 
     def test_assert_result_success_passes(self) -> None:
         """Test tm.ok() with successful result."""

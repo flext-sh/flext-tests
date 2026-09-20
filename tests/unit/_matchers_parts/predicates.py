@@ -8,8 +8,6 @@ from tests import t
 class TestsFlextTestsMatchersPredicates:
     """Shared boolean predicates used as ``where=``/``all_=``/``any_=`` callables."""
 
-    class Tests:
-        """flext-tests matchers predicates test namespace."""
 
     @staticmethod
     def is_string(value: t.Tests.TestobjectSerializable) -> bool:
