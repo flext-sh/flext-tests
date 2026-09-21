@@ -37,7 +37,10 @@ class FlextTestsConstantsValidator:
         "HIGH",
         "try/except ImportError pattern",
     )
-    VALIDATOR_RULE_IMPORT_004: ClassVar[t.StrPair] = ("CRITICAL", "sys.path manipulation")
+    VALIDATOR_RULE_IMPORT_004: ClassVar[t.StrPair] = (
+        "CRITICAL",
+        "sys.path manipulation",
+    )
     VALIDATOR_RULE_IMPORT_005: ClassVar[t.StrPair] = (
         "MEDIUM",
         "Direct technology import (should use facade)",
@@ -46,8 +49,14 @@ class FlextTestsConstantsValidator:
         "HIGH",
         "Non-root import from flext-* package",
     )
-    VALIDATOR_RULE_TYPE_001: ClassVar[t.StrPair] = ("CRITICAL", "type suppression comment")
-    VALIDATOR_RULE_TYPE_002: ClassVar[t.StrPair] = ("CRITICAL", "wildcard type annotation")
+    VALIDATOR_RULE_TYPE_001: ClassVar[t.StrPair] = (
+        "CRITICAL",
+        "type suppression comment",
+    )
+    VALIDATOR_RULE_TYPE_002: ClassVar[t.StrPair] = (
+        "CRITICAL",
+        "wildcard type annotation",
+    )
     VALIDATOR_RULE_TYPE_003: ClassVar[t.StrPair] = ("MEDIUM", "Unapproved  usage")
     VALIDATOR_RULE_TYPE_004: ClassVar[t.StrPair] = (
         "CRITICAL",
@@ -61,8 +70,14 @@ class FlextTestsConstantsValidator:
         "CRITICAL",
         "forbidden object annotation",
     )
-    VALIDATOR_RULE_TYPE_007: ClassVar[t.StrPair] = ("HIGH", "bool-returning is_* helper")
-    VALIDATOR_RULE_TEST_001: ClassVar[t.StrPair] = ("HIGH", "monkeypatch usage detected")
+    VALIDATOR_RULE_TYPE_007: ClassVar[t.StrPair] = (
+        "HIGH",
+        "bool-returning is_* helper",
+    )
+    VALIDATOR_RULE_TEST_001: ClassVar[t.StrPair] = (
+        "HIGH",
+        "monkeypatch usage detected",
+    )
     VALIDATOR_RULE_TEST_002: ClassVar[t.StrPair] = (
         "HIGH",
         "Mock/MagicMock usage detected",
@@ -83,8 +98,14 @@ class FlextTestsConstantsValidator:
         "MEDIUM",
         "disallow_incomplete_defs = false",
     )
-    VALIDATOR_RULE_CONFIG_004: ClassVar[t.StrPair] = ("MEDIUM", "warn_return_any = false")
-    VALIDATOR_RULE_CONFIG_005: ClassVar[t.StrPair] = ("LOW", "reportPrivateUsage = false")
+    VALIDATOR_RULE_CONFIG_004: ClassVar[t.StrPair] = (
+        "MEDIUM",
+        "warn_return_any = false",
+    )
+    VALIDATOR_RULE_CONFIG_005: ClassVar[t.StrPair] = (
+        "LOW",
+        "reportPrivateUsage = false",
+    )
     VALIDATOR_RULE_BYPASS_001: ClassVar[t.StrPair] = ("MEDIUM", "noqa comment detected")
     VALIDATOR_RULE_BYPASS_002: ClassVar[t.StrPair] = (
         "LOW",

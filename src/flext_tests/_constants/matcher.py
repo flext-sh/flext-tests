@@ -50,17 +50,23 @@ class FlextTestsConstantsMatcher:
     ERR_ANY_ITEMS_FAILED: ClassVar[str] = "No items match the predicate"
     ERR_KEYS_MISSING: ClassVar[str] = "Missing required keys: {keys}"
     ERR_KEYS_EXTRA: ClassVar[str] = "Unexpected keys present: {keys}"
-    ERR_SCOPE_PATH_NOT_FOUND: ClassVar[str] = "Path '{path}' not found in value: {error}"
+    ERR_SCOPE_PATH_NOT_FOUND: ClassVar[str] = (
+        "Path '{path}' not found in value: {error}"
+    )
     ERR_ERROR_CODE_MISMATCH: ClassVar[str] = (
         "Expected error code {expected!r} but got {actual!r}"
     )
     ERR_ERROR_CODE_NOT_CONTAINS: ClassVar[str] = (
         "Expected error code to contain {expected!r} but got {actual!r}"
     )
-    ERR_ERROR_DATA_KEY_MISSING: ClassVar[str] = "Expected error data key {key!r} not found"
+    ERR_ERROR_DATA_KEY_MISSING: ClassVar[str] = (
+        "Expected error data key {key!r} not found"
+    )
     ERR_ERROR_DATA_VALUE_MISMATCH: ClassVar[str] = (
         "Error data key {key!r}: expected {expected!r}, got {actual!r}"
     )
-    ERR_SCOPE_CLEANUP_FAILED: ClassVar[str] = "Cleanup function failed in scope: {error}"
+    ERR_SCOPE_CLEANUP_FAILED: ClassVar[str] = (
+        "Cleanup function failed in scope: {error}"
+    )
     EMAIL_PATTERN: ClassVar[str] = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
     EMAIL_PATTERN_RE: ClassVar[t.Infra.RegexPattern] = re.compile(EMAIL_PATTERN)

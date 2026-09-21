@@ -12,6 +12,9 @@ from __future__ import annotations
 from collections.abc import KeysView, Mapping, ValuesView
 from datetime import datetime, tzinfo
 from enum import Enum
+from importlib.machinery import ModuleSpec
+from pathlib import Path
+from re import Match
 from types import (
     BuiltinFunctionType,
     CodeType,
@@ -20,9 +23,6 @@ from types import (
     ModuleType,
     UnionType,
 )
-from importlib.machinery import ModuleSpec
-from pathlib import Path
-from re import Match
 from typing import TypeAliasType
 
 from flext_infra import u
