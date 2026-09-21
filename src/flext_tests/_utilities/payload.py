@@ -9,11 +9,20 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import KeysView, Mapping, ValuesView
 from datetime import datetime, tzinfo
 from enum import Enum
+from types import (
+    BuiltinFunctionType,
+    CodeType,
+    FunctionType,
+    GenericAlias,
+    ModuleType,
+    UnionType,
+)
+from importlib.machinery import ModuleSpec
 from pathlib import Path
-from types import GenericAlias, UnionType
+from re import Match
 from typing import TypeAliasType
 
 from flext_infra import u
@@ -54,14 +63,34 @@ class FlextTestsPayloadUtilities:
                 | Path()
                 | type()
                 | BaseException()
-                | m.BaseModel()
+                | p.Model()
             ):
                 return m.Tests.Payload(kind="atom", atom=value)
-            case GenericAlias() | UnionType() | TypeAliasType():
-                # Typing constructs are type-level atoms: the established
-                # textual convention (mirrors the type() leaf below) keeps
-                # alias-bearing expectations comparable as strings.
+            case value if hasattr(value, "__metadata__") and hasattr(
+                value, "__origin__"
+            ):
+                # typing.Annotated[...] constructs are type-level atoms under
+                # the same textual convention as the alias arm below.
                 return m.Tests.Payload(kind="atom", atom=str(value))
+            case (
+                GenericAlias()
+                | UnionType()
+                | TypeAliasType()
+                | FunctionType()
+                | BuiltinFunctionType()
+                | CodeType()
+                | ModuleType()
+                | ModuleSpec()
+                | Match()
+            ):
+                # Typing constructs and runtime machinery (functions, modules,
+                # code specs, regex matches) are type-level atoms: the
+                # established textual convention (mirrors the type() leaf
+                # above) keeps alias-bearing expectations comparable as
+                # strings.
+                return m.Tests.Payload(kind="atom", atom=str(value))
+            case value if isinstance(value, (KeysView, ValuesView)):
+                return to_p(list(value))
             case Mapping():
                 entries: dict[str, m.Tests.Payload] = {}
                 for key, item in value.items():
