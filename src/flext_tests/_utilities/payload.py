@@ -9,12 +9,20 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import re
-from collections.abc import Mapping
+from collections.abc import KeysView, Mapping, ValuesView
 from datetime import datetime, tzinfo
 from enum import Enum
+from types import (
+    BuiltinFunctionType,
+    CodeType,
+    FunctionType,
+    GenericAlias,
+    ModuleType,
+    UnionType,
+)
+from importlib.machinery import ModuleSpec
 from pathlib import Path
-from types import GenericAlias, UnionType
+from re import Match
 from typing import TypeAliasType
 
 from flext_infra import u
@@ -54,18 +62,37 @@ class FlextTestsPayloadUtilities:
                 | tzinfo()
                 | Path()
                 | type()
-                | m.BaseModel()
+                | BaseException()
+                | p.Model()
             ):
                 return m.Tests.Payload(kind="atom", atom=value)
-            case GenericAlias() | UnionType() | TypeAliasType():
-                # Typing constructs are type-level atoms: the established
-                # textual convention (mirrors the type() leaf below) keeps
-                # alias-bearing expectations comparable as strings.
+            case value if hasattr(value, "__metadata__") and hasattr(
+                value, "__origin__"
+            ):
+                # typing.Annotated[...] constructs are type-level atoms under
+                # the same textual convention as the alias arm below.
                 return m.Tests.Payload(kind="atom", atom=str(value))
-            case re.Match():
+            case Match():
                 # A regex match compares by its matched text — the pattern
                 # contract (semver, id shape) is what an expectation asserts.
                 return m.Tests.Payload(kind="atom", atom=value.group(0))
+            case (
+                GenericAlias()
+                | UnionType()
+                | TypeAliasType()
+                | FunctionType()
+                | BuiltinFunctionType()
+                | CodeType()
+                | ModuleType()
+                | ModuleSpec()
+            ):
+                # Typing constructs and runtime machinery (functions, modules,
+                # code specs) are type-level atoms: the established textual
+                # convention (mirrors the type() leaf above) keeps
+                # alias-bearing expectations comparable as strings.
+                return m.Tests.Payload(kind="atom", atom=str(value))
+            case value if isinstance(value, (KeysView, ValuesView)):
+                return to_p(list(value))
             case Mapping():
                 entries: dict[str, m.Tests.Payload] = {}
                 for key, item in value.items():
@@ -106,8 +133,11 @@ class FlextTestsPayloadUtilities:
         if value.kind == "atom":
             return value.atom
         if value.kind == "mapping":
-            return {key: project(item) for key, item in value.entries.items()}
-        return [project(item) for item in value.items]
+            # Match values intentionally carry non-JSON sentinels (exceptions,
+            # models, paths); NativeMatchValue stays JsonValue-only because
+            # pyrefly cannot resolve a class-scoped self-referential alias.
+            return {key: project(item) for key, item in value.entries.items()}  # pyrefly: ignore[bad-return]
+        return [project(item) for item in value.items]  # pyrefly: ignore[bad-return]
 
     @staticmethod
     def to_normalized_value(value: p.Tests.Payload) -> t.JsonValue:
