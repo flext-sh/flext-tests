@@ -11,7 +11,7 @@ production counterpart.
 from __future__ import annotations
 
 from enum import StrEnum, unique
-from typing import Final
+from typing import ClassVar
 
 from flext_cli.constants import FlextCliConstantsFiles
 from flext_infra import c as infra_c
@@ -52,19 +52,19 @@ class FlextTestsConstantsFiles(FlextCliConstantsFiles):
 
     # ── Test-specific file constants ────────────────────────────
 
-    DEFAULT_ENCODING: Final[str] = infra_c.DEFAULT_ENCODING
-    DEFAULT_BINARY_ENCODING: Final[str] = "binary"
-    PERMISSION_READONLY_FILE: Final[int] = 292
-    PERMISSION_WRITABLE_FILE: Final[int] = 420
-    PERMISSION_WRITABLE_DIR: Final[int] = 493
-    HASH_CHUNK_SIZE: Final[int] = 8192
-    ERROR_FILE_NOT_FOUND: Final[str] = "File not found: {path}"
-    ERROR_INVALID_JSON: Final[str] = "Invalid JSON: {error}"
-    ERROR_INVALID_YAML: Final[str] = "Invalid YAML: {error}"
-    ERROR_ENCODING: Final[str] = "Encoding error: {error}"
-    ERROR_READ: Final[str] = "Read error: {error}"
-    ERROR_COMPARE: Final[str] = "Compare error: {error}"
-    ERROR_INFO: Final[str] = "Info error: {error}"
+    DEFAULT_ENCODING: ClassVar[str] = infra_c.DEFAULT_ENCODING
+    DEFAULT_BINARY_ENCODING: ClassVar[str] = "binary"
+    PERMISSION_READONLY_FILE: ClassVar[int] = 292
+    PERMISSION_WRITABLE_FILE: ClassVar[int] = 420
+    PERMISSION_WRITABLE_DIR: ClassVar[int] = 493
+    HASH_CHUNK_SIZE: ClassVar[int] = 8192
+    ERROR_FILE_NOT_FOUND: ClassVar[str] = "File not found: {path}"
+    ERROR_INVALID_JSON: ClassVar[str] = "Invalid JSON: {error}"
+    ERROR_INVALID_YAML: ClassVar[str] = "Invalid YAML: {error}"
+    ERROR_ENCODING: ClassVar[str] = "Encoding error: {error}"
+    ERROR_READ: ClassVar[str] = "Read error: {error}"
+    ERROR_COMPARE: ClassVar[str] = "Compare error: {error}"
+    ERROR_INFO: ClassVar[str] = "Info error: {error}"
 
 
 __all__: list[str] = ["FlextTestsConstantsFiles"]

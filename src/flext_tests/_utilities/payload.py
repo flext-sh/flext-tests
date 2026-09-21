@@ -9,6 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping
 from datetime import datetime, tzinfo
 from enum import Enum
@@ -61,6 +62,10 @@ class FlextTestsPayloadUtilities:
                 # textual convention (mirrors the type() leaf below) keeps
                 # alias-bearing expectations comparable as strings.
                 return m.Tests.Payload(kind="atom", atom=str(value))
+            case re.Match():
+                # A regex match compares by its matched text — the pattern
+                # contract (semver, id shape) is what an expectation asserts.
+                return m.Tests.Payload(kind="atom", atom=value.group(0))
             case Mapping():
                 entries: dict[str, m.Tests.Payload] = {}
                 for key, item in value.items():

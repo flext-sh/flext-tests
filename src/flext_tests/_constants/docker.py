@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from enum import StrEnum, unique
-from typing import TYPE_CHECKING, Final
+from typing import ClassVar, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -20,38 +20,38 @@ class FlextTestsConstantsDocker:
 
     # Exact Make CI token (flext-infra config.codegen.make.ci); never treat
     # GitHub's CI=true as docker-disable.
-    ENV_CI: Final[str] = "CI"
-    CI_MAKE_VALUE: Final[str] = "Y"
-    DOCKER_CI_SKIP_REASON: Final[str] = "docker disabled under CI=Y"
-    DOCKER_CONNECTIVITY_MARKER: Final[str] = "docker"
-    DOCKER_UNREACHABLE_SKIP_REASON: Final[str] = (
+    ENV_CI: ClassVar[str] = "CI"
+    CI_MAKE_VALUE: ClassVar[str] = "Y"
+    DOCKER_CI_SKIP_REASON: ClassVar[str] = "docker disabled under CI=Y"
+    DOCKER_CONNECTIVITY_MARKER: ClassVar[str] = "docker"
+    DOCKER_UNREACHABLE_SKIP_REASON: ClassVar[str] = (
         "Docker daemon unreachable; start it to run Docker integration tests"
     )
     # Default probe ceiling for callers that omit max_wait. Under CI=Y the
     # Docker lifecycle skips before probing. Outside CI, shared-container
     # startup_timeout remains the SSOT for long boots (Oracle/kind).
-    DOCKER_PROBE_MAX_WAIT_SECONDS: Final[int] = 8
+    DOCKER_PROBE_MAX_WAIT_SECONDS: ClassVar[int] = 8
 
     # Connectivity markers auto-skip when their service is unreachable
     # (AGENTS.md: "tests that need external/docker services skip when
     # unreachable"). Each marker maps to the shared container whose declared
     # host/port is probed once per session. A marker absent from this map is
     # never skipped, so adding one is a deliberate data change.
-    CONNECTIVITY_MARKER_CONTAINERS: Final[Mapping[str, str]] = {
+    CONNECTIVITY_MARKER_CONTAINERS: ClassVar[Mapping[str, str]] = {
         "oracle": "flext-oracle-db-test",
         "ldap": "flext-openldap-test",
         "kubernetes": "flext-kind-test",
     }
-    CONNECTIVITY_MARKERS: Final[tuple[str, ...]] = (
+    CONNECTIVITY_MARKERS: ClassVar[tuple[str, ...]] = (
         DOCKER_CONNECTIVITY_MARKER,
         *CONNECTIVITY_MARKER_CONTAINERS,
     )
-    UNREACHABLE_SKIP_REASON: Final[str] = (
+    UNREACHABLE_SKIP_REASON: ClassVar[str] = (
         "{marker} service unreachable at {host}:{port}; start it to run these tests"
     )
-    CONNECTIVITY_PROBE_TIMEOUT_SECONDS: Final[float] = 1.5
+    CONNECTIVITY_PROBE_TIMEOUT_SECONDS: ClassVar[float] = 1.5
 
-    SHARED_CONTAINERS: Final[Mapping[str, t.HeaderMapping]] = {
+    SHARED_CONTAINERS: ClassVar[Mapping[str, t.HeaderMapping]] = {
         "flext-openldap-test": {
             "compose_file": "docker/docker-compose.openldap.yml",
             "service": "openldap",
