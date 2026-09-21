@@ -11,7 +11,10 @@ from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 if TYPE_CHECKING:
     from .build import build_items
     from .config import (
-        SessionConfig, active_rules, discover_repository_root, resolve_config,
+        SessionConfig,
+        active_rules,
+        discover_repository_root,
+        resolve_config,
         split_csv,
     )
     from .discovery import (
@@ -24,10 +27,22 @@ if TYPE_CHECKING:
     from .namespace import NamespaceDetectorBuilder
     from .validators import build_tests_validator_items, dispatch_infra_detector
 __all__: tuple[str, ...] = (
-    "EnforcementCollector", "EnforcementItem", "EnforcementViolationError", "NamespaceDetectorBuilder",
-    "SessionConfig", "active_rules", "build_items", "build_tests_validator_items",
-    "collected_project_names", "collected_validator_targets", "discover_repository_root", "dispatch_infra_detector",
-    "load_infra_report", "project_name_for_path", "resolve_config", "split_csv",
+    "EnforcementCollector",
+    "EnforcementItem",
+    "EnforcementViolationError",
+    "NamespaceDetectorBuilder",
+    "SessionConfig",
+    "active_rules",
+    "build_items",
+    "build_tests_validator_items",
+    "collected_project_names",
+    "collected_validator_targets",
+    "discover_repository_root",
+    "dispatch_infra_detector",
+    "load_infra_report",
+    "project_name_for_path",
+    "resolve_config",
+    "split_csv",
 )
 
 _LAZY_IMPORTS = MappingProxyType(
@@ -35,15 +50,22 @@ _LAZY_IMPORTS = MappingProxyType(
         MappingProxyType({
             ".build": ("build_items",),
             ".config": (
-                "SessionConfig", "active_rules", "discover_repository_root",
-                "resolve_config", "split_csv",
+                "SessionConfig",
+                "active_rules",
+                "discover_repository_root",
+                "resolve_config",
+                "split_csv",
             ),
             ".discovery": (
-                "collected_project_names", "collected_validator_targets",
-                "load_infra_report", "project_name_for_path",
+                "collected_project_names",
+                "collected_validator_targets",
+                "load_infra_report",
+                "project_name_for_path",
             ),
             ".items": (
-                "EnforcementCollector", "EnforcementItem", "EnforcementViolationError",
+                "EnforcementCollector",
+                "EnforcementItem",
+                "EnforcementViolationError",
             ),
             ".namespace": ("NamespaceDetectorBuilder",),
             ".validators": ("build_tests_validator_items", "dispatch_infra_detector"),

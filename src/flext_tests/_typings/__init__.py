@@ -15,7 +15,10 @@ if TYPE_CHECKING:
     from .make import FlextTestsMakeTypesMixin
     from .matchers import FlextTestsMatchersTypesMixin
 __all__: tuple[str, ...] = (
-    "FlextTestsBaseTypesMixin", "FlextTestsFilesTypesMixin", "FlextTestsGuardsTypesMixin", "FlextTestsMakeTypesMixin",
+    "FlextTestsBaseTypesMixin",
+    "FlextTestsFilesTypesMixin",
+    "FlextTestsGuardsTypesMixin",
+    "FlextTestsMakeTypesMixin",
     "FlextTestsMatchersTypesMixin",
 )
 

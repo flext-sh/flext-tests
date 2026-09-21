@@ -9,12 +9,19 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 from .__version__ import (
-    __author__ as __author__, __author_email__ as __author_email__, __description__ as __description__, __license__ as __license__,
-    __title__ as __title__, __url__ as __url__, __version__ as __version__, __version_info__ as __version_info__,
+    __author__ as __author__,
+    __author_email__ as __author_email__,
+    __description__ as __description__,
+    __license__ as __license__,
+    __title__ as __title__,
+    __url__ as __url__,
+    __version__ as __version__,
+    __version_info__ as __version_info__,
 )
 
 if TYPE_CHECKING:
-    from flext_infra import c as infra_c, d, e, h, r, x
+    from flext_core import d, e, h, r, x
+    from flext_infra import c as infra_c
 
     from .__version__ import FlextTestsVersion
     from ._config import FlextTestsConfig, config
@@ -24,8 +31,13 @@ if TYPE_CHECKING:
     from .docker import FlextTestsDocker, tk
     from .domains import FlextTestsDomains, td
     from .enforcement import (
-        EnforcementCollector, EnforcementItem, EnforcementViolationError, active_rules,
-        discover_repository_root, load_infra_report, split_csv,
+        EnforcementCollector,
+        EnforcementItem,
+        EnforcementViolationError,
+        active_rules,
+        discover_repository_root,
+        load_infra_report,
+        split_csv,
     )
     from .enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
     from .files import FlextTestsFiles, tf
@@ -43,20 +55,60 @@ if TYPE_CHECKING:
     )
     from .validator import FlextTestsValidator, tv
 __all__: tuple[str, ...] = (
-    "SLOW_TIMEOUT_INI_OPTION", "EnforcementCollector", "EnforcementItem", "EnforcementViolationError",
-    "FlextTestsCase", "FlextTestsConfig", "FlextTestsConstants", "FlextTestsDocker",
-    "FlextTestsDomains", "FlextTestsFiles", "FlextTestsFixturesDSLMixin", "FlextTestsKube",
-    "FlextTestsMatchersUtilities", "FlextTestsModels", "FlextTestsProtocols", "FlextTestsServiceBase",
-    "FlextTestsSettings", "FlextTestsTypes", "FlextTestsUtilities", "FlextTestsValidator",
-    "FlextTestsVersion", "ModuleGovernanceMixin", "__author__", "__author_email__",
-    "__description__", "__license__", "__title__", "__url__",
-    "__version__", "__version_info__", "active_rules", "c",
-    "config", "d", "discover_repository_root", "e",
-    "h", "infra_c", "install_local_packages", "load_infra_report",
-    "m", "p", "r", "s",
-    "settings", "split_csv", "t", "td",
-    "tf", "tk", "tm", "tv",
-    "u", "x",
+    "SLOW_TIMEOUT_INI_OPTION",
+    "EnforcementCollector",
+    "EnforcementItem",
+    "EnforcementViolationError",
+    "FlextTestsCase",
+    "FlextTestsConfig",
+    "FlextTestsConstants",
+    "FlextTestsDocker",
+    "FlextTestsDomains",
+    "FlextTestsFiles",
+    "FlextTestsFixturesDSLMixin",
+    "FlextTestsKube",
+    "FlextTestsMatchersUtilities",
+    "FlextTestsModels",
+    "FlextTestsProtocols",
+    "FlextTestsServiceBase",
+    "FlextTestsSettings",
+    "FlextTestsTypes",
+    "FlextTestsUtilities",
+    "FlextTestsValidator",
+    "FlextTestsVersion",
+    "ModuleGovernanceMixin",
+    "__author__",
+    "__author_email__",
+    "__description__",
+    "__license__",
+    "__title__",
+    "__url__",
+    "__version__",
+    "__version_info__",
+    "active_rules",
+    "c",
+    "config",
+    "d",
+    "discover_repository_root",
+    "e",
+    "h",
+    "infra_c",
+    "install_local_packages",
+    "load_infra_report",
+    "m",
+    "p",
+    "r",
+    "s",
+    "settings",
+    "split_csv",
+    "t",
+    "td",
+    "tf",
+    "tk",
+    "tm",
+    "tv",
+    "u",
+    "x",
 )
 
 _LAZY_IMPORTS = MappingProxyType(
@@ -70,8 +122,12 @@ _LAZY_IMPORTS = MappingProxyType(
             ".docker": ("FlextTestsDocker", "tk"),
             ".domains": ("FlextTestsDomains", "td"),
             ".enforcement": (
-                "EnforcementCollector", "EnforcementItem", "EnforcementViolationError",
-                "active_rules", "discover_repository_root", "load_infra_report",
+                "EnforcementCollector",
+                "EnforcementItem",
+                "EnforcementViolationError",
+                "active_rules",
+                "discover_repository_root",
+                "load_infra_report",
                 "split_csv",
             ),
             ".enforcement_plugin": ("SLOW_TIMEOUT_INI_OPTION",),
@@ -83,11 +139,13 @@ _LAZY_IMPORTS = MappingProxyType(
             ".tmatchers": ("FlextTestsMatchersUtilities", "tm"),
             ".typings": ("FlextTestsTypes", "t"),
             ".utilities": (
-                "FlextTestsFixturesDSLMixin", "FlextTestsUtilities",
-                "ModuleGovernanceMixin", "u",
+                "FlextTestsFixturesDSLMixin",
+                "FlextTestsUtilities",
+                "ModuleGovernanceMixin",
+                "u",
             ),
             ".validator": ("FlextTestsValidator", "tv"),
-            "flext_infra": ("d", "e", "h", "r", "x"),
+            "flext_core": ("d", "e", "h", "r", "x"),
         }),
         alias_groups=MappingProxyType({"flext_infra": (("infra_c", "c"),)}),
         sort_keys=False,
