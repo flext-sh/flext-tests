@@ -20,9 +20,8 @@ from .__version__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_infra import c as infra_c
-
     from flext_core import d, e, h, r, x
+    from flext_infra import c as infra_c
 
     from .__version__ import FlextTestsVersion
     from ._config import FlextTestsConfig, config
