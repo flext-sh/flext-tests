@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import ClassVar, TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
     from flext_infra import t
@@ -38,7 +38,9 @@ class FlextTestsConstantsMake:
         "lib",
         "maintenance",
     })
-    MAKE_MUTATION_REQUIRED_PARAMS: ClassVar[frozenset[str]] = frozenset({MAKE_APPLY_PARAM})
+    MAKE_MUTATION_REQUIRED_PARAMS: ClassVar[frozenset[str]] = frozenset({
+        MAKE_APPLY_PARAM
+    })
     MAKE_TRUE_VALUES: ClassVar[frozenset[str]] = frozenset({"1", "Y", "YES", "TRUE"})
     MAKE_SAFE_PROBE_VALUES: ClassVar[t.MappingKV[str, str]] = {
         "APPLY": "N",

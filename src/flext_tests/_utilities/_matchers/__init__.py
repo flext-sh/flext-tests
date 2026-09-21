@@ -17,13 +17,8 @@ if TYPE_CHECKING:
     from ._that import FlextTestsMatchersThatMixin
     from ._typeguards import FlextTestsMatchersTypeGuardsMixin
 __all__: tuple[str, ...] = (
-    "FlextTestsMatchersAssertionsMixin",
-    "FlextTestsMatchersContainmentMixin",
-    "FlextTestsMatchersImmutabilityMixin",
-    "FlextTestsMatchersResultMixin",
-    "FlextTestsMatchersScopeMixin",
-    "FlextTestsMatchersThatMixin",
-    "FlextTestsMatchersTypeGuardsMixin",
+    "FlextTestsMatchersAssertionsMixin", "FlextTestsMatchersContainmentMixin", "FlextTestsMatchersImmutabilityMixin", "FlextTestsMatchersResultMixin",
+    "FlextTestsMatchersScopeMixin", "FlextTestsMatchersThatMixin", "FlextTestsMatchersTypeGuardsMixin",
 )
 
 _LAZY_IMPORTS = MappingProxyType(

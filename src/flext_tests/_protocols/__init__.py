@@ -15,10 +15,7 @@ if TYPE_CHECKING:
     from .valuefactory import FlextTestsValueFactoryProtocolsMixin
     from .workspace_cleanup import FlextTestsWorkspaceCleanupProtocols
 __all__: tuple[str, ...] = (
-    "FlextTestsEnforcementProtocolsMixin",
-    "FlextTestsMatchersProtocolsMixin",
-    "FlextTestsPayloadProtocolsMixin",
-    "FlextTestsValueFactoryProtocolsMixin",
+    "FlextTestsEnforcementProtocolsMixin", "FlextTestsMatchersProtocolsMixin", "FlextTestsPayloadProtocolsMixin", "FlextTestsValueFactoryProtocolsMixin",
     "FlextTestsWorkspaceCleanupProtocols",
 )
 
