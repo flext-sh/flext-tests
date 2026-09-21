@@ -20,8 +20,10 @@ from .__version__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_infra import c as infra_c, d, e, h, r, x
+    from flext_cli import d, e, h, r, x
+    from flext_infra import c as infra_c
 
+    from .__version__ import FlextTestsVersion
     from ._config import FlextTestsConfig, config
     from ._settings import FlextTestsSettings, settings
     from .base import FlextTestsCase, FlextTestsServiceBase, FlextTestsServiceBase as s
@@ -49,6 +51,7 @@ if TYPE_CHECKING:
         FlextTestsFixturesDSLMixin,
         FlextTestsUtilities,
         FlextTestsUtilities as u,
+        ModuleGovernanceMixin,
     )
     from .validator import FlextTestsValidator, tv
 __all__: tuple[str, ...] = (
@@ -72,6 +75,8 @@ __all__: tuple[str, ...] = (
     "FlextTestsTypes",
     "FlextTestsUtilities",
     "FlextTestsValidator",
+    "FlextTestsVersion",
+    "ModuleGovernanceMixin",
     "__author__",
     "__author_email__",
     "__description__",
@@ -109,6 +114,7 @@ __all__: tuple[str, ...] = (
 _LAZY_IMPORTS = MappingProxyType(
     build_lazy_import_map(
         MappingProxyType({
+            ".__version__": ("FlextTestsVersion",),
             "._config": ("FlextTestsConfig", "config"),
             "._settings": ("FlextTestsSettings", "settings"),
             ".base": ("FlextTestsCase", "FlextTestsServiceBase", "s"),
@@ -132,9 +138,14 @@ _LAZY_IMPORTS = MappingProxyType(
             ".pytest_bootstrap": ("install_local_packages",),
             ".tmatchers": ("FlextTestsMatchersUtilities", "tm"),
             ".typings": ("FlextTestsTypes", "t"),
-            ".utilities": ("FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"),
+            ".utilities": (
+                "FlextTestsFixturesDSLMixin",
+                "FlextTestsUtilities",
+                "ModuleGovernanceMixin",
+                "u",
+            ),
             ".validator": ("FlextTestsValidator", "tv"),
-            "flext_infra": ("d", "e", "h", "r", "x"),
+            "flext_cli": ("d", "e", "h", "r", "x"),
         }),
         alias_groups=MappingProxyType({"flext_infra": (("infra_c", "c"),)}),
         sort_keys=False,
