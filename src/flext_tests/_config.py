@@ -10,6 +10,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import Annotated
+
 from flext_cli import FlextCliConfig, m
 
 
@@ -22,7 +24,10 @@ class _TestsNamespace(m.BaseModel):
 class FlextTestsConfig(FlextCliConfig):
     """Tests config auto-loaded model-less from ``config/*.yaml``."""
 
-    Tests: _TestsNamespace = _TestsNamespace()
+    Tests: Annotated[
+        _TestsNamespace,
+        m.Field(description="Open namespace exposing ``config/*.yaml`` under ``Tests``."),
+    ] = _TestsNamespace()
 
 
 config: FlextTestsConfig = FlextTestsConfig.fetch_global()
