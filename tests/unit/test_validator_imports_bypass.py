@@ -11,13 +11,13 @@ from typing import TYPE_CHECKING
 from flext_tests import m, tm, tv
 from tests import u
 
-from ._validator_parts.helper import TestsFlextTestsValidatorHelper
+from ._validator_parts.helper import TestsFlextTestsValidatorTestFilesMixin
 
 if TYPE_CHECKING:
     from pathlib import Path
 
 
-class TestsFlextTestsValidatorImportsBypass(TestsFlextTestsValidatorHelper):
+class TestsFlextTestsValidatorImportsBypass(TestsFlextTestsValidatorTestFilesMixin):
     """Verify import and bypass validator rules through the public facade."""
 
     def test_imports_flags_indented_imports_importerror_sys_path_and_internal_modules(

@@ -234,7 +234,9 @@ value: int = 1
     def test_passed_flag_is_consistent_with_violation_presence(
         self, tmp_path: Path
     ) -> None:
-        dirty = self._write(tmp_path, "test_example.py", self._MOCK_HEAVY_TEST_SOURCE)
+        dirty = self._write(
+            tmp_path, "test_example.py", self._MOCK_HEAVY_TEST_SOURCE
+        )
         clean = self._write(tmp_path, "test_clean.py", self._CLEAN_TEST_SOURCE)
 
         dirty_result: m.Tests.ScanResult = u.Tests.assert_success(tv.tests(dirty))

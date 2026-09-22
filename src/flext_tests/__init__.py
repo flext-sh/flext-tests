@@ -20,32 +20,43 @@ from .__version__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_cli import cli
-    from flext_infra import docs_main, infra, main
-    from pydantic_core import from_json, to_json, to_jsonable_python
-
-    from flext_core import core, d, e, h, lazy_attribute, r, x
+    from flext_infra import c as infra_c, d, e, h, r, x
 
     from . import services
+    from .__version__ import FlextTestsVersion
     from ._config import FlextTestsConfig, config
-    from ._settings import FlextTestsSettings
-    from .api import FlextTests, FlextTests as api
-    from .base import FlextTestsCase, FlextTestsServiceBase, s
+    from ._settings import FlextTestsSettings, settings
+    from .api import FlextTests, api
+    from .base import FlextTestsServiceBase, FlextTestsServiceBase as s
+    from .case import FlextTestsCase
     from .cli import FlextTestsCli
-    from .constants import FlextTestsConstants, c
+    from .constants import FlextTestsConstants, FlextTestsConstants as c
     from .docker import FlextTestsDocker, tk
     from .domains import FlextTestsDomains, td
-    from .enforcement import load_infra_report
+    from .enforcement import (
+        FlextTestsEnforcementCollector,
+        FlextTestsEnforcementItem,
+        FlextTestsEnforcementViolationError,
+        active_rules,
+        discover_repository_root,
+        load_infra_report,
+        split_csv,
+    )
     from .enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
     from .files import FlextTestsFiles, tf
     from .kube import FlextTestsKube
-    from .models import FlextTestsModels, m
-    from .protocols import FlextTestsProtocols, p
+    from .models import FlextTestsModels, FlextTestsModels as m
+    from .protocols import FlextTestsProtocols, FlextTestsProtocols as p
     from .pytest_bootstrap import install_local_packages
     from .tmatchers import FlextTestsMatchersUtilities, tm
-    from .typings import FlextTestsTypes, t
-    from .utilities import FlextTestsFixturesDSLMixin, FlextTestsUtilities, u
-    from .validator import FlextTestsValidator, FlextTestsValidator as tv
+    from .typings import FlextTestsTypes, FlextTestsTypes as t
+    from .utilities import (
+        FlextTestsFixturesDSLMixin,
+        FlextTestsModuleGovernanceMixin,
+        FlextTestsUtilities,
+        FlextTestsUtilities as u,
+    )
+    from .validator import FlextTestsValidator, tv
 __all__: tuple[str, ...] = (
     "SLOW_TIMEOUT_INI_OPTION",
     "FlextTests",
@@ -55,17 +66,22 @@ __all__: tuple[str, ...] = (
     "FlextTestsConstants",
     "FlextTestsDocker",
     "FlextTestsDomains",
+    "FlextTestsEnforcementCollector",
+    "FlextTestsEnforcementItem",
+    "FlextTestsEnforcementViolationError",
     "FlextTestsFiles",
     "FlextTestsFixturesDSLMixin",
     "FlextTestsKube",
     "FlextTestsMatchersUtilities",
     "FlextTestsModels",
+    "FlextTestsModuleGovernanceMixin",
     "FlextTestsProtocols",
     "FlextTestsServiceBase",
     "FlextTestsSettings",
     "FlextTestsTypes",
     "FlextTestsUtilities",
     "FlextTestsValidator",
+    "FlextTestsVersion",
     "__author__",
     "__author_email__",
     "__description__",
@@ -74,33 +90,29 @@ __all__: tuple[str, ...] = (
     "__url__",
     "__version__",
     "__version_info__",
+    "active_rules",
     "api",
     "c",
-    "cli",
     "config",
-    "core",
     "d",
-    "docs_main",
+    "discover_repository_root",
     "e",
-    "from_json",
     "h",
-    "infra",
+    "infra_c",
     "install_local_packages",
-    "lazy_attribute",
     "load_infra_report",
     "m",
-    "main",
     "p",
     "r",
     "s",
     "services",
+    "settings",
+    "split_csv",
     "t",
     "td",
     "tf",
     "tk",
     "tm",
-    "to_json",
-    "to_jsonable_python",
     "tv",
     "u",
     "x",
@@ -109,15 +121,25 @@ __all__: tuple[str, ...] = (
 _LAZY_IMPORTS = MappingProxyType(
     build_lazy_import_map(
         MappingProxyType({
+            ".__version__": ("FlextTestsVersion",),
             "._config": ("FlextTestsConfig", "config"),
-            "._settings": ("FlextTestsSettings",),
+            "._settings": ("FlextTestsSettings", "settings"),
             ".api": ("FlextTests", "api"),
-            ".base": ("FlextTestsCase", "FlextTestsServiceBase", "s"),
+            ".base": ("FlextTestsServiceBase", "s"),
+            ".case": ("FlextTestsCase",),
             ".cli": ("FlextTestsCli",),
             ".constants": ("FlextTestsConstants", "c"),
             ".docker": ("FlextTestsDocker", "tk"),
             ".domains": ("FlextTestsDomains", "td"),
-            ".enforcement": ("load_infra_report",),
+            ".enforcement": (
+                "FlextTestsEnforcementCollector",
+                "FlextTestsEnforcementItem",
+                "FlextTestsEnforcementViolationError",
+                "active_rules",
+                "discover_repository_root",
+                "load_infra_report",
+                "split_csv",
+            ),
             ".enforcement_plugin": ("SLOW_TIMEOUT_INI_OPTION",),
             ".files": ("FlextTestsFiles", "tf"),
             ".kube": ("FlextTestsKube",),
@@ -127,14 +149,16 @@ _LAZY_IMPORTS = MappingProxyType(
             ".services": ("services",),
             ".tmatchers": ("FlextTestsMatchersUtilities", "tm"),
             ".typings": ("FlextTestsTypes", "t"),
-            ".utilities": ("FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"),
+            ".utilities": (
+                "FlextTestsFixturesDSLMixin",
+                "FlextTestsModuleGovernanceMixin",
+                "FlextTestsUtilities",
+                "u",
+            ),
             ".validator": ("FlextTestsValidator", "tv"),
-            "flext_cli": ("cli",),
-            "flext_core": ("core", "d", "e", "h", "lazy_attribute", "r", "x"),
-            "flext_infra": ("docs_main", "infra", "main"),
-            "pydantic_core": ("from_json", "to_json", "to_jsonable_python"),
+            "flext_infra": ("d", "e", "h", "r", "x"),
         }),
-        alias_groups=MappingProxyType({}),
+        alias_groups=MappingProxyType({"flext_infra": (("infra_c", "c"),)}),
         sort_keys=False,
     )
 )

@@ -19,16 +19,16 @@
   Python :: 3.13, Topic :: Software Development :: Testing, Typing :: Typed
 - Project class: `test`
 - Keywords: `builders`, `factories`, `flext`, `test-infrastructure`, `testing`
-- Main facades: `FlextTestsCase`, `FlextTestsConfig`, `FlextTestsConstants`,
-  `FlextTestsDocker`, `FlextTestsDomains`, `FlextTestsFiles`,
-  `FlextTestsFixturesDSLMixin`, `FlextTestsKube` (+9 more)
+- Main facades: `FlextTests`, `FlextTestsCase`, `FlextTestsCli`, `FlextTestsConfig`,
+  `FlextTestsConstants`, `FlextTestsDocker`, `FlextTestsDomains`,
+  `FlextTestsEnforcementCollector` (+15 more)
 - Alias exports: `c`, `d`, `e`, `h`, `m`, `p`, `r`, `s`, `t`, `u`, `x`
-- Public symbol exports: `SLOW_TIMEOUT_INI_OPTION`, `EnforcementCollector`,
-  `EnforcementItem`, `EnforcementViolationError`, `FlextTestsCase`, `FlextTestsConfig`,
-  `FlextTestsConstants`, `FlextTestsDocker`, `FlextTestsDomains`, `FlextTestsFiles` (+24
-  more)
-- Exported module shortcuts: _none_
-- Generated module pages: `15`
+- Public symbol exports: `SLOW_TIMEOUT_INI_OPTION`, `FlextTests`, `FlextTestsCase`,
+  `FlextTestsCli`, `FlextTestsConfig`, `FlextTestsConstants`, `FlextTestsDocker`,
+  `FlextTestsDomains`, `FlextTestsEnforcementCollector`, `FlextTestsEnforcementItem`
+  (+26 more)
+- Exported module shortcuts: `api`, `services`
+- Generated module pages: `19`
 
 ## Next Pages
 

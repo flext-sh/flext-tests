@@ -6,7 +6,8 @@ from typing import TYPE_CHECKING
 
 from flext_tests import m, p
 
-from .items import FlextTestsEnforcementCollector, FlextTestsEnforcementItem
+from ._collector import FlextTestsEnforcementCollector
+from .items import FlextTestsEnforcementItem
 from .validators import dispatch_infra_detector
 
 if TYPE_CHECKING:

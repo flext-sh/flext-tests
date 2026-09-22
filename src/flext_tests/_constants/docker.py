@@ -42,7 +42,7 @@ class FlextTestsConstantsDocker:
         "ldap": "flext-openldap-test",
         "kubernetes": "flext-kind-test",
     }
-    CONNECTIVITY_MARKERS: ClassVar[tuple[str, ...]] = (
+    CONNECTIVITY_MARKERS: ClassVar[t.VariadicTuple[str]] = (
         DOCKER_CONNECTIVITY_MARKER,
         *CONNECTIVITY_MARKER_CONTAINERS,
     )

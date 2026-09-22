@@ -1,14 +1,14 @@
-"""Model declarations for the private file-test package."""
+"""Private file model test mixins facade.
+
+Canonical owner of the mixin is ``_files_parts.file_models``; this module keeps
+the ``_files_parts.models`` import path and the ``m`` facet contract generated
+for the parts package.
+"""
 
 from __future__ import annotations
 
 from tests import m
 
+from .file_models import TestsFlextTestsFilesModelsMixin
 
-class TestsFlextTestsFilesModels(m):
-    """Inherit shared test models without mixing in test behavior."""
-
-
-m = TestsFlextTestsFilesModels
-
-__all__: list[str] = ["TestsFlextTestsFilesModels", "m"]
+__all__: list[str] = ["TestsFlextTestsFilesModelsMixin", "m"]

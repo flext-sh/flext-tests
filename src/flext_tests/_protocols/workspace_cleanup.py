@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Literal, Protocol
+from typing import TYPE_CHECKING, Literal, Protocol
+
+if TYPE_CHECKING:
+    from flext_core import t
 
 
 class FlextTestsWorkspaceCleanupProtocols:
@@ -13,7 +16,7 @@ class FlextTestsWorkspaceCleanupProtocols:
         """Config-owned cleanup policy surface."""
 
         @property
-        def residues(self) -> tuple[Path, ...]: ...
+        def residues(self) -> t.VariadicTuple[Path]: ...
 
     class WorkspaceCleanupRequest(Protocol):
         """Runtime cleanup request surface."""
@@ -64,7 +67,7 @@ class FlextTestsWorkspaceCleanupProtocols:
         def plan(self) -> FlextTestsWorkspaceCleanupProtocols.WorkspaceCleanupPlan: ...
 
         @property
-        def removed(self) -> tuple[Path, ...]: ...
+        def removed(self) -> t.VariadicTuple[Path]: ...
 
 
-__all__: tuple[str, ...] = ("FlextTestsWorkspaceCleanupProtocols",)
+__all__: t.VariadicTuple[str] = ("FlextTestsWorkspaceCleanupProtocols",)

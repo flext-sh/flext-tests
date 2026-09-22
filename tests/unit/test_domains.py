@@ -21,9 +21,6 @@ from flext_tests import FlextTestsDomains, t, tm
 class TestsFlextTestsDomains:
     """Public-contract tests for the ``FlextTestsDomains`` test-domain facade."""
 
-    class Tests:
-        """flext-tests domains test namespace."""
-
     # --- fixtures ---------------------------------------------------------
 
     @staticmethod

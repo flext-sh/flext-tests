@@ -13,12 +13,10 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_infra import t
-
 from flext_tests import FlextTestsTypes
 
 
-class TestsFlextTestsTypes(t, FlextTestsTypes):
+class TestsFlextTestsTypes(FlextTestsTypes):
     """Type system foundation for flext-tests tests - extends TestsFlextTypes.
 
     Architecture: Extends TestsFlextTypes with flext-tests-specific type definitions.

@@ -10,7 +10,7 @@ from __future__ import annotations
 from pathlib import Path
 
 
-class TestsFlextTestsValidatorHelper:
+class TestsFlextTestsValidatorTestFilesMixin:
     """Mixin providing shared file-writing helpers for validator tests."""
 
     @staticmethod
@@ -21,4 +21,4 @@ class TestsFlextTestsValidatorHelper:
         return file_path
 
 
-__all__: list[str] = ["TestsFlextTestsValidatorHelper"]
+__all__: list[str] = ["TestsFlextTestsValidatorTestFilesMixin"]

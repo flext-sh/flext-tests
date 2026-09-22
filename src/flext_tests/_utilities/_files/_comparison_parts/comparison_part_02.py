@@ -8,12 +8,10 @@ from flext_core import r
 from flext_tests import c, m, p, t, u
 
 from ...payload import FlextTestsPayloadUtilities
-from .comparison_part_01 import (
-    FlextTestsFilesComparisonMixin as FlextTestsFilesComparisonMixinPart1,
-)
+from .comparison_part_01 import FlextTestsFilesComparisonMixin as _ComparisonMixinPart1
 
 
-class FlextTestsFilesComparisonMixin(FlextTestsFilesComparisonMixinPart1):
+class FlextTestsFilesComparisonMixin(_ComparisonMixinPart1):
     """File-comparison execution helpers — part 2 of the modular split.
 
     Extends the parsing helpers from ``comparison_part_01`` with the

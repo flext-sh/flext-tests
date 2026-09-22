@@ -2,4 +2,9 @@
 
 from __future__ import annotations
 
-pytest_plugins: tuple[str, ...] = ("pytester",)
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from . import t
+
+pytest_plugins: t.VariadicTuple[str] = ("pytester",)

@@ -10,7 +10,7 @@ from tests import t
 from .predicates import TestsFlextTestsMatchersPredicates
 
 
-class TestsFlextTestsMatchersOkConstraints:
+class TestsFlextTestsMatchersOkConstraintsMixin:
     """Matcher ok constraint tests."""
 
     def test_ok_with_is_parameter(self) -> None:

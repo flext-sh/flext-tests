@@ -10,7 +10,7 @@ from tests import p, r, t
 from .predicates import TestsFlextTestsMatchersPredicates
 
 
-class TestsFlextTestsMatchersThatAttrs:
+class TestsFlextTestsMatchersThatAttrsMixin:
     """Matcher that attribute tests."""
 
     def test_that_with_attrs_parameter(self) -> None:

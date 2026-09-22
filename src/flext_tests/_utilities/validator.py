@@ -84,7 +84,7 @@ class FlextTestsValidatorUtilitiesMixin:
             file_path=file_path,
             line_number=line_number,
             rule_id=rule_id,
-            severity=severity,
+            severity=c.Tests.ValidatorSeverity(severity),
             description=description,
             code_snippet=line.strip(),
         )

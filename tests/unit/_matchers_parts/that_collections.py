@@ -10,7 +10,7 @@ from tests import c
 from .predicates import TestsFlextTestsMatchersPredicates
 
 
-class TestsFlextTestsMatchersThatCollections:
+class TestsFlextTestsMatchersThatCollectionsMixin:
     """Matcher that collection tests."""
 
     def test_that_with_eq_parameter(self) -> None:

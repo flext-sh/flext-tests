@@ -26,7 +26,7 @@ class FlextTestsValidatorModelsMixin:
             u.Field(description="Optional namespace report for detector rules."),
         ] = None
         validator_targets: Annotated[
-            tuple[Path, ...],
+            t.VariadicTuple[Path],
             u.Field(description="Validator targets collected for this session."),
         ] = ()
         repository_root: Annotated[

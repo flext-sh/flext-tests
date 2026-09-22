@@ -1,4 +1,4 @@
-"""Pytest collection items for enforcement violations."""
+"""Pytest collection item for enforcement violations."""
 
 from __future__ import annotations
 
@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, override
 import pytest
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
     from pathlib import Path
 
     from flext_tests import m, p, t
@@ -39,6 +38,8 @@ class FlextTestsEnforcementItem(pytest.Item):
             f"{self._rule.id} ({self._rule.severity}) in {self._project}: "
             f"{len(self._violations)} violation(s)"
         )
+        from ._error import FlextTestsEnforcementViolationError
+
         raise FlextTestsEnforcementViolationError("\n".join([header, *detail_lines]))
 
     @staticmethod
@@ -79,33 +80,4 @@ class FlextTestsEnforcementItem(pytest.Item):
         )
 
 
-class FlextTestsEnforcementCollector(pytest.Collector):
-    """Synthetic collector that owns every ``FlextTestsEnforcementItem`` for the session."""
-
-    def __init__(
-        self,
-        name: str,
-        parent: pytest.Session,
-        *,
-        items: t.SequenceOf[FlextTestsEnforcementItem] = (),
-    ) -> None:
-        super().__init__(name, parent)
-        self._items: list[FlextTestsEnforcementItem] = list(items)
-
-    def add(self, item: FlextTestsEnforcementItem) -> None:
-        self._items.append(item)
-
-    @override
-    def collect(self) -> Iterable[pytest.Item]:
-        return list(self._items)
-
-
-class FlextTestsEnforcementViolationError(Exception):
-    """Raised by ``FlextTestsEnforcementItem.runtest`` when violations are present."""
-
-
-__all__: list[str] = [
-    "FlextTestsEnforcementCollector",
-    "FlextTestsEnforcementItem",
-    "FlextTestsEnforcementViolationError",
-]
+__all__: list[str] = ["FlextTestsEnforcementItem"]

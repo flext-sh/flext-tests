@@ -126,7 +126,7 @@ class FlextTestsMatchersModelsMixin:
             MatchExpectedValue, u.Field(description="Expected inequality value.")
         ] = None
         is_: Annotated[
-            type | tuple[type, ...] | None,
+            type | t.VariadicTuple[type] | None,
             u.Field(
                 validation_alias=t.AliasChoices("is_", "is"),
                 description="Expected runtime type.",
@@ -237,7 +237,7 @@ class FlextTestsMatchersModelsMixin:
             MatchExpectedValue, u.Field(description="Value must not equal.")
         ] = None
         is_: Annotated[
-            type | tuple[type, ...] | None,
+            type | t.VariadicTuple[type] | None,
             u.Field(
                 validation_alias=t.AliasChoices("is_", "is"),
                 description="Runtime type check.",
@@ -374,11 +374,11 @@ class FlextTestsMatchersModelsMixin:
         eq: Annotated[MatchExpectedValue, u.Field(description="Equals.")] = None
         ne: Annotated[MatchExpectedValue, u.Field(description="Not equals.")] = None
         is_: Annotated[
-            type | tuple[type, ...] | None,
+            type | t.VariadicTuple[type] | None,
             u.Field(validation_alias=t.AliasChoices("is_", "is"), description="Type."),
         ] = None
         not_: Annotated[
-            type | tuple[type, ...] | None,
+            type | t.VariadicTuple[type] | None,
             u.Field(
                 validation_alias=t.AliasChoices("not_", "not"), description="Not type."
             ),

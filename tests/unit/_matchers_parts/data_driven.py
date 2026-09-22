@@ -11,7 +11,7 @@ from flext_tests import r, tm
 from tests import c, t
 
 
-class TestsFlextTestsMatchersDataDriven:
+class TestsFlextTestsMatchersDataDrivenMixin:
     """Matcher data driven tests."""
 
     def test_that_with_paths_data_driven_rules(self) -> None:

@@ -6,13 +6,13 @@ from typing import TYPE_CHECKING
 
 from flext_tests import m
 
+from ._collector import FlextTestsEnforcementCollector
 from .config import active_rules
 from .discovery import (
     collected_project_names,
     collected_validator_targets,
     load_infra_report,
 )
-from .items import FlextTestsEnforcementCollector
 from .namespace import NamespaceDetectorBuilder
 from .validators import build_tests_validator_items
 

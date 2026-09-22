@@ -9,12 +9,52 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from .helper import TestsFlextTestsValidatorHelper
-__all__: tuple[str, ...] = ("TestsFlextTestsValidatorHelper",)
+    from flext_tests import c, d, e, h, m, p, r, s, t, td, tf, tk, tm, tv, u, x
+
+    from .helper import TestsFlextTestsValidatorTestFilesMixin
+__all__: tuple[str, ...] = (
+    "TestsFlextTestsValidatorTestFilesMixin",
+    "c",
+    "d",
+    "e",
+    "h",
+    "m",
+    "p",
+    "r",
+    "s",
+    "t",
+    "td",
+    "tf",
+    "tk",
+    "tm",
+    "tv",
+    "u",
+    "x",
+)
 
 _LAZY_IMPORTS = MappingProxyType(
     build_lazy_import_map(
-        MappingProxyType({".helper": ("TestsFlextTestsValidatorHelper",)}),
+        MappingProxyType({
+            ".helper": ("TestsFlextTestsValidatorTestFilesMixin",),
+            "flext_tests": (
+                "c",
+                "d",
+                "e",
+                "h",
+                "m",
+                "p",
+                "r",
+                "s",
+                "t",
+                "td",
+                "tf",
+                "tk",
+                "tm",
+                "tv",
+                "u",
+                "x",
+            ),
+        }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
     )
