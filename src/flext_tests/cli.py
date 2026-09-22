@@ -13,4 +13,8 @@ class FlextTestsCli(FlextCliCli):
     """Flext-tests CLI facade — extends flext-cli CLI."""
 
 
+def main() -> None:
+    """Entry point."""
+
+
 __all__: tuple[str, ...] = ("FlextTestsCli",)
