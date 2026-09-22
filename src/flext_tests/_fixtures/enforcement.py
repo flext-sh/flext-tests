@@ -15,16 +15,16 @@ from ._enforcement_parts.hooks import (
     pytest_sessionstart,
     pytest_terminal_summary,
 )
-from ._enforcement_parts.items import (
-    EnforcementCollector,
-    EnforcementItem,
-    EnforcementViolationError,
+from ._enforcement_parts import (
+    _EnforcementCollector,
+    FlextTestsEnforcementItem,
+    _EnforcementViolationError,
 )
 
 __all__: list[str] = [
-    "EnforcementCollector",
-    "EnforcementItem",
-    "EnforcementViolationError",
+    "_EnforcementCollector",
+    "FlextTestsEnforcementItem",
+    "_EnforcementViolationError",
     "active_rules",
     "discover_repository_root",
     "pytest_addoption",

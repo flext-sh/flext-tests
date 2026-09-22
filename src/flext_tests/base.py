@@ -73,21 +73,4 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
         return m.RuntimeBootstrapOptions(settings_type=FlextTestsSettings)
 
 
-class FlextTestsCase:
-    """Pytest class MRO surface populated by the shared test runtime fixture."""
-
-    service: FlextTestsServiceBase[p.Base]
-    settings: FlextTestsSettings
-    logger: p.Logger
-    c: type
-    e: type
-    m: type
-    p: type
-    r: type
-    t: type
-    u: type
-
-
-s = FlextTestsServiceBase
-
-__all__: list[str] = ["FlextTestsCase", "FlextTestsServiceBase", "s"]
+__all__: list[str] = ["FlextTestsServiceBase"]

@@ -8,7 +8,8 @@ from typing import TYPE_CHECKING
 
 from flext_tests import m, p, t
 
-from .items import EnforcementItem
+from .items import FlextTestsEnforcementItem
+from ._error import _EnforcementViolationError
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
@@ -53,7 +54,7 @@ def build_tests_validator_items(
     collector: pytest.Collector,
     rule: m.EnforcementRuleSpec,
     context: m.Tests.EnforcementBuildContext,
-) -> list[EnforcementItem]:
+) -> list[FlextTestsEnforcementItem]:
     """Build enforcement items from flext-tests validator methods."""
     repository_root = context.repository_root
     targets = context.validator_targets
@@ -67,14 +68,14 @@ def _items_from_grouped(
     collector: pytest.Collector,
     rule: m.EnforcementRuleSpec,
     grouped: dict[str, list[p.AttributeProbe]],
-) -> list[EnforcementItem]:
+) -> list[FlextTestsEnforcementItem]:
     """Convert grouped violations into enforcement items."""
-    items: list[EnforcementItem] = []
+    items: list[FlextTestsEnforcementItem] = []
     for project, violations in grouped.items():
         if not violations:
             continue
         items.append(
-            EnforcementItem.from_parent(
+            FlextTestsEnforcementItem.from_parent(
                 collector,
                 name=f"{rule.id}[{project}]",
                 rule=rule,

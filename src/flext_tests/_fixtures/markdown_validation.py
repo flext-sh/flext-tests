@@ -21,6 +21,7 @@ import pytest
 from flext_tests import c, u
 
 from .._validator.markdown import FlextValidatorMarkdown
+from ._markdown_error import _MarkdownValidationError
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -43,7 +44,7 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     )
 
 
-class MarkdownCodeBlockItem(pytest.Item):
+class FlextTestsMarkdownCodeBlockItem(pytest.Item):
     """Pytest item representing a markdown file to validate."""
 
     def __init__(self, name: str, parent: pytest.Collector, md_path: Path) -> None:
@@ -56,7 +57,7 @@ class MarkdownCodeBlockItem(pytest.Item):
         result = FlextValidatorMarkdown.markdown([self.md_path])
         if result.failure:
             msg = f"Markdown validation failed: {result.error}"
-            raise MarkdownValidationError(msg)
+            raise _MarkdownValidationError(msg)
         scan = result.value
         if scan.violations:
             detail_lines = [
@@ -67,7 +68,7 @@ class MarkdownCodeBlockItem(pytest.Item):
                 f"Found {len(scan.violations)} violation(s) in {self.md_path}:",
                 *detail_lines,
             ])
-            raise MarkdownValidationError(msg)
+            raise _MarkdownValidationError(msg)
 
     @override
     def repr_failure(
@@ -83,40 +84,23 @@ class MarkdownCodeBlockItem(pytest.Item):
         return self.md_path, None, f"markdown-check: {self.md_path.name}"
 
 
-class MarkdownCodeBlockCollector(pytest.File):
-    """Pytest collector for markdown files."""
-
-    @override
-    def collect(self) -> list[MarkdownCodeBlockItem]:
-        """Collect markdown file as a test item."""
-        return [
-            MarkdownCodeBlockItem.from_parent(
-                self, name=self.path.name, md_path=self.path
-            )
-        ]
-
-
 def pytest_collect_file(
     parent: pytest.Collector, file_path: Path
-) -> MarkdownCodeBlockCollector | None:
+) -> _MarkdownCodeBlockCollector | None:
     """Collect .md files when the markdown docs option is enabled."""
     if not parent.config.getoption(c.Tests.VALIDATOR_MD_OPTION_DOCS, default=False):
         return None
     if file_path.suffix == ".md" and file_path.stat().st_size > 0:
         content = u.Cli.files_read_text(file_path).unwrap()
         if c.Tests.VALIDATOR_MD_PYTHON_BLOCK_RE.search(content):
-            return MarkdownCodeBlockCollector.from_parent(parent, path=file_path)
+            from ._markdown_collector import _MarkdownCodeBlockCollector
+
+            return _MarkdownCodeBlockCollector.from_parent(parent, path=file_path)
     return None
 
 
-class MarkdownValidationError(Exception):
-    """Raised when markdown code block validation fails."""
-
-
 __all__: list[str] = [
-    "MarkdownCodeBlockCollector",
-    "MarkdownCodeBlockItem",
-    "MarkdownValidationError",
+    "FlextTestsMarkdownCodeBlockItem",
     "pytest_addoption",
     "pytest_collect_file",
 ]

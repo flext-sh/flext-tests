@@ -27,14 +27,15 @@ if TYPE_CHECKING:
     from .__version__ import FlextTestsVersion
     from ._config import FlextTestsConfig, config
     from ._settings import FlextTestsSettings, settings
-    from .base import FlextTestsCase, FlextTestsServiceBase, FlextTestsServiceBase as s
+    from ._case import _FlextTestsCase
+    from .base import FlextTestsServiceBase, FlextTestsServiceBase as s
     from .constants import FlextTestsConstants, FlextTestsConstants as c
     from .docker import FlextTestsDocker, tk
     from .domains import FlextTestsDomains, td
     from .enforcement import (
-        EnforcementCollector,
-        EnforcementItem,
-        EnforcementViolationError,
+        _EnforcementCollector,
+        FlextTestsEnforcementItem,
+        _EnforcementViolationError,
         active_rules,
         discover_repository_root,
         load_infra_report,
@@ -57,10 +58,10 @@ if TYPE_CHECKING:
     from .validator import FlextTestsValidator, tv
 __all__: tuple[str, ...] = (
     "SLOW_TIMEOUT_INI_OPTION",
-    "EnforcementCollector",
-    "EnforcementItem",
-    "EnforcementViolationError",
-    "FlextTestsCase",
+    "_EnforcementCollector",
+    "FlextTestsEnforcementItem",
+    "_EnforcementViolationError",
+    "_FlextTestsCase",
     "FlextTestsConfig",
     "FlextTestsConstants",
     "FlextTestsDocker",
@@ -118,14 +119,15 @@ _LAZY_IMPORTS = MappingProxyType(
             ".__version__": ("FlextTestsVersion",),
             "._config": ("FlextTestsConfig", "config"),
             "._settings": ("FlextTestsSettings", "settings"),
-            ".base": ("FlextTestsCase", "FlextTestsServiceBase", "s"),
+            ".base": ("FlextTestsServiceBase", "s"),
+            "._case": ("_FlextTestsCase",),
             ".constants": ("FlextTestsConstants", "c"),
             ".docker": ("FlextTestsDocker", "tk"),
             ".domains": ("FlextTestsDomains", "td"),
             ".enforcement": (
-                "EnforcementCollector",
-                "EnforcementItem",
-                "EnforcementViolationError",
+                "_EnforcementCollector",
+                "FlextTestsEnforcementItem",
+                "_EnforcementViolationError",
                 "active_rules",
                 "discover_repository_root",
                 "load_infra_report",

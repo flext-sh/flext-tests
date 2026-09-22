@@ -24,17 +24,17 @@ if TYPE_CHECKING:
         dispatch_infra_detector,
     )
     from .enforcement import (
-        EnforcementCollector,
-        EnforcementItem,
-        EnforcementViolationError,
+        _EnforcementCollector,
+        FlextTestsEnforcementItem,
+        _EnforcementViolationError,
         active_rules,
         discover_repository_root,
         split_csv,
     )
     from .markdown_validation import (
-        MarkdownCodeBlockCollector,
-        MarkdownCodeBlockItem,
-        MarkdownValidationError,
+        FlextTestsMarkdownCodeBlockItem,
+        pytest_addoption,
+        pytest_collect_file,
     )
     from .project_metadata import project_metadata, project_tool_flext
     from .settings import (
@@ -49,12 +49,10 @@ if TYPE_CHECKING:
         test_runtime,
     )
 __all__: tuple[str, ...] = (
-    "EnforcementCollector",
-    "EnforcementItem",
-    "EnforcementViolationError",
-    "MarkdownCodeBlockCollector",
-    "MarkdownCodeBlockItem",
-    "MarkdownValidationError",
+    "_EnforcementCollector",
+    "FlextTestsEnforcementItem",
+    "_EnforcementViolationError",
+    "FlextTestsMarkdownCodeBlockItem",
     "NamespaceDetectorBuilder",
     "SessionConfig",
     "_enforcement_parts",
@@ -100,17 +98,17 @@ _LAZY_IMPORTS = MappingProxyType(
                 "dispatch_infra_detector",
             ),
             ".enforcement": (
-                "EnforcementCollector",
-                "EnforcementItem",
-                "EnforcementViolationError",
+                "_EnforcementCollector",
+                "FlextTestsEnforcementItem",
+                "_EnforcementViolationError",
                 "active_rules",
                 "discover_repository_root",
                 "split_csv",
             ),
             ".markdown_validation": (
-                "MarkdownCodeBlockCollector",
-                "MarkdownCodeBlockItem",
-                "MarkdownValidationError",
+                "FlextTestsMarkdownCodeBlockItem",
+                "pytest_addoption",
+                "pytest_collect_file",
             ),
             ".project_metadata": ("project_metadata", "project_tool_flext"),
             ".settings": (
