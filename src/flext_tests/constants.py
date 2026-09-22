@@ -9,7 +9,9 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_infra import c
+from typing import TYPE_CHECKING
+
+from flext_infra import c as infra_c
 
 from ._constants.data_cases import FlextTestsConstantsDataCases
 from ._constants.docker import FlextTestsConstantsDocker
@@ -18,8 +20,11 @@ from ._constants.make import FlextTestsConstantsMake
 from ._constants.matcher import FlextTestsConstantsMatcher
 from ._constants.validator import FlextTestsConstantsValidator
 
+if TYPE_CHECKING:
+    from . import t
 
-class FlextTestsConstants(c):
+
+class FlextTestsConstants(infra_c):
     """Constants for FLEXT tests - extends FlextCliConstants.
 
     Architecture layer: Layer 0 foundation constants with test extensions.
@@ -43,4 +48,4 @@ class FlextTestsConstants(c):
 
 c = FlextTestsConstants
 
-__all__: tuple[str, ...] = ("FlextTestsConstants", "c")
+__all__: t.VariadicTuple[str] = ("FlextTestsConstants", "c")

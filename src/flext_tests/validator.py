@@ -220,6 +220,7 @@ class FlextTestsValidator:
 """Public architecture validator facade for flext-tests."""
 
 tv = FlextTestsValidator
+"""Validator facade alias for flext_tests."""
 
 
 __all__: list[str] = ["FlextTestsValidator", "tv"]

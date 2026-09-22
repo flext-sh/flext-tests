@@ -24,6 +24,9 @@ from flext_tests import c, enforcement, m, tm, u
 class TestsFlextTestsEnforcementDispatcher:
     """Observable behavior of the enforcement dispatcher facade."""
 
+    class Tests:
+        """flext-tests enforcement dispatcher test namespace."""
+
     # ------------------------------------------------------------------ #
     # Fixtures                                                           #
     # ------------------------------------------------------------------ #

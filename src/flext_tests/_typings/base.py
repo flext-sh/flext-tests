@@ -28,6 +28,7 @@ from flext_infra import m, t as it
 from flext_core import p
 
 from .._models.domains import FlextTestsDomainModelsMixin
+from .._protocols.payload import FlextTestsPayloadProtocolsMixin
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -41,18 +42,18 @@ class FlextTestsBaseTypesMixin:
 
     type PayloadKind = Literal["atom", "list", "tuple", "set", "frozenset", "mapping"]
     type PayloadAtom = (
-        str
-        | int
-        | float
-        | bool
-        | bytes
-        | datetime
-        | tzinfo
-        | Path
-        | type
-        | BaseException
+        t.InstanceOf[str]
+        | t.InstanceOf[int]
+        | t.InstanceOf[float]
+        | t.InstanceOf[bool]
+        | t.InstanceOf[bytes]
+        | t.InstanceOf[datetime]
+        | t.InstanceOf[tzinfo]
+        | t.InstanceOf[Path]
+        | t.InstanceOf[type]
+        | t.InstanceOf[BaseException]
     )
-    type PayloadItems[NodeT] = tuple[NodeT, ...]
+    type PayloadItems[NodeT] = t.VariadicTuple[NodeT]
     type PayloadEntries[NodeT] = Mapping[str, NodeT]
 
     type TestobjectAtom = (
@@ -83,8 +84,8 @@ class FlextTestsBaseTypesMixin:
     type NativeMatchValue = (
         FlextTestsBaseTypesMixin.PayloadAtom
         | p.Model
-        | t.SequenceOf[t.JsonValue]
-        | t.MappingKV[str, t.JsonValue]
+        | FlextTestsPayloadProtocolsMixin.NativeSequence
+        | FlextTestsPayloadProtocolsMixin.NativeMapping
         | None
     )
     type DeepSpec = Mapping[

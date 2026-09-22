@@ -27,6 +27,9 @@ if TYPE_CHECKING:
 class TestsFlextTestsUtilities:
     """Behavioral contract for u.Tests result/data/make helpers."""
 
+    class Tests:
+        """flext-tests utilities test namespace."""
+
     def test_file_lock_preserves_shared_inode_between_holders(
         self, tmp_path: Path
     ) -> None:

@@ -13,6 +13,9 @@ from flext_tests import FlextTestsFiles, c, m, tm, u
 class TestsFlextTestsPayload:
     """Payload model contracts independent of JSON projection."""
 
+    class Tests:
+        """flext-tests payload test namespace."""
+
     def test_native_atoms_preserve_identity(self) -> None:
         leaves = (
             "  meaningful whitespace  ",
@@ -98,8 +101,9 @@ class TestsFlextTestsPayload:
 
     def test_arm_cannot_change_after_validation(self) -> None:
         payload = m.Tests.Payload(kind="atom", atom=1)
+        frozen_arm = "kind"
         with pytest.raises(c.ValidationError, match="frozen"):
-            payload.kind = "mapping"
+            setattr(payload, frozen_arm, "mapping")
         tm.that(payload.kind, eq="atom")
         tm.that(payload.atom, eq=1)
 

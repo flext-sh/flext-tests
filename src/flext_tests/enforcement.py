@@ -13,6 +13,8 @@ from ._fixtures.enforcement import (
     split_csv,
 )
 
+"""Loads infrastructure audit report data from the discovery module."""
+
 __all__: list[str] = [
     "FlextTestsEnforcementCollector",
     "FlextTestsEnforcementItem",

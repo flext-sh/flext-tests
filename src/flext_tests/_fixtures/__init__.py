@@ -18,24 +18,22 @@ if TYPE_CHECKING:
         load_infra_report,
         project_name_for_path,
     )
+    from ._enforcement_parts.items import FlextTestsEnforcementItem
     from ._enforcement_parts.namespace import NamespaceDetectorBuilder
     from ._enforcement_parts.validators import (
         build_tests_validator_items,
         dispatch_infra_detector,
     )
+    from ._markdown_collector import FlextTestsMarkdownCodeBlockCollector
+    from ._markdown_error import FlextTestsMarkdownValidationError
     from .enforcement import (
         FlextTestsEnforcementCollector,
-        FlextTestsEnforcementItem,
         FlextTestsEnforcementViolationError,
         active_rules,
         discover_repository_root,
         split_csv,
     )
-    from .markdown_validation import (
-        MarkdownCodeBlockCollector,
-        MarkdownCodeBlockItem,
-        MarkdownValidationError,
-    )
+    from .markdown_validation import FlextTestsMarkdownCodeBlockItem
     from .project_metadata import project_metadata, project_tool_flext
     from .settings import (
         clean_container,
@@ -52,9 +50,9 @@ __all__: tuple[str, ...] = (
     "FlextTestsEnforcementCollector",
     "FlextTestsEnforcementItem",
     "FlextTestsEnforcementViolationError",
-    "MarkdownCodeBlockCollector",
-    "MarkdownCodeBlockItem",
-    "MarkdownValidationError",
+    "FlextTestsMarkdownCodeBlockCollector",
+    "FlextTestsMarkdownCodeBlockItem",
+    "FlextTestsMarkdownValidationError",
     "NamespaceDetectorBuilder",
     "SessionConfig",
     "_enforcement_parts",
@@ -94,24 +92,22 @@ _LAZY_IMPORTS = MappingProxyType(
                 "load_infra_report",
                 "project_name_for_path",
             ),
+            "._enforcement_parts.items": ("FlextTestsEnforcementItem",),
             "._enforcement_parts.namespace": ("NamespaceDetectorBuilder",),
             "._enforcement_parts.validators": (
                 "build_tests_validator_items",
                 "dispatch_infra_detector",
             ),
+            "._markdown_collector": ("FlextTestsMarkdownCodeBlockCollector",),
+            "._markdown_error": ("FlextTestsMarkdownValidationError",),
             ".enforcement": (
                 "FlextTestsEnforcementCollector",
-                "FlextTestsEnforcementItem",
                 "FlextTestsEnforcementViolationError",
                 "active_rules",
                 "discover_repository_root",
                 "split_csv",
             ),
-            ".markdown_validation": (
-                "MarkdownCodeBlockCollector",
-                "MarkdownCodeBlockItem",
-                "MarkdownValidationError",
-            ),
+            ".markdown_validation": ("FlextTestsMarkdownCodeBlockItem",),
             ".project_metadata": ("project_metadata", "project_tool_flext"),
             ".settings": (
                 "clean_container",

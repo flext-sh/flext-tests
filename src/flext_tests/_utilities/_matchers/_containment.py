@@ -36,7 +36,9 @@ class FlextTestsMatchersContainmentMixin:
                 if as_str:
                     present = str(expected) in str(target)
                 elif isinstance(target, Mapping):
-                    present = isinstance(expected, str) and expected in target
+                    present = isinstance(expected, str) and any(
+                        key == expected for key in target
+                    )
                 elif isinstance(target, str):
                     present = str(expected) in target
                 elif isinstance(target, bytes):

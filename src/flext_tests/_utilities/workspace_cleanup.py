@@ -10,7 +10,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from .workspace_cleanup_plan import FlextTestsWorkspaceCleanupPlanUtilitiesMixin
+
+if TYPE_CHECKING:
+    from flext_core import t
 
 
 class FlextTestsWorkspaceCleanupUtilitiesMixin(
@@ -19,4 +24,4 @@ class FlextTestsWorkspaceCleanupUtilitiesMixin(
     """Deterministic workspace cleanup plan/apply namespace."""
 
 
-__all__: tuple[str, ...] = ("FlextTestsWorkspaceCleanupUtilitiesMixin",)
+__all__: t.VariadicTuple[str] = ("FlextTestsWorkspaceCleanupUtilitiesMixin",)

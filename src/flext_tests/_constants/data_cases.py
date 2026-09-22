@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
     from flext_infra import t
@@ -19,7 +19,7 @@ class FlextTestsConstantsDataCases:
     """Reusable test data cases for parametrized testing."""
 
     # App ID normalization test cases: (raw, normalized)
-    FORMAT_APP_ID_CASES: Final[t.StrPairTuple] = (
+    FORMAT_APP_ID_CASES: ClassVar[t.StrPairTuple] = (
         ("FlextApp", "flextapp"),
         ("flext-app", "flextapp"),
         ("FLEXT_APP", "flextapp"),
@@ -29,7 +29,7 @@ class FlextTestsConstantsDataCases:
     )
 
     # Safe string valid test cases: (raw, expected)
-    SAFE_STRING_VALID_CASES: Final[t.StrPairTuple] = (
+    SAFE_STRING_VALID_CASES: ClassVar[t.StrPairTuple] = (
         ("  valid_name  ", "valid_name"),
         ("identifier_123", "identifier_123"),
         ("_private", "_private"),
@@ -39,7 +39,7 @@ class FlextTestsConstantsDataCases:
     )
 
     # Safe string invalid test cases: (raw, reason)
-    SAFE_STRING_INVALID_CASES: Final[tuple[tuple[str | None, str], ...]] = (
+    SAFE_STRING_INVALID_CASES: ClassVar[tuple[tuple[str | None, str], ...]] = (
         ("", "empty string"),
         ("   ", "whitespace only"),
         ("invalid-name", "hyphen not allowed"),

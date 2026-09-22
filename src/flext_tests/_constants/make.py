@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
     from flext_infra import t
@@ -15,22 +15,22 @@ if TYPE_CHECKING:
 class FlextTestsConstantsMake:
     """Constants for the generic Make command registry."""
 
-    MAKE_DEFAULT_COMMAND: Final[str] = "all"
-    MAKE_HEADER_START: Final[str] = "/// flext-command"
-    MAKE_HEADER_END: Final[str] = "///"
-    MAKE_DISPATCH_ENV: Final[str] = "FLEXT_COMMAND_DISPATCHED"
-    MAKE_DISPATCH_ENV_VALUE: Final[str] = "Y"
-    MAKE_DISPATCH_VERB_ENV: Final[str] = "FLEXT_COMMAND_VERB"
-    MAKE_DISPATCH_WHAT_ENV: Final[str] = "FLEXT_COMMAND_WHAT"
-    MAKE_DISPATCH_PATH_ENV: Final[str] = "FLEXT_COMMAND_PATH"
-    MAKE_SURFACE_VALIDATE_ENV: Final[str] = "FLEXT_SURFACE_VALIDATE"
-    MAKE_APPLY_PARAM: Final[str] = "APPLY"
-    MAKE_WHAT_PARAM: Final[str] = "WHAT"
-    MAKE_HELP_PARAM: Final[str] = "HELP"
-    MAKE_OPTIONS_PARAM: Final[str] = "OPTIONS"
-    MAKE_PYTHONPATH_ENV: Final[str] = "PYTHONPATH"
-    MAKE_COMMAND_SUFFIXES: Final[frozenset[str]] = frozenset({".py", ".sh"})
-    MAKE_IGNORED_COMMAND_DIRS: Final[frozenset[str]] = frozenset({
+    MAKE_DEFAULT_COMMAND: ClassVar[str] = "all"
+    MAKE_HEADER_START: ClassVar[str] = "/// flext-command"
+    MAKE_HEADER_END: ClassVar[str] = "///"
+    MAKE_DISPATCH_ENV: ClassVar[str] = "FLEXT_COMMAND_DISPATCHED"
+    MAKE_DISPATCH_ENV_VALUE: ClassVar[str] = "Y"
+    MAKE_DISPATCH_VERB_ENV: ClassVar[str] = "FLEXT_COMMAND_VERB"
+    MAKE_DISPATCH_WHAT_ENV: ClassVar[str] = "FLEXT_COMMAND_WHAT"
+    MAKE_DISPATCH_PATH_ENV: ClassVar[str] = "FLEXT_COMMAND_PATH"
+    MAKE_SURFACE_VALIDATE_ENV: ClassVar[str] = "FLEXT_SURFACE_VALIDATE"
+    MAKE_APPLY_PARAM: ClassVar[str] = "APPLY"
+    MAKE_WHAT_PARAM: ClassVar[str] = "WHAT"
+    MAKE_HELP_PARAM: ClassVar[str] = "HELP"
+    MAKE_OPTIONS_PARAM: ClassVar[str] = "OPTIONS"
+    MAKE_PYTHONPATH_ENV: ClassVar[str] = "PYTHONPATH"
+    MAKE_COMMAND_SUFFIXES: ClassVar[frozenset[str]] = frozenset({".py", ".sh"})
+    MAKE_IGNORED_COMMAND_DIRS: ClassVar[frozenset[str]] = frozenset({
         ".pytest_cache",
         ".venv",
         "__pycache__",
@@ -38,9 +38,11 @@ class FlextTestsConstantsMake:
         "lib",
         "maintenance",
     })
-    MAKE_MUTATION_REQUIRED_PARAMS: Final[frozenset[str]] = frozenset({MAKE_APPLY_PARAM})
-    MAKE_TRUE_VALUES: Final[frozenset[str]] = frozenset({"1", "Y", "YES", "TRUE"})
-    MAKE_SAFE_PROBE_VALUES: Final[t.MappingKV[str, str]] = {
+    MAKE_MUTATION_REQUIRED_PARAMS: ClassVar[frozenset[str]] = frozenset({
+        MAKE_APPLY_PARAM
+    })
+    MAKE_TRUE_VALUES: ClassVar[frozenset[str]] = frozenset({"1", "Y", "YES", "TRUE"})
+    MAKE_SAFE_PROBE_VALUES: ClassVar[t.MappingKV[str, str]] = {
         "APPLY": "N",
         "CHECK_GATES": "lint",
         "DEPS_REPORT": "0",

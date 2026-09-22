@@ -23,13 +23,11 @@ if TYPE_CHECKING:
         load_infra_report,
         project_name_for_path,
     )
-    from .items import FlextTestsEnforcementCollector, FlextTestsEnforcementItem, FlextTestsEnforcementViolationError
+    from .items import FlextTestsEnforcementItem
     from .namespace import NamespaceDetectorBuilder
     from .validators import build_tests_validator_items, dispatch_infra_detector
 __all__: tuple[str, ...] = (
-    "FlextTestsEnforcementCollector",
     "FlextTestsEnforcementItem",
-    "FlextTestsEnforcementViolationError",
     "NamespaceDetectorBuilder",
     "SessionConfig",
     "active_rules",
@@ -62,11 +60,7 @@ _LAZY_IMPORTS = MappingProxyType(
                 "load_infra_report",
                 "project_name_for_path",
             ),
-            ".items": (
-                "FlextTestsEnforcementCollector",
-                "FlextTestsEnforcementItem",
-                "FlextTestsEnforcementViolationError",
-            ),
+            ".items": ("FlextTestsEnforcementItem",),
             ".namespace": ("NamespaceDetectorBuilder",),
             ".validators": ("build_tests_validator_items", "dispatch_infra_detector"),
         }),
