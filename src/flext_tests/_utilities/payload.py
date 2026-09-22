@@ -40,7 +40,7 @@ class FlextTestsPayloadUtilities:
         return type(native).__name__, str(native)
 
     @staticmethod
-    def to_payload(value: object) -> m.Tests.Payload:
+    def to_payload(value: p.AttributeProbe) -> m.Tests.Payload:
         """Own supported native values without serializing their model leaves."""
         to_p = FlextTestsPayloadUtilities.to_payload
         match value:
@@ -94,7 +94,7 @@ class FlextTestsPayloadUtilities:
             case value if isinstance(value, (KeysView, ValuesView)):
                 return to_p(list(value))
             case Mapping():
-                entries: dict[str, m.Tests.Payload] = {}
+                entries: t.MutableMappingKV[str, m.Tests.Payload] = {}
                 for key, item in value.items():
                     normalized_key = str(key)
                     if normalized_key in entries:

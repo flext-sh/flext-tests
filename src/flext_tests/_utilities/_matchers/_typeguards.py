@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Sized
-from typing import TYPE_CHECKING, TypeAliasType
+from typing import TypeAliasType
 
 from _pytest.python_api import ApproxBase
 from flext_infra import u
@@ -12,16 +12,13 @@ from flext_tests import c, m, p
 
 from ..payload import FlextTestsPayloadUtilities
 
-if TYPE_CHECKING:
-    from flext_core import t
-
 
 class FlextTestsMatchersTypeGuardsMixin:
     """Preserve native comparison semantics at the matcher boundary."""
 
     @staticmethod
     def matches_runtime_type(
-        value: object, expected_type: type | t.VariadicTuple[type]
+        value: p.AttributeProbe, expected_type: type | tuple[type, ...]
     ) -> bool:
         """Check the original subject rather than its payload envelope."""
         return isinstance(value, expected_type)

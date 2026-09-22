@@ -10,13 +10,13 @@ from typing import Annotated, ClassVar
 
 from flext_tests import c, m, p, r, t, u
 
-from ._validator.bypass import FlextValidatorBypass
-from ._validator.imports import FlextValidatorImports
-from ._validator.layer import FlextValidatorLayer
-from ._validator.markdown import FlextValidatorMarkdown
-from ._validator.settings import FlextValidatorSettings
-from ._validator.tests import FlextValidatorTests
-from ._validator.types import FlextValidatorTypes
+from ._validator.bypass import FlextTestsValidatorBypass
+from ._validator.imports import FlextTestsValidatorImports
+from ._validator.layer import FlextTestsValidatorLayer
+from ._validator.markdown import FlextTestsValidatorMarkdown
+from ._validator.settings import FlextTestsValidatorSettings
+from ._validator.tests import FlextTestsValidatorTests
+from ._validator.types import FlextTestsValidatorTypes
 
 
 class FlextTestsValidator:
@@ -148,7 +148,7 @@ class FlextTestsValidator:
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate bypass patterns in Python files."""
         files = cls._discover_files(path, exclude_patterns)
-        return FlextValidatorBypass.scan(files, approved_exceptions)
+        return FlextTestsValidatorBypass.scan(files, approved_exceptions)
 
     @classmethod
     def imports(
@@ -159,7 +159,7 @@ class FlextTestsValidator:
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate imports in Python files."""
         files = cls._discover_files(path, exclude_patterns)
-        return FlextValidatorImports.scan(files, approved_exceptions)
+        return FlextTestsValidatorImports.scan(files, approved_exceptions)
 
     @classmethod
     def layer(
@@ -171,7 +171,7 @@ class FlextTestsValidator:
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate layer dependencies in Python files."""
         files = cls._discover_files(path, exclude_patterns)
-        return FlextValidatorLayer.scan(files, approved_exceptions, layer_hierarchy)
+        return FlextTestsValidatorLayer.scan(files, approved_exceptions, layer_hierarchy)
 
     @classmethod
     def tests(
@@ -182,7 +182,7 @@ class FlextTestsValidator:
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate test patterns in Python files."""
         files = cls._discover_files(path, exclude_patterns)
-        return FlextValidatorTests.scan(files, approved_exceptions)
+        return FlextTestsValidatorTests.scan(files, approved_exceptions)
 
     @classmethod
     def types(
@@ -193,7 +193,7 @@ class FlextTestsValidator:
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate type annotations in Python files."""
         files = cls._discover_files(path, exclude_patterns)
-        return FlextValidatorTypes.scan(files, approved_exceptions)
+        return FlextTestsValidatorTypes.scan(files, approved_exceptions)
 
     @classmethod
     def validate_config(
@@ -202,7 +202,7 @@ class FlextTestsValidator:
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate pyproject.toml configuration."""
-        return FlextValidatorSettings.validate(pyproject_path, approved_exceptions)
+        return FlextTestsValidatorSettings.validate(pyproject_path, approved_exceptions)
 
     @classmethod
     def markdown(
@@ -211,8 +211,8 @@ class FlextTestsValidator:
         approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate Python code blocks in markdown files."""
-        md_files = FlextValidatorMarkdown.collect_markdown_files(project_root)
-        return FlextValidatorMarkdown.markdown(
+        md_files = FlextTestsValidatorMarkdown.collect_markdown_files(project_root)
+        return FlextTestsValidatorMarkdown.markdown(
             md_files, approved_exceptions=approved_exceptions
         )
 

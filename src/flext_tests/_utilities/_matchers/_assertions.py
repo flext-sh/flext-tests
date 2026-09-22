@@ -18,7 +18,11 @@ class FlextTestsMatchersAssertionsMixin:
 
     @staticmethod
     def raise_match_assertion(
-        template: str, *, msg: str | None, container: object, item: object
+        template: str,
+        *,
+        msg: str | None,
+        container: p.AttributeProbe,
+        item: p.AttributeProbe,
     ) -> Never:
         """Raise AssertionError with ``msg`` or formatted ``template``."""
         raise AssertionError(msg or template.format(container=container, item=item))
@@ -27,7 +31,7 @@ class FlextTestsMatchersAssertionsMixin:
     def assert_len_match(
         *,
         payload: p.Tests.Payload,
-        sized: object,
+        sized: p.AttributeProbe,
         length_spec: int | tuple[int, int],
         msg: str | None,
     ) -> None:

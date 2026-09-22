@@ -7,7 +7,8 @@ from typing import TYPE_CHECKING
 
 from flext_infra import c, u
 
-from flext_tests import p, r
+from flext_core import r
+from flext_tests import p
 
 if TYPE_CHECKING:
     from flext_core import t

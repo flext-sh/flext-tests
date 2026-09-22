@@ -22,11 +22,14 @@ from .__version__ import (
 if TYPE_CHECKING:
     from flext_infra import c as infra_c, d, e, h, r, x
 
+    from . import services
     from .__version__ import FlextTestsVersion
     from ._config import FlextTestsConfig, config
     from ._settings import FlextTestsSettings, settings
+    from .api import FlextTests, api
     from .base import FlextTestsServiceBase, FlextTestsServiceBase as s
     from .case import FlextTestsCase
+    from .cli import FlextTestsCli
     from .constants import FlextTestsConstants, FlextTestsConstants as c
     from .docker import FlextTestsDocker, tk
     from .domains import FlextTestsDomains, td
@@ -49,14 +52,16 @@ if TYPE_CHECKING:
     from .typings import FlextTestsTypes, FlextTestsTypes as t
     from .utilities import (
         FlextTestsFixturesDSLMixin,
+        FlextTestsModuleGovernanceMixin,
         FlextTestsUtilities,
         FlextTestsUtilities as u,
-        ModuleGovernanceMixin,
     )
     from .validator import FlextTestsValidator, tv
 __all__: tuple[str, ...] = (
     "SLOW_TIMEOUT_INI_OPTION",
+    "FlextTests",
     "FlextTestsCase",
+    "FlextTestsCli",
     "FlextTestsConfig",
     "FlextTestsConstants",
     "FlextTestsDocker",
@@ -69,6 +74,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsKube",
     "FlextTestsMatchersUtilities",
     "FlextTestsModels",
+    "FlextTestsModuleGovernanceMixin",
     "FlextTestsProtocols",
     "FlextTestsServiceBase",
     "FlextTestsSettings",
@@ -76,7 +82,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsUtilities",
     "FlextTestsValidator",
     "FlextTestsVersion",
-    "ModuleGovernanceMixin",
     "__author__",
     "__author_email__",
     "__description__",
@@ -86,6 +91,7 @@ __all__: tuple[str, ...] = (
     "__version__",
     "__version_info__",
     "active_rules",
+    "api",
     "c",
     "config",
     "d",
@@ -99,6 +105,7 @@ __all__: tuple[str, ...] = (
     "p",
     "r",
     "s",
+    "services",
     "settings",
     "split_csv",
     "t",
@@ -117,8 +124,10 @@ _LAZY_IMPORTS = MappingProxyType(
             ".__version__": ("FlextTestsVersion",),
             "._config": ("FlextTestsConfig", "config"),
             "._settings": ("FlextTestsSettings", "settings"),
+            ".api": ("FlextTests", "api"),
             ".base": ("FlextTestsServiceBase", "s"),
             ".case": ("FlextTestsCase",),
+            ".cli": ("FlextTestsCli",),
             ".constants": ("FlextTestsConstants", "c"),
             ".docker": ("FlextTestsDocker", "tk"),
             ".domains": ("FlextTestsDomains", "td"),
@@ -137,12 +146,13 @@ _LAZY_IMPORTS = MappingProxyType(
             ".models": ("FlextTestsModels", "m"),
             ".protocols": ("FlextTestsProtocols", "p"),
             ".pytest_bootstrap": ("install_local_packages",),
+            ".services": ("services",),
             ".tmatchers": ("FlextTestsMatchersUtilities", "tm"),
             ".typings": ("FlextTestsTypes", "t"),
             ".utilities": (
                 "FlextTestsFixturesDSLMixin",
+                "FlextTestsModuleGovernanceMixin",
                 "FlextTestsUtilities",
-                "ModuleGovernanceMixin",
                 "u",
             ),
             ".validator": ("FlextTestsValidator", "tv"),

@@ -8,7 +8,7 @@ from typing import Annotated
 
 from flext_infra import m, u
 
-from flext_tests import c, t
+from flext_tests import c, p, t
 
 from .base import FlextTestsBaseModelsMixin
 
@@ -124,7 +124,7 @@ class FlextTestsFilesystemModelsMixin:
 
         @u.field_validator("name", mode="before")
         @classmethod
-        def normalize_name(cls, value: object) -> str:
+        def normalize_name(cls, value: p.AttributeProbe) -> str:
             """Normalize filename by stripping whitespace."""
             if isinstance(value, str):
                 return value.strip()

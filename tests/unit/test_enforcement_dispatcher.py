@@ -176,7 +176,7 @@ class TestsFlextTestsEnforcementDispatcher:
         tm.that([r.id for r in first], eq=[r.id for r in second])
 
     # ------------------------------------------------------------------ #
-    # EnforcementItem / EnforcementCollector / EnforcementViolationError #
+    # FlextTestsEnforcementItem / FlextTestsEnforcementCollector / FlextTestsEnforcementViolationError #
     # ------------------------------------------------------------------ #
 
     def test_runtest_raises_violation_error_when_violations_present(

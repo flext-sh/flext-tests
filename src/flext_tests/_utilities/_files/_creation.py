@@ -16,12 +16,12 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
     """Create files from one validated native payload boundary."""
 
     @staticmethod
-    def is_mapping(value: object) -> bool:
+    def is_mapping(value: p.AttributeProbe) -> bool:
         """Identify native mappings without pretending to validate their leaves."""
         return isinstance(value, Mapping)
 
     @staticmethod
-    def to_payload_mapping(value: object) -> t.MappingKV[str, m.Tests.Payload]:
+    def to_payload_mapping(value: p.AttributeProbe) -> t.MappingKV[str, m.Tests.Payload]:
         """Own a native mapping and retain every rich child value."""
         payload = FlextTestsPayloadUtilities.to_payload(value)
         if payload.kind != "mapping":
@@ -37,7 +37,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             for row in value.items
         ]
 
-    def _coerce_file_content(self, value: object) -> m.Tests.Payload:
+    def _coerce_file_content(self, value: p.AttributeProbe) -> m.Tests.Payload:
         """Own file input without dumping native models or swallowing failures."""
         return FlextTestsPayloadUtilities.to_payload(value)
 
@@ -52,7 +52,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             return self._coerce_file_content(content.value)
         return self._coerce_file_content(content)
 
-    def _is_nested_rows(self, value: object) -> bool:
+    def _is_nested_rows(self, value: p.AttributeProbe) -> bool:
         """Recognize nonempty list/tuple rows without a second recursive adapter."""
         payload = FlextTestsPayloadUtilities.to_payload(value)
         return (

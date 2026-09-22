@@ -26,6 +26,7 @@ if TYPE_CHECKING:
     )
     from ._markdown_collector import FlextTestsMarkdownCodeBlockCollector
     from ._markdown_error import FlextTestsMarkdownValidationError
+    from .connectivity import FlextTestsConnectivityPlugin
     from .enforcement import (
         FlextTestsEnforcementCollector,
         FlextTestsEnforcementViolationError,
@@ -47,6 +48,7 @@ if TYPE_CHECKING:
         test_runtime,
     )
 __all__: tuple[str, ...] = (
+    "FlextTestsConnectivityPlugin",
     "FlextTestsEnforcementCollector",
     "FlextTestsEnforcementItem",
     "FlextTestsEnforcementViolationError",
@@ -100,6 +102,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ),
             "._markdown_collector": ("FlextTestsMarkdownCodeBlockCollector",),
             "._markdown_error": ("FlextTestsMarkdownValidationError",),
+            ".connectivity": ("FlextTestsConnectivityPlugin",),
             ".enforcement": (
                 "FlextTestsEnforcementCollector",
                 "FlextTestsEnforcementViolationError",

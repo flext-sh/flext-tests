@@ -35,14 +35,17 @@ def pytest_configure(config: pytest.Config) -> None:
     # the fixture, and registering a function as a plugin silently registers no
     # fixtures at all. `import_module` names the module unambiguously.
     settings = import_module("flext_tests._fixtures.settings")
-    connectivity = import_module("flext_tests._fixtures.connectivity")
+    connectivity_module = import_module("flext_tests._fixtures.connectivity")
 
     if settings not in config.pluginmanager.get_plugins():
         config.pluginmanager.register(settings, settings.__name__)
     # Connectivity-bound tests skip - never fail - when their external service
     # is unreachable (AGENTS.md external/docker skip rule).
-    if connectivity not in config.pluginmanager.get_plugins():
-        config.pluginmanager.register(connectivity, connectivity.__name__)
+    connectivity = connectivity_module.FlextTestsConnectivityPlugin()
+    if not config.pluginmanager.hasplugin("flext_tests._fixtures.connectivity"):
+        config.pluginmanager.register(
+            connectivity, "flext_tests._fixtures.connectivity"
+        )
     if find_spec("pytest_markdown_docs") is None:
         from ._fixtures import markdown_validation
 

@@ -8,7 +8,7 @@ from flext_tests import FlextTestsFiles, tm
 from tests import c, m, r, t, u
 
 
-class TestsFlextTestsFilesBatchCreateIn:
+class TestsFlextTestsFilesBatchCreateInMixin:
     """File batch and create_in tests."""
 
     def test_batch_create_multiple_files(self, tmp_path: Path) -> None:

@@ -8,7 +8,7 @@ from flext_tests import tm
 from tests import c, p, r, t
 
 
-class TestsFlextTestsMatchersValidation:
+class TestsFlextTestsMatchersValidationMixin:
     """Matcher validation tests."""
 
     def test_assert_valid_email_passes(self) -> None:

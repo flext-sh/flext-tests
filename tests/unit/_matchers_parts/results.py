@@ -11,7 +11,7 @@ from flext_tests import tm
 from tests import m, r, t
 
 
-class TestsFlextTestsMatchersResults:
+class TestsFlextTestsMatchersResultsMixin:
     """Matcher result assertion tests."""
 
     def test_assert_result_success_passes(self) -> None:

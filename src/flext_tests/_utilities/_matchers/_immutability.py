@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import re
 
+from flext_tests import p
+
 
 class FlextTestsMatchersImmutabilityMixin:
     """Assignment-rejection matcher exposed under ``Tests.Matchers``."""
@@ -21,9 +23,9 @@ class FlextTestsMatchersImmutabilityMixin:
 
             @staticmethod
             def rejects_assignment(
-                target: object,
+                target: p.AttributeProbe,
                 field: str,
-                value: object,
+                value: p.AttributeProbe,
                 *,
                 expected: type[BaseException] | tuple[type[BaseException], ...],
                 match: str | None = None,

@@ -5,7 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from flext_tests import c, p, r
+from flext_core import r
+from flext_tests import c, p
 
 from .workspace_cleanup_git import FlextTestsWorkspaceCleanupGitUtilitiesMixin
 

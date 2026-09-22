@@ -6,17 +6,17 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import FlextTestsDocker, m, t, tm
+from flext_tests import FlextTestsDocker, m, tm
 from tests import c
 
 
-class TestsFlextTestsDockerBuilders:
+class TestsFlextTestsDockerBuildersMixin:
     """Docker builder tests."""
 
     def test_shared_containers_attribute(self) -> None:
         """Test canonical shared containers constant."""
         tm.that(c.Tests.SHARED_CONTAINERS, none=False)
-        tm.that(c.Tests.SHARED_CONTAINERS, is_=t.StrMapping)
+        tm.that(c.Tests.SHARED_CONTAINERS, is_=dict)
 
     def test_shared_builder_resolves_target_config(self, tmp_path: Path) -> None:
         """Test shared() builds a resolved container target from constants."""

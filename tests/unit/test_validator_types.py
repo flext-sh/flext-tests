@@ -18,13 +18,13 @@ import pytest
 from flext_tests import m, tm, tv
 from tests import u
 
-from ._validator_parts.helper import TestsFlextTestsValidatorHelper
+from ._validator_parts.helper import TestsFlextTestsValidatorTestFilesMixin
 
 if TYPE_CHECKING:
     from pathlib import Path
 
 
-class TestsFlextTestsValidatorTypes(TestsFlextTestsValidatorHelper):
+class TestsFlextTestsValidatorTypes(TestsFlextTestsValidatorTestFilesMixin):
     """Verify strict typing rules through the public `tv.types` contract."""
 
     _MODERN_TYPING_SOURCE = """from __future__ import annotations

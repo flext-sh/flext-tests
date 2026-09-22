@@ -19,28 +19,21 @@ import pytest
 from flext_tests import FlextTestsDocker, tm
 from tests import c
 
-from ._docker_parts.builders import TestsFlextTestsDockerBuilders
-from ._docker_parts.operations import TestsFlextTestsDockerOperations
-from ._docker_parts.state import TestsFlextTestsDockerState
-from ._docker_parts.targets import TestsFlextTestsDockerTargets
+from ._docker_parts.builders import TestsFlextTestsDockerBuildersMixin
+from ._docker_parts.operations import TestsFlextTestsDockerOperationsMixin
+from ._docker_parts.state import TestsFlextTestsDockerStateMixin
+from ._docker_parts.targets import TestsFlextTestsDockerTargetsMixin
 
 
 class TestsFlextTestsDocker(
-    TestsFlextTestsDockerState,
-    TestsFlextTestsDockerBuilders,
-    TestsFlextTestsDockerOperations,
-    TestsFlextTestsDockerTargets,
+    TestsFlextTestsDockerStateMixin, TestsFlextTestsDockerBuildersMixin, TestsFlextTestsDockerOperationsMixin, TestsFlextTestsDockerTargetsMixin
 ):
     """Behavioral contract of the Docker control facade (FlextTestsDocker)."""
-
-    # ------------------------------------------------------------------ #
-    # CI=Y disables Docker lifecycle (exact Make token, not CI=true)     #
-    # ------------------------------------------------------------------ #
 
     @staticmethod
     @pytest.fixture
     def docker_manager(tmp_path: Path) -> FlextTestsDocker:
-        """Create a FlextTestsDocker instance with a known-clean container baseline."""
+        """Create a FlextTestsDocker with a known-clean container baseline."""
         fixtures_dir = Path(__file__).parent.parent.parent / "fixtures"
         manager = FlextTestsDocker(
             repository_root=fixtures_dir, worker_id=f"test-{tmp_path.name}"

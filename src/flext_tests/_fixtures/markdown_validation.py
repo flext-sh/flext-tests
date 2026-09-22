@@ -20,7 +20,7 @@ import pytest
 
 from flext_tests import c, u
 
-from .._validator.markdown import FlextValidatorMarkdown
+from .._validator.markdown import FlextTestsValidatorMarkdown
 from ._markdown_error import FlextTestsMarkdownValidationError
 
 if TYPE_CHECKING:
@@ -56,7 +56,7 @@ class FlextTestsMarkdownCodeBlockItem(pytest.Item):
     @override
     def runtest(self) -> None:
         """Run markdown code block validation."""
-        result = FlextValidatorMarkdown.markdown([self.md_path])
+        result = FlextTestsValidatorMarkdown.markdown([self.md_path])
         if result.failure:
             msg = f"Markdown validation failed: {result.error}"
             raise FlextTestsMarkdownValidationError(msg)

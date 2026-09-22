@@ -14,7 +14,7 @@ from pathlib import Path
 from flext_tests import c, m, p, t, u
 
 
-class FlextValidatorLayer:
+class FlextTestsValidatorLayer:
     """Layer validation methods for FlextTestsValidator.
 
     Uses c.Tests.Validator, m.Tests.Validator, u.Tests.Validator.
@@ -121,4 +121,4 @@ class FlextValidatorLayer:
         )
 
 
-__all__: list[str] = ["FlextValidatorLayer"]
+__all__: list[str] = ["FlextTestsValidatorLayer"]

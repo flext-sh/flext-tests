@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from flext_tests import c, m, p, r, t
+from flext_core import r
+from flext_tests import c, m, p, t
 
 from .make_registry import FlextTestsMakeRegistryUtilitiesMixin
 

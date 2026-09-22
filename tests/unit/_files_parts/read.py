@@ -5,13 +5,15 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_tests import tf, tm
-from tests import c, m, t, u
+from tests import c, m, u
 
 if TYPE_CHECKING:
     from pathlib import Path
 
+    from tests import t
 
-class TestsFlextTestsFilesRead:
+
+class TestsFlextTestsFilesReadMixin:
     """File read tests."""
 
     def test_read_text_file(self, tmp_path: Path) -> None:

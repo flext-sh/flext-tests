@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from tests import p
 
 
-class TestsFlextTestsMatchersScopeErrors:
+class TestsFlextTestsMatchersScopeErrorsMixin:
     """Matcher scope and error tests."""
 
     def test_check_returns_chain(self) -> None:

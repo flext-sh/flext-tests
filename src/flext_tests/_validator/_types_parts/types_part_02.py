@@ -8,13 +8,13 @@ from typing import TYPE_CHECKING, override
 
 from flext_tests import c, t, u
 
-from .types_part_01 import FlextValidatorTypes as _ValidatorTypesPart01
+from .types_part_01 import FlextTestsValidatorTypes as FlextTestsValidatorTypesPart01
 
 if TYPE_CHECKING:
     from flext_tests import m
 
 
-class FlextValidatorTypes(_ValidatorTypesPart01):
+class FlextTestsValidatorTypes(FlextTestsValidatorTypesPart01):
     """Type validation scanner for FlextTestsValidator."""
 
     @classmethod
@@ -150,4 +150,4 @@ class FlextValidatorTypes(_ValidatorTypesPart01):
         )
 
 
-__all__: list[str] = ["FlextValidatorTypes"]
+__all__: list[str] = ["FlextTestsValidatorTypes"]

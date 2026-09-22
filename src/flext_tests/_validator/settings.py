@@ -4,13 +4,17 @@ from __future__ import annotations
 
 from collections.abc import MutableSequence
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_cli import u as cli_u
 
-from flext_tests import c, m, p, t, u
+from flext_tests import c, m, t, u
+
+if TYPE_CHECKING:
+    from flext_tests import p
 
 
-class FlextValidatorSettings:
+class FlextTestsValidatorSettings:
     """Scan pyproject and config for policy violations."""
 
     @staticmethod
@@ -20,18 +24,18 @@ class FlextValidatorSettings:
             return ""
         if isinstance(value, dict):
             return {
-                key: FlextValidatorSettings.to_toml_value(item)
+                key: FlextTestsValidatorSettings.to_toml_value(item)
                 for key, item in value.items()
             }
         if isinstance(value, list):
-            return [FlextValidatorSettings.to_toml_value(item) for item in value]
+            return [FlextTestsValidatorSettings.to_toml_value(item) for item in value]
         return value
 
     @staticmethod
     def to_toml_dict(mapping: t.JsonMapping) -> t.Tests.MakeTomlTable:
         """Recursively convert a JsonMapping to a TOML-compatible dictionary."""
         return {
-            key: FlextValidatorSettings.to_toml_value(value)
+            key: FlextTestsValidatorSettings.to_toml_value(value)
             for key, value in mapping.items()
         }
 
@@ -201,4 +205,4 @@ class FlextValidatorSettings:
         return cls.scan([pyproject_path], approved_exceptions)
 
 
-__all__: list[str] = ["FlextValidatorSettings"]
+__all__: list[str] = ["FlextTestsValidatorSettings"]
