@@ -77,6 +77,10 @@ class FlextTestsBaseModelsMixin:
         """Factory entity class for tests."""
 
         name: Annotated[str, m.Field(description="Entity display name.")] = ""
+        # Inside this nested body the mixin name is not yet bound while the
+        # class is created: the annotation resolves strictly through pydantic's
+        # deferred module-namespace resolution, and the factory defers the
+        # same lookup to instantiation time.
         value: Annotated[
             "FlextTestsBaseModelsMixin.Payload",
             m.Field(description="Arbitrary serializable payload."),
