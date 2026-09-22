@@ -60,7 +60,9 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _validate_is_type(
-                value: p.AttributeProbe, params: m.Tests.ThatParams, value_type_name: str
+                value: p.AttributeProbe,
+                params: m.Tests.ThatParams,
+                value_type_name: str,
             ) -> None:
                 """Validate ``is_`` including FLEXT wrapper/model shortcuts."""
                 is_types = (
@@ -513,7 +515,9 @@ class FlextTestsMatchersThatMixin:
                     cls._validate_attr_eq(subject, params)
 
             @staticmethod
-            def _validate_attr_eq(subject: p.AttributeProbe, params: m.Tests.ThatParams) -> None:
+            def _validate_attr_eq(
+                subject: p.AttributeProbe, params: m.Tests.ThatParams
+            ) -> None:
                 """Inspect original subjects while comparing owned expectations."""
                 if params.attr_eq is None:
                     return
@@ -618,7 +622,8 @@ class FlextTestsMatchersThatMixin:
             return tuple(value.entries.items())
         if (
             value.kind == "tuple"
-            and len(value.items) == FlextTestsMatchersThatMixin._TUPLE_NAME_VALUE_PAIR_LEN
+            and len(value.items)
+            == FlextTestsMatchersThatMixin._TUPLE_NAME_VALUE_PAIR_LEN
         ):
             key, expected = value.items
             if key.kind == "atom" and isinstance(key.atom, str):

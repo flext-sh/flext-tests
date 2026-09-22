@@ -21,7 +21,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         return isinstance(value, Mapping)
 
     @staticmethod
-    def to_payload_mapping(value: p.AttributeProbe) -> t.MappingKV[str, m.Tests.Payload]:
+    def to_payload_mapping(
+        value: p.AttributeProbe,
+    ) -> t.MappingKV[str, m.Tests.Payload]:
         """Own a native mapping and retain every rich child value."""
         payload = FlextTestsPayloadUtilities.to_payload(value)
         if payload.kind != "mapping":

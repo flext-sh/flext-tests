@@ -82,48 +82,29 @@ class FlextTestsFilesComparisonMixin(_ComparisonMixinPart1):
         """Compare file content with optional deep/structured comparison."""
         c1, c2 = self._read_both(params)
         if params.deep:
-            deep = self._try_deep_compare(c1, c2, params.keys, params.exclude_keys)
-            if deep is not None:
-                return deep
+            structured = self._try_parse_both(c1, c2, "json")
+            if structured.failure:
+                structured = self._try_parse_both(c1, c2, "yaml")
+            if not structured.failure:
+                dict1, dict2 = structured.value
+                return self._deep_compare_mappings(dict1, dict2, params)
         if params.ignore_ws:
             c1, c2 = "".join(c1.split()), "".join(c2.split())
         if params.ignore_case:
             c1, c2 = c1.lower(), c2.lower()
         return r[bool].ok(c1 == c2)
 
-    def _compare_lines(self, params: m.Tests.CompareParams) -> p.Result[bool]:
-        """Compare files line by line with optional normalization."""
-        c1, c2 = self._read_both(params)
-        lines1, lines2 = c1.splitlines(), c2.splitlines()
-        if params.ignore_ws:
-            lines1 = [line.strip() for line in lines1]
-            lines2 = [line.strip() for line in lines2]
-        if params.ignore_case:
-            lines1 = [line.lower() for line in lines1]
-            lines2 = [line.lower() for line in lines2]
-        return r[bool].ok(lines1 == lines2)
-
-    def _try_deep_compare(
+    def _deep_compare_mappings(
         self,
-        content1_raw: str,
-        content2_raw: str,
-        keys: t.StrSequence | None,
-        exclude_keys: t.StrSequence | None,
-    ) -> p.Result[bool] | None:
-        """Try to parse and deeply compare content as JSON or YAML."""
-        # Why: format probing, not error swallowing — try json, then yaml;
-        # each attempt is read via explicit success/failure branches instead
-        # of `unwrap_or(sentinel)` (silent-failure-unwrap-or).
-        json_result = self._try_parse_both(content1_raw, content2_raw, "json")
-        if json_result.failure:
-            yaml_result = self._try_parse_both(content1_raw, content2_raw, "yaml")
-            if yaml_result.failure:
-                return None
-            dict1, dict2 = yaml_result.value
-        else:
-            dict1, dict2 = json_result.value
-        filter_keys_set = set(keys) if keys is not None else None
-        exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
+        dict1: p.AttributeProbe,
+        dict2: p.AttributeProbe,
+        params: m.Tests.CompareParams,
+    ) -> p.Result[bool]:
+        """Deeply compare already-parsed structured mappings."""
+        filter_keys_set = set(params.keys) if params.keys is not None else None
+        exclude_keys_set = (
+            set(params.exclude_keys) if params.exclude_keys is not None else None
+        )
         left_result = u.transform(
             FlextTestsPayloadUtilities.to_config_map(dict1),
             filter_keys=filter_keys_set,
@@ -137,6 +118,18 @@ class FlextTestsFilesComparisonMixin(_ComparisonMixinPart1):
         if left_result.failure or right_result.failure:
             return r[bool].ok(False)
         return r[bool].ok(u.deep_eq(left_result.value, right_result.value))
+
+    def _compare_lines(self, params: m.Tests.CompareParams) -> p.Result[bool]:
+        """Compare files line by line with optional normalization."""
+        c1, c2 = self._read_both(params)
+        lines1, lines2 = c1.splitlines(), c2.splitlines()
+        if params.ignore_ws:
+            lines1 = [line.strip() for line in lines1]
+            lines2 = [line.strip() for line in lines2]
+        if params.ignore_case:
+            lines1 = [line.lower() for line in lines1]
+            lines2 = [line.lower() for line in lines2]
+        return r[bool].ok(lines1 == lines2)
 
 
 __all__: list[str] = ["FlextTestsFilesComparisonMixin"]

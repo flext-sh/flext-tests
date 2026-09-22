@@ -185,7 +185,9 @@ class FlextTestsMatchersModelsMixin:
         ] = None
 
         @classmethod
-        def parse(cls, value: p.AttributeProbe) -> FlextTestsMatchersModelsMixin.MatchRule:
+        def parse(
+            cls, value: p.AttributeProbe
+        ) -> FlextTestsMatchersModelsMixin.MatchRule:
             """Parse one public matcher rule into its nominal representation."""
             if isinstance(value, cls):
                 return value

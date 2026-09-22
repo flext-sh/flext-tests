@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import importlib
 import inspect
-import warnings
 from collections.abc import Iterator, Mapping
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Final, Protocol, runtime_checkable
@@ -36,8 +35,6 @@ class FlextTestsModuleGovernanceMixin:
       that holds ``SRC_DIR``, ``PACKAGE_DIR``, and ``ALLOWED_MODULE_FUNCTIONS``.
 
     Subclasses may override:
-    - ``_warn_on_import_error``: set ``False`` to suppress the
-      ``warnings.warn`` on unimportable modules (default ``True``).
     - ``_allowed_functions_lookup_key``: return a different key for the
       ``ALLOWED_MODULE_FUNCTIONS`` lookup (default: path relative to package root).
     """
@@ -50,8 +47,9 @@ class FlextTestsModuleGovernanceMixin:
         PACKAGE_DIR: Final[str]
 
     _test_file: ClassVar[str]
-    _tests_config: ClassVar[type[FlextTestsModuleGovernanceMixin._GovernanceConfigProto]]
-    _warn_on_import_error: ClassVar[bool] = True
+    _tests_config: ClassVar[
+        type[FlextTestsModuleGovernanceMixin._GovernanceConfigProto]
+    ]
 
     @classmethod
     def _package_root(cls) -> Path:
@@ -88,17 +86,9 @@ class FlextTestsModuleGovernanceMixin:
         return ".".join(parts)
 
     @classmethod
-    def _import_package_module(cls, module_path: Path) -> ModuleType | None:
-        """Import a package module; tolerate import-time errors gracefully."""
-        try:
-            return importlib.import_module(cls._module_dotted_name(module_path))
-        except (ImportError, AttributeError) as exc:
-            if cls._warn_on_import_error:
-                warnings.warn(
-                    f"skipping unimportable governance module {module_path}: {exc}",
-                    stacklevel=2,
-                )
-            return None
+    def _import_package_module(cls, module_path: Path) -> ModuleType:
+        """Import a package module; an unimportable module is a defect that escapes."""
+        return importlib.import_module(cls._module_dotted_name(module_path))
 
     @staticmethod
     def _module_top_level_attrs(
@@ -146,8 +136,6 @@ class FlextTestsModuleGovernanceMixin:
         violations: list[str] = []
         for module_path in self._iter_package_modules():
             module = self._import_package_module(module_path)
-            if module is None:
-                continue
             for name, _ in self._module_top_level_attrs(module):
                 if name in {"logger", "_logger"}:
                     violations.append(
@@ -165,8 +153,6 @@ class FlextTestsModuleGovernanceMixin:
         violations: list[str] = []
         for module_path in self._iter_package_modules():
             module = self._import_package_module(module_path)
-            if module is None:
-                continue
             allowed = self._allowed_functions_for_module(module_path)
             unexpected_functions = sorted(
                 name

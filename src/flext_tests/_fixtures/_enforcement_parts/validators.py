@@ -89,19 +89,14 @@ def _collect_tests_validator_violations(
     rule: m.EnforcementRuleSpec, repository_root: Path, targets: t.SequenceOf[Path]
 ) -> t.MappingKV[str, list[p.AttributeProbe]]:
     result: t.MutableMappingKV[str, list[p.AttributeProbe]] = {}
-    try:
-        validator_mod = import_module("flext_tests.validator")
-    except ImportError:
-        return result
-    tv = getattr(validator_mod, "FlextTestsValidator", None)
-    if tv is None:
-        return result
+    # Late import: flext_tests.validator transitively imports this package
+    # facet; a missing module or validator symbol is a defect and raises.
+    validator_mod = import_module("flext_tests.validator")
+    tv = validator_mod.FlextTestsValidator
     method_name = getattr(rule.source, "method", "")
     if not method_name or method_name.startswith("_"):
         return result
-    method = getattr(tv, method_name, None)
-    if method is None or not callable(method):
-        return result
+    method = getattr(tv, method_name)
     wanted_ids = frozenset(getattr(rule.source, "rule_ids", ()))
     for target in targets:
         dispatch_target = _validator_dispatch_target(

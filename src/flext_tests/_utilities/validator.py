@@ -27,9 +27,7 @@ class FlextTestsValidatorUtilitiesMixin:
     @staticmethod
     def path_pattern_matches(value: str, pattern: str) -> bool:
         """Check whether one validator path pattern matches value."""
-        compiled = c.Tests.VALIDATOR_APPROVED_PATH_REGEX_BY_PATTERN.get(
-            pattern
-        )
+        compiled = c.Tests.VALIDATOR_APPROVED_PATH_REGEX_BY_PATTERN.get(pattern)
         return compiled.search(value) is not None if compiled else False
 
     @staticmethod
@@ -233,24 +231,19 @@ class FlextTestsValidatorUtilitiesMixin:
         return FlextTestsValidatorUtilitiesMixin.code_match(line, pattern)
 
     @staticmethod
-    def except_block_only_pass(
-        lines: t.StrSequence, line_number: int
-    ) -> bool:
+    def except_block_only_pass(lines: t.StrSequence, line_number: int) -> bool:
         """Check whether one ``except`` block body contains only pass or ellipsis."""
         header_index = line_number - 1
         if header_index < 0 or header_index >= len(lines):
             return False
         header_line = lines[header_index]
-        header_match = c.Tests.VALIDATOR_EXCEPT_HEADER_RE.match(
-            header_line
-        )
+        header_match = c.Tests.VALIDATOR_EXCEPT_HEADER_RE.match(header_line)
         if header_match is None:
             return False
         trailing = header_line.rsplit(":", maxsplit=1)[-1].strip()
         if (
             trailing
-            and c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(trailing)
-            is not None
+            and c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(trailing) is not None
         ):
             return True
         header_indent = len(header_match.group("indent").expandtabs())
@@ -267,10 +260,7 @@ class FlextTestsValidatorUtilitiesMixin:
             body_lines.append(stripped)
         return (
             len(body_lines) == 1
-            and c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(
-                body_lines[0]
-            )
-            is not None
+            and c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(body_lines[0]) is not None
         )
 
     # NOTE (multi-agent): scanner behavior moved here from _validator/models.py
@@ -280,12 +270,10 @@ class FlextTestsValidatorUtilitiesMixin:
     def validator_run_scan(
         *,
         files: t.SequenceOf[Path],
-        approved_exceptions: t.MappingKV[str, t.StrSequence]
-        | None,
+        approved_exceptions: t.MappingKV[str, t.StrSequence] | None,
         validator_name: str,
         scan_file: Callable[
-            [Path, t.MappingKV[str, t.StrSequence]],
-            t.SequenceOf[m.Tests.Violation],
+            [Path, t.MappingKV[str, t.StrSequence]], t.SequenceOf[m.Tests.Violation]
         ],
     ) -> p.Result[m.Tests.ScanResult]:
         """Run one validator scan across files and build a ScanResult."""
@@ -321,9 +309,7 @@ class FlextTestsValidatorUtilitiesMixin:
 
         @classmethod
         def _scan_file(
-            cls,
-            file_path: Path,
-            approved: t.MappingKV[str, t.StrSequence],
+            cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
         ) -> t.SequenceOf[m.Tests.Violation]:
             """Read one file, then delegate to ``_scan_content``.
 
@@ -351,10 +337,7 @@ class FlextTestsValidatorUtilitiesMixin:
         def scan(
             cls,
             files: t.SequenceOf[Path],
-            approved_exceptions: t.MappingKV[
-                str, t.StrSequence
-            ]
-            | None = None,
+            approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
         ) -> p.Result[m.Tests.ScanResult]:
             """Scan files for violations using the consumer's _scan_file."""
             return FlextTestsValidatorUtilitiesMixin.validator_run_scan(

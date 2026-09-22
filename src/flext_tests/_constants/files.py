@@ -3,9 +3,9 @@
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
 
-Inherits all canonical file-format constants from ``FlextCliConstantsFiles``
-(SSOT in ``flext-cli``) and adds only test-specific constants that have no
-production counterpart.
+Declares only test-specific constants that have no production counterpart;
+shared file constants resolve through the FlextCliConstants MRO (SSOT in
+``flext-cli``).
 """
 
 from __future__ import annotations
@@ -13,16 +13,12 @@ from __future__ import annotations
 from enum import StrEnum, unique
 from typing import ClassVar
 
-from flext_cli.constants import FlextCliConstantsFiles
-from flext_infra import c as infra_c
 
-
-class FlextTestsConstantsFiles(FlextCliConstantsFiles):
+class FlextTestsConstantsFiles:
     """File management constants mixin for test infrastructure.
 
-    Inherits all shared file-format constants from ``FlextCliConstantsFiles``
-    and adds test-only constants (comparison modes, permissions, error
-    message templates).
+    Adds test-only constants (comparison modes, permissions, error message
+    templates); shared file-format constants come from the upstream MRO.
     """
 
     @unique
@@ -52,7 +48,6 @@ class FlextTestsConstantsFiles(FlextCliConstantsFiles):
 
     # ── Test-specific file constants ────────────────────────────
 
-    DEFAULT_ENCODING: ClassVar[str] = infra_c.DEFAULT_ENCODING
     DEFAULT_BINARY_ENCODING: ClassVar[str] = "binary"
     PERMISSION_READONLY_FILE: ClassVar[int] = 292
     PERMISSION_WRITABLE_FILE: ClassVar[int] = 420

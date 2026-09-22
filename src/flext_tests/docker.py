@@ -185,23 +185,22 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             return r[bool].fail(f"Failed to mark dirty: {exc}", exception=exc)
 
     def _load_dirty_state(self) -> None:
-        """Load dirty container state from persistent storage."""
+        """Load dirty container state from persistent storage.
+
+        A state file that exists but cannot be read or parsed is a defect and
+        escapes; only the absent-file case is a legitimate first run.
+        """
         state_file = self.state_file_path
         if state_file is None or not state_file.exists():
             return
         read = u.Cli.files_read_text(state_file)
         if read.failure:
-            self.logger.warning("Failed to load dirty state", error=read.error)
-            self.dirty_container_names = set[str]()
-            return
-        try:
-            state_raw: t.MappingKV[str, t.StrSequence] = (
-                t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.validate_json(read.value)
-            )
-            self.dirty_container_names = set(state_raw.get("dirty_containers", ()))
-        except c.EXC_KEY_OS_TYPE_VALUE as exc:
-            self.logger.warning("Failed to load dirty state", error=str(exc))
-            self.dirty_container_names = set[str]()
+            msg = f"Failed to load dirty state from {state_file}: {read.error}"
+            raise ValueError(msg) from read.error
+        state_raw: t.MappingKV[str, t.StrSequence] = (
+            t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.validate_json(read.value)
+        )
+        self.dirty_container_names = set(state_raw["dirty_containers"])
 
     def _save_dirty_state(self) -> None:
         """Save dirty container state to persistent storage."""
@@ -585,14 +584,16 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             )
         container_name = target.container_name
 
-        error_msg = self._ensure_target_started(target, container_name)
-        if error_msg is not None:
-            return r[m.Tests.ContainerInfo].fail(error_msg)
+        started = self._ensure_target_started(target, container_name)
+        if started.failure:
+            return r[m.Tests.ContainerInfo].fail(
+                started.error or "Failed to start Docker target"
+            )
         return self._ensure_target_ready(target, container_name)
 
     def _ensure_target_started(
         self, target: m.Tests.ContainerConfig, container_name: str
-    ) -> str | None:
+    ) -> p.Result[None]:
         """Start or recreate the configured target when required."""
         if target.force_recreate or self.container_dirty(container_name):
             compose_result = self.compose_up(
@@ -601,25 +602,27 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 force_recreate=True,
             )
             if compose_result.failure:
-                return compose_result.error or "Failed to recreate Docker target"
+                return r[None].fail(
+                    compose_result.error or "Failed to recreate Docker target"
+                )
             _ = self.mark_container_clean(container_name)
-            return None
+            return r[None].ok()
 
         status_result = self.fetch_container_status(container_name)
         container_running = status_result.success and (
             status_result.value.status == c.Tests.ContainerStatus.RUNNING
         )
         if container_running:
-            return None
+            return r[None].ok()
         start_result = self.start_existing_container(container_name)
         if start_result.success:
-            return None
+            return r[None].ok()
         compose_result = self.compose_up(
             str(target.compose_file), service=target.service or None
         )
         if compose_result.failure:
-            return compose_result.error or "Failed to start Docker target"
-        return None
+            return r[None].fail(compose_result.error or "Failed to start Docker target")
+        return r[None].ok()
 
     def _ensure_target_ready(
         self, target: m.Tests.ContainerConfig, container_name: str

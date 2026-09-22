@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from .base import FlextTestsBaseModelsMixin
+    from .base import FlextTestsBaseModelsMixin, FlextTestsPayload
     from .batch import FlextTestsBatchModelsMixin
     from .docker import FlextTestsDockerModelsMixin
     from .domains import FlextTestsDomainModelsMixin
@@ -26,6 +26,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsFilesystemModelsMixin",
     "FlextTestsMakeModelsMixin",
     "FlextTestsMatchersModelsMixin",
+    "FlextTestsPayload",
     "FlextTestsValidatorModelsMixin",
     "FlextTestsWorkspaceCleanupModelsMixin",
 )
@@ -33,7 +34,7 @@ __all__: tuple[str, ...] = (
 _LAZY_IMPORTS = MappingProxyType(
     build_lazy_import_map(
         MappingProxyType({
-            ".base": ("FlextTestsBaseModelsMixin",),
+            ".base": ("FlextTestsBaseModelsMixin", "FlextTestsPayload"),
             ".batch": ("FlextTestsBatchModelsMixin",),
             ".docker": ("FlextTestsDockerModelsMixin",),
             ".domains": ("FlextTestsDomainModelsMixin",),

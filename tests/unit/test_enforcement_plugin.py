@@ -136,8 +136,8 @@ class TestsFlextTestsEnforcementPlugin:
     def test_active_rules_returns_only_enabled_rules(self) -> None:
         """The unfiltered result contains exclusively enabled catalog rules."""
         rules = active_rules(self._config())
-        assert rules
-        assert all(rule.enabled for rule in rules)
+        tm.that(len(rules) > 0, eq=True)
+        tm.that(all(rule.enabled for rule in rules), eq=True)
 
     def test_active_rules_include_restricts_to_allow_list(self) -> None:
         """An include allow-list narrows the result to the requested id only."""

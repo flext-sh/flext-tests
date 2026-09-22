@@ -171,7 +171,9 @@ class FlextTestsValidator:
     ) -> p.Result[m.Tests.ScanResult]:
         """Validate layer dependencies in Python files."""
         files = cls._discover_files(path, exclude_patterns)
-        return FlextTestsValidatorLayer.scan(files, approved_exceptions, layer_hierarchy)
+        return FlextTestsValidatorLayer.scan(
+            files, approved_exceptions, layer_hierarchy
+        )
 
     @classmethod
     def tests(

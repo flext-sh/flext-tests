@@ -129,14 +129,14 @@ class TestsFlextTestsEnforcementDispatcher:
     def test_active_rules_returns_only_enabled_rules(self) -> None:
         active = enforcement.active_rules(self._cfg())
 
-        assert active
-        assert all(r.enabled for r in active)
+        tm.that(len(active) > 0, eq=True)
+        tm.that(all(r.enabled for r in active), eq=True)
 
     def test_active_rules_excludes_disabled_skill_pointer_rules(self) -> None:
         # ENFORCE-034..038 ship disabled by default.
         ids = {r.id for r in enforcement.active_rules(self._cfg())}
 
-        assert ids.isdisjoint({"ENFORCE-034", "ENFORCE-035", "ENFORCE-038"})
+        tm.that(ids.isdisjoint({"ENFORCE-034", "ENFORCE-035", "ENFORCE-038"}), eq=True)
 
     def test_include_narrows_to_the_listed_ids(self) -> None:
         active = enforcement.active_rules(self._cfg(include=frozenset({"ENFORCE-001"})))
@@ -259,7 +259,10 @@ class TestsFlextTestsEnforcementDispatcher:
         tm.that(list(collector.collect()), eq=[])
 
     def test_violation_error_is_an_exception(self) -> None:
-        assert issubclass(enforcement.FlextTestsEnforcementViolationError, Exception)
+        tm.that(
+            issubclass(enforcement.FlextTestsEnforcementViolationError, Exception),
+            eq=True,
+        )
 
     # ------------------------------------------------------------------ #
     # pytest_addoption                                                   #

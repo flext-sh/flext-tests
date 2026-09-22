@@ -22,7 +22,9 @@ class TestsFlextTestsMatchersOkConstraintsMixin:
     def test_ok_with_is_tuple_parameter(self) -> None:
         """Test tm.ok() with is_ tuple parameter."""
         result = r[str].ok("test")
-        value = tm.ok(result, where=TestsFlextTestsMatchersPredicates.is_string_or_bytes)
+        value = tm.ok(
+            result, where=TestsFlextTestsMatchersPredicates.is_string_or_bytes
+        )
         tm.that(value, eq="test")
 
     def test_ok_with_has_parameter(self) -> None:
@@ -66,7 +68,9 @@ class TestsFlextTestsMatchersOkConstraintsMixin:
         """Test tm.ok() with deep predicate parameter."""
         data: t.JsonMapping = {"user": {"email": "test@example.com"}}
         result = r[t.JsonMapping].ok(data)
-        value = tm.ok(result, deep={"user.email": TestsFlextTestsMatchersPredicates.is_string})
+        value = tm.ok(
+            result, deep={"user.email": TestsFlextTestsMatchersPredicates.is_string}
+        )
         tm.that(value, eq=data)
 
     def test_ok_with_missing_deep_predicate_path_fails_cleanly(self) -> None:
@@ -74,7 +78,10 @@ class TestsFlextTestsMatchersOkConstraintsMixin:
         data: t.JsonMapping = {"user": {"email": "test@example.com"}}
         result = r[t.JsonMapping].ok(data)
         with pytest.raises(AssertionError, match=r"Path not found: user.missing"):
-            tm.ok(result, deep={"user.missing": TestsFlextTestsMatchersPredicates.is_string})
+            tm.ok(
+                result,
+                deep={"user.missing": TestsFlextTestsMatchersPredicates.is_string},
+            )
 
     def test_ok_with_path_parameter(self) -> None:
         """Test tm.ok() with path parameter."""

@@ -69,8 +69,7 @@ class FlextTestsConnectivityPlugin:
             host, port = endpoint
             try:
                 with socket.create_connection(
-                    (host, port),
-                    timeout=c.Tests.CONNECTIVITY_PROBE_TIMEOUT_SECONDS,
+                    (host, port), timeout=c.Tests.CONNECTIVITY_PROBE_TIMEOUT_SECONDS
                 ):
                     reason = None
             except OSError:

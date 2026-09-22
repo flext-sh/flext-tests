@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from .data_cases import FlextTestsConstantsDataCases
     from .docker import FlextTestsConstantsDocker
     from .files import FlextTestsConstantsFiles
+    from .kube import FlextTestsConstantsKube
     from .make import FlextTestsConstantsMake
     from .matcher import FlextTestsConstantsMatcher
     from .validator import FlextTestsConstantsValidator
@@ -21,6 +22,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsConstantsDataCases",
     "FlextTestsConstantsDocker",
     "FlextTestsConstantsFiles",
+    "FlextTestsConstantsKube",
     "FlextTestsConstantsMake",
     "FlextTestsConstantsMatcher",
     "FlextTestsConstantsValidator",
@@ -33,6 +35,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ".data_cases": ("FlextTestsConstantsDataCases",),
             ".docker": ("FlextTestsConstantsDocker",),
             ".files": ("FlextTestsConstantsFiles",),
+            ".kube": ("FlextTestsConstantsKube",),
             ".make": ("FlextTestsConstantsMake",),
             ".matcher": ("FlextTestsConstantsMatcher",),
             ".validator": ("FlextTestsConstantsValidator",),

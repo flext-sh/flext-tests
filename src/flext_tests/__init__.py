@@ -20,7 +20,8 @@ from .__version__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_infra import c as infra_c, d, e, h, r, x
+    from flext_cli import c as cli_c, d, e, h, r, x
+    from flext_infra import c as infra_c
 
     from . import services
     from .__version__ import FlextTestsVersion
@@ -93,6 +94,7 @@ __all__: tuple[str, ...] = (
     "active_rules",
     "api",
     "c",
+    "cli_c",
     "config",
     "d",
     "discover_repository_root",
@@ -156,9 +158,12 @@ _LAZY_IMPORTS = MappingProxyType(
                 "u",
             ),
             ".validator": ("FlextTestsValidator", "tv"),
-            "flext_infra": ("d", "e", "h", "r", "x"),
+            "flext_cli": ("d", "e", "h", "r", "x"),
         }),
-        alias_groups=MappingProxyType({"flext_infra": (("infra_c", "c"),)}),
+        alias_groups=MappingProxyType({
+            "flext_cli": (("cli_c", "c"),),
+            "flext_infra": (("infra_c", "c"),),
+        }),
         sort_keys=False,
     )
 )
