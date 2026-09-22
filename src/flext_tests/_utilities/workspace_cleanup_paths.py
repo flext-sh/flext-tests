@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_tests import c, p, r
 
 from .workspace_cleanup_git import FlextTestsWorkspaceCleanupGitUtilitiesMixin
+
+if TYPE_CHECKING:
+    from flext_core import t
 
 
 class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
@@ -140,4 +144,4 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
         return r[bool].ok(True)
 
 
-__all__: tuple[str, ...] = ("FlextTestsWorkspaceCleanupPathsUtilitiesMixin",)
+__all__: t.VariadicTuple[str] = ("FlextTestsWorkspaceCleanupPathsUtilitiesMixin",)

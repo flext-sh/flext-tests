@@ -4,12 +4,16 @@ from __future__ import annotations
 
 import stat
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_cli import u
 
 from flext_tests import c, p, r
 
 from .workspace_cleanup_paths import FlextTestsWorkspaceCleanupPathsUtilitiesMixin
+
+if TYPE_CHECKING:
+    from flext_core import t
 
 
 class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
@@ -173,4 +177,4 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
         return r[str].ok(u.Cli.sha256_content("\0".join(manifest)))
 
 
-__all__: tuple[str, ...] = ("FlextTestsWorkspaceCleanupInspectUtilitiesMixin",)
+__all__: t.VariadicTuple[str] = ("FlextTestsWorkspaceCleanupInspectUtilitiesMixin",)

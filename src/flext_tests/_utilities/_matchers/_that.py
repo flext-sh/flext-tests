@@ -631,7 +631,7 @@ class FlextTestsMatchersThatMixin:
         | t.Tests.LengthSpec
         | t.Infra.RegexPattern
         | type
-        | tuple[type, ...]
+        | t.VariadicTuple[type]
         | None,
     ]:
         parsed = rule

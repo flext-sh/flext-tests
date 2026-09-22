@@ -7,6 +7,8 @@ from typing import Annotated, Literal
 
 from flext_infra import m, u
 
+from flext_core import t
+
 
 class FlextTestsWorkspaceCleanupModelsMixin:
     """Immutable cleanup policy, plan, and execution report models."""
@@ -15,7 +17,7 @@ class FlextTestsWorkspaceCleanupModelsMixin:
         """Config-owned exact residue paths eligible for cleanup."""
 
         residues: Annotated[
-            tuple[Path, ...],
+            t.VariadicTuple[Path],
             u.Field(
                 strict=False,
                 description="Exact workspace-relative development residue paths.",
@@ -71,9 +73,9 @@ class FlextTestsWorkspaceCleanupModelsMixin:
             u.Field(description="Exact dry-run plan applied by the operation."),
         ]
         removed: Annotated[
-            tuple[Path, ...],
+            t.VariadicTuple[Path],
             u.Field(strict=False, description="Sorted paths removed successfully."),
         ]
 
 
-__all__: tuple[str, ...] = ("FlextTestsWorkspaceCleanupModelsMixin",)
+__all__: t.VariadicTuple[str] = ("FlextTestsWorkspaceCleanupModelsMixin",)

@@ -17,7 +17,7 @@ class FlextTestsMakeTypesMixin:
     type MakeTomlValue = t.JsonValue
     type MakeTomlTable = t.JsonMapping
     type MutableMakeTomlTable = t.MutableJsonMapping
-    type DispatchMain = Callable[[tuple[str, ...]], int]
+    type DispatchMain = Callable[[t.VariadicTuple[str]], int]
 
     MAKE_TOML_TABLE_ADAPTER: m.TypeAdapter[MakeTomlTable] = m.TypeAdapter(MakeTomlTable)
 

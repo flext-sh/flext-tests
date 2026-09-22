@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_infra import c, u
 
 from flext_tests import p, r
+
+if TYPE_CHECKING:
+    from flext_core import t
 
 
 class FlextTestsWorkspaceCleanupGitUtilitiesMixin:
@@ -15,7 +19,7 @@ class FlextTestsWorkspaceCleanupGitUtilitiesMixin:
     @staticmethod
     def _git(
         repository_root: Path,
-        arguments: tuple[str, ...],
+        arguments: t.VariadicTuple[str],
         *,
         input_data: bytes | None = None,
     ) -> p.Result[p.Cli.CommandOutput]:
@@ -40,4 +44,4 @@ class FlextTestsWorkspaceCleanupGitUtilitiesMixin:
         return f"{operation} failed: {detail}"
 
 
-__all__: tuple[str, ...] = ("FlextTestsWorkspaceCleanupGitUtilitiesMixin",)
+__all__: t.VariadicTuple[str] = ("FlextTestsWorkspaceCleanupGitUtilitiesMixin",)

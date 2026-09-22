@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 class FlextTestsConstantsMatcher:
     """Matcher constants mixin for test assertions."""
 
-    MATCHER_GUARD_EQ_TYPES: ClassVar[tuple[type, ...]] = (
+    MATCHER_GUARD_EQ_TYPES: ClassVar[t.VariadicTuple[type]] = (
         str,
         int,
         float,
