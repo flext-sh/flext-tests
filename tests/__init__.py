@@ -9,21 +9,9 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_cli import (
-        cli,
-        core,
-        d,
-        e,
-        from_json,
-        h,
-        lazy_attribute,
-        r,
-        services,
-        to_json,
-        to_jsonable_python,
-        x,
-    )
+    from flext_cli import cli, main
 
+    from flext_core import core, d, e, h, lazy_attribute, r, x
     from flext_tests import (
         active_rules,
         api,
@@ -62,17 +50,16 @@ __all__: tuple[str, ...] = (
     "d",
     "discover_repository_root",
     "e",
-    "from_json",
     "h",
     "install_local_packages",
     "integration",
     "lazy_attribute",
     "load_infra_report",
     "m",
+    "main",
     "p",
     "r",
     "s",
-    "services",
     "settings",
     "split_csv",
     "t",
@@ -80,8 +67,6 @@ __all__: tuple[str, ...] = (
     "tf",
     "tk",
     "tm",
-    "to_json",
-    "to_jsonable_python",
     "tv",
     "u",
     "unit",
@@ -98,20 +83,8 @@ _LAZY_IMPORTS = MappingProxyType(
             ".typings": ("TestsFlextTestsTypes", "t"),
             ".unit": ("unit",),
             ".utilities": ("TestsFlextTestsUtilities", "u"),
-            "flext_cli": (
-                "cli",
-                "core",
-                "d",
-                "e",
-                "from_json",
-                "h",
-                "lazy_attribute",
-                "r",
-                "services",
-                "to_json",
-                "to_jsonable_python",
-                "x",
-            ),
+            "flext_cli": ("cli", "main"),
+            "flext_core": ("core", "d", "e", "h", "lazy_attribute", "r", "x"),
             "flext_tests": (
                 "active_rules",
                 "api",
