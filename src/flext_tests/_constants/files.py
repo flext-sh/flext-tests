@@ -13,6 +13,8 @@ from __future__ import annotations
 from enum import StrEnum, unique
 from typing import ClassVar
 
+from flext_cli import c as cli_c
+
 
 class FlextTestsConstantsFiles:
     """File management constants mixin for test infrastructure.
@@ -48,6 +50,7 @@ class FlextTestsConstantsFiles:
 
     # ── Test-specific file constants ────────────────────────────
 
+    DEFAULT_ENCODING: ClassVar[str] = cli_c.DEFAULT_ENCODING
     DEFAULT_BINARY_ENCODING: ClassVar[str] = "binary"
     PERMISSION_READONLY_FILE: ClassVar[int] = 292
     PERMISSION_WRITABLE_FILE: ClassVar[int] = 420
