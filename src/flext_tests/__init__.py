@@ -20,19 +20,9 @@ from .__version__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_cli import (
-        cli,
-        core,
-        d,
-        e,
-        from_json,
-        h,
-        lazy_attribute,
-        r,
-        to_json,
-        to_jsonable_python,
-        x,
-    )
+    from flext_cli import cli, main
+
+    from flext_core import core, d, e, h, lazy_attribute, r, x
 
     from . import services
     from ._config import FlextTestsConfig, config
@@ -55,6 +45,8 @@ if TYPE_CHECKING:
     from .typings import FlextTestsTypes, t
     from .utilities import FlextTestsFixturesDSLMixin, FlextTestsUtilities, u
     from .validator import FlextTestsValidator, FlextTestsValidator as tv
+
+
 __all__: tuple[str, ...] = (
     "SLOW_TIMEOUT_INI_OPTION",
     "FlextTests",
@@ -90,12 +82,12 @@ __all__: tuple[str, ...] = (
     "core",
     "d",
     "e",
-    "from_json",
     "h",
     "install_local_packages",
     "lazy_attribute",
     "load_infra_report",
     "m",
+    "main",
     "p",
     "r",
     "s",
@@ -105,8 +97,6 @@ __all__: tuple[str, ...] = (
     "tf",
     "tk",
     "tm",
-    "to_json",
-    "to_jsonable_python",
     "tv",
     "u",
     "x",
@@ -136,19 +126,8 @@ _LAZY_IMPORTS = MappingProxyType(
             ".typings": ("FlextTestsTypes", "t"),
             ".utilities": ("FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"),
             ".validator": ("FlextTestsValidator", "tv"),
-            "flext_cli": (
-                "cli",
-                "core",
-                "d",
-                "e",
-                "from_json",
-                "h",
-                "lazy_attribute",
-                "r",
-                "to_json",
-                "to_jsonable_python",
-                "x",
-            ),
+            "flext_cli": ("cli", "main"),
+            "flext_core": ("core", "d", "e", "h", "lazy_attribute", "r", "x"),
         }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,

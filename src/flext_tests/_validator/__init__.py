@@ -17,6 +17,8 @@ if TYPE_CHECKING:
     from .settings import FlextTestsValidatorSettings
     from .tests import FlextTestsValidatorTests
     from .types import FlextTestsValidatorTypes
+
+
 __all__: tuple[str, ...] = (
     "FlextTestsValidatorBypass",
     "FlextTestsValidatorImports",
