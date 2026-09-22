@@ -23,7 +23,7 @@ import importlib
 
 import pytest
 
-from tests import c
+from tests import c, tm
 
 
 class TestsFlextTestsKubeSharedContainer:
@@ -39,19 +39,9 @@ class TestsFlextTestsKubeSharedContainer:
         """
         mod = importlib.import_module("flext_tests.kube")
 
-        assert hasattr(mod, "FlextTestsKube"), (
-            "flext_tests.kube must expose a FlextTestsKube facade class"
-        )
+        tm.that(hasattr(mod, "FlextTestsKube"), eq=True)
 
     @pytest.mark.integration
     def test_kind_registered_in_shared_containers(self) -> None:
-        """``flext-kind-test`` is registered in the shared-container catalog.
-
-        RED until the registry entry is added to
-        ``flext_tests._constants`` (e.g. a Kubernetes constants mixin wired
-        into ``FlextTestsConstants.Tests.SHARED_CONTAINERS``).
-        """
-        assert "flext-kind-test" in c.Tests.SHARED_CONTAINERS, (
-            "SHARED_CONTAINERS must register a 'flext-kind-test' kind cluster "
-            f"entry; got: {sorted(c.Tests.SHARED_CONTAINERS)}"
-        )
+        """``flext-kind-test`` is registered in the shared-container catalog."""
+        tm.that("flext-kind-test" in c.Tests.SHARED_CONTAINERS, eq=True)

@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Annotated, ClassVar, Self, override
+from typing import Annotated, Self, override
 
 from flext_tests import c, m, p, r, t, u
 from flext_tests.docker import FlextTestsDocker
@@ -21,8 +21,6 @@ class FlextTestsKube(FlextTestsDocker):
     ``docker/docker-compose.kubernetes.yml`` stack up, waits for the
     apiserver port, and asserts node readiness through ``kubectl``.
     """
-
-    KIND_CONTAINER_NAME: ClassVar[str] = "flext-kind-test"
 
     kubectl_service: Annotated[
         str,
@@ -44,7 +42,7 @@ class FlextTestsKube(FlextTestsDocker):
             repository_root=resolved_root,
             worker_id=worker_id or "master",
             target_config=cls._resolve_shared_target_config(
-                cls.KIND_CONTAINER_NAME, resolved_root
+                c.Tests.KIND_CONTAINER_NAME, resolved_root
             ),
         )
 
@@ -141,7 +139,7 @@ class FlextTestsKube(FlextTestsDocker):
         if not container_name:
             return r[m.Tests.ContainerInfo].ok(
                 m.Tests.ContainerInfo(
-                    name=target.service or self.KIND_CONTAINER_NAME,
+                    name=target.service or c.Tests.KIND_CONTAINER_NAME,
                     status=c.Tests.ContainerStatus.RUNNING,
                     ports={},
                     image="",

@@ -37,12 +37,12 @@ class FlextTestsBaseModelsMixin:
         ] = ()
         entries: Annotated[
             t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload],
-            m.Field(frozen=True, description="String-keyed payload children."),
-        ] = m.Field(
-            default_factory=lambda: MappingProxyType(
-                dict[str, FlextTestsBaseModelsMixin.Payload]()
-            )
-        )
+            m.Field(
+                default_factory=lambda: MappingProxyType({}),
+                frozen=True,
+                description="String-keyed payload children.",
+            ),
+        ]
 
         @u.field_validator("entries", mode="after")
         @classmethod
@@ -68,15 +68,20 @@ class FlextTestsBaseModelsMixin:
                 raise ValueError(msg)
             return self
 
+        @classmethod
+        def atom_default(cls) -> FlextTestsBaseModelsMixin.Payload:
+            """Build the default atom payload used by entity value defaults."""
+            return cls(kind="atom")
+
     class Entity(m.Entity):
         """Factory entity class for tests."""
 
         name: Annotated[str, m.Field(description="Entity display name.")] = ""
         value: Annotated[
-            FlextTestsBaseModelsMixin.Payload,
+            "FlextTestsBaseModelsMixin.Payload",
             m.Field(description="Arbitrary serializable payload."),
         ] = m.Field(
-            default_factory=lambda: FlextTestsBaseModelsMixin.Payload(kind="atom")
+            default_factory=lambda: FlextTestsBaseModelsMixin.Payload.atom_default()
         )
 
     class Value(m.Value):

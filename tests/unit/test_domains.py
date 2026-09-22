@@ -145,7 +145,7 @@ class TestsFlextTestsDomains:
             if entry.handler_id == handler_id
         )
 
-        assert spec.should_fail is should_fail
+        tm.that(spec.should_fail, eq=should_fail)
 
     # --- fixture path + loading ------------------------------------------
 
@@ -155,9 +155,9 @@ class TestsFlextTestsDomains:
             FlextTestsDomains.fixture_filename("oid", "schema"),
             eq="oid_schema_fixtures.ldif",
         )
-        assert (
-            FlextTestsDomains.fixture_filename("oud", "acl", file_extension=".txt")
-            == "oud_acl_fixtures.txt"
+        tm.that(
+            FlextTestsDomains.fixture_filename("oud", "acl", file_extension=".txt"),
+            eq="oud_acl_fixtures.txt",
         )
 
     def test_load_fixture_returns_file_contents(self, fixtures_root: Path) -> None:
@@ -174,7 +174,7 @@ class TestsFlextTestsDomains:
             "oid", "schema", fixtures_root=fixtures_root
         )
 
-        assert resolved.exists()
+        tm.that(resolved.exists(), eq=True)
         tm.that(resolved.parent.name, eq="oid")
         tm.that(resolved.name, eq="oid_schema_fixtures.ldif")
 
@@ -208,9 +208,9 @@ class TestsFlextTestsDomains:
         self, fixtures_root: Path, group: str, kind: str, *, expected: bool
     ) -> None:
         """``fixture_exists`` mirrors on-disk presence without raising."""
-        assert (
-            FlextTestsDomains.fixture_exists(group, kind, fixtures_root=fixtures_root)
-            is expected
+        tm.that(
+            FlextTestsDomains.fixture_exists(group, kind, fixtures_root=fixtures_root),
+            eq=expected,
         )
 
     # --- fixture discovery ------------------------------------------------
@@ -228,9 +228,11 @@ class TestsFlextTestsDomains:
         self, tmp_path: Path
     ) -> None:
         """A non-existent root yields an empty tuple, never an error."""
-        assert (
-            FlextTestsDomains.available_fixture_servers(fixtures_root=tmp_path / "nope")
-            == ()
+        tm.that(
+            FlextTestsDomains.available_fixture_servers(
+                fixtures_root=tmp_path / "nope"
+            ),
+            eq=(),
         )
 
     def test_available_fixture_types_lists_kinds_for_group(
@@ -248,11 +250,11 @@ class TestsFlextTestsDomains:
         self, fixtures_root: Path
     ) -> None:
         """An unknown group has no fixture types."""
-        assert (
+        tm.that(
             FlextTestsDomains.available_fixture_types(
                 "ghost", fixtures_root=fixtures_root
-            )
-            == ()
+            ),
+            eq=(),
         )
 
     def test_load_server_fixtures_maps_every_kind_to_its_contents(
