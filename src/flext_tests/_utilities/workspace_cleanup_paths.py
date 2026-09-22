@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_tests import c, p, r
+from flext_core import r
+from flext_tests import c, p
 
 from .workspace_cleanup_git import FlextTestsWorkspaceCleanupGitUtilitiesMixin
 

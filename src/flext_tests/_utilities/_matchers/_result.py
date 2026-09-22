@@ -32,7 +32,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def fail[TResult](
-                result: core_p.ResultView[TResult], **kwargs: object
+                result: core_p.ResultView[TResult], **kwargs: p.AttributeProbe
             ) -> str:
                 """Assert that a result failed and validate its error payload."""
                 params = m.Tests.FailParams.model_validate(kwargs)
@@ -233,12 +233,12 @@ class FlextTestsMatchersResultMixin:
             @staticmethod
             @overload
             def ok[TResult](
-                result: core_p.ResultView[TResult], **kwargs: object
+                result: core_p.ResultView[TResult], **kwargs: p.AttributeProbe
             ) -> TResult | t.Tests.NativeMatchValue: ...
 
             @staticmethod
             def ok[TResult](
-                result: core_p.ResultView[TResult], **kwargs: object
+                result: core_p.ResultView[TResult], **kwargs: p.AttributeProbe
             ) -> TResult | t.Tests.NativeMatchValue:
                 # mro-j47u: matchers observe the protocol and preserve source identity.
                 if not kwargs:

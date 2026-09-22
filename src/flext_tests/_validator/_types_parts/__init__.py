@@ -9,12 +9,12 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from .types_part_02 import FlextValidatorTypes
-__all__: tuple[str, ...] = ("FlextValidatorTypes",)
+    from .types_part_02 import FlextTestsValidatorTypes
+__all__: tuple[str, ...] = ("FlextTestsValidatorTypes",)
 
 _LAZY_IMPORTS = MappingProxyType(
     build_lazy_import_map(
-        MappingProxyType({".types_part_02": ("FlextValidatorTypes",)}),
+        MappingProxyType({".types_part_02": ("FlextTestsValidatorTypes",)}),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
     )

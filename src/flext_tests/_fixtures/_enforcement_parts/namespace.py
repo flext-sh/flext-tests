@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from flext_tests import m, p
 
-from .items import EnforcementCollector, EnforcementItem
+from .items import FlextTestsEnforcementCollector, FlextTestsEnforcementItem
 from .validators import dispatch_infra_detector
 
 if TYPE_CHECKING:
@@ -28,11 +28,11 @@ class NamespaceDetectorBuilder(p.Tests.EnforcementBuilder):
         if context.infra_report is None:
             return []
         grouped = dispatch_infra_detector(rule, context.infra_report)
-        collector = EnforcementCollector.from_parent(
+        collector = FlextTestsEnforcementCollector.from_parent(
             parent=session, name="flext-enforcement"
         )
         return [
-            EnforcementItem.from_parent(
+            FlextTestsEnforcementItem.from_parent(
                 name=f"{rule.id}[{project}]",
                 parent=collector,
                 rule=rule,

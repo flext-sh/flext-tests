@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
+    from .base import FlextTestsConstantsBase
     from .data_cases import FlextTestsConstantsDataCases
     from .docker import FlextTestsConstantsDocker
     from .files import FlextTestsConstantsFiles
@@ -16,6 +17,7 @@ if TYPE_CHECKING:
     from .matcher import FlextTestsConstantsMatcher
     from .validator import FlextTestsConstantsValidator
 __all__: tuple[str, ...] = (
+    "FlextTestsConstantsBase",
     "FlextTestsConstantsDataCases",
     "FlextTestsConstantsDocker",
     "FlextTestsConstantsFiles",
@@ -27,6 +29,7 @@ __all__: tuple[str, ...] = (
 _LAZY_IMPORTS = MappingProxyType(
     build_lazy_import_map(
         MappingProxyType({
+            ".base": ("FlextTestsConstantsBase",),
             ".data_cases": ("FlextTestsConstantsDataCases",),
             ".docker": ("FlextTestsConstantsDocker",),
             ".files": ("FlextTestsConstantsFiles",),

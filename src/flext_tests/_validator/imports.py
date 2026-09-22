@@ -15,7 +15,7 @@ from typing import override
 from flext_tests import c, m, t, u
 
 
-class FlextValidatorImports(u.Tests.ValidatorScannerMixin):
+class FlextTestsValidatorImports(u.Tests.ValidatorScannerMixin):
     """Import validation methods for FlextTestsValidator."""
 
     _VALIDATOR_KEY = c.Tests.VALIDATOR_IMPORTS_KEY
@@ -164,4 +164,4 @@ class FlextValidatorImports(u.Tests.ValidatorScannerMixin):
         )
 
 
-__all__: list[str] = ["FlextValidatorImports"]
+__all__: list[str] = ["FlextTestsValidatorImports"]

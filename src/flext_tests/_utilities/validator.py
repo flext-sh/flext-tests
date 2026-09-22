@@ -8,10 +8,8 @@ from typing import ClassVar
 
 from flext_cli import u as _cli_u
 
-import flext_tests.constants as tests_constants
-import flext_tests.models as tests_models
-import flext_tests.typings as tests_typings
-from flext_tests import p, r
+from flext_core import r
+from flext_tests import c, m, p, t
 
 
 class FlextTestsValidatorUtilitiesMixin:
@@ -20,24 +18,22 @@ class FlextTestsValidatorUtilitiesMixin:
     # NOTE (multi-agent): validator_rule/path_pattern_matches/layer_dict moved
     # here from c.Tests constants facet (declaration purity, mro-i6nq.11).
     @staticmethod
-    def validator_rule(rule_id: str) -> tests_typings.t.StrPair:
+    def validator_rule(rule_id: str) -> t.StrPair:
         """Resolve one validator rule (severity, description) by rule id."""
         attr_name = "VALIDATOR_RULE_" + rule_id.replace("-", "_")
-        rule: tests_typings.t.StrPair = getattr(tests_constants.c.Tests, attr_name)
+        rule: t.StrPair = getattr(c.Tests, attr_name)
         return rule
 
     @staticmethod
     def path_pattern_matches(value: str, pattern: str) -> bool:
         """Check whether one validator path pattern matches value."""
-        compiled = tests_constants.c.Tests.VALIDATOR_APPROVED_PATH_REGEX_BY_PATTERN.get(
-            pattern
-        )
+        compiled = c.Tests.VALIDATOR_APPROVED_PATH_REGEX_BY_PATTERN.get(pattern)
         return compiled.search(value) is not None if compiled else False
 
     @staticmethod
-    def layer_dict() -> tests_typings.t.IntMapping:
+    def layer_dict() -> t.IntMapping:
         """Return the architecture layer hierarchy as a mapping."""
-        constants = tests_constants.c.Tests
+        constants = c.Tests
         return {
             "constants": constants.LAYER_CONSTANTS,
             "typings": constants.LAYER_TYPINGS,
@@ -64,9 +60,9 @@ class FlextTestsValidatorUtilitiesMixin:
         file_path: Path,
         line_number: int,
         rule_id: str,
-        lines: tests_typings.t.StrSequence,
+        lines: t.StrSequence,
         extra_desc: str = "",
-    ) -> tests_models.m.Tests.Violation:
+    ) -> m.Tests.Violation:
         """Create a violation model using c.Tests.
 
         Args:
@@ -84,7 +80,7 @@ class FlextTestsValidatorUtilitiesMixin:
         severity, desc = FlextTestsValidatorUtilitiesMixin.validator_rule(rule_id)
         description = f"{desc}: {extra_desc}" if extra_desc else desc
         line = lines[line_number - 1] if line_number <= len(lines) else ""
-        return tests_models.m.Tests.Violation(
+        return m.Tests.Violation(
             file_path=file_path,
             line_number=line_number,
             rule_id=rule_id,
@@ -96,7 +92,7 @@ class FlextTestsValidatorUtilitiesMixin:
     @staticmethod
     def read_scan_file(
         file_path: Path, unreadable_code: str
-    ) -> tuple[str | None, tuple[tests_models.m.Tests.Violation, ...]]:
+    ) -> tuple[str | None, tuple[m.Tests.Violation, ...]]:
         """Read one file for scanning.
 
         Centralizes the file-read + unreadable-violation boilerplate every
@@ -122,7 +118,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return read.value, ()
 
     @staticmethod
-    def find_line_number(lines: tests_typings.t.StrSequence, pattern: str) -> int:
+    def find_line_number(lines: t.StrSequence, pattern: str) -> int:
         """Find line number containing pattern."""
         for i, line in enumerate(lines, start=1):
             if pattern in line:
@@ -130,7 +126,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return 1
 
     @staticmethod
-    def split_import_targets(value: str) -> tests_typings.t.StrSequence:
+    def split_import_targets(value: str) -> t.StrSequence:
         """Normalize one import target list into canonical imported names."""
         cleaned = value.split("#", maxsplit=1)[0].replace("(", " ").replace(")", " ")
         targets: list[str] = []
@@ -144,8 +140,8 @@ class FlextTestsValidatorUtilitiesMixin:
     def approved(
         rule_id: str,
         file_path: Path,
-        approved: tests_typings.t.MappingKV[str, tests_typings.t.StrSequence],
-        extra_patterns: tests_typings.t.StrSequence = (),
+        approved: t.MappingKV[str, t.StrSequence],
+        extra_patterns: t.StrSequence = (),
     ) -> bool:
         """Check if file is approved for this rule.
 
@@ -168,7 +164,7 @@ class FlextTestsValidatorUtilitiesMixin:
         )
 
     @staticmethod
-    def code_match(line: str, pattern: tests_typings.t.Infra.RegexPattern) -> bool:
+    def code_match(line: str, pattern: t.Infra.RegexPattern) -> bool:
         """Check if one pattern match appears outside quoted string literals.
 
         Args:
@@ -216,7 +212,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return not (in_single or in_double or in_triple_single or in_triple_double)
 
     @staticmethod
-    def real_comment(line: str, pattern: tests_typings.t.Infra.RegexPattern) -> bool:
+    def real_comment(line: str, pattern: t.Infra.RegexPattern) -> bool:
         """Check if pattern match is in a real comment, not inside a string.
 
         Used by validators to avoid false positives from patterns appearing
@@ -235,24 +231,19 @@ class FlextTestsValidatorUtilitiesMixin:
         return FlextTestsValidatorUtilitiesMixin.code_match(line, pattern)
 
     @staticmethod
-    def except_block_only_pass(
-        lines: tests_typings.t.StrSequence, line_number: int
-    ) -> bool:
+    def except_block_only_pass(lines: t.StrSequence, line_number: int) -> bool:
         """Check whether one ``except`` block body contains only pass or ellipsis."""
         header_index = line_number - 1
         if header_index < 0 or header_index >= len(lines):
             return False
         header_line = lines[header_index]
-        header_match = tests_constants.c.Tests.VALIDATOR_EXCEPT_HEADER_RE.match(
-            header_line
-        )
+        header_match = c.Tests.VALIDATOR_EXCEPT_HEADER_RE.match(header_line)
         if header_match is None:
             return False
         trailing = header_line.rsplit(":", maxsplit=1)[-1].strip()
         if (
             trailing
-            and tests_constants.c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(trailing)
-            is not None
+            and c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(trailing) is not None
         ):
             return True
         header_indent = len(header_match.group("indent").expandtabs())
@@ -269,10 +260,7 @@ class FlextTestsValidatorUtilitiesMixin:
             body_lines.append(stripped)
         return (
             len(body_lines) == 1
-            and tests_constants.c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(
-                body_lines[0]
-            )
-            is not None
+            and c.Tests.VALIDATOR_PASS_OR_ELLIPSIS_RE.match(body_lines[0]) is not None
         )
 
     # NOTE (multi-agent): scanner behavior moved here from _validator/models.py
@@ -281,22 +269,20 @@ class FlextTestsValidatorUtilitiesMixin:
     @staticmethod
     def validator_run_scan(
         *,
-        files: tests_typings.t.SequenceOf[Path],
-        approved_exceptions: tests_typings.t.MappingKV[str, tests_typings.t.StrSequence]
-        | None,
+        files: t.SequenceOf[Path],
+        approved_exceptions: t.MappingKV[str, t.StrSequence] | None,
         validator_name: str,
         scan_file: Callable[
-            [Path, tests_typings.t.MappingKV[str, tests_typings.t.StrSequence]],
-            tests_typings.t.SequenceOf[tests_models.m.Tests.Violation],
+            [Path, t.MappingKV[str, t.StrSequence]], t.SequenceOf[m.Tests.Violation]
         ],
-    ) -> p.Result[tests_models.m.Tests.ScanResult]:
+    ) -> p.Result[m.Tests.ScanResult]:
         """Run one validator scan across files and build a ScanResult."""
-        violations: MutableSequence[tests_models.m.Tests.Violation] = []
+        violations: MutableSequence[m.Tests.Violation] = []
         approved = approved_exceptions or {}
         for file_path in files:
             violations.extend(scan_file(file_path, approved))
-        return r[tests_models.m.Tests.ScanResult].ok(
-            tests_models.m.Tests.ScanResult(
+        return r[m.Tests.ScanResult].ok(
+            m.Tests.ScanResult(
                 validator_name=validator_name,
                 files_scanned=len(files),
                 violations=violations,
@@ -323,10 +309,8 @@ class FlextTestsValidatorUtilitiesMixin:
 
         @classmethod
         def _scan_file(
-            cls,
-            file_path: Path,
-            approved: tests_typings.t.MappingKV[str, tests_typings.t.StrSequence],
-        ) -> tests_typings.t.SequenceOf[tests_models.m.Tests.Violation]:
+            cls, file_path: Path, approved: t.MappingKV[str, t.StrSequence]
+        ) -> t.SequenceOf[m.Tests.Violation]:
             """Read one file, then delegate to ``_scan_content``.
 
             Subclasses never reimplement file reading; they own only
@@ -343,21 +327,18 @@ class FlextTestsValidatorUtilitiesMixin:
         def _scan_content(
             cls,
             file_path: Path,
-            lines: tests_typings.t.StrSequence,
-            approved: tests_typings.t.MappingKV[str, tests_typings.t.StrSequence],
-        ) -> tests_typings.t.SequenceOf[tests_models.m.Tests.Violation]:
+            lines: t.StrSequence,
+            approved: t.MappingKV[str, t.StrSequence],
+        ) -> t.SequenceOf[m.Tests.Violation]:
             """Hook: scan parsed lines; subclass MUST override."""
             raise NotImplementedError
 
         @classmethod
         def scan(
             cls,
-            files: tests_typings.t.SequenceOf[Path],
-            approved_exceptions: tests_typings.t.MappingKV[
-                str, tests_typings.t.StrSequence
-            ]
-            | None = None,
-        ) -> p.Result[tests_models.m.Tests.ScanResult]:
+            files: t.SequenceOf[Path],
+            approved_exceptions: t.MappingKV[str, t.StrSequence] | None = None,
+        ) -> p.Result[m.Tests.ScanResult]:
             """Scan files for violations using the consumer's _scan_file."""
             return FlextTestsValidatorUtilitiesMixin.validator_run_scan(
                 files=files,

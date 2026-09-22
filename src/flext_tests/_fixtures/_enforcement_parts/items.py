@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from flext_tests import m, p, t
 
 
-class EnforcementItem(pytest.Item):
+class FlextTestsEnforcementItem(pytest.Item):
     """Pytest item representing one ``(project, rule_id)`` violation group."""
 
     def __init__(
@@ -39,7 +39,7 @@ class EnforcementItem(pytest.Item):
             f"{self._rule.id} ({self._rule.severity}) in {self._project}: "
             f"{len(self._violations)} violation(s)"
         )
-        raise EnforcementViolationError("\n".join([header, *detail_lines]))
+        raise FlextTestsEnforcementViolationError("\n".join([header, *detail_lines]))
 
     @staticmethod
     def _format_violation(violation: p.AttributeProbe) -> str:
@@ -79,20 +79,20 @@ class EnforcementItem(pytest.Item):
         )
 
 
-class EnforcementCollector(pytest.Collector):
-    """Synthetic collector that owns every ``EnforcementItem`` for the session."""
+class FlextTestsEnforcementCollector(pytest.Collector):
+    """Synthetic collector that owns every ``FlextTestsEnforcementItem`` for the session."""
 
     def __init__(
         self,
         name: str,
         parent: pytest.Session,
         *,
-        items: t.SequenceOf[EnforcementItem] = (),
+        items: t.SequenceOf[FlextTestsEnforcementItem] = (),
     ) -> None:
         super().__init__(name, parent)
-        self._items: list[EnforcementItem] = list(items)
+        self._items: list[FlextTestsEnforcementItem] = list(items)
 
-    def add(self, item: EnforcementItem) -> None:
+    def add(self, item: FlextTestsEnforcementItem) -> None:
         self._items.append(item)
 
     @override
@@ -100,12 +100,12 @@ class EnforcementCollector(pytest.Collector):
         return list(self._items)
 
 
-class EnforcementViolationError(Exception):
-    """Raised by ``EnforcementItem.runtest`` when violations are present."""
+class FlextTestsEnforcementViolationError(Exception):
+    """Raised by ``FlextTestsEnforcementItem.runtest`` when violations are present."""
 
 
 __all__: list[str] = [
-    "EnforcementCollector",
-    "EnforcementItem",
-    "EnforcementViolationError",
+    "FlextTestsEnforcementCollector",
+    "FlextTestsEnforcementItem",
+    "FlextTestsEnforcementViolationError",
 ]

@@ -176,7 +176,7 @@ class TestsFlextTestsEnforcementDispatcher:
         tm.that([r.id for r in first], eq=[r.id for r in second])
 
     # ------------------------------------------------------------------ #
-    # EnforcementItem / EnforcementCollector / EnforcementViolationError #
+    # FlextTestsEnforcementItem / FlextTestsEnforcementCollector / FlextTestsEnforcementViolationError #
     # ------------------------------------------------------------------ #
 
     def test_runtest_raises_violation_error_when_violations_present(
@@ -185,10 +185,10 @@ class TestsFlextTestsEnforcementDispatcher:
         rule: m.EnforcementRuleSpec,
         violation: m.Violation,
     ) -> None:
-        collector = enforcement.EnforcementCollector.from_parent(
+        collector = enforcement.FlextTestsEnforcementCollector.from_parent(
             request.session, name="flext-enforce"
         )
-        item = enforcement.EnforcementItem.from_parent(
+        item = enforcement.FlextTestsEnforcementItem.from_parent(
             collector,
             name=f"{rule.id}-flext-core",
             rule=rule,
@@ -196,7 +196,7 @@ class TestsFlextTestsEnforcementDispatcher:
             violations=[violation],
         )
 
-        with pytest.raises(enforcement.EnforcementViolationError) as excinfo:
+        with pytest.raises(enforcement.FlextTestsEnforcementViolationError) as excinfo:
             item.runtest()
 
         message = str(excinfo.value)
@@ -207,10 +207,10 @@ class TestsFlextTestsEnforcementDispatcher:
     def test_runtest_is_a_noop_when_no_violations(
         self, request: pytest.FixtureRequest, rule: m.EnforcementRuleSpec
     ) -> None:
-        collector = enforcement.EnforcementCollector.from_parent(
+        collector = enforcement.FlextTestsEnforcementCollector.from_parent(
             request.session, name="flext-enforce"
         )
-        item = enforcement.EnforcementItem.from_parent(
+        item = enforcement.FlextTestsEnforcementItem.from_parent(
             collector,
             name=f"{rule.id}-clean",
             rule=rule,
@@ -226,11 +226,11 @@ class TestsFlextTestsEnforcementDispatcher:
         rule: m.EnforcementRuleSpec,
         violation: m.Violation,
     ) -> None:
-        collector = enforcement.EnforcementCollector.from_parent(
+        collector = enforcement.FlextTestsEnforcementCollector.from_parent(
             request.session, name="flext-enforce"
         )
         items = [
-            enforcement.EnforcementItem.from_parent(
+            enforcement.FlextTestsEnforcementItem.from_parent(
                 collector,
                 name=f"{rule.id}-{i}",
                 rule=rule,
@@ -246,20 +246,20 @@ class TestsFlextTestsEnforcementDispatcher:
         tm.that(len(collected), eq=len(items))
         for index, item in enumerate(items):
             tm.that(collected[index].name, eq=item.name)
-            with pytest.raises(enforcement.EnforcementViolationError):
+            with pytest.raises(enforcement.FlextTestsEnforcementViolationError):
                 collected[index].runtest()
 
     def test_collector_is_empty_before_any_item_is_added(
         self, request: pytest.FixtureRequest
     ) -> None:
-        collector = enforcement.EnforcementCollector.from_parent(
+        collector = enforcement.FlextTestsEnforcementCollector.from_parent(
             request.session, name="flext-enforce"
         )
 
         tm.that(list(collector.collect()), eq=[])
 
     def test_violation_error_is_an_exception(self) -> None:
-        assert issubclass(enforcement.EnforcementViolationError, Exception)
+        assert issubclass(enforcement.FlextTestsEnforcementViolationError, Exception)
 
     # ------------------------------------------------------------------ #
     # pytest_addoption                                                   #

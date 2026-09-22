@@ -23,10 +23,11 @@ if TYPE_CHECKING:
         build_tests_validator_items,
         dispatch_infra_detector,
     )
+    from .connectivity import FlextTestsConnectivityPlugin
     from .enforcement import (
-        EnforcementCollector,
-        EnforcementItem,
-        EnforcementViolationError,
+        FlextTestsEnforcementCollector,
+        FlextTestsEnforcementItem,
+        FlextTestsEnforcementViolationError,
         active_rules,
         discover_repository_root,
         split_csv,
@@ -49,9 +50,10 @@ if TYPE_CHECKING:
         test_runtime,
     )
 __all__: tuple[str, ...] = (
-    "EnforcementCollector",
-    "EnforcementItem",
-    "EnforcementViolationError",
+    "FlextTestsConnectivityPlugin",
+    "FlextTestsEnforcementCollector",
+    "FlextTestsEnforcementItem",
+    "FlextTestsEnforcementViolationError",
     "MarkdownCodeBlockCollector",
     "MarkdownCodeBlockItem",
     "MarkdownValidationError",
@@ -99,10 +101,11 @@ _LAZY_IMPORTS = MappingProxyType(
                 "build_tests_validator_items",
                 "dispatch_infra_detector",
             ),
+            ".connectivity": ("FlextTestsConnectivityPlugin",),
             ".enforcement": (
-                "EnforcementCollector",
-                "EnforcementItem",
-                "EnforcementViolationError",
+                "FlextTestsEnforcementCollector",
+                "FlextTestsEnforcementItem",
+                "FlextTestsEnforcementViolationError",
                 "active_rules",
                 "discover_repository_root",
                 "split_csv",

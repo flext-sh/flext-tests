@@ -12,7 +12,7 @@ from .discovery import (
     collected_validator_targets,
     load_infra_report,
 )
-from .items import EnforcementCollector
+from .items import FlextTestsEnforcementCollector
 from .namespace import NamespaceDetectorBuilder
 from .validators import build_tests_validator_items
 
@@ -40,7 +40,7 @@ def build_items(
     )
     infra_report = _load_infra_report_if_needed(rules, repository_root, collected_items)
 
-    collector = EnforcementCollector.from_parent(
+    collector = FlextTestsEnforcementCollector.from_parent(
         parent=session, name="flext-enforcement"
     )
     context = m.Tests.EnforcementBuildContext(

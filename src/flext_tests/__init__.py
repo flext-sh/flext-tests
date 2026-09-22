@@ -20,45 +20,37 @@ from .__version__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_infra import c as infra_c, d, e, h, r, x
+    from flext_cli import cli
+    from flext_infra import docs_main, infra, main
+    from pydantic_core import from_json, to_json, to_jsonable_python
 
-    from .__version__ import FlextTestsVersion
+    from flext_core import core, d, e, h, lazy_attribute, r, x
+
+    from . import services
     from ._config import FlextTestsConfig, config
-    from ._settings import FlextTestsSettings, settings
-    from .base import FlextTestsCase, FlextTestsServiceBase, FlextTestsServiceBase as s
-    from .constants import FlextTestsConstants, FlextTestsConstants as c
+    from ._settings import FlextTestsSettings
+    from .api import FlextTests, FlextTests as api
+    from .base import FlextTestsCase, FlextTestsServiceBase, s
+    from .cli import FlextTestsCli
+    from .constants import FlextTestsConstants, c
     from .docker import FlextTestsDocker, tk
     from .domains import FlextTestsDomains, td
-    from .enforcement import (
-        EnforcementCollector,
-        EnforcementItem,
-        EnforcementViolationError,
-        active_rules,
-        discover_repository_root,
-        load_infra_report,
-        split_csv,
-    )
+    from .enforcement import load_infra_report
     from .enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
     from .files import FlextTestsFiles, tf
     from .kube import FlextTestsKube
-    from .models import FlextTestsModels, FlextTestsModels as m
-    from .protocols import FlextTestsProtocols, FlextTestsProtocols as p
+    from .models import FlextTestsModels, m
+    from .protocols import FlextTestsProtocols, p
     from .pytest_bootstrap import install_local_packages
     from .tmatchers import FlextTestsMatchersUtilities, tm
-    from .typings import FlextTestsTypes, FlextTestsTypes as t
-    from .utilities import (
-        FlextTestsFixturesDSLMixin,
-        FlextTestsUtilities,
-        FlextTestsUtilities as u,
-        ModuleGovernanceMixin,
-    )
-    from .validator import FlextTestsValidator, tv
+    from .typings import FlextTestsTypes, t
+    from .utilities import FlextTestsFixturesDSLMixin, FlextTestsUtilities, u
+    from .validator import FlextTestsValidator, FlextTestsValidator as tv
 __all__: tuple[str, ...] = (
     "SLOW_TIMEOUT_INI_OPTION",
-    "EnforcementCollector",
-    "EnforcementItem",
-    "EnforcementViolationError",
+    "FlextTests",
     "FlextTestsCase",
+    "FlextTestsCli",
     "FlextTestsConfig",
     "FlextTestsConstants",
     "FlextTestsDocker",
@@ -74,8 +66,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsTypes",
     "FlextTestsUtilities",
     "FlextTestsValidator",
-    "FlextTestsVersion",
-    "ModuleGovernanceMixin",
     "__author__",
     "__author_email__",
     "__description__",
@@ -84,27 +74,33 @@ __all__: tuple[str, ...] = (
     "__url__",
     "__version__",
     "__version_info__",
-    "active_rules",
+    "api",
     "c",
+    "cli",
     "config",
+    "core",
     "d",
-    "discover_repository_root",
+    "docs_main",
     "e",
+    "from_json",
     "h",
-    "infra_c",
+    "infra",
     "install_local_packages",
+    "lazy_attribute",
     "load_infra_report",
     "m",
+    "main",
     "p",
     "r",
     "s",
-    "settings",
-    "split_csv",
+    "services",
     "t",
     "td",
     "tf",
     "tk",
     "tm",
+    "to_json",
+    "to_jsonable_python",
     "tv",
     "u",
     "x",
@@ -113,40 +109,32 @@ __all__: tuple[str, ...] = (
 _LAZY_IMPORTS = MappingProxyType(
     build_lazy_import_map(
         MappingProxyType({
-            ".__version__": ("FlextTestsVersion",),
             "._config": ("FlextTestsConfig", "config"),
-            "._settings": ("FlextTestsSettings", "settings"),
+            "._settings": ("FlextTestsSettings",),
+            ".api": ("FlextTests", "api"),
             ".base": ("FlextTestsCase", "FlextTestsServiceBase", "s"),
+            ".cli": ("FlextTestsCli",),
             ".constants": ("FlextTestsConstants", "c"),
             ".docker": ("FlextTestsDocker", "tk"),
             ".domains": ("FlextTestsDomains", "td"),
-            ".enforcement": (
-                "EnforcementCollector",
-                "EnforcementItem",
-                "EnforcementViolationError",
-                "active_rules",
-                "discover_repository_root",
-                "load_infra_report",
-                "split_csv",
-            ),
+            ".enforcement": ("load_infra_report",),
             ".enforcement_plugin": ("SLOW_TIMEOUT_INI_OPTION",),
             ".files": ("FlextTestsFiles", "tf"),
             ".kube": ("FlextTestsKube",),
             ".models": ("FlextTestsModels", "m"),
             ".protocols": ("FlextTestsProtocols", "p"),
             ".pytest_bootstrap": ("install_local_packages",),
+            ".services": ("services",),
             ".tmatchers": ("FlextTestsMatchersUtilities", "tm"),
             ".typings": ("FlextTestsTypes", "t"),
-            ".utilities": (
-                "FlextTestsFixturesDSLMixin",
-                "FlextTestsUtilities",
-                "ModuleGovernanceMixin",
-                "u",
-            ),
+            ".utilities": ("FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"),
             ".validator": ("FlextTestsValidator", "tv"),
-            "flext_infra": ("d", "e", "h", "r", "x"),
+            "flext_cli": ("cli",),
+            "flext_core": ("core", "d", "e", "h", "lazy_attribute", "r", "x"),
+            "flext_infra": ("docs_main", "infra", "main"),
+            "pydantic_core": ("from_json", "to_json", "to_jsonable_python"),
         }),
-        alias_groups=MappingProxyType({"flext_infra": (("infra_c", "c"),)}),
+        alias_groups=MappingProxyType({}),
         sort_keys=False,
     )
 )

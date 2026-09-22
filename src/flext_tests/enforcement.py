@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from ._fixtures._enforcement_parts.discovery import load_infra_report
 from ._fixtures.enforcement import (
-    EnforcementCollector,
-    EnforcementItem,
-    EnforcementViolationError,
+    FlextTestsEnforcementCollector,
+    FlextTestsEnforcementItem,
+    FlextTestsEnforcementViolationError,
     active_rules,
     discover_repository_root,
     pytest_addoption,
@@ -16,9 +16,9 @@ from ._fixtures.enforcement import (
 """Loads infrastructure audit report data from the discovery module."""
 
 __all__: list[str] = [
-    "EnforcementCollector",
-    "EnforcementItem",
-    "EnforcementViolationError",
+    "FlextTestsEnforcementCollector",
+    "FlextTestsEnforcementItem",
+    "FlextTestsEnforcementViolationError",
     "active_rules",
     "discover_repository_root",
     "load_infra_report",

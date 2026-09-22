@@ -18,13 +18,13 @@ from collections.abc import Iterator, Mapping
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Final, Protocol, runtime_checkable
 
-from flext_tests import tm
+from flext_tests import p, tm
 
 if TYPE_CHECKING:
     from types import ModuleType
 
 
-class ModuleGovernanceMixin:
+class FlextTestsModuleGovernanceMixin:
     """Shared module-governance test helpers for FLEXT submodules.
 
     Each submodule's ``test_module_governance.py`` subclasses this mixin and
@@ -50,7 +50,9 @@ class ModuleGovernanceMixin:
         PACKAGE_DIR: Final[str]
 
     _test_file: ClassVar[str]
-    _tests_config: ClassVar[type[ModuleGovernanceMixin._GovernanceConfigProto]]
+    _tests_config: ClassVar[
+        type[FlextTestsModuleGovernanceMixin._GovernanceConfigProto]
+    ]
     _warn_on_import_error: ClassVar[bool] = True
 
     @classmethod
@@ -101,7 +103,9 @@ class ModuleGovernanceMixin:
             return None
 
     @staticmethod
-    def _module_top_level_attrs(module: ModuleType) -> Iterator[tuple[str, object]]:
+    def _module_top_level_attrs(
+        module: ModuleType,
+    ) -> Iterator[tuple[str, p.AttributeProbe]]:
         """Yield only the symbols defined directly on this module (no re-exports)."""
         module_name = module.__name__
         for name, value in vars(module).items():
@@ -186,4 +190,4 @@ class ModuleGovernanceMixin:
         )
 
 
-__all__: list[str] = ["ModuleGovernanceMixin"]
+__all__: list[str] = ["FlextTestsModuleGovernanceMixin"]

@@ -21,74 +21,78 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import c
+from flext_tests import c, t
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
-_probe_cache: dict[str, str | None] = {}
+
+class FlextTestsConnectivityPlugin:
+    """Pytest plugin skipping connectivity-bound tests with a down service."""
+
+    _probe_cache: t.MutableMappingKV[str, str | None] = {}
+
+    @staticmethod
+    def _endpoint(container_name: str) -> tuple[str, int] | None:
+        """Return the declared (host, port) for one shared container."""
+        settings = c.Tests.SHARED_CONTAINERS.get(container_name)
+        if settings is None:
+            return None
+        host = settings.get("host")
+        port = settings.get("port")
+        if host is None or port is None:
+            return None
+        return str(host), int(port)
+
+    @classmethod
+    def _unreachable_reason(cls, marker: str) -> str | None:
+        """Return a skip reason when the marker's service cannot be reached."""
+        if marker in cls._probe_cache:
+            return cls._probe_cache[marker]
+        if marker == c.Tests.DOCKER_CONNECTIVITY_MARKER:
+            from flext_tests.docker import FlextTestsDocker
+
+            manager = FlextTestsDocker()
+            client = manager.client
+            docker_reason: str | None
+            if client is None:
+                docker_reason = c.Tests.DOCKER_UNREACHABLE_SKIP_REASON
+            else:
+                client.close()
+                docker_reason = None
+            cls._probe_cache[marker] = docker_reason
+            return docker_reason
+        reason: str | None = None
+        container = c.Tests.CONNECTIVITY_MARKER_CONTAINERS.get(marker)
+        endpoint = None if container is None else cls._endpoint(container)
+        if endpoint is not None:
+            host, port = endpoint
+            try:
+                with socket.create_connection(
+                    (host, port), timeout=c.Tests.CONNECTIVITY_PROBE_TIMEOUT_SECONDS
+                ):
+                    reason = None
+            except OSError:
+                reason = c.Tests.UNREACHABLE_SKIP_REASON.format(
+                    marker=marker, host=host, port=port
+                )
+        cls._probe_cache[marker] = reason
+        return reason
+
+    @staticmethod
+    def pytest_collection_modifyitems(
+        config: pytest.Config, items: Iterable[pytest.Item]
+    ) -> None:
+        """Mark connectivity-bound tests as skipped when their service is down."""
+        del config
+        for item in items:
+            for marker in c.Tests.CONNECTIVITY_MARKERS:
+                if item.get_closest_marker(marker) is None:
+                    continue
+                reason = FlextTestsConnectivityPlugin._unreachable_reason(marker)
+                if reason is not None:
+                    item.add_marker(pytest.mark.skip(reason=reason))
+                break
 
 
-def _endpoint(container_name: str) -> tuple[str, int] | None:
-    """Return the declared (host, port) for one shared container."""
-    settings = c.Tests.SHARED_CONTAINERS.get(container_name)
-    if settings is None:
-        return None
-    host = settings.get("host")
-    port = settings.get("port")
-    if host is None or port is None:
-        return None
-    return str(host), int(port)
-
-
-def _unreachable_reason(marker: str) -> str | None:
-    """Return a skip reason when the marker's service cannot be reached."""
-    if marker in _probe_cache:
-        return _probe_cache[marker]
-    if marker == c.Tests.DOCKER_CONNECTIVITY_MARKER:
-        from flext_tests.docker import FlextTestsDocker
-
-        manager = FlextTestsDocker()
-        client = manager.client
-        docker_reason: str | None
-        if client is None:
-            docker_reason = c.Tests.DOCKER_UNREACHABLE_SKIP_REASON
-        else:
-            client.close()
-            docker_reason = None
-        _probe_cache[marker] = docker_reason
-        return docker_reason
-    reason: str | None = None
-    container = c.Tests.CONNECTIVITY_MARKER_CONTAINERS.get(marker)
-    endpoint = None if container is None else _endpoint(container)
-    if endpoint is not None:
-        host, port = endpoint
-        try:
-            with socket.create_connection(
-                (host, port), timeout=c.Tests.CONNECTIVITY_PROBE_TIMEOUT_SECONDS
-            ):
-                reason = None
-        except OSError:
-            reason = c.Tests.UNREACHABLE_SKIP_REASON.format(
-                marker=marker, host=host, port=port
-            )
-    _probe_cache[marker] = reason
-    return reason
-
-
-def pytest_collection_modifyitems(
-    config: pytest.Config, items: Iterable[pytest.Item]
-) -> None:
-    """Mark connectivity-bound tests as skipped when their service is down."""
-    del config
-    for item in items:
-        for marker in c.Tests.CONNECTIVITY_MARKERS:
-            if item.get_closest_marker(marker) is None:
-                continue
-            reason = _unreachable_reason(marker)
-            if reason is not None:
-                item.add_marker(pytest.mark.skip(reason=reason))
-            break
-
-
-__all__: list[str] = ["pytest_collection_modifyitems"]
+__all__: list[str] = ["FlextTestsConnectivityPlugin"]

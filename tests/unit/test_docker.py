@@ -33,10 +33,6 @@ class TestsFlextTestsDocker(
 ):
     """Behavioral contract of the Docker control facade (FlextTestsDocker)."""
 
-    # ------------------------------------------------------------------ #
-    # CI=Y disables Docker lifecycle (exact Make token, not CI=true)     #
-    # ------------------------------------------------------------------ #
-
     @staticmethod
     @pytest.fixture
     def docker_manager(tmp_path: Path) -> FlextTestsDocker:

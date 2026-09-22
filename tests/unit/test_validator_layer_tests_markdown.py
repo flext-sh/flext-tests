@@ -105,9 +105,6 @@ value: int = 1
 ```
 """
 
-    class Tests:
-        """flext-tests validator layer tests markdown test namespace."""
-
     @staticmethod
     def _write(base_path: Path, name: str, source: str) -> Path:
         file_path = base_path / name

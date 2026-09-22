@@ -9,35 +9,68 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests import FlextTestsConstants, d, e, h, r, s, td, tf, tk, tm, tv, x
+    from flext_cli import cli
+    from flext_infra import config, docs_main, infra, main, s, settings
+    from pydantic_core import from_json, to_json, to_jsonable_python
+
+    from flext_core import core, d, e, h, lazy_attribute, r, x
+    from flext_tests import (
+        active_rules,
+        api,
+        discover_repository_root,
+        install_local_packages,
+        load_infra_report,
+        split_csv,
+        td,
+        tf,
+        tk,
+        tm,
+        tv,
+    )
 
     from . import integration, unit
-    from .constants import TestsFlextTestsConstants, TestsFlextTestsConstants as c
-    from .models import TestsFlextTestsModels, TestsFlextTestsModels as m
-    from .protocols import TestsFlextTestsProtocols, TestsFlextTestsProtocols as p
-    from .typings import TestsFlextTestsTypes, TestsFlextTestsTypes as t
-    from .utilities import TestsFlextTestsUtilities, TestsFlextTestsUtilities as u
+    from .constants import TestsFlextTestsConstants, c
+    from .models import TestsFlextTestsModels, m
+    from .protocols import TestsFlextTestsProtocols, p
+    from .typings import TestsFlextTestsTypes, t
+    from .utilities import TestsFlextTestsUtilities, u
 __all__: tuple[str, ...] = (
-    "FlextTestsConstants",
     "TestsFlextTestsConstants",
     "TestsFlextTestsModels",
     "TestsFlextTestsProtocols",
     "TestsFlextTestsTypes",
     "TestsFlextTestsUtilities",
+    "active_rules",
+    "api",
     "c",
+    "cli",
+    "config",
+    "core",
     "d",
+    "discover_repository_root",
+    "docs_main",
     "e",
+    "from_json",
     "h",
+    "infra",
+    "install_local_packages",
     "integration",
+    "lazy_attribute",
+    "load_infra_report",
     "m",
+    "main",
     "p",
     "r",
     "s",
+    "settings",
+    "split_csv",
     "t",
     "td",
     "tf",
     "tk",
     "tm",
+    "to_json",
+    "to_jsonable_python",
     "tv",
     "u",
     "unit",
@@ -54,20 +87,23 @@ _LAZY_IMPORTS = MappingProxyType(
             ".typings": ("TestsFlextTestsTypes", "t"),
             ".unit": ("unit",),
             ".utilities": ("TestsFlextTestsUtilities", "u"),
+            "flext_cli": ("cli",),
+            "flext_core": ("core", "d", "e", "h", "lazy_attribute", "r", "x"),
+            "flext_infra": ("config", "docs_main", "infra", "main", "s", "settings"),
             "flext_tests": (
-                "FlextTestsConstants",
-                "d",
-                "e",
-                "h",
-                "r",
-                "s",
+                "active_rules",
+                "api",
+                "discover_repository_root",
+                "install_local_packages",
+                "load_infra_report",
+                "split_csv",
                 "td",
                 "tf",
                 "tk",
                 "tm",
                 "tv",
-                "x",
             ),
+            "pydantic_core": ("from_json", "to_json", "to_jsonable_python"),
         }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
