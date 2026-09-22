@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-# The generated parts facade resolves the ``m`` facet through this module.
 from flext_tests import FlextTestsFiles, tm
 
 

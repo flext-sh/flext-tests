@@ -196,7 +196,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         read = u.Cli.files_read_text(state_file)
         if read.failure:
             msg = f"Failed to load dirty state from {state_file}: {read.error}"
-            raise ValueError(msg) from read.error
+            raise ValueError(msg) from None
         state_raw: t.MappingKV[str, t.StrSequence] = (
             t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.validate_json(read.value)
         )
@@ -602,23 +602,23 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             if compose_result.failure:
                 return r[None].from_failure(compose_result)
             _ = self.mark_container_clean(container_name)
-            return r[None].ok()
+            return r[None].ok(None)
 
         status_result = self.fetch_container_status(container_name)
         container_running = status_result.success and (
             status_result.value.status == c.Tests.ContainerStatus.RUNNING
         )
         if container_running:
-            return r[None].ok()
+            return r[None].ok(None)
         start_result = self.start_existing_container(container_name)
         if start_result.success:
-            return r[None].ok()
+            return r[None].ok(None)
         compose_result = self.compose_up(
             str(target.compose_file), service=target.service or None
         )
         if compose_result.failure:
             return r[None].from_failure(compose_result)
-        return r[None].ok()
+        return r[None].ok(None)
 
     def _ensure_target_ready(
         self, target: m.Tests.ContainerConfig, container_name: str

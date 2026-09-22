@@ -51,7 +51,7 @@ class FlextTestsBaseModelsMixin:
         entries: Annotated[
             t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload],
             m.Field(
-                default_factory=lambda: MappingProxyType({}),
+                default_factory=lambda: MappingProxyType[str, FlextTestsBaseModelsMixin.Payload]({}),
                 frozen=True,
                 description="String-keyed payload children.",
             ),

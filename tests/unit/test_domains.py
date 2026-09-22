@@ -51,7 +51,7 @@ class TestsFlextTestsDomains:
 
     def test_create_result_ok_yields_success_carrying_value(self) -> None:
         """A generic OK result reports success and unwraps to the input value."""
-        payload: t.MappingKV[str, str] = {"foo": "bar"}
+        payload: t.StrMapping = {"foo": "bar"}
 
         result = FlextTestsDomains.create_result_ok(payload)
 

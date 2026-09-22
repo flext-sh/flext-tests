@@ -50,6 +50,7 @@ class FlextTestsModuleGovernanceMixin:
     _tests_config: ClassVar[
         type[FlextTestsModuleGovernanceMixin._GovernanceConfigProto]
     ]
+    _warn_on_import_error: ClassVar[bool] = True
 
     @classmethod
     def _package_root(cls) -> Path:
