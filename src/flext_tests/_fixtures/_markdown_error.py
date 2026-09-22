@@ -3,5 +3,5 @@
 from __future__ import annotations
 
 
-class _MarkdownValidationError(Exception):
+class FlextTestsMarkdownValidationError(Exception):
     """Raised when markdown code block validation fails."""

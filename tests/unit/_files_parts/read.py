@@ -33,7 +33,7 @@ class TestsFlextTestsFilesRead:
     def test_read_json_file(self, tmp_path: Path) -> None:
         """Test read() returns dict content for .json files."""
         manager = tf(base_dir=tmp_path)
-        content_root: t.MappingKV[str, t.JsonValue] = {"key": "value", "number": 42}
+        content_root: dict[str, t.JsonPayload] = {"key": "value", "number": 42}
         content: m.ConfigMap = m.ConfigMap(root=content_root)
         path = manager.create(content, "settings.json")
         result = manager.read(path)

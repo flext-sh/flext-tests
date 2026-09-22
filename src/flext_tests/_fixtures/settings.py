@@ -22,7 +22,7 @@ from flext_core import FlextContainer, FlextContext, FlextSettings
 from flext_tests import c, e, m, p, r, s, t, u
 
 from .._settings import FlextTestsSettings
-from .._case import _FlextTestsCase
+from ..case import FlextTestsCase
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
@@ -37,7 +37,7 @@ def _reset_runtime_state() -> None:
 
 
 def _bind_runtime_aliases(
-    *, module: ModuleType, instance: _FlextTestsCase | None
+    *, module: ModuleType, instance: FlextTestsCase | None
 ) -> None:
     """Bind canonical FLEXT runtime aliases onto pytest class instances."""
     package_root = module.__package__ or module.__name__
@@ -75,7 +75,7 @@ def pytest_runtest_setup(item: pytest.Item) -> None:
     instance = item.instance
     _bind_runtime_aliases(
         module=module,
-        instance=instance if isinstance(instance, _FlextTestsCase) else None,
+        instance=instance if isinstance(instance, FlextTestsCase) else None,
     )
 
 
@@ -109,7 +109,7 @@ def test_runtime(request: pytest.FixtureRequest, reset_settings: None) -> None:
     instance = request.instance
     _bind_runtime_aliases(
         module=request.module,
-        instance=instance if isinstance(instance, _FlextTestsCase) else None,
+        instance=instance if isinstance(instance, FlextTestsCase) else None,
     )
 
 

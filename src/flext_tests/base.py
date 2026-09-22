@@ -73,4 +73,6 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
         return m.RuntimeBootstrapOptions(settings_type=FlextTestsSettings)
 
 
-__all__: list[str] = ["FlextTestsServiceBase"]
+s = FlextTestsServiceBase
+
+__all__: list[str] = ["FlextTestsServiceBase", "s"]

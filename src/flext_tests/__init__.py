@@ -20,22 +20,20 @@ from .__version__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_infra import c as infra_c
-
-    from flext_core import d, e, h, r, x
+    from flext_infra import c as infra_c, d, e, h, r, x
 
     from .__version__ import FlextTestsVersion
     from ._config import FlextTestsConfig, config
     from ._settings import FlextTestsSettings, settings
-    from ._case import _FlextTestsCase
     from .base import FlextTestsServiceBase, FlextTestsServiceBase as s
+    from .case import FlextTestsCase
     from .constants import FlextTestsConstants, FlextTestsConstants as c
     from .docker import FlextTestsDocker, tk
     from .domains import FlextTestsDomains, td
     from .enforcement import (
-        _EnforcementCollector,
+        FlextTestsEnforcementCollector,
         FlextTestsEnforcementItem,
-        _EnforcementViolationError,
+        FlextTestsEnforcementViolationError,
         active_rules,
         discover_repository_root,
         load_infra_report,
@@ -58,14 +56,14 @@ if TYPE_CHECKING:
     from .validator import FlextTestsValidator, tv
 __all__: tuple[str, ...] = (
     "SLOW_TIMEOUT_INI_OPTION",
-    "_EnforcementCollector",
-    "FlextTestsEnforcementItem",
-    "_EnforcementViolationError",
-    "_FlextTestsCase",
+    "FlextTestsCase",
     "FlextTestsConfig",
     "FlextTestsConstants",
     "FlextTestsDocker",
     "FlextTestsDomains",
+    "FlextTestsEnforcementCollector",
+    "FlextTestsEnforcementItem",
+    "FlextTestsEnforcementViolationError",
     "FlextTestsFiles",
     "FlextTestsFixturesDSLMixin",
     "FlextTestsKube",
@@ -120,14 +118,14 @@ _LAZY_IMPORTS = MappingProxyType(
             "._config": ("FlextTestsConfig", "config"),
             "._settings": ("FlextTestsSettings", "settings"),
             ".base": ("FlextTestsServiceBase", "s"),
-            "._case": ("_FlextTestsCase",),
+            ".case": ("FlextTestsCase",),
             ".constants": ("FlextTestsConstants", "c"),
             ".docker": ("FlextTestsDocker", "tk"),
             ".domains": ("FlextTestsDomains", "td"),
             ".enforcement": (
-                "_EnforcementCollector",
+                "FlextTestsEnforcementCollector",
                 "FlextTestsEnforcementItem",
-                "_EnforcementViolationError",
+                "FlextTestsEnforcementViolationError",
                 "active_rules",
                 "discover_repository_root",
                 "load_infra_report",
@@ -148,7 +146,7 @@ _LAZY_IMPORTS = MappingProxyType(
                 "u",
             ),
             ".validator": ("FlextTestsValidator", "tv"),
-            "flext_core": ("d", "e", "h", "r", "x"),
+            "flext_infra": ("d", "e", "h", "r", "x"),
         }),
         alias_groups=MappingProxyType({"flext_infra": (("infra_c", "c"),)}),
         sort_keys=False,

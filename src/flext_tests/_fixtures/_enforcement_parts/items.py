@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, override
 import pytest
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
     from pathlib import Path
 
     from flext_tests import m, p, t
@@ -39,9 +38,9 @@ class FlextTestsEnforcementItem(pytest.Item):
             f"{self._rule.id} ({self._rule.severity}) in {self._project}: "
             f"{len(self._violations)} violation(s)"
         )
-        from ._error import _EnforcementViolationError
+        from ._error import FlextTestsEnforcementViolationError
 
-        raise _EnforcementViolationError("\n".join([header, *detail_lines]))
+        raise FlextTestsEnforcementViolationError("\n".join([header, *detail_lines]))
 
     @staticmethod
     def _format_violation(violation: p.AttributeProbe) -> str:

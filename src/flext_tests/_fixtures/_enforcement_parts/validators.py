@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING
 from flext_tests import m, p, t
 
 from .items import FlextTestsEnforcementItem
-from ._error import _EnforcementViolationError
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable

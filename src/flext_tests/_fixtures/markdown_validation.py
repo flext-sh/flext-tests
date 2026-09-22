@@ -21,10 +21,12 @@ import pytest
 from flext_tests import c, u
 
 from .._validator.markdown import FlextValidatorMarkdown
-from ._markdown_error import _MarkdownValidationError
+from ._markdown_error import FlextTestsMarkdownValidationError
 
 if TYPE_CHECKING:
     from pathlib import Path
+
+    from ._markdown_collector import FlextTestsMarkdownCodeBlockCollector
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
@@ -57,7 +59,7 @@ class FlextTestsMarkdownCodeBlockItem(pytest.Item):
         result = FlextValidatorMarkdown.markdown([self.md_path])
         if result.failure:
             msg = f"Markdown validation failed: {result.error}"
-            raise _MarkdownValidationError(msg)
+            raise FlextTestsMarkdownValidationError(msg)
         scan = result.value
         if scan.violations:
             detail_lines = [
@@ -68,7 +70,7 @@ class FlextTestsMarkdownCodeBlockItem(pytest.Item):
                 f"Found {len(scan.violations)} violation(s) in {self.md_path}:",
                 *detail_lines,
             ])
-            raise _MarkdownValidationError(msg)
+            raise FlextTestsMarkdownValidationError(msg)
 
     @override
     def repr_failure(
@@ -86,16 +88,18 @@ class FlextTestsMarkdownCodeBlockItem(pytest.Item):
 
 def pytest_collect_file(
     parent: pytest.Collector, file_path: Path
-) -> _MarkdownCodeBlockCollector | None:
+) -> FlextTestsMarkdownCodeBlockCollector | None:
     """Collect .md files when the markdown docs option is enabled."""
     if not parent.config.getoption(c.Tests.VALIDATOR_MD_OPTION_DOCS, default=False):
         return None
     if file_path.suffix == ".md" and file_path.stat().st_size > 0:
         content = u.Cli.files_read_text(file_path).unwrap()
         if c.Tests.VALIDATOR_MD_PYTHON_BLOCK_RE.search(content):
-            from ._markdown_collector import _MarkdownCodeBlockCollector
+            from ._markdown_collector import FlextTestsMarkdownCodeBlockCollector
 
-            return _MarkdownCodeBlockCollector.from_parent(parent, path=file_path)
+            return FlextTestsMarkdownCodeBlockCollector.from_parent(
+                parent, path=file_path
+            )
     return None
 
 

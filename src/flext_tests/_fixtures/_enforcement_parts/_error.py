@@ -1,7 +1,7 @@
-"""Private exception for enforcement violations."""
+"""Exception for enforcement violations."""
 
 from __future__ import annotations
 
 
-class _EnforcementViolationError(Exception):
+class FlextTestsEnforcementViolationError(Exception):
     """Raised by ``FlextTestsEnforcementItem.runtest`` when violations are present."""

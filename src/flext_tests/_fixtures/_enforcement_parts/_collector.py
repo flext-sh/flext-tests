@@ -1,4 +1,4 @@
-"""Private collector for enforcement items."""
+"""Collector for enforcement items."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from flext_tests import t
 
 
-class _EnforcementCollector(pytest.Collector):
+class FlextTestsEnforcementCollector(pytest.Collector):
     """Synthetic collector that owns every ``FlextTestsEnforcementItem`` for the session."""
 
     def __init__(

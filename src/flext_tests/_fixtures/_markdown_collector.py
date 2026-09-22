@@ -2,17 +2,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, override
+from typing import override
 
 import pytest
 
 from .markdown_validation import FlextTestsMarkdownCodeBlockItem
 
-if TYPE_CHECKING:
-    from pathlib import Path
 
-
-class _MarkdownCodeBlockCollector(pytest.File):
+class FlextTestsMarkdownCodeBlockCollector(pytest.File):
     """Pytest collector for markdown files."""
 
     @override
