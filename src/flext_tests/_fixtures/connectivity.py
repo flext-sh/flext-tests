@@ -17,7 +17,7 @@ misbehaves still fails, which is the whole point of the suite.
 from __future__ import annotations
 
 import socket
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 import pytest
 
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 class FlextTestsConnectivityPlugin:
     """Pytest plugin skipping connectivity-bound tests with a down service."""
 
-    _probe_cache: t.MutableMappingKV[str, str | None] = {}
+    _probe_cache: ClassVar[t.MutableMappingKV[str, str | None]] = {}
 
     @staticmethod
     def _endpoint(container_name: str) -> tuple[str, int] | None:

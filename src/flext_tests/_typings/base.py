@@ -34,7 +34,6 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from .._models.base import FlextTestsBaseModelsMixin
-    from .._protocols.payload import FlextTestsPayloadProtocolsMixin
 
 
 class FlextTestsBaseTypesMixin:

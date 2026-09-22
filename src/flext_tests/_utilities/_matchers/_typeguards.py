@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Sized
-from typing import TYPE_CHECKING, TypeAliasType
+from typing import TypeAliasType
 
 from _pytest.python_api import ApproxBase
 from flext_infra import u
@@ -11,9 +11,6 @@ from flext_infra import u
 from flext_tests import c, m, p
 
 from ..payload import FlextTestsPayloadUtilities
-
-if TYPE_CHECKING:
-    from flext_core import t
 
 
 class FlextTestsMatchersTypeGuardsMixin:

@@ -66,7 +66,7 @@ def build_tests_validator_items(
 def _items_from_grouped(
     collector: pytest.Collector,
     rule: m.EnforcementRuleSpec,
-    grouped: t.MutableMappingKV[str, list[p.AttributeProbe]],
+    grouped: t.MappingKV[str, list[p.AttributeProbe]],
 ) -> list[FlextTestsEnforcementItem]:
     """Convert grouped violations into enforcement items."""
     items: list[FlextTestsEnforcementItem] = []

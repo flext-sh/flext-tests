@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import ClassVar
 
 from flext_cli import u as _cli_u
-from flext_core import r
 
+from flext_core import r
 from flext_tests import c, m, p, t
 
 
@@ -86,7 +86,7 @@ class FlextTestsValidatorUtilitiesMixin:
             file_path=file_path,
             line_number=line_number,
             rule_id=rule_id,
-            severity=severity,
+            severity=c.Tests.ValidatorSeverity(severity),
             description=description,
             code_snippet=line.strip(),
         )

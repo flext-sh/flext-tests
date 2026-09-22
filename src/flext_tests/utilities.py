@@ -56,7 +56,7 @@ u = FlextTestsUtilities
 
 __all__: list[str] = [
     "FlextTestsFixturesDSLMixin",
-    "FlextTestsUtilities",
     "FlextTestsModuleGovernanceMixin",
+    "FlextTestsUtilities",
     "u",
 ]

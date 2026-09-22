@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from ._matchers._scope import FlextTestsMatchersScopeMixin
     from ._matchers._that import FlextTestsMatchersThatMixin
     from ._matchers._typeguards import FlextTestsMatchersTypeGuardsMixin
+    from .base import FlextTestsUtilitiesBase
     from .container import FlextTestsContainerHelpersUtilitiesMixin
     from .files import FlextTestsFilesUtilitiesMixin
     from .fixtures_dsl import FlextTestsFixturesDSLMixin
@@ -36,7 +37,7 @@ if TYPE_CHECKING:
     from .make_parsing import FlextTestsMakeParsingUtilitiesMixin
     from .make_registry import FlextTestsMakeRegistryUtilitiesMixin
     from .make_rendering import FlextTestsMakeRenderingUtilitiesMixin
-    from .matchers import FlextTestsMatchersUtilities, tm
+    from .matchers import FlextTestsMatchersUtilities
     from .payload import FlextTestsPayloadUtilities
     from .result import FlextTestsResultUtilitiesMixin
     from .settings import FlextTestsConfigHelpersUtilitiesMixin
@@ -77,19 +78,19 @@ __all__: tuple[str, ...] = (
     "FlextTestsMatchersThatMixin",
     "FlextTestsMatchersTypeGuardsMixin",
     "FlextTestsMatchersUtilities",
+    "FlextTestsModuleGovernanceMixin",
     "FlextTestsPayloadUtilities",
     "FlextTestsResultUtilitiesMixin",
     "FlextTestsTestContextUtilitiesMixin",
+    "FlextTestsUtilitiesBase",
     "FlextTestsValidatorUtilitiesMixin",
     "FlextTestsWorkspaceCleanupGitUtilitiesMixin",
     "FlextTestsWorkspaceCleanupInspectUtilitiesMixin",
     "FlextTestsWorkspaceCleanupPathsUtilitiesMixin",
     "FlextTestsWorkspaceCleanupPlanUtilitiesMixin",
     "FlextTestsWorkspaceCleanupUtilitiesMixin",
-    "FlextTestsModuleGovernanceMixin",
     "_files",
     "_matchers",
-    "tm",
 )
 
 _LAZY_IMPORTS = MappingProxyType(
@@ -112,6 +113,7 @@ _LAZY_IMPORTS = MappingProxyType(
             "._matchers._scope": ("FlextTestsMatchersScopeMixin",),
             "._matchers._that": ("FlextTestsMatchersThatMixin",),
             "._matchers._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
+            ".base": ("FlextTestsUtilitiesBase",),
             ".container": ("FlextTestsContainerHelpersUtilitiesMixin",),
             ".files": ("FlextTestsFilesUtilitiesMixin",),
             ".fixtures_dsl": ("FlextTestsFixturesDSLMixin",),
@@ -123,7 +125,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ".make_parsing": ("FlextTestsMakeParsingUtilitiesMixin",),
             ".make_registry": ("FlextTestsMakeRegistryUtilitiesMixin",),
             ".make_rendering": ("FlextTestsMakeRenderingUtilitiesMixin",),
-            ".matchers": ("FlextTestsMatchersUtilities", "tm"),
+            ".matchers": ("FlextTestsMatchersUtilities",),
             ".payload": ("FlextTestsPayloadUtilities",),
             ".result": ("FlextTestsResultUtilitiesMixin",),
             ".settings": ("FlextTestsConfigHelpersUtilitiesMixin",),
