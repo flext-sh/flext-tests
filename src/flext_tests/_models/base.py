@@ -14,6 +14,19 @@ from flext_infra import m, p, u
 from flext_tests import t
 
 
+def _entity_payload_default() -> FlextTestsBaseModelsMixin.Payload:
+    """Late-bound entity default.
+
+    Defined before the mixin so the class body binds the bare name while the
+    mixin itself resolves only at instantiation time: annotations stay lazy
+    under ``from __future__ import annotations`` and this function's body
+    runs after the module is complete. A lambda here would be flattened back
+    into an eager attribute reference by the fleet's autofix pass, which
+    re-introduces the class-body NameError.
+    """
+    return FlextTestsBaseModelsMixin.Payload.atom_default()
+
+
 class FlextTestsBaseModelsMixin:
     class Payload(m.ArbitraryTypesModel):
         """Owned native payload tree; model leaves retain their instance identity."""
@@ -38,7 +51,7 @@ class FlextTestsBaseModelsMixin:
         entries: Annotated[
             t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload],
             m.Field(
-                default_factory=lambda: MappingProxyType({}),
+                default_factory=lambda: MappingProxyType[str, FlextTestsBaseModelsMixin.Payload]({}),
                 frozen=True,
                 description="String-keyed payload children.",
             ),
@@ -78,11 +91,9 @@ class FlextTestsBaseModelsMixin:
 
         name: Annotated[str, m.Field(description="Entity display name.")] = ""
         value: Annotated[
-            "FlextTestsBaseModelsMixin.Payload",
+            FlextTestsBaseModelsMixin.Payload,
             m.Field(description="Arbitrary serializable payload."),
-        ] = m.Field(
-            default_factory=lambda: FlextTestsBaseModelsMixin.Payload.atom_default()
-        )
+        ] = m.Field(default_factory=_entity_payload_default)
 
     class Value(m.Value):
         """Factory value object class for tests."""
