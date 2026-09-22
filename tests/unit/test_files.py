@@ -13,10 +13,10 @@ from ._files_parts.compare import TestsFlextTestsFilesCompareMixin
 from ._files_parts.content_meta import TestsFlextTestsFilesContentMetaMixin
 from ._files_parts.contexts import TestsFlextTestsFilesContextsMixin
 from ._files_parts.creation import TestsFlextTestsFilesCreationMixin
+from ._files_parts.file_models import TestsFlextTestsFilesModelsMixin
 from ._files_parts.formats import TestsFlextTestsFilesFormatsMixin
 from ._files_parts.info_cleanup import TestsFlextTestsFilesInfoCleanupMixin
 from ._files_parts.info_metadata import TestsFlextTestsFilesInfoMetadataMixin
-from ._files_parts.file_models import TestsFlextTestsFilesModelsMixin
 from ._files_parts.read import TestsFlextTestsFilesReadMixin
 
 

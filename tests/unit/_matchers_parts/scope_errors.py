@@ -10,7 +10,7 @@ import pytest
 from flext_tests import r, tm
 
 if TYPE_CHECKING:
-    from tests import p
+    from tests import m, p
 
 
 class TestsFlextTestsMatchersScopeErrorsMixin:
@@ -19,7 +19,7 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
     def test_check_returns_chain(self) -> None:
         """Test tm.check() returns Chain t.JsonValue."""
         result = r[int].ok(42)
-        chain = tm.check(result)
+        chain: m.Tests.Chain[int] = tm.check(result)
         tm.that(chain, none=False)
 
     def test_scope_basic_usage(self) -> None:

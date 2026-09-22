@@ -26,7 +26,10 @@ from ._docker_parts.targets import TestsFlextTestsDockerTargetsMixin
 
 
 class TestsFlextTestsDocker(
-    TestsFlextTestsDockerStateMixin, TestsFlextTestsDockerBuildersMixin, TestsFlextTestsDockerOperationsMixin, TestsFlextTestsDockerTargetsMixin
+    TestsFlextTestsDockerStateMixin,
+    TestsFlextTestsDockerBuildersMixin,
+    TestsFlextTestsDockerOperationsMixin,
+    TestsFlextTestsDockerTargetsMixin,
 ):
     """Behavioral contract of the Docker control facade (FlextTestsDocker)."""
 
