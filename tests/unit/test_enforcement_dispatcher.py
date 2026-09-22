@@ -260,7 +260,8 @@ class TestsFlextTestsEnforcementDispatcher:
 
     def test_violation_error_is_an_exception(self) -> None:
         tm.that(
-            issubclass(enforcement.FlextTestsEnforcementViolationError, Exception),
+            Exception
+            in enforcement.FlextTestsEnforcementViolationError.__mro__,
             eq=True,
         )
 

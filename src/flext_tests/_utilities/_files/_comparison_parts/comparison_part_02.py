@@ -96,8 +96,8 @@ class FlextTestsFilesComparisonMixin(_ComparisonMixinPart1):
 
     def _deep_compare_mappings(
         self,
-        dict1: p.AttributeProbe,
-        dict2: p.AttributeProbe,
+        dict1: t.MappingKV[str, t.Tests.TestobjectSerializable],
+        dict2: t.MappingKV[str, t.Tests.TestobjectSerializable],
         params: m.Tests.CompareParams,
     ) -> p.Result[bool]:
         """Deeply compare already-parsed structured mappings."""
