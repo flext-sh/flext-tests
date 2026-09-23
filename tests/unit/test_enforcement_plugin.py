@@ -11,6 +11,7 @@ any manual ``-p`` wiring.
 from __future__ import annotations
 
 from importlib.metadata import entry_points
+
 import pytest
 
 from flext_tests import tm

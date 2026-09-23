@@ -9,11 +9,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pytest import hookimpl
+import pytest
 
 if TYPE_CHECKING:
-    import pytest
-
     from flext_tests import p
 
 SLOW_TIMEOUT_INI_OPTION = "flext_slow_timeout_seconds"
@@ -71,9 +69,7 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 
 def pytest_configure(config: pytest.Config) -> None:
     """Resolve enforcement only after startup instrumentation is active."""
-    from ._fixtures._enforcement_parts.dispatcher import (
-        FlextTestsEnforcementDispatcher,
-    )
+    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
 
     FlextTestsEnforcementDispatcher.configure(config)
 
@@ -82,20 +78,16 @@ def pytest_collection_modifyitems(
     session: pytest.Session, config: pytest.Config, items: list[pytest.Item]
 ) -> None:
     """Delegate collection-time enforcement."""
-    from ._fixtures._enforcement_parts.dispatcher import (
-        FlextTestsEnforcementDispatcher,
-    )
+    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
 
     FlextTestsEnforcementDispatcher.collection_modifyitems(session, config, items)
 
 
-@hookimpl(tryfirst=True)
+@pytest.hookimpl(tryfirst=True)
 def pytest_runtest_protocol(item: pytest.Item, nextitem: pytest.Item | None) -> None:
     """Re-apply the config-owned slow budget in the executing process."""
     del nextitem
-    from ._fixtures._enforcement_parts.dispatcher import (
-        FlextTestsEnforcementDispatcher,
-    )
+    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
 
     FlextTestsEnforcementDispatcher.runtest_protocol(item)
 
@@ -108,18 +100,14 @@ def pytest_warning_recorded(
 ) -> None:
     """Track runtime enforcement warnings."""
     _ = when, nodeid, location
-    from ._fixtures._enforcement_parts.dispatcher import (
-        FlextTestsEnforcementDispatcher,
-    )
+    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
 
     FlextTestsEnforcementDispatcher.record_warning(warning_message)
 
 
 def pytest_sessionstart(session: pytest.Session) -> None:
     """Expose the session config for warning-capture plumbing."""
-    from ._fixtures._enforcement_parts.dispatcher import (
-        FlextTestsEnforcementDispatcher,
-    )
+    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
 
     FlextTestsEnforcementDispatcher.session_config = session.config
 
@@ -129,9 +117,7 @@ def pytest_terminal_summary(
 ) -> None:
     """Delegate the enforcement summary."""
     _ = exitstatus
-    from ._fixtures._enforcement_parts.dispatcher import (
-        FlextTestsEnforcementDispatcher,
-    )
+    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
 
     FlextTestsEnforcementDispatcher.terminal_summary(terminalreporter, config)
 

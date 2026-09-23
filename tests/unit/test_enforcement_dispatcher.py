@@ -130,9 +130,7 @@ class TestsFlextTestsEnforcementDispatcher:
     def test_exclude_removes_the_listed_id(self) -> None:
         ids = {
             r.id
-            for r in u.Tests.active_rules(
-                self._cfg(exclude=frozenset({"ENFORCE-001"}))
-            )
+            for r in u.Tests.active_rules(self._cfg(exclude=frozenset({"ENFORCE-001"})))
         }
 
         tm.that(ids, lacks="ENFORCE-001")

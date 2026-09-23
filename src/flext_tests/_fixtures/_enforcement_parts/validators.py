@@ -129,9 +129,7 @@ class FlextTestsEnforcementValidators:
                 if file_path is not None
                 else ()
             )
-            result.setdefault(parts[0] if parts else "workspace", []).append(
-                violation
-            )
+            result.setdefault(parts[0] if parts else "workspace", []).append(violation)
 
 
 __all__: list[str] = ["FlextTestsEnforcementValidators"]
