@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from pathlib import Path
-from typing import cast, overload
+from typing import cast
 
 from flext_tests import c, m, p, t, u
 
@@ -135,38 +135,6 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                 str(FlextTestsPayloadUtilities.to_match_value(actual_content))
             ])
         return rows
-
-    @overload
-    def create[TContentCreate](
-        self,
-        content: p.Result[TContentCreate],
-        name: str = c.Tests.DEFAULT_FILENAME,
-        directory: Path | None = None,
-        *,
-        fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
-        enc: str = c.Tests.DEFAULT_ENCODING,
-        indent: int = c.Tests.DEFAULT_JSON_INDENT,
-        delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
-        headers: t.StrSequence | None = None,
-        readonly: bool = False,
-        extract_result: bool = True,
-    ) -> Path: ...
-
-    @overload
-    def create[TContentCreate](
-        self,
-        content: TContentCreate | p.Result[TContentCreate],
-        name: str = c.Tests.DEFAULT_FILENAME,
-        directory: Path | None = None,
-        *,
-        fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
-        enc: str = c.Tests.DEFAULT_ENCODING,
-        indent: int = c.Tests.DEFAULT_JSON_INDENT,
-        delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
-        headers: t.StrSequence | None = None,
-        readonly: bool = False,
-        extract_result: bool = True,
-    ) -> Path: ...
 
     def create[ContentT](
         self,
