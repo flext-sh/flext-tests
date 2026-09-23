@@ -70,7 +70,7 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
 
     @classmethod
     def runtime_bootstrap_options(cls) -> m.RuntimeBootstrapOptions:
-        """Return bootstrap options binding the tests settings type."""
+        """Provide the runtime bootstrap options bound to the test settings type."""
         return m.RuntimeBootstrapOptions(settings_type=FlextTestsSettings)
 
 
