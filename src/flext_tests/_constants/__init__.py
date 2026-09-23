@@ -17,6 +17,8 @@ if TYPE_CHECKING:
     from .make import FlextTestsConstantsMake
     from .matcher import FlextTestsConstantsMatcher
     from .validator import FlextTestsConstantsValidator
+
+
 __all__: tuple[str, ...] = (
     "FlextTestsConstantsBase",
     "FlextTestsConstantsDataCases",

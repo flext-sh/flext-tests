@@ -24,9 +24,9 @@ Primary references:
 
 - The official security alert inventory is at:
   - `docs/reports/dependabot-alerts-2026-06-24.md`
-- O plano atual cobre três frentes:
-  - inventariar alertas por gravidade e pacote,
-  - agrupar remediações em ondas (critical/high first),
-  - ampliar Dependabot para rastrear os módulos Python com `pyproject.toml` no monorepo.
-- A execução de segurança deve registrar evidência por ação (alerta, commit de correção
-  e status de fechamento) no `bd`, sem "close" sem trilha.
+- The current plan covers three fronts:
+  - inventory alerts by severity and package,
+  - group remediations into waves (critical/high first),
+  - expand Dependabot to track Python modules with `pyproject.toml` in the monorepo.
+- Security execution must record evidence per action (alert, fix commit, and closure
+  status) in the bead tracker, without closing without a trail.

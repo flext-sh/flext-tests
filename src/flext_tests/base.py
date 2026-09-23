@@ -18,7 +18,7 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
     @classmethod
     def test_settings_type(cls) -> type[FlextTestsSettings]:
         """Return the concrete test settings type declared by the service MRO."""
-        settings_type = cls._runtime_bootstrap_options().settings_type
+        settings_type = cls.runtime_bootstrap_options().settings_type
         if settings_type is None:
             return FlextTestsSettings
         if not issubclass(settings_type, FlextTestsSettings):
@@ -69,7 +69,7 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
             FlextContainer.reset_for_testing()
 
     @classmethod
-    def _runtime_bootstrap_options(cls) -> m.RuntimeBootstrapOptions:
+    def runtime_bootstrap_options(cls) -> m.RuntimeBootstrapOptions:
         return m.RuntimeBootstrapOptions(settings_type=FlextTestsSettings)
 
 

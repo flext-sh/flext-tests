@@ -25,7 +25,7 @@ dependencies = [
   "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
   "packaging>=26.3",
   "pydantic>=2.13.5",
-  "pydantic-settings>=2.15.0",
+  "pydantic-settings>=2.14.0,<2.15",
   "pytest>=9.1.1",
   "pytest-timeout>=2.4.0",
   "python-on-whales>=0.81.0",
@@ -468,6 +468,7 @@ exclude = [
 ]
 fix = false
 line-length = 88
+namespace-packages = ["tests", "examples", "scripts"]
 preview = true
 respect-gitignore = true
 show-fixes = true

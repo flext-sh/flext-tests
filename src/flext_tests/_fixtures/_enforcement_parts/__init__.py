@@ -26,6 +26,8 @@ if TYPE_CHECKING:
     from .items import FlextTestsEnforcementItem
     from .namespace import NamespaceDetectorBuilder
     from .validators import build_tests_validator_items, dispatch_infra_detector
+
+
 __all__: tuple[str, ...] = (
     "FlextTestsEnforcementItem",
     "NamespaceDetectorBuilder",
