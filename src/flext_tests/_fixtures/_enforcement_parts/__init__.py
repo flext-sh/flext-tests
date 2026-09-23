@@ -9,62 +9,29 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from .build import build_items
-    from .config import (
-        SessionConfig,
-        active_rules,
-        discover_repository_root,
-        resolve_config,
-        split_csv,
-    )
-    from .discovery import (
-        collected_project_names,
-        collected_validator_targets,
-        load_infra_report,
-        project_name_for_path,
-    )
+    from .build import FlextTestsEnforcementBuilder
+    from .dispatcher import FlextTestsEnforcementDispatcher
     from .items import FlextTestsEnforcementItem
     from .namespace import NamespaceDetectorBuilder
-    from .validators import build_tests_validator_items, dispatch_infra_detector
+    from .validators import FlextTestsEnforcementValidators
 
 
 __all__: tuple[str, ...] = (
+    "FlextTestsEnforcementBuilder",
+    "FlextTestsEnforcementDispatcher",
     "FlextTestsEnforcementItem",
+    "FlextTestsEnforcementValidators",
     "NamespaceDetectorBuilder",
-    "SessionConfig",
-    "active_rules",
-    "build_items",
-    "build_tests_validator_items",
-    "collected_project_names",
-    "collected_validator_targets",
-    "discover_repository_root",
-    "dispatch_infra_detector",
-    "load_infra_report",
-    "project_name_for_path",
-    "resolve_config",
-    "split_csv",
 )
 
 _LAZY_IMPORTS = MappingProxyType(
     build_lazy_import_map(
         MappingProxyType({
-            ".build": ("build_items",),
-            ".config": (
-                "SessionConfig",
-                "active_rules",
-                "discover_repository_root",
-                "resolve_config",
-                "split_csv",
-            ),
-            ".discovery": (
-                "collected_project_names",
-                "collected_validator_targets",
-                "load_infra_report",
-                "project_name_for_path",
-            ),
+            ".build": ("FlextTestsEnforcementBuilder",),
+            ".dispatcher": ("FlextTestsEnforcementDispatcher",),
             ".items": ("FlextTestsEnforcementItem",),
             ".namespace": ("NamespaceDetectorBuilder",),
-            ".validators": ("build_tests_validator_items", "dispatch_infra_detector"),
+            ".validators": ("FlextTestsEnforcementValidators",),
         }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,

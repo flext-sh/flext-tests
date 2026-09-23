@@ -20,10 +20,7 @@ from .__version__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_cli import cli, main
-    from flext_infra import docs_main, infra
-
-    from flext_core import core, d, e, h, lazy_attribute, r, x
+    from flext_cli import d, e, h, r, x
 
     from . import services
     from ._config import FlextTestsConfig, config
@@ -35,7 +32,6 @@ if TYPE_CHECKING:
     from .constants import FlextTestsConstants, FlextTestsConstants as c
     from .docker import FlextTestsDocker, tk
     from .domains import FlextTestsDomains, td
-    from .enforcement import load_infra_report
     from .enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
     from .files import FlextTestsFiles, tf
     from .kube import FlextTestsKube
@@ -78,19 +74,12 @@ __all__: tuple[str, ...] = (
     "__version_info__",
     "api",
     "c",
-    "cli",
     "config",
-    "core",
     "d",
-    "docs_main",
     "e",
     "h",
-    "infra",
     "install_local_packages",
-    "lazy_attribute",
-    "load_infra_report",
     "m",
-    "main",
     "p",
     "r",
     "s",
@@ -117,7 +106,6 @@ _LAZY_IMPORTS = MappingProxyType(
             ".constants": ("FlextTestsConstants", "c"),
             ".docker": ("FlextTestsDocker", "tk"),
             ".domains": ("FlextTestsDomains", "td"),
-            ".enforcement": ("load_infra_report",),
             ".enforcement_plugin": ("SLOW_TIMEOUT_INI_OPTION",),
             ".files": ("FlextTestsFiles", "tf"),
             ".kube": ("FlextTestsKube",),
@@ -129,9 +117,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ".typings": ("FlextTestsTypes", "t"),
             ".utilities": ("FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"),
             ".validator": ("FlextTestsValidator", "tv"),
-            "flext_cli": ("cli", "main"),
-            "flext_core": ("core", "d", "e", "h", "lazy_attribute", "r", "x"),
-            "flext_infra": ("docs_main", "infra"),
+            "flext_cli": ("d", "e", "h", "r", "x"),
         }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
