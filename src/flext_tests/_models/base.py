@@ -27,6 +27,13 @@ def _entity_payload_default() -> FlextTestsBaseModelsMixin.Payload:
     return FlextTestsBaseModelsMixin.Payload.atom_default()
 
 
+def _payload_entries_default() -> t.Tests.PayloadEntries[
+    FlextTestsBaseModelsMixin.Payload
+]:
+    """Late-bound empty mapping arm, bound the same way as the entity default."""
+    return MappingProxyType({})
+
+
 class FlextTestsBaseModelsMixin:
     class Payload(m.ArbitraryTypesModel):
         """Owned native payload tree; model leaves retain their instance identity."""
@@ -51,9 +58,7 @@ class FlextTestsBaseModelsMixin:
         entries: Annotated[
             t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload],
             m.Field(
-                default_factory=lambda: MappingProxyType[
-                    str, FlextTestsBaseModelsMixin.Payload
-                ]({}),
+                default_factory=_payload_entries_default,
                 frozen=True,
                 description="String-keyed payload children.",
             ),
