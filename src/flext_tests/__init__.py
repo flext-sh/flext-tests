@@ -20,9 +20,7 @@ from .__version__ import (
 )
 
 if TYPE_CHECKING:
-    from flext_cli import cli, main
-
-    from flext_core import core, d, e, h, lazy_attribute, r, x
+    from flext_cli import cli, core, d, e, h, lazy_attribute, main, r, x
 
     from . import services
     from ._config import FlextTestsConfig, config
@@ -126,8 +124,17 @@ _LAZY_IMPORTS = MappingProxyType(
             ".typings": ("FlextTestsTypes", "t"),
             ".utilities": ("FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"),
             ".validator": ("FlextTestsValidator", "tv"),
-            "flext_cli": ("cli", "main"),
-            "flext_core": ("core", "d", "e", "h", "lazy_attribute", "r", "x"),
+            "flext_cli": (
+                "cli",
+                "core",
+                "d",
+                "e",
+                "h",
+                "lazy_attribute",
+                "main",
+                "r",
+                "x",
+            ),
         }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
