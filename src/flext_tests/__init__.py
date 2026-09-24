@@ -32,6 +32,15 @@ if TYPE_CHECKING:
     from .constants import FlextTestsConstants, FlextTestsConstants as c
     from .docker import FlextTestsDocker, tk
     from .domains import FlextTestsDomains, td
+    from .enforcement import (
+        FlextTestsEnforcementCollector,
+        FlextTestsEnforcementItem,
+        FlextTestsEnforcementViolationError,
+        active_rules,
+        discover_repository_root,
+        load_infra_report,
+        split_csv,
+    )
     from .enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
     from .files import FlextTestsFiles, tf
     from .kube import FlextTestsKube
@@ -39,12 +48,12 @@ if TYPE_CHECKING:
     from .protocols import FlextTestsProtocols, FlextTestsProtocols as p
     from .pytest_bootstrap import install_local_packages
     from .tmatchers import FlextTestsMatchersUtilities, tm
-    from .typings import FlextTestsTypes, FlextTestsTypes as t
+    from .typings import FlextTestsTypes, t
     from .utilities import (
         FlextTestsFixturesDSLMixin,
         FlextTestsModuleGovernanceMixin,
         FlextTestsUtilities,
-        FlextTestsUtilities as u,
+        u,
     )
     from .validator import FlextTestsValidator, FlextTestsValidator as tv
 
@@ -58,6 +67,9 @@ __all__: tuple[str, ...] = (
     "FlextTestsConstants",
     "FlextTestsDocker",
     "FlextTestsDomains",
+    "FlextTestsEnforcementCollector",
+    "FlextTestsEnforcementItem",
+    "FlextTestsEnforcementViolationError",
     "FlextTestsFiles",
     "FlextTestsFixturesDSLMixin",
     "FlextTestsKube",
@@ -78,19 +90,23 @@ __all__: tuple[str, ...] = (
     "__url__",
     "__version__",
     "__version_info__",
+    "active_rules",
     "api",
     "c",
     "config",
     "d",
+    "discover_repository_root",
     "e",
     "h",
     "install_local_packages",
+    "load_infra_report",
     "m",
     "p",
     "r",
     "s",
     "services",
     "settings",
+    "split_csv",
     "t",
     "td",
     "tf",
@@ -113,6 +129,15 @@ _LAZY_IMPORTS = MappingProxyType(
             ".constants": ("FlextTestsConstants", "c"),
             ".docker": ("FlextTestsDocker", "tk"),
             ".domains": ("FlextTestsDomains", "td"),
+            ".enforcement": (
+                "FlextTestsEnforcementCollector",
+                "FlextTestsEnforcementItem",
+                "FlextTestsEnforcementViolationError",
+                "active_rules",
+                "discover_repository_root",
+                "load_infra_report",
+                "split_csv",
+            ),
             ".enforcement_plugin": ("SLOW_TIMEOUT_INI_OPTION",),
             ".files": ("FlextTestsFiles", "tf"),
             ".kube": ("FlextTestsKube",),
