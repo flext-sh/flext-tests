@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_infra import m
+from flext_infra import FlextInfraModels
 
 from ._models.base import FlextTestsBaseModelsMixin
 from ._models.batch import FlextTestsBatchModelsMixin
@@ -22,7 +22,7 @@ from ._models.validator import FlextTestsValidatorModelsMixin
 from ._models.workspace_cleanup import FlextTestsWorkspaceCleanupModelsMixin
 
 
-class FlextTestsModels(m):
+class FlextTestsModels(FlextInfraModels):
     """Test models extending m with test-specific factory models."""
 
     class Tests(

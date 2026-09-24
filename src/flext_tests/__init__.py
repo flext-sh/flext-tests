@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
     from . import services
     from ._config import FlextTestsConfig, config
-    from ._settings import FlextTestsSettings
+    from ._settings import FlextTestsSettings, settings
     from .api import FlextTests, FlextTests as api
     from .base import FlextTestsServiceBase, s
     from .case import FlextTestsCase
@@ -35,12 +35,17 @@ if TYPE_CHECKING:
     from .enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
     from .files import FlextTestsFiles, tf
     from .kube import FlextTestsKube
-    from .models import FlextTestsModels, m
-    from .protocols import FlextTestsProtocols, p
+    from .models import FlextTestsModels, FlextTestsModels as m
+    from .protocols import FlextTestsProtocols, FlextTestsProtocols as p
     from .pytest_bootstrap import install_local_packages
     from .tmatchers import FlextTestsMatchersUtilities, tm
-    from .typings import FlextTestsTypes, t
-    from .utilities import FlextTestsFixturesDSLMixin, FlextTestsUtilities, u
+    from .typings import FlextTestsTypes, FlextTestsTypes as t
+    from .utilities import (
+        FlextTestsFixturesDSLMixin,
+        FlextTestsModuleGovernanceMixin,
+        FlextTestsUtilities,
+        FlextTestsUtilities as u,
+    )
     from .validator import FlextTestsValidator, FlextTestsValidator as tv
 
 
@@ -58,6 +63,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsKube",
     "FlextTestsMatchersUtilities",
     "FlextTestsModels",
+    "FlextTestsModuleGovernanceMixin",
     "FlextTestsProtocols",
     "FlextTestsServiceBase",
     "FlextTestsSettings",
@@ -84,6 +90,7 @@ __all__: tuple[str, ...] = (
     "r",
     "s",
     "services",
+    "settings",
     "t",
     "td",
     "tf",
@@ -98,7 +105,7 @@ _LAZY_IMPORTS = MappingProxyType(
     build_lazy_import_map(
         MappingProxyType({
             "._config": ("FlextTestsConfig", "config"),
-            "._settings": ("FlextTestsSettings",),
+            "._settings": ("FlextTestsSettings", "settings"),
             ".api": ("FlextTests", "api"),
             ".base": ("FlextTestsServiceBase", "s"),
             ".case": ("FlextTestsCase",),
@@ -115,7 +122,12 @@ _LAZY_IMPORTS = MappingProxyType(
             ".services": ("services",),
             ".tmatchers": ("FlextTestsMatchersUtilities", "tm"),
             ".typings": ("FlextTestsTypes", "t"),
-            ".utilities": ("FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"),
+            ".utilities": (
+                "FlextTestsFixturesDSLMixin",
+                "FlextTestsModuleGovernanceMixin",
+                "FlextTestsUtilities",
+                "u",
+            ),
             ".validator": ("FlextTestsValidator", "tv"),
             "flext_cli": ("d", "e", "h", "r", "x"),
         }),
