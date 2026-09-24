@@ -9,9 +9,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import pytest
-
 if TYPE_CHECKING:
+    import pytest
+
     from flext_tests import p
 
 SLOW_TIMEOUT_INI_OPTION = "flext_slow_timeout_seconds"
@@ -81,15 +81,6 @@ def pytest_collection_modifyitems(
     from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
 
     FlextTestsEnforcementDispatcher.collection_modifyitems(session, config, items)
-
-
-@pytest.hookimpl(tryfirst=True)
-def pytest_runtest_protocol(item: pytest.Item, nextitem: pytest.Item | None) -> None:
-    """Re-apply the config-owned slow budget in the executing process."""
-    del nextitem
-    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
-
-    FlextTestsEnforcementDispatcher.runtest_protocol(item)
 
 
 def pytest_warning_recorded(

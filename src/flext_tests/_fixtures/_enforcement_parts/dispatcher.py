@@ -119,23 +119,6 @@ class FlextTestsEnforcementDispatcher:
         )
 
     @classmethod
-    def runtest_protocol(cls, item: pytest.Item) -> None:
-        """Re-apply the config-owned slow budget in the executing process.
-
-        Why: xdist transmits only nodeids to workers and testmon rewrites the
-        collected items on worker re-collection, so the timeout marker added at
-        controller collection time does not survive into every executing
-        process. Each executing process re-derives the budget from its config.
-        """
-        if item.get_closest_marker("slow") is None:
-            return
-        if item.get_closest_marker("timeout") is not None:
-            return
-        slow_timeout = cls.slow_budget_seconds(item.config)
-        if slow_timeout is not None:
-            item.add_marker(pytest.mark.timeout(slow_timeout), append=False)
-
-    @classmethod
     def record_warning(cls, warning_message: p.AttributeProbe) -> None:
         """Count one captured runtime warning by its dotted category."""
         if cls.session_config is None:
