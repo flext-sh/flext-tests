@@ -9,25 +9,7 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_cli import cli, main
-
-    from flext_core import core, d, e, h, lazy_attribute, r, x
-    from flext_tests import (
-        active_rules,
-        api,
-        config,
-        discover_repository_root,
-        install_local_packages,
-        load_infra_report,
-        s,
-        settings,
-        split_csv,
-        td,
-        tf,
-        tk,
-        tm,
-        tv,
-    )
+    from flext_tests import api, d, e, h, r, s, td, tf, tk, tm, tv, x
 
     from . import integration, unit
     from .constants import TestsFlextTestsConstants, TestsFlextTestsConstants as c
@@ -43,27 +25,16 @@ __all__: tuple[str, ...] = (
     "TestsFlextTestsProtocols",
     "TestsFlextTestsTypes",
     "TestsFlextTestsUtilities",
-    "active_rules",
     "api",
     "c",
-    "cli",
-    "config",
-    "core",
     "d",
-    "discover_repository_root",
     "e",
     "h",
-    "install_local_packages",
     "integration",
-    "lazy_attribute",
-    "load_infra_report",
     "m",
-    "main",
     "p",
     "r",
     "s",
-    "settings",
-    "split_csv",
     "t",
     "td",
     "tf",
@@ -85,23 +56,19 @@ _LAZY_IMPORTS = MappingProxyType(
             ".typings": ("TestsFlextTestsTypes", "t"),
             ".unit": ("unit",),
             ".utilities": ("TestsFlextTestsUtilities", "u"),
-            "flext_cli": ("cli", "main"),
-            "flext_core": ("core", "d", "e", "h", "lazy_attribute", "r", "x"),
             "flext_tests": (
-                "active_rules",
                 "api",
-                "config",
-                "discover_repository_root",
-                "install_local_packages",
-                "load_infra_report",
+                "d",
+                "e",
+                "h",
+                "r",
                 "s",
-                "settings",
-                "split_csv",
                 "td",
                 "tf",
                 "tk",
                 "tm",
                 "tv",
+                "x",
             ),
         }),
         alias_groups=MappingProxyType({}),

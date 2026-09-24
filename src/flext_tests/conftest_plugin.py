@@ -55,7 +55,7 @@ def pytest_configure(config: pytest.Config) -> None:
             )
 
 
-# Enforcement dispatcher (flext_tests._fixtures.enforcement) is loaded via
+# Enforcement dispatcher (flext_tests.enforcement_plugin) is loaded via
 # the ``flext_tests_enforcement`` pytest11 entry point in pyproject.toml —
 # re-exporting its hooks here would double-register CLI options when both
 # paths are active. The plugin module registers the canonical fixture modules

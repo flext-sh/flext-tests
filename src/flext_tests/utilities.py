@@ -12,6 +12,7 @@ from __future__ import annotations
 from flext_infra import u
 
 from ._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
+from ._utilities.enforcement import FlextTestsEnforcementUtilitiesMixin
 from ._utilities.files import FlextTestsFilesUtilitiesMixin
 from ._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
 from ._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
@@ -48,6 +49,7 @@ class FlextTestsUtilities(u):
         # NOTE (multi-agent): compose guarded cleanup planning/apply into u.Tests.
         FlextTestsWorkspaceCleanupUtilitiesMixin,
         FlextTestsModuleGovernanceMixin,
+        FlextTestsEnforcementUtilitiesMixin,
     ):
         """Test utilities namespace."""
 
