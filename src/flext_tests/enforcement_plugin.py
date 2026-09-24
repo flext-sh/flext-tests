@@ -69,18 +69,18 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 
 def pytest_configure(config: pytest.Config) -> None:
     """Resolve enforcement only after startup instrumentation is active."""
-    from ._fixtures._enforcement_parts.config import pytest_configure
+    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
 
-    pytest_configure(config)
+    FlextTestsEnforcementDispatcher.configure(config)
 
 
 def pytest_collection_modifyitems(
     session: pytest.Session, config: pytest.Config, items: list[pytest.Item]
 ) -> None:
     """Delegate collection-time enforcement."""
-    from ._fixtures._enforcement_parts.hooks import pytest_collection_modifyitems
+    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
 
-    pytest_collection_modifyitems(session, config, items)
+    FlextTestsEnforcementDispatcher.collection_modifyitems(session, config, items)
 
 
 def pytest_warning_recorded(
@@ -91,35 +91,26 @@ def pytest_warning_recorded(
 ) -> None:
     """Track runtime enforcement warnings."""
     _ = when, nodeid, location
-    from ._fixtures._enforcement_parts.config import SessionConfig, resolve_config
+    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
 
-    if SessionConfig.value is None:
-        return
-    cfg = resolve_config(SessionConfig.value)
-    if not cfg.active:
-        return
-    category = getattr(warning_message, "category", None)
-    if category is None:
-        return
-    dotted = f"{category.__module__}.{category.__qualname__}"
-    counter = cfg.warning_counter
-    counter[dotted] = counter.get(dotted, 0) + 1
+    FlextTestsEnforcementDispatcher.record_warning(warning_message)
 
 
 def pytest_sessionstart(session: pytest.Session) -> None:
-    """Delegate session initialization."""
-    from ._fixtures._enforcement_parts.hooks import pytest_sessionstart
+    """Expose the session config for warning-capture plumbing."""
+    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
 
-    pytest_sessionstart(session)
+    FlextTestsEnforcementDispatcher.session_config = session.config
 
 
 def pytest_terminal_summary(
     terminalreporter: pytest.TerminalReporter, exitstatus: int, config: pytest.Config
 ) -> None:
     """Delegate the enforcement summary."""
-    from ._fixtures._enforcement_parts.hooks import pytest_terminal_summary
+    _ = exitstatus
+    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
 
-    pytest_terminal_summary(terminalreporter, exitstatus, config)
+    FlextTestsEnforcementDispatcher.terminal_summary(terminalreporter, config)
 
 
 __all__: list[str] = [

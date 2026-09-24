@@ -44,8 +44,8 @@ if TYPE_CHECKING:
     from .enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
     from .files import FlextTestsFiles, tf
     from .kube import FlextTestsKube
-    from .models import FlextTestsModels, m
-    from .protocols import FlextTestsProtocols, p
+    from .models import FlextTestsModels, FlextTestsModels as m
+    from .protocols import FlextTestsProtocols, FlextTestsProtocols as p
     from .pytest_bootstrap import install_local_packages
     from .tmatchers import FlextTestsMatchersUtilities, tm
     from .typings import FlextTestsTypes, t

@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_infra import p
+from flext_infra import FlextInfraProtocols
 
 from ._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
 from ._protocols.matchers import FlextTestsMatchersProtocolsMixin
@@ -18,7 +18,7 @@ from ._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
 from ._protocols.workspace_cleanup import FlextTestsWorkspaceCleanupProtocols
 
 
-class FlextTestsProtocols(p):
+class FlextTestsProtocols(FlextInfraProtocols):
     """Protocols for FLEXT tests - extends p."""
 
     class Tests(

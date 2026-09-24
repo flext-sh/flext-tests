@@ -289,6 +289,7 @@ class FlextTestsConstantsValidator:
         "flext-core",
         "flext-tests",
     )
+    ENFORCEMENT_PROJECT_PREFIX: ClassVar[str] = "flext-"
     VALIDATOR_EXCLUDE_PATTERNS: ClassVar[t.StrSequence] = (
         "**/.venv/**",
         "**/venv/**",
