@@ -114,7 +114,9 @@ class TestsFlextTestsPayload:
         children.clear()
         tm.that(payload.entries["value"] is child, eq=True)
         with pytest.raises(c.ValidationError, match="frozen"):
-            payload.entries = {}
+            # The test enforces pydantic's runtime frozen enforcement; the
+            # static read-only diagnostic is the very contract under test.
+            payload.entries = {}  # pyrefly: ignore[read-only]
 
     def test_binary_file_roundtrip_preserves_non_utf8_bytes(
         self, tmp_path: Path
