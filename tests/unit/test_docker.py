@@ -19,17 +19,14 @@ import pytest
 from flext_tests import FlextTestsDocker, tm
 from tests import c
 
-from ._docker_parts.builders import TestsFlextTestsDockerBuildersMixin
-from ._docker_parts.operations import TestsFlextTestsDockerOperationsMixin
-from ._docker_parts.state import TestsFlextTestsDockerStateMixin
-from ._docker_parts.targets import TestsFlextTestsDockerTargetsMixin
+from ._docker_parts import builders, operations, state, targets
 
 
 class TestsFlextTestsDocker(
-    TestsFlextTestsDockerStateMixin,
-    TestsFlextTestsDockerBuildersMixin,
-    TestsFlextTestsDockerOperationsMixin,
-    TestsFlextTestsDockerTargetsMixin,
+    state.TestsFlextTestsDockerStateMixin,
+    builders.TestsFlextTestsDockerBuildersMixin,
+    operations.TestsFlextTestsDockerOperationsMixin,
+    targets.TestsFlextTestsDockerTargetsMixin,
 ):
     """Behavioral contract of the Docker control facade (FlextTestsDocker)."""
 
