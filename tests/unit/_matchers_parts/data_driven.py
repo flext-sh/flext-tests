@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import cast
 
 import pytest
 
@@ -58,7 +57,7 @@ class TestsFlextTestsMatchersDataDrivenMixin:
         )
 
     def test_item_rules_reject_string_rule_container(self) -> None:
-        with pytest.raises(ValueError, match="Parameter validation failed"):
+        with pytest.raises(ValueError, match=r"for ThatParams\nitems"):
             tm.that(["alpha"], items="alpha")
 
     def test_that_with_attrs_match_data_driven_rules(self) -> None:
@@ -76,7 +75,7 @@ class TestsFlextTestsMatchersDataDrivenMixin:
 
         user = User()
         tm.that(
-            cast("t.JsonValue", user),
+            user,
             attrs_match={
                 "profile.name": {"eq": "Ada"},
                 "profile.level": {"gte": 1, "lte": 10},
@@ -87,7 +86,7 @@ class TestsFlextTestsMatchersDataDrivenMixin:
     def test_ok_with_composed_data_driven_validations(self) -> None:
         """Validate result payload with path extraction plus composed rules."""
 
-        def is_mapping(data: t.Tests.TestobjectSerializable) -> bool:
+        def is_mapping(data: t.Tests.NativeMatchValue) -> bool:
             return isinstance(data, Mapping)
 
         result = r[t.JsonMapping].ok({

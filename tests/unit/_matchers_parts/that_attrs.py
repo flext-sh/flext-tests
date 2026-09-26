@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import cast
+import pytest
 
 from flext_tests import tm
 from tests import p, r, t
@@ -22,7 +22,7 @@ class TestsFlextTestsMatchersThatAttrsMixin:
                 self.attr2 = "value2"
 
         obj = TestClass()
-        tm.that(cast("t.JsonValue", obj), attrs=["attr1", "attr2"])
+        tm.that(obj, attrs=["attr1", "attr2"])
 
     def test_that_with_methods_parameter(self) -> None:
         """Test tm.that() with methods parameter."""
@@ -37,7 +37,7 @@ class TestsFlextTestsMatchersThatAttrsMixin:
                 raise NotImplementedError(msg)
 
         obj = TestClass()
-        tm.that(cast("t.JsonValue", obj), methods=["method1", "method2"])
+        tm.that(obj, methods=["method1", "method2"])
 
     def test_that_with_attr_eq_tuple_parameter(self) -> None:
         """Test tm.that() with attr_eq tuple parameter."""
@@ -47,7 +47,7 @@ class TestsFlextTestsMatchersThatAttrsMixin:
                 self.attr = "value"
 
         obj = TestClass()
-        tm.that(cast("t.JsonValue", obj), attr_eq=("attr", "value"))
+        tm.that(obj, attr_eq=("attr", "value"))
 
     def test_that_with_attr_eq_mapping_parameter(self) -> None:
         """Test tm.that() with attr_eq mapping parameter."""
@@ -58,9 +58,7 @@ class TestsFlextTestsMatchersThatAttrsMixin:
                 self.attr2 = "value2"
 
         obj = TestClass()
-        tm.that(
-            cast("t.JsonValue", obj), attr_eq={"attr1": "value1", "attr2": "value2"}
-        )
+        tm.that(obj, attr_eq={"attr1": "value1", "attr2": "value2"})
 
     def test_that_with_ok_parameter(self) -> None:
         """Test tm.that() with ok parameter for r."""
@@ -79,9 +77,37 @@ class TestsFlextTestsMatchersThatAttrsMixin:
         }
         tm.that(data, deep={"user.name": "John"})
 
+    def test_that_with_deep_parameter_rejects_mismatch(self) -> None:
+        """A deep literal expectation fails when the value at the path differs."""
+        data: t.MappingKV[str, t.Tests.TestobjectSerializable] = {
+            "user": {"name": "John"}
+        }
+        with pytest.raises(AssertionError, match="Value mismatch"):
+            tm.that(data, deep={"user.name": "Jane"})
+
     def test_that_with_where_parameter(self) -> None:
         """Test tm.that() with where parameter."""
         tm.that(42, where=TestsFlextTestsMatchersPredicates.is_positive)
+
+    def test_that_where_predicate_receives_the_native_value(self) -> None:
+        """A predicate sees the value itself, so a falsy subject fails ``bool``."""
+        tm.that(True, where=bool)
+        with pytest.raises(AssertionError, match="Custom predicate failed"):
+            tm.that(False, where=bool)
+
+    def test_that_presence_checks_accept_any_runtime_object(self) -> None:
+        """none=/is_=/ne=None hold for objects outside the payload vocabulary."""
+
+        class Connection:
+            """A runtime handle with no payload representation."""
+
+        conn = Connection()
+        tm.that(conn, none=False)
+        tm.that(conn, ne=None)
+        tm.that(conn, none=False, is_=Connection)
+        tm.that(tm.ok(r[Connection].ok(conn), none=False) is conn, eq=True)
+        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+            tm.that(conn, none=True)
 
     def test_that_with_all_alias_parameter(self) -> None:
         """Test tm.that() with all alias parameter (accepts both all_ and all)."""

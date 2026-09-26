@@ -51,7 +51,7 @@ class FlextTestsMatchersTypeGuardsMixin:
     ) -> None:
         """Apply native equality then the canonical finite scalar guard."""
         native = FlextTestsPayloadUtilities.to_match_value(payload)
-        message = params.msg or f"Value {native!r} did not satisfy constraints"
+        message = params.msg or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=native)
         FlextTestsMatchersTypeGuardsMixin.prepare_eq_ne_payloads(
             payload, params.eq, params.ne, msg=params.msg, default_msg=message
         )

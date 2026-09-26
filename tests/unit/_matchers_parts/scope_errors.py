@@ -17,15 +17,10 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
     """Matcher scope and error tests."""
 
     def test_check_returns_chain(self) -> None:
-        """Test tm.check() returns Chain t.JsonValue."""
+        """tm.check() chains assertions over the result it was given."""
         result = r[int].ok(42)
         chain: m.Tests.Chain[int] = tm.check(result)
-        tm.that(chain, none=False)
-
-    def test_scope_basic_usage(self) -> None:
-        """Test tm.scope() basic usage."""
-        with tm.scope() as scope:
-            tm.that(scope, none=False)
+        tm.that(chain.result is result, eq=True)
 
     def test_scope_with_settings(self) -> None:
         """Test tm.scope() with settings parameter."""
@@ -55,20 +50,20 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
             tm.that(present_key in os.environ, eq=False)
 
     def test_ok_invalid_parameter_type(self) -> None:
-        """Test tm.ok() with invalid parameter type raises ValueError."""
+        """tm.ok() rejects an invalid criterion, naming the offending field."""
         result = r[int].ok(42)
-        with pytest.raises(ValueError, match="Parameter validation failed"):
+        with pytest.raises(ValueError, match=r"for OkParams\nlen"):
             tm.ok(result, len="invalid")
 
     def test_fail_invalid_parameter_type(self) -> None:
-        """Test tm.fail() with invalid parameter type raises ValueError."""
+        """tm.fail() rejects an invalid criterion, naming the offending field."""
         result: p.Result[str] = r[str].fail("error")
-        with pytest.raises(ValueError, match="Parameter validation failed"):
+        with pytest.raises(ValueError, match=r"for FailParams\ncode"):
             tm.fail(result, code=123)
 
     def test_that_invalid_parameter_type(self) -> None:
-        """Test tm.that() with invalid parameter type raises ValueError."""
-        with pytest.raises(ValueError, match="Parameter validation failed"):
+        """tm.that() rejects an invalid criterion, naming the offending field."""
+        with pytest.raises(ValueError, match=r"for ThatParams\nlen"):
             tm.that([1, 2, 3], len="invalid")
 
     def test_scope_invalid_parameter_type(self) -> None:

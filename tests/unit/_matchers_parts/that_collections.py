@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from flext_tests import tm
-from tests import c
+from tests import c, t
 
 from .predicates import TestsFlextTestsMatchersPredicates
 
@@ -14,8 +14,10 @@ class TestsFlextTestsMatchersThatCollectionsMixin:
     """Matcher that collection tests."""
 
     def test_that_with_eq_parameter(self) -> None:
-        """Test tm.that() with eq parameter."""
-        tm.that(42, eq=42)
+        """eq= accepts a computed equal value and rejects a different one."""
+        tm.that(sum((40, 2)), eq=42)
+        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+            tm.that(sum((40, 2)), eq=43)
 
     def test_that_with_ne_parameter(self) -> None:
         """Test tm.that() with ne parameter."""
@@ -55,7 +57,8 @@ class TestsFlextTestsMatchersThatCollectionsMixin:
 
     def test_that_eq_none_requires_none(self) -> None:
         """eq=None asserts the value is None instead of passing silently."""
-        tm.that(None, eq=None)
+        absent: t.StrMapping = {}
+        tm.that(absent.get("missing"), eq=None)
         with pytest.raises(AssertionError, match="did not satisfy constraints"):
             tm.that("x", eq=None)
 

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
+
 import pytest
 
 from flext_tests import tm
@@ -51,7 +53,7 @@ class TestsFlextTestsMatchersValidationMixin:
     def test_assert_settings_valid_zero_timeout(self) -> None:
         """Test tm.that() with zero timeout."""
         settings = {"service_type": "api", "environment": "test", "timeout": 0}
-        with pytest.raises(AssertionError, match="Assertion failed"):
+        with pytest.raises(AssertionError, match="Value 0 did not satisfy constraints"):
             tm.that(settings["timeout"], is_=int, gt=0)
 
     def test_ok_with_eq_parameter(self) -> None:
@@ -91,7 +93,7 @@ class TestsFlextTestsMatchersValidationMixin:
             {"services": ["api", {"workers": [1, 2]}]},
         )
         for value in values:
-            tm.that(value, eq=value)
+            tm.that(deepcopy(value), eq=value)
             # Bind the result so ok's payload typevar solves from the family
             # subscript instead of the outer matcher's contextual inference.
             result: p.Result[t.JsonValue] = r[t.JsonValue].ok(value)
