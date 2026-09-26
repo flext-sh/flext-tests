@@ -645,7 +645,7 @@ class FlextTestsMatchersThatMixin:
         | t.Tests.PayloadAtom
         | p.Tests.MatchPredicate
         | t.Tests.LengthSpec
-        | t.Infra.RegexPattern
+        | t.RegexPattern
         | type
         | t.VariadicTuple[type]
         | None,

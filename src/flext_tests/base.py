@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from typing import Self
 
@@ -52,17 +52,30 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
     @classmethod
     @contextmanager
     def isolated_test_runtime(
-        cls, **overrides: t.SettingsOverride | None
+        cls,
+        build: Callable[[], Self] | None = None,
+        **overrides: t.SettingsOverride | None,
     ) -> Generator[Self]:
-        """Yield one isolated service/settings/container cycle for a test body."""
+        """Yield one isolated service/settings/container cycle for a test body.
+
+        A port-bearing service has no ``fetch_global()`` (ADR-019 §4: a required
+        ``t.Port`` field fails validation with no arguments); pass ``build`` to
+        construct it explicitly with its real adapters. ``overrides`` is only
+        valid for a port-free service resolved through ``with_test_settings``.
+        """
         settings_type = cls.test_settings_type()
         FlextContainer.reset_for_testing()
         settings_type.reset_for_testing()
         cls.reset_for_testing()
         try:
-            yield (
-                cls.with_test_settings(**overrides) if overrides else cls.fetch_global()
-            )
+            if build is not None:
+                yield build()
+            else:
+                yield (
+                    cls.with_test_settings(**overrides)
+                    if overrides
+                    else cls.fetch_global()
+                )
         finally:
             cls.reset_for_testing()
             settings_type.reset_for_testing()

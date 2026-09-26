@@ -13,6 +13,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import Protocol, runtime_checkable
+
 from flext_tests import FlextTestsProtocols
 
 
@@ -31,6 +33,13 @@ class TestsFlextTestsProtocols(FlextTestsProtocols):
 
     class Tests(FlextTestsProtocols.Tests):
         """flext-tests test protocols namespace."""
+
+        @runtime_checkable
+        class Echo(FlextTestsProtocols.Base, Protocol):
+            """Dependency port of the S6 typed-service-base tests: an echo capability."""
+
+            def echo(self, value: str) -> str:
+                """Return the transformed echo value."""
 
 
 p = TestsFlextTestsProtocols
