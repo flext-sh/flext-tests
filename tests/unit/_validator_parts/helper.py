@@ -21,4 +21,4 @@ class TestsFlextTestsValidatorTestFilesMixin:
         return file_path
 
 
-__all__: list[str] = ["TestsFlextTestsValidatorTestFilesMixin"]
+
