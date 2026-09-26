@@ -43,9 +43,13 @@ def _bind_runtime_aliases(
     package_root = module.__package__ or module.__name__
     package_name = package_root.split(".", maxsplit=1)[0]
     tests_package = importlib.import_module(package_name)
-    service_type = getattr(tests_package, "s", s)
+    service_type = tests_package.s if hasattr(tests_package, "s") else s
     if not isinstance(service_type, type) or not issubclass(service_type, s):
-        service_type = s
+        msg = (
+            f"{package_name} declares 's' as {service_type!r}, "
+            "which is not a FlextTestsServiceBase subclass"
+        )
+        raise TypeError(msg)
     service = service_type.fetch_global()
     if instance is None:
         return
