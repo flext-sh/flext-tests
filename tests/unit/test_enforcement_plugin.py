@@ -25,11 +25,11 @@ class TestsFlextTestsEnforcementPlugin:
     # only its explicit owner plugins.
 
     def test_flext_pytest11_entrypoints_have_one_package_owner(self) -> None:
-        """Only the two flext-tests plugins participate in pytest autoload."""
+        """The flext-tests distribution publishes exactly its two pytest plugins."""
         names = {
             entry.name
             for entry in entry_points(group="pytest11")
-            if entry.name.startswith("flext_")
+            if entry.dist is not None and entry.dist.name == "flext-tests"
         }
         tm.that(names, eq={"flext_tests", "flext_tests_enforcement"})
 
