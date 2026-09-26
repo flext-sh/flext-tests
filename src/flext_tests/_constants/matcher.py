@@ -86,4 +86,4 @@ class FlextTestsConstantsMatcher:
         "Cleanup function failed in scope: {error}"
     )
     EMAIL_PATTERN: ClassVar[str] = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
-    EMAIL_PATTERN_RE: ClassVar[t.Infra.RegexPattern] = re.compile(EMAIL_PATTERN)
+    EMAIL_PATTERN_RE: ClassVar[t.RegexPattern] = re.compile(EMAIL_PATTERN)

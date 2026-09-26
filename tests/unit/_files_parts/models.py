@@ -6,9 +6,3 @@ for the parts package.
 """
 
 from __future__ import annotations
-
-from tests import m
-
-from .file_models import TestsFlextTestsFilesModelsMixin
-
-__all__: list[str] = ["TestsFlextTestsFilesModelsMixin", "m"]
