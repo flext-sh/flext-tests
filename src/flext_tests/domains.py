@@ -6,7 +6,7 @@ from pathlib import Path
 
 from flext_cli import u as cli_u
 
-from flext_tests import m, p, r, t
+from flext_tests import m, p, t
 
 
 class FlextTestsDomains:
@@ -183,21 +183,6 @@ class FlextTestsDomains:
                 description="Query handler failure",
             ),
         ]
-
-    @staticmethod
-    def create_result_ok[ValueT](value: ValueT) -> p.Result[ValueT]:
-        """Create a generic successful result for test flows."""
-        return r[ValueT].ok(value)
-
-    @staticmethod
-    def create_result_failure(
-        message: str,
-        *,
-        error_code: str = "TEST_ERROR",
-        error_data: t.JsonMapping | t.ConfigModelInput | None = None,
-    ) -> p.Result[None]:
-        """Create a generic failed result for test flows."""
-        return r[None].fail(message, error_code=error_code, error_data=error_data)
 
     @staticmethod
     def valid_email_cases() -> t.SequenceOf[tuple[str, bool]]:

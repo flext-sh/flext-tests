@@ -47,50 +47,6 @@ class TestsFlextTestsDomains:
             )
         return tmp_path
 
-    # --- result builders --------------------------------------------------
-
-    def test_create_result_ok_yields_success_carrying_value(self) -> None:
-        """A generic OK result reports success and unwraps to the input value."""
-        payload: t.StrMapping = {"foo": "bar"}
-
-        result = FlextTestsDomains.create_result_ok(payload)
-
-        tm.that(tm.ok(result), eq=payload)
-
-    def test_create_result_ok_is_chainable_as_result_monad(self) -> None:
-        """The OK builder returns a real ``r[T]`` that supports ``.map``."""
-
-        def bracket(value: str) -> str:
-            return f"[{value}]"
-
-        result = FlextTestsDomains.create_result_ok("payload")
-
-        tm.that(result.map(bracket).unwrap(), eq="[payload]")
-
-    def test_create_result_failure_carries_error_message_code_and_data(self) -> None:
-        """A generic failure exposes message, code and structured data."""
-        result = FlextTestsDomains.create_result_failure(
-            "failed", error_code="GENERIC_ERROR", error_data={"detail": "reason"}
-        )
-
-        error_text = tm.fail(
-            result, has="failed", code="GENERIC_ERROR", data={"detail": "reason"}
-        )
-        tm.that(error_text, eq="failed")
-
-    def test_create_result_failure_defaults_to_test_error_code(self) -> None:
-        """Omitting ``error_code`` yields the documented default code."""
-        result = FlextTestsDomains.create_result_failure("boom")
-
-        tm.fail(result, has="boom", code="TEST_ERROR")
-
-    def test_failure_result_does_not_expose_a_value(self) -> None:
-        """A failed result is observably not a success."""
-        result = FlextTestsDomains.create_result_failure("nope")
-
-        tm.fail(result)
-        tm.fail(result)
-
     # --- case-table data helpers -----------------------------------------
 
     def test_valid_email_cases_pairs_input_with_expected_validity(self) -> None:
