@@ -19,6 +19,3 @@ class TestsFlextTestsValidatorTestFilesMixin:
         file_path = tmp_path / name
         file_path.write_text(source, encoding="utf-8")
         return file_path
-
-
-

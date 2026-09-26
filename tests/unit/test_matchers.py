@@ -23,8 +23,6 @@ from ._matchers_parts import (
 )
 
 
-
-
 class TestsFlextTestsMatchers(
     results.TestsFlextTestsMatchersResultsMixin,
     validation.TestsFlextTestsMatchersValidationMixin,

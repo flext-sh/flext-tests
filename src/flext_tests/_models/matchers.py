@@ -174,8 +174,7 @@ class FlextTestsMatchersModelsMixin:
             None
         )
         match: Annotated[
-            t.RegexPattern | None,
-            u.Field(description="Required regular expression."),
+            t.RegexPattern | None, u.Field(description="Required regular expression.")
         ] = None
         len: Annotated[
             t.Tests.LengthSpec | None, u.Field(description="Required length.")
@@ -355,8 +354,7 @@ class FlextTestsMatchersModelsMixin:
             None
         )
         match: Annotated[
-            t.RegexPattern | None,
-            u.Field(description="Error matches compiled regex."),
+            t.RegexPattern | None, u.Field(description="Error matches compiled regex.")
         ] = None
         code: Annotated[str | None, u.Field(description="Error code equals.")] = None
         code_has: Annotated[
@@ -436,9 +434,7 @@ class FlextTestsMatchersModelsMixin:
         ] = None
         starts: Annotated[str | None, u.Field(description="Prefix.")] = None
         ends: Annotated[str | None, u.Field(description="Suffix.")] = None
-        match: Annotated[t.RegexPattern | None, u.Field(description="Regex.")] = (
-            None
-        )
+        match: Annotated[t.RegexPattern | None, u.Field(description="Regex.")] = None
         first: Annotated[
             FlextTestsBaseModelsMixin.Payload | None, u.Field(description="First item.")
         ] = None

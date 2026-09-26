@@ -85,6 +85,3 @@ class TestsFlextTestsPublicFacade:
         tm.that(requirements[name].marker, eq=None)
         import_module(module_name)
         tm.that(module_name in sys.modules, eq=True)
-
-
-
