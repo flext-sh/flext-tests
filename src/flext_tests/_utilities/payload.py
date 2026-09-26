@@ -185,32 +185,45 @@ class FlextTestsPayloadUtilities:
         })
 
     @staticmethod
+    def path_node(
+        subject: p.Tests.Payload, path: str, *, path_sep: str = "."
+    ) -> p.Tests.Payload | None:
+        """Walk an owned payload by path; ``None`` marks an absent path."""
+        node = subject
+        for segment in path.split(path_sep):
+            if node.kind == "mapping":
+                if segment not in node.entries:
+                    return None
+                node = node.entries[segment]
+            elif node.kind != "atom":
+                if not segment.lstrip("-").isdigit() or not (
+                    -len(node.items) <= int(segment) < len(node.items)
+                ):
+                    return None
+                node = node.items[int(segment)]
+            elif hasattr(node.atom, segment):
+                node = FlextTestsPayloadUtilities.to_payload(
+                    getattr(node.atom, segment)
+                )
+            else:
+                return None
+        return node
+
+    @staticmethod
     def deep_match(
-        obj: m.BaseModel | t.MappingKV[str, t.Tests.TestobjectSerializable],
-        spec: t.Tests.DeepSpec,
-        *,
-        path_sep: str = ".",
+        subject: p.Tests.Payload, spec: t.Tests.DeepSpec, *, path_sep: str = "."
     ) -> m.Tests.DeepMatchResult:
-        """Match t.JsonValue against deep specification.
+        """Match an owned payload tree against a path -> expectation spec.
 
-        Uses u.extract() for path extraction.
-        Supports unlimited nesting depth via dot notation paths.
-
-        Args:
-            obj: Object to match against (dict or Pydantic model)
-            spec: DeepSpec mapping of path -> expected value or predicate
-            path_sep: Path separator (default: ".")
-
-        Returns:
-            DeepMatchResult with match status and details
-
+        Literal expectations compare native projections; predicates receive the
+        native value found at the path.
         """
-        source_obj = FlextTestsPayloadUtilities.to_config_map(obj)
-        to_payload = FlextTestsPayloadUtilities.to_payload
-        object_payload = to_payload(obj)
+        project = FlextTestsPayloadUtilities.to_match_value
         for path, expected in spec.items():
-            result = u.extract(source_obj, path, separator=path_sep)
-            if result.failure:
+            node = FlextTestsPayloadUtilities.path_node(
+                subject, path, path_sep=path_sep
+            )
+            if node is None:
                 return m.Tests.DeepMatchResult(
                     path=path,
                     expected=expected,
@@ -218,29 +231,23 @@ class FlextTestsPayloadUtilities:
                     matched=False,
                     reason=f"Path not found: {path}",
                 )
-            actual = result.value
-            actual_payload = to_payload(actual)
-            if callable(expected):
-                if not expected(actual_payload):
+            if isinstance(expected, m.Tests.Payload):
+                if project(node) != project(expected):
                     return m.Tests.DeepMatchResult(
                         path=path,
-                        expected="<predicate>",
-                        actual=actual_payload,
+                        expected=expected,
+                        actual=node,
                         matched=False,
-                        reason="Predicate failed",
+                        reason="Value mismatch",
                     )
-            elif actual != expected:
+            elif not expected(project(node)):
                 return m.Tests.DeepMatchResult(
                     path=path,
-                    expected=expected,
-                    actual=actual_payload,
+                    expected="<predicate>",
+                    actual=node,
                     matched=False,
-                    reason="Value mismatch",
+                    reason="Predicate failed",
                 )
         return m.Tests.DeepMatchResult(
-            path="",
-            expected=object_payload,
-            actual=object_payload,
-            matched=True,
-            reason="",
+            path="", expected=subject, actual=subject, matched=True, reason=""
         )

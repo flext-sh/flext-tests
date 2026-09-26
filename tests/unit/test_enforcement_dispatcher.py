@@ -157,8 +157,13 @@ class TestsFlextTestsEnforcementDispatcher:
     def test_plugin_registers_flext_enforce_cli_options(
         self, pytester: pytest.Pytester
     ) -> None:
-        """The installed pytest11 plugin publishes the enforcement options."""
-        result = pytester.runpytest("--help")
+        """The installed pytest11 plugin publishes the enforcement options.
+
+        A subprocess sandbox isolates the run from this session's process-global
+        warning filters, so ``--help`` reflects a cold entry-point load.
+        """
+        pytester.makeini("[pytest]\n")
+        result = pytester.runpytest_subprocess("--help")
         result.stdout.fnmatch_lines([
             "*--flext-enforce *",
             "*--no-flext-enforce*",

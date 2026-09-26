@@ -19,7 +19,10 @@ type MatchExpectedValue = (
     FlextTestsBaseModelsMixin.Payload | ApproxBase | TypeAliasType | None
 )
 type DeepExpected = (
-    FlextTestsBaseModelsMixin.Payload | Callable[[p.Tests.Payload], bool] | str | None
+    FlextTestsBaseModelsMixin.Payload
+    | Callable[[t.Tests.NativeMatchValue], bool]
+    | str
+    | None
 )
 
 
@@ -96,7 +99,8 @@ class FlextTestsMatchersModelsMixin:
         ) -> (
             Mapping[
                 str,
-                FlextTestsBaseModelsMixin.Payload | Callable[[p.Tests.Payload], bool],
+                FlextTestsBaseModelsMixin.Payload
+                | Callable[[t.Tests.NativeMatchValue], bool],
             ]
             | None
         ):
@@ -177,7 +181,7 @@ class FlextTestsMatchersModelsMixin:
             t.Tests.LengthSpec | None, u.Field(description="Required length.")
         ] = None
         where: Annotated[
-            Callable[[p.Tests.Payload], bool] | None,
+            Callable[[t.Tests.NativeMatchValue], bool] | None,
             u.Field(description="Predicate applied to the subject."),
         ] = None
         msg: Annotated[
@@ -281,7 +285,8 @@ class FlextTestsMatchersModelsMixin:
         deep: Annotated[
             Mapping[
                 str,
-                FlextTestsBaseModelsMixin.Payload | Callable[[p.Tests.Payload], bool],
+                FlextTestsBaseModelsMixin.Payload
+                | Callable[[t.Tests.NativeMatchValue], bool],
             ]
             | None,
             u.Field(description="Deep structural matching."),
@@ -305,7 +310,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Attribute assertions by attribute path."),
         ] = None
         where: Annotated[
-            Callable[[p.Tests.Payload], bool] | None,
+            Callable[[t.Tests.NativeMatchValue], bool] | None,
             u.Field(description="Custom predicate function."),
         ] = None
         msg: Annotated[str | None, u.Field(description="Custom error message.")] = None
@@ -362,6 +367,14 @@ class FlextTestsMatchersModelsMixin:
             Mapping[str, FlextTestsBaseModelsMixin.Payload] | None,
             u.Field(description="Error data contains key-value pairs."),
         ] = None
+
+        @u.field_validator("data", mode="before")
+        @classmethod
+        def own_data(
+            cls, value: p.AttributeProbe
+        ) -> Mapping[str, FlextTestsBaseModelsMixin.Payload] | None:
+            """Own expected error data through the shared mapping owner."""
+            return FlextTestsMatchersModelsMixin.PayloadParams.own_mapping(value)
 
     class ThatParams(PayloadParams):
         """Generic matcher parameters for value assertions."""
@@ -433,15 +446,17 @@ class FlextTestsMatchersModelsMixin:
             FlextTestsBaseModelsMixin.Payload | None, u.Field(description="Last item.")
         ] = None
         all_: Annotated[
-            type | Callable[[p.Tests.Payload], bool] | None,
+            type | Callable[[t.Tests.NativeMatchValue], bool] | None,
             u.Field(validation_alias=t.AliasChoices("all_", "all"), description="All."),
         ] = None
         any_: Annotated[
-            type | Callable[[p.Tests.Payload], bool] | None,
+            type | Callable[[t.Tests.NativeMatchValue], bool] | None,
             u.Field(validation_alias=t.AliasChoices("any_", "any"), description="Any."),
         ] = None
         sorted: Annotated[
-            bool | Callable[[p.Tests.Payload], p.Tests.Payload] | None,
+            bool
+            | Callable[[t.Tests.NativeMatchValue], t.Tests.NativeMatchValue]
+            | None,
             u.Field(description="Sort key."),
         ] = None
         unique: Annotated[bool | None, u.Field(description="Unique.")] = None
@@ -473,7 +488,8 @@ class FlextTestsMatchersModelsMixin:
         deep: Annotated[
             Mapping[
                 str,
-                FlextTestsBaseModelsMixin.Payload | Callable[[p.Tests.Payload], bool],
+                FlextTestsBaseModelsMixin.Payload
+                | Callable[[t.Tests.NativeMatchValue], bool],
             ]
             | None,
             u.Field(description="Deep spec."),
@@ -493,7 +509,8 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Attr rules."),
         ] = None
         where: Annotated[
-            Callable[[p.Tests.Payload], bool] | None, u.Field(description="Predicate.")
+            Callable[[t.Tests.NativeMatchValue], bool] | None,
+            u.Field(description="Predicate."),
         ] = None
 
         @u.field_validator("paths", "items", "attrs_match", mode="before")

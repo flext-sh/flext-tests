@@ -28,6 +28,20 @@ class FlextTestsConstantsMatcher:
         Path,
     )
 
+    MATCHER_SCALAR_CRITERIA: ClassVar[t.VariadicTuple[str]] = (
+        "eq",
+        "ne",
+        "none",
+        "empty",
+        "gt",
+        "gte",
+        "lt",
+        "lte",
+        "starts",
+        "ends",
+        "match",
+    )
+
     ERR_NOT_STARTSWITH: ClassVar[str] = "Expected '{text}' to start with '{prefix}'"
     ERR_NOT_ENDSWITH: ClassVar[str] = "Expected '{text}' to end with '{suffix}'"
     ERR_NOT_MATCHES: ClassVar[str] = (
@@ -46,6 +60,9 @@ class FlextTestsConstantsMatcher:
     )
     ERR_DEEP_PATH_FAILED: ClassVar[str] = "Deep match failed at path '{path}': {reason}"
     ERR_PREDICATE_FAILED: ClassVar[str] = "Custom predicate failed for value: {value!r}"
+    ERR_CONSTRAINTS_FAILED: ClassVar[str] = (
+        "Value {value!r} did not satisfy constraints"
+    )
     ERR_ALL_ITEMS_FAILED: ClassVar[str] = "Not all items match: failed at index {index}"
     ERR_ANY_ITEMS_FAILED: ClassVar[str] = "No items match the predicate"
     ERR_KEYS_MISSING: ClassVar[str] = "Missing required keys: {keys}"

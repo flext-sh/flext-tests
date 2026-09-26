@@ -160,19 +160,7 @@ class FlextTestsMatchersResultMixin:
                 """Return whether scalar guard validation is requested."""
                 return any(
                     getattr(params, name) is not None
-                    for name in (
-                        "eq",
-                        "ne",
-                        "none",
-                        "empty",
-                        "gt",
-                        "gte",
-                        "lt",
-                        "lte",
-                        "starts",
-                        "ends",
-                        "match",
-                    )
+                    for name in c.Tests.MATCHER_SCALAR_CRITERIA
                 )
 
             @staticmethod
@@ -195,8 +183,28 @@ class FlextTestsMatchersResultMixin:
             def ok_validate_scalar[TResult](
                 result_value: TResult, params: m.Tests.OkParams
             ) -> TResult:
-                """Validate native equality and finite scalar constraints."""
-                if FlextTestsMatchersResultMixin.Tests.Matchers.ok_has_scalar_validation(
+                """Validate native equality and finite scalar constraints.
+
+                A presence-only ``none`` check reads the original value, so it
+                holds for any runtime object without a payload conversion.
+                """
+                presence_only = params.none is not None and all(
+                    getattr(params, name) is None
+                    for name in c.Tests.MATCHER_SCALAR_CRITERIA
+                    if name != "none"
+                )
+                if presence_only:
+                    native = (
+                        FlextTestsPayloadUtilities.to_match_value(result_value)
+                        if isinstance(result_value, m.Tests.Payload)
+                        else result_value
+                    )
+                    if (native is None) is not params.none:
+                        raise AssertionError(
+                            params.msg
+                            or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=native)
+                        )
+                elif FlextTestsMatchersResultMixin.Tests.Matchers.ok_has_scalar_validation(
                     params
                 ):
                     FlextTestsMatchersTypeGuardsMixin.assert_scalar_match(
@@ -328,11 +336,13 @@ class FlextTestsMatchersResultMixin:
                     FlextTestsMatchersRulesMixin.apply_attribute_rules(
                         result.value, params.attrs_match, inherited_msg=params.msg
                     )
-                if params.where is not None and (not params.where(result_payload)):
-                    raise AssertionError(
-                        params.msg
-                        or c.Tests.ERR_PREDICATE_FAILED.format(value=result_payload)
-                    )
+                if params.where is not None:
+                    native = FlextTestsPayloadUtilities.to_match_value(result_payload)
+                    if not params.where(native):
+                        raise AssertionError(
+                            params.msg
+                            or c.Tests.ERR_PREDICATE_FAILED.format(value=native)
+                        )
 
             @staticmethod
             def ok_validate_deep[TResult](
