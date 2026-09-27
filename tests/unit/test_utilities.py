@@ -47,8 +47,12 @@ class TestsFlextTestsUtilities:
         """A failing holder releases its native lock for the next holder."""
         lock_path = tmp_path / "shared.lock"
 
-        with pytest.raises(ValueError), u.Tests.FileLock(lock_path):
-            raise ValueError
+        body_failure = ValueError("body failed")
+        with (
+            pytest.raises(ValueError, match=str(body_failure)),
+            u.Tests.FileLock(lock_path),
+        ):
+            raise body_failure
 
         with u.Tests.FileLock(lock_path):
             tm.that(lock_path.is_file(), eq=True)
