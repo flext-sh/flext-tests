@@ -363,6 +363,14 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Error data contains key-value pairs."),
         ] = None
 
+        @u.field_validator("data", mode="before")
+        @classmethod
+        def own_data(
+            cls, value: p.AttributeProbe
+        ) -> Mapping[str, FlextTestsBaseModelsMixin.Payload] | None:
+            """Own failure data while retaining textual error constraints."""
+            return FlextTestsMatchersModelsMixin.PayloadParams.own_mapping(value)
+
     class ThatParams(PayloadParams):
         """Generic matcher parameters for value assertions."""
 

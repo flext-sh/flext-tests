@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 from typing import cast
 
 import pytest
 
 from flext_tests import r, tm
-from tests import c, t
+from tests import c, p, t
 
 
 class TestsFlextTestsMatchersDataDrivenMixin:
@@ -58,8 +57,9 @@ class TestsFlextTestsMatchersDataDrivenMixin:
         )
 
     def test_item_rules_reject_string_rule_container(self) -> None:
-        with pytest.raises(ValueError, match="Parameter validation failed"):
+        with pytest.raises(c.ValidationError) as error:
             tm.that(["alpha"], items="alpha")
+        tm.that({item["loc"][0] for item in error.value.errors()}, eq={"items"})
 
     def test_that_with_attrs_match_data_driven_rules(self) -> None:
         """Validate nested attributes using one declarative attrs_match spec."""
@@ -87,8 +87,8 @@ class TestsFlextTestsMatchersDataDrivenMixin:
     def test_ok_with_composed_data_driven_validations(self) -> None:
         """Validate result payload with path extraction plus composed rules."""
 
-        def is_mapping(data: t.Tests.TestobjectSerializable) -> bool:
-            return isinstance(data, Mapping)
+        def is_mapping(data: p.Tests.Payload) -> bool:
+            return data.kind == "mapping"
 
         result = r[t.JsonMapping].ok({
             "meta": {"version": "v1", "count": 3},

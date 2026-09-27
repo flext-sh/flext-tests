@@ -18,9 +18,18 @@ class FlextTestsMatchersTypeGuardsMixin:
 
     @staticmethod
     def matches_runtime_type(
-        value: p.AttributeProbe, expected_type: type | tuple[type, ...]
+        value: p.AttributeProbe,
+        expected_type: type | tuple[type, ...],
+        *,
+        owned_payload: bool = False,
     ) -> bool:
-        """Check the original subject rather than its payload envelope."""
+        """Check original subjects or explicitly owned internal rule nodes."""
+        if owned_payload and isinstance(value, m.Tests.Payload):
+            if value.kind == "atom":
+                return isinstance(value.atom, expected_type)
+            return issubclass(
+                c.Tests.PAYLOAD_COLLECTION_TYPES[value.kind], expected_type
+            )
         return isinstance(value, expected_type)
 
     @staticmethod

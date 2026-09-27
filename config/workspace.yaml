@@ -22,4 +22,33 @@ repository:
   package: true
   editable: true
   read_only: false
+project:
+  package_name: flext_tests
+  class_stem: FlextTests
+  namespace: Tests
+  constant_name: flext-tests
+  namespace_attribute: tests
+  alias: tests
+  environment_prefix: FLEXT_TESTS_
+  description: >-
+    FLEXT Test Infrastructure - Shared test utilities, builders, factories,
+    and validation for the FLEXT ecosystem
+  license: MIT
+  author_name: FLEXT Team
+  author_email: team@flext.sh
+  upstream: flext_cli
+  homepage: https://github.com/flext-sh/flext-tests
+  documentation: https://github.com/flext-sh/flext-tests/blob/main/README.md
+  repository_root_rel: .
+  year: 2026
+  runtime_dependency_overlay:
+    - hypothesis
+    - pytest-asyncio
+    - pytest-benchmark
+    - pytest-cov
+    - pytest-markdown-docs
+    - pytest-randomly>=4.1.0
+    - pytest-reportlog
+    - pytest-testmon>=2.2.0
+    - pytest-xdist
 members: []

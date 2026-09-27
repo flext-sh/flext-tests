@@ -9,6 +9,7 @@ from __future__ import annotations
 import re
 from datetime import datetime
 from pathlib import Path
+from types import MappingProxyType
 from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
@@ -17,6 +18,14 @@ if TYPE_CHECKING:
 
 class FlextTestsConstantsMatcher:
     """Matcher constants mixin for test assertions."""
+
+    PAYLOAD_COLLECTION_TYPES: ClassVar[t.MappingKV[str, type]] = MappingProxyType({
+        "list": list,
+        "tuple": tuple,
+        "set": set,
+        "frozenset": frozenset,
+        "mapping": dict,
+    })
 
     MATCHER_GUARD_EQ_TYPES: ClassVar[t.VariadicTuple[type]] = (
         str,

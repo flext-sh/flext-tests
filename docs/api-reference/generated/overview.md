@@ -20,12 +20,13 @@
 - Project class: `test`
 - Keywords: `builders`, `factories`, `flext`, `test-infrastructure`, `testing`
 - Main facades: `FlextTests`, `FlextTestsCase`, `FlextTestsCli`, `FlextTestsConfig`,
-  `FlextTestsConstants`, `FlextTestsDocker`, `FlextTestsDomains`, `FlextTestsFiles` (+10
-  more)
+  `FlextTestsConstants`, `FlextTestsDocker`, `FlextTestsDomains`,
+  `FlextTestsEnforcementCollector` (+14 more)
 - Alias exports: `c`, `d`, `e`, `h`, `m`, `p`, `r`, `s`, `t`, `u`, `x`
 - Public symbol exports: `SLOW_TIMEOUT_INI_OPTION`, `FlextTests`, `FlextTestsCase`,
   `FlextTestsCli`, `FlextTestsConfig`, `FlextTestsConstants`, `FlextTestsDocker`,
-  `FlextTestsDomains`, `FlextTestsFiles`, `FlextTestsFixturesDSLMixin` (+17 more)
+  `FlextTestsDomains`, `FlextTestsEnforcementCollector`, `FlextTestsEnforcementItem`
+  (+25 more)
 - Exported module shortcuts: `api`, `services`
 - Generated module pages: `19`
 

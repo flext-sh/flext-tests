@@ -185,32 +185,42 @@ class FlextTestsPayloadUtilities:
         })
 
     @staticmethod
+    def extract_path_value(
+        subject: p.Tests.Payload, path: str, *, path_sep: str = "."
+    ) -> p.Tests.Payload | None:
+        """Read an owned node, preserving native leaves and absent paths."""
+        node = subject
+        for segment in path.split(path_sep):
+            if node.kind == "mapping":
+                if segment not in node.entries:
+                    return None
+                node = node.entries[segment]
+            elif node.kind != "atom":
+                index = int(segment)
+                if not -len(node.items) <= index < len(node.items):
+                    return None
+                node = node.items[index]
+            else:
+                if not hasattr(node.atom, segment):
+                    return None
+                node = FlextTestsPayloadUtilities.to_payload(
+                    getattr(node.atom, segment)
+                )
+        return node
+
+    @staticmethod
     def deep_match(
-        obj: m.BaseModel | t.MappingKV[str, t.Tests.TestobjectSerializable],
-        spec: t.Tests.DeepSpec,
-        *,
-        path_sep: str = ".",
+        obj: p.AttributeProbe, spec: t.Tests.DeepSpec, *, path_sep: str = "."
     ) -> m.Tests.DeepMatchResult:
-        """Match t.JsonValue against deep specification.
-
-        Uses u.extract() for path extraction.
-        Supports unlimited nesting depth via dot notation paths.
-
-        Args:
-            obj: Object to match against (dict or Pydantic model)
-            spec: DeepSpec mapping of path -> expected value or predicate
-            path_sep: Path separator (default: ".")
-
-        Returns:
-            DeepMatchResult with match status and details
-
-        """
-        source_obj = FlextTestsPayloadUtilities.to_config_map(obj)
+        """Compare native paths and return a typed result for absent values."""
         to_payload = FlextTestsPayloadUtilities.to_payload
+        to_match_value = FlextTestsPayloadUtilities.to_match_value
         object_payload = to_payload(obj)
         for path, expected in spec.items():
-            result = u.extract(source_obj, path, separator=path_sep)
-            if result.failure:
+            actual = FlextTestsPayloadUtilities.extract_path_value(
+                object_payload, path, path_sep=path_sep
+            )
+            if actual is None:
                 return m.Tests.DeepMatchResult(
                     path=path,
                     expected=expected,
@@ -218,7 +228,6 @@ class FlextTestsPayloadUtilities:
                     matched=False,
                     reason=f"Path not found: {path}",
                 )
-            actual = result.value
             actual_payload = to_payload(actual)
             if callable(expected):
                 if not expected(actual_payload):
@@ -229,7 +238,7 @@ class FlextTestsPayloadUtilities:
                         matched=False,
                         reason="Predicate failed",
                     )
-            elif actual != expected:
+            elif to_match_value(actual_payload) != to_match_value(expected):
                 return m.Tests.DeepMatchResult(
                     path=path,
                     expected=expected,

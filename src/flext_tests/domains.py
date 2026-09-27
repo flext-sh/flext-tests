@@ -195,9 +195,9 @@ class FlextTestsDomains:
         *,
         error_code: str = "TEST_ERROR",
         error_data: t.JsonMapping | t.ConfigModelInput | None = None,
-    ) -> p.Result[None]:
+    ) -> p.Result[bool]:
         """Create a generic failed result for test flows."""
-        return r[None].fail(message, error_code=error_code, error_data=error_data)
+        return r[bool].fail(message, error_code=error_code, error_data=error_data)
 
     @staticmethod
     def valid_email_cases() -> t.SequenceOf[tuple[str, bool]]:

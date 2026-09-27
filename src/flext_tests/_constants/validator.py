@@ -139,6 +139,34 @@ class FlextTestsConstantsValidator:
         "HIGH",
         "Forbidden Any annotation in markdown code block",
     )
+    VALIDATOR_RULE_IMPORT_UNREADABLE: ClassVar[t.StrPair] = (
+        "HIGH",
+        "Cannot read file for import validation",
+    )
+    VALIDATOR_RULE_TYPE_UNREADABLE: ClassVar[t.StrPair] = (
+        "HIGH",
+        "Cannot read file for type validation",
+    )
+    VALIDATOR_RULE_TEST_UNREADABLE: ClassVar[t.StrPair] = (
+        "HIGH",
+        "Cannot read file for test validation",
+    )
+    VALIDATOR_RULE_CONFIG_UNREADABLE: ClassVar[t.StrPair] = (
+        "HIGH",
+        "Cannot read file for configuration validation",
+    )
+    VALIDATOR_RULE_BYPASS_UNREADABLE: ClassVar[t.StrPair] = (
+        "HIGH",
+        "Cannot read file for bypass validation",
+    )
+    VALIDATOR_RULE_LAYER_UNREADABLE: ClassVar[t.StrPair] = (
+        "HIGH",
+        "Cannot read file for layer validation",
+    )
+    VALIDATOR_RULE_MD_UNREADABLE: ClassVar[t.StrPair] = (
+        "HIGH",
+        "Cannot read file for markdown validation",
+    )
 
     VALIDATOR_MSG_LAYER_VIOLATION: ClassVar[str] = (
         "'{current}' L{current_level} -> '{imported}' L{imported_level}"

@@ -150,9 +150,11 @@ class FlextTestsMatchersResultMixin:
                     if isinstance(params.path, str)
                     else ".".join(params.path)
                 )
-                payload = FlextTestsMatchersRulesMixin.extract_path_value(
+                payload = FlextTestsPayloadUtilities.extract_path_value(
                     FlextTestsPayloadUtilities.to_payload(result_value), path
                 )
+                if payload is None:
+                    raise AssertionError(params.msg or f"Path not found: {path}")
                 return payload, payload
 
             @staticmethod

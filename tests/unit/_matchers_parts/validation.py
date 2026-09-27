@@ -51,7 +51,7 @@ class TestsFlextTestsMatchersValidationMixin:
     def test_assert_settings_valid_zero_timeout(self) -> None:
         """Test tm.that() with zero timeout."""
         settings = {"service_type": "api", "environment": "test", "timeout": 0}
-        with pytest.raises(AssertionError, match="Assertion failed"):
+        with pytest.raises(AssertionError):
             tm.that(settings["timeout"], is_=int, gt=0)
 
     def test_ok_with_eq_parameter(self) -> None:

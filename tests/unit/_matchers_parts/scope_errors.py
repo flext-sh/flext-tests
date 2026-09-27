@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import r, tm
+from flext_tests import c, r, tm
 
 if TYPE_CHECKING:
     from tests import m, p
@@ -55,26 +55,27 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
             tm.that(present_key in os.environ, eq=False)
 
     def test_ok_invalid_parameter_type(self) -> None:
-        """Test tm.ok() with invalid parameter type raises ValueError."""
+        """Invalid length preserves Pydantic's structured validation error."""
         result = r[int].ok(42)
-        with pytest.raises(ValueError, match="Parameter validation failed"):
+        with pytest.raises(c.ValidationError) as error:
             tm.ok(result, len="invalid")
+        tm.that({item["loc"][0] for item in error.value.errors()}, eq={"len"})
 
     def test_fail_invalid_parameter_type(self) -> None:
-        """Test tm.fail() with invalid parameter type raises ValueError."""
+        """Invalid error codes preserve Pydantic's structured validation error."""
         result: p.Result[str] = r[str].fail("error")
-        with pytest.raises(ValueError, match="Parameter validation failed"):
+        with pytest.raises(c.ValidationError) as error:
             tm.fail(result, code=123)
+        tm.that({item["loc"][0] for item in error.value.errors()}, eq={"code"})
 
     def test_that_invalid_parameter_type(self) -> None:
-        """Test tm.that() with invalid parameter type raises ValueError."""
-        with pytest.raises(ValueError, match="Parameter validation failed"):
+        """Invalid operands preserve Pydantic's structured validation error."""
+        with pytest.raises(c.ValidationError) as error:
             tm.that([1, 2, 3], len="invalid")
+        tm.that({item["loc"][0] for item in error.value.errors()}, eq={"len"})
 
     def test_scope_invalid_parameter_type(self) -> None:
-        """Test tm.scope() with invalid parameter type raises ValueError."""
-        with (
-            pytest.raises(ValueError, match="Parameter validation failed"),
-            tm.scope(env="invalid"),
-        ):
+        """Invalid scope input preserves Pydantic's structured validation error."""
+        with pytest.raises(c.ValidationError) as error, tm.scope(env="invalid"):
             pass
+        tm.that({item["loc"][0] for item in error.value.errors()}, eq={"env"})
