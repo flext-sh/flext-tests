@@ -20,7 +20,8 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
         """Return the concrete test settings type declared by the service MRO."""
         settings_type = cls.runtime_bootstrap_options().settings_type
         if settings_type is None:
-            return FlextTestsSettings
+            msg = f"{cls.__name__} must declare a FlextTestsSettings subclass"
+            raise TypeError(msg)
         if not issubclass(settings_type, FlextTestsSettings):
             msg = (
                 f"{cls.__name__} must bootstrap a FlextTestsSettings subclass, "

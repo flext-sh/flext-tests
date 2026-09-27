@@ -57,6 +57,18 @@ class TestsFlextTestsServiceBase:
 
     # ---- test_settings_type: raise, never fall back -------------------------
 
+    def test_settings_type_without_declaration_raises_with_service_name(self) -> None:
+        """An absent settings class cannot silently select the test base settings."""
+
+        class _MissingSettingsService(FlextTestsServiceBase[str]):
+            @classmethod
+            @override
+            def runtime_bootstrap_options(cls) -> m.RuntimeBootstrapOptions:
+                return m.RuntimeBootstrapOptions(settings_type=None)
+
+        with pytest.raises(TypeError, match="_MissingSettingsService"):
+            _MissingSettingsService.test_settings_type()
+
     def test_settings_type_raises_type_error_naming_the_class(self) -> None:
         """A settings type outside the ``FlextTestsSettings`` tree fails loudly."""
 

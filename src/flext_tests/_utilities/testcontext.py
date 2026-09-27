@@ -2,10 +2,15 @@
 
 from __future__ import annotations
 
-import fcntl
+import os
 import types
 from pathlib import Path
-from typing import TextIO
+from typing import BinaryIO
+
+if os.name == "nt":
+    import msvcrt
+else:
+    import fcntl
 
 
 class FlextTestsTestContextUtilitiesMixin:
@@ -21,15 +26,22 @@ class FlextTestsTestContextUtilitiesMixin:
 
         def __init__(self, lock_file: Path) -> None:
             self.lock_file = lock_file
-            self._fd: int | None = None
-            self._file_obj: TextIO | None = None
+            self._file_obj: BinaryIO | None = None
 
         def __enter__(self) -> None:
             """Acquire exclusive file lock."""
             self.lock_file.parent.mkdir(parents=True, exist_ok=True)
-            self._file_obj = self.lock_file.open("a")
-            self._fd = self._file_obj.fileno()
-            fcntl.flock(self._fd, fcntl.LOCK_EX)
+            file_obj = self.lock_file.open("a+b")
+            try:
+                if os.name == "nt":
+                    os.lseek(file_obj.fileno(), 0, os.SEEK_SET)
+                    msvcrt.locking(file_obj.fileno(), msvcrt.LK_LOCK, 1)
+                else:
+                    fcntl.flock(file_obj.fileno(), fcntl.LOCK_EX)
+            except BaseException:
+                file_obj.close()
+                raise
+            self._file_obj = file_obj
 
         # mro-j47u (codex): these dunder arguments are contract-only.
         def __exit__(
@@ -39,7 +51,15 @@ class FlextTestsTestContextUtilitiesMixin:
             _exc_tb: types.TracebackType | None,
         ) -> None:
             """Release the lock while preserving its shared inode."""
-            if self._fd is not None:
-                fcntl.flock(self._fd, fcntl.LOCK_UN)
-            if self._file_obj is not None:
-                self._file_obj.close()
+            if self._file_obj is None:
+                return
+            file_obj = self._file_obj
+            self._file_obj = None
+            try:
+                if os.name == "nt":
+                    os.lseek(file_obj.fileno(), 0, os.SEEK_SET)
+                    msvcrt.locking(file_obj.fileno(), msvcrt.LK_UNLCK, 1)
+                else:
+                    fcntl.flock(file_obj.fileno(), fcntl.LOCK_UN)
+            finally:
+                file_obj.close()
