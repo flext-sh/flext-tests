@@ -11,6 +11,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import functools
 import importlib
 import importlib.metadata
 import inspect
@@ -22,6 +23,21 @@ from flext_tests import p, tm
 
 if TYPE_CHECKING:
     from types import ModuleType
+
+
+@functools.lru_cache(maxsize=1)
+def _console_script_functions() -> dict[str, frozenset[str]]:
+    """Map each installed console-script module to its exposed function names.
+
+    One scan per session: ``importlib.metadata.entry_points`` walks every
+    installed distribution on each call, and governance tests invoke the
+    lookup once per package module.
+    """
+    mapping: dict[str, set[str]] = {}
+    for entry in importlib.metadata.entry_points(group="console_scripts"):
+        if "." not in entry.attr:
+            mapping.setdefault(entry.module, set()).add(entry.attr)
+    return {module: frozenset(names) for module, names in mapping.items()}
 
 
 class FlextTestsModuleGovernanceMixin:
@@ -114,14 +130,12 @@ class FlextTestsModuleGovernanceMixin:
         Derived from the installed ``console_scripts`` entry points, which the
         build projects from ``[project.scripts]``. A module-level function is
         approved only when an entry point targets it directly
-        (``package.module:function``).
+        (``package.module:function``). The mapping is scanned once per session
+        and cached: ``entry_points()`` walks every installed distribution, and
+        per-module rescans pushed governance tests past their timeout.
         """
         module_name = cls._module_dotted_name(module_path)
-        return frozenset(
-            entry.attr
-            for entry in importlib.metadata.entry_points(group="console_scripts")
-            if entry.module == module_name and "." not in entry.attr
-        )
+        return _console_script_functions().get(module_name, frozenset())
 
     def test_package_modules_do_not_define_module_level_loggers(self) -> None:
         """Assert no package module defines a ``logger`` or ``_logger``."""
