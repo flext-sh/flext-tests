@@ -11,9 +11,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import functools
 import importlib
+import importlib.metadata
 import inspect
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterator
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Final, Protocol, runtime_checkable
 
@@ -21,6 +23,21 @@ from flext_tests import p, tm
 
 if TYPE_CHECKING:
     from types import ModuleType
+
+
+@functools.lru_cache(maxsize=1)
+def _console_script_functions() -> dict[str, frozenset[str]]:
+    """Map each installed console-script module to its exposed function names.
+
+    One scan per session: ``importlib.metadata.entry_points`` walks every
+    installed distribution on each call, and governance tests invoke the
+    lookup once per package module.
+    """
+    mapping: dict[str, set[str]] = {}
+    for entry in importlib.metadata.entry_points(group="console_scripts"):
+        if "." not in entry.attr:
+            mapping.setdefault(entry.module, set()).add(entry.attr)
+    return {module: frozenset(names) for module, names in mapping.items()}
 
 
 class FlextTestsModuleGovernanceMixin:
@@ -32,11 +49,12 @@ class FlextTestsModuleGovernanceMixin:
     - ``_test_file``: the test module's own ``__file__`` (so root-discovery
       is anchored relative to the test file, not this utility module).
     - ``_tests_config``: the project ``c.<Package>.Tests`` constants namespace
-      that holds ``SRC_DIR``, ``PACKAGE_DIR``, and ``ALLOWED_MODULE_FUNCTIONS``.
+      that holds ``SRC_DIR`` and ``PACKAGE_DIR``.
 
-    Subclasses may override:
-    - ``_allowed_functions_lookup_key``: return a different key for the
-      ``ALLOWED_MODULE_FUNCTIONS`` lookup (default: path relative to package root).
+    The only approved top-level functions are the console entrypoints the
+    project declares in ``[project.scripts]``. They are derived from the
+    installed distribution's ``console_scripts`` metadata, never listed per
+    project.
     """
 
     @runtime_checkable
@@ -106,31 +124,18 @@ class FlextTestsModuleGovernanceMixin:
             yield name, value
 
     @classmethod
-    def _allowed_functions_lookup_key(
-        cls, module_path: Path, package_root: Path
-    ) -> str:
-        """Key used for the ``ALLOWED_MODULE_FUNCTIONS`` lookup.
-
-        Returns the module path relative to the package root (e.g. ``"cli.py"``
-        or ``"__init__.py"``).  Override only if a project uses a different
-        key scheme.
-        """
-        return str(module_path.relative_to(package_root))
-
-    @classmethod
     def _allowed_functions_for_module(cls, module_path: Path) -> frozenset[str]:
-        """Resolve the set of approved top-level functions for one module."""
-        package_root = cls._package_root()
-        key = cls._allowed_functions_lookup_key(module_path, package_root)
-        # Why: annotate the getattr result explicitly (ALLOWED_MODULE_FUNCTIONS
-        # is an optional attribute, not part of the structural protocol) so
-        # `.get()` resolves to `frozenset[str]` instead of `Any`.
-        allowed_map: Mapping[str, frozenset[str]] | None = getattr(
-            cls._tests_config, "ALLOWED_MODULE_FUNCTIONS", None
-        )
-        if allowed_map is None:
-            return frozenset()
-        return allowed_map.get(key, frozenset())
+        """Return the console-script functions this module exposes.
+
+        Derived from the installed ``console_scripts`` entry points, which the
+        build projects from ``[project.scripts]``. A module-level function is
+        approved only when an entry point targets it directly
+        (``package.module:function``). The mapping is scanned once per session
+        and cached: ``entry_points()`` walks every installed distribution, and
+        per-module rescans pushed governance tests past their timeout.
+        """
+        module_name = cls._module_dotted_name(module_path)
+        return _console_script_functions().get(module_name, frozenset())
 
     def test_package_modules_do_not_define_module_level_loggers(self) -> None:
         """Assert no package module defines a ``logger`` or ``_logger``."""
