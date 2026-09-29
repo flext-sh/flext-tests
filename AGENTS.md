@@ -55,6 +55,9 @@ There is **no runtime `api.py`** — this is test tooling.
 
 - `conftest_plugin.py` is the pytest11 entry point. Packages receive fixtures and
   enforcement through it and never duplicate them locally.
+- `project.runtime_dependency_overlay` in `config/workspace.yaml` owns the additional
+  pytest plugins shipped to installed consumers. `make gen` projects those requirements
+  into package metadata.
 
 ## Commands
 
