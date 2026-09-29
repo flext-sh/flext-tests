@@ -18,19 +18,48 @@ if TYPE_CHECKING:
 class FlextTestsConstantsDocker:
     """Docker test infrastructure constants mixin."""
 
-    # Exact Make CI token (flext-infra config.codegen.make.ci); never treat
-    # GitHub's CI=true as docker-disable.
-    ENV_CI: ClassVar[str] = "CI"
-    CI_MAKE_VALUE: ClassVar[str] = "Y"
-    DOCKER_CI_SKIP_REASON: ClassVar[str] = "docker disabled under CI=Y"
+    # The Make CI token (variable and value) is owned by flext-infra
+    # ``config.Infra.codegen.make.ci``; the lifecycle reads it from there and
+    # never treats GitHub's CI=true as the token.
+    ERR_DOCKER_DISABLED_BY_CI: ClassVar[str] = (
+        "Docker lifecycle disabled under {variable}={value}: "
+        "container tests are not executed in CI"
+    )
     DOCKER_CONNECTIVITY_MARKER: ClassVar[str] = "docker"
     DOCKER_UNREACHABLE_SKIP_REASON: ClassVar[str] = (
         "Docker daemon unreachable; start it to run Docker integration tests"
     )
-    # Default probe ceiling for callers that omit max_wait. Under CI=Y the
-    # Docker lifecycle skips before probing. Outside CI, shared-container
-    # startup_timeout remains the SSOT for long boots (Oracle/kind).
+    # Default probe ceiling for callers that omit max_wait. Under the Make CI
+    # token the lifecycle fails DISABLED_BY_CI before probing. Outside CI,
+    # shared-container startup_timeout remains the SSOT for long boots.
     DOCKER_PROBE_MAX_WAIT_SECONDS: ClassVar[int] = 8
+
+    # One state record per container name, shared by every checkout of the
+    # host: ``<home>/<parts>/<name>.json``, rewritten atomically under
+    # ``<name>.state.lock``. The session lease owns ``<name>.lease.lock`` so
+    # marking a container dirty never waits on the sessions that use it.
+    DOCKER_STATE_DIR_PARTS: ClassVar[t.VariadicTuple[str]] = (".flext", "docker")
+    DOCKER_STATE_FILE_SUFFIX: ClassVar[str] = ".json"
+    DOCKER_STATE_LOCK_SUFFIX: ClassVar[str] = ".state.lock"
+    DOCKER_LEASE_LOCK_SUFFIX: ClassVar[str] = ".lease.lock"
+    DOCKER_STATE_LOCK_TIMEOUT_SECONDS: ClassVar[float] = 30.0
+    # Docker's own container-name grammar; the name is also the state file stem.
+    DOCKER_CONTAINER_NAME_PATTERN: ClassVar[str] = r"^[a-zA-Z0-9][a-zA-Z0-9_.-]+$"
+    ERR_DOCKER_STATE_NAME_MISMATCH: ClassVar[str] = (
+        "Container state {path} records {recorded!r}, expected {expected!r}"
+    )
+
+    # Bounded condition polling of a non-blocking lock attempt.
+    FILE_LOCK_POLL_SECONDS: ClassVar[float] = 0.05
+    FILE_LOCK_MODE_SHARED: ClassVar[str] = "shared"
+    FILE_LOCK_MODE_EXCLUSIVE: ClassVar[str] = "exclusive"
+    ERR_FILE_LOCK_TIMEOUT: ClassVar[str] = (
+        "{mode} lock on {path} not acquired within {timeout}s"
+    )
+    ERR_FILE_LOCK_POSIX_ONLY: ClassVar[str] = (
+        "shared or bounded lock on {path} requires POSIX fcntl; "
+        "msvcrt offers only a blocking exclusive lock"
+    )
 
     # Connectivity markers auto-skip when their service is unreachable
     # (AGENTS.md: "tests that need external/docker services skip when
@@ -73,6 +102,13 @@ class FlextTestsConstantsDocker:
             "startup_timeout": 120,
         },
     }
+
+    @unique
+    class DockerErrorCode(StrEnum):
+        """Typed failure codes of the Docker test lifecycle."""
+
+        DISABLED_BY_CI = "DISABLED_BY_CI"
+        LOCK_TIMEOUT = "LOCK_TIMEOUT"
 
     @unique
     class ContainerStatus(StrEnum):

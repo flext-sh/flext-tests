@@ -34,16 +34,13 @@ class FlextTestsKube(FlextTestsDocker):
 
     @classmethod
     def kind(
-        cls, *, repository_root: Path | None = None, worker_id: str | None = None
+        cls, *, repository_root: Path | None = None, state_dir: Path | None = None
     ) -> Self:
         """Build a DSL-configured service for the shared kind cluster."""
-        resolved_root = repository_root or Path.cwd()
-        return cls(
-            repository_root=resolved_root,
-            worker_id=worker_id or "master",
-            target_config=cls._resolve_shared_target_config(
-                c.Tests.KIND_CONTAINER_NAME, resolved_root
-            ),
+        return cls.shared(
+            c.Tests.KIND_CONTAINER_NAME,
+            repository_root=repository_root,
+            state_dir=state_dir,
         )
 
     def cluster_up(self) -> p.Result[str]:
@@ -93,6 +90,9 @@ class FlextTestsKube(FlextTestsDocker):
             return r[bool].fail(
                 "Kubernetes target not configured. Use FlextTestsKube.kind(...) first."
             )
+        enabled = self.lifecycle_enabled()
+        if enabled.failure:
+            return enabled
         try:
             output = self._run_kubectl(["get", "nodes", "--no-headers"])
         except self._compose_exception_types() as exc:
@@ -129,6 +129,9 @@ class FlextTestsKube(FlextTestsDocker):
             return r[m.Tests.ContainerInfo].fail(
                 "Kubernetes target not configured. Use FlextTestsKube.kind(...).execute()."
             )
+        enabled = self.lifecycle_enabled()
+        if enabled.failure:
+            return r[m.Tests.ContainerInfo].from_failure(enabled)
         up_result = self.cluster_up()
         if up_result.failure:
             return r[m.Tests.ContainerInfo].from_failure(up_result)

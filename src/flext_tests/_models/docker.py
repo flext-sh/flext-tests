@@ -58,6 +58,35 @@ class FlextTestsDockerModelsMixin:
             str, u.Field(description="Docker-assigned container identifier.")
         ] = ""
 
+    class ContainerState(m.Value):
+        """Host-scoped lifecycle record of one shared test container.
+
+        A name without a record is unprovisioned: no id, no fingerprint, clean
+        and unsealed. Every checkout of the host reads the same record.
+        """
+
+        container_name: Annotated[
+            str,
+            u.Field(
+                pattern=c.Tests.DOCKER_CONTAINER_NAME_PATTERN,
+                description="Docker container name; also the record file stem.",
+            ),
+        ]
+        container_id: Annotated[
+            str,
+            u.Field(description="Container id the lifecycle sealed; empty if none."),
+        ] = ""
+        fingerprint: Annotated[
+            str, u.Field(description="Declared-input fingerprint sealed with the id.")
+        ] = ""
+        dirty: Annotated[
+            bool, u.Field(description="A session reported the container unusable.")
+        ] = False
+        sealed: Annotated[
+            bool,
+            u.Field(description="Creation and initialization completed for the id."),
+        ] = False
+
     class User(m.Value):
         """Test user model - immutable value object."""
 
