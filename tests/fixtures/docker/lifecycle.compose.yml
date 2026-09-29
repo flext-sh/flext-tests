@@ -10,7 +10,7 @@ services:
     ports:
       - "127.0.0.1::80"
     environment:
-      FLEXT_TESTS_LIFECYCLE_SECRET: ${FLEXT_TESTS_LIFECYCLE_SECRET:-}
+      FLEXT_TESTS_LIFECYCLE_VALUE: ${FLEXT_TESTS_LIFECYCLE_VALUE:-}
     healthcheck:
       test: ["CMD-SHELL", "test ! -e /unhealthy"]
       interval: 1s

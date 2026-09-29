@@ -599,35 +599,52 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         if preflight.failure:
             return r[m.Tests.ContainerInfo].from_failure(preflight)
         fingerprint = preflight.value
-        lease_file = u.Tests.docker_lease_lock_file(self.state_dir, container_name)
         try:
-            with u.Tests.FileLock(
-                lease_file, shared=True, timeout_seconds=target.lock_timeout_seconds
-            ):
-                observed = self._observe(container_name)
-                if observed.failure:
-                    return r[m.Tests.ContainerInfo].from_failure(observed)
-                info, state = observed.value
-                action = u.Tests.docker_action(info, state, fingerprint=fingerprint)
-                if (
-                    info is not None
-                    and action == c.Tests.ContainerAction.REUSE
-                    and not target.force_recreate
-                ):
-                    return self._serve(target, info, readiness_probe)
-            with u.Tests.FileLock(
-                lease_file, timeout_seconds=target.lock_timeout_seconds
-            ):
-                converged = self._converge(
-                    target, container_name, fingerprint, initializer, environment
-                )
-                if converged.failure:
-                    return converged
-                return self._serve(target, converged.value, readiness_probe)
+            return self._ensure_leased(
+                target,
+                container_name,
+                fingerprint,
+                initializer,
+                readiness_probe,
+                environment,
+            )
         except TimeoutError as exc:
             return r[m.Tests.ContainerInfo].fail(
                 str(exc), error_code=c.Tests.DockerErrorCode.LOCK_TIMEOUT, exception=exc
             )
+
+    def _ensure_leased(
+        self,
+        target: m.Tests.ContainerConfig,
+        container_name: str,
+        fingerprint: str,
+        initializer: p.Tests.ContainerInitializer | None,
+        readiness_probe: p.Tests.ReadinessProbe | None,
+        environment: t.MappingKV[str, t.SecretStr],
+    ) -> p.Result[m.Tests.ContainerInfo]:
+        """Reuse under the shared lease, otherwise converge under the exclusive one."""
+        lease_file = u.Tests.docker_lease_lock_file(self.state_dir, container_name)
+        with u.Tests.FileLock(
+            lease_file, shared=True, timeout_seconds=target.lock_timeout_seconds
+        ):
+            observed = self._observe(container_name)
+            if observed.failure:
+                return r[m.Tests.ContainerInfo].from_failure(observed)
+            info, state = observed.value
+            action = u.Tests.docker_action(info, state, fingerprint=fingerprint)
+            if (
+                info is not None
+                and action == c.Tests.ContainerAction.REUSE
+                and not target.force_recreate
+            ):
+                return self._serve(target, info, readiness_probe)
+        with u.Tests.FileLock(lease_file, timeout_seconds=target.lock_timeout_seconds):
+            converged = self._converge(
+                target, container_name, fingerprint, initializer, environment
+            )
+            if converged.failure:
+                return converged
+            return self._serve(target, converged.value, readiness_probe)
 
     def _converge(
         self,

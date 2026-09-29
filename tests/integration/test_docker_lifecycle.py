@@ -34,7 +34,7 @@ pytestmark = [pytest.mark.docker, pytest.mark.integration, pytest.mark.slow]
 class TestsFlextTestsDockerLifecycle:
     """Create once, reuse while sealed and healthy, recreate when stale."""
 
-    SECRET_KEY = "FLEXT_TESTS_LIFECYCLE_SECRET"
+    CREATION_VARIABLE = "FLEXT_TESTS_LIFECYCLE_VALUE"
 
     @staticmethod
     def _compose_file() -> Path:
@@ -155,14 +155,16 @@ class TestsFlextTestsDockerLifecycle:
         docker = self._docker(project, state_dir)
         value = secrets.token_hex(8)
         info = tm.ok(
-            docker.execute(creation_environment={self.SECRET_KEY: t.SecretStr(value)})
+            docker.execute(
+                creation_environment={self.CREATION_VARIABLE: t.SecretStr(value)}
+            )
         )
         environment = tm.ok(
-            docker.fetch_container_environment(info.name, [self.SECRET_KEY])
+            docker.fetch_container_environment(info.name, [self.CREATION_VARIABLE])
         )
-        tm.that(environment[self.SECRET_KEY].get_secret_value(), eq=value)
+        tm.that(environment[self.CREATION_VARIABLE].get_secret_value(), eq=value)
         tm.that(list(state_dir.glob(f"*{c.Tests.DOCKER_ENV_FILE_SUFFIX}")), empty=True)
-        tm.ok(docker.verify(required_environment=[self.SECRET_KEY]))
+        tm.ok(docker.verify(required_environment=[self.CREATION_VARIABLE]))
         tm.fail(
             docker.verify(required_environment=["FLEXT_TESTS_ABSENT_KEY"]),
             code=c.Tests.DockerErrorCode.ENVIRONMENT_MISSING,
