@@ -1,54 +1,88 @@
-"""Enforcement dispatcher behind the ``flext_tests_enforcement`` pytest plugin."""
+"""Enforcement dispatcher behind the ``flext_tests_enforcement`` pytest plugin.
+
+Activation resolves from the pytest options, the rootdir and the workspace
+markers alone. The enforcement catalog, its models and the builder load only
+once a session is proven active, so every pytest process that enforcement does
+not govern (a nested runner project, a sandbox, a worker outside the workspace)
+starts without importing the full facade tree.
+"""
 
 from __future__ import annotations
 
 import math
 from pathlib import Path
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import pytest
 
-from flext_tests import m, p, t
+from flext_tests import c
 from flext_tests.enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
-from flext_tests.utilities import u
 
-from .build import FlextTestsEnforcementBuilder
+if TYPE_CHECKING:
+    from flext_tests import m, p, t
 
 
 class FlextTestsEnforcementDispatcher:
-    """Resolve the session configuration and run every enforcement hook body."""
+    """Resolve the session activation and run every enforcement hook body."""
 
+    stash_root: ClassVar[pytest.StashKey[Path | None]] = pytest.StashKey()
     stash_config: ClassVar[pytest.StashKey[m.Tests.EnforcementDispatcherConfig]] = (
         pytest.StashKey()
     )
     session_config: ClassVar[pytest.Config | None] = None
 
+    @staticmethod
+    def discover_repository_root(start: Path) -> Path | None:
+        """Walk upward from ``start`` to find the FLEXT workspace root."""
+        for candidate in (start, *start.parents):
+            if all(
+                (candidate / marker).exists()
+                for marker in c.Tests.ENFORCEMENT_WORKSPACE_MARKERS
+            ):
+                return candidate
+        return None
+
+    @staticmethod
+    def split_csv(raw: str | None) -> frozenset[str]:
+        """Split a comma-separated option value into a normalized frozen set."""
+        if not raw:
+            return frozenset()
+        return frozenset(part.strip() for part in raw.split(",") if part.strip())
+
+    @classmethod
+    def active_root(cls, config: pytest.Config) -> Path | None:
+        """Return the governed workspace root, or None when enforcement is off."""
+        if cls.stash_root in config.stash:
+            return config.stash[cls.stash_root]
+        override_root = str(config.getoption("--flext-enforce-workspace-root") or "")
+        rootpath = Path(config.rootpath).resolve()
+        repository_root: Path | None
+        if config.getoption("--no-flext-enforce"):
+            repository_root = None
+        elif override_root:
+            repository_root = Path(override_root).resolve()
+        elif config.getoption("--flext-enforce"):
+            repository_root = cls.discover_repository_root(rootpath)
+        else:
+            discovered = cls.discover_repository_root(rootpath)
+            repository_root = discovered if discovered == rootpath else None
+        config.stash[cls.stash_root] = repository_root
+        return repository_root
+
     @classmethod
     def resolve_config(
-        cls, config: pytest.Config
+        cls, config: pytest.Config, repository_root: Path
     ) -> m.Tests.EnforcementDispatcherConfig:
-        """Build and cache the dispatcher's resolved configuration."""
+        """Build and cache the configuration of an active enforcement session."""
         stashed = config.stash.get(cls.stash_config, None)
         if stashed is not None:
             return stashed
-        forced = bool(config.getoption("--flext-enforce"))
-        override_root = str(config.getoption("--flext-enforce-workspace-root") or "")
-        rootpath = Path(config.rootpath).resolve()
-        if override_root:
-            repository_root = Path(override_root).resolve()
-        elif forced:
-            repository_root = u.Tests.discover_repository_root(rootpath)
-        else:
-            discovered = u.Tests.discover_repository_root(rootpath)
-            repository_root = discovered if discovered == rootpath else None
+        from flext_tests import m
+
         resolved = m.Tests.EnforcementDispatcherConfig(
-            active=not bool(config.getoption("--no-flext-enforce"))
-            and repository_root is not None,
             strict=bool(config.getoption("--flext-enforce-strict")),
-            include=u.Tests.split_csv(
-                str(config.getoption("--flext-enforce-rules") or "")
-            ),
-            exclude=u.Tests.split_csv(
+            include=cls.split_csv(str(config.getoption("--flext-enforce-rules") or "")),
+            exclude=cls.split_csv(
                 str(config.getoption("--flext-enforce-exclude-rules") or "")
             ),
             repository_root=repository_root,
@@ -59,9 +93,12 @@ class FlextTestsEnforcementDispatcher:
     @classmethod
     def configure(cls, config: pytest.Config) -> None:
         """Register filterwarnings for every active runtime-warning rule."""
-        cfg = cls.resolve_config(config)
-        if not cfg.active:
+        repository_root = cls.active_root(config)
+        if repository_root is None:
             return
+        from flext_tests.utilities import u
+
+        cfg = cls.resolve_config(config, repository_root)
         for rule in u.Tests.active_rules(cfg):
             category = getattr(rule.source, "category", None)
             if rule.source.kind != "runtime_warning" or not category:
@@ -109,12 +146,16 @@ class FlextTestsEnforcementDispatcher:
                 raise pytest.UsageError(msg)
             if item.get_closest_marker("slow") is not None:
                 item.add_marker(pytest.mark.timeout(slow_timeout), append=False)
-        cfg = cls.resolve_config(config)
-        if not cfg.active or hasattr(config, "workerinput"):
+        repository_root = cls.active_root(config)
+        if repository_root is None or hasattr(config, "workerinput"):
             return
+        from .build import FlextTestsEnforcementBuilder
+
         items.extend(
             FlextTestsEnforcementBuilder.build_items(
-                session, cfg, collected_items=items
+                session,
+                cls.resolve_config(config, repository_root),
+                collected_items=items,
             )
         )
 
@@ -123,10 +164,11 @@ class FlextTestsEnforcementDispatcher:
         """Count one captured runtime warning by its dotted category."""
         if cls.session_config is None:
             return
-        cfg = cls.resolve_config(cls.session_config)
+        repository_root = cls.active_root(cls.session_config)
         category = getattr(warning_message, "category", None)
-        if not cfg.active or category is None:
+        if repository_root is None or category is None:
             return
+        cfg = cls.resolve_config(cls.session_config, repository_root)
         dotted = f"{category.__module__}.{category.__qualname__}"
         cfg.warning_counter[dotted] = cfg.warning_counter.get(dotted, 0) + 1
 
@@ -135,9 +177,12 @@ class FlextTestsEnforcementDispatcher:
         cls, terminalreporter: pytest.TerminalReporter, config: pytest.Config
     ) -> None:
         """Print the per-kind breakdown at the end of the session."""
-        cfg = cls.resolve_config(config)
-        if not cfg.active:
+        repository_root = cls.active_root(config)
+        if repository_root is None:
             return
+        from flext_tests.utilities import u
+
+        cfg = cls.resolve_config(config, repository_root)
         active = u.Tests.active_rules(cfg)
         kinds: t.MutableMappingKV[str, int] = {}
         for rule in active:

@@ -90,10 +90,6 @@ class FlextTestsValidatorModelsMixin:
     class EnforcementDispatcherConfig(m.Value):
         """Resolved runtime configuration for the pytest enforcement dispatcher."""
 
-        active: Annotated[
-            bool,
-            u.Field(description="Whether the dispatcher is active for this session."),
-        ]
         strict: Annotated[
             bool, u.Field(description="Promote runtime warnings to failures when true.")
         ]
