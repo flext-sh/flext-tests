@@ -2,34 +2,37 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
 from pathlib import Path
 
 import pytest
 from flext_infra import config as infra_config
 
 from flext_tests import FlextTestsDocker, FlextTestsKube, m, tm
-from tests import c, u
+from tests import c, t, u
 
 
 class TestsFlextTestsDockerCiMixin:
     """The Make CI token disables every Docker effect with a typed failure."""
 
     @pytest.mark.parametrize(
-        ("token_value", "disabled"),
+        ("value_template", "disabled"),
         [
             pytest.param(None, False, id="unset"),
-            pytest.param(lambda token: token, True, id="make-token"),
-            pytest.param(lambda token: f" {token} ", True, id="make-token-padded"),
-            pytest.param(lambda token: f"{token}-other", False, id="other-value"),
+            pytest.param("{token}", True, id="make-token"),
+            pytest.param(" {token} ", True, id="make-token-padded"),
+            pytest.param("{token}-other", False, id="other-value"),
         ],
     )
     def test_ci_token_gates_the_lifecycle(
-        self, token_value: Callable[[str], str] | None, disabled: bool
+        self, *, value_template: str | None, disabled: bool
     ) -> None:
         """Only the configured Make CI value disables Docker, and it is typed."""
         ci = infra_config.Infra.codegen.make.ci
-        env = {} if token_value is None else {ci.variable: token_value(ci.value)}
+        env: t.StrMapping = (
+            {}
+            if value_template is None
+            else {ci.variable: value_template.format(token=ci.value)}
+        )
         with u.Tests.env_vars_context(env, vars_to_clear=(ci.variable,)):
             tm.that(FlextTestsDocker.ci_disables_docker(), eq=disabled)
             gate = FlextTestsDocker.lifecycle_enabled()

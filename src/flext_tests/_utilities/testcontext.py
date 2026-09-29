@@ -62,17 +62,21 @@ class FlextTestsTestContextUtilitiesMixin:
             self.lock_file.parent.mkdir(parents=True, exist_ok=True)
             file_obj = self.lock_file.open("a+b")
             try:
-                if os.name == "nt":
-                    os.lseek(file_obj.fileno(), 0, os.SEEK_SET)
-                    msvcrt.locking(file_obj.fileno(), msvcrt.LK_LOCK, 1)
-                elif self.timeout_seconds is None:
-                    fcntl.flock(file_obj.fileno(), self._posix_flags())
-                else:
-                    self._acquire_before_deadline(file_obj.fileno())
+                self._acquire(file_obj.fileno())
             except BaseException:
                 file_obj.close()
                 raise
             self._file_obj = file_obj
+
+        def _acquire(self, descriptor: int) -> None:
+            """Take the lock on an open descriptor in this lock's mode."""
+            if os.name == "nt":
+                os.lseek(descriptor, 0, os.SEEK_SET)
+                msvcrt.locking(descriptor, msvcrt.LK_LOCK, 1)
+            elif self.timeout_seconds is None:
+                fcntl.flock(descriptor, self._posix_flags())
+            else:
+                self._acquire_before_deadline(descriptor)
 
         def _posix_flags(self) -> int:
             """Return the fcntl operation for this lock's mode."""

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import socket
 import time
-from collections.abc import Callable, Generator
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated, ClassVar, Self, override
@@ -170,10 +170,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     def _record_dirty(self, container_name: str, *, dirty: bool) -> p.Result[bool]:
         """Rewrite the dirty flag of one host record."""
-        change: Callable[[m.Tests.ContainerState], m.Tests.ContainerState] = (
-            lambda state: state.model_copy(update={"dirty": dirty})
+        updated = u.Tests.update_container_state(
+            self.state_dir,
+            container_name,
+            lambda state: state.model_copy(update={"dirty": dirty}),
         )
-        updated = u.Tests.update_container_state(self.state_dir, container_name, change)
         if updated.failure:
             return r[bool].from_failure(updated)
         self.logger.info(
