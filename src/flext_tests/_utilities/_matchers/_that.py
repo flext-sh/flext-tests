@@ -679,24 +679,18 @@ class FlextTestsMatchersThatMixin:
         subject: p.AttributeProbe,
         rule: m.Tests.MatchRule,
         *,
+        owned_payload: bool,
         inherited_msg: str | None = None,
     ) -> None:
         kwargs = dict(cls._rule_kwargs(rule))
+        raw_owned = kwargs.pop("owned_payload", owned_payload)
+        owned = raw_owned if isinstance(raw_owned, bool) else owned_payload
         if inherited_msg is not None and "msg" not in kwargs:
             kwargs["msg"] = inherited_msg
         if not hasattr(cls.Tests.Matchers, "that"):
             message = "Matcher rule runner missing"
             raise AssertionError(message)
-        cls.Tests.Matchers.that(subject, owned_payload=False, **kwargs)
-
-    @staticmethod
-    def extract_path_value(subject: p.Tests.Payload, path: str) -> p.Tests.Payload:
-        """Read nested payload nodes without serializing model leaves."""
-        node = FlextTestsPayloadUtilities.path_node(subject, path)
-        if node is None:
-            msg = f"Path not found: {path}"
-            raise AssertionError(msg)
-        return node
+        cls.Tests.Matchers.that(subject, owned_payload=owned, **kwargs)
 
     @classmethod
     def apply_path_rules(
@@ -710,9 +704,10 @@ class FlextTestsMatchersThatMixin:
             try:
                 cls._apply_rule(
                     FlextTestsPayloadUtilities.to_match_value(
-                        cls.extract_path_value(subject, path)
+                        FlextTestsPayloadUtilities.extract_path_value(subject, path)
                     ),
                     rule,
+                    owned_payload=True,
                     inherited_msg=inherited_msg,
                 )
             except AssertionError as exc:
@@ -737,7 +732,10 @@ class FlextTestsMatchersThatMixin:
             case Sequence():
                 for index, rule in enumerate(rules):
                     cls._apply_rule(
-                        sequence_value[index], rule, inherited_msg=inherited_msg
+                        sequence_value[index],
+                        rule,
+                        owned_payload=False,
+                        inherited_msg=inherited_msg,
                     )
                 return
             case Mapping():
@@ -750,7 +748,9 @@ class FlextTestsMatchersThatMixin:
         for selector, rule in rules.items():
             if selector in {"*", "all"}:
                 for item in sequence_value:
-                    cls._apply_rule(item, rule, inherited_msg=inherited_msg)
+                    cls._apply_rule(
+                        item, rule, owned_payload=True, inherited_msg=inherited_msg
+                    )
                 continue
             target_index = (
                 0
@@ -760,7 +760,10 @@ class FlextTestsMatchersThatMixin:
                 else int(selector)
             )
             cls._apply_rule(
-                sequence_value[target_index], rule, inherited_msg=inherited_msg
+                sequence_value[target_index],
+                rule,
+                owned_payload=True,
+                inherited_msg=inherited_msg,
             )
 
     @classmethod
@@ -781,7 +784,9 @@ class FlextTestsMatchersThatMixin:
                 else:
                     msg = f"Object missing attribute path: {attr_path}"
                     raise AssertionError(msg)
-            cls._apply_rule(current, rule, inherited_msg=inherited_msg)
+            cls._apply_rule(
+                current, rule, owned_payload=False, inherited_msg=inherited_msg
+            )
 
 
 __all__: list[str] = ["FlextTestsMatchersThatMixin"]

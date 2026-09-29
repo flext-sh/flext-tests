@@ -150,7 +150,7 @@ class FlextTestsMatchersResultMixin:
                     if isinstance(params.path, str)
                     else ".".join(params.path)
                 )
-                payload = FlextTestsMatchersRulesMixin.extract_path_value(
+                payload = FlextTestsPayloadUtilities.extract_path_value(
                     FlextTestsPayloadUtilities.to_payload(result_value), path
                 )
                 return payload, payload
