@@ -97,7 +97,7 @@ class FlextTestsMatchersThatMixin:
                 )
                 is_sequence_wrapper = (
                     list in expected_types
-                    and isinstance(root_value, t.SEQUENCE_PAIR_TYPES)
+                    and isinstance(root_value, c.SEQUENCE_PAIR_TYPES)
                     and value_type_name == "ObjectList"
                 )
                 matches_declared_type = any(
