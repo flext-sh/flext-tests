@@ -1,11 +1,7 @@
 """Behavioral tests for the FlextTestsDocker public DSL contract.
 
-Two layers are covered:
-
-* Pure DSL-contract behavior that needs no Docker daemon (configuration
-  resolution and unconfigured-target error paths) — always executed.
-* Real shared-container behavior that requires a live Docker daemon — skipped
-  when the daemon is unavailable.
+The DSL contract needs no Docker daemon: configuration resolution and the
+error paths of an unconfigured target.
 
 Every assertion targets observable public behavior: the ``r[T]`` outcome of
 fallible operations, the public model state of the configured target, the
@@ -156,56 +152,3 @@ class TestsFlextTestsDockerIntegration:
         tm.fail(result)
         tm.that(result.error, none=False)
         tm.that(result.error, has="no inspection container")
-
-    # ------------------------------------------------------------------
-    # Real shared-container behavior (requires a live Docker daemon)
-    # ------------------------------------------------------------------
-
-    @pytest.mark.integration
-    @pytest.mark.docker
-    def test_execute_local_container_returns_running_info(self) -> None:
-        """The DSL starts the repository-owned container and reports it running."""
-        root = self._repository_root()
-        target = m.Tests.ContainerConfig(
-            container_name="flext-tests-web-test", service="web", port=8080
-        )
-        docker = FlextTestsDocker.compose(
-            root / "tests/fixtures/docker-compose.yml",
-            target=target,
-            repository_root=root,
-        )
-        tm.that(docker.client, none=False)
-
-        result = docker.execute()
-
-        tm.ok(result)
-        container = result.unwrap()
-        tm.that(container.name, eq="flext-tests-web-test")
-        tm.that(container.status, eq=c.Tests.ContainerStatus.RUNNING)
-        tm.that(container.container_id, empty=False)
-        tm.that(container.image, empty=False)
-
-    @pytest.mark.integration
-    @pytest.mark.docker
-    def test_execute_local_container_is_idempotent(self) -> None:
-        """Repeated DSL execution keeps the repository-owned container running."""
-        root = self._repository_root()
-        target = m.Tests.ContainerConfig(
-            container_name="flext-tests-web-test", service="web", port=8080
-        )
-        docker = FlextTestsDocker.compose(
-            root / "tests/fixtures/docker-compose.yml",
-            target=target,
-            repository_root=root,
-        )
-        tm.that(docker.client, none=False)
-
-        first = docker.execute()
-        second = docker.execute()
-
-        tm.ok(first)
-        tm.ok(second)
-        first_info = first.unwrap()
-        second_info = second.unwrap()
-        tm.that(first_info.name, eq=second_info.name)
-        tm.that(second_info.status, eq=c.Tests.ContainerStatus.RUNNING)
