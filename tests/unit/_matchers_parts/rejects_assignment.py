@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import enum
+import re
 
 import pytest
 
@@ -22,6 +23,19 @@ class _Mutable(m.BaseModel):
 
 class _PluginType(enum.StrEnum):
     EXTRACTORS = "extractors"
+
+
+class _RejectedAssignment:
+    """Write-only descriptor target with an identifiable rejection cause."""
+
+    def __init__(self, rejection: ValueError) -> None:
+        self.rejection = rejection
+
+    def reject(self, _value: str) -> None:
+        """Refuse a write while preserving the supplied rejection instance."""
+        raise self.rejection
+
+    host = property(fset=reject)
 
 
 class TestsFlextTestsMatchersRejectsAssignmentMixin:
@@ -55,3 +69,29 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
             tm.rejects_assignment(
                 _Mutable(host="h"), "host", "other", expected=m.ValidationError
             )
+
+    def test_rejects_assignment_propagates_unexpected_exception_identity(self) -> None:
+        """An unexpected descriptor error escapes without normalization."""
+        rejection = ValueError("assignment rejected")
+
+        with pytest.raises(ValueError, match=re.escape(str(rejection))) as caught:
+            tm.rejects_assignment(
+                _RejectedAssignment(rejection), "host", "other", expected=TypeError
+            )
+
+        tm.that(caught.value is rejection, eq=True)
+
+    def test_rejects_assignment_chains_original_on_regex_mismatch(self) -> None:
+        """A mismatched rejection message retains the original exception cause."""
+        rejection = ValueError("assignment rejected")
+
+        with pytest.raises(AssertionError) as caught:
+            tm.rejects_assignment(
+                _RejectedAssignment(rejection),
+                "host",
+                "other",
+                expected=ValueError,
+                match="^a different rejection$",
+            )
+
+        tm.that(caught.value.__cause__ is rejection, eq=True)
