@@ -8,9 +8,10 @@ from typing import TYPE_CHECKING
 import pytest
 
 from flext_tests import c, r, tm
+from tests import m
 
 if TYPE_CHECKING:
-    from tests import m, p
+    from tests import p
 
 
 class TestsFlextTestsMatchersScopeErrorsMixin:
@@ -52,20 +53,20 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
     def test_ok_invalid_parameter_type(self) -> None:
         """tm.ok() rejects an invalid criterion, naming the offending field."""
         result = r[int].ok(42)
-        with pytest.raises(ValueError, match=r"for OkParams\nlen") as error:
+        with pytest.raises(m.ValidationError, match=r"for OkParams\nlen") as error:
             tm.ok(result, len="invalid")
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"len"})
 
     def test_fail_invalid_parameter_type(self) -> None:
         """tm.fail() rejects an invalid criterion, naming the offending field."""
         result: p.Result[str] = r[str].fail("error")
-        with pytest.raises(ValueError, match=r"for FailParams\ncode") as error:
+        with pytest.raises(m.ValidationError, match=r"for FailParams\ncode") as error:
             tm.fail(result, code=123)
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"code"})
 
     def test_that_invalid_parameter_type(self) -> None:
         """tm.that() rejects an invalid criterion, naming the offending field."""
-        with pytest.raises(ValueError, match=r"for ThatParams\nlen") as error:
+        with pytest.raises(m.ValidationError, match=r"for ThatParams\nlen") as error:
             tm.that([1, 2, 3], len="invalid")
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"len"})
 
