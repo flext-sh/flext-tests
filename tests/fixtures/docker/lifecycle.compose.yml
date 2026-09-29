@@ -1,0 +1,27 @@
+# Fixture of the Docker lifecycle integration tests (tests/integration/test_docker_lifecycle.py).
+# Each test binds its own compose project, so containers are named
+# <project>-<service>-1 and never collide across tests or checkouts.
+# `probe` turns unhealthy while /unhealthy exists (docker exec ... touch /unhealthy)
+# and publishes port 80 on an ephemeral loopback host port.
+# `never-healthy` fails its healthcheck forever.
+services:
+  probe:
+    image: nginx:alpine
+    ports:
+      - "127.0.0.1::80"
+    environment:
+      FLEXT_TESTS_LIFECYCLE_SECRET: ${FLEXT_TESTS_LIFECYCLE_SECRET:-}
+    healthcheck:
+      test: ["CMD-SHELL", "test ! -e /unhealthy"]
+      interval: 1s
+      timeout: 1s
+      retries: 1
+      start_period: 0s
+  never-healthy:
+    image: nginx:alpine
+    healthcheck:
+      test: ["CMD-SHELL", "exit 1"]
+      interval: 1s
+      timeout: 1s
+      retries: 1
+      start_period: 0s

@@ -7,7 +7,7 @@ import time
 from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING, Annotated, ClassVar, Self, override
+from typing import TYPE_CHECKING, Annotated, Self, override
 
 from docker import DockerClient as DockerSDKClient, from_env as docker_from_env
 from docker.constants import DEFAULT_DOCKER_API_VERSION
@@ -24,15 +24,15 @@ if TYPE_CHECKING:
 
 
 class FlextTestsDocker(s[m.Tests.ContainerInfo]):
-    """Manage Docker containers for FLEXT tests.
+    """Manage the Docker containers FLEXT tests share.
 
-    Container state is host-scoped: every checkout and every pytest worker of
-    the machine reads and writes the same record per container name under
-    ``state_dir``. Under the Make CI token every lifecycle effect fails with
-    ``DISABLED_BY_CI`` instead of touching Docker.
+    One container per name serves the whole host. Its record under
+    ``state_dir`` says which container the lifecycle created and sealed, for
+    which declared inputs, and whether a session reported it unusable.
+    ``execute`` decides under a shared lease and mutates only under the
+    exclusive one; ``verify`` checks without effects. Under the Make CI token
+    every Docker effect fails with ``DISABLED_BY_CI``.
     """
-
-    docker: ClassVar[WhalesDockerClient] = WhalesDockerClient(client_type="docker")
 
     repository_root: Annotated[
         Path, u.Field(description="Workspace root used to resolve compose files.")
@@ -100,28 +100,6 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             update={"container_name": container_name, "compose_file": compose_path}
         )
 
-    @staticmethod
-    def _resolve_readiness_port(
-        target: m.Tests.ContainerConfig, info: m.Tests.ContainerInfo
-    ) -> int | None:
-        """Resolve the host port used by a target readiness check."""
-        if target.port is None:
-            return None
-        target_port_str = str(target.port)
-        for container_port, host_port in info.ports.items():
-            if container_port.startswith(f"{target_port_str}/"):
-                return int(host_port)
-            if host_port == target_port_str:
-                return int(host_port)
-        return int(target_port_str) if target_port_str.isdigit() else None
-
-    @staticmethod
-    def _extract_host_port(bindings: t.SequenceOf[t.StrMapping] | None) -> str:
-        """Extract the first Docker HostPort value from normalized bindings."""
-        if not bindings:
-            return ""
-        return bindings[0].get("HostPort", "")
-
     @property
     def client(self) -> DockerSDKClient | None:
         """Docker client with lazy initialization."""
@@ -182,48 +160,16 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         )
         return r[bool].ok(True)
 
-    def compose_down(self, compose_file: str) -> p.Result[str]:
-        """Stop services using docker-compose via python_on_whales."""
-        enabled = self.lifecycle_enabled()
-        if enabled.failure:
-            return r[str].from_failure(enabled)
-        compose_path = self._compose_path(compose_file)
-        try:
-            self._run_compose_down(compose_path)
-        except self._compose_exception_types() as exc:
-            return r[str].fail_op("Compose down", exc)
-        return r[str].ok("Compose down successful")
-
-    def compose_up(
-        self,
-        compose_file: str,
-        service: str | None = None,
-        *,
-        force_recreate: bool = False,
-    ) -> p.Result[str]:
-        """Start services using docker-compose via python_on_whales."""
-        enabled = self.lifecycle_enabled()
-        if enabled.failure:
-            return r[str].from_failure(enabled)
-        compose_path = self._compose_path(compose_file)
-        try:
-            cleanup_result = self._run_compose_up(
-                compose_path, service, force_recreate=force_recreate
-            )
-        except self._compose_exception_types() as exc:
-            self.logger.exception("Compose up failed")
-            return r[str].fail_op("Compose up", exc)
-        if cleanup_result.failure:
-            return cleanup_result
-        return r[str].ok("Compose up successful")
-
-    def _compose_path(self, compose_file: str) -> Path:
-        """Resolve a compose path against the configured workspace root."""
-        compose_path = Path(compose_file)
-        return (
-            compose_path
-            if compose_path.is_absolute()
-            else self.repository_root / compose_file
+    @staticmethod
+    def _compose_client(
+        compose_file: Path, project: str, env_files: t.VariadicTuple[Path] = ()
+    ) -> WhalesDockerClient:
+        """Bind one compose file, its project and its env files to a client."""
+        return WhalesDockerClient(
+            client_type="docker",
+            compose_files=[compose_file],
+            compose_project_name=project,
+            compose_env_files=list(env_files),
         )
 
     @staticmethod
@@ -238,94 +184,111 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             WhalesDockerException,
         )
 
-    @staticmethod
-    def compose_project_name(compose_path: Path) -> str:
-        """Derive one compose project per compose file.
+    def _compose_path(self, compose_file: str) -> Path:
+        """Resolve a compose path against the configured workspace root."""
+        compose_path = Path(compose_file)
+        return (
+            compose_path
+            if compose_path.is_absolute()
+            else self.repository_root / compose_file
+        )
 
-        Compose derives the project name from the directory when none is given,
-        so every file under the shared ``docker/`` directory lands in the same
-        project. ``remove_orphans`` then treats a sibling suite's container as
-        garbage and deletes it, which makes parallel test runs kill each other's
-        databases. Binding each compose file to its own project keeps
-        ``remove_orphans`` scoped to the services that file actually declares.
-        """
-        return compose_path.stem.replace(".", "-").replace("_", "-")
+    def compose_down(self, compose_file: str) -> p.Result[str]:
+        """Remove the project of one compose file with its volumes."""
+        compose_path = self._compose_path(compose_file)
+        return self._compose_down(
+            compose_path, u.Tests.docker_compose_project(compose_path)
+        )
 
-    @contextmanager
-    def _compose_binding(self, compose_path: Path) -> Generator[None]:
-        """Bind compose file and its dedicated project for one operation."""
-        config = self.docker.client_config
-        original_files = config.compose_files
-        original_project = config.compose_project_name
+    def _compose_down(self, compose_path: Path, project: str) -> p.Result[str]:
+        """Remove one compose project with its volumes."""
+        enabled = self.lifecycle_enabled()
+        if enabled.failure:
+            return r[str].from_failure(enabled)
+        client = self._compose_client(compose_path, project)
         try:
-            config.compose_files = [str(compose_path)]
-            config.compose_project_name = self.compose_project_name(compose_path)
-            yield
-        finally:
-            config.compose_files = original_files
-            config.compose_project_name = original_project
+            client.compose.down(volumes=True, remove_orphans=True)
+        except self._compose_exception_types() as exc:
+            return r[str].fail_op("Compose down", exc)
+        return r[str].ok("Compose down successful")
 
-    def _run_compose_down(self, compose_path: Path) -> None:
-        """Run compose down with temporary compose-file binding."""
-        with self._compose_binding(compose_path):
-            self.docker.compose.down(volumes=True, remove_orphans=True)
-
-    def _run_compose_up(
-        self, compose_path: Path, service: str | None, *, force_recreate: bool
+    def compose_up(
+        self,
+        compose_file: str,
+        service: str | None = None,
+        *,
+        force_recreate: bool = False,
     ) -> p.Result[str]:
-        """Run compose up with temporary compose-file binding."""
-        with self._compose_binding(compose_path):
+        """Start the project of one compose file and wait for its health."""
+        compose_path = self._compose_path(compose_file)
+        return self._compose_up(
+            compose_path,
+            u.Tests.docker_compose_project(compose_path),
+            service,
+            force_recreate=force_recreate,
+        )
+
+    def _compose_up(
+        self,
+        compose_path: Path,
+        project: str,
+        service: str | None,
+        *,
+        force_recreate: bool,
+    ) -> p.Result[str]:
+        """Start one compose project and wait for its health."""
+        enabled = self.lifecycle_enabled()
+        if enabled.failure:
+            return r[str].from_failure(enabled)
+        client = self._compose_client(compose_path, project)
+        try:
             if force_recreate:
-                down_result = self._compose_down_current_file()
-                if down_result.failure:
-                    return down_result
-            # python-on-whales treats an EMPTY service list as a no-op and
-            # returns without running compose at all; only None means "every
-            # service in the file". Passing [] here silently started nothing.
-            services = [service] if service else None
-            # `wait` blocks until every started service reports healthy (or
-            # running, when it declares no healthcheck). Without it compose
-            # returns as soon as the containers are created, so a cold boot
-            # hands back a stack whose database is still initializing and every
-            # readiness probe races first-run setup.
-            # Whales' quiet option captures both subprocess streams so its
-            # exception carries startup diagnostics through the result boundary.
-            self.docker.compose.up(
-                services=services,
+                client.compose.down(remove_orphans=True, volumes=True)
+            # An EMPTY service list is a python-on-whales no-op; None is every
+            # service. `wait` returns only once started services are healthy
+            # (or running without a healthcheck); `quiet` keeps compose output
+            # in the raised exception.
+            client.compose.up(
+                services=[service] if service else None,
                 detach=True,
                 remove_orphans=True,
                 wait=True,
                 quiet=True,
             )
+        except self._compose_exception_types() as exc:
+            self.logger.exception("Compose up failed")
+            return r[str].fail_op("Compose up", exc)
         return r[str].ok("Compose up successful")
 
-    def _compose_down_current_file(self) -> p.Result[str]:
-        """Run compose down for the currently configured compose file."""
+    def _inspect(self, container_name: str) -> p.Result[m.Tests.ContainerInspect]:
+        """Inspect one container; an absent one fails NOT_PROVISIONED."""
+        client = self.client
+        if client is None:
+            return r[m.Tests.ContainerInspect].fail(
+                self.client_error or "Docker daemon unavailable"
+            )
         try:
-            self.docker.compose.down(remove_orphans=True, volumes=True)
-        except self._compose_exception_types() as exc:
-            self.logger.warning("Compose recreate cleanup failed", error=str(exc))
-            return r[str].fail_op("Compose recreate cleanup", exc)
-        return r[str].ok("Compose recreate cleanup successful")
+            container = client.containers.get(container_name)
+        except NotFound as exc:
+            return r[m.Tests.ContainerInspect].fail(
+                c.Tests.ERR_DOCKER_NOT_PROVISIONED.format(name=container_name),
+                error_code=c.Tests.DockerErrorCode.NOT_PROVISIONED,
+                exception=exc,
+            )
+        except c.EXC_BROAD_RUNTIME as exc:
+            return r[m.Tests.ContainerInspect].fail(str(exc), exception=exc)
+        return u.try_(
+            lambda: m.Tests.ContainerInspect.model_validate(container.attrs),
+            catch=c.EXC_VALIDATION_VALUE,
+            op_name=f"Parse docker inspect of {container_name}",
+        )
 
     def fetch_container_info(
         self, container_name: str
     ) -> p.Result[m.Tests.ContainerInfo]:
-        """Fetch container information."""
-        client = self.client
-        if client is None:
-            error = self.client_error or "Docker daemon unavailable"
-            return r[m.Tests.ContainerInfo].fail(error)
-        try:
-            container = client.containers.get(container_name)
-        except NotFound:
-            return r[m.Tests.ContainerInfo].fail(
-                f"Container {container_name} not found"
-            )
-        except c.EXC_BROAD_RUNTIME as exc:
-            return r[m.Tests.ContainerInfo].fail(str(exc), exception=exc)
-        return r[m.Tests.ContainerInfo].ok(
-            self._container_info_from_sdk(container_name, container)
+        """Inspect one container; an absent one fails NOT_PROVISIONED."""
+        return self._inspect(container_name).map(
+            lambda inspect: u.Tests.container_info(container_name, inspect)
         )
 
     def fetch_container_status(
@@ -333,6 +296,18 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     ) -> p.Result[m.Tests.ContainerInfo]:
         """Fetch container status."""
         return self.fetch_container_info(container_name)
+
+    def fetch_container_environment(
+        self, container_name: str, keys: t.StrSequence
+    ) -> p.Result[t.MappingKV[str, t.SecretStr]]:
+        """Read named creation variables of a container as secrets.
+
+        A key the container does not carry fails ``ENVIRONMENT_MISSING``,
+        naming the key and never a value.
+        """
+        return self._inspect(container_name).flat_map(
+            lambda inspect: u.Tests.container_environment(container_name, inspect, keys)
+        )
 
     def start_existing_container(self, container_name: str) -> p.Result[bool]:
         """Start an existing stopped container by name."""
@@ -353,6 +328,21 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             )
         return self._start_sdk_container(container_name, container)
 
+    @staticmethod
+    def _start_sdk_container(
+        container_name: str, container: Container
+    ) -> p.Result[bool]:
+        """Start a Docker SDK container when it is not already running."""
+        try:
+            if container.status == c.Tests.ContainerStatus.RUNNING:
+                return r[bool].ok(value=True)
+            container.start()
+        except (DockerException, OSError, RuntimeError, AttributeError) as exc:
+            return r[bool].fail(
+                f"Failed to start container {container_name}: {exc}", exception=exc
+            )
+        return r[bool].ok(value=True)
+
     def start_compose_stack(
         self, compose_file: str, network_name: str | None = None
     ) -> p.Result[str]:
@@ -364,71 +354,30 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return r[str].ok("Stack started successfully")
 
     def wait_for_port_ready(
-        self, host: str, port: int, max_wait: int | None = None
+        self, host: str, port: int, max_wait: float | None = None
     ) -> p.Result[bool]:
-        """Wait until a TCP port is accepting connections.
+        """Poll until a TCP port accepts connections or the bound passes.
 
-        Uses ``max_wait`` when provided (shared-container startup budgets).
-        When omitted, uses ``DOCKER_PROBE_MAX_WAIT_SECONDS`` so quick probes
-        fail closed as a Result instead of hanging into pytest case-timeouts.
+        The bound is wall-clock, so connection attempts count against it.
+        Without ``max_wait`` the ``DOCKER_PROBE_MAX_WAIT_SECONDS`` budget applies.
         """
         probe_budget = (
             max_wait if max_wait is not None else c.Tests.DOCKER_PROBE_MAX_WAIT_SECONDS
         )
-        waited = 0.0
-        while waited < probe_budget:
+        deadline = time.monotonic() + probe_budget
+        while True:
             try:
-                with socket.create_connection((host, port), timeout=1):
+                with socket.create_connection(
+                    (host, port), timeout=c.Tests.DOCKER_TCP_CONNECT_TIMEOUT_SECONDS
+                ):
                     return r[bool].ok(value=True)
-            except (ConnectionRefusedError, TimeoutError, OSError):
-                time.sleep(0.5)
-                waited += 0.5
-        return r[bool].fail(
-            f"TCP {host}:{port} not ready within {probe_budget}s probe budget"
-        )
-
-    def _container_info_from_sdk(
-        self, container_name: str, container: Container
-    ) -> m.Tests.ContainerInfo:
-        """Build canonical container info from a Docker SDK container."""
-        ports_raw: t.MappingKV[str, t.Tests.TestobjectSerializable] = (
-            t.Tests.TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER.validate_python(
-                container.ports
-            )
-        )
-        ports: t.MutableStrMapping = {}
-        for container_port, host_bindings in ports_raw.items():
-            normalized_bindings = t.Tests.STR_MAPPING_SEQUENCE_ADAPTER.validate_python(
-                host_bindings
-            )
-            host_port = self._extract_host_port(normalized_bindings)
-            if host_port:
-                ports[container_port] = host_port
-        image_obj = container.image
-        image_tags_raw = image_obj.tags if image_obj is not None else ()
-        image_tags = list(image_tags_raw)
-        return m.Tests.ContainerInfo(
-            name=container_name,
-            status=c.Tests.ContainerStatus(container.status),
-            ports=ports,
-            image=image_tags[0] if image_tags else "",
-            container_id=str(container.id),
-        )
-
-    @staticmethod
-    def _start_sdk_container(
-        container_name: str, container: Container
-    ) -> p.Result[bool]:
-        """Start a Docker SDK container when it is not already running."""
-        try:
-            if container.status == "running":
-                return r[bool].ok(value=True)
-            container.start()
-        except (DockerException, OSError, RuntimeError, AttributeError) as exc:
-            return r[bool].fail(
-                f"Failed to start container {container_name}: {exc}", exception=exc
-            )
-        return r[bool].ok(value=True)
+            except OSError as exc:
+                if time.monotonic() >= deadline:
+                    return r[bool].fail(
+                        f"TCP {host}:{port} not ready within {probe_budget}s: {exc}",
+                        exception=exc,
+                    )
+            time.sleep(c.Tests.DOCKER_HEALTH_POLL_SECONDS)
 
     @classmethod
     def shared(
@@ -490,14 +439,13 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         """Start the configured compose target using the DSL state."""
         target = self.target_config
         if target is None:
-            return r[str].fail(
-                "Docker target not configured. Use FlextTestsDocker.shared(...), FlextTestsDocker.compose(...), or FlextTestsDocker.stack(...)."
-            )
+            return r[str].fail(c.Tests.ERR_DOCKER_TARGET_MISSING)
         if target.compose_file is None:
             return r[str].fail("Docker target has no compose file configured.")
-        return self.compose_up(
-            str(target.compose_file),
-            service=target.service or None,
+        return self._compose_up(
+            target.compose_file,
+            target.project_name or u.Tests.docker_compose_project(target.compose_file),
+            target.service or None,
             force_recreate=target.force_recreate,
         )
 
@@ -505,22 +453,21 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         """Stop the configured compose target using the DSL state."""
         target = self.target_config
         if target is None:
-            return r[str].fail(
-                "Docker target not configured. Use FlextTestsDocker.shared(...), FlextTestsDocker.compose(...), or FlextTestsDocker.stack(...)."
-            )
+            return r[str].fail(c.Tests.ERR_DOCKER_TARGET_MISSING)
         if target.compose_file is None:
             return r[str].fail("Docker target has no compose file configured.")
-        return self.compose_down(str(target.compose_file))
+        return self._compose_down(
+            target.compose_file,
+            target.project_name or u.Tests.docker_compose_project(target.compose_file),
+        )
 
     def ready(
         self, *, port: int | None = None, max_wait: int | None = None
     ) -> p.Result[bool]:
-        """Run a readiness check against the configured target."""
+        """Probe the configured host and port, as given, until it accepts TCP."""
         target = self.target_config
         if target is None:
-            return r[bool].fail(
-                "Docker target not configured. Use FlextTestsDocker.shared(...), FlextTestsDocker.compose(...), or FlextTestsDocker.stack(...)."
-            )
+            return r[bool].fail(c.Tests.ERR_DOCKER_TARGET_MISSING)
         resolved_port = target.port if port is None else port
         if resolved_port is None:
             return r[bool].fail(
@@ -533,11 +480,12 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         )
 
     def cleanup_dirty_containers(self) -> p.Result[t.StrSequence]:
-        """Recreate every dirty shared container of the host with fresh volumes.
+        """Recreate every dirty shared container of the host.
 
-        A dirty record whose name is not a declared shared container belongs
-        to the lifecycle that declares it and is left untouched. The first
-        recreation or record failure is returned.
+        Each one goes through the same locked lifecycle as ``execute``. A dirty
+        record whose name is not a declared shared container belongs to the
+        lifecycle that declares it and is left untouched. The first failure is
+        returned.
         """
         enabled = self.lifecycle_enabled()
         if enabled.failure:
@@ -546,98 +494,409 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         for container_name in self.dirty_containers:
             if container_name not in c.Tests.SHARED_CONTAINERS:
                 continue
-            target = self._resolve_shared_target_config(
-                container_name, self.repository_root
-            )
             self.logger.info("Recreating dirty container", container=container_name)
-            recreated = self.compose_up(
-                str(target.compose_file), target.service or None, force_recreate=True
-            )
+            recreated = FlextTestsDocker.shared(
+                container_name,
+                repository_root=self.repository_root,
+                state_dir=self.state_dir,
+            ).execute()
             if recreated.failure:
                 return r[t.StrSequence].from_failure(recreated)
-            cleared = self.mark_container_clean(container_name)
-            if cleared.failure:
-                return r[t.StrSequence].from_failure(cleared)
             cleaned.append(container_name)
         return r[t.StrSequence].ok(tuple(cleaned))
 
-    @override
-    def execute(self) -> p.Result[m.Tests.ContainerInfo]:
-        """Ensure the configured container is available with a single DSL call."""
+    def _target_error(self) -> str | None:
+        """Explain why the configured target cannot run the lifecycle."""
         target = self.target_config
         if target is None:
-            return r[m.Tests.ContainerInfo].fail(
-                "Docker target not configured. Use FlextTestsDocker.shared(...).execute() or FlextTestsDocker.compose(...).execute()."
-            )
-        if not target.container_name:
-            return r[m.Tests.ContainerInfo].fail(
-                "Docker target has no inspection container configured. Use up()/down()/ready() for stack-only lifecycles."
-            )
+            return c.Tests.ERR_DOCKER_TARGET_MISSING
+        if not target.container_name or target.compose_file is None:
+            return c.Tests.ERR_DOCKER_TARGET_NOT_INSPECTABLE
+        return None
+
+    def fingerprint(
+        self, target: m.Tests.ContainerConfig | None = None
+    ) -> p.Result[str]:
+        """Fingerprint a target's declared inputs; the configured one by default."""
+        resolved = target or self.target_config
+        if resolved is None:
+            return r[str].fail(c.Tests.ERR_DOCKER_TARGET_MISSING)
+        return u.Tests.docker_fingerprint(resolved)
+
+    @contextmanager
+    def lease(self) -> Generator[None]:
+        """Hold the shared session lease of the configured container.
+
+        Sessions that use a container hold its lease; a recreation waits for
+        every lease to be released, up to the target's lock timeout. An
+        ``execute`` that must mutate cannot run inside its own session's
+        lease: ensure first, then lease.
+        """
+        target = self.target_config
+        error = self._target_error()
+        if target is None or target.container_name is None or error is not None:
+            raise ValueError(error)
+        with u.Tests.FileLock(
+            u.Tests.docker_lease_lock_file(self.state_dir, target.container_name),
+            shared=True,
+            timeout_seconds=target.lock_timeout_seconds,
+        ):
+            yield
+
+    def _observe(
+        self, container_name: str
+    ) -> p.Result[t.Pair[m.Tests.ContainerInfo | None, m.Tests.ContainerState]]:
+        """Read the container (absent is None) and its host record."""
+        state = u.Tests.read_container_state(self.state_dir, container_name)
+        if state.failure:
+            return r[
+                t.Pair[m.Tests.ContainerInfo | None, m.Tests.ContainerState]
+            ].from_failure(state)
+        info = self.fetch_container_info(container_name)
+        if info.success:
+            return r[t.Pair[m.Tests.ContainerInfo | None, m.Tests.ContainerState]].ok((
+                info.value,
+                state.value,
+            ))
+        if info.error_code == c.Tests.DockerErrorCode.NOT_PROVISIONED:
+            return r[t.Pair[m.Tests.ContainerInfo | None, m.Tests.ContainerState]].ok((
+                None,
+                state.value,
+            ))
+        return r[
+            t.Pair[m.Tests.ContainerInfo | None, m.Tests.ContainerState]
+        ].from_failure(info)
+
+    @override
+    def execute(
+        self,
+        *,
+        initializer: p.Tests.ContainerInitializer | None = None,
+        readiness_probe: p.Tests.ReadinessProbe | None = None,
+        creation_environment: t.MappingKV[str, t.SecretStr] | None = None,
+    ) -> p.Result[m.Tests.ContainerInfo]:
+        """Ensure the configured container exists, is sealed, healthy and ready.
+
+        Decides under a shared lease and reuses a matching container there. To
+        create, start or recreate it takes the exclusive lease (waiting at most
+        ``lock_timeout_seconds`` for other sessions), decides again, runs
+        compose with ``--wait``, runs ``initializer`` once on a created
+        container, seals the record and then waits for readiness.
+        ``creation_environment`` reaches compose only while it creates.
+        """
+        target = self.target_config
+        error = self._target_error()
+        if target is None or target.container_name is None or error is not None:
+            return r[m.Tests.ContainerInfo].fail(error)
         container_name = target.container_name
-        enabled = self.lifecycle_enabled()
-        if enabled.failure:
-            return r[m.Tests.ContainerInfo].from_failure(enabled)
-
-        started = self._ensure_target_started(target, container_name)
-        if started.failure:
-            return r[m.Tests.ContainerInfo].from_failure(started)
-        return self._ensure_target_ready(target, container_name)
-
-    def _ensure_target_started(
-        self, target: m.Tests.ContainerConfig, container_name: str
-    ) -> p.Result[bool]:
-        """Start or recreate the configured target when required."""
-        if target.force_recreate or self.container_dirty(container_name):
-            compose_result = self.compose_up(
-                str(target.compose_file),
-                service=target.service or None,
-                force_recreate=True,
+        environment = creation_environment or {}
+        preflight = (
+            self
+            .lifecycle_enabled()
+            .flat_map(lambda _: u.Tests.validate_creation_environment(environment))
+            .flat_map(lambda _: u.Tests.docker_fingerprint(target))
+        )
+        if preflight.failure:
+            return r[m.Tests.ContainerInfo].from_failure(preflight)
+        fingerprint = preflight.value
+        lease_file = u.Tests.docker_lease_lock_file(self.state_dir, container_name)
+        try:
+            with u.Tests.FileLock(
+                lease_file, shared=True, timeout_seconds=target.lock_timeout_seconds
+            ):
+                observed = self._observe(container_name)
+                if observed.failure:
+                    return r[m.Tests.ContainerInfo].from_failure(observed)
+                info, state = observed.value
+                action = u.Tests.docker_action(info, state, fingerprint=fingerprint)
+                if (
+                    info is not None
+                    and action == c.Tests.ContainerAction.REUSE
+                    and not target.force_recreate
+                ):
+                    return self._serve(target, info, readiness_probe)
+            with u.Tests.FileLock(
+                lease_file, timeout_seconds=target.lock_timeout_seconds
+            ):
+                converged = self._converge(
+                    target, container_name, fingerprint, initializer, environment
+                )
+                if converged.failure:
+                    return converged
+                return self._serve(target, converged.value, readiness_probe)
+        except TimeoutError as exc:
+            return r[m.Tests.ContainerInfo].fail(
+                str(exc), error_code=c.Tests.DockerErrorCode.LOCK_TIMEOUT, exception=exc
             )
-            if compose_result.failure:
-                return r[bool].from_failure(compose_result)
-            return self.mark_container_clean(container_name)
 
-        status_result = self.fetch_container_status(container_name)
-        container_running = status_result.success and (
-            status_result.value.status == c.Tests.ContainerStatus.RUNNING
+    def _converge(
+        self,
+        target: m.Tests.ContainerConfig,
+        container_name: str,
+        fingerprint: str,
+        initializer: p.Tests.ContainerInitializer | None,
+        environment: t.MappingKV[str, t.SecretStr],
+    ) -> p.Result[m.Tests.ContainerInfo]:
+        """Under the exclusive lease, decide again and apply the decision."""
+        observed = self._observe(container_name)
+        if observed.failure:
+            return r[m.Tests.ContainerInfo].from_failure(observed)
+        info, state = observed.value
+        action = (
+            c.Tests.ContainerAction.RECREATE
+            if target.force_recreate and info is not None
+            else u.Tests.docker_action(info, state, fingerprint=fingerprint)
         )
-        if container_running:
-            return r[bool].ok(True)
-        start_result = self.start_existing_container(container_name)
-        if start_result.success:
-            return r[bool].ok(True)
-        compose_result = self.compose_up(
-            str(target.compose_file), service=target.service or None
+        if info is not None and action == c.Tests.ContainerAction.REUSE:
+            return r[m.Tests.ContainerInfo].ok(info)
+        if action == c.Tests.ContainerAction.START:
+            return self._compose_to_health(target, (), recreate=False).flat_map(
+                lambda _: self.fetch_container_info(container_name)
+            )
+        unsealed = u.Tests.update_container_state(
+            self.state_dir,
+            container_name,
+            lambda _: m.Tests.ContainerState(container_name=container_name),
         )
-        if compose_result.failure:
-            return r[bool].from_failure(compose_result)
+        if unsealed.failure:
+            return r[m.Tests.ContainerInfo].from_failure(unsealed)
+        with u.Tests.creation_env_file(
+            self.state_dir, container_name, environment
+        ) as env_files:
+            created = self._compose_to_health(
+                target, env_files, recreate=action == c.Tests.ContainerAction.RECREATE
+            )
+        if created.failure:
+            return r[m.Tests.ContainerInfo].from_failure(created)
+        fetched = self.fetch_container_info(container_name)
+        if fetched.failure:
+            return fetched
+        if initializer is not None:
+            initialized = initializer(fetched.value)
+            if initialized.failure:
+                return r[m.Tests.ContainerInfo].from_failure(initialized)
+        created_id = fetched.value.container_id
+        sealed = u.Tests.update_container_state(
+            self.state_dir,
+            container_name,
+            lambda state: state.model_copy(
+                update={
+                    "container_id": created_id,
+                    "fingerprint": fingerprint,
+                    "dirty": False,
+                    "sealed": True,
+                }
+            ),
+        )
+        if sealed.failure:
+            return r[m.Tests.ContainerInfo].from_failure(sealed)
+        return fetched
+
+    def _compose_to_health(
+        self,
+        target: m.Tests.ContainerConfig,
+        env_files: t.VariadicTuple[Path],
+        *,
+        recreate: bool,
+    ) -> p.Result[bool]:
+        """Run compose up with --wait bounded by the target's startup timeout."""
+        compose_file = target.compose_file
+        if compose_file is None:
+            return r[bool].fail(c.Tests.ERR_DOCKER_TARGET_NOT_INSPECTABLE)
+        client = self._compose_client(
+            compose_file,
+            target.project_name or u.Tests.docker_compose_project(compose_file),
+            env_files,
+        )
+        try:
+            if recreate:
+                client.compose.down(remove_orphans=True, volumes=True)
+            client.compose.up(
+                services=[target.service] if target.service else None,
+                detach=True,
+                remove_orphans=True,
+                recreate=recreate,
+                wait=True,
+                wait_timeout=target.startup_timeout,
+                quiet=True,
+            )
+        except self._compose_exception_types() as exc:
+            return r[bool].fail_op("Compose up", exc)
         return r[bool].ok(True)
 
-    def _ensure_target_ready(
-        self, target: m.Tests.ContainerConfig, container_name: str
+    def _serve(
+        self,
+        target: m.Tests.ContainerConfig,
+        info: m.Tests.ContainerInfo,
+        readiness_probe: p.Tests.ReadinessProbe | None,
     ) -> p.Result[m.Tests.ContainerInfo]:
-        """Fetch target info and run configured readiness checks."""
-        container_info_result = self.fetch_container_info(container_name)
-        if container_info_result.failure:
-            return container_info_result
-        if target.port is None:
-            return container_info_result
+        """Wait, within startup_timeout, for health, the published port and probe."""
+        deadline = time.monotonic() + target.startup_timeout
+        settled = self._await_health(info, deadline, target.startup_timeout)
+        if settled.failure:
+            return settled
+        current = settled.value
+        if current.status != c.Tests.ContainerStatus.RUNNING or current.health not in {
+            c.Tests.ContainerHealth.HEALTHY,
+            c.Tests.ContainerHealth.UNKNOWN,
+        }:
+            return r[m.Tests.ContainerInfo].fail(
+                c.Tests.ERR_DOCKER_UNHEALTHY.format(
+                    name=current.name, status=current.status, health=current.health
+                ),
+                error_code=c.Tests.DockerErrorCode.UNHEALTHY,
+            )
+        if target.port is not None:
+            listening = self._await_port(target, current, deadline)
+            if listening.failure:
+                return r[m.Tests.ContainerInfo].from_failure(listening)
+        if readiness_probe is not None:
+            probed = self._poll_readiness(
+                current, readiness_probe, deadline, target.startup_timeout
+            )
+            if probed.failure:
+                return r[m.Tests.ContainerInfo].from_failure(probed)
+        return r[m.Tests.ContainerInfo].ok(current)
 
-        ready_port = self._resolve_readiness_port(target, container_info_result.value)
-        if ready_port is None:
-            return r[m.Tests.ContainerInfo].fail(
-                f"Docker target {target.container_name} has no resolved host port for readiness check"
-            )
-        ready_result = self.wait_for_port_ready(
-            target.host, ready_port, max_wait=target.startup_timeout
+    def _await_port(
+        self,
+        target: m.Tests.ContainerConfig,
+        info: m.Tests.ContainerInfo,
+        deadline: float,
+    ) -> p.Result[bool]:
+        """Wait for the published host port of the target's container port."""
+        host_port = u.Tests.resolve_host_port(info, target.port or 0)
+        if host_port.failure:
+            return r[bool].from_failure(host_port)
+        listening = self.wait_for_port_ready(
+            target.host, host_port.value, max_wait=deadline - time.monotonic()
         )
-        if ready_result.failure:
-            return r[m.Tests.ContainerInfo].from_failure(ready_result)
-        if not ready_result.value:
-            return r[m.Tests.ContainerInfo].fail(
-                f"Container {target.container_name} did not become ready on {target.host}:{ready_port}"
+        if listening.failure:
+            return r[bool].fail(
+                c.Tests.ERR_DOCKER_READINESS_TIMEOUT.format(
+                    name=info.name,
+                    timeout=target.startup_timeout,
+                    detail=listening.error,
+                ),
+                error_code=c.Tests.DockerErrorCode.READINESS_TIMEOUT,
+                exception=listening.exception,
             )
-        return container_info_result
+        return listening
+
+    def _await_health(
+        self, info: m.Tests.ContainerInfo, deadline: float, timeout: int
+    ) -> p.Result[m.Tests.ContainerInfo]:
+        """Poll a starting healthcheck until it settles or the deadline passes."""
+        current = info
+        while current.health == c.Tests.ContainerHealth.STARTING:
+            if time.monotonic() >= deadline:
+                return r[m.Tests.ContainerInfo].fail(
+                    c.Tests.ERR_DOCKER_READINESS_TIMEOUT.format(
+                        name=current.name,
+                        timeout=timeout,
+                        detail="healthcheck still starting",
+                    ),
+                    error_code=c.Tests.DockerErrorCode.READINESS_TIMEOUT,
+                )
+            time.sleep(c.Tests.DOCKER_HEALTH_POLL_SECONDS)
+            refreshed = self.fetch_container_info(current.name)
+            if refreshed.failure:
+                return refreshed
+            current = refreshed.value
+        return r[m.Tests.ContainerInfo].ok(current)
+
+    @staticmethod
+    def _poll_readiness(
+        info: m.Tests.ContainerInfo,
+        readiness_probe: p.Tests.ReadinessProbe,
+        deadline: float,
+        timeout: int,
+    ) -> p.Result[bool]:
+        """Poll a readiness probe until it reports True or the deadline passes."""
+        while True:
+            probed = readiness_probe(info)
+            if probed.success and probed.value:
+                return r[bool].ok(True)
+            detail = probed.error if probed.failure else "probe reported not ready"
+            if time.monotonic() >= deadline:
+                return r[bool].fail(
+                    c.Tests.ERR_DOCKER_READINESS_TIMEOUT.format(
+                        name=info.name, timeout=timeout, detail=detail
+                    ),
+                    error_code=c.Tests.DockerErrorCode.READINESS_TIMEOUT,
+                )
+            time.sleep(c.Tests.DOCKER_HEALTH_POLL_SECONDS)
+
+    def verify(
+        self,
+        *,
+        readiness_probe: p.Tests.ReadinessProbe | None = None,
+        required_environment: t.StrSequence = (),
+    ) -> p.Result[m.Tests.ContainerInfo]:
+        """Check, without changing anything, that the container is usable.
+
+        Fails typed: NOT_PROVISIONED, DIRTY, UNSEALED, FINGERPRINT_MISMATCH,
+        UNHEALTHY, LOCK_TIMEOUT (a recreation holds the lease),
+        ENVIRONMENT_MISSING, PORT_NOT_PUBLISHED or READINESS_TIMEOUT.
+        """
+        target = self.target_config
+        error = self._target_error()
+        if target is None or target.container_name is None or error is not None:
+            return r[m.Tests.ContainerInfo].fail(error)
+        container_name = target.container_name
+        preflight = self.lifecycle_enabled().flat_map(
+            lambda _: u.Tests.docker_fingerprint(target)
+        )
+        if preflight.failure:
+            return r[m.Tests.ContainerInfo].from_failure(preflight)
+        fingerprint = preflight.value
+        try:
+            with u.Tests.FileLock(
+                u.Tests.docker_lease_lock_file(self.state_dir, container_name),
+                shared=True,
+                timeout_seconds=target.lock_timeout_seconds,
+            ):
+                return self._verify_leased(
+                    target,
+                    container_name,
+                    fingerprint,
+                    readiness_probe,
+                    required_environment,
+                )
+        except TimeoutError as exc:
+            return r[m.Tests.ContainerInfo].fail(
+                str(exc), error_code=c.Tests.DockerErrorCode.LOCK_TIMEOUT, exception=exc
+            )
+
+    def _verify_leased(
+        self,
+        target: m.Tests.ContainerConfig,
+        container_name: str,
+        fingerprint: str,
+        readiness_probe: p.Tests.ReadinessProbe | None,
+        required_environment: t.StrSequence,
+    ) -> p.Result[m.Tests.ContainerInfo]:
+        """Verify under a held shared lease."""
+        observed = self._observe(container_name)
+        if observed.failure:
+            return r[m.Tests.ContainerInfo].from_failure(observed)
+        info, state = observed.value
+        if info is not None:
+            deadline = time.monotonic() + target.startup_timeout
+            settled = self._await_health(info, deadline, target.startup_timeout)
+            if settled.failure:
+                return settled
+            info = settled.value
+        checked = u.Tests.docker_verify(info, state, fingerprint=fingerprint)
+        if checked.failure:
+            return checked
+        if required_environment:
+            environment = self.fetch_container_environment(
+                container_name, required_environment
+            )
+            if environment.failure:
+                return r[m.Tests.ContainerInfo].from_failure(environment)
+        return self._serve(target, checked.value, readiness_probe)
 
 
 tk: type[FlextTestsDocker] = FlextTestsDocker

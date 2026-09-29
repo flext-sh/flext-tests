@@ -50,6 +50,62 @@ class FlextTestsConstantsDocker:
         "Container state {path} records {recorded!r}, expected {expected!r}"
     )
 
+    # A mutation waits at most this long for other sessions' leases, then fails
+    # LOCK_TIMEOUT; a target may declare its own bound.
+    DOCKER_LEASE_TIMEOUT_SECONDS: ClassVar[float] = 120.0
+    # Bounded condition polling of container health and readiness.
+    DOCKER_HEALTH_POLL_SECONDS: ClassVar[float] = 0.5
+    # Creation-only secrets reach compose through a 0600 env file in the state
+    # directory that exists only for the duration of ``compose up``.
+    DOCKER_ENV_FILE_SUFFIX: ClassVar[str] = ".creation.env"
+    DOCKER_ENV_FILE_MODE: ClassVar[int] = 0o600
+    DOCKER_TCP_PORT_SUFFIX: ClassVar[str] = "/tcp"
+    DOCKER_TCP_CONNECT_TIMEOUT_SECONDS: ClassVar[float] = 1.0
+    DOCKER_ENV_SEPARATOR: ClassVar[str] = "="
+    # Values are written single-quoted, which compose reads literally; a quote
+    # or a line break cannot be represented.
+    DOCKER_ENV_FORBIDDEN_MARKS: ClassVar[t.VariadicTuple[str]] = ("'", "\n", "\r")
+    DOCKER_FINGERPRINT_SEPARATOR: ClassVar[bytes] = b"\0"
+    DOCKER_FINGERPRINT_SIZE_BYTES: ClassVar[int] = 8
+    ERR_DOCKER_NOT_PROVISIONED: ClassVar[str] = "Container {name} does not exist"
+    ERR_DOCKER_UNHEALTHY: ClassVar[str] = (
+        "Container {name} is {status} with health {health}"
+    )
+    ERR_DOCKER_DIRTY: ClassVar[str] = (
+        "Container {name} is marked dirty; the next ensure recreates it"
+    )
+    ERR_DOCKER_UNSEALED: ClassVar[str] = (
+        "Container {name} ({container_id}) is not the one the lifecycle sealed"
+    )
+    ERR_DOCKER_FINGERPRINT_MISMATCH: ClassVar[str] = (
+        "Container {name} was sealed for {sealed}; the declared inputs give {current}"
+    )
+    ERR_DOCKER_PORT_NOT_PUBLISHED: ClassVar[str] = (
+        "Container {name} publishes no host port for {port}/tcp"
+    )
+    ERR_DOCKER_READINESS_TIMEOUT: ClassVar[str] = (
+        "Container {name} not ready within {timeout}s: {detail}"
+    )
+    ERR_DOCKER_ENVIRONMENT_MISSING: ClassVar[str] = (
+        "Container {name} environment lacks {keys}"
+    )
+    ERR_DOCKER_ENV_VALUE: ClassVar[str] = (
+        "Creation value of {key} cannot be written to a compose env file: "
+        "it contains a single quote or a line break"
+    )
+    ERR_DOCKER_TARGET_MISSING: ClassVar[str] = (
+        "Docker target not configured. Use FlextTestsDocker.shared(...), "
+        "FlextTestsDocker.compose(...), or FlextTestsDocker.stack(...)."
+    )
+    ERR_DOCKER_TARGET_NOT_INSPECTABLE: ClassVar[str] = (
+        "Docker target has no inspection container or compose file configured. "
+        "Use up()/down()/ready() for stack-only lifecycles."
+    )
+    ERR_DOCKER_KUBE_HOOKS_UNSUPPORTED: ClassVar[str] = (
+        "The kind cluster lifecycle creates no sealed container: "
+        "initializer and creation_environment do not apply"
+    )
+
     # Bounded condition polling of a non-blocking lock attempt.
     FILE_LOCK_POLL_SECONDS: ClassVar[float] = 0.05
     FILE_LOCK_MODE_SHARED: ClassVar[str] = "shared"
@@ -81,11 +137,13 @@ class FlextTestsConstantsDocker:
     )
     CONNECTIVITY_PROBE_TIMEOUT_SECONDS: ClassVar[float] = 1.5
 
+    # ``port`` is the container port a service listens on; the host port it is
+    # published on is read from the running container (u.Tests.resolve_host_port).
     SHARED_CONTAINERS: ClassVar[Mapping[str, t.HeaderMapping]] = MappingProxyType({
         "flext-openldap-test": MappingProxyType({
             "compose_file": "docker/docker-compose.openldap.yml",
             "service": "openldap",
-            "port": 3390,
+            "port": 389,
             "host": "localhost",
         }),
         "flext-oracle-db-test": MappingProxyType({
@@ -110,6 +168,32 @@ class FlextTestsConstantsDocker:
 
         DISABLED_BY_CI = "DISABLED_BY_CI"
         LOCK_TIMEOUT = "LOCK_TIMEOUT"
+        NOT_PROVISIONED = "NOT_PROVISIONED"
+        UNHEALTHY = "UNHEALTHY"
+        DIRTY = "DIRTY"
+        UNSEALED = "UNSEALED"
+        FINGERPRINT_MISMATCH = "FINGERPRINT_MISMATCH"
+        PORT_NOT_PUBLISHED = "PORT_NOT_PUBLISHED"
+        READINESS_TIMEOUT = "READINESS_TIMEOUT"
+        ENVIRONMENT_MISSING = "ENVIRONMENT_MISSING"
+
+    @unique
+    class ContainerHealth(StrEnum):
+        """Docker healthcheck state; UNKNOWN is Docker's ``none`` (no check)."""
+
+        HEALTHY = "healthy"
+        UNHEALTHY = "unhealthy"
+        STARTING = "starting"
+        UNKNOWN = "none"
+
+    @unique
+    class ContainerAction(StrEnum):
+        """What an ensure does with a container and its host record."""
+
+        CREATE = "create"
+        START = "start"
+        RECREATE = "recreate"
+        REUSE = "reuse"
 
     @unique
     class ContainerStatus(StrEnum):

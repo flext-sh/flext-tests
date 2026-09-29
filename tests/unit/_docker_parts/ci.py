@@ -56,6 +56,7 @@ class TestsFlextTestsDockerCiMixin:
         )
         with u.Tests.env_vars_context({ci.variable: ci.value}):
             tm.fail(docker.execute(), code=disabled)
+            tm.fail(docker.verify(), code=disabled)
             tm.fail(docker.up(), code=disabled)
             tm.fail(docker.down(), code=disabled)
             tm.fail(docker.compose_up(str(compose_file)), code=disabled)

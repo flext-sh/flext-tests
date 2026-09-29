@@ -21,7 +21,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 import pytest
 
-from flext_tests import c
+from flext_tests import c, u
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -36,7 +36,7 @@ class FlextTestsConnectivityPlugin:
 
     @staticmethod
     def _endpoint(container_name: str) -> tuple[str, int] | None:
-        """Return the declared (host, port) for one shared container."""
+        """Return the declared host and container port of one shared container."""
         settings = c.Tests.SHARED_CONTAINERS.get(container_name)
         if settings is None:
             return None
@@ -45,6 +45,18 @@ class FlextTestsConnectivityPlugin:
         if host is None or port is None:
             return None
         return str(host), int(port)
+
+    @staticmethod
+    def _published_port(container_name: str, container_port: int) -> int | None:
+        """Return the host port a running container publishes, if any."""
+        from flext_tests.docker import FlextTestsDocker
+
+        published = (
+            FlextTestsDocker()
+            .fetch_container_info(container_name)
+            .flat_map(lambda info: u.Tests.resolve_host_port(info, container_port))
+        )
+        return published.value if published.success else None
 
     @classmethod
     def _unreachable_reason(cls, marker: str) -> str | None:
@@ -67,17 +79,22 @@ class FlextTestsConnectivityPlugin:
         reason: str | None = None
         container = c.Tests.CONNECTIVITY_MARKER_CONTAINERS.get(marker)
         endpoint = None if container is None else cls._endpoint(container)
-        if endpoint is not None:
+        if container is not None and endpoint is not None:
             host, port = endpoint
-            try:
-                with socket.create_connection(
-                    (host, port), timeout=c.Tests.CONNECTIVITY_PROBE_TIMEOUT_SECONDS
-                ):
-                    reason = None
-            except OSError:
-                reason = c.Tests.UNREACHABLE_SKIP_REASON.format(
-                    marker=marker, host=host, port=port
-                )
+            unreachable = c.Tests.UNREACHABLE_SKIP_REASON.format(
+                marker=marker, host=host, port=port
+            )
+            host_port = cls._published_port(container, port)
+            reason = unreachable
+            if host_port is not None:
+                try:
+                    with socket.create_connection(
+                        (host, host_port),
+                        timeout=c.Tests.CONNECTIVITY_PROBE_TIMEOUT_SECONDS,
+                    ):
+                        reason = None
+                except OSError:
+                    reason = unreachable
         cls._probe_cache[marker] = reason
         return reason
 
