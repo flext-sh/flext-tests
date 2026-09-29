@@ -7,7 +7,7 @@ from collections.abc import Mapping
 import pytest
 
 from flext_tests import r, tm
-from tests import c, t
+from tests import c, m, t
 
 
 class TestsFlextTestsMatchersDataDrivenMixin:
@@ -57,7 +57,7 @@ class TestsFlextTestsMatchersDataDrivenMixin:
         )
 
     def test_item_rules_reject_string_rule_container(self) -> None:
-        with pytest.raises(c.ValidationError) as error:
+        with pytest.raises(m.ValidationError, match=r"for ThatParams\nitems") as error:
             tm.that(["alpha"], items="alpha")
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"items"})
 
