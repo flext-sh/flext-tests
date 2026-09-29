@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from tests import p
+from tests import t
 
 
 class TestsFlextTestsMatchersPredicates:

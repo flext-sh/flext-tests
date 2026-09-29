@@ -679,7 +679,6 @@ class FlextTestsMatchersThatMixin:
         subject: p.AttributeProbe,
         rule: m.Tests.MatchRule,
         *,
-        owned_payload: bool,
         inherited_msg: str | None = None,
     ) -> None:
         kwargs = dict(cls._rule_kwargs(rule))
@@ -738,10 +737,7 @@ class FlextTestsMatchersThatMixin:
             case Sequence():
                 for index, rule in enumerate(rules):
                     cls._apply_rule(
-                        sequence_value[index],
-                        rule,
-                        owned_payload=True,
-                        inherited_msg=inherited_msg,
+                        sequence_value[index], rule, inherited_msg=inherited_msg
                     )
                 return
             case Mapping():
