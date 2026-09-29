@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_tests import m
+from flext_tests import c, m
 from flext_tests.utilities import u
 
 from ._collector import FlextTestsEnforcementCollector
@@ -50,9 +50,9 @@ class FlextTestsEnforcementBuilder:
         namespace_builder = NamespaceDetectorBuilder()
         items: list[pytest.Item] = []
         for rule in rules:
-            if rule.source.kind == m.EnforcementSourceKind.FLEXT_INFRA_DETECTOR.value:
+            if rule.source.kind == c.EnforcementSourceKind.FLEXT_INFRA_DETECTOR.value:
                 items.extend(namespace_builder(session, cfg, rule, context))
-            elif rule.source.kind == "flext_tests_validator":
+            elif rule.source.kind == c.EnforcementSourceKind.FLEXT_TESTS_VALIDATOR.value:
                 items.extend(
                     FlextTestsEnforcementValidators.build_tests_validator_items(
                         collector, rule, context
@@ -68,7 +68,7 @@ class FlextTestsEnforcementBuilder:
     ) -> p.AttributeProbe | None:
         """Load the workspace infra report only when a rule needs it."""
         if not any(
-            rule.source.kind == m.EnforcementSourceKind.FLEXT_INFRA_DETECTOR.value
+            rule.source.kind == c.EnforcementSourceKind.FLEXT_INFRA_DETECTOR.value
             for rule in rules
         ):
             return None
