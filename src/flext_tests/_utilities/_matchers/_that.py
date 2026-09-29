@@ -679,7 +679,6 @@ class FlextTestsMatchersThatMixin:
         subject: p.AttributeProbe,
         rule: m.Tests.MatchRule,
         *,
-        owned_payload: bool,
         inherited_msg: str | None = None,
     ) -> None:
         kwargs = dict(cls._rule_kwargs(rule))
@@ -738,10 +737,7 @@ class FlextTestsMatchersThatMixin:
             case Sequence():
                 for index, rule in enumerate(rules):
                     cls._apply_rule(
-                        sequence_value[index],
-                        rule,
-                        owned_payload=True,
-                        inherited_msg=inherited_msg,
+                        sequence_value[index], rule, inherited_msg=inherited_msg
                     )
                 return
             case Mapping():
@@ -754,9 +750,7 @@ class FlextTestsMatchersThatMixin:
         for selector, rule in rules.items():
             if selector in {"*", "all"}:
                 for item in sequence_value:
-                    cls._apply_rule(
-                        item, rule, owned_payload=True, inherited_msg=inherited_msg
-                    )
+                    cls._apply_rule(item, rule, inherited_msg=inherited_msg)
                 continue
             target_index = (
                 0
@@ -766,10 +760,7 @@ class FlextTestsMatchersThatMixin:
                 else int(selector)
             )
             cls._apply_rule(
-                sequence_value[target_index],
-                rule,
-                owned_payload=True,
-                inherited_msg=inherited_msg,
+                sequence_value[target_index], rule, inherited_msg=inherited_msg
             )
 
     @classmethod
@@ -790,9 +781,7 @@ class FlextTestsMatchersThatMixin:
                 else:
                     msg = f"Object missing attribute path: {attr_path}"
                     raise AssertionError(msg)
-            cls._apply_rule(
-                current, rule, owned_payload=False, inherited_msg=inherited_msg
-            )
+            cls._apply_rule(current, rule, inherited_msg=inherited_msg)
 
 
 __all__: list[str] = ["FlextTestsMatchersThatMixin"]
