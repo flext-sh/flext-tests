@@ -58,7 +58,9 @@ class FlextTestsKube(FlextTestsDocker):
             force_recreate=target.force_recreate,
         )
         if up_result.failure:
-            return r[str].fail_op("Kind cluster start", up_result.error)
+            return up_result.map_error(
+                lambda error: f"Kind cluster start failed: {error}"
+            )
         if target.port is None:
             return r[str].ok("Kind cluster started (no readiness port configured)")
         ready = self.wait_for_port_ready(

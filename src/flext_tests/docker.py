@@ -359,7 +359,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         _ = network_name
         result = self.compose_up(compose_file)
         if result.failure:
-            return r[str].from_failure(result)
+            return result.map_error(lambda error: f"Stack start failed: {error}")
         return r[str].ok("Stack started successfully")
 
     def wait_for_port_ready(
