@@ -57,7 +57,7 @@ class TestsFlextTestsMatchersDataDrivenMixin:
         )
 
     def test_item_rules_reject_string_rule_container(self) -> None:
-        with pytest.raises(ValueError, match=r"for ThatParams\nitems"):
+        with pytest.raises(c.ValidationError) as error:
             tm.that(["alpha"], items="alpha")
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"items"})
 
