@@ -6,7 +6,7 @@
 # `never-healthy` fails its healthcheck forever.
 services:
   probe:
-    image: nginx:alpine
+    image: nginx:latest
     ports:
       - "127.0.0.1::80"
     environment:
@@ -18,7 +18,7 @@ services:
       retries: 1
       start_period: 0s
   never-healthy:
-    image: nginx:alpine
+    image: nginx:latest
     healthcheck:
       test: ["CMD-SHELL", "exit 1"]
       interval: 1s
