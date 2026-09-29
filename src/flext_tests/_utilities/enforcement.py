@@ -11,25 +11,7 @@ from flext_tests import c, m, p, t
 
 
 class FlextTestsEnforcementUtilitiesMixin:
-    """Workspace discovery, option parsing and catalog filtering for enforcement."""
-
-    @staticmethod
-    def discover_repository_root(start: Path) -> Path | None:
-        """Walk upward from ``start`` to find the FLEXT workspace root."""
-        for candidate in (start, *start.parents):
-            if all(
-                (candidate / marker).exists()
-                for marker in c.Tests.ENFORCEMENT_WORKSPACE_MARKERS
-            ):
-                return candidate
-        return None
-
-    @staticmethod
-    def split_csv(raw: str | None) -> frozenset[str]:
-        """Split a comma-separated option value into a normalized frozen set."""
-        if not raw:
-            return frozenset()
-        return frozenset(part.strip() for part in raw.split(",") if part.strip())
+    """Catalog filtering and collected-project discovery for enforcement."""
 
     @staticmethod
     def active_rules(
