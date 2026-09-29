@@ -7,7 +7,7 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from typing import Self
 
-from flext_core import FlextSettings, settings
+from flext_core import FlextSettings
 from flext_tests import t
 
 
@@ -35,25 +35,6 @@ class FlextTestsConfigHelpersUtilitiesMixin(FlextSettings):
     __eq__ = object.__eq__
 
     __hash__ = object.__hash__
-
-    @staticmethod
-    def create_test_config(**kwargs: t.Scalar) -> FlextSettings:
-        """Create a test settings instance.
-
-        Args:
-            **kwargs: Config field values (scalar types: str, int, float, bool, datetime)
-
-        Returns:
-            Test FlextSettings singleton with overrides applied
-
-        """
-        if not kwargs:
-            return settings
-        candidate = settings.model_copy(update=kwargs, deep=True)
-        computed_fields = set(type(candidate).model_computed_fields)
-        return FlextSettings.model_validate(
-            candidate.model_dump(exclude=computed_fields)
-        )
 
     @staticmethod
     @contextmanager

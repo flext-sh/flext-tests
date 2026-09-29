@@ -591,7 +591,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     def _ensure_target_started(
         self, target: m.Tests.ContainerConfig, container_name: str
-    ) -> p.Result[None]:
+    ) -> p.Result[bool]:
         """Start or recreate the configured target when required."""
         if target.force_recreate or self.container_dirty(container_name):
             compose_result = self.compose_up(
@@ -600,25 +600,25 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 force_recreate=True,
             )
             if compose_result.failure:
-                return r[None].from_failure(compose_result)
+                return r[bool].from_failure(compose_result)
             _ = self.mark_container_clean(container_name)
-            return r[None].ok(None)
+            return r[bool].ok(True)
 
         status_result = self.fetch_container_status(container_name)
         container_running = status_result.success and (
             status_result.value.status == c.Tests.ContainerStatus.RUNNING
         )
         if container_running:
-            return r[None].ok(None)
+            return r[bool].ok(True)
         start_result = self.start_existing_container(container_name)
         if start_result.success:
-            return r[None].ok(None)
+            return r[bool].ok(True)
         compose_result = self.compose_up(
             str(target.compose_file), service=target.service or None
         )
         if compose_result.failure:
-            return r[None].from_failure(compose_result)
-        return r[None].ok(None)
+            return r[bool].from_failure(compose_result)
+        return r[bool].ok(True)
 
     def _ensure_target_ready(
         self, target: m.Tests.ContainerConfig, container_name: str

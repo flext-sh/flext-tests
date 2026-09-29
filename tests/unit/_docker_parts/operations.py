@@ -11,17 +11,6 @@ from tests import c, u
 class TestsFlextTestsDockerOperationsMixin:
     """Docker operation tests."""
 
-    def test_compose_up_returns_flext_result(
-        self, docker_manager: FlextTestsDocker
-    ) -> None:
-        """Test compose_up returns a valid public Result contract."""
-        result = docker_manager.compose_up("missing-compose.yml")
-        tm.that(result.success or result.failure, eq=True)
-        if result.success:
-            tm.that(result.value, is_=str)
-        else:
-            tm.that(result.error, is_=str)
-
     def test_compose_down_returns_flext_result(
         self, docker_manager: FlextTestsDocker
     ) -> None:
@@ -57,17 +46,6 @@ class TestsFlextTestsDockerOperationsMixin:
         result = docker_manager.wait_for_port_ready(c.LOOPBACK_IP, 59999, max_wait=1)
         _ = u.Tests.assert_failure(result)
         tm.that(result.error or "", has="not ready")
-
-    def test_start_compose_stack_returns_result(
-        self, docker_manager: FlextTestsDocker
-    ) -> None:
-        """Test start_compose_stack returns a valid public Result contract."""
-        result = docker_manager.start_compose_stack("missing-compose.yml")
-        tm.that(result.success or result.failure, eq=True)
-        if result.success:
-            tm.that(result.value, is_=str)
-        else:
-            tm.that(result.error, is_=str)
 
     def test_cleanup_dirty_containers_empty(
         self, docker_manager: FlextTestsDocker

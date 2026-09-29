@@ -13,34 +13,18 @@ from tests import c
 class TestsFlextTestsDockerBuildersMixin:
     """Docker builder tests."""
 
-    def test_shared_containers_attribute(self) -> None:
-        """Test canonical shared containers constant."""
-        tm.that(c.Tests.SHARED_CONTAINERS, none=False)
-        tm.that(c.Tests.SHARED_CONTAINERS, is_=dict)
-
-    def test_shared_builder_resolves_target_config(self, tmp_path: Path) -> None:
-        """Test shared() builds a resolved container target from constants."""
-        manager = FlextTestsDocker.shared(
-            "flext-oracle-db-test", repository_root=tmp_path
-        )
+    @pytest.mark.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))
+    def test_shared_builder_resolves_every_declared_container(
+        self, container_name: str, tmp_path: Path
+    ) -> None:
+        """shared() resolves each declared container from the constants SSOT."""
+        declared = c.Tests.SHARED_CONTAINERS[container_name]
+        manager = FlextTestsDocker.shared(container_name, repository_root=tmp_path)
         target = tm.not_none(manager.target_config)
-        tm.that(target.container_name, eq="flext-oracle-db-test")
-        tm.that(
-            target.compose_file, eq=tmp_path / "docker" / "docker-compose.oracle-db.yml"
-        )
-
-    def test_shared_builder_resolves_openldap_target(self, tmp_path: Path) -> None:
-        """Test shared() resolves the centralized OpenLDAP container target."""
-        manager = FlextTestsDocker.shared(
-            "flext-openldap-test", repository_root=tmp_path
-        )
-        target = tm.not_none(manager.target_config)
-        tm.that(target.container_name, eq="flext-openldap-test")
-        tm.that(
-            target.compose_file, eq=tmp_path / "docker" / "docker-compose.openldap.yml"
-        )
-        tm.that(target.service, eq="openldap")
-        tm.that(target.port, eq=3390)
+        tm.that(target.container_name, eq=container_name)
+        tm.that(target.compose_file, eq=tmp_path / str(declared["compose_file"]))
+        tm.that(target.service, eq=declared["service"])
+        tm.that(target.port, eq=declared["port"])
 
     def test_compose_builder_resolves_target_config(self, tmp_path: Path) -> None:
         """Test compose() builds a resolved explicit container target."""

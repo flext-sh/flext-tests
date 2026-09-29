@@ -21,10 +21,12 @@ from typing import TYPE_CHECKING, ClassVar
 
 import pytest
 
-from flext_tests import c, t
+from flext_tests import c
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
+
+    from flext_tests import t
 
 
 class FlextTestsConnectivityPlugin:

@@ -9,9 +9,10 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_infra import u
+from flext_infra import FlextInfraUtilities
 
 from ._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
+from ._utilities.enforcement import FlextTestsEnforcementUtilitiesMixin
 from ._utilities.files import FlextTestsFilesUtilitiesMixin
 from ._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
 from ._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
@@ -26,7 +27,7 @@ from ._utilities.validator import FlextTestsValidatorUtilitiesMixin
 from ._utilities.workspace_cleanup import FlextTestsWorkspaceCleanupUtilitiesMixin
 
 
-class FlextTestsUtilities(u):
+class FlextTestsUtilities(FlextInfraUtilities):
     """Test utilities for FLEXT ecosystem - extends u.
 
     Provides essential test helpers that complement u.
@@ -48,6 +49,7 @@ class FlextTestsUtilities(u):
         # NOTE (multi-agent): compose guarded cleanup planning/apply into u.Tests.
         FlextTestsWorkspaceCleanupUtilitiesMixin,
         FlextTestsModuleGovernanceMixin,
+        FlextTestsEnforcementUtilitiesMixin,
     ):
         """Test utilities namespace."""
 

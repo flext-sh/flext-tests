@@ -164,7 +164,7 @@ class FlextTestsValidatorUtilitiesMixin:
         )
 
     @staticmethod
-    def code_match(line: str, pattern: t.Infra.RegexPattern) -> bool:
+    def code_match(line: str, pattern: t.RegexPattern) -> bool:
         """Check if one pattern match appears outside quoted string literals.
 
         Args:
@@ -212,7 +212,7 @@ class FlextTestsValidatorUtilitiesMixin:
         return not (in_single or in_double or in_triple_single or in_triple_double)
 
     @staticmethod
-    def real_comment(line: str, pattern: t.Infra.RegexPattern) -> bool:
+    def real_comment(line: str, pattern: t.RegexPattern) -> bool:
         """Check if pattern match is in a real comment, not inside a string.
 
         Used by validators to avoid false positives from patterns appearing

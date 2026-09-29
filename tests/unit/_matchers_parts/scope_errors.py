@@ -17,15 +17,10 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
     """Matcher scope and error tests."""
 
     def test_check_returns_chain(self) -> None:
-        """Test tm.check() returns Chain t.JsonValue."""
+        """tm.check() chains assertions over the result it was given."""
         result = r[int].ok(42)
         chain: m.Tests.Chain[int] = tm.check(result)
-        tm.that(chain, none=False)
-
-    def test_scope_basic_usage(self) -> None:
-        """Test tm.scope() basic usage."""
-        with tm.scope() as scope:
-            tm.that(scope, none=False)
+        tm.that(chain.result is result, eq=True)
 
     def test_scope_with_settings(self) -> None:
         """Test tm.scope() with settings parameter."""
@@ -55,22 +50,22 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
             tm.that(present_key in os.environ, eq=False)
 
     def test_ok_invalid_parameter_type(self) -> None:
-        """Invalid length preserves Pydantic's structured validation error."""
+        """tm.ok() rejects an invalid criterion, naming the offending field."""
         result = r[int].ok(42)
-        with pytest.raises(c.ValidationError) as error:
+        with pytest.raises(ValueError, match=r"for OkParams\nlen"):
             tm.ok(result, len="invalid")
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"len"})
 
     def test_fail_invalid_parameter_type(self) -> None:
-        """Invalid error codes preserve Pydantic's structured validation error."""
+        """tm.fail() rejects an invalid criterion, naming the offending field."""
         result: p.Result[str] = r[str].fail("error")
-        with pytest.raises(c.ValidationError) as error:
+        with pytest.raises(ValueError, match=r"for FailParams\ncode"):
             tm.fail(result, code=123)
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"code"})
 
     def test_that_invalid_parameter_type(self) -> None:
-        """Invalid operands preserve Pydantic's structured validation error."""
-        with pytest.raises(c.ValidationError) as error:
+        """tm.that() rejects an invalid criterion, naming the offending field."""
+        with pytest.raises(ValueError, match=r"for ThatParams\nlen"):
             tm.that([1, 2, 3], len="invalid")
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"len"})
 

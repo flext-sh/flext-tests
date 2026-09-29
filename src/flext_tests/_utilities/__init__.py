@@ -27,6 +27,7 @@ if TYPE_CHECKING:
     from ._matchers._typeguards import FlextTestsMatchersTypeGuardsMixin
     from .base import FlextTestsUtilitiesBase
     from .container import FlextTestsContainerHelpersUtilitiesMixin
+    from .enforcement import FlextTestsEnforcementUtilitiesMixin
     from .files import FlextTestsFilesUtilitiesMixin
     from .fixtures_dsl import FlextTestsFixturesDSLMixin
     from .generic import FlextTestsGenericHelpersUtilitiesMixin
@@ -55,6 +56,7 @@ if TYPE_CHECKING:
 __all__: tuple[str, ...] = (
     "FlextTestsConfigHelpersUtilitiesMixin",
     "FlextTestsContainerHelpersUtilitiesMixin",
+    "FlextTestsEnforcementUtilitiesMixin",
     "FlextTestsFilesAssertionsMixin",
     "FlextTestsFilesBatchMixin",
     "FlextTestsFilesComparisonMixin",
@@ -117,6 +119,7 @@ _LAZY_IMPORTS = MappingProxyType(
             "._matchers._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
             ".base": ("FlextTestsUtilitiesBase",),
             ".container": ("FlextTestsContainerHelpersUtilitiesMixin",),
+            ".enforcement": ("FlextTestsEnforcementUtilitiesMixin",),
             ".files": ("FlextTestsFilesUtilitiesMixin",),
             ".fixtures_dsl": ("FlextTestsFixturesDSLMixin",),
             ".generic": ("FlextTestsGenericHelpersUtilitiesMixin",),

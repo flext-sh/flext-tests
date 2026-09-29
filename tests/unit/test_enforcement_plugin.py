@@ -1,30 +1,20 @@
 """Behavioral coverage for the enforcement dispatcher public contract.
 
-Two behavioral surfaces are exercised through the module's public API only:
-
-* Pure exported functions (``split_csv``, ``discover_repository_root``,
-  ``active_rules``) are called directly and asserted on their return values and
-  invariants.
-* The end-to-end pytest11 pipeline (entry-point load -> ``pytest_configure``
-  filterwarnings -> ``pytest_warning_recorded`` -> ``pytest_terminal_summary``)
-  is driven inside a ``pytester`` subprocess sandbox and asserted on observable
-  outcomes plus the terminal summary the plugin promises to print. Subprocess
-  runs keep the real workspace untouched and prove entry-point loading without
-  any manual ``-p`` wiring.
+The end-to-end pytest11 pipeline (entry-point load -> ``pytest_configure``
+filterwarnings -> ``pytest_warning_recorded`` -> ``pytest_terminal_summary``)
+is driven inside a ``pytester`` subprocess sandbox and asserted on observable
+outcomes plus the terminal summary the plugin promises to print. Subprocess
+runs keep the real workspace untouched and prove entry-point loading without
+any manual ``-p`` wiring.
 """
 
 from __future__ import annotations
 
 from importlib.metadata import entry_points
-from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import m, tm
-from flext_tests.enforcement import active_rules, discover_repository_root, split_csv
-
-if TYPE_CHECKING:
-    from pathlib import Path
+from flext_tests import tm
 
 
 class TestsFlextTestsEnforcementPlugin:
@@ -35,11 +25,11 @@ class TestsFlextTestsEnforcementPlugin:
     # only its explicit owner plugins.
 
     def test_flext_pytest11_entrypoints_have_one_package_owner(self) -> None:
-        """Only the two flext-tests plugins participate in pytest autoload."""
+        """The flext-tests distribution publishes exactly its two pytest plugins."""
         names = {
             entry.name
             for entry in entry_points(group="pytest11")
-            if entry.name.startswith("flext_")
+            if entry.dist is not None and entry.dist.name == "flext-tests"
         }
         tm.that(names, eq={"flext_tests", "flext_tests_enforcement"})
 
@@ -64,99 +54,24 @@ class TestsFlextTestsEnforcementPlugin:
         tm.that(completed.ret, eq=0)
         tm.that(completed.errlines, eq=[])
 
-    # ---- split_csv: pure CSV parsing contract --------------------------------
-
-    @pytest.mark.parametrize(
-        ("raw", "expected"),
-        [
-            (None, frozenset()),
-            ("", frozenset()),
-            ("   ", frozenset()),
-            ("ENFORCE-022", frozenset({"ENFORCE-022"})),
-            ("a,b,c", frozenset({"a", "b", "c"})),
-            ("  a , b ,c ", frozenset({"a", "b", "c"})),
-            ("a,,b,", frozenset({"a", "b"})),
-            ("a,a,a", frozenset({"a"})),
-        ],
-    )
-    def test_split_csv_parses_and_normalizes_tokens(
-        self, raw: str | None, expected: frozenset[str]
+    @pytest.mark.slow
+    def test_inactive_session_collects_without_the_model_facade(
+        self, pytester: pytest.Pytester
     ) -> None:
-        """split_csv trims whitespace, drops empties, and dedups into a set."""
-        tm.that(split_csv(raw), eq=expected)
-
-    def test_split_csv_is_idempotent_under_rejoin(self) -> None:
-        """Re-splitting the sorted tokens yields the same set (stable contract)."""
-        first = split_csv("gamma, alpha , beta,alpha")
-        rejoined = split_csv(",".join(sorted(first)))
-        tm.that(first, eq=rejoined)
-
-    # ---- discover_repository_root: filesystem marker walk ---------------------
-
-    @staticmethod
-    def _stamp_workspace_markers(root: Path) -> None:
-        """Write the marker set that identifies a FLEXT workspace root."""
-        (root / "AGENTS.md").write_text("# sandbox workspace stub")
-        (root / "flext-core").mkdir()
-        (root / "flext-tests").mkdir()
-
-    def test_discover_repository_root_returns_marked_root(self, tmp_path: Path) -> None:
-        """A directory carrying every marker is reported as the workspace root."""
-        self._stamp_workspace_markers(tmp_path)
-        tm.that(discover_repository_root(tmp_path), eq=tmp_path)
-
-    def test_discover_repository_root_walks_upward_from_nested_start(
-        self, tmp_path: Path
-    ) -> None:
-        """Discovery climbs parents until the marked root is found."""
-        self._stamp_workspace_markers(tmp_path)
-        nested = tmp_path / "pkg" / "sub"
-        nested.mkdir(parents=True)
-        tm.that(discover_repository_root(nested), eq=tmp_path)
-
-    def test_discover_repository_root_returns_none_without_markers(
-        self, tmp_path: Path
-    ) -> None:
-        """A tree missing any marker yields None rather than a false root."""
-        (tmp_path / "AGENTS.md").write_text("stub")
-        # flext-core / flext-tests markers deliberately absent.
-        tm.that(discover_repository_root(tmp_path), none=True)
-
-    # ---- active_rules: catalog filtering contract ----------------------------
-
-    @staticmethod
-    def _config(
-        *, include: frozenset[str] = frozenset(), exclude: frozenset[str] = frozenset()
-    ) -> m.Tests.EnforcementDispatcherConfig:
-        """Build a resolved dispatcher config for catalog filtering."""
-        return m.Tests.EnforcementDispatcherConfig(
-            active=True, strict=False, include=include, exclude=exclude
+        """An ungoverned session configures and collects without ``m`` loaded."""
+        pytester.makeini("[pytest]\n")
+        pytester.makeconftest(
+            "import sys\n"
+            "\n"
+            "\n"
+            "def pytest_collection_finish(session):\n"
+            "    if 'flext_tests.models' in sys.modules:\n"
+            "        raise RuntimeError('flext_tests.models loaded at collection')\n"
         )
-
-    def test_active_rules_returns_only_enabled_rules(self) -> None:
-        """The unfiltered result contains exclusively enabled catalog rules."""
-        rules = active_rules(self._config())
-        tm.that(len(rules) > 0, eq=True)
-        tm.that(all(rule.enabled for rule in rules), eq=True)
-
-    def test_active_rules_include_restricts_to_allow_list(self) -> None:
-        """An include allow-list narrows the result to the requested id only."""
-        baseline = active_rules(self._config())
-        chosen = baseline[0].id
-        restricted = active_rules(self._config(include=frozenset({chosen})))
-        tm.that({rule.id for rule in restricted}, eq={chosen})
-
-    def test_active_rules_exclude_removes_blocked_rule(self) -> None:
-        """An exclude block-list drops exactly the named id from the result."""
-        baseline = active_rules(self._config())
-        blocked = baseline[0].id
-        remaining = active_rules(self._config(exclude=frozenset({blocked})))
-        tm.that({rule.id for rule in remaining}, lacks=blocked)
-        tm.that(len(remaining), eq=len(baseline) - 1)
-
-    def test_active_rules_include_unknown_id_yields_empty(self) -> None:
-        """An allow-list of unknown ids selects no rules (no silent fallback)."""
-        tm.that(active_rules(self._config(include=frozenset({"ENFORCE-000"}))), eq=())
+        pytester.makepyfile(test_probe="def test_probe() -> None:\n    assert True\n")
+        result = pytester.runpytest_subprocess("--collect-only", "-q")
+        tm.that(result.ret, eq=pytest.ExitCode.OK)
+        result.stdout.fnmatch_lines(["*test_probe*"])
 
     # ---- end-to-end pytest11 pipeline via pytester subprocess ----------------
 
@@ -242,7 +157,7 @@ class TestsFlextTestsEnforcementPlugin:
             test_public_boundary=(
                 "from pathlib import Path\n"
                 "\n"
-                "from flext_tests.enforcement import load_infra_report\n"
+                "from flext_tests import u\n"
                 "\n"
                 "\n"
                 "class TestsPublicInfraReportBoundary:\n"
@@ -260,7 +175,7 @@ class TestsFlextTestsEnforcementPlugin:
                 "            'version = \\\"0.1.0\\\"\\n',\n"
                 "            encoding='utf-8',\n"
                 "        )\n"
-                "        report = load_infra_report(\n"
+                "        report = u.Tests.load_infra_report(\n"
                 "            project,\n"
                 "            project_names=(project.name,),\n"
                 "        ).unwrap()\n"

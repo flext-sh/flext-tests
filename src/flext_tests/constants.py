@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_cli import c as cli_c
+from flext_cli import FlextCliConstants
 
 from ._constants.data_cases import FlextTestsConstantsDataCases
 from ._constants.docker import FlextTestsConstantsDocker
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from . import t
 
 
-class FlextTestsConstants(cli_c):
+class FlextTestsConstants(FlextCliConstants):
     """Constants for FLEXT tests - extends FlextCliConstants.
 
     Architecture layer: Layer 0 foundation constants with test extensions.
@@ -34,7 +34,7 @@ class FlextTestsConstants(cli_c):
     """
 
     class Tests(
-        cli_c.Cli,
+        FlextCliConstants.Cli,
         FlextTestsConstantsDataCases,
         FlextTestsConstantsDocker,
         FlextTestsConstantsFiles,

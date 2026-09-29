@@ -43,6 +43,20 @@ class TestsFlextTestsUtilities:
 
         tm.that(second_inode, eq=first_inode)
 
+    def test_file_lock_releases_after_body_failure(self, tmp_path: Path) -> None:
+        """A failing holder releases its native lock for the next holder."""
+        lock_path = tmp_path / "shared.lock"
+
+        body_failure = ValueError("body failed")
+        with (
+            pytest.raises(ValueError, match=str(body_failure)),
+            u.Tests.FileLock(lock_path),
+        ):
+            raise body_failure
+
+        with u.Tests.FileLock(lock_path):
+            tm.that(lock_path.is_file(), eq=True)
+
     # ------------------------------------------------------------------
     # assert_success / assert_failure — return values on the happy path
     # ------------------------------------------------------------------

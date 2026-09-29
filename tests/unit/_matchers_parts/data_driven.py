@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import cast
+from collections.abc import Mapping
 
 import pytest
 
@@ -57,7 +57,7 @@ class TestsFlextTestsMatchersDataDrivenMixin:
         )
 
     def test_item_rules_reject_string_rule_container(self) -> None:
-        with pytest.raises(c.ValidationError) as error:
+        with pytest.raises(ValueError, match=r"for ThatParams\nitems"):
             tm.that(["alpha"], items="alpha")
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"items"})
 
@@ -76,7 +76,7 @@ class TestsFlextTestsMatchersDataDrivenMixin:
 
         user = User()
         tm.that(
-            cast("t.JsonValue", user),
+            user,
             attrs_match={
                 "profile.name": {"eq": "Ada"},
                 "profile.level": {"gte": 1, "lte": 10},
@@ -87,8 +87,8 @@ class TestsFlextTestsMatchersDataDrivenMixin:
     def test_ok_with_composed_data_driven_validations(self) -> None:
         """Validate result payload with path extraction plus composed rules."""
 
-        def is_mapping(data: p.Tests.Payload) -> bool:
-            return data.kind == "mapping"
+        def is_mapping(data: t.Tests.NativeMatchValue) -> bool:
+            return isinstance(data, Mapping)
 
         result = r[t.JsonMapping].ok({
             "meta": {"version": "v1", "count": 3},

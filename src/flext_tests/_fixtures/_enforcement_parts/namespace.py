@@ -8,7 +8,7 @@ from flext_tests import m, p
 
 from ._collector import FlextTestsEnforcementCollector
 from .items import FlextTestsEnforcementItem
-from .validators import dispatch_infra_detector
+from .validators import FlextTestsEnforcementValidators
 
 if TYPE_CHECKING:
     import pytest
@@ -28,7 +28,9 @@ class NamespaceDetectorBuilder(p.Tests.EnforcementBuilder):
         _ = cfg
         if context.infra_report is None:
             return []
-        grouped = dispatch_infra_detector(rule, context.infra_report)
+        grouped = FlextTestsEnforcementValidators.dispatch_infra_detector(
+            rule, context.infra_report
+        )
         collector = FlextTestsEnforcementCollector.from_parent(
             parent=session, name="flext-enforcement"
         )

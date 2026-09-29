@@ -90,7 +90,7 @@ class FlextTestsBaseTypesMixin:
     type DeepSpec = Mapping[
         str,
         FlextTestsBaseModelsMixin.Payload
-        | Callable[[FlextTestsPayloadProtocolsMixin.Payload], bool],
+        | Callable[[FlextTestsBaseTypesMixin.NativeMatchValue], bool],
     ]
     type TestobjectHashable = (
         str | int | float | bool | bytes | datetime | tzinfo | Path | type | None

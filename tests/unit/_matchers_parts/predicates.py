@@ -9,25 +9,25 @@ class TestsFlextTestsMatchersPredicates:
     """Shared boolean predicates used as ``where=``/``all_=``/``any_=`` callables."""
 
     @staticmethod
-    def is_string(value: p.Tests.Payload) -> bool:
-        return isinstance(value.atom, str)
+    def is_string(value: t.Tests.NativeMatchValue) -> bool:
+        return isinstance(value, str)
 
     @staticmethod
-    def is_string_or_bytes(value: p.Tests.Payload) -> bool:
-        return isinstance(value.atom, str | bytes)
+    def is_string_or_bytes(value: t.Tests.NativeMatchValue) -> bool:
+        return isinstance(value, str | bytes)
 
     @staticmethod
-    def is_positive(value: p.Tests.Payload) -> bool:
-        return isinstance(value.atom, int) and value.atom > 0
+    def is_positive(value: t.Tests.NativeMatchValue) -> bool:
+        return isinstance(value, int) and value > 0
 
     @staticmethod
-    def is_negative(value: p.Tests.Payload) -> bool:
-        return isinstance(value.atom, int) and value.atom < 0
+    def is_negative(value: t.Tests.NativeMatchValue) -> bool:
+        return isinstance(value, int) and value < 0
 
     @staticmethod
-    def greater_than_zero(value: p.Tests.Payload) -> bool:
-        return isinstance(value.atom, int) and value.atom > 0
+    def greater_than_zero(value: t.Tests.NativeMatchValue) -> bool:
+        return isinstance(value, int) and value > 0
 
     @staticmethod
-    def greater_than_two(value: p.Tests.Payload) -> bool:
-        return isinstance(value.atom, int) and value.atom > 2
+    def greater_than_two(value: t.Tests.NativeMatchValue) -> bool:
+        return isinstance(value, int) and value > 2

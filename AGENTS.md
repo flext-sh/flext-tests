@@ -6,8 +6,9 @@
 > global skills + parent/root `AGENTS.md` + this scope delta. Do not re-embed universal
 > law.
 >
-> **Standalone / independent mode:** when the sibling `AGENTS.md` does not resolve, pin
-> the parent raw URL to the same branch/release as this package (never `main`).
+> **Standalone / independent mode:** when `../AGENTS.md` does not resolve, pin the
+> parent raw `AGENTS.md` URL to the same branch/release as this package (never
+> `main`): <https://raw.githubusercontent.com/flext-sh/flext/0.12.0-dev/AGENTS.md>
 
 <!-- AIHUB-AGENTS-SCOPE-LOCAL-BEGIN -->
 
@@ -60,9 +61,12 @@ There is **no runtime `api.py`** — this is test tooling.
 
 ## Commands
 
+Run from the workspace root (selector-free; the root dispatcher routes to every
+member — `PROJECT=` is not a root Make variable):
+
 ```bash
-make check PROJECT=flext-tests
-make test PROJECT=flext-tests # tests/{unit,integration,fixtures}
+make check
+make test
 ```
 
 <!-- AIHUB-AGENTS-SCOPE-LOCAL-END -->
