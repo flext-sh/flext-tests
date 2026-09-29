@@ -42,6 +42,7 @@ class FlextTestsEnforcementProtocolsMixin:
             """Run namespace enforcement for the selected projects."""
             ...
 
+    @runtime_checkable
     class NamespaceEnforcerFactory(Protocol):
         """Construct the external namespace enforcer boundary."""
 

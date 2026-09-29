@@ -97,7 +97,7 @@ class FlextTestsMatchersThatMixin:
                 )
                 is_sequence_wrapper = (
                     list in expected_types
-                    and isinstance(root_value, t.SEQUENCE_PAIR_TYPES)
+                    and isinstance(root_value, c.SEQUENCE_PAIR_TYPES)
                     and value_type_name == "ObjectList"
                 )
                 matches_declared_type = any(
@@ -683,21 +683,14 @@ class FlextTestsMatchersThatMixin:
         inherited_msg: str | None = None,
     ) -> None:
         kwargs = dict(cls._rule_kwargs(rule))
+        raw_owned = kwargs.pop("owned_payload", owned_payload)
+        owned = raw_owned if isinstance(raw_owned, bool) else owned_payload
         if inherited_msg is not None and "msg" not in kwargs:
             kwargs["msg"] = inherited_msg
         if not hasattr(cls.Tests.Matchers, "that"):
             message = "Matcher rule runner missing"
             raise AssertionError(message)
-        cls.Tests.Matchers.that(subject, **kwargs)
-
-    @staticmethod
-    def extract_path_value(subject: p.Tests.Payload, path: str) -> p.Tests.Payload:
-        """Read nested payload nodes without serializing model leaves."""
-        node = FlextTestsPayloadUtilities.path_node(subject, path)
-        if node is None:
-            msg = f"Path not found: {path}"
-            raise AssertionError(msg)
-        return node
+        cls.Tests.Matchers.that(subject, owned_payload=owned, **kwargs)
 
     @classmethod
     def apply_path_rules(
@@ -711,9 +704,10 @@ class FlextTestsMatchersThatMixin:
             try:
                 cls._apply_rule(
                     FlextTestsPayloadUtilities.to_match_value(
-                        cls.extract_path_value(subject, path)
+                        FlextTestsPayloadUtilities.extract_path_value(subject, path)
                     ),
                     rule,
+                    owned_payload=True,
                     inherited_msg=inherited_msg,
                 )
             except AssertionError as exc:
@@ -740,7 +734,7 @@ class FlextTestsMatchersThatMixin:
                     cls._apply_rule(
                         sequence_value[index],
                         rule,
-                        owned_payload=True,
+                        owned_payload=False,
                         inherited_msg=inherited_msg,
                     )
                 return
