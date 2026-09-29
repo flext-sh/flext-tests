@@ -8,7 +8,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_tests import m, tm, tv
+import pytest
+
+from flext_tests import c, m, tm, tv
 from tests import u
 
 from ._validator_parts.helper import TestsFlextTestsValidatorTestFilesMixin
@@ -19,6 +21,54 @@ if TYPE_CHECKING:
 
 class TestsFlextTestsValidatorImportsBypass(TestsFlextTestsValidatorTestFilesMixin):
     """Verify import and bypass validator rules through the public facade."""
+
+    @pytest.mark.parametrize("line_number", [-1, 0, 1, 2, 3])
+    def test_violation_snippet_uses_one_based_source_lines(
+        self, tmp_path: Path, line_number: int
+    ) -> None:
+        rule_name = next(
+            name for name in dir(c.Tests) if name.startswith("VALIDATOR_RULE_")
+        )
+        rule_id = rule_name.removeprefix("VALIDATOR_RULE_").replace("_", "-")
+        lines = ("  first source line  ", "  last source line  ")
+
+        violation = u.Tests.create_violation(
+            tmp_path / "source.py", line_number, rule_id, lines
+        )
+
+        expected_snippet = dict(enumerate(map(str.strip, lines), start=1)).get(
+            line_number, ""
+        )
+        tm.that(violation.code_snippet, eq=expected_snippet)
+        tm.that(violation.line_number, eq=line_number)
+
+    @pytest.mark.parametrize(
+        "rule_id",
+        [
+            name.removeprefix("VALIDATOR_RULE_").replace("_", "-")
+            for name in dir(c.Tests)
+            if name.startswith("VALIDATOR_RULE_") and name.endswith("_UNREADABLE")
+        ],
+    )
+    def test_missing_scan_file_returns_a_file_level_violation(
+        self, tmp_path: Path, rule_id: str
+    ) -> None:
+        severity, description = u.Tests.validator_rule(rule_id)
+        missing_path = tmp_path / "absent.py"
+        read = u.Cli.files_read_text(missing_path)
+
+        content, violations = u.Tests.read_scan_file(missing_path, rule_id)
+
+        tm.that(read.failure, eq=True)
+        tm.that(content, none=True)
+        tm.that(len(violations), eq=1)
+        violation = violations[0]
+        tm.that(violation.file_path, eq=missing_path)
+        tm.that(violation.line_number, eq=0)
+        tm.that(violation.rule_id, eq=rule_id)
+        tm.that(violation.severity, eq=c.Tests.ValidatorSeverity(severity))
+        tm.that(violation.description, eq=f"{description}: {read.error}")
+        tm.that(violation.code_snippet, eq="")
 
     def test_imports_flags_indented_imports_importerror_sys_path_and_internal_modules(
         self, tmp_path: Path

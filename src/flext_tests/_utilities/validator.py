@@ -79,7 +79,7 @@ class FlextTestsValidatorUtilitiesMixin:
         """
         severity, desc = FlextTestsValidatorUtilitiesMixin.validator_rule(rule_id)
         description = f"{desc}: {extra_desc}" if extra_desc else desc
-        line = lines[line_number - 1] if line_number <= len(lines) else ""
+        line = lines[line_number - 1] if 1 <= line_number <= len(lines) else ""
         return m.Tests.Violation(
             file_path=file_path,
             line_number=line_number,

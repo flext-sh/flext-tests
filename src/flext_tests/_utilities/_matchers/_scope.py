@@ -62,15 +62,8 @@ class FlextTestsMatchersScopeMixin:
                 Yields:
                     TestScope with settings, container, and context dicts
 
-                Raises:
-                    ValueError: If parameter validation fails (via Pydantic model)
-
                 """
-                try:
-                    params = m.Tests.ScopeParams.model_validate(kwargs)
-                except c.EXC_BASIC_TYPE as exc:
-                    message = f"Parameter validation failed: {exc}"
-                    raise ValueError(message) from exc
+                params = m.Tests.ScopeParams.model_validate(kwargs)
                 original_cwd: Path | None = None
                 env_context = (
                     FlextTestsConfigHelpersUtilitiesMixin.env_vars_context(
