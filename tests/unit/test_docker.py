@@ -34,7 +34,7 @@ class TestsFlextTestsDocker(
     @pytest.fixture
     def docker_manager(tmp_path: Path) -> FlextTestsDocker:
         """Create a FlextTestsDocker with a known-clean container baseline."""
-        fixtures_dir = Path(__file__).parent.parent.parent / "fixtures"
+        fixtures_dir = Path(__file__).parent.parent / "fixtures"
         manager = FlextTestsDocker(
             repository_root=fixtures_dir, worker_id=f"test-{tmp_path.name}"
         )

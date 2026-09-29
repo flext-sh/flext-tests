@@ -101,9 +101,9 @@ class TestsFlextTestsPayload:
 
     def test_arm_cannot_change_after_validation(self) -> None:
         payload = m.Tests.Payload(kind="atom", atom=1)
-        frozen_arm = "kind"
-        with pytest.raises(c.ValidationError, match="frozen"):
-            setattr(payload, frozen_arm, "mapping")
+        tm.rejects_assignment(
+            payload, "kind", "mapping", expected=c.ValidationError, match="frozen"
+        )
         tm.that(payload.kind, eq="atom")
         tm.that(payload.atom, eq=1)
 
@@ -113,10 +113,10 @@ class TestsFlextTestsPayload:
         payload = m.Tests.Payload(kind="mapping", entries=children)
         children.clear()
         tm.that(payload.entries["value"] is child, eq=True)
-        with pytest.raises(c.ValidationError, match="frozen"):
-            # The test enforces pydantic's runtime frozen enforcement; the
-            # static read-only diagnostic is the very contract under test.
-            payload.entries = {}  # pyrefly: ignore[read-only]
+        tm.rejects_assignment(
+            payload, "entries", {}, expected=c.ValidationError, match="frozen"
+        )
+        tm.that(payload.entries["value"] is child, eq=True)
 
     def test_binary_file_roundtrip_preserves_non_utf8_bytes(
         self, tmp_path: Path
