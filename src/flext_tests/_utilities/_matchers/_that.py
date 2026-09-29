@@ -687,7 +687,7 @@ class FlextTestsMatchersThatMixin:
         if not hasattr(cls.Tests.Matchers, "that"):
             message = "Matcher rule runner missing"
             raise AssertionError(message)
-        cls.Tests.Matchers.that(subject, **kwargs)
+        cls.Tests.Matchers.that(subject, owned_payload=False, **kwargs)
 
     @staticmethod
     def extract_path_value(subject: p.Tests.Payload, path: str) -> p.Tests.Payload:
