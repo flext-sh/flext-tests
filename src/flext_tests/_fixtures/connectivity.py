@@ -21,7 +21,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 import pytest
 
-from flext_tests import c, u
+from flext_tests import c
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -49,6 +49,7 @@ class FlextTestsConnectivityPlugin:
     @staticmethod
     def _published_port(container_name: str, container_port: int) -> int | None:
         """Return the host port a running container publishes, if any."""
+        from flext_tests import u
         from flext_tests.docker import FlextTestsDocker
 
         published = (
