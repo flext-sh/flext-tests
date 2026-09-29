@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from types import MappingProxyType
 from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
@@ -42,7 +43,7 @@ class FlextTestsConstantsMake:
         MAKE_APPLY_PARAM
     })
     MAKE_TRUE_VALUES: ClassVar[frozenset[str]] = frozenset({"1", "Y", "YES", "TRUE"})
-    MAKE_SAFE_PROBE_VALUES: ClassVar[t.MappingKV[str, str]] = {
+    MAKE_SAFE_PROBE_VALUES: ClassVar[t.MappingKV[str, str]] = MappingProxyType({
         "APPLY": "N",
         "CHECK_GATES": "lint",
         "DEPS_REPORT": "0",
@@ -52,7 +53,7 @@ class FlextTestsConstantsMake:
         "PYTEST_ARGS": "-q",
         "TAG": "surface-validation",
         "VALIDATE_SCOPE": "project",
-    }
+    })
 
 
 __all__: list[str] = ["FlextTestsConstantsMake"]

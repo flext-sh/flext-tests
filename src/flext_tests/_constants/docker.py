@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from enum import StrEnum, unique
+from types import MappingProxyType
 from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
@@ -37,11 +38,11 @@ class FlextTestsConstantsDocker:
     # unreachable"). Each marker maps to the shared container whose declared
     # host/port is probed once per session. A marker absent from this map is
     # never skipped, so adding one is a deliberate data change.
-    CONNECTIVITY_MARKER_CONTAINERS: ClassVar[Mapping[str, str]] = {
+    CONNECTIVITY_MARKER_CONTAINERS: ClassVar[Mapping[str, str]] = MappingProxyType({
         "oracle": "flext-oracle-db-test",
         "ldap": "flext-openldap-test",
         "kubernetes": "flext-kind-test",
-    }
+    })
     CONNECTIVITY_MARKERS: ClassVar[t.VariadicTuple[str]] = (
         DOCKER_CONNECTIVITY_MARKER,
         *CONNECTIVITY_MARKER_CONTAINERS,
@@ -51,28 +52,28 @@ class FlextTestsConstantsDocker:
     )
     CONNECTIVITY_PROBE_TIMEOUT_SECONDS: ClassVar[float] = 1.5
 
-    SHARED_CONTAINERS: ClassVar[Mapping[str, t.HeaderMapping]] = {
-        "flext-openldap-test": {
+    SHARED_CONTAINERS: ClassVar[Mapping[str, t.HeaderMapping]] = MappingProxyType({
+        "flext-openldap-test": MappingProxyType({
             "compose_file": "docker/docker-compose.openldap.yml",
             "service": "openldap",
             "port": 3390,
             "host": "localhost",
-        },
-        "flext-oracle-db-test": {
+        }),
+        "flext-oracle-db-test": MappingProxyType({
             "compose_file": "docker/docker-compose.oracle-db.yml",
             "service": "oracle-db",
             "port": 1521,
             "host": "localhost",
             "startup_timeout": 900,
-        },
-        "flext-kind-test": {
+        }),
+        "flext-kind-test": MappingProxyType({
             "compose_file": "docker/docker-compose.kubernetes.yml",
             "service": "kind",
             "port": 6443,
             "host": "localhost",
             "startup_timeout": 120,
-        },
-    }
+        }),
+    })
 
     @unique
     class ContainerStatus(StrEnum):

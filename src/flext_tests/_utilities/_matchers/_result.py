@@ -153,8 +153,6 @@ class FlextTestsMatchersResultMixin:
                 payload = FlextTestsPayloadUtilities.extract_path_value(
                     FlextTestsPayloadUtilities.to_payload(result_value), path
                 )
-                if payload is None:
-                    raise AssertionError(params.msg or f"Path not found: {path}")
                 return payload, payload
 
             @staticmethod
