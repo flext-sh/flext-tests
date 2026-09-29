@@ -704,9 +704,10 @@ class FlextTestsMatchersThatMixin:
             try:
                 cls._apply_rule(
                     FlextTestsPayloadUtilities.to_match_value(
-                        cls.extract_path_value(subject, path)
+                        FlextTestsPayloadUtilities.extract_path_value(subject, path)
                     ),
                     rule,
+                    owned_payload=True,
                     inherited_msg=inherited_msg,
                 )
             except AssertionError as exc:
@@ -731,7 +732,10 @@ class FlextTestsMatchersThatMixin:
             case Sequence():
                 for index, rule in enumerate(rules):
                     cls._apply_rule(
-                        sequence_value[index], rule, inherited_msg=inherited_msg
+                        sequence_value[index],
+                        rule,
+                        owned_payload=False,
+                        inherited_msg=inherited_msg,
                     )
                 return
             case Mapping():
