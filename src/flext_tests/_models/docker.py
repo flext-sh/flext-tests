@@ -42,6 +42,33 @@ class FlextTestsDockerModelsMixin:
             bool,
             u.Field(description="Whether execute should recreate the target stack."),
         ] = False
+        project_name: Annotated[
+            str | None,
+            u.Field(
+                description=(
+                    "Optional compose project name; derived from the compose "
+                    "file stem when omitted."
+                )
+            ),
+        ] = None
+        fingerprint_inputs: Annotated[
+            t.StrSequence,
+            u.Field(
+                description=(
+                    "Tracked inputs (compose file plus optional extra paths) "
+                    "hashed into the container-state fingerprint."
+                )
+            ),
+        ] = ()
+        lock_timeout_seconds: Annotated[
+            float,
+            u.Field(
+                gt=0,
+                description=(
+                    "Bounded wait for the container host lock before failing."
+                ),
+            ),
+        ] = 120.0
 
     class ContainerState(m.Value):
         """Host-scoped persistent state of one managed container.
@@ -82,6 +109,12 @@ class FlextTestsDockerModelsMixin:
         image: Annotated[str, u.Field(min_length=1, description="Source image tag.")]
         container_id: Annotated[
             str, u.Field(description="Docker-assigned container identifier.")
+        ] = ""
+        health: Annotated[
+            str, u.Field(description="Healthcheck verdict (healthy/unhealthy/none).")
+        ] = ""
+        image_id: Annotated[
+            str, u.Field(description="Docker-resolved image identifier.")
         ] = ""
 
     class User(m.Value):

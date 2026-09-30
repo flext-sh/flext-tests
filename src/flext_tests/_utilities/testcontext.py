@@ -94,8 +94,23 @@ class FlextTestsTestContextUtilitiesMixin:
                     if acquired:
                         return
 
-        def __enter__(self) -> None:
-            """Acquire the lock (shared or exclusive, optionally bounded)."""
+        def acquire_or_none(self) -> None:
+            """Acquire the lock outside a with-block (idempotent guard)."""
+            if self.is_acquired:
+                return
+            self._acquire()
+
+        @property
+        def is_acquired(self) -> bool:
+            """True while the lock is held by this instance."""
+            return self._file_obj is not None
+
+        def release(self) -> None:
+            """Release the lock outside a with-block (idempotent)."""
+            self._release()
+
+        def _acquire(self) -> None:
+            """Open the lock file and take the platform lock."""
             self.lock_file.parent.mkdir(parents=True, exist_ok=True)
             file_obj = self.lock_file.open("a+b")
             try:
@@ -109,14 +124,8 @@ class FlextTestsTestContextUtilitiesMixin:
                 raise
             self._file_obj = file_obj
 
-        # mro-j47u (codex): these dunder arguments are contract-only.
-        def __exit__(
-            self,
-            _exc_type: type[BaseException] | None,
-            _exc_val: BaseException | None,
-            _exc_tb: types.TracebackType | None,
-        ) -> None:
-            """Release the lock while preserving its shared inode."""
+        def _release(self) -> None:
+            """Release the platform lock and close the lock file."""
             if self._file_obj is None:
                 return
             file_obj = self._file_obj
@@ -129,3 +138,16 @@ class FlextTestsTestContextUtilitiesMixin:
                     fcntl.flock(file_obj.fileno(), fcntl.LOCK_UN)
             finally:
                 file_obj.close()
+
+        def __enter__(self) -> None:
+            """Acquire the lock (shared or exclusive, optionally bounded)."""
+            self._acquire()
+
+        def __exit__(
+            self,
+            _exc_type: type[BaseException] | None,
+            _exc_val: BaseException | None,
+            _exc_tb: types.TracebackType | None,
+        ) -> None:
+            """Release the lock while preserving its shared inode."""
+            self._release()

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import os
 import socket
 import time
@@ -39,6 +40,13 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             description="Host-scoped per-container state cache (name → state).",
         ),
     ] = u.Field(default_factory=dict)
+
+    active_lease: Annotated[
+        t.JsonValue | None,
+        u.Field(
+            exclude=True, description="Active container host-lock lease, when held."
+        ),
+    ] = None
 
     state_root: Annotated[
         Path | None,
@@ -206,6 +214,37 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         """Initialize private runtime state after model validation."""
         super().model_post_init(__context)
         _ = self.client
+
+    @staticmethod
+    def docker_action(
+        state: m.Tests.ContainerState | None,
+        info: m.Tests.ContainerInfo | None,
+        fingerprint: str,
+    ) -> str:
+        """Pure health-aware lifecycle decision for one container.
+
+        Decision table (operator law, OUD campaign): absent → CREATE;
+        exited → START; unhealthy / dirty / unsealed / fingerprint drift →
+        RECREATE; healthy + sealed + matching fingerprint → REUSE.
+        """
+        if state is None or info is None:
+            return "CREATE"
+        if state.dirty:
+            return "RECREATE"
+        if info.status == c.Tests.ContainerStatus.EXITED:
+            return "START"
+        unhealthy = info.health == "unhealthy" and info.status == (
+            c.Tests.ContainerStatus.RUNNING
+        )
+        fingerprint_drift = bool(state.fingerprint) and state.fingerprint != fingerprint
+        if unhealthy or not state.sealed or fingerprint_drift:
+            return "RECREATE"
+        if info.status == c.Tests.ContainerStatus.RUNNING and info.health in {
+            "healthy",
+            "",
+        }:
+            return "REUSE"
+        return "RECREATE"
 
     @property
     def client(self) -> DockerSDKClient | None:
@@ -411,6 +450,106 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     ) -> p.Result[m.Tests.ContainerInfo]:
         """Fetch container status."""
         return self.fetch_container_info(container_name)
+
+    def fingerprint(self, target: m.Tests.ContainerConfig) -> str:
+        """Hash the tracked inputs (compose file + declared extras) verbatim."""
+        digest = hashlib.sha256()
+        tracked: list[str] = []
+        if target.compose_file is not None:
+            tracked.append(target.compose_file.as_posix())
+        tracked.extend(target.fingerprint_inputs)
+        for item in tracked:
+            digest.update(item.encode(encoding="utf-8"))
+            digest.update(b"\0")
+            path = Path(item)
+            if path.is_file():
+                digest.update(path.read_bytes())
+            digest.update(b"\0")
+        return digest.hexdigest()
+
+    def fetch_container_environment(
+        self, container_name: str, keys: t.StrSequence
+    ) -> p.Result[t.MappingKV[str, t.SecretStr]]:
+        """Read selected env vars from a running container (secret-safe)."""
+        wanted = set(keys)
+        client = self.client
+        if client is None:
+            error = self.client_error or "Docker daemon unavailable"
+            return r[t.MappingKV[str, t.SecretStr]].fail(error)
+        try:
+            container = client.containers.get(container_name)
+            env_lines = container.attrs.get("Config", {}).get("Env", [])
+        except (DockerException, OSError, AttributeError) as exc:
+            return r[t.MappingKV[str, t.SecretStr]].fail(
+                f"Failed to inspect {container_name} environment: {exc}"
+            )
+        selected: dict[str, t.SecretStr] = {}
+        for line in env_lines:
+            name, sep, value = str(line).partition("=")
+            if sep and name in wanted:
+                selected[name] = t.SecretStr(value)
+        return r[t.MappingKV[str, t.SecretStr]].ok(selected)
+
+    def resolve_host_port(
+        self, container_name: str, container_port: int
+    ) -> p.Result[int]:
+        """Resolve the published host port for one container port."""
+        info_result = self.fetch_container_info(container_name)
+        if info_result.failure:
+            return r[int].from_failure(info_result)
+        port_str = str(container_port)
+        info = info_result.value
+        for mapped_port, host_port in info.ports.items():
+            if mapped_port.startswith(f"{port_str}/") or host_port == port_str:
+                return r[int].ok(int(host_port))
+        return r[int].fail(
+            f"Container {container_name} publishes no host port for {container_port}"
+        )
+
+    def verify(self) -> p.Result[m.Tests.ContainerInfo]:
+        """Read-only health check of the configured target (never mutates)."""
+        target = self.target_config
+        if target is None or not target.container_name:
+            return r[m.Tests.ContainerInfo].fail(
+                "Docker target not configured for verification."
+            )
+        return self.fetch_container_info(target.container_name)
+
+    def lease(
+        self, container_name: str, *, timeout_seconds: float | None = None
+    ) -> p.Result[bool]:
+        """Hold the container's host lock for a bounded session."""
+        lock_file = self.state_file_path_for(container_name).with_suffix(".lock")
+        budget = (
+            timeout_seconds
+            if timeout_seconds is not None
+            else self._lease_budget(target_config=self.target_config)
+        )
+        lock = u.Tests.FileLock(lock_file, timeout_seconds=budget or None)
+        try:
+            lock.acquire_or_none()
+        except (TimeoutError, OSError) as exc:
+            return r[bool].fail(f"Lease not granted for {container_name}: {exc}")
+        if not lock.is_acquired:
+            return r[bool].fail(f"Lease not granted for {container_name}")
+        _ACTIVE_LEASES[id(self)] = lock
+        return r[bool].ok(value=True)
+
+    def release_lease(self) -> p.Result[bool]:
+        """Release a previously granted lease (idempotent)."""
+        lock = _ACTIVE_LEASES.pop(id(self), None)
+        if lock is None:
+            return r[bool].ok(value=False)
+        lock.release()
+        return r[bool].ok(value=True)
+
+    def _lease_budget(
+        self, *, target_config: m.Tests.ContainerConfig | None
+    ) -> float | None:
+        """Bounded lease wait from the target config (None blocks)."""
+        if target_config is not None and target_config.lock_timeout_seconds > 0:
+            return float(target_config.lock_timeout_seconds)
+        return None
 
     def start_existing_container(self, container_name: str) -> p.Result[bool]:
         """Start an existing stopped container by name."""
@@ -653,32 +792,44 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     def _ensure_target_started(
         self, target: m.Tests.ContainerConfig, container_name: str
     ) -> p.Result[bool]:
-        """Start or recreate the configured target when required."""
-        if target.force_recreate or self.container_dirty(container_name):
-            compose_result = self.compose_up(
-                str(target.compose_file),
-                service=target.service or None,
-                force_recreate=True,
-            )
-            if compose_result.failure:
-                return r[bool].from_failure(compose_result)
-            _ = self.mark_container_clean(container_name)
-            return r[bool].ok(True)
-
-        status_result = self.fetch_container_status(container_name)
-        container_running = status_result.success and (
-            status_result.value.status == c.Tests.ContainerStatus.RUNNING
+        """Start, recreate, or reuse the target per the health-aware decision."""
+        fingerprint = self.fingerprint(target)
+        state = self._state_for(container_name)
+        info_result = self.fetch_container_info(container_name)
+        info = info_result.value if info_result.success else None
+        action = (
+            "RECREATE"
+            if target.force_recreate
+            else self.docker_action(state, info, fingerprint)
         )
-        if container_running:
+        if action == "REUSE":
             return r[bool].ok(True)
-        start_result = self.start_existing_container(container_name)
-        if start_result.success:
-            return r[bool].ok(True)
+        if action == "START":
+            start_result = self.start_existing_container(container_name)
+            if start_result.success:
+                return r[bool].ok(True)
         compose_result = self.compose_up(
-            str(target.compose_file), service=target.service or None
+            str(target.compose_file),
+            service=target.service or None,
+            force_recreate=True,
         )
         if compose_result.failure:
             return r[bool].from_failure(compose_result)
+        sealed = m.Tests.ContainerState(
+            container_name=container_name,
+            container_id="",
+            fingerprint=fingerprint,
+            sealed=True,
+            dirty=False,
+        )
+        info_after = self.fetch_container_info(container_name)
+        if info_after.success:
+            sealed = sealed.model_copy(
+                update={"container_id": info_after.value.container_id}
+            )
+        seal_result = self.seal_container_state(sealed)
+        if seal_result.failure:
+            return r[bool].from_failure(seal_result)
         return r[bool].ok(True)
 
     def _ensure_target_ready(
@@ -707,6 +858,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             )
         return container_info_result
 
+
+_ACTIVE_LEASES: t.MutableMappingKV[int, u.Tests.FileLock] = {}
+"""Module-scoped lease handles keyed by owner instance id."""
 
 tk: type[FlextTestsDocker] = FlextTestsDocker
 """Docker container control facade alias for flext_tests."""

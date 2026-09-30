@@ -16,13 +16,14 @@ import os
 from flext_tests import FlextTestsDocker, tm
 from tests import c, u
 
-from ._docker_parts import builders, operations, state, targets
+from ._docker_parts import builders, decision, operations, state, targets
 
 
 class TestsFlextTestsDocker(
     state.TestsFlextTestsDockerStateMixin,
     builders.TestsFlextTestsDockerBuildersMixin,
     operations.TestsFlextTestsDockerOperationsMixin,
+    decision.TestsFlextTestsDockerDecisionMixin,
     targets.TestsFlextTestsDockerTargetsMixin,
 ):
     """Behavioral contract of the Docker control facade (FlextTestsDocker)."""
