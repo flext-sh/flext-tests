@@ -52,7 +52,9 @@ class FlextTestsEnforcementBuilder:
         for rule in rules:
             if rule.source.kind == c.EnforcementSourceKind.FLEXT_INFRA_DETECTOR.value:
                 items.extend(namespace_builder(session, cfg, rule, context))
-            elif rule.source.kind == "flext_tests_validator":
+            elif (
+                rule.source.kind == c.EnforcementSourceKind.FLEXT_TESTS_VALIDATOR.value
+            ):
                 items.extend(
                     FlextTestsEnforcementValidators.build_tests_validator_items(
                         collector, rule, context

@@ -27,6 +27,8 @@ if TYPE_CHECKING:
     from ._matchers._typeguards import FlextTestsMatchersTypeGuardsMixin
     from .base import FlextTestsUtilitiesBase
     from .container import FlextTestsContainerHelpersUtilitiesMixin
+    from .docker_lifecycle import FlextTestsDockerLifecycleUtilitiesMixin
+    from .docker_state import FlextTestsDockerStateUtilitiesMixin
     from .enforcement import FlextTestsEnforcementUtilitiesMixin
     from .files import FlextTestsFilesUtilitiesMixin
     from .fixtures_dsl import FlextTestsFixturesDSLMixin
@@ -56,6 +58,8 @@ if TYPE_CHECKING:
 __all__: tuple[str, ...] = (
     "FlextTestsConfigHelpersUtilitiesMixin",
     "FlextTestsContainerHelpersUtilitiesMixin",
+    "FlextTestsDockerLifecycleUtilitiesMixin",
+    "FlextTestsDockerStateUtilitiesMixin",
     "FlextTestsEnforcementUtilitiesMixin",
     "FlextTestsFilesAssertionsMixin",
     "FlextTestsFilesBatchMixin",
@@ -119,6 +123,8 @@ _LAZY_IMPORTS = MappingProxyType(
             "._matchers._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
             ".base": ("FlextTestsUtilitiesBase",),
             ".container": ("FlextTestsContainerHelpersUtilitiesMixin",),
+            ".docker_lifecycle": ("FlextTestsDockerLifecycleUtilitiesMixin",),
+            ".docker_state": ("FlextTestsDockerStateUtilitiesMixin",),
             ".enforcement": ("FlextTestsEnforcementUtilitiesMixin",),
             ".files": ("FlextTestsFilesUtilitiesMixin",),
             ".fixtures_dsl": ("FlextTestsFixturesDSLMixin",),

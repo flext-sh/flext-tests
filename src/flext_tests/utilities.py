@@ -12,6 +12,8 @@ from __future__ import annotations
 from flext_infra import FlextInfraUtilities
 
 from ._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
+from ._utilities.docker_lifecycle import FlextTestsDockerLifecycleUtilitiesMixin
+from ._utilities.docker_state import FlextTestsDockerStateUtilitiesMixin
 from ._utilities.enforcement import FlextTestsEnforcementUtilitiesMixin
 from ._utilities.files import FlextTestsFilesUtilitiesMixin
 from ._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
@@ -37,6 +39,8 @@ class FlextTestsUtilities(FlextInfraUtilities):
     class Tests(
         FlextTestsResultUtilitiesMixin,
         FlextTestsTestContextUtilitiesMixin,
+        FlextTestsDockerStateUtilitiesMixin,
+        FlextTestsDockerLifecycleUtilitiesMixin,
         FlextTestsGenericHelpersUtilitiesMixin,
         FlextTestsConfigHelpersUtilitiesMixin,
         FlextTestsContainerHelpersUtilitiesMixin,
