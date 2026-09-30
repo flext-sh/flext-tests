@@ -17,8 +17,8 @@ pytest_plugins: t.VariadicTuple[str] = ("pytester",)
 
 @pytest.fixture
 def docker_manager(tmp_path: Path) -> FlextTestsDocker:
-    """Create a Docker manager with an isolated per-test state tree."""
+    """Docker manager over the suite fixtures with a per-test state directory."""
     return FlextTestsDocker(
         repository_root=Path(__file__).parent / "fixtures",
-        state_root=tmp_path / "docker-state",
+        state_dir=tmp_path / "docker-state",
     )

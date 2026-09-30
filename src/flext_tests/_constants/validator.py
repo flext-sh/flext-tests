@@ -339,7 +339,9 @@ class FlextTestsConstantsValidator:
     VALIDATOR_APPROVED_CAST_CONTAINER_PATTERN: ClassVar[str] = "container\\.py$"
     VALIDATOR_APPROVED_PRAGMA_PATTERN: ClassVar[str] = "__init__\\.py$"
     VALIDATOR_APPROVED_INTERNAL_INIT_PATTERN: ClassVar[str] = "_[^/]+/__init__\\.py$"
-    VALIDATOR_APPROVED_PROTOCOLS_PATTERN: ClassVar[str] = "protocols/(brand|domain)\\.py$"
+    VALIDATOR_APPROVED_PROTOCOLS_PATTERN: ClassVar[str] = (
+        "protocols/(brand|domain)\\.py$"
+    )
     VALIDATOR_APPROVED_CAST_SERVICE_RE: ClassVar[t.RegexPattern] = re.compile(
         VALIDATOR_APPROVED_CAST_SERVICE_PATTERN
     )
