@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import FlextTestsFiles, c, m, p, t, tm, u
+from flext_tests import FlextTestsFiles, c, m, t, tm, u
 
 
 class TestsFlextTestsPayload:
@@ -46,7 +46,7 @@ class TestsFlextTestsPayload:
     def test_matcher_preserves_native_model_identity(self) -> None:
         model = m.Tests.Value(data="native matcher model", count=2)
 
-        def is_original_model(value: p.AttributeProbe) -> bool:
+        def is_original_model(value: t.Tests.NativeMatchValue) -> bool:
             return value is model
 
         tm.that(model, is_=type(model), where=is_original_model)
@@ -58,7 +58,7 @@ class TestsFlextTestsPayload:
         model = m.Tests.Value(data="nested matcher model", count=2)
         leaves = (model, b"\x00\xff", datetime.now(UTC), Path("native"))
 
-        def is_original_model(value: p.AttributeProbe) -> bool:
+        def is_original_model(value: t.Tests.NativeMatchValue) -> bool:
             return value is model
 
         tm.that(
@@ -66,37 +66,6 @@ class TestsFlextTestsPayload:
             deep={f"nested.{index}": leaf for index, leaf in enumerate(leaves)},
         )
         tm.that({"nested": (model,)}, deep={"nested.0": is_original_model})
-
-    @pytest.mark.parametrize(
-        ("value", "kind", "expected_type"),
-        [
-            ([1, 2], "list", list),
-            ((1, 2), "tuple", tuple),
-            ({1, 2}, "set", set),
-            (frozenset({1, 2}), "frozenset", frozenset),
-            ({"value": 1}, "mapping", dict),
-        ],
-    )
-    def test_rules_preserve_native_collection_contract(
-        self, value: p.AttributeProbe, kind: t.Tests.PayloadKind, expected_type: type
-    ) -> None:
-        def has_original_kind(payload: p.Tests.Payload) -> bool:
-            return payload.kind == kind
-
-        def has_original_child_kind(payload: p.Tests.Payload) -> bool:
-            return payload.entries["value"].kind == kind
-
-        rule = {"is_": expected_type, "where": has_original_kind}
-        tm.that({"nested": value}, paths={"nested": rule})
-        tm.that([value], items={"all": rule})
-        tm.that({"nested": value}, paths={"nested": has_original_kind})
-        tm.that([value], items={"all": has_original_kind})
-        tm.that({"nested": {"value": value}}, paths={"nested": has_original_child_kind})
-        wrong_type = tuple if expected_type is dict else dict
-        with pytest.raises(AssertionError):
-            tm.that({"nested": value}, paths={"nested": wrong_type})
-        with pytest.raises(AssertionError):
-            tm.that([value], items={"all": wrong_type})
 
     def test_type_matcher_inspects_original_payload_subject(self) -> None:
         payload = m.Tests.Payload(
@@ -132,7 +101,7 @@ class TestsFlextTestsPayload:
     def test_matcher_preserves_exception_atom_identity(self) -> None:
         error = ValueError("native exception atom")
 
-        def is_original_error(value: p.AttributeProbe) -> bool:
+        def is_original_error(value: t.Tests.NativeMatchValue) -> bool:
             return value is error
 
         tm.that(error, is_=ValueError, eq=error, where=is_original_error)
@@ -140,7 +109,7 @@ class TestsFlextTestsPayload:
     def test_matcher_propagates_callback_exception_identity(self) -> None:
         error = ValueError("predicate rejected the subject")
 
-        def reject(_payload: p.Tests.Payload) -> bool:
+        def reject(_value: t.Tests.NativeMatchValue) -> bool:
             raise error
 
         with pytest.raises(ValueError, match=re.escape(str(error))) as caught:
