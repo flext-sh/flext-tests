@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from .kube import FlextTestsConstantsKube
     from .make import FlextTestsConstantsMake
     from .matcher import FlextTestsConstantsMatcher
+    from .namespace import FlextTestsConstantsNamespace
     from .validator import FlextTestsConstantsValidator
 
 
@@ -27,6 +28,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsConstantsKube",
     "FlextTestsConstantsMake",
     "FlextTestsConstantsMatcher",
+    "FlextTestsConstantsNamespace",
     "FlextTestsConstantsValidator",
 )
 
@@ -40,6 +42,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ".kube": ("FlextTestsConstantsKube",),
             ".make": ("FlextTestsConstantsMake",),
             ".matcher": ("FlextTestsConstantsMatcher",),
+            ".namespace": ("FlextTestsConstantsNamespace",),
             ".validator": ("FlextTestsConstantsValidator",),
         }),
         alias_groups=MappingProxyType({}),

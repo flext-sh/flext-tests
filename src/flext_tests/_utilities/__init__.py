@@ -41,6 +41,7 @@ if TYPE_CHECKING:
     from .make_registry import FlextTestsMakeRegistryUtilitiesMixin
     from .make_rendering import FlextTestsMakeRenderingUtilitiesMixin
     from .matchers import FlextTestsMatchersUtilities
+    from .namespace import FlextTestsNamespaceUtilitiesMixin
     from .payload import FlextTestsPayloadUtilities
     from .result import FlextTestsResultUtilitiesMixin
     from .settings import FlextTestsConfigHelpersUtilitiesMixin
@@ -87,6 +88,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsMatchersTypeGuardsMixin",
     "FlextTestsMatchersUtilities",
     "FlextTestsModuleGovernanceMixin",
+    "FlextTestsNamespaceUtilitiesMixin",
     "FlextTestsPayloadUtilities",
     "FlextTestsResultUtilitiesMixin",
     "FlextTestsTestContextUtilitiesMixin",
@@ -137,6 +139,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ".make_registry": ("FlextTestsMakeRegistryUtilitiesMixin",),
             ".make_rendering": ("FlextTestsMakeRenderingUtilitiesMixin",),
             ".matchers": ("FlextTestsMatchersUtilities",),
+            ".namespace": ("FlextTestsNamespaceUtilitiesMixin",),
             ".payload": ("FlextTestsPayloadUtilities",),
             ".result": ("FlextTestsResultUtilitiesMixin",),
             ".settings": ("FlextTestsConfigHelpersUtilitiesMixin",),
