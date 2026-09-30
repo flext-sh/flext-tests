@@ -25,9 +25,9 @@ dependencies = [
   "beartype>=0.22.9",
   "dependency-injector>=4.49.1",
   "docker>=7.2.0",
-  "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@0.12.0-dev",
+  "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@8b2aea801805b2e5efa0fce6424e97fc45635260",
   "flext-core @ git+https://github.com/flext-sh/flext-core.git@0.12.0-dev",
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
+  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@bd3bca4bc9df9c74a9798056233a7cd5e8fd2d4f",
   "hypothesis",
   "packaging>=26.3",
   "pydantic>=2.13.5",
@@ -77,7 +77,7 @@ flext_tests_enforcement = "flext_tests.enforcement_plugin"
 
 [dependency-groups]
 codegen = [
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
+  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@bd3bca4bc9df9c74a9798056233a7cd5e8fd2d4f",
 ]
 dev = [
   "actionlint-py>=1.7.12.24",
@@ -498,7 +498,7 @@ namespace-packages = ["tests", "examples", "scripts"]
 preview = true
 respect-gitignore = true
 show-fixes = true
-src = ["examples", "scripts", "src", "tests"]
+src = ["src", "tests"]
 target-version = "py313"
 
 [tool.ruff.format]
@@ -509,6 +509,7 @@ quote-style = "double"
 skip-magic-trailing-comma = true
 
 [tool.ruff.lint]
+extend-safe-fixes = []
 ignore = [
   "ambiguous-unicode-character-comment",
   "ambiguous-unicode-character-docstring",
@@ -543,6 +544,17 @@ ignore = [
   "typing-only-third-party-import",
 ]
 select = ["ALL"]
+unfixable = [
+  "duplicate-value",
+  "multi-value-repeated-key-literal",
+  "multi-value-repeated-key-variable",
+  "outdated-version-block",
+  "p-print",
+  "print",
+  "pytest-duplicate-parametrize-test-cases",
+  "redefined-while-unused",
+  "unused-variable",
+]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api.argparse]
 msg = "Use cli.register_result_command + Pydantic model from flext_cli."
