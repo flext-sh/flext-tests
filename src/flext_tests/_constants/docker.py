@@ -48,6 +48,10 @@ class FlextTestsConstantsDocker:
     DOCKER_STATE_LOCK_SUFFIX: ClassVar[str] = ".state.lock"
     DOCKER_LEASE_LOCK_SUFFIX: ClassVar[str] = ".lease.lock"
     DOCKER_STATE_LOCK_TIMEOUT_SECONDS: ClassVar[float] = 30.0
+    # Scratch root for relocated caches (hypothesis, benchmarks): never
+    # inside the checkout; keyed per checkout identity under this root.
+    SCRATCH_DIR_PARTS: ClassVar[t.VariadicTuple[str]] = (".flext", "scratch")
+    SCRATCH_ROOT_INI: ClassVar[str] = "flext_scratch_root"
     # Docker's own container-name grammar; the name is also the state file stem.
     DOCKER_CONTAINER_NAME_PATTERN: ClassVar[str] = r"^[a-zA-Z0-9][a-zA-Z0-9_.-]+$"
     ERR_DOCKER_STATE_NAME_MISMATCH: ClassVar[str] = (
