@@ -406,7 +406,7 @@ wheels = [
 [[package]]
 name = "flext-cli"
 version = "0.12.0"
-source = { git = "https://github.com/flext-sh/flext-cli.git?rev=0.12.0-dev#c825e0c0559a6fb328a34cd51215ad4285021923" }
+source = { git = "https://github.com/flext-sh/flext-cli.git?rev=0.12.0-dev#8fcf2e13d59bbcefb5cddacf3f4e0e0c831cc862" }
 dependencies = [
     { name = "annotated-types" },
     { name = "beartype" },
@@ -449,7 +449,7 @@ dependencies = [
 [[package]]
 name = "flext-infra"
 version = "0.12.0"
-source = { git = "https://github.com/flext-sh/flext-infra.git?rev=4fc588381637df52a0ec305ae2fbe49bb42df292#4fc588381637df52a0ec305ae2fbe49bb42df292" }
+source = { git = "https://github.com/flext-sh/flext-infra.git?rev=0.12.0-dev#d0bce9b9162d931eaecca6a170c673d7ab86926b" }
 dependencies = [
     { name = "annotated-types" },
     { name = "beartype" },
@@ -575,9 +575,9 @@ requires-dist = [
     { name = "beartype", specifier = ">=0.22.9" },
     { name = "dependency-injector", specifier = ">=4.49.1" },
     { name = "docker", specifier = ">=7.2.0" },
-    { name = "flext-cli", git = "https://github.com/flext-sh/flext-cli.git?rev=c825e0c0559a6fb328a34cd51215ad4285021923" },
+    { name = "flext-cli", git = "https://github.com/flext-sh/flext-cli.git?rev=0.12.0-dev" },
     { name = "flext-core", git = "https://github.com/flext-sh/flext-core.git?rev=0.12.0-dev" },
-    { name = "flext-infra", git = "https://github.com/flext-sh/flext-infra.git?rev=4fc588381637df52a0ec305ae2fbe49bb42df292" },
+    { name = "flext-infra", git = "https://github.com/flext-sh/flext-infra.git?rev=0.12.0-dev" },
     { name = "hypothesis" },
     { name = "packaging", specifier = ">=26.3" },
     { name = "pydantic", specifier = ">=2.13.5" },
@@ -599,7 +599,7 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-codegen = [{ name = "flext-infra", git = "https://github.com/flext-sh/flext-infra.git?rev=4fc588381637df52a0ec305ae2fbe49bb42df292" }]
+codegen = [{ name = "flext-infra", git = "https://github.com/flext-sh/flext-infra.git?rev=0.12.0-dev" }]
 dev = [
     { name = "actionlint-py", specifier = ">=1.7.12.24" },
     { name = "bandit", specifier = ">=1.9.4" },
