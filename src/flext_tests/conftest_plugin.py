@@ -42,9 +42,9 @@ def pytest_configure(config: pytest.Config) -> None:
         config.pluginmanager.register(settings, settings.__name__)
     if namespace_module not in config.pluginmanager.get_plugins():
         config.pluginmanager.register(namespace_module, namespace_module.__name__)
-    # Connectivity-bound tests skip - never fail - when their external service
-    # is unreachable (AGENTS.md external/docker skip rule).
-    connectivity = connectivity_module.FlextTestsConnectivityPlugin()
+    # Capability-bound tests are DESELECTED (typed NOT EXECUTED) when their
+    # capability is absent; a capable host executes and a service failure is RED.
+    connectivity = connectivity_module.FlextTestsCapabilityPlugin()
     if not config.pluginmanager.hasplugin("flext_tests._fixtures.connectivity"):
         config.pluginmanager.register(
             connectivity, "flext_tests._fixtures.connectivity"
