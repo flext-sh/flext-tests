@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from ._markdown_error import FlextTestsMarkdownValidationError
     from .connectivity import FlextTestsConnectivityPlugin
     from .markdown_validation import FlextTestsMarkdownCodeBlockItem
+    from .namespace import run_namespace, test_namespace
     from .project_metadata import project_metadata, project_tool_flext
     from .settings import (
         clean_container,
@@ -48,12 +49,14 @@ __all__: tuple[str, ...] = (
     "project_metadata",
     "project_tool_flext",
     "reset_settings",
+    "run_namespace",
     "sample_data",
     "settings",
     "settings_factory",
     "temp_dir",
     "temp_file",
     "test_context",
+    "test_namespace",
     "test_runtime",
 )
 
@@ -70,6 +73,7 @@ _LAZY_IMPORTS = MappingProxyType(
             "._markdown_error": ("FlextTestsMarkdownValidationError",),
             ".connectivity": ("FlextTestsConnectivityPlugin",),
             ".markdown_validation": ("FlextTestsMarkdownCodeBlockItem",),
+            ".namespace": ("run_namespace", "test_namespace"),
             ".project_metadata": ("project_metadata", "project_tool_flext"),
             ".settings": (
                 "clean_container",

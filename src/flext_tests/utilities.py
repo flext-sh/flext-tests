@@ -11,6 +11,8 @@ from __future__ import annotations
 
 from flext_infra import FlextInfraUtilities
 
+from flext_tests._utilities.namespace import FlextTestsNamespaceUtilitiesMixin
+
 from ._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
 from ._utilities.docker_lifecycle import FlextTestsDockerLifecycleUtilitiesMixin
 from ._utilities.docker_state import FlextTestsDockerStateUtilitiesMixin
@@ -54,6 +56,7 @@ class FlextTestsUtilities(FlextInfraUtilities):
         FlextTestsWorkspaceCleanupUtilitiesMixin,
         FlextTestsModuleGovernanceMixin,
         FlextTestsEnforcementUtilitiesMixin,
+        FlextTestsNamespaceUtilitiesMixin,
     ):
         """Test utilities namespace."""
 
