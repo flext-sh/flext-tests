@@ -44,12 +44,24 @@ def _bind_runtime_aliases(
     *, module: ModuleType, instance: FlextTestsCase | None
 ) -> None:
     """Bind canonical FLEXT runtime aliases onto pytest class instances."""
-    from flext_tests import c, e, m, p, r, s, t, u
+    from flext_tests import s
 
-    package_root = module.__package__ or module.__name__
+    # A bare top-level module (e.g. a pytester probe file) has no package
+    # contract: there is no package root to resolve aliases from, so the
+    # binding scope does not apply. Package-based suites always enforce.
+    package_root = module.__package__ or ""
+    if not package_root:
+        return
     package_name = package_root.split(".", maxsplit=1)[0]
     tests_package = importlib.import_module(package_name)
-    service_type = tests_package.s if hasattr(tests_package, "s") else s
+    try:
+        service_type = tests_package.s
+    except AttributeError as exc:
+        msg = (
+            f"{package_name} must re-export the canonical service alias 's' "
+            "from its package root for the shared test runtime"
+        )
+        raise AttributeError(msg) from exc
     if not isinstance(service_type, type) or not issubclass(service_type, s):
         msg = (
             f"{package_name} declares 's' as {service_type!r}, "
@@ -62,16 +74,16 @@ def _bind_runtime_aliases(
     instance.service = service
     instance.settings = service.fetch_settings()
     instance.logger = service.logger
-    for alias_name, fallback in (
-        ("c", c),
-        ("e", e),
-        ("m", m),
-        ("p", p),
-        ("r", r),
-        ("t", t),
-        ("u", u),
-    ):
-        setattr(instance, alias_name, getattr(tests_package, alias_name, fallback))
+    for alias_name in ("c", "e", "m", "p", "r", "t", "u"):
+        try:
+            alias_value = getattr(tests_package, alias_name)
+        except AttributeError as exc:
+            msg = (
+                f"{package_name} must re-export the canonical facade letter "
+                f"'{alias_name}' from its package root for the shared test runtime"
+            )
+            raise AttributeError(msg) from exc
+        setattr(instance, alias_name, alias_value)
 
 
 def pytest_runtest_setup(item: pytest.Item) -> None:
