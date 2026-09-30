@@ -37,11 +37,14 @@ def pytest_configure(config: pytest.Config) -> None:
     settings = import_module("flext_tests._fixtures.settings")
     connectivity_module = import_module("flext_tests._fixtures.connectivity")
     namespace_module = import_module("flext_tests._fixtures.namespace")
+    scratch_module = import_module("flext_tests._fixtures.scratch_storage")
 
     if settings not in config.pluginmanager.get_plugins():
         config.pluginmanager.register(settings, settings.__name__)
     if namespace_module not in config.pluginmanager.get_plugins():
         config.pluginmanager.register(namespace_module, namespace_module.__name__)
+    if scratch_module not in config.pluginmanager.get_plugins():
+        config.pluginmanager.register(scratch_module, scratch_module.__name__)
     # Capability-bound tests are DESELECTED (typed NOT EXECUTED) when their
     # capability is absent; a capable host executes and a service failure is RED.
     connectivity = connectivity_module.FlextTestsCapabilityPlugin()
