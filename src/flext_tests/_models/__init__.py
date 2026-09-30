@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from .make import FlextTestsMakeModelsMixin
     from .matchers import FlextTestsMatchersModelsMixin
     from .namespace import FlextTestsNamespaceModelsMixin
+    from .spec import FlextTestsSpecModelsMixin
     from .validator import FlextTestsValidatorModelsMixin
     from .workspace_cleanup import FlextTestsWorkspaceCleanupModelsMixin
 
@@ -30,6 +31,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsMakeModelsMixin",
     "FlextTestsMatchersModelsMixin",
     "FlextTestsNamespaceModelsMixin",
+    "FlextTestsSpecModelsMixin",
     "FlextTestsValidatorModelsMixin",
     "FlextTestsWorkspaceCleanupModelsMixin",
 )
@@ -45,6 +47,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ".make": ("FlextTestsMakeModelsMixin",),
             ".matchers": ("FlextTestsMatchersModelsMixin",),
             ".namespace": ("FlextTestsNamespaceModelsMixin",),
+            ".spec": ("FlextTestsSpecModelsMixin",),
             ".validator": ("FlextTestsValidatorModelsMixin",),
             ".workspace_cleanup": ("FlextTestsWorkspaceCleanupModelsMixin",),
         }),
