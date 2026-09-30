@@ -46,8 +46,8 @@ class TestsFlextTestsPayload:
     def test_matcher_preserves_native_model_identity(self) -> None:
         model = m.Tests.Value(data="native matcher model", count=2)
 
-        def is_original_model(payload: p.Tests.Payload) -> bool:
-            return payload.atom is model
+        def is_original_model(value: p.AttributeProbe) -> bool:
+            return value is model
 
         tm.that(model, is_=type(model), where=is_original_model)
 
@@ -58,8 +58,8 @@ class TestsFlextTestsPayload:
         model = m.Tests.Value(data="nested matcher model", count=2)
         leaves = (model, b"\x00\xff", datetime.now(UTC), Path("native"))
 
-        def is_original_model(payload: p.Tests.Payload) -> bool:
-            return payload.atom is model
+        def is_original_model(value: p.AttributeProbe) -> bool:
+            return value is model
 
         tm.that(
             {"nested": leaves},
@@ -132,8 +132,8 @@ class TestsFlextTestsPayload:
     def test_matcher_preserves_exception_atom_identity(self) -> None:
         error = ValueError("native exception atom")
 
-        def is_original_error(payload: p.Tests.Payload) -> bool:
-            return payload.atom is error
+        def is_original_error(value: p.AttributeProbe) -> bool:
+            return value is error
 
         tm.that(error, is_=ValueError, eq=error, where=is_original_error)
 
