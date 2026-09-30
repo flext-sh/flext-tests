@@ -43,6 +43,32 @@ class FlextTestsDockerModelsMixin:
             u.Field(description="Whether execute should recreate the target stack."),
         ] = False
 
+    class ContainerState(m.Value):
+        """Host-scoped persistent state of one managed container.
+
+        One JSON file per container under ``~/.flext/docker/`` carries this
+        state; all checkouts on the host share it (the container is shared,
+        so its state is too). ``sealed`` marks a container that came up
+        healthy against a known fingerprint; ``dirty`` marks one a failing
+        test run must not reuse.
+        """
+
+        container_name: Annotated[
+            str, u.Field(min_length=1, description="Managed container name.")
+        ]
+        container_id: Annotated[
+            str, u.Field(description="Docker container id at seal time.")
+        ] = ""
+        fingerprint: Annotated[
+            str, u.Field(description="Tracked-inputs fingerprint at seal time.")
+        ] = ""
+        sealed: Annotated[
+            bool, u.Field(description="True once verified healthy and sealed.")
+        ] = False
+        dirty: Annotated[
+            bool, u.Field(description="True when a run marked the container dirty.")
+        ] = False
+
     class ContainerInfo(m.Value):
         """Container information model."""
 

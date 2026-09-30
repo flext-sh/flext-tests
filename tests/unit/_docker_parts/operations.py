@@ -47,13 +47,10 @@ class TestsFlextTestsDockerOperationsMixin:
         _ = u.Tests.assert_failure(result)
         tm.that(result.error or "", has="not ready")
 
-    def test_cleanup_dirty_containers_empty(
-        self, docker_manager: FlextTestsDocker
-    ) -> None:
-        """Test cleanup with no dirty containers."""
-        _ = docker_manager.mark_container_clean("container1")
-        _ = docker_manager.mark_container_clean("container2")
-        result = docker_manager.cleanup_dirty_containers()
+    def test_cleanup_dirty_containers_empty(self, tmp_path: Path) -> None:
+        """Test cleanup with no dirty containers in a fresh state tree."""
+        manager = FlextTestsDocker(state_root=tmp_path / "docker-state")
+        result = manager.cleanup_dirty_containers()
         _ = u.Tests.assert_success(result)
         tm.that(result.value, empty=True)
 
@@ -62,34 +59,23 @@ class TestsFlextTestsDockerOperationsMixin:
     ) -> None:
         """Test cleanup purges retired shared containers from persisted state."""
         manager = FlextTestsDocker(
-            repository_root=tmp_path, worker_id="stale-container"
+            repository_root=tmp_path, state_root=tmp_path / "docker-state"
         )
-        _ = manager.mark_container_dirty("algar-oud-test")
+        _ = manager.mark_container_dirty("retired-shared-entry")
 
         result = manager.cleanup_dirty_containers()
 
         _ = u.Tests.assert_success(result)
         tm.that(result.value, empty=True)
-        tm.that(manager.container_dirty("algar-oud-test"), eq=False)
+        tm.that(manager.container_dirty("retired-shared-entry"), eq=False)
 
-    def test_default_worker_id(self) -> None:
-        """Test default worker_id is 'master'."""
-        manager = FlextTestsDocker()
-        tm.that(manager.worker_id, eq="master")
-
-    def test_custom_worker_id(self) -> None:
-        """Test custom worker_id."""
-        manager = FlextTestsDocker(worker_id="worker_1")
-        tm.that(manager.worker_id, eq="worker_1")
-
-    def test_worker_id_isolates_persisted_dirty_state(self) -> None:
-        """Test different worker_id values isolate persisted dirty state."""
-        manager_a = FlextTestsDocker(worker_id="worker_a")
-        _ = manager_a.mark_container_dirty("container-x")
-        manager_b = FlextTestsDocker(worker_id="worker_b")
-        tm.that(manager_b.container_dirty("container-x"), eq=False)
-        manager_a_reload = FlextTestsDocker(worker_id="worker_a")
-        tm.that(manager_a_reload.container_dirty("container-x"), eq=True)
+    def test_state_is_shared_across_manager_instances(self, tmp_path: Path) -> None:
+        """Host-scoped state: a second manager sees the first's markers."""
+        state_root = tmp_path / "docker-state"
+        manager_a = FlextTestsDocker(state_root=state_root)
+        _ = manager_a.mark_container_dirty("shared-container")
+        manager_b = FlextTestsDocker(state_root=state_root)
+        tm.that(manager_b.container_dirty("shared-container"), eq=True)
 
     def test_default_repository_root(self) -> None:
         """Test default repository_root is cwd."""

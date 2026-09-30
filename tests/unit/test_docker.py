@@ -13,10 +13,8 @@ from __future__ import annotations
 
 import os
 
-import pytest
-
 from flext_tests import FlextTestsDocker, tm
-from tests import c
+from tests import c, u
 
 from ._docker_parts import builders, operations, state, targets
 
@@ -49,17 +47,17 @@ class TestsFlextTestsDocker(
             else:
                 os.environ[c.Tests.ENV_CI] = saved
 
-    def test_compose_up_skips_under_ci_y(
+    def test_compose_up_returns_typed_disabled_under_ci_y(
         self, docker_manager: FlextTestsDocker
     ) -> None:
-        """compose_up() pytest.skips under exact CI=Y before touching Docker."""
+        """compose_up() is a typed NOT EXECUTED failure under exact CI=Y."""
         saved = os.environ.get(c.Tests.ENV_CI)
         try:
             os.environ[c.Tests.ENV_CI] = c.Tests.CI_MAKE_VALUE
             tm.that(FlextTestsDocker.ci_disables_docker(), eq=True)
-            with pytest.raises(pytest.skip.Exception) as skipped:
-                docker_manager.skip_if_ci_disables_docker()
-            tm.that(str(skipped.value), has=c.Tests.DOCKER_CI_SKIP_REASON)
+            result = docker_manager.compose_up("docker/docker-compose.nothing.yml")
+            _ = u.Tests.assert_failure(result)
+            tm.that(result.error or "", has="CI=Y")
         finally:
             if saved is None:
                 os.environ.pop(c.Tests.ENV_CI, None)

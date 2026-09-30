@@ -23,7 +23,12 @@ class FlextTestsConstantsDocker:
     # GitHub's CI=true as docker-disable.
     ENV_CI: ClassVar[str] = "CI"
     CI_MAKE_VALUE: ClassVar[str] = "Y"
-    DOCKER_CI_SKIP_REASON: ClassVar[str] = "docker disabled under CI=Y"
+    DOCKER_DISABLED_BY_CI: ClassVar[str] = (
+        "docker lifecycle disabled under CI=Y (typed NOT EXECUTED; "
+        "never reported as passed)"
+    )
+    DOCKER_STATE_DIRNAME: ClassVar[str] = ".flext"
+    DOCKER_STATE_SUBDIR: ClassVar[str] = "docker"
     DOCKER_CONNECTIVITY_MARKER: ClassVar[str] = "docker"
     DOCKER_UNREACHABLE_SKIP_REASON: ClassVar[str] = (
         "Docker daemon unreachable; start it to run Docker integration tests"
