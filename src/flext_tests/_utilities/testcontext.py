@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import time
 import types
 from pathlib import Path
 from typing import BinaryIO
@@ -17,27 +18,92 @@ class FlextTestsTestContextUtilitiesMixin:
     """Context managers for tests."""
 
     class FileLock:
-        """File-based exclusive lock for pytest-xdist parallel test isolation.
+        """File-based lock for pytest-xdist parallel test isolation.
 
         Centralized SSOT for the LDAP-family / pytest-xdist coordination
         pattern (previously cloned across ``flext-ldap``, ``flext-ldif``,
-        ``flext-tap-ldap``).
+        ``flext-tap-ldap``). Exclusive by default; ``shared=True`` takes a
+        shared (reader) lock on POSIX. ``timeout_seconds`` bounds the
+        acquisition with non-blocking retries and raises ``TimeoutError``
+        when the deadline passes (blocking indefinitely when ``None``).
+        Windows supports only exclusive locking; ``shared`` is ignored there.
         """
 
-        def __init__(self, lock_file: Path) -> None:
+        RETRY_INTERVAL_SECONDS = 0.05
+
+        def __init__(
+            self,
+            lock_file: Path,
+            *,
+            shared: bool = False,
+            timeout_seconds: float | None = None,
+        ) -> None:
             self.lock_file = lock_file
+            self.shared = shared
+            self.timeout_seconds = timeout_seconds
             self._file_obj: BinaryIO | None = None
 
+        def _deadline(self) -> float | None:
+            """Monotonic acquisition deadline (None blocks indefinitely)."""
+            if self.timeout_seconds is None:
+                return None
+            return time.monotonic() + self.timeout_seconds
+
+        def _timed_out(self, deadline: float | None) -> bool:
+            """True when a bounded acquisition missed its deadline."""
+            if deadline is None:
+                return False
+            if time.monotonic() < deadline:
+                return False
+            msg = (
+                f"FileLock acquisition timed out after "
+                f"{self.timeout_seconds}s: {self.lock_file}"
+            )
+            raise TimeoutError(msg)
+
+        def _acquire_windows(self, file_obj: BinaryIO, deadline: float | None) -> None:
+            """Acquire the Windows lock with bounded retries (exclusive)."""
+            if os.name == "nt":
+                while True:
+                    os.lseek(file_obj.fileno(), 0, os.SEEK_SET)
+                    acquired = False
+                    try:
+                        msvcrt.locking(file_obj.fileno(), msvcrt.LK_LOCK, 1)
+                        acquired = True
+                    except OSError:
+                        _ = self._timed_out(deadline)
+                        time.sleep(self.RETRY_INTERVAL_SECONDS)
+                    if acquired:
+                        return
+
+        def _acquire_posix(self, file_obj: BinaryIO, deadline: float | None) -> None:
+            """Acquire the POSIX flock honouring shared mode and timeout."""
+            if os.name != "nt":
+                mode = fcntl.LOCK_SH if self.shared else fcntl.LOCK_EX
+                if deadline is None:
+                    fcntl.flock(file_obj.fileno(), mode)
+                    return
+                while True:
+                    acquired = False
+                    try:
+                        fcntl.flock(file_obj.fileno(), mode | fcntl.LOCK_NB)
+                        acquired = True
+                    except BlockingIOError:
+                        _ = self._timed_out(deadline)
+                        time.sleep(self.RETRY_INTERVAL_SECONDS)
+                    if acquired:
+                        return
+
         def __enter__(self) -> None:
-            """Acquire exclusive file lock."""
+            """Acquire the lock (shared or exclusive, optionally bounded)."""
             self.lock_file.parent.mkdir(parents=True, exist_ok=True)
             file_obj = self.lock_file.open("a+b")
             try:
+                deadline = self._deadline()
                 if os.name == "nt":
-                    os.lseek(file_obj.fileno(), 0, os.SEEK_SET)
-                    msvcrt.locking(file_obj.fileno(), msvcrt.LK_LOCK, 1)
+                    self._acquire_windows(file_obj, deadline)
                 else:
-                    fcntl.flock(file_obj.fileno(), fcntl.LOCK_EX)
+                    self._acquire_posix(file_obj, deadline)
             except BaseException:
                 file_obj.close()
                 raise

@@ -5,12 +5,11 @@ from __future__ import annotations
 import os
 import socket
 import time
-from collections.abc import Generator, MutableSet
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated, ClassVar, Self, override
 
-import pytest
 from docker import DockerClient as DockerSDKClient, from_env as docker_from_env
 from docker.constants import DEFAULT_DOCKER_API_VERSION
 from docker.errors import DockerException, NotFound
@@ -33,9 +32,23 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         Path, u.Field(description="Workspace root used to resolve compose files.")
     ] = u.Field(default_factory=Path.cwd)
 
-    worker_id: Annotated[
-        str, u.Field(description="Worker identifier used to isolate persisted state.")
-    ] = "master"
+    container_states: Annotated[
+        t.MutableMappingKV[str, m.Tests.ContainerState],
+        u.Field(
+            exclude=True,
+            description="Host-scoped per-container state cache (name → state).",
+        ),
+    ] = u.Field(default_factory=dict)
+
+    state_root: Annotated[
+        Path | None,
+        u.Field(
+            description=(
+                "Optional override of the host-scoped state directory "
+                "(defaults to ~/.flext/docker; tests point it at a tmp tree)."
+            )
+        ),
+    ] = None
 
     docker_client: Annotated[
         DockerSDKClient | None,
@@ -45,16 +58,6 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     client_error: Annotated[
         str | None,
         u.Field(exclude=True, description="Last Docker client initialization error."),
-    ] = None
-
-    dirty_container_names: Annotated[
-        MutableSet[str],
-        u.Field(exclude=True, description="Tracked dirty containers for the worker."),
-    ] = u.Field(default_factory=set)
-
-    state_file_path: Annotated[
-        Path | None,
-        u.Field(exclude=True, description="Persistent dirty container state file."),
     ] = None
 
     target_config: Annotated[
@@ -67,11 +70,90 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         """True when Make CI token is exact CI=Y (not GitHub CI=true)."""
         return os.environ.get(c.Tests.ENV_CI) == c.Tests.CI_MAKE_VALUE
 
-    @classmethod
-    def skip_if_ci_disables_docker(cls) -> None:
-        """Fail-closed skip for any Docker lifecycle entry under CI=Y."""
-        if cls.ci_disables_docker():
-            pytest.skip(c.Tests.DOCKER_CI_SKIP_REASON)
+    @staticmethod
+    def _disabled_by_ci_result() -> p.Result[str]:
+        """Typed NOT EXECUTED result for any Docker lifecycle under CI=Y."""
+        return r[str].fail(c.Tests.DOCKER_DISABLED_BY_CI)
+
+    def state_directory(self) -> Path:
+        """Directory holding one JSON state file per container (host-scoped)."""
+        if self.state_root is not None:
+            return self.state_root
+        return Path.home() / c.Tests.DOCKER_STATE_DIRNAME / c.Tests.DOCKER_STATE_SUBDIR
+
+    def state_file_path_for(self, container_name: str) -> Path:
+        """Persistent state file for one managed container."""
+        return self.state_directory() / f"{container_name}.json"
+
+    def _state_for(self, container_name: str) -> m.Tests.ContainerState:
+        """Load (once) the host-scoped state of one container.
+
+        A state file that exists but cannot be read or parsed is a defect and
+        escapes; only the absent-file case is a legitimate first run.
+        """
+        cached = self.container_states.get(container_name)
+        if cached is not None:
+            return cached
+        state_file = self.state_file_path_for(container_name)
+        state = m.Tests.ContainerState(container_name=container_name)
+        if state_file.exists():
+            state = self._read_state_disk(container_name)
+        self.container_states[container_name] = state
+        return state
+
+    def _read_state_disk(self, container_name: str) -> m.Tests.ContainerState:
+        """Re-read one state file from disk (caller holds the lock)."""
+        state_file = self.state_file_path_for(container_name)
+        if not state_file.exists():
+            return m.Tests.ContainerState(container_name=container_name)
+        read = u.Cli.files_read_text(state_file)
+        if read.failure:
+            msg = f"Failed to load container state from {state_file}: {read.error}"
+            raise ValueError(msg) from None
+        try:
+            return m.Tests.ContainerState.model_validate_json(read.value)
+        except ValueError as exc:
+            msg = f"Corrupt container state file {state_file}: {exc}"
+            raise ValueError(msg) from exc
+
+    def seal_container_state(self, state: m.Tests.ContainerState) -> p.Result[bool]:
+        """Persist one container state (public read-modify-write under lock)."""
+        return self._write_state_under_lock(state)
+
+    def _write_state_under_lock(self, state: m.Tests.ContainerState) -> p.Result[bool]:
+        """Read-modify-write one container state file under its host lock."""
+        state_file = self.state_file_path_for(state.container_name)
+        lock_file = state_file.with_suffix(".lock")
+        merged = state
+        try:
+            with u.Tests.FileLock(lock_file):
+                merged = self._merge_state_on_disk(state)
+        except c.EXC_OS_TYPE as exc:
+            return r[bool].fail(
+                f"Failed to persist container state: {exc}", exception=exc
+            )
+        self.container_states[state.container_name] = merged
+        return r[bool].ok(value=True)
+
+    def _merge_state_on_disk(
+        self, state: m.Tests.ContainerState
+    ) -> m.Tests.ContainerState:
+        """Merge and atomically write one state file (caller holds the lock)."""
+        state_file = self.state_file_path_for(state.container_name)
+        state_file.parent.mkdir(parents=True, exist_ok=True)
+        fresh = self._read_state_disk(state.container_name)
+        merged = fresh.model_copy(
+            update={
+                "container_id": state.container_id or fresh.container_id,
+                "fingerprint": state.fingerprint or fresh.fingerprint,
+                "sealed": state.sealed,
+                "dirty": state.dirty,
+            }
+        )
+        tmp_file = state_file.with_suffix(f".{os.getpid()}.tmp")
+        tmp_file.write_text(merged.model_dump_json(), encoding="utf-8")
+        Path(tmp_file).replace(state_file)
+        return merged
 
     @staticmethod
     def _resolve_shared_target_config(
@@ -123,10 +205,6 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     def model_post_init(self, __context: t.JsonValue | None, /) -> None:
         """Initialize private runtime state after model validation."""
         super().model_post_init(__context)
-        self.state_file_path = (
-            Path.home() / ".flext" / f"docker_state_{self.worker_id}.json"
-        )
-        self._load_dirty_state()
         _ = self.client
 
     @property
@@ -157,66 +235,37 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     @property
     def dirty_containers(self) -> t.StrSequence:
-        """Dirty container names."""
-        return tuple(self.dirty_container_names)
+        """Names of containers whose host-scoped state is dirty."""
+        return tuple(
+            name for name in self.container_states if self._state_for(name).dirty
+        )
 
     def container_dirty(self, container_name: str) -> bool:
-        """Whether a container is marked as dirty."""
-        return container_name in self.dirty_container_names
+        """Whether a container is marked as dirty (host-scoped state)."""
+        return self._state_for(container_name).dirty
 
     def mark_container_clean(self, container_name: str) -> p.Result[bool]:
         """Mark a container as clean after successful recreation."""
-        try:
-            self.dirty_container_names.discard(container_name)
-            self._save_dirty_state()
-            self.logger.info("Container marked clean", container=container_name)
-            return r[bool].ok(value=True)
-        except c.EXC_OS_TYPE as exc:
-            return r[bool].fail(f"Failed to mark clean: {exc}", exception=exc)
+        state = self._state_for(container_name).model_copy(update={"dirty": False})
+        result = self._write_state_under_lock(state)
+        if result.failure:
+            return result
+        self.logger.info("Container marked clean", container=container_name)
+        return r[bool].ok(value=True)
 
     def mark_container_dirty(self, container_name: str) -> p.Result[bool]:
         """Mark a container as dirty for recreation on next use."""
-        try:
-            self.dirty_container_names.add(container_name)
-            self._save_dirty_state()
-            self.logger.info("Container marked dirty", container=container_name)
-            return r[bool].ok(value=True)
-        except c.EXC_OS_TYPE as exc:
-            return r[bool].fail(f"Failed to mark dirty: {exc}", exception=exc)
-
-    def _load_dirty_state(self) -> None:
-        """Load dirty container state from persistent storage.
-
-        A state file that exists but cannot be read or parsed is a defect and
-        escapes; only the absent-file case is a legitimate first run.
-        """
-        state_file = self.state_file_path
-        if state_file is None or not state_file.exists():
-            return
-        read = u.Cli.files_read_text(state_file)
-        if read.failure:
-            msg = f"Failed to load dirty state from {state_file}: {read.error}"
-            raise ValueError(msg) from None
-        state_raw: t.MappingKV[str, t.StrSequence] = (
-            t.Tests.STR_SEQUENCE_MAPPING_ADAPTER.validate_json(read.value)
-        )
-        self.dirty_container_names = set(state_raw["dirty_containers"])
-
-    def _save_dirty_state(self) -> None:
-        """Save dirty container state to persistent storage."""
-        state_file = self.state_file_path
-        if state_file is None:
-            return
-        data: t.MappingKV[str, t.StrSequence] = {
-            "dirty_containers": tuple(self.dirty_container_names)
-        }
-        write = u.Cli.json_write(state_file, data)
-        if write.failure:
-            self.logger.warning("Failed to save dirty state", error=write.error)
+        state = self._state_for(container_name).model_copy(update={"dirty": True})
+        result = self._write_state_under_lock(state)
+        if result.failure:
+            return result
+        self.logger.info("Container marked dirty", container=container_name)
+        return r[bool].ok(value=True)
 
     def compose_down(self, compose_file: str) -> p.Result[str]:
         """Stop services using docker-compose via python_on_whales."""
-        self.skip_if_ci_disables_docker()
+        if self.ci_disables_docker():
+            return self._disabled_by_ci_result()
         compose_path = self._compose_path(compose_file)
         try:
             self._run_compose_down(compose_path)
@@ -232,7 +281,8 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         force_recreate: bool = False,
     ) -> p.Result[str]:
         """Start services using docker-compose via python_on_whales."""
-        self.skip_if_ci_disables_docker()
+        if self.ci_disables_docker():
+            return self._disabled_by_ci_result()
         compose_path = self._compose_path(compose_file)
         try:
             cleanup_result = self._run_compose_up(
@@ -453,17 +503,12 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     @classmethod
     def shared(
-        cls,
-        container_name: str,
-        *,
-        repository_root: Path | None = None,
-        worker_id: str | None = None,
+        cls, container_name: str, *, repository_root: Path | None = None
     ) -> Self:
         """Build a DSL-configured service from a shared container constant."""
         resolved_root = repository_root or Path.cwd()
         return cls(
             repository_root=resolved_root,
-            worker_id=worker_id or "master",
             target_config=cls._resolve_shared_target_config(
                 container_name, resolved_root
             ),
@@ -485,7 +530,6 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         base_target = target or m.Tests.ContainerConfig()
         return cls(
             repository_root=resolved_root,
-            worker_id="master",
             target_config=base_target.model_copy(update={"compose_file": compose_path}),
         )
 
@@ -547,9 +591,21 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         )
 
     def cleanup_dirty_containers(self) -> p.Result[t.StrSequence]:
-        """Clean up all dirty containers by recreating them with fresh volumes."""
+        """Clean up all dirty containers by recreating them with fresh volumes.
+
+        Scans the host-scoped state directory so every checkout's dirty
+        markers are visible, then recreates each declared shared container.
+        """
         cleaned: list[str] = []
-        for container_name in list(self.dirty_container_names):
+        state_dir = self.state_directory()
+        state_names = sorted(
+            path.stem
+            for path in state_dir.glob("*.json")
+            if not path.name.endswith(".tmp")
+        )
+        for container_name in state_names:
+            if not self._state_for(container_name).dirty:
+                continue
             if container_name not in c.Tests.SHARED_CONTAINERS:
                 self.logger.warning(
                     "Removing stale dirty container entry", container=container_name
@@ -571,8 +627,13 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     @override
     def execute(self) -> p.Result[m.Tests.ContainerInfo]:
-        """Ensure the configured container is available with a single DSL call."""
-        self.skip_if_ci_disables_docker()
+        """Ensure the configured container is available with a single DSL call.
+
+        Under CI=Y the lifecycle is a typed NOT EXECUTED failure (never a
+        pytest.skip and never reported as passed).
+        """
+        if self.ci_disables_docker():
+            return r[m.Tests.ContainerInfo].fail(c.Tests.DOCKER_DISABLED_BY_CI)
         target = self.target_config
         if target is None:
             return r[m.Tests.ContainerInfo].fail(
