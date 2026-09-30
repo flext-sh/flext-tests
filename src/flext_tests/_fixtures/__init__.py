@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from ._enforcement_parts.validators import FlextTestsEnforcementValidators
     from ._markdown_collector import FlextTestsMarkdownCodeBlockCollector
     from ._markdown_error import FlextTestsMarkdownValidationError
-    from .connectivity import FlextTestsConnectivityPlugin
+    from .connectivity import FlextTestsCapabilityPlugin
     from .markdown_validation import FlextTestsMarkdownCodeBlockItem
     from .namespace import run_namespace, test_namespace
     from .project_metadata import project_metadata, project_tool_flext
@@ -35,7 +35,7 @@ if TYPE_CHECKING:
 
 
 __all__: tuple[str, ...] = (
-    "FlextTestsConnectivityPlugin",
+    "FlextTestsCapabilityPlugin",
     "FlextTestsEnforcementBuilder",
     "FlextTestsEnforcementDispatcher",
     "FlextTestsEnforcementItem",
@@ -71,7 +71,7 @@ _LAZY_IMPORTS = MappingProxyType(
             "._enforcement_parts.validators": ("FlextTestsEnforcementValidators",),
             "._markdown_collector": ("FlextTestsMarkdownCodeBlockCollector",),
             "._markdown_error": ("FlextTestsMarkdownValidationError",),
-            ".connectivity": ("FlextTestsConnectivityPlugin",),
+            ".connectivity": ("FlextTestsCapabilityPlugin",),
             ".markdown_validation": ("FlextTestsMarkdownCodeBlockItem",),
             ".namespace": ("run_namespace", "test_namespace"),
             ".project_metadata": ("project_metadata", "project_tool_flext"),
