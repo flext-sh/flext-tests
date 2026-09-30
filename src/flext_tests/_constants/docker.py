@@ -27,6 +27,10 @@ class FlextTestsConstantsDocker:
         "container tests are not executed in CI"
     )
     DOCKER_CONNECTIVITY_MARKER: ClassVar[str] = "docker"
+    DOCKER_CI_SKIP_REASON: ClassVar[str] = (
+        "Docker lifecycle disabled under the Make CI token: "
+        "container tests are not executed in CI"
+    )
     DOCKER_UNREACHABLE_DESELECT_REASON: ClassVar[str] = (
         "Docker daemon unreachable; start it to run Docker integration tests"
     )
