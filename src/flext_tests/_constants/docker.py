@@ -27,7 +27,7 @@ class FlextTestsConstantsDocker:
         "container tests are not executed in CI"
     )
     DOCKER_CONNECTIVITY_MARKER: ClassVar[str] = "docker"
-    DOCKER_UNREACHABLE_SKIP_REASON: ClassVar[str] = (
+    DOCKER_UNREACHABLE_DESELECT_REASON: ClassVar[str] = (
         "Docker daemon unreachable; start it to run Docker integration tests"
     )
     # Default probe ceiling for callers that omit max_wait. Under the Make CI
@@ -132,7 +132,7 @@ class FlextTestsConstantsDocker:
         DOCKER_CONNECTIVITY_MARKER,
         *CONNECTIVITY_MARKER_CONTAINERS,
     )
-    UNREACHABLE_SKIP_REASON: ClassVar[str] = (
+    UNREACHABLE_DESELECT_REASON: ClassVar[str] = (
         "{marker} service unreachable at {host}:{port}; start it to run these tests"
     )
     CONNECTIVITY_PROBE_TIMEOUT_SECONDS: ClassVar[float] = 1.5
