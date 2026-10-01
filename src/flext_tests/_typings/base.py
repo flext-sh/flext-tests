@@ -25,7 +25,7 @@ from typing import TYPE_CHECKING, Literal
 from flext_cli import t
 from flext_infra import m, t as it
 
-from flext_core import p
+from flext_core import p, u
 
 from .._models.domains import FlextTestsDomainModelsMixin
 from .._protocols.payload import FlextTestsPayloadProtocolsMixin
@@ -143,51 +143,51 @@ class FlextTestsBaseTypesMixin:
     )
 
     TESTOBJECT_SERIALIZABLE_ADAPTER: m.TypeAdapter[TestobjectSerializable] = (
-        m.TypeAdapter(
+        u.type_adapter(
             TestobjectSerializable, config=m.ConfigDict(arbitrary_types_allowed=True)
         )
     )
 
     TESTOBJECT_SEQUENCE_ADAPTER: m.TypeAdapter[
         t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
-    ] = m.TypeAdapter(
+    ] = u.type_adapter(
         t.SequenceOf[TestobjectSerializable],
         config=m.ConfigDict(arbitrary_types_allowed=True),
     )
     TESTOBJECT_MAPPING_ADAPTER: m.TypeAdapter[
         t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-    ] = m.TypeAdapter(
+    ] = u.type_adapter(
         t.MappingKV[str, TestobjectSerializable],
         config=m.ConfigDict(arbitrary_types_allowed=True),
     )
     STR_MAPPING_SEQUENCE_ADAPTER: m.TypeAdapter[t.SequenceOf[t.StrMapping]] = (
-        m.TypeAdapter(t.SequenceOf[t.StrMapping])
+        u.type_adapter(t.SequenceOf[t.StrMapping])
     )
     TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER: m.TypeAdapter[
         t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-    ] = m.TypeAdapter(
+    ] = u.type_adapter(
         t.MappingKV[str, TestobjectSerializable],
         config=m.ConfigDict(arbitrary_types_allowed=True),
     )
     TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER: m.TypeAdapter[
         t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
-    ] = m.TypeAdapter(
+    ] = u.type_adapter(
         t.SequenceOf[TestobjectSerializable],
         config=m.ConfigDict(arbitrary_types_allowed=True),
     )
-    DICT_ADAPTER: m.TypeAdapter[m.Dict] = m.TypeAdapter(m.Dict)
-    SCALAR_MAPPING_ADAPTER: m.TypeAdapter[t.ScalarMapping] = m.TypeAdapter(
+    DICT_ADAPTER: m.TypeAdapter[m.Dict] = u.type_adapter(m.Dict)
+    SCALAR_MAPPING_ADAPTER: m.TypeAdapter[t.ScalarMapping] = u.type_adapter(
         t.ScalarMapping
     )
     CONTAINER_MAPPING_SEQUENCE_ADAPTER: m.TypeAdapter[t.SequenceOf[t.JsonMapping]] = (
-        m.TypeAdapter(t.SequenceOf[t.JsonMapping])
+        u.type_adapter(t.SequenceOf[t.JsonMapping])
     )
     STR_MAPPING_MAPPING_ADAPTER: m.TypeAdapter[t.MappingKV[str, t.StrMapping]] = (
-        m.TypeAdapter(t.MappingKV[str, t.StrMapping])
+        u.type_adapter(t.MappingKV[str, t.StrMapping])
     )
-    INTEGER_SEQUENCE_ADAPTER: m.TypeAdapter[Sequence[int]] = m.TypeAdapter(
+    INTEGER_SEQUENCE_ADAPTER: m.TypeAdapter[Sequence[int]] = u.type_adapter(
         Sequence[int]
     )
     STR_SEQUENCE_MAPPING_ADAPTER: m.TypeAdapter[t.MappingKV[str, t.StrSequence]] = (
-        m.TypeAdapter(t.MappingKV[str, t.StrSequence])
+        u.type_adapter(t.MappingKV[str, t.StrSequence])
     )
