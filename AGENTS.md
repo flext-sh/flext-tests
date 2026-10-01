@@ -27,7 +27,7 @@ src/flext_tests/
 ├── tmatchers.py            # public tm (matchers)
 ├── conftest_plugin.py      # pytest11 plugin registration
 ├── enforcement.py files.py domains.py docker.py
-├── _validator/ _fixtures/ _domains_parts/ _docker_parts/
+├── _fixtures/ _domains_parts/ _docker_parts/
 ├── constants.py typings.py protocols.py models.py utilities.py
 └── _constants/ _models/ _protocols/ _typings/ _utilities/
 ```

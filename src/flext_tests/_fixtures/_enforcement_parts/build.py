@@ -54,27 +54,15 @@ class FlextTestsEnforcementBuilder:
             if project_names and engine_selected
             else None,
             project_names=project_names,
-            validator_targets=u.Tests.collected_validator_targets(
-                items=collected_items, repository_root=repository_root
-            ),
-            repository_root=repository_root,
         )
         collector = FlextTestsEnforcementCollector.from_parent(
             parent=session, name="flext-enforcement"
         )
-        items: list[pytest.Item] = [
+        return [
             *FlextTestsEnforcementValidators.build_infra_rule_items(
                 collector, cfg, context
             )
         ]
-        for rule in rules:
-            if isinstance(rule.source, m.EnforcementTestsValidatorSource):
-                items.extend(
-                    FlextTestsEnforcementValidators.build_tests_validator_items(
-                        collector, rule, rule.source, context
-                    )
-                )
-        return items
 
 
 __all__: list[str] = ["FlextTestsEnforcementBuilder"]

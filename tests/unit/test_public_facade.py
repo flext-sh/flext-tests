@@ -39,7 +39,7 @@ class TestsFlextTestsPublicFacade:
 
     def test_consumer_facade_imports_without_container_lifecycle(self) -> None:
         import flext_tests
-        from flext_tests import FlextTestsCase, d, e, h, r, tf, tk, tm, tv, x
+        from flext_tests import FlextTestsCase, d, e, h, r, tf, tk, tm, x
 
         for name, exported in (
             ("FlextTestsCase", FlextTestsCase),
@@ -50,7 +50,6 @@ class TestsFlextTestsPublicFacade:
             ("tf", tf),
             ("tk", tk),
             ("tm", tm),
-            ("tv", tv),
             ("x", x),
         ):
             tm.that(exported is getattr(flext_tests, name), eq=True)

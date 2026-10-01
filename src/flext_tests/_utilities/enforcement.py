@@ -81,17 +81,5 @@ class FlextTestsEnforcementUtilitiesMixin:
             is not None
         )
 
-    @classmethod
-    def collected_validator_targets(
-        cls, *, items: t.SequenceOf[pytest.Item], repository_root: Path
-    ) -> t.SequenceOf[Path]:
-        """Return sorted validation targets represented by collected items."""
-        targets: set[Path] = set()
-        for item in items:
-            path = item.path.resolve()
-            name = cls.project_name_for_path(path=path, repository_root=repository_root)
-            targets.add(repository_root / name if name is not None else path)
-        return tuple(sorted(targets))
-
 
 __all__: list[str] = ["FlextTestsEnforcementUtilitiesMixin"]
