@@ -27,7 +27,11 @@ class FlextTestsConstantsDocker:
         "container tests are not executed in CI"
     )
     DOCKER_CONNECTIVITY_MARKER: ClassVar[str] = "docker"
-    DOCKER_UNREACHABLE_SKIP_REASON: ClassVar[str] = (
+    DOCKER_CI_SKIP_REASON: ClassVar[str] = (
+        "Docker lifecycle disabled under the Make CI token: "
+        "container tests are not executed in CI"
+    )
+    DOCKER_UNREACHABLE_DESELECT_REASON: ClassVar[str] = (
         "Docker daemon unreachable; start it to run Docker integration tests"
     )
     # Default probe ceiling for callers that omit max_wait. Under the Make CI
@@ -44,6 +48,10 @@ class FlextTestsConstantsDocker:
     DOCKER_STATE_LOCK_SUFFIX: ClassVar[str] = ".state.lock"
     DOCKER_LEASE_LOCK_SUFFIX: ClassVar[str] = ".lease.lock"
     DOCKER_STATE_LOCK_TIMEOUT_SECONDS: ClassVar[float] = 30.0
+    # Scratch root for relocated caches (hypothesis, benchmarks): never
+    # inside the checkout; keyed per checkout identity under this root.
+    SCRATCH_DIR_PARTS: ClassVar[t.VariadicTuple[str]] = (".flext", "scratch")
+    SCRATCH_ROOT_INI: ClassVar[str] = "flext_scratch_root"
     # Docker's own container-name grammar; the name is also the state file stem.
     DOCKER_CONTAINER_NAME_PATTERN: ClassVar[str] = r"^[a-zA-Z0-9][a-zA-Z0-9_.-]+$"
     ERR_DOCKER_STATE_NAME_MISMATCH: ClassVar[str] = (
@@ -132,7 +140,7 @@ class FlextTestsConstantsDocker:
         DOCKER_CONNECTIVITY_MARKER,
         *CONNECTIVITY_MARKER_CONTAINERS,
     )
-    UNREACHABLE_SKIP_REASON: ClassVar[str] = (
+    UNREACHABLE_DESELECT_REASON: ClassVar[str] = (
         "{marker} service unreachable at {host}:{port}; start it to run these tests"
     )
     CONNECTIVITY_PROBE_TIMEOUT_SECONDS: ClassVar[float] = 1.5

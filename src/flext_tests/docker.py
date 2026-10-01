@@ -9,7 +9,11 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated, Self, override
 
-from docker import DockerClient as DockerSDKClient, from_env as docker_from_env
+from docker import (
+    DockerClient as DockerSDKClient,
+    DockerClient as _DockerClientWithBaseUrl,
+    from_env as docker_from_env,
+)
 from docker.constants import DEFAULT_DOCKER_API_VERSION
 from docker.errors import DockerException, NotFound
 from docker.transport import UnixHTTPAdapter
@@ -100,9 +104,27 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             update={"container_name": container_name, "compose_file": compose_path}
         )
 
+    @staticmethod
+    def _context_docker_host() -> str | None:
+        """Rootless endpoint of this user's docker daemon, when present.
+
+        The SDK's default endpoint is /var/run/docker.sock, which a rootless
+        installation does not provide; the per-user socket at
+        /run/user/<uid>/docker.sock is the standard rootless endpoint.
+        """
+        uid_socket = Path(f"/run/user/{os.getuid()}/docker.sock")
+        if uid_socket.exists():
+            return f"unix://{uid_socket}"
+        return None
+
     @property
     def client(self) -> DockerSDKClient | None:
-        """Docker client with lazy initialization."""
+        """Docker client with lazy initialization.
+
+        When the SDK default endpoint is absent (rootless docker), the
+        operator's `docker context` endpoint is adopted so the capability
+        matches the way the operator's docker actually runs.
+        """
         if self.docker_client is None and self.client_error is None:
             client: DockerSDKClient | None = None
             try:
@@ -117,6 +139,23 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             except (DockerException, OSError, TypeError, ValueError) as error:
                 if client is not None:
                     client.close()
+                context_host = self._context_docker_host()
+                if context_host is not None:
+                    retry = _DockerClientWithBaseUrl(
+                        base_url=context_host, version=DEFAULT_DOCKER_API_VERSION
+                    )
+                    try:
+                        _ = retry.ping()
+                    except (DockerException, OSError) as retry_error:
+                        self.logger.exception(
+                            "Failed to initialize Docker client", error=str(retry_error)
+                        )
+                        self.client_error = str(retry_error)
+                    else:
+                        self.docker_client = retry
+                        self.client_error = None
+                    if self.docker_client is not None:
+                        return self.docker_client
                 self.logger.exception(
                     "Failed to initialize Docker client", error=str(error)
                 )

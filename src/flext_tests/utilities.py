@@ -11,6 +11,8 @@ from __future__ import annotations
 
 from flext_infra import FlextInfraUtilities
 
+from flext_tests._utilities.namespace import FlextTestsNamespaceUtilitiesMixin
+
 from ._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
 from ._utilities.docker_lifecycle import FlextTestsDockerLifecycleUtilitiesMixin
 from ._utilities.docker_state import FlextTestsDockerStateUtilitiesMixin
@@ -25,7 +27,6 @@ from ._utilities.matchers import FlextTestsMatchersUtilities
 from ._utilities.result import FlextTestsResultUtilitiesMixin
 from ._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
 from ._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
-from ._utilities.validator import FlextTestsValidatorUtilitiesMixin
 from ._utilities.workspace_cleanup import FlextTestsWorkspaceCleanupUtilitiesMixin
 
 
@@ -47,13 +48,13 @@ class FlextTestsUtilities(FlextInfraUtilities):
         FlextTestsHandlerHelpersUtilitiesMixin,
         FlextTestsFilesUtilitiesMixin,
         FlextTestsMakeUtilitiesMixin,
-        FlextTestsValidatorUtilitiesMixin,
         FlextTestsMatchersUtilities.Tests,
         FlextTestsFixturesDSLMixin,
         # NOTE (multi-agent): compose guarded cleanup planning/apply into u.Tests.
         FlextTestsWorkspaceCleanupUtilitiesMixin,
         FlextTestsModuleGovernanceMixin,
         FlextTestsEnforcementUtilitiesMixin,
+        FlextTestsNamespaceUtilitiesMixin,
     ):
         """Test utilities namespace."""
 
