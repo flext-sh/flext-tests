@@ -46,7 +46,6 @@ if TYPE_CHECKING:
         FlextTestsUtilities,
         FlextTestsUtilities as u,
     )
-    from .validator import FlextTestsValidator, FlextTestsValidator as tv
 
 
 __all__: tuple[str, ...] = (
@@ -69,7 +68,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsSettings",
     "FlextTestsTypes",
     "FlextTestsUtilities",
-    "FlextTestsValidator",
     "__author__",
     "__author_email__",
     "__description__",
@@ -128,7 +126,6 @@ _LAZY_IMPORTS = MappingProxyType(
                 "FlextTestsUtilities",
                 "u",
             ),
-            ".validator": ("FlextTestsValidator", "tv"),
             "flext_cli": ("d", "e", "h", "r", "x"),
         }),
         alias_groups=MappingProxyType({}),
