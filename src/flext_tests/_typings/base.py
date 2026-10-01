@@ -23,6 +23,7 @@ from typing import TYPE_CHECKING, Literal
 
 from flext_cli import t
 from flext_infra import m, t as it
+from pydantic import TypeAdapter
 
 from flext_core import p
 
@@ -139,4 +140,54 @@ class FlextTestsBaseTypesMixin:
     type Testobject = (
         FlextTestsBaseTypesMixin.TestResultValue
         | p.Result[FlextTestsBaseTypesMixin.TestResultValue]
+    )
+
+    TESTOBJECT_SERIALIZABLE_ADAPTER: m.TypeAdapter[TestobjectSerializable] = (
+        TypeAdapter(
+            TestobjectSerializable, config=m.ConfigDict(arbitrary_types_allowed=True)
+        )
+    )
+
+    TESTOBJECT_SEQUENCE_ADAPTER: m.TypeAdapter[
+        t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
+    ] = TypeAdapter(
+        t.SequenceOf[TestobjectSerializable],
+        config=m.ConfigDict(arbitrary_types_allowed=True),
+    )
+    TESTOBJECT_MAPPING_ADAPTER: m.TypeAdapter[
+        t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+    ] = TypeAdapter(
+        t.MappingKV[str, TestobjectSerializable],
+        config=m.ConfigDict(arbitrary_types_allowed=True),
+    )
+    STR_MAPPING_SEQUENCE_ADAPTER: m.TypeAdapter[t.SequenceOf[t.StrMapping]] = (
+        TypeAdapter(t.SequenceOf[t.StrMapping])
+    )
+    TESTOBJECT_SERIALIZABLE_MAPPING_ADAPTER: m.TypeAdapter[
+        t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+    ] = TypeAdapter(
+        t.MappingKV[str, TestobjectSerializable],
+        config=m.ConfigDict(arbitrary_types_allowed=True),
+    )
+    TESTOBJECT_SERIALIZABLE_SEQUENCE_ADAPTER: m.TypeAdapter[
+        t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
+    ] = TypeAdapter(
+        t.SequenceOf[TestobjectSerializable],
+        config=m.ConfigDict(arbitrary_types_allowed=True),
+    )
+    DICT_ADAPTER: m.TypeAdapter[m.Dict] = TypeAdapter(m.Dict)
+    SCALAR_MAPPING_ADAPTER: m.TypeAdapter[t.ScalarMapping] = TypeAdapter(
+        t.ScalarMapping
+    )
+    CONTAINER_MAPPING_SEQUENCE_ADAPTER: m.TypeAdapter[t.SequenceOf[t.JsonMapping]] = (
+        TypeAdapter(t.SequenceOf[t.JsonMapping])
+    )
+    STR_MAPPING_MAPPING_ADAPTER: m.TypeAdapter[t.MappingKV[str, t.StrMapping]] = (
+        TypeAdapter(t.MappingKV[str, t.StrMapping])
+    )
+    INTEGER_SEQUENCE_ADAPTER: m.TypeAdapter[Sequence[int]] = TypeAdapter(
+        Sequence[int]
+    )
+    STR_SEQUENCE_MAPPING_ADAPTER: m.TypeAdapter[t.MappingKV[str, t.StrSequence]] = (
+        TypeAdapter(t.MappingKV[str, t.StrSequence])
     )
