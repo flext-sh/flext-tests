@@ -7,50 +7,46 @@ from pathlib import Path
 import pytest
 
 from flext_core import r, u as _core_u
+from flext_infra import FlextInfraModGateEngine, u as _infra_u
 from flext_tests import c, m, p, t
 
 
 class FlextTestsEnforcementUtilitiesMixin:
-    """Catalog filtering and collected-project discovery for enforcement."""
+    """Catalog filtering, engine findings and collected-project discovery."""
 
     @staticmethod
     def active_rules(
         cfg: m.Tests.EnforcementDispatcherConfig,
     ) -> tuple[m.EnforcementRuleSpec, ...]:
-        """Return enabled catalog rules after applying include/exclude filters."""
+        """Return catalog rules after applying the include/exclude filters."""
         return tuple(
             rule
             for rule in _core_u.build_canonical_catalog().rules
-            if rule.enabled
-            and (not cfg.include or rule.id in cfg.include)
+            if (not cfg.include or rule.id in cfg.include)
             and rule.id not in cfg.exclude
         )
 
     @staticmethod
-    def load_infra_report(
-        repository_root: Path, *, project_names: t.StrSequence
-    ) -> p.Result[p.AttributeProbe]:
-        """Return the workspace namespace-enforcement report for the projects."""
-        if not project_names:
-            return r[p.AttributeProbe].fail("no project names provided")
-        # Late import: the rope-backed enforcer is loaded only when a rule
-        # needs it; flext-infra is a declared runtime dependency of flext-tests.
-        from flext_infra.refactor import FlextInfraNamespaceEnforcer
+    def infra_rule_findings(
+        repository_root: Path, *, required_rule_ids: frozenset[str]
+    ) -> p.Result[m.Infra.ModScanReport]:
+        """Return the flext-infra rule-engine findings for the workspace.
 
-        return r[p.AttributeProbe].ok(
-            FlextInfraNamespaceEnforcer(repository_root=repository_root).enforce(
-                project_names=project_names
-            )
+        Every id in ``required_rule_ids`` must be declared by the engine's rule
+        plan; a missing rule is a failure, never an empty scan.
+        """
+        planned = _infra_u.Infra.codemod_rule_plan(repository_root)
+        if planned.failure:
+            return r[m.Infra.ModScanReport].from_failure(planned)
+        missing = sorted(
+            required_rule_ids - {rule.id for rule in planned.value.rules}
         )
-
-    @staticmethod
-    def item_path(item: pytest.Item) -> Path | None:
-        """Return the filesystem path represented by one collected pytest item."""
-        path_value = getattr(item, "path", None)
-        if isinstance(path_value, Path):
-            return path_value.resolve()
-        fspath = getattr(item, "fspath", None)
-        return None if fspath is None else Path(str(fspath)).resolve()
+        if missing:
+            return r[m.Infra.ModScanReport].fail(
+                "enforcement names flext-infra rules that config/rules does not "
+                f"declare: {', '.join(missing)}"
+            )
+        return FlextInfraModGateEngine.scan(repository_root, fix=False)
 
     @staticmethod
     def project_name_for_path(*, path: Path, repository_root: Path) -> str | None:
@@ -72,35 +68,18 @@ class FlextTestsEnforcementUtilitiesMixin:
     @classmethod
     def collected_project_names(
         cls, *, items: t.SequenceOf[pytest.Item], repository_root: Path
-    ) -> t.StrSequence:
-        """Return sorted FLEXT project names represented by collected items."""
-        return tuple(
-            sorted({
-                name
-                for item in items
-                if (path := cls.item_path(item)) is not None
-                and (
-                    name := cls.project_name_for_path(
-                        path=path, repository_root=repository_root
-                    )
+    ) -> frozenset[str]:
+        """Return the FLEXT project names represented by collected items."""
+        return frozenset(
+            name
+            for item in items
+            if (
+                name := cls.project_name_for_path(
+                    path=item.path.resolve(), repository_root=repository_root
                 )
-                is not None
-            })
+            )
+            is not None
         )
-
-    @classmethod
-    def collected_validator_targets(
-        cls, *, items: t.SequenceOf[pytest.Item], repository_root: Path
-    ) -> t.SequenceOf[Path]:
-        """Return sorted validation targets represented by collected items."""
-        targets: set[Path] = set()
-        for item in items:
-            path = cls.item_path(item)
-            if path is None:
-                continue
-            name = cls.project_name_for_path(path=path, repository_root=repository_root)
-            targets.add(repository_root / name if name is not None else path)
-        return tuple(sorted(targets))
 
 
 __all__: list[str] = ["FlextTestsEnforcementUtilitiesMixin"]
