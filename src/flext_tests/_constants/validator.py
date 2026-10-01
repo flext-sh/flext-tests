@@ -316,6 +316,10 @@ class FlextTestsConstantsValidator:
         "flext-tests",
     )
     ENFORCEMENT_PROJECT_PREFIX: ClassVar[str] = "flext-"
+    ENFORCEMENT_FINDING_SEVERITY_KEY: ClassVar[str] = "severity"
+    """ast-grep JSON finding key carrying the rule severity."""
+    ENFORCEMENT_FINDING_MESSAGE_KEY: ClassVar[str] = "message"
+    """ast-grep JSON finding key carrying the rule message."""
     VALIDATOR_EXCLUDE_PATTERNS: ClassVar[t.StrSequence] = (
         "**/.venv/**",
         "**/venv/**",

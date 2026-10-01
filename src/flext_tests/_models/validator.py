@@ -10,7 +10,7 @@ from collections.abc import MutableMapping
 from pathlib import Path
 from typing import Annotated, ClassVar
 
-from flext_infra import m, p, u
+from flext_infra import m, u
 
 from flext_tests import c, t
 
@@ -21,10 +21,17 @@ class FlextTestsValidatorModelsMixin:
 
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(frozen=True)
 
-        infra_report: Annotated[
-            p.AttributeProbe | None,
-            u.Field(description="Optional namespace report for detector rules."),
+        infra_findings: Annotated[
+            m.Infra.ModScanReport | None,
+            u.Field(
+                description="flext-infra rule-engine findings keyed by rule id, "
+                "absent when no engine rule is selected."
+            ),
         ] = None
+        project_names: Annotated[
+            frozenset[str],
+            u.Field(description="FLEXT projects represented by collected items."),
+        ] = frozenset()
         validator_targets: Annotated[
             t.VariadicTuple[Path],
             u.Field(description="Validator targets collected for this session."),

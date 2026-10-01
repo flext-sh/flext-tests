@@ -9,60 +9,41 @@ import pytest
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from flext_tests import m, p, t
+    from flext_tests import t
 
 
 class FlextTestsEnforcementItem(pytest.Item):
-    """Pytest item representing one ``(project, rule_id)`` violation group."""
+    """Pytest item representing one ``(rule_id, project)`` violation group."""
 
     def __init__(
         self,
         name: str,
         parent: pytest.Collector,
         *,
-        rule: m.EnforcementRuleSpec,
+        rule_id: str,
+        severity: str,
+        description: str,
         project: str,
-        violations: t.SequenceOf[m.Violation | p.AttributeProbe],
+        violations: t.StrSequence,
     ) -> None:
         super().__init__(name, parent)
-        self._rule = rule
+        self._rule_id = rule_id
+        self._severity = severity
+        self._description = description
         self._project = project
         self._violations = tuple(violations)
 
     @override
     def runtest(self) -> None:
-        if not self._violations:
-            return
-        detail_lines = [f"  - {self._format_violation(v)}" for v in self._violations]
         header = (
-            f"{self._rule.id} ({self._rule.severity}) in {self._project}: "
+            f"{self._rule_id} ({self._severity}) in {self._project}: "
             f"{len(self._violations)} violation(s)"
         )
         from ._error import FlextTestsEnforcementViolationError
 
-        raise FlextTestsEnforcementViolationError("\n".join([header, *detail_lines]))
-
-    @staticmethod
-    def _format_violation(violation: p.AttributeProbe) -> str:
-        rule_id = getattr(violation, "rule_id", "")
-        file_path = getattr(violation, "file_path", None) or getattr(
-            violation, "file", ""
+        raise FlextTestsEnforcementViolationError(
+            "\n".join([header, *(f"  - {line}" for line in self._violations)])
         )
-        line = getattr(violation, "line_number", None) or getattr(violation, "line", "")
-        description = (
-            getattr(violation, "description", None)
-            or getattr(violation, "detail", None)
-            or getattr(violation, "suggestion", None)
-            or ""
-        )
-        parts = [str(rule_id) if rule_id else ""]
-        if file_path:
-            parts.append(str(file_path))
-        if line:
-            parts.append(f"line {line}")
-        if description:
-            parts.append(str(description))
-        return " | ".join(part for part in parts if part)
 
     @override
     def repr_failure(
@@ -74,9 +55,9 @@ class FlextTestsEnforcementItem(pytest.Item):
     @override
     def reportinfo(self) -> tuple[Path | str, int | None, str]:
         return (
-            f"flext-enforce::{self._rule.id}",
+            f"flext-enforce::{self._rule_id}",
             None,
-            f"{self._rule.id} [{self._project}] {self._rule.description}",
+            f"{self._rule_id} [{self._project}] {self._description}",
         )
 
 
