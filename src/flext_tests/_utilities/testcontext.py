@@ -57,8 +57,23 @@ class FlextTestsTestContextUtilitiesMixin:
                 else c.Tests.FILE_LOCK_MODE_EXCLUSIVE
             )
 
-        def __enter__(self) -> None:
-            """Acquire the lock, blocking or until the configured deadline."""
+        def acquire_or_none(self) -> None:
+            """Acquire the lock outside a with-block (idempotent guard)."""
+            if self.is_acquired:
+                return
+            self._acquire()
+
+        @property
+        def is_acquired(self) -> bool:
+            """True while the lock is held by this instance."""
+            return self._file_obj is not None
+
+        def release(self) -> None:
+            """Release the lock outside a with-block (idempotent)."""
+            self._release()
+
+        def _acquire(self) -> None:
+            """Open the lock file and take the platform lock."""
             self.lock_file.parent.mkdir(parents=True, exist_ok=True)
             file_obj = self.lock_file.open("a+b")
             try:
@@ -68,45 +83,8 @@ class FlextTestsTestContextUtilitiesMixin:
                 raise
             self._file_obj = file_obj
 
-        def _acquire(self, descriptor: int) -> None:
-            """Take the lock on an open descriptor in this lock's mode."""
-            if os.name == "nt":
-                os.lseek(descriptor, 0, os.SEEK_SET)
-                msvcrt.locking(descriptor, msvcrt.LK_LOCK, 1)
-            elif self.timeout_seconds is None:
-                fcntl.flock(descriptor, self._posix_flags())
-            else:
-                self._acquire_before_deadline(descriptor)
-
-        def _posix_flags(self) -> int:
-            """Return the fcntl operation for this lock's mode."""
-            return fcntl.LOCK_SH if self.shared else fcntl.LOCK_EX
-
-        def _acquire_before_deadline(self, descriptor: int) -> None:
-            """Poll a non-blocking attempt until granted or the deadline passes."""
-            timeout = self.timeout_seconds or 0.0
-            deadline = time.monotonic() + timeout
-            while True:
-                try:
-                    fcntl.flock(descriptor, self._posix_flags() | fcntl.LOCK_NB)
-                except BlockingIOError:
-                    if time.monotonic() >= deadline:
-                        msg = c.Tests.ERR_FILE_LOCK_TIMEOUT.format(
-                            mode=self.mode, path=self.lock_file, timeout=timeout
-                        )
-                        raise TimeoutError(msg) from None
-                    time.sleep(c.Tests.FILE_LOCK_POLL_SECONDS)
-                else:
-                    return
-
-        # mro-j47u (codex): these dunder arguments are contract-only.
-        def __exit__(
-            self,
-            _exc_type: type[BaseException] | None,
-            _exc_val: BaseException | None,
-            _exc_tb: types.TracebackType | None,
-        ) -> None:
-            """Release the lock while preserving its shared inode."""
+        def _release(self) -> None:
+            """Release the platform lock and close the lock file."""
             if self._file_obj is None:
                 return
             file_obj = self._file_obj
@@ -119,3 +97,16 @@ class FlextTestsTestContextUtilitiesMixin:
                     fcntl.flock(file_obj.fileno(), fcntl.LOCK_UN)
             finally:
                 file_obj.close()
+
+        def __enter__(self) -> None:
+            """Acquire the lock (shared or exclusive, optionally bounded)."""
+            self._acquire()
+
+        def __exit__(
+            self,
+            _exc_type: type[BaseException] | None,
+            _exc_val: BaseException | None,
+            _exc_tb: types.TracebackType | None,
+        ) -> None:
+            """Release the lock while preserving its shared inode."""
+            self._release()

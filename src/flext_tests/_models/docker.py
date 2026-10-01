@@ -52,19 +52,57 @@ class FlextTestsDockerModelsMixin:
         ] = False
         project_name: Annotated[
             str | None,
-            u.Field(description="Compose project; the compose file stem when absent."),
+            u.Field(
+                description=(
+                    "Optional compose project name; derived from the compose "
+                    "file stem when omitted."
+                )
+            ),
         ] = None
         fingerprint_inputs: Annotated[
-            t.VariadicTuple[Path],
-            u.Field(description="Files hashed with the compose file into the seal."),
+            t.StrSequence,
+            u.Field(
+                description=(
+                    "Tracked inputs (compose file plus optional extra paths) "
+                    "hashed into the container-state fingerprint."
+                )
+            ),
         ] = ()
         lock_timeout_seconds: Annotated[
             float,
             u.Field(
                 gt=0,
-                description="Bound on waiting for other sessions' leases to mutate.",
+                description=(
+                    "Bounded wait for the container host lock before failing."
+                ),
             ),
-        ] = c.Tests.DOCKER_LEASE_TIMEOUT_SECONDS
+        ] = 120.0
+
+    class ContainerState(m.Value):
+        """Host-scoped persistent state of one managed container.
+
+        One JSON file per container under ``~/.flext/docker/`` carries this
+        state; all checkouts on the host share it (the container is shared,
+        so its state is too). ``sealed`` marks a container that came up
+        healthy against a known fingerprint; ``dirty`` marks one a failing
+        test run must not reuse.
+        """
+
+        container_name: Annotated[
+            str, u.Field(min_length=1, description="Managed container name.")
+        ]
+        container_id: Annotated[
+            str, u.Field(description="Docker container id at seal time.")
+        ] = ""
+        fingerprint: Annotated[
+            str, u.Field(description="Tracked-inputs fingerprint at seal time.")
+        ] = ""
+        sealed: Annotated[
+            bool, u.Field(description="True once verified healthy and sealed.")
+        ] = False
+        dirty: Annotated[
+            bool, u.Field(description="True when a run marked the container dirty.")
+        ] = False
 
     class ContainerInfo(m.Value):
         """Container information model."""
