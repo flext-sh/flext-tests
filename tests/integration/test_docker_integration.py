@@ -1,11 +1,8 @@
 """Behavioral tests for the FlextTestsDocker public DSL contract.
 
-Two layers are covered:
-
-* Pure DSL-contract behavior that needs no Docker daemon (configuration
-  resolution and unconfigured-target error paths) — always executed.
-* Real shared-container behavior that requires a live Docker daemon — skipped
-  when the daemon is unavailable.
+The DSL contract needs no Docker daemon: configuration resolution and the
+error paths of an unconfigured target. The lifecycle against a real daemon is
+covered by ``test_docker_lifecycle.py``.
 
 Every assertion targets observable public behavior: the ``r[T]`` outcome of
 fallible operations, the public model state of the configured target, the
@@ -21,7 +18,7 @@ from pathlib import Path
 import pytest
 
 from flext_tests import FlextTestsDocker, m, tm
-from tests import c
+from tests import c, u
 
 
 class TestsFlextTestsDockerIntegration:
@@ -96,23 +93,26 @@ class TestsFlextTestsDockerIntegration:
         so sibling stacks in ``docker/`` would share one project and
         ``remove_orphans`` would delete another suite's container.
         """
-        root = tmp_path / "flext-docker-contract"
-        manager = FlextTestsDocker.compose(
-            "docker/docker-compose.oracle-db.yml", repository_root=root
-        )
-        sibling = FlextTestsDocker.compose(
-            "docker/docker-compose.openldap.yml", repository_root=root
-        )
+        root = tmp_path / "flext-docker-contract" / "docker"
+        oracle_file = tm.not_none(
+            FlextTestsDocker.compose(
+                root / "docker-compose.oracle-db.yml", repository_root=root
+            ).target_config
+        ).compose_file
+        openldap_file = tm.not_none(
+            FlextTestsDocker.compose(
+                root / "docker-compose.openldap.yml", repository_root=root
+            ).target_config
+        ).compose_file
 
-        oracle_project = manager.compose_project_name(
-            root / "docker" / "docker-compose.oracle-db.yml"
+        tm.that(
+            u.Tests.docker_compose_project(tm.not_none(oracle_file)),
+            eq="docker-compose-oracle-db",
         )
-        openldap_project = sibling.compose_project_name(
-            root / "docker" / "docker-compose.openldap.yml"
+        tm.that(
+            u.Tests.docker_compose_project(tm.not_none(openldap_file)),
+            eq="docker-compose-openldap",
         )
-
-        tm.that(oracle_project, eq="docker-compose-oracle-db")
-        tm.that(openldap_project, eq="docker-compose-openldap")
 
     def test_compose_preserves_absolute_file_unchanged(self, tmp_path: Path) -> None:
         """An absolute compose file is used verbatim by ``FlextTestsDocker.compose``."""
@@ -156,56 +156,3 @@ class TestsFlextTestsDockerIntegration:
         tm.fail(result)
         tm.that(result.error, none=False)
         tm.that(result.error, has="no inspection container")
-
-    # ------------------------------------------------------------------
-    # Real shared-container behavior (requires a live Docker daemon)
-    # ------------------------------------------------------------------
-
-    @pytest.mark.integration
-    @pytest.mark.docker
-    def test_execute_local_container_returns_running_info(self) -> None:
-        """The DSL starts the repository-owned container and reports it running."""
-        root = self._repository_root()
-        target = m.Tests.ContainerConfig(
-            container_name="flext-tests-web-test", service="web", port=8080
-        )
-        docker = FlextTestsDocker.compose(
-            root / "tests/fixtures/docker-compose.yml",
-            target=target,
-            repository_root=root,
-        )
-        tm.that(docker.client, none=False)
-
-        result = docker.execute()
-
-        tm.ok(result)
-        container = result.unwrap()
-        tm.that(container.name, eq="flext-tests-web-test")
-        tm.that(container.status, eq=c.Tests.ContainerStatus.RUNNING)
-        tm.that(container.container_id, empty=False)
-        tm.that(container.image, empty=False)
-
-    @pytest.mark.integration
-    @pytest.mark.docker
-    def test_execute_local_container_is_idempotent(self) -> None:
-        """Repeated DSL execution keeps the repository-owned container running."""
-        root = self._repository_root()
-        target = m.Tests.ContainerConfig(
-            container_name="flext-tests-web-test", service="web", port=8080
-        )
-        docker = FlextTestsDocker.compose(
-            root / "tests/fixtures/docker-compose.yml",
-            target=target,
-            repository_root=root,
-        )
-        tm.that(docker.client, none=False)
-
-        first = docker.execute()
-        second = docker.execute()
-
-        tm.ok(first)
-        tm.ok(second)
-        first_info = first.unwrap()
-        second_info = second.unwrap()
-        tm.that(first_info.name, eq=second_info.name)
-        tm.that(second_info.status, eq=c.Tests.ContainerStatus.RUNNING)

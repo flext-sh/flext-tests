@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import time
 from pathlib import Path
 from typing import Annotated, Self, override
 
@@ -34,16 +35,13 @@ class FlextTestsKube(FlextTestsDocker):
 
     @classmethod
     def kind(
-        cls, *, repository_root: Path | None = None, worker_id: str | None = None
+        cls, *, repository_root: Path | None = None, state_dir: Path | None = None
     ) -> Self:
         """Build a DSL-configured service for the shared kind cluster."""
-        resolved_root = repository_root or Path.cwd()
-        return cls(
-            repository_root=resolved_root,
-            worker_id=worker_id or "master",
-            target_config=cls._resolve_shared_target_config(
-                c.Tests.KIND_CONTAINER_NAME, resolved_root
-            ),
+        return cls.shared(
+            c.Tests.KIND_CONTAINER_NAME,
+            repository_root=repository_root,
+            state_dir=state_dir,
         )
 
     def cluster_up(self) -> p.Result[str]:
@@ -55,23 +53,29 @@ class FlextTestsKube(FlextTestsDocker):
             )
         if target.compose_file is None:
             return r[str].fail("Kubernetes target has no compose file configured.")
-        up_result = self.compose_up(
-            str(target.compose_file),
-            service=target.service or None,
-            force_recreate=target.force_recreate,
-        )
+        up_result = self.up()
         if up_result.failure:
-            return r[str].fail_op("Kind cluster start", up_result.error)
-        if target.port is None:
+            return up_result.map_error(
+                lambda error: f"Kind cluster start failed: {error}"
+            )
+        if target.port is None or not target.container_name:
             return r[str].ok("Kind cluster started (no readiness port configured)")
-        ready = self.wait_for_port_ready(
-            target.host, target.port, max_wait=target.startup_timeout
+        port = target.port
+        listening = (
+            self
+            .fetch_container_info(target.container_name)
+            .flat_map(lambda info: u.Tests.resolve_host_port(info, port))
+            .flat_map(
+                lambda host_port: self.wait_for_port_ready(
+                    target.host, host_port, max_wait=target.startup_timeout
+                )
+            )
         )
-        if ready.failure:
-            return r[str].fail_op("Kind apiserver readiness", ready.error)
-        if not ready.value:
-            return r[str].fail(
-                f"Kind apiserver did not become ready on {target.host}:{target.port}"
+        if listening.failure:
+            return r[str].from_failure(
+                listening.map_error(
+                    lambda error: f"Kind apiserver readiness failed: {error}"
+                )
             )
         return r[str].ok("Kind cluster started and apiserver is reachable")
 
@@ -84,7 +88,7 @@ class FlextTestsKube(FlextTestsDocker):
             )
         if target.compose_file is None:
             return r[str].fail("Kubernetes target has no compose file configured.")
-        return self.compose_down(str(target.compose_file))
+        return self.down()
 
     def nodes_ready(self) -> p.Result[bool]:
         """Run ``kubectl get nodes`` and confirm every node reports Ready."""
@@ -93,11 +97,20 @@ class FlextTestsKube(FlextTestsDocker):
             return r[bool].fail(
                 "Kubernetes target not configured. Use FlextTestsKube.kind(...) first."
             )
+        enabled = self.lifecycle_enabled()
+        if enabled.failure:
+            return enabled
+        client = self._compose_client(
+            target.compose_file,
+            target.project_name or u.Tests.docker_compose_project(target.compose_file),
+        )
         try:
-            output = self._run_kubectl(["get", "nodes", "--no-headers"])
+            output = client.compose.execute(
+                self.kubectl_service, ["get", "nodes", "--no-headers"], tty=False
+            )
         except self._compose_exception_types() as exc:
             return r[bool].fail_op("kubectl get nodes", exc)
-        lines = [line.strip() for line in output.splitlines() if line.strip()]
+        lines = [line.strip() for line in (output or "").splitlines() if line.strip()]
         if not lines:
             return r[bool].fail("kubectl get nodes returned no nodes")
         not_ready = [line for line in lines if " Ready" not in f" {line}"]
@@ -105,30 +118,33 @@ class FlextTestsKube(FlextTestsDocker):
             return r[bool].fail(f"Kind nodes not Ready: {not_ready}")
         return r[bool].ok(value=True)
 
-    def _run_kubectl(self, args: t.StrSequence) -> str:
-        """Exec kubectl through the compose sidecar against the kind cluster."""
-        target = self.target_config
-        if target is None or target.compose_file is None:
-            msg = "Kubernetes target not configured"
-            raise ValueError(msg)
-        original_files = self.docker.client_config.compose_files
-        try:
-            self.docker.client_config.compose_files = [str(target.compose_file)]
-            output = self.docker.compose.execute(
-                self.kubectl_service, list(args), tty=False
-            )
-        finally:
-            self.docker.client_config.compose_files = original_files
-        return output or ""
-
     @override
-    def execute(self) -> p.Result[m.Tests.ContainerInfo]:
-        """Bring the kind cluster up, verify node readiness, and return info."""
+    def execute(
+        self,
+        *,
+        initializer: p.Tests.ContainerInitializer | None = None,
+        readiness_probe: p.Tests.ReadinessProbe | None = None,
+        creation_environment: t.MappingKV[str, t.SecretStr] | None = None,
+    ) -> p.Result[m.Tests.ContainerInfo]:
+        """Bring the kind cluster up, verify node readiness, and return info.
+
+        The cluster is not a sealed container: ``initializer`` and
+        ``creation_environment`` are rejected; ``readiness_probe`` is polled
+        after the nodes report Ready.
+        """
         target = self.target_config
         if target is None:
             return r[m.Tests.ContainerInfo].fail(
                 "Kubernetes target not configured. Use FlextTestsKube.kind(...).execute()."
             )
+        if initializer is not None or creation_environment:
+            return r[m.Tests.ContainerInfo].fail(
+                c.Tests.ERR_DOCKER_KUBE_HOOKS_UNSUPPORTED
+            )
+        enabled = self.lifecycle_enabled()
+        if enabled.failure:
+            return r[m.Tests.ContainerInfo].from_failure(enabled)
+        deadline = time.monotonic() + target.startup_timeout
         up_result = self.cluster_up()
         if up_result.failure:
             return r[m.Tests.ContainerInfo].from_failure(up_result)
@@ -136,8 +152,10 @@ class FlextTestsKube(FlextTestsDocker):
         if nodes_result.failure:
             return r[m.Tests.ContainerInfo].from_failure(nodes_result)
         container_name = target.container_name
-        if not container_name:
-            return r[m.Tests.ContainerInfo].ok(
+        info = (
+            self.fetch_container_info(container_name)
+            if container_name
+            else r[m.Tests.ContainerInfo].ok(
                 m.Tests.ContainerInfo(
                     name=target.service or c.Tests.KIND_CONTAINER_NAME,
                     status=c.Tests.ContainerStatus.RUNNING,
@@ -145,7 +163,15 @@ class FlextTestsKube(FlextTestsDocker):
                     image="",
                 )
             )
-        return self.fetch_container_info(container_name)
+        )
+        if info.failure or readiness_probe is None:
+            return info
+        probed = self._poll_readiness(
+            info.value, readiness_probe, deadline, target.startup_timeout
+        )
+        if probed.failure:
+            return r[m.Tests.ContainerInfo].from_failure(probed)
+        return info
 
 
 __all__: list[str] = ["FlextTestsKube"]

@@ -18,19 +18,23 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_core import FlextContainer, FlextContext, FlextSettings
-from flext_tests import c, e, m, p, r, s, t, u
-
-from .._settings import FlextTestsSettings
-from ..case import FlextTestsCase
-
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
     from pathlib import Path
 
+    from flext_core import FlextContext, FlextSettings
+    from flext_tests import FlextTestsCase, FlextTestsSettings, p, t
+
+# pytest imports this module while registering fixtures at configure time.
+# Product facades load inside the hook and fixture bodies, only when a test
+# actually runs, so collection-only and controller processes stay light.
+
 
 def _reset_runtime_state() -> None:
     """Reset root/test settings singletons and the DI container."""
+    from flext_core import FlextContainer, FlextSettings
+    from flext_tests import FlextTestsSettings
+
     FlextSettings.reset_for_testing()
     FlextTestsSettings.reset_for_testing()
     FlextContainer.reset_for_testing()
@@ -40,10 +44,24 @@ def _bind_runtime_aliases(
     *, module: ModuleType, instance: FlextTestsCase | None
 ) -> None:
     """Bind canonical FLEXT runtime aliases onto pytest class instances."""
-    package_root = module.__package__ or module.__name__
+    from flext_tests import s
+
+    # A bare top-level module (e.g. a pytester probe file) has no package
+    # contract: there is no package root to resolve aliases from, so the
+    # binding scope does not apply. Package-based suites always enforce.
+    package_root = module.__package__ or ""
+    if not package_root:
+        return
     package_name = package_root.split(".", maxsplit=1)[0]
     tests_package = importlib.import_module(package_name)
-    service_type = tests_package.s if hasattr(tests_package, "s") else s
+    try:
+        service_type = tests_package.s
+    except AttributeError as exc:
+        msg = (
+            f"{package_name} must re-export the canonical service alias 's' "
+            "from its package root for the shared test runtime"
+        )
+        raise AttributeError(msg) from exc
     if not isinstance(service_type, type) or not issubclass(service_type, s):
         msg = (
             f"{package_name} declares 's' as {service_type!r}, "
@@ -56,20 +74,22 @@ def _bind_runtime_aliases(
     instance.service = service
     instance.settings = service.fetch_settings()
     instance.logger = service.logger
-    for alias_name, fallback in (
-        ("c", c),
-        ("e", e),
-        ("m", m),
-        ("p", p),
-        ("r", r),
-        ("t", t),
-        ("u", u),
-    ):
-        setattr(instance, alias_name, getattr(tests_package, alias_name, fallback))
+    for alias_name in ("c", "e", "m", "p", "r", "t", "u"):
+        try:
+            alias_value = getattr(tests_package, alias_name)
+        except AttributeError as exc:
+            msg = (
+                f"{package_name} must re-export the canonical facade letter "
+                f"'{alias_name}' from its package root for the shared test runtime"
+            )
+            raise AttributeError(msg) from exc
+        setattr(instance, alias_name, alias_value)
 
 
 def pytest_runtest_setup(item: pytest.Item) -> None:
     """Reset and bind the canonical runtime before each pytest function."""
+    from flext_tests import FlextTestsCase
+
     _reset_runtime_state()
     if not isinstance(item, pytest.Function):
         return
@@ -107,6 +127,8 @@ def reset_settings() -> Iterator[None]:
 @pytest.fixture
 def test_runtime(request: pytest.FixtureRequest, reset_settings: None) -> None:
     """Bind the canonical FLEXT test runtime aliases onto pytest class instances."""
+    from flext_tests import FlextTestsCase
+
     _ = reset_settings
     if not isinstance(request.node, pytest.Function):
         return
@@ -124,6 +146,9 @@ def settings() -> FlextTestsSettings:
     Resets the root/test singletons first, then creates a fresh typed
     tests settings instance with verbose core defaults.
     """
+    from flext_core import FlextSettings
+    from flext_tests import FlextTestsSettings
+
     FlextSettings.reset_for_testing()
     FlextTestsSettings.reset_for_testing()
     return FlextTestsSettings(debug=True, trace=False)
@@ -158,12 +183,16 @@ def settings_factory() -> Callable[..., FlextSettings]:
 @pytest.fixture
 def test_context() -> FlextContext:
     """Provide the canonical FlextContext fixture for test runtimes."""
+    from flext_core import FlextContext
+
     return FlextContext()
 
 
 @pytest.fixture
 def clean_container() -> Iterator[p.Container]:
     """Provide an isolated DI container for tests that mutate registrations."""
+    from flext_core import FlextContainer
+
     FlextContainer.reset_for_testing()
     try:
         yield FlextContainer()

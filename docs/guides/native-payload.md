@@ -31,6 +31,12 @@ Collection kind preserves source information. Matcher normalization remains a se
 behavior: tuple/list comparison and deterministic set ordering must not change merely
 because the owned tree retains this information.
 
+Matcher predicates (`where`, callable `all_`/`any_`, and callable `deep` entries)
+receive the native match value of their subject: an atom arrives as the original leaf
+(the same model, exception or path instance), a mapping as a `dict`, and every other
+collection as a `list`. Predicate exceptions and Pydantic parameter validation errors
+propagate unchanged.
+
 ## Boundary changes
 
 Native ingress rejects unsupported objects instead of silently converting them to

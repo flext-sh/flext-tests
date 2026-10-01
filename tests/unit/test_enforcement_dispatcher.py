@@ -1,10 +1,10 @@
 """Behavioral unit tests for the pytest enforcement dispatcher.
 
-Asserts the observable public contract exposed through ``u.Tests``:
-workspace discovery, CSV parsing and catalog rule filtering, plus the CLI
-options the installed ``flext_tests_enforcement`` pytest11 plugin registers.
-Lifecycle hooks run end to end through ``pytester`` in
-``test_enforcement_plugin.py``.
+Asserts catalog rule filtering through ``u.Tests``, the session activation
+contract (workspace discovery, forced and disabled modes, rule-list parsing)
+observed through the installed ``flext_tests_enforcement`` pytest11 plugin in a
+subprocess sandbox, and the CLI options that plugin registers. Lifecycle hooks
+run end to end through ``pytester`` in ``test_enforcement_plugin.py``.
 """
 
 from __future__ import annotations
@@ -40,80 +40,118 @@ class TestsFlextTestsEnforcementDispatcher:
         *, include: frozenset[str] = frozenset(), exclude: frozenset[str] = frozenset()
     ) -> m.Tests.EnforcementDispatcherConfig:
         return m.Tests.EnforcementDispatcherConfig(
-            active=True, strict=False, include=include, exclude=exclude
+            strict=False, include=include, exclude=exclude
         )
 
     # ------------------------------------------------------------------ #
-    # discover_repository_root                                            #
+    # Session activation (installed plugin, subprocess sandbox)          #
     # ------------------------------------------------------------------ #
 
-    def test_discovers_root_from_nested_descendant(self, workspace: Path) -> None:
-        nested = workspace / "flext-core" / "src" / "pkg"
-        nested.mkdir(parents=True)
+    @staticmethod
+    def _sandbox_project(workspace: Path) -> Path:
+        """Create a sub-project with one passing test under ``workspace``."""
+        project = workspace / "flext-core"
+        project.mkdir(parents=True, exist_ok=True)
+        (project / "pytest.ini").write_text("[pytest]\n", encoding="utf-8")
+        (project / "test_probe.py").write_text(
+            "def test_probe() -> None:\n    assert True\n", encoding="utf-8"
+        )
+        return project
 
-        tm.that(u.Tests.discover_repository_root(nested), eq=workspace)
+    @classmethod
+    def _runtime_rule_id(cls) -> str:
+        """Return the first enabled runtime-warning rule of the live catalog."""
+        return next(
+            rule.id
+            for rule in u.Tests.active_rules(cls._cfg())
+            if rule.source.kind == "runtime_warning"
+        )
 
-    def test_returns_workspace_itself_when_start_is_root(self, workspace: Path) -> None:
-        tm.that(u.Tests.discover_repository_root(workspace), eq=workspace)
+    @classmethod
+    def _collect(
+        cls, pytester: pytest.Pytester, project: Path, *args: str, rules: str = ""
+    ) -> pytest.RunResult:
+        """Collect ``project`` as its own rootdir with the enforcement options."""
+        return pytester.runpytest_subprocess(
+            "--collect-only",
+            "-q",
+            f"--rootdir={project}",
+            f"--flext-enforce-rules={rules or cls._runtime_rule_id()}",
+            *args,
+            str(project),
+        )
 
-    def test_returns_none_when_no_marker_present(self, tmp_path: Path) -> None:
-        stray = tmp_path / "unrelated" / "deep"
-        stray.mkdir(parents=True)
+    @pytest.mark.slow
+    def test_forced_run_discovers_the_workspace_above_a_sub_project(
+        self, pytester: pytest.Pytester, workspace: Path
+    ) -> None:
+        result = self._collect(
+            pytester, self._sandbox_project(workspace), "--flext-enforce"
+        )
 
-        tm.that(u.Tests.discover_repository_root(stray), none=True)
+        result.stdout.fnmatch_lines(["*flext-enforce*", "catalog active: 1 rules*"])
 
-    def test_returns_none_when_a_single_marker_is_missing(self, tmp_path: Path) -> None:
+    @pytest.mark.slow
+    def test_sub_project_rootdir_stays_inactive_without_force(
+        self, pytester: pytest.Pytester, workspace: Path
+    ) -> None:
+        result = self._collect(pytester, self._sandbox_project(workspace))
+
+        result.stdout.no_fnmatch_line("*flext-enforce*")
+
+    @pytest.mark.slow
+    def test_forced_run_without_every_marker_stays_inactive(
+        self, pytester: pytest.Pytester, tmp_path: Path
+    ) -> None:
         partial = tmp_path / "partial"
-        partial.mkdir()
-        # All markers but the last one -> not a workspace.
         for marker in list(c.Tests.ENFORCEMENT_WORKSPACE_MARKERS)[:-1]:
             (partial / marker).mkdir(parents=True, exist_ok=True)
 
-        tm.that(u.Tests.discover_repository_root(partial), none=True)
+        result = self._collect(
+            pytester, self._sandbox_project(partial), "--flext-enforce"
+        )
 
-    def test_sub_project_root_resolves_to_workspace_not_itself(
-        self, workspace: Path
+        result.stdout.no_fnmatch_line("*flext-enforce*")
+
+    @pytest.mark.slow
+    def test_no_flext_enforce_overrides_an_explicit_workspace_root(
+        self, pytester: pytest.Pytester, workspace: Path
     ) -> None:
-        # Auto-activation contract: a sub-project path discovers the workspace
-        # above it, and that workspace is distinguishable from the sub-project
-        # (so running pytest inside a sub-project stays a no-op).
-        sub = workspace / "flext-core"
-        discovered = u.Tests.discover_repository_root(sub)
+        result = self._collect(
+            pytester,
+            self._sandbox_project(workspace),
+            f"--flext-enforce-workspace-root={workspace}",
+            "--no-flext-enforce",
+        )
 
-        tm.that(discovered, eq=workspace)
-        tm.that(discovered, ne=sub)
+        result.stdout.no_fnmatch_line("*flext-enforce*")
 
-    # ------------------------------------------------------------------ #
-    # split_csv                                                          #
-    # ------------------------------------------------------------------ #
+    @pytest.mark.slow
+    def test_rule_list_strips_blank_and_padded_fields(
+        self, pytester: pytest.Pytester, workspace: Path
+    ) -> None:
+        rule = self._runtime_rule_id()
+        result = self._collect(
+            pytester,
+            self._sandbox_project(workspace),
+            f"--flext-enforce-workspace-root={workspace}",
+            rules=f" {rule} ,, {rule} ,",
+        )
 
-    @pytest.mark.parametrize("raw", ["", None])
-    def test_split_csv_empty_input_yields_empty_set(self, raw: str | None) -> None:
-        tm.that(u.Tests.split_csv(raw), eq=frozenset())
-
-    def test_split_csv_strips_whitespace_and_drops_blank_fields(self) -> None:
-        got = u.Tests.split_csv("ENFORCE-001, ENFORCE-002 ,,ENFORCE-003")
-
-        tm.that(got, eq=frozenset({"ENFORCE-001", "ENFORCE-002", "ENFORCE-003"}))
-
-    def test_split_csv_deduplicates_repeated_ids(self) -> None:
-        tm.that(u.Tests.split_csv("A, A ,A"), eq=frozenset({"A"}))
+        result.stdout.fnmatch_lines(["catalog active: 1 rules*"])
 
     # ------------------------------------------------------------------ #
     # active_rules                                                       #
     # ------------------------------------------------------------------ #
 
-    def test_active_rules_returns_only_enabled_rules(self) -> None:
+    def test_active_rules_without_filters_is_the_whole_catalog(self) -> None:
+        # No rule is suspended: an unfiltered session runs every catalog rule.
         active = u.Tests.active_rules(self._cfg())
 
-        tm.that(len(active) > 0, eq=True)
-        tm.that(all(r.enabled for r in active), eq=True)
-
-    def test_active_rules_excludes_disabled_skill_pointer_rules(self) -> None:
-        # ENFORCE-034..038 ship disabled by default.
-        ids = {r.id for r in u.Tests.active_rules(self._cfg())}
-
-        tm.that(ids.isdisjoint({"ENFORCE-034", "ENFORCE-035", "ENFORCE-038"}), eq=True)
+        tm.that(
+            [r.id for r in active],
+            eq=[r.id for r in u.build_canonical_catalog().rules],
+        )
 
     def test_include_narrows_to_the_listed_ids(self) -> None:
         active = u.Tests.active_rules(self._cfg(include=frozenset({"ENFORCE-001"})))

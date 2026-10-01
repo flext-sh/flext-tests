@@ -6,8 +6,9 @@
 > global skills + parent/root `AGENTS.md` + this scope delta. Do not re-embed universal
 > law.
 >
-> **Standalone / independent mode:** when the sibling `AGENTS.md` does not resolve, pin
-> the parent raw URL to the same branch/release as this package (never `main`).
+> **Standalone / independent mode:** when `../AGENTS.md` does not resolve, pin the
+> parent raw `AGENTS.md` URL to the same branch/release as this package (never
+> `main`): <https://raw.githubusercontent.com/flext-sh/flext/0.12.0-dev/AGENTS.md>
 
 <!-- AIHUB-AGENTS-SCOPE-LOCAL-BEGIN -->
 
@@ -26,7 +27,7 @@ src/flext_tests/
 ├── tmatchers.py            # public tm (matchers)
 ├── conftest_plugin.py      # pytest11 plugin registration
 ├── enforcement.py files.py domains.py docker.py
-├── _validator/ _fixtures/ _domains_parts/ _docker_parts/
+├── _fixtures/ _domains_parts/ _docker_parts/
 ├── constants.py typings.py protocols.py models.py utilities.py
 └── _constants/ _models/ _protocols/ _typings/ _utilities/
 ```
@@ -54,12 +55,18 @@ There is **no runtime `api.py`** — this is test tooling.
 
 - `conftest_plugin.py` is the pytest11 entry point. Packages receive fixtures and
   enforcement through it and never duplicate them locally.
+- `project.runtime_dependency_overlay` in `config/workspace.yaml` owns the additional
+  pytest plugins shipped to installed consumers. `make gen` projects those requirements
+  into package metadata.
 
 ## Commands
 
+Run from the workspace root (selector-free; the root dispatcher routes to every
+member — `PROJECT=` is not a root Make variable):
+
 ```bash
-make check PROJECT=flext-tests
-make test PROJECT=flext-tests # tests/{unit,integration,fixtures}
+make check
+make test
 ```
 
 <!-- AIHUB-AGENTS-SCOPE-LOCAL-END -->

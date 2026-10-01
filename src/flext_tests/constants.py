@@ -19,6 +19,7 @@ from ._constants.files import FlextTestsConstantsFiles
 from ._constants.kube import FlextTestsConstantsKube
 from ._constants.make import FlextTestsConstantsMake
 from ._constants.matcher import FlextTestsConstantsMatcher
+from ._constants.namespace import FlextTestsConstantsNamespace
 from ._constants.validator import FlextTestsConstantsValidator
 
 if TYPE_CHECKING:
@@ -41,6 +42,7 @@ class FlextTestsConstants(FlextCliConstants):
         FlextTestsConstantsKube,
         FlextTestsConstantsMake,
         FlextTestsConstantsMatcher,
+        FlextTestsConstantsNamespace,
         FlextTestsConstantsValidator,
     ):
         """Test-specific constants namespace.

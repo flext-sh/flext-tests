@@ -29,16 +29,27 @@ class FlextTestsMatchersThatMixin:
                 kwargs: Mapping[str, p.AttributeProbe],
             ) -> m.Tests.ThatParams:
                 """Parse all criteria once; invalid operands are never discarded."""
-                return m.Tests.ThatParams.model_validate(kwargs)
+                params = m.Tests.ThatParams.model_validate(kwargs)
+                if "eq" in kwargs and kwargs["eq"] is None and params.none is None:
+                    params = params.model_copy(update={"none": True})
+                if "ne" in kwargs and kwargs["ne"] is None and params.none is None:
+                    params = params.model_copy(update={"none": False})
+                return params
 
             @classmethod
             def _validate_declared_types(
-                cls, value: p.AttributeProbe, params: m.Tests.ThatParams
+                cls,
+                value: p.AttributeProbe,
+                params: m.Tests.ThatParams,
+                *,
+                owned_payload: bool = False,
             ) -> None:
-                """Validate ``is_`` and ``not_`` against the original value."""
+                """Validate declared types with the caller's explicit ownership."""
                 value_type_name = type(value).__name__
                 if params.is_ is not None:
-                    cls._validate_is_type(value, params, value_type_name)
+                    cls._validate_is_type(
+                        value, params, value_type_name, owned_payload=owned_payload
+                    )
                 if params.not_ is not None:
                     not_types = (
                         params.not_
@@ -47,7 +58,7 @@ class FlextTestsMatchersThatMixin:
                     )
                     if any(
                         FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(
-                            value, forbidden_type
+                            value, forbidden_type, owned_payload=owned_payload
                         )
                         for forbidden_type in not_types
                     ):
@@ -63,6 +74,8 @@ class FlextTestsMatchersThatMixin:
                 value: p.AttributeProbe,
                 params: m.Tests.ThatParams,
                 value_type_name: str,
+                *,
+                owned_payload: bool = False,
             ) -> None:
                 """Validate ``is_`` including FLEXT wrapper/model shortcuts."""
                 is_types = (
@@ -84,20 +97,18 @@ class FlextTestsMatchersThatMixin:
                 )
                 is_sequence_wrapper = (
                     list in expected_types
-                    and isinstance(root_value, t.SEQUENCE_PAIR_TYPES)
+                    and isinstance(root_value, c.SEQUENCE_PAIR_TYPES)
                     and value_type_name == "ObjectList"
                 )
                 matches_declared_type = any(
                     FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(
-                        value, expected_type
+                        value, expected_type, owned_payload=owned_payload
                     )
                     for expected_type in expected_types
                 )
-                if (
-                    matches_declared_type
-                    or is_mapping_wrapper
-                    or is_model_mapping
-                    or is_sequence_wrapper
+                if matches_declared_type or (
+                    not owned_payload
+                    and (is_mapping_wrapper or is_model_mapping or is_sequence_wrapper)
                 ):
                     return
                 type_error = c.Tests.ERR_TYPE_FAILED.format(
@@ -544,14 +555,19 @@ class FlextTestsMatchersThatMixin:
                 return value
 
             @classmethod
-            def that(cls, value: p.AttributeProbe, **kwargs: p.AttributeProbe) -> None:
+            def that(
+                cls,
+                value: p.AttributeProbe,
+                *,
+                owned_payload: bool = False,
+                **kwargs: p.AttributeProbe,
+            ) -> None:
                 """Assert original subjects using validated owned criteria."""
                 params = cls._that_params(kwargs)
-                if "eq" in kwargs and kwargs["eq"] is None and params.none is None:
-                    params = params.model_copy(update={"none": True})
-                if "ne" in kwargs and kwargs["ne"] is None and params.none is None:
-                    params = params.model_copy(update={"none": False})
-                cls._validate_declared_types(value, params)
+                if owned_payload:
+                    payload = FlextTestsPayloadUtilities.to_payload(value)
+                    value = payload.atom if payload.kind == "atom" else payload
+                cls._validate_declared_types(value, params, owned_payload=owned_payload)
                 cls._validate_attrs(value, params)
                 if cls._is_subject_only(value, params):
                     if params.none is not None and (value is None) is not params.none:
@@ -663,24 +679,18 @@ class FlextTestsMatchersThatMixin:
         subject: p.AttributeProbe,
         rule: m.Tests.MatchRule,
         *,
+        owned_payload: bool,
         inherited_msg: str | None = None,
     ) -> None:
         kwargs = dict(cls._rule_kwargs(rule))
+        raw_owned = kwargs.pop("owned_payload", owned_payload)
+        owned = raw_owned if isinstance(raw_owned, bool) else owned_payload
         if inherited_msg is not None and "msg" not in kwargs:
             kwargs["msg"] = inherited_msg
         if not hasattr(cls.Tests.Matchers, "that"):
             message = "Matcher rule runner missing"
             raise AssertionError(message)
-        cls.Tests.Matchers.that(subject, **kwargs)
-
-    @staticmethod
-    def extract_path_value(subject: p.Tests.Payload, path: str) -> p.Tests.Payload:
-        """Read nested payload nodes without serializing model leaves."""
-        node = FlextTestsPayloadUtilities.path_node(subject, path)
-        if node is None:
-            msg = f"Path not found: {path}"
-            raise AssertionError(msg)
-        return node
+        cls.Tests.Matchers.that(subject, owned_payload=owned, **kwargs)
 
     @classmethod
     def apply_path_rules(
@@ -694,9 +704,10 @@ class FlextTestsMatchersThatMixin:
             try:
                 cls._apply_rule(
                     FlextTestsPayloadUtilities.to_match_value(
-                        cls.extract_path_value(subject, path)
+                        FlextTestsPayloadUtilities.extract_path_value(subject, path)
                     ),
                     rule,
+                    owned_payload=True,
                     inherited_msg=inherited_msg,
                 )
             except AssertionError as exc:
@@ -721,7 +732,10 @@ class FlextTestsMatchersThatMixin:
             case Sequence():
                 for index, rule in enumerate(rules):
                     cls._apply_rule(
-                        sequence_value[index], rule, inherited_msg=inherited_msg
+                        sequence_value[index],
+                        rule,
+                        owned_payload=False,
+                        inherited_msg=inherited_msg,
                     )
                 return
             case Mapping():
@@ -734,7 +748,9 @@ class FlextTestsMatchersThatMixin:
         for selector, rule in rules.items():
             if selector in {"*", "all"}:
                 for item in sequence_value:
-                    cls._apply_rule(item, rule, inherited_msg=inherited_msg)
+                    cls._apply_rule(
+                        item, rule, owned_payload=True, inherited_msg=inherited_msg
+                    )
                 continue
             target_index = (
                 0
@@ -744,7 +760,10 @@ class FlextTestsMatchersThatMixin:
                 else int(selector)
             )
             cls._apply_rule(
-                sequence_value[target_index], rule, inherited_msg=inherited_msg
+                sequence_value[target_index],
+                rule,
+                owned_payload=True,
+                inherited_msg=inherited_msg,
             )
 
     @classmethod
@@ -765,12 +784,9 @@ class FlextTestsMatchersThatMixin:
                 else:
                     msg = f"Object missing attribute path: {attr_path}"
                     raise AssertionError(msg)
-            try:
-                cls._apply_rule(current, rule, inherited_msg=inherited_msg)
-            except AssertionError as exc:
-                raise AssertionError(
-                    inherited_msg or f"Attribute rule '{attr_path}' failed: {exc}"
-                ) from exc
+            cls._apply_rule(
+                current, rule, owned_payload=False, inherited_msg=inherited_msg
+            )
 
 
 __all__: list[str] = ["FlextTestsMatchersThatMixin"]
