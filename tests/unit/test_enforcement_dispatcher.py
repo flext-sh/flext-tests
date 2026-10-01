@@ -144,17 +144,14 @@ class TestsFlextTestsEnforcementDispatcher:
     # active_rules                                                       #
     # ------------------------------------------------------------------ #
 
-    def test_active_rules_returns_only_enabled_rules(self) -> None:
+    def test_active_rules_without_filters_is_the_whole_catalog(self) -> None:
+        # No rule is suspended: an unfiltered session runs every catalog rule.
         active = u.Tests.active_rules(self._cfg())
 
-        tm.that(len(active) > 0, eq=True)
-        tm.that(all(r.enabled for r in active), eq=True)
-
-    def test_active_rules_excludes_disabled_skill_pointer_rules(self) -> None:
-        # ENFORCE-034..038 ship disabled by default.
-        ids = {r.id for r in u.Tests.active_rules(self._cfg())}
-
-        tm.that(ids.isdisjoint({"ENFORCE-034", "ENFORCE-035", "ENFORCE-038"}), eq=True)
+        tm.that(
+            [r.id for r in active],
+            eq=[r.id for r in u.build_canonical_catalog().rules],
+        )
 
     def test_include_narrows_to_the_listed_ids(self) -> None:
         active = u.Tests.active_rules(self._cfg(include=frozenset({"ENFORCE-001"})))

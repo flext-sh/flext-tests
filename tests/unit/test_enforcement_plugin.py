@@ -146,12 +146,11 @@ class TestsFlextTestsEnforcementPlugin:
         result.stdout.no_fnmatch_line("runtime warnings captured:*")
 
     @pytest.mark.slow
-    def test_infra_report_boundary_runs_in_subprocess(
+    def test_infra_rule_engine_boundary_runs_in_subprocess(
         self, pytester: pytest.Pytester
     ) -> None:
-        """Return the real infra report through the public Result boundary."""
-        # NOTE (multi-agent, mro-wkii.17.21): exercise only the installed public
-        # boundary; private plugin registration is an implementation detail.
+        """Engine findings come through the public Result boundary; a rule the
+        engine does not declare is a failure, never an empty scan."""
         pytester.makeini("[pytest]\n")
         pytester.makepyfile(
             test_public_boundary=(
@@ -160,26 +159,30 @@ class TestsFlextTestsEnforcementPlugin:
                 "from flext_tests import u\n"
                 "\n"
                 "\n"
-                "class TestsPublicInfraReportBoundary:\n"
-                "    def test_public_boundary_wraps_direct_report(\n"
-                "        self,\n"
-                "        tmp_path: Path,\n"
-                "    ) -> None:\n"
+                "class TestsPublicInfraRuleBoundary:\n"
+                "    def test_engine_boundary(self, tmp_path: Path) -> None:\n"
                 "        project = tmp_path / 'flext-contract-probe'\n"
                 "        package = project / 'src' / 'flext_contract_probe'\n"
                 "        package.mkdir(parents=True)\n"
-                "        (package / '__init__.py').write_text('', encoding='utf-8')\n"
+                "        (package / '__init__.py').write_text(\n"
+                "            '\"\"\"Probe.\"\"\"\\n\\nfrom __future__ import annotations\\n',\n"
+                "            encoding='utf-8',\n"
+                "        )\n"
                 "        (project / 'pyproject.toml').write_text(\n"
                 "            '[project]\\n'\n"
                 "            'name = \\\"flext-contract-probe\\\"\\n'\n"
                 "            'version = \\\"0.1.0\\\"\\n',\n"
                 "            encoding='utf-8',\n"
                 "        )\n"
-                "        report = u.Tests.load_infra_report(\n"
-                "            project,\n"
-                "            project_names=(project.name,),\n"
-                "        ).unwrap()\n"
-                "        assert report.workspace == str(project.resolve())\n"
+                "        missing = u.Tests.infra_rule_findings(\n"
+                "            project, required_rule_ids=frozenset({'no-such-rule'})\n"
+                "        )\n"
+                "        assert missing.failure\n"
+                "        assert 'no-such-rule' in str(missing.error)\n"
+                "        scanned = u.Tests.infra_rule_findings(\n"
+                "            project, required_rule_ids=frozenset()\n"
+                "        )\n"
+                "        assert scanned.success\n"
             )
         )
         result = pytester.runpytest_subprocess()
