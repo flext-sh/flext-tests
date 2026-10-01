@@ -1,4 +1,4 @@
-"""Extracted mixin for flext_tests."""
+"""Host file lock shared by every test process of one machine."""
 
 from __future__ import annotations
 
@@ -7,6 +7,8 @@ import time
 import types
 from pathlib import Path
 from typing import BinaryIO
+
+from flext_tests import c
 
 if os.name == "nt":
     import msvcrt
@@ -18,18 +20,18 @@ class FlextTestsTestContextUtilitiesMixin:
     """Context managers for tests."""
 
     class FileLock:
-        """File-based lock for pytest-xdist parallel test isolation.
+        """Advisory lock on one file, coordinating every process of the host.
 
-        Centralized SSOT for the LDAP-family / pytest-xdist coordination
-        pattern (previously cloned across ``flext-ldap``, ``flext-ldif``,
-        ``flext-tap-ldap``). Exclusive by default; ``shared=True`` takes a
-        shared (reader) lock on POSIX. ``timeout_seconds`` bounds the
-        acquisition with non-blocking retries and raises ``TimeoutError``
-        when the deadline passes (blocking indefinitely when ``None``).
-        Windows supports only exclusive locking; ``shared`` is ignored there.
+        Exclusive by default. ``shared=True`` takes a shared lock: shared
+        holders coexist and together exclude an exclusive holder, which in turn
+        excludes them. ``timeout_seconds=None`` blocks until the lock is
+        granted; a number polls a non-blocking attempt until that deadline and
+        then raises ``TimeoutError`` naming the file and the mode. The lock file
+        is never removed, so every holder coordinates through one inode.
+
+        Shared and bounded modes use POSIX ``fcntl``; on Windows only the
+        blocking exclusive mode exists and the others fail at construction.
         """
-
-        RETRY_INTERVAL_SECONDS = 0.05
 
         def __init__(
             self,
@@ -38,61 +40,22 @@ class FlextTestsTestContextUtilitiesMixin:
             shared: bool = False,
             timeout_seconds: float | None = None,
         ) -> None:
+            if os.name == "nt" and (shared or timeout_seconds is not None):
+                msg = c.Tests.ERR_FILE_LOCK_POSIX_ONLY.format(path=lock_file)
+                raise ValueError(msg)
             self.lock_file = lock_file
             self.shared = shared
             self.timeout_seconds = timeout_seconds
             self._file_obj: BinaryIO | None = None
 
-        def _deadline(self) -> float | None:
-            """Monotonic acquisition deadline (None blocks indefinitely)."""
-            if self.timeout_seconds is None:
-                return None
-            return time.monotonic() + self.timeout_seconds
-
-        def _timed_out(self, deadline: float | None) -> bool:
-            """True when a bounded acquisition missed its deadline."""
-            if deadline is None:
-                return False
-            if time.monotonic() < deadline:
-                return False
-            msg = (
-                f"FileLock acquisition timed out after "
-                f"{self.timeout_seconds}s: {self.lock_file}"
+        @property
+        def mode(self) -> str:
+            """Lock mode name used in diagnostics."""
+            return (
+                c.Tests.FILE_LOCK_MODE_SHARED
+                if self.shared
+                else c.Tests.FILE_LOCK_MODE_EXCLUSIVE
             )
-            raise TimeoutError(msg)
-
-        def _acquire_windows(self, file_obj: BinaryIO, deadline: float | None) -> None:
-            """Acquire the Windows lock with bounded retries (exclusive)."""
-            if os.name == "nt":
-                while True:
-                    os.lseek(file_obj.fileno(), 0, os.SEEK_SET)
-                    acquired = False
-                    try:
-                        msvcrt.locking(file_obj.fileno(), msvcrt.LK_LOCK, 1)
-                        acquired = True
-                    except OSError:
-                        _ = self._timed_out(deadline)
-                        time.sleep(self.RETRY_INTERVAL_SECONDS)
-                    if acquired:
-                        return
-
-        def _acquire_posix(self, file_obj: BinaryIO, deadline: float | None) -> None:
-            """Acquire the POSIX flock honouring shared mode and timeout."""
-            if os.name != "nt":
-                mode = fcntl.LOCK_SH if self.shared else fcntl.LOCK_EX
-                if deadline is None:
-                    fcntl.flock(file_obj.fileno(), mode)
-                    return
-                while True:
-                    acquired = False
-                    try:
-                        fcntl.flock(file_obj.fileno(), mode | fcntl.LOCK_NB)
-                        acquired = True
-                    except BlockingIOError:
-                        _ = self._timed_out(deadline)
-                        time.sleep(self.RETRY_INTERVAL_SECONDS)
-                    if acquired:
-                        return
 
         def acquire_or_none(self) -> None:
             """Acquire the lock outside a with-block (idempotent guard)."""
@@ -114,11 +77,7 @@ class FlextTestsTestContextUtilitiesMixin:
             self.lock_file.parent.mkdir(parents=True, exist_ok=True)
             file_obj = self.lock_file.open("a+b")
             try:
-                deadline = self._deadline()
-                if os.name == "nt":
-                    self._acquire_windows(file_obj, deadline)
-                else:
-                    self._acquire_posix(file_obj, deadline)
+                self._acquire(file_obj.fileno())
             except BaseException:
                 file_obj.close()
                 raise

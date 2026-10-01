@@ -4,28 +4,19 @@ Usage in any project's conftest.py::
 
     pytest_plugins = ["flext_tests.conftest_plugin"]
 
-This plugin delegates to the shared markdown-validation and test-runtime
-fixture modules so projects get one canonical owner for CLI options,
-autouse runtime setup, and shared helper fixtures.
+This plugin registers the shared test-runtime fixture modules so projects get
+one canonical owner for autouse runtime setup and shared helper fixtures.
+Markdown code blocks are executed by pytest-markdown-docs; there is no local
+markdown rule fallback.
 """
 
 from __future__ import annotations
 
 from importlib import import_module
-from importlib.util import find_spec
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import pytest
-
-
-def pytest_addoption(parser: pytest.Parser) -> None:
-    """Register the local markdown fallback without eager product imports."""
-    if find_spec("pytest_markdown_docs") is not None:
-        return
-    from ._fixtures.markdown_validation import pytest_addoption as register
-
-    register(parser)
 
 
 def pytest_configure(config: pytest.Config) -> None:
@@ -36,23 +27,22 @@ def pytest_configure(config: pytest.Config) -> None:
     # fixtures at all. `import_module` names the module unambiguously.
     settings = import_module("flext_tests._fixtures.settings")
     connectivity_module = import_module("flext_tests._fixtures.connectivity")
+    namespace_module = import_module("flext_tests._fixtures.namespace")
+    scratch_module = import_module("flext_tests._fixtures.scratch_storage")
 
     if settings not in config.pluginmanager.get_plugins():
         config.pluginmanager.register(settings, settings.__name__)
-    # Connectivity-bound tests skip - never fail - when their external service
-    # is unreachable (AGENTS.md external/docker skip rule).
-    connectivity = connectivity_module.FlextTestsConnectivityPlugin()
+    if namespace_module not in config.pluginmanager.get_plugins():
+        config.pluginmanager.register(namespace_module, namespace_module.__name__)
+    if scratch_module not in config.pluginmanager.get_plugins():
+        config.pluginmanager.register(scratch_module, scratch_module.__name__)
+    # Capability-bound tests are DESELECTED (typed NOT EXECUTED) when their
+    # capability is absent; a capable host executes and a service failure is RED.
+    connectivity = connectivity_module.FlextTestsCapabilityPlugin()
     if not config.pluginmanager.hasplugin("flext_tests._fixtures.connectivity"):
         config.pluginmanager.register(
             connectivity, "flext_tests._fixtures.connectivity"
         )
-    if find_spec("pytest_markdown_docs") is None:
-        from ._fixtures import markdown_validation
-
-        if markdown_validation not in config.pluginmanager.get_plugins():
-            config.pluginmanager.register(
-                markdown_validation, markdown_validation.__name__
-            )
 
 
 # Enforcement dispatcher (flext_tests.enforcement_plugin) is loaded via
@@ -64,4 +54,4 @@ def pytest_configure(config: pytest.Config) -> None:
 # before pytest-cov starts measuring the product package.
 
 
-__all__: list[str] = ["pytest_addoption", "pytest_configure"]
+__all__: list[str] = ["pytest_configure"]

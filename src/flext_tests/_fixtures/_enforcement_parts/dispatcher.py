@@ -19,7 +19,9 @@ from flext_tests import c
 from flext_tests.enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
 
 if TYPE_CHECKING:
-    from flext_tests import m, p, t
+    import warnings
+
+    from flext_tests import m, t
 
 
 class FlextTestsEnforcementDispatcher:
@@ -98,14 +100,15 @@ class FlextTestsEnforcementDispatcher:
             return
         from flext_tests.utilities import u
 
+        from flext_tests import m
+
         cfg = cls.resolve_config(config, repository_root)
+        action = "error" if cfg.strict else "default"
         for rule in u.Tests.active_rules(cfg):
-            category = getattr(rule.source, "category", None)
-            if rule.source.kind != "runtime_warning" or not category:
-                continue
-            strict = cfg.strict and rule.promote_to_error_when_strict
-            action = "error" if strict else "default"
-            config.addinivalue_line("filterwarnings", f"{action}::{category}")
+            if isinstance(rule.source, m.EnforcementRuntimeWarningSource):
+                config.addinivalue_line(
+                    "filterwarnings", f"{action}::{rule.source.category}"
+                )
 
     @staticmethod
     def slow_budget_seconds(config: pytest.Config) -> float | None:
@@ -160,14 +163,14 @@ class FlextTestsEnforcementDispatcher:
         )
 
     @classmethod
-    def record_warning(cls, warning_message: p.AttributeProbe) -> None:
+    def record_warning(cls, warning_message: warnings.WarningMessage) -> None:
         """Count one captured runtime warning by its dotted category."""
         if cls.session_config is None:
             return
         repository_root = cls.active_root(cls.session_config)
-        category = getattr(warning_message, "category", None)
-        if repository_root is None or category is None:
+        if repository_root is None:
             return
+        category = warning_message.category
         cfg = cls.resolve_config(cls.session_config, repository_root)
         dotted = f"{category.__module__}.{category.__qualname__}"
         cfg.warning_counter[dotted] = cfg.warning_counter.get(dotted, 0) + 1

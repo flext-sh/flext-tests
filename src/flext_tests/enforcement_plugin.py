@@ -10,9 +10,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    import pytest
+    import warnings
 
-    from flext_tests import p
+    import pytest
 
 SLOW_TIMEOUT_INI_OPTION = "flext_slow_timeout_seconds"
 """Config-owned timeout option for slow pytest items."""
@@ -84,7 +84,7 @@ def pytest_collection_modifyitems(
 
 
 def pytest_warning_recorded(
-    warning_message: p.AttributeProbe,
+    warning_message: warnings.WarningMessage,
     when: str,
     nodeid: str,
     location: tuple[str, int, str] | None,

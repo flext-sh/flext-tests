@@ -27,6 +27,8 @@ if TYPE_CHECKING:
     from ._matchers._typeguards import FlextTestsMatchersTypeGuardsMixin
     from .base import FlextTestsUtilitiesBase
     from .container import FlextTestsContainerHelpersUtilitiesMixin
+    from .docker_lifecycle import FlextTestsDockerLifecycleUtilitiesMixin
+    from .docker_state import FlextTestsDockerStateUtilitiesMixin
     from .enforcement import FlextTestsEnforcementUtilitiesMixin
     from .files import FlextTestsFilesUtilitiesMixin
     from .fixtures_dsl import FlextTestsFixturesDSLMixin
@@ -39,6 +41,7 @@ if TYPE_CHECKING:
     from .make_registry import FlextTestsMakeRegistryUtilitiesMixin
     from .make_rendering import FlextTestsMakeRenderingUtilitiesMixin
     from .matchers import FlextTestsMatchersUtilities
+    from .namespace import FlextTestsNamespaceUtilitiesMixin
     from .payload import FlextTestsPayloadUtilities
     from .result import FlextTestsResultUtilitiesMixin
     from .settings import FlextTestsConfigHelpersUtilitiesMixin
@@ -56,6 +59,8 @@ if TYPE_CHECKING:
 __all__: tuple[str, ...] = (
     "FlextTestsConfigHelpersUtilitiesMixin",
     "FlextTestsContainerHelpersUtilitiesMixin",
+    "FlextTestsDockerLifecycleUtilitiesMixin",
+    "FlextTestsDockerStateUtilitiesMixin",
     "FlextTestsEnforcementUtilitiesMixin",
     "FlextTestsFilesAssertionsMixin",
     "FlextTestsFilesBatchMixin",
@@ -83,6 +88,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsMatchersTypeGuardsMixin",
     "FlextTestsMatchersUtilities",
     "FlextTestsModuleGovernanceMixin",
+    "FlextTestsNamespaceUtilitiesMixin",
     "FlextTestsPayloadUtilities",
     "FlextTestsResultUtilitiesMixin",
     "FlextTestsTestContextUtilitiesMixin",
@@ -119,6 +125,8 @@ _LAZY_IMPORTS = MappingProxyType(
             "._matchers._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
             ".base": ("FlextTestsUtilitiesBase",),
             ".container": ("FlextTestsContainerHelpersUtilitiesMixin",),
+            ".docker_lifecycle": ("FlextTestsDockerLifecycleUtilitiesMixin",),
+            ".docker_state": ("FlextTestsDockerStateUtilitiesMixin",),
             ".enforcement": ("FlextTestsEnforcementUtilitiesMixin",),
             ".files": ("FlextTestsFilesUtilitiesMixin",),
             ".fixtures_dsl": ("FlextTestsFixturesDSLMixin",),
@@ -131,6 +139,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ".make_registry": ("FlextTestsMakeRegistryUtilitiesMixin",),
             ".make_rendering": ("FlextTestsMakeRenderingUtilitiesMixin",),
             ".matchers": ("FlextTestsMatchersUtilities",),
+            ".namespace": ("FlextTestsNamespaceUtilitiesMixin",),
             ".payload": ("FlextTestsPayloadUtilities",),
             ".result": ("FlextTestsResultUtilitiesMixin",),
             ".settings": ("FlextTestsConfigHelpersUtilitiesMixin",),

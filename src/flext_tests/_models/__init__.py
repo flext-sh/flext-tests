@@ -16,6 +16,8 @@ if TYPE_CHECKING:
     from .filesystem import FlextTestsFilesystemModelsMixin
     from .make import FlextTestsMakeModelsMixin
     from .matchers import FlextTestsMatchersModelsMixin
+    from .namespace import FlextTestsNamespaceModelsMixin
+    from .spec import FlextTestsSpecModelsMixin
     from .validator import FlextTestsValidatorModelsMixin
     from .workspace_cleanup import FlextTestsWorkspaceCleanupModelsMixin
 
@@ -28,6 +30,8 @@ __all__: tuple[str, ...] = (
     "FlextTestsFilesystemModelsMixin",
     "FlextTestsMakeModelsMixin",
     "FlextTestsMatchersModelsMixin",
+    "FlextTestsNamespaceModelsMixin",
+    "FlextTestsSpecModelsMixin",
     "FlextTestsValidatorModelsMixin",
     "FlextTestsWorkspaceCleanupModelsMixin",
 )
@@ -42,6 +46,8 @@ _LAZY_IMPORTS = MappingProxyType(
             ".filesystem": ("FlextTestsFilesystemModelsMixin",),
             ".make": ("FlextTestsMakeModelsMixin",),
             ".matchers": ("FlextTestsMatchersModelsMixin",),
+            ".namespace": ("FlextTestsNamespaceModelsMixin",),
+            ".spec": ("FlextTestsSpecModelsMixin",),
             ".validator": ("FlextTestsValidatorModelsMixin",),
             ".workspace_cleanup": ("FlextTestsWorkspaceCleanupModelsMixin",),
         }),

@@ -33,10 +33,18 @@ class FlextTestsDockerModelsMixin:
         ] = c.LOCALHOST
         port: Annotated[
             int | None,
-            u.Field(description="Optional host port used for readiness checks."),
+            u.Field(
+                description=(
+                    "Container port the service listens on; its published host "
+                    "port is resolved from the running container."
+                )
+            ),
         ] = None
         startup_timeout: Annotated[
-            int, u.Field(ge=1, description="Maximum wait time for readiness checks.")
+            int,
+            u.Field(
+                ge=1, description="Bound for compose --wait and for readiness polling."
+            ),
         ] = 30
         force_recreate: Annotated[
             bool,
@@ -104,18 +112,120 @@ class FlextTestsDockerModelsMixin:
             c.Tests.ContainerStatus, u.Field(description="Runtime lifecycle status.")
         ]
         ports: Annotated[
-            t.StrMapping, u.Field(description="Port mapping (internal → external).")
+            t.StrMapping,
+            u.Field(description="Published ports: '<port>/<proto>' to host port."),
         ]
-        image: Annotated[str, u.Field(min_length=1, description="Source image tag.")]
+        image: Annotated[
+            str, u.Field(description="Configured image reference; may be empty.")
+        ]
         container_id: Annotated[
             str, u.Field(description="Docker-assigned container identifier.")
         ] = ""
+        image_id: Annotated[str, u.Field(description="Resolved image identifier.")] = ""
         health: Annotated[
-            str, u.Field(description="Healthcheck verdict (healthy/unhealthy/none).")
+            c.Tests.ContainerHealth,
+            u.Field(description="Healthcheck state; UNKNOWN without a check."),
+        ] = c.Tests.ContainerHealth.UNKNOWN
+
+    class ContainerInspectHealth(m.FlexibleModel):
+        """``State.Health`` of ``docker inspect``."""
+
+        status: Annotated[
+            c.Tests.ContainerHealth,
+            u.Field(alias="Status", description="Healthcheck status."),
+        ]
+
+    class ContainerInspectState(m.FlexibleModel):
+        """``State`` of ``docker inspect``."""
+
+        status: Annotated[
+            c.Tests.ContainerStatus,
+            u.Field(alias="Status", description="Container lifecycle status."),
+        ]
+        health: Annotated[
+            FlextTestsDockerModelsMixin.ContainerInspectHealth | None,
+            u.Field(alias="Health", description="Present when a check is set."),
+        ] = None
+
+    class ContainerInspectConfig(m.FlexibleModel):
+        """``Config`` of ``docker inspect``."""
+
+        image: Annotated[
+            str, u.Field(alias="Image", description="Configured image reference.")
         ] = ""
+        env: Annotated[
+            t.StrSequence | None,
+            u.Field(alias="Env", description="Environment as KEY=VALUE entries."),
+        ] = None
+
+    class ContainerInspectBinding(m.FlexibleModel):
+        """One host binding of a published container port."""
+
+        host_port: Annotated[
+            str, u.Field(alias="HostPort", description="Published host port.")
+        ] = ""
+
+    class ContainerInspectNetwork(m.FlexibleModel):
+        """``NetworkSettings`` of ``docker inspect``."""
+
+        ports: Annotated[
+            t.MappingKV[
+                str,
+                t.SequenceOf[FlextTestsDockerModelsMixin.ContainerInspectBinding]
+                | None,
+            ]
+            | None,
+            u.Field(alias="Ports", description="Bindings per '<port>/<proto>'."),
+        ] = None
+
+    class ContainerInspect(m.FlexibleModel):
+        """The subset of ``docker inspect`` the lifecycle reads."""
+
+        id: Annotated[str, u.Field(alias="Id", description="Container id.")]
         image_id: Annotated[
-            str, u.Field(description="Docker-resolved image identifier.")
+            str, u.Field(alias="Image", description="Resolved image id.")
+        ]
+        state: Annotated[
+            FlextTestsDockerModelsMixin.ContainerInspectState,
+            u.Field(alias="State", description="Lifecycle state."),
+        ]
+        config: Annotated[
+            FlextTestsDockerModelsMixin.ContainerInspectConfig,
+            u.Field(alias="Config", description="Creation configuration."),
+        ]
+        network_settings: Annotated[
+            FlextTestsDockerModelsMixin.ContainerInspectNetwork,
+            u.Field(alias="NetworkSettings", description="Published ports."),
+        ]
+
+    class ContainerState(m.Value):
+        """Host-scoped lifecycle record of one shared test container.
+
+        A name without a record is unprovisioned: no id, no fingerprint, clean
+        and unsealed. Every checkout of the host reads the same record.
+        """
+
+        container_name: Annotated[
+            str,
+            u.Field(
+                pattern=c.Tests.DOCKER_CONTAINER_NAME_PATTERN,
+                description="Docker container name; also the record file stem.",
+            ),
+        ]
+        container_id: Annotated[
+            str,
+            u.Field(description="Container id the lifecycle sealed; empty if none."),
         ] = ""
+        fingerprint: Annotated[
+            str, u.Field(description="Declared-input fingerprint sealed with the id.")
+        ] = ""
+        dirty: Annotated[
+            bool, u.Field(description="A session reported the container unusable.")
+        ] = False
+        sealed: Annotated[
+            bool,
+            u.Field(description="Creation and initialization completed for the id."),
+        ] = False
 
     class User(m.Value):
         """Test user model - immutable value object."""
