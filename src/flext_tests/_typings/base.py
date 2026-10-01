@@ -23,6 +23,7 @@ from typing import TYPE_CHECKING, Literal
 
 from flext_cli import t
 from flext_infra import m, t as it
+from pydantic import TypeAdapter
 
 from flext_core import p
 
