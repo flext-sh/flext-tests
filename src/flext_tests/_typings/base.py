@@ -12,7 +12,6 @@ from collections.abc import (
     KeysView,
     Mapping,
     MutableMapping,
-    Sequence,
     Set as AbstractSet,
     ValuesView,
 )
