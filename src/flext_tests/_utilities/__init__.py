@@ -1,59 +1,88 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""Flext Tests. Utilities package."""
+"""Flext Tests. Utilities package.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
 from types import MappingProxyType
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import build_lazy_import_map, install_lazy_exports
+from flext_core import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
-    from . import _files, _matchers
-    from ._files._assertions import FlextTestsFilesAssertionsMixin
-    from ._files._batch import FlextTestsFilesBatchMixin
-    from ._files._comparison import FlextTestsFilesComparisonMixin
-    from ._files._contexts import FlextTestsFilesContextsMixin
-    from ._files._creation import FlextTestsFilesCreationMixin
-    from ._files._info import FlextTestsFilesInfoMixin
-    from ._files._lifecycle import FlextTestsFilesLifecycleMixin
-    from ._files._reading import FlextTestsFilesReadingMixin
-    from ._matchers._assertions import FlextTestsMatchersAssertionsMixin
-    from ._matchers._containment import FlextTestsMatchersContainmentMixin
-    from ._matchers._immutability import FlextTestsMatchersImmutabilityMixin
-    from ._matchers._result import FlextTestsMatchersResultMixin
-    from ._matchers._scope import FlextTestsMatchersScopeMixin
-    from ._matchers._that import FlextTestsMatchersThatMixin
-    from ._matchers._typeguards import FlextTestsMatchersTypeGuardsMixin
-    from .base import FlextTestsUtilitiesBase
-    from .container import FlextTestsContainerHelpersUtilitiesMixin
-    from .docker_lifecycle import FlextTestsDockerLifecycleUtilitiesMixin
-    from .docker_state import FlextTestsDockerStateUtilitiesMixin
-    from .enforcement import FlextTestsEnforcementUtilitiesMixin
-    from .files import FlextTestsFilesUtilitiesMixin
-    from .fixtures_dsl import FlextTestsFixturesDSLMixin
-    from .generic import FlextTestsGenericHelpersUtilitiesMixin
-    from .governance import FlextTestsModuleGovernanceMixin
-    from .handler import FlextTestsHandlerHelpersUtilitiesMixin
-    from .make import FlextTestsMakeUtilitiesMixin
-    from .make_contract import FlextTestsMakeContractUtilitiesMixin
-    from .make_parsing import FlextTestsMakeParsingUtilitiesMixin
-    from .make_registry import FlextTestsMakeRegistryUtilitiesMixin
-    from .make_rendering import FlextTestsMakeRenderingUtilitiesMixin
-    from .matchers import FlextTestsMatchersUtilities
-    from .namespace import FlextTestsNamespaceUtilitiesMixin
-    from .payload import FlextTestsPayloadUtilities
-    from .result import FlextTestsResultUtilitiesMixin
-    from .settings import FlextTestsConfigHelpersUtilitiesMixin
-    from .testcontext import FlextTestsTestContextUtilitiesMixin
-    from .validator import FlextTestsValidatorUtilitiesMixin
-    from .workspace_cleanup import FlextTestsWorkspaceCleanupUtilitiesMixin
-    from .workspace_cleanup_git import FlextTestsWorkspaceCleanupGitUtilitiesMixin
-    from .workspace_cleanup_inspect import (
+    from flext_tests._utilities import _files, _matchers
+    from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
+    from flext_tests._utilities._files._batch import FlextTestsFilesBatchMixin
+    from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
+    from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
+    from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
+    from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
+    from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
+    from flext_tests._utilities._files._reading import FlextTestsFilesReadingMixin
+    from flext_tests._utilities._matchers._assertions import (
+        FlextTestsMatchersAssertionsMixin,
+    )
+    from flext_tests._utilities._matchers._containment import (
+        FlextTestsMatchersContainmentMixin,
+    )
+    from flext_tests._utilities._matchers._immutability import (
+        FlextTestsMatchersImmutabilityMixin,
+    )
+    from flext_tests._utilities._matchers._result import FlextTestsMatchersResultMixin
+    from flext_tests._utilities._matchers._scope import FlextTestsMatchersScopeMixin
+    from flext_tests._utilities._matchers._that import FlextTestsMatchersThatMixin
+    from flext_tests._utilities._matchers._typeguards import (
+        FlextTestsMatchersTypeGuardsMixin,
+    )
+    from flext_tests._utilities.base import FlextTestsUtilitiesBase
+    from flext_tests._utilities.container import (
+        FlextTestsContainerHelpersUtilitiesMixin,
+    )
+    from flext_tests._utilities.docker_lifecycle import (
+        FlextTestsDockerLifecycleUtilitiesMixin,
+    )
+    from flext_tests._utilities.docker_state import FlextTestsDockerStateUtilitiesMixin
+    from flext_tests._utilities.enforcement import FlextTestsEnforcementUtilitiesMixin
+    from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
+    from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
+    from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
+    from flext_tests._utilities.governance import FlextTestsModuleGovernanceMixin
+    from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
+    from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
+    from flext_tests._utilities.make_contract import (
+        FlextTestsMakeContractUtilitiesMixin,
+    )
+    from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
+    from flext_tests._utilities.make_registry import (
+        FlextTestsMakeRegistryUtilitiesMixin,
+    )
+    from flext_tests._utilities.make_rendering import (
+        FlextTestsMakeRenderingUtilitiesMixin,
+    )
+    from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
+    from flext_tests._utilities.namespace import FlextTestsNamespaceUtilitiesMixin
+    from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+    from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
+    from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
+    from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
+    from flext_tests._utilities.workspace_cleanup import (
+        FlextTestsWorkspaceCleanupUtilitiesMixin,
+    )
+    from flext_tests._utilities.workspace_cleanup_git import (
+        FlextTestsWorkspaceCleanupGitUtilitiesMixin,
+    )
+    from flext_tests._utilities.workspace_cleanup_inspect import (
         FlextTestsWorkspaceCleanupInspectUtilitiesMixin,
     )
-    from .workspace_cleanup_paths import FlextTestsWorkspaceCleanupPathsUtilitiesMixin
-    from .workspace_cleanup_plan import FlextTestsWorkspaceCleanupPlanUtilitiesMixin
+    from flext_tests._utilities.workspace_cleanup_paths import (
+        FlextTestsWorkspaceCleanupPathsUtilitiesMixin,
+    )
+    from flext_tests._utilities.workspace_cleanup_plan import (
+        FlextTestsWorkspaceCleanupPlanUtilitiesMixin,
+    )
 
 
 __all__: tuple[str, ...] = (
@@ -93,7 +122,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsResultUtilitiesMixin",
     "FlextTestsTestContextUtilitiesMixin",
     "FlextTestsUtilitiesBase",
-    "FlextTestsValidatorUtilitiesMixin",
     "FlextTestsWorkspaceCleanupGitUtilitiesMixin",
     "FlextTestsWorkspaceCleanupInspectUtilitiesMixin",
     "FlextTestsWorkspaceCleanupPathsUtilitiesMixin",
@@ -144,7 +172,6 @@ _LAZY_IMPORTS = MappingProxyType(
             ".result": ("FlextTestsResultUtilitiesMixin",),
             ".settings": ("FlextTestsConfigHelpersUtilitiesMixin",),
             ".testcontext": ("FlextTestsTestContextUtilitiesMixin",),
-            ".validator": ("FlextTestsValidatorUtilitiesMixin",),
             ".workspace_cleanup": ("FlextTestsWorkspaceCleanupUtilitiesMixin",),
             ".workspace_cleanup_git": ("FlextTestsWorkspaceCleanupGitUtilitiesMixin",),
             ".workspace_cleanup_inspect": (
@@ -159,7 +186,7 @@ _LAZY_IMPORTS = MappingProxyType(
         }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
-    )
+    ),
 )
 
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)
