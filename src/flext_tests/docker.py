@@ -22,7 +22,7 @@ from docker import (
 from docker.constants import DEFAULT_DOCKER_API_VERSION
 from docker.errors import DockerException, NotFound
 from docker.transport import UnixHTTPAdapter
-from flext_infra import config as infra_config
+from flext_infra import config as infra_config, settings as infra_settings
 from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
@@ -76,7 +76,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             The resulting ``bool``.
         """
         ci = infra_config.Infra.codegen.make.ci
-        return (u.Infra.env_lookup(ci.variable) or "").strip() == ci.value
+        return (infra_settings.env_lookup(ci.variable) or "").strip() == ci.value
 
     @classmethod
     def lifecycle_enabled(cls) -> p.Result[bool]:

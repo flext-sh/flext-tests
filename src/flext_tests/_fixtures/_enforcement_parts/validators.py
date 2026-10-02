@@ -14,6 +14,8 @@ from flext_tests._fixtures._enforcement_parts.items import FlextTestsEnforcement
 if TYPE_CHECKING:
     import pytest
 
+    from flext_tests import p
+
 
 class FlextTestsEnforcementValidators:
     """Group engine findings into enforcement items by rule id and project."""
@@ -31,7 +33,10 @@ class FlextTestsEnforcementValidators:
         """
         if context.infra_findings is None:
             return []
-        grouped: dict[tuple[str, str], list[m.Infra.ModScanFinding]] = {}
+        grouped: dict[
+            tuple[str, str],
+            list[p.Tests.EnforcementScanFinding],
+        ] = {}
         for finding in context.infra_findings.entries:
             if finding.repository not in context.project_names:
                 continue

@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_infra import FlextInfraUtilities
+from flext_cli import FlextCliUtilities
 
 from flext_tests._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
 from flext_tests._utilities.docker_lifecycle import (
@@ -36,7 +36,7 @@ from flext_tests._utilities.workspace_cleanup import (
 )
 
 
-class FlextTestsUtilities(FlextInfraUtilities):
+class FlextTestsUtilities(FlextCliUtilities):
     """Test utilities for FLEXT ecosystem - extends u.
 
     Provides essential test helpers that complement u.
