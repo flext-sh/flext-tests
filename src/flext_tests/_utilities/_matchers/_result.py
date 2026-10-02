@@ -94,7 +94,8 @@ class FlextTestsMatchersResultMixin:
                     raise AssertionError(
                         params.msg
                         or c.Tests.ERR_NOT_ENDSWITH.format(
-                            text=err, suffix=params.ends
+                            text=err,
+                            suffix=params.ends,
                         ),
                     )
                 if params.match is not None and params.match.search(err) is None:

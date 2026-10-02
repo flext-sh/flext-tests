@@ -121,7 +121,8 @@ class TestsFlextTestsServiceBase:
             encoding="utf-8",
         )
         result = pytester.runpytest_subprocess(
-            *self._consumer_options(), str(package_dir / "test_probe.py")
+            *self._consumer_options(),
+            str(package_dir / "test_probe.py"),
         )
         result.assert_outcomes(errors=1)
         result.stdout.fnmatch_lines(["*TypeError*badpkg*"])
@@ -139,7 +140,8 @@ class TestsFlextTestsServiceBase:
             encoding="utf-8",
         )
         result = pytester.runpytest(
-            *self._consumer_options(), str(package_dir / "test_probe.py")
+            *self._consumer_options(),
+            str(package_dir / "test_probe.py"),
         )
         result.assert_outcomes(errors=1)
         result.stdout.fnmatch_lines(["*AttributeError*noservicepkg*s*"])
@@ -175,7 +177,8 @@ class TestsFlextTestsServiceBase:
             encoding="utf-8",
         )
         result = pytester.runpytest(
-            *self._consumer_options(), str(package_dir / "test_probe.py")
+            *self._consumer_options(),
+            str(package_dir / "test_probe.py"),
         )
         result.assert_outcomes(errors=1)
         result.stdout.fnmatch_lines(["*AttributeError*noletterpkg*'c'*"])
@@ -213,6 +216,7 @@ class TestsFlextTestsServiceBase:
             encoding="utf-8",
         )
         result = pytester.runpytest(
-            *self._consumer_options(), str(package_dir / "test_probe.py")
+            *self._consumer_options(),
+            str(package_dir / "test_probe.py"),
         )
         result.assert_outcomes(passed=1)

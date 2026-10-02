@@ -444,7 +444,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         """
         return self._inspect(container_name).flat_map(
             lambda inspect: u.Tests.container_environment(
-                container_name, inspect, keys
+                container_name,
+                inspect,
+                keys,
             ),
         )
 
