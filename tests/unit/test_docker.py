@@ -18,7 +18,6 @@ class TestsFlextTestsDocker(
     state.TestsFlextTestsDockerStateMixin,
     builders.TestsFlextTestsDockerBuildersMixin,
     operations.TestsFlextTestsDockerOperationsMixin,
-    decision.TestsFlextTestsDockerDecisionMixin,
     targets.TestsFlextTestsDockerTargetsMixin,
     ci.TestsFlextTestsDockerCiMixin,
     lifecycle.TestsFlextTestsDockerLifecycleMixin,

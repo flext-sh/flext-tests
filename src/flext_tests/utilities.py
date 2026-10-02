@@ -25,6 +25,7 @@ from ._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
 from ._utilities.make import FlextTestsMakeUtilitiesMixin
 from ._utilities.matchers import FlextTestsMatchersUtilities
 from ._utilities.result import FlextTestsResultUtilitiesMixin
+from ._utilities.scratch_storage import FlextTestsScratchStorageUtilitiesMixin
 from ._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
 from ._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
 from ._utilities.workspace_cleanup import FlextTestsWorkspaceCleanupUtilitiesMixin
@@ -41,6 +42,7 @@ class FlextTestsUtilities(FlextInfraUtilities):
         FlextTestsResultUtilitiesMixin,
         FlextTestsTestContextUtilitiesMixin,
         FlextTestsDockerStateUtilitiesMixin,
+        FlextTestsScratchStorageUtilitiesMixin,
         FlextTestsDockerLifecycleUtilitiesMixin,
         FlextTestsGenericHelpersUtilitiesMixin,
         FlextTestsConfigHelpersUtilitiesMixin,

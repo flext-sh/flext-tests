@@ -11,7 +11,6 @@ supported-markers = [
 ]
 
 [manifest]
-constraints = [{ name = "structlog", specifier = "<27" }]
 excludes = [{ package = { name = "flext-infra" }, dependencies = ["flext-tests"] }]
 
 [[package]]
@@ -581,7 +580,7 @@ requires-dist = [
     { name = "hypothesis" },
     { name = "packaging", specifier = ">=26.3" },
     { name = "pydantic", specifier = ">=2.13.5" },
-    { name = "pydantic-settings", specifier = ">=2.15.0,<2.16" },
+    { name = "pydantic-settings", specifier = ">=2.15.0" },
     { name = "pytest", specifier = ">=9.1.1" },
     { name = "pytest-asyncio" },
     { name = "pytest-benchmark" },
