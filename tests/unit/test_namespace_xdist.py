@@ -1,4 +1,8 @@
-"""xdist-parallel namespace acceptance (T3): two workers, no token overlap."""
+"""xdist-parallel namespace acceptance (T3): two workers, no token overlap.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -28,7 +32,7 @@ def test_namespaces_unique_across_two_workers(pytester: pytest.Pytester) -> None
         "        checkout_root=Path(request.config.rootpath),\n"
         "    ).token\n"
         "    (Path(request.config.rootpath) / f'{worker_id}.txt').write_text(token)\n"
-        "    return token\n"
+        "    return token\n",
     )
     pytester.makepyfile(
         test_a="""
@@ -59,7 +63,7 @@ def test_namespaces_unique_across_two_workers(pytester: pytest.Pytester) -> None
             "inner run did not produce a summary:\n"
             + result.stdout.str()[-3000:]
             + "\nSTDERR:\n"
-            + result.stderr.str()[-1500:]
+            + result.stderr.str()[-1500:],
         )
     tokens = {path.read_text().strip() for path in pytester.path.glob("*.txt")}
     assert len(tokens) == 2

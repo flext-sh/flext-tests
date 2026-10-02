@@ -25,7 +25,7 @@ class FlextTestsScratchStorageUtilitiesMixin:
         ``flext_scratch_root`` ini) replaces the host default.
         """
         identity = hashlib.sha256(
-            str(checkout_root).encode(encoding="utf-8")
+            str(checkout_root).encode(encoding="utf-8"),
         ).hexdigest()[:12]
         base = (
             Path(override)

@@ -27,7 +27,10 @@ class FlextTestsNamespaceUtilitiesMixin:
 
     @staticmethod
     def namespace(
-        *, worker_id: str, testrun_uid: str, checkout_root: Path
+        *,
+        worker_id: str,
+        testrun_uid: str,
+        checkout_root: Path,
     ) -> m.Tests.TestNamespace:
         """Derive one collision-free namespace for worker and run.
 
@@ -40,12 +43,15 @@ class FlextTestsNamespaceUtilitiesMixin:
         pytest-randomly reseeding the global random module. The run token
         derives only from the checkout and ``testrun_uid``, so every worker
         and every call of one run shares it whatever the clock reads.
+
+        Returns:
+            The resulting ``m.Tests.TestNamespace``.
         """
         namespace_constants = FlextTestsConstantsNamespace
         issued_ms = time.time_ns() // 1_000_000
         epoch_stamp = FlextTestsNamespaceUtilitiesMixin._base36(issued_ms)
         checkout_digest = hashlib.sha256(
-            str(checkout_root).encode(encoding="utf-8")
+            str(checkout_root).encode(encoding="utf-8"),
         ).hexdigest()[: namespace_constants.NAMESPACE_CHECKOUT_DIGEST_LENGTH]
         worker_code = FlextTestsNamespaceUtilitiesMixin._worker_code(worker_id)
         prefix = f"{epoch_stamp}{checkout_digest}{worker_code}"
@@ -65,7 +71,11 @@ class FlextTestsNamespaceUtilitiesMixin:
 
     @classmethod
     def _monotonic_tail(cls, issued_ms: int, width: int) -> str:
-        """Return a ``width``-digit base36 tail unique within this process."""
+        """Return a ``width``-digit base36 tail unique within this process.
+
+        Raises:
+            OverflowError: If namespace tail space exhausted within.
+        """
         space = len(FlextTestsConstantsNamespace.NAMESPACE_BASE36_ALPHABET) ** width
         with cls._issue_lock:
             last = cls._last_issue
@@ -78,12 +88,17 @@ class FlextTestsNamespaceUtilitiesMixin:
                 stamp_ms, value = issued_ms, secrets.randbelow(space // 2)
             cls._last_issue = (stamp_ms, value)
         return cls._base36(value).rjust(
-            width, FlextTestsConstantsNamespace.NAMESPACE_BASE36_ALPHABET[0]
+            width,
+            FlextTestsConstantsNamespace.NAMESPACE_BASE36_ALPHABET[0],
         )
 
     @staticmethod
     def _base36(value: int) -> str:
-        """Encode a non-negative integer as lowercase base36."""
+        """Encode a non-negative integer as lowercase base36.
+
+        Returns:
+            The resulting ``str``.
+        """
         alphabet = FlextTestsConstantsNamespace.NAMESPACE_BASE36_ALPHABET
         if value == 0:
             return alphabet[0]
@@ -95,7 +110,11 @@ class FlextTestsNamespaceUtilitiesMixin:
 
     @staticmethod
     def _worker_code(worker_id: str) -> str:
-        """Condense a worker identifier to two lowercase base36 digits."""
+        """Condense a worker identifier to two lowercase base36 digits.
+
+        Returns:
+            The resulting ``str``.
+        """
         alphabet = FlextTestsConstantsNamespace.NAMESPACE_BASE36_ALPHABET
         digest = hashlib.sha256(worker_id.encode(encoding="utf-8")).hexdigest()
         width = FlextTestsConstantsNamespace.NAMESPACE_WORKER_CODE_LENGTH

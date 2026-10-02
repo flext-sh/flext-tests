@@ -6,6 +6,9 @@ is driven inside a ``pytester`` subprocess sandbox and asserted on observable
 outcomes plus the terminal summary the plugin promises to print. Subprocess
 runs keep the real workspace untouched and prove entry-point loading without
 any manual ``-p`` wiring.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -34,7 +37,8 @@ class TestsFlextTestsEnforcementPlugin:
         tm.that(names, eq={"flext_tests", "flext_tests_enforcement"})
 
     def test_flext_pytest11_entrypoint_load_defers_fixture_imports(
-        self, pytester: pytest.Pytester
+        self,
+        pytester: pytest.Pytester,
     ) -> None:
         """Cold entry-point discovery does not pre-import measured product code."""
         probe = (
@@ -56,7 +60,8 @@ class TestsFlextTestsEnforcementPlugin:
 
     @pytest.mark.slow
     def test_inactive_session_collects_without_the_model_facade(
-        self, pytester: pytest.Pytester
+        self,
+        pytester: pytest.Pytester,
     ) -> None:
         """An ungoverned session configures and collects without ``m`` loaded."""
         pytester.makeini("[pytest]\n")
@@ -66,7 +71,7 @@ class TestsFlextTestsEnforcementPlugin:
             "\n"
             "def pytest_collection_finish(session):\n"
             "    if 'flext_tests.models' in sys.modules:\n"
-            "        raise RuntimeError('flext_tests.models loaded at collection')\n"
+            "        raise RuntimeError('flext_tests.models loaded at collection')\n",
         )
         pytester.makepyfile(test_probe="def test_probe() -> None:\n    assert True\n")
         result = pytester.runpytest_subprocess("--collect-only", "-q")
@@ -91,7 +96,7 @@ class TestsFlextTestsEnforcementPlugin:
                 "        e.MroViolation,\n"
                 "        stacklevel=2,\n"
                 "    )\n"
-            )
+            ),
         )
 
     @classmethod
@@ -105,7 +110,8 @@ class TestsFlextTestsEnforcementPlugin:
 
     @pytest.mark.slow
     def test_dispatcher_records_warning_and_prints_summary(
-        self, pytester: pytest.Pytester
+        self,
+        pytester: pytest.Pytester,
     ) -> None:
         """Non-strict run captures the warning and reports it in the summary."""
         self._make_workspace_sandbox(pytester)
@@ -120,12 +126,14 @@ class TestsFlextTestsEnforcementPlugin:
 
     @pytest.mark.slow
     def test_strict_mode_promotes_warning_to_failure(
-        self, pytester: pytest.Pytester
+        self,
+        pytester: pytest.Pytester,
     ) -> None:
         """--flext-enforce-strict promotes the configured warning to a failure."""
         self._make_workspace_sandbox(pytester)
         result = pytester.runpytest_subprocess(
-            "--flext-enforce-rules=ENFORCE-022", "--flext-enforce-strict"
+            "--flext-enforce-rules=ENFORCE-022",
+            "--flext-enforce-strict",
         )
         result.assert_outcomes(failed=1)
         result.stdout.fnmatch_lines([
@@ -135,7 +143,8 @@ class TestsFlextTestsEnforcementPlugin:
 
     @pytest.mark.slow
     def test_dispatcher_inactive_outside_workspace(
-        self, pytester: pytest.Pytester
+        self,
+        pytester: pytest.Pytester,
     ) -> None:
         """Without workspace markers the dispatcher stays silent and passive."""
         pytester.makeini("[pytest]\n")
@@ -147,10 +156,12 @@ class TestsFlextTestsEnforcementPlugin:
 
     @pytest.mark.slow
     def test_infra_rule_engine_boundary_runs_in_subprocess(
-        self, pytester: pytest.Pytester
+        self,
+        pytester: pytest.Pytester,
     ) -> None:
         """Engine findings come through the public Result boundary; a rule the
-        engine does not declare is a failure, never an empty scan."""
+        engine does not declare is a failure, never an empty scan.
+        """
         pytester.makeini("[pytest]\n")
         pytester.makepyfile(
             test_public_boundary=(
@@ -165,7 +176,7 @@ class TestsFlextTestsEnforcementPlugin:
                 "        package = project / 'src' / 'flext_contract_probe'\n"
                 "        package.mkdir(parents=True)\n"
                 "        (package / '__init__.py').write_text(\n"
-                "            '\"\"\"Probe.\"\"\"\\n\\nfrom __future__ import annotations\\n',\n"
+                '            \'"""Probe."""\\n\\nfrom __future__ import annotations\\n\',\n'
                 "            encoding='utf-8',\n"
                 "        )\n"
                 "        (project / 'pyproject.toml').write_text(\n"
@@ -184,7 +195,7 @@ class TestsFlextTestsEnforcementPlugin:
                 "            project, required_rule_ids=frozenset()\n"
                 "        )\n"
                 "        assert scanned.success\n"
-            )
+            ),
         )
         result = pytester.runpytest_subprocess()
         result.assert_outcomes(passed=1)

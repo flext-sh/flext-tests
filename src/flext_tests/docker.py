@@ -1,4 +1,8 @@
-"""Docker container control facade for FLEXT test infrastructure."""
+"""Docker container control facade for FLEXT test infrastructure.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -40,11 +44,13 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     """
 
     repository_root: Annotated[
-        Path, u.Field(description="Workspace root used to resolve compose files.")
+        Path,
+        u.Field(description="Workspace root used to resolve compose files."),
     ] = u.Field(default_factory=Path.cwd)
 
     state_dir: Annotated[
-        Path, u.Field(description="Host directory of the container state records.")
+        Path,
+        u.Field(description="Host directory of the container state records."),
     ] = u.Field(default_factory=u.Tests.docker_state_dir)
 
     docker_client: Annotated[
@@ -64,28 +70,45 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     @staticmethod
     def ci_disables_docker() -> bool:
-        """True when the Make CI token (not GitHub's CI=true) is active."""
+        """True when the Make CI token (not GitHub's CI=true) is active.
+
+        Returns:
+            The resulting ``bool``.
+        """
         ci = infra_config.Infra.codegen.make.ci
         return (u.Infra.env_lookup(ci.variable) or "").strip() == ci.value
 
     @classmethod
     def lifecycle_enabled(cls) -> p.Result[bool]:
-        """Gate every Docker effect: fail ``DISABLED_BY_CI`` under the CI token."""
+        """Gate every Docker effect: fail ``DISABLED_BY_CI`` under the CI token.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         if not cls.ci_disables_docker():
             return r[bool].ok(True)
         ci = infra_config.Infra.codegen.make.ci
         return r[bool].fail(
             c.Tests.ERR_DOCKER_DISABLED_BY_CI.format(
-                variable=ci.variable, value=ci.value
+                variable=ci.variable,
+                value=ci.value,
             ),
             error_code=c.Tests.DockerErrorCode.DISABLED_BY_CI,
         )
 
     @staticmethod
     def _resolve_shared_target_config(
-        container_name: str, repository_root: Path
+        container_name: str,
+        repository_root: Path,
     ) -> m.Tests.ContainerConfig:
-        """Resolve one shared-container entry into the canonical target config."""
+        """Resolve one shared-container entry into the canonical target config.
+
+        Returns:
+            The resulting ``m.Tests.ContainerConfig``.
+
+        Raises:
+            ValueError: If Unknown shared container; or if Shared container.
+        """
         settings = c.Tests.SHARED_CONTAINERS.get(container_name)
         if settings is None:
             msg = f"Unknown shared container: {container_name}"
@@ -102,7 +125,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         if not compose_path.is_absolute():
             compose_path = repository_root / compose_path
         return target.model_copy(
-            update={"container_name": container_name, "compose_file": compose_path}
+            update={"container_name": container_name, "compose_file": compose_path},
         )
 
     @staticmethod
@@ -112,6 +135,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         The SDK's default endpoint is /var/run/docker.sock, which a rootless
         installation does not provide; the per-user socket at
         /run/user/<uid>/docker.sock is the standard rootless endpoint.
+
+        Returns:
+            The resulting ``str | None``.
         """
         uid_socket = Path(f"/run/user/{os.getuid()}/docker.sock")
         if uid_socket.exists():
@@ -125,6 +151,10 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         When the SDK default endpoint is absent (rootless docker), the
         operator's `docker context` endpoint is adopted so the capability
         matches the way the operator's docker actually runs.
+
+        Raises:
+            FileNotFoundError: If ``isinstance(adapter, UnixHTTPAdapter) and (not
+                Path(adapter.socket_path).exists())``.
         """
         if self.docker_client is None and self.client_error is None:
             client: DockerSDKClient | None = None
@@ -143,13 +173,15 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 context_host = self._context_docker_host()
                 if context_host is not None:
                     retry = _DockerClientWithBaseUrl(
-                        base_url=context_host, version=DEFAULT_DOCKER_API_VERSION
+                        base_url=context_host,
+                        version=DEFAULT_DOCKER_API_VERSION,
                     )
                     try:
                         _ = retry.ping()
                     except (DockerException, OSError) as retry_error:
                         self.logger.exception(
-                            "Failed to initialize Docker client", error=str(retry_error)
+                            "Failed to initialize Docker client",
+                            error=str(retry_error),
                         )
                         self.client_error = str(retry_error)
                     else:
@@ -158,7 +190,8 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                     if self.docker_client is not None:
                         return self.docker_client
                 self.logger.exception(
-                    "Failed to initialize Docker client", error=str(error)
+                    "Failed to initialize Docker client",
+                    error=str(error),
                 )
                 self.client_error = str(error)
             else:
@@ -173,21 +206,37 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return tuple(state.container_name for state in states if state.dirty)
 
     def container_dirty(self, container_name: str) -> bool:
-        """Whether the host record marks a container dirty."""
+        """Whether the host record marks a container dirty.
+
+        Returns:
+            The resulting ``bool``.
+        """
         return (
             u.Tests.read_container_state(self.state_dir, container_name).unwrap().dirty
         )
 
     def mark_container_clean(self, container_name: str) -> p.Result[bool]:
-        """Mark a container clean in the host record."""
+        """Mark a container clean in the host record.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         return self._record_dirty(container_name, dirty=False)
 
     def mark_container_dirty(self, container_name: str) -> p.Result[bool]:
-        """Mark a container dirty so the next ensure recreates it."""
+        """Mark a container dirty so the next ensure recreates it.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         return self._record_dirty(container_name, dirty=True)
 
     def _record_dirty(self, container_name: str, *, dirty: bool) -> p.Result[bool]:
-        """Rewrite the dirty flag of one host record."""
+        """Rewrite the dirty flag of one host record.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         updated = u.Tests.update_container_state(
             self.state_dir,
             container_name,
@@ -196,15 +245,23 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         if updated.failure:
             return r[bool].from_failure(updated)
         self.logger.info(
-            "Container dirty flag set", container=container_name, dirty=dirty
+            "Container dirty flag set",
+            container=container_name,
+            dirty=dirty,
         )
         return r[bool].ok(True)
 
     @staticmethod
     def _compose_client(
-        compose_file: Path, project: str, env_files: t.VariadicTuple[Path] = ()
+        compose_file: Path,
+        project: str,
+        env_files: t.VariadicTuple[Path] = (),
     ) -> WhalesDockerClient:
-        """Bind one compose file, its project and its env files to a client."""
+        """Bind one compose file, its project and its env files to a client.
+
+        Returns:
+            The resulting ``WhalesDockerClient``.
+        """
         return WhalesDockerClient(
             client_type="docker",
             compose_files=[compose_file],
@@ -225,7 +282,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         )
 
     def _compose_path(self, compose_file: str) -> Path:
-        """Resolve a compose path against the configured workspace root."""
+        """Resolve a compose path against the configured workspace root.
+
+        Returns:
+            The resulting ``Path``.
+        """
         compose_path = Path(compose_file)
         return (
             compose_path
@@ -234,14 +295,23 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         )
 
     def compose_down(self, compose_file: str) -> p.Result[str]:
-        """Remove the project of one compose file with its volumes."""
+        """Remove the project of one compose file with its volumes.
+
+        Returns:
+            The resulting ``p.Result[str]``.
+        """
         compose_path = self._compose_path(compose_file)
         return self._compose_down(
-            compose_path, u.Tests.docker_compose_project(compose_path)
+            compose_path,
+            u.Tests.docker_compose_project(compose_path),
         )
 
     def _compose_down(self, compose_path: Path, project: str) -> p.Result[str]:
-        """Remove one compose project with its volumes."""
+        """Remove one compose project with its volumes.
+
+        Returns:
+            The resulting ``p.Result[str]``.
+        """
         enabled = self.lifecycle_enabled()
         if enabled.failure:
             return r[str].from_failure(enabled)
@@ -259,7 +329,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         *,
         force_recreate: bool = False,
     ) -> p.Result[str]:
-        """Start the project of one compose file and wait for its health."""
+        """Start the project of one compose file and wait for its health.
+
+        Returns:
+            The resulting ``p.Result[str]``.
+        """
         compose_path = self._compose_path(compose_file)
         return self._compose_up(
             compose_path,
@@ -276,7 +350,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         *,
         force_recreate: bool,
     ) -> p.Result[str]:
-        """Start one compose project and wait for its health."""
+        """Start one compose project and wait for its health.
+
+        Returns:
+            The resulting ``p.Result[str]``.
+        """
         enabled = self.lifecycle_enabled()
         if enabled.failure:
             return r[str].from_failure(enabled)
@@ -301,11 +379,15 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return r[str].ok("Compose up successful")
 
     def _inspect(self, container_name: str) -> p.Result[m.Tests.ContainerInspect]:
-        """Inspect one container; an absent one fails NOT_PROVISIONED."""
+        """Inspect one container; an absent one fails NOT_PROVISIONED.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInspect]``.
+        """
         client = self.client
         if client is None:
             return r[m.Tests.ContainerInspect].fail(
-                self.client_error or "Docker daemon unavailable"
+                self.client_error or "Docker daemon unavailable",
             )
         try:
             container = client.containers.get(container_name)
@@ -324,33 +406,54 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         )
 
     def fetch_container_info(
-        self, container_name: str
+        self,
+        container_name: str,
     ) -> p.Result[m.Tests.ContainerInfo]:
-        """Inspect one container; an absent one fails NOT_PROVISIONED."""
+        """Inspect one container; an absent one fails NOT_PROVISIONED.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+        """
         return self._inspect(container_name).map(
-            lambda inspect: u.Tests.container_info(container_name, inspect)
+            lambda inspect: u.Tests.container_info(container_name, inspect),
         )
 
     def fetch_container_status(
-        self, container_name: str
+        self,
+        container_name: str,
     ) -> p.Result[m.Tests.ContainerInfo]:
-        """Fetch container status."""
+        """Fetch container status.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+        """
         return self.fetch_container_info(container_name)
 
     def fetch_container_environment(
-        self, container_name: str, keys: t.StrSequence
+        self,
+        container_name: str,
+        keys: t.StrSequence,
     ) -> p.Result[t.MappingKV[str, t.SecretStr]]:
         """Read named creation variables of a container as secrets.
 
         A key the container does not carry fails ``ENVIRONMENT_MISSING``,
         naming the key and never a value.
+
+        Returns:
+            The resulting ``p.Result[t.MappingKV[str, t.SecretStr]]``.
         """
         return self._inspect(container_name).flat_map(
-            lambda inspect: u.Tests.container_environment(container_name, inspect, keys)
+            lambda inspect: u.Tests.container_environment(
+                container_name, inspect, keys
+            ),
         )
 
     def start_existing_container(self, container_name: str) -> p.Result[bool]:
-        """Start an existing stopped container by name."""
+        """Start an existing stopped container by name.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         enabled = self.lifecycle_enabled()
         if enabled.failure:
             return enabled
@@ -364,29 +467,42 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             return r[bool].fail(f"Container {container_name} not found")
         except (DockerException, OSError, RuntimeError, AttributeError) as exc:
             return r[bool].fail(
-                f"Failed to inspect container {container_name}: {exc}", exception=exc
+                f"Failed to inspect container {container_name}: {exc}",
+                exception=exc,
             )
         return self._start_sdk_container(container_name, container)
 
     @staticmethod
     def _start_sdk_container(
-        container_name: str, container: Container
+        container_name: str,
+        container: Container,
     ) -> p.Result[bool]:
-        """Start a Docker SDK container when it is not already running."""
+        """Start a Docker SDK container when it is not already running.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         try:
             if container.status == c.Tests.ContainerStatus.RUNNING:
                 return r[bool].ok(value=True)
             container.start()
         except (DockerException, OSError, RuntimeError, AttributeError) as exc:
             return r[bool].fail(
-                f"Failed to start container {container_name}: {exc}", exception=exc
+                f"Failed to start container {container_name}: {exc}",
+                exception=exc,
             )
         return r[bool].ok(value=True)
 
     def start_compose_stack(
-        self, compose_file: str, network_name: str | None = None
+        self,
+        compose_file: str,
+        network_name: str | None = None,
     ) -> p.Result[str]:
-        """Start a Docker Compose stack."""
+        """Start a Docker Compose stack.
+
+        Returns:
+            The resulting ``p.Result[str]``.
+        """
         _ = network_name
         result = self.compose_up(compose_file)
         if result.failure:
@@ -394,12 +510,18 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return r[str].ok("Stack started successfully")
 
     def wait_for_port_ready(
-        self, host: str, port: int, max_wait: float | None = None
+        self,
+        host: str,
+        port: int,
+        max_wait: float | None = None,
     ) -> p.Result[bool]:
         """Poll until a TCP port accepts connections or the bound passes.
 
         The bound is wall-clock, so connection attempts count against it.
         Without ``max_wait`` the ``DOCKER_PROBE_MAX_WAIT_SECONDS`` budget applies.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
         """
         probe_budget = (
             max_wait if max_wait is not None else c.Tests.DOCKER_PROBE_MAX_WAIT_SECONDS
@@ -408,7 +530,8 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         while True:
             try:
                 with socket.create_connection(
-                    (host, port), timeout=c.Tests.DOCKER_TCP_CONNECT_TIMEOUT_SECONDS
+                    (host, port),
+                    timeout=c.Tests.DOCKER_TCP_CONNECT_TIMEOUT_SECONDS,
                 ):
                     return r[bool].ok(value=True)
             except OSError as exc:
@@ -427,13 +550,18 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         repository_root: Path | None = None,
         state_dir: Path | None = None,
     ) -> Self:
-        """Build a DSL-configured service from a shared container constant."""
+        """Build a DSL-configured service from a shared container constant.
+
+        Returns:
+            The resulting ``Self``.
+        """
         resolved_root = repository_root or Path.cwd()
         return cls(
             repository_root=resolved_root,
             state_dir=state_dir or u.Tests.docker_state_dir(),
             target_config=cls._resolve_shared_target_config(
-                container_name, resolved_root
+                container_name,
+                resolved_root,
             ),
         )
 
@@ -446,7 +574,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         repository_root: Path | None = None,
         state_dir: Path | None = None,
     ) -> Self:
-        """Build a DSL-configured service for an explicit compose target."""
+        """Build a DSL-configured service for an explicit compose target.
+
+        Returns:
+            The resulting ``Self``.
+        """
         resolved_root = repository_root or Path.cwd()
         compose_path = Path(compose_file)
         if not compose_path.is_absolute():
@@ -467,7 +599,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         repository_root: Path | None = None,
         state_dir: Path | None = None,
     ) -> Self:
-        """Build a DSL-configured service for a compose stack target."""
+        """Build a DSL-configured service for a compose stack target.
+
+        Returns:
+            The resulting ``Self``.
+        """
         return cls.compose(
             compose_file,
             target=target,
@@ -476,7 +612,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         )
 
     def up(self) -> p.Result[str]:
-        """Start the configured compose target using the DSL state."""
+        """Start the configured compose target using the DSL state.
+
+        Returns:
+            The resulting ``p.Result[str]``.
+        """
         target = self.target_config
         if target is None:
             return r[str].fail(c.Tests.ERR_DOCKER_TARGET_MISSING)
@@ -490,7 +630,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         )
 
     def down(self) -> p.Result[str]:
-        """Stop the configured compose target using the DSL state."""
+        """Stop the configured compose target using the DSL state.
+
+        Returns:
+            The resulting ``p.Result[str]``.
+        """
         target = self.target_config
         if target is None:
             return r[str].fail(c.Tests.ERR_DOCKER_TARGET_MISSING)
@@ -502,16 +646,23 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         )
 
     def ready(
-        self, *, port: int | None = None, max_wait: int | None = None
+        self,
+        *,
+        port: int | None = None,
+        max_wait: int | None = None,
     ) -> p.Result[bool]:
-        """Probe the configured host and port, as given, until it accepts TCP."""
+        """Probe the configured host and port, as given, until it accepts TCP.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         target = self.target_config
         if target is None:
             return r[bool].fail(c.Tests.ERR_DOCKER_TARGET_MISSING)
         resolved_port = target.port if port is None else port
         if resolved_port is None:
             return r[bool].fail(
-                f"Docker target {target.container_name} has no configured readiness port."
+                f"Docker target {target.container_name} has no configured readiness port.",
             )
         return self.wait_for_port_ready(
             target.host,
@@ -526,6 +677,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         record whose name is not a declared shared container belongs to the
         lifecycle that declares it and is left untouched. The first failure is
         returned.
+
+        Returns:
+            The resulting ``p.Result[t.StrSequence]``.
         """
         enabled = self.lifecycle_enabled()
         if enabled.failure:
@@ -546,7 +700,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return r[t.StrSequence].ok(tuple(cleaned))
 
     def _target_error(self) -> str | None:
-        """Explain why the configured target cannot run the lifecycle."""
+        """Explain why the configured target cannot run the lifecycle.
+
+        Returns:
+            The resulting ``str | None``.
+        """
         target = self.target_config
         if target is None:
             return c.Tests.ERR_DOCKER_TARGET_MISSING
@@ -555,9 +713,14 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return None
 
     def fingerprint(
-        self, target: m.Tests.ContainerConfig | None = None
+        self,
+        target: m.Tests.ContainerConfig | None = None,
     ) -> p.Result[str]:
-        """Fingerprint a target's declared inputs; the configured one by default."""
+        """Fingerprint a target's declared inputs; the configured one by default.
+
+        Returns:
+            The resulting ``p.Result[str]``.
+        """
         resolved = target or self.target_config
         if resolved is None:
             return r[str].fail(c.Tests.ERR_DOCKER_TARGET_MISSING)
@@ -571,6 +734,10 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         every lease to be released, up to the target's lock timeout. An
         ``execute`` that must mutate cannot run inside its own session's
         lease: ensure first, then lease.
+
+        Raises:
+            ValueError: If ``target is None or target.container_name is None or error is
+                not None``.
         """
         target = self.target_config
         error = self._target_error()
@@ -584,9 +751,15 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             yield
 
     def _observe(
-        self, container_name: str
+        self,
+        container_name: str,
     ) -> p.Result[t.Pair[m.Tests.ContainerInfo | None, m.Tests.ContainerState]]:
-        """Read the container (absent is None) and its host record."""
+        """Read the container (absent is None) and its host record.
+
+        Returns:
+            The resulting ``p.Result[t.Pair[m.Tests.ContainerInfo | None,
+                m.Tests.ContainerState]]``.
+        """
         state = u.Tests.read_container_state(self.state_dir, container_name)
         if state.failure:
             return r[
@@ -623,6 +796,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         compose with ``--wait``, runs ``initializer`` once on a created
         container, seals the record and then waits for readiness.
         ``creation_environment`` reaches compose only while it creates.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInfo]``.
         """
         target = self.target_config
         error = self._target_error()
@@ -650,7 +826,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             )
         except TimeoutError as exc:
             return r[m.Tests.ContainerInfo].fail(
-                str(exc), error_code=c.Tests.DockerErrorCode.LOCK_TIMEOUT, exception=exc
+                str(exc),
+                error_code=c.Tests.DockerErrorCode.LOCK_TIMEOUT,
+                exception=exc,
             )
 
     def _ensure_leased(
@@ -662,10 +840,16 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         readiness_probe: p.Tests.ReadinessProbe | None,
         environment: t.MappingKV[str, t.SecretStr],
     ) -> p.Result[m.Tests.ContainerInfo]:
-        """Reuse under the shared lease, otherwise converge under the exclusive one."""
+        """Reuse under the shared lease, otherwise converge under the exclusive one.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+        """
         lease_file = u.Tests.docker_lease_lock_file(self.state_dir, container_name)
         with u.Tests.FileLock(
-            lease_file, shared=True, timeout_seconds=target.lock_timeout_seconds
+            lease_file,
+            shared=True,
+            timeout_seconds=target.lock_timeout_seconds,
         ):
             observed = self._observe(container_name)
             if observed.failure:
@@ -680,7 +864,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 return self._serve(target, info, readiness_probe)
         with u.Tests.FileLock(lease_file, timeout_seconds=target.lock_timeout_seconds):
             converged = self._converge(
-                target, container_name, fingerprint, initializer, environment
+                target,
+                container_name,
+                fingerprint,
+                initializer,
+                environment,
             )
             if converged.failure:
                 return converged
@@ -694,7 +882,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         initializer: p.Tests.ContainerInitializer | None,
         environment: t.MappingKV[str, t.SecretStr],
     ) -> p.Result[m.Tests.ContainerInfo]:
-        """Under the exclusive lease, decide again and apply the decision."""
+        """Under the exclusive lease, decide again and apply the decision.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+        """
         observed = self._observe(container_name)
         if observed.failure:
             return r[m.Tests.ContainerInfo].from_failure(observed)
@@ -708,7 +900,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             return r[m.Tests.ContainerInfo].ok(info)
         if action == c.Tests.ContainerAction.START:
             return self._compose_to_health(target, (), recreate=False).flat_map(
-                lambda _: self.fetch_container_info(container_name)
+                lambda _: self.fetch_container_info(container_name),
             )
         unsealed = u.Tests.update_container_state(
             self.state_dir,
@@ -718,10 +910,14 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         if unsealed.failure:
             return r[m.Tests.ContainerInfo].from_failure(unsealed)
         with u.Tests.creation_env_file(
-            self.state_dir, container_name, environment
+            self.state_dir,
+            container_name,
+            environment,
         ) as env_files:
             created = self._compose_to_health(
-                target, env_files, recreate=action == c.Tests.ContainerAction.RECREATE
+                target,
+                env_files,
+                recreate=action == c.Tests.ContainerAction.RECREATE,
             )
         if created.failure:
             return r[m.Tests.ContainerInfo].from_failure(created)
@@ -742,7 +938,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                     "fingerprint": fingerprint,
                     "dirty": False,
                     "sealed": True,
-                }
+                },
             ),
         )
         if sealed.failure:
@@ -756,7 +952,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         *,
         recreate: bool,
     ) -> p.Result[bool]:
-        """Run compose up with --wait bounded by the target's startup timeout."""
+        """Run compose up with --wait bounded by the target's startup timeout.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         compose_file = target.compose_file
         if compose_file is None:
             return r[bool].fail(c.Tests.ERR_DOCKER_TARGET_NOT_INSPECTABLE)
@@ -787,7 +987,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         info: m.Tests.ContainerInfo,
         readiness_probe: p.Tests.ReadinessProbe | None,
     ) -> p.Result[m.Tests.ContainerInfo]:
-        """Wait, within startup_timeout, for health, the published port and probe."""
+        """Wait, within startup_timeout, for health, the published port and probe.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+        """
         deadline = time.monotonic() + target.startup_timeout
         settled = self._await_health(info, deadline, target.startup_timeout)
         if settled.failure:
@@ -799,7 +1003,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         }:
             return r[m.Tests.ContainerInfo].fail(
                 c.Tests.ERR_DOCKER_UNHEALTHY.format(
-                    name=current.name, status=current.status, health=current.health
+                    name=current.name,
+                    status=current.status,
+                    health=current.health,
                 ),
                 error_code=c.Tests.DockerErrorCode.UNHEALTHY,
             )
@@ -809,7 +1015,10 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 return r[m.Tests.ContainerInfo].from_failure(listening)
         if readiness_probe is not None:
             probed = self._poll_readiness(
-                current, readiness_probe, deadline, target.startup_timeout
+                current,
+                readiness_probe,
+                deadline,
+                target.startup_timeout,
             )
             if probed.failure:
                 return r[m.Tests.ContainerInfo].from_failure(probed)
@@ -821,12 +1030,18 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         info: m.Tests.ContainerInfo,
         deadline: float,
     ) -> p.Result[bool]:
-        """Wait for the published host port of the target's container port."""
+        """Wait for the published host port of the target's container port.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         host_port = u.Tests.resolve_host_port(info, target.port or 0)
         if host_port.failure:
             return r[bool].from_failure(host_port)
         listening = self.wait_for_port_ready(
-            target.host, host_port.value, max_wait=deadline - time.monotonic()
+            target.host,
+            host_port.value,
+            max_wait=deadline - time.monotonic(),
         )
         if listening.failure:
             return r[bool].fail(
@@ -841,9 +1056,16 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         return listening
 
     def _await_health(
-        self, info: m.Tests.ContainerInfo, deadline: float, timeout: int
+        self,
+        info: m.Tests.ContainerInfo,
+        deadline: float,
+        timeout: int,
     ) -> p.Result[m.Tests.ContainerInfo]:
-        """Poll a starting healthcheck until it settles or the deadline passes."""
+        """Poll a starting healthcheck until it settles or the deadline passes.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+        """
         current = info
         while current.health == c.Tests.ContainerHealth.STARTING:
             if time.monotonic() >= deadline:
@@ -869,7 +1091,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         deadline: float,
         timeout: int,
     ) -> p.Result[bool]:
-        """Poll a readiness probe until it reports True or the deadline passes."""
+        """Poll a readiness probe until it reports True or the deadline passes.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         while True:
             probed = readiness_probe(info)
             if probed.success and probed.value:
@@ -878,7 +1104,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             if time.monotonic() >= deadline:
                 return r[bool].fail(
                     c.Tests.ERR_DOCKER_READINESS_TIMEOUT.format(
-                        name=info.name, timeout=timeout, detail=detail
+                        name=info.name,
+                        timeout=timeout,
+                        detail=detail,
                     ),
                     error_code=c.Tests.DockerErrorCode.READINESS_TIMEOUT,
                 )
@@ -895,6 +1123,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         Fails typed: NOT_PROVISIONED, DIRTY, UNSEALED, FINGERPRINT_MISMATCH,
         UNHEALTHY, LOCK_TIMEOUT (a recreation holds the lease),
         ENVIRONMENT_MISSING, PORT_NOT_PUBLISHED or READINESS_TIMEOUT.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInfo]``.
         """
         target = self.target_config
         error = self._target_error()
@@ -902,7 +1133,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             return r[m.Tests.ContainerInfo].fail(error)
         container_name = target.container_name
         preflight = self.lifecycle_enabled().flat_map(
-            lambda _: u.Tests.docker_fingerprint(target)
+            lambda _: u.Tests.docker_fingerprint(target),
         )
         if preflight.failure:
             return r[m.Tests.ContainerInfo].from_failure(preflight)
@@ -922,7 +1153,9 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 )
         except TimeoutError as exc:
             return r[m.Tests.ContainerInfo].fail(
-                str(exc), error_code=c.Tests.DockerErrorCode.LOCK_TIMEOUT, exception=exc
+                str(exc),
+                error_code=c.Tests.DockerErrorCode.LOCK_TIMEOUT,
+                exception=exc,
             )
 
     def _verify_leased(
@@ -933,7 +1166,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         readiness_probe: p.Tests.ReadinessProbe | None,
         required_environment: t.StrSequence,
     ) -> p.Result[m.Tests.ContainerInfo]:
-        """Verify under a held shared lease."""
+        """Verify under a held shared lease.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+        """
         observed = self._observe(container_name)
         if observed.failure:
             return r[m.Tests.ContainerInfo].from_failure(observed)
@@ -949,7 +1186,8 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             return checked
         if required_environment:
             environment = self.fetch_container_environment(
-                container_name, required_environment
+                container_name,
+                required_environment,
             )
             if environment.failure:
                 return r[m.Tests.ContainerInfo].from_failure(environment)

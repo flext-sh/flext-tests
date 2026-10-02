@@ -1,4 +1,8 @@
-"""Native type, equality, and scalar guards for owned matcher payloads."""
+"""Native type, equality, and scalar guards for owned matcher payloads.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -23,12 +27,17 @@ class FlextTestsMatchersTypeGuardsMixin:
         *,
         owned_payload: bool = False,
     ) -> bool:
-        """Check original subjects or explicitly owned internal rule nodes."""
+        """Check original subjects or explicitly owned internal rule nodes.
+
+        Returns:
+            The resulting ``bool``.
+        """
         if owned_payload and isinstance(value, m.Tests.Payload):
             if value.kind == "atom":
                 return isinstance(value.atom, expected_type)
             return issubclass(
-                c.Tests.PAYLOAD_COLLECTION_TYPES[value.kind], expected_type
+                c.Tests.PAYLOAD_COLLECTION_TYPES[value.kind],
+                expected_type,
             )
         return isinstance(value, expected_type)
 
@@ -41,7 +50,11 @@ class FlextTestsMatchersTypeGuardsMixin:
         msg: str | None,
         default_msg: str,
     ) -> None:
-        """Compare native values directly without JSON or envelope equality."""
+        """Compare native values directly without JSON or envelope equality.
+
+        Raises:
+            AssertionError: If ``(actual == operand) is not equal``.
+        """
         actual = FlextTestsPayloadUtilities.to_match_value(actual_payload)
         for expected, equal in ((eq_value, True), (ne_value, False)):
             if expected is None:
@@ -56,13 +69,25 @@ class FlextTestsMatchersTypeGuardsMixin:
 
     @staticmethod
     def assert_scalar_match(
-        payload: p.Tests.Payload, params: m.Tests.ThatParams | m.Tests.OkParams
+        payload: p.Tests.Payload,
+        params: m.Tests.ThatParams | m.Tests.OkParams,
     ) -> None:
-        """Apply native equality then the canonical finite scalar guard."""
+        """Apply native equality then the canonical finite scalar guard.
+
+        Raises:
+            AssertionError: If ``params.none is not None and (native is None) is not
+                params.none``; or if ``params.match is not None and (not
+                isinstance(native, str) or params.match.search(native) is None)``; or if
+                ``not matches``; or if ``not (isinstance(native, Sized))``.
+        """
         native = FlextTestsPayloadUtilities.to_match_value(payload)
         message = params.msg or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=native)
         FlextTestsMatchersTypeGuardsMixin.prepare_eq_ne_payloads(
-            payload, params.eq, params.ne, msg=params.msg, default_msg=message
+            payload,
+            params.eq,
+            params.ne,
+            msg=params.msg,
+            default_msg=message,
         )
         if params.none is not None and (native is None) is not params.none:
             raise AssertionError(message)
@@ -99,8 +124,9 @@ class FlextTestsMatchersTypeGuardsMixin:
             raise AssertionError(
                 params.msg
                 or c.Tests.ERR_NOT_MATCHES.format(
-                    text=native, pattern=params.match.pattern
-                )
+                    text=native,
+                    pattern=params.match.pattern,
+                ),
             )
 
 

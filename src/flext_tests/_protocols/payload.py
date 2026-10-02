@@ -1,4 +1,8 @@
-"""Read-only capability for owned native test payload trees."""
+"""Read-only capability for owned native test payload trees.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -35,7 +39,8 @@ class FlextTestsPayloadProtocolsMixin:
             ...
 
         def __getitem__(
-            self, index: int
+            self,
+            index: int,
         ) -> (
             t.Tests.PayloadAtom
             | p.Model
@@ -70,7 +75,8 @@ class FlextTestsPayloadProtocolsMixin:
             ...
 
         def __getitem__(
-            self, key: str
+            self,
+            key: str,
         ) -> (
             t.Tests.PayloadAtom
             | p.Model

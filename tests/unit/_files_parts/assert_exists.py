@@ -1,4 +1,8 @@
-"""Private file assert_exists test mixins."""
+"""Private file assert_exists test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -91,7 +95,11 @@ class TestsFlextTestsFilesAssertExistsMixin:
         _ = path.write_text("content")
         path.chmod(420)
         _ = FlextTestsFiles.assert_exists(
-            path, is_file=True, not_empty=True, readable=True, writable=True
+            path,
+            is_file=True,
+            not_empty=True,
+            readable=True,
+            writable=True,
         )
 
     def test_assert_exists_is_file_false(self, tmp_path: Path) -> None:

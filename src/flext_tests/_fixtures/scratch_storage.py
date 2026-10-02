@@ -24,6 +24,9 @@ def _scratch_root(config: pytest.Config) -> Path:
     The owner mixin is reached directly, not through the composed ``u``
     facade: configuring an ungoverned session must not load the model facade
     that the other utility mixins import.
+
+    Returns:
+        The resulting ``Path``.
     """
     from flext_tests._utilities import FlextTestsScratchStorageUtilitiesMixin
 

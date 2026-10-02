@@ -1,4 +1,8 @@
-"""Private file batch and create_in test mixins."""
+"""Private file batch and create_in test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -70,7 +74,8 @@ class TestsFlextTestsFilesBatchCreateInMixin:
     def test_create_in_dict_content(self, tmp_path: Path) -> None:
         """Test create_in() for dict content (JSON)."""
         path = FlextTestsFiles(base_dir=tmp_path).create(
-            m.ConfigMap(root={"key": "value"}), "settings.json"
+            m.ConfigMap(root={"key": "value"}),
+            "settings.json",
         )
         tm.that(path.exists(), eq=True)
         empty_content: t.JsonMapping = {}
@@ -80,7 +85,8 @@ class TestsFlextTestsFilesBatchCreateInMixin:
     def test_create_in_yaml_content(self, tmp_path: Path) -> None:
         """Test create_in() for YAML file."""
         path = FlextTestsFiles(base_dir=tmp_path).create(
-            m.ConfigMap(root={"setting": True}), "settings.yaml"
+            m.ConfigMap(root={"setting": True}),
+            "settings.yaml",
         )
         tm.that(path.exists(), eq=True)
         empty_content: t.JsonMapping = {}
@@ -105,17 +111,20 @@ class TestsFlextTestsFilesBatchCreateInMixin:
     def test_create_in_format_detection(self, tmp_path: Path) -> None:
         """Test create_in() format auto-detection from extension."""
         path1 = FlextTestsFiles(base_dir=tmp_path).create(
-            m.ConfigMap(root={"key": "value"}), "settings.json"
+            m.ConfigMap(root={"key": "value"}),
+            "settings.json",
         )
         tm.that(path1.exists(), eq=True)
         tm.that(u.Cli.json_read(path1).unwrap(), eq={"key": "value"})
         path2 = FlextTestsFiles(base_dir=tmp_path).create(
-            m.ConfigMap(root={"key": "value"}), "settings.yaml"
+            m.ConfigMap(root={"key": "value"}),
+            "settings.yaml",
         )
         tm.that(path2.exists(), eq=True)
         tm.that(u.Cli.yaml_parse(path2.read_text()).unwrap(), eq={"key": "value"})
         path3 = FlextTestsFiles(base_dir=tmp_path).create(
-            [["a", "b"], ["1", "2"]], "data.csv"
+            [["a", "b"], ["1", "2"]],
+            "data.csv",
         )
         tm.that(path3.exists(), eq=True)
         lines = path3.read_text().strip().split("\n")
@@ -133,7 +142,9 @@ class TestsFlextTestsFilesBatchCreateInMixin:
     def test_create_in_custom_format(self, tmp_path: Path) -> None:
         """Test create_in() with explicit format override."""
         path = FlextTestsFiles(base_dir=tmp_path).create(
-            b"binary data", "data.dat", fmt=c.Tests.FILE_FORMAT_BIN
+            b"binary data",
+            "data.dat",
+            fmt=c.Tests.FILE_FORMAT_BIN,
         )
         tm.that(path.exists(), eq=True)
         tm.that(path.read_bytes(), eq=b"binary data")
@@ -141,7 +152,9 @@ class TestsFlextTestsFilesBatchCreateInMixin:
     def test_create_in_custom_encoding(self, tmp_path: Path) -> None:
         """Test create_in() with custom encoding."""
         path = FlextTestsFiles(base_dir=tmp_path).create(
-            "áéíóú", "unicode.txt", enc="utf-16"
+            "áéíóú",
+            "unicode.txt",
+            enc="utf-16",
         )
         tm.that(path.exists(), eq=True)
         tm.that(path.read_text(encoding="utf-16"), eq="áéíóú")
@@ -150,7 +163,9 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         """Test create_in() with custom JSON indentation."""
         content: m.ConfigMap = m.ConfigMap(root={"key": "value", "nested": {"a": 1}})
         path = FlextTestsFiles(base_dir=tmp_path).create(
-            content, "settings.json", indent=4
+            content,
+            "settings.json",
+            indent=4,
         )
         tm.that(path.exists(), eq=True)
         text = path.read_text()
@@ -160,7 +175,9 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         """Test create_in() CSV with explicit headers."""
         content = [["1", "2"], ["3", "4"]]
         path = FlextTestsFiles(base_dir=tmp_path).create(
-            content, "data.csv", headers=["col1", "col2"]
+            content,
+            "data.csv",
+            headers=["col1", "col2"],
         )
         tm.that(path.exists(), eq=True)
         lines = path.read_text().strip().split("\n")

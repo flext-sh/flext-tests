@@ -1,4 +1,8 @@
-"""Private file content metadata test mixins."""
+"""Private file content metadata test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -15,7 +19,8 @@ class TestsFlextTestsFilesContentMetaMixin:
         """Test info() with parse_content=True for JSON dict."""
         manager = tf(base_dir=tmp_path)
         path = manager.create(
-            m.ConfigMap(root={"key1": "value1", "key2": "value2"}), "settings.json"
+            m.ConfigMap(root={"key1": "value1", "key2": "value2"}),
+            "settings.json",
         )
         result = manager.info(path, parse_content=True)
         _ = u.Tests.assert_success(result)
@@ -41,7 +46,8 @@ class TestsFlextTestsFilesContentMetaMixin:
         """Test info() with parse_content=True for YAML dict."""
         manager = tf(base_dir=tmp_path)
         path = manager.create(
-            m.ConfigMap(root={"a": 1, "b": 2, "c": 3}), "settings.yaml"
+            m.ConfigMap(root={"a": 1, "b": 2, "c": 3}),
+            "settings.yaml",
         )
         result = manager.info(path, parse_content=True)
         _ = u.Tests.assert_success(result)
@@ -71,7 +77,8 @@ class TestsFlextTestsFilesContentMetaMixin:
 
         manager = tf(base_dir=tmp_path)
         path = manager.create(
-            m.ConfigMap(root={"name": "Alice", "age": 30}), "user.json"
+            m.ConfigMap(root={"name": "Alice", "age": 30}),
+            "user.json",
         )
         result = manager.info(path, validate_model=SimpleModel)
         _ = u.Tests.assert_success(result)
@@ -88,7 +95,8 @@ class TestsFlextTestsFilesContentMetaMixin:
 
         manager = tf(base_dir=tmp_path)
         path = manager.create(
-            m.ConfigMap(root={"other_field": "value"}), "invalid.json"
+            m.ConfigMap(root={"other_field": "value"}),
+            "invalid.json",
         )
         result = manager.info(path, validate_model=StrictModel)
         _ = u.Tests.assert_success(result)

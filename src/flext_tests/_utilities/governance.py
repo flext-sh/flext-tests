@@ -32,6 +32,9 @@ def _console_script_functions() -> dict[str, frozenset[str]]:
     One scan per session: ``importlib.metadata.entry_points`` walks every
     installed distribution on each call, and governance tests invoke the
     lookup once per package module.
+
+    Returns:
+        The resulting ``dict[str, frozenset[str]]``.
     """
     mapping: dict[str, set[str]] = {}
     for entry in importlib.metadata.entry_points(group="console_scripts"):
@@ -77,6 +80,12 @@ class FlextTestsModuleGovernanceMixin:
         Walks up the ancestor chain from ``_test_file`` until it finds a
         directory containing ``<SRC_DIR>/<PACKAGE_DIR>`` — anchoring discovery
         to the real package rather than a fixed, brittle parent depth.
+
+        Returns:
+            The resulting ``Path``.
+
+        Raises:
+            FileNotFoundError: If could not locate.
         """
         tests = cls._tests_config
         for ancestor in Path(cls._test_file).resolve().parents:
@@ -91,12 +100,20 @@ class FlextTestsModuleGovernanceMixin:
 
     @classmethod
     def _iter_package_modules(cls) -> list[Path]:
-        """Yield all Python module paths under the package root."""
+        """Yield all Python module paths under the package root.
+
+        Returns:
+            The resulting ``list[Path]``.
+        """
         return sorted(cls._package_root().rglob("*.py"))
 
     @classmethod
     def _module_dotted_name(cls, module_path: Path) -> str:
-        """Convert a package module path to its dotted import name."""
+        """Convert a package module path to its dotted import name.
+
+        Returns:
+            The resulting ``str``.
+        """
         package_root = cls._package_root()
         relative = module_path.relative_to(package_root.parent)
         parts = relative.with_suffix("").parts
@@ -106,7 +123,11 @@ class FlextTestsModuleGovernanceMixin:
 
     @classmethod
     def _import_package_module(cls, module_path: Path) -> ModuleType:
-        """Import a package module; an unimportable module is a defect that escapes."""
+        """Import a package module; an unimportable module is a defect that escapes.
+
+        Returns:
+            The resulting ``ModuleType``.
+        """
         return importlib.import_module(cls._module_dotted_name(module_path))
 
     @staticmethod
@@ -145,7 +166,7 @@ class FlextTestsModuleGovernanceMixin:
             for name, _ in self._module_top_level_attrs(module):
                 if name in {"logger", "_logger"}:
                     violations.append(
-                        str(module_path.relative_to(self._package_root().parent))
+                        str(module_path.relative_to(self._package_root().parent)),
                     )
                     break
         tm.that(
@@ -168,7 +189,7 @@ class FlextTestsModuleGovernanceMixin:
             if unexpected_functions:
                 violations.append(
                     f"{module_path.relative_to(self._package_root().parent)}: "
-                    f"{unexpected_functions}"
+                    f"{unexpected_functions}",
                 )
         tm.that(
             violations,
