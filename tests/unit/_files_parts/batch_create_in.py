@@ -15,7 +15,8 @@ from tests import c, m, r, t, u
 class TestsFlextTestsFilesBatchCreateInMixin:
     """File batch and create_in tests."""
 
-    def test_batch_create_multiple_files(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_batch_create_multiple_files(tmp_path: Path) -> None:
         """Test batch create for multiple files."""
         manager = FlextTestsFiles(base_dir=tmp_path)
         result = manager.batch_files(
@@ -28,7 +29,8 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         tm.that(batch_result.failure_count, eq=0)
         tm.that(batch_result.succeeded, eq=3)
 
-    def test_batch_create_json_files(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_batch_create_json_files(tmp_path: Path) -> None:
         """Test batch create for JSON files."""
         manager = FlextTestsFiles(base_dir=tmp_path)
         result = manager.batch_files(
@@ -41,7 +43,8 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         tm.that(settings1.exists(), eq=True)
         tm.that(u.Cli.json_read(settings1).unwrap()["key"], eq="value1")
 
-    def test_batch_on_error_collect(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_batch_on_error_collect(tmp_path: Path) -> None:
         """Test batch with on_error='collect' continues on failures."""
         manager = FlextTestsFiles(base_dir=tmp_path)
         readonly_dir = tmp_path / "readonly"
@@ -55,7 +58,8 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         batch_result = result.value
         tm.that(batch_result.succeeded, gte=1)
 
-    def test_batch_result_model_structure(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_batch_result_model_structure(tmp_path: Path) -> None:
         """Test BatchResult model has correct structure."""
         manager = FlextTestsFiles(base_dir=tmp_path)
         result = manager.batch_files({"file.txt": "content"}, directory=tmp_path)
@@ -65,13 +69,15 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         tm.that(batch_result.failed, is_=int)
         tm.that(batch_result.total, is_=int)
 
-    def test_create_in_text_content(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_create_in_text_content(tmp_path: Path) -> None:
         """Test create_in() for text content."""
         path = FlextTestsFiles(base_dir=tmp_path).create("hello world", "test.txt")
         tm.that(path.exists(), eq=True)
         tm.that(path.read_text(), eq="hello world")
 
-    def test_create_in_dict_content(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_create_in_dict_content(tmp_path: Path) -> None:
         """Test create_in() for dict content (JSON)."""
         path = FlextTestsFiles(base_dir=tmp_path).create(
             m.ConfigMap(root={"key": "value"}),
@@ -82,7 +88,8 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         content = u.Cli.json_read(path).unwrap_or(empty_content)
         tm.that(content, eq={"key": "value"})
 
-    def test_create_in_yaml_content(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_create_in_yaml_content(tmp_path: Path) -> None:
         """Test create_in() for YAML file."""
         path = FlextTestsFiles(base_dir=tmp_path).create(
             m.ConfigMap(root={"setting": True}),
@@ -93,7 +100,8 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         content = u.Cli.yaml_parse(path.read_text()).unwrap_or(empty_content)
         tm.that(content, eq={"setting": True})
 
-    def test_create_in_pydantic_model(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_create_in_pydantic_model(tmp_path: Path) -> None:
         """Test create_in() for Pydantic model content."""
 
         class UserModel(m.BaseModel):
@@ -108,7 +116,8 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         expected: t.Tests.TestobjectSerializable = {"name": "Alice", "age": 30}
         tm.that(content, eq=expected)
 
-    def test_create_in_format_detection(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_create_in_format_detection(tmp_path: Path) -> None:
         """Test create_in() format auto-detection from extension."""
         path1 = FlextTestsFiles(base_dir=tmp_path).create(
             m.ConfigMap(root={"key": "value"}),
@@ -130,7 +139,8 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         lines = path3.read_text().strip().split("\n")
         tm.that(len(lines), gte=2)
 
-    def test_create_in_with_flextresult(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_create_in_with_flextresult(tmp_path: Path) -> None:
         """Test create_in() with r content extraction."""
         result = r[t.Tests.FileContentPlain].ok(m.ConfigMap(root={"status": "success"}))
         path = FlextTestsFiles(base_dir=tmp_path).create(result, "result.json")
@@ -139,7 +149,8 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         content = u.Cli.json_read(path).unwrap_or(empty_content)
         tm.that(content, eq={"status": "success"})
 
-    def test_create_in_custom_format(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_create_in_custom_format(tmp_path: Path) -> None:
         """Test create_in() with explicit format override."""
         path = FlextTestsFiles(base_dir=tmp_path).create(
             b"binary data",
@@ -149,7 +160,8 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         tm.that(path.exists(), eq=True)
         tm.that(path.read_bytes(), eq=b"binary data")
 
-    def test_create_in_custom_encoding(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_create_in_custom_encoding(tmp_path: Path) -> None:
         """Test create_in() with custom encoding."""
         path = FlextTestsFiles(base_dir=tmp_path).create(
             "áéíóú",
@@ -159,7 +171,8 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         tm.that(path.exists(), eq=True)
         tm.that(path.read_text(encoding="utf-16"), eq="áéíóú")
 
-    def test_create_in_json_indent(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_create_in_json_indent(tmp_path: Path) -> None:
         """Test create_in() with custom JSON indentation."""
         content: m.ConfigMap = m.ConfigMap(root={"key": "value", "nested": {"a": 1}})
         path = FlextTestsFiles(base_dir=tmp_path).create(
@@ -171,7 +184,8 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         text = path.read_text()
         tm.that(text, has="    ")
 
-    def test_create_in_csv_with_headers(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_create_in_csv_with_headers(tmp_path: Path) -> None:
         """Test create_in() CSV with explicit headers."""
         content = [["1", "2"], ["3", "4"]]
         path = FlextTestsFiles(base_dir=tmp_path).create(

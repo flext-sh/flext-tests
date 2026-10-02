@@ -29,8 +29,8 @@ class FlextTestsFilesComparisonMixin:
             params.file2.read_text(encoding=enc),
         )
 
+    @staticmethod
     def _parse_both(
-        self,
         content1: str,
         content2: str,
         fmt: str,
@@ -70,8 +70,8 @@ class FlextTestsFilesComparisonMixin:
             "comparison contents are not both mappings",
         )
 
+    @staticmethod
     def _apply_key_filtering(
-        self,
         dict1: t.MappingKV[str, t.Tests.TestobjectSerializable],
         dict2: t.MappingKV[str, t.Tests.TestobjectSerializable],
         keys: t.StrSequence | None,

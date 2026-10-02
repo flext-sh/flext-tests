@@ -18,8 +18,8 @@ if TYPE_CHECKING:
 class TestsFlextTestsDockerTargetsMixin:
     """Docker target failure tests."""
 
+    @staticmethod
     def test_execute_requires_target_config(
-        self,
         docker_manager: FlextTestsDocker,
     ) -> None:
         """Test execute fails fast when no DSL target has been configured."""
@@ -27,7 +27,8 @@ class TestsFlextTestsDockerTargetsMixin:
         _ = u.Tests.assert_failure(result)
         tm.that(result.error, has="Docker target not configured")
 
-    def test_execute_rejects_stack_only_target(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_execute_rejects_stack_only_target(tmp_path: Path) -> None:
         """Test execute rejects stack targets without inspection container."""
         manager = FlextTestsDocker.stack(
             "docker-compose.stack.yml",
@@ -38,14 +39,15 @@ class TestsFlextTestsDockerTargetsMixin:
         _ = u.Tests.assert_failure(result)
         tm.that(result.error, has="no inspection container")
 
-    def test_up_requires_target_config(self, docker_manager: FlextTestsDocker) -> None:
+    @staticmethod
+    def test_up_requires_target_config(docker_manager: FlextTestsDocker) -> None:
         """Test up fails fast when no DSL target has been configured."""
         result = docker_manager.up()
         _ = u.Tests.assert_failure(result)
         tm.that(result.error, has="Docker target not configured")
 
+    @staticmethod
     def test_down_requires_target_config(
-        self,
         docker_manager: FlextTestsDocker,
     ) -> None:
         """Test down fails fast when no DSL target has been configured."""
@@ -53,8 +55,8 @@ class TestsFlextTestsDockerTargetsMixin:
         _ = u.Tests.assert_failure(result)
         tm.that(result.error, has="Docker target not configured")
 
+    @staticmethod
     def test_ready_requires_target_config(
-        self,
         docker_manager: FlextTestsDocker,
     ) -> None:
         """Test ready fails fast when no DSL target has been configured."""
@@ -62,7 +64,8 @@ class TestsFlextTestsDockerTargetsMixin:
         _ = u.Tests.assert_failure(result)
         tm.that(result.error, has="Docker target not configured")
 
-    def test_ready_uses_target_config_port(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_ready_uses_target_config_port(tmp_path: Path) -> None:
         """Test ready uses the configured target host and port."""
         manager = FlextTestsDocker.stack(
             "docker-compose.stack.yml",

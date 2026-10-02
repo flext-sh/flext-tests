@@ -146,7 +146,8 @@ class FlextTestsCapabilityPlugin:
         del config
         return reasons
 
-    def _ci_disables_docker(self) -> bool:
+    @staticmethod
+    def _ci_disables_docker() -> bool:
         """True when the Make CI token (config SSOT) is active.
 
         Returns:
@@ -170,8 +171,8 @@ class FlextTestsCapabilityPlugin:
         recorded.update(reasons)
         config.stash[_DESELECTED_CAPABILITY_RECEIPT] = recorded
 
+    @staticmethod
     def pytest_terminal_summary(
-        self,
         terminalreporter: pytest.TerminalReporter,
     ) -> None:
         """Report the typed NOT EXECUTED accounting for the runner receipts."""

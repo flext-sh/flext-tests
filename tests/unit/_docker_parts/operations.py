@@ -17,16 +17,16 @@ from tests import c, u
 class TestsFlextTestsDockerOperationsMixin:
     """Docker operation tests."""
 
+    @staticmethod
     def test_compose_down_returns_flext_result(
-        self,
         docker_manager: FlextTestsDocker,
     ) -> None:
         """Test compose_down failure behavior for missing compose file."""
         result = docker_manager.compose_down("missing-compose.yml")
         _ = u.Tests.assert_failure(result)
 
+    @staticmethod
     def test_start_existing_container_not_found(
-        self,
         docker_manager: FlextTestsDocker,
     ) -> None:
         """Test starting a container returns a failure result when unavailable."""
@@ -34,8 +34,8 @@ class TestsFlextTestsDockerOperationsMixin:
         _ = u.Tests.assert_failure(result)
         tm.that(result.error, is_=str)
 
+    @staticmethod
     def test_fetch_container_info_not_found(
-        self,
         docker_manager: FlextTestsDocker,
     ) -> None:
         """Test fetching container info returns a failure result when unavailable."""
@@ -43,13 +43,14 @@ class TestsFlextTestsDockerOperationsMixin:
         _ = u.Tests.assert_failure(result)
         tm.that(result.error, is_=str)
 
-    def test_fetch_container_status(self, docker_manager: FlextTestsDocker) -> None:
+    @staticmethod
+    def test_fetch_container_status(docker_manager: FlextTestsDocker) -> None:
         """Test fetch_container_status delegates to container lookup."""
         result = docker_manager.fetch_container_status("nonexistent")
         _ = u.Tests.assert_failure(result)
 
+    @staticmethod
     def test_wait_for_port_ready_immediate(
-        self,
         docker_manager: FlextTestsDocker,
     ) -> None:
         """Test wait_for_port_ready fails closed quickly for unavailable port."""
@@ -57,8 +58,8 @@ class TestsFlextTestsDockerOperationsMixin:
         _ = u.Tests.assert_failure(result)
         tm.that(result.error or "", has="not ready")
 
+    @staticmethod
     def test_cleanup_dirty_containers_empty(
-        self,
         docker_manager: FlextTestsDocker,
     ) -> None:
         """A host without dirty records recreates nothing."""
@@ -68,8 +69,8 @@ class TestsFlextTestsDockerOperationsMixin:
         _ = u.Tests.assert_success(result)
         tm.that(result.value, empty=True)
 
+    @staticmethod
     def test_cleanup_dirty_containers_keeps_foreign_records(
-        self,
         docker_manager: FlextTestsDocker,
     ) -> None:
         """A dirty record of an undeclared container is left to its own owner."""
@@ -82,13 +83,15 @@ class TestsFlextTestsDockerOperationsMixin:
         tm.that(result.value, empty=True)
         tm.that(docker_manager.container_dirty(foreign), eq=True)
 
-    def test_default_state_dir_is_host_scoped(self) -> None:
+    @staticmethod
+    def test_default_state_dir_is_host_scoped() -> None:
         """Without an explicit directory the records live in the host directory."""
         host_dir = Path.home().joinpath(*c.Tests.DOCKER_STATE_DIR_PARTS)
         tm.that(u.Tests.docker_state_dir(), eq=host_dir)
         tm.that(FlextTestsDocker().state_dir, eq=host_dir)
 
-    def test_builders_bind_the_given_state_dir(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_builders_bind_the_given_state_dir(tmp_path: Path) -> None:
         """Every builder carries an explicit state directory to the facade."""
         state_dir = tmp_path / "state"
         shared = FlextTestsDocker.shared(
@@ -104,12 +107,14 @@ class TestsFlextTestsDockerOperationsMixin:
         tm.that(shared.state_dir, eq=state_dir)
         tm.that(composed.state_dir, eq=state_dir)
 
-    def test_default_repository_root(self) -> None:
+    @staticmethod
+    def test_default_repository_root() -> None:
         """Test default repository_root is cwd."""
         manager = FlextTestsDocker()
         tm.that(manager.repository_root, eq=Path.cwd())
 
-    def test_custom_repository_root(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_custom_repository_root(tmp_path: Path) -> None:
         """Test custom repository_root."""
         manager = FlextTestsDocker(repository_root=tmp_path)
         tm.that(manager.repository_root, eq=tmp_path)

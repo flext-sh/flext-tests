@@ -27,7 +27,8 @@ class TestsFlextTestsEnforcementPlugin:
     # discovery itself; ordinary dispatcher behavior stays in-process or loads
     # only its explicit owner plugins.
 
-    def test_flext_pytest11_entrypoints_have_one_package_owner(self) -> None:
+    @staticmethod
+    def test_flext_pytest11_entrypoints_have_one_package_owner() -> None:
         """The flext-tests distribution publishes exactly its two pytest plugins."""
         names = {
             entry.name
@@ -36,8 +37,8 @@ class TestsFlextTestsEnforcementPlugin:
         }
         tm.that(names, eq={"flext_tests", "flext_tests_enforcement"})
 
+    @staticmethod
     def test_flext_pytest11_entrypoint_load_defers_fixture_imports(
-        self,
         pytester: pytest.Pytester,
     ) -> None:
         """Cold entry-point discovery does not pre-import measured product code."""
@@ -58,9 +59,9 @@ class TestsFlextTestsEnforcementPlugin:
         tm.that(completed.ret, eq=0)
         tm.that(completed.errlines, eq=[])
 
+    @staticmethod
     @pytest.mark.slow
     def test_inactive_session_collects_without_the_model_facade(
-        self,
         pytester: pytest.Pytester,
     ) -> None:
         """An ungoverned session configures and collects without ``m`` loaded."""
@@ -154,9 +155,9 @@ class TestsFlextTestsEnforcementPlugin:
         result.stdout.no_fnmatch_line("*flext-enforce*")
         result.stdout.no_fnmatch_line("runtime warnings captured:*")
 
+    @staticmethod
     @pytest.mark.slow
     def test_infra_rule_engine_boundary_runs_in_subprocess(
-        self,
         pytester: pytest.Pytester,
     ) -> None:
         """Engine findings come through the public Result boundary; a rule the
