@@ -14,9 +14,8 @@ from flext_cli import u
 
 from flext_core import r
 from flext_tests import c, m, p, t
-
-from ..files import FlextTestsFilesUtilitiesMixin
-from ._assertions import FlextTestsFilesAssertionsMixin
+from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
+from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
 
 
 class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):

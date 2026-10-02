@@ -1,4 +1,8 @@
-"""Enforcement protocols for flext_tests."""
+"""Enforcement protocols for flext_tests.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -47,7 +51,9 @@ class FlextTestsEnforcementProtocolsMixin:
         """Construct the external namespace enforcer boundary."""
 
         def __call__(
-            self, *, repository_root: Path
+            self,
+            *,
+            repository_root: Path,
         ) -> FlextTestsEnforcementProtocolsMixin.NamespaceEnforcer:
             """Construct an enforcer for one workspace root."""
             ...

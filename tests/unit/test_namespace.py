@@ -13,7 +13,7 @@ from pathlib import Path
 import pytest
 
 from flext_tests import m, u
-from tests import c
+from tests import c, u as test_u
 
 
 class TestsFlextTestsNamespace:
@@ -21,7 +21,7 @@ class TestsFlextTestsNamespace:
 
     def test_token_matches_the_declared_pattern(self, tmp_path: Path) -> None:
         """Tokens are 23 lowercase chars starting with a letter."""
-        namespace = u.Tests.namespace(
+        namespace = test_u.Tests.namespace(
             worker_id="w1",
             testrun_uid="run-1",
             checkout_root=tmp_path,
@@ -50,7 +50,7 @@ class TestsFlextTestsNamespace:
         for seed in range(100):
             random.seed(seed)
             for _ in range(100):
-                namespace = u.Tests.namespace(
+                namespace = test_u.Tests.namespace(
                     worker_id=f"w{seed % 7}",
                     testrun_uid=f"run-{seed}",
                     checkout_root=tmp_path,
@@ -61,12 +61,12 @@ class TestsFlextTestsNamespace:
 
     def test_worker_change_changes_the_token(self, tmp_path: Path) -> None:
         """Two workers on the same run derive different tokens."""
-        first = u.Tests.namespace(
+        first = test_u.Tests.namespace(
             worker_id="w0",
             testrun_uid="run",
             checkout_root=tmp_path,
         )
-        second = u.Tests.namespace(
+        second = test_u.Tests.namespace(
             worker_id="w1",
             testrun_uid="run",
             checkout_root=tmp_path,
@@ -81,12 +81,12 @@ class TestsFlextTestsNamespace:
     ) -> None:
         """Two checkouts derive different tokens and checkout digests."""
         other = tmp_path_factory.mktemp("other-checkout")
-        first = u.Tests.namespace(
+        first = test_u.Tests.namespace(
             worker_id="w0",
             testrun_uid="run",
             checkout_root=tmp_path,
         )
-        second = u.Tests.namespace(
+        second = test_u.Tests.namespace(
             worker_id="w0",
             testrun_uid="run",
             checkout_root=other,

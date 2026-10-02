@@ -14,6 +14,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from ._comparison_parts import FlextTestsFilesComparisonMixin
+from flext_tests._utilities._files._comparison_parts import (
+    FlextTestsFilesComparisonMixin,
+)
 
 __all__: list[str] = ["FlextTestsFilesComparisonMixin"]
