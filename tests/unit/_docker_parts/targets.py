@@ -1,4 +1,8 @@
-"""Private docker target failure test mixins."""
+"""Private docker target failure test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -15,7 +19,8 @@ class TestsFlextTestsDockerTargetsMixin:
     """Docker target failure tests."""
 
     def test_execute_requires_target_config(
-        self, docker_manager: FlextTestsDocker
+        self,
+        docker_manager: FlextTestsDocker,
     ) -> None:
         """Test execute fails fast when no DSL target has been configured."""
         result = docker_manager.execute()
@@ -40,7 +45,8 @@ class TestsFlextTestsDockerTargetsMixin:
         tm.that(result.error, has="Docker target not configured")
 
     def test_down_requires_target_config(
-        self, docker_manager: FlextTestsDocker
+        self,
+        docker_manager: FlextTestsDocker,
     ) -> None:
         """Test down fails fast when no DSL target has been configured."""
         result = docker_manager.down()
@@ -48,7 +54,8 @@ class TestsFlextTestsDockerTargetsMixin:
         tm.that(result.error, has="Docker target not configured")
 
     def test_ready_requires_target_config(
-        self, docker_manager: FlextTestsDocker
+        self,
+        docker_manager: FlextTestsDocker,
     ) -> None:
         """Test ready fails fast when no DSL target has been configured."""
         result = docker_manager.ready()
@@ -60,7 +67,9 @@ class TestsFlextTestsDockerTargetsMixin:
         manager = FlextTestsDocker.stack(
             "docker-compose.stack.yml",
             target=m.Tests.ContainerConfig(
-                container_name="stack-main", service="stack-main", port=59999
+                container_name="stack-main",
+                service="stack-main",
+                port=59999,
             ),
             repository_root=tmp_path,
         )

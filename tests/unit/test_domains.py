@@ -33,6 +33,9 @@ class TestsFlextTestsDomains:
             <root>/oid/oid_schema_fixtures.ldif
             <root>/oid/oid_entries_fixtures.ldif
             <root>/oud/oud_schema_fixtures.ldif
+
+        Returns:
+            The resulting ``Path``.
         """
         payloads: t.MappingKV[tuple[str, str], str] = {
             ("oid", "schema"): "dn: cn=schema,dc=oid\n",
@@ -43,7 +46,8 @@ class TestsFlextTestsDomains:
             group_dir = tmp_path / group
             group_dir.mkdir(parents=True, exist_ok=True)
             (group_dir / f"{group}_{kind}_fixtures.ldif").write_text(
-                text, encoding="utf-8"
+                text,
+                encoding="utf-8",
             )
         return tmp_path
 
@@ -92,7 +96,10 @@ class TestsFlextTestsDomains:
         ],
     )
     def test_default_handler_case_specs_flag_failures_consistently(
-        self, handler_id: str, *, should_fail: bool
+        self,
+        handler_id: str,
+        *,
+        should_fail: bool,
     ) -> None:
         """Only the ``fail_*`` handler specs carry the ``should_fail`` marker."""
         spec = next(
@@ -119,7 +126,9 @@ class TestsFlextTestsDomains:
     def test_load_fixture_returns_file_contents(self, fixtures_root: Path) -> None:
         """Loading an existing fixture returns its exact text."""
         loaded = FlextTestsDomains.load_fixture(
-            "oid", "schema", fixtures_root=fixtures_root
+            "oid",
+            "schema",
+            fixtures_root=fixtures_root,
         )
 
         tm.that(loaded, eq="dn: cn=schema,dc=oid\n")
@@ -127,7 +136,9 @@ class TestsFlextTestsDomains:
     def test_fixture_path_points_at_existing_file(self, fixtures_root: Path) -> None:
         """``fixture_path`` resolves to an existing file inside the group dir."""
         resolved = FlextTestsDomains.fixture_path(
-            "oid", "schema", fixtures_root=fixtures_root
+            "oid",
+            "schema",
+            fixtures_root=fixtures_root,
         )
 
         tm.that(resolved.exists(), eq=True)
@@ -135,19 +146,24 @@ class TestsFlextTestsDomains:
         tm.that(resolved.name, eq="oid_schema_fixtures.ldif")
 
     def test_fixture_path_raises_file_not_found_when_absent(
-        self, fixtures_root: Path
+        self,
+        fixtures_root: Path,
     ) -> None:
         """A missing fixture is a hard error, not a silent empty result."""
         with pytest.raises(FileNotFoundError, match="Fixture file not found"):
             FlextTestsDomains.fixture_path(
-                "oid", "missing", fixtures_root=fixtures_root
+                "oid",
+                "missing",
+                fixtures_root=fixtures_root,
             )
 
     def test_load_fixture_raises_when_fixture_absent(self, fixtures_root: Path) -> None:
         """Loading an absent fixture surfaces the missing-file failure."""
         with pytest.raises(FileNotFoundError):
             FlextTestsDomains.load_fixture(
-                "oid", "missing", fixtures_root=fixtures_root
+                "oid",
+                "missing",
+                fixtures_root=fixtures_root,
             )
 
     @pytest.mark.parametrize(
@@ -161,7 +177,12 @@ class TestsFlextTestsDomains:
         ],
     )
     def test_fixture_exists_reports_presence(
-        self, fixtures_root: Path, group: str, kind: str, *, expected: bool
+        self,
+        fixtures_root: Path,
+        group: str,
+        kind: str,
+        *,
+        expected: bool,
     ) -> None:
         """``fixture_exists`` mirrors on-disk presence without raising."""
         tm.that(
@@ -172,7 +193,8 @@ class TestsFlextTestsDomains:
     # --- fixture discovery ------------------------------------------------
 
     def test_available_fixture_servers_lists_group_dirs_sorted(
-        self, fixtures_root: Path
+        self,
+        fixtures_root: Path,
     ) -> None:
         """Discovery returns each server directory name, sorted."""
         tm.that(
@@ -181,44 +203,51 @@ class TestsFlextTestsDomains:
         )
 
     def test_available_fixture_servers_empty_for_missing_root(
-        self, tmp_path: Path
+        self,
+        tmp_path: Path,
     ) -> None:
         """A non-existent root yields an empty tuple, never an error."""
         tm.that(
             FlextTestsDomains.available_fixture_servers(
-                fixtures_root=tmp_path / "nope"
+                fixtures_root=tmp_path / "nope",
             ),
             eq=(),
         )
 
     def test_available_fixture_types_lists_kinds_for_group(
-        self, fixtures_root: Path
+        self,
+        fixtures_root: Path,
     ) -> None:
         """Discovery extracts the ``kind`` segment of each fixture file."""
         tm.that(
             FlextTestsDomains.available_fixture_types(
-                "oid", fixtures_root=fixtures_root
+                "oid",
+                fixtures_root=fixtures_root,
             ),
             eq=("entries", "schema"),
         )
 
     def test_available_fixture_types_empty_for_unknown_group(
-        self, fixtures_root: Path
+        self,
+        fixtures_root: Path,
     ) -> None:
         """An unknown group has no fixture types."""
         tm.that(
             FlextTestsDomains.available_fixture_types(
-                "ghost", fixtures_root=fixtures_root
+                "ghost",
+                fixtures_root=fixtures_root,
             ),
             eq=(),
         )
 
     def test_load_server_fixtures_maps_every_kind_to_its_contents(
-        self, fixtures_root: Path
+        self,
+        fixtures_root: Path,
     ) -> None:
         """All of a group's fixtures load into a kind -> text mapping."""
         loaded = FlextTestsDomains.load_server_fixtures(
-            "oid", fixtures_root=fixtures_root
+            "oid",
+            fixtures_root=fixtures_root,
         )
 
         tm.that(
@@ -229,7 +258,8 @@ class TestsFlextTestsDomains:
     # --- bound loader (public ``bind`` API) -------------------------------
 
     def test_bind_loads_same_content_as_unbound_facade(
-        self, fixtures_root: Path
+        self,
+        fixtures_root: Path,
     ) -> None:
         """A bound loader is equivalent to passing the root each call."""
         bound = FlextTestsDomains.bind(fixtures_root)
@@ -237,14 +267,17 @@ class TestsFlextTestsDomains:
         tm.that(
             bound.load_fixture("oid", "schema"),
             eq=FlextTestsDomains.load_fixture(
-                "oid", "schema", fixtures_root=fixtures_root
+                "oid",
+                "schema",
+                fixtures_root=fixtures_root,
             ),
         )
         tm.that(bound.available_fixture_servers(), eq=("oid", "oud"))
         tm.that(bound.fixture_exists("oud", "schema"), eq=True)
 
     def test_bind_load_all_aggregates_every_server_and_kind(
-        self, fixtures_root: Path
+        self,
+        fixtures_root: Path,
     ) -> None:
         """``load_all`` returns the full server -> kind -> text structure."""
         bound = FlextTestsDomains.bind(fixtures_root)
@@ -261,7 +294,8 @@ class TestsFlextTestsDomains:
         )
 
     def test_bind_load_fixture_kind_collects_one_kind_across_servers(
-        self, fixtures_root: Path
+        self,
+        fixtures_root: Path,
     ) -> None:
         """``load_fixture_kind`` gathers a single kind from every server."""
         bound = FlextTestsDomains.bind(fixtures_root)
@@ -272,7 +306,8 @@ class TestsFlextTestsDomains:
         )
 
     def test_bind_pytest_params_for_group_pairs_kind_and_content(
-        self, fixtures_root: Path
+        self,
+        fixtures_root: Path,
     ) -> None:
         """Per-group params expose ``(kind, content)`` tuples."""
         bound = FlextTestsDomains.bind(fixtures_root)
@@ -286,7 +321,8 @@ class TestsFlextTestsDomains:
         )
 
     def test_bind_all_pytest_params_yields_group_kind_content_triples(
-        self, fixtures_root: Path
+        self,
+        fixtures_root: Path,
     ) -> None:
         """The flattened params expose ``(group, kind, content)`` triples."""
         bound = FlextTestsDomains.bind(fixtures_root)

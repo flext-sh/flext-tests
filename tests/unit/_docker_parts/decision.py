@@ -1,4 +1,8 @@
-"""Health-aware lifecycle decision-table tests (T2)."""
+"""Health-aware lifecycle decision-table tests (T2).
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -10,7 +14,11 @@ from tests import c
 
 
 def _info(status: c.Tests.ContainerStatus, health: str = "") -> m.Tests.ContainerInfo:
-    """Build container info for one decision-table row."""
+    """Build container info for one decision-table row.
+
+    Returns:
+        The resulting ``m.Tests.ContainerInfo``.
+    """
     return m.Tests.ContainerInfo(
         name="decision-target",
         status=status,
@@ -22,9 +30,16 @@ def _info(status: c.Tests.ContainerStatus, health: str = "") -> m.Tests.Containe
 
 
 def _state(
-    *, sealed: bool = True, dirty: bool = False, fingerprint: str = "fp-current"
+    *,
+    sealed: bool = True,
+    dirty: bool = False,
+    fingerprint: str = "fp-current",
 ) -> m.Tests.ContainerState:
-    """Build container state for one decision-table row."""
+    """Build container state for one decision-table row.
+
+    Returns:
+        The resulting ``m.Tests.ContainerState``.
+    """
     return m.Tests.ContainerState(
         container_name="decision-target",
         container_id="id-1",
@@ -40,7 +55,9 @@ class TestsFlextTestsDockerDecisionMixin:
     def test_absent_state_creates(self) -> None:
         """No persisted state means the container must be created."""
         action = FlextTestsDocker.docker_action(
-            None, _info(c.Tests.ContainerStatus.RUNNING), "fp"
+            None,
+            _info(c.Tests.ContainerStatus.RUNNING),
+            "fp",
         )
         tm.that(action, eq="CREATE")
 
@@ -52,14 +69,18 @@ class TestsFlextTestsDockerDecisionMixin:
     def test_exited_starts(self) -> None:
         """An exited container is started, not recreated."""
         action = FlextTestsDocker.docker_action(
-            _state(), _info(c.Tests.ContainerStatus.EXITED), "fp-current"
+            _state(),
+            _info(c.Tests.ContainerStatus.EXITED),
+            "fp-current",
         )
         tm.that(action, eq="START")
 
     def test_running_unhealthy_recreates(self) -> None:
         """A running but unhealthy container is recreated."""
         action = FlextTestsDocker.docker_action(
-            _state(), _info(c.Tests.ContainerStatus.RUNNING, "unhealthy"), "fp-current"
+            _state(),
+            _info(c.Tests.ContainerStatus.RUNNING, "unhealthy"),
+            "fp-current",
         )
         tm.that(action, eq="RECREATE")
 
@@ -93,14 +114,18 @@ class TestsFlextTestsDockerDecisionMixin:
     def test_healthy_sealed_matching_reuses(self) -> None:
         """Healthy + sealed + matching fingerprint keeps the container id."""
         action = FlextTestsDocker.docker_action(
-            _state(), _info(c.Tests.ContainerStatus.RUNNING, "healthy"), "fp-current"
+            _state(),
+            _info(c.Tests.ContainerStatus.RUNNING, "healthy"),
+            "fp-current",
         )
         tm.that(action, eq="REUSE")
 
     def test_running_without_healthcheck_reuses_when_sealed(self) -> None:
         """No declared healthcheck: running + sealed + matching reuses."""
         action = FlextTestsDocker.docker_action(
-            _state(), _info(c.Tests.ContainerStatus.RUNNING, ""), "fp-current"
+            _state(),
+            _info(c.Tests.ContainerStatus.RUNNING, ""),
+            "fp-current",
         )
         tm.that(action, eq="REUSE")
 
@@ -114,7 +139,8 @@ class TestsFlextTestsDockerDecisionMixin:
         target_a = m.Tests.ContainerConfig(compose_file=compose_a)
         target_b = m.Tests.ContainerConfig(compose_file=compose_b)
         tm.that(
-            manager.fingerprint(target_a) == manager.fingerprint(target_b), eq=False
+            manager.fingerprint(target_a) == manager.fingerprint(target_b),
+            eq=False,
         )
 
     def test_fingerprint_extra_inputs_change_the_hash(self, tmp_path: Path) -> None:
@@ -126,6 +152,7 @@ class TestsFlextTestsDockerDecisionMixin:
         manager = FlextTestsDocker(state_root=tmp_path / "docker-state")
         base = m.Tests.ContainerConfig(compose_file=compose)
         with_extra = m.Tests.ContainerConfig(
-            compose_file=compose, fingerprint_inputs=[str(extra)]
+            compose_file=compose,
+            fingerprint_inputs=[str(extra)],
         )
         tm.that(manager.fingerprint(base) == manager.fingerprint(with_extra), eq=False)

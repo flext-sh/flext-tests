@@ -1,4 +1,8 @@
-"""Private matcher ok constraint test mixins."""
+"""Private matcher ok constraint test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -23,7 +27,8 @@ class TestsFlextTestsMatchersOkConstraintsMixin:
         """Test tm.ok() with is_ tuple parameter."""
         result = r[str].ok("test")
         value = tm.ok(
-            result, where=TestsFlextTestsMatchersPredicates.is_string_or_bytes
+            result,
+            where=TestsFlextTestsMatchersPredicates.is_string_or_bytes,
         )
         tm.that(value, eq="test")
 
@@ -69,7 +74,8 @@ class TestsFlextTestsMatchersOkConstraintsMixin:
         data: t.JsonMapping = {"user": {"email": "test@example.com"}}
         result = r[t.JsonMapping].ok(data)
         value = tm.ok(
-            result, deep={"user.email": TestsFlextTestsMatchersPredicates.is_string}
+            result,
+            deep={"user.email": TestsFlextTestsMatchersPredicates.is_string},
         )
         tm.that(value, eq=data)
 

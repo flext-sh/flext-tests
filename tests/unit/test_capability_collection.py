@@ -2,6 +2,9 @@
 
 The inner runs are subprocesses with the fleet plugins disabled except the
 pytest11 auto-loaded ones, matching a consumer suite's real environment.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -32,7 +35,7 @@ def _write_docker_probe(pytester: pytest.Pytester) -> None:
             "\n"
             "def test_needs_docker():\n"
             "    assert True\n"
-        )
+        ),
     })
 
 
@@ -40,14 +43,19 @@ class TestsFlextTestsCapabilityCollection:
     """Typed capability deselection replaces skip-based gating."""
 
     def test_ci_y_deselects_docker_tests_as_not_executed(
-        self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
+        self,
+        pytester: pytest.Pytester,
+        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         """Under exact CI=Y the docker test is DESELECTED, never skipped."""
         _write_docker_probe(pytester)
         pytester.makeconftest(_COMMON_CONFTEST)
         monkeypatch.setenv("CI", "Y")
         result = pytester.runpytest_subprocess(
-            "-p", "no:cacheprovider", "-p", "no:flext_tests_enforcement"
+            "-p",
+            "no:cacheprovider",
+            "-p",
+            "no:flext_tests_enforcement",
         )
         result.assert_outcomes(passed=0, failed=0, skipped=0)
         out = result.stdout.str()
@@ -55,7 +63,8 @@ class TestsFlextTestsCapabilityCollection:
         assert "test_needs_docker" in out
 
     def test_capable_host_executes_and_real_failure_is_red(
-        self, pytester: pytest.Pytester
+        self,
+        pytester: pytest.Pytester,
     ) -> None:
         """On a Docker-capable host the test runs; a failure stays RED.
 
@@ -71,35 +80,49 @@ class TestsFlextTestsCapabilityCollection:
                 "\n"
                 "def test_needs_docker():\n"
                 "    assert False, 'service misbehaved'\n"
-            )
+            ),
         })
         result = pytester.runpytest_subprocess(
-            "-p", "no:cacheprovider", "-p", "no:flext_tests_enforcement"
+            "-p",
+            "no:cacheprovider",
+            "-p",
+            "no:flext_tests_enforcement",
         )
         result.assert_outcomes(failed=1)
         out = result.stdout.str()
         assert "service misbehaved" in out
 
     def test_unmarked_tests_are_never_touched(
-        self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
+        self,
+        pytester: pytest.Pytester,
+        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         """CI=Y only deselects marker-carrying tests; plain tests execute."""
         pytester.makepyfile(test_plain="def test_plain():\n    assert True\n")
         pytester.makeconftest(_COMMON_CONFTEST)
         monkeypatch.setenv("CI", "Y")
         result = pytester.runpytest_subprocess(
-            "-p", "no:cacheprovider", "-p", "no:flext_tests_enforcement"
+            "-p",
+            "no:cacheprovider",
+            "-p",
+            "no:flext_tests_enforcement",
         )
         result.assert_outcomes(passed=1)
 
     def test_no_skip_marker_is_ever_applied(
-        self, pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
+        self,
+        pytester: pytest.Pytester,
+        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         """The deselection is collection-time: skipped count stays zero."""
         _write_docker_probe(pytester)
         pytester.makeconftest(_COMMON_CONFTEST)
         monkeypatch.setenv("CI", "Y")
         result = pytester.runpytest_subprocess(
-            "-p", "no:cacheprovider", "-p", "no:flext_tests_enforcement", "-rs"
+            "-p",
+            "no:cacheprovider",
+            "-p",
+            "no:flext_tests_enforcement",
+            "-rs",
         )
         result.assert_outcomes(skipped=0)
