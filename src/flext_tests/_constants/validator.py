@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+from types import MappingProxyType
 from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
