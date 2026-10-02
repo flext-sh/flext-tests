@@ -135,15 +135,12 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                         model_cls,
                     )
                 except ValueError as e:
-                    result = self._read_fail(
-                        c.Tests.ERROR_INVALID_JSON.format(error=e),
-                        model_cls,
+                    template = (
+                        c.Tests.ERROR_INVALID_YAML
+                        if actual_fmt == c.Tests.FILE_FORMAT_YAML
+                        else c.Tests.ERROR_INVALID_JSON
                     )
-                except c.Cli.YamlParseError as e:
-                    result = self._read_fail(
-                        c.Tests.ERROR_INVALID_YAML.format(error=e),
-                        model_cls,
-                    )
+                    result = self._read_fail(template.format(error=e), model_cls)
                 except OSError as e:
                     result = self._read_fail(
                         c.Tests.ERROR_READ.format(error=e),
@@ -166,6 +163,10 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
 
         Returns:
             The resulting ``t.Tests.ReadContent``.
+
+        Raises:
+            OSError: If ``csv_result.failure``.
+            ValueError: If ``parsed_yaml.failure``.
         """
         content: t.Tests.ReadContent
         match actual_fmt:
@@ -184,18 +185,15 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                 )
             case _ if actual_fmt == c.Tests.FILE_FORMAT_YAML:
                 text = path.read_text(encoding=params.enc)
-                parsed_yaml_result = u.Cli.yaml_parse(text)
-                parsed_yaml = (
-                    parsed_yaml_result.value if parsed_yaml_result.success else None
-                )
-                content = (
-                    FlextTestsPayloadUtilities.to_config_map(parsed_yaml)
-                    if isinstance(parsed_yaml, dict)
-                    else text
-                )
+                parsed_yaml = u.Cli.yaml_parse(text)
+                if parsed_yaml.failure:
+                    raise ValueError(parsed_yaml.error)
+                content = FlextTestsPayloadUtilities.to_config_map(parsed_yaml.value)
             case _ if actual_fmt == c.Tests.FILE_FORMAT_CSV:
                 csv_result = u.Cli.files_read_csv_with_headers(path)
-                csv_rows_m = csv_result.value if csv_result.success else ()
+                if csv_result.failure:
+                    raise OSError(csv_result.error)
+                csv_rows_m = csv_result.value
                 if csv_rows_m:
                     keys = list(csv_rows_m[0].keys())
                     data_rows = [[row.get(k, "") for k in keys] for row in csv_rows_m]

@@ -99,13 +99,20 @@ class FlextTestsFilesComparisonMixin(_ComparisonMixinPart1):
             The resulting ``p.Result[bool]``.
         """
         c1, c2 = self._read_both(params)
-        if params.deep:
-            structured = self._try_parse_both(c1, c2, "json")
+        # Structured comparison is selected by the files' declared format,
+        # never by trial: both JSON or both YAML compare as mappings and a
+        # parse error is the result; any other pair compares as text.
+        fmt = u.Cli.files_detect_format_from_path(params.file1)
+        if (
+            params.deep
+            and fmt == u.Cli.files_detect_format_from_path(params.file2)
+            and fmt in {c.Tests.FILE_FORMAT_JSON, c.Tests.FILE_FORMAT_YAML}
+        ):
+            structured = self._parse_both(c1, c2, fmt)
             if structured.failure:
-                structured = self._try_parse_both(c1, c2, "yaml")
-            if not structured.failure:
-                dict1, dict2 = structured.value
-                return self._deep_compare_mappings(dict1, dict2, params)
+                return r[bool].from_failure(structured)
+            dict1, dict2 = structured.value
+            return self._deep_compare_mappings(dict1, dict2, params)
         if params.ignore_ws:
             c1, c2 = "".join(c1.split()), "".join(c2.split())
         if params.ignore_case:

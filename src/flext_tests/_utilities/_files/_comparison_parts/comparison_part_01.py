@@ -29,40 +29,36 @@ class FlextTestsFilesComparisonMixin:
             params.file2.read_text(encoding=enc),
         )
 
-    def _try_parse_both(
+    def _parse_both(
         self,
         content1: str,
         content2: str,
         fmt: str,
     ) -> p.Result[FlextTestsFilesComparisonMixin.ParsedPair]:
-        """Try to parse both contents as dicts in given format.
+        """Parse both contents as mappings in the given format.
 
         Returns:
             The resulting ``p.Result[FlextTestsFilesComparisonMixin.ParsedPair]``.
         """
         parse = (
             u.Cli.json_parse
-            if fmt == "json"
+            if fmt == c.Tests.FILE_FORMAT_JSON
             else u.Cli.yaml_parse
-            if fmt == "yaml"
+            if fmt == c.Tests.FILE_FORMAT_YAML
             else None
         )
         if parse is None:
             return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
                 f"unsupported comparison format: {fmt}",
             )
-        parsed_result = u.try_(
-            lambda: (parse(content1), parse(content2)),
-            catch=(ValueError, c.Cli.YamlParseError, TypeError),
-            op_name="parse comparison contents",
-        )
-        if parsed_result.failure:
-            return r[FlextTestsFilesComparisonMixin.ParsedPair].from_failure(
-                parsed_result,
-            )
-        r1, r2 = parsed_result.value
-        d1 = r1.value if r1.success else None
-        d2 = r2.value if r2.success else None
+        # Each parser reports its own failure; that failure is the result.
+        r1 = parse(content1)
+        if r1.failure:
+            return r[FlextTestsFilesComparisonMixin.ParsedPair].from_failure(r1)
+        r2 = parse(content2)
+        if r2.failure:
+            return r[FlextTestsFilesComparisonMixin.ParsedPair].from_failure(r2)
+        d1, d2 = r1.value, r2.value
         if FlextTestsFilesCreationMixin.matches_native_mapping(
             d1,
         ) and FlextTestsFilesCreationMixin.matches_native_mapping(d2):
