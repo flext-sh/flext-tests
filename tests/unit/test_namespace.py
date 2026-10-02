@@ -1,4 +1,8 @@
-"""Namespace-token derivation tests (T3, bead flext-ht1t9.5)."""
+"""Namespace-token derivation tests (T3, bead flext-ht1t9.5).
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -18,7 +22,9 @@ class TestsFlextTestsNamespace:
     def test_token_matches_the_declared_pattern(self, tmp_path: Path) -> None:
         """Tokens are 23 lowercase chars starting with a letter."""
         namespace = u.Tests.namespace(
-            worker_id="w1", testrun_uid="run-1", checkout_root=tmp_path
+            worker_id="w1",
+            testrun_uid="run-1",
+            checkout_root=tmp_path,
         )
         tm_match = re.match(c.Tests.NAMESPACE_TOKEN_PATTERN, namespace.token)
         assert tm_match is not None
@@ -56,24 +62,34 @@ class TestsFlextTestsNamespace:
     def test_worker_change_changes_the_token(self, tmp_path: Path) -> None:
         """Two workers on the same run derive different tokens."""
         first = u.Tests.namespace(
-            worker_id="w0", testrun_uid="run", checkout_root=tmp_path
+            worker_id="w0",
+            testrun_uid="run",
+            checkout_root=tmp_path,
         )
         second = u.Tests.namespace(
-            worker_id="w1", testrun_uid="run", checkout_root=tmp_path
+            worker_id="w1",
+            testrun_uid="run",
+            checkout_root=tmp_path,
         )
         assert first.token != second.token
         assert first.run_token == second.run_token
 
     def test_checkout_change_changes_the_token(
-        self, tmp_path: Path, tmp_path_factory: pytest.TempPathFactory
+        self,
+        tmp_path: Path,
+        tmp_path_factory: pytest.TempPathFactory,
     ) -> None:
         """Two checkouts derive different tokens and checkout digests."""
         other = tmp_path_factory.mktemp("other-checkout")
         first = u.Tests.namespace(
-            worker_id="w0", testrun_uid="run", checkout_root=tmp_path
+            worker_id="w0",
+            testrun_uid="run",
+            checkout_root=tmp_path,
         )
         second = u.Tests.namespace(
-            worker_id="w0", testrun_uid="run", checkout_root=other
+            worker_id="w0",
+            testrun_uid="run",
+            checkout_root=other,
         )
         assert first.token != second.token
         assert first.checkout != second.checkout
@@ -87,7 +103,8 @@ class TestsFlextTestsNamespace:
         assert run_namespace.token == run_namespace_again.token
 
     def test_test_namespace_differs_per_test(
-        self, test_namespace: m.Tests.TestNamespace
+        self,
+        test_namespace: m.Tests.TestNamespace,
     ) -> None:
         """The function fixture yields a valid per-test token."""
         assert re.match(c.Tests.NAMESPACE_TOKEN_PATTERN, test_namespace.token)
@@ -95,5 +112,9 @@ class TestsFlextTestsNamespace:
 
 @pytest.fixture
 def run_namespace_again(run_namespace: m.Tests.TestNamespace) -> m.Tests.TestNamespace:
-    """Second injection point proving session scope."""
+    """Second injection point proving session scope.
+
+    Returns:
+        The resulting ``m.Tests.TestNamespace``.
+    """
     return run_namespace

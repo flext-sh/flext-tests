@@ -44,7 +44,9 @@ class FlextTestsEnforcementUtilitiesMixin:
         planned = _infra_u.Infra.codemod_rule_plan(repository_root)
         if planned.failure:
             return r[m.Infra.ModScanReport].from_failure(planned)
-        missing = sorted(required_rule_ids - {rule.id for rule in planned.value.rules})
+        missing = sorted(
+            required_rule_ids - {rule.id for rule in planned.value.rules},
+        )
         if missing:
             return r[m.Infra.ModScanReport].fail(
                 "enforcement names flext-infra rules that config/rules does not "

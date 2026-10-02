@@ -43,7 +43,11 @@ class TestsFlextTestsFileLock:
         ],
     )
     def test_conflicting_holder_times_out_naming_path_and_mode(
-        self, tmp_path: Path, *, held_shared: bool, wanted_shared: bool
+        self,
+        tmp_path: Path,
+        *,
+        held_shared: bool,
+        wanted_shared: bool,
     ) -> None:
         """A conflicting request fails after its bound, naming file and mode."""
         lock_path = tmp_path / "lease.lock"
