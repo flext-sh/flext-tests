@@ -16,6 +16,7 @@ from __future__ import annotations
 from typing import override
 
 import pytest
+from flext_infra import FlextInfraConstants, config as infra_config
 from pydantic import ValidationError
 
 from flext_core import FlextSettings
@@ -25,6 +26,25 @@ from tests import u
 
 class TestsFlextTestsServiceBase:
     """Behavioral contract for the ``FlextTestsServiceBase`` typed test hooks."""
+
+    @staticmethod
+    def _consumer_options() -> tuple[str, ...]:
+        """Inner-run options a consumer receives from the canonical runner.
+
+        The flext-infra runner passes the config-owned asyncio loop scope to
+        every pytest it starts; a synthetic consumer package gets the same
+        value from the same owner, never a copied literal.
+
+        Returns:
+            The resulting ``tuple[str, ...]``.
+        """
+        loop_scope = (
+            infra_config.Infra.tooling.tools.pytest.asyncio_default_fixture_loop_scope
+        )
+        return (
+            "-o",
+            f"{FlextInfraConstants.Infra.ASYNCIO_DEFAULT_FIXTURE_LOOP_SCOPE}={loop_scope}",
+        )
 
     class Tests:
         """flext-tests service-base test namespace."""
@@ -83,6 +103,7 @@ class TestsFlextTestsServiceBase:
 
     # ---- runtime-alias binding hook: typed 's', no getattr substitution ----
 
+    @pytest.mark.slow
     def test_runtime_alias_hook_rejects_a_package_without_a_valid_service_type(
         self,
         pytester: pytest.Pytester,
@@ -99,7 +120,10 @@ class TestsFlextTestsServiceBase:
             "def test_probe() -> None:\n    pass\n",
             encoding="utf-8",
         )
-        result = pytester.runpytest_subprocess(str(package_dir / "test_probe.py"))
+        result = pytester.runpytest_subprocess(
+            *self._consumer_options(),
+            str(package_dir / "test_probe.py"),
+        )
         result.assert_outcomes(errors=1)
         result.stdout.fnmatch_lines(["*TypeError*badpkg*"])
 
@@ -115,7 +139,10 @@ class TestsFlextTestsServiceBase:
             "def test_probe() -> None:\n    pass\n",
             encoding="utf-8",
         )
-        result = pytester.runpytest(str(package_dir / "test_probe.py"))
+        result = pytester.runpytest(
+            *self._consumer_options(),
+            str(package_dir / "test_probe.py"),
+        )
         result.assert_outcomes(errors=1)
         result.stdout.fnmatch_lines(["*AttributeError*noservicepkg*s*"])
 
@@ -149,7 +176,10 @@ class TestsFlextTestsServiceBase:
             "        pass\n",
             encoding="utf-8",
         )
-        result = pytester.runpytest(str(package_dir / "test_probe.py"))
+        result = pytester.runpytest(
+            *self._consumer_options(),
+            str(package_dir / "test_probe.py"),
+        )
         result.assert_outcomes(errors=1)
         result.stdout.fnmatch_lines(["*AttributeError*noletterpkg*'c'*"])
 
@@ -185,5 +215,8 @@ class TestsFlextTestsServiceBase:
             "        assert self.u is flext_core.u\n",
             encoding="utf-8",
         )
-        result = pytester.runpytest(str(package_dir / "test_probe.py"))
+        result = pytester.runpytest(
+            *self._consumer_options(),
+            str(package_dir / "test_probe.py"),
+        )
         result.assert_outcomes(passed=1)

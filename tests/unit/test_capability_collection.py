@@ -42,6 +42,7 @@ def _write_docker_probe(pytester: pytest.Pytester) -> None:
 class TestsFlextTestsCapabilityCollection:
     """Typed capability deselection replaces skip-based gating."""
 
+    @pytest.mark.slow
     def test_ci_y_deselects_docker_tests_as_not_executed(
         self,
         pytester: pytest.Pytester,
@@ -62,6 +63,7 @@ class TestsFlextTestsCapabilityCollection:
         assert "NOT EXECUTED" in out
         assert "test_needs_docker" in out
 
+    @pytest.mark.slow
     def test_capable_host_executes_and_real_failure_is_red(
         self,
         pytester: pytest.Pytester,
@@ -92,6 +94,7 @@ class TestsFlextTestsCapabilityCollection:
         out = result.stdout.str()
         assert "service misbehaved" in out
 
+    @pytest.mark.slow
     def test_unmarked_tests_are_never_touched(
         self,
         pytester: pytest.Pytester,
@@ -109,6 +112,7 @@ class TestsFlextTestsCapabilityCollection:
         )
         result.assert_outcomes(passed=1)
 
+    @pytest.mark.slow
     def test_no_skip_marker_is_ever_applied(
         self,
         pytester: pytest.Pytester,

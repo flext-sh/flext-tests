@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import m, u
+from flext_tests import m
 from tests import c, u as test_u
 
 
