@@ -31,7 +31,7 @@ dependencies = [
   "hypothesis",
   "packaging>=26.3",
   "pydantic>=2.13.5",
-  "pydantic-settings>=2.14.2,<2.16",
+  "pydantic-settings>=2.15.0,<2.16",
   "pytest>=9.1.1",
   "pytest-asyncio",
   "pytest-benchmark",
@@ -44,7 +44,7 @@ dependencies = [
   "pytest-xdist",
   "python-on-whales>=0.81.0",
   "pyyaml>=6.0.3",
-  "structlog>=25.5.0,<27",
+  "structlog>=26.1.0,<27",
   "typing-extensions>=4.16.0",
 ]
 description = "FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem"
@@ -620,7 +620,7 @@ whitelines = 1
 
 [tool.uv]
 link-mode = "copy"
-constraint-dependencies = ["structlog<26"]
+constraint-dependencies = ["structlog<27"]
 environments = ["sys_platform == 'linux'", "sys_platform == 'darwin'"]
 
 [[tool.uv.exclude-dependencies]]
