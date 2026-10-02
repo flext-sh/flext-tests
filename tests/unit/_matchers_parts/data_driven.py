@@ -17,7 +17,8 @@ from tests import c, m, t
 class TestsFlextTestsMatchersDataDrivenMixin:
     """Matcher data driven tests."""
 
-    def test_that_with_paths_data_driven_rules(self) -> None:
+    @staticmethod
+    def test_that_with_paths_data_driven_rules() -> None:
         """Validate multiple dotted paths with a single declarative matcher call."""
         payload: t.JsonMapping = {
             "user": {"name": "John", "age": 33, "email": "john@example.com"},
@@ -33,21 +34,24 @@ class TestsFlextTestsMatchersDataDrivenMixin:
             },
         )
 
-    def test_path_rule_preserves_explicit_none_constraint(self) -> None:
+    @staticmethod
+    def test_path_rule_preserves_explicit_none_constraint() -> None:
         payload: t.JsonMapping = {"value": None}
 
         tm.that(payload, paths={"value": {"eq": None}})
         with pytest.raises(AssertionError):
             tm.that({"value": "present"}, paths={"value": {"eq": None}})
 
-    def test_path_rule_accepts_excludes_alias(self) -> None:
+    @staticmethod
+    def test_path_rule_accepts_excludes_alias() -> None:
         payload: t.JsonMapping = {"value": "allowed"}
 
         tm.that(payload, paths={"value": {"excludes": "blocked"}})
         with pytest.raises(AssertionError):
             tm.that({"value": "blocked"}, paths={"value": {"excludes": "blocked"}})
 
-    def test_that_with_items_data_driven_rules(self) -> None:
+    @staticmethod
+    def test_that_with_items_data_driven_rules() -> None:
         """Validate indexed, first/last and all-item rules declaratively."""
         rows: t.StrSequence = ["alpha", "beta", "gamma"]
         tm.that(
@@ -60,12 +64,14 @@ class TestsFlextTestsMatchersDataDrivenMixin:
             },
         )
 
-    def test_item_rules_reject_string_rule_container(self) -> None:
+    @staticmethod
+    def test_item_rules_reject_string_rule_container() -> None:
         with pytest.raises(m.ValidationError, match=r"for ThatParams\nitems") as error:
             tm.that(["alpha"], items="alpha")
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"items"})
 
-    def test_that_with_attrs_match_data_driven_rules(self) -> None:
+    @staticmethod
+    def test_that_with_attrs_match_data_driven_rules() -> None:
         """Validate nested attributes using one declarative attrs_match spec."""
 
         class Profile:
@@ -88,7 +94,8 @@ class TestsFlextTestsMatchersDataDrivenMixin:
             },
         )
 
-    def test_ok_with_composed_data_driven_validations(self) -> None:
+    @staticmethod
+    def test_ok_with_composed_data_driven_validations() -> None:
         """Validate result payload with path extraction plus composed rules."""
 
         def is_mapping(data: t.Tests.NativeMatchValue) -> bool:

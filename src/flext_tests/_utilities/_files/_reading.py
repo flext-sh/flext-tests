@@ -153,8 +153,8 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                         result = r[t.Tests.ReadContent].ok(content)
         return result
 
+    @staticmethod
     def _read_content_by_format(
-        self,
         path: Path,
         actual_fmt: str,
         params: m.Tests.ReadParams,

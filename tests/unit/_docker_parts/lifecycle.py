@@ -320,7 +320,8 @@ class TestsFlextTestsDockerLifecycleMixin:
         )
         tm.fail(FlextTestsDocker(state_dir=tmp_path).fingerprint())
 
-    def test_creation_env_file_is_private_and_removed(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_creation_env_file_is_private_and_removed(tmp_path: Path) -> None:
         """Creation values live in a 0600 file only inside the block."""
         environment = {"FLEXT_TESTS_SECRET": t.SecretStr("s3cr=t value")}
         with u.Tests.creation_env_file(tmp_path, "env-owner", environment) as env_files:
@@ -334,8 +335,8 @@ class TestsFlextTestsDockerLifecycleMixin:
         with u.Tests.creation_env_file(tmp_path, "env-owner", {}) as no_files:
             tm.that(no_files, eq=())
 
+    @staticmethod
     def test_creation_env_file_never_overwrites_a_leftover(
-        self,
         tmp_path: Path,
     ) -> None:
         """A file left by an interrupted run fails instead of being replaced."""
@@ -349,7 +350,8 @@ class TestsFlextTestsDockerLifecycleMixin:
             tm.that(leftover.exists(), eq=True)
         tm.that(leftover.read_text(encoding="utf-8"), eq="LEFT=over\n")
 
-    def test_unrepresentable_creation_value_is_rejected(self) -> None:
+    @staticmethod
+    def test_unrepresentable_creation_value_is_rejected() -> None:
         """A quote or line break cannot be written literally and is refused."""
         for value in ("it's", "two\nlines"):
             tm.fail(

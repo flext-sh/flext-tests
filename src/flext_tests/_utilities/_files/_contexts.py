@@ -59,10 +59,7 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
                 ):
                     filename = f"{name}.json"
                 else:
-                    is_nested_sequence = "." not in name and cls._is_nested_rows(
-                        manager,
-                        data,
-                    )
+                    is_nested_sequence = "." not in name and cls._is_nested_rows(data)
                     if is_nested_sequence:
                         filename = f"{name}.csv"
                 try:
@@ -70,7 +67,7 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
                 except c.EXC_VALIDATION_TYPE_VALUE:
                     validated_kwargs = m.Tests.CreateKwargsParams()
                 path = manager.create(
-                    cls._coerce_file_content(manager, data),
+                    cls._coerce_file_content(data),
                     filename,
                     directory=validated_kwargs.directory,
                     fmt=validated_kwargs.fmt,
@@ -84,8 +81,9 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
                 paths[name] = path
             yield paths
 
+    @staticmethod
     @contextmanager
-    def temporary_directory(self) -> Generator[Path]:
+    def temporary_directory() -> Generator[Path]:
         """Create and manage a temporary directory.
 
         Yields:

@@ -45,7 +45,8 @@ class _RejectedAssignment:
 class TestsFlextTestsMatchersRejectsAssignmentMixin:
     """Cover ``tm.rejects_assignment`` against real frozen and enum surfaces."""
 
-    def test_rejects_assignment_on_frozen_model(self) -> None:
+    @staticmethod
+    def test_rejects_assignment_on_frozen_model() -> None:
         """A frozen pydantic model rejects field assignment."""
         tm.rejects_assignment(
             _Frozen(host="h"),
@@ -54,7 +55,8 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
             expected=m.ValidationError,
         )
 
-    def test_rejects_assignment_matches_error_text(self) -> None:
+    @staticmethod
+    def test_rejects_assignment_matches_error_text() -> None:
         """The rejection reason is assertable through ``match``."""
         tm.rejects_assignment(
             _Frozen(host="h"),
@@ -64,7 +66,8 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
             match="frozen_instance",
         )
 
-    def test_rejects_assignment_on_enum_member(self) -> None:
+    @staticmethod
+    def test_rejects_assignment_on_enum_member() -> None:
         """Enum members cannot be reassigned through the public class."""
         tm.rejects_assignment(
             _PluginType,
@@ -73,7 +76,8 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
             expected=(AttributeError, TypeError),
         )
 
-    def test_rejects_assignment_reports_a_mutable_target(self) -> None:
+    @staticmethod
+    def test_rejects_assignment_reports_a_mutable_target() -> None:
         """A target that accepts the assignment fails the matcher."""
         with pytest.raises(AssertionError):
             tm.rejects_assignment(
@@ -83,7 +87,8 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
                 expected=m.ValidationError,
             )
 
-    def test_rejects_assignment_propagates_unexpected_exception_identity(self) -> None:
+    @staticmethod
+    def test_rejects_assignment_propagates_unexpected_exception_identity() -> None:
         """An unexpected descriptor error escapes without normalization."""
         rejection = ValueError("assignment rejected")
 
@@ -97,7 +102,8 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
 
         tm.that(caught.value is rejection, eq=True)
 
-    def test_rejects_assignment_chains_original_on_regex_mismatch(self) -> None:
+    @staticmethod
+    def test_rejects_assignment_chains_original_on_regex_mismatch() -> None:
         """A mismatched rejection message retains the original exception cause."""
         rejection = ValueError("assignment rejected")
 

@@ -511,8 +511,8 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             return result.map_error(lambda error: f"Stack start failed: {error}")
         return r[str].ok("Stack started successfully")
 
+    @staticmethod
     def wait_for_port_ready(
-        self,
         host: str,
         port: int,
         max_wait: float | None = None,

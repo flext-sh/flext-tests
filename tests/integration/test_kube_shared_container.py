@@ -29,8 +29,9 @@ from tests import c, tm
 class TestsFlextTestsKubeSharedContainer:
     """Public facade + registry contract for Kubernetes/kind test containers."""
 
+    @staticmethod
     @pytest.mark.integration
-    def test_flext_tests_kube_importable(self) -> None:
+    def test_flext_tests_kube_importable() -> None:
         """``flext_tests.kube`` exists and exposes ``FlextTestsKube``.
 
         RED until the facade module is implemented; fails with
@@ -41,7 +42,8 @@ class TestsFlextTestsKubeSharedContainer:
 
         tm.that(hasattr(mod, "FlextTestsKube"), eq=True)
 
+    @staticmethod
     @pytest.mark.integration
-    def test_kind_registered_in_shared_containers(self) -> None:
+    def test_kind_registered_in_shared_containers() -> None:
         """``flext-kind-test`` is registered in the shared-container catalog."""
         tm.that("flext-kind-test" in c.Tests.SHARED_CONTAINERS, eq=True)
