@@ -8,13 +8,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_tests import c, m
+from flext_tests import c, m, p
 from flext_tests._fixtures._enforcement_parts.items import FlextTestsEnforcementItem
 
 if TYPE_CHECKING:
     import pytest
-
-    from flext_tests import p
 
 
 class FlextTestsEnforcementValidators:
@@ -30,14 +28,21 @@ class FlextTestsEnforcementValidators:
 
         Returns:
             The resulting ``list[FlextTestsEnforcementItem]``.
+
+        Raises:
+            TypeError: If engine findings lack the scan-report contract.
         """
-        if context.infra_findings is None:
+        report = context.infra_findings
+        if report is None:
             return []
+        if not isinstance(report, p.Tests.EnforcementScanReport):
+            msg = f"engine findings lack the scan-report contract: {type(report)!r}"
+            raise TypeError(msg)
         grouped: dict[
             tuple[str, str],
             list[p.Tests.EnforcementScanFinding],
         ] = {}
-        for finding in context.infra_findings.entries:
+        for finding in report.entries:
             if finding.repository not in context.project_names:
                 continue
             if cfg.include and finding.rule_id not in cfg.include:

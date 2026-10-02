@@ -10,9 +10,7 @@ from collections.abc import MutableMapping
 from pathlib import Path
 from typing import Annotated, ClassVar
 
-from flext_cli import m, u
-
-from flext_tests._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
+from flext_cli import m, p, u
 
 
 class FlextTestsValidatorModelsMixin:
@@ -22,7 +20,7 @@ class FlextTestsValidatorModelsMixin:
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(frozen=True)
 
         infra_findings: Annotated[
-            FlextTestsEnforcementProtocolsMixin.EnforcementScanReport | None,
+            p.Model | None,
             u.Field(
                 description="flext-infra rule-engine findings keyed by rule id, "
                 "absent when no engine rule is selected.",
