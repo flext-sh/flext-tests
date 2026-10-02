@@ -8,10 +8,9 @@ from __future__ import annotations
 
 from flext_core import r
 from flext_tests import c, m, t, u
+from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 from flext_tests.protocols import p
-
-from ...payload import FlextTestsPayloadUtilities
-from .._creation import FlextTestsFilesCreationMixin
 
 
 class FlextTestsFilesComparisonMixin:
@@ -64,9 +63,9 @@ class FlextTestsFilesComparisonMixin:
         r1, r2 = parsed_result.value
         d1 = r1.value if r1.success else None
         d2 = r2.value if r2.success else None
-        if FlextTestsFilesCreationMixin.is_mapping(
+        if FlextTestsFilesCreationMixin.matches_native_mapping(
             d1,
-        ) and FlextTestsFilesCreationMixin.is_mapping(d2):
+        ) and FlextTestsFilesCreationMixin.matches_native_mapping(d2):
             return r[FlextTestsFilesComparisonMixin.ParsedPair].ok((
                 FlextTestsFilesCreationMixin.to_payload_mapping(d1),
                 FlextTestsFilesCreationMixin.to_payload_mapping(d2),

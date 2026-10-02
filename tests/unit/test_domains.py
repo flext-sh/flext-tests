@@ -1,12 +1,12 @@
 """Behavioral unit tests for the ``flext_tests.domains`` (``FlextTestsDomains``) facade.
 
-Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT
-
 These tests exercise only the public contract of ``FlextTestsDomains``: the values it
 returns, the ``r[T]`` outcomes it builds, the fixtures it discovers/loads on
 disk, and the exceptions it raises on missing inputs. No private attribute,
 internal collaborator, or implementation detail is touched.
+
+Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations

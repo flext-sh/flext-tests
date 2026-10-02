@@ -13,8 +13,7 @@ from pathlib import Path
 from flext_infra import u
 
 from flext_tests import c, m
-
-from ._batch import FlextTestsFilesBatchMixin
+from flext_tests._utilities._files._batch import FlextTestsFilesBatchMixin
 
 
 class FlextTestsFilesAssertionsMixin(FlextTestsFilesBatchMixin):

@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, override
 
 import pytest
 
-from .items import FlextTestsEnforcementItem
+from flext_tests._fixtures._enforcement_parts.items import FlextTestsEnforcementItem
 
 if TYPE_CHECKING:
     from collections.abc import Iterable

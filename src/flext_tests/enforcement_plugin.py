@@ -72,7 +72,9 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 
 def pytest_configure(config: pytest.Config) -> None:
     """Resolve enforcement only after startup instrumentation is active."""
-    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
+    from flext_tests._fixtures._enforcement_parts.dispatcher import (
+        FlextTestsEnforcementDispatcher,
+    )
 
     FlextTestsEnforcementDispatcher.configure(config)
 
@@ -83,7 +85,9 @@ def pytest_collection_modifyitems(
     items: list[pytest.Item],
 ) -> None:
     """Delegate collection-time enforcement."""
-    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
+    from flext_tests._fixtures._enforcement_parts.dispatcher import (
+        FlextTestsEnforcementDispatcher,
+    )
 
     FlextTestsEnforcementDispatcher.collection_modifyitems(session, config, items)
 
@@ -96,14 +100,18 @@ def pytest_warning_recorded(
 ) -> None:
     """Track runtime enforcement warnings."""
     _ = when, nodeid, location
-    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
+    from flext_tests._fixtures._enforcement_parts.dispatcher import (
+        FlextTestsEnforcementDispatcher,
+    )
 
     FlextTestsEnforcementDispatcher.record_warning(warning_message)
 
 
 def pytest_sessionstart(session: pytest.Session) -> None:
     """Expose the session config for warning-capture plumbing."""
-    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
+    from flext_tests._fixtures._enforcement_parts.dispatcher import (
+        FlextTestsEnforcementDispatcher,
+    )
 
     FlextTestsEnforcementDispatcher.session_config = session.config
 
@@ -115,7 +123,9 @@ def pytest_terminal_summary(
 ) -> None:
     """Delegate the enforcement summary."""
     _ = exitstatus
-    from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
+    from flext_tests._fixtures._enforcement_parts.dispatcher import (
+        FlextTestsEnforcementDispatcher,
+    )
 
     FlextTestsEnforcementDispatcher.terminal_summary(terminalreporter, config)
 

@@ -15,9 +15,8 @@ from flext_cli import u
 
 from flext_core import r
 from flext_tests import c, m, p, t
-
-from ..payload import FlextTestsPayloadUtilities
-from ._creation import FlextTestsFilesCreationMixin
+from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
@@ -180,7 +179,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                 ).validate_json(text.encode())
                 content = (
                     FlextTestsPayloadUtilities.to_config_map(parsed_json)
-                    if FlextTestsFilesCreationMixin.is_mapping(parsed_json)
+                    if FlextTestsFilesCreationMixin.matches_native_mapping(parsed_json)
                     else text
                 )
             case _ if actual_fmt == c.Tests.FILE_FORMAT_YAML:

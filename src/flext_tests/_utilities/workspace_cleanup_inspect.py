@@ -14,8 +14,9 @@ from flext_cli import u
 
 from flext_core import r
 from flext_tests import c, p
-
-from .workspace_cleanup_paths import FlextTestsWorkspaceCleanupPathsUtilitiesMixin
+from flext_tests._utilities.workspace_cleanup_paths import (
+    FlextTestsWorkspaceCleanupPathsUtilitiesMixin,
+)
 
 if TYPE_CHECKING:
     from flext_core import t
