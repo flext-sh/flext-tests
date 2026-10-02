@@ -51,7 +51,8 @@ class TestsFlextTestsServiceBase:
 
     # ---- isolated_test_runtime(build=...) for port-bearing services --------
 
-    def test_isolated_test_runtime_builds_port_service_with_real_adapter(self) -> None:
+    @staticmethod
+    def test_isolated_test_runtime_builds_port_service_with_real_adapter() -> None:
         """A port-bearing service is constructed explicitly with a real adapter."""
         with u.Tests.EchoService.isolated_test_runtime(
             build=lambda: u.Tests.EchoService(port=u.Tests.MemoryEcho()),
@@ -60,7 +61,8 @@ class TestsFlextTestsServiceBase:
             tm.that(result.success, eq=True)
             tm.that(result.unwrap(), eq="HI")
 
-    def test_isolated_test_runtime_without_build_still_needs_fetch_global(self) -> None:
+    @staticmethod
+    def test_isolated_test_runtime_without_build_still_needs_fetch_global() -> None:
         """Omitting ``build`` for a port-bearing service still fails validated."""
         with (
             pytest.raises(ValidationError, match="port"),
@@ -68,16 +70,16 @@ class TestsFlextTestsServiceBase:
         ):
             pytest.fail("unreachable: fetch_global() must raise ValidationError")
 
-    def test_isolated_test_runtime_without_build_resolves_a_port_free_service(
-        self,
-    ) -> None:
+    @staticmethod
+    def test_isolated_test_runtime_without_build_resolves_a_port_free_service() -> None:
         """A port-free service keeps resolving through ``fetch_global()``."""
         with FlextTestsServiceBase.isolated_test_runtime() as service:
             tm.that(service is FlextTestsServiceBase.fetch_global(), eq=True)
 
     # ---- test_settings_type: raise, never fall back -------------------------
 
-    def test_settings_type_without_declaration_raises_with_service_name(self) -> None:
+    @staticmethod
+    def test_settings_type_without_declaration_raises_with_service_name() -> None:
         """An absent settings class cannot silently select the test base settings."""
 
         class _MissingSettingsService(FlextTestsServiceBase[str]):
@@ -89,7 +91,8 @@ class TestsFlextTestsServiceBase:
         with pytest.raises(TypeError, match="_MissingSettingsService"):
             _MissingSettingsService.test_settings_type()
 
-    def test_settings_type_raises_type_error_naming_the_class(self) -> None:
+    @staticmethod
+    def test_settings_type_raises_type_error_naming_the_class() -> None:
         """A settings type outside the ``FlextTestsSettings`` tree fails loudly."""
 
         class _WrongSettingsService(FlextTestsServiceBase[str]):

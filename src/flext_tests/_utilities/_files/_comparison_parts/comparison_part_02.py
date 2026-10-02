@@ -119,8 +119,8 @@ class FlextTestsFilesComparisonMixin(_ComparisonMixinPart1):
             c1, c2 = c1.lower(), c2.lower()
         return r[bool].ok(c1 == c2)
 
+    @staticmethod
     def _deep_compare_mappings(
-        self,
         dict1: t.MappingKV[str, t.Tests.TestobjectSerializable],
         dict2: t.MappingKV[str, t.Tests.TestobjectSerializable],
         params: m.Tests.CompareParams,

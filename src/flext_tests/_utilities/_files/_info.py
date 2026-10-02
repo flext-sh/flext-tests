@@ -110,7 +110,8 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
             content_meta=content_meta,
         )
 
-    def _read_info_text(self, path: Path, size: int) -> tuple[str, int, bool, str, str]:
+    @staticmethod
+    def _read_info_text(path: Path, size: int) -> tuple[str, int, bool, str, str]:
         """Read text metadata for a file, falling back to binary defaults.
 
         Returns:

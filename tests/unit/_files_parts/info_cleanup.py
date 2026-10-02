@@ -15,7 +15,8 @@ from tests import m, t, u
 class TestsFlextTestsFilesInfoCleanupMixin:
     """File info and cleanup tests."""
 
-    def test_get_file_info_not_exists(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_get_file_info_not_exists(tmp_path: Path) -> None:
         """Test getting file info for non-existent file."""
         manager = FlextTestsFiles()
         non_existent = tmp_path / "non_existent.txt"
@@ -25,7 +26,8 @@ class TestsFlextTestsFilesInfoCleanupMixin:
         tm.that(file_info, is_=FlextTestsFiles.FileInfo)
         tm.that(file_info.exists is False, eq=True)
 
-    def test_get_file_info_exists(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_get_file_info_exists(tmp_path: Path) -> None:
         """Test getting file info for existing file."""
         manager = FlextTestsFiles(base_dir=tmp_path)
         content = "line1\nline2\nline3"
@@ -41,7 +43,8 @@ class TestsFlextTestsFilesInfoCleanupMixin:
         tm.that(file_info.is_empty is False, eq=True)
         tm.that(file_info.first_line, eq="line1")
 
-    def test_get_file_info_empty_file(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_get_file_info_empty_file(tmp_path: Path) -> None:
         """Test getting file info for empty file."""
         manager = FlextTestsFiles(base_dir=tmp_path)
         file_path = manager.create("", "empty.txt")
@@ -54,7 +57,8 @@ class TestsFlextTestsFilesInfoCleanupMixin:
         tm.that(file_info.is_empty is True, eq=True)
         tm.that(file_info.first_line, eq="")
 
-    def test_get_file_info_multiline(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_get_file_info_multiline(tmp_path: Path) -> None:
         """Test getting file info for multiline file."""
         manager = FlextTestsFiles(base_dir=tmp_path)
         content = "first line\nsecond line\nthird line"
@@ -65,7 +69,8 @@ class TestsFlextTestsFilesInfoCleanupMixin:
         tm.that(file_info.lines, eq=3)
         tm.that(file_info.first_line, eq="first line")
 
-    def test_cleanup_files(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_cleanup_files(tmp_path: Path) -> None:
         """Test cleaning up created files."""
         manager = FlextTestsFiles(base_dir=tmp_path)
         file1 = manager.create("content1", "file1.txt")
@@ -77,7 +82,8 @@ class TestsFlextTestsFilesInfoCleanupMixin:
         tm.that(not file2.exists(), eq=True)
         tm.that(not manager.created_files, eq=True)
 
-    def test_cleanup_directories(self) -> None:
+    @staticmethod
+    def test_cleanup_directories() -> None:
         """Test cleaning up created directories."""
         manager = FlextTestsFiles()
         file_path = manager.create("content", "test.txt")
@@ -88,7 +94,8 @@ class TestsFlextTestsFilesInfoCleanupMixin:
         tm.that(not temp_dir.exists(), eq=True)
         tm.that(not manager.created_dirs, eq=True)
 
-    def test_cleanup_nonexistent_files(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_cleanup_nonexistent_files(tmp_path: Path) -> None:
         """Test cleanup handles non-existent files gracefully."""
         manager = FlextTestsFiles(base_dir=tmp_path)
         file_path = manager.create("content", "test.txt")
@@ -96,14 +103,16 @@ class TestsFlextTestsFilesInfoCleanupMixin:
         manager.cleanup()
         tm.that(not manager.created_files, eq=True)
 
-    def test_context_manager(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_context_manager(tmp_path: Path) -> None:
         """Test context manager usage."""
         with FlextTestsFiles(base_dir=tmp_path) as manager:
             file_path = manager.create("content", "test.txt")
             tm.that(file_path.exists(), eq=True)
         tm.that(not file_path.exists(), eq=True)
 
-    def test_create_uses_explicit_directory(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_create_uses_explicit_directory(tmp_path: Path) -> None:
         """Test create() writes into explicitly provided directory."""
         manager = FlextTestsFiles(base_dir=tmp_path)
         custom_dir = tmp_path / "custom"
@@ -111,14 +120,16 @@ class TestsFlextTestsFilesInfoCleanupMixin:
         tm.that(file_path.parent, eq=custom_dir)
         tm.that(file_path.exists(), eq=True)
 
-    def test_create_uses_base_dir_when_directory_missing(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_create_uses_base_dir_when_directory_missing(tmp_path: Path) -> None:
         """Test create() defaults to base_dir when no directory is provided."""
         manager = FlextTestsFiles(base_dir=tmp_path)
         file_path = manager.create("content", "base-dir.txt")
         tm.that(file_path.parent, eq=tmp_path)
         tm.that(file_path.exists(), eq=True)
 
-    def test_create_without_base_dir_tracks_temp_directory(self) -> None:
+    @staticmethod
+    def test_create_without_base_dir_tracks_temp_directory() -> None:
         """Test create() without base_dir uses and tracks one temporary directory."""
         manager = FlextTestsFiles()
         file_path = manager.create("content", "temp.txt")
@@ -126,7 +137,8 @@ class TestsFlextTestsFilesInfoCleanupMixin:
         tm.that(manager.created_dirs, length_gte=1)
         tm.that(manager.created_dirs, has=file_path.parent)
 
-    def test_temporary_files_classmethod(self) -> None:
+    @staticmethod
+    def test_temporary_files_classmethod() -> None:
         """Test files classmethod context manager."""
         files: t.MappingKV[
             str,
@@ -141,7 +153,8 @@ class TestsFlextTestsFilesInfoCleanupMixin:
         tm.that(not created["file1"].exists(), eq=True)
         tm.that(not created["file2"].exists(), eq=True)
 
-    def test_temporary_files_custom_extension(self) -> None:
+    @staticmethod
+    def test_temporary_files_custom_extension() -> None:
         """Test files with custom extension."""
         files: t.MappingKV[
             str,
@@ -150,7 +163,8 @@ class TestsFlextTestsFilesInfoCleanupMixin:
         with FlextTestsFiles.files(files, ext=".md") as created:
             tm.that(created["file1"].name, eq="file1.md")
 
-    def test_create_file_set_nested_directory(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_create_file_set_nested_directory(tmp_path: Path) -> None:
         """Test creating files in nested directory."""
         nested_dir = tmp_path / "nested" / "subdir"
         files: t.MappingKV[
@@ -161,7 +175,8 @@ class TestsFlextTestsFilesInfoCleanupMixin:
             tm.that(created["file1"].parent, eq=nested_dir)
             tm.that(nested_dir.exists(), eq=True)
 
-    def test_create_text_file_nested_directory(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_create_text_file_nested_directory(tmp_path: Path) -> None:
         """Test creating text file in nested directory."""
         manager = FlextTestsFiles(base_dir=tmp_path)
         nested_dir = tmp_path / "nested" / "subdir"
@@ -169,7 +184,8 @@ class TestsFlextTestsFilesInfoCleanupMixin:
         tm.that(file_path.parent, eq=nested_dir)
         tm.that(nested_dir.exists(), eq=True)
 
-    def test_multiple_cleanup_calls(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_multiple_cleanup_calls(tmp_path: Path) -> None:
         """Test multiple cleanup calls are safe."""
         manager = FlextTestsFiles(base_dir=tmp_path)
         _ = manager.create("content", "test.txt")

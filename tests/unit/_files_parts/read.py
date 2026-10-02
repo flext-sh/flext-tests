@@ -20,7 +20,8 @@ if TYPE_CHECKING:
 class TestsFlextTestsFilesReadMixin:
     """File read tests."""
 
-    def test_read_text_file(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_read_text_file(tmp_path: Path) -> None:
         """Test read() returns text content for .txt files."""
         manager = tf(base_dir=tmp_path)
         path = manager.create("hello world", "test.txt")
@@ -28,7 +29,8 @@ class TestsFlextTestsFilesReadMixin:
         _ = u.Tests.assert_success(result)
         tm.that(result.value, eq="hello world")
 
-    def test_read_binary_file(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_read_binary_file(tmp_path: Path) -> None:
         """Test read() returns bytes content for .bin files."""
         manager = tf(base_dir=tmp_path)
         path = manager.create(b"\x00\x01\x02", "data.bin", fmt=c.Tests.FILE_FORMAT_BIN)
@@ -36,7 +38,8 @@ class TestsFlextTestsFilesReadMixin:
         _ = u.Tests.assert_success(result)
         tm.that(result.value, eq=b"\x00\x01\x02")
 
-    def test_read_json_file(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_read_json_file(tmp_path: Path) -> None:
         """Test read() returns dict content for .json files."""
         manager = tf(base_dir=tmp_path)
         content_root: t.JsonMapping = {"key": "value", "number": 42}
@@ -46,7 +49,8 @@ class TestsFlextTestsFilesReadMixin:
         _ = u.Tests.assert_success(result)
         tm.that(result.value, eq=content_root)
 
-    def test_read_yaml_file(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_read_yaml_file(tmp_path: Path) -> None:
         """Test read() returns dict content for .yaml files."""
         manager = tf(base_dir=tmp_path)
         content: m.ConfigMap = m.ConfigMap(root={"name": "test", "enabled": True})
@@ -56,7 +60,8 @@ class TestsFlextTestsFilesReadMixin:
         read_value = m.ConfigMap.model_validate(result.value)
         tm.that(read_value.model_dump() == content.model_dump(), eq=True)
 
-    def test_read_csv_file(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_read_csv_file(tmp_path: Path) -> None:
         """Test read() returns t.SequenceOf[list] content for .csv files."""
         manager = tf(base_dir=tmp_path)
         content = [["a", "b"], ["1", "2"]]
@@ -67,7 +72,8 @@ class TestsFlextTestsFilesReadMixin:
         tm.that(data, is_=list)
         tm.that(len(data), eq=2)
 
-    def test_read_csv_file_with_headers(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_read_csv_file_with_headers(tmp_path: Path) -> None:
         """Test read() CSV with headers skips first row by default."""
         manager = tf(base_dir=tmp_path)
         content = [["header1", "header2"], ["1", "2"], ["3", "4"]]
@@ -78,7 +84,8 @@ class TestsFlextTestsFilesReadMixin:
         tm.that(data, is_=list)
         tm.that(len(data), eq=2)
 
-    def test_read_invalid_yaml_fails_as_invalid_yaml(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_read_invalid_yaml_fails_as_invalid_yaml(tmp_path: Path) -> None:
         """Invalid YAML is a read failure, never its raw text."""
         manager = tf(base_dir=tmp_path)
         path = tmp_path / "broken.yaml"
@@ -87,7 +94,8 @@ class TestsFlextTestsFilesReadMixin:
         _ = u.Tests.assert_failure(result)
         tm.that(result.error or "", has="Invalid YAML")
 
-    def test_read_nonexistent_file(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_read_nonexistent_file(tmp_path: Path) -> None:
         """Test read() returns failure for non-existent file.
 
         Raises:
@@ -109,7 +117,8 @@ class TestsFlextTestsFilesReadMixin:
             eq=True,
         )
 
-    def test_read_explicit_format(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_read_explicit_format(tmp_path: Path) -> None:
         """Test read() with explicit format override."""
         manager = tf(base_dir=tmp_path)
         path = manager.create("plain text", "data.dat", fmt=c.Tests.FILE_FORMAT_TEXT)

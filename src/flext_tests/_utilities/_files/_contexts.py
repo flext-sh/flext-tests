@@ -84,8 +84,9 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
                 paths[name] = path
             yield paths
 
+    @staticmethod
     @contextmanager
-    def temporary_directory(self) -> Generator[Path]:
+    def temporary_directory() -> Generator[Path]:
         """Create and manage a temporary directory.
 
         Yields:
