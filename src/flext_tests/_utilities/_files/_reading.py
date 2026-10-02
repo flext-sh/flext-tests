@@ -179,7 +179,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                 ).validate_json(text.encode())
                 content = (
                     FlextTestsPayloadUtilities.to_config_map(parsed_json)
-                    if FlextTestsFilesCreationMixin.is_mapping(parsed_json)
+                    if FlextTestsFilesCreationMixin.matches_native_mapping(parsed_json)
                     else text
                 )
             case _ if actual_fmt == c.Tests.FILE_FORMAT_YAML:

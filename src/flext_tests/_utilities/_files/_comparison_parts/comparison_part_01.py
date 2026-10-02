@@ -63,9 +63,9 @@ class FlextTestsFilesComparisonMixin:
         r1, r2 = parsed_result.value
         d1 = r1.value if r1.success else None
         d2 = r2.value if r2.success else None
-        if FlextTestsFilesCreationMixin.is_mapping(
+        if FlextTestsFilesCreationMixin.matches_native_mapping(
             d1,
-        ) and FlextTestsFilesCreationMixin.is_mapping(d2):
+        ) and FlextTestsFilesCreationMixin.matches_native_mapping(d2):
             return r[FlextTestsFilesComparisonMixin.ParsedPair].ok((
                 FlextTestsFilesCreationMixin.to_payload_mapping(d1),
                 FlextTestsFilesCreationMixin.to_payload_mapping(d2),

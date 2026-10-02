@@ -19,7 +19,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
     """Create files from one validated native payload boundary."""
 
     @staticmethod
-    def is_mapping(value: p.AttributeProbe) -> bool:
+    def matches_native_mapping(value: p.AttributeProbe) -> bool:
         """Identify native mappings without pretending to validate their leaves.
 
         Returns:
