@@ -68,11 +68,10 @@ class FlextTestsCapabilityPlugin:
         )
         return published.value if published.success else None
 
-    @classmethod
-    def _unreachable_reason(cls, marker: str) -> str | None:
-        """Return a skip reason when the marker's service cannot be reached."""
-        if marker in cls._probe_cache:
-            return cls._probe_cache[marker]
+    def _unreachable_reason(self, marker: str) -> str | None:
+        """Return a deselect reason when the marker's service is unavailable."""
+        if marker in self._probe_cache:
+            return self._probe_cache[marker]
         if marker == c.Tests.DOCKER_CONNECTIVITY_MARKER:
             from flext_tests.docker import FlextTestsDocker
 
@@ -88,13 +87,13 @@ class FlextTestsCapabilityPlugin:
             return docker_reason
         reason: str | None = None
         container = c.Tests.CONNECTIVITY_MARKER_CONTAINERS.get(marker)
-        endpoint = None if container is None else cls._endpoint(container)
+        endpoint = None if container is None else self._endpoint(container)
         if container is not None and endpoint is not None:
             host, port = endpoint
-            unreachable = c.Tests.UNREACHABLE_SKIP_REASON.format(
+            unreachable = c.Tests.UNREACHABLE_DESELECT_REASON.format(
                 marker=marker, host=host, port=port
             )
-            host_port = cls._published_port(container, port)
+            host_port = self._published_port(container, port)
             reason = unreachable
             if host_port is not None:
                 try:
@@ -105,7 +104,7 @@ class FlextTestsCapabilityPlugin:
                         reason = None
                 except OSError:
                     reason = unreachable
-        cls._probe_cache[marker] = reason
+        self._probe_cache[marker] = reason
         return reason
 
     def deselect_reasons(

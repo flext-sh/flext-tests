@@ -55,35 +55,8 @@ class FlextTestsEnforcementBuilder:
             else None,
             project_names=project_names,
         )
-        namespace_builder = NamespaceDetectorBuilder()
-        items: list[pytest.Item] = []
-        for rule in rules:
-            if rule.source.kind == c.EnforcementSourceKind.FLEXT_INFRA_DETECTOR.value:
-                items.extend(namespace_builder(session, cfg, rule, context))
-            elif (
-                rule.source.kind == c.EnforcementSourceKind.FLEXT_TESTS_VALIDATOR.value
-            ):
-                items.extend(
-                    FlextTestsEnforcementValidators.build_tests_validator_items(
-                        collector, rule, context
-                    )
-                )
-        return items
-
-    @staticmethod
-    def infra_report_if_needed(
-        rules: tuple[m.EnforcementRuleSpec, ...],
-        repository_root: Path,
-        collected_items: t.SequenceOf[pytest.Item],
-    ) -> p.AttributeProbe | None:
-        """Load the workspace infra report only when a rule needs it."""
-        if not any(
-            rule.source.kind == c.EnforcementSourceKind.FLEXT_INFRA_DETECTOR.value
-            for rule in rules
-        ):
-            return None
-        project_names = u.Tests.collected_project_names(
-            items=collected_items, repository_root=repository_root
+        collector = FlextTestsEnforcementCollector.from_parent(
+            parent=session, name="flext-enforcement"
         )
         return [
             *FlextTestsEnforcementValidators.build_infra_rule_items(
