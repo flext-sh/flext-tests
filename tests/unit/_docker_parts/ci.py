@@ -1,4 +1,8 @@
-"""Private docker Make-CI-token gate test mixins."""
+"""Private docker Make-CI-token gate test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -24,7 +28,10 @@ class TestsFlextTestsDockerCiMixin:
         ],
     )
     def test_ci_token_gates_the_lifecycle(
-        self, *, value_template: str | None, disabled: bool
+        self,
+        *,
+        value_template: str | None,
+        disabled: bool,
     ) -> None:
         """Only the configured Make CI value disables Docker, and it is typed."""
         ci = infra_config.Infra.codegen.make.ci
@@ -49,7 +56,8 @@ class TestsFlextTestsDockerCiMixin:
         docker = FlextTestsDocker.compose(
             compose_file,
             target=m.Tests.ContainerConfig(
-                container_name="flext-tests-ci-gate", service="gate"
+                container_name="flext-tests-ci-gate",
+                service="gate",
             ),
             repository_root=tmp_path,
             state_dir=tmp_path / "state",
@@ -63,7 +71,8 @@ class TestsFlextTestsDockerCiMixin:
             tm.fail(docker.compose_down(str(compose_file)), code=disabled)
             tm.fail(docker.start_compose_stack(str(compose_file)), code=disabled)
             tm.fail(
-                docker.start_existing_container("flext-tests-ci-gate"), code=disabled
+                docker.start_existing_container("flext-tests-ci-gate"),
+                code=disabled,
             )
             tm.fail(docker.cleanup_dirty_containers(), code=disabled)
 

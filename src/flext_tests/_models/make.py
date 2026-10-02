@@ -24,13 +24,16 @@ class FlextTestsMakeModelsMixin:
         name: Annotated[str, u.Field(description="Environment variable name.")]
         help: Annotated[str, u.Field(description="Human-readable parameter help.")]
         required: Annotated[
-            bool, u.Field(description="Whether the parameter is required.")
+            bool,
+            u.Field(description="Whether the parameter is required."),
         ] = False
         default: Annotated[
-            str, u.Field(description="Default value when the environment is unset.")
+            str,
+            u.Field(description="Default value when the environment is unset."),
         ] = ""
         choices: Annotated[
-            t.StrSequence, u.Field(description="Allowed values for the parameter.")
+            t.StrSequence,
+            u.Field(description="Allowed values for the parameter."),
         ] = ()
 
     class MakeMutationCondition(m.Value):
@@ -38,7 +41,8 @@ class FlextTestsMakeModelsMixin:
 
         name: Annotated[str, u.Field(description="Environment variable name.")]
         values: Annotated[
-            t.StrSequence, u.Field(description="Values that make the command mutating.")
+            t.StrSequence,
+            u.Field(description="Values that make the command mutating."),
         ]
 
     class MakeCommand(m.Value):
@@ -52,14 +56,16 @@ class FlextTestsMakeModelsMixin:
         example: Annotated[str, u.Field(description="Canonical invocation example.")]
         path: Annotated[Path, u.Field(description="Source script path.")]
         mutates: Annotated[
-            bool, u.Field(description="Whether execution can mutate workspace state.")
+            bool,
+            u.Field(description="Whether execution can mutate workspace state."),
         ]
         mutates_when: Annotated[
             t.SequenceOf[FlextTestsMakeModelsMixin.MakeMutationCondition],
             u.Field(description="Conditional mutation predicates."),
         ] = ()
         aliases: Annotated[
-            t.StrSequence, u.Field(description="Verb aliases declared on.")
+            t.StrSequence,
+            u.Field(description="Verb aliases declared on."),
         ] = ()
         params: Annotated[
             t.SequenceOf[FlextTestsMakeModelsMixin.MakeParam],
@@ -70,12 +76,13 @@ class FlextTestsMakeModelsMixin:
             u.Field(description="Governance rules enforced by this command."),
         ] = ()
         target: Annotated[
-            str, u.Field(description="Optional Make target for header-only commands.")
+            str,
+            u.Field(description="Optional Make target for header-only commands."),
         ] = ""
         surface: Annotated[
             str,
             u.Field(
-                description="Declared surface-validation route for Python commands."
+                description="Declared surface-validation route for Python commands.",
             ),
         ] = ""
         target_env: Annotated[

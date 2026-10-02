@@ -16,6 +16,9 @@ probed. Each endpoint is probed at most once per session, and only when a
 collected test actually carries the marker, so suites that need nothing
 external pay nothing. This replaces the historical skip-based behaviour and
 its stale "AGENTS.md skip rule" citation.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -92,7 +95,9 @@ class FlextTestsCapabilityPlugin:
         if container is not None and endpoint is not None:
             host, port = endpoint
             unreachable = c.Tests.UNREACHABLE_SKIP_REASON.format(
-                marker=marker, host=host, port=port
+                marker=marker,
+                host=host,
+                port=port,
             )
             host_port = cls._published_port(container, port)
             reason = unreachable
@@ -109,9 +114,15 @@ class FlextTestsCapabilityPlugin:
         return reason
 
     def deselect_reasons(
-        self, config: pytest.Config, items: Iterable[pytest.Item]
+        self,
+        config: pytest.Config,
+        items: Iterable[pytest.Item],
     ) -> t.MutableMappingKV[str, str]:
-        """Compute {nodeid: reason} for capability tests this host cannot run."""
+        """Compute {nodeid: reason} for capability tests this host cannot run.
+
+        Returns:
+            The resulting ``t.MutableMappingKV[str, str]``.
+        """
         reasons: dict[str, str] = {}
         ci_disabled = self._ci_disables_docker()
         for item in items:
@@ -123,7 +134,8 @@ class FlextTestsCapabilityPlugin:
 
                     ci = infra_config.Infra.codegen.make.ci
                     reasons[item.nodeid] = c.Tests.ERR_DOCKER_DISABLED_BY_CI.format(
-                        variable=ci.variable, value=ci.value
+                        variable=ci.variable,
+                        value=ci.value,
                     )
                 else:
                     unreachable = self._unreachable_reason(marker)
@@ -134,13 +146,19 @@ class FlextTestsCapabilityPlugin:
         return reasons
 
     def _ci_disables_docker(self) -> bool:
-        """True when the Make CI token (config SSOT) is active."""
+        """True when the Make CI token (config SSOT) is active.
+
+        Returns:
+            The resulting ``bool``.
+        """
         from flext_tests.docker import FlextTestsDocker
 
         return FlextTestsDocker.ci_disables_docker()
 
     def pytest_collection_modifyitems(
-        self, config: pytest.Config, items: list[pytest.Item]
+        self,
+        config: pytest.Config,
+        items: list[pytest.Item],
     ) -> None:
         """Deselect capability tests this host cannot run; record the reasons."""
         reasons = self.deselect_reasons(config, items)
@@ -152,17 +170,20 @@ class FlextTestsCapabilityPlugin:
         config.stash[_DESELECTED_CAPABILITY_RECEIPT] = recorded
 
     def pytest_terminal_summary(
-        self, terminalreporter: pytest.TerminalReporter
+        self,
+        terminalreporter: pytest.TerminalReporter,
     ) -> None:
         """Report the typed NOT EXECUTED accounting for the runner receipts."""
         empty_receipt: dict[str, str] = {}
         recorded = terminalreporter.config.stash.get(
-            _DESELECTED_CAPABILITY_RECEIPT, empty_receipt
+            _DESELECTED_CAPABILITY_RECEIPT,
+            empty_receipt,
         )
         if not recorded:
             return
         terminalreporter.section(
-            f"NOT EXECUTED (capability deselected): {len(recorded)}", sep="="
+            f"NOT EXECUTED (capability deselected): {len(recorded)}",
+            sep="=",
         )
         for nodeid, reason in sorted(recorded.items()):
             terminalreporter.write_line(f"  {nodeid}: {reason}")

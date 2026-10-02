@@ -1,6 +1,9 @@
 """File-assertion helpers for FlextTestsFiles.
 
 Generalized file/directory existence and property checks.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -48,6 +51,9 @@ class FlextTestsFilesAssertionsMixin(FlextTestsFilesBatchMixin):
         Returns:
             Path if all validations pass
 
+        Raises:
+            AssertionError: If ``not path.exists()``; or if a ``AssertionError`` is
+                caught.
         """
         params = (
             options

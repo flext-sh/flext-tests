@@ -12,7 +12,6 @@ from __future__ import annotations
 from flext_infra import FlextInfraProtocols
 
 from ._protocols.docker import FlextTestsDockerProtocolsMixin
-from ._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
 from ._protocols.matchers import FlextTestsMatchersProtocolsMixin
 from ._protocols.payload import FlextTestsPayloadProtocolsMixin
 from ._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
@@ -24,7 +23,6 @@ class FlextTestsProtocols(FlextInfraProtocols):
 
     class Tests(
         FlextTestsDockerProtocolsMixin,
-        FlextTestsEnforcementProtocolsMixin,
         FlextTestsValueFactoryProtocolsMixin,
         # Owned payload and matcher capability contracts consumed by matchers.
         FlextTestsPayloadProtocolsMixin,

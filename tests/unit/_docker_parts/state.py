@@ -1,4 +1,8 @@
-"""Private docker host-state test mixins."""
+"""Private docker host-state test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -21,7 +25,8 @@ class TestsFlextTestsDockerStateMixin:
         tm.that(client1 is client2, eq=True)
 
     def test_dirty_state_is_shared_by_every_facade_of_the_host(
-        self, tmp_path: Path
+        self,
+        tmp_path: Path,
     ) -> None:
         """Facades over one state directory see one record per container."""
         state_dir = tmp_path / "host-state"
@@ -78,12 +83,13 @@ class TestsFlextTestsDockerStateMixin:
                         "fingerprint": "f00d",
                         "dirty": True,
                         "sealed": True,
-                    }
+                    },
                 ),
-            )
+            ),
         )
         tm.that(
-            tm.ok(u.Tests.read_container_state(tmp_path, "round-trip")), eq=published
+            tm.ok(u.Tests.read_container_state(tmp_path, "round-trip")),
+            eq=published,
         )
         tm.that(tm.ok(u.Tests.list_container_states(tmp_path)), eq=(published,))
 
@@ -109,7 +115,8 @@ class TestsFlextTestsDockerStateMixin:
             encoding="utf-8",
         )
         tm.fail(
-            u.Tests.read_container_state(tmp_path, "expected-name"), has="other-name"
+            u.Tests.read_container_state(tmp_path, "expected-name"),
+            has="other-name",
         )
 
     def test_invalid_container_name_is_rejected(self, tmp_path: Path) -> None:
@@ -117,7 +124,7 @@ class TestsFlextTestsDockerStateMixin:
         state_dir = tmp_path / "state"
         tm.fail(u.Tests.read_container_state(state_dir, "../escape"))
         tm.fail(
-            u.Tests.update_container_state(state_dir, "../escape", lambda state: state)
+            u.Tests.update_container_state(state_dir, "../escape", lambda state: state),
         )
         tm.that(list(tmp_path.iterdir()), eq=[])
 

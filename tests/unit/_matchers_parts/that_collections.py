@@ -1,4 +1,8 @@
-"""Private matcher that collection test mixins."""
+"""Private matcher that collection test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 

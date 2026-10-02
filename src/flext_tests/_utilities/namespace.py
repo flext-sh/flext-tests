@@ -23,7 +23,10 @@ class FlextTestsNamespaceUtilitiesMixin:
 
     @staticmethod
     def namespace(
-        *, worker_id: str, testrun_uid: str, checkout_root: Path
+        *,
+        worker_id: str,
+        testrun_uid: str,
+        checkout_root: Path,
     ) -> m.Tests.TestNamespace:
         """Derive one collision-free namespace for worker and run.
 
@@ -31,10 +34,13 @@ class FlextTestsNamespaceUtilitiesMixin:
         random_hex`` totalling 23 lowercase characters. Every input feeds a
         cryptographic digest or ``secrets`` randomness, so pytest-randomly
         reseeding the global random module cannot collide two runs.
+
+        Returns:
+            The resulting ``m.Tests.TestNamespace``.
         """
         epoch_stamp = _base36(int(time.time() * 1000))
         checkout_digest = hashlib.sha256(
-            str(checkout_root).encode(encoding="utf-8")
+            str(checkout_root).encode(encoding="utf-8"),
         ).hexdigest()
         worker_code = _worker_code(worker_id)
         run_digest = hashlib.sha256(testrun_uid.encode(encoding="utf-8")).hexdigest()[
@@ -54,7 +60,11 @@ class FlextTestsNamespaceUtilitiesMixin:
 
 
 def _base36(value: int) -> str:
-    """Encode a non-negative integer as lowercase base36."""
+    """Encode a non-negative integer as lowercase base36.
+
+    Returns:
+        The resulting ``str``.
+    """
     alphabet = "0123456789abcdefghijklmnopqrstuvwxyz"
     if value == 0:
         return alphabet[0]
@@ -66,7 +76,11 @@ def _base36(value: int) -> str:
 
 
 def _worker_code(worker_id: str) -> str:
-    """Condense a worker identifier to two lowercase alphanumerics."""
+    """Condense a worker identifier to two lowercase alphanumerics.
+
+    Returns:
+        The resulting ``str``.
+    """
     digest = hashlib.sha256(worker_id.encode(encoding="utf-8")).hexdigest()
     alphabet = "0123456789abcdefghijklmnopqrstuvwxyz"
     first = int(digest[:8], 16) % 36

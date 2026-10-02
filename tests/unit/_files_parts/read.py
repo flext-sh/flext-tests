@@ -1,4 +1,8 @@
-"""Private file read test mixins."""
+"""Private file read test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -75,7 +79,11 @@ class TestsFlextTestsFilesReadMixin:
         tm.that(len(data), eq=2)
 
     def test_read_nonexistent_file(self, tmp_path: Path) -> None:
-        """Test read() returns failure for non-existent file."""
+        """Test read() returns failure for non-existent file.
+
+        Raises:
+            TypeError: If Expected error to be not None.
+        """
         manager = tf(base_dir=tmp_path)
         path = tmp_path / "nonexistent.txt"
         result = manager.read(path)

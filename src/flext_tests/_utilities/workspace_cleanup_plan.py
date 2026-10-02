@@ -1,4 +1,8 @@
-"""Deterministic cleanup planning and guarded apply for workspace residues."""
+"""Deterministic cleanup planning and guarded apply for workspace residues.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -17,7 +21,7 @@ if TYPE_CHECKING:
 
 
 class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
-    FlextTestsWorkspaceCleanupInspectUtilitiesMixin
+    FlextTestsWorkspaceCleanupInspectUtilitiesMixin,
 ):
     """Build and apply exact ignored-residue plans with stale-drift protection."""
 
@@ -28,9 +32,15 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
 
     @classmethod
     def _candidate(
-        cls, root: Path, relative_path: Path
+        cls,
+        root: Path,
+        relative_path: Path,
     ) -> p.Result[m.Tests.WorkspaceCleanupCandidate]:
-        """Validate and describe one existing cleanup candidate."""
+        """Validate and describe one existing cleanup candidate.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.WorkspaceCleanupCandidate]``.
+        """
         lexical_result = cls._lexical_path(root, relative_path)
         if lexical_result.failure:
             return r[m.Tests.WorkspaceCleanupCandidate].fail(lexical_result.error)
@@ -68,7 +78,11 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
     def _reject_nested(
         candidates: tuple[m.Tests.WorkspaceCleanupCandidate, ...],
     ) -> p.Result[bool]:
-        """Reject overlapping parent and child cleanup targets."""
+        """Reject overlapping parent and child cleanup targets.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         for index, parent in enumerate(candidates):
             for child in candidates[index + 1 :]:
                 if (
@@ -77,18 +91,23 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
                 ):
                     return r[bool].fail(
                         "cleanup residues overlap: "
-                        f"{parent.relative_path} and {child.relative_path}"
+                        f"{parent.relative_path} and {child.relative_path}",
                     )
         return r[bool].ok(True)
 
     @classmethod
     def workspace_cleanup_plan(
-        cls, request: p.Tests.WorkspaceCleanupRequest
+        cls,
+        request: p.Tests.WorkspaceCleanupRequest,
     ) -> p.Result[p.Tests.WorkspaceCleanupPlan]:
-        """Build a deterministic read-only plan for exact ignored residues."""
+        """Build a deterministic read-only plan for exact ignored residues.
+
+        Returns:
+            The resulting ``p.Result[p.Tests.WorkspaceCleanupPlan]``.
+        """
         if not isinstance(request, m.Tests.WorkspaceCleanupRequest):
             return r[p.Tests.WorkspaceCleanupPlan].fail(
-                "cleanup request must be the canonical WorkspaceCleanupRequest model"
+                "cleanup request must be the canonical WorkspaceCleanupRequest model",
             )
         root_result = cls._repository_root(request)
         if root_result.failure:
@@ -103,7 +122,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
             relative_path = relative_result.value
             if relative_path in relative_paths:
                 return r[p.Tests.WorkspaceCleanupPlan].fail(
-                    f"cleanup residue is declared more than once: {relative_path}"
+                    f"cleanup residue is declared more than once: {relative_path}",
                 )
             relative_paths.add(relative_path)
             lexical_result = cls._lexical_path(root, relative_path)
@@ -125,27 +144,32 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
 
     @classmethod
     def workspace_cleanup_apply(
-        cls, plan: p.Tests.WorkspaceCleanupPlan
+        cls,
+        plan: p.Tests.WorkspaceCleanupPlan,
     ) -> p.Result[p.Tests.WorkspaceCleanupReport]:
-        """Apply exactly one fresh canonical dry-run plan and fail loudly."""
+        """Apply exactly one fresh canonical dry-run plan and fail loudly.
+
+        Returns:
+            The resulting ``p.Result[p.Tests.WorkspaceCleanupReport]``.
+        """
         if not isinstance(plan, m.Tests.WorkspaceCleanupPlan):
             return r[p.Tests.WorkspaceCleanupReport].fail(
-                "cleanup plan must be the canonical WorkspaceCleanupPlan model"
+                "cleanup plan must be the canonical WorkspaceCleanupPlan model",
             )
         replanned_result = cls.workspace_cleanup_plan(plan.request)
         if replanned_result.failure:
             return r[p.Tests.WorkspaceCleanupReport].fail(
-                f"cleanup plan is stale: {replanned_result.error}"
+                f"cleanup plan is stale: {replanned_result.error}",
             )
         replanned = replanned_result.value
         if replanned.candidates != plan.candidates:
             return r[p.Tests.WorkspaceCleanupReport].fail(
-                "cleanup plan is stale: candidates changed since dry-run"
+                "cleanup plan is stale: candidates changed since dry-run",
             )
         root_result = cls._repository_root(plan.request)
         if root_result.failure:
             return r[p.Tests.WorkspaceCleanupReport].fail(
-                f"cleanup plan is stale: {root_result.error}"
+                f"cleanup plan is stale: {root_result.error}",
             )
         root = root_result.value
         removed: list[Path] = []
@@ -153,24 +177,24 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
             fresh_result = cls._candidate(root, candidate.relative_path)
             if fresh_result.failure:
                 return r[p.Tests.WorkspaceCleanupReport].fail(
-                    f"cleanup plan is stale: {fresh_result.error}"
+                    f"cleanup plan is stale: {fresh_result.error}",
                 )
             if fresh_result.value != candidate:
                 return r[p.Tests.WorkspaceCleanupReport].fail(
                     f"cleanup plan is stale for {candidate.relative_path}: "
-                    "filesystem state changed since dry-run"
+                    "filesystem state changed since dry-run",
                 )
             delete_result = u.Cli.files_delete(candidate.path)
             if delete_result.failure:
                 completed = ", ".join(path.as_posix() for path in removed)
                 return r[p.Tests.WorkspaceCleanupReport].fail(
                     f"cleanup deletion failed for {candidate.relative_path}: "
-                    f"{delete_result.error}; already removed=[{completed}]"
+                    f"{delete_result.error}; already removed=[{completed}]",
                 )
             if candidate.path.exists() or candidate.path.is_symlink():
                 return r[p.Tests.WorkspaceCleanupReport].fail(
                     f"cleanup deletion reported success but path remains: "
-                    f"{candidate.relative_path}"
+                    f"{candidate.relative_path}",
                 )
             removed.append(candidate.path)
         report = m.Tests.WorkspaceCleanupReport(plan=plan, removed=tuple(removed))

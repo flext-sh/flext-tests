@@ -1,4 +1,8 @@
-"""Private file model test mixins."""
+"""Private file model test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -52,7 +56,8 @@ class TestsFlextTestsFilesModelsMixin:
         tm.that(manager.created_dirs, empty=True)
 
     def test_file_manager_preserves_operations_with_explicit_base_dir(
-        self, tmp_path: Path
+        self,
+        tmp_path: Path,
     ) -> None:
         """Characterize the public file-manager operations."""
         manager = FlextTestsFiles(base_dir=tmp_path)

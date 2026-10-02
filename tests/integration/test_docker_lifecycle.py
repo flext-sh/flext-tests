@@ -72,7 +72,11 @@ class TestsFlextTestsDockerLifecycle:
 
     @staticmethod
     def _marker(marker_file: Path) -> p.Tests.ContainerInitializer:
-        """Initializer appending the created container id to a file."""
+        """Initializer appending the created container id to a file.
+
+        Returns:
+            The resulting ``p.Tests.ContainerInitializer``.
+        """
 
         def append(info: m.Tests.ContainerInfo) -> p.Result[bool]:
             with marker_file.open("a", encoding="utf-8") as handle:
@@ -83,9 +87,15 @@ class TestsFlextTestsDockerLifecycle:
 
     @staticmethod
     def _await_health(
-        docker: FlextTestsDocker, name: str, health: c.Tests.ContainerHealth
+        docker: FlextTestsDocker,
+        name: str,
+        health: c.Tests.ContainerHealth,
     ) -> m.Tests.ContainerInfo:
-        """Poll Docker until the container reports ``health`` (bounded)."""
+        """Poll Docker until the container reports ``health`` (bounded).
+
+        Returns:
+            The resulting ``m.Tests.ContainerInfo``.
+        """
         deadline = time.monotonic() + 15
         while True:
             info = tm.ok(docker.fetch_container_info(name))
@@ -96,13 +106,19 @@ class TestsFlextTestsDockerLifecycle:
 
     @pytest.fixture
     def project(self, tmp_path: Path) -> Generator[str]:
-        """A fresh compose project whose containers and volumes are removed."""
+        """A fresh compose project whose containers and volumes are removed.
+
+        Yields:
+            Each ``str``.
+        """
         name = f"flext-tests-lc-{secrets.token_hex(4)}"
         yield name
         tm.ok(self._docker(name, tmp_path / "teardown").down())
 
     def test_reuse_keeps_the_sealed_container(
-        self, project: str, tmp_path: Path
+        self,
+        project: str,
+        tmp_path: Path,
     ) -> None:
         """A second ensure reuses the container the first one created."""
         state_dir = tmp_path / "state"
@@ -120,7 +136,9 @@ class TestsFlextTestsDockerLifecycle:
         tm.that(tm.ok(u.Tests.resolve_host_port(first, 80)), gt=0)
 
     def test_unhealthy_container_is_recreated(
-        self, project: str, tmp_path: Path
+        self,
+        project: str,
+        tmp_path: Path,
     ) -> None:
         """A failing healthcheck makes verify fail and ensure recreate."""
         docker = self._docker(project, tmp_path / "state")
@@ -134,7 +152,9 @@ class TestsFlextTestsDockerLifecycle:
         tm.that(second.health, eq=c.Tests.ContainerHealth.HEALTHY)
 
     def test_changed_fingerprint_input_recreates(
-        self, project: str, tmp_path: Path
+        self,
+        project: str,
+        tmp_path: Path,
     ) -> None:
         """Changing a declared input invalidates the seal."""
         declared = tmp_path / "declared-input.txt"
@@ -148,7 +168,9 @@ class TestsFlextTestsDockerLifecycle:
         tm.ok(docker.verify())
 
     def test_creation_environment_reads_back_as_secret(
-        self, project: str, tmp_path: Path
+        self,
+        project: str,
+        tmp_path: Path,
     ) -> None:
         """Creation values reach the container and never stay on disk."""
         state_dir = tmp_path / "state"
@@ -156,11 +178,11 @@ class TestsFlextTestsDockerLifecycle:
         value = secrets.token_hex(8)
         info = tm.ok(
             docker.execute(
-                creation_environment={self.CREATION_VARIABLE: t.SecretStr(value)}
-            )
+                creation_environment={self.CREATION_VARIABLE: t.SecretStr(value)},
+            ),
         )
         environment = tm.ok(
-            docker.fetch_container_environment(info.name, [self.CREATION_VARIABLE])
+            docker.fetch_container_environment(info.name, [self.CREATION_VARIABLE]),
         )
         tm.that(environment[self.CREATION_VARIABLE].get_secret_value(), eq=value)
         tm.that(list(state_dir.glob(f"*{c.Tests.DOCKER_ENV_FILE_SUFFIX}")), empty=True)
@@ -193,17 +215,20 @@ class TestsFlextTestsDockerLifecycle:
 
     @staticmethod
     def _ensure_in_child(
-        project: str, state_dir: str, marker_file: str, results: Queue[str]
+        project: str,
+        state_dir: str,
+        marker_file: str,
+        results: Queue[str],
     ) -> None:
         """Process body of the concurrency test: one ensure, report its id."""
         docker = TestsFlextTestsDockerLifecycle._docker(project, Path(state_dir))
         ensured = docker.execute(
-            initializer=TestsFlextTestsDockerLifecycle._marker(Path(marker_file))
+            initializer=TestsFlextTestsDockerLifecycle._marker(Path(marker_file)),
         )
         results.put(
             ensured.value.container_id
             if ensured.success
-            else f"failure: {ensured.error}"
+            else f"failure: {ensured.error}",
         )
 
     def test_concurrent_ensures_create_once(self, project: str, tmp_path: Path) -> None:
@@ -230,17 +255,22 @@ class TestsFlextTestsDockerLifecycle:
         tm.that(created.read_text(encoding="utf-8").splitlines(), eq=[reported[0]])
 
     def test_never_healthy_service_fails_within_startup_timeout(
-        self, project: str, tmp_path: Path
+        self,
+        project: str,
+        tmp_path: Path,
     ) -> None:
         """A service that never turns healthy fails the ensure, unsealed."""
         state_dir = tmp_path / "state"
         docker = self._docker(
-            project, state_dir, service="never-healthy", startup_timeout=5
+            project,
+            state_dir,
+            service="never-healthy",
+            startup_timeout=5,
         )
         started = time.monotonic()
         tm.fail(docker.execute())
         tm.that(time.monotonic() - started, lt=20)
         record = tm.ok(
-            u.Tests.read_container_state(state_dir, f"{project}-never-healthy-1")
+            u.Tests.read_container_state(state_dir, f"{project}-never-healthy-1"),
         )
         tm.that(record.sealed, eq=False)

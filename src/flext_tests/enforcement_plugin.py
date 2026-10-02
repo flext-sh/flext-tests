@@ -3,6 +3,9 @@
 Pytest imports installed entry points before pytest-cov starts measurement.
 This module therefore owns only the external hook boundary and defers product
 imports until each lifecycle hook is actually called.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -75,7 +78,9 @@ def pytest_configure(config: pytest.Config) -> None:
 
 
 def pytest_collection_modifyitems(
-    session: pytest.Session, config: pytest.Config, items: list[pytest.Item]
+    session: pytest.Session,
+    config: pytest.Config,
+    items: list[pytest.Item],
 ) -> None:
     """Delegate collection-time enforcement."""
     from ._fixtures._enforcement_parts.dispatcher import FlextTestsEnforcementDispatcher
@@ -104,7 +109,9 @@ def pytest_sessionstart(session: pytest.Session) -> None:
 
 
 def pytest_terminal_summary(
-    terminalreporter: pytest.TerminalReporter, exitstatus: int, config: pytest.Config
+    terminalreporter: pytest.TerminalReporter,
+    exitstatus: int,
+    config: pytest.Config,
 ) -> None:
     """Delegate the enforcement summary."""
     _ = exitstatus
