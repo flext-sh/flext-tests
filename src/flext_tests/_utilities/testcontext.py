@@ -1,9 +1,12 @@
-"""Host file lock shared by every test process of one machine."""
+"""Host file lock shared by every test process of one machine.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
 import os
-import time
 import types
 from pathlib import Path
 from typing import BinaryIO

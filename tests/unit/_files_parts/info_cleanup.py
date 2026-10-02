@@ -1,4 +1,8 @@
-"""Private file info and cleanup test mixins."""
+"""Private file info and cleanup test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -125,7 +129,8 @@ class TestsFlextTestsFilesInfoCleanupMixin:
     def test_temporary_files_classmethod(self) -> None:
         """Test files classmethod context manager."""
         files: t.MappingKV[
-            str, str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel
+            str,
+            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
         ] = {"file1": "content1", "file2": "content2"}
         with FlextTestsFiles.files(files) as created:
             tm.that(len(created), eq=2)
@@ -139,7 +144,8 @@ class TestsFlextTestsFilesInfoCleanupMixin:
     def test_temporary_files_custom_extension(self) -> None:
         """Test files with custom extension."""
         files: t.MappingKV[
-            str, str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel
+            str,
+            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
         ] = {"file1": "content1"}
         with FlextTestsFiles.files(files, ext=".md") as created:
             tm.that(created["file1"].name, eq="file1.md")
@@ -148,7 +154,8 @@ class TestsFlextTestsFilesInfoCleanupMixin:
         """Test creating files in nested directory."""
         nested_dir = tmp_path / "nested" / "subdir"
         files: t.MappingKV[
-            str, str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel
+            str,
+            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
         ] = {"file1": "content1"}
         with FlextTestsFiles.files(files, directory=nested_dir) as created:
             tm.that(created["file1"].parent, eq=nested_dir)

@@ -1,4 +1,8 @@
-"""Host-scoped container state records of the Docker test lifecycle."""
+"""Host-scoped container state records of the Docker test lifecycle.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -38,7 +42,7 @@ class FlextTestsDockerStateUtilitiesMixin:
         ``flext_scratch_root`` ini) replaces the host default.
         """
         identity = hashlib.sha256(
-            str(checkout_root).encode(encoding="utf-8")
+            str(checkout_root).encode(encoding="utf-8"),
         ).hexdigest()[:12]
         base = (
             Path(override)
@@ -66,16 +70,22 @@ class FlextTestsDockerStateUtilitiesMixin:
 
     @staticmethod
     def read_container_state(
-        state_dir: Path, container_name: str
+        state_dir: Path,
+        container_name: str,
     ) -> p.Result[m.Tests.ContainerState]:
-        """Read the record of one container; no record means unprovisioned."""
+        """Read the record of one container; no record means unprovisioned.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerState]``.
+        """
         unprovisioned = FlextTestsDockerStateUtilitiesMixin._unprovisioned(
-            container_name
+            container_name,
         )
         if unprovisioned.failure:
             return unprovisioned
         state_file = FlextTestsDockerStateUtilitiesMixin.docker_state_file(
-            state_dir, container_name
+            state_dir,
+            container_name,
         )
         if not state_file.exists():
             return unprovisioned
@@ -87,33 +97,48 @@ class FlextTestsDockerStateUtilitiesMixin:
                     lambda: m.Tests.ContainerState.model_validate_json(text),
                     catch=c.EXC_VALIDATION_VALUE,
                     op_name=f"Parse container state {state_file}",
-                )
+                ),
             )
             .flat_map(
                 lambda state: FlextTestsDockerStateUtilitiesMixin._own_record(
-                    state_file, container_name, state
-                )
+                    state_file,
+                    container_name,
+                    state,
+                ),
             )
         )
 
     @staticmethod
     def _unprovisioned(container_name: str) -> p.Result[m.Tests.ContainerState]:
-        """Validate the name before it becomes a path; return its empty record."""
+        """Validate the name before it becomes a path; return its empty record.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerState]``.
+        """
         return r[m.Tests.ContainerState].from_validation(
-            {"container_name": container_name}, m.Tests.ContainerState
+            {"container_name": container_name},
+            m.Tests.ContainerState,
         )
 
     @staticmethod
     def _own_record(
-        state_file: Path, container_name: str, state: m.Tests.ContainerState
+        state_file: Path,
+        container_name: str,
+        state: m.Tests.ContainerState,
     ) -> p.Result[m.Tests.ContainerState]:
-        """Reject a record that names another container."""
+        """Reject a record that names another container.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerState]``.
+        """
         if state.container_name == container_name:
             return r[m.Tests.ContainerState].ok(state)
         return r[m.Tests.ContainerState].fail(
             c.Tests.ERR_DOCKER_STATE_NAME_MISMATCH.format(
-                path=state_file, recorded=state.container_name, expected=container_name
-            )
+                path=state_file,
+                recorded=state.container_name,
+                expected=container_name,
+            ),
         )
 
     @staticmethod
@@ -128,16 +153,21 @@ class FlextTestsDockerStateUtilitiesMixin:
 
         The state lock is awaited at most ``timeout_seconds``; a longer holder
         fails the rewrite with ``LOCK_TIMEOUT`` and leaves the record intact.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerState]``.
         """
         named = FlextTestsDockerStateUtilitiesMixin._unprovisioned(container_name)
         if named.failure:
             return named
         state_file = FlextTestsDockerStateUtilitiesMixin.docker_state_file(
-            state_dir, container_name
+            state_dir,
+            container_name,
         )
         lock = FlextTestsTestContextUtilitiesMixin.FileLock(
             FlextTestsDockerStateUtilitiesMixin.docker_state_lock_file(
-                state_dir, container_name
+                state_dir,
+                container_name,
             ),
             timeout_seconds=timeout_seconds,
         )
@@ -149,34 +179,48 @@ class FlextTestsDockerStateUtilitiesMixin:
                     .map(change)
                     .flat_map(
                         lambda changed: FlextTestsDockerStateUtilitiesMixin._own_record(
-                            state_file, container_name, changed
-                        )
+                            state_file,
+                            container_name,
+                            changed,
+                        ),
                     )
                     .flat_map(
                         lambda owned: FlextTestsDockerStateUtilitiesMixin._publish(
-                            state_file, owned
-                        )
+                            state_file,
+                            owned,
+                        ),
                     )
                 )
         except TimeoutError as exc:
             return r[m.Tests.ContainerState].fail(
-                str(exc), error_code=c.Tests.DockerErrorCode.LOCK_TIMEOUT, exception=exc
+                str(exc),
+                error_code=c.Tests.DockerErrorCode.LOCK_TIMEOUT,
+                exception=exc,
             )
 
     @staticmethod
     def _publish(
-        state_file: Path, state: m.Tests.ContainerState
+        state_file: Path,
+        state: m.Tests.ContainerState,
     ) -> p.Result[m.Tests.ContainerState]:
-        """Atomically replace the record file with ``state``."""
+        """Atomically replace the record file with ``state``.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerState]``.
+        """
         return u.Cli.atomic_write_text_file(state_file, state.model_dump_json()).map(
-            lambda _: state
+            lambda _: state,
         )
 
     @staticmethod
     def list_container_states(
         state_dir: Path,
     ) -> p.Result[t.SequenceOf[m.Tests.ContainerState]]:
-        """Read every record of the host, ordered by container name."""
+        """Read every record of the host, ordered by container name.
+
+        Returns:
+            The resulting ``p.Result[t.SequenceOf[m.Tests.ContainerState]]``.
+        """
         states: list[m.Tests.ContainerState] = []
         record_files = (
             sorted(state_dir.glob(f"*{c.Tests.DOCKER_STATE_FILE_SUFFIX}"))

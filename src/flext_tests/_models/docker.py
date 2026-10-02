@@ -23,13 +23,16 @@ class FlextTestsDockerModelsMixin:
             u.Field(description="Optional managed container name for inspection."),
         ] = None
         compose_file: Annotated[
-            Path | None, u.Field(description="Resolved docker-compose file path.")
+            Path | None,
+            u.Field(description="Resolved docker-compose file path."),
         ] = None
         service: Annotated[
-            str, u.Field(description="Compose service name to start.")
+            str,
+            u.Field(description="Compose service name to start."),
         ] = ""
         host: Annotated[
-            str, u.Field(min_length=1, description="Host used for readiness checks.")
+            str,
+            u.Field(min_length=1, description="Host used for readiness checks."),
         ] = c.LOCALHOST
         port: Annotated[
             int | None,
@@ -37,13 +40,14 @@ class FlextTestsDockerModelsMixin:
                 description=(
                     "Container port the service listens on; its published host "
                     "port is resolved from the running container."
-                )
+                ),
             ),
         ] = None
         startup_timeout: Annotated[
             int,
             u.Field(
-                ge=1, description="Bound for compose --wait and for readiness polling."
+                ge=1,
+                description="Bound for compose --wait and for readiness polling.",
             ),
         ] = 30
         force_recreate: Annotated[
@@ -56,7 +60,7 @@ class FlextTestsDockerModelsMixin:
                 description=(
                     "Optional compose project name; derived from the compose "
                     "file stem when omitted."
-                )
+                ),
             ),
         ] = None
         fingerprint_inputs: Annotated[
@@ -65,7 +69,7 @@ class FlextTestsDockerModelsMixin:
                 description=(
                     "Tracked inputs (compose file plus optional extra paths) "
                     "hashed into the container-state fingerprint."
-                )
+                ),
             ),
         ] = ()
         lock_timeout_seconds: Annotated[
@@ -89,19 +93,24 @@ class FlextTestsDockerModelsMixin:
         """
 
         container_name: Annotated[
-            str, u.Field(min_length=1, description="Managed container name.")
+            str,
+            u.Field(min_length=1, description="Managed container name."),
         ]
         container_id: Annotated[
-            str, u.Field(description="Docker container id at seal time.")
+            str,
+            u.Field(description="Docker container id at seal time."),
         ] = ""
         fingerprint: Annotated[
-            str, u.Field(description="Tracked-inputs fingerprint at seal time.")
+            str,
+            u.Field(description="Tracked-inputs fingerprint at seal time."),
         ] = ""
         sealed: Annotated[
-            bool, u.Field(description="True once verified healthy and sealed.")
+            bool,
+            u.Field(description="True once verified healthy and sealed."),
         ] = False
         dirty: Annotated[
-            bool, u.Field(description="True when a run marked the container dirty.")
+            bool,
+            u.Field(description="True when a run marked the container dirty."),
         ] = False
 
     class ContainerInfo(m.Value):
@@ -109,17 +118,20 @@ class FlextTestsDockerModelsMixin:
 
         name: Annotated[str, u.Field(min_length=1, description="Container name.")]
         status: Annotated[
-            c.Tests.ContainerStatus, u.Field(description="Runtime lifecycle status.")
+            c.Tests.ContainerStatus,
+            u.Field(description="Runtime lifecycle status."),
         ]
         ports: Annotated[
             t.StrMapping,
             u.Field(description="Published ports: '<port>/<proto>' to host port."),
         ]
         image: Annotated[
-            str, u.Field(description="Configured image reference; may be empty.")
+            str,
+            u.Field(description="Configured image reference; may be empty."),
         ]
         container_id: Annotated[
-            str, u.Field(description="Docker-assigned container identifier.")
+            str,
+            u.Field(description="Docker-assigned container identifier."),
         ] = ""
         image_id: Annotated[str, u.Field(description="Resolved image identifier.")] = ""
         health: Annotated[
@@ -151,7 +163,8 @@ class FlextTestsDockerModelsMixin:
         """``Config`` of ``docker inspect``."""
 
         image: Annotated[
-            str, u.Field(alias="Image", description="Configured image reference.")
+            str,
+            u.Field(alias="Image", description="Configured image reference."),
         ] = ""
         env: Annotated[
             t.StrSequence | None,
@@ -162,7 +175,8 @@ class FlextTestsDockerModelsMixin:
         """One host binding of a published container port."""
 
         host_port: Annotated[
-            str, u.Field(alias="HostPort", description="Published host port.")
+            str,
+            u.Field(alias="HostPort", description="Published host port."),
         ] = ""
 
     class ContainerInspectNetwork(m.FlexibleModel):
@@ -183,7 +197,8 @@ class FlextTestsDockerModelsMixin:
 
         id: Annotated[str, u.Field(alias="Id", description="Container id.")]
         image_id: Annotated[
-            str, u.Field(alias="Image", description="Resolved image id.")
+            str,
+            u.Field(alias="Image", description="Resolved image id."),
         ]
         state: Annotated[
             FlextTestsDockerModelsMixin.ContainerInspectState,
@@ -217,10 +232,12 @@ class FlextTestsDockerModelsMixin:
             u.Field(description="Container id the lifecycle sealed; empty if none."),
         ] = ""
         fingerprint: Annotated[
-            str, u.Field(description="Declared-input fingerprint sealed with the id.")
+            str,
+            u.Field(description="Declared-input fingerprint sealed with the id."),
         ] = ""
         dirty: Annotated[
-            bool, u.Field(description="A session reported the container unusable.")
+            bool,
+            u.Field(description="A session reported the container unusable."),
         ] = False
         sealed: Annotated[
             bool,
@@ -232,22 +249,26 @@ class FlextTestsDockerModelsMixin:
 
         id: Annotated[str, u.Field(description="Opaque user identifier.")]
         unique_id: Annotated[
-            str | None, u.Field(description="Optional unique user identifier.")
+            str | None,
+            u.Field(description="Optional unique user identifier."),
         ] = None
         name: Annotated[str, u.Field(description="Display name.")]
         email: Annotated[str, u.Field(description="Primary email address.")]
         active: Annotated[
-            bool, u.Field(description="True when the account is active.")
+            bool,
+            u.Field(description="True when the account is active."),
         ] = True
 
     class Config(m.Value):
         """Test configuration model - immutable value object."""
 
         service_type: Annotated[
-            str, u.Field(description="Service kind under test.")
+            str,
+            u.Field(description="Service kind under test."),
         ] = "api"
         environment: Annotated[
-            str, u.Field(description="Target environment label.")
+            str,
+            u.Field(description="Target environment label."),
         ] = "test"
         debug: Annotated[bool, u.Field(description="Enable verbose debug output.")] = (
             True
@@ -255,5 +276,6 @@ class FlextTestsDockerModelsMixin:
         log_level: Annotated[str, u.Field(description="Logging level name.")] = "DEBUG"
         timeout: Annotated[int, u.Field(description="Request timeout in seconds.")] = 30
         max_retries: Annotated[
-            int, u.Field(description="Retry budget on transient failure.")
+            int,
+            u.Field(description="Retry budget on transient failure."),
         ] = 3

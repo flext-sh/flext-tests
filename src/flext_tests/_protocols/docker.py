@@ -1,4 +1,8 @@
-"""Hook contracts of the Docker test lifecycle."""
+"""Hook contracts of the Docker test lifecycle.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 

@@ -2,6 +2,9 @@
 
 Covers initialization, context-manager entry/exit, cleanup tracking, and
 base-directory resolution.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -34,7 +37,11 @@ class FlextTestsFilesLifecycleMixin:
         self._created_dirs = list[Path]()
 
     def __enter__(self) -> Self:
-        """Context manager entry."""
+        """Context manager entry.
+
+        Returns:
+            The resulting ``Self``.
+        """
         return self
 
     def __exit__(
@@ -69,7 +76,8 @@ class FlextTestsFilesLifecycleMixin:
                 # observable (not silently swallowed) but never fails the
                 # test that triggered teardown.
                 warnings.warn(
-                    f"cleanup: failed to remove file {path}: {exc}", stacklevel=2
+                    f"cleanup: failed to remove file {path}: {exc}",
+                    stacklevel=2,
                 )
         self._created_files.clear()
         for path in reversed(self._created_dirs):
@@ -80,12 +88,17 @@ class FlextTestsFilesLifecycleMixin:
                 shutil.rmtree(path)
             except OSError as exc:
                 warnings.warn(
-                    f"cleanup: failed to remove directory {path}: {exc}", stacklevel=2
+                    f"cleanup: failed to remove directory {path}: {exc}",
+                    stacklevel=2,
                 )
         self._created_dirs.clear()
 
     def _resolve_directory(self, directory: Path | None) -> Path:
-        """Resolve target directory for file creation."""
+        """Resolve target directory for file creation.
+
+        Returns:
+            The resulting ``Path``.
+        """
         target_dir = directory or self.base_dir
         if target_dir is not None:
             target_dir.mkdir(parents=True, exist_ok=True)

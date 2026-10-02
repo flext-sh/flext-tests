@@ -1,6 +1,9 @@
 """Test-domain file helpers (format detection only).
 
 Format detection delegates to ``u.Cli`` canonical helpers; no I/O lives here.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -26,15 +29,25 @@ class FlextTestsFilesUtilitiesMixin:
         name: str,
         fmt: str,
     ) -> str:
-        """Detect format by content shape + name; honors explicit ``fmt``."""
+        """Detect format by content shape + name; honors explicit ``fmt``.
+
+        Returns:
+            The resulting ``str``.
+        """
         detected_format: str = u.Cli.files_detect_format_from_content(
-            content, name, fmt
+            content,
+            name,
+            fmt,
         )
         return detected_format
 
     @staticmethod
     def detect_format_from_path(path: Path, fmt: str) -> str:
-        """Detect format from path extension; honors explicit ``fmt``."""
+        """Detect format from path extension; honors explicit ``fmt``.
+
+        Returns:
+            The resulting ``str``.
+        """
         detected_format: str = u.Cli.files_detect_format_from_path(path, fmt)
         return detected_format
 
@@ -42,7 +55,11 @@ class FlextTestsFilesUtilitiesMixin:
     # (declaration purity - constants must not hold formatting behavior; mro-i6nq.11).
     @staticmethod
     def format_size(size: int) -> str:
-        """Format a byte size in human-readable units (e.g. "1.2 KB")."""
+        """Format a byte size in human-readable units (e.g. "1.2 KB").
+
+        Returns:
+            The resulting ``str``.
+        """
         from flext_tests import c
 
         value = size

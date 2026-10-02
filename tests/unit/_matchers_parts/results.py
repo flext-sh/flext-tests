@@ -1,4 +1,8 @@
-"""Private matcher result assertion test mixins."""
+"""Private matcher result assertion test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -27,7 +31,8 @@ class TestsFlextTestsMatchersResultsMixin:
         assert_type(tm.ok(result), str)
         tm.that(tm.ok(result), eq="success")
         tm.that(
-            tm.ok(r[t.JsonMapping].ok({"meta": {"id": "x"}}), path="meta.id"), eq="x"
+            tm.ok(r[t.JsonMapping].ok({"meta": {"id": "x"}}), path="meta.id"),
+            eq="x",
         )
 
     def test_ok_preserves_arbitrary_result_payload(self) -> None:
@@ -98,7 +103,8 @@ class TestsFlextTestsMatchersResultsMixin:
         data = {"key1": "value1"}
         expected = {"key1": "wrong_value"}
         with pytest.raises(
-            AssertionError, match="expected 'wrong_value', got 'value1'"
+            AssertionError,
+            match="expected 'wrong_value', got 'value1'",
         ):
             tm.that(data, kv=expected)
 

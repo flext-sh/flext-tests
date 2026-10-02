@@ -1,4 +1,8 @@
-"""Private matcher that attribute test mixins."""
+"""Private matcher that attribute test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -73,14 +77,14 @@ class TestsFlextTestsMatchersThatAttrsMixin:
     def test_that_with_deep_parameter(self) -> None:
         """Test tm.that() with deep parameter."""
         data: t.MappingKV[str, t.Tests.TestobjectSerializable] = {
-            "user": {"name": "John", "age": 30}
+            "user": {"name": "John", "age": 30},
         }
         tm.that(data, deep={"user.name": "John"})
 
     def test_that_with_deep_parameter_rejects_mismatch(self) -> None:
         """A deep literal expectation fails when the value at the path differs."""
         data: t.MappingKV[str, t.Tests.TestobjectSerializable] = {
-            "user": {"name": "John"}
+            "user": {"name": "John"},
         }
         with pytest.raises(AssertionError, match="Value mismatch"):
             tm.that(data, deep={"user.name": "Jane"})

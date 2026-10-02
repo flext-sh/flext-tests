@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 
 class FlextTestsWorkspaceCleanupUtilitiesMixin(
-    FlextTestsWorkspaceCleanupPlanUtilitiesMixin
+    FlextTestsWorkspaceCleanupPlanUtilitiesMixin,
 ):
     """Deterministic workspace cleanup plan/apply namespace."""
 

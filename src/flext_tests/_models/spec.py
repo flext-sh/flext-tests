@@ -32,7 +32,7 @@ class FlextTestsSpecModelsMixin:
                 description=(
                     "Target name → container config; the target name is what "
                     "CLI --target and the in-session plugin resolve."
-                )
+                ),
             ),
         ]
         initializer_command: Annotated[
@@ -41,6 +41,6 @@ class FlextTestsSpecModelsMixin:
                 description=(
                     "Optional shell command run once after ensure, receiving "
                     "the container environment readback as env vars."
-                )
+                ),
             ),
         ] = None
