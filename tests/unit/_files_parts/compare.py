@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_tests import tf, tm
-from tests import c, u
+from tests import c, m, u
 
 
 class TestsFlextTestsFilesCompareMixin:
@@ -113,6 +113,28 @@ class TestsFlextTestsFilesCompareMixin:
         result = manager.compare(path1, path2, pattern="ERROR")
         _ = u.Tests.assert_success(result)
         tm.that(result.value is False, eq=True)
+
+    def test_compare_json_mappings_ignore_key_order(self, tmp_path: Path) -> None:
+        """Two JSON files compare as mappings, whatever their key order."""
+        manager = tf(base_dir=tmp_path)
+        path1 = manager.create(m.ConfigMap(root={"a": 1, "b": 2}), "first.json")
+        path2 = manager.create(m.ConfigMap(root={"b": 2, "a": 1}), "second.json")
+        result = manager.compare(path1, path2)
+        _ = u.Tests.assert_success(result)
+        tm.that(result.value, eq=True)
+
+    def test_compare_invalid_json_surfaces_the_parse_error(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """A structured pair that does not parse fails; it is never text-compared."""
+        manager = tf(base_dir=tmp_path)
+        path1 = tmp_path / "first.json"
+        path2 = tmp_path / "second.json"
+        for path in (path1, path2):
+            path.write_text('{"a": 1', encoding="utf-8")
+        result = manager.compare(path1, path2)
+        _ = u.Tests.assert_failure(result)
 
     def test_compare_nonexistent_file(self, tmp_path: Path) -> None:
         """Test compare() returns failure for non-existent file."""
