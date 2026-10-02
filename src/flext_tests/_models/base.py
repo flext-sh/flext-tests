@@ -23,6 +23,9 @@ def _entity_payload_default() -> FlextTestsBaseModelsMixin.Payload:
     runs after the module is complete. A lambda here would be flattened back
     into an eager attribute reference by the fleet's autofix pass, which
     re-introduces the class-body NameError.
+
+    Returns:
+        The resulting ``FlextTestsBaseModelsMixin.Payload``.
     """
     return FlextTestsBaseModelsMixin.Payload.atom_default()
 
@@ -30,7 +33,11 @@ def _entity_payload_default() -> FlextTestsBaseModelsMixin.Payload:
 def _payload_entries_default() -> t.Tests.PayloadEntries[
     FlextTestsBaseModelsMixin.Payload
 ]:
-    """Late-bound empty mapping arm, bound the same way as the entity default."""
+    """Late-bound empty mapping arm, bound the same way as the entity default.
+
+    Returns:
+        The resulting ``t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload]``.
+    """
     return MappingProxyType({})
 
 
@@ -39,7 +46,8 @@ class FlextTestsBaseModelsMixin:
         """Owned native payload tree; model leaves retain their instance identity."""
 
         kind: Annotated[
-            t.Tests.PayloadKind, m.Field(frozen=True, description="Native value arm.")
+            t.Tests.PayloadKind,
+            m.Field(frozen=True, description="Native value arm."),
         ]
         atom: Annotated[
             t.Tests.PayloadAtom | p.Model | None,
@@ -67,14 +75,29 @@ class FlextTestsBaseModelsMixin:
         @u.field_validator("entries", mode="after")
         @classmethod
         def freeze_entries(
-            cls, value: t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload]
+            cls,
+            value: t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload],
         ) -> t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload]:
-            """Own an immutable copy so caller mutation cannot invalidate the arm."""
+            """Own an immutable copy so caller mutation cannot invalidate the arm.
+
+            Returns:
+                The resulting
+                    ``t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload]``.
+            """
             return MappingProxyType(dict(value))
 
         @u.model_validator(mode="after")
         def validate_arm(self) -> Self:
-            """Reject data in fields belonging to a different native value arm."""
+            """Reject data in fields belonging to a different native value arm.
+
+            Returns:
+                The resulting ``Self``.
+
+            Raises:
+                ValueError: If An atom payload cannot contain children; or if A mapping
+                    payload cannot contain an atom or items; or if A collection payload
+                    cannot contain an atom or entries.
+            """
             if self.kind == "atom":
                 if self.items or self.entries:
                     msg = "An atom payload cannot contain children"
@@ -90,7 +113,11 @@ class FlextTestsBaseModelsMixin:
 
         @classmethod
         def atom_default(cls) -> FlextTestsBaseModelsMixin.Payload:
-            """Build the default atom payload used by entity value defaults."""
+            """Build the default atom payload used by entity value defaults.
+
+            Returns:
+                The resulting ``FlextTestsBaseModelsMixin.Payload``.
+            """
             return cls(kind="atom")
 
     class Entity(m.Entity):

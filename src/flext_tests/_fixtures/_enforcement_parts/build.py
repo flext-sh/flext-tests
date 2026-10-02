@@ -1,4 +1,8 @@
-"""Enforcement item construction for the pytest plugin."""
+"""Enforcement item construction for the pytest plugin.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -7,7 +11,6 @@ from typing import TYPE_CHECKING
 from flext_tests import m
 from flext_tests.utilities import u
 
-from ._collector import FlextTestsEnforcementCollector
 from .validators import FlextTestsEnforcementValidators
 
 if TYPE_CHECKING:
@@ -33,7 +36,8 @@ class FlextTestsEnforcementBuilder:
             return []
         rules = u.Tests.active_rules(cfg)
         project_names = u.Tests.collected_project_names(
-            items=collected_items, repository_root=repository_root
+            items=collected_items,
+            repository_root=repository_root,
         )
         # Catalog rows naming engine rules, plus included ids the catalog does
         # not own (engine rule ids), must all be declared by the engine.
@@ -49,7 +53,8 @@ class FlextTestsEnforcementBuilder:
         engine_selected = not cfg.include or bool(required_rule_ids)
         context = m.Tests.EnforcementBuildContext(
             infra_findings=u.Tests.infra_rule_findings(
-                repository_root, required_rule_ids=required_rule_ids
+                repository_root,
+                required_rule_ids=required_rule_ids,
             ).unwrap()
             if project_names and engine_selected
             else None,
@@ -65,8 +70,10 @@ class FlextTestsEnforcementBuilder:
             ):
                 items.extend(
                     FlextTestsEnforcementValidators.build_tests_validator_items(
-                        collector, rule, context
-                    )
+                        collector,
+                        rule,
+                        context,
+                    ),
                 )
         return items
 
@@ -76,19 +83,26 @@ class FlextTestsEnforcementBuilder:
         repository_root: Path,
         collected_items: t.SequenceOf[pytest.Item],
     ) -> p.AttributeProbe | None:
-        """Load the workspace infra report only when a rule needs it."""
+        """Load the workspace infra report only when a rule needs it.
+
+        Returns:
+            The resulting ``p.AttributeProbe | None``.
+        """
         if not any(
             rule.source.kind == c.EnforcementSourceKind.FLEXT_INFRA_DETECTOR.value
             for rule in rules
         ):
             return None
         project_names = u.Tests.collected_project_names(
-            items=collected_items, repository_root=repository_root
+            items=collected_items,
+            repository_root=repository_root,
         )
         return [
             *FlextTestsEnforcementValidators.build_infra_rule_items(
-                collector, cfg, context
-            )
+                collector,
+                cfg,
+                context,
+            ),
         ]
 
 

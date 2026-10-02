@@ -1,13 +1,17 @@
-"""Enforcement discovery utilities mixin for flext-tests."""
+"""Enforcement discovery utilities mixin for flext-tests.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
 from pathlib import Path
 
 import pytest
+from flext_infra import FlextInfraModGateEngine, u as _infra_u
 
 from flext_core import r, u as _core_u
-from flext_infra import FlextInfraModGateEngine, u as _infra_u
 from flext_tests import c, m, p, t
 
 
@@ -28,7 +32,9 @@ class FlextTestsEnforcementUtilitiesMixin:
 
     @staticmethod
     def infra_rule_findings(
-        repository_root: Path, *, required_rule_ids: frozenset[str]
+        repository_root: Path,
+        *,
+        required_rule_ids: frozenset[str],
     ) -> p.Result[m.Infra.ModScanReport]:
         """Return the flext-infra rule-engine findings for the workspace.
 
@@ -38,13 +44,11 @@ class FlextTestsEnforcementUtilitiesMixin:
         planned = _infra_u.Infra.codemod_rule_plan(repository_root)
         if planned.failure:
             return r[m.Infra.ModScanReport].from_failure(planned)
-        missing = sorted(
-            required_rule_ids - {rule.id for rule in planned.value.rules}
-        )
+        missing = sorted(required_rule_ids - {rule.id for rule in planned.value.rules})
         if missing:
             return r[m.Infra.ModScanReport].fail(
                 "enforcement names flext-infra rules that config/rules does not "
-                f"declare: {', '.join(missing)}"
+                f"declare: {', '.join(missing)}",
             )
         return FlextInfraModGateEngine.scan(repository_root, fix=False)
 
@@ -67,7 +71,10 @@ class FlextTestsEnforcementUtilitiesMixin:
 
     @classmethod
     def collected_project_names(
-        cls, *, items: t.SequenceOf[pytest.Item], repository_root: Path
+        cls,
+        *,
+        items: t.SequenceOf[pytest.Item],
+        repository_root: Path,
     ) -> frozenset[str]:
         """Return the FLEXT project names represented by collected items."""
         return frozenset(
@@ -75,7 +82,8 @@ class FlextTestsEnforcementUtilitiesMixin:
             for item in items
             if (
                 name := cls.project_name_for_path(
-                    path=item.path.resolve(), repository_root=repository_root
+                    path=item.path.resolve(),
+                    repository_root=repository_root,
                 )
             )
             is not None

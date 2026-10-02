@@ -32,17 +32,22 @@ class FlextTestsNamespaceModelsMixin:
             ),
         ]
         run_token: Annotated[
-            str, u.Field(description="Shared token of the whole pytest run.")
+            str,
+            u.Field(description="Shared token of the whole pytest run."),
         ]
         worker: Annotated[
-            str, u.Field(description="Worker identifier (master outside xdist).")
+            str,
+            u.Field(description="Worker identifier (master outside xdist)."),
         ]
         checkout: Annotated[
-            str, u.Field(description="Checkout identity digest prefix.")
+            str,
+            u.Field(description="Checkout identity digest prefix."),
         ]
         issued_at_ns: Annotated[
-            int, u.Field(ge=0, description="Issue time in nanoseconds.")
+            int,
+            u.Field(ge=0, description="Issue time in nanoseconds."),
         ]
         root: Annotated[
-            t.NonEmptyStr, u.Field(description="Absolute checkout root path.")
+            t.NonEmptyStr,
+            u.Field(description="Absolute checkout root path."),
         ]

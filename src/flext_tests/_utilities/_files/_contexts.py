@@ -1,6 +1,9 @@
 """File-context helpers for FlextTestsFiles.
 
 Temporary file bundles and temporary directory context managers.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -52,12 +55,14 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
                 data: t.Tests.FileContentPlain = data_raw
                 filename = name if "." in name else f"{name}{default_ext}"
                 if "." not in name and isinstance(
-                    data, (Mapping, m.BaseModel, m.ConfigMap, m.Dict)
+                    data,
+                    (Mapping, m.BaseModel, m.ConfigMap, m.Dict),
                 ):
                     filename = f"{name}.json"
                 else:
                     is_nested_sequence = "." not in name and cls._is_nested_rows(
-                        manager, data
+                        manager,
+                        data,
                     )
                     if is_nested_sequence:
                         filename = f"{name}.csv"

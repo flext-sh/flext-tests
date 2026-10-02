@@ -1,4 +1,8 @@
-"""Path validation and containment for workspace cleanup utilities."""
+"""Path validation and containment for workspace cleanup utilities.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -15,7 +19,7 @@ if TYPE_CHECKING:
 
 
 class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
-    FlextTestsWorkspaceCleanupGitUtilitiesMixin
+    FlextTestsWorkspaceCleanupGitUtilitiesMixin,
 ):
     """Resolve the Git root and validate normalized contained residue paths."""
 
@@ -39,14 +43,20 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
 
     @classmethod
     def _repository_root(
-        cls, request: p.Tests.WorkspaceCleanupRequest
+        cls,
+        request: p.Tests.WorkspaceCleanupRequest,
     ) -> p.Result[Path]:
-        """Require the request root to be the exact enclosing Git worktree root."""
+        """Require the request root to be the exact enclosing Git worktree root.
+
+        Returns:
+            The resulting ``p.Result[Path]``.
+        """
         try:
             root = request.repository_root.resolve(strict=True)
         except OSError as exc:
             return r[Path].fail(
-                f"cleanup workspace root resolution failed: {exc}", exception=exc
+                f"cleanup workspace root resolution failed: {exc}",
+                exception=exc,
             )
         if not root.is_dir():
             return r[Path].fail(f"cleanup workspace root is not a directory: {root}")
@@ -65,13 +75,17 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
             return r[Path].fail(f"git root resolution failed: {exc}", exception=exc)
         if git_root != root:
             return r[Path].fail(
-                f"cleanup root must equal the Git worktree root: {root} != {git_root}"
+                f"cleanup root must equal the Git worktree root: {root} != {git_root}",
             )
         return r[Path].ok(root)
 
     @staticmethod
     def _relative_path(path: Path) -> p.Result[Path]:
-        """Validate one exact normalized workspace-relative path."""
+        """Validate one exact normalized workspace-relative path.
+
+        Returns:
+            The resulting ``p.Result[Path]``.
+        """
         if path.is_absolute() or not path.parts:
             return r[Path].fail(f"cleanup residue must be a relative path: {path}")
         if any(part in {".", ".."} for part in path.parts):
@@ -83,14 +97,18 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
 
     @staticmethod
     def _lexical_path(root: Path, relative_path: Path) -> p.Result[Path]:
-        """Resolve containment while retaining the lexical path for symlink unlinking."""
+        """Resolve containment while retaining the lexical path for symlink unlinking.
+
+        Returns:
+            The resulting ``p.Result[Path]``.
+        """
         lexical = root.joinpath(relative_path)
         try:
             resolved = lexical.resolve(strict=False)
             _ = resolved.relative_to(root)
         except (OSError, ValueError) as exc:
             return r[Path].fail(
-                f"cleanup residue escapes the workspace: {relative_path}: {exc}"
+                f"cleanup residue escapes the workspace: {relative_path}: {exc}",
             )
         if lexical == root:
             return r[Path].fail("cleanup residue cannot be the workspace root")
@@ -98,10 +116,14 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
 
     @classmethod
     def _reject_protected(cls, root: Path, relative_path: Path) -> p.Result[bool]:
-        """Refuse any residue that targets a protected component or the Git dir."""
+        """Refuse any residue that targets a protected component or the Git dir.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         if any(part in cls._PROTECTED_COMPONENTS for part in relative_path.parts):
             return r[bool].fail(
-                f"cleanup residue targets a protected path: {relative_path}"
+                f"cleanup residue targets a protected path: {relative_path}",
             )
         for name in ("--git-dir", "--git-common-dir"):
             git_result = cls._git(root, ("rev-parse", name))
@@ -115,32 +137,36 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
                 continue
             try:
                 git_dir = Path(raw if Path(raw).is_absolute() else root / raw).resolve(
-                    strict=False
+                    strict=False,
                 )
                 candidate = root.joinpath(relative_path).resolve(strict=False)
             except (OSError, ValueError) as exc:
                 return r[bool].fail(
-                    f"protected path resolution failed: {relative_path}: {exc}"
+                    f"protected path resolution failed: {relative_path}: {exc}",
                 )
             if candidate == git_dir or git_dir in candidate.parents:
                 return r[bool].fail(
-                    f"cleanup residue targets the protected Git directory: {relative_path}"
+                    f"cleanup residue targets the protected Git directory: {relative_path}",
                 )
             if candidate in git_dir.parents:
                 return r[bool].fail(
-                    f"cleanup residue would remove the protected Git directory: {relative_path}"
+                    f"cleanup residue would remove the protected Git directory: {relative_path}",
                 )
         return r[bool].ok(True)
 
     @staticmethod
     def _reject_symlink_ancestor(root: Path, relative_path: Path) -> p.Result[bool]:
-        """Refuse a residue whose own ancestor components are symbolic links."""
+        """Refuse a residue whose own ancestor components are symbolic links.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         current = root
         for part in relative_path.parts[:-1]:
             current /= part
             if current.is_symlink():
                 return r[bool].fail(
-                    f"cleanup residue has a symlink ancestor: {relative_path}"
+                    f"cleanup residue has a symlink ancestor: {relative_path}",
                 )
         return r[bool].ok(True)
 

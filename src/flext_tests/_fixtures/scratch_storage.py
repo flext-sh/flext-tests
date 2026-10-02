@@ -19,7 +19,11 @@ from flext_tests import c
 
 
 def _scratch_root(config: pytest.Config) -> Path:
-    """Transport hook: resolve the scratch root via u.Tests (pure owner)."""
+    """Transport hook: resolve the scratch root via u.Tests (pure owner).
+
+    Returns:
+        The resulting ``Path``.
+    """
     from flext_tests import u
 
     return u.Tests.scratch_root(

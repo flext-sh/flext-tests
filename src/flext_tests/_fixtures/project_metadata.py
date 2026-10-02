@@ -21,7 +21,14 @@ from flext_tests import p, u
 
 
 def _find_project_root() -> Path:
-    """Walk up from CWD to find the nearest pyproject.toml with [project].name."""
+    """Walk up from CWD to find the nearest pyproject.toml with [project].name.
+
+    Returns:
+        The resulting ``Path``.
+
+    Raises:
+        FileNotFoundError: If no pyproject.toml found above.
+    """
     cwd = Path.cwd().resolve()
     for parent in (cwd, *cwd.parents):
         pyproject = parent / "pyproject.toml"

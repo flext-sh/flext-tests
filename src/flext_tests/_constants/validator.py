@@ -1,7 +1,13 @@
-"""Enforcement dispatch constants for flext-tests (data-only facade)."""
+"""Enforcement dispatch constants for flext-tests (data-only facade).
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
+import re
+from types import MappingProxyType
 from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
@@ -44,19 +50,19 @@ class FlextTestsConstantsValidator:
         "protocols/(brand|domain)\\.py$"
     )
     VALIDATOR_APPROVED_CAST_SERVICE_RE: ClassVar[t.RegexPattern] = re.compile(
-        VALIDATOR_APPROVED_CAST_SERVICE_PATTERN
+        VALIDATOR_APPROVED_CAST_SERVICE_PATTERN,
     )
     VALIDATOR_APPROVED_CAST_CONTAINER_RE: ClassVar[t.RegexPattern] = re.compile(
-        VALIDATOR_APPROVED_CAST_CONTAINER_PATTERN
+        VALIDATOR_APPROVED_CAST_CONTAINER_PATTERN,
     )
     VALIDATOR_APPROVED_PRAGMA_RE: ClassVar[t.RegexPattern] = re.compile(
-        VALIDATOR_APPROVED_PRAGMA_PATTERN
+        VALIDATOR_APPROVED_PRAGMA_PATTERN,
     )
     VALIDATOR_APPROVED_INTERNAL_INIT_RE: ClassVar[t.RegexPattern] = re.compile(
-        VALIDATOR_APPROVED_INTERNAL_INIT_PATTERN
+        VALIDATOR_APPROVED_INTERNAL_INIT_PATTERN,
     )
     VALIDATOR_APPROVED_PROTOCOLS_RE: ClassVar[t.RegexPattern] = re.compile(
-        VALIDATOR_APPROVED_PROTOCOLS_PATTERN
+        VALIDATOR_APPROVED_PROTOCOLS_PATTERN,
     )
     VALIDATOR_APPROVED_PATH_REGEX_BY_PATTERN: ClassVar[
         t.MappingKV[str, t.RegexPattern]

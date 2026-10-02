@@ -1,4 +1,8 @@
-"""Extracted mixin for flext_tests."""
+"""Extracted mixin for flext_tests.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -56,7 +60,8 @@ class FlextTestsGenericHelpersUtilitiesMixin:
             raise AssertionError(message)
         if first_failure_index is not None:
             actual_first_failure = next(
-                (i for i, res in enumerate(results) if res.failure), None
+                (i for i, res in enumerate(results) if res.failure),
+                None,
             )
             if actual_first_failure != first_failure_index:
                 message = (
@@ -66,7 +71,8 @@ class FlextTestsGenericHelpersUtilitiesMixin:
                 raise AssertionError(message)
         elif failures == 0:
             actual_first_failure = next(
-                (i for i, res in enumerate(results) if res.failure), None
+                (i for i, res in enumerate(results) if res.failure),
+                None,
             )
             if actual_first_failure is not None:
                 message = (

@@ -8,6 +8,9 @@ This plugin registers the shared test-runtime fixture modules so projects get
 one canonical owner for autouse runtime setup and shared helper fixtures.
 Markdown code blocks are executed by pytest-markdown-docs; there is no local
 markdown rule fallback.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -41,7 +44,8 @@ def pytest_configure(config: pytest.Config) -> None:
     connectivity = connectivity_module.FlextTestsCapabilityPlugin()
     if not config.pluginmanager.hasplugin("flext_tests._fixtures.connectivity"):
         config.pluginmanager.register(
-            connectivity, "flext_tests._fixtures.connectivity"
+            connectivity,
+            "flext_tests._fixtures.connectivity",
         )
 
 
