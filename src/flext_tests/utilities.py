@@ -16,6 +16,7 @@ from flext_tests._utilities.namespace import FlextTestsNamespaceUtilitiesMixin
 from ._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
 from ._utilities.docker_lifecycle import FlextTestsDockerLifecycleUtilitiesMixin
 from ._utilities.docker_state import FlextTestsDockerStateUtilitiesMixin
+from ._utilities.scratch_storage import FlextTestsScratchStorageUtilitiesMixin
 from ._utilities.enforcement import FlextTestsEnforcementUtilitiesMixin
 from ._utilities.files import FlextTestsFilesUtilitiesMixin
 from ._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
@@ -41,6 +42,7 @@ class FlextTestsUtilities(FlextInfraUtilities):
         FlextTestsResultUtilitiesMixin,
         FlextTestsTestContextUtilitiesMixin,
         FlextTestsDockerStateUtilitiesMixin,
+        FlextTestsScratchStorageUtilitiesMixin,
         FlextTestsDockerLifecycleUtilitiesMixin,
         FlextTestsGenericHelpersUtilitiesMixin,
         FlextTestsConfigHelpersUtilitiesMixin,

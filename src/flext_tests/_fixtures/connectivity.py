@@ -112,11 +112,13 @@ class FlextTestsCapabilityPlugin:
     ) -> t.MutableMappingKV[str, str]:
         """Compute {nodeid: reason} for capability tests this host cannot run."""
         reasons: dict[str, str] = {}
-        ci_disabled = self._ci_disables_docker()
+        ci_disabled: bool | None = None
         for item in items:
             for marker in c.Tests.CONNECTIVITY_MARKERS:
                 if item.get_closest_marker(marker) is None:
                     continue
+                if marker == c.Tests.DOCKER_CONNECTIVITY_MARKER and ci_disabled is None:
+                    ci_disabled = self._ci_disables_docker()
                 if marker == c.Tests.DOCKER_CONNECTIVITY_MARKER and ci_disabled:
                     from flext_infra import config as infra_config
 

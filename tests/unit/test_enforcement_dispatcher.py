@@ -192,6 +192,7 @@ class TestsFlextTestsEnforcementDispatcher:
     # pytest_addoption                                                   #
     # ------------------------------------------------------------------ #
 
+    @pytest.mark.slow
     def test_plugin_registers_flext_enforce_cli_options(
         self, pytester: pytest.Pytester
     ) -> None:

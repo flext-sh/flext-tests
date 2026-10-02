@@ -7,6 +7,7 @@ import pytest
 pytest_plugins = ["pytester"]
 
 
+@pytest.mark.slow
 def test_namespaces_unique_across_two_workers(pytester: pytest.Pytester) -> None:
     """Pytest -n 2 derives distinct tokens per worker (recorded to files)."""
     pytester.makeconftest(

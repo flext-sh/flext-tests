@@ -12,6 +12,7 @@ from flext_tests import c
 class TestsFlextTestsScratchStorage:
     """Public contract of the scratch-storage relocation plugin."""
 
+    @pytest.mark.slow
     def test_no_hypothesis_directory_inside_the_checkout(
         self, pytester: pytest.Pytester
     ) -> None:
@@ -32,6 +33,7 @@ class TestsFlextTestsScratchStorage:
         result.assert_outcomes(passed=1)
         assert not (pytester.path / ".hypothesis").exists()
 
+    @pytest.mark.slow
     def test_benchmark_storage_outside_the_checkout(
         self, pytester: pytest.Pytester
     ) -> None:
@@ -55,6 +57,7 @@ class TestsFlextTestsScratchStorage:
         benchmarks = list(pytester.path.rglob(".benchmarks"))
         assert benchmarks == []
 
+    @pytest.mark.slow
     def test_scratch_root_ini_override(
         self, pytester: pytest.Pytester, tmp_path: Path
     ) -> None:
