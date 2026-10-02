@@ -13,7 +13,7 @@ from types import MappingProxyType
 from typing import Annotated, ClassVar, TypeAliasType
 
 from _pytest.python_api import ApproxBase  # ruff: ignore[import-private-name] -- ApproxBase has no public pytest path in the supported versions; justified per fleet suppression law.
-from flext_infra import m, u
+from flext_cli import m, u
 
 from flext_tests import p, t
 from flext_tests._models.base import FlextTestsBaseModelsMixin
