@@ -10,9 +10,10 @@ from pathlib import Path
 
 from flext_core import r
 from flext_tests import c, m, p, t, u
-
-from ...payload import FlextTestsPayloadUtilities
-from .comparison_part_01 import FlextTestsFilesComparisonMixin as _ComparisonMixinPart1
+from flext_tests._utilities._files._comparison_parts.comparison_part_01 import (
+    FlextTestsFilesComparisonMixin as _ComparisonMixinPart1,
+)
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsFilesComparisonMixin(_ComparisonMixinPart1):

@@ -10,8 +10,7 @@ import pytest
 
 from flext_tests import r, tm
 from tests import t
-
-from .predicates import TestsFlextTestsMatchersPredicates
+from tests.unit._matchers_parts.predicates import TestsFlextTestsMatchersPredicates
 
 
 class TestsFlextTestsMatchersOkConstraintsMixin:

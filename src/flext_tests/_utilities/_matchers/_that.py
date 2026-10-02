@@ -10,11 +10,16 @@ from collections.abc import Callable, Mapping, Sequence
 
 from flext_core import r
 from flext_tests import c, m, p, t
-
-from ..payload import FlextTestsPayloadUtilities
-from ._assertions import FlextTestsMatchersAssertionsMixin
-from ._containment import FlextTestsMatchersContainmentMixin
-from ._typeguards import FlextTestsMatchersTypeGuardsMixin
+from flext_tests._utilities._matchers._assertions import (
+    FlextTestsMatchersAssertionsMixin,
+)
+from flext_tests._utilities._matchers._containment import (
+    FlextTestsMatchersContainmentMixin,
+)
+from flext_tests._utilities._matchers._typeguards import (
+    FlextTestsMatchersTypeGuardsMixin,
+)
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsMatchersThatMixin:

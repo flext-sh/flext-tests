@@ -14,7 +14,7 @@ import pytest
 from flext_tests import FlextTestsDocker
 
 if TYPE_CHECKING:
-    from . import t
+    from tests import t
 
 pytest_plugins: t.VariadicTuple[str] = ("pytester",)
 

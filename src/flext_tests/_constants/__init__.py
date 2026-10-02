@@ -23,7 +23,6 @@ if TYPE_CHECKING:
     from flext_tests._constants.namespace import FlextTestsConstantsNamespace
     from flext_tests._constants.validator import FlextTestsConstantsValidator
 
-
 __all__: tuple[str, ...] = (
     "FlextTestsConstantsBase",
     "FlextTestsConstantsDataCases",

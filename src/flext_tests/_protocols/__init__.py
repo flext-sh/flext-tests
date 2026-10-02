@@ -22,7 +22,6 @@ if TYPE_CHECKING:
         FlextTestsWorkspaceCleanupProtocols,
     )
 
-
 __all__: tuple[str, ...] = (
     "FlextTestsDockerProtocolsMixin",
     "FlextTestsMatchersProtocolsMixin",

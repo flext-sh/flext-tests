@@ -11,9 +11,8 @@ from pathlib import Path
 
 from flext_core import r
 from flext_tests import c, m, p, t
-
-from ..payload import FlextTestsPayloadUtilities
-from ._contexts import FlextTestsFilesContextsMixin
+from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):

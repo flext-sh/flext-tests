@@ -10,8 +10,7 @@ import pytest
 
 from flext_tests import tm
 from tests import c, t
-
-from .predicates import TestsFlextTestsMatchersPredicates
+from tests.unit._matchers_parts.predicates import TestsFlextTestsMatchersPredicates
 
 
 class TestsFlextTestsMatchersThatCollectionsMixin:

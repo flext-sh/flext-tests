@@ -14,8 +14,7 @@ from flext_infra import u
 
 from flext_core import r
 from flext_tests import c, m, p, t
-
-from .testcontext import FlextTestsTestContextUtilitiesMixin
+from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
 
 
 class FlextTestsDockerStateUtilitiesMixin:

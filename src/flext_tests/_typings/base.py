@@ -25,14 +25,13 @@ from flext_cli import t
 from flext_infra import m, t as it
 
 from flext_core import p
-
-from .._models.domains import FlextTestsDomainModelsMixin
-from .._protocols.payload import FlextTestsPayloadProtocolsMixin
+from flext_tests._models.domains import FlextTestsDomainModelsMixin
+from flext_tests._protocols.payload import FlextTestsPayloadProtocolsMixin
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from .._models.base import FlextTestsBaseModelsMixin
+    from flext_tests._models.base import FlextTestsBaseModelsMixin
 
 
 class FlextTestsBaseTypesMixin:

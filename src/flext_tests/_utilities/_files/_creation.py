@@ -11,9 +11,8 @@ from pathlib import Path
 from typing import cast
 
 from flext_tests import c, m, p, t, u
-
-from ..payload import FlextTestsPayloadUtilities
-from ._lifecycle import FlextTestsFilesLifecycleMixin
+from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
