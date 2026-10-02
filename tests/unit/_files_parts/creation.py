@@ -1,4 +1,8 @@
-"""Private file creation test mixins."""
+"""Private file creation test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -85,7 +89,8 @@ class TestsFlextTestsFilesCreationMixin:
     def test_create_file_set(self, tmp_path: Path) -> None:
         """Test creating multiple files from dictionary."""
         files: t.MappingKV[
-            str, str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel
+            str,
+            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
         ] = {"file1": "content1", "file2": "content2", "file3.txt": "content3"}
         with FlextTestsFiles.files(files, directory=tmp_path, ext=".txt") as created:
             tm.that(len(created), eq=3)
@@ -99,7 +104,8 @@ class TestsFlextTestsFilesCreationMixin:
     def test_create_file_set_custom_extension(self, tmp_path: Path) -> None:
         """Test creating file set with custom extension."""
         files: t.MappingKV[
-            str, str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel
+            str,
+            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
         ] = {"file1": "content1"}
         extension = ".md"
         with FlextTestsFiles.files(files, directory=tmp_path, ext=extension) as created:

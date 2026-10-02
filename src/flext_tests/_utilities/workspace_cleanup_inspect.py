@@ -1,4 +1,8 @@
-"""Git-ignore, WIP, and fingerprint inspection for workspace cleanup utilities."""
+"""Git-ignore, WIP, and fingerprint inspection for workspace cleanup utilities.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -18,41 +22,49 @@ if TYPE_CHECKING:
 
 
 class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
-    FlextTestsWorkspaceCleanupPathsUtilitiesMixin
+    FlextTestsWorkspaceCleanupPathsUtilitiesMixin,
 ):
     """Classify residues and fingerprint their exact filesystem state."""
 
     @staticmethod
     def _reject_unsafe_node(lexical: Path, relative_path: Path) -> p.Result[bool]:
-        """Refuse symlinks, hardlinked files, and non-regular filesystem nodes."""
+        """Refuse symlinks, hardlinked files, and non-regular filesystem nodes.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         try:
             info = lexical.lstat()
         except OSError as exc:
             return r[bool].fail(
-                f"cleanup residue inspection failed: {relative_path}: {exc}"
+                f"cleanup residue inspection failed: {relative_path}: {exc}",
             )
         mode = info.st_mode
         if stat.S_ISLNK(mode):
             return r[bool].fail(
                 f"cleanup residue is a symlink and cannot be removed safely: "
-                f"{relative_path}"
+                f"{relative_path}",
             )
         if stat.S_ISDIR(mode):
             return r[bool].ok(True)
         if not stat.S_ISREG(mode):
             return r[bool].fail(
-                f"cleanup residue is not a regular file: {relative_path}"
+                f"cleanup residue is not a regular file: {relative_path}",
             )
         if info.st_nlink > 1:
             return r[bool].fail(
                 f"cleanup residue is a hardlink shared with other paths: "
-                f"{relative_path}"
+                f"{relative_path}",
             )
         return r[bool].ok(True)
 
     @classmethod
     def _ignored(cls, root: Path, relative_path: Path) -> p.Result[bool]:
-        """Require Git to classify one exact candidate as ignored."""
+        """Require Git to classify one exact candidate as ignored.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         result = cls._git(
             root,
             ("check-ignore", "--no-index", "--stdin", "-z"),
@@ -65,13 +77,17 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
             return r[bool].ok(True)
         if output.outcome.raw_return_code == c.Cli.EXIT_CODE_FAILURE:
             return r[bool].fail(
-                f"cleanup residue is not ignored by Git: {relative_path}"
+                f"cleanup residue is not ignored by Git: {relative_path}",
             )
         return r[bool].fail(cls._command_error("git ignore check", output))
 
     @classmethod
     def _untracked_and_clean(cls, root: Path, relative_path: Path) -> p.Result[bool]:
-        """Reject dirty/WIP state and tracked files beneath one candidate."""
+        """Reject dirty/WIP state and tracked files beneath one candidate.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         status_result = cls._git(
             root,
             (
@@ -90,7 +106,7 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
             return r[bool].fail(cls._command_error("git status check", status))
         if status.stdout:
             return r[bool].fail(
-                f"cleanup residue contains dirty or untracked WIP: {relative_path}"
+                f"cleanup residue contains dirty or untracked WIP: {relative_path}",
             )
         tracked_result = cls._git(
             root,
@@ -103,13 +119,17 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
             return r[bool].fail(cls._command_error("git tracked-path check", tracked))
         if tracked.stdout:
             return r[bool].fail(
-                f"cleanup residue contains Git-tracked content: {relative_path}"
+                f"cleanup residue contains Git-tracked content: {relative_path}",
             )
         return r[bool].ok(True)
 
     @staticmethod
     def _fingerprint_entry(root: Path, entry: Path) -> p.Result[str]:
-        """Encode one filesystem node without following symbolic links."""
+        """Encode one filesystem node without following symbolic links.
+
+        Returns:
+            The resulting ``p.Result[str]``.
+        """
         try:
             stat = entry.lstat()
             relative = Path() if entry == root else entry.relative_to(root)
@@ -121,7 +141,7 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
                 payload = entry.readlink().as_posix()
             except OSError as exc:
                 return r[str].fail(
-                    f"cleanup residue fingerprint failed for {entry}: {exc}"
+                    f"cleanup residue fingerprint failed for {entry}: {exc}",
                 )
         elif entry.is_dir():
             kind = "directory"
@@ -132,11 +152,11 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
                 payload = u.Cli.sha256_file(entry)
             except OSError as exc:
                 return r[str].fail(
-                    f"cleanup residue fingerprint failed for {entry}: {exc}"
+                    f"cleanup residue fingerprint failed for {entry}: {exc}",
                 )
         else:
             return r[str].fail(
-                f"cleanup residue contains unsupported filesystem node: {entry}"
+                f"cleanup residue contains unsupported filesystem node: {entry}",
             )
         # NOTE (multi-agent): NUL framing makes arbitrary path names unambiguous.
         return r[str].ok(
@@ -151,12 +171,16 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
                 str(stat.st_dev),
                 str(stat.st_ino),
                 payload,
-            ))
+            )),
         )
 
     @classmethod
     def _path_fingerprint(cls, path: Path) -> p.Result[str]:
-        """Fingerprint one residue tree without following symbolic links."""
+        """Fingerprint one residue tree without following symbolic links.
+
+        Returns:
+            The resulting ``p.Result[str]``.
+        """
 
         def relative_path_key(item: Path) -> str:
             return item.relative_to(path).as_posix()

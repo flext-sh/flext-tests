@@ -1,4 +1,8 @@
-"""Immutability matcher tests: assignment rejection on frozen and enum surfaces."""
+"""Immutability matcher tests: assignment rejection on frozen and enum surfaces.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -44,7 +48,10 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
     def test_rejects_assignment_on_frozen_model(self) -> None:
         """A frozen pydantic model rejects field assignment."""
         tm.rejects_assignment(
-            _Frozen(host="h"), "host", "other", expected=m.ValidationError
+            _Frozen(host="h"),
+            "host",
+            "other",
+            expected=m.ValidationError,
         )
 
     def test_rejects_assignment_matches_error_text(self) -> None:
@@ -60,14 +67,20 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
     def test_rejects_assignment_on_enum_member(self) -> None:
         """Enum members cannot be reassigned through the public class."""
         tm.rejects_assignment(
-            _PluginType, "EXTRACTORS", "mutated", expected=(AttributeError, TypeError)
+            _PluginType,
+            "EXTRACTORS",
+            "mutated",
+            expected=(AttributeError, TypeError),
         )
 
     def test_rejects_assignment_reports_a_mutable_target(self) -> None:
         """A target that accepts the assignment fails the matcher."""
         with pytest.raises(AssertionError):
             tm.rejects_assignment(
-                _Mutable(host="h"), "host", "other", expected=m.ValidationError
+                _Mutable(host="h"),
+                "host",
+                "other",
+                expected=m.ValidationError,
             )
 
     def test_rejects_assignment_propagates_unexpected_exception_identity(self) -> None:
@@ -76,7 +89,10 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
 
         with pytest.raises(ValueError, match=re.escape(str(rejection))) as caught:
             tm.rejects_assignment(
-                _RejectedAssignment(rejection), "host", "other", expected=TypeError
+                _RejectedAssignment(rejection),
+                "host",
+                "other",
+                expected=TypeError,
             )
 
         tm.that(caught.value is rejection, eq=True)

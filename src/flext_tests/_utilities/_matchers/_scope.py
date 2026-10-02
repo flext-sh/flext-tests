@@ -1,6 +1,9 @@
 """Test-scope context manager for matchers.
 
 Exposes ``Tests.Matchers.scope`` for isolated test execution scopes.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -67,7 +70,8 @@ class FlextTestsMatchersScopeMixin:
                 original_cwd: Path | None = None
                 env_context = (
                     FlextTestsConfigHelpersUtilitiesMixin.env_vars_context(
-                        params.env, params.remove_env_keys
+                        params.env,
+                        params.remove_env_keys,
                     )
                     if params.env is not None or params.remove_env_keys
                     else nullcontext()
@@ -93,7 +97,8 @@ class FlextTestsMatchersScopeMixin:
                             if t.Tests.general_value(v)
                         }
                         context_map: t.MappingKV[
-                            str, t.Tests.TestobjectSerializable
+                            str,
+                            t.Tests.TestobjectSerializable,
                         ] = {}
                         if params.context:
                             context_map = dict(params.context)
@@ -119,7 +124,7 @@ class FlextTestsMatchersScopeMixin:
                             ) as e:
                                 warnings.warn(
                                     c.Tests.ERR_SCOPE_CLEANUP_FAILED.format(
-                                        error=str(e)
+                                        error=str(e),
                                     ),
                                     RuntimeWarning,
                                     stacklevel=2,

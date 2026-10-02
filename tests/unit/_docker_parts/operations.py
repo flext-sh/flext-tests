@@ -1,4 +1,8 @@
-"""Private docker operation test mixins."""
+"""Private docker operation test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -14,14 +18,16 @@ class TestsFlextTestsDockerOperationsMixin:
     """Docker operation tests."""
 
     def test_compose_down_returns_flext_result(
-        self, docker_manager: FlextTestsDocker
+        self,
+        docker_manager: FlextTestsDocker,
     ) -> None:
         """Test compose_down failure behavior for missing compose file."""
         result = docker_manager.compose_down("missing-compose.yml")
         _ = u.Tests.assert_failure(result)
 
     def test_start_existing_container_not_found(
-        self, docker_manager: FlextTestsDocker
+        self,
+        docker_manager: FlextTestsDocker,
     ) -> None:
         """Test starting a container returns a failure result when unavailable."""
         result = docker_manager.start_existing_container("nonexistent_container")
@@ -29,7 +35,8 @@ class TestsFlextTestsDockerOperationsMixin:
         tm.that(result.error, is_=str)
 
     def test_fetch_container_info_not_found(
-        self, docker_manager: FlextTestsDocker
+        self,
+        docker_manager: FlextTestsDocker,
     ) -> None:
         """Test fetching container info returns a failure result when unavailable."""
         result = docker_manager.fetch_container_info("nonexistent_container")
@@ -42,7 +49,8 @@ class TestsFlextTestsDockerOperationsMixin:
         _ = u.Tests.assert_failure(result)
 
     def test_wait_for_port_ready_immediate(
-        self, docker_manager: FlextTestsDocker
+        self,
+        docker_manager: FlextTestsDocker,
     ) -> None:
         """Test wait_for_port_ready fails closed quickly for unavailable port."""
         result = docker_manager.wait_for_port_ready(c.LOOPBACK_IP, 59999, max_wait=1)
@@ -50,7 +58,8 @@ class TestsFlextTestsDockerOperationsMixin:
         tm.that(result.error or "", has="not ready")
 
     def test_cleanup_dirty_containers_empty(
-        self, docker_manager: FlextTestsDocker
+        self,
+        docker_manager: FlextTestsDocker,
     ) -> None:
         """A host without dirty records recreates nothing."""
         ci_variable = infra_config.Infra.codegen.make.ci.variable
@@ -60,7 +69,8 @@ class TestsFlextTestsDockerOperationsMixin:
         tm.that(result.value, empty=True)
 
     def test_cleanup_dirty_containers_keeps_foreign_records(
-        self, docker_manager: FlextTestsDocker
+        self,
+        docker_manager: FlextTestsDocker,
     ) -> None:
         """A dirty record of an undeclared container is left to its own owner."""
         foreign = "foreign-owner-test"
@@ -82,10 +92,14 @@ class TestsFlextTestsDockerOperationsMixin:
         """Every builder carries an explicit state directory to the facade."""
         state_dir = tmp_path / "state"
         shared = FlextTestsDocker.shared(
-            "flext-openldap-test", repository_root=tmp_path, state_dir=state_dir
+            "flext-openldap-test",
+            repository_root=tmp_path,
+            state_dir=state_dir,
         )
         composed = FlextTestsDocker.compose(
-            "docker-compose.yml", repository_root=tmp_path, state_dir=state_dir
+            "docker-compose.yml",
+            repository_root=tmp_path,
+            state_dir=state_dir,
         )
         tm.that(shared.state_dir, eq=state_dir)
         tm.that(composed.state_dir, eq=state_dir)

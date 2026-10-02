@@ -3,6 +3,9 @@
 Owns the dynamic attribute assignment that a negative immutability test performs.
 Holding it here keeps the mechanism in library code, so test suites assert
 immutability without spelling a constant-name assignment at every call site.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations

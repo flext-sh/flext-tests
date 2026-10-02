@@ -25,7 +25,15 @@ ContainerSpec = FlextTestsSpecModelsMixin.ContainerSpec
 
 
 def load_spec(path: Path) -> ContainerSpec:
-    """Parse one YAML spec document into the typed model (exits on failure)."""
+    """Parse one YAML spec document into the typed model (exits on failure).
+
+    Returns:
+        The resulting ``ContainerSpec``.
+
+    Raises:
+        SystemExit: If ``read.failure``; or if ``parsed.failure``; or if a ``Exception``
+            is caught.
+    """
     read = cli_u.Cli.files_read_text(path)
     if read.failure:
         raise SystemExit(1)
@@ -39,7 +47,14 @@ def load_spec(path: Path) -> ContainerSpec:
 
 
 def resolve_targets(spec: ContainerSpec, target: str | None) -> list[str]:
-    """Resolve the requested target names (all when omitted)."""
+    """Resolve the requested target names (all when omitted).
+
+    Returns:
+        The resulting ``list[str]``.
+
+    Raises:
+        SystemExit: If ``target not in spec.containers``.
+    """
     if target is None:
         return list(spec.containers)
     if target not in spec.containers:
@@ -48,7 +63,11 @@ def resolve_targets(spec: ContainerSpec, target: str | None) -> list[str]:
 
 
 def run_ensure(path: Path, target: str | None) -> int:
-    """Ensure every requested container is up, healthy, and sealed."""
+    """Ensure every requested container is up, healthy, and sealed.
+
+    Returns:
+        The resulting ``int``.
+    """
     spec = load_spec(path)
     exit_code = 0
     for name in resolve_targets(spec, target):
@@ -62,7 +81,11 @@ def run_ensure(path: Path, target: str | None) -> int:
 
 
 def run_verify(path: Path, target: str | None) -> int:
-    """Read-only verification: up, healthy, sealed against the fingerprint."""
+    """Read-only verification: up, healthy, sealed against the fingerprint.
+
+    Returns:
+        The resulting ``int``.
+    """
     spec = load_spec(path)
     exit_code = 0
     for name in resolve_targets(spec, target):
@@ -76,7 +99,11 @@ def run_verify(path: Path, target: str | None) -> int:
 
 
 def run_down(path: Path, target: str | None) -> int:
-    """Stop the compose projects of the requested targets."""
+    """Stop the compose projects of the requested targets.
+
+    Returns:
+        The resulting ``int``.
+    """
     spec = load_spec(path)
     exit_code = 0
     for name in resolve_targets(spec, target):
@@ -93,7 +120,11 @@ def run_down(path: Path, target: str | None) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Entry point: flext-tests docker <verb> --spec <yaml> [--target <name>]."""
+    """Entry point: flext-tests docker <verb> --spec <yaml> [--target <name>].
+
+    Returns:
+        The resulting ``int``.
+    """
     args = list(sys.argv[1:] if argv is None else argv)
     verbs = {"ensure": run_ensure, "verify": run_verify, "down": run_down}
     minimum_args = 3  # docker <verb> --spec <path>

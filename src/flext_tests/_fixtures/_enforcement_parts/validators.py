@@ -1,4 +1,8 @@
-"""Enforcement items from the flext-infra rule engine findings."""
+"""Enforcement items from the flext-infra rule engine findings.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -21,7 +25,11 @@ class FlextTestsEnforcementValidators:
         cfg: m.Tests.EnforcementDispatcherConfig,
         context: m.Tests.EnforcementBuildContext,
     ) -> list[FlextTestsEnforcementItem]:
-        """Build one item per engine rule id and collected project with findings."""
+        """Build one item per engine rule id and collected project with findings.
+
+        Returns:
+            The resulting ``list[FlextTestsEnforcementItem]``.
+        """
         if context.infra_findings is None:
             return []
         grouped: dict[tuple[str, str], list[m.Infra.ModScanFinding]] = {}
@@ -33,7 +41,7 @@ class FlextTestsEnforcementValidators:
             if finding.rule_id in cfg.exclude:
                 continue
             grouped.setdefault((finding.rule_id, finding.repository), []).append(
-                finding
+                finding,
             )
         severity_key = c.Tests.ENFORCEMENT_FINDING_SEVERITY_KEY
         message_key = c.Tests.ENFORCEMENT_FINDING_MESSAGE_KEY

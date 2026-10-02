@@ -1,4 +1,8 @@
-"""Utilities for flext-tests tests."""
+"""Utilities for flext-tests tests.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -27,11 +31,16 @@ class TestsFlextTestsUtilities(FlextTestsUtilities):
             """Port-bearing service whose only collaborator is the echo port."""
 
             port: t.Port[TestsFlextTestsProtocols.Tests.Echo] = m.Field(
-                exclude=True, description="Echo port the service delegates to."
+                exclude=True,
+                description="Echo port the service delegates to.",
             )
 
             def run(self) -> p.Result[str]:
-                """Delegate the echo call to the port and return its result."""
+                """Delegate the echo call to the port and return its result.
+
+                Returns:
+                    The resulting ``p.Result[str]``.
+                """
                 return r.ok(self.port.echo("hi"))
 
 

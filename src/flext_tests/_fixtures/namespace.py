@@ -14,7 +14,11 @@ from flext_tests import m, u
 
 
 def _worker_id(config: pytest.Config) -> str:
-    """Resolve the xdist worker id (master outside xdist)."""
+    """Resolve the xdist worker id (master outside xdist).
+
+    Returns:
+        The resulting ``str``.
+    """
     worker_input = getattr(config, "workerinput", None)
     if worker_input is not None:
         return str(worker_input.get("workerid", "master"))
@@ -22,7 +26,11 @@ def _worker_id(config: pytest.Config) -> str:
 
 
 def _run_token(config: pytest.Config) -> str:
-    """Resolve the shared run token (xdist testrunuid or session-stable id)."""
+    """Resolve the shared run token (xdist testrunuid or session-stable id).
+
+    Returns:
+        The resulting ``str``.
+    """
     worker_input = getattr(config, "workerinput", None)
     if worker_input is not None:
         return str(worker_input.get("testrunuid", ""))
@@ -38,7 +46,11 @@ def _run_token(config: pytest.Config) -> str:
 
 @pytest.fixture(scope="session")
 def run_namespace(request: pytest.FixtureRequest) -> m.Tests.TestNamespace:
-    """Session namespace: one token per pytest run per worker."""
+    """Session namespace: one token per pytest run per worker.
+
+    Returns:
+        The resulting ``m.Tests.TestNamespace``.
+    """
     config = request.config
     return u.Tests.namespace(
         worker_id=_worker_id(config),
@@ -49,7 +61,11 @@ def run_namespace(request: pytest.FixtureRequest) -> m.Tests.TestNamespace:
 
 @pytest.fixture
 def test_namespace(run_namespace: m.Tests.TestNamespace) -> m.Tests.TestNamespace:
-    """Function namespace: the run token plus a fresh per-test token."""
+    """Function namespace: the run token plus a fresh per-test token.
+
+    Returns:
+        The resulting ``m.Tests.TestNamespace``.
+    """
     return u.Tests.namespace(
         worker_id=run_namespace.worker,
         testrun_uid=f"{run_namespace.run_token}-{run_namespace.issued_at_ns}",

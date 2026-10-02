@@ -1,4 +1,8 @@
-"""File-comparison parsing helpers for FlextTestsFiles."""
+"""File-comparison parsing helpers for FlextTestsFiles.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -27,9 +31,16 @@ class FlextTestsFilesComparisonMixin:
         )
 
     def _try_parse_both(
-        self, content1: str, content2: str, fmt: str
+        self,
+        content1: str,
+        content2: str,
+        fmt: str,
     ) -> p.Result[FlextTestsFilesComparisonMixin.ParsedPair]:
-        """Try to parse both contents as dicts in given format."""
+        """Try to parse both contents as dicts in given format.
+
+        Returns:
+            The resulting ``p.Result[FlextTestsFilesComparisonMixin.ParsedPair]``.
+        """
         parse = (
             u.Cli.json_parse
             if fmt == "json"
@@ -39,7 +50,7 @@ class FlextTestsFilesComparisonMixin:
         )
         if parse is None:
             return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
-                f"unsupported comparison format: {fmt}"
+                f"unsupported comparison format: {fmt}",
             )
         parsed_result = u.try_(
             lambda: (parse(content1), parse(content2)),
@@ -48,20 +59,20 @@ class FlextTestsFilesComparisonMixin:
         )
         if parsed_result.failure:
             return r[FlextTestsFilesComparisonMixin.ParsedPair].from_failure(
-                parsed_result
+                parsed_result,
             )
         r1, r2 = parsed_result.value
         d1 = r1.value if r1.success else None
         d2 = r2.value if r2.success else None
         if FlextTestsFilesCreationMixin.is_mapping(
-            d1
+            d1,
         ) and FlextTestsFilesCreationMixin.is_mapping(d2):
             return r[FlextTestsFilesComparisonMixin.ParsedPair].ok((
                 FlextTestsFilesCreationMixin.to_payload_mapping(d1),
                 FlextTestsFilesCreationMixin.to_payload_mapping(d2),
             ))
         return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
-            "comparison contents are not both mappings"
+            "comparison contents are not both mappings",
         )
 
     def _apply_key_filtering(
@@ -74,7 +85,12 @@ class FlextTestsFilesComparisonMixin:
         t.MappingKV[str, t.Tests.TestobjectSerializable],
         t.MappingKV[str, t.Tests.TestobjectSerializable],
     ]:
-        """Apply key filtering to both dicts if specified."""
+        """Apply key filtering to both dicts if specified.
+
+        Returns:
+            The resulting ``tuple[t.MappingKV[str, t.Tests.TestobjectSerializable],
+                t.MappingKV[str, t.Tests.TestobjectSerializable]]``.
+        """
         if keys is None and exclude_keys is None:
             return (dict1, dict2)
         filter_keys_set = set(keys) if keys is not None else None

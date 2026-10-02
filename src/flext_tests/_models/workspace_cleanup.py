@@ -1,4 +1,8 @@
-"""Typed workspace cleanup contracts for flext-tests consumers."""
+"""Typed workspace cleanup contracts for flext-tests consumers.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -28,7 +32,8 @@ class FlextTestsWorkspaceCleanupModelsMixin:
         """Runtime root composed with the original cleanup policy object."""
 
         repository_root: Annotated[
-            Path, u.Field(strict=False, description="Exact Git workspace root.")
+            Path,
+            u.Field(strict=False, description="Exact Git workspace root."),
         ]
         policy: Annotated[
             FlextTestsWorkspaceCleanupModelsMixin.WorkspaceCleanupPolicy,
@@ -39,10 +44,12 @@ class FlextTestsWorkspaceCleanupModelsMixin:
         """One validated ignored residue in a cleanup plan."""
 
         relative_path: Annotated[
-            Path, u.Field(strict=False, description="Workspace-relative residue path.")
+            Path,
+            u.Field(strict=False, description="Workspace-relative residue path."),
         ]
         path: Annotated[
-            Path, u.Field(strict=False, description="Absolute lexical residue path.")
+            Path,
+            u.Field(strict=False, description="Absolute lexical residue path."),
         ]
         kind: Annotated[
             Literal["file", "directory", "symlink"],
@@ -50,7 +57,8 @@ class FlextTestsWorkspaceCleanupModelsMixin:
         ]
         # NOTE (multi-agent): bind apply to the exact dry-run filesystem state.
         fingerprint: Annotated[
-            str, u.Field(description="SHA-256 fingerprint of the planned residue tree.")
+            str,
+            u.Field(description="SHA-256 fingerprint of the planned residue tree."),
         ]
 
     class WorkspaceCleanupPlan(m.Value):

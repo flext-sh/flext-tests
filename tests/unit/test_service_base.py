@@ -34,7 +34,7 @@ class TestsFlextTestsServiceBase:
     def test_isolated_test_runtime_builds_port_service_with_real_adapter(self) -> None:
         """A port-bearing service is constructed explicitly with a real adapter."""
         with u.Tests.EchoService.isolated_test_runtime(
-            build=lambda: u.Tests.EchoService(port=u.Tests.MemoryEcho())
+            build=lambda: u.Tests.EchoService(port=u.Tests.MemoryEcho()),
         ) as service:
             result = service.run()
             tm.that(result.success, eq=True)
@@ -84,7 +84,8 @@ class TestsFlextTestsServiceBase:
     # ---- runtime-alias binding hook: typed 's', no getattr substitution ----
 
     def test_runtime_alias_hook_rejects_a_package_without_a_valid_service_type(
-        self, pytester: pytest.Pytester
+        self,
+        pytester: pytest.Pytester,
     ) -> None:
         """The real ``pytest_runtest_setup`` hook fails loudly for a bad package.
 
@@ -95,28 +96,32 @@ class TestsFlextTestsServiceBase:
         package_dir.mkdir()
         (package_dir / "__init__.py").write_text("s = object\n", encoding="utf-8")
         (package_dir / "test_probe.py").write_text(
-            "def test_probe() -> None:\n    pass\n", encoding="utf-8"
+            "def test_probe() -> None:\n    pass\n",
+            encoding="utf-8",
         )
         result = pytester.runpytest_subprocess(str(package_dir / "test_probe.py"))
         result.assert_outcomes(errors=1)
         result.stdout.fnmatch_lines(["*TypeError*badpkg*"])
 
     def test_runtime_alias_hook_rejects_a_package_without_the_service_alias(
-        self, pytester: pytest.Pytester
+        self,
+        pytester: pytest.Pytester,
     ) -> None:
         """A package root without ``s`` raises; it never substitutes the base."""
         package_dir = pytester.path / "noservicepkg"
         package_dir.mkdir()
         (package_dir / "__init__.py").write_text("", encoding="utf-8")
         (package_dir / "test_probe.py").write_text(
-            "def test_probe() -> None:\n    pass\n", encoding="utf-8"
+            "def test_probe() -> None:\n    pass\n",
+            encoding="utf-8",
         )
         result = pytester.runpytest(str(package_dir / "test_probe.py"))
         result.assert_outcomes(errors=1)
         result.stdout.fnmatch_lines(["*AttributeError*noservicepkg*s*"])
 
     def test_runtime_alias_hook_rejects_a_package_missing_a_facade_letter(
-        self, pytester: pytest.Pytester
+        self,
+        pytester: pytest.Pytester,
     ) -> None:
         """A package root missing a canonical facade letter fails loudly.
 
@@ -133,7 +138,8 @@ class TestsFlextTestsServiceBase:
         package_dir = pytester.path / "noletterpkg"
         package_dir.mkdir()
         (package_dir / "__init__.py").write_text(
-            "\n".join(init_lines) + "\n", encoding="utf-8"
+            "\n".join(init_lines) + "\n",
+            encoding="utf-8",
         )
         (package_dir / "test_probe.py").write_text(
             "from flext_tests import FlextTestsCase\n"
@@ -148,7 +154,8 @@ class TestsFlextTestsServiceBase:
         result.stdout.fnmatch_lines(["*AttributeError*noletterpkg*'c'*"])
 
     def test_runtime_alias_hook_binds_the_package_local_letters(
-        self, pytester: pytest.Pytester
+        self,
+        pytester: pytest.Pytester,
     ) -> None:
         """A well-formed package gets its own letters bound, never substitutes.
 
@@ -166,7 +173,8 @@ class TestsFlextTestsServiceBase:
         package_dir = pytester.path / "localpkg"
         package_dir.mkdir()
         (package_dir / "__init__.py").write_text(
-            "\n".join(init_lines) + "\n", encoding="utf-8"
+            "\n".join(init_lines) + "\n",
+            encoding="utf-8",
         )
         (package_dir / "test_probe.py").write_text(
             "import flext_core\n"
