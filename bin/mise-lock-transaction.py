@@ -22,7 +22,6 @@ import tomllib
 from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path, PurePosixPath
-from typing import Iterator
 
 
 class MiseLockTransaction:

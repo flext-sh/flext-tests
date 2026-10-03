@@ -42,6 +42,7 @@ if TYPE_CHECKING:
         test_runtime,
     )
 
+
 __all__: tuple[str, ...] = (
     "FlextTestsCapabilityPlugin",
     "FlextTestsEnforcementBuilder",

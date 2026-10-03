@@ -230,9 +230,12 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
         lines.extend((
             "",
             "Exemplo:",
-            f"  {FlextTestsMakeRenderingUtilitiesMixin.make_example_for(
-                command, requested_verb,
-            )}",
+            f"  {
+                FlextTestsMakeRenderingUtilitiesMixin.make_example_for(
+                    command,
+                    requested_verb,
+                )
+            }",
         ))
         return r[str].ok("\n".join(lines))
 
@@ -272,9 +275,12 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
         lines.extend((
             "",
             "Execucao canonica:",
-            f"  {FlextTestsMakeRenderingUtilitiesMixin.make_example_for(
-                command, requested_verb,
-            )}",
+            f"  {
+                FlextTestsMakeRenderingUtilitiesMixin.make_example_for(
+                    command,
+                    requested_verb,
+                )
+            }",
         ))
         return "\n".join(lines)
 

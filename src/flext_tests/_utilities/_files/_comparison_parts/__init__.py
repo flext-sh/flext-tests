@@ -17,6 +17,7 @@ if TYPE_CHECKING:
         FlextTestsFilesComparisonMixin,
     )
 
+
 __all__: tuple[str, ...] = ("FlextTestsFilesComparisonMixin",)
 
 _LAZY_IMPORTS = MappingProxyType(
