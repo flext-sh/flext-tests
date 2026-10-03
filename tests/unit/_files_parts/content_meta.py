@@ -15,7 +15,8 @@ from tests import m, u
 class TestsFlextTestsFilesContentMetaMixin:
     """File content metadata tests."""
 
-    def test_info_parse_content_json_dict(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_info_parse_content_json_dict(tmp_path: Path) -> None:
         """Test info() with parse_content=True for JSON dict."""
         manager = tf(base_dir=tmp_path)
         path = manager.create(
@@ -29,7 +30,8 @@ class TestsFlextTestsFilesContentMetaMixin:
         tm.that(content_meta.key_count, eq=2)
         tm.that(content_meta.item_count, none=True)
 
-    def test_info_parse_content_json_list(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_info_parse_content_json_list(tmp_path: Path) -> None:
         """Test info() with parse_content=True for JSON list."""
         manager = tf(base_dir=tmp_path)
         content = u.Cli.json_dumps([1, 2, 3, 4, 5]).unwrap()
@@ -42,7 +44,8 @@ class TestsFlextTestsFilesContentMetaMixin:
         tm.that(content_meta.key_count, none=True)
         tm.that(content_meta.item_count, eq=5)
 
-    def test_info_parse_content_yaml_dict(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_info_parse_content_yaml_dict(tmp_path: Path) -> None:
         """Test info() with parse_content=True for YAML dict."""
         manager = tf(base_dir=tmp_path)
         path = manager.create(
@@ -55,7 +58,8 @@ class TestsFlextTestsFilesContentMetaMixin:
         content_meta = tm.not_none(info.content_meta)
         tm.that(content_meta.key_count, eq=3)
 
-    def test_info_parse_content_csv(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_info_parse_content_csv(tmp_path: Path) -> None:
         """Test info() with parse_content=True for CSV."""
         manager = tf(base_dir=tmp_path)
         csv_content = "name,age,city\nAlice,30,NYC\nBob,25,LA\n"
@@ -68,7 +72,8 @@ class TestsFlextTestsFilesContentMetaMixin:
         tm.that(content_meta.row_count, eq=3)
         tm.that(content_meta.column_count, eq=3)
 
-    def test_info_validate_model_success(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_info_validate_model_success(tmp_path: Path) -> None:
         """Test info() with validate_model for valid model."""
 
         class SimpleModel(m.BaseModel):
@@ -87,7 +92,8 @@ class TestsFlextTestsFilesContentMetaMixin:
         tm.that(content_meta.model_valid is True, eq=True)
         tm.that(content_meta.model_name, eq="SimpleModel")
 
-    def test_info_validate_model_failure(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_info_validate_model_failure(tmp_path: Path) -> None:
         """Test info() with validate_model for invalid model."""
 
         class StrictModel(m.BaseModel):

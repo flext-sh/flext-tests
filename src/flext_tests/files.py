@@ -20,9 +20,8 @@ from pathlib import Path
 from typing import Annotated, ClassVar, Self, override
 
 from flext_tests import m, p, r, s, t, u
-
-from ._utilities._files._comparison import FlextTestsFilesComparisonMixin
-from ._utilities._files._info import FlextTestsFilesInfoMixin
+from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
+from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
 
 
 class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixin):

@@ -10,9 +10,8 @@ from pathlib import Path
 
 from flext_core import r
 from flext_tests import c, m, p, t
-
-from .make_contract import FlextTestsMakeContractUtilitiesMixin
-from .make_parsing import FlextTestsMakeParsingUtilitiesMixin
+from flext_tests._utilities.make_contract import FlextTestsMakeContractUtilitiesMixin
+from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
 
 
 class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin):
@@ -50,7 +49,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
                     f"duplicate alias: {alias} points to {previous} and {command.verb}",
                 )
             aliases_by_name[alias] = command.verb
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     @staticmethod
     def _make_command_from_data(

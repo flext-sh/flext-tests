@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated
 
-from flext_infra import m, u
+from flext_cli import m, u
 
 from flext_tests._models.docker import FlextTestsDockerModelsMixin
 

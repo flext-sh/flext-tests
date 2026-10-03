@@ -181,7 +181,9 @@ class FlextTestsEnforcementDispatcher:
         repository_root = cls.active_root(config)
         if repository_root is None or hasattr(config, "workerinput"):
             return
-        from .build import FlextTestsEnforcementBuilder
+        from flext_tests._fixtures._enforcement_parts.build import (
+            FlextTestsEnforcementBuilder,
+        )
 
         items.extend(
             FlextTestsEnforcementBuilder.build_items(

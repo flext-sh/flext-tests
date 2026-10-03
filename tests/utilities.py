@@ -9,8 +9,7 @@ from __future__ import annotations
 from typing import override
 
 from flext_tests import FlextTestsUtilities, m, p, r, s, t
-
-from .protocols import TestsFlextTestsProtocols
+from tests.protocols import TestsFlextTestsProtocols
 
 
 class TestsFlextTestsUtilities(FlextTestsUtilities):

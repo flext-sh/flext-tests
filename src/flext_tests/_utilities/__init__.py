@@ -66,6 +66,9 @@ if TYPE_CHECKING:
     from flext_tests._utilities.namespace import FlextTestsNamespaceUtilitiesMixin
     from flext_tests._utilities.payload import FlextTestsPayloadUtilities
     from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
+    from flext_tests._utilities.scratch_storage import (
+        FlextTestsScratchStorageUtilitiesMixin,
+    )
     from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
     from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
     from flext_tests._utilities.workspace_cleanup import (
@@ -120,6 +123,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsNamespaceUtilitiesMixin",
     "FlextTestsPayloadUtilities",
     "FlextTestsResultUtilitiesMixin",
+    "FlextTestsScratchStorageUtilitiesMixin",
     "FlextTestsTestContextUtilitiesMixin",
     "FlextTestsUtilitiesBase",
     "FlextTestsWorkspaceCleanupGitUtilitiesMixin",
@@ -170,6 +174,7 @@ _LAZY_IMPORTS = MappingProxyType(
             ".namespace": ("FlextTestsNamespaceUtilitiesMixin",),
             ".payload": ("FlextTestsPayloadUtilities",),
             ".result": ("FlextTestsResultUtilitiesMixin",),
+            ".scratch_storage": ("FlextTestsScratchStorageUtilitiesMixin",),
             ".settings": ("FlextTestsConfigHelpersUtilitiesMixin",),
             ".testcontext": ("FlextTestsTestContextUtilitiesMixin",),
             ".workspace_cleanup": ("FlextTestsWorkspaceCleanupUtilitiesMixin",),

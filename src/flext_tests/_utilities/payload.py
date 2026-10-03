@@ -25,8 +25,7 @@ from types import (
 )
 from typing import TypeAliasType
 
-from flext_infra import u
-
+from flext_core import u
 from flext_tests import m, p, t
 
 

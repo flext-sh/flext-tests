@@ -13,8 +13,9 @@ from flext_cli import u
 
 from flext_core import r
 from flext_tests import m, p
-
-from .workspace_cleanup_inspect import FlextTestsWorkspaceCleanupInspectUtilitiesMixin
+from flext_tests._utilities.workspace_cleanup_inspect import (
+    FlextTestsWorkspaceCleanupInspectUtilitiesMixin,
+)
 
 if TYPE_CHECKING:
     from flext_core import t
@@ -93,7 +94,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
                         "cleanup residues overlap: "
                         f"{parent.relative_path} and {child.relative_path}",
                     )
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     @classmethod
     def workspace_cleanup_plan(

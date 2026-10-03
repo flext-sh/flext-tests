@@ -161,7 +161,8 @@ class FlextTestsKube(FlextTestsDocker):
         target = self.target_config
         if target is None:
             return r[m.Tests.ContainerInfo].fail(
-                "Kubernetes target not configured. Use FlextTestsKube.kind(...).execute().",
+                "Kubernetes target not configured. "
+                "Use FlextTestsKube.kind(...).execute().",
             )
         if initializer is not None or creation_environment:
             return r[m.Tests.ContainerInfo].fail(

@@ -11,13 +11,20 @@ from typing import cast, overload
 
 from flext_core import p as core_p, u
 from flext_tests import c, m, p, t
-
-from ..payload import FlextTestsPayloadUtilities
-from ..result import FlextTestsResultUtilitiesMixin
-from ._assertions import FlextTestsMatchersAssertionsMixin
-from ._containment import FlextTestsMatchersContainmentMixin
-from ._that import FlextTestsMatchersThatMixin as FlextTestsMatchersRulesMixin
-from ._typeguards import FlextTestsMatchersTypeGuardsMixin
+from flext_tests._utilities._matchers._assertions import (
+    FlextTestsMatchersAssertionsMixin,
+)
+from flext_tests._utilities._matchers._containment import (
+    FlextTestsMatchersContainmentMixin,
+)
+from flext_tests._utilities._matchers._that import (
+    FlextTestsMatchersThatMixin as FlextTestsMatchersRulesMixin,
+)
+from flext_tests._utilities._matchers._typeguards import (
+    FlextTestsMatchersTypeGuardsMixin,
+)
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
 
 
 class FlextTestsMatchersResultMixin:
@@ -94,7 +101,8 @@ class FlextTestsMatchersResultMixin:
                     raise AssertionError(
                         params.msg
                         or c.Tests.ERR_NOT_ENDSWITH.format(
-                            text=err, suffix=params.ends
+                            text=err,
+                            suffix=params.ends,
                         ),
                     )
                 if params.match is not None and params.match.search(err) is None:
@@ -266,8 +274,10 @@ class FlextTestsMatchersResultMixin:
                             params.msg
                             or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=native),
                         )
-                elif FlextTestsMatchersResultMixin.Tests.Matchers.ok_has_scalar_validation(
-                    params,
+                elif (
+                    FlextTestsMatchersResultMixin.Tests.Matchers.ok_has_scalar_validation(
+                        params,
+                    )
                 ):
                     FlextTestsMatchersTypeGuardsMixin.assert_scalar_match(
                         FlextTestsPayloadUtilities.to_payload(result_value),
@@ -360,8 +370,10 @@ class FlextTestsMatchersResultMixin:
                         params.lacks,
                         params.msg,
                     )
-                if FlextTestsMatchersResultMixin.Tests.Matchers.ok_preserves_result_identity(
-                    params,
+                if (
+                    FlextTestsMatchersResultMixin.Tests.Matchers.ok_preserves_result_identity(
+                        params,
+                    )
                 ):
                     # No structural extraction was requested, so ok_extract_path
                     # returned the success value unchanged; the subject keeps its

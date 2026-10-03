@@ -11,14 +11,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from ._docker_parts import builders, ci, lifecycle, operations, state, targets
+from tests.unit._docker_parts import builders, ci, lifecycle, operations, state, targets
 
 
 class TestsFlextTestsDocker(
     state.TestsFlextTestsDockerStateMixin,
     builders.TestsFlextTestsDockerBuildersMixin,
     operations.TestsFlextTestsDockerOperationsMixin,
-    decision.TestsFlextTestsDockerDecisionMixin,
     targets.TestsFlextTestsDockerTargetsMixin,
     ci.TestsFlextTestsDockerCiMixin,
     lifecycle.TestsFlextTestsDockerLifecycleMixin,

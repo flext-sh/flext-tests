@@ -12,7 +12,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
-    from flext_infra import t
+    from flext_cli import t
 
 
 class FlextTestsConstantsDataCases:

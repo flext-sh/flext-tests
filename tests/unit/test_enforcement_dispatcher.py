@@ -29,8 +29,9 @@ class TestsFlextTestsEnforcementDispatcher:
     # Fixtures                                                           #
     # ------------------------------------------------------------------ #
 
+    @staticmethod
     @pytest.fixture
-    def workspace(self, tmp_path: Path) -> Path:
+    def workspace(tmp_path: Path) -> Path:
         """Create a directory carrying every FLEXT workspace marker.
 
         Returns:
@@ -242,8 +243,9 @@ class TestsFlextTestsEnforcementDispatcher:
     # pytest_addoption                                                   #
     # ------------------------------------------------------------------ #
 
+    @staticmethod
+    @pytest.mark.slow
     def test_plugin_registers_flext_enforce_cli_options(
-        self,
         pytester: pytest.Pytester,
     ) -> None:
         """The installed pytest11 plugin publishes the enforcement options.

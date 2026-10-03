@@ -7,10 +7,12 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import m, u
+if TYPE_CHECKING:
+    from flext_tests import m
 
 
 def _worker_id(config: pytest.Config) -> str:
@@ -31,6 +33,8 @@ def _run_token(config: pytest.Config) -> str:
     Returns:
         The resulting ``str``.
     """
+    from flext_tests import u
+
     worker_input = getattr(config, "workerinput", None)
     if worker_input is not None:
         return str(worker_input.get("testrunuid", ""))
@@ -51,6 +55,8 @@ def run_namespace(request: pytest.FixtureRequest) -> m.Tests.TestNamespace:
     Returns:
         The resulting ``m.Tests.TestNamespace``.
     """
+    from flext_tests import u
+
     config = request.config
     return u.Tests.namespace(
         worker_id=_worker_id(config),
@@ -66,6 +72,8 @@ def test_namespace(run_namespace: m.Tests.TestNamespace) -> m.Tests.TestNamespac
     Returns:
         The resulting ``m.Tests.TestNamespace``.
     """
+    from flext_tests import u
+
     return u.Tests.namespace(
         worker_id=run_namespace.worker,
         testrun_uid=f"{run_namespace.run_token}-{run_namespace.issued_at_ns}",

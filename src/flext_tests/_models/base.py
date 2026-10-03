@@ -9,7 +9,7 @@ from __future__ import annotations
 from types import MappingProxyType
 from typing import Annotated, Self
 
-from flext_infra import m, p, u
+from flext_cli import m, p, u
 
 from flext_tests import t
 

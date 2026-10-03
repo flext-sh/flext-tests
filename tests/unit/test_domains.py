@@ -1,12 +1,12 @@
 """Behavioral unit tests for the ``flext_tests.domains`` (``FlextTestsDomains``) facade.
 
-Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT
-
 These tests exercise only the public contract of ``FlextTestsDomains``: the values it
 returns, the ``r[T]`` outcomes it builds, the fixtures it discovers/loads on
 disk, and the exceptions it raises on missing inputs. No private attribute,
 internal collaborator, or implementation detail is touched.
+
+Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -53,7 +53,8 @@ class TestsFlextTestsDomains:
 
     # --- case-table data helpers -----------------------------------------
 
-    def test_valid_email_cases_pairs_input_with_expected_validity(self) -> None:
+    @staticmethod
+    def test_valid_email_cases_pairs_input_with_expected_validity() -> None:
         """Each email case is a ``(value, is_valid)`` pair with stable verdicts."""
         cases = dict(FlextTestsDomains.valid_email_cases())
 
@@ -62,14 +63,16 @@ class TestsFlextTestsDomains:
         tm.that(cases["invalid-email"], eq=False)
         tm.that(cases[""], eq=False)
 
-    def test_valid_email_cases_verdicts_are_deterministic(self) -> None:
+    @staticmethod
+    def test_valid_email_cases_verdicts_are_deterministic() -> None:
         """Repeated calls return equal case tables (pure data helper)."""
         tm.that(
             list(FlextTestsDomains.valid_email_cases()),
             eq=list(FlextTestsDomains.valid_email_cases()),
         )
 
-    def test_default_handler_case_specs_expose_expected_handler_ids(self) -> None:
+    @staticmethod
+    def test_default_handler_case_specs_expose_expected_handler_ids() -> None:
         """The shared handler specs cover the documented success/fail ids."""
         specs = FlextTestsDomains.default_handler_case_specs()
 
@@ -85,6 +88,7 @@ class TestsFlextTestsDomains:
             ],
         )
 
+    @staticmethod
     @pytest.mark.parametrize(
         ("handler_id", "should_fail"),
         [
@@ -96,7 +100,6 @@ class TestsFlextTestsDomains:
         ],
     )
     def test_default_handler_case_specs_flag_failures_consistently(
-        self,
         handler_id: str,
         *,
         should_fail: bool,
@@ -112,7 +115,8 @@ class TestsFlextTestsDomains:
 
     # --- fixture path + loading ------------------------------------------
 
-    def test_fixture_filename_follows_group_kind_extension_convention(self) -> None:
+    @staticmethod
+    def test_fixture_filename_follows_group_kind_extension_convention() -> None:
         """The filename contract is ``<group>_<kind>_fixtures<ext>``."""
         tm.that(
             FlextTestsDomains.fixture_filename("oid", "schema"),
@@ -123,7 +127,8 @@ class TestsFlextTestsDomains:
             eq="oud_acl_fixtures.txt",
         )
 
-    def test_load_fixture_returns_file_contents(self, fixtures_root: Path) -> None:
+    @staticmethod
+    def test_load_fixture_returns_file_contents(fixtures_root: Path) -> None:
         """Loading an existing fixture returns its exact text."""
         loaded = FlextTestsDomains.load_fixture(
             "oid",
@@ -133,7 +138,8 @@ class TestsFlextTestsDomains:
 
         tm.that(loaded, eq="dn: cn=schema,dc=oid\n")
 
-    def test_fixture_path_points_at_existing_file(self, fixtures_root: Path) -> None:
+    @staticmethod
+    def test_fixture_path_points_at_existing_file(fixtures_root: Path) -> None:
         """``fixture_path`` resolves to an existing file inside the group dir."""
         resolved = FlextTestsDomains.fixture_path(
             "oid",
@@ -145,8 +151,8 @@ class TestsFlextTestsDomains:
         tm.that(resolved.parent.name, eq="oid")
         tm.that(resolved.name, eq="oid_schema_fixtures.ldif")
 
+    @staticmethod
     def test_fixture_path_raises_file_not_found_when_absent(
-        self,
         fixtures_root: Path,
     ) -> None:
         """A missing fixture is a hard error, not a silent empty result."""
@@ -157,7 +163,8 @@ class TestsFlextTestsDomains:
                 fixtures_root=fixtures_root,
             )
 
-    def test_load_fixture_raises_when_fixture_absent(self, fixtures_root: Path) -> None:
+    @staticmethod
+    def test_load_fixture_raises_when_fixture_absent(fixtures_root: Path) -> None:
         """Loading an absent fixture surfaces the missing-file failure."""
         with pytest.raises(FileNotFoundError):
             FlextTestsDomains.load_fixture(
@@ -166,6 +173,7 @@ class TestsFlextTestsDomains:
                 fixtures_root=fixtures_root,
             )
 
+    @staticmethod
     @pytest.mark.parametrize(
         ("group", "kind", "expected"),
         [
@@ -177,7 +185,6 @@ class TestsFlextTestsDomains:
         ],
     )
     def test_fixture_exists_reports_presence(
-        self,
         fixtures_root: Path,
         group: str,
         kind: str,
@@ -192,8 +199,8 @@ class TestsFlextTestsDomains:
 
     # --- fixture discovery ------------------------------------------------
 
+    @staticmethod
     def test_available_fixture_servers_lists_group_dirs_sorted(
-        self,
         fixtures_root: Path,
     ) -> None:
         """Discovery returns each server directory name, sorted."""
@@ -202,8 +209,8 @@ class TestsFlextTestsDomains:
             eq=("oid", "oud"),
         )
 
+    @staticmethod
     def test_available_fixture_servers_empty_for_missing_root(
-        self,
         tmp_path: Path,
     ) -> None:
         """A non-existent root yields an empty tuple, never an error."""
@@ -214,8 +221,8 @@ class TestsFlextTestsDomains:
             eq=(),
         )
 
+    @staticmethod
     def test_available_fixture_types_lists_kinds_for_group(
-        self,
         fixtures_root: Path,
     ) -> None:
         """Discovery extracts the ``kind`` segment of each fixture file."""
@@ -227,8 +234,8 @@ class TestsFlextTestsDomains:
             eq=("entries", "schema"),
         )
 
+    @staticmethod
     def test_available_fixture_types_empty_for_unknown_group(
-        self,
         fixtures_root: Path,
     ) -> None:
         """An unknown group has no fixture types."""
@@ -240,8 +247,8 @@ class TestsFlextTestsDomains:
             eq=(),
         )
 
+    @staticmethod
     def test_load_server_fixtures_maps_every_kind_to_its_contents(
-        self,
         fixtures_root: Path,
     ) -> None:
         """All of a group's fixtures load into a kind -> text mapping."""
@@ -257,8 +264,8 @@ class TestsFlextTestsDomains:
 
     # --- bound loader (public ``bind`` API) -------------------------------
 
+    @staticmethod
     def test_bind_loads_same_content_as_unbound_facade(
-        self,
         fixtures_root: Path,
     ) -> None:
         """A bound loader is equivalent to passing the root each call."""
@@ -275,8 +282,8 @@ class TestsFlextTestsDomains:
         tm.that(bound.available_fixture_servers(), eq=("oid", "oud"))
         tm.that(bound.fixture_exists("oud", "schema"), eq=True)
 
+    @staticmethod
     def test_bind_load_all_aggregates_every_server_and_kind(
-        self,
         fixtures_root: Path,
     ) -> None:
         """``load_all`` returns the full server -> kind -> text structure."""
@@ -293,8 +300,8 @@ class TestsFlextTestsDomains:
             },
         )
 
+    @staticmethod
     def test_bind_load_fixture_kind_collects_one_kind_across_servers(
-        self,
         fixtures_root: Path,
     ) -> None:
         """``load_fixture_kind`` gathers a single kind from every server."""
@@ -305,8 +312,8 @@ class TestsFlextTestsDomains:
             eq={"oid": "dn: cn=schema,dc=oid\n", "oud": "dn: cn=schema,dc=oud\n"},
         )
 
+    @staticmethod
     def test_bind_pytest_params_for_group_pairs_kind_and_content(
-        self,
         fixtures_root: Path,
     ) -> None:
         """Per-group params expose ``(kind, content)`` tuples."""
@@ -320,8 +327,8 @@ class TestsFlextTestsDomains:
             ],
         )
 
+    @staticmethod
     def test_bind_all_pytest_params_yields_group_kind_content_triples(
-        self,
         fixtures_root: Path,
     ) -> None:
         """The flattened params expose ``(group, kind, content)`` triples."""
@@ -336,7 +343,8 @@ class TestsFlextTestsDomains:
             ],
         )
 
-    def test_bind_honors_custom_file_extension(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_bind_honors_custom_file_extension(tmp_path: Path) -> None:
         """A bound loader created with a custom extension only sees those files."""
         group_dir = tmp_path / "oid"
         group_dir.mkdir(parents=True, exist_ok=True)

@@ -21,29 +21,34 @@ if TYPE_CHECKING:
 class TestsFlextTestsMatchersScopeErrorsMixin:
     """Matcher scope and error tests."""
 
-    def test_check_returns_chain(self) -> None:
+    @staticmethod
+    def test_check_returns_chain() -> None:
         """tm.check() chains assertions over the result it was given."""
         result = r[int].ok(42)
         chain: m.Tests.Chain[int] = tm.check(result)
         tm.that(chain.result is result, eq=True)
 
-    def test_scope_with_settings(self) -> None:
+    @staticmethod
+    def test_scope_with_settings() -> None:
         """Test tm.scope() with settings parameter."""
         with tm.scope(settings={"debug": True}) as scope:
             tm.that(scope.settings["debug"].atom is True, eq=True)
 
-    def test_scope_with_container(self) -> None:
+    @staticmethod
+    def test_scope_with_container() -> None:
         """Test tm.scope() with container parameter."""
         mock_service = "test_service_value"
         with tm.scope(container={"service": mock_service}) as scope:
             tm.that(scope.container["service"], eq=mock_service)
 
-    def test_scope_with_context(self) -> None:
+    @staticmethod
+    def test_scope_with_context() -> None:
         """Test tm.scope() with context parameter."""
         with tm.scope(context={"user_id": 123}) as scope:
             tm.that(scope.context["user_id"], eq=123)
 
-    def test_scope_applies_removes_and_restores_real_environment(self) -> None:
+    @staticmethod
+    def test_scope_applies_removes_and_restores_real_environment() -> None:
         """Environment scope restores both overridden and removed names."""
         present_key = "FLEXT_TEST_SCOPE_PRESENT"
         removed_key = "FLEXT_TEST_SCOPE_REMOVED"
@@ -54,27 +59,31 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
             tm.that(os.environ[removed_key], eq="outer")
             tm.that(present_key in os.environ, eq=False)
 
-    def test_ok_invalid_parameter_type(self) -> None:
+    @staticmethod
+    def test_ok_invalid_parameter_type() -> None:
         """tm.ok() rejects an invalid criterion, naming the offending field."""
         result = r[int].ok(42)
         with pytest.raises(m.ValidationError, match=r"for OkParams\nlen") as error:
             tm.ok(result, len="invalid")
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"len"})
 
-    def test_fail_invalid_parameter_type(self) -> None:
+    @staticmethod
+    def test_fail_invalid_parameter_type() -> None:
         """tm.fail() rejects an invalid criterion, naming the offending field."""
         result: p.Result[str] = r[str].fail("error")
         with pytest.raises(m.ValidationError, match=r"for FailParams\ncode") as error:
             tm.fail(result, code=123)
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"code"})
 
-    def test_that_invalid_parameter_type(self) -> None:
+    @staticmethod
+    def test_that_invalid_parameter_type() -> None:
         """tm.that() rejects an invalid criterion, naming the offending field."""
         with pytest.raises(m.ValidationError, match=r"for ThatParams\nlen") as error:
             tm.that([1, 2, 3], len="invalid")
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"len"})
 
-    def test_scope_invalid_parameter_type(self) -> None:
+    @staticmethod
+    def test_scope_invalid_parameter_type() -> None:
         """Invalid scope input preserves Pydantic's structured validation error."""
         with pytest.raises(c.ValidationError) as error, tm.scope(env="invalid"):
             pass
