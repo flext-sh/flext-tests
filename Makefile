@@ -178,7 +178,7 @@ override MISE_VERSION_PIN := $(RUNTIME_ROOT)/mise.version
 # has been recovered. Parsing it here would freeze a torn pre-recovery value.
 # End SECTION: profile routing
 
-override RUNTIME_VENV := $(RUNTIME_ROOT)/.venv
+override RUNTIME_VENV := $(abspath $(RUNTIME_ROOT)/../.flext-venvs/$(subst :,/,$(patsubst /%,%,$(RUNTIME_ROOT))))
 ifeq ($(OS),Windows_NT)
 override RUNTIME_BIN := $(RUNTIME_VENV)/Scripts
 override RUNTIME_PYTHON := $(RUNTIME_BIN)/python.exe
@@ -839,6 +839,7 @@ fi; \
 SETUP_ENVIRONMENT_RECIPE = set -eu; \
 	$(REQUIRE_WORKSPACE_ENVIRONMENT); \
 	desired_python="$${SETUP_PYTHON:?missing Mise-resolved Python executable}"; \
+	mkdir -p "$(dir $(RUNTIME_VENV))"; \
 	if [ ! -x "$(RUNTIME_PYTHON)" ]; then \
 		$(UV) venv --python "$$desired_python" "$(RUNTIME_VENV)"; \
 	else \
@@ -926,9 +927,9 @@ define _lock_project
 	@set -eu; \
 	workspace=$$($(UV) workspace dir --project "$(PROJECT_ROOT)"); \
 	stage=$$(mktemp -d); candidate="$$workspace/.uv.lock.$$$$"; \
-	trap 'find "$${stage}" -depth -delete; rm -f "$$candidate"' EXIT; \
+	trap 'find "$$stage" -depth -delete; rm -f "$$candidate"' EXIT; \
 	trap 'exit 129' HUP; trap 'exit 130' INT; trap 'exit 143' TERM; \
-	$(UV) workspace list --paths --project "$$workspace" > "$${stage}/.members"; \
+	$(UV) workspace list --paths --project "$$workspace" > "$$stage/.members"; \
 	while IFS= read -r member; do \
 		relative=$${member#"$$workspace"}; \
 		mkdir -p "$${stage}/mirror$$relative"; \
@@ -938,7 +939,7 @@ define _lock_project
 	$(UV) lock --project "$${stage}/mirror" $(1); \
 	$(UV) lock --check --project "$${stage}/mirror"; \
 	if [ -e "$$candidate" ]; then printf 'ERROR: lock staging path already exists: %s\n' "$$candidate" >&2; exit 2; fi; \
-	cp "$${stage}/mirror/uv.lock" "$$candidate"; \
+	cp "$$stage/mirror/uv.lock" "$$candidate"; \
 	mv -f "$$candidate" "$$workspace/uv.lock"
 endef
 
@@ -1183,6 +1184,17 @@ _activated-gen: _builtin_require_environment
 
 
 
+bootstrap-candidate: _builtin_require_workspace
+	+@direnv exec "$(PROJECT_ROOT)" $(SELF_MAKE) _activated-bootstrap-candidate
+
+.PHONY: _activated-bootstrap-candidate
+_activated-bootstrap-candidate: _builtin_require_environment
+
+	$(call RUN_PUBLIC,bootstrap-candidate)
+
+
+
+
 initialize: _builtin_require_workspace
 	+@direnv exec "$(PROJECT_ROOT)" $(SELF_MAKE) _activated-initialize
 
@@ -1335,7 +1347,7 @@ _builtin-help:
 
 	@printf '  %-16s %s\n' 'setup' 'Provision the declared environment and hooks.';
 
-	@printf '  %-16s %s\n' 'upg' 'Resolve the newest declared releases, write the uv and mise locks, then prove the upgraded tree still converges and passes every active check gate.';
+	@printf '  %-16s %s\n' 'upg' 'Resolve the newest declared releases and write the uv and mise locks.';
 
 	@printf '  %-16s %s\n' 'build' 'Build the project distribution artifacts.';
 
@@ -1378,6 +1390,8 @@ _builtin-help:
 	@printf '  %-16s %s\n' 'publication' 'Publish only receipt-attested release artifacts.';
 
 	@printf '  %-16s %s\n' 'gen' 'Regenerate every managed projection atomically.';
+
+	@printf '  %-16s %s\n' 'bootstrap-candidate' 'Conform the sibling candidate worktree declared in this repository manifest.';
 
 	@printf '  %-16s %s\n' 'initialize' 'Materialize the declared package initializer graph.';
 
