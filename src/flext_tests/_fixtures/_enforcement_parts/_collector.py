@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 
 class FlextTestsEnforcementCollector(pytest.Collector):
-    """Synthetic collector that owns every ``FlextTestsEnforcementItem`` for the session."""
+    """Synthetic collector owning session ``FlextTestsEnforcementItem`` items."""
 
     def __init__(
         self,

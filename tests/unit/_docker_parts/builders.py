@@ -17,9 +17,9 @@ from tests import c
 class TestsFlextTestsDockerBuildersMixin:
     """Docker builder tests."""
 
+    @staticmethod
     @pytest.mark.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))
     def test_shared_builder_resolves_every_declared_container(
-        self,
         container_name: str,
         tmp_path: Path,
     ) -> None:
@@ -32,7 +32,8 @@ class TestsFlextTestsDockerBuildersMixin:
         tm.that(target.service, eq=declared["service"])
         tm.that(target.port, eq=declared["port"])
 
-    def test_compose_builder_resolves_target_config(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_compose_builder_resolves_target_config(tmp_path: Path) -> None:
         """Test compose() builds a resolved explicit container target."""
         manager = FlextTestsDocker.compose(
             "docker-compose.yml",
@@ -48,7 +49,8 @@ class TestsFlextTestsDockerBuildersMixin:
         tm.that(target.compose_file, eq=tmp_path / "docker-compose.yml")
         tm.that(target.port, eq=5432)
 
-    def test_stack_builder_resolves_target_config(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_stack_builder_resolves_target_config(tmp_path: Path) -> None:
         """Test stack() builds a resolved explicit compose-stack target."""
         manager = FlextTestsDocker.stack(
             "docker-compose.stack.yml",
@@ -65,7 +67,8 @@ class TestsFlextTestsDockerBuildersMixin:
         tm.that(target.service, eq="stack-main")
         tm.that(target.port, eq=3389)
 
-    def test_stack_builder_allows_stack_only_target(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_stack_builder_allows_stack_only_target(tmp_path: Path) -> None:
         """Test stack() supports lifecycle-only stacks without inspection target."""
         manager = FlextTestsDocker.stack(
             "docker-compose.stack.yml",
@@ -76,8 +79,8 @@ class TestsFlextTestsDockerBuildersMixin:
         tm.that(target.container_name, eq=None)
         tm.that(target.port, eq=25432)
 
+    @staticmethod
     def test_resolve_shared_target_raises_on_unknown_container(
-        self,
         tmp_path: Path,
     ) -> None:
         """Unknown shared containers fail loud against the real constants SSOT."""

@@ -21,8 +21,7 @@ from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
 from typing import TYPE_CHECKING, Literal
 
-from flext_cli import t
-from flext_infra import m, t as it
+from flext_cli import m, t, t as it
 
 from flext_core import p
 from flext_tests._models.domains import FlextTestsDomainModelsMixin
@@ -119,7 +118,7 @@ class FlextTestsBaseTypesMixin:
         | p.Registry
         | p.AttributeProbe
         | p.Result[FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | it.Infra.RegexMatch
+        | it.RegexMatch
         | bt.UnionType
         | FrameType
         | ModuleType

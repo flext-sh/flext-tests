@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_infra import FlextInfraModels
+from flext_cli import FlextCliModels
 
 from flext_tests._models.base import FlextTestsBaseModelsMixin
 from flext_tests._models.batch import FlextTestsBatchModelsMixin
@@ -23,7 +23,7 @@ from flext_tests._models.validator import FlextTestsValidatorModelsMixin
 from flext_tests._models.workspace_cleanup import FlextTestsWorkspaceCleanupModelsMixin
 
 
-class FlextTestsModels(FlextInfraModels):
+class FlextTestsModels(FlextCliModels):
     """Test models extending m with test-specific factory models."""
 
     class Tests(
@@ -36,7 +36,8 @@ class FlextTestsModels(FlextInfraModels):
         FlextTestsMakeModelsMixin,
         FlextTestsValidatorModelsMixin,
         FlextTestsMatchersModelsMixin,
-        # NOTE (multi-agent): expose the approved typed cleanup contract through m.Tests.
+        # NOTE (multi-agent): expose the approved typed cleanup contract
+        # through m.Tests.
         FlextTestsWorkspaceCleanupModelsMixin,
     ):
         """Test-specific models namespace."""

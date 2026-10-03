@@ -30,8 +30,8 @@ class TestsFlextTestsUtilities:
     class Tests:
         """flext-tests utilities test namespace."""
 
+    @staticmethod
     def test_file_lock_preserves_shared_inode_between_holders(
-        self,
         tmp_path: Path,
     ) -> None:
         """Sequential holders coordinate through one persistent lock inode."""
@@ -44,7 +44,8 @@ class TestsFlextTestsUtilities:
 
         tm.that(second_inode, eq=first_inode)
 
-    def test_file_lock_releases_after_body_failure(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_file_lock_releases_after_body_failure(tmp_path: Path) -> None:
         """A failing holder releases its native lock for the next holder."""
         lock_path = tmp_path / "shared.lock"
 
@@ -62,6 +63,7 @@ class TestsFlextTestsUtilities:
     # assert_success / assert_failure — return values on the happy path
     # ------------------------------------------------------------------
 
+    @staticmethod
     @pytest.mark.parametrize(
         ("result", "assertion", "expected"),
         [
@@ -80,7 +82,6 @@ class TestsFlextTestsUtilities:
         ],
     )
     def test_assertion_helper_returns_unwrapped_payload(
-        self,
         result: p.Result[str],
         assertion: str,
         expected: str,
@@ -93,6 +94,7 @@ class TestsFlextTestsUtilities:
         )
         tm.that(actual, eq=expected)
 
+    @staticmethod
     @pytest.mark.parametrize(
         ("result", "assertion", "match"),
         [
@@ -111,7 +113,6 @@ class TestsFlextTestsUtilities:
         ],
     )
     def test_assertion_helper_raises_on_mismatched_outcome(
-        self,
         result: p.Result[str],
         assertion: str,
         match: str,
@@ -123,25 +124,29 @@ class TestsFlextTestsUtilities:
         with pytest.raises(AssertionError, match=match):
             _ = assertion_fn(result)
 
-    def test_assert_failure_accepts_matching_error_substring(self) -> None:
+    @staticmethod
+    def test_assert_failure_accepts_matching_error_substring() -> None:
         """A matching expected-error substring returns the full error text."""
         result: p.Result[str] = r[str].fail("validation error occurred")
         error = u.Tests.assert_failure(result, "validation")
         tm.that(error, has="validation")
 
-    def test_assert_failure_rejects_non_matching_error_substring(self) -> None:
+    @staticmethod
+    def test_assert_failure_rejects_non_matching_error_substring() -> None:
         """A non-matching expected-error substring raises AssertionError."""
         result: p.Result[str] = r[str].fail("validation error occurred")
         with pytest.raises(AssertionError, match="Expected error containing"):
             _ = u.Tests.assert_failure(result, "not found")
 
-    def test_assert_success_returns_value_when_expected_value_matches(self) -> None:
+    @staticmethod
+    def test_assert_success_returns_value_when_expected_value_matches() -> None:
         """A matching expected_value passes and yields the unwrapped value."""
         result = r[str].ok("expected")
         returned = u.Tests.assert_success(result, expected_value="expected")
         tm.that(returned, eq="expected")
 
-    def test_assert_success_rejects_non_matching_expected_value(self) -> None:
+    @staticmethod
+    def test_assert_success_rejects_non_matching_expected_value() -> None:
         """A non-matching expected_value raises AssertionError."""
         result = r[str].ok("actual")
         with pytest.raises(AssertionError, match="Expected success value"):
@@ -151,7 +156,8 @@ class TestsFlextTestsUtilities:
     # assert_result_chain — count semantics
     # ------------------------------------------------------------------
 
-    def test_assert_result_chain_passes_when_counts_match(self) -> None:
+    @staticmethod
+    def test_assert_result_chain_passes_when_counts_match() -> None:
         """Matching success/failure counts and first-failure index pass silently."""
         chain: list[p.Result[str]] = [
             r[str].ok("a"),
@@ -166,7 +172,8 @@ class TestsFlextTestsUtilities:
             first_failure_index=1,
         )
 
-    def test_assert_result_chain_treats_zero_alias_count_as_explicit(self) -> None:
+    @staticmethod
+    def test_assert_result_chain_treats_zero_alias_count_as_explicit() -> None:
         """Explicit expected_success_count=0 is honored, not treated as unset."""
         with pytest.raises(AssertionError, match="Expected 0 successes, got 1"):
             u.Tests.assert_result_chain(
@@ -174,7 +181,8 @@ class TestsFlextTestsUtilities:
                 expected_success_count=0,
             )
 
-    def test_assert_result_chain_reports_wrong_first_failure_index(self) -> None:
+    @staticmethod
+    def test_assert_result_chain_reports_wrong_first_failure_index() -> None:
         """A wrong first_failure_index raises AssertionError."""
         chain: list[p.Result[str]] = [r[str].ok("a"), r[str].fail("boom")]
         with pytest.raises(AssertionError, match="Expected first failure at index 0"):
@@ -184,12 +192,14 @@ class TestsFlextTestsUtilities:
     # create_result_from_value — None handling contract
     # ------------------------------------------------------------------
 
-    def test_create_result_from_value_wraps_present_value_as_success(self) -> None:
+    @staticmethod
+    def test_create_result_from_value_wraps_present_value_as_success() -> None:
         """A non-None value yields a success result carrying that value."""
         result = u.Tests.create_result_from_value("payload")
         tm.that(u.Tests.assert_success(result), eq="payload")
 
-    def test_create_result_from_value_fails_on_none_without_default(self) -> None:
+    @staticmethod
+    def test_create_result_from_value_fails_on_none_without_default() -> None:
         """None without a default yields a failure carrying the given message."""
         result: p.Result[str] = u.Tests.create_result_from_value(
             None,
@@ -198,7 +208,8 @@ class TestsFlextTestsUtilities:
         error = u.Tests.assert_failure(result)
         tm.that(error, has="was none")
 
-    def test_create_result_from_value_uses_default_on_none(self) -> None:
+    @staticmethod
+    def test_create_result_from_value_uses_default_on_none() -> None:
         """None with a default yields a success carrying the default."""
         result = u.Tests.create_result_from_value(None, default_on_none="fallback")
         tm.that(u.Tests.assert_success(result), eq="fallback")
@@ -207,7 +218,8 @@ class TestsFlextTestsUtilities:
     # create_parametrized_cases — case-table generation contract
     # ------------------------------------------------------------------
 
-    def test_create_parametrized_cases_builds_success_and_failure_rows(self) -> None:
+    @staticmethod
+    def test_create_parametrized_cases_builds_success_and_failure_rows() -> None:
         """Values and errors produce aligned (result, is_success, value, error) rows."""
         cases = u.Tests.create_parametrized_cases(
             success_values=("ok",),
@@ -227,7 +239,8 @@ class TestsFlextTestsUtilities:
         tm.that(failure_row[3], eq="boom")
         tm.that(failure_row[0].error_code, eq="E1")
 
-    def test_create_parametrized_cases_preserves_empty_error_codes(self) -> None:
+    @staticmethod
+    def test_create_parametrized_cases_preserves_empty_error_codes() -> None:
         """An explicit empty error-code sequence leaves the failure code unset."""
         cases: t.SequenceOf[tuple[p.Result[str], bool, str | None, str | None]] = (
             u.Tests.create_parametrized_cases(
@@ -244,6 +257,7 @@ class TestsFlextTestsUtilities:
     # make_has_executable_body — command-body detection contract
     # ------------------------------------------------------------------
 
+    @staticmethod
     @pytest.mark.parametrize(
         ("source", "expected_body"),
         [
@@ -286,7 +300,6 @@ SIDE_EFFECT = "detected"
         ],
     )
     def test_make_has_executable_body_classifies_command_source(
-        self,
         tmp_path: Path,
         source: str,
         *,
@@ -299,8 +312,8 @@ SIDE_EFFECT = "detected"
         result = u.Tests.make_has_executable_body(script)
         tm.that(u.Tests.assert_success(result), eq=expected_body)
 
+    @staticmethod
     def test_make_has_executable_body_fails_for_missing_file(
-        self,
         tmp_path: Path,
     ) -> None:
         """A missing path yields a failure result rather than raising."""
@@ -309,8 +322,8 @@ SIDE_EFFECT = "detected"
         error = u.Tests.assert_failure(result)
         tm.that(error, has="command body read")
 
+    @staticmethod
     def test_make_has_executable_body_fails_for_invalid_python(
-        self,
         tmp_path: Path,
     ) -> None:
         """Unparseable Python yields a failure result naming the file."""
@@ -320,7 +333,8 @@ SIDE_EFFECT = "detected"
         error = u.Tests.assert_failure(result)
         tm.that(error, has="broken.py")
 
-    def test_make_load_command_parses_declared_surface(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_make_load_command_parses_declared_surface(tmp_path: Path) -> None:
         """A promoted command may declare its validated surface route."""
         verb_dir = tmp_path / "check"
         verb_dir.mkdir()

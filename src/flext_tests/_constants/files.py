@@ -1,11 +1,11 @@
 """File management constants for flext_tests.
 
-Copyright (c) 2025 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT
-
 Declares only test-specific constants that have no production counterpart;
 shared file constants resolve through the FlextCliConstants MRO (SSOT in
 ``flext-cli``).
+
+Copyright (c) 2025 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations

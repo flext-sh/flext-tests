@@ -200,7 +200,10 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             f"make {requested_verb} WHAT={what}",
             "",
             f"Dominio: {command.domain}",
-            f"Mutaction: {FlextTestsMakeRenderingUtilitiesMixin.make_mutation_label(command)}",
+            (
+                "Mutaction: "
+                f"{FlextTestsMakeRenderingUtilitiesMixin.make_mutation_label(command)}"
+            ),
         ]
         if command.mutates:
             lines.append("Sem a execucao fica em dry-run.")
@@ -227,7 +230,9 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
         lines.extend((
             "",
             "Exemplo:",
-            f"  {FlextTestsMakeRenderingUtilitiesMixin.make_example_for(command, requested_verb)}",
+            f"  {FlextTestsMakeRenderingUtilitiesMixin.make_example_for(
+                command, requested_verb,
+            )}",
         ))
         return r[str].ok("\n".join(lines))
 
@@ -267,7 +272,9 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
         lines.extend((
             "",
             "Execucao canonica:",
-            f"  {FlextTestsMakeRenderingUtilitiesMixin.make_example_for(command, requested_verb)}",
+            f"  {FlextTestsMakeRenderingUtilitiesMixin.make_example_for(
+                command, requested_verb,
+            )}",
         ))
         return "\n".join(lines)
 

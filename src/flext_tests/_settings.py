@@ -30,6 +30,7 @@ class FlextTestsSettings(FlextSettings):
 
 
 settings: FlextTestsSettings = FlextTestsSettings.fetch_global()
-"""Pre-instantiated project settings singleton — ``from flext_tests import settings``."""
+"""Pre-instantiated project settings singleton —
+``from flext_tests import settings``."""
 
 __all__: list[str] = ["FlextTestsSettings", "settings"]

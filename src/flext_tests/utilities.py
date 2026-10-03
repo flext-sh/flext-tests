@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_infra import FlextInfraUtilities
+from flext_cli import FlextCliUtilities
 
 from flext_tests._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
 from flext_tests._utilities.docker_lifecycle import (
@@ -26,6 +26,9 @@ from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
 from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
 from flext_tests._utilities.namespace import FlextTestsNamespaceUtilitiesMixin
 from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
+from flext_tests._utilities.scratch_storage import (
+    FlextTestsScratchStorageUtilitiesMixin,
+)
 from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
 from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
 from flext_tests._utilities.workspace_cleanup import (
@@ -33,7 +36,7 @@ from flext_tests._utilities.workspace_cleanup import (
 )
 
 
-class FlextTestsUtilities(FlextInfraUtilities):
+class FlextTestsUtilities(FlextCliUtilities):
     """Test utilities for FLEXT ecosystem - extends u.
 
     Provides essential test helpers that complement u.
@@ -44,6 +47,7 @@ class FlextTestsUtilities(FlextInfraUtilities):
         FlextTestsResultUtilitiesMixin,
         FlextTestsTestContextUtilitiesMixin,
         FlextTestsDockerStateUtilitiesMixin,
+        FlextTestsScratchStorageUtilitiesMixin,
         FlextTestsDockerLifecycleUtilitiesMixin,
         FlextTestsGenericHelpersUtilitiesMixin,
         FlextTestsConfigHelpersUtilitiesMixin,

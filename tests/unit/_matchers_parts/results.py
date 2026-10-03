@@ -18,13 +18,15 @@ from tests import m, r, t
 class TestsFlextTestsMatchersResultsMixin:
     """Matcher result assertion tests."""
 
-    def test_assert_result_success_passes(self) -> None:
+    @staticmethod
+    def test_assert_result_success_passes() -> None:
         """Test tm.ok() with successful result."""
         result: core_p.Result[str] = r[str].ok("success")
         value: t.Tests.TestobjectSerializable = tm.ok(result)
         tm.that(value, eq="success")
 
-    def test_ok_preserves_generic_result_payload(self) -> None:
+    @staticmethod
+    def test_ok_preserves_generic_result_payload() -> None:
         """The no-matcher overload preserves the producer's payload type."""
         result: core_p.Result[str] = core_r[str].ok("success")
         assert_type(result.value, str)
@@ -35,7 +37,8 @@ class TestsFlextTestsMatchersResultsMixin:
             eq="x",
         )
 
-    def test_ok_preserves_arbitrary_result_payload(self) -> None:
+    @staticmethod
+    def test_ok_preserves_arbitrary_result_payload() -> None:
         """The no-matcher overload accepts payloads outside the matcher union."""
 
         class Payload(m.BaseModel):
@@ -49,56 +52,65 @@ class TestsFlextTestsMatchersResultsMixin:
         assert_type(resolved, Payload)
         tm.that(resolved, eq=payload)
 
-    def test_assert_result_success_fails(self) -> None:
+    @staticmethod
+    def test_assert_result_success_fails() -> None:
         """Test tm.ok() with failed result."""
         result: core_p.Result[str] = r[str].fail("error")
         with pytest.raises(AssertionError, match="Expected success but got failure"):
             tm.ok(result)
 
-    def test_assert_result_success_custom_message(self) -> None:
+    @staticmethod
+    def test_assert_result_success_custom_message() -> None:
         """Test tm.ok() with custom error message."""
         result: core_p.Result[str] = r[str].fail("error")
         with pytest.raises(AssertionError, match="Custom message"):
             tm.ok(result, msg="Custom message")
 
-    def test_assert_result_failure_passes(self) -> None:
+    @staticmethod
+    def test_assert_result_failure_passes() -> None:
         """Test tm.fail() with failed result."""
         result: core_p.Result[str] = r[str].fail("error")
         error = tm.fail(result)
         tm.that(error, eq="error")
 
-    def test_assert_result_failure_fails(self) -> None:
+    @staticmethod
+    def test_assert_result_failure_fails() -> None:
         """Test tm.fail() with successful result."""
         result = r[str].ok("success")
         with pytest.raises(AssertionError, match="Expected failure but got success"):
             tm.fail(result)
 
-    def test_assert_result_failure_with_expected_error(self) -> None:
+    @staticmethod
+    def test_assert_result_failure_with_expected_error() -> None:
         """Test tm.fail() with expected error substring."""
         result: core_p.Result[str] = r[str].fail("Database connection failed")
         error = tm.fail(result, contains="connection")
         tm.that(error, has="connection")
 
-    def test_assert_result_failure_expected_error_not_found(self) -> None:
+    @staticmethod
+    def test_assert_result_failure_expected_error_not_found() -> None:
         """Test tm.fail() when expected error substring not found."""
         result: core_p.Result[str] = r[str].fail("Database error")
         with pytest.raises(AssertionError, match=r"Expected.*to contain 'connection'"):
             tm.fail(result, contains="connection")
 
-    def test_assert_dict_contains_passes(self) -> None:
+    @staticmethod
+    def test_assert_dict_contains_passes() -> None:
         """Test tm.that() with contains parameter for dict."""
         data = {"key1": "value1", "key2": "value2"}
         expected = {"key1": "value1"}
         tm.that(data, kv=expected)
 
-    def test_assert_dict_contains_missing_key(self) -> None:
+    @staticmethod
+    def test_assert_dict_contains_missing_key() -> None:
         """Test tm.that() with missing key."""
         data = {"key1": "value1"}
         expected = {"key2": "value2"}
         with pytest.raises(AssertionError, match="Key 'key2' not found in mapping"):
             tm.that(data, kv=expected)
 
-    def test_assert_dict_contains_wrong_value(self) -> None:
+    @staticmethod
+    def test_assert_dict_contains_wrong_value() -> None:
         """Test tm.that() with wrong value."""
         data = {"key1": "value1"}
         expected = {"key1": "wrong_value"}
@@ -108,12 +120,14 @@ class TestsFlextTestsMatchersResultsMixin:
         ):
             tm.that(data, kv=expected)
 
-    def test_assert_list_contains_passes(self) -> None:
+    @staticmethod
+    def test_assert_list_contains_passes() -> None:
         """Test tm.that() with has parameter for list."""
         items = ["item1", "item2", "item3"]
         tm.that(items, has="item2")
 
-    def test_assert_list_contains_missing_item(self) -> None:
+    @staticmethod
+    def test_assert_list_contains_missing_item() -> None:
         """Test tm.that() with item not in list."""
         items = ["item1", "item2"]
         with pytest.raises(AssertionError, match=r"Expected.*to contain 'item3'"):
