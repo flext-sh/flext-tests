@@ -86,7 +86,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             The resulting ``p.Result[bool]``.
         """
         if not cls.ci_disables_docker():
-            return r[bool].ok(True)
+            return r[bool].ok(value=True)
         ci = infra_config.Infra.codegen.make.ci
         return r[bool].fail(
             c.Tests.ERR_DOCKER_DISABLED_BY_CI.format(
@@ -249,7 +249,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             container=container_name,
             dirty=dirty,
         )
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     @staticmethod
     def _compose_client(
@@ -664,7 +664,8 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         resolved_port = target.port if port is None else port
         if resolved_port is None:
             return r[bool].fail(
-                f"Docker target {target.container_name} has no configured readiness port.",
+                f"Docker target {target.container_name} has no configured "
+                f"readiness port.",
             )
         return self.wait_for_port_ready(
             target.host,
@@ -981,7 +982,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             )
         except self._compose_exception_types() as exc:
             return r[bool].fail_op("Compose up", exc)
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     def _serve(
         self,
@@ -1101,7 +1102,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         while True:
             probed = readiness_probe(info)
             if probed.success and probed.value:
-                return r[bool].ok(True)
+                return r[bool].ok(value=True)
             detail = probed.error if probed.failure else "probe reported not ready"
             if time.monotonic() >= deadline:
                 return r[bool].fail(

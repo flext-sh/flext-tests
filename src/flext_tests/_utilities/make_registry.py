@@ -49,7 +49,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
                     f"duplicate alias: {alias} points to {previous} and {command.verb}",
                 )
             aliases_by_name[alias] = command.verb
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     @staticmethod
     def _make_command_from_data(

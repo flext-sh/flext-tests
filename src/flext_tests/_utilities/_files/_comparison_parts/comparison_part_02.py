@@ -145,7 +145,7 @@ class FlextTestsFilesComparisonMixin(_ComparisonMixinPart1):
             exclude_keys=exclude_keys_set,
         )
         if left_result.failure or right_result.failure:
-            return r[bool].ok(False)
+            return r[bool].ok(value=False)
         return r[bool].ok(u.deep_eq(left_result.value, right_result.value))
 
     def _compare_lines(self, params: m.Tests.CompareParams) -> p.Result[bool]:

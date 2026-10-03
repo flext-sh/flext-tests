@@ -249,7 +249,7 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
             value = secret.get_secret_value()
             if any(mark in value for mark in c.Tests.DOCKER_ENV_FORBIDDEN_MARKS):
                 return r[bool].fail(c.Tests.ERR_DOCKER_ENV_VALUE.format(key=key))
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     @staticmethod
     @contextmanager

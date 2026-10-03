@@ -147,7 +147,7 @@ class FlextTestsMatchersModelsMixin:
             }
 
     class MatchRule(PayloadParams):
-        """One nominal matcher rule parsed from a scalar, type, predicate, or mapping."""
+        """One matcher rule parsed from a scalar, type, predicate, or mapping."""
 
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
             frozen=True,

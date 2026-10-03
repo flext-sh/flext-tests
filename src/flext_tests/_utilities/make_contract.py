@@ -58,7 +58,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
                     f"{command.verb} WHAT={command.what}: {param.name}={value!r} "
                     f"invalido; validos: {valid}",
                 )
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     @staticmethod
     def make_validate_command_contract(command: m.Tests.MakeCommand) -> p.Result[bool]:
@@ -117,7 +117,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
         )
         if condition_result.failure:
             return r[bool].from_failure(condition_result)
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     @staticmethod
     def make_validate_mutation_conditions(
@@ -130,7 +130,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
             The resulting ``p.Result[bool]``.
         """
         if not command.mutates_when:
-            return r[bool].ok(True)
+            return r[bool].ok(value=True)
         apply_param = param_by_name.get(c.Tests.MAKE_APPLY_PARAM)
         if (
             apply_param is None
@@ -155,7 +155,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
                         f"{command.path}: mutates_when.{condition.name} possui "
                         f"valores fora de choices: {','.join(missing)}",
                     )
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     @staticmethod
     def make_validate_registry(registry: m.Tests.MakeRegistry) -> p.Result[bool]:
@@ -178,8 +178,10 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
                     f"verb '{verb}' declares more than one domain: {valid}",
                 )
             for command in commands.values():
-                command_result = FlextTestsMakeContractUtilitiesMixin.make_validate_registered_command(
-                    command,
+                command_result = (
+                    FlextTestsMakeContractUtilitiesMixin.make_validate_registered_command(
+                        command,
+                    )
                 )
                 if command_result.failure:
                     return r[bool].from_failure(command_result)
@@ -191,7 +193,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
             )
             if choices_result.failure:
                 return r[bool].from_failure(choices_result)
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     @staticmethod
     def make_validate_registered_command(
@@ -231,7 +233,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
             None,
         )
         if what_param is None or not what_param.choices:
-            return r[bool].ok(True)
+            return r[bool].ok(value=True)
         declared = tuple(sorted(what_param.choices))
         actual = tuple(sorted(commands))
         if declared != actual:
@@ -239,7 +241,7 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
                 f"{all_command.path}: WHAT choices diverge from the promoted commands "
                 f"para {verb}: declared={','.join(declared)} actual={','.join(actual)}",
             )
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     @staticmethod
     def make_registry_verbs(registry: m.Tests.MakeRegistry) -> t.StrSequence:
