@@ -94,7 +94,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
                         "cleanup residues overlap: "
                         f"{parent.relative_path} and {child.relative_path}",
                     )
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     @classmethod
     def workspace_cleanup_plan(

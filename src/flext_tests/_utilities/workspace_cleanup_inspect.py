@@ -47,7 +47,7 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
                 f"{relative_path}",
             )
         if stat.S_ISDIR(mode):
-            return r[bool].ok(True)
+            return r[bool].ok(value=True)
         if not stat.S_ISREG(mode):
             return r[bool].fail(
                 f"cleanup residue is not a regular file: {relative_path}",
@@ -57,7 +57,7 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
                 f"cleanup residue is a hardlink shared with other paths: "
                 f"{relative_path}",
             )
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     @classmethod
     def _ignored(cls, root: Path, relative_path: Path) -> p.Result[bool]:
@@ -75,7 +75,7 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
             return r[bool].fail(result.error)
         output = result.value
         if output.outcome.raw_return_code == c.Cli.EXIT_CODE_SUCCESS:
-            return r[bool].ok(True)
+            return r[bool].ok(value=True)
         if output.outcome.raw_return_code == c.Cli.EXIT_CODE_FAILURE:
             return r[bool].fail(
                 f"cleanup residue is not ignored by Git: {relative_path}",
@@ -122,7 +122,7 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
             return r[bool].fail(
                 f"cleanup residue contains Git-tracked content: {relative_path}",
             )
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     @staticmethod
     def _fingerprint_entry(root: Path, entry: Path) -> p.Result[str]:

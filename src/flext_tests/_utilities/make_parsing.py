@@ -64,7 +64,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
         body = tuple(tree.body)
         if not body:
-            return r[bool].ok(False)
+            return r[bool].ok(value=False)
         first = body[0]
         has_module_docstring = (
             isinstance(first, ast.Expr)
