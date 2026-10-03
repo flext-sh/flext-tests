@@ -82,7 +82,7 @@ override FLEXT_PYTEST_TESTMON_DATABASE = $(if $(strip $(PYTEST_CACHE_HOME)),$(PY
 # Profiles sit beside the other reports of this checkout (.reports is ignored).
 PROFILE_REPORTS_DIR = $(PROJECT_ROOT)/$(dir $(PYTEST_REPORTS_DIR))profiles
 override PYTEST_CASE_TIMEOUT_SECONDS := 10
-override PYTEST_RUN_TIMEOUT_SECONDS := 3600
+override PYTEST_RUN_TIMEOUT_SECONDS := 120
 override PYTEST_TERMINATION_GRACE_SECONDS := 2
 override PYTEST_TIMEOUT_EXIT_CODE := 124
 override PYTEST_ENFORCEMENT_PLUGIN := flext_tests_enforcement
@@ -178,7 +178,7 @@ override MISE_VERSION_PIN := $(RUNTIME_ROOT)/mise.version
 # has been recovered. Parsing it here would freeze a torn pre-recovery value.
 # End SECTION: profile routing
 
-override RUNTIME_VENV := $(abspath $(RUNTIME_ROOT)/../.flext-venvs/$(subst :,/,$(patsubst /%,%,$(RUNTIME_ROOT))))
+override RUNTIME_VENV := $(RUNTIME_ROOT)/.venv
 ifeq ($(OS),Windows_NT)
 override RUNTIME_BIN := $(RUNTIME_VENV)/Scripts
 override RUNTIME_PYTHON := $(RUNTIME_BIN)/python.exe
@@ -839,7 +839,6 @@ fi; \
 SETUP_ENVIRONMENT_RECIPE = set -eu; \
 	$(REQUIRE_WORKSPACE_ENVIRONMENT); \
 	desired_python="$${SETUP_PYTHON:?missing Mise-resolved Python executable}"; \
-	mkdir -p "$(dir $(RUNTIME_VENV))"; \
 	if [ ! -x "$(RUNTIME_PYTHON)" ]; then \
 		$(UV) venv --python "$$desired_python" "$(RUNTIME_VENV)"; \
 	else \
@@ -927,9 +926,9 @@ define _lock_project
 	@set -eu; \
 	workspace=$$($(UV) workspace dir --project "$(PROJECT_ROOT)"); \
 	stage=$$(mktemp -d); candidate="$$workspace/.uv.lock.$$$$"; \
-	trap 'find "$$stage" -depth -delete; rm -f "$$candidate"' EXIT; \
+	trap 'find "$${stage}" -depth -delete; rm -f "$$candidate"' EXIT; \
 	trap 'exit 129' HUP; trap 'exit 130' INT; trap 'exit 143' TERM; \
-	$(UV) workspace list --paths --project "$$workspace" > "$$stage/.members"; \
+	$(UV) workspace list --paths --project "$$workspace" > "$${stage}/.members"; \
 	while IFS= read -r member; do \
 		relative=$${member#"$$workspace"}; \
 		mkdir -p "$${stage}/mirror$$relative"; \
@@ -939,7 +938,7 @@ define _lock_project
 	$(UV) lock --project "$${stage}/mirror" $(1); \
 	$(UV) lock --check --project "$${stage}/mirror"; \
 	if [ -e "$$candidate" ]; then printf 'ERROR: lock staging path already exists: %s\n' "$$candidate" >&2; exit 2; fi; \
-	cp "$$stage/mirror/uv.lock" "$$candidate"; \
+	cp "$${stage}/mirror/uv.lock" "$$candidate"; \
 	mv -f "$$candidate" "$$workspace/uv.lock"
 endef
 
@@ -1184,17 +1183,6 @@ _activated-gen: _builtin_require_environment
 
 
 
-bootstrap-candidate: _builtin_require_workspace
-	+@direnv exec "$(PROJECT_ROOT)" $(SELF_MAKE) _activated-bootstrap-candidate
-
-.PHONY: _activated-bootstrap-candidate
-_activated-bootstrap-candidate: _builtin_require_environment
-
-	$(call RUN_PUBLIC,bootstrap-candidate)
-
-
-
-
 initialize: _builtin_require_workspace
 	+@direnv exec "$(PROJECT_ROOT)" $(SELF_MAKE) _activated-initialize
 
@@ -1347,7 +1335,7 @@ _builtin-help:
 
 	@printf '  %-16s %s\n' 'setup' 'Provision the declared environment and hooks.';
 
-	@printf '  %-16s %s\n' 'upg' 'Resolve the newest declared releases and write the uv and mise locks.';
+	@printf '  %-16s %s\n' 'upg' 'Resolve the newest declared releases, write the uv and mise locks, then prove the upgraded tree still converges and passes every active check gate.';
 
 	@printf '  %-16s %s\n' 'build' 'Build the project distribution artifacts.';
 
@@ -1390,8 +1378,6 @@ _builtin-help:
 	@printf '  %-16s %s\n' 'publication' 'Publish only receipt-attested release artifacts.';
 
 	@printf '  %-16s %s\n' 'gen' 'Regenerate every managed projection atomically.';
-
-	@printf '  %-16s %s\n' 'bootstrap-candidate' 'Conform the sibling candidate worktree declared in this repository manifest.';
 
 	@printf '  %-16s %s\n' 'initialize' 'Materialize the declared package initializer graph.';
 
@@ -1711,45 +1697,8 @@ _upg_activated:
 	esac
 
 
-# _builtin-self-* targets serve the workspace root itself (project selector
-# `.` from the orchestrator). They apply the same member-style gate recipes to
-# PROJECT_ROOT without recursing into submodules, so the root distribution
-# runs its own evidence in the global cycles. Where the standalone profile's
-# `_builtin-*_all` twin owns the identical body, the self target delegates to
-# that twin so the gate-selection shell block is emitted exactly once; the
-# workspace profile emits the root-local body because its `_all` twin
-# recurses into members instead.
-
-# Standalone: the `_all` twins own the one emitted body (SSOT); each carries
-# its own `_builtin_require_environment` edge.
-_builtin-self-test: _builtin_test_all
-
-_builtin-self-check: _builtin_check_all
-
-_builtin-self-test-full: _builtin_test_full_all
-
-_builtin-self-fmt: _builtin_fmt_all
-
-_builtin-self-fix: _builtin_fix_all
-
-_builtin-self-fix-enforcement: _builtin_fix_enforcement
-
-_builtin-self-build: _builtin_build_artifacts
-
-
-_builtin-self-clean: _builtin_clean_generated
-
-_builtin-self-docs: _builtin_docs_all
-
-# SonarCloud server-side issue exclusions (SSOT: codegen.sonarcloud). The verb
-# writes an external service with SONAR_TOKEN from the environment; it belongs
-# to no setup/gen/check/test workflow row and never runs implicitly.
-_builtin_sonarcloud_sync_project: _builtin_require_environment
-	@$(PROJECT_FLEXT_INFRA) maintenance sonarcloud-sync --repository-root "$(PROJECT_ROOT)"
-
-_builtin-self-sonarcloud-sync: _builtin_sonarcloud_sync_project
-
-
+# Gate, fix and build verbs act on this repository only, with one body per verb
+# in every profile: a workspace root evaluates itself exactly as CI does.
 _builtin_build_artifacts:
 
 	@$(UV) build --project "$(PROJECT_ROOT)"
@@ -1757,9 +1706,8 @@ _builtin_build_artifacts:
 
 # Check is read-only: it runs the gates without --apply, so the tree is left
 # unchanged; fix applies the declared repairs of the fixable gates.
-# CI=Y runs make.check_gates_ci, the external gates of the
-# registry; CI=N runs make.check_gates_local, its strict
-# complement (type checkers and flext-infra validators).
+# CI=Y keeps make.check_gates_ci, the strict complement of
+# make.check_gates_local; CI=N runs that local partition.
 # An absent CI token runs every active default gate.
 _builtin_check_all: _builtin_require_environment
 	@set -eu; \

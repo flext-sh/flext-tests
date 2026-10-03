@@ -178,10 +178,8 @@ class FlextTestsMakeContractUtilitiesMixin(FlextTestsMakeParsingUtilitiesMixin):
                     f"verb '{verb}' declares more than one domain: {valid}",
                 )
             for command in commands.values():
-                command_result = (
-                    FlextTestsMakeContractUtilitiesMixin.make_validate_registered_command(
-                        command,
-                    )
+                command_result = FlextTestsMakeContractUtilitiesMixin.make_validate_registered_command(
+                    command,
                 )
                 if command_result.failure:
                     return r[bool].from_failure(command_result)

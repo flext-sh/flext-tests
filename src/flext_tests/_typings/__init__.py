@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from flext_tests._typings.make import FlextTestsMakeTypesMixin
     from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
 
+
 __all__: tuple[str, ...] = (
     "FlextTestsBaseTypesMixin",
     "FlextTestsFilesTypesMixin",

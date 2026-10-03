@@ -274,10 +274,8 @@ class FlextTestsMatchersResultMixin:
                             params.msg
                             or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=native),
                         )
-                elif (
-                    FlextTestsMatchersResultMixin.Tests.Matchers.ok_has_scalar_validation(
-                        params,
-                    )
+                elif FlextTestsMatchersResultMixin.Tests.Matchers.ok_has_scalar_validation(
+                    params,
                 ):
                     FlextTestsMatchersTypeGuardsMixin.assert_scalar_match(
                         FlextTestsPayloadUtilities.to_payload(result_value),
@@ -370,10 +368,8 @@ class FlextTestsMatchersResultMixin:
                         params.lacks,
                         params.msg,
                     )
-                if (
-                    FlextTestsMatchersResultMixin.Tests.Matchers.ok_preserves_result_identity(
-                        params,
-                    )
+                if FlextTestsMatchersResultMixin.Tests.Matchers.ok_preserves_result_identity(
+                    params,
                 ):
                     # No structural extraction was requested, so ok_extract_path
                     # returned the success value unchanged; the subject keeps its
