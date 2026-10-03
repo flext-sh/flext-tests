@@ -10,7 +10,7 @@ from collections.abc import MutableMapping
 from pathlib import Path
 from typing import Annotated, ClassVar
 
-from flext_infra import m, u
+from flext_cli import m, p, u
 
 
 class FlextTestsValidatorModelsMixin:
@@ -20,10 +20,10 @@ class FlextTestsValidatorModelsMixin:
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(frozen=True)
 
         infra_findings: Annotated[
-            m.Infra.ModScanReport | None,
+            p.Model | None,
             u.Field(
                 description="flext-infra rule-engine findings keyed by rule id, "
-                "absent when no engine rule is selected."
+                "absent when no engine rule is selected.",
             ),
         ] = None
         project_names: Annotated[
@@ -35,7 +35,8 @@ class FlextTestsValidatorModelsMixin:
         """Resolved runtime configuration for the pytest enforcement dispatcher."""
 
         strict: Annotated[
-            bool, u.Field(description="Promote runtime warnings to failures when true.")
+            bool,
+            u.Field(description="Promote runtime warnings to failures when true."),
         ]
         include: Annotated[
             frozenset[str],
@@ -52,6 +53,6 @@ class FlextTestsValidatorModelsMixin:
         warning_counter: Annotated[
             MutableMapping[str, int],
             u.Field(
-                description="Captured runtime warning counts keyed by dotted category."
+                description="Captured runtime warning counts keyed by dotted category.",
             ),
         ] = u.Field(default_factory=dict)

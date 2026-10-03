@@ -1,13 +1,18 @@
-"""Containment checks over native projections of owned matcher payloads."""
+"""Containment checks over native projections of owned matcher payloads.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
 from collections.abc import Mapping
 
 from flext_tests import c, p
-
-from ..payload import FlextTestsPayloadUtilities
-from ._assertions import FlextTestsMatchersAssertionsMixin
+from flext_tests._utilities._matchers._assertions import (
+    FlextTestsMatchersAssertionsMixin,
+)
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsMatchersContainmentMixin:
@@ -24,7 +29,7 @@ class FlextTestsMatchersContainmentMixin:
     ) -> None:
         """Validate containment without converting native values to text."""
         target = FlextTestsPayloadUtilities.to_match_value(
-            FlextTestsPayloadUtilities.to_payload(value)
+            FlextTestsPayloadUtilities.to_payload(value),
         )
         for expectation, required in ((has, True), (lacks, False)):
             if expectation is None:

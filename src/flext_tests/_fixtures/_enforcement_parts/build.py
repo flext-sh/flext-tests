@@ -1,14 +1,21 @@
-"""Enforcement item construction for the pytest plugin."""
+"""Enforcement item construction for the pytest plugin.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
 from flext_tests import m
+from flext_tests._fixtures._enforcement_parts._collector import (
+    FlextTestsEnforcementCollector,
+)
+from flext_tests._fixtures._enforcement_parts.validators import (
+    FlextTestsEnforcementValidators,
+)
 from flext_tests.utilities import u
-
-from ._collector import FlextTestsEnforcementCollector
-from .validators import FlextTestsEnforcementValidators
 
 if TYPE_CHECKING:
     import pytest
@@ -33,7 +40,8 @@ class FlextTestsEnforcementBuilder:
             return []
         rules = u.Tests.active_rules(cfg)
         project_names = u.Tests.collected_project_names(
-            items=collected_items, repository_root=repository_root
+            items=collected_items,
+            repository_root=repository_root,
         )
         # Catalog rows naming engine rules, plus included ids the catalog does
         # not own (engine rule ids), must all be declared by the engine.
@@ -49,19 +57,23 @@ class FlextTestsEnforcementBuilder:
         engine_selected = not cfg.include or bool(required_rule_ids)
         context = m.Tests.EnforcementBuildContext(
             infra_findings=u.Tests.infra_rule_findings(
-                repository_root, required_rule_ids=required_rule_ids
+                repository_root,
+                required_rule_ids=required_rule_ids,
             ).unwrap()
             if project_names and engine_selected
             else None,
             project_names=project_names,
         )
         collector = FlextTestsEnforcementCollector.from_parent(
-            parent=session, name="flext-enforcement"
+            parent=session,
+            name="flext-enforcement",
         )
         return [
             *FlextTestsEnforcementValidators.build_infra_rule_items(
-                collector, cfg, context
-            )
+                collector,
+                cfg,
+                context,
+            ),
         ]
 
 

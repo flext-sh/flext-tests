@@ -1,11 +1,15 @@
-"""Enforcement dispatch constants for flext-tests (data-only facade)."""
+"""Enforcement dispatch constants for flext-tests (data-only facade).
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
-    from flext_infra import t
+    from flext_cli import t
 
 
 class FlextTestsConstantsValidator:

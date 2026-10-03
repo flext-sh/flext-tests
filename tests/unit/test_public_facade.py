@@ -1,4 +1,8 @@
-"""Public facade import regressions."""
+"""Public facade import regressions.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -15,18 +19,24 @@ from flext_tests import tm
 
 
 class TestsFlextTestsPublicFacade:
+    """Tests for ``FlextTestsPublicFacade``."""
+
     class Tests:
         """flext-tests public facade test namespace."""
 
-    def test_models_and_utilities_import_together(self) -> None:
+    @staticmethod
+    def test_models_and_utilities_import_together() -> None:
+        """Test models and utilities import together."""
         from flext_tests import m, u
 
         tm.that(m.__name__, eq="FlextTestsModels")
         tm.that(u.__name__, eq="FlextTestsUtilities")
 
+    @staticmethod
     def test_selected_enforcement_plugin_uses_its_declared_identity(
-        self, pytestconfig: pytest.Config
+        pytestconfig: pytest.Config,
     ) -> None:
+        """Test selected enforcement plugin uses its declared identity."""
         from flext_infra import config
 
         plugin = config.Infra.tooling.tools.pytest.enforcement_plugin
@@ -37,7 +47,9 @@ class TestsFlextTestsPublicFacade:
             eq=True,
         )
 
-    def test_consumer_facade_imports_without_container_lifecycle(self) -> None:
+    @staticmethod
+    def test_consumer_facade_imports_without_container_lifecycle() -> None:
+        """Test consumer facade imports without container lifecycle."""
         import flext_tests
         from flext_tests import FlextTestsCase, d, e, h, r, tf, tk, tm, x
 
@@ -54,6 +66,7 @@ class TestsFlextTestsPublicFacade:
         ):
             tm.that(exported is getattr(flext_tests, name), eq=True)
 
+    @staticmethod
     @pytest.mark.parametrize(
         ("module_name", "distribution_name"),
         [
@@ -67,8 +80,10 @@ class TestsFlextTestsPublicFacade:
         ],
     )
     def test_facade_runtime_imports_are_direct_unconditional_dependencies(
-        self, module_name: str, distribution_name: str
+        module_name: str,
+        distribution_name: str,
     ) -> None:
+        """Test facade runtime imports are direct unconditional dependencies."""
         from flext_tests import u
 
         root = Path(__file__).resolve().parents[2]

@@ -13,7 +13,7 @@ from types import MappingProxyType
 from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
-    from flext_infra import t
+    from flext_cli import t
 
 
 class FlextTestsConstantsMatcher:

@@ -3,11 +3,14 @@
 Short alias: ``tm`` (test matchers). Re-exports the matcher utilities from the
 private ``_utilities.matchers`` implementation so the root ``flext_tests``
 package can publish ``tm`` as a governed root facade alias.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
 
-from ._utilities.matchers import FlextTestsMatchersUtilities
+from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
 
 tm = FlextTestsMatchersUtilities.Tests.Matchers
 """Public test-matchers facade alias for flext_tests."""

@@ -1,4 +1,8 @@
-"""Private docker lifecycle rule test mixins (no Docker daemon involved)."""
+"""Private docker lifecycle rule test mixins (no Docker daemon involved).
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -61,14 +65,17 @@ class TestsFlextTestsDockerLifecycleMixin:
         ],
     )
     def test_stale_record_recreates_in_every_status_and_health(
-        self, stale: t.MappingKV[str, str | bool]
+        self,
+        stale: t.MappingKV[str, str | bool],
     ) -> None:
         """A dirty, unsealed, re-declared or foreign record always recreates."""
         state = self._sealed().model_copy(update=stale)
         for status in c.Tests.ContainerStatus:
             for health in c.Tests.ContainerHealth:
                 action = u.Tests.docker_action(
-                    self._info(status, health), state, fingerprint="sealed-fingerprint"
+                    self._info(status, health),
+                    state,
+                    fingerprint="sealed-fingerprint",
                 )
                 tm.that(action, eq=c.Tests.ContainerAction.RECREATE)
 
@@ -113,7 +120,11 @@ class TestsFlextTestsDockerLifecycleMixin:
             pytest.param(None, None, {}, "NOT_PROVISIONED", id="absent"),
             pytest.param("running", "healthy", {"dirty": True}, "DIRTY", id="dirty"),
             pytest.param(
-                "running", "healthy", {"sealed": False}, "UNSEALED", id="unsealed"
+                "running",
+                "healthy",
+                {"sealed": False},
+                "UNSEALED",
+                id="unsealed",
             ),
             pytest.param(
                 "running",
@@ -146,7 +157,8 @@ class TestsFlextTestsDockerLifecycleMixin:
             None
             if info_status is None or health is None
             else self._info(
-                c.Tests.ContainerStatus(info_status), c.Tests.ContainerHealth(health)
+                c.Tests.ContainerStatus(info_status),
+                c.Tests.ContainerHealth(health),
             )
         )
         result = u.Tests.docker_verify(
@@ -164,14 +176,17 @@ class TestsFlextTestsDockerLifecycleMixin:
         ):
             info = self._info(c.Tests.ContainerStatus.RUNNING, health)
             verified = u.Tests.docker_verify(
-                info, self._sealed(), fingerprint="sealed-fingerprint"
+                info,
+                self._sealed(),
+                fingerprint="sealed-fingerprint",
             )
             tm.that(tm.ok(verified), eq=info)
 
     def test_host_port_is_read_from_published_bindings(self) -> None:
         """A published TCP port resolves; an unpublished one fails typed."""
         info = self._info(
-            c.Tests.ContainerStatus.RUNNING, c.Tests.ContainerHealth.HEALTHY
+            c.Tests.ContainerStatus.RUNNING,
+            c.Tests.ContainerHealth.HEALTHY,
         ).model_copy(update={"ports": {"80/tcp": "49153"}})
         tm.that(tm.ok(u.Tests.resolve_host_port(info, 80)), eq=49153)
         tm.fail(
@@ -181,7 +196,8 @@ class TestsFlextTestsDockerLifecycleMixin:
 
     @staticmethod
     def _inspect(
-        health: t.MappingKV[str, str] | None, env: t.StrSequence | None
+        health: t.MappingKV[str, str] | None,
+        env: t.StrSequence | None,
     ) -> m.Tests.ContainerInspect:
         state: dict[str, str | t.MappingKV[str, str]] = {"Status": "running"}
         if health is not None:
@@ -196,14 +212,15 @@ class TestsFlextTestsDockerLifecycleMixin:
                 "Ports": {
                     "80/tcp": [{"HostIp": "127.0.0.1", "HostPort": "49153"}],
                     "443/tcp": None,
-                }
+                },
             },
         })
 
     def test_inspect_projects_onto_container_info(self) -> None:
         """Inspect data becomes the typed view: ids, image, published ports."""
         info = u.Tests.container_info(
-            "lifecycle-rule", self._inspect({"Status": "healthy"}, None)
+            "lifecycle-rule",
+            self._inspect({"Status": "healthy"}, None),
         )
         tm.that(info.container_id, eq="0123456789ab")
         tm.that(info.image, eq="nginx:alpine")
@@ -223,14 +240,18 @@ class TestsFlextTestsDockerLifecycleMixin:
         inspect = self._inspect(None, ["PLAIN=1", "WITH_EQ=a=b", "BARE"])
         environment = tm.ok(
             u.Tests.container_environment(
-                "lifecycle-rule", inspect, ["PLAIN", "WITH_EQ"]
-            )
+                "lifecycle-rule",
+                inspect,
+                ["PLAIN", "WITH_EQ"],
+            ),
         )
         tm.that(environment["PLAIN"].get_secret_value(), eq="1")
         tm.that(environment["WITH_EQ"].get_secret_value(), eq="a=b")
         tm.that(str(environment["PLAIN"]), lacks="1")
         missing = u.Tests.container_environment(
-            "lifecycle-rule", inspect, ["PLAIN", "ABSENT", "BARE"]
+            "lifecycle-rule",
+            inspect,
+            ["PLAIN", "ABSENT", "BARE"],
         )
         tm.fail(
             missing,
@@ -241,7 +262,9 @@ class TestsFlextTestsDockerLifecycleMixin:
 
     @staticmethod
     def _target(
-        compose_file: Path, *inputs: Path, service: str = "probe"
+        compose_file: Path,
+        *inputs: Path,
+        service: str = "probe",
     ) -> m.Tests.ContainerConfig:
         return m.Tests.ContainerConfig(
             container_name="fingerprinted",
@@ -265,8 +288,8 @@ class TestsFlextTestsDockerLifecycleMixin:
         tm.that(
             tm.ok(
                 u.Tests.docker_fingerprint(
-                    self._target(compose_file, schema, service="other")
-                )
+                    self._target(compose_file, schema, service="other"),
+                ),
             ),
             ne=base,
         )
@@ -274,9 +297,9 @@ class TestsFlextTestsDockerLifecycleMixin:
             tm.ok(
                 u.Tests.docker_fingerprint(
                     self._target(compose_file, schema).model_copy(
-                        update={"project_name": "other-project"}
-                    )
-                )
+                        update={"project_name": "other-project"},
+                    ),
+                ),
             ),
             ne=base,
         )
@@ -292,12 +315,13 @@ class TestsFlextTestsDockerLifecycleMixin:
         _ = compose_file.write_text("services: {}\n", encoding="utf-8")
         tm.fail(
             u.Tests.docker_fingerprint(
-                self._target(compose_file, tmp_path / "absent.ldif")
-            )
+                self._target(compose_file, tmp_path / "absent.ldif"),
+            ),
         )
         tm.fail(FlextTestsDocker(state_dir=tmp_path).fingerprint())
 
-    def test_creation_env_file_is_private_and_removed(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_creation_env_file_is_private_and_removed(tmp_path: Path) -> None:
         """Creation values live in a 0600 file only inside the block."""
         environment = {"FLEXT_TESTS_SECRET": t.SecretStr("s3cr=t value")}
         with u.Tests.creation_env_file(tmp_path, "env-owner", environment) as env_files:
@@ -311,8 +335,9 @@ class TestsFlextTestsDockerLifecycleMixin:
         with u.Tests.creation_env_file(tmp_path, "env-owner", {}) as no_files:
             tm.that(no_files, eq=())
 
+    @staticmethod
     def test_creation_env_file_never_overwrites_a_leftover(
-        self, tmp_path: Path
+        tmp_path: Path,
     ) -> None:
         """A file left by an interrupted run fails instead of being replaced."""
         leftover = tmp_path / f"env-owner{c.Tests.DOCKER_ENV_FILE_SUFFIX}"
@@ -325,7 +350,8 @@ class TestsFlextTestsDockerLifecycleMixin:
             tm.that(leftover.exists(), eq=True)
         tm.that(leftover.read_text(encoding="utf-8"), eq="LEFT=over\n")
 
-    def test_unrepresentable_creation_value_is_rejected(self) -> None:
+    @staticmethod
+    def test_unrepresentable_creation_value_is_rejected() -> None:
         """A quote or line break cannot be written literally and is refused."""
         for value in ("it's", "two\nlines"):
             tm.fail(

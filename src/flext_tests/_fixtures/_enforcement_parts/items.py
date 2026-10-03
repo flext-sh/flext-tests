@@ -1,4 +1,8 @@
-"""Pytest collection item for enforcement violations."""
+"""Pytest collection item for enforcement violations.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -39,15 +43,19 @@ class FlextTestsEnforcementItem(pytest.Item):
             f"{self._rule_id} ({self._severity}) in {self._project}: "
             f"{len(self._violations)} violation(s)"
         )
-        from ._error import FlextTestsEnforcementViolationError
+        from flext_tests._fixtures._enforcement_parts._error import (
+            FlextTestsEnforcementViolationError,
+        )
 
         raise FlextTestsEnforcementViolationError(
-            "\n".join([header, *(f"  - {line}" for line in self._violations)])
+            "\n".join([header, *(f"  - {line}" for line in self._violations)]),
         )
 
     @override
     def repr_failure(
-        self, excinfo: pytest.ExceptionInfo[BaseException], style: str | None = None
+        self,
+        excinfo: pytest.ExceptionInfo[BaseException],
+        style: str | None = None,
     ) -> str:
         _ = style
         return str(excinfo.value)

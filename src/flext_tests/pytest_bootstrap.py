@@ -11,6 +11,9 @@ Usage in any project's root ``conftest.py``::
     from flext_tests.pytest_bootstrap import install_local_packages
 
     install_local_packages(Path(__file__).resolve().parent)
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -26,7 +29,8 @@ _LOCAL_PACKAGES: Final[t.StrSequence] = ("tests",)
 
 
 def install_local_packages(
-    project_root: Path, package_names: t.StrSequence = _LOCAL_PACKAGES
+    project_root: Path,
+    package_names: t.StrSequence = _LOCAL_PACKAGES,
 ) -> None:
     """Register local packages on ``sys.modules`` for in-place test collection.
 
@@ -58,12 +62,14 @@ def install_local_packages(
 
         for module_name in list(sys.modules):
             if module_name == package_name or module_name.startswith(
-                f"{package_name}."
+                f"{package_name}.",
             ):
                 sys.modules.pop(module_name, None)
 
         package_spec = importlib.util.spec_from_file_location(
-            package_name, init_file, submodule_search_locations=[str(package_dir)]
+            package_name,
+            init_file,
+            submodule_search_locations=[str(package_dir)],
         )
         if package_spec is None or package_spec.loader is None:
             msg = f"Unable to load local package from {init_file}"

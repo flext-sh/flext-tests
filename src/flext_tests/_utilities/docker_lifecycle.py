@@ -1,4 +1,8 @@
-"""Decisions and projections of the Docker test lifecycle."""
+"""Decisions and projections of the Docker test lifecycle.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -8,7 +12,7 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
 
-from flext_infra import u
+from flext_cli import u
 
 from flext_core import r
 from flext_tests import c, m, p, t
@@ -31,6 +35,9 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
         stopped container that matches its seal is started. A running one that
         matches is reused, including while its healthcheck is still starting:
         the ensure then waits for the check to settle.
+
+        Returns:
+            The resulting ``c.Tests.ContainerAction``.
         """
         if info is None:
             return c.Tests.ContainerAction.CREATE
@@ -58,7 +65,11 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
         *,
         fingerprint: str,
     ) -> p.Result[m.Tests.ContainerInfo]:
-        """Check without effects that the running container is the sealed one."""
+        """Check without effects that the running container is the sealed one.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+        """
         codes = c.Tests.DockerErrorCode
         name = state.container_name
         if info is None:
@@ -68,19 +79,23 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
             )
         if state.dirty:
             return r[m.Tests.ContainerInfo].fail(
-                c.Tests.ERR_DOCKER_DIRTY.format(name=name), error_code=codes.DIRTY
+                c.Tests.ERR_DOCKER_DIRTY.format(name=name),
+                error_code=codes.DIRTY,
             )
         if not state.sealed or state.container_id != info.container_id:
             return r[m.Tests.ContainerInfo].fail(
                 c.Tests.ERR_DOCKER_UNSEALED.format(
-                    name=name, container_id=info.container_id
+                    name=name,
+                    container_id=info.container_id,
                 ),
                 error_code=codes.UNSEALED,
             )
         if state.fingerprint != fingerprint:
             return r[m.Tests.ContainerInfo].fail(
                 c.Tests.ERR_DOCKER_FINGERPRINT_MISMATCH.format(
-                    name=name, sealed=state.fingerprint, current=fingerprint
+                    name=name,
+                    sealed=state.fingerprint,
+                    current=fingerprint,
                 ),
                 error_code=codes.FINGERPRINT_MISMATCH,
             )
@@ -90,7 +105,9 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
         }:
             return r[m.Tests.ContainerInfo].fail(
                 c.Tests.ERR_DOCKER_UNHEALTHY.format(
-                    name=name, status=info.status, health=info.health
+                    name=name,
+                    status=info.status,
+                    health=info.health,
                 ),
                 error_code=codes.UNHEALTHY,
             )
@@ -105,6 +122,9 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
         project, and ``remove_orphans`` would delete a sibling suite's
         containers. Binding each file to its own project keeps
         ``remove_orphans`` scoped to the services that file declares.
+
+        Returns:
+            The resulting ``str``.
         """
         return compose_file.stem.replace(".", "-").replace("_", "-")
 
@@ -114,6 +134,9 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
 
         The process environment is never an input: two checkouts that declare
         the same files compute the same fingerprint.
+
+        Returns:
+            The resulting ``p.Result[str]``.
         """
         compose_file = target.compose_file
         if compose_file is None:
@@ -130,33 +153,41 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
             if read.failure:
                 return r[str].from_failure(read)
             digest.update(
-                len(read.value).to_bytes(c.Tests.DOCKER_FINGERPRINT_SIZE_BYTES)
+                len(read.value).to_bytes(c.Tests.DOCKER_FINGERPRINT_SIZE_BYTES),
             )
             digest.update(read.value)
         return r[str].ok(digest.hexdigest())
 
     @staticmethod
     def resolve_host_port(
-        info: m.Tests.ContainerInfo, container_port: int
+        info: m.Tests.ContainerInfo,
+        container_port: int,
     ) -> p.Result[int]:
         """Return the host port Docker published for a container TCP port."""
         host_port = info.ports.get(
-            f"{container_port}{c.Tests.DOCKER_TCP_PORT_SUFFIX}", ""
+            f"{container_port}{c.Tests.DOCKER_TCP_PORT_SUFFIX}",
+            "",
         )
         if host_port.isdigit():
             return r[int].ok(int(host_port))
         return r[int].fail(
             c.Tests.ERR_DOCKER_PORT_NOT_PUBLISHED.format(
-                name=info.name, port=container_port
+                name=info.name,
+                port=container_port,
             ),
             error_code=c.Tests.DockerErrorCode.PORT_NOT_PUBLISHED,
         )
 
     @staticmethod
     def container_info(
-        container_name: str, inspect: m.Tests.ContainerInspect
+        container_name: str,
+        inspect: m.Tests.ContainerInspect,
     ) -> m.Tests.ContainerInfo:
-        """Project ``docker inspect`` onto the lifecycle's container view."""
+        """Project ``docker inspect`` onto the lifecycle's container view.
+
+        Returns:
+            The resulting ``m.Tests.ContainerInfo``.
+        """
         bindings = inspect.network_settings.ports or {}
         return m.Tests.ContainerInfo(
             name=container_name,
@@ -172,15 +203,21 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
             health=c.Tests.ContainerHealth(
                 inspect.state.health.status
                 if inspect.state.health is not None
-                else c.Tests.ContainerHealth.UNKNOWN
+                else c.Tests.ContainerHealth.UNKNOWN,
             ),
         )
 
     @staticmethod
     def container_environment(
-        container_name: str, inspect: m.Tests.ContainerInspect, keys: t.StrSequence
+        container_name: str,
+        inspect: m.Tests.ContainerInspect,
+        keys: t.StrSequence,
     ) -> p.Result[t.MappingKV[str, t.SecretStr]]:
-        """Read named variables from a container's creation environment."""
+        """Read named variables from a container's creation environment.
+
+        Returns:
+            The resulting ``p.Result[t.MappingKV[str, t.SecretStr]]``.
+        """
         entries = dict(
             entry.split(c.Tests.DOCKER_ENV_SEPARATOR, 1)
             for entry in inspect.config.env or ()
@@ -190,7 +227,8 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
         if missing:
             return r[t.MappingKV[str, t.SecretStr]].fail(
                 c.Tests.ERR_DOCKER_ENVIRONMENT_MISSING.format(
-                    name=container_name, keys=", ".join(missing)
+                    name=container_name,
+                    keys=", ".join(missing),
                 ),
                 error_code=c.Tests.DockerErrorCode.ENVIRONMENT_MISSING,
             )
@@ -202,17 +240,23 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
     def validate_creation_environment(
         environment: t.MappingKV[str, t.SecretStr],
     ) -> p.Result[bool]:
-        """Reject a creation value a compose env file cannot carry literally."""
+        """Reject a creation value a compose env file cannot carry literally.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         for key, secret in environment.items():
             value = secret.get_secret_value()
             if any(mark in value for mark in c.Tests.DOCKER_ENV_FORBIDDEN_MARKS):
                 return r[bool].fail(c.Tests.ERR_DOCKER_ENV_VALUE.format(key=key))
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     @staticmethod
     @contextmanager
     def creation_env_file(
-        state_dir: Path, container_name: str, environment: t.MappingKV[str, t.SecretStr]
+        state_dir: Path,
+        container_name: str,
+        environment: t.MappingKV[str, t.SecretStr],
     ) -> Generator[t.VariadicTuple[Path]]:
         """Expose creation-only values to compose through a private env file.
 
@@ -220,12 +264,18 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
         the block and is removed on exit. A leftover file from an interrupted
         run fails the creation instead of being overwritten. Yields the env
         files to pass to compose: none when there is nothing to expose.
+
+        Yields:
+            Each ``t.VariadicTuple[Path]``.
+
+        Raises:
+            OSError: If ``failure is None``.
         """
         if not environment:
             yield ()
             return
         _ = FlextTestsDockerLifecycleUtilitiesMixin.validate_creation_environment(
-            environment
+            environment,
         ).unwrap()
         lines = [
             f"{key}='{secret.get_secret_value()}'"
@@ -234,7 +284,9 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
         env_file = state_dir / f"{container_name}{c.Tests.DOCKER_ENV_FILE_SUFFIX}"
         state_dir.mkdir(parents=True, exist_ok=True)
         descriptor = os.open(
-            env_file, os.O_WRONLY | os.O_CREAT | os.O_EXCL, c.Tests.DOCKER_ENV_FILE_MODE
+            env_file,
+            os.O_WRONLY | os.O_CREAT | os.O_EXCL,
+            c.Tests.DOCKER_ENV_FILE_MODE,
         )
         with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
             _ = handle.write("".join(f"{line}\n" for line in lines))

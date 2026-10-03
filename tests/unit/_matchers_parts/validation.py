@@ -1,4 +1,8 @@
-"""Private matcher validation test mixins."""
+"""Private matcher validation test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -13,16 +17,19 @@ from tests import c, p, r, t
 class TestsFlextTestsMatchersValidationMixin:
     """Matcher validation tests."""
 
-    def test_assert_valid_email_passes(self) -> None:
+    @staticmethod
+    def test_assert_valid_email_passes() -> None:
         """Test tm.that() with email pattern match."""
         tm.that("test@example.com", match=c.Tests.EMAIL_PATTERN_RE)
 
-    def test_assert_valid_email_fails(self) -> None:
+    @staticmethod
+    def test_assert_valid_email_fails() -> None:
         """Test tm.that() with invalid email."""
         with pytest.raises(AssertionError, match="Assertion failed"):
             tm.that("invalid-email", match=c.Tests.EMAIL_PATTERN_RE)
 
-    def test_assert_valid_email_edge_cases(self) -> None:
+    @staticmethod
+    def test_assert_valid_email_edge_cases() -> None:
         """Test tm.that() with various email edge cases."""
         valid_emails = ["user.name@domain.co.uk", "test+tag@example.com", "a@b.co"]
         invalid_emails = ["invalid", "@example.com", "test@", "test.example.com"]
@@ -32,60 +39,70 @@ class TestsFlextTestsMatchersValidationMixin:
             with pytest.raises(AssertionError):
                 tm.that(email, match=c.Tests.EMAIL_PATTERN_RE)
 
-    def test_assert_settings_valid_passes(self) -> None:
+    @staticmethod
+    def test_assert_settings_valid_passes() -> None:
         """Test tm.that() with keys parameter for settings validation."""
         settings = {"service_type": "api", "environment": "test", "timeout": 30}
         tm.that(settings, keys=["service_type", "environment", "timeout"])
         tm.that(settings["timeout"], is_=int, gt=0)
 
-    def test_assert_settings_valid_missing_required_key(self) -> None:
+    @staticmethod
+    def test_assert_settings_valid_missing_required_key() -> None:
         """Test tm.that() with missing required key."""
         settings = {"service_type": "api"}
         with pytest.raises(AssertionError, match="Missing required keys"):
             tm.that(settings, keys=["service_type", "environment", "timeout"])
 
-    def test_assert_settings_valid_invalid_timeout(self) -> None:
+    @staticmethod
+    def test_assert_settings_valid_invalid_timeout() -> None:
         """Test tm.that() with invalid timeout type."""
         settings = {"service_type": "api", "environment": "test", "timeout": "invalid"}
         with pytest.raises(AssertionError, match="Assertion failed"):
             tm.that(settings["timeout"], is_=int, gt=0)
 
-    def test_assert_settings_valid_zero_timeout(self) -> None:
+    @staticmethod
+    def test_assert_settings_valid_zero_timeout() -> None:
         """Test tm.that() with zero timeout."""
         settings = {"service_type": "api", "environment": "test", "timeout": 0}
         with pytest.raises(AssertionError, match="Value 0 did not satisfy constraints"):
             tm.that(settings["timeout"], is_=int, gt=0)
 
-    def test_ok_with_eq_parameter(self) -> None:
+    @staticmethod
+    def test_ok_with_eq_parameter() -> None:
         """Test tm.ok() with eq parameter."""
         result = r[int].ok(42)
         value = tm.ok(result, eq=42)
         tm.that(value, eq=42)
 
-    def test_ok_with_eq_parameter_fails(self) -> None:
+    @staticmethod
+    def test_ok_with_eq_parameter_fails() -> None:
         """Test tm.ok() with eq parameter fails when value doesn't match."""
         result = r[int].ok(42)
         with pytest.raises(AssertionError):
             tm.ok(result, eq=43)
 
-    def test_ok_with_ne_parameter(self) -> None:
+    @staticmethod
+    def test_ok_with_ne_parameter() -> None:
         """Test tm.ok() with ne parameter."""
         result = r[int].ok(42)
         value = tm.ok(result, ne=43)
         tm.that(value, eq=42)
 
-    def test_ok_with_eq_sequence_parameter(self) -> None:
+    @staticmethod
+    def test_ok_with_eq_sequence_parameter() -> None:
         """Test tm.ok() with structural sequence equality."""
         result = r[t.StrSequence].ok(["a", "b", "c"])
         value = tm.ok(result, eq=["a", "b", "c"])
         tm.that(value, eq=["a", "b", "c"])
 
-    def test_that_with_eq_mapping_parameter(self) -> None:
+    @staticmethod
+    def test_that_with_eq_mapping_parameter() -> None:
         """Test tm.that() with structural mapping equality."""
         payload = {"service": "api", "enabled": True, "retries": 2}
         tm.that(payload, eq={"service": "api", "enabled": True, "retries": 2})
 
-    def test_public_matcher_boundary_accepts_supported_value_shapes(self) -> None:
+    @staticmethod
+    def test_public_matcher_boundary_accepts_supported_value_shapes() -> None:
         values: tuple[t.JsonValue, ...] = (
             "scalar",
             {"service": "api"},
@@ -99,12 +116,14 @@ class TestsFlextTestsMatchersValidationMixin:
             result: p.Result[t.JsonValue] = r[t.JsonValue].ok(value)
             tm.that(tm.ok(result, eq=value), eq=value)
 
-    def test_public_matcher_boundary_accepts_approximation(self) -> None:
+    @staticmethod
+    def test_public_matcher_boundary_accepts_approximation() -> None:
         expected = pytest.approx(1.5)
         tm.that(1.5, eq=expected)
         tm.that(tm.ok(r[float].ok(1.5), eq=expected), eq=expected)
 
-    def test_that_with_ne_sequence_parameter_fails(self) -> None:
+    @staticmethod
+    def test_that_with_ne_sequence_parameter_fails() -> None:
         """Test tm.that() with structural sequence inequality failure."""
         with pytest.raises(AssertionError, match="did not satisfy constraints"):
             tm.that(["a", "b"], ne=["a", "b"])
