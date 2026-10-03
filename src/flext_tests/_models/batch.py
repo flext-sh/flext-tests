@@ -10,7 +10,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated
 
-from flext_infra import m, u
+from flext_cli import m, u
 
 from flext_tests import c, p, t
 
@@ -27,12 +27,13 @@ class FlextTestsBatchModelsMixin:
             u.Field(description="Mapping or Sequence of files to process"),
         ]
         directory: Annotated[
-            Path | None, u.Field(description="Target directory for create operations")
+            Path | None,
+            u.Field(description="Target directory for create operations"),
         ] = None
         operation: Annotated[
             c.Tests.Operation,
             m.BeforeValidator(
-                lambda v: c.Tests.Operation(v) if isinstance(v, str) else v
+                lambda v: c.Tests.Operation(v) if isinstance(v, str) else v,
             ),
             u.Field(
                 default=c.Tests.Operation.CREATE,
@@ -46,7 +47,7 @@ class FlextTestsBatchModelsMixin:
         on_error: Annotated[
             c.Tests.ErrorMode,
             m.BeforeValidator(
-                lambda v: c.Tests.ErrorMode(v) if isinstance(v, str) else v
+                lambda v: c.Tests.ErrorMode(v) if isinstance(v, str) else v,
             ),
             u.Field(
                 default=c.Tests.ErrorMode.COLLECT,
@@ -61,24 +62,28 @@ class FlextTestsBatchModelsMixin:
         """Result of batch file operations."""
 
         succeeded: Annotated[
-            int, u.Field(ge=0, description="Number of successful operations")
+            int,
+            u.Field(ge=0, description="Number of successful operations"),
         ]
         failed: Annotated[
-            t.NonNegativeInt, u.Field(description="Number of failed operations")
+            t.NonNegativeInt,
+            u.Field(description="Number of failed operations"),
         ]
         total: Annotated[
-            t.NonNegativeInt, u.Field(description="Total number of operations")
+            t.NonNegativeInt,
+            u.Field(description="Total number of operations"),
         ]
         results: Annotated[
             t.MappingKV[str, p.Result[t.Tests.TestResultValue]],
             u.Field(description="Mapping of file names to operation results"),
         ] = u.Field(
             default_factory=lambda: MappingProxyType(
-                dict[str, p.Result[t.Tests.TestResultValue]]()
-            )
+                dict[str, p.Result[t.Tests.TestResultValue]](),
+            ),
         )
         errors: Annotated[
-            t.StrMapping, u.Field(description="Mapping of file names to error messages")
+            t.StrMapping,
+            u.Field(description="Mapping of file names to error messages"),
         ] = u.Field(default_factory=lambda: MappingProxyType(dict[str, str]()))
 
         @u.computed_field

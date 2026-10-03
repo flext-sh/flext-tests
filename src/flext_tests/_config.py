@@ -27,7 +27,7 @@ class FlextTestsConfig(FlextCliConfig):
     Tests: Annotated[
         _TestsNamespace,
         m.Field(
-            description="Open namespace exposing ``config/*.yaml`` under ``Tests``."
+            description="Open namespace exposing ``config/*.yaml`` under ``Tests``.",
         ),
     ] = _TestsNamespace()
 

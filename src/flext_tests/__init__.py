@@ -1,52 +1,54 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""Flext Tests package."""
+"""Flext Tests package.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
 from types import MappingProxyType
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import build_lazy_import_map, install_lazy_exports
-
-from .__version__ import (
-    __author__ as __author__,
-    __author_email__ as __author_email__,
-    __description__ as __description__,
-    __license__ as __license__,
-    __title__ as __title__,
-    __url__ as __url__,
-    __version__ as __version__,
-    __version_info__ as __version_info__,
+from flext_core import build_lazy_import_map, install_lazy_exports
+from flext_tests.__version__ import (
+    __author__,
+    __author_email__,
+    __description__,
+    __license__,
+    __title__,
+    __url__,
+    __version__,
+    __version_info__,
 )
 
 if TYPE_CHECKING:
     from flext_cli import d, e, h, r, x
 
-    from . import services
-    from ._config import FlextTestsConfig, config
-    from ._settings import FlextTestsSettings, settings
-    from .api import FlextTests, FlextTests as api
-    from .base import FlextTestsServiceBase, s
-    from .case import FlextTestsCase
-    from .cli import FlextTestsCli
-    from .constants import FlextTestsConstants, FlextTestsConstants as c
-    from .docker import FlextTestsDocker, tk
-    from .domains import FlextTestsDomains, td
-    from .enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
-    from .files import FlextTestsFiles, tf
-    from .kube import FlextTestsKube
-    from .models import FlextTestsModels, FlextTestsModels as m
-    from .protocols import FlextTestsProtocols, FlextTestsProtocols as p
-    from .pytest_bootstrap import install_local_packages
-    from .tmatchers import FlextTestsMatchersUtilities, tm
-    from .typings import FlextTestsTypes, FlextTestsTypes as t
-    from .utilities import (
+    from flext_tests import services
+    from flext_tests._config import FlextTestsConfig, config
+    from flext_tests._settings import FlextTestsSettings, settings
+    from flext_tests.api import FlextTests, api
+    from flext_tests.base import FlextTestsServiceBase, s
+    from flext_tests.case import FlextTestsCase
+    from flext_tests.cli import FlextTestsCli
+    from flext_tests.constants import FlextTestsConstants, c
+    from flext_tests.docker import FlextTestsDocker, tk
+    from flext_tests.domains import FlextTestsDomains, td
+    from flext_tests.enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
+    from flext_tests.files import FlextTestsFiles, tf
+    from flext_tests.kube import FlextTestsKube
+    from flext_tests.models import FlextTestsModels, m
+    from flext_tests.protocols import FlextTestsProtocols, p
+    from flext_tests.pytest_bootstrap import install_local_packages
+    from flext_tests.tmatchers import FlextTestsMatchersUtilities, tm
+    from flext_tests.typings import FlextTestsTypes, t
+    from flext_tests.utilities import (
         FlextTestsFixturesDSLMixin,
         FlextTestsModuleGovernanceMixin,
         FlextTestsUtilities,
-        FlextTestsUtilities as u,
+        u,
     )
-    from .validator import FlextTestsValidator, FlextTestsValidator as tv
 
 
 __all__: tuple[str, ...] = (
@@ -69,7 +71,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsSettings",
     "FlextTestsTypes",
     "FlextTestsUtilities",
-    "FlextTestsValidator",
     "__author__",
     "__author_email__",
     "__description__",
@@ -96,7 +97,6 @@ __all__: tuple[str, ...] = (
     "tf",
     "tk",
     "tm",
-    "tv",
     "u",
     "x",
 )
@@ -128,12 +128,11 @@ _LAZY_IMPORTS = MappingProxyType(
                 "FlextTestsUtilities",
                 "u",
             ),
-            ".validator": ("FlextTestsValidator", "tv"),
             "flext_cli": ("d", "e", "h", "r", "x"),
         }),
         alias_groups=MappingProxyType({}),
         sort_keys=False,
-    )
+    ),
 )
 
 install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)

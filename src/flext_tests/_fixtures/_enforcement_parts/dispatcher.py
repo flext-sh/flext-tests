@@ -5,6 +5,9 @@ markers alone. The enforcement catalog, its models and the builder load only
 once a session is proven active, so every pytest process that enforcement does
 not govern (a nested runner project, a sandbox, a worker outside the workspace)
 starts without importing the full facade tree.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -19,7 +22,9 @@ from flext_tests import c
 from flext_tests.enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
 
 if TYPE_CHECKING:
-    from flext_tests import m, p, t
+    import warnings
+
+    from flext_tests import m, t
 
 
 class FlextTestsEnforcementDispatcher:
@@ -33,7 +38,11 @@ class FlextTestsEnforcementDispatcher:
 
     @staticmethod
     def discover_repository_root(start: Path) -> Path | None:
-        """Walk upward from ``start`` to find the FLEXT workspace root."""
+        """Walk upward from ``start`` to find the FLEXT workspace root.
+
+        Returns:
+            The resulting ``Path | None``.
+        """
         for candidate in (start, *start.parents):
             if all(
                 (candidate / marker).exists()
@@ -44,7 +53,11 @@ class FlextTestsEnforcementDispatcher:
 
     @staticmethod
     def split_csv(raw: str | None) -> frozenset[str]:
-        """Split a comma-separated option value into a normalized frozen set."""
+        """Split a comma-separated option value into a normalized frozen set.
+
+        Returns:
+            The resulting ``frozenset[str]``.
+        """
         if not raw:
             return frozenset()
         return frozenset(part.strip() for part in raw.split(",") if part.strip())
@@ -71,9 +84,15 @@ class FlextTestsEnforcementDispatcher:
 
     @classmethod
     def resolve_config(
-        cls, config: pytest.Config, repository_root: Path
+        cls,
+        config: pytest.Config,
+        repository_root: Path,
     ) -> m.Tests.EnforcementDispatcherConfig:
-        """Build and cache the configuration of an active enforcement session."""
+        """Build and cache the configuration of an active enforcement session.
+
+        Returns:
+            The resulting ``m.Tests.EnforcementDispatcherConfig``.
+        """
         stashed = config.stash.get(cls.stash_config, None)
         if stashed is not None:
             return stashed
@@ -83,7 +102,7 @@ class FlextTestsEnforcementDispatcher:
             strict=bool(config.getoption("--flext-enforce-strict")),
             include=cls.split_csv(str(config.getoption("--flext-enforce-rules") or "")),
             exclude=cls.split_csv(
-                str(config.getoption("--flext-enforce-exclude-rules") or "")
+                str(config.getoption("--flext-enforce-exclude-rules") or ""),
             ),
             repository_root=repository_root,
         )
@@ -96,20 +115,26 @@ class FlextTestsEnforcementDispatcher:
         repository_root = cls.active_root(config)
         if repository_root is None:
             return
+        from flext_tests import m
         from flext_tests.utilities import u
 
         cfg = cls.resolve_config(config, repository_root)
+        action = "error" if cfg.strict else "default"
         for rule in u.Tests.active_rules(cfg):
-            category = getattr(rule.source, "category", None)
-            if rule.source.kind != "runtime_warning" or not category:
-                continue
-            strict = cfg.strict and rule.promote_to_error_when_strict
-            action = "error" if strict else "default"
-            config.addinivalue_line("filterwarnings", f"{action}::{category}")
+            if isinstance(rule.source, m.EnforcementRuntimeWarningSource):
+                config.addinivalue_line(
+                    "filterwarnings",
+                    f"{action}::{rule.source.category}",
+                )
 
     @staticmethod
     def slow_budget_seconds(config: pytest.Config) -> float | None:
-        """Return the config-owned slow item budget, or None when unconfigured."""
+        """Return the config-owned slow item budget, or None when unconfigured.
+
+        Raises:
+            UsageError: If FLEXT slow timeout policy; or if FLEXT slow timeout policy
+                requires the pytest-timeout plugin.
+        """
         raw_timeout = str(config.getini(SLOW_TIMEOUT_INI_OPTION)).strip()
         if not raw_timeout:
             return None
@@ -133,9 +158,16 @@ class FlextTestsEnforcementDispatcher:
 
     @classmethod
     def collection_modifyitems(
-        cls, session: pytest.Session, config: pytest.Config, items: list[pytest.Item]
+        cls,
+        session: pytest.Session,
+        config: pytest.Config,
+        items: list[pytest.Item],
     ) -> None:
-        """Apply the slow budget, then append dispatcher items when active."""
+        """Apply the slow budget, then append dispatcher items when active.
+
+        Raises:
+            UsageError: If FLEXT slow timeout policy.
+        """
         slow_timeout = cls.slow_budget_seconds(config)
         for item in items if slow_timeout is not None else ():
             if item.get_closest_marker("timeout") is not None:
@@ -149,32 +181,36 @@ class FlextTestsEnforcementDispatcher:
         repository_root = cls.active_root(config)
         if repository_root is None or hasattr(config, "workerinput"):
             return
-        from .build import FlextTestsEnforcementBuilder
+        from flext_tests._fixtures._enforcement_parts.build import (
+            FlextTestsEnforcementBuilder,
+        )
 
         items.extend(
             FlextTestsEnforcementBuilder.build_items(
                 session,
                 cls.resolve_config(config, repository_root),
                 collected_items=items,
-            )
+            ),
         )
 
     @classmethod
-    def record_warning(cls, warning_message: p.AttributeProbe) -> None:
+    def record_warning(cls, warning_message: warnings.WarningMessage) -> None:
         """Count one captured runtime warning by its dotted category."""
         if cls.session_config is None:
             return
         repository_root = cls.active_root(cls.session_config)
-        category = getattr(warning_message, "category", None)
-        if repository_root is None or category is None:
+        if repository_root is None:
             return
+        category = warning_message.category
         cfg = cls.resolve_config(cls.session_config, repository_root)
         dotted = f"{category.__module__}.{category.__qualname__}"
         cfg.warning_counter[dotted] = cfg.warning_counter.get(dotted, 0) + 1
 
     @classmethod
     def terminal_summary(
-        cls, terminalreporter: pytest.TerminalReporter, config: pytest.Config
+        cls,
+        terminalreporter: pytest.TerminalReporter,
+        config: pytest.Config,
     ) -> None:
         """Print the per-kind breakdown at the end of the session."""
         repository_root = cls.active_root(config)
@@ -189,12 +225,12 @@ class FlextTestsEnforcementDispatcher:
             kinds[rule.source.kind] = kinds.get(rule.source.kind, 0) + 1
         terminalreporter.write_sep("-", "flext-enforce", yellow=True)
         terminalreporter.write_line(
-            f"catalog active: {len(active)} rules across {len(kinds)} source kinds"
+            f"catalog active: {len(active)} rules across {len(kinds)} source kinds",
         )
         for kind in sorted(kinds):
             terminalreporter.write_line(f"  {kind}: {kinds[kind]}")
         terminalreporter.write_line(
-            f"runtime warnings captured: {sum(cfg.warning_counter.values())}"
+            f"runtime warnings captured: {sum(cfg.warning_counter.values())}",
         )
 
 

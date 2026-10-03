@@ -1,4 +1,8 @@
-"""Private matcher that attribute test mixins."""
+"""Private matcher that attribute test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -6,14 +10,14 @@ import pytest
 
 from flext_tests import tm
 from tests import p, r, t
-
-from .predicates import TestsFlextTestsMatchersPredicates
+from tests.unit._matchers_parts.predicates import TestsFlextTestsMatchersPredicates
 
 
 class TestsFlextTestsMatchersThatAttrsMixin:
     """Matcher that attribute tests."""
 
-    def test_that_with_attrs_parameter(self) -> None:
+    @staticmethod
+    def test_that_with_attrs_parameter() -> None:
         """Test tm.that() with attrs parameter."""
 
         class TestClass:
@@ -24,7 +28,8 @@ class TestsFlextTestsMatchersThatAttrsMixin:
         obj = TestClass()
         tm.that(obj, attrs=["attr1", "attr2"])
 
-    def test_that_with_methods_parameter(self) -> None:
+    @staticmethod
+    def test_that_with_methods_parameter() -> None:
         """Test tm.that() with methods parameter."""
 
         class TestClass:
@@ -39,7 +44,8 @@ class TestsFlextTestsMatchersThatAttrsMixin:
         obj = TestClass()
         tm.that(obj, methods=["method1", "method2"])
 
-    def test_that_with_attr_eq_tuple_parameter(self) -> None:
+    @staticmethod
+    def test_that_with_attr_eq_tuple_parameter() -> None:
         """Test tm.that() with attr_eq tuple parameter."""
 
         class TestClass:
@@ -49,7 +55,8 @@ class TestsFlextTestsMatchersThatAttrsMixin:
         obj = TestClass()
         tm.that(obj, attr_eq=("attr", "value"))
 
-    def test_that_with_attr_eq_mapping_parameter(self) -> None:
+    @staticmethod
+    def test_that_with_attr_eq_mapping_parameter() -> None:
         """Test tm.that() with attr_eq mapping parameter."""
 
         class TestClass:
@@ -60,42 +67,49 @@ class TestsFlextTestsMatchersThatAttrsMixin:
         obj = TestClass()
         tm.that(obj, attr_eq={"attr1": "value1", "attr2": "value2"})
 
-    def test_that_with_ok_parameter(self) -> None:
+    @staticmethod
+    def test_that_with_ok_parameter() -> None:
         """Test tm.that() with ok parameter for r."""
         result = r[str].ok("success")
         tm.that(result, ok=True)
 
-    def test_that_with_error_parameter(self) -> None:
+    @staticmethod
+    def test_that_with_error_parameter() -> None:
         """Test tm.that() with error parameter for r."""
         result: p.Result[str] = r[str].fail("error")
         tm.that(result, error="error")
 
-    def test_that_with_deep_parameter(self) -> None:
+    @staticmethod
+    def test_that_with_deep_parameter() -> None:
         """Test tm.that() with deep parameter."""
         data: t.MappingKV[str, t.Tests.TestobjectSerializable] = {
-            "user": {"name": "John", "age": 30}
+            "user": {"name": "John", "age": 30},
         }
         tm.that(data, deep={"user.name": "John"})
 
-    def test_that_with_deep_parameter_rejects_mismatch(self) -> None:
+    @staticmethod
+    def test_that_with_deep_parameter_rejects_mismatch() -> None:
         """A deep literal expectation fails when the value at the path differs."""
         data: t.MappingKV[str, t.Tests.TestobjectSerializable] = {
-            "user": {"name": "John"}
+            "user": {"name": "John"},
         }
         with pytest.raises(AssertionError, match="Value mismatch"):
             tm.that(data, deep={"user.name": "Jane"})
 
-    def test_that_with_where_parameter(self) -> None:
+    @staticmethod
+    def test_that_with_where_parameter() -> None:
         """Test tm.that() with where parameter."""
         tm.that(42, where=TestsFlextTestsMatchersPredicates.is_positive)
 
-    def test_that_where_predicate_receives_the_native_value(self) -> None:
+    @staticmethod
+    def test_that_where_predicate_receives_the_native_value() -> None:
         """A predicate sees the value itself, so a falsy subject fails ``bool``."""
         tm.that(True, where=bool)
         with pytest.raises(AssertionError, match="Custom predicate failed"):
             tm.that(False, where=bool)
 
-    def test_that_presence_checks_accept_any_runtime_object(self) -> None:
+    @staticmethod
+    def test_that_presence_checks_accept_any_runtime_object() -> None:
         """none=/is_=/ne=None hold for objects outside the payload vocabulary."""
 
         class Connection:
@@ -109,10 +123,12 @@ class TestsFlextTestsMatchersThatAttrsMixin:
         with pytest.raises(AssertionError, match="did not satisfy constraints"):
             tm.that(conn, none=True)
 
-    def test_that_with_all_alias_parameter(self) -> None:
+    @staticmethod
+    def test_that_with_all_alias_parameter() -> None:
         """Test tm.that() with all alias parameter (accepts both all_ and all)."""
         tm.that(["a", "b", "c"], all=str)
 
-    def test_that_with_any_alias_parameter(self) -> None:
+    @staticmethod
+    def test_that_with_any_alias_parameter() -> None:
         """Test tm.that() with any alias parameter (accepts both any_ and any)."""
         tm.that(["a", 1, "c"], any=int)

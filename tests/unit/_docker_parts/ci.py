@@ -1,4 +1,8 @@
-"""Private docker Make-CI-token gate test mixins."""
+"""Private docker Make-CI-token gate test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -14,6 +18,7 @@ from tests import c, t, u
 class TestsFlextTestsDockerCiMixin:
     """The Make CI token disables every Docker effect with a typed failure."""
 
+    @staticmethod
     @pytest.mark.parametrize(
         ("value_template", "disabled"),
         [
@@ -24,7 +29,9 @@ class TestsFlextTestsDockerCiMixin:
         ],
     )
     def test_ci_token_gates_the_lifecycle(
-        self, *, value_template: str | None, disabled: bool
+        *,
+        value_template: str | None,
+        disabled: bool,
     ) -> None:
         """Only the configured Make CI value disables Docker, and it is typed."""
         ci = infra_config.Infra.codegen.make.ci
@@ -41,7 +48,8 @@ class TestsFlextTestsDockerCiMixin:
         else:
             tm.that(tm.ok(gate), eq=True)
 
-    def test_lifecycle_effects_fail_disabled_by_ci(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_lifecycle_effects_fail_disabled_by_ci(tmp_path: Path) -> None:
         """Under the CI token no effect reaches Docker; each one fails typed."""
         ci = infra_config.Infra.codegen.make.ci
         disabled = c.Tests.DockerErrorCode.DISABLED_BY_CI
@@ -49,7 +57,8 @@ class TestsFlextTestsDockerCiMixin:
         docker = FlextTestsDocker.compose(
             compose_file,
             target=m.Tests.ContainerConfig(
-                container_name="flext-tests-ci-gate", service="gate"
+                container_name="flext-tests-ci-gate",
+                service="gate",
             ),
             repository_root=tmp_path,
             state_dir=tmp_path / "state",
@@ -63,11 +72,13 @@ class TestsFlextTestsDockerCiMixin:
             tm.fail(docker.compose_down(str(compose_file)), code=disabled)
             tm.fail(docker.start_compose_stack(str(compose_file)), code=disabled)
             tm.fail(
-                docker.start_existing_container("flext-tests-ci-gate"), code=disabled
+                docker.start_existing_container("flext-tests-ci-gate"),
+                code=disabled,
             )
             tm.fail(docker.cleanup_dirty_containers(), code=disabled)
 
-    def test_kube_effects_fail_disabled_by_ci(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_kube_effects_fail_disabled_by_ci(tmp_path: Path) -> None:
         """The kind specialization inherits the same typed CI gate."""
         ci = infra_config.Infra.codegen.make.ci
         disabled = c.Tests.DockerErrorCode.DISABLED_BY_CI
@@ -78,7 +89,8 @@ class TestsFlextTestsDockerCiMixin:
             tm.fail(kube.cluster_down(), code=disabled)
             tm.fail(kube.nodes_ready(), code=disabled)
 
-    def test_ci_token_leaves_host_records_writable(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_ci_token_leaves_host_records_writable(tmp_path: Path) -> None:
         """Dirty marking is host bookkeeping, not a Docker effect."""
         ci = infra_config.Infra.codegen.make.ci
         docker = FlextTestsDocker(state_dir=tmp_path)

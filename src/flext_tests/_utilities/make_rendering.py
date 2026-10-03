@@ -1,4 +1,8 @@
-"""Make command rendering utilities for flext-tests."""
+"""Make command rendering utilities for flext-tests.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -6,8 +10,7 @@ from collections.abc import Iterable
 
 from flext_core import r
 from flext_tests import c, m, p, t
-
-from .make_registry import FlextTestsMakeRegistryUtilitiesMixin
+from flext_tests._utilities.make_registry import FlextTestsMakeRegistryUtilitiesMixin
 
 
 class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin):
@@ -15,7 +18,11 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
     @staticmethod
     def make_format_params_inline(params: Iterable[m.Tests.MakeParam]) -> str:
-        """Render command params in one compact inline form."""
+        """Render command params in one compact inline form.
+
+        Returns:
+            The resulting ``str``.
+        """
         parts: list[str] = []
         for param in params:
             suffix = "*" if param.required else ""
@@ -52,7 +59,11 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
     def make_format_mutation_conditions(
         conditions: Iterable[m.Tests.MakeMutationCondition],
     ) -> str:
-        """Render conditional mutation predicates compactly."""
+        """Render conditional mutation predicates compactly.
+
+        Returns:
+            The resulting ``str``.
+        """
         return "; ".join(
             f"{condition.name}={('|'.join(condition.values))}"
             for condition in conditions
@@ -70,12 +81,17 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
     @staticmethod
     def make_render_global_help(registry: m.Tests.MakeRegistry) -> str:
-        """Render top-level dispatcher help."""
+        """Render top-level dispatcher help.
+
+        Returns:
+            The resulting ``str``.
+        """
         lines = ["flext - make <verb> WHAT=<action> [PARAM=value ...]", ""]
         for verb in FlextTestsMakeRegistryUtilitiesMixin.make_registry_verbs(registry):
             command = registry.commands_by_verb[verb][c.Tests.MAKE_DEFAULT_COMMAND]
             aliases = FlextTestsMakeRegistryUtilitiesMixin.make_registry_aliases_for(
-                registry, verb
+                registry,
+                verb,
             )
             suffix = f" (alias: {', '.join(aliases)})" if aliases else ""
             lines.append(f"  {verb:14} [{command.domain:12}] {command.summary}{suffix}")
@@ -94,17 +110,24 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
     @staticmethod
     def make_render_verb_help(
-        registry: m.Tests.MakeRegistry, requested_verb: str
+        registry: m.Tests.MakeRegistry,
+        requested_verb: str,
     ) -> p.Result[str]:
-        """Render help for one promoted verb."""
+        """Render help for one promoted verb.
+
+        Returns:
+            The resulting ``p.Result[str]``.
+        """
         verb_result = FlextTestsMakeRegistryUtilitiesMixin.make_registry_resolve_verb(
-            registry, requested_verb
+            registry,
+            requested_verb,
         )
         if verb_result.failure:
             return r[str].from_failure(verb_result)
         verb = verb_result.value
         aliases = FlextTestsMakeRegistryUtilitiesMixin.make_registry_aliases_for(
-            registry, verb
+            registry,
+            verb,
         )
         alias_suffix = f" (alias: {', '.join(aliases)})" if aliases else ""
         lines = [
@@ -126,7 +149,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             for what, command in command_params:
                 rendered = (
                     FlextTestsMakeRenderingUtilitiesMixin.make_format_params_inline(
-                        command.params
+                        command.params,
                     )
                 )
                 lines.append(f"  {what:20} {rendered}")
@@ -144,7 +167,8 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             lines.extend(f"  - {rule}" for rule in rules)
         examples = sorted({
             FlextTestsMakeRenderingUtilitiesMixin.make_example_for(
-                command, requested_verb
+                command,
+                requested_verb,
             )
             for command in commands.values()
         })
@@ -155,11 +179,19 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
     @staticmethod
     def make_render_command_help(
-        registry: m.Tests.MakeRegistry, requested_verb: str, what: str
+        registry: m.Tests.MakeRegistry,
+        requested_verb: str,
+        what: str,
     ) -> p.Result[str]:
-        """Render help for one promoted command."""
+        """Render help for one promoted command.
+
+        Returns:
+            The resulting ``p.Result[str]``.
+        """
         command_result = FlextTestsMakeRegistryUtilitiesMixin.make_registry_command(
-            registry, requested_verb, what
+            registry,
+            requested_verb,
+            what,
         )
         if command_result.failure:
             return r[str].from_failure(command_result)
@@ -168,14 +200,17 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             f"make {requested_verb} WHAT={what}",
             "",
             f"Dominio: {command.domain}",
-            f"Mutaction: {FlextTestsMakeRenderingUtilitiesMixin.make_mutation_label(command)}",
+            (
+                "Mutaction: "
+                f"{FlextTestsMakeRenderingUtilitiesMixin.make_mutation_label(command)}"
+            ),
         ]
         if command.mutates:
             lines.append("Sem a execucao fica em dry-run.")
         elif command.mutates_when:
             conditions = (
                 FlextTestsMakeRenderingUtilitiesMixin.make_format_mutation_conditions(
-                    command.mutates_when
+                    command.mutates_when,
                 )
             )
             lines.append(f"Mutaction condicional: {conditions}.")
@@ -187,7 +222,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
                 default = f" default={param.default}" if param.default else ""
                 choices = f" choices={','.join(param.choices)}" if param.choices else ""
                 lines.append(
-                    f"  {param.name:24} {param.help}{required}{default}{choices}"
+                    f"  {param.name:24} {param.help}{required}{default}{choices}",
                 )
         if command.rules:
             lines.extend(("", "Regras:"))
@@ -195,7 +230,9 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
         lines.extend((
             "",
             "Exemplo:",
-            f"  {FlextTestsMakeRenderingUtilitiesMixin.make_example_for(command, requested_verb)}",
+            f"  {FlextTestsMakeRenderingUtilitiesMixin.make_example_for(
+                command, requested_verb,
+            )}",
         ))
         return r[str].ok("\n".join(lines))
 
@@ -206,7 +243,11 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
         what: str,
         env: t.MappingKV[str, str],
     ) -> str:
-        """Render dry-run output for one mutating command."""
+        """Render dry-run output for one mutating command.
+
+        Returns:
+            The resulting ``str``.
+        """
         lines = [
             "DRY-RUN: nenhuma mutacao executada.",
             f"Comando: make {requested_verb} WHAT={what}",
@@ -218,18 +259,22 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
             lines.extend(("", "Current parameters:"))
             for param in command.params:
                 value = FlextTestsMakeRegistryUtilitiesMixin.make_param_value(
-                    param, command, env
+                    param,
+                    command,
+                    env,
                 )
                 shown = value or "<missing>"
                 required = "required" if param.required else "opcional"
                 choices = f" choices={','.join(param.choices)}" if param.choices else ""
                 lines.append(
-                    f"  {param.name:24} {shown:20} {required}{choices} - {param.help}"
+                    f"  {param.name:24} {shown:20} {required}{choices} - {param.help}",
                 )
         lines.extend((
             "",
             "Execucao canonica:",
-            f"  {FlextTestsMakeRenderingUtilitiesMixin.make_example_for(command, requested_verb)}",
+            f"  {FlextTestsMakeRenderingUtilitiesMixin.make_example_for(
+                command, requested_verb,
+            )}",
         ))
         return "\n".join(lines)
 
