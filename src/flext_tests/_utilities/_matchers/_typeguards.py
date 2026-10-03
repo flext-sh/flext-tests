@@ -10,11 +10,10 @@ from collections.abc import Sized
 from typing import TypeAliasType
 
 from _pytest.python_api import ApproxBase
-from flext_infra import u
+from flext_cli import u
 
 from flext_tests import c, m, p
-
-from ..payload import FlextTestsPayloadUtilities
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsMatchersTypeGuardsMixin:

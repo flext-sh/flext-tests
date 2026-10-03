@@ -13,11 +13,10 @@ from types import MappingProxyType
 from typing import Annotated, ClassVar, TypeAliasType
 
 from _pytest.python_api import ApproxBase  # ruff: ignore[import-private-name] -- ApproxBase has no public pytest path in the supported versions; justified per fleet suppression law.
-from flext_infra import m, u
+from flext_cli import m, u
 
 from flext_tests import p, t
-
-from .base import FlextTestsBaseModelsMixin
+from flext_tests._models.base import FlextTestsBaseModelsMixin
 
 type MatchExpectedValue = (
     FlextTestsBaseModelsMixin.Payload | ApproxBase | TypeAliasType | None
@@ -55,7 +54,7 @@ class FlextTestsMatchersModelsMixin:
             Returns:
                 The resulting ``MatchExpectedValue``.
             """
-            from .._utilities.payload import FlextTestsPayloadUtilities
+            from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
             if value is None or isinstance(value, ApproxBase | TypeAliasType):
                 return value
@@ -83,7 +82,7 @@ class FlextTestsMatchersModelsMixin:
             Raises:
                 ValueError: If Matcher mapping requires a mapping payload.
             """
-            from .._utilities.payload import FlextTestsPayloadUtilities
+            from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
             if value is None:
                 return None
@@ -107,7 +106,7 @@ class FlextTestsMatchersModelsMixin:
             Raises:
                 ValueError: If Matcher values require a sequence payload.
             """
-            from .._utilities.payload import FlextTestsPayloadUtilities
+            from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
             if value is None:
                 return None
@@ -136,7 +135,7 @@ class FlextTestsMatchersModelsMixin:
                 The resulting ``Mapping[str, FlextTestsBaseModelsMixin.Payload |
                     Callable[[t.Tests.NativeMatchValue], bool]] | None``.
             """
-            from .._utilities.payload import FlextTestsPayloadUtilities
+            from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
             if value is None:
                 return None
@@ -148,7 +147,7 @@ class FlextTestsMatchersModelsMixin:
             }
 
     class MatchRule(PayloadParams):
-        """One nominal matcher rule parsed from a scalar, type, predicate, or mapping."""
+        """One matcher rule parsed from a scalar, type, predicate, or mapping."""
 
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
             frozen=True,
@@ -637,7 +636,7 @@ class FlextTestsMatchersModelsMixin:
             if self.error is not None and self.has is None:
                 # self.error is a non-None native sequence/scalar, so owning it
                 # is exactly the payload walker; no approx/type operand applies.
-                from .._utilities.payload import FlextTestsPayloadUtilities
+                from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
                 updates["has"] = FlextTestsPayloadUtilities.to_payload(self.error)
             if self.len is None and any(

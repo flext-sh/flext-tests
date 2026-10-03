@@ -10,9 +10,10 @@ from pathlib import Path
 
 from flext_core import r
 from flext_tests import c, m, p, t, u
-
-from ...payload import FlextTestsPayloadUtilities
-from .comparison_part_01 import FlextTestsFilesComparisonMixin as _ComparisonMixinPart1
+from flext_tests._utilities._files._comparison_parts.comparison_part_01 import (
+    FlextTestsFilesComparisonMixin as _ComparisonMixinPart1,
+)
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsFilesComparisonMixin(_ComparisonMixinPart1):
@@ -98,21 +99,28 @@ class FlextTestsFilesComparisonMixin(_ComparisonMixinPart1):
             The resulting ``p.Result[bool]``.
         """
         c1, c2 = self._read_both(params)
-        if params.deep:
-            structured = self._try_parse_both(c1, c2, "json")
+        # Structured comparison is selected by the files' declared format,
+        # never by trial: both JSON or both YAML compare as mappings and a
+        # parse error is the result; any other pair compares as text.
+        fmt = u.Cli.files_detect_format_from_path(params.file1)
+        if (
+            params.deep
+            and fmt == u.Cli.files_detect_format_from_path(params.file2)
+            and fmt in {c.Tests.FILE_FORMAT_JSON, c.Tests.FILE_FORMAT_YAML}
+        ):
+            structured = self._parse_both(c1, c2, fmt)
             if structured.failure:
-                structured = self._try_parse_both(c1, c2, "yaml")
-            if not structured.failure:
-                dict1, dict2 = structured.value
-                return self._deep_compare_mappings(dict1, dict2, params)
+                return r[bool].from_failure(structured)
+            dict1, dict2 = structured.value
+            return self._deep_compare_mappings(dict1, dict2, params)
         if params.ignore_ws:
             c1, c2 = "".join(c1.split()), "".join(c2.split())
         if params.ignore_case:
             c1, c2 = c1.lower(), c2.lower()
         return r[bool].ok(c1 == c2)
 
+    @staticmethod
     def _deep_compare_mappings(
-        self,
         dict1: t.MappingKV[str, t.Tests.TestobjectSerializable],
         dict2: t.MappingKV[str, t.Tests.TestobjectSerializable],
         params: m.Tests.CompareParams,
@@ -137,7 +145,7 @@ class FlextTestsFilesComparisonMixin(_ComparisonMixinPart1):
             exclude_keys=exclude_keys_set,
         )
         if left_result.failure or right_result.failure:
-            return r[bool].ok(False)
+            return r[bool].ok(value=False)
         return r[bool].ok(u.deep_eq(left_result.value, right_result.value))
 
     def _compare_lines(self, params: m.Tests.CompareParams) -> p.Result[bool]:

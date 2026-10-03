@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from .make_rendering import FlextTestsMakeRenderingUtilitiesMixin
+from flext_tests._utilities.make_rendering import FlextTestsMakeRenderingUtilitiesMixin
 
 
 class FlextTestsMakeUtilitiesMixin(FlextTestsMakeRenderingUtilitiesMixin):

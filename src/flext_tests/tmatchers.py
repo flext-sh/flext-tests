@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from ._utilities.matchers import FlextTestsMatchersUtilities
+from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
 
 tm = FlextTestsMatchersUtilities.Tests.Matchers
 """Public test-matchers facade alias for flext_tests."""

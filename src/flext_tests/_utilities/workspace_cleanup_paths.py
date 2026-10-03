@@ -11,8 +11,9 @@ from typing import TYPE_CHECKING
 
 from flext_core import r
 from flext_tests import c, p
-
-from .workspace_cleanup_git import FlextTestsWorkspaceCleanupGitUtilitiesMixin
+from flext_tests._utilities.workspace_cleanup_git import (
+    FlextTestsWorkspaceCleanupGitUtilitiesMixin,
+)
 
 if TYPE_CHECKING:
     from flext_core import t
@@ -146,13 +147,15 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
                 )
             if candidate == git_dir or git_dir in candidate.parents:
                 return r[bool].fail(
-                    f"cleanup residue targets the protected Git directory: {relative_path}",
+                    f"cleanup residue targets the protected Git directory: "
+                    f"{relative_path}",
                 )
             if candidate in git_dir.parents:
                 return r[bool].fail(
-                    f"cleanup residue would remove the protected Git directory: {relative_path}",
+                    f"cleanup residue would remove the protected Git directory: "
+                    f"{relative_path}",
                 )
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
     @staticmethod
     def _reject_symlink_ancestor(root: Path, relative_path: Path) -> p.Result[bool]:
@@ -168,7 +171,7 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
                 return r[bool].fail(
                     f"cleanup residue has a symlink ancestor: {relative_path}",
                 )
-        return r[bool].ok(True)
+        return r[bool].ok(value=True)
 
 
 __all__: t.VariadicTuple[str] = ("FlextTestsWorkspaceCleanupPathsUtilitiesMixin",)

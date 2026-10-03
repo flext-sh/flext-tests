@@ -11,16 +11,15 @@ from pathlib import Path
 from typing import cast
 
 from flext_tests import c, m, p, t, u
-
-from ..payload import FlextTestsPayloadUtilities
-from ._lifecycle import FlextTestsFilesLifecycleMixin
+from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
     """Create files from one validated native payload boundary."""
 
     @staticmethod
-    def is_mapping(value: p.AttributeProbe) -> bool:
+    def matches_native_mapping(value: p.AttributeProbe) -> bool:
         """Identify native mappings without pretending to validate their leaves.
 
         Returns:
@@ -58,7 +57,8 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             for row in value.items
         ]
 
-    def _coerce_file_content(self, value: p.AttributeProbe) -> m.Tests.Payload:
+    @staticmethod
+    def _coerce_file_content(value: p.AttributeProbe) -> m.Tests.Payload:
         """Own file input without dumping native models or swallowing failures.
 
         Returns:
@@ -87,7 +87,8 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             return self._coerce_file_content(content.value)
         return self._coerce_file_content(content)
 
-    def _is_nested_rows(self, value: p.AttributeProbe) -> bool:
+    @staticmethod
+    def _is_nested_rows(value: p.AttributeProbe) -> bool:
         """Recognize nonempty list/tuple rows without a second recursive adapter.
 
         Returns:

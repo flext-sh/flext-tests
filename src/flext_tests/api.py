@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from .base import FlextTestsServiceBase
+from flext_tests.base import FlextTestsServiceBase
 
 
 class FlextTests(FlextTestsServiceBase):

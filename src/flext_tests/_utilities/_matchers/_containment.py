@@ -9,9 +9,10 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 from flext_tests import c, p
-
-from ..payload import FlextTestsPayloadUtilities
-from ._assertions import FlextTestsMatchersAssertionsMixin
+from flext_tests._utilities._matchers._assertions import (
+    FlextTestsMatchersAssertionsMixin,
+)
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsMatchersContainmentMixin:

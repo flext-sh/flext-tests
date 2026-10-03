@@ -13,17 +13,17 @@ from typing import TYPE_CHECKING
 
 from flext_cli import FlextCliConstants
 
-from ._constants.data_cases import FlextTestsConstantsDataCases
-from ._constants.docker import FlextTestsConstantsDocker
-from ._constants.files import FlextTestsConstantsFiles
-from ._constants.kube import FlextTestsConstantsKube
-from ._constants.make import FlextTestsConstantsMake
-from ._constants.matcher import FlextTestsConstantsMatcher
-from ._constants.namespace import FlextTestsConstantsNamespace
-from ._constants.validator import FlextTestsConstantsValidator
+from flext_tests._constants.data_cases import FlextTestsConstantsDataCases
+from flext_tests._constants.docker import FlextTestsConstantsDocker
+from flext_tests._constants.files import FlextTestsConstantsFiles
+from flext_tests._constants.kube import FlextTestsConstantsKube
+from flext_tests._constants.make import FlextTestsConstantsMake
+from flext_tests._constants.matcher import FlextTestsConstantsMatcher
+from flext_tests._constants.namespace import FlextTestsConstantsNamespace
+from flext_tests._constants.validator import FlextTestsConstantsValidator
 
 if TYPE_CHECKING:
-    from . import t
+    from flext_tests import t
 
 
 class FlextTestsConstants(FlextCliConstants):

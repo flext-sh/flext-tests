@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from flext_infra import FlextInfraModGateEngine, u as _infra_u
+from flext_infra import FlextInfraModGateEngine, m as _infra_m, u as _infra_u
 
 from flext_core import r, u as _core_u
 from flext_tests import c, m, p, t
@@ -35,7 +35,7 @@ class FlextTestsEnforcementUtilitiesMixin:
         repository_root: Path,
         *,
         required_rule_ids: frozenset[str],
-    ) -> p.Result[m.Infra.ModScanReport]:
+    ) -> p.Result[_infra_m.Infra.ModScanReport]:
         """Return the flext-infra rule-engine findings for the workspace.
 
         Every id in ``required_rule_ids`` must be declared by the engine's rule
@@ -43,10 +43,12 @@ class FlextTestsEnforcementUtilitiesMixin:
         """
         planned = _infra_u.Infra.codemod_rule_plan(repository_root)
         if planned.failure:
-            return r[m.Infra.ModScanReport].from_failure(planned)
-        missing = sorted(required_rule_ids - {rule.id for rule in planned.value.rules})
+            return r[_infra_m.Infra.ModScanReport].from_failure(planned)
+        missing = sorted(
+            required_rule_ids - {rule.id for rule in planned.value.rules},
+        )
         if missing:
-            return r[m.Infra.ModScanReport].fail(
+            return r[_infra_m.Infra.ModScanReport].fail(
                 "enforcement names flext-infra rules that config/rules does not "
                 f"declare: {', '.join(missing)}",
             )
