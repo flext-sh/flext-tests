@@ -50,7 +50,6 @@ if TYPE_CHECKING:
         u,
     )
 
-
 __all__: tuple[str, ...] = (
     "SLOW_TIMEOUT_INI_OPTION",
     "FlextTests",

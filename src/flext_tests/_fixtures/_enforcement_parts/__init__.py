@@ -24,7 +24,6 @@ if TYPE_CHECKING:
         FlextTestsEnforcementValidators,
     )
 
-
 __all__: tuple[str, ...] = (
     "FlextTestsEnforcementBuilder",
     "FlextTestsEnforcementDispatcher",

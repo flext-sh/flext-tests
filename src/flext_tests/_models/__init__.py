@@ -27,7 +27,6 @@ if TYPE_CHECKING:
         FlextTestsWorkspaceCleanupModelsMixin,
     )
 
-
 __all__: tuple[str, ...] = (
     "FlextTestsBaseModelsMixin",
     "FlextTestsBatchModelsMixin",
