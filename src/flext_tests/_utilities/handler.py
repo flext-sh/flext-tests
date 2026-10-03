@@ -1,4 +1,8 @@
-"""Extracted mixin for flext_tests."""
+"""Extracted mixin for flext_tests.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -18,7 +22,11 @@ class FlextTestsHandlerHelpersUtilitiesMixin:
         max_command_retries: int | None = None,
         metadata: m.Metadata | None = None,
     ) -> m.Handler:
-        """Create a handler configuration model using canonical model defaults."""
+        """Create a handler configuration model using canonical model defaults.
+
+        Returns:
+            The resulting ``m.Handler``.
+        """
         resolved_handler_type = handler_type or c.HandlerType.COMMAND
         handler: m.Handler = m.Handler.model_validate({
             "handler_id": handler_id,

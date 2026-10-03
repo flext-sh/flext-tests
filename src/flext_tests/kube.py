@@ -35,9 +35,16 @@ class FlextTestsKube(FlextTestsDocker):
 
     @classmethod
     def kind(
-        cls, *, repository_root: Path | None = None, state_dir: Path | None = None
+        cls,
+        *,
+        repository_root: Path | None = None,
+        state_dir: Path | None = None,
     ) -> Self:
-        """Build a DSL-configured service for the shared kind cluster."""
+        """Build a DSL-configured service for the shared kind cluster.
+
+        Returns:
+            The resulting ``Self``.
+        """
         return cls.shared(
             c.Tests.KIND_CONTAINER_NAME,
             repository_root=repository_root,
@@ -45,18 +52,22 @@ class FlextTestsKube(FlextTestsDocker):
         )
 
     def cluster_up(self) -> p.Result[str]:
-        """Start the kind stack and wait for the apiserver to accept TCP."""
+        """Start the kind stack and wait for the apiserver to accept TCP.
+
+        Returns:
+            The resulting ``p.Result[str]``.
+        """
         target = self.target_config
         if target is None:
             return r[str].fail(
-                "Kubernetes target not configured. Use FlextTestsKube.kind(...) first."
+                "Kubernetes target not configured. Use FlextTestsKube.kind(...) first.",
             )
         if target.compose_file is None:
             return r[str].fail("Kubernetes target has no compose file configured.")
         up_result = self.up()
         if up_result.failure:
             return up_result.map_error(
-                lambda error: f"Kind cluster start failed: {error}"
+                lambda error: f"Kind cluster start failed: {error}",
             )
         if target.port is None or not target.container_name:
             return r[str].ok("Kind cluster started (no readiness port configured)")
@@ -67,35 +78,45 @@ class FlextTestsKube(FlextTestsDocker):
             .flat_map(lambda info: u.Tests.resolve_host_port(info, port))
             .flat_map(
                 lambda host_port: self.wait_for_port_ready(
-                    target.host, host_port, max_wait=target.startup_timeout
-                )
+                    target.host,
+                    host_port,
+                    max_wait=target.startup_timeout,
+                ),
             )
         )
         if listening.failure:
             return r[str].from_failure(
                 listening.map_error(
-                    lambda error: f"Kind apiserver readiness failed: {error}"
-                )
+                    lambda error: f"Kind apiserver readiness failed: {error}",
+                ),
             )
         return r[str].ok("Kind cluster started and apiserver is reachable")
 
     def cluster_down(self) -> p.Result[str]:
-        """Tear down the kind stack via compose down."""
+        """Tear down the kind stack via compose down.
+
+        Returns:
+            The resulting ``p.Result[str]``.
+        """
         target = self.target_config
         if target is None:
             return r[str].fail(
-                "Kubernetes target not configured. Use FlextTestsKube.kind(...) first."
+                "Kubernetes target not configured. Use FlextTestsKube.kind(...) first.",
             )
         if target.compose_file is None:
             return r[str].fail("Kubernetes target has no compose file configured.")
         return self.down()
 
     def nodes_ready(self) -> p.Result[bool]:
-        """Run ``kubectl get nodes`` and confirm every node reports Ready."""
+        """Run ``kubectl get nodes`` and confirm every node reports Ready.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
         target = self.target_config
         if target is None or target.compose_file is None:
             return r[bool].fail(
-                "Kubernetes target not configured. Use FlextTestsKube.kind(...) first."
+                "Kubernetes target not configured. Use FlextTestsKube.kind(...) first.",
             )
         enabled = self.lifecycle_enabled()
         if enabled.failure:
@@ -106,7 +127,9 @@ class FlextTestsKube(FlextTestsDocker):
         )
         try:
             output = client.compose.execute(
-                self.kubectl_service, ["get", "nodes", "--no-headers"], tty=False
+                self.kubectl_service,
+                ["get", "nodes", "--no-headers"],
+                tty=False,
             )
         except self._compose_exception_types() as exc:
             return r[bool].fail_op("kubectl get nodes", exc)
@@ -131,15 +154,19 @@ class FlextTestsKube(FlextTestsDocker):
         The cluster is not a sealed container: ``initializer`` and
         ``creation_environment`` are rejected; ``readiness_probe`` is polled
         after the nodes report Ready.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInfo]``.
         """
         target = self.target_config
         if target is None:
             return r[m.Tests.ContainerInfo].fail(
-                "Kubernetes target not configured. Use FlextTestsKube.kind(...).execute()."
+                "Kubernetes target not configured. "
+                "Use FlextTestsKube.kind(...).execute().",
             )
         if initializer is not None or creation_environment:
             return r[m.Tests.ContainerInfo].fail(
-                c.Tests.ERR_DOCKER_KUBE_HOOKS_UNSUPPORTED
+                c.Tests.ERR_DOCKER_KUBE_HOOKS_UNSUPPORTED,
             )
         enabled = self.lifecycle_enabled()
         if enabled.failure:
@@ -161,13 +188,16 @@ class FlextTestsKube(FlextTestsDocker):
                     status=c.Tests.ContainerStatus.RUNNING,
                     ports={},
                     image="",
-                )
+                ),
             )
         )
         if info.failure or readiness_probe is None:
             return info
         probed = self._poll_readiness(
-            info.value, readiness_probe, deadline, target.startup_timeout
+            info.value,
+            readiness_probe,
+            deadline,
+            target.startup_timeout,
         )
         if probed.failure:
             return r[m.Tests.ContainerInfo].from_failure(probed)

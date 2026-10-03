@@ -6,6 +6,9 @@ is driven inside a ``pytester`` subprocess sandbox and asserted on observable
 outcomes plus the terminal summary the plugin promises to print. Subprocess
 runs keep the real workspace untouched and prove entry-point loading without
 any manual ``-p`` wiring.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -24,7 +27,8 @@ class TestsFlextTestsEnforcementPlugin:
     # discovery itself; ordinary dispatcher behavior stays in-process or loads
     # only its explicit owner plugins.
 
-    def test_flext_pytest11_entrypoints_have_one_package_owner(self) -> None:
+    @staticmethod
+    def test_flext_pytest11_entrypoints_have_one_package_owner() -> None:
         """The flext-tests distribution publishes exactly its two pytest plugins."""
         names = {
             entry.name
@@ -33,8 +37,9 @@ class TestsFlextTestsEnforcementPlugin:
         }
         tm.that(names, eq={"flext_tests", "flext_tests_enforcement"})
 
+    @staticmethod
     def test_flext_pytest11_entrypoint_load_defers_fixture_imports(
-        self, pytester: pytest.Pytester
+        pytester: pytest.Pytester,
     ) -> None:
         """Cold entry-point discovery does not pre-import measured product code."""
         probe = (
@@ -54,9 +59,10 @@ class TestsFlextTestsEnforcementPlugin:
         tm.that(completed.ret, eq=0)
         tm.that(completed.errlines, eq=[])
 
+    @staticmethod
     @pytest.mark.slow
     def test_inactive_session_collects_without_the_model_facade(
-        self, pytester: pytest.Pytester
+        pytester: pytest.Pytester,
     ) -> None:
         """An ungoverned session configures and collects without ``m`` loaded."""
         pytester.makeini("[pytest]\n")
@@ -66,7 +72,7 @@ class TestsFlextTestsEnforcementPlugin:
             "\n"
             "def pytest_collection_finish(session):\n"
             "    if 'flext_tests.models' in sys.modules:\n"
-            "        raise RuntimeError('flext_tests.models loaded at collection')\n"
+            "        raise RuntimeError('flext_tests.models loaded at collection')\n",
         )
         pytester.makepyfile(test_probe="def test_probe() -> None:\n    assert True\n")
         result = pytester.runpytest_subprocess("--collect-only", "-q")
@@ -91,7 +97,7 @@ class TestsFlextTestsEnforcementPlugin:
                 "        e.MroViolation,\n"
                 "        stacklevel=2,\n"
                 "    )\n"
-            )
+            ),
         )
 
     @classmethod
@@ -105,7 +111,8 @@ class TestsFlextTestsEnforcementPlugin:
 
     @pytest.mark.slow
     def test_dispatcher_records_warning_and_prints_summary(
-        self, pytester: pytest.Pytester
+        self,
+        pytester: pytest.Pytester,
     ) -> None:
         """Non-strict run captures the warning and reports it in the summary."""
         self._make_workspace_sandbox(pytester)
@@ -120,12 +127,14 @@ class TestsFlextTestsEnforcementPlugin:
 
     @pytest.mark.slow
     def test_strict_mode_promotes_warning_to_failure(
-        self, pytester: pytest.Pytester
+        self,
+        pytester: pytest.Pytester,
     ) -> None:
         """--flext-enforce-strict promotes the configured warning to a failure."""
         self._make_workspace_sandbox(pytester)
         result = pytester.runpytest_subprocess(
-            "--flext-enforce-rules=ENFORCE-022", "--flext-enforce-strict"
+            "--flext-enforce-rules=ENFORCE-022",
+            "--flext-enforce-strict",
         )
         result.assert_outcomes(failed=1)
         result.stdout.fnmatch_lines([
@@ -135,7 +144,8 @@ class TestsFlextTestsEnforcementPlugin:
 
     @pytest.mark.slow
     def test_dispatcher_inactive_outside_workspace(
-        self, pytester: pytest.Pytester
+        self,
+        pytester: pytest.Pytester,
     ) -> None:
         """Without workspace markers the dispatcher stays silent and passive."""
         pytester.makeini("[pytest]\n")
@@ -145,13 +155,14 @@ class TestsFlextTestsEnforcementPlugin:
         result.stdout.no_fnmatch_line("*flext-enforce*")
         result.stdout.no_fnmatch_line("runtime warnings captured:*")
 
+    @staticmethod
     @pytest.mark.slow
-    def test_infra_report_boundary_runs_in_subprocess(
-        self, pytester: pytest.Pytester
+    def test_infra_rule_engine_boundary_runs_in_subprocess(
+        pytester: pytest.Pytester,
     ) -> None:
-        """Return the real infra report through the public Result boundary."""
-        # NOTE (multi-agent, mro-wkii.17.21): exercise only the installed public
-        # boundary; private plugin registration is an implementation detail.
+        """Engine findings come through the public Result boundary; a rule the
+        engine does not declare is a failure, never an empty scan.
+        """
         pytester.makeini("[pytest]\n")
         pytester.makepyfile(
             test_public_boundary=(
@@ -160,27 +171,32 @@ class TestsFlextTestsEnforcementPlugin:
                 "from flext_tests import u\n"
                 "\n"
                 "\n"
-                "class TestsPublicInfraReportBoundary:\n"
-                "    def test_public_boundary_wraps_direct_report(\n"
-                "        self,\n"
-                "        tmp_path: Path,\n"
-                "    ) -> None:\n"
+                "class TestsPublicInfraRuleBoundary:\n"
+                "    def test_engine_boundary(self, tmp_path: Path) -> None:\n"
                 "        project = tmp_path / 'flext-contract-probe'\n"
                 "        package = project / 'src' / 'flext_contract_probe'\n"
                 "        package.mkdir(parents=True)\n"
-                "        (package / '__init__.py').write_text('', encoding='utf-8')\n"
+                "        (package / '__init__.py').write_text(\n"
+                '            \'"""Probe."""\\n\\nfrom __future__ import annotations\\n\',\n'
+                "            encoding='utf-8',\n"
+                "        )\n"
                 "        (project / 'pyproject.toml').write_text(\n"
                 "            '[project]\\n'\n"
                 "            'name = \\\"flext-contract-probe\\\"\\n'\n"
-                "            'version = \\\"0.1.0\\\"\\n',\n"
+                "            'version = \\\"0.1.0\\\"\\n'\n"
+                "            'dependencies = []\\n',\n"
                 "            encoding='utf-8',\n"
                 "        )\n"
-                "        report = u.Tests.load_infra_report(\n"
-                "            project,\n"
-                "            project_names=(project.name,),\n"
-                "        ).unwrap()\n"
-                "        assert report.workspace == str(project.resolve())\n"
-            )
+                "        missing = u.Tests.infra_rule_findings(\n"
+                "            project, required_rule_ids=frozenset({'no-such-rule'})\n"
+                "        )\n"
+                "        assert missing.failure\n"
+                "        assert 'no-such-rule' in str(missing.error)\n"
+                "        scanned = u.Tests.infra_rule_findings(\n"
+                "            project, required_rule_ids=frozenset()\n"
+                "        )\n"
+                "        assert scanned.success\n"
+            ),
         )
         result = pytester.runpytest_subprocess()
         result.assert_outcomes(passed=1)

@@ -1,4 +1,8 @@
-"""Runtime settings namespace for FLEXT test services."""
+"""Runtime settings namespace for FLEXT test services.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -12,7 +16,8 @@ class FlextTestsSettings(FlextSettings):
     """FLEXT settings extended with the test runtime namespace."""
 
     model_config: ClassVar[m.SettingsConfigDict] = m.SettingsConfigDict(
-        env_prefix="FLEXT_TESTS_", extra="ignore"
+        env_prefix="FLEXT_TESTS_",
+        extra="ignore",
     )
 
     class TestsSettings(m.BaseModel):
@@ -25,6 +30,7 @@ class FlextTestsSettings(FlextSettings):
 
 
 settings: FlextTestsSettings = FlextTestsSettings.fetch_global()
-"""Pre-instantiated project settings singleton — ``from flext_tests import settings``."""
+"""Pre-instantiated project settings singleton —
+``from flext_tests import settings``."""
 
 __all__: list[str] = ["FlextTestsSettings", "settings"]

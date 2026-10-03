@@ -19,10 +19,18 @@ from flext_tests import c
 
 
 def _scratch_root(config: pytest.Config) -> Path:
-    """Transport hook: resolve the scratch root via u.Tests (pure owner)."""
-    from flext_tests import u
+    """Transport hook: resolve the scratch root through its pure owner.
 
-    return u.Tests.scratch_root(
+    The owner mixin is reached directly, not through the composed ``u``
+    facade: configuring an ungoverned session must not load the model facade
+    that the other utility mixins import.
+
+    Returns:
+        The resulting ``Path``.
+    """
+    from flext_tests._utilities import FlextTestsScratchStorageUtilitiesMixin
+
+    return FlextTestsScratchStorageUtilitiesMixin.scratch_root(
         checkout_root=Path(config.rootpath),
         override=config.getini(c.Tests.SCRATCH_ROOT_INI) or None,
     )

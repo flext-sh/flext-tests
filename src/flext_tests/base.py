@@ -1,4 +1,8 @@
-"""Generic service surface for flext-tests."""
+"""Generic service surface for flext-tests.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -8,8 +12,7 @@ from typing import Self
 
 from flext_core import FlextContainer, s
 from flext_tests import m, p, t
-
-from ._settings import FlextTestsSettings
+from flext_tests._settings import FlextTestsSettings
 
 
 class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
@@ -17,7 +20,12 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
 
     @classmethod
     def test_settings_type(cls) -> type[FlextTestsSettings]:
-        """Return the concrete test settings type declared by the service MRO."""
+        """Return the concrete test settings type declared by the service MRO.
+
+        Raises:
+            TypeError: If ``settings_type is None``; or if ``not
+                issubclass(settings_type, FlextTestsSettings)``.
+        """
         settings_type = cls.runtime_bootstrap_options().settings_type
         if settings_type is None:
             msg = f"{cls.__name__} must declare a FlextTestsSettings subclass"
@@ -47,7 +55,11 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
 
     @classmethod
     def with_test_settings(cls, **overrides: t.SettingsOverride | None) -> Self:
-        """Bind an isolated snapshot of the most specific test settings tree."""
+        """Bind an isolated snapshot of the most specific test settings tree.
+
+        Returns:
+            The resulting ``Self``.
+        """
         return cls.with_settings(cls.fetch_settings().clone(**overrides))
 
     @classmethod
@@ -84,7 +96,11 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
 
     @classmethod
     def runtime_bootstrap_options(cls) -> m.RuntimeBootstrapOptions:
-        """Provide the runtime bootstrap options bound to the test settings type."""
+        """Provide the runtime bootstrap options bound to the test settings type.
+
+        Returns:
+            The resulting ``m.RuntimeBootstrapOptions``.
+        """
         return m.RuntimeBootstrapOptions(settings_type=FlextTestsSettings)
 
 

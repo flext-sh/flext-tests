@@ -5,6 +5,9 @@ contract (workspace discovery, forced and disabled modes, rule-list parsing)
 observed through the installed ``flext_tests_enforcement`` pytest11 plugin in a
 subprocess sandbox, and the CLI options that plugin registers. Lifecycle hooks
 run end to end through ``pytester`` in ``test_enforcement_plugin.py``.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -26,9 +29,14 @@ class TestsFlextTestsEnforcementDispatcher:
     # Fixtures                                                           #
     # ------------------------------------------------------------------ #
 
+    @staticmethod
     @pytest.fixture
-    def workspace(self, tmp_path: Path) -> Path:
-        """Create a directory carrying every FLEXT workspace marker."""
+    def workspace(tmp_path: Path) -> Path:
+        """Create a directory carrying every FLEXT workspace marker.
+
+        Returns:
+            The resulting ``Path``.
+        """
         root = tmp_path / "ws"
         root.mkdir()
         for marker in c.Tests.ENFORCEMENT_WORKSPACE_MARKERS:
@@ -37,10 +45,14 @@ class TestsFlextTestsEnforcementDispatcher:
 
     @staticmethod
     def _cfg(
-        *, include: frozenset[str] = frozenset(), exclude: frozenset[str] = frozenset()
+        *,
+        include: frozenset[str] = frozenset(),
+        exclude: frozenset[str] = frozenset(),
     ) -> m.Tests.EnforcementDispatcherConfig:
         return m.Tests.EnforcementDispatcherConfig(
-            strict=False, include=include, exclude=exclude
+            strict=False,
+            include=include,
+            exclude=exclude,
         )
 
     # ------------------------------------------------------------------ #
@@ -49,12 +61,17 @@ class TestsFlextTestsEnforcementDispatcher:
 
     @staticmethod
     def _sandbox_project(workspace: Path) -> Path:
-        """Create a sub-project with one passing test under ``workspace``."""
+        """Create a sub-project with one passing test under ``workspace``.
+
+        Returns:
+            The resulting ``Path``.
+        """
         project = workspace / "flext-core"
         project.mkdir(parents=True, exist_ok=True)
         (project / "pytest.ini").write_text("[pytest]\n", encoding="utf-8")
         (project / "test_probe.py").write_text(
-            "def test_probe() -> None:\n    assert True\n", encoding="utf-8"
+            "def test_probe() -> None:\n    assert True\n",
+            encoding="utf-8",
         )
         return project
 
@@ -69,9 +86,17 @@ class TestsFlextTestsEnforcementDispatcher:
 
     @classmethod
     def _collect(
-        cls, pytester: pytest.Pytester, project: Path, *args: str, rules: str = ""
+        cls,
+        pytester: pytest.Pytester,
+        project: Path,
+        *args: str,
+        rules: str = "",
     ) -> pytest.RunResult:
-        """Collect ``project`` as its own rootdir with the enforcement options."""
+        """Collect ``project`` as its own rootdir with the enforcement options.
+
+        Returns:
+            The resulting ``pytest.RunResult``.
+        """
         return pytester.runpytest_subprocess(
             "--collect-only",
             "-q",
@@ -83,40 +108,56 @@ class TestsFlextTestsEnforcementDispatcher:
 
     @pytest.mark.slow
     def test_forced_run_discovers_the_workspace_above_a_sub_project(
-        self, pytester: pytest.Pytester, workspace: Path
+        self,
+        pytester: pytest.Pytester,
+        workspace: Path,
     ) -> None:
+        """Test forced run discovers the workspace above a sub project."""
         result = self._collect(
-            pytester, self._sandbox_project(workspace), "--flext-enforce"
+            pytester,
+            self._sandbox_project(workspace),
+            "--flext-enforce",
         )
 
         result.stdout.fnmatch_lines(["*flext-enforce*", "catalog active: 1 rules*"])
 
     @pytest.mark.slow
     def test_sub_project_rootdir_stays_inactive_without_force(
-        self, pytester: pytest.Pytester, workspace: Path
+        self,
+        pytester: pytest.Pytester,
+        workspace: Path,
     ) -> None:
+        """Test sub project rootdir stays inactive without force."""
         result = self._collect(pytester, self._sandbox_project(workspace))
 
         result.stdout.no_fnmatch_line("*flext-enforce*")
 
     @pytest.mark.slow
     def test_forced_run_without_every_marker_stays_inactive(
-        self, pytester: pytest.Pytester, tmp_path: Path
+        self,
+        pytester: pytest.Pytester,
+        tmp_path: Path,
     ) -> None:
+        """Test forced run without every marker stays inactive."""
         partial = tmp_path / "partial"
         for marker in list(c.Tests.ENFORCEMENT_WORKSPACE_MARKERS)[:-1]:
             (partial / marker).mkdir(parents=True, exist_ok=True)
 
         result = self._collect(
-            pytester, self._sandbox_project(partial), "--flext-enforce"
+            pytester,
+            self._sandbox_project(partial),
+            "--flext-enforce",
         )
 
         result.stdout.no_fnmatch_line("*flext-enforce*")
 
     @pytest.mark.slow
     def test_no_flext_enforce_overrides_an_explicit_workspace_root(
-        self, pytester: pytest.Pytester, workspace: Path
+        self,
+        pytester: pytest.Pytester,
+        workspace: Path,
     ) -> None:
+        """Test no flext enforce overrides an explicit workspace root."""
         result = self._collect(
             pytester,
             self._sandbox_project(workspace),
@@ -128,8 +169,11 @@ class TestsFlextTestsEnforcementDispatcher:
 
     @pytest.mark.slow
     def test_rule_list_strips_blank_and_padded_fields(
-        self, pytester: pytest.Pytester, workspace: Path
+        self,
+        pytester: pytest.Pytester,
+        workspace: Path,
     ) -> None:
+        """Test rule list strips blank and padded fields."""
         rule = self._runtime_rule_id()
         result = self._collect(
             pytester,
@@ -144,31 +188,32 @@ class TestsFlextTestsEnforcementDispatcher:
     # active_rules                                                       #
     # ------------------------------------------------------------------ #
 
-    def test_active_rules_returns_only_enabled_rules(self) -> None:
+    def test_active_rules_without_filters_is_the_whole_catalog(self) -> None:
+        # No rule is suspended: an unfiltered session runs every catalog rule.
+        """Test active rules without filters is the whole catalog."""
         active = u.Tests.active_rules(self._cfg())
 
-        tm.that(len(active) > 0, eq=True)
-        tm.that(all(r.enabled for r in active), eq=True)
-
-    def test_active_rules_excludes_disabled_skill_pointer_rules(self) -> None:
-        # ENFORCE-034..038 ship disabled by default.
-        ids = {r.id for r in u.Tests.active_rules(self._cfg())}
-
-        tm.that(ids.isdisjoint({"ENFORCE-034", "ENFORCE-035", "ENFORCE-038"}), eq=True)
+        tm.that(
+            [r.id for r in active],
+            eq=[r.id for r in u.build_canonical_catalog().rules],
+        )
 
     def test_include_narrows_to_the_listed_ids(self) -> None:
+        """Test include narrows to the listed ids."""
         active = u.Tests.active_rules(self._cfg(include=frozenset({"ENFORCE-001"})))
 
         tm.that({r.id for r in active}, eq={"ENFORCE-001"})
 
     def test_include_of_unknown_id_yields_no_rules(self) -> None:
+        """Test include of unknown id yields no rules."""
         active = u.Tests.active_rules(
-            self._cfg(include=frozenset({"ENFORCE-DOES-NOT-EXIST"}))
+            self._cfg(include=frozenset({"ENFORCE-DOES-NOT-EXIST"})),
         )
 
         tm.that(active, eq=())
 
     def test_exclude_removes_the_listed_id(self) -> None:
+        """Test exclude removes the listed id."""
         ids = {
             r.id
             for r in u.Tests.active_rules(self._cfg(exclude=frozenset({"ENFORCE-001"})))
@@ -177,15 +222,18 @@ class TestsFlextTestsEnforcementDispatcher:
         tm.that(ids, lacks="ENFORCE-001")
 
     def test_exclude_takes_precedence_over_include(self) -> None:
+        """Test exclude takes precedence over include."""
         active = u.Tests.active_rules(
             self._cfg(
-                include=frozenset({"ENFORCE-001"}), exclude=frozenset({"ENFORCE-001"})
-            )
+                include=frozenset({"ENFORCE-001"}),
+                exclude=frozenset({"ENFORCE-001"}),
+            ),
         )
 
         tm.that(active, eq=())
 
     def test_active_rules_is_idempotent(self) -> None:
+        """Test active rules is idempotent."""
         first = u.Tests.active_rules(self._cfg())
         second = u.Tests.active_rules(self._cfg())
 
@@ -195,8 +243,10 @@ class TestsFlextTestsEnforcementDispatcher:
     # pytest_addoption                                                   #
     # ------------------------------------------------------------------ #
 
+    @staticmethod
+    @pytest.mark.slow
     def test_plugin_registers_flext_enforce_cli_options(
-        self, pytester: pytest.Pytester
+        pytester: pytest.Pytester,
     ) -> None:
         """The installed pytest11 plugin publishes the enforcement options.
 

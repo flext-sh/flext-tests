@@ -1,13 +1,16 @@
-"""File-comparison parsing helpers for FlextTestsFiles."""
+"""File-comparison parsing helpers for FlextTestsFiles.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
 from flext_core import r
 from flext_tests import c, m, t, u
+from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 from flext_tests.protocols import p
-
-from ...payload import FlextTestsPayloadUtilities
-from .._creation import FlextTestsFilesCreationMixin
 
 
 class FlextTestsFilesComparisonMixin:
@@ -26,46 +29,49 @@ class FlextTestsFilesComparisonMixin:
             params.file2.read_text(encoding=enc),
         )
 
-    def _try_parse_both(
-        self, content1: str, content2: str, fmt: str
+    @staticmethod
+    def _parse_both(
+        content1: str,
+        content2: str,
+        fmt: str,
     ) -> p.Result[FlextTestsFilesComparisonMixin.ParsedPair]:
-        """Try to parse both contents as dicts in given format."""
+        """Parse both contents as mappings in the given format.
+
+        Returns:
+            The resulting ``p.Result[FlextTestsFilesComparisonMixin.ParsedPair]``.
+        """
         parse = (
             u.Cli.json_parse
-            if fmt == "json"
+            if fmt == c.Tests.FILE_FORMAT_JSON
             else u.Cli.yaml_parse
-            if fmt == "yaml"
+            if fmt == c.Tests.FILE_FORMAT_YAML
             else None
         )
         if parse is None:
             return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
-                f"unsupported comparison format: {fmt}"
+                f"unsupported comparison format: {fmt}",
             )
-        parsed_result = u.try_(
-            lambda: (parse(content1), parse(content2)),
-            catch=(ValueError, c.Cli.YamlParseError, TypeError),
-            op_name="parse comparison contents",
-        )
-        if parsed_result.failure:
-            return r[FlextTestsFilesComparisonMixin.ParsedPair].from_failure(
-                parsed_result
-            )
-        r1, r2 = parsed_result.value
-        d1 = r1.value if r1.success else None
-        d2 = r2.value if r2.success else None
-        if FlextTestsFilesCreationMixin.is_mapping(
-            d1
-        ) and FlextTestsFilesCreationMixin.is_mapping(d2):
+        # Each parser reports its own failure; that failure is the result.
+        r1 = parse(content1)
+        if r1.failure:
+            return r[FlextTestsFilesComparisonMixin.ParsedPair].from_failure(r1)
+        r2 = parse(content2)
+        if r2.failure:
+            return r[FlextTestsFilesComparisonMixin.ParsedPair].from_failure(r2)
+        d1, d2 = r1.value, r2.value
+        if FlextTestsFilesCreationMixin.matches_native_mapping(
+            d1,
+        ) and FlextTestsFilesCreationMixin.matches_native_mapping(d2):
             return r[FlextTestsFilesComparisonMixin.ParsedPair].ok((
                 FlextTestsFilesCreationMixin.to_payload_mapping(d1),
                 FlextTestsFilesCreationMixin.to_payload_mapping(d2),
             ))
         return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
-            "comparison contents are not both mappings"
+            "comparison contents are not both mappings",
         )
 
+    @staticmethod
     def _apply_key_filtering(
-        self,
         dict1: t.MappingKV[str, t.Tests.TestobjectSerializable],
         dict2: t.MappingKV[str, t.Tests.TestobjectSerializable],
         keys: t.StrSequence | None,
@@ -74,7 +80,12 @@ class FlextTestsFilesComparisonMixin:
         t.MappingKV[str, t.Tests.TestobjectSerializable],
         t.MappingKV[str, t.Tests.TestobjectSerializable],
     ]:
-        """Apply key filtering to both dicts if specified."""
+        """Apply key filtering to both dicts if specified.
+
+        Returns:
+            The resulting ``tuple[t.MappingKV[str, t.Tests.TestobjectSerializable],
+                t.MappingKV[str, t.Tests.TestobjectSerializable]]``.
+        """
         if keys is None and exclude_keys is None:
             return (dict1, dict2)
         filter_keys_set = set(keys) if keys is not None else None

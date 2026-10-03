@@ -9,28 +9,28 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_infra import FlextInfraProtocols
+from flext_cli import FlextCliProtocols
 
-from ._protocols.docker import FlextTestsDockerProtocolsMixin
-from ._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
-from ._protocols.matchers import FlextTestsMatchersProtocolsMixin
-from ._protocols.payload import FlextTestsPayloadProtocolsMixin
-from ._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
-from ._protocols.workspace_cleanup import FlextTestsWorkspaceCleanupProtocols
+from flext_tests._protocols.docker import FlextTestsDockerProtocolsMixin
+from flext_tests._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
+from flext_tests._protocols.matchers import FlextTestsMatchersProtocolsMixin
+from flext_tests._protocols.payload import FlextTestsPayloadProtocolsMixin
+from flext_tests._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
+from flext_tests._protocols.workspace_cleanup import FlextTestsWorkspaceCleanupProtocols
 
 
-class FlextTestsProtocols(FlextInfraProtocols):
+class FlextTestsProtocols(FlextCliProtocols):
     """Protocols for FLEXT tests - extends p."""
 
     class Tests(
         FlextTestsDockerProtocolsMixin,
-        FlextTestsEnforcementProtocolsMixin,
         FlextTestsValueFactoryProtocolsMixin,
         # Owned payload and matcher capability contracts consumed by matchers.
         FlextTestsPayloadProtocolsMixin,
         FlextTestsMatchersProtocolsMixin,
         # NOTE (multi-agent): publish read-only cleanup contracts under p.Tests.
         FlextTestsWorkspaceCleanupProtocols,
+        FlextTestsEnforcementProtocolsMixin,
     ):
         """Test-specific protocols namespace.
 

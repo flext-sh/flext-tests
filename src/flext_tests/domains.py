@@ -1,4 +1,8 @@
-"""Test domain facade for FLEXT ecosystem tests."""
+"""Test domain facade for FLEXT ecosystem tests.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -14,7 +18,11 @@ class FlextTestsDomains:
 
     @staticmethod
     def fixture_filename(group: str, kind: str, file_extension: str = ".ldif") -> str:
-        """Build the canonical fixture filename for a group and kind."""
+        """Build the canonical fixture filename for a group and kind.
+
+        Returns:
+            The resulting ``str``.
+        """
         return f"{group}_{kind}_fixtures{file_extension}"
 
     @classmethod
@@ -26,7 +34,11 @@ class FlextTestsDomains:
         fixtures_root: Path | None = None,
         file_extension: str = ".ldif",
     ) -> Path:
-        """Compute the candidate fixture path without checking existence."""
+        """Compute the candidate fixture path without checking existence.
+
+        Returns:
+            The resulting ``Path``.
+        """
         fixtures_root = fixtures_root or Path.cwd()
         return (
             fixtures_root
@@ -43,9 +55,16 @@ class FlextTestsDomains:
         fixtures_root: Path | None = None,
         file_extension: str = ".ldif",
     ) -> Path:
-        """Return the on-disk fixture path, raising if it is missing."""
+        """Return the on-disk fixture path, raising if it is missing.
+
+        Raises:
+            FileNotFoundError: If Fixture file not found.
+        """
         file_path = cls._resolve_fixture_path(
-            group, kind, fixtures_root=fixtures_root, file_extension=file_extension
+            group,
+            kind,
+            fixtures_root=fixtures_root,
+            file_extension=file_extension,
         )
         if not file_path.exists():
             msg = f"Fixture file not found: {file_path}"
@@ -61,11 +80,21 @@ class FlextTestsDomains:
         fixtures_root: Path | None = None,
         file_extension: str = ".ldif",
     ) -> str:
-        """Read and return the text content of a fixture file."""
+        """Read and return the text content of a fixture file.
+
+        Returns:
+            The resulting ``str``.
+
+        Raises:
+            ValueError: If ``text_result.failure``.
+        """
         text_result: p.Result[str] = cli_u.Cli.files_read_text(
             cls.fixture_path(
-                group, kind, fixtures_root=fixtures_root, file_extension=file_extension
-            )
+                group,
+                kind,
+                fixtures_root=fixtures_root,
+                file_extension=file_extension,
+            ),
         )
         if text_result.failure:
             raise ValueError(text_result.error or "Fixture file read failed")
@@ -83,14 +112,23 @@ class FlextTestsDomains:
     ) -> bool:
         """Return whether the fixture file exists on disk."""
         return cls._resolve_fixture_path(
-            group, kind, fixtures_root=fixtures_root, file_extension=file_extension
+            group,
+            kind,
+            fixtures_root=fixtures_root,
+            file_extension=file_extension,
         ).exists()
 
     @classmethod
     def available_fixture_servers(
-        cls, *, fixtures_root: Path | None = None
+        cls,
+        *,
+        fixtures_root: Path | None = None,
     ) -> t.StrSequence:
-        """List fixture server group directories under the root."""
+        """List fixture server group directories under the root.
+
+        Returns:
+            The resulting ``t.StrSequence``.
+        """
         fixtures_root = fixtures_root or Path.cwd()
         if not fixtures_root.exists():
             return ()
@@ -99,7 +137,7 @@ class FlextTestsDomains:
                 directory.name
                 for directory in fixtures_root.iterdir()
                 if directory.is_dir()
-            )
+            ),
         )
 
     @classmethod
@@ -110,7 +148,11 @@ class FlextTestsDomains:
         fixtures_root: Path | None = None,
         file_extension: str = ".ldif",
     ) -> t.StrSequence:
-        """List available fixture kinds for one server group."""
+        """List available fixture kinds for one server group.
+
+        Returns:
+            The resulting ``t.StrSequence``.
+        """
         fixtures_root = fixtures_root or Path.cwd()
         server_dir = fixtures_root / group
         if not server_dir.exists():
@@ -122,7 +164,7 @@ class FlextTestsDomains:
                 name[len(prefix) : -len(suffix)]
                 for name in sorted(entry.name for entry in server_dir.iterdir())
                 if name.startswith(prefix) and name.endswith(suffix)
-            )
+            ),
         )
 
     @classmethod
@@ -133,7 +175,11 @@ class FlextTestsDomains:
         fixtures_root: Path | None = None,
         file_extension: str = ".ldif",
     ) -> t.MappingKV[str, str]:
-        """Load every fixture kind for one server group as a mapping."""
+        """Load every fixture kind for one server group as a mapping.
+
+        Returns:
+            The resulting ``t.MappingKV[str, str]``.
+        """
         return {
             fixture_type: cls.load_fixture(
                 group,
@@ -142,13 +188,19 @@ class FlextTestsDomains:
                 file_extension=file_extension,
             )
             for fixture_type in cls.available_fixture_types(
-                group, fixtures_root=fixtures_root, file_extension=file_extension
+                group,
+                fixtures_root=fixtures_root,
+                file_extension=file_extension,
             )
         }
 
     @staticmethod
     def default_handler_case_specs() -> t.SequenceOf[t.Tests.HandlerCaseSpec]:
-        """Create shared handler test-case specs for service-base tests."""
+        """Create shared handler test-case specs for service-base tests.
+
+        Returns:
+            The resulting ``t.SequenceOf[t.Tests.HandlerCaseSpec]``.
+        """
         return [
             m.Tests.HandlerCaseSpec(
                 handler_id="success_command",
@@ -186,7 +238,11 @@ class FlextTestsDomains:
 
     @staticmethod
     def valid_email_cases() -> t.SequenceOf[tuple[str, bool]]:
-        """Get valid email test cases."""
+        """Get valid email test cases.
+
+        Returns:
+            The resulting ``t.SequenceOf[tuple[str, bool]]``.
+        """
         return [
             ("test@example.com", True),
             ("user.name@domain.co.uk", True),
@@ -201,7 +257,10 @@ class FlextTestsDomains:
         """Bound fixture loader for one fixture root and extension."""
 
         def __init__(
-            self, fixtures_root: Path, *, file_extension: str = ".ldif"
+            self,
+            fixtures_root: Path,
+            *,
+            file_extension: str = ".ldif",
         ) -> None:
             """Store the fixtures root and default file extension."""
             self._fixtures_root: Path = fixtures_root
@@ -217,7 +276,11 @@ class FlextTestsDomains:
             )
 
         def load_fixture(self, group: str, kind: str) -> str:
-            """Read and return the text content of a fixture file."""
+            """Read and return the text content of a fixture file.
+
+            Returns:
+                The resulting ``str``.
+            """
             return FlextTestsDomains.load_fixture(
                 group,
                 kind,
@@ -235,13 +298,21 @@ class FlextTestsDomains:
             )
 
         def available_fixture_servers(self) -> t.StrSequence:
-            """List fixture server group directories under the root."""
+            """List fixture server group directories under the root.
+
+            Returns:
+                The resulting ``t.StrSequence``.
+            """
             return FlextTestsDomains.available_fixture_servers(
-                fixtures_root=self._fixtures_root
+                fixtures_root=self._fixtures_root,
             )
 
         def available_fixture_types(self, group: str) -> t.StrSequence:
-            """List available fixture kinds for one server group."""
+            """List available fixture kinds for one server group.
+
+            Returns:
+                The resulting ``t.StrSequence``.
+            """
             return FlextTestsDomains.available_fixture_types(
                 group,
                 fixtures_root=self._fixtures_root,
@@ -249,7 +320,11 @@ class FlextTestsDomains:
             )
 
         def load_server_fixtures(self, group: str) -> t.MappingKV[str, str]:
-            """Load every fixture kind for one server group as a mapping."""
+            """Load every fixture kind for one server group as a mapping.
+
+            Returns:
+                The resulting ``t.MappingKV[str, str]``.
+            """
             return FlextTestsDomains.load_server_fixtures(
                 group,
                 fixtures_root=self._fixtures_root,
@@ -257,7 +332,11 @@ class FlextTestsDomains:
             )
 
         def load_fixture_kind(self, kind: str) -> t.MappingKV[str, str]:
-            """Load every server's fixture for one kind as a mapping."""
+            """Load every server's fixture for one kind as a mapping.
+
+            Returns:
+                The resulting ``t.MappingKV[str, str]``.
+            """
             return {
                 group: self.load_fixture(group, kind)
                 for group in self.available_fixture_servers()
@@ -265,7 +344,11 @@ class FlextTestsDomains:
             }
 
         def load_all(self) -> t.MappingKV[str, t.MappingKV[str, str]]:
-            """Load every server and kind fixture as a nested mapping."""
+            """Load every server and kind fixture as a nested mapping.
+
+            Returns:
+                The resulting ``t.MappingKV[str, t.MappingKV[str, str]]``.
+            """
             return {
                 group: self.load_server_fixtures(group)
                 for group in self.available_fixture_servers()
@@ -288,7 +371,10 @@ class FlextTestsDomains:
 
     @classmethod
     def bind(
-        cls, fixtures_root: Path, *, file_extension: str = ".ldif"
+        cls,
+        fixtures_root: Path,
+        *,
+        file_extension: str = ".ldif",
     ) -> BoundFixtures:
         """Return a BoundFixtures view anchored at the given root."""
         return cls.BoundFixtures(fixtures_root, file_extension=file_extension)
