@@ -1,4 +1,8 @@
-"""Read-only workspace cleanup protocols for flext-tests."""
+"""Read-only workspace cleanup protocols for flext-tests.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -61,7 +65,8 @@ class FlextTestsWorkspaceCleanupProtocols:
         def candidates(
             self,
         ) -> tuple[
-            FlextTestsWorkspaceCleanupProtocols.WorkspaceCleanupCandidate, ...
+            FlextTestsWorkspaceCleanupProtocols.WorkspaceCleanupCandidate,
+            ...,
         ]: ...
 
     @runtime_checkable

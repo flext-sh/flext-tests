@@ -1,4 +1,8 @@
-"""File creation utilities for flext-tests."""
+"""File creation utilities for flext-tests.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -7,24 +11,34 @@ from pathlib import Path
 from typing import cast
 
 from flext_tests import c, m, p, t, u
-
-from ..payload import FlextTestsPayloadUtilities
-from ._lifecycle import FlextTestsFilesLifecycleMixin
+from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
     """Create files from one validated native payload boundary."""
 
     @staticmethod
-    def is_mapping(value: p.AttributeProbe) -> bool:
-        """Identify native mappings without pretending to validate their leaves."""
+    def matches_native_mapping(value: p.AttributeProbe) -> bool:
+        """Identify native mappings without pretending to validate their leaves.
+
+        Returns:
+            The resulting ``bool``.
+        """
         return isinstance(value, Mapping)
 
     @staticmethod
     def to_payload_mapping(
         value: p.AttributeProbe,
     ) -> t.MappingKV[str, m.Tests.Payload]:
-        """Own a native mapping and retain every rich child value."""
+        """Own a native mapping and retain every rich child value.
+
+        Returns:
+            The resulting ``t.MappingKV[str, m.Tests.Payload]``.
+
+        Raises:
+            TypeError: If File content requires a native mapping.
+        """
         payload = FlextTestsPayloadUtilities.to_payload(value)
         if payload.kind != "mapping":
             msg = "File content requires a native mapping"
@@ -33,20 +47,39 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
 
     @staticmethod
     def _to_string_rows(value: p.Tests.Payload) -> t.SequenceOf[t.StrSequence]:
-        """Render validated CSV cells only at their textual output boundary."""
+        """Render validated CSV cells only at their textual output boundary.
+
+        Returns:
+            The resulting ``t.SequenceOf[t.StrSequence]``.
+        """
         return [
             [str(FlextTestsPayloadUtilities.to_match_value(cell)) for cell in row.items]
             for row in value.items
         ]
 
-    def _coerce_file_content(self, value: p.AttributeProbe) -> m.Tests.Payload:
-        """Own file input without dumping native models or swallowing failures."""
+    @staticmethod
+    def _coerce_file_content(value: p.AttributeProbe) -> m.Tests.Payload:
+        """Own file input without dumping native models or swallowing failures.
+
+        Returns:
+            The resulting ``m.Tests.Payload``.
+        """
         return FlextTestsPayloadUtilities.to_payload(value)
 
     def _extract_content[ContentT](
-        self, content: ContentT | p.Result[ContentT], *, extract_result: bool
+        self,
+        content: ContentT | p.Result[ContentT],
+        *,
+        extract_result: bool,
     ) -> m.Tests.Payload:
-        """Extract explicitly requested results before validating native content."""
+        """Extract explicitly requested results before validating native content.
+
+        Returns:
+            The resulting ``m.Tests.Payload``.
+
+        Raises:
+            ValueError: If Cannot create file from failed result.
+        """
         if extract_result and isinstance(content, p.Result):
             if content.failure:
                 msg = f"Cannot create file from failed result: {content.error}"
@@ -54,8 +87,13 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             return self._coerce_file_content(content.value)
         return self._coerce_file_content(content)
 
-    def _is_nested_rows(self, value: p.AttributeProbe) -> bool:
-        """Recognize nonempty list/tuple rows without a second recursive adapter."""
+    @staticmethod
+    def _is_nested_rows(value: p.AttributeProbe) -> bool:
+        """Recognize nonempty list/tuple rows without a second recursive adapter.
+
+        Returns:
+            The resulting ``bool``.
+        """
         payload = FlextTestsPayloadUtilities.to_payload(value)
         return (
             payload.kind in {"list", "tuple"}
@@ -79,7 +117,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                     atom
                     if actual_content.kind == "atom" and isinstance(atom, bytes)
                     else str(
-                        FlextTestsPayloadUtilities.to_match_value(actual_content)
+                        FlextTestsPayloadUtilities.to_match_value(actual_content),
                     ).encode(params.enc)
                 )
                 file_path.write_bytes(content)
@@ -97,7 +135,8 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                 u.Cli.files_write_csv(
                     file_path,
                     self._build_csv_rows(
-                        actual_content=actual_content, headers=params.headers
+                        actual_content=actual_content,
+                        headers=params.headers,
                     ),
                 )
             case _:
@@ -108,12 +147,17 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
 
     @staticmethod
     def _build_json_payload(actual_content: p.Tests.Payload) -> t.JsonValue:
-        """Perform JSON conversion only at the selected file output boundary."""
+        """Perform JSON conversion only at the selected file output boundary.
+
+        Returns:
+            The resulting ``t.JsonValue``.
+        """
         if actual_content.kind == "atom" and isinstance(
-            actual_content.atom, m.BaseModel
+            actual_content.atom,
+            m.BaseModel,
         ):
             return t.json_value_adapter().validate_python(
-                actual_content.atom.model_dump(mode="json")
+                actual_content.atom.model_dump(mode="json"),
             )
         normalized = FlextTestsPayloadUtilities.to_normalized_value(actual_content)
         if actual_content.kind == "mapping":
@@ -122,9 +166,15 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
 
     @staticmethod
     def _build_csv_rows(
-        *, actual_content: p.Tests.Payload, headers: t.StrSequence | None
+        *,
+        actual_content: p.Tests.Payload,
+        headers: t.StrSequence | None,
     ) -> list[t.StrSequence]:
-        """Build CSV rows while keeping native matching independent of text."""
+        """Build CSV rows while keeping native matching independent of text.
+
+        Returns:
+            The resulting ``list[t.StrSequence]``.
+        """
         rows: list[t.StrSequence] = []
         if headers:
             rows.append(list(headers))
@@ -132,7 +182,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             rows.extend(FlextTestsFilesCreationMixin._to_string_rows(actual_content))
         else:
             rows.append([
-                str(FlextTestsPayloadUtilities.to_match_value(actual_content))
+                str(FlextTestsPayloadUtilities.to_match_value(actual_content)),
             ])
         return rows
 
@@ -150,9 +200,14 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         readonly: bool = False,
         extract_result: bool = True,
     ) -> Path:
-        """Create a file after validating the complete native input tree."""
+        """Create a file after validating the complete native input tree.
+
+        Returns:
+            The resulting ``Path``.
+        """
         content_to_validate = self._extract_content(
-            content, extract_result=extract_result
+            content,
+            extract_result=extract_result,
         )
         params = m.Tests.CreateParams.model_validate({
             "content": content_to_validate,
@@ -174,7 +229,8 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         # parameter union does not model those fallback arms. The callable
         # assertion records that shape-total contract for this projection.
         detect_format = cast(
-            "Callable[[object, str, str], str]", u.Cli.files_detect_format_from_content
+            "Callable[[object, str, str], str]",
+            u.Cli.files_detect_format_from_content,
         )
         actual_fmt = detect_format(native_content, params.name, params.fmt)
         target_dir = self._resolve_directory(params.directory)

@@ -1,8 +1,14 @@
-"""Private docker operation test mixins."""
+"""Private docker operation test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
 from pathlib import Path
+
+from flext_infra import config as infra_config
 
 from flext_tests import FlextTestsDocker, tm
 from tests import c, u
@@ -11,92 +17,104 @@ from tests import c, u
 class TestsFlextTestsDockerOperationsMixin:
     """Docker operation tests."""
 
+    @staticmethod
     def test_compose_down_returns_flext_result(
-        self, docker_manager: FlextTestsDocker
+        docker_manager: FlextTestsDocker,
     ) -> None:
         """Test compose_down failure behavior for missing compose file."""
         result = docker_manager.compose_down("missing-compose.yml")
         _ = u.Tests.assert_failure(result)
 
+    @staticmethod
     def test_start_existing_container_not_found(
-        self, docker_manager: FlextTestsDocker
+        docker_manager: FlextTestsDocker,
     ) -> None:
         """Test starting a container returns a failure result when unavailable."""
         result = docker_manager.start_existing_container("nonexistent_container")
         _ = u.Tests.assert_failure(result)
         tm.that(result.error, is_=str)
 
+    @staticmethod
     def test_fetch_container_info_not_found(
-        self, docker_manager: FlextTestsDocker
+        docker_manager: FlextTestsDocker,
     ) -> None:
         """Test fetching container info returns a failure result when unavailable."""
         result = docker_manager.fetch_container_info("nonexistent_container")
         _ = u.Tests.assert_failure(result)
         tm.that(result.error, is_=str)
 
-    def test_fetch_container_status(self, docker_manager: FlextTestsDocker) -> None:
+    @staticmethod
+    def test_fetch_container_status(docker_manager: FlextTestsDocker) -> None:
         """Test fetch_container_status delegates to container lookup."""
         result = docker_manager.fetch_container_status("nonexistent")
         _ = u.Tests.assert_failure(result)
 
+    @staticmethod
     def test_wait_for_port_ready_immediate(
-        self, docker_manager: FlextTestsDocker
+        docker_manager: FlextTestsDocker,
     ) -> None:
         """Test wait_for_port_ready fails closed quickly for unavailable port."""
         result = docker_manager.wait_for_port_ready(c.LOOPBACK_IP, 59999, max_wait=1)
         _ = u.Tests.assert_failure(result)
         tm.that(result.error or "", has="not ready")
 
+    @staticmethod
     def test_cleanup_dirty_containers_empty(
-        self, docker_manager: FlextTestsDocker
+        docker_manager: FlextTestsDocker,
     ) -> None:
-        """Test cleanup with no dirty containers."""
-        _ = docker_manager.mark_container_clean("container1")
-        _ = docker_manager.mark_container_clean("container2")
-        result = docker_manager.cleanup_dirty_containers()
+        """A host without dirty records recreates nothing."""
+        ci_variable = infra_config.Infra.codegen.make.ci.variable
+        with u.Tests.env_vars_context(vars_to_clear=(ci_variable,)):
+            result = docker_manager.cleanup_dirty_containers()
         _ = u.Tests.assert_success(result)
         tm.that(result.value, empty=True)
 
-    def test_cleanup_dirty_containers_removes_stale_shared_entry(
-        self, tmp_path: Path
+    @staticmethod
+    def test_cleanup_dirty_containers_keeps_foreign_records(
+        docker_manager: FlextTestsDocker,
     ) -> None:
-        """Test cleanup purges retired shared containers from persisted state."""
-        manager = FlextTestsDocker(
-            repository_root=tmp_path, worker_id="stale-container"
+        """A dirty record of an undeclared container is left to its own owner."""
+        foreign = "foreign-owner-test"
+        _ = u.Tests.assert_success(docker_manager.mark_container_dirty(foreign))
+        ci_variable = infra_config.Infra.codegen.make.ci.variable
+        with u.Tests.env_vars_context(vars_to_clear=(ci_variable,)):
+            result = docker_manager.cleanup_dirty_containers()
+        _ = u.Tests.assert_success(result)
+        tm.that(result.value, empty=True)
+        tm.that(docker_manager.container_dirty(foreign), eq=True)
+
+    @staticmethod
+    def test_default_state_dir_is_host_scoped() -> None:
+        """Without an explicit directory the records live in the host directory."""
+        host_dir = Path.home().joinpath(*c.Tests.DOCKER_STATE_DIR_PARTS)
+        tm.that(u.Tests.docker_state_dir(), eq=host_dir)
+        tm.that(FlextTestsDocker().state_dir, eq=host_dir)
+
+    @staticmethod
+    def test_builders_bind_the_given_state_dir(tmp_path: Path) -> None:
+        """Every builder carries an explicit state directory to the facade."""
+        state_dir = tmp_path / "state"
+        shared = FlextTestsDocker.shared(
+            "flext-openldap-test",
+            repository_root=tmp_path,
+            state_dir=state_dir,
         )
-        _ = manager.mark_container_dirty("algar-oud-test")
+        composed = FlextTestsDocker.compose(
+            "docker-compose.yml",
+            repository_root=tmp_path,
+            state_dir=state_dir,
+        )
+        tm.that(shared.state_dir, eq=state_dir)
+        tm.that(composed.state_dir, eq=state_dir)
 
-        result = manager.cleanup_dirty_containers()
-
-        _ = u.Tests.assert_success(result)
-        tm.that(result.value, empty=True)
-        tm.that(manager.container_dirty("algar-oud-test"), eq=False)
-
-    def test_default_worker_id(self) -> None:
-        """Test default worker_id is 'master'."""
-        manager = FlextTestsDocker()
-        tm.that(manager.worker_id, eq="master")
-
-    def test_custom_worker_id(self) -> None:
-        """Test custom worker_id."""
-        manager = FlextTestsDocker(worker_id="worker_1")
-        tm.that(manager.worker_id, eq="worker_1")
-
-    def test_worker_id_isolates_persisted_dirty_state(self) -> None:
-        """Test different worker_id values isolate persisted dirty state."""
-        manager_a = FlextTestsDocker(worker_id="worker_a")
-        _ = manager_a.mark_container_dirty("container-x")
-        manager_b = FlextTestsDocker(worker_id="worker_b")
-        tm.that(manager_b.container_dirty("container-x"), eq=False)
-        manager_a_reload = FlextTestsDocker(worker_id="worker_a")
-        tm.that(manager_a_reload.container_dirty("container-x"), eq=True)
-
-    def test_default_repository_root(self) -> None:
+    @staticmethod
+    def test_default_repository_root() -> None:
         """Test default repository_root is cwd."""
         manager = FlextTestsDocker()
         tm.that(manager.repository_root, eq=Path.cwd())
 
-    def test_custom_repository_root(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_custom_repository_root(tmp_path: Path) -> None:
         """Test custom repository_root."""
         manager = FlextTestsDocker(repository_root=tmp_path)
         tm.that(manager.repository_root, eq=tmp_path)

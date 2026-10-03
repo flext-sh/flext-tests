@@ -1,6 +1,9 @@
 """File-context helpers for FlextTestsFiles.
 
 Temporary file bundles and temporary directory context managers.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -11,8 +14,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from flext_tests import c, m, t
-
-from ._reading import FlextTestsFilesReadingMixin
+from flext_tests._utilities._files._reading import FlextTestsFilesReadingMixin
 
 
 class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
@@ -52,13 +54,12 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
                 data: t.Tests.FileContentPlain = data_raw
                 filename = name if "." in name else f"{name}{default_ext}"
                 if "." not in name and isinstance(
-                    data, (Mapping, m.BaseModel, m.ConfigMap, m.Dict)
+                    data,
+                    (Mapping, m.BaseModel, m.ConfigMap, m.Dict),
                 ):
                     filename = f"{name}.json"
                 else:
-                    is_nested_sequence = "." not in name and cls._is_nested_rows(
-                        manager, data
-                    )
+                    is_nested_sequence = "." not in name and cls._is_nested_rows(data)
                     if is_nested_sequence:
                         filename = f"{name}.csv"
                 try:
@@ -66,7 +67,7 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
                 except c.EXC_VALIDATION_TYPE_VALUE:
                     validated_kwargs = m.Tests.CreateKwargsParams()
                 path = manager.create(
-                    cls._coerce_file_content(manager, data),
+                    cls._coerce_file_content(data),
                     filename,
                     directory=validated_kwargs.directory,
                     fmt=validated_kwargs.fmt,
@@ -80,8 +81,9 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
                 paths[name] = path
             yield paths
 
+    @staticmethod
     @contextmanager
-    def temporary_directory(self) -> Generator[Path]:
+    def temporary_directory() -> Generator[Path]:
         """Create and manage a temporary directory.
 
         Yields:

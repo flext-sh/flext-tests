@@ -14,7 +14,14 @@ class FlextTestsCli(FlextCliCli):
 
 
 def main() -> None:
-    """Entry point."""
+    """Entry point: flext-tests docker <verb> --spec <yaml> [--target <name>].
+
+    Raises:
+        SystemExit: Always.
+    """
+    from flext_tests._cli_docker import main as docker_main
+
+    raise SystemExit(docker_main())
 
 
 __all__: tuple[str, ...] = ("FlextTestsCli",)

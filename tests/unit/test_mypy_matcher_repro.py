@@ -1,4 +1,8 @@
-"""Mypy regression for result matcher diagnostics with nested rules."""
+"""Mypy regression for result matcher diagnostics with nested rules.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
