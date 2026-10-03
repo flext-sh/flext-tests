@@ -20,9 +20,8 @@ from pathlib import Path
 from typing import Annotated, ClassVar, Self, override
 
 from flext_tests import m, p, r, s, t, u
-
-from ._utilities._files._comparison import FlextTestsFilesComparisonMixin
-from ._utilities._files._info import FlextTestsFilesInfoMixin
+from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
+from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
 
 
 class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixin):
@@ -32,7 +31,7 @@ class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixi
     base_dir: Annotated[
         Path | None,
         m.BeforeValidator(
-            lambda value: Path(value) if isinstance(value, str) else value
+            lambda value: Path(value) if isinstance(value, str) else value,
         ),
     ] = u.Field(default=None, description="Base directory used for file operations.")
 
@@ -45,7 +44,11 @@ class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixi
     @classmethod
     @override
     def _create_file_manager(cls, base_dir: Path | None) -> Self:
-        """Construct a validated file manager for class-level contexts."""
+        """Construct a validated file manager for class-level contexts.
+
+        Returns:
+            The resulting ``Self``.
+        """
         return cls(base_dir=base_dir)
 
     @override
@@ -54,9 +57,12 @@ class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixi
 
         FlextTestsFiles is a utility service whose real API is its file
         methods (create, compare, info, ...); execute has no domain result.
+
+        Returns:
+            The resulting ``p.Result[p.Base]``.
         """
         return r[p.Base].fail(
-            "Use specific file methods: create, compare, read, info, ..."
+            "Use specific file methods: create, compare, read, info, ...",
         )
 
 

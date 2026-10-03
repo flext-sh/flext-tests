@@ -1,13 +1,18 @@
-"""Enforcement protocols for flext_tests."""
+"""Enforcement protocols for flext_tests.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from flext_infra import p
+from flext_cli import p
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
     from pathlib import Path
 
     import pytest
@@ -47,7 +52,53 @@ class FlextTestsEnforcementProtocolsMixin:
         """Construct the external namespace enforcer boundary."""
 
         def __call__(
-            self, *, repository_root: Path
+            self,
+            *,
+            repository_root: Path,
         ) -> FlextTestsEnforcementProtocolsMixin.NamespaceEnforcer:
             """Construct an enforcer for one workspace root."""
+            ...
+
+    @runtime_checkable
+    class EnforcementScanFinding(Protocol):
+        """One rule-engine finding, as the enforcement dispatcher reads it."""
+
+        @property
+        def rule_id(self) -> str:
+            """Rule that produced the finding."""
+            ...
+
+        @property
+        def repository(self) -> str:
+            """Project whose tree holds the finding."""
+            ...
+
+        @property
+        def file(self) -> Path:
+            """Workspace-relative finding path."""
+            ...
+
+        @property
+        def text(self) -> str:
+            """Exact matched source text."""
+            ...
+
+        @property
+        def payload(self) -> t.JsonMapping:
+            """Complete engine finding payload."""
+            ...
+
+    @runtime_checkable
+    class EnforcementScanReport(Protocol):
+        """Rule-engine findings consumed by the enforcement dispatcher.
+
+        The engine's report satisfies it structurally, so the shared test
+        models never import the engine's model family to type this field.
+        """
+
+        @property
+        def entries(
+            self,
+        ) -> Sequence[FlextTestsEnforcementProtocolsMixin.EnforcementScanFinding]:
+            """Every finding in stable order."""
             ...

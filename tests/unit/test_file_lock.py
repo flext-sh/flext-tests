@@ -25,7 +25,8 @@ if TYPE_CHECKING:
 class TestsFlextTestsFileLock:
     """Exclusive, shared and bounded modes of the host file lock."""
 
-    def test_shared_holders_coexist(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_shared_holders_coexist(tmp_path: Path) -> None:
         """A second shared holder is granted while the first still holds."""
         lock_path = tmp_path / "lease.lock"
         with (
@@ -34,6 +35,7 @@ class TestsFlextTestsFileLock:
         ):
             tm.that(lock_path.is_file(), eq=True)
 
+    @staticmethod
     @pytest.mark.parametrize(
         ("held_shared", "wanted_shared"),
         [
@@ -43,7 +45,10 @@ class TestsFlextTestsFileLock:
         ],
     )
     def test_conflicting_holder_times_out_naming_path_and_mode(
-        self, tmp_path: Path, *, held_shared: bool, wanted_shared: bool
+        tmp_path: Path,
+        *,
+        held_shared: bool,
+        wanted_shared: bool,
     ) -> None:
         """A conflicting request fails after its bound, naming file and mode."""
         lock_path = tmp_path / "lease.lock"
@@ -58,7 +63,8 @@ class TestsFlextTestsFileLock:
         tm.that(time.monotonic() - started, gte=0.2)
         tm.that(str(timed_out.value), has=[str(lock_path), wanted.mode])
 
-    def test_released_lock_is_granted_within_bound(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_released_lock_is_granted_within_bound(tmp_path: Path) -> None:
         """Once the holder leaves, a bounded request is granted."""
         lock_path = tmp_path / "lease.lock"
         with u.Tests.FileLock(lock_path, shared=True):
@@ -66,7 +72,8 @@ class TestsFlextTestsFileLock:
         with u.Tests.FileLock(lock_path, timeout_seconds=0.2):
             tm.that(lock_path.is_file(), eq=True)
 
-    def test_timed_out_request_holds_nothing(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_timed_out_request_holds_nothing(tmp_path: Path) -> None:
         """A request that timed out leaves the lock to the next holder."""
         lock_path = tmp_path / "lease.lock"
         with (

@@ -19,15 +19,19 @@ class FlextTestsDomainModelsMixin:
 
         handler_id: Annotated[str, m.Field(description="Unique handler identifier.")]
         handler_type: Annotated[
-            str, m.Field(description="Handler implementation kind.")
+            str,
+            m.Field(description="Handler implementation kind."),
         ]
         description: Annotated[str, m.Field(description="Human-readable summary.")]
         expected_result: Annotated[
-            str | None, m.Field(description="Expected outcome label.")
+            str | None,
+            m.Field(description="Expected outcome label."),
         ] = None
         should_fail: Annotated[
-            bool, m.Field(description="Whether the case must raise.")
+            bool,
+            m.Field(description="Whether the case must raise."),
         ] = False
         error_message: Annotated[
-            str | None, m.Field(description="Expected error text.")
+            str | None,
+            m.Field(description="Expected error text."),
         ] = None

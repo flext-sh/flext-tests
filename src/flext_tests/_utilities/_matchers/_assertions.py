@@ -1,6 +1,9 @@
 """Assertion-raising helpers for matchers — Group B.
 
 Static methods used internally by ``FlextTestsMatchersUtilities``.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -9,8 +12,7 @@ from collections.abc import Sized
 from typing import Never
 
 from flext_tests import c, p
-
-from ..payload import FlextTestsPayloadUtilities
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsMatchersAssertionsMixin:
@@ -24,7 +26,11 @@ class FlextTestsMatchersAssertionsMixin:
         container: p.AttributeProbe,
         item: p.AttributeProbe,
     ) -> Never:
-        """Raise AssertionError with ``msg`` or formatted ``template``."""
+        """Raise AssertionError with ``msg`` or formatted ``template``.
+
+        Raises:
+            AssertionError: Always.
+        """
         raise AssertionError(msg or template.format(container=container, item=item))
 
     @staticmethod
@@ -35,7 +41,11 @@ class FlextTestsMatchersAssertionsMixin:
         length_spec: int | tuple[int, int],
         msg: str | None,
     ) -> None:
-        """Raise AssertionError if ``payload`` length doesn't match ``length_spec``."""
+        """Raise AssertionError if ``payload`` length doesn't match ``length_spec``.
+
+        Raises:
+            AssertionError: Always.
+        """
         native = FlextTestsPayloadUtilities.to_match_value(payload)
         if isinstance(native, Sized):
             payload_len = len(native)
@@ -53,15 +63,18 @@ class FlextTestsMatchersAssertionsMixin:
                 raise AssertionError(
                     msg
                     or c.Tests.ERR_LEN_EXACT_FAILED.format(
-                        expected=exact_length, actual=actual_len
-                    )
+                        expected=exact_length,
+                        actual=actual_len,
+                    ),
                 )
             case (min_length, max_length):
                 raise AssertionError(
                     msg
                     or c.Tests.ERR_LEN_RANGE_FAILED.format(
-                        min=min_length, max=max_length, actual=actual_len
-                    )
+                        min=min_length,
+                        max=max_length,
+                        actual=actual_len,
+                    ),
                 )
 
 

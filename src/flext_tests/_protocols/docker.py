@@ -1,10 +1,14 @@
-"""Hook contracts of the Docker test lifecycle."""
+"""Hook contracts of the Docker test lifecycle.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from flext_infra import p
+from flext_cli import p
 
 if TYPE_CHECKING:
     from flext_tests import m

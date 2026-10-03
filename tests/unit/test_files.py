@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from ._files_parts import (
+from tests.unit._files_parts import (
     assert_exists,
     batch_create_in,
     compare,

@@ -25,8 +25,7 @@ from types import (
 )
 from typing import TypeAliasType
 
-from flext_infra import u
-
+from flext_core import u
 from flext_tests import m, p, t
 
 
@@ -41,7 +40,15 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def to_payload(value: p.AttributeProbe) -> m.Tests.Payload:
-        """Own supported native values without serializing their model leaves."""
+        """Own supported native values without serializing their model leaves.
+
+        Returns:
+            The resulting ``m.Tests.Payload``.
+
+        Raises:
+            TypeError: If Unsupported native payload leaf.
+            ValueError: If Native payload mapping key collision.
+        """
         to_p = FlextTestsPayloadUtilities.to_payload
         match value:
             case m.Tests.Payload():
@@ -67,7 +74,8 @@ class FlextTestsPayloadUtilities:
             ):
                 return m.Tests.Payload(kind="atom", atom=value)
             case value if hasattr(value, "__metadata__") and hasattr(
-                value, "__origin__"
+                value,
+                "__origin__",
             ):
                 # typing.Annotated[...] constructs are type-level atoms under
                 # the same textual convention as the alias arm below.
@@ -109,8 +117,9 @@ class FlextTestsPayloadUtilities:
                 if isinstance(value, (set, frozenset)):
                     children = tuple(
                         sorted(
-                            children, key=FlextTestsPayloadUtilities._stable_sort_key
-                        )
+                            children,
+                            key=FlextTestsPayloadUtilities._stable_sort_key,
+                        ),
                     )
                 kind: t.Tests.PayloadKind
                 if isinstance(value, list):
@@ -128,7 +137,11 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def to_match_value(value: p.Tests.Payload) -> t.Tests.NativeMatchValue:
-        """Project a native tree into the established list/mapping match semantics."""
+        """Project a native tree into the established list/mapping match semantics.
+
+        Returns:
+            The resulting ``t.Tests.NativeMatchValue``.
+        """
         project = FlextTestsPayloadUtilities.to_match_value
         if value.kind == "atom":
             return value.atom
@@ -141,7 +154,14 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def to_normalized_value(value: p.Tests.Payload) -> t.JsonValue:
-        """Project an owned tree at an explicit textual/metadata boundary."""
+        """Project an owned tree at an explicit textual/metadata boundary.
+
+        Returns:
+            The resulting ``t.JsonValue``.
+
+        Raises:
+            TypeError: If Unsupported textual payload leaf.
+        """
         to_n = FlextTestsPayloadUtilities.to_normalized_value
         if value.kind == "mapping":
             return u.normalize_to_metadata({
@@ -168,7 +188,11 @@ class FlextTestsPayloadUtilities:
             | t.JsonMapping
         ),
     ) -> m.ConfigMap:
-        """Convert a model or payload mapping to the canonical ConfigMap shape."""
+        """Convert a model or payload mapping to the canonical ConfigMap shape.
+
+        Returns:
+            The resulting ``m.ConfigMap``.
+        """
         source = (
             value.model_dump(mode="python") if isinstance(value, m.BaseModel) else value
         )
@@ -186,9 +210,16 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def path_node(
-        subject: p.Tests.Payload, path: str, *, path_sep: str = "."
+        subject: p.Tests.Payload,
+        path: str,
+        *,
+        path_sep: str = ".",
     ) -> p.Tests.Payload | None:
-        """Walk an owned payload by path; ``None`` marks an absent path."""
+        """Walk an owned payload by path; ``None`` marks an absent path.
+
+        Returns:
+            The resulting ``p.Tests.Payload | None``.
+        """
         node = subject
         for segment in path.split(path_sep):
             if node.kind == "mapping":
@@ -203,7 +234,7 @@ class FlextTestsPayloadUtilities:
                 node = node.items[int(segment)]
             elif hasattr(node.atom, segment):
                 node = FlextTestsPayloadUtilities.to_payload(
-                    getattr(node.atom, segment)
+                    getattr(node.atom, segment),
                 )
             else:
                 return None
@@ -211,7 +242,14 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def extract_path_value(subject: p.Tests.Payload, path: str) -> p.Tests.Payload:
-        """Read nested payload nodes without serializing model leaves."""
+        """Read nested payload nodes without serializing model leaves.
+
+        Returns:
+            The resulting ``p.Tests.Payload``.
+
+        Raises:
+            AssertionError: If Path not found.
+        """
         node = FlextTestsPayloadUtilities.path_node(subject, path)
         if node is None:
             msg = f"Path not found: {path}"
@@ -220,17 +258,25 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def deep_match(
-        subject: p.Tests.Payload, spec: t.Tests.DeepSpec, *, path_sep: str = "."
+        subject: p.Tests.Payload,
+        spec: t.Tests.DeepSpec,
+        *,
+        path_sep: str = ".",
     ) -> m.Tests.DeepMatchResult:
         """Match an owned payload tree against a path -> expectation spec.
 
         Literal expectations compare native projections; predicates receive the
         native value found at the path.
+
+        Returns:
+            The resulting ``m.Tests.DeepMatchResult``.
         """
         project = FlextTestsPayloadUtilities.to_match_value
         for path, expected in spec.items():
             node = FlextTestsPayloadUtilities.path_node(
-                subject, path, path_sep=path_sep
+                subject,
+                path,
+                path_sep=path_sep,
             )
             if node is None:
                 return m.Tests.DeepMatchResult(
@@ -258,5 +304,9 @@ class FlextTestsPayloadUtilities:
                     reason="Predicate failed",
                 )
         return m.Tests.DeepMatchResult(
-            path="", expected=subject, actual=subject, matched=True, reason=""
+            path="",
+            expected=subject,
+            actual=subject,
+            matched=True,
+            reason="",
         )

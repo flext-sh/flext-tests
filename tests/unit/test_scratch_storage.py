@@ -1,4 +1,8 @@
-"""Scratch-storage relocation tests (T6, bead flext-ht1t9.8)."""
+"""Scratch-storage relocation tests (T6, bead flext-ht1t9.8).
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -12,8 +16,10 @@ from flext_tests import c
 class TestsFlextTestsScratchStorage:
     """Public contract of the scratch-storage relocation plugin."""
 
+    @staticmethod
+    @pytest.mark.slow
     def test_no_hypothesis_directory_inside_the_checkout(
-        self, pytester: pytest.Pytester
+        pytester: pytest.Pytester,
     ) -> None:
         """A hypothesis test leaves .hypothesis/ out of the checkout."""
         pytester.makepyfile(
@@ -24,23 +30,28 @@ class TestsFlextTestsScratchStorage:
             @given(strategies.integers())
             def test_ok(value):
                 assert isinstance(value, int)
-            """
+            """,
         )
         result = pytester.runpytest_subprocess(
-            "-p", "no:cacheprovider", "-p", "no:flext_tests_enforcement"
+            "-p",
+            "no:cacheprovider",
+            "-p",
+            "no:flext_tests_enforcement",
         )
         result.assert_outcomes(passed=1)
         assert not (pytester.path / ".hypothesis").exists()
 
+    @staticmethod
+    @pytest.mark.slow
     def test_benchmark_storage_outside_the_checkout(
-        self, pytester: pytest.Pytester
+        pytester: pytest.Pytester,
     ) -> None:
         """A benchmark run stores under the scratch root, not the checkout."""
         pytester.makepyfile(
             test_bench="""
             def test_perf(benchmark):
                 benchmark(lambda: sum(range(100)))
-            """
+            """,
         )
         result = pytester.runpytest_subprocess(
             "--benchmark-only",
@@ -55,8 +66,11 @@ class TestsFlextTestsScratchStorage:
         benchmarks = list(pytester.path.rglob(".benchmarks"))
         assert benchmarks == []
 
+    @staticmethod
+    @pytest.mark.slow
     def test_scratch_root_ini_override(
-        self, pytester: pytest.Pytester, tmp_path: Path
+        pytester: pytest.Pytester,
+        tmp_path: Path,
     ) -> None:
         """The flext_scratch_root ini redirects the storage base."""
         override = tmp_path / "custom-scratch"
@@ -72,8 +86,10 @@ class TestsFlextTestsScratchStorage:
         result.assert_outcomes(passed=1)
         assert override.exists()
 
+    @staticmethod
     def test_scratch_root_utility_keys_by_checkout(
-        self, tmp_path: Path, tmp_path_factory: pytest.TempPathFactory
+        tmp_path: Path,
+        tmp_path_factory: pytest.TempPathFactory,
     ) -> None:
         """u.Tests.scratch_root keys per checkout and honors the override."""
         from flext_tests import u
@@ -84,7 +100,8 @@ class TestsFlextTestsScratchStorage:
         root_a = u.Tests.scratch_root(checkout_root=checkout_a)
         root_b = u.Tests.scratch_root(checkout_root=checkout_b)
         root_override = u.Tests.scratch_root(
-            checkout_root=checkout_a, override=str(override)
+            checkout_root=checkout_a,
+            override=str(override),
         )
         assert root_a != root_b
         assert root_override == override / root_a.name

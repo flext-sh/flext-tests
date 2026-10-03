@@ -1,4 +1,8 @@
-"""Private docker builder test mixins."""
+"""Private docker builder test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -13,9 +17,11 @@ from tests import c
 class TestsFlextTestsDockerBuildersMixin:
     """Docker builder tests."""
 
+    @staticmethod
     @pytest.mark.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))
     def test_shared_builder_resolves_every_declared_container(
-        self, container_name: str, tmp_path: Path
+        container_name: str,
+        tmp_path: Path,
     ) -> None:
         """shared() resolves each declared container from the constants SSOT."""
         declared = c.Tests.SHARED_CONTAINERS[container_name]
@@ -26,12 +32,15 @@ class TestsFlextTestsDockerBuildersMixin:
         tm.that(target.service, eq=declared["service"])
         tm.that(target.port, eq=declared["port"])
 
-    def test_compose_builder_resolves_target_config(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_compose_builder_resolves_target_config(tmp_path: Path) -> None:
         """Test compose() builds a resolved explicit container target."""
         manager = FlextTestsDocker.compose(
             "docker-compose.yml",
             target=m.Tests.ContainerConfig(
-                container_name="service-test", service="service-test", port=5432
+                container_name="service-test",
+                service="service-test",
+                port=5432,
             ),
             repository_root=tmp_path,
         )
@@ -40,12 +49,15 @@ class TestsFlextTestsDockerBuildersMixin:
         tm.that(target.compose_file, eq=tmp_path / "docker-compose.yml")
         tm.that(target.port, eq=5432)
 
-    def test_stack_builder_resolves_target_config(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_stack_builder_resolves_target_config(tmp_path: Path) -> None:
         """Test stack() builds a resolved explicit compose-stack target."""
         manager = FlextTestsDocker.stack(
             "docker-compose.stack.yml",
             target=m.Tests.ContainerConfig(
-                container_name="stack-main", service="stack-main", port=3389
+                container_name="stack-main",
+                service="stack-main",
+                port=3389,
             ),
             repository_root=tmp_path,
         )
@@ -55,7 +67,8 @@ class TestsFlextTestsDockerBuildersMixin:
         tm.that(target.service, eq="stack-main")
         tm.that(target.port, eq=3389)
 
-    def test_stack_builder_allows_stack_only_target(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_stack_builder_allows_stack_only_target(tmp_path: Path) -> None:
         """Test stack() supports lifecycle-only stacks without inspection target."""
         manager = FlextTestsDocker.stack(
             "docker-compose.stack.yml",
@@ -66,11 +79,13 @@ class TestsFlextTestsDockerBuildersMixin:
         tm.that(target.container_name, eq=None)
         tm.that(target.port, eq=25432)
 
+    @staticmethod
     def test_resolve_shared_target_raises_on_unknown_container(
-        self, tmp_path: Path
+        tmp_path: Path,
     ) -> None:
         """Unknown shared containers fail loud against the real constants SSOT."""
         with pytest.raises(ValueError, match="Unknown shared container"):
             FlextTestsDocker.shared(
-                "no-such-shared-container", repository_root=tmp_path
+                "no-such-shared-container",
+                repository_root=tmp_path,
             )
