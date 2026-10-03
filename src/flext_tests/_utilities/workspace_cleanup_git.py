@@ -1,4 +1,8 @@
-"""Git process boundary for workspace cleanup utilities."""
+"""Git process boundary for workspace cleanup utilities.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -24,19 +28,29 @@ class FlextTestsWorkspaceCleanupGitUtilitiesMixin:
         *,
         input_data: bytes | None = None,
     ) -> p.Result[p.Cli.CommandOutput]:
-        """Execute Git through ``u.Cli.run_raw`` (cwd-bound raw owner)."""
+        """Execute Git through ``u.Cli.run_raw`` (cwd-bound raw owner).
+
+        Returns:
+            The resulting ``p.Result[p.Cli.CommandOutput]``.
+        """
         result = u.Cli.run_raw(
-            [c.Infra.GIT, *arguments], cwd=repository_root, input_data=input_data
+            [c.Infra.GIT, *arguments],
+            cwd=repository_root,
+            input_data=input_data,
         )
         if result.failure and result.error is None:
             return r[p.Cli.CommandOutput].fail(
-                "git execution failed without an error message"
+                "git execution failed without an error message",
             )
         return result
 
     @staticmethod
     def _command_error(operation: str, output: p.Cli.CommandOutput) -> str:
-        """Describe one non-zero Git command without hiding its real output."""
+        """Describe one non-zero Git command without hiding its real output.
+
+        Returns:
+            The resulting ``str``.
+        """
         detail = output.stderr.strip()
         if not detail:
             detail = output.stdout.strip()

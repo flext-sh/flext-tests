@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, ClassVar
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
-    from flext_infra import t
+    from flext_cli import t
 
 
 class FlextTestsConstantsDocker:

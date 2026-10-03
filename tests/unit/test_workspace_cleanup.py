@@ -1,4 +1,8 @@
-"""Real Git/filesystem behavior tests for public workspace cleanup utilities."""
+"""Real Git/filesystem behavior tests for public workspace cleanup utilities.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -22,7 +26,7 @@ class TestsFlextTestsWorkspaceCleanup:
     def _repository(cls, root: Path, gitignore: str) -> Path:
         cls._git(root, "init", "--quiet")
         _ = u.Tests.assert_success(
-            u.Cli.files_write_text(root / ".gitignore", gitignore)
+            u.Cli.files_write_text(root / ".gitignore", gitignore),
         )
         return root
 
@@ -35,12 +39,13 @@ class TestsFlextTestsWorkspaceCleanup:
     @staticmethod
     def _request(root: Path, *residues: str) -> m.Tests.WorkspaceCleanupRequest:
         policy = m.Tests.WorkspaceCleanupPolicy(
-            residues=tuple(Path(residue) for residue in residues)
+            residues=tuple(Path(residue) for residue in residues),
         )
         return m.Tests.WorkspaceCleanupRequest(repository_root=root, policy=policy)
 
     def test_plan_is_deterministic_and_retains_source_request(
-        self, tmp_path: Path
+        self,
+        tmp_path: Path,
     ) -> None:
         """Return sorted declared residues while preserving request identity."""
         root = self._repository(tmp_path, ".cache/\n*.tmp\n")
@@ -66,8 +71,8 @@ class TestsFlextTestsWorkspaceCleanup:
         _ = self._write(root / "unlisted.tmp")
         plan = u.Tests.assert_success(
             u.Tests.workspace_cleanup_plan(
-                self._request(root, "artifact.tmp", ".cache")
-            )
+                self._request(root, "artifact.tmp", ".cache"),
+            ),
         )
 
         report = u.Tests.assert_success(u.Tests.workspace_cleanup_apply(plan))
@@ -82,7 +87,7 @@ class TestsFlextTestsWorkspaceCleanup:
         root = self._repository(tmp_path, "*.tmp\n")
         target = self._write(root / "artifact.tmp", "before")
         plan = u.Tests.assert_success(
-            u.Tests.workspace_cleanup_plan(self._request(root, "artifact.tmp"))
+            u.Tests.workspace_cleanup_plan(self._request(root, "artifact.tmp")),
         )
         # NOTE (multi-agent): prove the dry-run captured real filesystem state.
         tm.that(bool(plan.candidates[0].fingerprint), eq=True)
@@ -174,7 +179,7 @@ class TestsFlextTestsWorkspaceCleanup:
         root = self._repository(tmp_path, ".cache/\n")
         _ = self._write(root / ".cache" / "artifact.bin")
         plan = u.Tests.assert_success(
-            u.Tests.workspace_cleanup_plan(self._request(root, ".cache"))
+            u.Tests.workspace_cleanup_plan(self._request(root, ".cache")),
         )
         self._git(root, "add", "-f", "--", ".cache/artifact.bin")
 
@@ -189,13 +194,14 @@ class TestsFlextTestsWorkspaceCleanup:
         _ = self._write(root / ".cache" / "nested" / "artifact.bin")
 
         result = u.Tests.workspace_cleanup_plan(
-            self._request(root, ".cache", ".cache/nested")
+            self._request(root, ".cache", ".cache/nested"),
         )
 
         _ = u.Tests.assert_failure(result, "cleanup residues overlap")
 
     def test_apply_propagates_real_filesystem_deletion_failure(
-        self, tmp_path: Path
+        self,
+        tmp_path: Path,
     ) -> None:
         """Return the real deletion failure without swallowing it."""
         root = self._repository(tmp_path, "blocked/\n")
@@ -204,7 +210,7 @@ class TestsFlextTestsWorkspaceCleanup:
         blocked.chmod(0o500)
         try:
             plan = u.Tests.assert_success(
-                u.Tests.workspace_cleanup_plan(self._request(root, "blocked"))
+                u.Tests.workspace_cleanup_plan(self._request(root, "blocked")),
             )
             result = u.Tests.workspace_cleanup_apply(plan)
         finally:
@@ -251,7 +257,7 @@ class TestsFlextTestsWorkspaceCleanup:
         (root / "linkdir").symlink_to(root / "realdir", target_is_directory=True)
 
         result = u.Tests.workspace_cleanup_plan(
-            self._request(root, "linkdir/artifact.bin")
+            self._request(root, "linkdir/artifact.bin"),
         )
 
         _ = u.Tests.assert_failure(result, "symlink")
@@ -283,7 +289,7 @@ class TestsFlextTestsWorkspaceCleanup:
         root = self._repository(tmp_path, "*.tmp\n")
         target = self._write(root / "artifact.tmp")
         plan = u.Tests.assert_success(
-            u.Tests.workspace_cleanup_plan(self._request(root, "artifact.tmp"))
+            u.Tests.workspace_cleanup_plan(self._request(root, "artifact.tmp")),
         )
         os.link(target, root / "artifact.hardlink")
 

@@ -1,4 +1,8 @@
-"""Batch file-operation helper for FlextTestsFiles."""
+"""Batch file-operation helper for FlextTestsFiles.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -7,9 +11,8 @@ from pathlib import Path
 
 from flext_core import r
 from flext_tests import c, m, p, t
-
-from ..payload import FlextTestsPayloadUtilities
-from ._contexts import FlextTestsFilesContextsMixin
+from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
@@ -51,10 +54,11 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
             })
         except c.EXC_BASIC_TYPE as exc:
             return r[m.Tests.BatchResult].fail(
-                f"Invalid parameters for batch operation: {exc}", exception=exc
+                f"Invalid parameters for batch operation: {exc}",
+                exception=exc,
             )
         files_dict: MutableMapping[str, t.Tests.TestobjectSerializable] = dict(
-            params.files
+            params.files,
         )
         error_mode_str = (
             "collect" if params.on_error is c.Tests.ErrorMode.COLLECT else "fail"
@@ -63,7 +67,11 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
         def process_one(
             name_and_content: tuple[str, t.Tests.TestobjectSerializable],
         ) -> p.Result[Path]:
-            """Process single file operation."""
+            """Process single file operation.
+
+            Returns:
+                The resulting ``p.Result[Path]``.
+            """
             name, content = name_and_content
             path = Path(content) if isinstance(content, (Path, str)) else Path(name)
             result: p.Result[Path]
@@ -83,7 +91,7 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
                                 self._coerce_file_content(payload),
                                 name,
                                 params.directory,
-                            )
+                            ),
                         )
                     except (OSError, TypeError, ValueError, AttributeError) as e:
                         result = r[Path].fail(f"Failed to create {name}: {e}")

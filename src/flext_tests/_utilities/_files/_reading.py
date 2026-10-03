@@ -1,6 +1,9 @@
 """File-reading helpers for FlextTestsFiles.
 
 Read content by format and optional Pydantic model validation.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
 """
 
 from __future__ import annotations
@@ -12,9 +15,8 @@ from flext_cli import u
 
 from flext_core import r
 from flext_tests import c, m, p, t
-
-from ..payload import FlextTestsPayloadUtilities
-from ._creation import FlextTestsFilesCreationMixin
+from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
@@ -22,7 +24,8 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
 
     @staticmethod
     def _validate_model_content[TModelRead: m.BaseModel](
-        model_cls: type[TModelRead], content: t.Tests.FileContentPlain
+        model_cls: type[TModelRead],
+        content: t.Tests.FileContentPlain,
     ) -> p.Result[TModelRead]:
         try:
             model_instance: TModelRead = model_cls.model_validate(content)
@@ -32,9 +35,14 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
 
     @staticmethod
     def _read_fail[TModelRead: m.BaseModel](
-        error: str, model_cls: type[TModelRead] | None
+        error: str,
+        model_cls: type[TModelRead] | None,
     ) -> p.Result[t.Tests.ReadContent] | p.Result[TModelRead]:
-        """Dispatch a single read-failure message to the correct result type."""
+        """Dispatch a single read-failure message to the correct result type.
+
+        Returns:
+            The resulting ``p.Result[t.Tests.ReadContent] | p.Result[TModelRead]``.
+        """
         if model_cls is not None:
             return r[TModelRead].fail(error)
         return r[t.Tests.ReadContent].fail(error)
@@ -101,36 +109,42 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
             })
         except c.EXC_BASIC_TYPE as exc:
             result = self._read_fail(
-                f"Invalid parameters for file read: {exc}", model_cls
+                f"Invalid parameters for file read: {exc}",
+                model_cls,
             )
         else:
             if not params.path.exists():
                 result = self._read_fail(
-                    c.Tests.ERROR_FILE_NOT_FOUND.format(path=params.path), model_cls
+                    c.Tests.ERROR_FILE_NOT_FOUND.format(path=params.path),
+                    model_cls,
                 )
             else:
                 actual_fmt = u.Cli.files_detect_format_from_path(
-                    params.path, params.fmt
+                    params.path,
+                    params.fmt,
                 )
                 try:
                     content = self._read_content_by_format(
-                        params.path, actual_fmt, params
+                        params.path,
+                        actual_fmt,
+                        params,
                     )
                 except UnicodeDecodeError as e:
                     result = self._read_fail(
-                        c.Tests.ERROR_ENCODING.format(error=e), model_cls
+                        c.Tests.ERROR_ENCODING.format(error=e),
+                        model_cls,
                     )
                 except ValueError as e:
-                    result = self._read_fail(
-                        c.Tests.ERROR_INVALID_JSON.format(error=e), model_cls
+                    template = (
+                        c.Tests.ERROR_INVALID_YAML
+                        if actual_fmt == c.Tests.FILE_FORMAT_YAML
+                        else c.Tests.ERROR_INVALID_JSON
                     )
-                except c.Cli.YamlParseError as e:
-                    result = self._read_fail(
-                        c.Tests.ERROR_INVALID_YAML.format(error=e), model_cls
-                    )
+                    result = self._read_fail(template.format(error=e), model_cls)
                 except OSError as e:
                     result = self._read_fail(
-                        c.Tests.ERROR_READ.format(error=e), model_cls
+                        c.Tests.ERROR_READ.format(error=e),
+                        model_cls,
                     )
                 else:
                     if model_cls is not None:
@@ -139,38 +153,47 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                         result = r[t.Tests.ReadContent].ok(content)
         return result
 
+    @staticmethod
     def _read_content_by_format(
-        self, path: Path, actual_fmt: str, params: m.Tests.ReadParams
+        path: Path,
+        actual_fmt: str,
+        params: m.Tests.ReadParams,
     ) -> t.Tests.ReadContent:
-        """Read file content using format-specific parsing."""
+        """Read file content using format-specific parsing.
+
+        Returns:
+            The resulting ``t.Tests.ReadContent``.
+
+        Raises:
+            OSError: If ``csv_result.failure``.
+            ValueError: If ``parsed_yaml.failure``.
+        """
         content: t.Tests.ReadContent
         match actual_fmt:
             case _ if actual_fmt == c.Tests.FILE_FORMAT_BIN:
                 content = path.read_bytes()
             case _ if actual_fmt == c.Tests.FILE_FORMAT_JSON:
                 text = path.read_text(encoding=params.enc)
-                parsed_json = t.Tests.TESTOBJECT_MAPPING_ADAPTER.validate_json(
-                    text.encode()
-                )
+                parsed_json = u.type_adapter(
+                    t.MappingKV[str, t.Tests.TestobjectSerializable],
+                    config=m.ConfigDict(arbitrary_types_allowed=True),
+                ).validate_json(text.encode())
                 content = (
                     FlextTestsPayloadUtilities.to_config_map(parsed_json)
-                    if FlextTestsFilesCreationMixin.is_mapping(parsed_json)
+                    if FlextTestsFilesCreationMixin.matches_native_mapping(parsed_json)
                     else text
                 )
             case _ if actual_fmt == c.Tests.FILE_FORMAT_YAML:
                 text = path.read_text(encoding=params.enc)
-                parsed_yaml_result = u.Cli.yaml_parse(text)
-                parsed_yaml = (
-                    parsed_yaml_result.value if parsed_yaml_result.success else None
-                )
-                content = (
-                    FlextTestsPayloadUtilities.to_config_map(parsed_yaml)
-                    if isinstance(parsed_yaml, dict)
-                    else text
-                )
+                parsed_yaml = u.Cli.yaml_parse(text)
+                if parsed_yaml.failure:
+                    raise ValueError(parsed_yaml.error)
+                content = FlextTestsPayloadUtilities.to_config_map(parsed_yaml.value)
             case _ if actual_fmt == c.Tests.FILE_FORMAT_CSV:
                 csv_result = u.Cli.files_read_csv_with_headers(path)
-                csv_rows_m = csv_result.value if csv_result.success else ()
+                if csv_result.failure:
+                    raise OSError(csv_result.error)
+                csv_rows_m = csv_result.value
                 if csv_rows_m:
                     keys = list(csv_rows_m[0].keys())
                     data_rows = [[row.get(k, "") for k in keys] for row in csv_rows_m]

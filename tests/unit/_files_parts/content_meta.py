@@ -1,4 +1,8 @@
-"""Private file content metadata test mixins."""
+"""Private file content metadata test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -11,11 +15,13 @@ from tests import m, u
 class TestsFlextTestsFilesContentMetaMixin:
     """File content metadata tests."""
 
-    def test_info_parse_content_json_dict(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_info_parse_content_json_dict(tmp_path: Path) -> None:
         """Test info() with parse_content=True for JSON dict."""
         manager = tf(base_dir=tmp_path)
         path = manager.create(
-            m.ConfigMap(root={"key1": "value1", "key2": "value2"}), "settings.json"
+            m.ConfigMap(root={"key1": "value1", "key2": "value2"}),
+            "settings.json",
         )
         result = manager.info(path, parse_content=True)
         _ = u.Tests.assert_success(result)
@@ -24,7 +30,8 @@ class TestsFlextTestsFilesContentMetaMixin:
         tm.that(content_meta.key_count, eq=2)
         tm.that(content_meta.item_count, none=True)
 
-    def test_info_parse_content_json_list(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_info_parse_content_json_list(tmp_path: Path) -> None:
         """Test info() with parse_content=True for JSON list."""
         manager = tf(base_dir=tmp_path)
         content = u.Cli.json_dumps([1, 2, 3, 4, 5]).unwrap()
@@ -37,11 +44,13 @@ class TestsFlextTestsFilesContentMetaMixin:
         tm.that(content_meta.key_count, none=True)
         tm.that(content_meta.item_count, eq=5)
 
-    def test_info_parse_content_yaml_dict(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_info_parse_content_yaml_dict(tmp_path: Path) -> None:
         """Test info() with parse_content=True for YAML dict."""
         manager = tf(base_dir=tmp_path)
         path = manager.create(
-            m.ConfigMap(root={"a": 1, "b": 2, "c": 3}), "settings.yaml"
+            m.ConfigMap(root={"a": 1, "b": 2, "c": 3}),
+            "settings.yaml",
         )
         result = manager.info(path, parse_content=True)
         _ = u.Tests.assert_success(result)
@@ -49,7 +58,8 @@ class TestsFlextTestsFilesContentMetaMixin:
         content_meta = tm.not_none(info.content_meta)
         tm.that(content_meta.key_count, eq=3)
 
-    def test_info_parse_content_csv(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_info_parse_content_csv(tmp_path: Path) -> None:
         """Test info() with parse_content=True for CSV."""
         manager = tf(base_dir=tmp_path)
         csv_content = "name,age,city\nAlice,30,NYC\nBob,25,LA\n"
@@ -62,7 +72,8 @@ class TestsFlextTestsFilesContentMetaMixin:
         tm.that(content_meta.row_count, eq=3)
         tm.that(content_meta.column_count, eq=3)
 
-    def test_info_validate_model_success(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_info_validate_model_success(tmp_path: Path) -> None:
         """Test info() with validate_model for valid model."""
 
         class SimpleModel(m.BaseModel):
@@ -71,7 +82,8 @@ class TestsFlextTestsFilesContentMetaMixin:
 
         manager = tf(base_dir=tmp_path)
         path = manager.create(
-            m.ConfigMap(root={"name": "Alice", "age": 30}), "user.json"
+            m.ConfigMap(root={"name": "Alice", "age": 30}),
+            "user.json",
         )
         result = manager.info(path, validate_model=SimpleModel)
         _ = u.Tests.assert_success(result)
@@ -80,7 +92,8 @@ class TestsFlextTestsFilesContentMetaMixin:
         tm.that(content_meta.model_valid is True, eq=True)
         tm.that(content_meta.model_name, eq="SimpleModel")
 
-    def test_info_validate_model_failure(self, tmp_path: Path) -> None:
+    @staticmethod
+    def test_info_validate_model_failure(tmp_path: Path) -> None:
         """Test info() with validate_model for invalid model."""
 
         class StrictModel(m.BaseModel):
@@ -88,7 +101,8 @@ class TestsFlextTestsFilesContentMetaMixin:
 
         manager = tf(base_dir=tmp_path)
         path = manager.create(
-            m.ConfigMap(root={"other_field": "value"}), "invalid.json"
+            m.ConfigMap(root={"other_field": "value"}),
+            "invalid.json",
         )
         result = manager.info(path, validate_model=StrictModel)
         _ = u.Tests.assert_success(result)

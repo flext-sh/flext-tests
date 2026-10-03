@@ -1,4 +1,8 @@
-"""Host file lock shared by every test process of one machine."""
+"""Host file lock shared by every test process of one machine.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -83,7 +87,11 @@ class FlextTestsTestContextUtilitiesMixin:
             return fcntl.LOCK_SH if self.shared else fcntl.LOCK_EX
 
         def _acquire_before_deadline(self, descriptor: int) -> None:
-            """Poll a non-blocking attempt until granted or the deadline passes."""
+            """Poll a non-blocking attempt until granted or the deadline passes.
+
+            Raises:
+                TimeoutError: If ``time.monotonic() >= deadline``.
+            """
             timeout = self.timeout_seconds or 0.0
             deadline = time.monotonic() + timeout
             while True:
@@ -92,7 +100,9 @@ class FlextTestsTestContextUtilitiesMixin:
                 except BlockingIOError:
                     if time.monotonic() >= deadline:
                         msg = c.Tests.ERR_FILE_LOCK_TIMEOUT.format(
-                            mode=self.mode, path=self.lock_file, timeout=timeout
+                            mode=self.mode,
+                            path=self.lock_file,
+                            timeout=timeout,
                         )
                         raise TimeoutError(msg) from None
                     time.sleep(c.Tests.FILE_LOCK_POLL_SECONDS)

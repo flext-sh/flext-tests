@@ -1,4 +1,8 @@
-"""Extracted mixin for flext_tests."""
+"""Extracted mixin for flext_tests.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -13,9 +17,18 @@ class FlextTestsResultUtilitiesMixin:
 
     @staticmethod
     def assert_failure[TResult](
-        result: p.ResultView[TResult], expected_error: str | None = None
+        result: p.ResultView[TResult],
+        expected_error: str | None = None,
     ) -> str:
-        """Assert result is failure and return error message."""
+        """Assert result is failure and return error message.
+
+        Returns:
+            The resulting ``str``.
+
+        Raises:
+            AssertionError: If Expected failure but got success; or if Expected error
+                but got None; or if Expected error containing.
+        """
         if result.success:
             msg = f"Expected failure but got success: {result.value}"
             raise AssertionError(msg)
@@ -35,11 +48,18 @@ class FlextTestsResultUtilitiesMixin:
         *,
         expected_value: TResult | EllipsisType = ...,
     ) -> TResult:
-        """Assert result is success, optionally validate the value, and return it."""
+        """Assert result is success, optionally validate the value, and return it.
+
+        Returns:
+            The resulting ``TResult``.
+
+        Raises:
+            AssertionError: If ``not result.success``; or if Expected success value.
+        """
         # mro-p68a.17.3.2.1.7: observation stays covariant across result payloads.
         if not result.success:
             raise AssertionError(
-                error_msg or c.Tests.ERR_OK_FAILED.format(error=result.error)
+                error_msg or c.Tests.ERR_OK_FAILED.format(error=result.error),
             )
         value: TResult = result.value
         if expected_value is not ... and value != expected_value:

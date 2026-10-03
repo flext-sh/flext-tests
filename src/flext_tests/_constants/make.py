@@ -10,7 +10,7 @@ from types import MappingProxyType
 from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
-    from flext_infra import t
+    from flext_cli import t
 
 
 class FlextTestsConstantsMake:
@@ -40,7 +40,7 @@ class FlextTestsConstantsMake:
         "maintenance",
     })
     MAKE_MUTATION_REQUIRED_PARAMS: ClassVar[frozenset[str]] = frozenset({
-        MAKE_APPLY_PARAM
+        MAKE_APPLY_PARAM,
     })
     MAKE_TRUE_VALUES: ClassVar[frozenset[str]] = frozenset({"1", "Y", "YES", "TRUE"})
     MAKE_SAFE_PROBE_VALUES: ClassVar[t.MappingKV[str, str]] = MappingProxyType({
