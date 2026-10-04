@@ -31,6 +31,11 @@ class FlextTestsDockerStateUtilitiesMixin:
         return Path.home().joinpath(*c.Tests.DOCKER_STATE_DIR_PARTS)
 
     @staticmethod
+    def docker_shared_assets_dir() -> Path:
+        """Return the packaged root the shared-container compose files resolve from."""
+        return Path(__file__).resolve().parents[1] / c.Tests.DOCKER_SHARED_ASSETS_DIR
+
+    @staticmethod
     def docker_state_file(state_dir: Path, container_name: str) -> Path:
         """Return the JSON record of one container."""
         return state_dir / f"{container_name}{c.Tests.DOCKER_STATE_FILE_SUFFIX}"

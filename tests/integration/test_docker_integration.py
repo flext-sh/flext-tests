@@ -55,21 +55,40 @@ class TestsFlextTestsDockerIntegration:
 
     @staticmethod
     @pytest.mark.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))
-    def test_shared_resolves_compose_file_against_repository_root(
+    def test_shared_resolves_compose_file_from_packaged_assets(
         container_name: str,
         tmp_path: Path,
     ) -> None:
-        """Relative catalog compose files resolve to an absolute workspace path."""
+        """Catalog compose files resolve from the packaged assets, not the checkout."""
         settings = c.Tests.SHARED_CONTAINERS[container_name]
-        root = tmp_path / "flext-docker-contract"
+        workspace = tmp_path / "workspace"
+        standalone = tmp_path / "standalone"
 
-        target = tm.not_none(
-            FlextTestsDocker.shared(container_name, repository_root=root).target_config,
-        )
-        compose_file = tm.not_none(target.compose_file)
+        resolved = [
+            tm.not_none(
+                tm.not_none(
+                    FlextTestsDocker.shared(
+                        container_name,
+                        repository_root=root,
+                    ).target_config,
+                ).compose_file,
+            )
+            for root in (workspace, standalone)
+        ]
 
-        tm.that(compose_file.is_absolute(), eq=True)
-        tm.that(compose_file, eq=root / str(settings["compose_file"]))
+        expected = u.Tests.docker_shared_assets_dir() / str(settings["compose_file"])
+        tm.that(expected.is_absolute(), eq=True)
+        tm.that(resolved, eq=[expected, expected])
+
+    @staticmethod
+    @pytest.mark.parametrize("marker", ["ldap", "oracle"])
+    def test_shared_service_compose_file_ships_with_flext_tests(marker: str) -> None:
+        """The LDAP and Oracle shared services resolve to a shipped compose file."""
+        container_name = c.Tests.CONNECTIVITY_MARKER_CONTAINERS[marker]
+
+        target = tm.not_none(FlextTestsDocker.shared(container_name).target_config)
+
+        tm.that(tm.not_none(target.compose_file).is_file(), eq=True)
 
     @staticmethod
     def test_shared_rejects_unknown_container_with_value_error(

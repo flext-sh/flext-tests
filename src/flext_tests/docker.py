@@ -99,9 +99,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
     @staticmethod
     def _resolve_shared_target_config(
         container_name: str,
-        repository_root: Path,
     ) -> m.Tests.ContainerConfig:
         """Resolve one shared-container entry into the canonical target config.
+
+        Its compose file resolves from the packaged shared assets, never from
+        the caller's checkout.
 
         Returns:
             The resulting ``m.Tests.ContainerConfig``.
@@ -121,9 +123,7 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             **settings,
             "compose_file": Path(str(compose_file_raw)),
         })
-        compose_path = Path(str(compose_file_raw))
-        if not compose_path.is_absolute():
-            compose_path = repository_root / compose_path
+        compose_path = u.Tests.docker_shared_assets_dir() / str(compose_file_raw)
         return target.model_copy(
             update={"container_name": container_name, "compose_file": compose_path},
         )
@@ -557,14 +557,10 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         Returns:
             The resulting ``Self``.
         """
-        resolved_root = repository_root or Path.cwd()
         return cls(
-            repository_root=resolved_root,
+            repository_root=repository_root or Path.cwd(),
             state_dir=state_dir or u.Tests.docker_state_dir(),
-            target_config=cls._resolve_shared_target_config(
-                container_name,
-                resolved_root,
-            ),
+            target_config=cls._resolve_shared_target_config(container_name),
         )
 
     @classmethod
