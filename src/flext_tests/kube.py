@@ -18,7 +18,7 @@ class FlextTestsKube(FlextTestsDocker):
     """Manage a kind Kubernetes cluster for FLEXT tests via docker compose.
 
     Specializes :class:`FlextTestsDocker` for the ``flext-kind-test`` shared
-    container entry: brings the consumer-owned
+    container entry: brings its shared-asset
     ``docker/docker-compose.kubernetes.yml`` stack up, waits for the
     apiserver port, and asserts node readiness through ``kubectl``.
     """

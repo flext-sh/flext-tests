@@ -145,8 +145,13 @@ class FlextTestsConstantsDocker:
     )
     CONNECTIVITY_PROBE_TIMEOUT_SECONDS: ClassVar[float] = 1.5
 
-    # ``port`` is the container port a service listens on; the host port it is
-    # published on is read from the running container (u.Tests.resolve_host_port).
+    # Shared-container compose files ship inside the flext_tests package under
+    # this directory, so workspace and standalone checkouts resolve the same file.
+    DOCKER_SHARED_ASSETS_DIR: ClassVar[str] = "assets"
+
+    # ``compose_file`` is relative to DOCKER_SHARED_ASSETS_DIR. ``port`` is the
+    # container port a service listens on; the host port it is published on is
+    # read from the running container (u.Tests.resolve_host_port).
     SHARED_CONTAINERS: ClassVar[Mapping[str, t.HeaderMapping]] = MappingProxyType({
         "flext-openldap-test": MappingProxyType({
             "compose_file": "docker/docker-compose.openldap.yml",

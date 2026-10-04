@@ -11,7 +11,7 @@ from pathlib import Path
 import pytest
 
 from flext_tests import FlextTestsDocker, m, tm
-from tests import c
+from tests import c, u
 
 
 class TestsFlextTestsDockerBuildersMixin:
@@ -28,7 +28,10 @@ class TestsFlextTestsDockerBuildersMixin:
         manager = FlextTestsDocker.shared(container_name, repository_root=tmp_path)
         target = tm.not_none(manager.target_config)
         tm.that(target.container_name, eq=container_name)
-        tm.that(target.compose_file, eq=tmp_path / str(declared["compose_file"]))
+        tm.that(
+            target.compose_file,
+            eq=u.Tests.docker_shared_assets_dir() / str(declared["compose_file"]),
+        )
         tm.that(target.service, eq=declared["service"])
         tm.that(target.port, eq=declared["port"])
 
