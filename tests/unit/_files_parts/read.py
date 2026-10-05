@@ -85,7 +85,9 @@ class TestsFlextTestsFilesReadMixin:
         manager = tf(base_dir=tmp_path)
         content = [["header1", "header2"], ["1", "2"], ["3", "4"]]
         path = manager.create(
-            content, "data.csv", options=tf.CreateOptions(headers=None)
+            content,
+            "data.csv",
+            options=tf.CreateOptions(headers=None),
         )
         result = manager.read(path)
         _ = u.Tests.assert_success(result)
