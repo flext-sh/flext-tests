@@ -18,8 +18,8 @@ import pytest
 from flext_tests import FlextTestsDomains, t, tm
 
 
-class TestsFlextTestsDomains:
-    """Public-contract tests for the ``FlextTestsDomains`` test-domain facade."""
+class FlextTestsDomainsFixtureParts:
+    """Fixture and fixture-discovery contracts of ``FlextTestsDomains``."""
 
     # --- fixtures ---------------------------------------------------------
 
@@ -50,68 +50,6 @@ class TestsFlextTestsDomains:
                 encoding="utf-8",
             )
         return tmp_path
-
-    # --- case-table data helpers -----------------------------------------
-
-    @staticmethod
-    def test_valid_email_cases_pairs_input_with_expected_validity() -> None:
-        """Each email case is a ``(value, is_valid)`` pair with stable verdicts."""
-        cases = dict(FlextTestsDomains.valid_email_cases())
-
-        tm.that(cases["test@example.com"], eq=True)
-        tm.that(cases["user.name@domain.co.uk"], eq=True)
-        tm.that(cases["invalid-email"], eq=False)
-        tm.that(cases[""], eq=False)
-
-    @staticmethod
-    def test_valid_email_cases_verdicts_are_deterministic() -> None:
-        """Repeated calls return equal case tables (pure data helper)."""
-        tm.that(
-            list(FlextTestsDomains.valid_email_cases()),
-            eq=list(FlextTestsDomains.valid_email_cases()),
-        )
-
-    @staticmethod
-    def test_default_handler_case_specs_expose_expected_handler_ids() -> None:
-        """The shared handler specs cover the documented success/fail ids."""
-        specs = FlextTestsDomains.default_handler_case_specs()
-
-        handler_ids = [spec.handler_id for spec in specs]
-        tm.that(
-            handler_ids,
-            eq=[
-                "success_command",
-                "success_query",
-                "success_event",
-                "fail_command",
-                "fail_query",
-            ],
-        )
-
-    @staticmethod
-    @pytest.mark.parametrize(
-        ("handler_id", "should_fail"),
-        [
-            ("success_command", False),
-            ("success_query", False),
-            ("success_event", False),
-            ("fail_command", True),
-            ("fail_query", True),
-        ],
-    )
-    def test_default_handler_case_specs_flag_failures_consistently(
-        handler_id: str,
-        *,
-        should_fail: bool,
-    ) -> None:
-        """Only the ``fail_*`` handler specs carry the ``should_fail`` marker."""
-        spec = next(
-            entry
-            for entry in FlextTestsDomains.default_handler_case_specs()
-            if entry.handler_id == handler_id
-        )
-
-        tm.that(spec.should_fail, eq=should_fail)
 
     # --- fixture path + loading ------------------------------------------
 
@@ -261,6 +199,72 @@ class TestsFlextTestsDomains:
             loaded,
             eq={"entries": "dn: cn=alice,dc=oid\n", "schema": "dn: cn=schema,dc=oid\n"},
         )
+
+
+class TestsFlextTestsDomains(FlextTestsDomainsFixtureParts):
+    """Public-contract tests for the ``FlextTestsDomains`` test-domain facade."""
+
+    # --- case-table data helpers -----------------------------------------
+
+    @staticmethod
+    def test_valid_email_cases_pairs_input_with_expected_validity() -> None:
+        """Each email case is a ``(value, is_valid)`` pair with stable verdicts."""
+        cases = dict(FlextTestsDomains.valid_email_cases())
+
+        tm.that(cases["test@example.com"], eq=True)
+        tm.that(cases["user.name@domain.co.uk"], eq=True)
+        tm.that(cases["invalid-email"], eq=False)
+        tm.that(cases[""], eq=False)
+
+    @staticmethod
+    def test_valid_email_cases_verdicts_are_deterministic() -> None:
+        """Repeated calls return equal case tables (pure data helper)."""
+        tm.that(
+            list(FlextTestsDomains.valid_email_cases()),
+            eq=list(FlextTestsDomains.valid_email_cases()),
+        )
+
+    @staticmethod
+    def test_default_handler_case_specs_expose_expected_handler_ids() -> None:
+        """The shared handler specs cover the documented success/fail ids."""
+        specs = FlextTestsDomains.default_handler_case_specs()
+
+        handler_ids = [spec.handler_id for spec in specs]
+        tm.that(
+            handler_ids,
+            eq=[
+                "success_command",
+                "success_query",
+                "success_event",
+                "fail_command",
+                "fail_query",
+            ],
+        )
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        ("handler_id", "should_fail"),
+        [
+            ("success_command", False),
+            ("success_query", False),
+            ("success_event", False),
+            ("fail_command", True),
+            ("fail_query", True),
+        ],
+    )
+    def test_default_handler_case_specs_flag_failures_consistently(
+        handler_id: str,
+        *,
+        should_fail: bool,
+    ) -> None:
+        """Only the ``fail_*`` handler specs carry the ``should_fail`` marker."""
+        spec = next(
+            entry
+            for entry in FlextTestsDomains.default_handler_case_specs()
+            if entry.handler_id == handler_id
+        )
+
+        tm.that(spec.should_fail, eq=should_fail)
 
     # --- bound loader (public ``bind`` API) -------------------------------
 

@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import c
+from flext_tests import c, u
 
 
 class TestsFlextTestsScratchStorage:
@@ -92,8 +92,6 @@ class TestsFlextTestsScratchStorage:
         tmp_path_factory: pytest.TempPathFactory,
     ) -> None:
         """u.Tests.scratch_root keys per checkout and honors the override."""
-        from flext_tests import u
-
         checkout_a = tmp_path_factory.mktemp("checkout-a")
         checkout_b = tmp_path_factory.mktemp("checkout-b")
         override = tmp_path / "custom"

@@ -15,6 +15,9 @@ class TestsFlextTestsMypyMatcherRepro:
 
     @staticmethod
     def exercise_nested_matcher_diagnostic() -> None:
-        """Type-check a mismatched result assertion without recursive alias expansion."""
+        """Type-check a mismatched result assertion.
+
+        Without recursive alias expansion.
+        """
         # Mypy must accept this nested paths mapping without recursive alias expansion.
         tm.ok(r[int].ok(1), eq="wrong", paths={"value": {"eq": 2}})

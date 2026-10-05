@@ -6,9 +6,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import Final
+
 import pytest
 
 pytest_plugins = ["pytester"]
+
+XDIST_WORKER_COUNT: Final[int] = 2
 
 
 @pytest.mark.slow
@@ -57,8 +61,6 @@ def test_namespaces_unique_across_two_workers(pytester: pytest.Pytester) -> None
     try:
         result.assert_outcomes(passed=2)
     except ValueError:
-        import pytest
-
         pytest.fail(
             "inner run did not produce a summary:\n"
             + result.stdout.str()[-3000:]
@@ -66,4 +68,4 @@ def test_namespaces_unique_across_two_workers(pytester: pytest.Pytester) -> None
             + result.stderr.str()[-1500:],
         )
     tokens = {path.read_text().strip() for path in pytester.path.glob("*.txt")}
-    assert len(tokens) == 2
+    assert len(tokens) == XDIST_WORKER_COUNT
