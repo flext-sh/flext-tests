@@ -9,10 +9,12 @@ from __future__ import annotations
 import os
 from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 from flext_core import FlextSettings
-from flext_tests import t
+
+if TYPE_CHECKING:
+    from flext_tests import t
 
 
 class FlextTestsConfigHelpersUtilitiesMixin(FlextSettings):

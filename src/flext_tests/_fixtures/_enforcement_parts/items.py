@@ -10,10 +10,14 @@ from typing import TYPE_CHECKING, override
 
 import pytest
 
+from flext_tests._fixtures._enforcement_parts._error import (
+    FlextTestsEnforcementViolationError,
+)
+
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from flext_tests import t
+    from flext_tests import m
 
 
 class FlextTestsEnforcementItem(pytest.Item):
@@ -24,18 +28,14 @@ class FlextTestsEnforcementItem(pytest.Item):
         name: str,
         parent: pytest.Collector,
         *,
-        rule_id: str,
-        severity: str,
-        description: str,
-        project: str,
-        violations: t.StrSequence,
+        violation: m.Tests.EnforcementViolation,
     ) -> None:
         super().__init__(name, parent)
-        self._rule_id = rule_id
-        self._severity = severity
-        self._description = description
-        self._project = project
-        self._violations = tuple(violations)
+        self._rule_id = violation.rule_id
+        self._severity = violation.severity
+        self._description = violation.description
+        self._project = violation.project
+        self._violations = tuple(violation.violations)
 
     @override
     def runtest(self) -> None:
@@ -43,10 +43,6 @@ class FlextTestsEnforcementItem(pytest.Item):
             f"{self._rule_id} ({self._severity}) in {self._project}: "
             f"{len(self._violations)} violation(s)"
         )
-        from flext_tests._fixtures._enforcement_parts._error import (
-            FlextTestsEnforcementViolationError,
-        )
-
         raise FlextTestsEnforcementViolationError(
             "\n".join([header, *(f"  - {line}" for line in self._violations)]),
         )

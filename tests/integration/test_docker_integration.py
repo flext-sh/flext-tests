@@ -41,7 +41,10 @@ class TestsFlextTestsDockerIntegration:
         container_name: str,
         tmp_path: Path,
     ) -> None:
-        """``FlextTestsDocker.shared`` maps a catalog entry onto the public target config."""
+        """``FlextTestsDocker.shared``.
+
+        Maps a catalog entry onto the public target config.
+        """
         settings = c.Tests.SHARED_CONTAINERS[container_name]
         root = tmp_path / "flext-docker-contract"
 
@@ -105,7 +108,10 @@ class TestsFlextTestsDockerIntegration:
     def test_compose_resolves_relative_file_against_repository_root(
         tmp_path: Path,
     ) -> None:
-        """``FlextTestsDocker.compose`` anchors a relative compose file to the workspace root."""
+        """``FlextTestsDocker.compose``.
+
+        Anchors a relative compose file to the workspace root.
+        """
         root = tmp_path / "flext-docker-contract"
 
         target = tm.not_none(

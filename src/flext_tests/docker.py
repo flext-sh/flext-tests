@@ -27,12 +27,13 @@ from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
 from flext_tests import c, m, p, r, s, t, u
+from flext_tests._docker_surface_parts import FlextTestsDockerSurfaceParts
 
 if TYPE_CHECKING:
     from docker.models.containers import Container
 
 
-class FlextTestsDocker(s[m.Tests.ContainerInfo]):
+class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
     """Manage the Docker containers FLEXT tests share.
 
     One container per name serves the whole host. Its record under
@@ -294,18 +295,6 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             else self.repository_root / compose_file
         )
 
-    def compose_down(self, compose_file: str) -> p.Result[str]:
-        """Remove the project of one compose file with its volumes.
-
-        Returns:
-            The resulting ``p.Result[str]``.
-        """
-        compose_path = self._compose_path(compose_file)
-        return self._compose_down(
-            compose_path,
-            u.Tests.docker_compose_project(compose_path),
-        )
-
     def _compose_down(self, compose_path: Path, project: str) -> p.Result[str]:
         """Remove one compose project with its volumes.
 
@@ -321,26 +310,6 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         except self._compose_exception_types() as exc:
             return r[str].fail_op("Compose down", exc)
         return r[str].ok("Compose down successful")
-
-    def compose_up(
-        self,
-        compose_file: str,
-        service: str | None = None,
-        *,
-        force_recreate: bool = False,
-    ) -> p.Result[str]:
-        """Start the project of one compose file and wait for its health.
-
-        Returns:
-            The resulting ``p.Result[str]``.
-        """
-        compose_path = self._compose_path(compose_file)
-        return self._compose_up(
-            compose_path,
-            u.Tests.docker_compose_project(compose_path),
-            service,
-            force_recreate=force_recreate,
-        )
 
     def _compose_up(
         self,
@@ -405,51 +374,6 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             op_name=f"Parse docker inspect of {container_name}",
         )
 
-    def fetch_container_info(
-        self,
-        container_name: str,
-    ) -> p.Result[m.Tests.ContainerInfo]:
-        """Inspect one container; an absent one fails NOT_PROVISIONED.
-
-        Returns:
-            The resulting ``p.Result[m.Tests.ContainerInfo]``.
-        """
-        return self._inspect(container_name).map(
-            lambda inspect: u.Tests.container_info(container_name, inspect),
-        )
-
-    def fetch_container_status(
-        self,
-        container_name: str,
-    ) -> p.Result[m.Tests.ContainerInfo]:
-        """Fetch container status.
-
-        Returns:
-            The resulting ``p.Result[m.Tests.ContainerInfo]``.
-        """
-        return self.fetch_container_info(container_name)
-
-    def fetch_container_environment(
-        self,
-        container_name: str,
-        keys: t.StrSequence,
-    ) -> p.Result[t.MappingKV[str, t.SecretStr]]:
-        """Read named creation variables of a container as secrets.
-
-        A key the container does not carry fails ``ENVIRONMENT_MISSING``,
-        naming the key and never a value.
-
-        Returns:
-            The resulting ``p.Result[t.MappingKV[str, t.SecretStr]]``.
-        """
-        return self._inspect(container_name).flat_map(
-            lambda inspect: u.Tests.container_environment(
-                container_name,
-                inspect,
-                keys,
-            ),
-        )
-
     def start_existing_container(self, container_name: str) -> p.Result[bool]:
         """Start an existing stopped container by name.
 
@@ -494,22 +418,6 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
                 exception=exc,
             )
         return r[bool].ok(value=True)
-
-    def start_compose_stack(
-        self,
-        compose_file: str,
-        network_name: str | None = None,
-    ) -> p.Result[str]:
-        """Start a Docker Compose stack.
-
-        Returns:
-            The resulting ``p.Result[str]``.
-        """
-        _ = network_name
-        result = self.compose_up(compose_file)
-        if result.failure:
-            return result.map_error(lambda error: f"Stack start failed: {error}")
-        return r[str].ok("Stack started successfully")
 
     @staticmethod
     def wait_for_port_ready(
@@ -803,7 +711,6 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         error = self._target_error()
         if target is None or target.container_name is None or error is not None:
             return r[m.Tests.ContainerInfo].fail(error)
-        container_name = target.container_name
         environment = creation_environment or {}
         preflight = (
             self
@@ -816,8 +723,6 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         fingerprint = preflight.value
         try:
             return self._ensure_leased(
-                target,
-                container_name,
                 fingerprint,
                 initializer,
                 readiness_probe,
@@ -832,8 +737,6 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
 
     def _ensure_leased(
         self,
-        target: m.Tests.ContainerConfig,
-        container_name: str,
         fingerprint: str,
         initializer: p.Tests.ContainerInitializer | None,
         readiness_probe: p.Tests.ReadinessProbe | None,
@@ -844,6 +747,11 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInfo]``.
         """
+        target = self.target_config
+        error = self._target_error()
+        if target is None or target.container_name is None or error is not None:
+            return r[m.Tests.ContainerInfo].fail(error)
+        container_name = target.container_name
         lease_file = u.Tests.docker_lease_lock_file(self.state_dir, container_name)
         with u.Tests.FileLock(
             lease_file,
@@ -920,6 +828,19 @@ class FlextTestsDocker(s[m.Tests.ContainerInfo]):
             )
         if created.failure:
             return r[m.Tests.ContainerInfo].from_failure(created)
+        return self._seal_created_container(container_name, fingerprint, initializer)
+
+    def _seal_created_container(
+        self,
+        container_name: str,
+        fingerprint: str,
+        initializer: p.Tests.ContainerInitializer | None,
+    ) -> p.Result[m.Tests.ContainerInfo]:
+        """Fetch the created container, run its initializer once, and seal it.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+        """
         fetched = self.fetch_container_info(container_name)
         if fetched.failure:
             return fetched

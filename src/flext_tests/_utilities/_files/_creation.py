@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from pathlib import Path
-from typing import cast
+from typing import Annotated, cast
 
 from flext_tests import c, m, p, t, u
 from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
@@ -186,40 +186,66 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             ])
         return rows
 
+    class CreateOptions(m.Value):
+        """Optional creation knobs; defaults mirror the canonical SSOT."""
+
+        fmt: Annotated[
+            c.Tests.FileFormat,
+            m.BeforeValidator(
+                lambda v: (
+                    type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
+                ),
+            ),
+            u.Field(description="Target file format; AUTO detects from content."),
+        ] = c.Tests.FILE_FORMAT_AUTO
+        enc: Annotated[
+            str,
+            u.Field(description="Text encoding for textual formats."),
+        ] = c.Tests.DEFAULT_ENCODING
+        indent: Annotated[
+            int,
+            u.Field(description="Indent width for JSON output."),
+        ] = c.Tests.DEFAULT_JSON_INDENT
+        delim: Annotated[
+            str,
+            u.Field(description="Delimiter for CSV output."),
+        ] = c.Tests.DEFAULT_CSV_DELIMITER
+        headers: Annotated[
+            t.StrSequence | None,
+            u.Field(description="Optional CSV header row."),
+        ] = None
+        readonly: Annotated[
+            bool,
+            u.Field(description="chmod the created file read-only when true."),
+        ] = False
+        extract_result: Annotated[
+            bool,
+            u.Field(description="Unwrap a passed Result payload before validation."),
+        ] = True
+
     def create[ContentT](
         self,
         content: ContentT | p.Result[ContentT],
         name: str = c.Tests.DEFAULT_FILENAME,
         directory: Path | None = None,
         *,
-        fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
-        enc: str = c.Tests.DEFAULT_ENCODING,
-        indent: int = c.Tests.DEFAULT_JSON_INDENT,
-        delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
-        headers: t.StrSequence | None = None,
-        readonly: bool = False,
-        extract_result: bool = True,
+        options: FlextTestsFilesCreationMixin.CreateOptions | None = None,
     ) -> Path:
         """Create a file after validating the complete native input tree.
 
         Returns:
             The resulting ``Path``.
         """
+        chosen = options or FlextTestsFilesCreationMixin.CreateOptions()
         content_to_validate = self._extract_content(
             content,
-            extract_result=extract_result,
+            extract_result=chosen.extract_result,
         )
         params = m.Tests.CreateParams.model_validate({
+            **chosen.model_dump(),
             "content": content_to_validate,
             "name": name,
             "directory": directory,
-            "fmt": fmt,
-            "enc": enc,
-            "indent": indent,
-            "delim": delim,
-            "headers": headers,
-            "readonly": readonly,
-            "extract_result": extract_result,
         })
         actual_content = params.content
         native_content = FlextTestsPayloadUtilities.to_match_value(actual_content)

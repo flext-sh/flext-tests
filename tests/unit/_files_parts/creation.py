@@ -7,9 +7,12 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_tests import FlextTestsFiles, tm
-from tests import m, t
+
+if TYPE_CHECKING:
+    from tests import m, t
 
 
 class TestsFlextTestsFilesCreationMixin:
@@ -46,7 +49,11 @@ class TestsFlextTestsFilesCreationMixin:
         manager = FlextTestsFiles(base_dir=tmp_path)
         content = "test content"
         encoding = "utf-16"
-        file_path = manager.create(content, "test.txt", enc=encoding)
+        file_path = manager.create(
+            content,
+            "test.txt",
+            options=FlextTestsFiles.CreateOptions(enc=encoding),
+        )
         tm.that(file_path.exists(), eq=True)
         tm.that(file_path.read_text(encoding=encoding), eq=content)
 

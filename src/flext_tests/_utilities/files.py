@@ -9,10 +9,14 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from flext_cli import u
 
-from flext_tests import m, t
+from flext_tests import c
+
+if TYPE_CHECKING:
+    from flext_tests import m, t
 
 
 class FlextTestsFilesUtilitiesMixin:
@@ -60,8 +64,6 @@ class FlextTestsFilesUtilitiesMixin:
         Returns:
             The resulting ``str``.
         """
-        from flext_tests import c
-
         value = size
         for unit in c.Tests.SIZE_UNITS:
             if value < c.Tests.SIZE_THRESHOLD:

@@ -42,12 +42,11 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
         "settings",
     })
 
-    @classmethod
-    def _repository_root(
-        cls,
+    @staticmethod
+    def _validated_request_root(
         request: p.Tests.WorkspaceCleanupRequest,
     ) -> p.Result[Path]:
-        """Require the request root to be the exact enclosing Git worktree root.
+        """Resolve the request root and require an existing directory.
 
         Returns:
             The resulting ``p.Result[Path]``.
@@ -61,13 +60,43 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
             )
         if not root.is_dir():
             return r[Path].fail(f"cleanup workspace root is not a directory: {root}")
-        git_result = cls._git(root, ("rev-parse", "--show-toplevel"))
+        return r[Path].ok(root)
+
+    @classmethod
+    def _successful_git_output(
+        cls,
+        root: Path,
+        arguments: t.VariadicTuple[str],
+        label: str,
+    ) -> p.Result[p.Cli.CommandOutput]:
+        """Run Git in ``root`` and require a zero exit code.
+
+        Returns:
+            The resulting ``p.Result[p.Cli.CommandOutput]``.
+        """
+        git_result = cls._git(root, arguments)
         if git_result.failure:
-            return r[Path].fail(git_result.error)
+            return r[p.Cli.CommandOutput].fail(git_result.error)
         output = git_result.value
         if output.outcome.raw_return_code != c.Cli.EXIT_CODE_SUCCESS:
-            return r[Path].fail(cls._command_error("git root discovery", output))
-        raw_root = output.stdout.strip()
+            return r[p.Cli.CommandOutput].fail(cls._command_error(label, output))
+        return r[p.Cli.CommandOutput].ok(output)
+
+    @classmethod
+    def _resolved_git_root(cls, root: Path) -> p.Result[Path]:
+        """Resolve the Git worktree root and require it to equal ``root``.
+
+        Returns:
+            The resulting ``p.Result[Path]``.
+        """
+        output_result = cls._successful_git_output(
+            root,
+            ("rev-parse", "--show-toplevel"),
+            "git root discovery",
+        )
+        if output_result.failure:
+            return r[Path].from_failure(output_result)
+        raw_root = output_result.value.stdout.strip()
         if not raw_root:
             return r[Path].fail("git root discovery returned an empty path")
         try:
@@ -78,6 +107,25 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
             return r[Path].fail(
                 f"cleanup root must equal the Git worktree root: {root} != {git_root}",
             )
+        return r[Path].ok(root)
+
+    @classmethod
+    def _repository_root(
+        cls,
+        request: p.Tests.WorkspaceCleanupRequest,
+    ) -> p.Result[Path]:
+        """Require the request root to be the exact enclosing Git worktree root.
+
+        Returns:
+            The resulting ``p.Result[Path]``.
+        """
+        root_result = cls._validated_request_root(request)
+        if root_result.failure:
+            return r[Path].from_failure(root_result)
+        root = root_result.value
+        git_root_result = cls._resolved_git_root(root)
+        if git_root_result.failure:
+            return r[Path].from_failure(git_root_result)
         return r[Path].ok(root)
 
     @staticmethod
@@ -127,13 +175,14 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
                 f"cleanup residue targets a protected path: {relative_path}",
             )
         for name in ("--git-dir", "--git-common-dir"):
-            git_result = cls._git(root, ("rev-parse", name))
-            if git_result.failure:
-                return r[bool].fail(git_result.error)
-            output = git_result.value
-            if output.outcome.raw_return_code != c.Cli.EXIT_CODE_SUCCESS:
-                return r[bool].fail(cls._command_error("git dir discovery", output))
-            raw = output.stdout.strip()
+            output_result = cls._successful_git_output(
+                root,
+                ("rev-parse", name),
+                "git dir discovery",
+            )
+            if output_result.failure:
+                return r[bool].from_failure(output_result)
+            raw = output_result.value.stdout.strip()
             if not raw:
                 continue
             try:

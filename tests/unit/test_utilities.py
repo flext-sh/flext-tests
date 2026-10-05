@@ -167,9 +167,11 @@ class TestsFlextTestsUtilities:
         # No AssertionError expected.
         u.Tests.assert_result_chain(
             chain,
-            expected_successes=2,
-            expected_failures=1,
-            first_failure_index=1,
+            expectations=u.Tests.ResultChainExpectations(
+                expected_successes=2,
+                expected_failures=1,
+                first_failure_index=1,
+            ),
         )
 
     @staticmethod
@@ -178,7 +180,9 @@ class TestsFlextTestsUtilities:
         with pytest.raises(AssertionError, match="Expected 0 successes, got 1"):
             u.Tests.assert_result_chain(
                 [r[str].ok("success")],
-                expected_success_count=0,
+                expectations=u.Tests.ResultChainExpectations(
+                    expected_success_count=0,
+                ),
             )
 
     @staticmethod
@@ -186,7 +190,10 @@ class TestsFlextTestsUtilities:
         """A wrong first_failure_index raises AssertionError."""
         chain: list[p.Result[str]] = [r[str].ok("a"), r[str].fail("boom")]
         with pytest.raises(AssertionError, match="Expected first failure at index 0"):
-            u.Tests.assert_result_chain(chain, first_failure_index=0)
+            u.Tests.assert_result_chain(
+                chain,
+                expectations=u.Tests.ResultChainExpectations(first_failure_index=0),
+            )
 
     # ------------------------------------------------------------------
     # create_result_from_value — None handling contract

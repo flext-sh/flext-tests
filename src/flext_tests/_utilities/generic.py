@@ -7,48 +7,79 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import MutableSequence
+from typing import TYPE_CHECKING, Annotated
+
+from flext_cli import m, u
 
 from flext_core import r
-from flext_tests import p, t
+
+if TYPE_CHECKING:
+    from flext_tests import p, t
 
 
 class FlextTestsGenericHelpersUtilitiesMixin:
     """Generic helpers for test data creation."""
+
+    # NOTE (multi-agent): the grouped model extends the flext_cli Value preset
+    # (the identical inherited class) because ``flext_tests.models`` must stay
+    # unloaded while an ungoverned pytest session collects.
+    class ResultChainExpectations(m.Value):
+        """Expected outcome counters for ``assert_result_chain``."""
+
+        expected_successes: Annotated[
+            int | None,
+            u.Field(description="Expected number of successes."),
+        ] = None
+        expected_failures: Annotated[
+            int | None,
+            u.Field(description="Expected number of failures."),
+        ] = None
+        expected_success_count: Annotated[
+            int | None,
+            u.Field(description="Alias for expected_successes."),
+        ] = None
+        expected_failure_count: Annotated[
+            int | None,
+            u.Field(description="Alias for expected_failures."),
+        ] = None
+        first_failure_index: Annotated[
+            int | None,
+            u.Field(description="Expected index of the first failure (if any)."),
+        ] = None
 
     # mro-j47u: explicit raises preserve assertion behavior under optimized Python.
 
     @staticmethod
     def assert_result_chain[T](
         results: t.SequenceOf[p.Result[T]],
-        expected_successes: int | None = None,
-        expected_failures: int | None = None,
-        expected_success_count: int | None = None,
-        expected_failure_count: int | None = None,
-        first_failure_index: int | None = None,
+        *,
+        expectations: FlextTestsGenericHelpersUtilitiesMixin.ResultChainExpectations
+        | None = None,
     ) -> None:
         """Assert result chain has expected success/failure counts.
 
         Args:
             results: List of results to check
-            expected_successes: Expected number of successes
-            expected_failures: Expected number of failures
-            expected_success_count: Alias for expected_successes
-            expected_failure_count: Alias for expected_failures
-            first_failure_index: Expected index of first failure (if any)
+            expectations: Expected success/failure counters (aliases honored)
 
         Raises:
             AssertionError: If counts don't match
 
         """
+        expected = (
+            expectations
+            if expectations is not None
+            else FlextTestsGenericHelpersUtilitiesMixin.ResultChainExpectations()
+        )
         successes_expected = (
-            expected_successes
-            if expected_successes is not None
-            else expected_success_count
+            expected.expected_successes
+            if expected.expected_successes is not None
+            else expected.expected_success_count
         )
         failures_expected = (
-            expected_failures
-            if expected_failures is not None
-            else expected_failure_count
+            expected.expected_failures
+            if expected.expected_failures is not None
+            else expected.expected_failure_count
         )
         successes = sum(1 for res in results if res.success)
         failures = sum(1 for res in results if res.failure)
@@ -58,14 +89,14 @@ class FlextTestsGenericHelpersUtilitiesMixin:
         if failures_expected is not None and failures != failures_expected:
             message = f"Expected {failures_expected} failures, got {failures}"
             raise AssertionError(message)
-        if first_failure_index is not None:
+        if expected.first_failure_index is not None:
             actual_first_failure = next(
                 (i for i, res in enumerate(results) if res.failure),
                 None,
             )
-            if actual_first_failure != first_failure_index:
+            if actual_first_failure != expected.first_failure_index:
                 message = (
-                    f"Expected first failure at index {first_failure_index}, "
+                    f"Expected first failure at index {expected.first_failure_index}, "
                     f"got {actual_first_failure}"
                 )
                 raise AssertionError(message)

@@ -13,8 +13,8 @@ from tests import c, t
 from tests.unit._matchers_parts.predicates import TestsFlextTestsMatchersPredicates
 
 
-class TestsFlextTestsMatchersThatCollectionsMixin:
-    """Matcher that collection tests."""
+class TestsFlextTestsMatchersThatCollectionsNarrowingMixin:
+    """Narrowing tests for ``tm.that()`` value and None constraints."""
 
     @staticmethod
     def test_that_with_eq_parameter() -> None:
@@ -87,6 +87,12 @@ class TestsFlextTestsMatchersThatCollectionsMixin:
         """not_none returns the original value with its optional removed."""
         value: str | None = "test"
         tm.that(tm.not_none(value), eq="test")
+
+
+class TestsFlextTestsMatchersThatCollectionsMixin(
+    TestsFlextTestsMatchersThatCollectionsNarrowingMixin,
+):
+    """Matcher that collection tests."""
 
     @staticmethod
     def test_not_none_rejects_none_with_context() -> None:

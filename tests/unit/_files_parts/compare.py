@@ -41,7 +41,11 @@ class TestsFlextTestsFilesCompareMixin:
         manager = tf(base_dir=tmp_path)
         path1 = manager.create("12345", "file1.txt")
         path2 = manager.create("abcde", "file2.txt")
-        result = manager.compare(path1, path2, mode=c.Tests.CompareMode.SIZE)
+        result = manager.compare(
+            path1,
+            path2,
+            options=tf.CompareOptions(mode=c.Tests.CompareMode.SIZE),
+        )
         _ = u.Tests.assert_success(result)
         tm.that(result.value is True, eq=True)
 
@@ -51,7 +55,11 @@ class TestsFlextTestsFilesCompareMixin:
         manager = tf(base_dir=tmp_path)
         path1 = manager.create("short", "file1.txt")
         path2 = manager.create("much longer content", "file2.txt")
-        result = manager.compare(path1, path2, mode=c.Tests.CompareMode.SIZE)
+        result = manager.compare(
+            path1,
+            path2,
+            options=tf.CompareOptions(mode=c.Tests.CompareMode.SIZE),
+        )
         _ = u.Tests.assert_success(result)
         tm.that(result.value is False, eq=True)
 
@@ -61,7 +69,11 @@ class TestsFlextTestsFilesCompareMixin:
         manager = tf(base_dir=tmp_path)
         path1 = manager.create("identical", "file1.txt")
         path2 = manager.create("identical", "file2.txt")
-        result = manager.compare(path1, path2, mode=c.Tests.CompareMode.HASH)
+        result = manager.compare(
+            path1,
+            path2,
+            options=tf.CompareOptions(mode=c.Tests.CompareMode.HASH),
+        )
         _ = u.Tests.assert_success(result)
         tm.that(result.value is True, eq=True)
 
@@ -71,7 +83,11 @@ class TestsFlextTestsFilesCompareMixin:
         manager = tf(base_dir=tmp_path)
         path1 = manager.create("line1\nline2\nline3", "file1.txt")
         path2 = manager.create("line1\nline2\nline3", "file2.txt")
-        result = manager.compare(path1, path2, mode=c.Tests.CompareMode.LINES)
+        result = manager.compare(
+            path1,
+            path2,
+            options=tf.CompareOptions(mode=c.Tests.CompareMode.LINES),
+        )
         _ = u.Tests.assert_success(result)
         tm.that(result.value is True, eq=True)
 
@@ -81,7 +97,11 @@ class TestsFlextTestsFilesCompareMixin:
         manager = tf(base_dir=tmp_path)
         path1 = manager.create("line1\nline2\nline3", "file1.txt")
         path2 = manager.create("a\nb\nc", "file2.txt")
-        result = manager.compare(path1, path2, mode=c.Tests.CompareMode.LINES)
+        result = manager.compare(
+            path1,
+            path2,
+            options=tf.CompareOptions(mode=c.Tests.CompareMode.LINES),
+        )
         _ = u.Tests.assert_success(result)
         tm.that(result.value is False, eq=True)
 
@@ -91,7 +111,11 @@ class TestsFlextTestsFilesCompareMixin:
         manager = tf(base_dir=tmp_path)
         path1 = manager.create("hello world", "file1.txt")
         path2 = manager.create("hello  world", "file2.txt")
-        result = manager.compare(path1, path2, ignore_ws=True)
+        result = manager.compare(
+            path1,
+            path2,
+            options=tf.CompareOptions(ignore_ws=True),
+        )
         _ = u.Tests.assert_success(result)
         tm.that(result.value is True, eq=True)
 
@@ -101,7 +125,11 @@ class TestsFlextTestsFilesCompareMixin:
         manager = tf(base_dir=tmp_path)
         path1 = manager.create("Hello World", "file1.txt")
         path2 = manager.create("hello world", "file2.txt")
-        result = manager.compare(path1, path2, ignore_case=True)
+        result = manager.compare(
+            path1,
+            path2,
+            options=tf.CompareOptions(ignore_case=True),
+        )
         _ = u.Tests.assert_success(result)
         tm.that(result.value is True, eq=True)
 
@@ -111,7 +139,11 @@ class TestsFlextTestsFilesCompareMixin:
         manager = tf(base_dir=tmp_path)
         path1 = manager.create("ERROR: something failed", "file1.txt")
         path2 = manager.create("ERROR: other failure", "file2.txt")
-        result = manager.compare(path1, path2, pattern="ERROR")
+        result = manager.compare(
+            path1,
+            path2,
+            options=tf.CompareOptions(pattern="ERROR"),
+        )
         _ = u.Tests.assert_success(result)
         tm.that(result.value is True, eq=True)
 
@@ -121,7 +153,11 @@ class TestsFlextTestsFilesCompareMixin:
         manager = tf(base_dir=tmp_path)
         path1 = manager.create("ERROR: something failed", "file1.txt")
         path2 = manager.create("Success: all good", "file2.txt")
-        result = manager.compare(path1, path2, pattern="ERROR")
+        result = manager.compare(
+            path1,
+            path2,
+            options=tf.CompareOptions(pattern="ERROR"),
+        )
         _ = u.Tests.assert_success(result)
         tm.that(result.value is False, eq=True)
 

@@ -15,11 +15,8 @@ import pytest
 from flext_tests import FlextTestsFiles, c, m, t, tm, u
 
 
-class TestsFlextTestsPayload:
-    """Payload model contracts independent of JSON projection."""
-
-    class Tests:
-        """flext-tests payload test namespace."""
+class FlextTestsPayloadIdentityParts:
+    """Payload identity, matcher, and arm-shape contracts (uncollected parts)."""
 
     @staticmethod
     def test_native_atoms_preserve_identity() -> None:
@@ -185,6 +182,13 @@ class TestsFlextTestsPayload:
         with pytest.raises(c.ValidationError, match="mapping payload cannot"):
             m.Tests.Payload(kind="mapping", atom="discarded")
 
+
+class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
+    """Payload model contracts independent of JSON projection."""
+
+    class Tests:
+        """flext-tests payload test namespace."""
+
     @staticmethod
     def test_rejects_collection_with_entries() -> None:
         """Test rejects collection with entries."""
@@ -258,7 +262,7 @@ class TestsFlextTestsPayload:
         path = FlextTestsFiles(base_dir=tmp_path).create(
             content,
             "native.bin",
-            fmt=c.Tests.FILE_FORMAT_BIN,
+            options=FlextTestsFiles.CreateOptions(fmt=c.Tests.FILE_FORMAT_BIN),
         )
         tm.that(path.read_bytes() == content, eq=True)
 
@@ -269,7 +273,7 @@ class TestsFlextTestsPayload:
             FlextTestsFiles(base_dir=tmp_path).create(
                 {"binary": b"\xff"},
                 "native.json",
-                fmt=c.Tests.FILE_FORMAT_JSON,
+                options=FlextTestsFiles.CreateOptions(fmt=c.Tests.FILE_FORMAT_JSON),
             )
         tm.that((tmp_path / "native.json").exists(), eq=False)
 
@@ -325,7 +329,7 @@ class TestsFlextTestsPayload:
         explicit_json_path = files.create(
             model,
             "explicit.yaml",
-            fmt=c.Tests.FILE_FORMAT_JSON,
+            options=FlextTestsFiles.CreateOptions(fmt=c.Tests.FILE_FORMAT_JSON),
         )
         json_content = u.Cli.json_read(json_path).unwrap()
         yaml_content = u.Cli.yaml_parse(yaml_path.read_text()).unwrap()

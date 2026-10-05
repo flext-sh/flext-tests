@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
-from typing import overload
+from typing import Annotated, overload
 
 from flext_cli import u
 
@@ -20,6 +20,28 @@ from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
+    """Read-side of the test files utility."""
+
+    class ReadOptions(m.Value):
+        """Optional read knobs; defaults mirror the canonical SSOT."""
+
+        fmt: Annotated[
+            c.Tests.FileFormat,
+            u.Field(description="Source file format; AUTO detects from extension."),
+        ] = c.Tests.FILE_FORMAT_AUTO
+        enc: Annotated[
+            str,
+            u.Field(description="Text encoding for textual formats."),
+        ] = c.Tests.DEFAULT_ENCODING
+        delim: Annotated[
+            str,
+            u.Field(description="Delimiter for CSV input."),
+        ] = c.Tests.DEFAULT_CSV_DELIMITER
+        has_headers: Annotated[
+            bool,
+            u.Field(description="Whether CSV input carries a header row."),
+        ] = True
+
     """Read test files with format detection and model loading."""
 
     @staticmethod
@@ -53,10 +75,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         path: Path,
         *,
         model_cls: None = None,
-        fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
-        enc: str = c.Tests.DEFAULT_ENCODING,
-        delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
-        has_headers: bool = True,
+        options: FlextTestsFilesReadingMixin.ReadOptions | None = None,
     ) -> p.Result[t.Tests.ReadContent]: ...
 
     @overload
@@ -65,10 +84,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         path: Path,
         *,
         model_cls: type[TModelRead],
-        fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
-        enc: str = c.Tests.DEFAULT_ENCODING,
-        delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
-        has_headers: bool = True,
+        options: FlextTestsFilesReadingMixin.ReadOptions | None = None,
     ) -> p.Result[TModelRead]: ...
 
     def read[TModelRead: m.BaseModel](
@@ -76,10 +92,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         path: Path,
         *,
         model_cls: type[TModelRead] | None = None,
-        fmt: c.Tests.FileFormat = c.Tests.FILE_FORMAT_AUTO,
-        enc: str = c.Tests.DEFAULT_ENCODING,
-        delim: str = c.Tests.DEFAULT_CSV_DELIMITER,
-        has_headers: bool = True,
+        options: FlextTestsFilesReadingMixin.ReadOptions | None = None,
     ) -> p.Result[t.Tests.ReadContent] | p.Result[TModelRead]:
         """Read file with auto-detection or explicit format.
 
@@ -88,10 +101,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         Args:
             path: File path
             model_cls: Optional Pydantic model class to deserialize into
-            fmt: Format ("auto" detects from extension)
-            enc: Encoding (default: utf-8)
-            delim: CSV delimiter (default: ",")
-            has_headers: CSV has headers (default: True)
+            options: Optional read knobs (format, encoding, delimiter, header)
 
         Returns:
             r with content or model instance.
@@ -99,12 +109,10 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         """
         result: p.Result[t.Tests.ReadContent] | p.Result[TModelRead]
         try:
+            chosen = options or FlextTestsFilesReadingMixin.ReadOptions()
             params = m.Tests.ReadParams.model_validate({
+                **chosen.model_dump(),
                 "path": path,
-                "fmt": fmt,
-                "enc": enc,
-                "delim": delim,
-                "has_headers": has_headers,
                 "model_cls": model_cls,
             })
         except c.EXC_BASIC_TYPE as exc:

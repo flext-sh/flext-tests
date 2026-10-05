@@ -17,6 +17,7 @@ from flext_cli import m, u
 
 from flext_tests import p, t
 from flext_tests._models.base import FlextTestsBaseModelsMixin
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 type MatchExpectedValue = (
     FlextTestsBaseModelsMixin.Payload | ApproxBase | TypeAliasType | None
@@ -54,8 +55,6 @@ class FlextTestsMatchersModelsMixin:
             Returns:
                 The resulting ``MatchExpectedValue``.
             """
-            from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-
             if value is None or isinstance(value, ApproxBase | TypeAliasType):
                 return value
             return FlextTestsPayloadUtilities.to_payload(value)
@@ -82,8 +81,6 @@ class FlextTestsMatchersModelsMixin:
             Raises:
                 ValueError: If Matcher mapping requires a mapping payload.
             """
-            from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-
             if value is None:
                 return None
             node = FlextTestsPayloadUtilities.to_payload(value)
@@ -106,8 +103,6 @@ class FlextTestsMatchersModelsMixin:
             Raises:
                 ValueError: If Matcher values require a sequence payload.
             """
-            from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-
             if value is None:
                 return None
             node = FlextTestsPayloadUtilities.to_payload(value)
@@ -135,8 +130,6 @@ class FlextTestsMatchersModelsMixin:
                 The resulting ``Mapping[str, FlextTestsBaseModelsMixin.Payload |
                     Callable[[t.Tests.NativeMatchValue], bool]] | None``.
             """
-            from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-
             if value is None:
                 return None
             return {
@@ -636,8 +629,6 @@ class FlextTestsMatchersModelsMixin:
             if self.error is not None and self.has is None:
                 # self.error is a non-None native sequence/scalar, so owning it
                 # is exactly the payload walker; no approx/type operand applies.
-                from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-
                 updates["has"] = FlextTestsPayloadUtilities.to_payload(self.error)
             if self.len is None and any(
                 v is not None

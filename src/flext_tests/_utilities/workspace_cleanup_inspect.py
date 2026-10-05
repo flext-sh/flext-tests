@@ -89,7 +89,7 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
         Returns:
             The resulting ``p.Result[bool]``.
         """
-        status_result = cls._git(
+        status_result = cls._successful_git_output(
             root,
             (
                 "--literal-pathspecs",
@@ -99,26 +99,22 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
                 "--",
                 relative_path.as_posix(),
             ),
+            "git status check",
         )
         if status_result.failure:
-            return r[bool].fail(status_result.error)
-        status = status_result.value
-        if status.outcome.raw_return_code != c.Cli.EXIT_CODE_SUCCESS:
-            return r[bool].fail(cls._command_error("git status check", status))
-        if status.stdout:
+            return r[bool].from_failure(status_result)
+        if status_result.value.stdout:
             return r[bool].fail(
                 f"cleanup residue contains dirty or untracked WIP: {relative_path}",
             )
-        tracked_result = cls._git(
+        tracked_result = cls._successful_git_output(
             root,
             ("--literal-pathspecs", "ls-files", "-z", "--", relative_path.as_posix()),
+            "git tracked-path check",
         )
         if tracked_result.failure:
-            return r[bool].fail(tracked_result.error)
-        tracked = tracked_result.value
-        if tracked.outcome.raw_return_code != c.Cli.EXIT_CODE_SUCCESS:
-            return r[bool].fail(cls._command_error("git tracked-path check", tracked))
-        if tracked.stdout:
+            return r[bool].from_failure(tracked_result)
+        if tracked_result.value.stdout:
             return r[bool].fail(
                 f"cleanup residue contains Git-tracked content: {relative_path}",
             )

@@ -9,11 +9,16 @@ from __future__ import annotations
 import random
 import re
 from pathlib import Path
+from typing import Final
 
 import pytest
 
 from flext_tests import m
 from tests import c, u as test_u
+
+NAMESPACE_SEED_COUNT: Final[int] = 100
+NAMESPACE_TOKENS_PER_SEED: Final[int] = 100
+EXPECTED_UNIQUE_TOKENS: Final[int] = NAMESPACE_SEED_COUNT * NAMESPACE_TOKENS_PER_SEED
 
 
 class TestsFlextTestsNamespace:
@@ -50,9 +55,9 @@ class TestsFlextTestsNamespace:
     def test_ten_thousand_tokens_stay_unique(tmp_path: Path) -> None:
         """10k derivations across reseeds never collide (T3 acceptance)."""
         seen: set[str] = set()
-        for seed in range(100):
+        for seed in range(NAMESPACE_SEED_COUNT):
             random.seed(seed)
-            for _ in range(100):
+            for _ in range(NAMESPACE_TOKENS_PER_SEED):
                 namespace = test_u.Tests.namespace(
                     worker_id=f"w{seed % 7}",
                     testrun_uid=f"run-{seed}",
@@ -60,7 +65,7 @@ class TestsFlextTestsNamespace:
                 )
                 assert namespace.token not in seen
                 seen.add(namespace.token)
-        assert len(seen) == 10_000
+        assert len(seen) == EXPECTED_UNIQUE_TOKENS
 
     @staticmethod
     def test_worker_change_changes_the_token(tmp_path: Path) -> None:

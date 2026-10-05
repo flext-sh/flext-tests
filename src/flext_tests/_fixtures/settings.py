@@ -21,23 +21,21 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from flext_core import FlextContainer, FlextContext, FlextSettings
+from flext_tests import FlextTestsCase, FlextTestsSettings, s
+
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
     from pathlib import Path
 
-    from flext_core import FlextContext, FlextSettings
-    from flext_tests import FlextTestsCase, FlextTestsSettings, p, t
+    from flext_tests import p, t
 
 # pytest imports this module while registering fixtures at configure time.
-# Product facades load inside the hook and fixture bodies, only when a test
-# actually runs, so collection-only and controller processes stay light.
+# The runtime facades it needs are imported at module top level with it.
 
 
 def _reset_runtime_state() -> None:
     """Reset root/test settings singletons and the DI container."""
-    from flext_core import FlextContainer, FlextSettings
-    from flext_tests import FlextTestsSettings
-
     FlextSettings.reset_for_testing()
     FlextTestsSettings.reset_for_testing()
     FlextContainer.reset_for_testing()
@@ -55,8 +53,6 @@ def _bind_runtime_aliases(
             issubclass(service_type, s)``.
         AttributeError: If a ``AttributeError`` is caught.
     """
-    from flext_tests import s
-
     # A bare top-level module (e.g. a pytester probe file) has no package
     # contract: there is no package root to resolve aliases from, so the
     # binding scope does not apply. Package-based suites always enforce.
@@ -104,8 +100,6 @@ def _bind_runtime_aliases(
 
 def pytest_runtest_setup(item: pytest.Item) -> None:
     """Reset and bind the canonical runtime before each pytest function."""
-    from flext_tests import FlextTestsCase
-
     _reset_runtime_state()
     if not isinstance(item, pytest.Function):
         return
@@ -143,8 +137,6 @@ def reset_settings() -> Iterator[None]:
 @pytest.fixture
 def test_runtime(request: pytest.FixtureRequest, reset_settings: None) -> None:
     """Bind the canonical FLEXT test runtime aliases onto pytest class instances."""
-    from flext_tests import FlextTestsCase
-
     _ = reset_settings
     if not isinstance(request.node, pytest.Function):
         return
@@ -165,9 +157,6 @@ def settings() -> FlextTestsSettings:
     Returns:
         The resulting ``FlextTestsSettings``.
     """
-    from flext_core import FlextSettings
-    from flext_tests import FlextTestsSettings
-
     FlextSettings.reset_for_testing()
     FlextTestsSettings.reset_for_testing()
     return FlextTestsSettings(debug=True, trace=False)
@@ -210,8 +199,6 @@ def test_context() -> FlextContext:
     Returns:
         The resulting ``FlextContext``.
     """
-    from flext_core import FlextContext
-
     return FlextContext()
 
 
@@ -222,8 +209,6 @@ def clean_container() -> Iterator[p.Container]:
     Yields:
         Each ``p.Container``.
     """
-    from flext_core import FlextContainer
-
     FlextContainer.reset_for_testing()
     try:
         yield FlextContainer()

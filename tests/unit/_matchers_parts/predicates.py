@@ -6,7 +6,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from tests import t
+from typing import TYPE_CHECKING, Final
+
+if TYPE_CHECKING:
+    from tests import t
+
+GREATER_THAN_TWO_THRESHOLD: Final[int] = 2
 
 
 class TestsFlextTestsMatchersPredicates:
@@ -34,4 +39,4 @@ class TestsFlextTestsMatchersPredicates:
 
     @staticmethod
     def greater_than_two(value: t.Tests.NativeMatchValue) -> bool:
-        return isinstance(value, int) and value > 2
+        return isinstance(value, int) and value > GREATER_THAN_TWO_THRESHOLD

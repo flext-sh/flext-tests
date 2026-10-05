@@ -13,7 +13,7 @@ from tests import t
 from tests.unit._matchers_parts.predicates import TestsFlextTestsMatchersPredicates
 
 
-class TestsFlextTestsMatchersOkConstraintsMixin:
+class TestsFlextTestsMatchersOkConstraintsBaseMixin:
     """Matcher ok constraint tests."""
 
     @staticmethod
@@ -112,6 +112,12 @@ class TestsFlextTestsMatchersOkConstraintsMixin:
         result = r[int].ok(42)
         value = tm.ok(result, where=TestsFlextTestsMatchersPredicates.is_positive)
         tm.that(value, eq=42)
+
+
+class TestsFlextTestsMatchersOkConstraintsMixin(
+    TestsFlextTestsMatchersOkConstraintsBaseMixin,
+):
+    """Composed ok() constraint matrix (public name and tests preserved)."""
 
     @staticmethod
     def test_ok_with_where_parameter_fails() -> None:
