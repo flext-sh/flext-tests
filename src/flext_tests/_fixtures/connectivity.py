@@ -28,7 +28,9 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import c
+from flext_infra import config as infra_config
+from flext_tests import c, u
+from flext_tests.docker import FlextTestsDocker
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -61,9 +63,6 @@ class FlextTestsCapabilityPlugin:
     @staticmethod
     def _published_port(container_name: str, container_port: int) -> int | None:
         """Return the host port a running container publishes, if any."""
-        from flext_tests import u
-        from flext_tests.docker import FlextTestsDocker
-
         published = (
             FlextTestsDocker()
             .fetch_container_info(container_name)
@@ -76,8 +75,6 @@ class FlextTestsCapabilityPlugin:
         if marker in self._probe_cache:
             return self._probe_cache[marker]
         if marker == c.Tests.DOCKER_CONNECTIVITY_MARKER:
-            from flext_tests.docker import FlextTestsDocker
-
             manager = FlextTestsDocker()
             client = manager.client
             docker_reason: str | None
@@ -131,8 +128,6 @@ class FlextTestsCapabilityPlugin:
                 if marker == c.Tests.DOCKER_CONNECTIVITY_MARKER and ci_disabled is None:
                     ci_disabled = self._ci_disables_docker()
                 if marker == c.Tests.DOCKER_CONNECTIVITY_MARKER and ci_disabled:
-                    from flext_infra import config as infra_config
-
                     ci = infra_config.Infra.codegen.make.ci
                     reasons[item.nodeid] = c.Tests.ERR_DOCKER_DISABLED_BY_CI.format(
                         variable=ci.variable,
@@ -153,8 +148,6 @@ class FlextTestsCapabilityPlugin:
         Returns:
             The resulting ``bool``.
         """
-        from flext_tests.docker import FlextTestsDocker
-
         return FlextTestsDocker.ci_disables_docker()
 
     def pytest_collection_modifyitems(

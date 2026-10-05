@@ -2,7 +2,10 @@
 
 Pytest imports installed entry points before pytest-cov starts measurement.
 This module therefore owns only the external hook boundary and defers product
-imports until each lifecycle hook is actually called.
+imports until each lifecycle hook is actually called: every hook resolves the
+dispatcher through ``import_module`` with a constant module name, the same
+deferred form ``conftest_plugin`` uses, so the static import graph stays light
+while the dynamic contract stays explicit and greppable.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -10,6 +13,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from importlib import import_module
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -72,11 +76,10 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 
 def pytest_configure(config: pytest.Config) -> None:
     """Resolve enforcement only after startup instrumentation is active."""
-    from flext_tests._fixtures._enforcement_parts.dispatcher import (
-        FlextTestsEnforcementDispatcher,
-    )
-
-    FlextTestsEnforcementDispatcher.configure(config)
+    dispatcher = import_module(
+        "flext_tests._fixtures._enforcement_parts.dispatcher"
+    ).FlextTestsEnforcementDispatcher
+    dispatcher.configure(config)
 
 
 def pytest_collection_modifyitems(
@@ -85,11 +88,10 @@ def pytest_collection_modifyitems(
     items: list[pytest.Item],
 ) -> None:
     """Delegate collection-time enforcement."""
-    from flext_tests._fixtures._enforcement_parts.dispatcher import (
-        FlextTestsEnforcementDispatcher,
-    )
-
-    FlextTestsEnforcementDispatcher.collection_modifyitems(session, config, items)
+    dispatcher = import_module(
+        "flext_tests._fixtures._enforcement_parts.dispatcher"
+    ).FlextTestsEnforcementDispatcher
+    dispatcher.collection_modifyitems(session, config, items)
 
 
 def pytest_warning_recorded(
@@ -100,20 +102,18 @@ def pytest_warning_recorded(
 ) -> None:
     """Track runtime enforcement warnings."""
     _ = when, nodeid, location
-    from flext_tests._fixtures._enforcement_parts.dispatcher import (
-        FlextTestsEnforcementDispatcher,
-    )
-
-    FlextTestsEnforcementDispatcher.record_warning(warning_message)
+    dispatcher = import_module(
+        "flext_tests._fixtures._enforcement_parts.dispatcher"
+    ).FlextTestsEnforcementDispatcher
+    dispatcher.record_warning(warning_message)
 
 
 def pytest_sessionstart(session: pytest.Session) -> None:
     """Expose the session config for warning-capture plumbing."""
-    from flext_tests._fixtures._enforcement_parts.dispatcher import (
-        FlextTestsEnforcementDispatcher,
-    )
-
-    FlextTestsEnforcementDispatcher.session_config = session.config
+    dispatcher = import_module(
+        "flext_tests._fixtures._enforcement_parts.dispatcher"
+    ).FlextTestsEnforcementDispatcher
+    dispatcher.session_config = session.config
 
 
 def pytest_terminal_summary(
@@ -123,11 +123,10 @@ def pytest_terminal_summary(
 ) -> None:
     """Delegate the enforcement summary."""
     _ = exitstatus
-    from flext_tests._fixtures._enforcement_parts.dispatcher import (
-        FlextTestsEnforcementDispatcher,
-    )
-
-    FlextTestsEnforcementDispatcher.terminal_summary(terminalreporter, config)
+    dispatcher = import_module(
+        "flext_tests._fixtures._enforcement_parts.dispatcher"
+    ).FlextTestsEnforcementDispatcher
+    dispatcher.terminal_summary(terminalreporter, config)
 
 
 __all__: list[str] = [

@@ -5,7 +5,8 @@ flext-tests-specific model definitions.
 
 Architecture:
 - TestsFlextModels (flext_tests) = Generic models for all FLEXT projects
-- TestsFlextTestsModels (tests/) = flext-tests-specific models extending TestsFlextModels
+- TestsFlextTestsModels (tests/) = flext-tests-specific models extending
+  TestsFlextModels
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT

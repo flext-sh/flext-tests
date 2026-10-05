@@ -11,11 +11,14 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from importlib.util import find_spec
 from pathlib import Path
 
 import pytest
+from hypothesis.configuration import set_hypothesis_home_dir
 
 from flext_tests import c
+from flext_tests._utilities import FlextTestsScratchStorageUtilitiesMixin
 
 
 def _scratch_root(config: pytest.Config) -> Path:
@@ -28,8 +31,6 @@ def _scratch_root(config: pytest.Config) -> Path:
     Returns:
         The resulting ``Path``.
     """
-    from flext_tests._utilities import FlextTestsScratchStorageUtilitiesMixin
-
     return FlextTestsScratchStorageUtilitiesMixin.scratch_root(
         checkout_root=Path(config.rootpath),
         override=config.getini(c.Tests.SCRATCH_ROOT_INI) or None,
@@ -38,14 +39,10 @@ def _scratch_root(config: pytest.Config) -> Path:
 
 def pytest_configure(config: pytest.Config) -> None:
     """Relocate hypothesis/benchmark storage under the scratch root."""
-    from importlib.util import find_spec
-
     scratch = _scratch_root(config)
     hypothesis_dir = scratch / "hypothesis"
     hypothesis_dir.mkdir(parents=True, exist_ok=True)
     if find_spec("hypothesis") is not None:
-        from hypothesis.configuration import set_hypothesis_home_dir
-
         set_hypothesis_home_dir(hypothesis_dir)
     benchmark_dir = scratch / "benchmarks"
     benchmark_dir.mkdir(parents=True, exist_ok=True)

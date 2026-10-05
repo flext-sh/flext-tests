@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from flext_cli.services.cli import FlextCliCli
 
+from flext_tests._cli_docker import main as docker_main
+
 
 class FlextTestsCli(FlextCliCli):
     """Flext-tests CLI facade — extends flext-cli CLI."""
@@ -19,8 +21,6 @@ def main() -> None:
     Raises:
         SystemExit: Always.
     """
-    from flext_tests._cli_docker import main as docker_main
-
     raise SystemExit(docker_main())
 
 

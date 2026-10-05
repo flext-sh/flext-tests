@@ -58,13 +58,15 @@ class FlextTestsEnforcementValidators:
             FlextTestsEnforcementItem.from_parent(
                 collector,
                 name=f"{rule_id}[{project}]",
-                rule_id=rule_id,
-                severity=str(findings[0].payload[severity_key]),
-                description=str(findings[0].payload[message_key]),
-                project=project,
-                violations=tuple(
-                    f"{finding.file.as_posix()} | {finding.text.splitlines()[0]}"
-                    for finding in findings
+                violation=m.Tests.EnforcementViolation(
+                    rule_id=rule_id,
+                    severity=str(findings[0].payload[severity_key]),
+                    description=str(findings[0].payload[message_key]),
+                    project=project,
+                    violations=tuple(
+                        f"{finding.file.as_posix()} | {finding.text.splitlines()[0]}"
+                        for finding in findings
+                    ),
                 ),
             )
             for (rule_id, project), findings in sorted(grouped.items())
