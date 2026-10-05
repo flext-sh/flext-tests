@@ -77,7 +77,7 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 def pytest_configure(config: pytest.Config) -> None:
     """Resolve enforcement only after startup instrumentation is active."""
     dispatcher = import_module(
-        "flext_tests._fixtures._enforcement_parts.dispatcher"
+        "flext_tests._fixtures._enforcement_parts.dispatcher",
     ).FlextTestsEnforcementDispatcher
     dispatcher.configure(config)
 
@@ -89,7 +89,7 @@ def pytest_collection_modifyitems(
 ) -> None:
     """Delegate collection-time enforcement."""
     dispatcher = import_module(
-        "flext_tests._fixtures._enforcement_parts.dispatcher"
+        "flext_tests._fixtures._enforcement_parts.dispatcher",
     ).FlextTestsEnforcementDispatcher
     dispatcher.collection_modifyitems(session, config, items)
 
@@ -103,7 +103,7 @@ def pytest_warning_recorded(
     """Track runtime enforcement warnings."""
     _ = when, nodeid, location
     dispatcher = import_module(
-        "flext_tests._fixtures._enforcement_parts.dispatcher"
+        "flext_tests._fixtures._enforcement_parts.dispatcher",
     ).FlextTestsEnforcementDispatcher
     dispatcher.record_warning(warning_message)
 
@@ -111,7 +111,7 @@ def pytest_warning_recorded(
 def pytest_sessionstart(session: pytest.Session) -> None:
     """Expose the session config for warning-capture plumbing."""
     dispatcher = import_module(
-        "flext_tests._fixtures._enforcement_parts.dispatcher"
+        "flext_tests._fixtures._enforcement_parts.dispatcher",
     ).FlextTestsEnforcementDispatcher
     dispatcher.session_config = session.config
 
@@ -124,7 +124,7 @@ def pytest_terminal_summary(
     """Delegate the enforcement summary."""
     _ = exitstatus
     dispatcher = import_module(
-        "flext_tests._fixtures._enforcement_parts.dispatcher"
+        "flext_tests._fixtures._enforcement_parts.dispatcher",
     ).FlextTestsEnforcementDispatcher
     dispatcher.terminal_summary(terminalreporter, config)
 

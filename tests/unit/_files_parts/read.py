@@ -33,7 +33,11 @@ class TestsFlextTestsFilesReadMixin:
     def test_read_binary_file(tmp_path: Path) -> None:
         """Test read() returns bytes content for .bin files."""
         manager = tf(base_dir=tmp_path)
-        path = manager.create(b"\x00\x01\x02", "data.bin", fmt=c.Tests.FILE_FORMAT_BIN)
+        path = manager.create(
+            b"\x00\x01\x02",
+            "data.bin",
+            options=tf.CreateOptions(fmt=c.Tests.FILE_FORMAT_BIN),
+        )
         result = manager.read(path)
         _ = u.Tests.assert_success(result)
         tm.that(result.value, eq=b"\x00\x01\x02")
@@ -66,7 +70,10 @@ class TestsFlextTestsFilesReadMixin:
         manager = tf(base_dir=tmp_path)
         content = [["a", "b"], ["1", "2"]]
         path = manager.create(content, "data.csv")
-        result = manager.read(path, has_headers=False)
+        result = manager.read(
+            path,
+            options=tf.ReadOptions(has_headers=False),
+        )
         _ = u.Tests.assert_success(result)
         data = result.value
         tm.that(data, is_=list)
@@ -122,6 +129,11 @@ class TestsFlextTestsFilesReadMixin:
         """Test read() with explicit format override."""
         manager = tf(base_dir=tmp_path)
         path = manager.create("plain text", "data.dat", fmt=c.Tests.FILE_FORMAT_TEXT)
-        result = manager.read(path, fmt=c.Tests.FILE_FORMAT_TEXT)
+        result = manager.read(
+            path,
+            options=tf.ReadOptions(
+                fmt=c.Tests.FILE_FORMAT_TEXT,
+            ),
+        )
         _ = u.Tests.assert_success(result)
         tm.that(result.value, eq="plain text")

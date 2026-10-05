@@ -21,9 +21,10 @@ from __future__ import annotations
 import importlib.util
 import sys
 from pathlib import Path
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
-from flext_tests.typings import t
+if TYPE_CHECKING:
+    from flext_tests.typings import t
 
 _LOCAL_PACKAGES: Final[t.StrSequence] = ("tests",)
 

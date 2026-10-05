@@ -262,7 +262,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
         path = FlextTestsFiles(base_dir=tmp_path).create(
             content,
             "native.bin",
-            fmt=c.Tests.FILE_FORMAT_BIN,
+            options=FlextTestsFiles.CreateOptions(fmt=c.Tests.FILE_FORMAT_BIN),
         )
         tm.that(path.read_bytes() == content, eq=True)
 
@@ -273,7 +273,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
             FlextTestsFiles(base_dir=tmp_path).create(
                 {"binary": b"\xff"},
                 "native.json",
-                fmt=c.Tests.FILE_FORMAT_JSON,
+                options=FlextTestsFiles.CreateOptions(fmt=c.Tests.FILE_FORMAT_JSON),
             )
         tm.that((tmp_path / "native.json").exists(), eq=False)
 
@@ -329,7 +329,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
         explicit_json_path = files.create(
             model,
             "explicit.yaml",
-            fmt=c.Tests.FILE_FORMAT_JSON,
+            options=FlextTestsFiles.CreateOptions(fmt=c.Tests.FILE_FORMAT_JSON),
         )
         json_content = u.Cli.json_read(json_path).unwrap()
         yaml_content = u.Cli.yaml_parse(yaml_path.read_text()).unwrap()

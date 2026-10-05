@@ -11,8 +11,10 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import re
+from typing import TYPE_CHECKING
 
-from flext_tests import p
+if TYPE_CHECKING:
+    from flext_tests import p
 
 
 class FlextTestsMatchersImmutabilityMixin:

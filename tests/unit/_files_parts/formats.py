@@ -69,7 +69,11 @@ class TestsFlextTestsFilesFormatsMixin:
         """Test create() CSV with explicit headers."""
         manager = tf(base_dir=tmp_path)
         content = [["1", "2"], ["3", "4"]]
-        path = manager.create(content, "data.csv", headers=["col1", "col2"])
+        path = manager.create(
+            content,
+            "data.csv",
+            options=tf.CreateOptions(headers=["col1", "col2"]),
+        )
         tm.that(path.exists(), eq=True)
         lines = path.read_text().strip().split("\n")
         tm.that(lines[0], eq="col1,col2")
@@ -79,7 +83,11 @@ class TestsFlextTestsFilesFormatsMixin:
     def test_create_explicit_format(tmp_path: Path) -> None:
         """Test create() with explicit format override."""
         manager = tf(base_dir=tmp_path)
-        path = manager.create(b"raw bytes", "data.dat", fmt=c.Tests.FILE_FORMAT_BIN)
+        path = manager.create(
+            b"raw bytes",
+            "data.dat",
+            options=tf.CreateOptions(fmt=c.Tests.FILE_FORMAT_BIN),
+        )
         tm.that(path.exists(), eq=True)
         tm.that(path.read_bytes(), eq=b"raw bytes")
 
@@ -87,7 +95,11 @@ class TestsFlextTestsFilesFormatsMixin:
     def test_create_custom_encoding(tmp_path: Path) -> None:
         """Test create() with custom encoding."""
         manager = tf(base_dir=tmp_path)
-        path = manager.create("áéíóú", "unicode.txt", enc="utf-16")
+        path = manager.create(
+            "áéíóú",
+            "unicode.txt",
+            options=tf.CreateOptions(enc="utf-16"),
+        )
         tm.that(path.exists(), eq=True)
         tm.that(path.read_text(encoding="utf-16"), eq="áéíóú")
 
@@ -96,7 +108,11 @@ class TestsFlextTestsFilesFormatsMixin:
         """Test create() JSON with custom indentation."""
         manager = tf(base_dir=tmp_path)
         content = m.ConfigMap(root={"key": "value"})
-        path = manager.create(content, "settings.json", indent=4)
+        path = manager.create(
+            content,
+            "settings.json",
+            options=tf.CreateOptions(indent=4),
+        )
         tm.that(path.exists(), eq=True)
         text = path.read_text()
         tm.that(text, has="    ")

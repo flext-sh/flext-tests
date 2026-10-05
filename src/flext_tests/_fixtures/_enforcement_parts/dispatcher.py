@@ -1,11 +1,11 @@
 """Enforcement dispatcher behind the ``flext_tests_enforcement`` pytest plugin.
 
 Activation resolves from the pytest options, the rootdir and the workspace
-markers alone. The plugin loads this module (and, with it, the enforcement
-catalog, its models and the builder) only once a session is proven active, so
-every pytest process that enforcement does not govern (a nested runner
-project, a sandbox, a worker outside the workspace) starts without importing
-the full facade tree.
+markers alone. The module itself stays import-light: the enforcement catalog,
+its models and the builder load through the deferred ``import_module`` form
+only once a governed session reaches them, so every pytest process that
+enforcement does not govern (a nested runner project, a sandbox, a worker
+outside the workspace) starts without importing the full facade tree.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -14,17 +14,14 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import math
+from importlib import import_module
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar
 
 import pytest
 
 from flext_tests import c, m
-from flext_tests._fixtures._enforcement_parts.build import (
-    FlextTestsEnforcementBuilder,
-)
 from flext_tests.enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
-from flext_tests.utilities import u
 
 if TYPE_CHECKING:
     import warnings
@@ -101,7 +98,8 @@ class FlextTestsEnforcementDispatcher:
         stashed = config.stash.get(cls.stash_config, None)
         if stashed is not None:
             return stashed
-        resolved = m.Tests.EnforcementDispatcherConfig(
+        models = import_module("flext_tests").m
+        resolved = models.Tests.EnforcementDispatcherConfig(
             strict=bool(config.getoption("--flext-enforce-strict")),
             include=cls.split_csv(str(config.getoption("--flext-enforce-rules") or "")),
             exclude=cls.split_csv(
@@ -120,8 +118,9 @@ class FlextTestsEnforcementDispatcher:
             return
         cfg = cls.resolve_config(config, repository_root)
         action = "error" if cfg.strict else "default"
-        for rule in u.Tests.active_rules(cfg):
-            if isinstance(rule.source, m.EnforcementRuntimeWarningSource):
+        root = import_module("flext_tests")
+        for rule in root.u.Tests.active_rules(cfg):
+            if isinstance(rule.source, root.m.EnforcementRuntimeWarningSource):
                 config.addinivalue_line(
                     "filterwarnings",
                     f"{action}::{rule.source.category}",
@@ -181,8 +180,11 @@ class FlextTestsEnforcementDispatcher:
         repository_root = cls.active_root(config)
         if repository_root is None or hasattr(config, "workerinput"):
             return
+        builder = import_module(
+            "flext_tests._fixtures._enforcement_parts.build",
+        ).FlextTestsEnforcementBuilder
         items.extend(
-            FlextTestsEnforcementBuilder.build_items(
+            builder.build_items(
                 session,
                 cls.resolve_config(config, repository_root),
                 collected_items=items,
@@ -213,7 +215,7 @@ class FlextTestsEnforcementDispatcher:
         if repository_root is None:
             return
         cfg = cls.resolve_config(config, repository_root)
-        active = u.Tests.active_rules(cfg)
+        active = import_module("flext_tests").u.Tests.active_rules(cfg)
         kinds: t.MutableMappingKV[str, int] = {}
         for rule in active:
             kinds[rule.source.kind] = kinds.get(rule.source.kind, 0) + 1

@@ -7,9 +7,12 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from types import EllipsisType
+from typing import TYPE_CHECKING
 
-from flext_core import p
 from flext_tests import c
+
+if TYPE_CHECKING:
+    from flext_core import p
 
 
 class FlextTestsResultUtilitiesMixin:

@@ -27,8 +27,8 @@ import socket
 from typing import TYPE_CHECKING
 
 import pytest
-
 from flext_infra import config as infra_config
+
 from flext_tests import c, u
 from flext_tests.docker import FlextTestsDocker
 
