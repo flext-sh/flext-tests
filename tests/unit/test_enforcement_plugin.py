@@ -45,7 +45,8 @@ class TestsFlextTestsEnforcementPlugin:
         probe = (
             "from importlib.metadata import entry_points\n"
             "import sys\n"
-            "entries = {entry.name: entry for entry in entry_points(group='pytest11')}\n"
+            "entries = {entry.name: entry for entry in "
+            "entry_points(group='pytest11')}\n"
             "entries['flext_tests'].load()\n"
             "entries['flext_tests_enforcement'].load()\n"
             "eager = sorted(\n"
@@ -160,8 +161,9 @@ class TestsFlextTestsEnforcementPlugin:
     def test_infra_rule_engine_boundary_runs_in_subprocess(
         pytester: pytest.Pytester,
     ) -> None:
-        """Engine findings come through the public Result boundary; a rule the
-        engine does not declare is a failure, never an empty scan.
+        """Engine findings come through the public Result boundary.
+
+        A rule the engine does not declare is a failure, never an empty scan.
         """
         pytester.makeini("[pytest]\n")
         pytester.makepyfile(
@@ -177,7 +179,8 @@ class TestsFlextTestsEnforcementPlugin:
                 "        package = project / 'src' / 'flext_contract_probe'\n"
                 "        package.mkdir(parents=True)\n"
                 "        (package / '__init__.py').write_text(\n"
-                '            \'"""Probe."""\\n\\nfrom __future__ import annotations\\n\',\n'
+                '            \'"""Probe."""\\n\\nfrom __future__ import annotations'
+                '\\n\',\n'
                 "            encoding='utf-8',\n"
                 "        )\n"
                 "        (project / 'pyproject.toml').write_text(\n"

@@ -9,8 +9,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from flext_cli import FlextCliConstants
 
 from flext_tests._constants.data_cases import FlextTestsConstantsDataCases
@@ -21,9 +19,6 @@ from flext_tests._constants.make import FlextTestsConstantsMake
 from flext_tests._constants.matcher import FlextTestsConstantsMatcher
 from flext_tests._constants.namespace import FlextTestsConstantsNamespace
 from flext_tests._constants.validator import FlextTestsConstantsValidator
-
-if TYPE_CHECKING:
-    from flext_tests import t
 
 
 class FlextTestsConstants(FlextCliConstants):
@@ -55,4 +50,4 @@ class FlextTestsConstants(FlextCliConstants):
 
 c = FlextTestsConstants
 
-__all__: t.VariadicTuple[str] = ("FlextTestsConstants", "c")
+__all__ = ("FlextTestsConstants", "c")

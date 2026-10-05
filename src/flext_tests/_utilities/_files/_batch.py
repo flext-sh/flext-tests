@@ -18,6 +18,63 @@ from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
     """Batch create/read/delete file operations."""
 
+    @staticmethod
+    def _batch_create_payload(
+        content: t.Tests.TestobjectSerializable,
+    ) -> t.Tests.TestobjectSerializable:
+        """Own mapping payload leaves for one batch create operation.
+
+        Returns:
+            The resulting ``t.Tests.TestobjectSerializable``.
+        """
+        if isinstance(content, Mapping):
+            return {
+                k: FlextTestsPayloadUtilities.to_payload(v) for k, v in content.items()
+            }
+        return content
+
+    def _batch_process_one(
+        self,
+        params: m.Tests.BatchParams,
+        name: str,
+        content: t.Tests.TestobjectSerializable,
+    ) -> p.Result[Path]:
+        """Process a single batch file operation.
+
+        Returns:
+            The resulting ``p.Result[Path]``.
+        """
+        path = Path(content) if isinstance(content, (Path, str)) else Path(name)
+        result: p.Result[Path]
+        match params.operation:
+            case c.Tests.Operation.CREATE:
+                try:
+                    result = r[Path].ok(
+                        self.create(
+                            self._coerce_file_content(
+                                self._batch_create_payload(content),
+                            ),
+                            name,
+                            params.directory,
+                        ),
+                    )
+                except (OSError, TypeError, ValueError, AttributeError) as e:
+                    result = r[Path].fail(f"Failed to create {name}: {e}")
+            case c.Tests.Operation.READ:
+                read_result = self.read(path, model_cls=None)
+                result = (
+                    r[Path].ok(path)
+                    if read_result.success
+                    else r[Path].fail(read_result.error or f"Failed to read {name}")
+                )
+            case c.Tests.Operation.DELETE:
+                try:
+                    path.unlink(missing_ok=True)
+                    result = r[Path].ok(path)
+                except OSError as e:
+                    result = r[Path].fail(f"Failed to delete {name}: {e}")
+        return result
+
     def batch_files[TModel: m.BaseModel](
         self,
         items: t.Tests.BatchFiles,
@@ -64,58 +121,12 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
             "collect" if params.on_error is c.Tests.ErrorMode.COLLECT else "fail"
         )
 
-        def process_one(
-            name_and_content: tuple[str, t.Tests.TestobjectSerializable],
-        ) -> p.Result[Path]:
-            """Process single file operation.
-
-            Returns:
-                The resulting ``p.Result[Path]``.
-            """
-            name, content = name_and_content
-            path = Path(content) if isinstance(content, (Path, str)) else Path(name)
-            result: p.Result[Path]
-            match params.operation:
-                case c.Tests.Operation.CREATE:
-                    try:
-                        payload = (
-                            {
-                                k: FlextTestsPayloadUtilities.to_payload(v)
-                                for k, v in content.items()
-                            }
-                            if isinstance(content, Mapping)
-                            else content
-                        )
-                        result = r[Path].ok(
-                            self.create(
-                                self._coerce_file_content(payload),
-                                name,
-                                params.directory,
-                            ),
-                        )
-                    except (OSError, TypeError, ValueError, AttributeError) as e:
-                        result = r[Path].fail(f"Failed to create {name}: {e}")
-                case c.Tests.Operation.READ:
-                    read_result = self.read(path, model_cls=None)
-                    result = (
-                        r[Path].ok(path)
-                        if read_result.success
-                        else r[Path].fail(read_result.error or f"Failed to read {name}")
-                    )
-                case c.Tests.Operation.DELETE:
-                    try:
-                        path.unlink(missing_ok=True)
-                        result = r[Path].ok(path)
-                    except OSError as e:
-                        result = r[Path].fail(f"Failed to delete {name}: {e}")
-            return result
-
         items_list = list(files_dict.items())
         results_dict: MutableMapping[str, p.Result[t.Tests.TestResultValue]] = {}
         failed_dict: t.MutableStrMapping = {}
         rtype = r[t.Tests.TestResultValue]
         for name, _ in items_list:
-            op_result = process_one((name, files_dict[name]))
+            op_result = self._batch_process_one(params, name, files_dict[name])
             if op_result.success:
                 results_dict[name] = rtype.ok(op_result.value)
                 continue

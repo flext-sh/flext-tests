@@ -43,11 +43,30 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
     })
 
     @classmethod
-    def _repository_root(
+    def _successful_git_output(
         cls,
+        root: Path,
+        args: tuple[str, ...],
+        label: str,
+    ) -> p.Result[str]:
+        """Run one Git command in ``root`` and require a successful exit code.
+
+        Returns:
+            The resulting ``p.Result[str]`` carrying the command stdout.
+        """
+        result = cls._git(root, args)
+        if result.failure:
+            return r[str].fail(result.error)
+        output = result.value
+        if output.outcome.raw_return_code != c.Cli.EXIT_CODE_SUCCESS:
+            return r[str].fail(cls._command_error(label, output))
+        return r[str].ok(output.stdout)
+
+    @staticmethod
+    def _validated_request_root(
         request: p.Tests.WorkspaceCleanupRequest,
     ) -> p.Result[Path]:
-        """Require the request root to be the exact enclosing Git worktree root.
+        """Resolve the request root strictly and require a directory.
 
         Returns:
             The resulting ``p.Result[Path]``.
@@ -61,19 +80,48 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
             )
         if not root.is_dir():
             return r[Path].fail(f"cleanup workspace root is not a directory: {root}")
-        git_result = cls._git(root, ("rev-parse", "--show-toplevel"))
-        if git_result.failure:
-            return r[Path].fail(git_result.error)
-        output = git_result.value
-        if output.outcome.raw_return_code != c.Cli.EXIT_CODE_SUCCESS:
-            return r[Path].fail(cls._command_error("git root discovery", output))
-        raw_root = output.stdout.strip()
-        if not raw_root:
-            return r[Path].fail("git root discovery returned an empty path")
+        return r[Path].ok(root)
+
+    @staticmethod
+    def _resolved_git_root(raw_root: str) -> p.Result[Path]:
+        """Resolve the discovered Git root strictly.
+
+        Returns:
+            The resulting ``p.Result[Path]``.
+        """
         try:
-            git_root = Path(raw_root).resolve(strict=True)
+            return r[Path].ok(Path(raw_root).resolve(strict=True))
         except OSError as exc:
             return r[Path].fail(f"git root resolution failed: {exc}", exception=exc)
+
+    @classmethod
+    def _repository_root(
+        cls,
+        request: p.Tests.WorkspaceCleanupRequest,
+    ) -> p.Result[Path]:
+        """Require the request root to be the exact enclosing Git worktree root.
+
+        Returns:
+            The resulting ``p.Result[Path]``.
+        """
+        root_result = cls._validated_request_root(request)
+        if root_result.failure:
+            return r[Path].from_failure(root_result)
+        root = root_result.value
+        git_result = cls._successful_git_output(
+            root,
+            ("rev-parse", "--show-toplevel"),
+            "git root discovery",
+        )
+        if git_result.failure:
+            return r[Path].fail(git_result.error)
+        raw_root = git_result.value.strip()
+        if not raw_root:
+            return r[Path].fail("git root discovery returned an empty path")
+        resolved_result = cls._resolved_git_root(raw_root)
+        if resolved_result.failure:
+            return r[Path].from_failure(resolved_result)
+        git_root = resolved_result.value
         if git_root != root:
             return r[Path].fail(
                 f"cleanup root must equal the Git worktree root: {root} != {git_root}",
@@ -127,13 +175,14 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
                 f"cleanup residue targets a protected path: {relative_path}",
             )
         for name in ("--git-dir", "--git-common-dir"):
-            git_result = cls._git(root, ("rev-parse", name))
+            git_result = cls._successful_git_output(
+                root,
+                ("rev-parse", name),
+                "git dir discovery",
+            )
             if git_result.failure:
                 return r[bool].fail(git_result.error)
-            output = git_result.value
-            if output.outcome.raw_return_code != c.Cli.EXIT_CODE_SUCCESS:
-                return r[bool].fail(cls._command_error("git dir discovery", output))
-            raw = output.stdout.strip()
+            raw = git_result.value.strip()
             if not raw:
                 continue
             try:

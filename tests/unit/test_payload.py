@@ -15,11 +15,8 @@ import pytest
 from flext_tests import FlextTestsFiles, c, m, t, tm, u
 
 
-class TestsFlextTestsPayload:
-    """Payload model contracts independent of JSON projection."""
-
-    class Tests:
-        """flext-tests payload test namespace."""
+class FlextTestsPayloadIdentityParts:
+    """Payload identity and matcher parts of the payload contracts."""
 
     @staticmethod
     def test_native_atoms_preserve_identity() -> None:
@@ -184,6 +181,13 @@ class TestsFlextTestsPayload:
         """Test rejects mapping with atom."""
         with pytest.raises(c.ValidationError, match="mapping payload cannot"):
             m.Tests.Payload(kind="mapping", atom="discarded")
+
+
+class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
+    """Payload model contracts independent of JSON projection."""
+
+    class Tests:
+        """flext-tests payload test namespace."""
 
     @staticmethod
     def test_rejects_collection_with_entries() -> None:

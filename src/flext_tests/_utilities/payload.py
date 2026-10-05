@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import KeysView, Mapping, ValuesView
+from collections.abc import Callable, KeysView, Mapping, ValuesView
 from datetime import datetime, tzinfo
 from enum import Enum
 from importlib.machinery import ModuleSpec
@@ -23,10 +23,148 @@ from types import (
     ModuleType,
     UnionType,
 )
-from typing import TypeAliasType
+from typing import Final, TypeAliasType
 
 from flext_core import u
 from flext_tests import m, p, t
+
+
+def _payload_model_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+    """Own matcher model leaves (payload, root model, enum) recursively."""
+    if isinstance(value, m.Tests.Payload):
+        return value
+    if isinstance(value, m.RootModel):
+        return FlextTestsPayloadUtilities.to_payload(value.root)
+    if isinstance(value, Enum):
+        return FlextTestsPayloadUtilities.to_payload(value.value)
+    return None
+
+
+def _payload_none_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+    """Own ``None`` as the canonical empty atom."""
+    if value is None:
+        return m.Tests.Payload(kind="atom", atom=None)
+    return None
+
+
+def _payload_scalar_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+    """Own supported native scalars and model leaves as atoms."""
+    if isinstance(
+        value,
+        (str, int, float, bool, bytes, datetime, tzinfo, Path, type, BaseException),
+    ) or isinstance(value, p.Model):
+        return m.Tests.Payload(kind="atom", atom=value)
+    return None
+
+
+def _payload_annotated_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+    """Own ``typing.Annotated`` constructs as their textual atom."""
+    if hasattr(value, "__metadata__") and hasattr(value, "__origin__"):
+        # typing.Annotated[...] constructs are type-level atoms under
+        # the same textual convention as the alias arm below.
+        return m.Tests.Payload(kind="atom", atom=str(value))
+    return None
+
+
+def _payload_match_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+    """Own a regex match through its matched text."""
+    if isinstance(value, Match):
+        # A regex match compares by its matched text — the pattern
+        # contract (semver, id shape) is what an expectation asserts.
+        return m.Tests.Payload(kind="atom", atom=value.group(0))
+    return None
+
+
+def _payload_runtime_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+    """Own typing constructs and runtime machinery as textual atoms."""
+    if isinstance(
+        value,
+        (
+            GenericAlias,
+            UnionType,
+            TypeAliasType,
+            FunctionType,
+            BuiltinFunctionType,
+            CodeType,
+            ModuleType,
+            ModuleSpec,
+        ),
+    ):
+        # Typing constructs and runtime machinery (functions, modules,
+        # code specs) are type-level atoms: the established textual
+        # convention (mirrors the type() leaf above) keeps
+        # alias-bearing expectations comparable as strings.
+        return m.Tests.Payload(kind="atom", atom=str(value))
+    return None
+
+
+def _payload_view_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+    """Own dict and set views through their native iteration order."""
+    if isinstance(value, (KeysView, ValuesView)):
+        return FlextTestsPayloadUtilities.to_payload(list(value))
+    return None
+
+
+def _payload_mapping_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+    """Own a native mapping with stringified, collision-checked keys.
+
+    Returns:
+        The resulting ``m.Tests.Payload | None``.
+
+    Raises:
+        ValueError: If Native payload mapping key collision.
+    """
+    if not isinstance(value, Mapping):
+        return None
+    entries: t.MutableMappingKV[str, m.Tests.Payload] = {}
+    for key, item in value.items():
+        normalized_key = str(key)
+        if normalized_key in entries:
+            msg = f"Native payload mapping key collision: {normalized_key!r}"
+            raise ValueError(msg)
+        entries[normalized_key] = FlextTestsPayloadUtilities.to_payload(item)
+    return m.Tests.Payload(kind="mapping", entries=entries)
+
+
+_PAYLOAD_SEQUENCE_KINDS: Final[tuple[tuple[type, t.Tests.PayloadKind], ...]] = (
+    (list, "list"),
+    (tuple, "tuple"),
+    (set, "set"),
+    (frozenset, "frozenset"),
+)
+
+
+def _payload_sequence_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+    """Own a native sequence or set with deterministic set ordering."""
+    if not isinstance(value, (list, tuple, set, frozenset)):
+        return None
+    children = tuple(FlextTestsPayloadUtilities.to_payload(item) for item in value)
+    if isinstance(value, (set, frozenset)):
+        children = tuple(
+            sorted(
+                children,
+                key=FlextTestsPayloadUtilities._stable_sort_key,
+            ),
+        )
+    for sequence_type, kind in _PAYLOAD_SEQUENCE_KINDS:
+        if isinstance(value, sequence_type):
+            return m.Tests.Payload(kind=kind, items=children)
+    return None
+
+
+_PAYLOAD_LEAF_HANDLERS: Final[
+    tuple[Callable[[p.AttributeProbe], m.Tests.Payload | None], ...]
+] = (
+    _payload_model_leaf,
+    _payload_none_leaf,
+    _payload_scalar_leaf,
+    _payload_annotated_leaf,
+    _payload_match_leaf,
+    _payload_runtime_leaf,
+    _payload_view_leaf,
+    _payload_mapping_leaf,
+    _payload_sequence_leaf,
+)
 
 
 class FlextTestsPayloadUtilities:
@@ -49,91 +187,12 @@ class FlextTestsPayloadUtilities:
             TypeError: If Unsupported native payload leaf.
             ValueError: If Native payload mapping key collision.
         """
-        to_p = FlextTestsPayloadUtilities.to_payload
-        match value:
-            case m.Tests.Payload():
-                return value
-            case m.RootModel():
-                return to_p(value.root)
-            case Enum():
-                return to_p(value.value)
-            case None:
-                return m.Tests.Payload(kind="atom", atom=None)
-            case (
-                str()
-                | int()
-                | float()
-                | bool()
-                | bytes()
-                | datetime()
-                | tzinfo()
-                | Path()
-                | type()
-                | BaseException()
-                | p.Model()
-            ):
-                return m.Tests.Payload(kind="atom", atom=value)
-            case value if hasattr(value, "__metadata__") and hasattr(
-                value,
-                "__origin__",
-            ):
-                # typing.Annotated[...] constructs are type-level atoms under
-                # the same textual convention as the alias arm below.
-                return m.Tests.Payload(kind="atom", atom=str(value))
-            case Match():
-                # A regex match compares by its matched text — the pattern
-                # contract (semver, id shape) is what an expectation asserts.
-                return m.Tests.Payload(kind="atom", atom=value.group(0))
-            case (
-                GenericAlias()
-                | UnionType()
-                | TypeAliasType()
-                | FunctionType()
-                | BuiltinFunctionType()
-                | CodeType()
-                | ModuleType()
-                | ModuleSpec()
-            ):
-                # Typing constructs and runtime machinery (functions, modules,
-                # code specs) are type-level atoms: the established textual
-                # convention (mirrors the type() leaf above) keeps
-                # alias-bearing expectations comparable as strings.
-                return m.Tests.Payload(kind="atom", atom=str(value))
-            case value if isinstance(value, (KeysView, ValuesView)):
-                return to_p(list(value))
-            case Mapping():
-                entries: t.MutableMappingKV[str, m.Tests.Payload] = {}
-                for key, item in value.items():
-                    normalized_key = str(key)
-                    if normalized_key in entries:
-                        msg = (
-                            f"Native payload mapping key collision: {normalized_key!r}"
-                        )
-                        raise ValueError(msg)
-                    entries[normalized_key] = to_p(item)
-                return m.Tests.Payload(kind="mapping", entries=entries)
-            case list() | tuple() | set() | frozenset():
-                children = tuple(to_p(item) for item in value)
-                if isinstance(value, (set, frozenset)):
-                    children = tuple(
-                        sorted(
-                            children,
-                            key=FlextTestsPayloadUtilities._stable_sort_key,
-                        ),
-                    )
-                kind: t.Tests.PayloadKind
-                if isinstance(value, list):
-                    kind = "list"
-                elif isinstance(value, tuple):
-                    kind = "tuple"
-                elif isinstance(value, set):
-                    kind = "set"
-                else:
-                    kind = "frozenset"
-                return m.Tests.Payload(kind=kind, items=children)
-            case _:
-                msg = f"Unsupported native payload leaf: {type(value).__name__}"
-                raise TypeError(msg)
+        for handler in _PAYLOAD_LEAF_HANDLERS:
+            payload = handler(value)
+            if payload is not None:
+                return payload
+        msg = f"Unsupported native payload leaf: {type(value).__name__}"
+        raise TypeError(msg)
 
     @staticmethod
     def to_match_value(value: p.Tests.Payload) -> t.Tests.NativeMatchValue:

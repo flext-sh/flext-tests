@@ -81,7 +81,7 @@ class TestsFlextTestsDockerLifecycle:
         def append(info: m.Tests.ContainerInfo) -> p.Result[bool]:
             with marker_file.open("a", encoding="utf-8") as handle:
                 _ = handle.write(f"{info.container_id}\n")
-            return r[bool].ok(True)
+            return r[bool].ok(value=True)
 
         return append
 

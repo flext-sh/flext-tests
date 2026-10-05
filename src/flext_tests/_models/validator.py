@@ -56,3 +56,27 @@ class FlextTestsValidatorModelsMixin:
                 description="Captured runtime warning counts keyed by dotted category.",
             ),
         ] = u.Field(default_factory=dict)
+
+    class EnforcementViolation(m.Value):
+        """One grouped ``(rule_id, project)`` enforcement violation payload."""
+
+        rule_id: Annotated[
+            str,
+            u.Field(description="Enforcement rule ID the findings belong to."),
+        ]
+        severity: Annotated[
+            str,
+            u.Field(description="Severity declared by the finding payload."),
+        ]
+        description: Annotated[
+            str,
+            u.Field(description="Human-readable finding message of the first hit."),
+        ]
+        project: Annotated[
+            str,
+            u.Field(description="FLEXT project the findings belong to."),
+        ]
+        violations: Annotated[
+            tuple[str, ...],
+            u.Field(description="Formatted per-finding lines for the failure body."),
+        ] = ()

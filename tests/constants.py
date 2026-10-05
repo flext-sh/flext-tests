@@ -5,7 +5,8 @@ flext-tests-specific constants. All generic test constants come from flext_tests
 
 Architecture:
 - FlextTestsConstants (flext_tests) = Generic constants for all FLEXT projects
-- TestsFlextTestsConstants (tests/) = flext-tests-specific constants extending FlextTestsConstants
+- TestsFlextTestsConstants (tests/) = flext-tests-specific constants
+  extending FlextTestsConstants
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT

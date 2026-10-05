@@ -178,6 +178,19 @@ class FlextTestsKube(FlextTestsDocker):
         nodes_result = self.nodes_ready()
         if nodes_result.failure:
             return r[m.Tests.ContainerInfo].from_failure(nodes_result)
+        return self._probe_kind_readiness(target, readiness_probe, deadline)
+
+    def _probe_kind_readiness(
+        self,
+        target: m.Tests.ContainerConfig,
+        readiness_probe: p.Tests.ReadinessProbe | None,
+        deadline: float,
+    ) -> p.Result[m.Tests.ContainerInfo]:
+        """Collect the cluster info and run the readiness probe when given.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+        """
         container_name = target.container_name
         info = (
             self.fetch_container_info(container_name)

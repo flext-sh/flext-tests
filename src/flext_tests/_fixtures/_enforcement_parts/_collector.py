@@ -10,12 +10,11 @@ from typing import TYPE_CHECKING, override
 
 import pytest
 
-from flext_tests._fixtures._enforcement_parts.items import FlextTestsEnforcementItem
-
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from flext_tests import t
+    from flext_tests._fixtures._enforcement_parts.items import FlextTestsEnforcementItem
 
 
 class FlextTestsEnforcementCollector(pytest.Collector):

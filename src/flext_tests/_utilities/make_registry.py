@@ -199,17 +199,9 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             return r[m.Tests.MakeRegistry].from_failure(validate_result)
         return r[m.Tests.MakeRegistry].ok(registry)
 
-    @classmethod
-    def make_load_command(
-        cls,
-        path: Path,
-        expected_verb: str,
-    ) -> p.Result[m.Tests.MakeCommand]:
-        """Load one promoted command from its flext-command TOML header.
-
-        Returns:
-            The resulting ``p.Result[m.Tests.MakeCommand]``.
-        """
+    @staticmethod
+    def _load_command_path_failure(path: Path) -> p.Result[m.Tests.MakeCommand] | None:
+        """Return the public command-path contract failure, or ``None`` when valid."""
         if path.name == "__pycache__":
             return r[m.Tests.MakeCommand].fail(f"{path}: cache publico invalido")
         if path.is_dir():
@@ -220,10 +212,18 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             return r[m.Tests.MakeCommand].fail(
                 f"{path}: file publico must be .sh ou .py",
             )
-        data_result = FlextTestsMakeParsingUtilitiesMixin.make_header_data(path)
-        if data_result.failure:
-            return r[m.Tests.MakeCommand].from_failure(data_result)
-        data = data_result.value
+        return None
+
+    @staticmethod
+    def _load_command_header_fields(
+        path: Path,
+        data: t.Tests.MakeTomlTable,
+    ) -> p.Result[tuple[str, str]]:
+        """Require the ``verb`` and ``what`` header strings for one command.
+
+        Returns:
+            The resulting ``p.Result[tuple[str, str]]``.
+        """
         verb_result = FlextTestsMakeParsingUtilitiesMixin.make_require_string(
             data,
             "verb",
@@ -235,11 +235,32 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             path,
         )
         if verb_result.failure:
-            return r[m.Tests.MakeCommand].from_failure(verb_result)
+            return r[tuple[str, str]].from_failure(verb_result)
         if what_result.failure:
-            return r[m.Tests.MakeCommand].from_failure(what_result)
-        verb = verb_result.value
-        what = what_result.value
+            return r[tuple[str, str]].from_failure(what_result)
+        return r[tuple[str, str]].ok((verb_result.value, what_result.value))
+
+    @classmethod
+    def make_load_command(
+        cls,
+        path: Path,
+        expected_verb: str,
+    ) -> p.Result[m.Tests.MakeCommand]:
+        """Load one promoted command from its flext-command TOML header.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.MakeCommand]``.
+        """
+        path_failure = cls._load_command_path_failure(path)
+        if path_failure is not None:
+            return path_failure
+        data_result = FlextTestsMakeParsingUtilitiesMixin.make_header_data(path)
+        if data_result.failure:
+            return r[m.Tests.MakeCommand].from_failure(data_result)
+        header_result = cls._load_command_header_fields(path, data_result.value)
+        if header_result.failure:
+            return r[m.Tests.MakeCommand].from_failure(header_result)
+        verb, what = header_result.value
         if verb != expected_verb:
             return r[m.Tests.MakeCommand].fail(
                 f"{path}: header verb={verb} diverge do diretorio {expected_verb}",
@@ -248,7 +269,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             return r[m.Tests.MakeCommand].fail(
                 f"{path}: header what={what} diverge do file {path.stem}",
             )
-        return cls._make_command_from_data(path, data, verb, what)
+        return cls._make_command_from_data(path, data_result.value, verb, what)
 
 
 __all__: list[str] = ["FlextTestsMakeRegistryUtilitiesMixin"]

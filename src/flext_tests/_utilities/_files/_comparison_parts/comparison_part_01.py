@@ -6,11 +6,15 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from flext_core import r
 from flext_tests import c, m, t, u
 from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
-from flext_tests.protocols import p
+
+if TYPE_CHECKING:
+    from flext_tests.protocols import p
 
 
 class FlextTestsFilesComparisonMixin:

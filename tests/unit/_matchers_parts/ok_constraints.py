@@ -13,8 +13,8 @@ from tests import t
 from tests.unit._matchers_parts.predicates import TestsFlextTestsMatchersPredicates
 
 
-class TestsFlextTestsMatchersOkConstraintsMixin:
-    """Matcher ok constraint tests."""
+class TestsFlextTestsMatchersOkConstraintsContentMixin:
+    """Matcher ok content and structure constraint tests."""
 
     @staticmethod
     def test_ok_with_is_parameter() -> None:
@@ -97,6 +97,12 @@ class TestsFlextTestsMatchersOkConstraintsMixin:
                 result,
                 deep={"user.missing": TestsFlextTestsMatchersPredicates.is_string},
             )
+
+
+class TestsFlextTestsMatchersOkConstraintsMixin(
+    TestsFlextTestsMatchersOkConstraintsContentMixin,
+):
+    """Matcher ok constraint tests."""
 
     @staticmethod
     def test_ok_with_path_parameter() -> None:

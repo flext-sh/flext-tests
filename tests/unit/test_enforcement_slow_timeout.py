@@ -85,7 +85,8 @@ class TestsFlextTestsSlowTimeoutPolicy:
             "\n"
             "def test_regular_budget(request: pytest.FixtureRequest) -> None:\n"
             "    tm.that(request.node.get_closest_marker('timeout'), none=True)\n"
-            f"    tm.that(request.config.getoption('timeout'), eq={self.regular_timeout_seconds})\n",
+            f"    tm.that(request.config.getoption('timeout'), "
+            f"eq={self.regular_timeout_seconds})\n",
         )
 
         self._run_pytest(pytester).assert_outcomes(passed=2)

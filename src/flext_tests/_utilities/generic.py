@@ -7,9 +7,12 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import MutableSequence
+from typing import TYPE_CHECKING
 
 from flext_core import r
-from flext_tests import p, t
+
+if TYPE_CHECKING:
+    from flext_tests import p, t
 
 
 class FlextTestsGenericHelpersUtilitiesMixin:
@@ -20,6 +23,7 @@ class FlextTestsGenericHelpersUtilitiesMixin:
     @staticmethod
     def assert_result_chain[T](
         results: t.SequenceOf[p.Result[T]],
+        *,
         expected_successes: int | None = None,
         expected_failures: int | None = None,
         expected_success_count: int | None = None,

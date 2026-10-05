@@ -104,9 +104,9 @@ class TestsFlextTestsMatchersThatAttrsMixin:
     @staticmethod
     def test_that_where_predicate_receives_the_native_value() -> None:
         """A predicate sees the value itself, so a falsy subject fails ``bool``."""
-        tm.that(True, where=bool)
+        tm.that(value=True, where=bool)
         with pytest.raises(AssertionError, match="Custom predicate failed"):
-            tm.that(False, where=bool)
+            tm.that(value=False, where=bool)
 
     @staticmethod
     def test_that_presence_checks_accept_any_runtime_object() -> None:

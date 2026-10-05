@@ -5,7 +5,8 @@ flext-tests-specific protocol definitions.
 
 Architecture:
 - TestsFlextProtocols (flext_tests) = Generic protocols for all FLEXT projects
-- TestsFlextTestsProtocols (tests/) = flext-tests-specific protocols extending TestsFlextProtocols
+- TestsFlextTestsProtocols (tests/) = flext-tests-specific protocols
+  extending TestsFlextProtocols
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -36,7 +37,10 @@ class TestsFlextTestsProtocols(FlextTestsProtocols):
 
         @runtime_checkable
         class Echo(FlextTestsProtocols.Base, Protocol):
-            """Dependency port of the S6 typed-service-base tests: an echo capability."""
+            """Dependency port of the S6 typed-service-base tests.
+
+            An echo capability.
+            """
 
             def echo(self, value: str) -> str:
                 """Return the transformed echo value."""

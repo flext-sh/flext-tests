@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
@@ -46,21 +47,17 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
         if lexical_result.failure:
             return r[m.Tests.WorkspaceCleanupCandidate].fail(lexical_result.error)
         path = lexical_result.value
-        protected_result = cls._reject_protected(root, relative_path)
-        if protected_result.failure:
-            return r[m.Tests.WorkspaceCleanupCandidate].fail(protected_result.error)
-        ancestor_result = cls._reject_symlink_ancestor(root, relative_path)
-        if ancestor_result.failure:
-            return r[m.Tests.WorkspaceCleanupCandidate].fail(ancestor_result.error)
-        node_result = cls._reject_unsafe_node(path, relative_path)
-        if node_result.failure:
-            return r[m.Tests.WorkspaceCleanupCandidate].fail(node_result.error)
-        ignored_result = cls._ignored(root, relative_path)
-        if ignored_result.failure:
-            return r[m.Tests.WorkspaceCleanupCandidate].fail(ignored_result.error)
-        clean_result = cls._untracked_and_clean(root, relative_path)
-        if clean_result.failure:
-            return r[m.Tests.WorkspaceCleanupCandidate].fail(clean_result.error)
+        validations: tuple[Callable[[], p.Result[bool]], ...] = (
+            lambda: cls._reject_protected(root, relative_path),
+            lambda: cls._reject_symlink_ancestor(root, relative_path),
+            lambda: cls._reject_unsafe_node(path, relative_path),
+            lambda: cls._ignored(root, relative_path),
+            lambda: cls._untracked_and_clean(root, relative_path),
+        )
+        for validate in validations:
+            result = validate()
+            if result.failure:
+                return r[m.Tests.WorkspaceCleanupCandidate].fail(result.error)
         fingerprint_result = cls._path_fingerprint(path)
         if fingerprint_result.failure:
             return r[m.Tests.WorkspaceCleanupCandidate].fail(fingerprint_result.error)
@@ -97,6 +94,41 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
         return r[bool].ok(value=True)
 
     @classmethod
+    def _unique_relative_path(
+        cls,
+        relative_paths: set[Path],
+        declared: Path,
+    ) -> p.Result[Path]:
+        """Validate one declared residue path and register it as planned.
+
+        Returns:
+            The resulting ``p.Result[Path]``.
+        """
+        relative_result = cls._relative_path(declared)
+        if relative_result.failure:
+            return r[Path].fail(relative_result.error)
+        relative_path = relative_result.value
+        if relative_path in relative_paths:
+            return r[Path].fail(
+                f"cleanup residue is declared more than once: {relative_path}",
+            )
+        relative_paths.add(relative_path)
+        return r[Path].ok(relative_path)
+
+    @classmethod
+    def _lexical_existing(cls, root: Path, relative_path: Path) -> p.Result[bool]:
+        """Resolve containment and report whether the residue path exists.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
+        lexical_result = cls._lexical_path(root, relative_path)
+        if lexical_result.failure:
+            return r[bool].fail(lexical_result.error)
+        lexical = lexical_result.value
+        return r[bool].ok(lexical.exists() or lexical.is_symlink())
+
+    @classmethod
     def workspace_cleanup_plan(
         cls,
         request: p.Tests.WorkspaceCleanupRequest,
@@ -117,20 +149,14 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
         relative_paths: set[Path] = set()
         candidates: list[m.Tests.WorkspaceCleanupCandidate] = []
         for declared in request.policy.residues:
-            relative_result = cls._relative_path(declared)
-            if relative_result.failure:
-                return r[p.Tests.WorkspaceCleanupPlan].fail(relative_result.error)
-            relative_path = relative_result.value
-            if relative_path in relative_paths:
-                return r[p.Tests.WorkspaceCleanupPlan].fail(
-                    f"cleanup residue is declared more than once: {relative_path}",
-                )
-            relative_paths.add(relative_path)
-            lexical_result = cls._lexical_path(root, relative_path)
-            if lexical_result.failure:
-                return r[p.Tests.WorkspaceCleanupPlan].fail(lexical_result.error)
-            lexical = lexical_result.value
-            if not lexical.exists() and not lexical.is_symlink():
+            unique_result = cls._unique_relative_path(relative_paths, declared)
+            if unique_result.failure:
+                return r[p.Tests.WorkspaceCleanupPlan].fail(unique_result.error)
+            relative_path = unique_result.value
+            existing_result = cls._lexical_existing(root, relative_path)
+            if existing_result.failure:
+                return r[p.Tests.WorkspaceCleanupPlan].fail(existing_result.error)
+            if not existing_result.value:
                 continue
             candidate_result = cls._candidate(root, relative_path)
             if candidate_result.failure:
@@ -142,6 +168,40 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
             return r[p.Tests.WorkspaceCleanupPlan].fail(nested_result.error)
         plan = m.Tests.WorkspaceCleanupPlan(request=request, candidates=ordered)
         return r[p.Tests.WorkspaceCleanupPlan].ok(plan)
+
+    @classmethod
+    def _apply_candidate(
+        cls,
+        root: Path,
+        candidate: m.Tests.WorkspaceCleanupCandidate,
+        removed: list[Path],
+    ) -> p.Result[bool]:
+        """Re-validate one planned candidate against fresh state and delete it.
+
+        Returns:
+            The resulting ``p.Result[bool]``.
+        """
+        fresh_result = cls._candidate(root, candidate.relative_path)
+        if fresh_result.failure:
+            return r[bool].fail(f"cleanup plan is stale: {fresh_result.error}")
+        if fresh_result.value != candidate:
+            return r[bool].fail(
+                f"cleanup plan is stale for {candidate.relative_path}: "
+                "filesystem state changed since dry-run",
+            )
+        delete_result = u.Cli.files_delete(candidate.path)
+        if delete_result.failure:
+            completed = ", ".join(path.as_posix() for path in removed)
+            return r[bool].fail(
+                f"cleanup deletion failed for {candidate.relative_path}: "
+                f"{delete_result.error}; already removed=[{completed}]",
+            )
+        if candidate.path.exists() or candidate.path.is_symlink():
+            return r[bool].fail(
+                f"cleanup deletion reported success but path remains: "
+                f"{candidate.relative_path}",
+            )
+        return r[bool].ok(value=True)
 
     @classmethod
     def workspace_cleanup_apply(
@@ -175,28 +235,9 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
         root = root_result.value
         removed: list[Path] = []
         for candidate in plan.candidates:
-            fresh_result = cls._candidate(root, candidate.relative_path)
-            if fresh_result.failure:
-                return r[p.Tests.WorkspaceCleanupReport].fail(
-                    f"cleanup plan is stale: {fresh_result.error}",
-                )
-            if fresh_result.value != candidate:
-                return r[p.Tests.WorkspaceCleanupReport].fail(
-                    f"cleanup plan is stale for {candidate.relative_path}: "
-                    "filesystem state changed since dry-run",
-                )
-            delete_result = u.Cli.files_delete(candidate.path)
-            if delete_result.failure:
-                completed = ", ".join(path.as_posix() for path in removed)
-                return r[p.Tests.WorkspaceCleanupReport].fail(
-                    f"cleanup deletion failed for {candidate.relative_path}: "
-                    f"{delete_result.error}; already removed=[{completed}]",
-                )
-            if candidate.path.exists() or candidate.path.is_symlink():
-                return r[p.Tests.WorkspaceCleanupReport].fail(
-                    f"cleanup deletion reported success but path remains: "
-                    f"{candidate.relative_path}",
-                )
+            apply_result = cls._apply_candidate(root, candidate, removed)
+            if apply_result.failure:
+                return r[p.Tests.WorkspaceCleanupReport].fail(apply_result.error)
             removed.append(candidate.path)
         report = m.Tests.WorkspaceCleanupReport(plan=plan, removed=tuple(removed))
         return r[p.Tests.WorkspaceCleanupReport].ok(report)

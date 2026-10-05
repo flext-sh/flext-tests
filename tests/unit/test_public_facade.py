@@ -15,7 +15,21 @@ import pytest
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
 
-from flext_tests import tm
+import flext_tests
+from flext_infra import config
+from flext_tests import (
+    FlextTestsCase,
+    d,
+    e,
+    h,
+    m,
+    r,
+    tf,
+    tk,
+    tm,
+    u,
+    x,
+)
 
 
 class TestsFlextTestsPublicFacade:
@@ -27,8 +41,6 @@ class TestsFlextTestsPublicFacade:
     @staticmethod
     def test_models_and_utilities_import_together() -> None:
         """Test models and utilities import together."""
-        from flext_tests import m, u
-
         tm.that(m.__name__, eq="FlextTestsModels")
         tm.that(u.__name__, eq="FlextTestsUtilities")
 
@@ -37,8 +49,6 @@ class TestsFlextTestsPublicFacade:
         pytestconfig: pytest.Config,
     ) -> None:
         """Test selected enforcement plugin uses its declared identity."""
-        from flext_infra import config
-
         plugin = config.Infra.tooling.tools.pytest.enforcement_plugin
         entries = entry_points(group="pytest11", name=plugin)
         tm.that(len(entries), eq=1)
@@ -50,9 +60,6 @@ class TestsFlextTestsPublicFacade:
     @staticmethod
     def test_consumer_facade_imports_without_container_lifecycle() -> None:
         """Test consumer facade imports without container lifecycle."""
-        import flext_tests
-        from flext_tests import FlextTestsCase, d, e, h, r, tf, tk, tm, x
-
         for name, exported in (
             ("FlextTestsCase", FlextTestsCase),
             ("d", d),
@@ -84,8 +91,6 @@ class TestsFlextTestsPublicFacade:
         distribution_name: str,
     ) -> None:
         """Test facade runtime imports are direct unconditional dependencies."""
-        from flext_tests import u
-
         root = Path(__file__).resolve().parents[2]
         document = u.read_project_document_cached(root)
         metadata = u.build_project_metadata(root, document)
