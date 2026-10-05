@@ -36,12 +36,18 @@ def pytest_configure(config: pytest.Config) -> None:
     # fixtures at all. `import_module` names the module unambiguously.
     settings = import_module("flext_tests._fixtures.settings")
     connectivity_module = import_module("flext_tests._fixtures.connectivity")
+    namespace_module = import_module("flext_tests._fixtures.namespace")
+    scratch_module = import_module("flext_tests._fixtures.scratch_storage")
 
     if settings not in config.pluginmanager.get_plugins():
         config.pluginmanager.register(settings, settings.__name__)
-    # Connectivity-bound tests skip - never fail - when their external service
-    # is unreachable (AGENTS.md external/docker skip rule).
-    connectivity = connectivity_module.FlextTestsConnectivityPlugin()
+    if namespace_module not in config.pluginmanager.get_plugins():
+        config.pluginmanager.register(namespace_module, namespace_module.__name__)
+    if scratch_module not in config.pluginmanager.get_plugins():
+        config.pluginmanager.register(scratch_module, scratch_module.__name__)
+    # Capability-bound tests are DESELECTED (typed NOT EXECUTED) when their
+    # capability is absent; a capable host executes and a service failure is RED.
+    connectivity = connectivity_module.FlextTestsCapabilityPlugin()
     if not config.pluginmanager.hasplugin("flext_tests._fixtures.connectivity"):
         config.pluginmanager.register(
             connectivity, "flext_tests._fixtures.connectivity"

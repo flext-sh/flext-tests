@@ -139,6 +139,34 @@ class FlextTestsConstantsValidator:
         "HIGH",
         "Forbidden Any annotation in markdown code block",
     )
+    VALIDATOR_RULE_IMPORT_UNREADABLE: ClassVar[t.StrPair] = (
+        "HIGH",
+        "Cannot read file for import validation",
+    )
+    VALIDATOR_RULE_TYPE_UNREADABLE: ClassVar[t.StrPair] = (
+        "HIGH",
+        "Cannot read file for type validation",
+    )
+    VALIDATOR_RULE_TEST_UNREADABLE: ClassVar[t.StrPair] = (
+        "HIGH",
+        "Cannot read file for test validation",
+    )
+    VALIDATOR_RULE_CONFIG_UNREADABLE: ClassVar[t.StrPair] = (
+        "HIGH",
+        "Cannot read file for configuration validation",
+    )
+    VALIDATOR_RULE_BYPASS_UNREADABLE: ClassVar[t.StrPair] = (
+        "HIGH",
+        "Cannot read file for bypass validation",
+    )
+    VALIDATOR_RULE_LAYER_UNREADABLE: ClassVar[t.StrPair] = (
+        "HIGH",
+        "Cannot read file for layer validation",
+    )
+    VALIDATOR_RULE_MD_UNREADABLE: ClassVar[t.StrPair] = (
+        "HIGH",
+        "Cannot read file for markdown validation",
+    )
 
     VALIDATOR_MSG_LAYER_VIOLATION: ClassVar[str] = (
         "'{current}' L{current_level} -> '{imported}' L{imported_level}"
@@ -311,6 +339,9 @@ class FlextTestsConstantsValidator:
     VALIDATOR_APPROVED_CAST_CONTAINER_PATTERN: ClassVar[str] = "container\\.py$"
     VALIDATOR_APPROVED_PRAGMA_PATTERN: ClassVar[str] = "__init__\\.py$"
     VALIDATOR_APPROVED_INTERNAL_INIT_PATTERN: ClassVar[str] = "_[^/]+/__init__\\.py$"
+    VALIDATOR_APPROVED_PROTOCOLS_PATTERN: ClassVar[str] = (
+        "protocols/(brand|domain)\\.py$"
+    )
     VALIDATOR_APPROVED_CAST_SERVICE_RE: ClassVar[t.RegexPattern] = re.compile(
         VALIDATOR_APPROVED_CAST_SERVICE_PATTERN
     )
@@ -323,6 +354,9 @@ class FlextTestsConstantsValidator:
     VALIDATOR_APPROVED_INTERNAL_INIT_RE: ClassVar[t.RegexPattern] = re.compile(
         VALIDATOR_APPROVED_INTERNAL_INIT_PATTERN
     )
+    VALIDATOR_APPROVED_PROTOCOLS_RE: ClassVar[t.RegexPattern] = re.compile(
+        VALIDATOR_APPROVED_PROTOCOLS_PATTERN
+    )
     VALIDATOR_APPROVED_PATH_REGEX_BY_PATTERN: ClassVar[
         t.MappingKV[str, t.RegexPattern]
     ] = MappingProxyType({
@@ -330,6 +364,7 @@ class FlextTestsConstantsValidator:
         VALIDATOR_APPROVED_CAST_CONTAINER_PATTERN: VALIDATOR_APPROVED_CAST_CONTAINER_RE,
         VALIDATOR_APPROVED_PRAGMA_PATTERN: VALIDATOR_APPROVED_PRAGMA_RE,
         VALIDATOR_APPROVED_INTERNAL_INIT_PATTERN: VALIDATOR_APPROVED_INTERNAL_INIT_RE,
+        VALIDATOR_APPROVED_PROTOCOLS_PATTERN: VALIDATOR_APPROVED_PROTOCOLS_RE,
     })
     VALIDATOR_APPROVED_CAST_PATTERNS: ClassVar[t.StrSequence] = (
         VALIDATOR_APPROVED_CAST_SERVICE_PATTERN,

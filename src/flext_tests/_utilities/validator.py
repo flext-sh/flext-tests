@@ -79,7 +79,7 @@ class FlextTestsValidatorUtilitiesMixin:
         """
         severity, desc = FlextTestsValidatorUtilitiesMixin.validator_rule(rule_id)
         description = f"{desc}: {extra_desc}" if extra_desc else desc
-        line = lines[line_number - 1] if line_number <= len(lines) else ""
+        line = lines[line_number - 1] if 1 <= line_number <= len(lines) else ""
         return m.Tests.Violation(
             file_path=file_path,
             line_number=line_number,
@@ -155,8 +155,23 @@ class FlextTestsValidatorUtilitiesMixin:
             r[TEntity]: Result containing created entity or error
             True if file matches any approved pattern for this rule
 
+        Raises:
+            ValueError: if any pattern is not a registered
+                ``VALIDATOR_APPROVED_*_PATTERN`` key — an unregistered approval
+                could never match anything, and honoring it silently would
+                turn declared policy into a no-op.
+
         """
         patterns = tuple(approved.get(rule_id, ())) + tuple(extra_patterns)
+        registry = c.Tests.VALIDATOR_APPROVED_PATH_REGEX_BY_PATTERN
+        unknown = tuple(pattern for pattern in patterns if pattern not in registry)
+        if unknown:
+            msg = (
+                f"unregistered approved pattern(s) for rule {rule_id!r}: "
+                f"{unknown!r} — patterns must be VALIDATOR_APPROVED_*_PATTERN "
+                "registry keys"
+            )
+            raise ValueError(msg)
         file_str = str(file_path)
         return any(
             FlextTestsValidatorUtilitiesMixin.path_pattern_matches(file_str, pattern)

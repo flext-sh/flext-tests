@@ -54,6 +54,25 @@ class TestsFlextTestsEnforcementPlugin:
         tm.that(completed.ret, eq=0)
         tm.that(completed.errlines, eq=[])
 
+    @pytest.mark.slow
+    def test_inactive_session_collects_without_the_model_facade(
+        self, pytester: pytest.Pytester
+    ) -> None:
+        """An ungoverned session configures and collects without ``m`` loaded."""
+        pytester.makeini("[pytest]\n")
+        pytester.makeconftest(
+            "import sys\n"
+            "\n"
+            "\n"
+            "def pytest_collection_finish(session):\n"
+            "    if 'flext_tests.models' in sys.modules:\n"
+            "        raise RuntimeError('flext_tests.models loaded at collection')\n"
+        )
+        pytester.makepyfile(test_probe="def test_probe() -> None:\n    assert True\n")
+        result = pytester.runpytest_subprocess("--collect-only", "-q")
+        tm.that(result.ret, eq=pytest.ExitCode.OK)
+        result.stdout.fnmatch_lines(["*test_probe*"])
+
     # ---- end-to-end pytest11 pipeline via pytester subprocess ----------------
 
     @staticmethod

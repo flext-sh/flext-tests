@@ -41,7 +41,9 @@ class FlextTestsMatchersImmutabilityMixin:
 
                 Raises:
                     AssertionError: If the assignment is accepted, or the raised
-                        error does not match ``expected`` / ``match``.
+                        expected error does not match ``match``.
+
+                Exceptions outside ``expected`` propagate unchanged.
 
                 """
                 label = getattr(target, "__name__", type(target).__name__)

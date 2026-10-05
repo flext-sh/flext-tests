@@ -210,6 +210,15 @@ class FlextTestsPayloadUtilities:
         return node
 
     @staticmethod
+    def extract_path_value(subject: p.Tests.Payload, path: str) -> p.Tests.Payload:
+        """Read nested payload nodes without serializing model leaves."""
+        node = FlextTestsPayloadUtilities.path_node(subject, path)
+        if node is None:
+            msg = f"Path not found: {path}"
+            raise AssertionError(msg)
+        return node
+
+    @staticmethod
     def deep_match(
         subject: p.Tests.Payload, spec: t.Tests.DeepSpec, *, path_sep: str = "."
     ) -> m.Tests.DeepMatchResult:

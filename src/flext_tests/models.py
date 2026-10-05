@@ -18,6 +18,7 @@ from ._models.domains import FlextTestsDomainModelsMixin
 from ._models.filesystem import FlextTestsFilesystemModelsMixin
 from ._models.make import FlextTestsMakeModelsMixin
 from ._models.matchers import FlextTestsMatchersModelsMixin
+from ._models.namespace import FlextTestsNamespaceModelsMixin
 from ._models.validator import FlextTestsValidatorModelsMixin
 from ._models.workspace_cleanup import FlextTestsWorkspaceCleanupModelsMixin
 
@@ -30,6 +31,7 @@ class FlextTestsModels(FlextInfraModels):
         FlextTestsBaseModelsMixin,
         FlextTestsDomainModelsMixin,
         FlextTestsFilesystemModelsMixin,
+        FlextTestsNamespaceModelsMixin,
         FlextTestsBatchModelsMixin,
         FlextTestsMakeModelsMixin,
         FlextTestsValidatorModelsMixin,
