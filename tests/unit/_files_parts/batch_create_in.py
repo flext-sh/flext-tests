@@ -21,7 +21,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         manager = FlextTestsFiles(base_dir=tmp_path)
         result = manager.batch_files(
             {"file1.txt": "content1", "file2.txt": "content2", "file3.txt": "content3"},
-            directory=tmp_path,
+            options=FlextTestsFiles.BatchOptions(directory=tmp_path),
         )
         batch_result: m.Tests.BatchResult = u.Tests.assert_success(result)
         tm.that(batch_result.total, eq=3)
@@ -35,7 +35,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         manager = FlextTestsFiles(base_dir=tmp_path)
         result = manager.batch_files(
             {"settings1.json": {"key": "value1"}, "settings2.json": {"key": "value2"}},
-            directory=tmp_path,
+            options=FlextTestsFiles.BatchOptions(directory=tmp_path),
         )
         batch_result: m.Tests.BatchResult = u.Tests.assert_success(result)
         tm.that(batch_result.success_count, eq=2)
@@ -51,8 +51,10 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         readonly_dir.mkdir()
         result = manager.batch_files(
             {"valid.txt": "content"},
-            directory=tmp_path,
-            on_error=c.Tests.ErrorMode.COLLECT,
+            options=FlextTestsFiles.BatchOptions(
+                directory=tmp_path,
+                on_error=c.Tests.ErrorMode.COLLECT,
+            ),
         )
         _ = u.Tests.assert_success(result)
         batch_result = result.value
@@ -62,7 +64,10 @@ class TestsFlextTestsFilesBatchCreateInMixin:
     def test_batch_result_model_structure(tmp_path: Path) -> None:
         """Test BatchResult model has correct structure."""
         manager = FlextTestsFiles(base_dir=tmp_path)
-        result = manager.batch_files({"file.txt": "content"}, directory=tmp_path)
+        result = manager.batch_files(
+            {"file.txt": "content"},
+            options=FlextTestsFiles.BatchOptions(directory=tmp_path),
+        )
         _ = u.Tests.assert_success(result)
         batch_result = result.value
         tm.that(batch_result.succeeded, is_=int)

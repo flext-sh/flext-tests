@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import FlextTestsFiles
+from flext_tests import FlextTestsFiles, m
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -45,21 +45,30 @@ class TestsFlextTestsFilesAssertExistsMixin:
         """Test assert_exists() with is_file=True."""
         file_path = tmp_path / "test.txt"
         _ = file_path.write_text("content")
-        _ = FlextTestsFiles.assert_exists(file_path, is_file=True)
+        _ = FlextTestsFiles.assert_exists(
+            file_path,
+            options=m.Tests.AssertExistsParams(is_file=True),
+        )
 
     @staticmethod
     def test_assert_exists_is_dir_check(tmp_path: Path) -> None:
         """Test assert_exists() with is_dir=True."""
         subdir = tmp_path / "subdir"
         subdir.mkdir()
-        _ = FlextTestsFiles.assert_exists(subdir, is_dir=True)
+        _ = FlextTestsFiles.assert_exists(
+            subdir,
+            options=m.Tests.AssertExistsParams(is_dir=True),
+        )
 
     @staticmethod
     def test_assert_exists_not_empty(tmp_path: Path) -> None:
         """Test assert_exists() with not_empty=True."""
         path = tmp_path / "test.txt"
         _ = path.write_text("content")
-        _ = FlextTestsFiles.assert_exists(path, not_empty=True)
+        _ = FlextTestsFiles.assert_exists(
+            path,
+            options=m.Tests.AssertExistsParams(not_empty=True),
+        )
 
     @staticmethod
     def test_assert_exists_empty_file_fails(tmp_path: Path) -> None:
@@ -67,7 +76,10 @@ class TestsFlextTestsFilesAssertExistsMixin:
         path = tmp_path / "empty.txt"
         _ = path.write_text("")
         with pytest.raises(AssertionError):
-            _ = FlextTestsFiles.assert_exists(path, not_empty=True)
+            _ = FlextTestsFiles.assert_exists(
+                path,
+                options=m.Tests.AssertExistsParams(not_empty=True),
+            )
 
     @staticmethod
     def test_assert_exists_readable_check(tmp_path: Path) -> None:
@@ -75,7 +87,10 @@ class TestsFlextTestsFilesAssertExistsMixin:
         path = tmp_path / "readable.txt"
         _ = path.write_text("content")
         path.chmod(420)
-        _ = FlextTestsFiles.assert_exists(path, readable=True)
+        _ = FlextTestsFiles.assert_exists(
+            path,
+            options=m.Tests.AssertExistsParams(readable=True),
+        )
 
     @staticmethod
     def test_assert_exists_writable_check_file(tmp_path: Path) -> None:
@@ -83,7 +98,10 @@ class TestsFlextTestsFilesAssertExistsMixin:
         path = tmp_path / "writable.txt"
         _ = path.write_text("content")
         path.chmod(420)
-        _ = FlextTestsFiles.assert_exists(path, writable=True)
+        _ = FlextTestsFiles.assert_exists(
+            path,
+            options=m.Tests.AssertExistsParams(writable=True),
+        )
 
     @staticmethod
     def test_assert_exists_writable_check_directory(tmp_path: Path) -> None:
@@ -91,7 +109,10 @@ class TestsFlextTestsFilesAssertExistsMixin:
         subdir = tmp_path / "writable_dir"
         subdir.mkdir()
         subdir.chmod(493)
-        _ = FlextTestsFiles.assert_exists(subdir, writable=True)
+        _ = FlextTestsFiles.assert_exists(
+            subdir,
+            options=m.Tests.AssertExistsParams(writable=True),
+        )
 
     @staticmethod
     def test_assert_exists_custom_error_message(tmp_path: Path) -> None:
@@ -108,10 +129,12 @@ class TestsFlextTestsFilesAssertExistsMixin:
         path.chmod(420)
         _ = FlextTestsFiles.assert_exists(
             path,
-            is_file=True,
-            not_empty=True,
-            readable=True,
-            writable=True,
+            options=m.Tests.AssertExistsParams(
+                is_file=True,
+                not_empty=True,
+                readable=True,
+                writable=True,
+            ),
         )
 
     @staticmethod
@@ -119,14 +142,20 @@ class TestsFlextTestsFilesAssertExistsMixin:
         """Test assert_exists() with is_file=False (should not be a file)."""
         subdir = tmp_path / "subdir"
         subdir.mkdir()
-        _ = FlextTestsFiles.assert_exists(subdir, is_file=False)
+        _ = FlextTestsFiles.assert_exists(
+            subdir,
+            options=m.Tests.AssertExistsParams(is_file=False),
+        )
 
     @staticmethod
     def test_assert_exists_is_dir_false(tmp_path: Path) -> None:
         """Test assert_exists() with is_dir=False (should not be a directory)."""
         path = tmp_path / "test.txt"
         _ = path.write_text("content")
-        _ = FlextTestsFiles.assert_exists(path, is_dir=False)
+        _ = FlextTestsFiles.assert_exists(
+            path,
+            options=m.Tests.AssertExistsParams(is_dir=False),
+        )
 
     @staticmethod
     def test_assert_exists_empty_directory_fails(tmp_path: Path) -> None:
@@ -134,7 +163,10 @@ class TestsFlextTestsFilesAssertExistsMixin:
         subdir = tmp_path / "empty_dir"
         subdir.mkdir()
         with pytest.raises(AssertionError):
-            _ = FlextTestsFiles.assert_exists(subdir, not_empty=True)
+            _ = FlextTestsFiles.assert_exists(
+                subdir,
+                options=m.Tests.AssertExistsParams(not_empty=True),
+            )
 
     @staticmethod
     def test_assert_exists_not_empty_directory_success(tmp_path: Path) -> None:
@@ -142,4 +174,7 @@ class TestsFlextTestsFilesAssertExistsMixin:
         subdir = tmp_path / "non_empty_dir"
         subdir.mkdir()
         _ = (subdir / "file.txt").write_text("content")
-        _ = FlextTestsFiles.assert_exists(subdir, not_empty=True)
+        _ = FlextTestsFiles.assert_exists(
+            subdir,
+            options=m.Tests.AssertExistsParams(not_empty=True),
+        )

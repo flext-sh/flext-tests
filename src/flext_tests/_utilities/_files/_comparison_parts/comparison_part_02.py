@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Annotated
 
 from flext_core import r
 from flext_tests import c, m, p, t, u
@@ -23,35 +24,66 @@ class FlextTestsFilesComparisonMixin(_ComparisonMixinPart1):
     dispatch, mode comparison, and deep-compare methods.
     """
 
+    class CompareOptions(m.Value):
+        """Grouped comparison knobs for ``compare``."""
+
+        mode: Annotated[
+            c.Tests.CompareMode,
+            u.Field(description="Comparison mode."),
+        ] = c.Tests.CompareMode.CONTENT
+        ignore_ws: Annotated[
+            bool,
+            u.Field(description="Ignore whitespace in comparison."),
+        ] = False
+        ignore_case: Annotated[
+            bool,
+            u.Field(description="Case-insensitive comparison."),
+        ] = False
+        pattern: Annotated[
+            str | None,
+            u.Field(description="Pattern to check if both files contain."),
+        ] = None
+        deep: Annotated[
+            bool,
+            u.Field(description="Use deep comparison for nested structures."),
+        ] = True
+        keys: Annotated[
+            t.StrSequence | None,
+            u.Field(description="Only compare these keys."),
+        ] = None
+        exclude_keys: Annotated[
+            t.StrSequence | None,
+            u.Field(description="Exclude these keys from comparison."),
+        ] = None
+
     def compare(
         self,
         file1: Path,
         file2: Path,
         *,
-        mode: c.Tests.CompareMode = c.Tests.CompareMode.CONTENT,
-        ignore_ws: bool = False,
-        ignore_case: bool = False,
-        pattern: str | None = None,
-        deep: bool = True,
-        keys: t.StrSequence | None = None,
-        exclude_keys: t.StrSequence | None = None,
+        options: FlextTestsFilesComparisonMixin.CompareOptions | None = None,
     ) -> p.Result[bool]:
         """Compare two files.
 
         Returns:
             The resulting ``p.Result[bool]``.
         """
+        compare_options = (
+            options
+            if options is not None
+            else FlextTestsFilesComparisonMixin.CompareOptions()
+        )
         try:
             params = m.Tests.CompareParams.model_validate({
                 "file1": file1,
                 "file2": file2,
-                "mode": mode,
-                "ignore_ws": ignore_ws,
-                "ignore_case": ignore_case,
-                "pattern": pattern,
-                "deep": deep,
-                "keys": keys,
-                "exclude_keys": exclude_keys,
+                "mode": compare_options.mode,
+                "ignore_ws": compare_options.ignore_ws,
+                "ignore_case": compare_options.ignore_case,
+                "pattern": compare_options.pattern,
+                "deep": compare_options.deep,
+                "keys": compare_options.keys,
+                "exclude_keys": compare_options.exclude_keys,
             })
         except c.EXC_BASIC_TYPE as exc:
             return r[bool].fail(

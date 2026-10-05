@@ -32,6 +32,12 @@ from flext_tests import p, t
 from flext_tests._models.base import FlextTestsBaseModelsMixin
 
 
+def _stable_sort_key(value: p.Tests.Payload) -> t.StrPair:
+    """Return a total deterministic key for heterogeneous payload values."""
+    native = FlextTestsPayloadUtilities.to_match_value(value)
+    return type(native).__name__, str(native)
+
+
 def _payload_model_leaf(
     value: p.AttributeProbe,
 ) -> FlextTestsBaseModelsMixin.Payload | None:
@@ -219,7 +225,7 @@ def _payload_sequence_leaf(
         children = tuple(
             sorted(
                 children,
-                key=FlextTestsPayloadUtilities._stable_sort_key,
+                key=_stable_sort_key,
             ),
         )
     kind: t.Tests.PayloadKind = "frozenset"
@@ -253,12 +259,6 @@ class FlextTestsPayloadUtilities:
     """Namespace class for shared payload conversion helpers in flext_tests."""
 
     @staticmethod
-    def _stable_sort_key(value: p.Tests.Payload) -> t.StrPair:
-        """Return a total deterministic key for heterogeneous payload values."""
-        native = FlextTestsPayloadUtilities.to_match_value(value)
-        return type(native).__name__, str(native)
-
-    @staticmethod
     def to_payload(value: p.AttributeProbe) -> FlextTestsBaseModelsMixin.Payload:
         """Own supported native values without serializing their model leaves.
 
@@ -267,7 +267,6 @@ class FlextTestsPayloadUtilities:
 
         Raises:
             TypeError: If Unsupported native payload leaf.
-            ValueError: If Native payload mapping key collision.
         """
         for handler in _PAYLOAD_LEAF_HANDLERS:
             payload = handler(value)
