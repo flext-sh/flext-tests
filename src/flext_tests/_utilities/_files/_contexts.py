@@ -14,6 +14,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from flext_tests import c, m, t
+from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
 from flext_tests._utilities._files._reading import FlextTestsFilesReadingMixin
 
 
@@ -70,13 +71,15 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
                     cls._coerce_file_content(data),
                     filename,
                     directory=validated_kwargs.directory,
-                    fmt=validated_kwargs.fmt,
-                    enc=validated_kwargs.enc,
-                    indent=validated_kwargs.indent,
-                    delim=validated_kwargs.delim,
-                    headers=validated_kwargs.headers,
-                    readonly=validated_kwargs.readonly,
-                    extract_result=extract_result,
+                    options=FlextTestsFilesCreationMixin.CreateOptions(
+                        fmt=validated_kwargs.fmt,
+                        enc=validated_kwargs.enc,
+                        indent=validated_kwargs.indent,
+                        delim=validated_kwargs.delim,
+                        headers=validated_kwargs.headers,
+                        readonly=validated_kwargs.readonly,
+                        extract_result=extract_result,
+                    ),
                 )
                 paths[name] = path
             yield paths

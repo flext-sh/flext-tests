@@ -84,7 +84,9 @@ class TestsFlextTestsFilesReadMixin:
         """Test read() CSV with headers skips first row by default."""
         manager = tf(base_dir=tmp_path)
         content = [["header1", "header2"], ["1", "2"], ["3", "4"]]
-        path = manager.create(content, "data.csv", headers=None)
+        path = manager.create(
+            content, "data.csv", options=tf.CreateOptions(headers=None)
+        )
         result = manager.read(path)
         _ = u.Tests.assert_success(result)
         data = result.value
@@ -128,7 +130,11 @@ class TestsFlextTestsFilesReadMixin:
     def test_read_explicit_format(tmp_path: Path) -> None:
         """Test read() with explicit format override."""
         manager = tf(base_dir=tmp_path)
-        path = manager.create("plain text", "data.dat", fmt=c.Tests.FILE_FORMAT_TEXT)
+        path = manager.create(
+            "plain text",
+            "data.dat",
+            options=tf.CreateOptions(fmt=c.Tests.FILE_FORMAT_TEXT),
+        )
         result = manager.read(
             path,
             options=tf.ReadOptions(

@@ -191,6 +191,11 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
 
         fmt: Annotated[
             c.Tests.FileFormat,
+            m.BeforeValidator(
+                lambda v: (
+                    type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
+                ),
+            ),
             u.Field(description="Target file format; AUTO detects from content."),
         ] = c.Tests.FILE_FORMAT_AUTO
         enc: Annotated[

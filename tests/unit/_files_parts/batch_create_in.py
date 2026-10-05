@@ -160,7 +160,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         path = FlextTestsFiles(base_dir=tmp_path).create(
             b"binary data",
             "data.dat",
-            fmt=c.Tests.FILE_FORMAT_BIN,
+            options=FlextTestsFiles.CreateOptions(fmt=c.Tests.FILE_FORMAT_BIN),
         )
         tm.that(path.exists(), eq=True)
         tm.that(path.read_bytes(), eq=b"binary data")
@@ -171,7 +171,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         path = FlextTestsFiles(base_dir=tmp_path).create(
             "áéíóú",
             "unicode.txt",
-            enc="utf-16",
+            options=FlextTestsFiles.CreateOptions(enc="utf-16"),
         )
         tm.that(path.exists(), eq=True)
         tm.that(path.read_text(encoding="utf-16"), eq="áéíóú")
@@ -183,7 +183,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         path = FlextTestsFiles(base_dir=tmp_path).create(
             content,
             "settings.json",
-            indent=4,
+            options=FlextTestsFiles.CreateOptions(indent=4),
         )
         tm.that(path.exists(), eq=True)
         text = path.read_text()
@@ -196,7 +196,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         path = FlextTestsFiles(base_dir=tmp_path).create(
             content,
             "data.csv",
-            headers=["col1", "col2"],
+            options=FlextTestsFiles.CreateOptions(headers=["col1", "col2"]),
         )
         tm.that(path.exists(), eq=True)
         lines = path.read_text().strip().split("\n")
