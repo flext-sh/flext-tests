@@ -49,15 +49,22 @@ def _bind_runtime_aliases(
     """Bind canonical FLEXT runtime aliases onto pytest class instances.
 
     Raises:
-        AttributeError: If a ``AttributeError`` is caught.
         TypeError: If ``not isinstance(service_type, type) or not
             issubclass(service_type, s)``.
+        AttributeError: If a ``AttributeError`` is caught.
     """
     # A bare top-level module (e.g. a pytester probe file) has no package
     # contract: there is no package root to resolve aliases from, so the
     # binding scope does not apply. Package-based suites always enforce.
     package_root = module.__package__ or ""
     if not package_root:
+        return
+    # Function-style tests and plain-class suites obtain their state through
+    # the fixtures alone, so the package alias contract is out of scope when
+    # there is no runtime instance to bind: enforcing it here would reject
+    # suites whose root package does not re-export the facade letters (e.g.
+    # lazy generated component packages).
+    if instance is None:
         return
     package_name = package_root.split(".", maxsplit=1)[0]
     tests_package = importlib.import_module(package_name)
@@ -76,8 +83,6 @@ def _bind_runtime_aliases(
         )
         raise TypeError(msg)
     service = service_type.fetch_global()
-    if instance is None:
-        return
     instance.service = service
     instance.settings = service.fetch_settings()
     instance.logger = service.logger

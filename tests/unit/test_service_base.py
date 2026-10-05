@@ -115,12 +115,19 @@ class TestsFlextTestsServiceBase:
 
         A package whose ``s`` is not a ``FlextTestsServiceBase`` subclass
         (settings.py:46-48) raises; it never silently substitutes the base.
+        The probe is class-style because the runtime alias contract binds the
+        ``FlextTestsCase`` runtime: function-style tests never trigger it.
         """
         package_dir = pytester.path / "badpkg"
         package_dir.mkdir()
         (package_dir / "__init__.py").write_text("s = object\n", encoding="utf-8")
         (package_dir / "test_probe.py").write_text(
-            "def test_probe() -> None:\n    pass\n",
+            "import flext_tests\n"
+            "\n"
+            "\n"
+            "class TestProbe(flext_tests.FlextTestsCase):\n"
+            "    def test_probe(self) -> None:\n"
+            "        pass\n",
             encoding="utf-8",
         )
         result = pytester.runpytest_subprocess(
@@ -134,12 +141,22 @@ class TestsFlextTestsServiceBase:
         self,
         pytester: pytest.Pytester,
     ) -> None:
-        """A package root without ``s`` raises; it never substitutes the base."""
+        """A package root without ``s`` raises; it never substitutes the base.
+
+        The probe is class-style: the alias contract binds the runtime for
+        ``FlextTestsCase`` tests, so the rejection fires where the binding
+        actually happens.
+        """
         package_dir = pytester.path / "noservicepkg"
         package_dir.mkdir()
         (package_dir / "__init__.py").write_text("", encoding="utf-8")
         (package_dir / "test_probe.py").write_text(
-            "def test_probe() -> None:\n    pass\n",
+            "import flext_tests\n"
+            "\n"
+            "\n"
+            "class TestProbe(flext_tests.FlextTestsCase):\n"
+            "    def test_probe(self) -> None:\n"
+            "        pass\n",
             encoding="utf-8",
         )
         result = pytester.runpytest(
