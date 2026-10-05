@@ -50,7 +50,10 @@ if TYPE_CHECKING:
     from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
     from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
     from flext_tests._utilities.governance import FlextTestsModuleGovernanceMixin
-    from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
+    from flext_tests._utilities.handler import (
+        FlextTestsHandlerConfigParams,
+        FlextTestsHandlerHelpersUtilitiesMixin,
+    )
     from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
     from flext_tests._utilities.make_contract import (
         FlextTestsMakeContractUtilitiesMixin,
@@ -105,6 +108,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsFilesUtilitiesMixin",
     "FlextTestsFixturesDSLMixin",
     "FlextTestsGenericHelpersUtilitiesMixin",
+    "FlextTestsHandlerConfigParams",
     "FlextTestsHandlerHelpersUtilitiesMixin",
     "FlextTestsMakeContractUtilitiesMixin",
     "FlextTestsMakeParsingUtilitiesMixin",
@@ -164,7 +168,10 @@ _LAZY_IMPORTS = MappingProxyType(
             ".fixtures_dsl": ("FlextTestsFixturesDSLMixin",),
             ".generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
             ".governance": ("FlextTestsModuleGovernanceMixin",),
-            ".handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
+            ".handler": (
+                "FlextTestsHandlerConfigParams",
+                "FlextTestsHandlerHelpersUtilitiesMixin",
+            ),
             ".make": ("FlextTestsMakeUtilitiesMixin",),
             ".make_contract": ("FlextTestsMakeContractUtilitiesMixin",),
             ".make_parsing": ("FlextTestsMakeParsingUtilitiesMixin",),
