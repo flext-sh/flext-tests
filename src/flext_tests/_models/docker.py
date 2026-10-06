@@ -236,11 +236,3 @@ class FlextTestsDockerModelsMixin:
             int,
             u.Field(description="Retry budget on transient failure."),
         ] = 3
-
-
-# NOTE (import discipline): see _rebuild.py — nested models annotate through
-# their enclosing mixin and TYPE_CHECKING-only siblings; rebuild them here,
-# at import end, so the lazy rebuild never depends on the caller's imports.
-from flext_tests._models._rebuild import rebuild_nested_models as _rebuild_nested_models
-
-_rebuild_nested_models(FlextTestsDockerModelsMixin)

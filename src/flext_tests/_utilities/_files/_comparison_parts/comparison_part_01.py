@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 from flext_core import r
 from flext_tests import c, m, t, u
 from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
 
 if TYPE_CHECKING:
     from flext_tests.protocols import p
@@ -95,12 +95,16 @@ class FlextTestsFilesComparisonMixin:
         filter_keys_set = set(keys) if keys is not None else None
         exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
         result1 = u.transform(
-            FlextTestsPayloadUtilities.to_config_map(dict1),
+            FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
+                dict1
+            ),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
         result2 = u.transform(
-            FlextTestsPayloadUtilities.to_config_map(dict2),
+            FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
+                dict2
+            ),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )

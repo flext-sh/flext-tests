@@ -23,7 +23,7 @@ from flext_tests._utilities._matchers._that import (
 from flext_tests._utilities._matchers._typeguards import (
     FlextTestsMatchersTypeGuardsMixin,
 )
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
 from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
 
 
@@ -169,7 +169,9 @@ class FlextTestsMatchersResultMixin:
                 actual_data: MutableMapping[str, p.Tests.Payload] = {}
                 if actual_raw is not None:
                     actual_data = {
-                        key: FlextTestsPayloadUtilities.to_payload(value)
+                        key: FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                            value
+                        )
                         for key, value in actual_raw.items()
                     }
                 for key, expected_value in params.data.items():
@@ -178,9 +180,14 @@ class FlextTestsMatchersResultMixin:
                             params.msg
                             or c.Tests.ERR_ERROR_DATA_KEY_MISSING.format(key=key),
                         )
-                    if FlextTestsPayloadUtilities.to_match_value(
-                        actual_data[key],
-                    ) != FlextTestsPayloadUtilities.to_match_value(expected_value):
+                    if (
+                        FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+                            actual_data[key],
+                        )
+                        != FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+                            expected_value
+                        )
+                    ):
                         raise AssertionError(
                             params.msg
                             or c.Tests.ERR_ERROR_DATA_VALUE_MISMATCH.format(
@@ -208,8 +215,10 @@ class FlextTestsMatchersResultMixin:
                     if isinstance(params.path, str)
                     else ".".join(params.path)
                 )
-                payload = FlextTestsPayloadUtilities.extract_path_value(
-                    FlextTestsPayloadUtilities.to_payload(result_value),
+                payload = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.extract_path_value(
+                    FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                        result_value
+                    ),
                     path,
                 )
                 return payload, payload
@@ -266,7 +275,9 @@ class FlextTestsMatchersResultMixin:
                 )
                 if presence_only:
                     native = (
-                        FlextTestsPayloadUtilities.to_match_value(result_value)
+                        FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+                            result_value
+                        )
                         if isinstance(result_value, m.Tests.Payload)
                         else result_value
                     )
@@ -279,7 +290,9 @@ class FlextTestsMatchersResultMixin:
                     params,
                 ):
                     FlextTestsMatchersTypeGuardsMixin.assert_scalar_match(
-                        FlextTestsPayloadUtilities.to_payload(result_value),
+                        FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                            result_value
+                        ),
                         params,
                     )
                 return result_value
@@ -301,7 +314,9 @@ class FlextTestsMatchersResultMixin:
                 """
                 if params.is_ is not None:
                     native = (
-                        FlextTestsPayloadUtilities.to_match_value(result_value)
+                        FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+                            result_value
+                        )
                         if isinstance(result_value, m.Tests.Payload)
                         else result_value
                     )
@@ -383,7 +398,9 @@ class FlextTestsMatchersResultMixin:
                     result_payload,
                     params,
                 )
-                return FlextTestsPayloadUtilities.to_match_value(result_payload)
+                return FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+                    result_payload
+                )
 
             @staticmethod
             def ok_payload[TResult](
@@ -393,10 +410,14 @@ class FlextTestsMatchersResultMixin:
                 params: m.Tests.OkParams,
             ) -> p.Tests.Payload:
                 if params.path is None:
-                    return FlextTestsPayloadUtilities.to_payload(result.value)
+                    return FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                        result.value
+                    )
                 if extracted_payload is not None:
                     return extracted_payload
-                return FlextTestsPayloadUtilities.to_payload(result_value)
+                return FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                    result_value
+                )
 
             @staticmethod
             def ok_validate_structured[TResult](
@@ -437,7 +458,9 @@ class FlextTestsMatchersResultMixin:
                         inherited_msg=params.msg,
                     )
                 if params.where is not None:
-                    native = FlextTestsPayloadUtilities.to_match_value(result_payload)
+                    native = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+                        result_payload
+                    )
                     if not params.where(native):
                         raise AssertionError(
                             params.msg
@@ -459,8 +482,10 @@ class FlextTestsMatchersResultMixin:
                 """
                 if params.deep is None:
                     return result_value
-                match_result = FlextTestsPayloadUtilities.deep_match(
-                    FlextTestsPayloadUtilities.to_payload(result_value),
+                match_result = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.deep_match(
+                    FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                        result_value
+                    ),
                     params.deep,
                 )
                 if not match_result.matched:

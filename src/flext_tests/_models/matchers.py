@@ -16,14 +16,17 @@ from _pytest.python_api import ApproxBase  # ruff: ignore[import-private-name] -
 from flext_cli import m, u
 
 from flext_tests import p, t
-from flext_tests._models.base import FlextTestsBaseModelsMixin
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests._models.base import FlextTestsFlextModelsBase
+from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
 
 type MatchExpectedValue = (
-    FlextTestsBaseModelsMixin.Payload | ApproxBase | TypeAliasType | None
+    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+    | ApproxBase
+    | TypeAliasType
+    | None
 )
 type DeepExpected = (
-    FlextTestsBaseModelsMixin.Payload
+    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
     | Callable[[t.Tests.NativeMatchValue], bool]
     | str
     | None
@@ -57,7 +60,11 @@ class FlextTestsMatchersModelsMixin:
             """
             if value is None or isinstance(value, ApproxBase | TypeAliasType):
                 return value
-            return FlextTestsPayloadUtilities.to_payload(value)
+            return (
+                FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                    value
+                )
+            )
 
         @u.field_validator(
             "settings",
@@ -71,7 +78,10 @@ class FlextTestsMatchersModelsMixin:
         def own_mapping(
             cls,
             value: p.AttributeProbe,
-        ) -> Mapping[str, FlextTestsBaseModelsMixin.Payload] | None:
+        ) -> (
+            Mapping[str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload]
+            | None
+        ):
             """Own mapping leaves without changing native model identity.
 
             Returns:
@@ -83,7 +93,11 @@ class FlextTestsMatchersModelsMixin:
             """
             if value is None:
                 return None
-            node = FlextTestsPayloadUtilities.to_payload(value)
+            node = (
+                FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                    value
+                )
+            )
             if node.kind != "mapping":
                 msg = "Matcher mapping requires a mapping payload"
                 raise ValueError(msg)
@@ -94,7 +108,10 @@ class FlextTestsMatchersModelsMixin:
         def own_values(
             cls,
             value: p.AttributeProbe,
-        ) -> tuple[FlextTestsBaseModelsMixin.Payload, ...] | None:
+        ) -> (
+            tuple[FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload, ...]
+            | None
+        ):
             """Own sequence value expectations.
 
             Returns:
@@ -105,7 +122,11 @@ class FlextTestsMatchersModelsMixin:
             """
             if value is None:
                 return None
-            node = FlextTestsPayloadUtilities.to_payload(value)
+            node = (
+                FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                    value
+                )
+            )
             if node.kind in {"atom", "mapping"}:
                 msg = "Matcher values require a sequence payload"
                 raise ValueError(msg)
@@ -119,7 +140,7 @@ class FlextTestsMatchersModelsMixin:
         ) -> (
             Mapping[
                 str,
-                FlextTestsBaseModelsMixin.Payload
+                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
                 | Callable[[t.Tests.NativeMatchValue], bool],
             ]
             | None
@@ -135,7 +156,9 @@ class FlextTestsMatchersModelsMixin:
             return {
                 key: item
                 if callable(item)
-                else FlextTestsPayloadUtilities.to_payload(item)
+                else FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                    item
+                )
                 for key, item in value.items()
             }
 
@@ -164,11 +187,11 @@ class FlextTestsMatchersModelsMixin:
             ),
         ] = None
         has: Annotated[
-            FlextTestsBaseModelsMixin.Payload | None,
+            FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
             u.Field(description="Required contained value."),
         ] = None
         lacks: Annotated[
-            FlextTestsBaseModelsMixin.Payload | None,
+            FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
             u.Field(
                 validation_alias=t.AliasChoices("lacks", "excludes"),
                 description="Forbidden contained value.",
@@ -310,11 +333,11 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Less than or equal."),
         ] = None
         has: Annotated[
-            FlextTestsBaseModelsMixin.Payload | None,
+            FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
             u.Field(description="Unified containment check."),
         ] = None
         lacks: Annotated[
-            FlextTestsBaseModelsMixin.Payload | None,
+            FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
             u.Field(description="Unified non-containment check."),
         ] = None
         starts: Annotated[
@@ -335,7 +358,7 @@ class FlextTestsMatchersModelsMixin:
         deep: Annotated[
             Mapping[
                 str,
-                FlextTestsBaseModelsMixin.Payload
+                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
                 | Callable[[t.Tests.NativeMatchValue], bool],
             ]
             | None,
@@ -346,15 +369,17 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Extract nested value via dot notation."),
         ] = None
         paths: Annotated[
-            Mapping[str, MatchRule] | None,
+            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
             u.Field(description="Multiple path-based assertions."),
         ] = None
         items: Annotated[
-            Sequence[MatchRule] | Mapping[str | int, MatchRule] | None,
+            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
+            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
+            | None,
             u.Field(description="Sequence item assertions by selector."),
         ] = None
         attrs_match: Annotated[
-            Mapping[str, MatchRule] | None,
+            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
             u.Field(description="Attribute assertions by attribute path."),
         ] = None
         where: Annotated[
@@ -420,7 +445,8 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Error code contains substrings."),
         ] = None
         data: Annotated[
-            Mapping[str, FlextTestsBaseModelsMixin.Payload] | None,
+            Mapping[str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload]
+            | None,
             u.Field(description="Error data contains key-value pairs."),
         ] = None
 
@@ -429,7 +455,10 @@ class FlextTestsMatchersModelsMixin:
         def own_data(
             cls,
             value: p.AttributeProbe,
-        ) -> Mapping[str, FlextTestsBaseModelsMixin.Payload] | None:
+        ) -> (
+            Mapping[str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload]
+            | None
+        ):
             """Own expected error data through the shared mapping owner.
 
             Returns:
@@ -490,14 +519,14 @@ class FlextTestsMatchersModelsMixin:
         length_lt: Annotated[int | None, u.Field(description="Length <.")] = None
         length_lte: Annotated[int | None, u.Field(description="Length <=.")] = None
         has: Annotated[
-            FlextTestsBaseModelsMixin.Payload | None,
+            FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
             u.Field(
                 validation_alias=t.AliasChoices("has", "contains"),
                 description="Contains.",
             ),
         ] = None
         lacks: Annotated[
-            FlextTestsBaseModelsMixin.Payload | None,
+            FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
             u.Field(
                 validation_alias=t.AliasChoices("lacks", "excludes"),
                 description="Lacks.",
@@ -507,11 +536,11 @@ class FlextTestsMatchersModelsMixin:
         ends: Annotated[str | None, u.Field(description="Suffix.")] = None
         match: Annotated[t.RegexPattern | None, u.Field(description="Regex.")] = None
         first: Annotated[
-            FlextTestsBaseModelsMixin.Payload | None,
+            FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
             u.Field(description="First item."),
         ] = None
         last: Annotated[
-            FlextTestsBaseModelsMixin.Payload | None,
+            FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
             u.Field(description="Last item."),
         ] = None
         all_: Annotated[
@@ -535,11 +564,12 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="No keys."),
         ] = None
         values: Annotated[
-            t.SequenceOf[FlextTestsBaseModelsMixin.Payload] | None,
+            t.SequenceOf[FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload]
+            | None,
             u.Field(description="Values."),
         ] = None
         kv: Annotated[
-            FlextTestsBaseModelsMixin.Payload | None,
+            FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
             u.Field(description="Key-values."),
         ] = None
         attrs: Annotated[
@@ -551,7 +581,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Methods."),
         ] = None
         attr_eq: Annotated[
-            FlextTestsBaseModelsMixin.Payload | None,
+            FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
             u.Field(description="Attr equals."),
         ] = None
         ok: Annotated[bool | None, u.Field(description="Result ok.")] = None
@@ -562,22 +592,24 @@ class FlextTestsMatchersModelsMixin:
         deep: Annotated[
             Mapping[
                 str,
-                FlextTestsBaseModelsMixin.Payload
+                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
                 | Callable[[t.Tests.NativeMatchValue], bool],
             ]
             | None,
             u.Field(description="Deep spec."),
         ] = None
         paths: Annotated[
-            Mapping[str, MatchRule] | None,
+            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
             u.Field(description="Paths."),
         ] = None
         items: Annotated[
-            Sequence[MatchRule] | Mapping[str | int, MatchRule] | None,
+            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
+            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
+            | None,
             u.Field(description="Items."),
         ] = None
         attrs_match: Annotated[
-            Mapping[str, MatchRule] | None,
+            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
             u.Field(description="Attr rules."),
         ] = None
         where: Annotated[
@@ -620,12 +652,18 @@ class FlextTestsMatchersModelsMixin:
             # recursive-alias fix made mypy/pyrefly evaluate it for real.
             updates: MutableMapping[
                 str,
-                t.Tests.LengthSpec | FlextTestsBaseModelsMixin.Payload | None,
+                t.Tests.LengthSpec
+                | FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                | None,
             ] = {}
             if self.error is not None and self.has is None:
                 # self.error is a non-None native sequence/scalar, so owning it
                 # is exactly the payload walker; no approx/type operand applies.
-                updates["has"] = FlextTestsPayloadUtilities.to_payload(self.error)
+                updates["has"] = (
+                    FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                        self.error
+                    )
+                )
             if self.len is None and any(
                 v is not None
                 for v in (
@@ -656,15 +694,24 @@ class FlextTestsMatchersModelsMixin:
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
 
         settings: Annotated[
-            t.MappingKV[str, FlextTestsBaseModelsMixin.Payload] | None,
+            t.MappingKV[
+                str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+            ]
+            | None,
             u.Field(description="Initial configuration values."),
         ] = None
         container: Annotated[
-            t.MappingKV[str, FlextTestsBaseModelsMixin.Payload] | None,
+            t.MappingKV[
+                str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+            ]
+            | None,
             u.Field(description="Initial container/service mappings."),
         ] = None
         context: Annotated[
-            t.MappingKV[str, FlextTestsBaseModelsMixin.Payload] | None,
+            t.MappingKV[
+                str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+            ]
+            | None,
             u.Field(description="Initial context values."),
         ] = None
         cleanup: Annotated[
@@ -709,7 +756,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Expected value or predicate."),
         ]
         actual: Annotated[
-            FlextTestsBaseModelsMixin.Payload | None,
+            FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
             u.Field(description="Actual value found."),
         ] = None
         matched: Annotated[bool, u.Field(description="Whether match succeeded.")]
@@ -727,37 +774,41 @@ class FlextTestsMatchersModelsMixin:
         """Scope container for test configuration and runtime state."""
 
         settings: Annotated[
-            t.MappingKV[str, FlextTestsBaseModelsMixin.Payload],
+            t.MappingKV[
+                str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+            ],
             u.Field(description="Configuration dictionary."),
         ] = u.Field(
             default_factory=lambda: MappingProxyType(
-                dict[str, FlextTestsBaseModelsMixin.Payload](),
+                dict[
+                    str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                ](),
             ),
         )
         container: Annotated[
-            t.MappingKV[str, FlextTestsBaseModelsMixin.Payload],
+            t.MappingKV[
+                str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+            ],
             u.Field(description="Container/service mappings."),
         ] = u.Field(
             default_factory=lambda: MappingProxyType(
-                dict[str, FlextTestsBaseModelsMixin.Payload](),
+                dict[
+                    str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                ](),
             ),
         )
         context: Annotated[
-            t.MappingKV[str, FlextTestsBaseModelsMixin.Payload],
+            t.MappingKV[
+                str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+            ],
             u.Field(description="Context values."),
         ] = u.Field(
             default_factory=lambda: MappingProxyType(
-                dict[str, FlextTestsBaseModelsMixin.Payload](),
+                dict[
+                    str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                ](),
             ),
         )
 
 
 __all__: list[str] = ["FlextTestsMatchersModelsMixin"]
-
-
-# NOTE (import discipline): see _rebuild.py — nested models annotate through
-# their enclosing mixin and TYPE_CHECKING-only siblings; rebuild them here,
-# at import end, so the lazy rebuild never depends on the caller's imports.
-from flext_tests._models._rebuild import rebuild_nested_models as _rebuild_nested_models
-
-_rebuild_nested_models(FlextTestsMatchersModelsMixin)

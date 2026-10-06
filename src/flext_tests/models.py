@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from flext_cli import FlextCliModels
 
-from flext_tests._models.base import FlextTestsBaseModelsMixin
+from flext_tests._models.base import FlextTestsFlextModelsBase
 from flext_tests._models.batch import FlextTestsBatchModelsMixin
 from flext_tests._models.docker import FlextTestsDockerModelsMixin
 from flext_tests._models.domains import FlextTestsDomainModelsMixin
@@ -28,7 +28,7 @@ class FlextTestsModels(FlextCliModels):
 
     class Tests(
         FlextTestsDockerModelsMixin,
-        FlextTestsBaseModelsMixin,
+        FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin,
         FlextTestsDomainModelsMixin,
         FlextTestsFilesystemModelsMixin,
         FlextTestsNamespaceModelsMixin,

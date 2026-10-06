@@ -15,7 +15,7 @@ from flext_cli import u
 from flext_core import r
 from flext_tests import c, m, p, t
 from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
 
 
 class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
@@ -68,7 +68,10 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
         """
         if isinstance(content, Mapping):
             return {
-                k: FlextTestsPayloadUtilities.to_payload(v) for k, v in content.items()
+                k: FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                    v
+                )
+                for k, v in content.items()
             }
         return content
 

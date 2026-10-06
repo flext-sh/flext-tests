@@ -20,7 +20,7 @@ from flext_tests._utilities.enforcement import FlextTestsEnforcementUtilitiesMix
 from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
 from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
 from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
-from flext_tests._utilities.governance import FlextTestsModuleGovernanceMixin
+from flext_tests._utilities.governance import FlextTestsFlextUtilitiesGovernance
 from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
 from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
 from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
@@ -59,7 +59,7 @@ class FlextTestsUtilities(FlextCliUtilities):
         FlextTestsFixturesDSLMixin,
         # NOTE (multi-agent): compose guarded cleanup planning/apply into u.Tests.
         FlextTestsWorkspaceCleanupUtilitiesMixin,
-        FlextTestsModuleGovernanceMixin,
+        FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin,
         FlextTestsEnforcementUtilitiesMixin,
         FlextTestsNamespaceUtilitiesMixin,
     ):

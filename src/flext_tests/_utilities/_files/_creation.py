@@ -12,7 +12,7 @@ from typing import Annotated, cast
 
 from flext_tests import c, m, p, t, u
 from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
 
 
 class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
@@ -39,7 +39,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         Raises:
             TypeError: If File content requires a native mapping.
         """
-        payload = FlextTestsPayloadUtilities.to_payload(value)
+        payload = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+            value
+        )
         if payload.kind != "mapping":
             msg = "File content requires a native mapping"
             raise TypeError(msg)
@@ -53,7 +55,14 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             The resulting ``t.SequenceOf[t.StrSequence]``.
         """
         return [
-            [str(FlextTestsPayloadUtilities.to_match_value(cell)) for cell in row.items]
+            [
+                str(
+                    FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+                        cell
+                    )
+                )
+                for cell in row.items
+            ]
             for row in value.items
         ]
 
@@ -64,7 +73,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         Returns:
             The resulting ``m.Tests.Payload``.
         """
-        return FlextTestsPayloadUtilities.to_payload(value)
+        return FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+            value
+        )
 
     def _extract_content[ContentT](
         self,
@@ -94,7 +105,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         Returns:
             The resulting ``bool``.
         """
-        payload = FlextTestsPayloadUtilities.to_payload(value)
+        payload = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+            value
+        )
         return (
             payload.kind in {"list", "tuple"}
             and bool(payload.items)
@@ -117,7 +130,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                     atom
                     if actual_content.kind == "atom" and isinstance(atom, bytes)
                     else str(
-                        FlextTestsPayloadUtilities.to_match_value(actual_content),
+                        FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+                            actual_content
+                        ),
                     ).encode(params.enc)
                 )
                 file_path.write_bytes(content)
@@ -141,7 +156,11 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                 )
             case _:
                 file_path.write_text(
-                    str(FlextTestsPayloadUtilities.to_match_value(actual_content)),
+                    str(
+                        FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+                            actual_content
+                        )
+                    ),
                     encoding=params.enc,
                 )
 
@@ -159,7 +178,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             return t.json_value_adapter().validate_python(
                 actual_content.atom.model_dump(mode="json"),
             )
-        normalized = FlextTestsPayloadUtilities.to_normalized_value(actual_content)
+        normalized = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_normalized_value(
+            actual_content
+        )
         if actual_content.kind == "mapping":
             return normalized
         return {"value": normalized} if normalized else {}
@@ -182,7 +203,11 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             rows.extend(FlextTestsFilesCreationMixin._to_string_rows(actual_content))
         else:
             rows.append([
-                str(FlextTestsPayloadUtilities.to_match_value(actual_content)),
+                str(
+                    FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+                        actual_content
+                    )
+                ),
             ])
         return rows
 
@@ -248,7 +273,11 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             "directory": directory,
         })
         actual_content = params.content
-        native_content = FlextTestsPayloadUtilities.to_match_value(actual_content)
+        native_content = (
+            FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+                actual_content
+            )
+        )
         # files_detect_format_from_content dispatches purely on the runtime
         # shape (bytes, model, mapping, list) and routes every other arm —
         # scalar atoms and None — to its extension fallback; its declared

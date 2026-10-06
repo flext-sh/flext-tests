@@ -14,7 +14,7 @@ from flext_tests import c, m, p, t, u
 from flext_tests._utilities._files._comparison_parts.comparison_part_01 import (
     FlextTestsFilesComparisonMixin as _ComparisonMixinPart1,
 )
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
 
 
 class FlextTestsFilesComparisonMixin(_ComparisonMixinPart1):
@@ -167,12 +167,16 @@ class FlextTestsFilesComparisonMixin(_ComparisonMixinPart1):
             set(params.exclude_keys) if params.exclude_keys is not None else None
         )
         left_result = u.transform(
-            FlextTestsPayloadUtilities.to_config_map(dict1),
+            FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
+                dict1
+            ),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
         right_result = u.transform(
-            FlextTestsPayloadUtilities.to_config_map(dict2),
+            FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
+                dict2
+            ),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
