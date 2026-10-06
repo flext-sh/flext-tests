@@ -20,6 +20,7 @@ from types import (
     CodeType,
     FunctionType,
     GenericAlias,
+    MappingProxyType,
     ModuleType,
     UnionType,
 )
@@ -36,6 +37,15 @@ if TYPE_CHECKING:
 
 class FlextTestsFlextUtilitiesPayload:
     """Canonical namespace owner."""
+
+    _PAYLOAD_SEQUENCE_KINDS: Final[t.MappingKV[type, t.Tests.PayloadKind]] = (
+        MappingProxyType({
+            list: "list",
+            tuple: "tuple",
+            set: "set",
+            frozenset: "frozenset",
+        })
+    )
 
     @staticmethod
     def _stable_sort_key(value: p.Tests.Payload) -> t.StrPair:
