@@ -346,17 +346,15 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Extract nested value via dot notation."),
         ] = None
         paths: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, MatchRule] | None,
             u.Field(description="Multiple path-based assertions."),
         ] = None
         items: Annotated[
-            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
-            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
-            | None,
+            Sequence[MatchRule] | Mapping[str | int, MatchRule] | None,
             u.Field(description="Sequence item assertions by selector."),
         ] = None
         attrs_match: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, MatchRule] | None,
             u.Field(description="Attribute assertions by attribute path."),
         ] = None
         where: Annotated[
@@ -571,17 +569,15 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Deep spec."),
         ] = None
         paths: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, MatchRule] | None,
             u.Field(description="Paths."),
         ] = None
         items: Annotated[
-            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
-            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
-            | None,
+            Sequence[MatchRule] | Mapping[str | int, MatchRule] | None,
             u.Field(description="Items."),
         ] = None
         attrs_match: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, MatchRule] | None,
             u.Field(description="Attr rules."),
         ] = None
         where: Annotated[

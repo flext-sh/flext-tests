@@ -10,7 +10,7 @@ from __future__ import annotations
 from types import MappingProxyType
 from typing import TYPE_CHECKING
 
-from flext_core import build_lazy_import_map, install_lazy_exports
+from flext_core import install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tests._fixtures import _enforcement_parts
@@ -65,32 +65,29 @@ __all__: tuple[str, ...] = (
     "test_runtime",
 )
 
-_LAZY_IMPORTS = MappingProxyType(
-    build_lazy_import_map(
-        MappingProxyType({
-            "._enforcement_parts": ("_enforcement_parts",),
-            "._enforcement_parts.build": ("FlextTestsEnforcementBuilder",),
-            "._enforcement_parts.dispatcher": ("FlextTestsEnforcementDispatcher",),
-            "._enforcement_parts.items": ("FlextTestsEnforcementItem",),
-            "._enforcement_parts.validators": ("FlextTestsEnforcementValidators",),
-            ".connectivity": ("FlextTestsCapabilityPlugin",),
-            ".namespace": ("run_namespace", "test_namespace"),
-            ".project_metadata": ("project_metadata", "project_tool_flext"),
-            ".settings": (
-                "clean_container",
-                "reset_settings",
-                "sample_data",
-                "settings",
-                "settings_factory",
-                "temp_dir",
-                "temp_file",
-                "test_context",
-                "test_runtime",
-            ),
-        }),
-        alias_groups=MappingProxyType({}),
-        sort_keys=False,
-    ),
+install_lazy_exports(
+    __name__,
+    globals(),
+    MappingProxyType({
+        "FlextTestsCapabilityPlugin": ".connectivity",
+        "FlextTestsEnforcementBuilder": "._enforcement_parts.build",
+        "FlextTestsEnforcementDispatcher": "._enforcement_parts.dispatcher",
+        "FlextTestsEnforcementItem": "._enforcement_parts.items",
+        "FlextTestsEnforcementValidators": "._enforcement_parts.validators",
+        "_enforcement_parts": "._enforcement_parts",
+        "clean_container": ".settings",
+        "project_metadata": ".project_metadata",
+        "project_tool_flext": ".project_metadata",
+        "reset_settings": ".settings",
+        "run_namespace": ".namespace",
+        "sample_data": ".settings",
+        "settings": ".settings",
+        "settings_factory": ".settings",
+        "temp_dir": ".settings",
+        "temp_file": ".settings",
+        "test_context": ".settings",
+        "test_namespace": ".namespace",
+        "test_runtime": ".settings",
+    }),
+    public_exports=__all__,
 )
-
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)

@@ -18,6 +18,26 @@ class TestsFlextTestsMatchersDataDrivenMixin:
     """Matcher data driven tests."""
 
     @staticmethod
+    @pytest.mark.parametrize("value", ["first operand", "different operand"])
+    def test_matcher_parameters_resolve_before_public_use(value: str) -> None:
+        """Resolve scalar and composed rules on the first public matcher call."""
+        tm.that(value, eq=value)
+        tm.that({"value": value}, paths={"value": {"eq": value}})
+        tm.that([value], items=[{"eq": value}])
+        tm.that({"value": value}, attrs_match={"value": {"eq": value}})
+        tm.ok(r[str].ok(value), eq=value)
+        tm.ok(r[t.JsonMapping].ok({"value": value}), paths={"value": {"eq": value}})
+        tm.ok(r[t.StrSequence].ok([value]), items=[{"eq": value}])
+        tm.ok(
+            r[t.JsonMapping].ok({"value": value}),
+            attrs_match={"value": {"eq": value}},
+        )
+        with pytest.raises(AssertionError):
+            tm.that({"value": value}, paths={"value": {"eq": value.upper()}})
+        with pytest.raises(AssertionError):
+            tm.ok(r[t.StrSequence].ok([value]), items=[{"eq": value.upper()}])
+
+    @staticmethod
     def test_that_with_paths_data_driven_rules() -> None:
         """Validate multiple dotted paths with a single declarative matcher call."""
         payload: t.JsonMapping = {
