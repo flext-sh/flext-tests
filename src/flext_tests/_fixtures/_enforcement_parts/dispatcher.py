@@ -16,7 +16,7 @@ from __future__ import annotations
 import math
 from importlib import import_module
 from pathlib import Path
-from typing import TYPE_CHECKING, ClassVar
+from typing import cast, TYPE_CHECKING, ClassVar
 
 import pytest
 
@@ -108,7 +108,7 @@ class FlextTestsEnforcementDispatcher:
             repository_root=repository_root,
         )
         config.stash[cls.stash_config] = resolved
-        return resolved
+        return cast("m.Tests.EnforcementDispatcherConfig", resolved)
 
     @classmethod
     def configure(cls, config: pytest.Config) -> None:

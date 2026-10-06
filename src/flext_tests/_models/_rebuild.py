@@ -92,17 +92,15 @@ class _LazyAliasNamespace(Mapping[str, object]):
         self._cache.update(other)
 
 
-def _rebuild_namespace(mixin: type) -> dict[str, object]:
+def _rebuild_namespace(mixin: type) -> _LazyAliasNamespace:
     """Build the merged types namespace for a mixin's deferred models.
 
     Returns:
-        The resulting ``dict[str, Any]`` namespace.
+        The resulting lazy alias namespace.
 
     """
-    namespace: dict[str, object] = _LazyAliasNamespace()
+    namespace: _LazyAliasNamespace = _LazyAliasNamespace()
     for module_name, module in tuple(sys.modules.items()):
-        if module is None:
-            continue
         if module_name != "flext_tests" and not module_name.startswith(
             "flext_tests._models.",
         ):

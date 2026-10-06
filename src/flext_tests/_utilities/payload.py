@@ -24,7 +24,7 @@ from types import (
     ModuleType,
     UnionType,
 )
-from typing import TYPE_CHECKING, Final, TypeAliasType
+from typing import TYPE_CHECKING, Final, TypeAliasType, cast
 
 import flext_tests
 from flext_core import m, u
@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 class FlextTestsFlextUtilitiesPayload:
     """Canonical namespace owner."""
 
-    _PAYLOAD_SEQUENCE_KINDS: Final[t.MappingKV[type, t.Tests.PayloadKind]] = (
+    _PAYLOAD_SEQUENCE_KINDS: Final[MappingProxyType[type, str]] = (
         MappingProxyType({
             list: "list",
             tuple: "tuple",
@@ -502,7 +502,10 @@ class FlextTestsFlextUtilitiesPayload:
                         return result_model(
                             path=path,
                             expected=expected,
-                            actual=node,
+                            actual=cast(
+                                "FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload",
+                                node,
+                            ),
                             matched=False,
                             reason="Value mismatch",
                         )

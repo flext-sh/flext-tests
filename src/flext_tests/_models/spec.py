@@ -6,15 +6,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 from flext_cli import m, u
 
-from flext_tests._models._rebuild import rebuild_nested_models as _rebuild
-
-if TYPE_CHECKING:
-    from flext_tests import t
-    from flext_tests._models.docker import FlextTestsDockerModelsMixin
+from flext_tests import t
+from flext_tests._models.docker import FlextTestsDockerModelsMixin
 
 
 class FlextTestsSpecModelsMixin:
@@ -46,5 +43,3 @@ class FlextTestsSpecModelsMixin:
             ),
         ] = None
 
-
-_rebuild(FlextTestsSpecModelsMixin)

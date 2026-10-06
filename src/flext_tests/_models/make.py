@@ -8,14 +8,11 @@ from __future__ import annotations
 
 from pathlib import Path
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 from flext_cli import m, u
 
-from flext_tests._models._rebuild import rebuild_nested_models as _rebuild
-
-if TYPE_CHECKING:
-    from flext_tests import t
+from flext_tests import t
 
 
 class FlextTestsMakeModelsMixin:
@@ -128,5 +125,3 @@ class FlextTestsMakeModelsMixin:
 
 
 __all__: list[str] = ["FlextTestsMakeModelsMixin"]
-
-_rebuild(FlextTestsMakeModelsMixin)

@@ -8,15 +8,13 @@ from __future__ import annotations
 
 import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 from flext_cli import m, u
+from pydantic import field_validator
 
 from flext_tests import c, p, t
-from flext_tests._models._rebuild import rebuild_nested_models as _rebuild
-
-if TYPE_CHECKING:
-    from flext_tests._models.base import FlextTestsFlextModelsBase
+from flext_tests._models.base import FlextTestsFlextModelsBase
 
 
 class FlextTestsFilesystemModelsMixin:
@@ -148,7 +146,7 @@ class FlextTestsFilesystemModelsMixin:
             u.Field(description="Auto-extract result value."),
         ] = True
 
-        @u.field_validator("name", mode="before")
+        @field_validator("name", mode="before")
         @classmethod
         def normalize_name(cls, value: p.AttributeProbe) -> str:
             """Normalize filename by stripping whitespace.
@@ -186,7 +184,7 @@ class FlextTestsFilesystemModelsMixin:
         ] = c.Tests.DEFAULT_CSV_DELIMITER
         has_headers: Annotated[bool, u.Field(description="CSV has headers.")] = True
 
-        @u.field_validator("path", mode="before")
+        @field_validator("path", mode="before")
         @classmethod
         def convert_path(cls, value: Path | str) -> Path:
             """Convert string to Path.
@@ -229,7 +227,7 @@ class FlextTestsFilesystemModelsMixin:
             u.Field(description="Exclude these keys from comparison."),
         ] = None
 
-        @u.field_validator("file1", "file2", mode="before")
+        @field_validator("file1", "file2", mode="before")
         @classmethod
         def convert_path(cls, value: Path | str) -> Path:
             """Convert string to Path.
@@ -256,7 +254,7 @@ class FlextTestsFilesystemModelsMixin:
             u.Field(description="Pydantic model to validate content against."),
         ] = None
 
-        @u.field_validator("path", mode="before")
+        @field_validator("path", mode="before")
         @classmethod
         def convert_path(cls, value: Path | str) -> Path:
             """Convert string to Path.
@@ -326,5 +324,3 @@ class FlextTestsFilesystemModelsMixin:
 
 
 __all__: list[str] = ["FlextTestsFilesystemModelsMixin"]
-
-_rebuild(FlextTestsFilesystemModelsMixin)

@@ -7,14 +7,11 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Annotated, Literal
+from typing import Annotated, Literal
 
 from flext_cli import m, u
 
-from flext_tests._models._rebuild import rebuild_nested_models as _rebuild
-
-if TYPE_CHECKING:
-    from flext_core import t
+from flext_core import t
 
 
 class FlextTestsWorkspaceCleanupModelsMixin:
@@ -90,5 +87,3 @@ class FlextTestsWorkspaceCleanupModelsMixin:
 
 
 __all__: t.VariadicTuple[str] = ("FlextTestsWorkspaceCleanupModelsMixin",)
-
-_rebuild(FlextTestsWorkspaceCleanupModelsMixin)

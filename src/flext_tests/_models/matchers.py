@@ -14,6 +14,7 @@ from typing import Annotated, ClassVar, TypeAliasType
 
 from _pytest.python_api import ApproxBase  # ruff: ignore[import-private-name] -- ApproxBase has no public pytest path in the supported versions; justified per fleet suppression law.
 from flext_cli import m, u
+from pydantic import field_validator, model_validator
 
 from flext_tests import p, t
 from flext_tests._models._rebuild import rebuild_nested_models as _rebuild
@@ -40,7 +41,7 @@ class FlextTestsMatchersModelsMixin:
     class PayloadParams(m.Value):
         """Own matcher operand trees once at parameter ingress."""
 
-        @u.field_validator(
+        @field_validator(
             "eq",
             "ne",
             "has",
@@ -65,7 +66,7 @@ class FlextTestsMatchersModelsMixin:
                 value,
             )
 
-        @u.field_validator(
+        @field_validator(
             "settings",
             "container",
             "context",
@@ -100,7 +101,7 @@ class FlextTestsMatchersModelsMixin:
                 raise ValueError(msg)
             return node.entries
 
-        @u.field_validator("values", mode="before", check_fields=False)
+        @field_validator("values", mode="before", check_fields=False)
         @classmethod
         def own_values(
             cls,
@@ -127,7 +128,7 @@ class FlextTestsMatchersModelsMixin:
                 raise ValueError(msg)
             return node.items
 
-        @u.field_validator("deep", mode="before", check_fields=False)
+        @field_validator("deep", mode="before", check_fields=False)
         @classmethod
         def own_deep[ValueT](
             cls,
@@ -383,7 +384,7 @@ class FlextTestsMatchersModelsMixin:
         ] = None
         msg: Annotated[str | None, u.Field(description="Custom error message.")] = None
 
-        @u.field_validator("paths", "items", "attrs_match", mode="before")
+        @field_validator("paths", "items", "attrs_match", mode="before")
         @classmethod
         def parse_rules(
             cls,
@@ -445,7 +446,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Error data contains key-value pairs."),
         ] = None
 
-        @u.field_validator("data", mode="before")
+        @field_validator("data", mode="before")
         @classmethod
         def own_data(
             cls,
@@ -612,7 +613,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Predicate."),
         ] = None
 
-        @u.field_validator("paths", "items", "attrs_match", mode="before")
+        @field_validator("paths", "items", "attrs_match", mode="before")
         @classmethod
         def parse_rules(
             cls,
@@ -632,7 +633,7 @@ class FlextTestsMatchersModelsMixin:
             """
             return FlextTestsMatchersModelsMixin.MatchRule.parse_rule_fields(value)
 
-        @u.model_validator(mode="after")
+        @model_validator(mode="after")
         def normalize_legacy_parameters(
             self,
         ) -> FlextTestsMatchersModelsMixin.ThatParams:
@@ -731,7 +732,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Temporary working directory."),
         ] = None
 
-        @u.field_validator("cwd", mode="before")
+        @field_validator("cwd", mode="before")
         @classmethod
         def convert_cwd(cls, value: Path | str | None) -> Path | str | None:
             """Convert string cwd to Path.

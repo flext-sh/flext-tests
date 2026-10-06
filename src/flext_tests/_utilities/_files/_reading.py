@@ -182,7 +182,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                 content = path.read_bytes()
             case _ if actual_fmt == c.Tests.FILE_FORMAT_JSON:
                 text = path.read_text(encoding=params.enc)
-                parsed_json = u.type_adapter(
+                parsed_json: t.MappingKV[str, t.Tests.TestobjectSerializable] = u.type_adapter(
                     t.MappingKV[str, t.Tests.TestobjectSerializable],
                     config=m.ConfigDict(arbitrary_types_allowed=True),
                 ).validate_json(text.encode())

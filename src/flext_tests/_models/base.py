@@ -7,17 +7,17 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Annotated, Self
+from typing import Annotated, Self
 
 from flext_cli import m, p, u
+from pydantic import field_validator, model_validator
 
-from flext_tests._models._rebuild import rebuild_nested_models as _rebuild
-
-if TYPE_CHECKING:
-    from flext_tests import t
+from flext_tests import t
 
 
-def _entity_payload_default() -> m.Tests.Payload:
+def _entity_payload_default() -> (
+    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+):
     """Late-bound entity default.
 
     Defined before the mixin so the class body binds the bare name while the
@@ -83,7 +83,7 @@ class FlextTestsFlextModelsBase:
                 ),
             ]
 
-            @u.field_validator("entries", mode="after")
+            @field_validator("entries", mode="after")
             @classmethod
             def freeze_entries(
                 cls,
@@ -101,7 +101,7 @@ class FlextTestsFlextModelsBase:
                 """
                 return MappingProxyType(dict(value))
 
-            @u.model_validator(mode="after")
+            @model_validator(mode="after")
             def validate_arm(self) -> Self:
                 """Reject data in fields belonging to a different native value arm.
 
@@ -154,5 +154,3 @@ class FlextTestsFlextModelsBase:
 
 
 __all__: list[str] = ["FlextTestsFlextModelsBase"]
-
-_rebuild(FlextTestsFlextModelsBase)

@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import importlib
 from types import ModuleType
-from typing import TYPE_CHECKING
+from typing import cast, TYPE_CHECKING
 
 import pytest
 
@@ -82,7 +82,7 @@ def _bind_runtime_aliases(
             "which is not a FlextTestsServiceBase subclass"
         )
         raise TypeError(msg)
-    service = service_type.fetch_global()
+    service = cast("FlextTestsServiceBase[Base]", service_type.fetch_global())
     instance.service = service
     instance.settings = service.fetch_settings()
     instance.logger = service.logger
