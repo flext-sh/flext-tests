@@ -15,7 +15,10 @@ from flext_cli import m, p, u
 # names, and pydantic resolves field annotations at runtime. A TYPE_CHECKING-only
 # import leaves the names unresolvable, deferring the models forever (PydanticUserError:
 # not fully defined). The package-level lazy descriptor resolves ``t`` without cycles.
-from flext_tests import t
+try:
+    from flext_tests import t
+except ImportError:  # mid-init: the models-end pass completes the deferred models
+    pass
 
 
 def _entity_payload_default() -> m.Tests.Payload:
