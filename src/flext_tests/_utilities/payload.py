@@ -23,23 +23,16 @@ from types import (
     ModuleType,
     UnionType,
 )
-from typing import Final, TypeAliasType
+from typing import Final, TypeAliasType, cast
 
 import flext_tests
 from flext_core import m, u
-from flext_tests import p, t
+from flext_tests import c, p, t
 from flext_tests._models.base import FlextTestsFlextModelsBase
 
 
 class FlextTestsFlextUtilitiesPayload:
     """Canonical namespace owner."""
-
-    _PAYLOAD_SEQUENCE_KINDS: Final[tuple[tuple[type, t.Tests.PayloadKind], ...]] = (
-        (list, "list"),
-        (tuple, "tuple"),
-        (set, "set"),
-        (frozenset, "frozenset"),
-    )
 
     @staticmethod
     def _stable_sort_key(value: p.Tests.Payload) -> t.StrPair:
@@ -211,12 +204,12 @@ class FlextTestsFlextUtilitiesPayload:
                     key=FlextTestsFlextUtilitiesPayload._stable_sort_key,
                 ),
             )
-        for (
-            sequence_type,
-            kind,
-        ) in FlextTestsFlextUtilitiesPayload._PAYLOAD_SEQUENCE_KINDS:
+        for kind, sequence_type in c.Tests.PAYLOAD_COLLECTION_TYPES.items():
             if isinstance(value, sequence_type):
-                return flext_tests.m.Tests.Payload(kind=kind, items=children)
+                return flext_tests.m.Tests.Payload(
+                    kind=cast("t.Tests.PayloadKind", kind),
+                    items=children,
+                )
         return None
 
     _PAYLOAD_LEAF_HANDLERS: Final[
