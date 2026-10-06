@@ -12,7 +12,6 @@ from typing import Annotated, ClassVar
 
 from flext_cli import m, p, u
 
-from flext_tests._models._rebuild import rebuild_nested_models as _rebuild
 
 
 class FlextTestsValidatorModelsMixin:

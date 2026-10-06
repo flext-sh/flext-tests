@@ -17,7 +17,6 @@ from flext_cli import m, u
 from pydantic import field_validator, model_validator
 
 from flext_tests import p, t
-from flext_tests._models._rebuild import rebuild_nested_models as _rebuild
 from flext_tests._models.base import FlextTestsFlextModelsBase
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
@@ -814,6 +813,6 @@ class FlextTestsMatchersModelsMixin:
         )
 
 
-__all__: list[str] = ["FlextTestsMatchersModelsMixin"]
-
 _rebuild(FlextTestsMatchersModelsMixin)
+
+__all__: list[str] = ["FlextTestsMatchersModelsMixin"]

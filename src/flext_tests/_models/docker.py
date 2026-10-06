@@ -12,7 +12,6 @@ from typing import Annotated
 from flext_cli import m, u
 
 from flext_tests import c, t
-from flext_tests._models._rebuild import rebuild_nested_models as _rebuild
 
 
 class FlextTestsDockerModelsMixin:

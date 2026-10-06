@@ -9,7 +9,6 @@ from __future__ import annotations
 from typing import Annotated
 
 from flext_core import m
-from flext_tests._models._rebuild import rebuild_nested_models as _rebuild
 
 
 class FlextTestsDomainModelsMixin:
