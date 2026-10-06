@@ -8,7 +8,8 @@ from __future__ import annotations
 
 from typing import override
 
-from flext_tests import FlextTestsUtilities, m, p, r, s, t
+from flext_tests import FlextTestsUtilities, m, p, r, t
+from flext_tests.base import FlextTestsServiceBase as s
 from tests.protocols import TestsFlextTestsProtocols
 
 
