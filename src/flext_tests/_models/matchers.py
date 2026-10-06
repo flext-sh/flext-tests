@@ -10,7 +10,7 @@ import sys
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, Any, ClassVar, TypeAliasType
+from typing import Annotated, Any, ClassVar, TypeAliasType, cast
 
 from _pytest.python_api import ApproxBase  # ruff: ignore[import-private-name] -- ApproxBase has no public pytest path in the supported versions; justified per fleet suppression law.
 from flext_cli import m, u
@@ -371,15 +371,17 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Extract nested value via dot notation."),
         ] = None
         paths: Annotated[
-            Mapping[str, MatchRule] | None,
+            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
             u.Field(description="Multiple path-based assertions."),
         ] = None
         items: Annotated[
-            Sequence[MatchRule] | Mapping[str | int, MatchRule] | None,
+            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
+            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
+            | None,
             u.Field(description="Sequence item assertions by selector."),
         ] = None
         attrs_match: Annotated[
-            Mapping[str, MatchRule] | None,
+            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
             u.Field(description="Attribute assertions by attribute path."),
         ] = None
         where: Annotated[
@@ -603,7 +605,9 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Paths."),
         ] = None
         items: Annotated[
-            Sequence[MatchRule] | Mapping[str | int, MatchRule] | None,
+            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
+            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
+            | None,
             u.Field(description="Items."),
         ] = None
         attrs_match: Annotated[

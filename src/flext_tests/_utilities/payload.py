@@ -23,7 +23,7 @@ from types import (
     ModuleType,
     UnionType,
 )
-from typing import TYPE_CHECKING, Final, TypeAliasType, cast
+from typing import cast, TYPE_CHECKING, Final, TypeAliasType, cast
 
 import flext_tests
 from flext_core import m, u
@@ -227,7 +227,10 @@ class FlextTestsFlextUtilitiesPayload:
             )
         for kind, sequence_type in c.Tests.PAYLOAD_COLLECTION_TYPES.items():
             if isinstance(value, sequence_type):
-                return flext_tests.m.Tests.Payload(kind=kind, items=children)
+                return flext_tests.m.Tests.Payload(
+                    kind=cast("t.Tests.PayloadKind", kind),
+                    items=children,
+                )
         return None
 
     _PAYLOAD_SEQUENCE_KINDS: Final[tuple[tuple[type, str], ...]] = (
