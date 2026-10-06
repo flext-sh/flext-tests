@@ -17,7 +17,7 @@ import importlib.metadata
 import inspect
 from collections.abc import Iterator
 from pathlib import Path
-from typing import TYPE_CHECKING, ClassVar, Final, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, ClassVar, Protocol, runtime_checkable
 
 from flext_tests import p, tm
 

@@ -10,35 +10,41 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Protocol, TYPE_CHECKING
-
 from pathlib import Path
+from typing import TYPE_CHECKING, Protocol
+
 from flext_tests import r, u
 
 if TYPE_CHECKING:
     from flext_tests import m, p, t
 
+    class _DockerFacadeInternals(Protocol):
+        """The facade-own internals the surface verbs delegate to."""
 
-class _DockerFacadeInternals(Protocol):
-    """The facade-own internals the surface verbs delegate to."""
+        def _compose_path(self, compose_file: str) -> Path: ...
 
-    def _compose_path(self, compose_file: str) -> Path: ...
+        def _compose_down(self, compose_path: Path, project: str) -> p.Result[str]: ...
 
-    def _compose_down(self, compose_path: Path, project: str) -> p.Result[str]: ...
+        def _compose_up(
+            self,
+            compose_path: Path,
+            project: str,
+            service: str | None,
+            *,
+            force_recreate: bool,
+        ) -> p.Result[str]: ...
 
-    def _compose_up(
-        self,
-        compose_path: Path,
-        project: str,
-        service: str | None,
-        *,
-        force_recreate: bool,
-    ) -> p.Result[str]: ...
+        def _inspect(
+            self,
+            container_name: str,
+        ) -> p.Result[m.Tests.ContainerInspect]: ...
 
-    def _inspect(self, container_name: str) -> p.Result[m.Tests.ContainerInspect]: ...
+    _PartsBase = _DockerFacadeInternals
+else:
+    _PartsBase = object
 
 
-class FlextTestsDockerSurfaceParts(_DockerFacadeInternals):
+class FlextTestsDockerSurfaceParts(_PartsBase):
     """Public compose and container verbs of the Docker facade."""
 
     def compose_down(self, compose_file: str) -> p.Result[str]:

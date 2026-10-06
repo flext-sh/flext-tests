@@ -76,8 +76,8 @@ class FlextTestsTestContextUtilitiesMixin:
             """Take the lock on an open descriptor in this lock's mode."""
             if os.name == "nt":
                 os.lseek(descriptor, 0, os.SEEK_SET)
-                locking = getattr(msvcrt, "locking")
-                locking(descriptor, getattr(msvcrt, "LK_LOCK"), 1)
+                locking = msvcrt.locking
+                locking(descriptor, msvcrt.LK_LOCK, 1)
             elif self.timeout_seconds is None:
                 fcntl.flock(descriptor, self._posix_flags())
             else:
@@ -125,8 +125,8 @@ class FlextTestsTestContextUtilitiesMixin:
             try:
                 if os.name == "nt":
                     os.lseek(file_obj.fileno(), 0, os.SEEK_SET)
-                    locking = getattr(msvcrt, "locking")
-                    locking(file_obj.fileno(), getattr(msvcrt, "LK_UNLCK"), 1)
+                    locking = msvcrt.locking
+                    locking(file_obj.fileno(), msvcrt.LK_UNLCK, 1)
                 else:
                     fcntl.flock(file_obj.fileno(), fcntl.LOCK_UN)
             finally:

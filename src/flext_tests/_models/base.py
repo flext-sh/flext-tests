@@ -9,7 +9,7 @@ from __future__ import annotations
 from types import MappingProxyType
 from typing import Annotated, Self
 
-from flext_cli import m, p, u
+from flext_cli import m, p
 from pydantic import field_validator, model_validator
 
 from flext_tests import t

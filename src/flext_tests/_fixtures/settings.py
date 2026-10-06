@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import importlib
 from types import ModuleType
-from typing import cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import pytest
 

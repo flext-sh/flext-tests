@@ -16,7 +16,7 @@ from __future__ import annotations
 import math
 from importlib import import_module
 from pathlib import Path
-from typing import cast, TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar, cast
 
 import pytest
 
