@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from flext_tests import c, m, p
 from flext_tests._fixtures._enforcement_parts.items import FlextTestsEnforcementItem
@@ -55,17 +55,20 @@ class FlextTestsEnforcementValidators:
         severity_key = c.Tests.ENFORCEMENT_FINDING_SEVERITY_KEY
         message_key = c.Tests.ENFORCEMENT_FINDING_MESSAGE_KEY
         return [
-            FlextTestsEnforcementItem.from_parent(
-                collector,
-                name=f"{rule_id}[{project}]",
-                violation=m.Tests.EnforcementViolation(
-                    rule_id=rule_id,
-                    severity=str(findings[0].payload[severity_key]),
-                    description=str(findings[0].payload[message_key]),
-                    project=project,
-                    violations=tuple(
-                        f"{finding.file.as_posix()} | {finding.text.splitlines()[0]}"
-                        for finding in findings
+            cast(
+                "FlextTestsEnforcementItem",
+                FlextTestsEnforcementItem.from_parent(
+                    collector,
+                    name=f"{rule_id}[{project}]",
+                    violation=m.Tests.EnforcementViolation(
+                        rule_id=rule_id,
+                        severity=str(findings[0].payload[severity_key]),
+                        description=str(findings[0].payload[message_key]),
+                        project=project,
+                        violations=tuple(
+                            f"{finding.file.as_posix()} | {finding.text.splitlines()[0]}"
+                            for finding in findings
+                        ),
                     ),
                 ),
             )

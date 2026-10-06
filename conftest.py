@@ -1,3 +1,4 @@
+# Copyright (c) 2026 FLEXT. All rights reserved.
 # Copyright 2026 FLEXT
 """Pytest bootstrap for flext-tests local package resolution."""
 
