@@ -11,7 +11,6 @@ from typing import TYPE_CHECKING, Annotated, Literal
 
 from flext_cli import m, u
 
-
 if TYPE_CHECKING:
     from flext_core import t
 

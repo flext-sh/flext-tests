@@ -15,7 +15,7 @@ from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMi
 
 
 class FlextTestsMakeRegistryUtilitiesMixin(
-    FlextTestsFlextUtilitiesMakeContract.FlextTestsMakeContractUtilitiesMixin
+    FlextTestsFlextUtilitiesMakeContract.FlextTestsMakeContractUtilitiesMixin,
 ):
     """Build and resolve the Make command registry."""
 
@@ -149,7 +149,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(
             surface=surface_result.value,
         )
         contract_result = FlextTestsFlextUtilitiesMakeContract.FlextTestsMakeContractUtilitiesMixin.make_validate_command_contract(
-            command
+            command,
         )
         if contract_result.failure:
             return r[m.Tests.MakeCommand].from_failure(contract_result)

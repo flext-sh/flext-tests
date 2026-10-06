@@ -208,11 +208,11 @@ class FlextTestsMatchersThatMixin:
                         as_str=True,
                     )
                     return FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                        err
+                        err,
                     )
                 if result_obj.success:
                     return FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                        result_obj.value
+                        result_obj.value,
                     )
                 raise AssertionError(
                     params.msg or c.Tests.ERR_OK_FAILED.format(error=result_obj.error),
@@ -322,7 +322,7 @@ class FlextTestsMatchersThatMixin:
                             seq_value[0],
                         )
                         != FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                            params.first
+                            params.first,
                         )
                     ):
                         raise AssertionError(
@@ -342,7 +342,7 @@ class FlextTestsMatchersThatMixin:
                             seq_value[-1],
                         )
                         != FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                            params.last
+                            params.last,
                         )
                     ):
                         raise AssertionError(
@@ -395,7 +395,7 @@ class FlextTestsMatchersThatMixin:
                     if all(
                         isinstance(
                             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                                item
+                                item,
                             ),
                             all_type,
                         )
@@ -408,7 +408,7 @@ class FlextTestsMatchersThatMixin:
                             for index, item in enumerate(seq_value)
                             if not isinstance(
                                 FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                                    item
+                                    item,
                                 ),
                                 all_type,
                             )
@@ -427,7 +427,7 @@ class FlextTestsMatchersThatMixin:
                             for index, item in enumerate(seq_value)
                             if not predicate(
                                 FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                                    item
+                                    item,
                                 ),
                             )
                         ),
@@ -458,7 +458,7 @@ class FlextTestsMatchersThatMixin:
                     if not any(
                         isinstance(
                             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                                item
+                                item,
                             ),
                             any_type,
                         )
@@ -469,8 +469,8 @@ class FlextTestsMatchersThatMixin:
                 if callable(params.any_) and not any(
                     params.any_(
                         FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                            item
-                        )
+                            item,
+                        ),
                     )
                     for item in seq_value
                 ):
@@ -513,10 +513,10 @@ class FlextTestsMatchersThatMixin:
                     and params.unique
                     and any(
                         FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                            item
+                            item,
                         )
                         == FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                            previous
+                            previous,
                         )
                         for index, item in enumerate(seq_value)
                         for previous in seq_value[:index]
@@ -530,7 +530,7 @@ class FlextTestsMatchersThatMixin:
             def _default_sort_key(item: p.Tests.Payload) -> t.StrPair:
                 """Return a deterministic key for heterogeneous matcher values."""
                 native = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                    item
+                    item,
                 )
                 return type(native).__name__, str(native)
 
@@ -549,8 +549,8 @@ class FlextTestsMatchersThatMixin:
                 """
                 result = user_key_fn(
                     FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                        item
-                    )
+                        item,
+                    ),
                 )
                 return (type(result).__name__, str(result))
 
@@ -598,14 +598,14 @@ class FlextTestsMatchersThatMixin:
                 if params.values is not None:
                     value_list = [
                         FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                            item
+                            item,
                         )
                         for item in mapping_value.values()
                     ]
                     for expected_val in params.values:
                         if (
                             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                                expected_val
+                                expected_val,
                             )
                             not in value_list
                         ):
@@ -643,7 +643,7 @@ class FlextTestsMatchersThatMixin:
                         mapping_value[key],
                     )
                     wanted = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                        expected
+                        expected,
                     )
                     if actual != wanted:
                         raise AssertionError(
@@ -719,7 +719,7 @@ class FlextTestsMatchersThatMixin:
                         )
                     actual = getattr(subject, name)
                     wanted = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                        expected
+                        expected,
                     )
                     if actual != wanted:
                         raise AssertionError(
@@ -760,7 +760,7 @@ class FlextTestsMatchersThatMixin:
                 params = cls._that_params(kwargs)
                 if owned_payload:
                     payload = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                        value
+                        value,
                     )
                     value = payload.atom if payload.kind == "atom" else payload
                 cls._validate_declared_types(value, params, owned_payload=owned_payload)
@@ -780,7 +780,7 @@ class FlextTestsMatchersThatMixin:
                     return
                 subject = cls._result_subject(value, params)
                 subject_payload = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    subject
+                    subject,
                 )
                 cls._validate_scalar(subject_payload, params)
                 cls._validate_common(subject_payload, params, effective_has=params.has)
@@ -845,7 +845,7 @@ class FlextTestsMatchersThatMixin:
                     )
                 if params.where is not None:
                     native = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                        subject_payload
+                        subject_payload,
                     )
                     if not params.where(native):
                         raise AssertionError(
@@ -931,7 +931,8 @@ class FlextTestsMatchersThatMixin:
                 cls._apply_rule(
                     FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
                         FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.extract_path_value(
-                            subject, path
+                            subject,
+                            path,
                         ),
                     ),
                     rule,
@@ -955,7 +956,7 @@ class FlextTestsMatchersThatMixin:
             raise AssertionError(inherited_msg or "Item assertions require a sequence")
         sequence_value = tuple(
             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                item
+                item,
             )
             for item in subject.items
         )

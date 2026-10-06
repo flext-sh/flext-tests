@@ -170,7 +170,7 @@ class FlextTestsMatchersResultMixin:
                 if actual_raw is not None:
                     actual_data = {
                         key: FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                            value
+                            value,
                         )
                         for key, value in actual_raw.items()
                     }
@@ -185,7 +185,7 @@ class FlextTestsMatchersResultMixin:
                             actual_data[key],
                         )
                         != FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                            expected_value
+                            expected_value,
                         )
                     ):
                         raise AssertionError(
@@ -217,7 +217,7 @@ class FlextTestsMatchersResultMixin:
                 )
                 payload = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.extract_path_value(
                     FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                        result_value
+                        result_value,
                     ),
                     path,
                 )
@@ -276,7 +276,7 @@ class FlextTestsMatchersResultMixin:
                 if presence_only:
                     native = (
                         FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                            result_value
+                            result_value,
                         )
                         if isinstance(result_value, m.Tests.Payload)
                         else result_value
@@ -291,7 +291,7 @@ class FlextTestsMatchersResultMixin:
                 ):
                     FlextTestsMatchersTypeGuardsMixin.assert_scalar_match(
                         FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                            result_value
+                            result_value,
                         ),
                         params,
                     )
@@ -315,7 +315,7 @@ class FlextTestsMatchersResultMixin:
                 if params.is_ is not None:
                     native = (
                         FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                            result_value
+                            result_value,
                         )
                         if isinstance(result_value, m.Tests.Payload)
                         else result_value
@@ -399,7 +399,7 @@ class FlextTestsMatchersResultMixin:
                     params,
                 )
                 return FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                    result_payload
+                    result_payload,
                 )
 
             @staticmethod
@@ -411,12 +411,12 @@ class FlextTestsMatchersResultMixin:
             ) -> p.Tests.Payload:
                 if params.path is None:
                     return FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                        result.value
+                        result.value,
                     )
                 if extracted_payload is not None:
                     return extracted_payload
                 return FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    result_value
+                    result_value,
                 )
 
             @staticmethod
@@ -459,7 +459,7 @@ class FlextTestsMatchersResultMixin:
                     )
                 if params.where is not None:
                     native = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                        result_payload
+                        result_payload,
                     )
                     if not params.where(native):
                         raise AssertionError(
@@ -484,7 +484,7 @@ class FlextTestsMatchersResultMixin:
                     return result_value
                 match_result = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.deep_match(
                     FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                        result_value
+                        result_value,
                     ),
                     params.deep,
                 )

@@ -40,7 +40,7 @@ class FlextTestsFlextUtilitiesPayload:
         """Return a total deterministic key for heterogeneous payload values."""
         native = (
             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                value
+                value,
             )
         )
         return type(native).__name__, str(native)
@@ -55,7 +55,8 @@ class FlextTestsFlextUtilitiesPayload:
             The resulting ``FlextTestsBaseModelsMixin.Payload | None``.
         """
         if isinstance(
-            value, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+            value,
+            FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
         ):
             return value
         return None
@@ -72,7 +73,7 @@ class FlextTestsFlextUtilitiesPayload:
         if isinstance(value, m.RootModel):
             return (
                 FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    value.root
+                    value.root,
                 )
             )
         return None
@@ -89,7 +90,7 @@ class FlextTestsFlextUtilitiesPayload:
         if isinstance(value, Enum):
             return (
                 FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    value.value
+                    value.value,
                 )
             )
         return None
@@ -120,7 +121,8 @@ class FlextTestsFlextUtilitiesPayload:
             ),
         ):
             return FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload(
-                kind="atom", atom=value
+                kind="atom",
+                atom=value,
             )
         return None
 
@@ -137,7 +139,8 @@ class FlextTestsFlextUtilitiesPayload:
             # typing.Annotated[...] constructs are type-level atoms under
             # the same textual convention as the alias arm below.
             return FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload(
-                kind="atom", atom=str(value)
+                kind="atom",
+                atom=str(value),
             )
         return None
 
@@ -154,7 +157,8 @@ class FlextTestsFlextUtilitiesPayload:
             # A regex match compares by its matched text — the pattern
             # contract (semver, id shape) is what an expectation asserts.
             return FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload(
-                kind="atom", atom=value.group(0)
+                kind="atom",
+                atom=value.group(0),
             )
         return None
 
@@ -185,7 +189,8 @@ class FlextTestsFlextUtilitiesPayload:
             # convention (mirrors the type() leaf above) keeps
             # alias-bearing expectations comparable as strings.
             return FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload(
-                kind="atom", atom=str(value)
+                kind="atom",
+                atom=str(value),
             )
         return None
 
@@ -201,7 +206,7 @@ class FlextTestsFlextUtilitiesPayload:
         if isinstance(value, (KeysView, ValuesView)):
             return (
                 FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    list(value)
+                    list(value),
                 )
             )
         return None
@@ -220,7 +225,8 @@ class FlextTestsFlextUtilitiesPayload:
         """
         if isinstance(value, Mapping):
             entries: t.MutableMappingKV[
-                str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                str,
+                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
             ] = {}
             for key, item in value.items():
                 normalized_key = str(key)
@@ -229,11 +235,12 @@ class FlextTestsFlextUtilitiesPayload:
                     raise ValueError(msg)
                 entries[normalized_key] = (
                     FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                        item
+                        item,
                     )
                 )
             return FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload(
-                kind="mapping", entries=entries
+                kind="mapping",
+                entries=entries,
             )
         return None
 
@@ -277,7 +284,8 @@ class FlextTestsFlextUtilitiesPayload:
                 kind = sequence_kind
                 break
         return FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload(
-            kind=kind, items=children
+            kind=kind,
+            items=children,
         )
 
     _PAYLOAD_LEAF_HANDLERS: Final[
@@ -313,13 +321,13 @@ class FlextTestsFlextUtilitiesPayload:
         if isinstance(value, m.RootModel):
             return (
                 FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    value.root
+                    value.root,
                 )
             )
         if isinstance(value, Enum):
             return (
                 FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    value.value
+                    value.value,
                 )
             )
         return None
@@ -424,7 +432,7 @@ class FlextTestsFlextUtilitiesPayload:
         if isinstance(value, (KeysView, ValuesView)):
             return (
                 FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    list(value)
+                    list(value),
                 )
             )
         return None
@@ -449,17 +457,10 @@ class FlextTestsFlextUtilitiesPayload:
                 raise ValueError(msg)
             entries[normalized_key] = (
                 FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    item
+                    item,
                 )
             )
         return m.Tests.Payload(kind="mapping", entries=entries)
-
-    _PAYLOAD_SEQUENCE_KINDS: Final[tuple[tuple[type, t.Tests.PayloadKind], ...]] = (
-        (list, "list"),
-        (tuple, "tuple"),
-        (set, "set"),
-        (frozenset, "frozenset"),
-    )
 
     @staticmethod
     def _payload_sequence_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
@@ -488,20 +489,6 @@ class FlextTestsFlextUtilitiesPayload:
             if isinstance(value, sequence_type):
                 return m.Tests.Payload(kind=kind, items=children)
         return None
-
-    _PAYLOAD_LEAF_HANDLERS: Final[
-        tuple[Callable[[p.AttributeProbe], m.Tests.Payload | None], ...]
-    ] = (
-        _payload_model_leaf,
-        _payload_none_leaf,
-        _payload_scalar_leaf,
-        _payload_annotated_leaf,
-        _payload_match_leaf,
-        _payload_runtime_leaf,
-        _payload_view_leaf,
-        _payload_mapping_leaf,
-        _payload_sequence_leaf,
-    )
 
     class FlextTestsPayloadUtilities:
         """Namespace class for shared payload conversion helpers in flext_tests."""
@@ -565,7 +552,8 @@ class FlextTestsFlextUtilitiesPayload:
             if isinstance(atom, m.BaseModel | type | tzinfo):
                 return str(atom)
             if atom is None or isinstance(
-                atom, bool | datetime | Path | str | int | float
+                atom,
+                bool | datetime | Path | str | int | float,
             ):
                 return u.normalize_to_metadata(atom)
             msg = f"Unsupported textual payload leaf: {type(atom).__name__}"
@@ -597,13 +585,13 @@ class FlextTestsFlextUtilitiesPayload:
                         (
                             payload
                             := FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                                item
+                                item,
                             )
                         ).atom,
                         m.BaseModel,
                     )
                     else FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_normalized_value(
-                        payload
+                        payload,
                     )
                 )
                 for key, item in source.items()
@@ -652,7 +640,8 @@ class FlextTestsFlextUtilitiesPayload:
                 AssertionError: If Path not found.
             """
             node = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.path_node(
-                subject, path
+                subject,
+                path,
             )
             if node is None:
                 msg = f"Path not found: {path}"

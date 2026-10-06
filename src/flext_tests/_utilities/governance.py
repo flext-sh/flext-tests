@@ -162,7 +162,8 @@ class FlextTestsFlextUtilitiesGovernance:
             """
             module_name = cls._module_dotted_name(module_path)
             return FlextTestsFlextUtilitiesGovernance._console_script_functions().get(
-                module_name, frozenset()
+                module_name,
+                frozenset(),
             )
 
         def test_package_modules_do_not_define_module_level_loggers(self) -> None:

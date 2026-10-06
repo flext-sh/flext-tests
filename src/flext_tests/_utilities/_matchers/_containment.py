@@ -31,7 +31,7 @@ class FlextTestsMatchersContainmentMixin:
         target = (
             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
                 FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    value
+                    value,
                 ),
             )
         )
@@ -40,13 +40,13 @@ class FlextTestsMatchersContainmentMixin:
                 continue
             operand = (
                 FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    expectation
+                    expectation,
                 )
             )
             items = operand.items if operand.kind in {"list", "tuple"} else (operand,)
             for item in items:
                 expected = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                    item
+                    item,
                 )
                 if as_str:
                     present = str(expected) in str(target)

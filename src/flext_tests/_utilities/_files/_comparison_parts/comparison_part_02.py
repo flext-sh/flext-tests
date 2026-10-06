@@ -168,14 +168,14 @@ class FlextTestsFilesComparisonMixin(_ComparisonMixinPart1):
         )
         left_result = u.transform(
             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
-                dict1
+                dict1,
             ),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
         right_result = u.transform(
             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
-                dict2
+                dict2,
             ),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,

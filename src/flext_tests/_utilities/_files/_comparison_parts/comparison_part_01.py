@@ -96,14 +96,14 @@ class FlextTestsFilesComparisonMixin:
         exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
         result1 = u.transform(
             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
-                dict1
+                dict1,
             ),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
         result2 = u.transform(
             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
-                dict2
+                dict2,
             ),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,

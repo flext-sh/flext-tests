@@ -69,7 +69,7 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
         if isinstance(content, Mapping):
             return {
                 k: FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    v
+                    v,
                 )
                 for k, v in content.items()
             }

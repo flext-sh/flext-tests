@@ -62,7 +62,7 @@ class FlextTestsMatchersModelsMixin:
                 return value
             return (
                 FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    value
+                    value,
                 )
             )
 
@@ -95,7 +95,7 @@ class FlextTestsMatchersModelsMixin:
                 return None
             node = (
                 FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    value
+                    value,
                 )
             )
             if node.kind != "mapping":
@@ -124,7 +124,7 @@ class FlextTestsMatchersModelsMixin:
                 return None
             node = (
                 FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    value
+                    value,
                 )
             )
             if node.kind in {"atom", "mapping"}:
@@ -157,7 +157,7 @@ class FlextTestsMatchersModelsMixin:
                 key: item
                 if callable(item)
                 else FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                    item
+                    item,
                 )
                 for key, item in value.items()
             }
@@ -661,7 +661,7 @@ class FlextTestsMatchersModelsMixin:
                 # is exactly the payload walker; no approx/type operand applies.
                 updates["has"] = (
                     FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
-                        self.error
+                        self.error,
                     )
                 )
             if self.len is None and any(
@@ -695,21 +695,24 @@ class FlextTestsMatchersModelsMixin:
 
         settings: Annotated[
             t.MappingKV[
-                str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                str,
+                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
             ]
             | None,
             u.Field(description="Initial configuration values."),
         ] = None
         container: Annotated[
             t.MappingKV[
-                str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                str,
+                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
             ]
             | None,
             u.Field(description="Initial container/service mappings."),
         ] = None
         context: Annotated[
             t.MappingKV[
-                str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                str,
+                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
             ]
             | None,
             u.Field(description="Initial context values."),
@@ -775,37 +778,43 @@ class FlextTestsMatchersModelsMixin:
 
         settings: Annotated[
             t.MappingKV[
-                str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                str,
+                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
             ],
             u.Field(description="Configuration dictionary."),
         ] = u.Field(
             default_factory=lambda: MappingProxyType(
                 dict[
-                    str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                    str,
+                    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
                 ](),
             ),
         )
         container: Annotated[
             t.MappingKV[
-                str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                str,
+                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
             ],
             u.Field(description="Container/service mappings."),
         ] = u.Field(
             default_factory=lambda: MappingProxyType(
                 dict[
-                    str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                    str,
+                    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
                 ](),
             ),
         )
         context: Annotated[
             t.MappingKV[
-                str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                str,
+                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
             ],
             u.Field(description="Context values."),
         ] = u.Field(
             default_factory=lambda: MappingProxyType(
                 dict[
-                    str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                    str,
+                    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
                 ](),
             ),
         )

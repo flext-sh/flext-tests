@@ -21,7 +21,7 @@ from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
 from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
 from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
 from flext_tests._utilities.governance import FlextTestsFlextUtilitiesGovernance
-from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
+from flext_tests._utilities.handler import FlextTestsFlextUtilitiesHandler
 from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
 from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
 from flext_tests._utilities.namespace import FlextTestsNamespaceUtilitiesMixin
@@ -52,7 +52,7 @@ class FlextTestsUtilities(FlextCliUtilities):
         FlextTestsGenericHelpersUtilitiesMixin,
         FlextTestsConfigHelpersUtilitiesMixin,
         FlextTestsContainerHelpersUtilitiesMixin,
-        FlextTestsHandlerHelpersUtilitiesMixin,
+        FlextTestsFlextUtilitiesHandler.FlextTestsHandlerHelpersUtilitiesMixin,
         FlextTestsFilesUtilitiesMixin,
         FlextTestsMakeUtilitiesMixin,
         FlextTestsMatchersUtilities.Tests,

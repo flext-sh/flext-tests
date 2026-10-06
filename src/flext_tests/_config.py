@@ -14,24 +14,19 @@ from typing import Annotated
 
 from flext_cli import FlextCliConfig
 
+import flext_tests._models._tests_namespace
 from flext_tests import m
-
-
-class _TestsNamespace(m.BaseModel):
-    """Open, frozen namespace exposing every ``config/*.yaml`` domain model-less."""
-
-    model_config = m.ConfigDict(extra="allow", frozen=True)
 
 
 class FlextTestsConfig(FlextCliConfig):
     """Tests config auto-loaded model-less from ``config/*.yaml``."""
 
     Tests: Annotated[
-        _TestsNamespace,
+        flext_tests._models._tests_namespace._TestsNamespace,
         m.Field(
             description="Open namespace exposing ``config/*.yaml`` under ``Tests``.",
         ),
-    ] = _TestsNamespace()
+    ] = flext_tests._models._tests_namespace._TestsNamespace()
 
 
 config: FlextTestsConfig = FlextTestsConfig.fetch_global()

@@ -48,7 +48,7 @@ class FlextTestsMatchersAssertionsMixin:
         """
         native = (
             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                payload
+                payload,
             )
         )
         if isinstance(native, Sized):

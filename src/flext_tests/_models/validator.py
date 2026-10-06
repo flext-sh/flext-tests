@@ -13,7 +13,6 @@ from typing import Annotated, ClassVar
 from flext_cli import m, p, u
 
 
-
 class FlextTestsValidatorModelsMixin:
     class EnforcementBuildContext(m.ArbitraryTypesModel):
         """Validated immutable inputs shared by enforcement item builders."""

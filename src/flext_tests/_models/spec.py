@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, Annotated
 
 from flext_cli import m, u
 
-
 if TYPE_CHECKING:
     from flext_tests import t
     from flext_tests._models.docker import FlextTestsDockerModelsMixin

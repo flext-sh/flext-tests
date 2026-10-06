@@ -145,18 +145,19 @@ class FlextTestsFlextUtilitiesMakeContract:
             param_by_name = {param.name: param for param in command.params}
             mutation_failure = (
                 FlextTestsFlextUtilitiesMakeContract._mutation_required_failure(
-                    command, param_by_name
+                    command,
+                    param_by_name,
                 )
             )
             if mutation_failure is not None:
                 return mutation_failure
             shape_failure = FlextTestsFlextUtilitiesMakeContract._command_shape_failure(
-                command
+                command,
             )
             if shape_failure is not None:
                 return shape_failure
             body_failure = FlextTestsFlextUtilitiesMakeContract._command_body_failure(
-                command
+                command,
             )
             if body_failure is not None:
                 return body_failure

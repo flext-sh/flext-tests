@@ -188,7 +188,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                 ).validate_json(text.encode())
                 content = (
                     FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
-                        parsed_json
+                        parsed_json,
                     )
                     if FlextTestsFilesCreationMixin.matches_native_mapping(parsed_json)
                     else text
@@ -199,7 +199,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                 if parsed_yaml.failure:
                     raise ValueError(parsed_yaml.error)
                 content = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
-                    parsed_yaml.value
+                    parsed_yaml.value,
                 )
             case _ if actual_fmt == c.Tests.FILE_FORMAT_CSV:
                 csv_result = u.Cli.files_read_csv_with_headers(path)

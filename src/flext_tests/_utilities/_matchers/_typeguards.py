@@ -56,7 +56,7 @@ class FlextTestsMatchersTypeGuardsMixin:
         """
         actual = (
             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                actual_payload
+                actual_payload,
             )
         )
         for expected, equal in ((eq_value, True), (ne_value, False)):
@@ -64,7 +64,7 @@ class FlextTestsMatchersTypeGuardsMixin:
                 continue
             operand = (
                 FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                    expected
+                    expected,
                 )
                 if isinstance(expected, m.Tests.Payload)
                 else expected
@@ -87,7 +87,7 @@ class FlextTestsMatchersTypeGuardsMixin:
         """
         native = (
             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                payload
+                payload,
             )
         )
         message = params.msg or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=native)
