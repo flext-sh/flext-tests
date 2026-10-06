@@ -10,7 +10,6 @@ from types import MappingProxyType
 from typing import Annotated, Any, Self
 
 from flext_cli import m, p
-from pydantic import field_validator, model_validator
 
 # Runtime import: the nested models' field annotations reference ``t.Tests.*``
 # names, and pydantic resolves field annotations at runtime. A TYPE_CHECKING-only
@@ -93,7 +92,7 @@ class FlextTestsFlextModelsBase:
                 ),
             ]
 
-            @field_validator("entries", mode="after")
+            @m.field_validator("entries", mode="after")
             @classmethod
             def freeze_entries(
                 cls,
@@ -111,7 +110,7 @@ class FlextTestsFlextModelsBase:
                 """
                 return MappingProxyType(dict(value))
 
-            @model_validator(mode="after")
+            @m.model_validator(mode="after")
             def validate_arm(self) -> Self:
                 """Reject data in fields belonging to a different native value arm.
 

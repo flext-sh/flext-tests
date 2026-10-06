@@ -11,7 +11,6 @@ from pathlib import Path
 from typing import Annotated
 
 from flext_cli import m, u
-from pydantic import field_validator
 
 from flext_tests import c, p, t
 from flext_tests._models.base import FlextTestsFlextModelsBase
@@ -146,7 +145,7 @@ class FlextTestsFilesystemModelsMixin:
             u.Field(description="Auto-extract result value."),
         ] = True
 
-        @field_validator("name", mode="before")
+        @m.field_validator("name", mode="before")
         @classmethod
         def normalize_name(cls, value: p.AttributeProbe) -> str:
             """Normalize filename by stripping whitespace.
@@ -184,7 +183,7 @@ class FlextTestsFilesystemModelsMixin:
         ] = c.Tests.DEFAULT_CSV_DELIMITER
         has_headers: Annotated[bool, u.Field(description="CSV has headers.")] = True
 
-        @field_validator("path", mode="before")
+        @m.field_validator("path", mode="before")
         @classmethod
         def convert_path(cls, value: Path | str) -> Path:
             """Convert string to Path.
@@ -227,7 +226,7 @@ class FlextTestsFilesystemModelsMixin:
             u.Field(description="Exclude these keys from comparison."),
         ] = None
 
-        @field_validator("file1", "file2", mode="before")
+        @m.field_validator("file1", "file2", mode="before")
         @classmethod
         def convert_path(cls, value: Path | str) -> Path:
             """Convert string to Path.
@@ -254,7 +253,7 @@ class FlextTestsFilesystemModelsMixin:
             u.Field(description="Pydantic model to validate content against."),
         ] = None
 
-        @field_validator("path", mode="before")
+        @m.field_validator("path", mode="before")
         @classmethod
         def convert_path(cls, value: Path | str) -> Path:
             """Convert string to Path.
