@@ -759,17 +759,9 @@ class FlextTestsMatchersModelsMixin:
 __all__: list[str] = ["FlextTestsMatchersModelsMixin"]
 
 
-# NOTE (import discipline): the nested param models annotate through the
-# enclosing mixin (FlextTestsMatchersModelsMixin.MatchRule and siblings),
-# which is not yet bound while the class body executes — pydantic defers
-# those models and its lazy rebuild then depends on the CALLING module's
-# imports (green inside flext-tests, PydanticUserError in consumers).
-# Rebuild deterministically now that the mixin namespace is complete.
-_matchers_rebuild_ns = {
-    **vars(sys.modules[__name__]),
-    "FlextTestsMatchersModelsMixin": FlextTestsMatchersModelsMixin,
-}
-for _member in tuple(vars(FlextTestsMatchersModelsMixin).values()):
-    if isinstance(_member, type) and hasattr(_member, "model_rebuild"):
-        _member.model_rebuild(_types_namespace=_matchers_rebuild_ns)
-del _matchers_rebuild_ns
+# NOTE (import discipline): see _rebuild.py — nested models annotate through
+# their enclosing mixin and TYPE_CHECKING-only siblings; rebuild them here,
+# at import end, so the lazy rebuild never depends on the caller's imports.
+from flext_tests._models._rebuild import rebuild_nested_models as _rebuild_nested_models
+
+_rebuild_nested_models(FlextTestsMatchersModelsMixin)
