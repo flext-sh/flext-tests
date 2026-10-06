@@ -22,32 +22,10 @@ from flext_tests._models.namespace import FlextTestsNamespaceModelsMixin
 from flext_tests._models.validator import FlextTestsValidatorModelsMixin
 from flext_tests._models.workspace_cleanup import FlextTestsWorkspaceCleanupModelsMixin
 
-
-# NOTE (import discipline): base.py's deferred models annotate through ``t.Tests.*``
-# whose import fails while the package is mid-init (base loads first from here).
-# Now that every mixin composed and the package namespace is complete, bind ``t``
-# into base's module namespace and complete its deferred models — the entries the
-# consumer's first import order needs.
-import flext_tests._models.base as _models_base
-from flext_tests import t as _t_final
-
-_models_base.t = _t_final
-_models_ns = {
-    **globals(),
-    **vars(_models_base),
-    "t": _t_final,
-}
-for _mixin_name in tuple(globals()):
-    _mixin = globals().get(_mixin_name)
-    if not isinstance(_mixin, type) or not _mixin_name.endswith("Mixin"):
-        continue
-    for _member in tuple(vars(_mixin).values()):
-        if isinstance(_member, type) and hasattr(_member, "model_rebuild"):
-            _member.model_rebuild(
-                _types_namespace=_models_ns,
-                raise_errors=False,
-                force=True,
-            )
+try:
+    from flext_tests import t
+except ImportError:  # mid-init: the tail completion tolerates and defers
+    t = None  # type: ignore[assignment]
 
 
 class FlextTestsModels(FlextCliModels):
@@ -71,5 +49,23 @@ class FlextTestsModels(FlextCliModels):
 
 
 m = FlextTestsModels
+
+# NOTE (import discipline): the family's nested models annotate through
+# ``t.Tests.*`` and cross-mixin names that are only fully bound once the
+# facade composed; complete every nested model here, at the module bounds,
+# against the merged namespace (the module globals — including the composed
+# family — plus the base family's names).
+_models_ns: dict[str, object] = {
+    **globals(),
+    **vars(FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin),
+}
+if t is not None:
+    _models_ns.setdefault("t", t)
+for _mixin_name in tuple(globals()):
+    _mixin = globals().get(_mixin_name)
+    if isinstance(_mixin, type) and _mixin_name.endswith("Mixin"):
+        for _member in tuple(vars(_mixin).values()):
+            if isinstance(_member, type) and hasattr(_member, "model_rebuild"):
+                _member.model_rebuild(_types_namespace=_models_ns, force=True)
 
 __all__: list[str] = ["FlextTestsModels", "m"]
