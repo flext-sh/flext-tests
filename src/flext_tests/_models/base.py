@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from flext_tests import t
 
 
-def _entity_payload_default() -> FlextTestsBaseModelsMixin.Payload:
+def _entity_payload_default() -> m.Tests.Payload:
     """Late-bound entity default.
 
     Defined before the mixin so the class body binds the bare name while the
@@ -47,7 +47,10 @@ class FlextTestsFlextModelsBase:
 
     class FlextTestsBaseModelsMixin:
         class Payload(m.ArbitraryTypesModel):
-            """Owned native payload tree; model leaves retain their instance identity."""
+            """Owned native payload tree.
+
+            Model leaves retain their instance identity.
+            """
 
             kind: Annotated[
                 t.Tests.PayloadKind,
@@ -104,9 +107,9 @@ class FlextTestsFlextModelsBase:
                     The resulting ``Self``.
 
                 Raises:
-                    ValueError: If An atom payload cannot contain children; or if A mapping
-                        payload cannot contain an atom or items; or if A collection payload
-                        cannot contain an atom or entries.
+                    ValueError: If an atom payload contains children; if a mapping
+                        payload contains an atom or items; or if a collection payload
+                        contains an atom or entries.
                 """
                 if self.kind == "atom":
                     if self.items or self.entries:

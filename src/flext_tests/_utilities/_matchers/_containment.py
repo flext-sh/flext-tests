@@ -12,7 +12,10 @@ from flext_tests import c, p
 from flext_tests._utilities._matchers._assertions import (
     FlextTestsMatchersAssertionsMixin,
 )
-from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
+from flext_tests._utilities.payload import (
+    FlextTestsFlextUtilitiesPayload,
+    FlextTestsPayloadUtilities,
+)
 
 
 class FlextTestsMatchersContainmentMixin:
@@ -29,8 +32,8 @@ class FlextTestsMatchersContainmentMixin:
     ) -> None:
         """Validate containment without converting native values to text."""
         target = (
-            FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+            FlextTestsPayloadUtilities.to_match_value(
+                FlextTestsPayloadUtilities.to_payload(
                     value,
                 ),
             )
@@ -39,13 +42,13 @@ class FlextTestsMatchersContainmentMixin:
             if expectation is None:
                 continue
             operand = (
-                FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                FlextTestsPayloadUtilities.to_payload(
                     expectation,
                 )
             )
             items = operand.items if operand.kind in {"list", "tuple"} else (operand,)
             for item in items:
-                expected = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+                expected = FlextTestsPayloadUtilities.to_match_value(
                     item,
                 )
                 if as_str:

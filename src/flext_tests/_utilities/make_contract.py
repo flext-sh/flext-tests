@@ -115,7 +115,7 @@ class FlextTestsFlextUtilitiesMakeContract:
                 The resulting ``p.Result[bool]``.
             """
             for param in command.params:
-                value = FlextTestsFlextUtilitiesMakeContract.FlextTestsMakeContractUtilitiesMixin.make_param_value(
+                value = FlextTestsMakeContractUtilitiesMixin.make_param_value(
                     param,
                     command,
                     env,
@@ -161,7 +161,7 @@ class FlextTestsFlextUtilitiesMakeContract:
             )
             if body_failure is not None:
                 return body_failure
-            condition_result = FlextTestsFlextUtilitiesMakeContract.FlextTestsMakeContractUtilitiesMixin.make_validate_mutation_conditions(
+            condition_result = FlextTestsMakeContractUtilitiesMixin.make_validate_mutation_conditions(
                 command,
                 param_by_name,
             )
@@ -253,7 +253,7 @@ class FlextTestsFlextUtilitiesMakeContract:
                     f"{command.path}: aliases podem ser declarados apenas em "
                     f"WHAT={c.Tests.MAKE_DEFAULT_COMMAND}",
                 )
-            return FlextTestsFlextUtilitiesMakeContract.FlextTestsMakeContractUtilitiesMixin.make_validate_command_contract(
+            return FlextTestsMakeContractUtilitiesMixin.make_validate_command_contract(
                 command,
             )
 
@@ -283,7 +283,7 @@ class FlextTestsFlextUtilitiesMakeContract:
             if declared != actual:
                 return r[bool].fail(
                     f"{all_command.path}: WHAT choices diverge from the promoted commands "
-                    f"para {verb}: declared={','.join(declared)} actual={','.join(actual)}",
+                    f"for {verb}: declared={','.join(declared)} actual={','.join(actual)}",
                 )
             return r[bool].ok(value=True)
 
@@ -313,7 +313,7 @@ class FlextTestsFlextUtilitiesMakeContract:
             verb: str,
         ) -> p.Result[t.MappingKV[str, m.Tests.MakeCommand]]:
             """Return commands registered for one verb."""
-            resolved = FlextTestsFlextUtilitiesMakeContract.FlextTestsMakeContractUtilitiesMixin.make_registry_resolve_verb(
+            resolved = FlextTestsMakeContractUtilitiesMixin.make_registry_resolve_verb(
                 registry,
                 verb,
             )
@@ -330,7 +330,7 @@ class FlextTestsFlextUtilitiesMakeContract:
             what: str,
         ) -> p.Result[m.Tests.MakeCommand]:
             """Return one command by verb and WHAT value."""
-            commands_result = FlextTestsFlextUtilitiesMakeContract.FlextTestsMakeContractUtilitiesMixin.make_registry_commands(
+            commands_result = FlextTestsMakeContractUtilitiesMixin.make_registry_commands(
                 registry,
                 verb,
             )
@@ -341,7 +341,7 @@ class FlextTestsFlextUtilitiesMakeContract:
             if command is None:
                 valid = " ".join(sorted(commands))
                 return r[m.Tests.MakeCommand].fail(
-                    f"WHAT='{what}' invalido para {verb}. Validos: {valid}",
+                    f"WHAT='{what}' invalid for {verb}. Valid: {valid}",
                 )
             return r[m.Tests.MakeCommand].ok(command)
 
@@ -360,4 +360,11 @@ class FlextTestsFlextUtilitiesMakeContract:
             )
 
 
-__all__: list[str] = ["FlextTestsFlextUtilitiesMakeContract"]
+FlextTestsMakeContractUtilitiesMixin = (
+    FlextTestsFlextUtilitiesMakeContract.FlextTestsMakeContractUtilitiesMixin
+)
+
+__all__: list[str] = [
+    "FlextTestsFlextUtilitiesMakeContract",
+    "FlextTestsMakeContractUtilitiesMixin",
+]

@@ -16,7 +16,10 @@ from flext_cli import u
 from flext_core import r
 from flext_tests import c, m, p, t
 from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
-from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
+from flext_tests._utilities.payload import (
+    FlextTestsFlextUtilitiesPayload,
+    FlextTestsPayloadUtilities,
+)
 
 
 class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
@@ -187,7 +190,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                     config=m.ConfigDict(arbitrary_types_allowed=True),
                 ).validate_json(text.encode())
                 content = (
-                    FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
+                    FlextTestsPayloadUtilities.to_config_map(
                         parsed_json,
                     )
                     if FlextTestsFilesCreationMixin.matches_native_mapping(parsed_json)
@@ -198,7 +201,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                 parsed_yaml = u.Cli.yaml_parse(text)
                 if parsed_yaml.failure:
                     raise ValueError(parsed_yaml.error)
-                content = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
+                content = FlextTestsPayloadUtilities.to_config_map(
                     parsed_yaml.value,
                 )
             case _ if actual_fmt == c.Tests.FILE_FORMAT_CSV:

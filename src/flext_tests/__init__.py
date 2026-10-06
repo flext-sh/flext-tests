@@ -43,12 +43,7 @@ if TYPE_CHECKING:
     from flext_tests.pytest_bootstrap import install_local_packages
     from flext_tests.tmatchers import FlextTestsMatchersUtilities, tm
     from flext_tests.typings import FlextTestsTypes, t
-    from flext_tests.utilities import (
-        FlextTestsFixturesDSLMixin,
-        FlextTestsModuleGovernanceMixin,
-        FlextTestsUtilities,
-        u,
-    )
+    from flext_tests.utilities import FlextTestsFixturesDSLMixin, FlextTestsUtilities, u
 
 
 __all__: tuple[str, ...] = (
@@ -65,7 +60,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsKube",
     "FlextTestsMatchersUtilities",
     "FlextTestsModels",
-    "FlextTestsModuleGovernanceMixin",
     "FlextTestsProtocols",
     "FlextTestsServiceBase",
     "FlextTestsSettings",
@@ -118,7 +112,6 @@ install_lazy_exports(
         "FlextTestsKube": ".kube",
         "FlextTestsMatchersUtilities": ".tmatchers",
         "FlextTestsModels": ".models",
-        "FlextTestsModuleGovernanceMixin": ".utilities",
         "FlextTestsProtocols": ".protocols",
         "FlextTestsServiceBase": ".base",
         "FlextTestsSettings": "._settings",

@@ -17,7 +17,10 @@ from flext_cli import m, u
 
 from flext_tests import p, t
 from flext_tests._models.base import FlextTestsFlextModelsBase
-from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
+from flext_tests._utilities.payload import (
+    FlextTestsFlextUtilitiesPayload,
+    FlextTestsPayloadUtilities,
+)
 
 type MatchExpectedValue = (
     FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
@@ -61,7 +64,7 @@ class FlextTestsMatchersModelsMixin:
             if value is None or isinstance(value, ApproxBase | TypeAliasType):
                 return value
             return (
-                FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                FlextTestsPayloadUtilities.to_payload(
                     value,
                 )
             )
@@ -94,7 +97,7 @@ class FlextTestsMatchersModelsMixin:
             if value is None:
                 return None
             node = (
-                FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                FlextTestsPayloadUtilities.to_payload(
                     value,
                 )
             )
@@ -123,7 +126,7 @@ class FlextTestsMatchersModelsMixin:
             if value is None:
                 return None
             node = (
-                FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                FlextTestsPayloadUtilities.to_payload(
                     value,
                 )
             )
@@ -156,7 +159,7 @@ class FlextTestsMatchersModelsMixin:
             return {
                 key: item
                 if callable(item)
-                else FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                else FlextTestsPayloadUtilities.to_payload(
                     item,
                 )
                 for key, item in value.items()
@@ -660,7 +663,7 @@ class FlextTestsMatchersModelsMixin:
                 # self.error is a non-None native sequence/scalar, so owning it
                 # is exactly the payload walker; no approx/type operand applies.
                 updates["has"] = (
-                    FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_payload(
+                    FlextTestsPayloadUtilities.to_payload(
                         self.error,
                     )
                 )

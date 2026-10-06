@@ -43,6 +43,10 @@ class FlextTestsUtilities(FlextCliUtilities):
     All u functionality is available via inheritance.
     """
 
+    FlextTestsModuleGovernanceMixin = (
+        FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin
+    )
+
     class Tests(
         FlextTestsResultUtilitiesMixin,
         FlextTestsTestContextUtilitiesMixin,
@@ -68,13 +72,4 @@ class FlextTestsUtilities(FlextCliUtilities):
 
 u = FlextTestsUtilities
 
-FlextTestsModuleGovernanceMixin = (
-    FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin
-)
-
-__all__: list[str] = [
-    "FlextTestsFixturesDSLMixin",
-    "FlextTestsModuleGovernanceMixin",
-    "FlextTestsUtilities",
-    "u",
-]
+__all__: list[str] = ["FlextTestsUtilities", "FlextTestsFixturesDSLMixin", "u"]
