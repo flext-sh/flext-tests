@@ -41,7 +41,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsSpecModelsMixin",
     "FlextTestsValidatorModelsMixin",
     "FlextTestsWorkspaceCleanupModelsMixin",
-    "rebuild_nested_models",
     "TestsNamespace",
 )
 
