@@ -10,7 +10,7 @@ import sys
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, ClassVar, TypeAliasType, cast
+from typing import Annotated, ClassVar, TypeAliasType, Any
 
 from _pytest.python_api import ApproxBase  # ruff: ignore[import-private-name] -- ApproxBase has no public pytest path in the supported versions; justified per fleet suppression law.
 from flext_cli import m, u
@@ -371,17 +371,15 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Extract nested value via dot notation."),
         ] = None
         paths: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, MatchRule] | None,
             u.Field(description="Multiple path-based assertions."),
         ] = None
         items: Annotated[
-            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
-            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
-            | None,
+            Sequence[MatchRule] | Mapping[str | int, MatchRule] | None,
             u.Field(description="Sequence item assertions by selector."),
         ] = None
         attrs_match: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, MatchRule] | None,
             u.Field(description="Attribute assertions by attribute path."),
         ] = None
         where: Annotated[
@@ -605,9 +603,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Paths."),
         ] = None
         items: Annotated[
-            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
-            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
-            | None,
+            Sequence[MatchRule] | Mapping[str | int, MatchRule] | None,
             u.Field(description="Items."),
         ] = None
         attrs_match: Annotated[
@@ -818,6 +814,27 @@ class FlextTestsMatchersModelsMixin:
                 ](),
             ),
         )
+
+
+# Nested models capture their enclosing class-body frame as the pydantic
+# parent namespace, which cannot see module-level names while the module is
+# still executing; their field schemas therefore stay deferred (mock
+# validators) and would raise ``not fully defined`` at first use. Completing
+# them here, once the full module namespace is bound, keeps every declaration
+# strictly resolved before the facade exposes it.
+_matchers_module_ns: dict[str, Any] = dict(globals())
+for _nested_model in (
+    FlextTestsMatchersModelsMixin.PayloadParams,
+    FlextTestsMatchersModelsMixin.MatchRule,
+    FlextTestsMatchersModelsMixin.OkParams,
+    FlextTestsMatchersModelsMixin.FailParams,
+    FlextTestsMatchersModelsMixin.ThatParams,
+    FlextTestsMatchersModelsMixin.ScopeParams,
+    FlextTestsMatchersModelsMixin.DeepMatchResult,
+    FlextTestsMatchersModelsMixin.TestScope,
+):
+    if not _nested_model.__pydantic_fields_complete__:
+        _nested_model.model_rebuild(_types_namespace=_matchers_module_ns)
 
 
 __all__: list[str] = ["FlextTestsMatchersModelsMixin"]

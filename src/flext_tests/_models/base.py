@@ -7,11 +7,15 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from types import MappingProxyType
-from typing import Annotated, Self
+from typing import Annotated, Any, Self, TYPE_CHECKING
 
 from flext_cli import m, p
 from pydantic import field_validator, model_validator
 
+# Runtime import: the nested models' field annotations reference ``t.Tests.*``
+# names, and pydantic resolves field annotations at runtime. A TYPE_CHECKING-only
+# import leaves the names unresolvable, deferring the models forever (PydanticUserError:
+# not fully defined). The package-level lazy descriptor resolves ``t`` without cycles.
 from flext_tests import t
 
 
@@ -151,6 +155,21 @@ class FlextTestsFlextModelsBase:
 
             data: Annotated[str, m.Field(description="Payload data string.")] = ""
             count: Annotated[int, m.Field(description="Occurrence counter.")] = 0
+
+
+# Nested models capture their enclosing class-body frame as the pydantic
+# parent namespace, which cannot see module-level names while the module is
+# still executing; their field schemas therefore stay deferred (mock
+# validators) and would raise ``not fully defined`` at first use. Completing
+# them here, once the full module namespace is bound, keeps every declaration
+# strictly resolved before the facade exposes it.
+_base_module_ns: dict[str, Any] = dict(globals())
+for _nested_model in (
+    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Entity,
+    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+):
+    if not _nested_model.__pydantic_fields_complete__:
+        _nested_model.model_rebuild(_types_namespace=_base_module_ns)
 
 
 __all__: list[str] = ["FlextTestsFlextModelsBase"]
