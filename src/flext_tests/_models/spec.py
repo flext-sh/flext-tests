@@ -6,12 +6,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 from flext_cli import m, u
 
-from flext_tests import t
-from flext_tests._models.docker import FlextTestsDockerModelsMixin
+if TYPE_CHECKING:
+    from flext_tests import t
+    from flext_tests._models.docker import FlextTestsDockerModelsMixin
 
 
 class FlextTestsSpecModelsMixin:

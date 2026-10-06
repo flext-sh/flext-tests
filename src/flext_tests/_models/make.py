@@ -8,11 +8,12 @@ from __future__ import annotations
 
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 from flext_cli import m, u
 
-from flext_tests import t
+if TYPE_CHECKING:
+    from flext_tests import t
 
 
 class FlextTestsMakeModelsMixin:
