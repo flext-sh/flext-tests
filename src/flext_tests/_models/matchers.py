@@ -818,19 +818,4 @@ class FlextTestsMatchersModelsMixin:
 # validators) and would raise ``not fully defined`` at first use. Completing
 # them here, once the full module namespace is bound, keeps every declaration
 # strictly resolved before the facade exposes it.
-_matchers_module_ns: dict[str, Any] = dict(globals())
-for _nested_model in (
-    FlextTestsMatchersModelsMixin.PayloadParams,
-    FlextTestsMatchersModelsMixin.MatchRule,
-    FlextTestsMatchersModelsMixin.OkParams,
-    FlextTestsMatchersModelsMixin.FailParams,
-    FlextTestsMatchersModelsMixin.ThatParams,
-    FlextTestsMatchersModelsMixin.ScopeParams,
-    FlextTestsMatchersModelsMixin.DeepMatchResult,
-    FlextTestsMatchersModelsMixin.TestScope,
-):
-    if not _nested_model.__pydantic_fields_complete__:
-        _nested_model.model_rebuild(_types_namespace=_matchers_module_ns)
-
-
 __all__: list[str] = ["FlextTestsMatchersModelsMixin"]
