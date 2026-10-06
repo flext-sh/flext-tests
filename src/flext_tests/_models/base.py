@@ -15,7 +15,10 @@ from flext_cli import m, p, u
 # names, and pydantic resolves field annotations at runtime. A TYPE_CHECKING-only
 # import leaves the names unresolvable, deferring the models forever (PydanticUserError:
 # not fully defined). The package-level lazy descriptor resolves ``t`` without cycles.
-from flext_tests import t
+try:
+    from flext_tests import t
+except ImportError:
+    t = None  # type: ignore[assignment]  # mid-init: the rebuild tolerates and defers
 
 
 def _entity_payload_default() -> m.Tests.Payload:
@@ -161,12 +164,27 @@ class FlextTestsFlextModelsBase:
 # them here, once the full module namespace is bound, keeps every declaration
 # strictly resolved before the facade exposes it.
 _base_module_ns: dict[str, Any] = dict(globals())
+import sys as _sys
+
+try:
+    _ns_siblings = vars(_sys.modules["flext_tests._models.base"])
+except KeyError:
+    _ns_siblings = {}
+for _ns_k, _ns_v in _ns_siblings.items():
+    _base_module_ns.setdefault(_ns_k, _ns_v)
+for _ns_alias in ("t", "p", "m", "u", "c", "r", "s", "x"):
+    try:
+        _base_module_ns.setdefault(_ns_alias, getattr(_sys.modules["flext_tests"], _ns_alias))
+    except AttributeError:
+        pass
+if t is not None:
+    _base_module_ns.setdefault("t", t)
 for _nested_model in (
     FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Entity,
     FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
 ):
     if not _nested_model.__pydantic_fields_complete__:
-        _nested_model.model_rebuild(_types_namespace=_base_module_ns)
+        _nested_model.model_rebuild(_types_namespace=_base_module_ns, raise_errors=False)
 
 
 __all__: list[str] = ["FlextTestsFlextModelsBase"]

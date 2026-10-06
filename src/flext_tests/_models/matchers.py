@@ -819,6 +819,19 @@ class FlextTestsMatchersModelsMixin:
 # them here, once the full module namespace is bound, keeps every declaration
 # strictly resolved before the facade exposes it.
 _matchers_module_ns: dict[str, Any] = dict(globals())
+import sys as _sys
+
+try:
+    _ns_siblings = vars(_sys.modules["flext_tests._models.base"])
+except KeyError:
+    _ns_siblings = {}
+for _ns_k, _ns_v in _ns_siblings.items():
+    _matchers_module_ns.setdefault(_ns_k, _ns_v)
+for _ns_alias in ("t", "p", "m", "u", "c", "r", "s", "x"):
+    try:
+        _matchers_module_ns.setdefault(_ns_alias, getattr(_sys.modules["flext_tests"], _ns_alias))
+    except AttributeError:
+        pass
 for _nested_model in (
     FlextTestsMatchersModelsMixin.PayloadParams,
     FlextTestsMatchersModelsMixin.MatchRule,

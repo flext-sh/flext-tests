@@ -126,3 +126,29 @@ class FlextTestsMakeModelsMixin:
 
 
 __all__: list[str] = ["FlextTestsMakeModelsMixin"]
+
+
+# NOTE (import discipline): nested models annotate through sibling modules and
+# TYPE_CHECKING-only imports whose names are invisible to a nested class body;
+# complete them here against the merged namespace (own globals + base module +
+# package aliases), tolerating the rare still-unresolvable annotation (it
+# stays deferred exactly as before instead of crashing the import).
+import sys as _sys
+
+_rebuild_ns: dict = dict(globals())
+try:
+    _rebuild_ns.update(vars(_sys.modules["flext_tests._models.base"]))
+except KeyError:
+    pass
+for _alias in ("t", "p", "m", "u", "c", "r", "s", "x"):
+    try:
+        _rebuild_ns.setdefault(_alias, getattr(_sys.modules["flext_tests"], _alias))
+    except AttributeError:
+        pass
+
+for _mixin_name in tuple(globals()):
+    _mixin = globals().get(_mixin_name)
+    if isinstance(_mixin, type) and _mixin_name.endswith("ModelsMixin"):
+        for _member in tuple(vars(_mixin).values()):
+            if isinstance(_member, type) and hasattr(_member, "model_rebuild"):
+                _member.model_rebuild(_types_namespace=_rebuild_ns, raise_errors=False)
