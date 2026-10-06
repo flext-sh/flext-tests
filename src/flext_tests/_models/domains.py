@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import Annotated
 
 from flext_core import m
+from flext_tests._models._rebuild import rebuild_nested_models as _rebuild
 
 
 class FlextTestsDomainModelsMixin:
@@ -37,9 +38,4 @@ class FlextTestsDomainModelsMixin:
         ] = None
 
 
-# NOTE (import discipline): see _rebuild.py — nested models annotate through
-# their enclosing mixin and TYPE_CHECKING-only siblings; rebuild them here,
-# at import end, so the lazy rebuild never depends on the caller's imports.
-from flext_tests._models._rebuild import rebuild_nested_models as _rebuild_nested_models
-
-_rebuild_nested_models(FlextTestsDomainModelsMixin)
+_rebuild(FlextTestsDomainModelsMixin)

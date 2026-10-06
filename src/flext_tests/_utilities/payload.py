@@ -62,7 +62,8 @@ class FlextTestsFlextUtilitiesPayload:
         """Own matcher model leaves (payload, root model, enum) recursively.
 
         Returns:
-            The resulting ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
+            The resulting
+                ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
         """
         if isinstance(
             value,
@@ -86,7 +87,8 @@ class FlextTestsFlextUtilitiesPayload:
         """Own ``None`` as the canonical empty atom.
 
         Returns:
-            The resulting ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
+            The resulting
+                ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
         """
         if value is None:
             return FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload(
@@ -102,7 +104,8 @@ class FlextTestsFlextUtilitiesPayload:
         """Own supported native scalars and model leaves as atoms.
 
         Returns:
-            The resulting ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
+            The resulting
+                ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
         """
         if isinstance(
             value,
@@ -133,7 +136,8 @@ class FlextTestsFlextUtilitiesPayload:
         """Own ``typing.Annotated`` constructs as their textual atom.
 
         Returns:
-            The resulting ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
+            The resulting
+                ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
         """
         if hasattr(value, "__metadata__") and hasattr(value, "__origin__"):
             # typing.Annotated[...] constructs are type-level atoms under
@@ -151,7 +155,8 @@ class FlextTestsFlextUtilitiesPayload:
         """Own a regex match through its matched text.
 
         Returns:
-            The resulting ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
+            The resulting
+                ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
         """
         if isinstance(value, Match):
             # A regex match compares by its matched text — the pattern
@@ -169,7 +174,8 @@ class FlextTestsFlextUtilitiesPayload:
         """Own typing constructs and runtime machinery as textual atoms.
 
         Returns:
-            The resulting ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
+            The resulting
+                ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
         """
         if isinstance(
             value,
@@ -201,7 +207,8 @@ class FlextTestsFlextUtilitiesPayload:
         """Own dict and set views through their native iteration order.
 
         Returns:
-            The resulting ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
+            The resulting
+                ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
         """
         if isinstance(value, (KeysView, ValuesView)):
             return FlextTestsPayloadUtilities.to_payload(
@@ -216,7 +223,8 @@ class FlextTestsFlextUtilitiesPayload:
         """Own a native mapping with stringified, collision-checked keys.
 
         Returns:
-            The resulting ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
+            The resulting
+                ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
 
         Raises:
             ValueError: If Native payload mapping key collision.
@@ -247,7 +255,8 @@ class FlextTestsFlextUtilitiesPayload:
         """Own a native sequence or set with deterministic set ordering.
 
         Returns:
-            The resulting ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
+            The resulting
+                ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None``.
         """
         if not isinstance(value, (list, tuple, set, frozenset)):
             return None
@@ -300,7 +309,8 @@ class FlextTestsFlextUtilitiesPayload:
             """Own supported native values without serializing their model leaves.
 
             Returns:
-                The resulting ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload``.
+                The resulting
+                    ``FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload``.
 
             Raises:
                 TypeError: If Unsupported native payload leaf.
@@ -326,8 +336,10 @@ class FlextTestsFlextUtilitiesPayload:
                 # Match values intentionally carry non-JSON sentinels (exceptions,
                 # models, paths); NativeMatchValue stays JsonValue-only because
                 # pyrefly cannot resolve a class-scoped self-referential alias.
-                return {key: project(item) for key, item in value.entries.items()}  # pyrefly: ignore[bad-return]
-            return [project(item) for item in value.items]  # pyrefly: ignore[bad-return]
+                pairs = value.entries.items()
+                return {key: project(item) for key, item in pairs}
+            items = value.items
+            return [project(item) for item in items]  # pyrefly: ignore[bad-return]
 
         @staticmethod
         def to_normalized_value(value: p.Tests.Payload) -> t.JsonValue:

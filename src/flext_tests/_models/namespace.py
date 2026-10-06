@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Annotated
 from flext_cli import m, u
 
 from flext_tests._constants.namespace import FlextTestsConstantsNamespace
+from flext_tests._models._rebuild import rebuild_nested_models as _rebuild
 
 if TYPE_CHECKING:
     from flext_tests import t
@@ -55,9 +56,4 @@ class FlextTestsNamespaceModelsMixin:
         ]
 
 
-# NOTE (import discipline): see _rebuild.py — nested models annotate through
-# their enclosing mixin and TYPE_CHECKING-only siblings; rebuild them here,
-# at import end, so the lazy rebuild never depends on the caller's imports.
-from flext_tests._models._rebuild import rebuild_nested_models as _rebuild_nested_models
-
-_rebuild_nested_models(FlextTestsNamespaceModelsMixin)
+_rebuild(FlextTestsNamespaceModelsMixin)

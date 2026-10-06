@@ -6,9 +6,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import importlib
 import sys
-from collections.abc import Mapping
-from typing import Any
+from collections.abc import Iterator, Mapping
+
+import flext_tests as _package
 
 # NOTE (import discipline): nested param models annotate through their
 # enclosing mixin and through sibling mixins (TYPE_CHECKING-only imports)
@@ -20,7 +22,42 @@ from typing import Any
 # siblings, and the mixin itself.
 
 
-class _LazyAliasNamespace(Mapping[str, Any]):
+_ALIAS_MODULE_BY_NAME: dict[str, str] = {
+    "t": "flext_tests.typings",
+    "p": "flext_tests.protocols",
+    "c": "flext_tests.constants",
+}
+
+
+def _resolve_alias(key: str) -> object:
+    """Resolve one fleet alias through the package, then the family module.
+
+    The package surface is authoritative, but a rebuild that runs while the
+    package is mid-init can observe a failed lazy export; the family module
+    attribute is the same object and retries cleanly once that module loads.
+
+    Returns:
+        The resolved alias value.
+
+    Raises:
+        KeyError: If neither surface binds the alias.
+
+    """
+    try:
+        return getattr(_package, key)
+    except AttributeError:
+        pass
+    module_name = _ALIAS_MODULE_BY_NAME.get(key)
+    if module_name is None:
+        raise KeyError(key)
+    module = importlib.import_module(module_name)
+    try:
+        return getattr(module, key)
+    except AttributeError as exc:
+        raise KeyError(key) from exc
+
+
+class _LazyAliasNamespace(Mapping[str, object]):
     """Namespace that resolves flext_tests aliases on first reference.
 
     Eager resolution would import alias targets (typings, models) while the
@@ -32,38 +69,37 @@ class _LazyAliasNamespace(Mapping[str, Any]):
     """
 
     def __init__(self) -> None:
-        self._cache: dict[str, Any] = {}
+        self._cache: dict[str, object] = {}
 
-    def __getitem__(self, key: str) -> Any:
-        if key in self._cache:
-            return self._cache[key]
-        import flext_tests as _package
-
-        try:
-            value = getattr(_package, key)
-        except AttributeError as exc:
-            raise KeyError(key) from exc
+    def __getitem__(self, key: str) -> object:
+        cached = self._cache.get(key)
+        if cached is not None:
+            return cached
+        value = _resolve_alias(key)
         self._cache[key] = value
         return value
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         return iter(self._cache)
 
     def __len__(self) -> int:
         return len(self._cache)
 
-    def __setitem__(self, key: str, value: Any) -> None:
+    def __setitem__(self, key: str, value: object) -> None:
         self._cache[key] = value
 
+    def update(self, other: Mapping[str, object]) -> None:
+        self._cache.update(other)
 
-def _rebuild_namespace(mixin: type) -> dict[str, Any]:
+
+def _rebuild_namespace(mixin: type) -> dict[str, object]:
     """Build the merged types namespace for a mixin's deferred models.
 
     Returns:
         The resulting ``dict[str, Any]`` namespace.
 
     """
-    namespace: dict[str, Any] = _LazyAliasNamespace()
+    namespace: dict[str, object] = _LazyAliasNamespace()
     for module_name, module in tuple(sys.modules.items()):
         if module is None:
             continue
@@ -71,27 +107,19 @@ def _rebuild_namespace(mixin: type) -> dict[str, Any]:
             "flext_tests._models.",
         ):
             continue
-        for name, value in vars(module).items():
-            if name.endswith("ModelsMixin") or name in (
-                "t",
-                "p",
-                "m",
-                "u",
-                "c",
-                "r",
-                "s",
-                "x",
-            ):
-                namespace[name] = value
+        namespace.update({
+            name: value
+            for name, value in vars(module).items()
+            if name.endswith("ModelsMixin")
+            or name in {"t", "p", "m", "u", "c", "r", "s", "x"}
+        })
     mixin_module = sys.modules.get(mixin.__module__)
     if mixin_module is not None:
-        for name, value in vars(mixin_module).items():
-            if not name.startswith("_") and name not in ("annotations",):
-                namespace[name] = value
-    # Pydantic resolves deferred annotations with ``Mapping.get``, which a
-    # ``__missing__`` hook cannot satisfy: materialize the fleet aliases
-    # eagerly from the family facade modules (never through the package
-    # attribute surface, which is still mid-init during the mixin imports).
+        namespace.update({
+            name: value
+            for name, value in vars(mixin_module).items()
+            if not name.startswith("_") and name != "annotations"
+        })
     namespace[mixin.__name__] = mixin
     return namespace
 

@@ -16,6 +16,7 @@ from _pytest.python_api import ApproxBase  # ruff: ignore[import-private-name] -
 from flext_cli import m, u
 
 from flext_tests import p, t
+from flext_tests._models._rebuild import rebuild_nested_models as _rebuild
 from flext_tests._models.base import FlextTestsFlextModelsBase
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
@@ -814,10 +815,4 @@ class FlextTestsMatchersModelsMixin:
 
 __all__: list[str] = ["FlextTestsMatchersModelsMixin"]
 
-
-# NOTE (import discipline): see _rebuild.py — nested models annotate through
-# their enclosing mixin and TYPE_CHECKING-only siblings; rebuild them here,
-# at import end, so the lazy rebuild never depends on the caller's imports.
-from flext_tests._models._rebuild import rebuild_nested_models as _rebuild_nested_models
-
-_rebuild_nested_models(FlextTestsMatchersModelsMixin)
+_rebuild(FlextTestsMatchersModelsMixin)
