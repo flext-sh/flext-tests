@@ -42,4 +42,3 @@ class FlextTestsSpecModelsMixin:
                 ),
             ),
         ] = None
-
