@@ -20,7 +20,6 @@ from types import (
     CodeType,
     FunctionType,
     GenericAlias,
-    MappingProxyType,
     ModuleType,
     UnionType,
 )
@@ -28,7 +27,7 @@ from typing import TYPE_CHECKING, Final, TypeAliasType, cast
 
 import flext_tests
 from flext_core import m, u
-from flext_tests import p, t
+from flext_tests import c, p, t
 from flext_tests._models.base import FlextTestsFlextModelsBase
 
 if TYPE_CHECKING:
@@ -37,15 +36,6 @@ if TYPE_CHECKING:
 
 class FlextTestsFlextUtilitiesPayload:
     """Canonical namespace owner."""
-
-    _PAYLOAD_SEQUENCE_KINDS: Final[MappingProxyType[type, t.Tests.PayloadKind]] = (
-        MappingProxyType({
-            list: "list",
-            tuple: "tuple",
-            set: "set",
-            frozenset: "frozenset",
-        })
-    )
 
     @staticmethod
     def _stable_sort_key(value: p.Tests.Payload) -> t.StrPair:
@@ -268,13 +258,10 @@ class FlextTestsFlextUtilitiesPayload:
                     key=FlextTestsFlextUtilitiesPayload._stable_sort_key,
                 ),
             )
-        kinds: Mapping[type, t.Tests.PayloadKind] = (
-            FlextTestsFlextUtilitiesPayload._PAYLOAD_SEQUENCE_KINDS
-        )
-        for sequence_type, kind in kinds.items():
+        for kind, sequence_type in c.Tests.PAYLOAD_COLLECTION_TYPES.items():
             if isinstance(value, sequence_type):
                 return FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload(
-                    kind=kind,
+                    kind=cast("t.Tests.PayloadKind", kind),
                     items=children,
                 )
         return None
