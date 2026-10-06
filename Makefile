@@ -2,7 +2,7 @@
 # @flext-owner: flext-infra/config/codegen.yaml + flext-infra/src/flext_infra/templates/project/base/Makefile.j2
 # @flext-adjust: edit the owner configuration or template; never this projection
 # @flext-regenerate: make gen
-# flext-tests — selector-free generated project interface.
+# flext-auth — selector-free generated project interface.
 # Managed by flext-infra codegen conform for new and existing repositories.
 # === SECTION: header (managed) ===
 # Source: template (base/Makefile.j2)
@@ -89,7 +89,7 @@ unexport GITHUB_API_TOKEN
 
 # === SECTION: project identity (managed) ===
 # Source: config:dist / config:make_profile / config:repository_root_rel / config:uv_link_mode
-PROJECT_NAME := flext-tests
+PROJECT_NAME := flext-auth
 MAKE_PROFILE := standalone
 REPOSITORY_ROOT_REL := .
 # === SECTION: workspace subprojects (managed) ===
@@ -190,47 +190,13 @@ CUSTOM_DECLARED_TARGETS := $(shell awk '/^[a-z_][a-z0-9_-]*:/ { target=$$1; sub(
 ifneq ($(.SHELLSTATUS),0)
 $(error Failed to inspect custom Make targets in $(CUSTOM_MAKEFILE))
 endif
-ifneq ($(filter pre-commit,$(CUSTOM_DECLARED_TARGETS)),)
+ifneq ($(filter pre-commit _custom-pre-commit,$(CUSTOM_DECLARED_TARGETS)),)
 $(error Mandatory approval cannot be replaced by custom targets)
 endif
 ifeq ($(APPROVAL_CONTEXT),Y)
-ifneq ($(filter setup audit check test,$(CUSTOM_DECLARED_TARGETS)),)
+ifneq ($(filter setup audit check test _custom-setup _custom-audit _custom-check _custom-test,$(CUSTOM_DECLARED_TARGETS)),)
 $(error Approval stages cannot be replaced by custom targets)
 endif
-# Wrapper parity: a custom approval-stage hook is legitimate only while it
-# chains the canonical builtin inside its recipe (the host-service harness
-# pattern). A declared hook without the builtin reference is a replacement
-# and stays forbidden.
-ifneq ($(filter _custom-pre-commit,$(CUSTOM_DECLARED_TARGETS)),)
-ifeq ($(shell grep -c "_builtin-pre-commit" $(CUSTOM_MAKEFILE) || true),0)
-$(error Approval stage _custom-pre-commit must chain _builtin-pre-commit (wrapper parity; replacements are forbidden))
-endif
-endif
-
-ifneq ($(filter _custom-setup,$(CUSTOM_DECLARED_TARGETS)),)
-ifeq ($(shell grep -c "_builtin-setup" $(CUSTOM_MAKEFILE) || true),0)
-$(error Approval stage _custom-setup must chain _builtin-setup (wrapper parity; replacements are forbidden))
-endif
-endif
-
-ifneq ($(filter _custom-audit,$(CUSTOM_DECLARED_TARGETS)),)
-ifeq ($(shell grep -c "_builtin-audit" $(CUSTOM_MAKEFILE) || true),0)
-$(error Approval stage _custom-audit must chain _builtin-audit (wrapper parity; replacements are forbidden))
-endif
-endif
-
-ifneq ($(filter _custom-check,$(CUSTOM_DECLARED_TARGETS)),)
-ifeq ($(shell grep -c "_builtin-check" $(CUSTOM_MAKEFILE) || true),0)
-$(error Approval stage _custom-check must chain _builtin-check (wrapper parity; replacements are forbidden))
-endif
-endif
-
-ifneq ($(filter _custom-test,$(CUSTOM_DECLARED_TARGETS)),)
-ifeq ($(shell grep -c "_builtin-test" $(CUSTOM_MAKEFILE) || true),0)
-$(error Approval stage _custom-test must chain _builtin-test (wrapper parity; replacements are forbidden))
-endif
-endif
-
 endif
 endif
 DOCS_ACTIONS := generate fix fmt validate audit
@@ -1768,7 +1734,7 @@ _setup_activated:
 	esac
 
 _builtin-help:
-	@printf '%s\n' 'flext-tests [standalone]' '';
+	@printf '%s\n' 'flext-auth [standalone]' '';
 
 	@printf '  %-16s %s\n' 'help' 'Show the complete selector-free public interface.';
 
@@ -2392,7 +2358,7 @@ profile-gen: _builtin_require_environment
 	@$(PROJECT_TOOL_EXEC) "$(RUNTIME_PYTHON)" -c \
 		'import cProfile, sys; from flext_infra.cli import main; profile = cProfile.Profile(); status = profile.runcall(main, sys.argv[2:]); profile.dump_stats(sys.argv[1]); raise SystemExit(status)' \
 		"$(PROFILE_REPORTS_DIR)/lazy-init.pstats" codegen lazy-init \
-		--repository-root "$(PROJECT_ROOT)" --module flext_tests --dry-run
+		--repository-root "$(PROJECT_ROOT)" --module flext_core --dry-run
 
 .PHONY: profile-gen-report
 profile-gen-report: _builtin_require_environment
