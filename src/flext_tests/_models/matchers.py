@@ -264,12 +264,14 @@ class FlextTestsMatchersModelsMixin:
                 # Own the mapping operand here; own_operand is idempotent, so
                 # the field validator re-running on the owned payload is a no-op.
                 return cls(eq=cls.own_operand(mapping_value))
-            if isinstance(value, type):
-                return cls(is_=value)
-            if isinstance(value, tuple):
-                members = tuple(item for item in value if isinstance(item, type))
-                if len(members) == len(value):
-                    return cls(is_=members)
+            if isinstance(value, (type, tuple)):
+                candidates = (value,) if isinstance(value, type) else tuple(value)
+                members = tuple(item for item in candidates if isinstance(item, type))
+                if len(members) == len(candidates):
+                    # A bare type keeps its nominal form; a tuple of types
+                    # narrows to the type members the rule accepts.
+                    is_spec = members[0] if len(members) == 1 else members
+                    return cls(is_=is_spec)
             if callable(value):
                 return cls(
                     where=cast(
