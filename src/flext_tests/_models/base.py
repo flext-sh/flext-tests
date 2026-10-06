@@ -81,10 +81,17 @@ class FlextTestsFlextModelsBase:
                     FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
                 ],
                 m.Field(
+                    # default_factory, not a literal: pydantic smart-copies the
+                    # class default on every construction, and a mappingproxy
+                    # default cannot be deep-copied (TypeError at Payload()).
+                    # Pyright cannot see either default through the facade base
+                    # chain, so it reports Payload(entries=...) as missing the
+                    # parameter — a static-only gap the runtime contract owns.
+                    default_factory=dict,
                     frozen=True,
                     description="String-keyed payload children.",
                 ),
-            ] = MappingProxyType({})
+            ]
 
             @field_validator("entries", mode="after")
             @classmethod
