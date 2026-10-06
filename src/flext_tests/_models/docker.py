@@ -236,6 +236,3 @@ class FlextTestsDockerModelsMixin:
             int,
             u.Field(description="Retry budget on transient failure."),
         ] = 3
-
-
-_rebuild(FlextTestsDockerModelsMixin)

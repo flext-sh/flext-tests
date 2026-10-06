@@ -35,6 +35,3 @@ class FlextTestsDomainModelsMixin:
             str | None,
             m.Field(description="Expected error text."),
         ] = None
-
-
-_rebuild(FlextTestsDomainModelsMixin)

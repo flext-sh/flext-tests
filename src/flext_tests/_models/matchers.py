@@ -813,6 +813,4 @@ class FlextTestsMatchersModelsMixin:
         )
 
 
-_rebuild(FlextTestsMatchersModelsMixin)
-
 __all__: list[str] = ["FlextTestsMatchersModelsMixin"]
