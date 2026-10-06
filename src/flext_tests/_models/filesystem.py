@@ -8,12 +8,14 @@ from __future__ import annotations
 
 import datetime
 from pathlib import Path
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 from flext_cli import m, u
 
 from flext_tests import c, p, t
-from flext_tests._models.base import FlextTestsBaseModelsMixin
+
+if TYPE_CHECKING:
+    from flext_tests._models.base import FlextTestsBaseModelsMixin
 
 
 class FlextTestsFilesystemModelsMixin:
