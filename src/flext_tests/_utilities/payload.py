@@ -212,6 +212,14 @@ class FlextTestsFlextUtilitiesPayload:
                 )
         return None
 
+    _PAYLOAD_SEQUENCE_KINDS: Final[tuple[tuple[type, str], ...]] = (
+        (list, "list"),
+        (tuple, "tuple"),
+        (set, "set"),
+        (frozenset, "frozenset"),
+    )
+    """Native sequence types paired with their ``Payload`` collection kinds."""
+
     _PAYLOAD_LEAF_HANDLERS: Final[
         tuple[Callable[[p.AttributeProbe], flext_tests.m.Tests.Payload | None], ...]
     ] = (
