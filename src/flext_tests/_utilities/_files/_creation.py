@@ -183,7 +183,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         )
         if actual_content.kind == "mapping":
             return normalized
-        return {"value": normalized} if normalized else {}
+        return {"value": cast("t.JsonValue", normalized)} if normalized else {}
 
     @staticmethod
     def _build_csv_rows(

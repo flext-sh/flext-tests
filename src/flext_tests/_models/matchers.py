@@ -10,7 +10,7 @@ import sys
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, ClassVar, TypeAliasType
+from typing import Annotated, ClassVar, TypeAliasType, cast
 
 from _pytest.python_api import ApproxBase  # ruff: ignore[import-private-name] -- ApproxBase has no public pytest path in the supported versions; justified per fleet suppression law.
 from flext_cli import m, u
@@ -249,19 +249,26 @@ class FlextTestsMatchersModelsMixin:
             if isinstance(value, cls):
                 return value
             if isinstance(value, Mapping):
+                mapping_value: Mapping[str, object] = value
                 rule_keys = frozenset({*cls.model_fields, "is", "excludes"})
-                if value and set(value).issubset(rule_keys):
-                    return cls.model_validate(value)
+                if mapping_value and set(mapping_value).issubset(rule_keys):
+                    return cls.model_validate(dict(mapping_value))
                 # Own the mapping operand here; own_operand is idempotent, so
                 # the field validator re-running on the owned payload is a no-op.
-                return cls(eq=cls.own_operand(value))
-            if isinstance(value, type) or (
-                isinstance(value, tuple)
-                and all(isinstance(item, type) for item in value)
-            ):
+                return cls(eq=cls.own_operand(mapping_value))
+            if isinstance(value, type):
                 return cls(is_=value)
+            if isinstance(value, tuple):
+                members = tuple(item for item in value if isinstance(item, type))
+                if len(members) == len(value):
+                    return cls(is_=members)
             if callable(value):
-                return cls(where=value)
+                return cls(
+                    where=cast(
+                        "Callable[[t.Tests.NativeMatchValue], bool]",
+                        value,
+                    ),
+                )
             return cls(eq=cls.own_operand(value))
 
         @classmethod
