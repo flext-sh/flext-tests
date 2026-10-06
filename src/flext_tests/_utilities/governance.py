@@ -139,7 +139,7 @@ class FlextTestsFlextUtilitiesGovernance:
         def _module_top_level_attrs(
             module: ModuleType,
         ) -> Iterator[tuple[str, p.AttributeProbe]]:
-            """Yield only the symbols defined directly on this module (no re-exports)."""
+            """Yield only symbols defined directly on this module (no re-exports)."""
             module_name = module.__name__
             for name, value in vars(module).items():
                 if name.startswith("__") and name.endswith("__"):
@@ -186,7 +186,7 @@ class FlextTestsFlextUtilitiesGovernance:
         def test_package_modules_do_not_define_unapproved_top_level_functions(
             self,
         ) -> None:
-            """Assert no module exposes top-level functions outside approved entrypoints."""
+            """Assert no module exposes top-level functions outside entrypoints."""
             violations: list[str] = []
             for module_path in self._iter_package_modules():
                 module = self._import_package_module(module_path)

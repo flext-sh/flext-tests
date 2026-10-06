@@ -151,8 +151,10 @@ class FlextTestsMakeRegistryUtilitiesMixin(
             target_env=target_env_result.value,
             surface=surface_result.value,
         )
-        contract_result = FlextTestsMakeContractUtilitiesMixin.make_validate_command_contract(
-            command,
+        contract_result = (
+            FlextTestsMakeContractUtilitiesMixin.make_validate_command_contract(
+                command,
+            )
         )
         if contract_result.failure:
             return r[m.Tests.MakeCommand].from_failure(contract_result)

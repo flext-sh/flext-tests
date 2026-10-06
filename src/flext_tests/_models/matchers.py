@@ -17,10 +17,7 @@ from flext_cli import m, u
 
 from flext_tests import p, t
 from flext_tests._models.base import FlextTestsFlextModelsBase
-from flext_tests._utilities.payload import (
-    FlextTestsFlextUtilitiesPayload,
-    FlextTestsPayloadUtilities,
-)
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 type MatchExpectedValue = (
     FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
@@ -63,10 +60,8 @@ class FlextTestsMatchersModelsMixin:
             """
             if value is None or isinstance(value, ApproxBase | TypeAliasType):
                 return value
-            return (
-                FlextTestsPayloadUtilities.to_payload(
-                    value,
-                )
+            return FlextTestsPayloadUtilities.to_payload(
+                value,
             )
 
         @u.field_validator(
@@ -96,10 +91,8 @@ class FlextTestsMatchersModelsMixin:
             """
             if value is None:
                 return None
-            node = (
-                FlextTestsPayloadUtilities.to_payload(
-                    value,
-                )
+            node = FlextTestsPayloadUtilities.to_payload(
+                value,
             )
             if node.kind != "mapping":
                 msg = "Matcher mapping requires a mapping payload"
@@ -125,10 +118,8 @@ class FlextTestsMatchersModelsMixin:
             """
             if value is None:
                 return None
-            node = (
-                FlextTestsPayloadUtilities.to_payload(
-                    value,
-                )
+            node = FlextTestsPayloadUtilities.to_payload(
+                value,
             )
             if node.kind in {"atom", "mapping"}:
                 msg = "Matcher values require a sequence payload"
@@ -662,10 +653,8 @@ class FlextTestsMatchersModelsMixin:
             if self.error is not None and self.has is None:
                 # self.error is a non-None native sequence/scalar, so owning it
                 # is exactly the payload walker; no approx/type operand applies.
-                updates["has"] = (
-                    FlextTestsPayloadUtilities.to_payload(
-                        self.error,
-                    )
+                updates["has"] = FlextTestsPayloadUtilities.to_payload(
+                    self.error,
                 )
             if self.len is None and any(
                 v is not None

@@ -20,7 +20,6 @@ from types import (
     CodeType,
     FunctionType,
     GenericAlias,
-    MappingProxyType,
     ModuleType,
     UnionType,
 )
@@ -38,13 +37,10 @@ class FlextTestsFlextUtilitiesPayload:
     @staticmethod
     def _stable_sort_key(value: p.Tests.Payload) -> t.StrPair:
         """Return a total deterministic key for heterogeneous payload values."""
-        native = (
-            FlextTestsPayloadUtilities.to_match_value(
-                value,
-            )
+        native = FlextTestsPayloadUtilities.to_match_value(
+            value,
         )
         return type(native).__name__, str(native)
-
 
     @staticmethod
     def _payload_model_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
@@ -56,16 +52,12 @@ class FlextTestsFlextUtilitiesPayload:
         if isinstance(value, m.Tests.Payload):
             return value
         if isinstance(value, m.RootModel):
-            return (
-                FlextTestsPayloadUtilities.to_payload(
-                    value.root,
-                )
+            return FlextTestsPayloadUtilities.to_payload(
+                value.root,
             )
         if isinstance(value, Enum):
-            return (
-                FlextTestsPayloadUtilities.to_payload(
-                    value.value,
-                )
+            return FlextTestsPayloadUtilities.to_payload(
+                value.value,
             )
         return None
 
@@ -167,10 +159,8 @@ class FlextTestsFlextUtilitiesPayload:
             The resulting ``m.Tests.Payload | None``.
         """
         if isinstance(value, (KeysView, ValuesView)):
-            return (
-                FlextTestsPayloadUtilities.to_payload(
-                    list(value),
-                )
+            return FlextTestsPayloadUtilities.to_payload(
+                list(value),
             )
         return None
 
@@ -192,10 +182,8 @@ class FlextTestsFlextUtilitiesPayload:
             if normalized_key in entries:
                 msg = f"Native payload mapping key collision: {normalized_key!r}"
                 raise ValueError(msg)
-            entries[normalized_key] = (
-                FlextTestsPayloadUtilities.to_payload(
-                    item,
-                )
+            entries[normalized_key] = FlextTestsPayloadUtilities.to_payload(
+                item,
             )
         return m.Tests.Payload(kind="mapping", entries=entries)
 
@@ -208,10 +196,7 @@ class FlextTestsFlextUtilitiesPayload:
         """
         if not isinstance(value, (list, tuple, set, frozenset)):
             return None
-        children = tuple(
-            FlextTestsPayloadUtilities.to_payload(item)
-            for item in value
-        )
+        children = tuple(FlextTestsPayloadUtilities.to_payload(item) for item in value)
         if isinstance(value, (set, frozenset)):
             children = tuple(
                 sorted(
@@ -334,8 +319,7 @@ class FlextTestsFlextUtilitiesPayload:
                     payload.atom
                     if isinstance(
                         (
-                            payload
-                            := FlextTestsPayloadUtilities.to_payload(
+                            payload := FlextTestsPayloadUtilities.to_payload(
                                 item,
                             )
                         ).atom,

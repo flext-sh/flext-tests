@@ -23,10 +23,7 @@ from flext_tests._utilities._matchers._that import (
 from flext_tests._utilities._matchers._typeguards import (
     FlextTestsMatchersTypeGuardsMixin,
 )
-from flext_tests._utilities.payload import (
-    FlextTestsFlextUtilitiesPayload,
-    FlextTestsPayloadUtilities,
-)
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
 
 
@@ -183,13 +180,10 @@ class FlextTestsMatchersResultMixin:
                             params.msg
                             or c.Tests.ERR_ERROR_DATA_KEY_MISSING.format(key=key),
                         )
-                    if (
-                        FlextTestsPayloadUtilities.to_match_value(
-                            actual_data[key],
-                        )
-                        != FlextTestsPayloadUtilities.to_match_value(
-                            expected_value,
-                        )
+                    if FlextTestsPayloadUtilities.to_match_value(
+                        actual_data[key],
+                    ) != FlextTestsPayloadUtilities.to_match_value(
+                        expected_value,
                     ):
                         raise AssertionError(
                             params.msg

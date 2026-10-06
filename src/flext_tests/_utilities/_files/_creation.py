@@ -12,10 +12,7 @@ from typing import Annotated, cast
 
 from flext_tests import c, m, p, t, u
 from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
-from flext_tests._utilities.payload import (
-    FlextTestsFlextUtilitiesPayload,
-    FlextTestsPayloadUtilities,
-)
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
@@ -276,10 +273,8 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             "directory": directory,
         })
         actual_content = params.content
-        native_content = (
-            FlextTestsPayloadUtilities.to_match_value(
-                actual_content,
-            )
+        native_content = FlextTestsPayloadUtilities.to_match_value(
+            actual_content,
         )
         # files_detect_format_from_content dispatches purely on the runtime
         # shape (bytes, model, mapping, list) and routes every other arm —

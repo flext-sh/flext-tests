@@ -161,9 +161,11 @@ class FlextTestsFlextUtilitiesMakeContract:
             )
             if body_failure is not None:
                 return body_failure
-            condition_result = FlextTestsMakeContractUtilitiesMixin.make_validate_mutation_conditions(
-                command,
-                param_by_name,
+            condition_result = (
+                FlextTestsMakeContractUtilitiesMixin.make_validate_mutation_conditions(
+                    command,
+                    param_by_name,
+                )
             )
             if condition_result.failure:
                 return r[bool].from_failure(condition_result)
@@ -218,7 +220,9 @@ class FlextTestsFlextUtilitiesMakeContract:
             """
             if not registry.commands_by_verb:
                 return r[bool].fail("no command found in scripts/cmd/<verb>/<what>")
-            contract = FlextTestsFlextUtilitiesMakeContract.FlextTestsMakeContractUtilitiesMixin
+            contract = (
+                FlextTestsFlextUtilitiesMakeContract.FlextTestsMakeContractUtilitiesMixin
+            )
             for verb, commands in sorted(registry.commands_by_verb.items()):
                 if c.Tests.MAKE_DEFAULT_COMMAND not in commands:
                     return r[bool].fail(
@@ -282,8 +286,9 @@ class FlextTestsFlextUtilitiesMakeContract:
             actual = tuple(sorted(commands))
             if declared != actual:
                 return r[bool].fail(
-                    f"{all_command.path}: WHAT choices diverge from the promoted commands "
-                    f"for {verb}: declared={','.join(declared)} actual={','.join(actual)}",
+                    f"{all_command.path}: WHAT choices diverge from the promoted "
+                    f"commands for {verb}: declared={','.join(declared)} "
+                    f"actual={','.join(actual)}",
                 )
             return r[bool].ok(value=True)
 
@@ -330,9 +335,11 @@ class FlextTestsFlextUtilitiesMakeContract:
             what: str,
         ) -> p.Result[m.Tests.MakeCommand]:
             """Return one command by verb and WHAT value."""
-            commands_result = FlextTestsMakeContractUtilitiesMixin.make_registry_commands(
-                registry,
-                verb,
+            commands_result = (
+                FlextTestsMakeContractUtilitiesMixin.make_registry_commands(
+                    registry,
+                    verb,
+                )
             )
             if commands_result.failure:
                 return r[m.Tests.MakeCommand].from_failure(commands_result)

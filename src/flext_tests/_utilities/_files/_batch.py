@@ -15,10 +15,7 @@ from flext_cli import u
 from flext_core import r
 from flext_tests import c, m, p, t
 from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
-from flext_tests._utilities.payload import (
-    FlextTestsFlextUtilitiesPayload,
-    FlextTestsPayloadUtilities,
-)
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):

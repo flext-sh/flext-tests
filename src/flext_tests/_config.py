@@ -14,7 +14,6 @@ from typing import Annotated
 
 from flext_cli import FlextCliConfig
 
-import flext_tests._models.tests_namespace
 from flext_tests import m
 from flext_tests._models import TestsNamespace
 

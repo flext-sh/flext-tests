@@ -19,10 +19,7 @@ from flext_tests._utilities._matchers._containment import (
 from flext_tests._utilities._matchers._typeguards import (
     FlextTestsMatchersTypeGuardsMixin,
 )
-from flext_tests._utilities.payload import (
-    FlextTestsFlextUtilitiesPayload,
-    FlextTestsPayloadUtilities,
-)
+from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsMatchersThatMixin:
@@ -320,13 +317,10 @@ class FlextTestsMatchersThatMixin:
                         raise AssertionError(
                             params.msg or "Sequence is empty, cannot check first",
                         )
-                    if (
-                        FlextTestsPayloadUtilities.to_match_value(
-                            seq_value[0],
-                        )
-                        != FlextTestsPayloadUtilities.to_match_value(
-                            params.first,
-                        )
+                    if FlextTestsPayloadUtilities.to_match_value(
+                        seq_value[0],
+                    ) != FlextTestsPayloadUtilities.to_match_value(
+                        params.first,
                     ):
                         raise AssertionError(
                             params.msg
@@ -340,13 +334,10 @@ class FlextTestsMatchersThatMixin:
                         raise AssertionError(
                             params.msg or "Sequence is empty, cannot check last",
                         )
-                    if (
-                        FlextTestsPayloadUtilities.to_match_value(
-                            seq_value[-1],
-                        )
-                        != FlextTestsPayloadUtilities.to_match_value(
-                            params.last,
-                        )
+                    if FlextTestsPayloadUtilities.to_match_value(
+                        seq_value[-1],
+                    ) != FlextTestsPayloadUtilities.to_match_value(
+                        params.last,
                     ):
                         raise AssertionError(
                             params.msg
