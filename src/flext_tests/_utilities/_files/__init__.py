@@ -10,7 +10,7 @@ from __future__ import annotations
 from types import MappingProxyType
 from typing import TYPE_CHECKING
 
-from flext_core import build_lazy_import_map, install_lazy_exports
+from flext_core import install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tests._utilities._files import _comparison_parts
@@ -36,22 +36,19 @@ __all__: tuple[str, ...] = (
     "_comparison_parts",
 )
 
-_LAZY_IMPORTS = MappingProxyType(
-    build_lazy_import_map(
-        MappingProxyType({
-            "._assertions": ("FlextTestsFilesAssertionsMixin",),
-            "._batch": ("FlextTestsFilesBatchMixin",),
-            "._comparison": ("FlextTestsFilesComparisonMixin",),
-            "._comparison_parts": ("_comparison_parts",),
-            "._contexts": ("FlextTestsFilesContextsMixin",),
-            "._creation": ("FlextTestsFilesCreationMixin",),
-            "._info": ("FlextTestsFilesInfoMixin",),
-            "._lifecycle": ("FlextTestsFilesLifecycleMixin",),
-            "._reading": ("FlextTestsFilesReadingMixin",),
-        }),
-        alias_groups=MappingProxyType({}),
-        sort_keys=False,
-    ),
+install_lazy_exports(
+    __name__,
+    globals(),
+    MappingProxyType({
+        "FlextTestsFilesAssertionsMixin": "._assertions",
+        "FlextTestsFilesBatchMixin": "._batch",
+        "FlextTestsFilesComparisonMixin": "._comparison",
+        "FlextTestsFilesContextsMixin": "._contexts",
+        "FlextTestsFilesCreationMixin": "._creation",
+        "FlextTestsFilesInfoMixin": "._info",
+        "FlextTestsFilesLifecycleMixin": "._lifecycle",
+        "FlextTestsFilesReadingMixin": "._reading",
+        "_comparison_parts": "._comparison_parts",
+    }),
+    public_exports=__all__,
 )
-
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)
