@@ -350,9 +350,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Multiple path-based assertions."),
         ] = None
         items: Annotated[
-            Sequence[MatchRule]
-            | Mapping[str | int, MatchRule]
-            | None,
+            Sequence[MatchRule] | Mapping[str | int, MatchRule] | None,
             u.Field(description="Sequence item assertions by selector."),
         ] = None
         attrs_match: Annotated[
@@ -575,9 +573,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Paths."),
         ] = None
         items: Annotated[
-            Sequence[MatchRule]
-            | Mapping[str | int, MatchRule]
-            | None,
+            Sequence[MatchRule] | Mapping[str | int, MatchRule] | None,
             u.Field(description="Items."),
         ] = None
         attrs_match: Annotated[

@@ -32,6 +32,10 @@ class TestsFlextTestsMatchersDataDrivenMixin:
             r[t.JsonMapping].ok({"value": value}),
             attrs_match={"value": {"eq": value}},
         )
+        with pytest.raises(AssertionError):
+            tm.that({"value": value}, paths={"value": {"eq": value.upper()}})
+        with pytest.raises(AssertionError):
+            tm.ok(r[t.StrSequence].ok([value]), items=[{"eq": value.upper()}])
 
     @staticmethod
     def test_that_with_paths_data_driven_rules() -> None:
