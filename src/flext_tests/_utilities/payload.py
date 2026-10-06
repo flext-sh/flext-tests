@@ -23,7 +23,7 @@ from types import (
     ModuleType,
     UnionType,
 )
-from typing import cast, TYPE_CHECKING, Final, TypeAliasType, cast
+from typing import TYPE_CHECKING, Final, TypeAliasType, cast
 
 import flext_tests
 from flext_core import m, u
