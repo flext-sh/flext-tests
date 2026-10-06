@@ -10,28 +10,17 @@ import sys
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, Any, ClassVar, TypeAliasType, cast
+from typing import TYPE_CHECKING, Annotated, ClassVar, TypeAliasType, cast
 
 from _pytest.python_api import ApproxBase  # ruff: ignore[import-private-name] -- ApproxBase has no public pytest path in the supported versions; justified per fleet suppression law.
 from flext_cli import m, u
-from pydantic import field_validator, model_validator
 
-from flext_tests import p, t
+from flext_tests import t
 from flext_tests._models.base import FlextTestsFlextModelsBase
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
-type MatchExpectedValue = (
-    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
-    | ApproxBase
-    | TypeAliasType
-    | None
-)
-type DeepExpected = (
-    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
-    | Callable[[t.Tests.NativeMatchValue], bool]
-    | str
-    | None
-)
+if TYPE_CHECKING:
+    from flext_tests import p
 
 
 type _OwnedEntries = Mapping[
@@ -44,10 +33,38 @@ type _OwnedEntries = Mapping[
 class FlextTestsMatchersModelsMixin:
     """Matcher model group (result, that, scope, and chain parameters)."""
 
+    # Namespace pinning: nested pydantic models capture THIS class-body frame
+    # as their parent namespace at creation, and it cannot see module globals.
+    # The facade letters used inside field annotations must therefore be bound
+    # here, before the first nested model — keeping every declaration strictly
+    # resolved with no deferred schemas and no ``model_rebuild``. (``p`` is
+    # annotation-only, lives under ``TYPE_CHECKING``, and never enters the
+    # schema namespace.)
+    t = t
+    m = m
+    u = u
+
+    # Matcher type aliases live in the class body (the namespace-class
+    # convention): nested pydantic models capture the enclosing class-body
+    # frame as their parent namespace, so declarations stay strictly resolved
+    # at class creation — no deferred schemas, no ``model_rebuild``.
+    type MatchExpectedValue = (
+        FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+        | ApproxBase
+        | TypeAliasType
+        | None
+    )
+    type DeepExpected = (
+        FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+        | Callable[[t.Tests.NativeMatchValue], bool]
+        | str
+        | None
+    )
+
     class PayloadParams(m.Value):
         """Own matcher operand trees once at parameter ingress."""
 
-        @field_validator(
+        @m.field_validator(
             "eq",
             "ne",
             "has",
@@ -72,7 +89,7 @@ class FlextTestsMatchersModelsMixin:
                 value,
             )
 
-        @field_validator(
+        @m.field_validator(
             "settings",
             "container",
             "context",
@@ -107,7 +124,7 @@ class FlextTestsMatchersModelsMixin:
                 raise ValueError(msg)
             return node.entries
 
-        @field_validator("values", mode="before", check_fields=False)
+        @m.field_validator("values", mode="before", check_fields=False)
         @classmethod
         def own_values(
             cls,
@@ -134,7 +151,7 @@ class FlextTestsMatchersModelsMixin:
                 raise ValueError(msg)
             return node.items
 
-        @field_validator("deep", mode="before", check_fields=False)
+        @m.field_validator("deep", mode="before", check_fields=False)
         @classmethod
         def own_deep[ValueT](
             cls,
@@ -248,7 +265,7 @@ class FlextTestsMatchersModelsMixin:
         def parse(
             cls,
             value: p.AttributeProbe,
-        ) -> FlextTestsMatchersModelsMixin.MatchRule:
+        ) -> MatchRule:
             """Parse one public matcher rule into its nominal representation.
 
             Returns:
@@ -285,18 +302,13 @@ class FlextTestsMatchersModelsMixin:
         def parse_rule_fields(
             cls,
             value: p.AttributeProbe,
-        ) -> (
-            p.AttributeProbe
-            | Mapping[str, FlextTestsMatchersModelsMixin.MatchRule]
-            | Sequence[FlextTestsMatchersModelsMixin.MatchRule]
-            | None
-        ):
+        ) -> p.AttributeProbe | Mapping[str, MatchRule] | Sequence[MatchRule] | None:
             """Parse paths, items, and attribute rule collections before validation.
 
             Returns:
                 The resulting ``p.AttributeProbe | Mapping[str,
                     FlextTestsMatchersModelsMixin.MatchRule] |
-                    Sequence[FlextTestsMatchersModelsMixin.MatchRule] | None``.
+                    Sequence[MatchRule] | None``.
             """
             if value is None:
                 return None
@@ -381,17 +393,15 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Extract nested value via dot notation."),
         ] = None
         paths: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, MatchRule] | None,
             u.Field(description="Multiple path-based assertions."),
         ] = None
         items: Annotated[
-            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
-            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
-            | None,
+            Sequence[MatchRule] | Mapping[str | int, MatchRule] | None,
             u.Field(description="Sequence item assertions by selector."),
         ] = None
         attrs_match: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, MatchRule] | None,
             u.Field(description="Attribute assertions by attribute path."),
         ] = None
         where: Annotated[
@@ -400,23 +410,18 @@ class FlextTestsMatchersModelsMixin:
         ] = None
         msg: Annotated[str | None, u.Field(description="Custom error message.")] = None
 
-        @field_validator("paths", "items", "attrs_match", mode="before")
+        @m.field_validator("paths", "items", "attrs_match", mode="before")
         @classmethod
         def parse_rules(
             cls,
             value: p.AttributeProbe,
-        ) -> (
-            p.AttributeProbe
-            | Mapping[str, FlextTestsMatchersModelsMixin.MatchRule]
-            | Sequence[FlextTestsMatchersModelsMixin.MatchRule]
-            | None
-        ):
+        ) -> p.AttributeProbe | Mapping[str, MatchRule] | Sequence[MatchRule] | None:
             """Parse public rule collections into nominal rules.
 
             Returns:
                 The resulting ``p.AttributeProbe | Mapping[str,
                     FlextTestsMatchersModelsMixin.MatchRule] |
-                    Sequence[FlextTestsMatchersModelsMixin.MatchRule] | None``.
+                    Sequence[MatchRule] | None``.
             """
             return FlextTestsMatchersModelsMixin.MatchRule.parse_rule_fields(value)
 
@@ -462,7 +467,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Error data contains key-value pairs."),
         ] = None
 
-        @field_validator("data", mode="before")
+        @m.field_validator("data", mode="before")
         @classmethod
         def own_data(
             cls,
@@ -611,17 +616,15 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Deep spec."),
         ] = None
         paths: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, MatchRule] | None,
             u.Field(description="Paths."),
         ] = None
         items: Annotated[
-            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
-            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
-            | None,
+            Sequence[MatchRule] | Mapping[str | int, MatchRule] | None,
             u.Field(description="Items."),
         ] = None
         attrs_match: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, MatchRule] | None,
             u.Field(description="Attr rules."),
         ] = None
         where: Annotated[
@@ -629,27 +632,22 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Predicate."),
         ] = None
 
-        @field_validator("paths", "items", "attrs_match", mode="before")
+        @m.field_validator("paths", "items", "attrs_match", mode="before")
         @classmethod
         def parse_rules(
             cls,
             value: p.AttributeProbe,
-        ) -> (
-            p.AttributeProbe
-            | Mapping[str, FlextTestsMatchersModelsMixin.MatchRule]
-            | Sequence[FlextTestsMatchersModelsMixin.MatchRule]
-            | None
-        ):
+        ) -> p.AttributeProbe | Mapping[str, MatchRule] | Sequence[MatchRule] | None:
             """Parse public rule collections into nominal rules.
 
             Returns:
                 The resulting ``p.AttributeProbe | Mapping[str,
                     FlextTestsMatchersModelsMixin.MatchRule] |
-                    Sequence[FlextTestsMatchersModelsMixin.MatchRule] | None``.
+                    Sequence[MatchRule] | None``.
             """
             return FlextTestsMatchersModelsMixin.MatchRule.parse_rule_fields(value)
 
-        @model_validator(mode="after")
+        @m.model_validator(mode="after")
         def normalize_legacy_parameters(
             self,
         ) -> FlextTestsMatchersModelsMixin.ThatParams:
@@ -748,7 +746,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Temporary working directory."),
         ] = None
 
-        @field_validator("cwd", mode="before")
+        @m.field_validator("cwd", mode="before")
         @classmethod
         def convert_cwd(cls, value: Path | str | None) -> Path | str | None:
             """Convert string cwd to Path.
@@ -828,27 +826,6 @@ class FlextTestsMatchersModelsMixin:
                 ](),
             ),
         )
-
-
-# Nested models capture their enclosing class-body frame as the pydantic
-# parent namespace, which cannot see module-level names while the module is
-# still executing; their field schemas therefore stay deferred (mock
-# validators) and would raise ``not fully defined`` at first use. Completing
-# them here, once the full module namespace is bound, keeps every declaration
-# strictly resolved before the facade exposes it.
-_matchers_module_ns: dict[str, Any] = dict(globals())
-for _nested_model in (
-    FlextTestsMatchersModelsMixin.PayloadParams,
-    FlextTestsMatchersModelsMixin.MatchRule,
-    FlextTestsMatchersModelsMixin.OkParams,
-    FlextTestsMatchersModelsMixin.FailParams,
-    FlextTestsMatchersModelsMixin.ThatParams,
-    FlextTestsMatchersModelsMixin.ScopeParams,
-    FlextTestsMatchersModelsMixin.DeepMatchResult,
-    FlextTestsMatchersModelsMixin.TestScope,
-):
-    if not _nested_model.__pydantic_fields_complete__:
-        _nested_model.model_rebuild(_types_namespace=_matchers_module_ns)
 
 
 __all__: list[str] = ["FlextTestsMatchersModelsMixin"]
