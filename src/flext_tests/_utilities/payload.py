@@ -292,13 +292,11 @@ class FlextTestsFlextUtilitiesPayload:
                 # models, paths); NativeMatchValue stays JsonValue-only because
                 # pyrefly cannot resolve a class-scoped self-referential alias.
                 pairs = value.entries.items()
-                # pyrefly: ignore[bad-return]
                 return cast(
                     "t.Tests.NativeMatchValue",
                     {key: project(item) for key, item in pairs},
                 )
             items = value.items
-            # pyrefly: ignore[bad-return]
             return cast("t.Tests.NativeMatchValue", [project(item) for item in items])
 
         @staticmethod

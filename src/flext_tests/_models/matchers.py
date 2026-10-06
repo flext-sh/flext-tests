@@ -34,6 +34,13 @@ type DeepExpected = (
 )
 
 
+type _OwnedEntries = Mapping[
+    str,
+    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+    | Callable[[t.Tests.NativeMatchValue], bool],
+]
+
+
 class FlextTestsMatchersModelsMixin:
     """Matcher model group (result, that, scope, and chain parameters)."""
 
@@ -149,7 +156,7 @@ class FlextTestsMatchersModelsMixin:
             if value is None:
                 return None
             return cast(
-                "Mapping[str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | Callable[[t.Tests.NativeMatchValue], bool]]",
+                "_OwnedEntries",
                 {
                     key: item
                     if callable(item)

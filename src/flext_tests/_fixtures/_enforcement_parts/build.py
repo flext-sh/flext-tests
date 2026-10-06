@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from flext_tests import m
 from flext_tests._fixtures._enforcement_parts._collector import (
@@ -64,12 +64,9 @@ class FlextTestsEnforcementBuilder:
             else None,
             project_names=project_names,
         )
-        collector = cast(
-            "FlextTestsEnforcementCollector",
-            FlextTestsEnforcementCollector.from_parent(
-                parent=session,
-                name="flext-enforcement",
-            ),
+        collector = FlextTestsEnforcementCollector.from_parent(
+            parent=session,
+            name="flext-enforcement",
         )
         return [
             *FlextTestsEnforcementValidators.build_infra_rule_items(
