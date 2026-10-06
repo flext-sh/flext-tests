@@ -68,6 +68,10 @@ class FlextTestsUtilities(FlextCliUtilities):
 
 u = FlextTestsUtilities
 
+FlextTestsModuleGovernanceMixin = (
+    FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin
+)
+
 __all__: list[str] = [
     "FlextTestsFixturesDSLMixin",
     "FlextTestsModuleGovernanceMixin",
