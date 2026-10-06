@@ -50,22 +50,4 @@ class FlextTestsModels(FlextCliModels):
 
 m = FlextTestsModels
 
-# NOTE (import discipline): the family's nested models annotate through
-# ``t.Tests.*`` and cross-mixin names that are only fully bound once the
-# facade composed; complete every nested model here, at the module bounds,
-# against the merged namespace (the module globals — including the composed
-# family — plus the base family's names).
-_models_ns: dict[str, object] = {
-    **globals(),
-    **vars(FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin),
-}
-if t is not None:
-    _models_ns.setdefault("t", t)
-for _mixin_name in tuple(globals()):
-    _mixin = globals().get(_mixin_name)
-    if isinstance(_mixin, type) and _mixin_name.endswith("Mixin"):
-        for _member in tuple(vars(_mixin).values()):
-            if isinstance(_member, type) and hasattr(_member, "model_rebuild"):
-                _member.model_rebuild(_types_namespace=_models_ns, force=True)
-
 __all__: list[str] = ["FlextTestsModels", "m"]
