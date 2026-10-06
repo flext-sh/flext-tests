@@ -1,3 +1,4 @@
+# Copyright 2026 FLEXT
 """Pytest bootstrap for flext-tests local package resolution."""
 
 from __future__ import annotations

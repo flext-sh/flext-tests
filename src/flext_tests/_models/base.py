@@ -84,7 +84,7 @@ class FlextTestsFlextModelsBase:
                     frozen=True,
                     description="String-keyed payload children.",
                 ),
-            ] = {}
+            ] = MappingProxyType({})
 
             @field_validator("entries", mode="after")
             @classmethod

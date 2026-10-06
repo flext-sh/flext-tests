@@ -148,14 +148,15 @@ class FlextTestsMatchersModelsMixin:
             """
             if value is None:
                 return None
-            return {
-                key: item
-                if callable(item)
-                else FlextTestsPayloadUtilities.to_payload(
-                    item,
-                )
-                for key, item in value.items()
-            }
+            return cast(
+                "Mapping[str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | Callable[[t.Tests.NativeMatchValue], bool]]",
+                {
+                    key: item
+                    if callable(item)
+                    else FlextTestsPayloadUtilities.to_payload(item)
+                    for key, item in value.items()
+                },
+            )
 
     class MatchRule(PayloadParams):
         """One matcher rule parsed from a scalar, type, predicate, or mapping."""
