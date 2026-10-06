@@ -186,6 +186,20 @@ class FlextTestsPayloadIdentityParts:
 class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
     """Payload model contracts independent of JSON projection."""
 
+    @staticmethod
+    @pytest.mark.parametrize("native", [[1, 2], {1, 2}])
+    def test_native_collection_roundtrip(
+        native: list[int] | set[int],
+        tmp_path: Path,
+    ) -> None:
+        """Public file conversion preserves native collection values."""
+        path = FlextTestsFiles(base_dir=tmp_path).create(
+            {"values": native},
+            "collection.json",
+        )
+        restored = u.Cli.json_read(path).unwrap()
+        tm.that(restored["values"], eq=sorted(native))
+
     class Tests:
         """flext-tests payload test namespace."""
 

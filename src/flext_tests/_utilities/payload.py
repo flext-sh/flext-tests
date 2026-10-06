@@ -34,6 +34,13 @@ from flext_tests._models.base import FlextTestsFlextModelsBase
 class FlextTestsFlextUtilitiesPayload:
     """Canonical namespace owner."""
 
+    _PAYLOAD_SEQUENCE_KINDS: Final[tuple[tuple[type, t.Tests.PayloadKind], ...]] = (
+        (list, "list"),
+        (tuple, "tuple"),
+        (set, "set"),
+        (frozenset, "frozenset"),
+    )
+
     @staticmethod
     def _stable_sort_key(value: p.Tests.Payload) -> t.StrPair:
         """Return a total deterministic key for heterogeneous payload values."""
