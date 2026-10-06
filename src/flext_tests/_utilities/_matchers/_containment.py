@@ -29,15 +29,21 @@ class FlextTestsMatchersContainmentMixin:
     ) -> None:
         """Validate containment without converting native values to text."""
         target = FlextTestsPayloadUtilities.to_match_value(
-            FlextTestsPayloadUtilities.to_payload(value),
+            FlextTestsPayloadUtilities.to_payload(
+                value,
+            ),
         )
         for expectation, required in ((has, True), (lacks, False)):
             if expectation is None:
                 continue
-            operand = FlextTestsPayloadUtilities.to_payload(expectation)
+            operand = FlextTestsPayloadUtilities.to_payload(
+                expectation,
+            )
             items = operand.items if operand.kind in {"list", "tuple"} else (operand,)
             for item in items:
-                expected = FlextTestsPayloadUtilities.to_match_value(item)
+                expected = FlextTestsPayloadUtilities.to_match_value(
+                    item,
+                )
                 if as_str:
                     present = str(expected) in str(target)
                 elif isinstance(target, Mapping):

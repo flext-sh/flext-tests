@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_cli.services.cli import FlextCliCli
-from flext_tests._cli_docker import main as docker_main
 
 from flext_tests._cli_docker import main as docker_main
 

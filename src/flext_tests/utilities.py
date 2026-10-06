@@ -20,8 +20,8 @@ from flext_tests._utilities.enforcement import FlextTestsEnforcementUtilitiesMix
 from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
 from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
 from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
-from flext_tests._utilities.governance import FlextTestsModuleGovernanceMixin
-from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
+from flext_tests._utilities.governance import FlextTestsFlextUtilitiesGovernance
+from flext_tests._utilities.handler import FlextTestsFlextUtilitiesHandler
 from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
 from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
 from flext_tests._utilities.namespace import FlextTestsNamespaceUtilitiesMixin
@@ -43,6 +43,10 @@ class FlextTestsUtilities(FlextCliUtilities):
     All u functionality is available via inheritance.
     """
 
+    FlextTestsModuleGovernanceMixin = (
+        FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin
+    )
+
     class Tests(
         FlextTestsResultUtilitiesMixin,
         FlextTestsTestContextUtilitiesMixin,
@@ -52,14 +56,14 @@ class FlextTestsUtilities(FlextCliUtilities):
         FlextTestsGenericHelpersUtilitiesMixin,
         FlextTestsConfigHelpersUtilitiesMixin,
         FlextTestsContainerHelpersUtilitiesMixin,
-        FlextTestsHandlerHelpersUtilitiesMixin,
+        FlextTestsFlextUtilitiesHandler.FlextTestsHandlerHelpersUtilitiesMixin,
         FlextTestsFilesUtilitiesMixin,
         FlextTestsMakeUtilitiesMixin,
         FlextTestsMatchersUtilities.Tests,
         FlextTestsFixturesDSLMixin,
         # NOTE (multi-agent): compose guarded cleanup planning/apply into u.Tests.
         FlextTestsWorkspaceCleanupUtilitiesMixin,
-        FlextTestsModuleGovernanceMixin,
+        FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin,
         FlextTestsEnforcementUtilitiesMixin,
         FlextTestsNamespaceUtilitiesMixin,
     ):
@@ -68,9 +72,4 @@ class FlextTestsUtilities(FlextCliUtilities):
 
 u = FlextTestsUtilities
 
-__all__: list[str] = [
-    "FlextTestsFixturesDSLMixin",
-    "FlextTestsModuleGovernanceMixin",
-    "FlextTestsUtilities",
-    "u",
-]
+__all__: list[str] = ["FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"]

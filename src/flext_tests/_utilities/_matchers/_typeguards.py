@@ -13,7 +13,7 @@ from _pytest.python_api import ApproxBase
 from flext_cli import u
 
 from flext_tests import c, m, p
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
 
 
 class FlextTestsMatchersTypeGuardsMixin:
@@ -54,12 +54,18 @@ class FlextTestsMatchersTypeGuardsMixin:
         Raises:
             AssertionError: If ``(actual == operand) is not equal``.
         """
-        actual = FlextTestsPayloadUtilities.to_match_value(actual_payload)
+        actual = (
+            FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+                actual_payload,
+            )
+        )
         for expected, equal in ((eq_value, True), (ne_value, False)):
             if expected is None:
                 continue
             operand = (
-                FlextTestsPayloadUtilities.to_match_value(expected)
+                FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+                    expected,
+                )
                 if isinstance(expected, m.Tests.Payload)
                 else expected
             )
@@ -79,7 +85,11 @@ class FlextTestsMatchersTypeGuardsMixin:
                 isinstance(native, str) or params.match.search(native) is None)``; or if
                 ``not matches``; or if ``not (isinstance(native, Sized))``.
         """
-        native = FlextTestsPayloadUtilities.to_match_value(payload)
+        native = (
+            FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+                payload,
+            )
+        )
         message = params.msg or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=native)
         FlextTestsMatchersTypeGuardsMixin.prepare_eq_ne_payloads(
             payload,

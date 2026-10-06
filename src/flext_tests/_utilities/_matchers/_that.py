@@ -207,9 +207,13 @@ class FlextTestsMatchersThatMixin:
                         params.msg,
                         as_str=True,
                     )
-                    return FlextTestsPayloadUtilities.to_payload(err)
+                    return FlextTestsPayloadUtilities.to_payload(
+                        err,
+                    )
                 if result_obj.success:
-                    return FlextTestsPayloadUtilities.to_payload(result_obj.value)
+                    return FlextTestsPayloadUtilities.to_payload(
+                        result_obj.value,
+                    )
                 raise AssertionError(
                     params.msg or c.Tests.ERR_OK_FAILED.format(error=result_obj.error),
                 )
@@ -315,7 +319,9 @@ class FlextTestsMatchersThatMixin:
                         )
                     if FlextTestsPayloadUtilities.to_match_value(
                         seq_value[0],
-                    ) != FlextTestsPayloadUtilities.to_match_value(params.first):
+                    ) != FlextTestsPayloadUtilities.to_match_value(
+                        params.first,
+                    ):
                         raise AssertionError(
                             params.msg
                             or (
@@ -330,7 +336,9 @@ class FlextTestsMatchersThatMixin:
                         )
                     if FlextTestsPayloadUtilities.to_match_value(
                         seq_value[-1],
-                    ) != FlextTestsPayloadUtilities.to_match_value(params.last):
+                    ) != FlextTestsPayloadUtilities.to_match_value(
+                        params.last,
+                    ):
                         raise AssertionError(
                             params.msg
                             or (
@@ -380,7 +388,9 @@ class FlextTestsMatchersThatMixin:
                     all_type = params.all_
                     if all(
                         isinstance(
-                            FlextTestsPayloadUtilities.to_match_value(item),
+                            FlextTestsPayloadUtilities.to_match_value(
+                                item,
+                            ),
                             all_type,
                         )
                         for item in seq_value
@@ -391,7 +401,9 @@ class FlextTestsMatchersThatMixin:
                             index
                             for index, item in enumerate(seq_value)
                             if not isinstance(
-                                FlextTestsPayloadUtilities.to_match_value(item),
+                                FlextTestsPayloadUtilities.to_match_value(
+                                    item,
+                                ),
                                 all_type,
                             )
                         ),
@@ -408,7 +420,9 @@ class FlextTestsMatchersThatMixin:
                             index
                             for index, item in enumerate(seq_value)
                             if not predicate(
-                                FlextTestsPayloadUtilities.to_match_value(item),
+                                FlextTestsPayloadUtilities.to_match_value(
+                                    item,
+                                ),
                             )
                         ),
                         None,
@@ -437,7 +451,9 @@ class FlextTestsMatchersThatMixin:
                     any_type = params.any_
                     if not any(
                         isinstance(
-                            FlextTestsPayloadUtilities.to_match_value(item),
+                            FlextTestsPayloadUtilities.to_match_value(
+                                item,
+                            ),
                             any_type,
                         )
                         for item in seq_value
@@ -445,7 +461,11 @@ class FlextTestsMatchersThatMixin:
                         raise AssertionError(params.msg or c.Tests.ERR_ANY_ITEMS_FAILED)
                     return
                 if callable(params.any_) and not any(
-                    params.any_(FlextTestsPayloadUtilities.to_match_value(item))
+                    params.any_(
+                        FlextTestsPayloadUtilities.to_match_value(
+                            item,
+                        ),
+                    )
                     for item in seq_value
                 ):
                     raise AssertionError(params.msg or c.Tests.ERR_ANY_ITEMS_FAILED)
@@ -486,8 +506,12 @@ class FlextTestsMatchersThatMixin:
                     params.unique is not None
                     and params.unique
                     and any(
-                        FlextTestsPayloadUtilities.to_match_value(item)
-                        == FlextTestsPayloadUtilities.to_match_value(previous)
+                        FlextTestsPayloadUtilities.to_match_value(
+                            item,
+                        )
+                        == FlextTestsPayloadUtilities.to_match_value(
+                            previous,
+                        )
                         for index, item in enumerate(seq_value)
                         for previous in seq_value[:index]
                     )
@@ -499,7 +523,9 @@ class FlextTestsMatchersThatMixin:
             @staticmethod
             def _default_sort_key(item: p.Tests.Payload) -> t.StrPair:
                 """Return a deterministic key for heterogeneous matcher values."""
-                native = FlextTestsPayloadUtilities.to_match_value(item)
+                native = FlextTestsPayloadUtilities.to_match_value(
+                    item,
+                )
                 return type(native).__name__, str(native)
 
             @staticmethod
@@ -515,7 +541,11 @@ class FlextTestsMatchersThatMixin:
                 Returns:
                     The resulting ``t.StrPair``.
                 """
-                result = user_key_fn(FlextTestsPayloadUtilities.to_match_value(item))
+                result = user_key_fn(
+                    FlextTestsPayloadUtilities.to_match_value(
+                        item,
+                    ),
+                )
                 return (type(result).__name__, str(result))
 
             @staticmethod
@@ -561,12 +591,16 @@ class FlextTestsMatchersThatMixin:
                         )
                 if params.values is not None:
                     value_list = [
-                        FlextTestsPayloadUtilities.to_match_value(item)
+                        FlextTestsPayloadUtilities.to_match_value(
+                            item,
+                        )
                         for item in mapping_value.values()
                     ]
                     for expected_val in params.values:
                         if (
-                            FlextTestsPayloadUtilities.to_match_value(expected_val)
+                            FlextTestsPayloadUtilities.to_match_value(
+                                expected_val,
+                            )
                             not in value_list
                         ):
                             raise AssertionError(
@@ -602,7 +636,9 @@ class FlextTestsMatchersThatMixin:
                     actual = FlextTestsPayloadUtilities.to_match_value(
                         mapping_value[key],
                     )
-                    wanted = FlextTestsPayloadUtilities.to_match_value(expected)
+                    wanted = FlextTestsPayloadUtilities.to_match_value(
+                        expected,
+                    )
                     if actual != wanted:
                         raise AssertionError(
                             params.msg
@@ -676,7 +712,9 @@ class FlextTestsMatchersThatMixin:
                             params.msg or f"Object missing attribute: {name}",
                         )
                     actual = getattr(subject, name)
-                    wanted = FlextTestsPayloadUtilities.to_match_value(expected)
+                    wanted = FlextTestsPayloadUtilities.to_match_value(
+                        expected,
+                    )
                     if actual != wanted:
                         raise AssertionError(
                             params.msg
@@ -715,7 +753,9 @@ class FlextTestsMatchersThatMixin:
                 """
                 params = cls._that_params(kwargs)
                 if owned_payload:
-                    payload = FlextTestsPayloadUtilities.to_payload(value)
+                    payload = FlextTestsPayloadUtilities.to_payload(
+                        value,
+                    )
                     value = payload.atom if payload.kind == "atom" else payload
                 cls._validate_declared_types(value, params, owned_payload=owned_payload)
                 cls._validate_attrs(value, params)
@@ -733,7 +773,9 @@ class FlextTestsMatchersThatMixin:
                         )
                     return
                 subject = cls._result_subject(value, params)
-                subject_payload = FlextTestsPayloadUtilities.to_payload(subject)
+                subject_payload = FlextTestsPayloadUtilities.to_payload(
+                    subject,
+                )
                 cls._validate_scalar(subject_payload, params)
                 cls._validate_common(subject_payload, params, effective_has=params.has)
                 cls._validate_sequence(subject_payload, params)
@@ -796,7 +838,9 @@ class FlextTestsMatchersThatMixin:
                         inherited_msg=params.msg,
                     )
                 if params.where is not None:
-                    native = FlextTestsPayloadUtilities.to_match_value(subject_payload)
+                    native = FlextTestsPayloadUtilities.to_match_value(
+                        subject_payload,
+                    )
                     if not params.where(native):
                         raise AssertionError(
                             params.msg
@@ -880,7 +924,10 @@ class FlextTestsMatchersThatMixin:
             try:
                 cls._apply_rule(
                     FlextTestsPayloadUtilities.to_match_value(
-                        FlextTestsPayloadUtilities.extract_path_value(subject, path),
+                        FlextTestsPayloadUtilities.extract_path_value(
+                            subject,
+                            path,
+                        ),
                     ),
                     rule,
                     owned_payload=True,
@@ -902,7 +949,10 @@ class FlextTestsMatchersThatMixin:
         if subject.kind in {"atom", "mapping"}:
             raise AssertionError(inherited_msg or "Item assertions require a sequence")
         sequence_value = tuple(
-            FlextTestsPayloadUtilities.to_match_value(item) for item in subject.items
+            FlextTestsPayloadUtilities.to_match_value(
+                item,
+            )
+            for item in subject.items
         )
         match rules:
             case Sequence():

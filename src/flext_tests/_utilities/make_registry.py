@@ -10,11 +10,16 @@ from pathlib import Path
 
 from flext_core import r
 from flext_tests import c, m, p, t
-from flext_tests._utilities.make_contract import FlextTestsMakeContractUtilitiesMixin
+from flext_tests._utilities.make_contract import (
+    FlextTestsFlextUtilitiesMakeContract,
+    FlextTestsMakeContractUtilitiesMixin,
+)
 from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
 
 
-class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin):
+class FlextTestsMakeRegistryUtilitiesMixin(
+    FlextTestsFlextUtilitiesMakeContract.FlextTestsMakeContractUtilitiesMixin,
+):
     """Build and resolve the Make command registry."""
 
     @staticmethod
@@ -147,7 +152,9 @@ class FlextTestsMakeRegistryUtilitiesMixin(FlextTestsMakeContractUtilitiesMixin)
             surface=surface_result.value,
         )
         contract_result = (
-            FlextTestsMakeContractUtilitiesMixin.make_validate_command_contract(command)
+            FlextTestsMakeContractUtilitiesMixin.make_validate_command_contract(
+                command,
+            )
         )
         if contract_result.failure:
             return r[m.Tests.MakeCommand].from_failure(contract_result)

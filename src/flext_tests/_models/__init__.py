@@ -10,11 +10,10 @@ from __future__ import annotations
 from types import MappingProxyType
 from typing import TYPE_CHECKING
 
-from flext_core import build_lazy_import_map, install_lazy_exports
+from flext_core import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._models._rebuild import rebuild_nested_models
-    from flext_tests._models.base import FlextTestsBaseModelsMixin
+    from flext_tests._models.base import FlextTestsFlextModelsBase
     from flext_tests._models.batch import FlextTestsBatchModelsMixin
     from flext_tests._models.docker import FlextTestsDockerModelsMixin
     from flext_tests._models.domains import FlextTestsDomainModelsMixin
@@ -23,6 +22,7 @@ if TYPE_CHECKING:
     from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
     from flext_tests._models.namespace import FlextTestsNamespaceModelsMixin
     from flext_tests._models.spec import FlextTestsSpecModelsMixin
+    from flext_tests._models.tests_namespace import TestsNamespace
     from flext_tests._models.validator import FlextTestsValidatorModelsMixin
     from flext_tests._models.workspace_cleanup import (
         FlextTestsWorkspaceCleanupModelsMixin,
@@ -30,39 +30,36 @@ if TYPE_CHECKING:
 
 
 __all__: tuple[str, ...] = (
-    "FlextTestsBaseModelsMixin",
     "FlextTestsBatchModelsMixin",
     "FlextTestsDockerModelsMixin",
     "FlextTestsDomainModelsMixin",
     "FlextTestsFilesystemModelsMixin",
+    "FlextTestsFlextModelsBase",
     "FlextTestsMakeModelsMixin",
     "FlextTestsMatchersModelsMixin",
     "FlextTestsNamespaceModelsMixin",
     "FlextTestsSpecModelsMixin",
     "FlextTestsValidatorModelsMixin",
     "FlextTestsWorkspaceCleanupModelsMixin",
-    "rebuild_nested_models",
+    "TestsNamespace",
 )
 
-_LAZY_IMPORTS = MappingProxyType(
-    build_lazy_import_map(
-        MappingProxyType({
-            "._rebuild": ("rebuild_nested_models",),
-            ".base": ("FlextTestsBaseModelsMixin",),
-            ".batch": ("FlextTestsBatchModelsMixin",),
-            ".docker": ("FlextTestsDockerModelsMixin",),
-            ".domains": ("FlextTestsDomainModelsMixin",),
-            ".filesystem": ("FlextTestsFilesystemModelsMixin",),
-            ".make": ("FlextTestsMakeModelsMixin",),
-            ".matchers": ("FlextTestsMatchersModelsMixin",),
-            ".namespace": ("FlextTestsNamespaceModelsMixin",),
-            ".spec": ("FlextTestsSpecModelsMixin",),
-            ".validator": ("FlextTestsValidatorModelsMixin",),
-            ".workspace_cleanup": ("FlextTestsWorkspaceCleanupModelsMixin",),
-        }),
-        alias_groups=MappingProxyType({}),
-        sort_keys=False,
-    ),
+install_lazy_exports(
+    __name__,
+    globals(),
+    MappingProxyType({
+        "FlextTestsBatchModelsMixin": ".batch",
+        "FlextTestsDockerModelsMixin": ".docker",
+        "FlextTestsDomainModelsMixin": ".domains",
+        "FlextTestsFilesystemModelsMixin": ".filesystem",
+        "FlextTestsFlextModelsBase": ".base",
+        "FlextTestsMakeModelsMixin": ".make",
+        "FlextTestsMatchersModelsMixin": ".matchers",
+        "FlextTestsNamespaceModelsMixin": ".namespace",
+        "FlextTestsSpecModelsMixin": ".spec",
+        "FlextTestsValidatorModelsMixin": ".validator",
+        "FlextTestsWorkspaceCleanupModelsMixin": ".workspace_cleanup",
+        "TestsNamespace": ".tests_namespace",
+    }),
+    public_exports=__all__,
 )
-
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)

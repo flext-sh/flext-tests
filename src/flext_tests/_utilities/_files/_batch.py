@@ -68,7 +68,10 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
         """
         if isinstance(content, Mapping):
             return {
-                k: FlextTestsPayloadUtilities.to_payload(v) for k, v in content.items()
+                k: FlextTestsPayloadUtilities.to_payload(
+                    v,
+                )
+                for k, v in content.items()
             }
         return content
 

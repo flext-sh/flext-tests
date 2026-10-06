@@ -30,7 +30,7 @@ from flext_tests._protocols.payload import FlextTestsPayloadProtocolsMixin
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from flext_tests._models.base import FlextTestsBaseModelsMixin
+    from flext_tests._models.base import FlextTestsFlextModelsBase
 
 
 class FlextTestsBaseTypesMixin:
@@ -86,7 +86,7 @@ class FlextTestsBaseTypesMixin:
     )
     type DeepSpec = Mapping[
         str,
-        FlextTestsBaseModelsMixin.Payload
+        FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
         | Callable[[FlextTestsBaseTypesMixin.NativeMatchValue], bool],
     ]
     type TestobjectHashable = (

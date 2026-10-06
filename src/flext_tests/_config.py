@@ -12,24 +12,21 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from flext_cli import FlextCliConfig, m
+from flext_cli import FlextCliConfig
 
-
-class _TestsNamespace(m.BaseModel):
-    """Open, frozen namespace exposing every ``config/*.yaml`` domain model-less."""
-
-    model_config = m.ConfigDict(extra="allow", frozen=True)
+from flext_tests import m
+from flext_tests._models import TestsNamespace
 
 
 class FlextTestsConfig(FlextCliConfig):
     """Tests config auto-loaded model-less from ``config/*.yaml``."""
 
     Tests: Annotated[
-        _TestsNamespace,
+        TestsNamespace,
         m.Field(
             description="Open namespace exposing ``config/*.yaml`` under ``Tests``.",
         ),
-    ] = _TestsNamespace()
+    ] = TestsNamespace()
 
 
 config: FlextTestsConfig = FlextTestsConfig.fetch_global()
