@@ -77,11 +77,10 @@ class FlextTestsFlextModelsBase:
                     FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
                 ],
                 m.Field(
-                    default_factory=FlextTestsFlextModelsBase._payload_entries_default,
                     frozen=True,
                     description="String-keyed payload children.",
                 ),
-            ]
+            ] = {}
 
             @field_validator("entries", mode="after")
             @classmethod

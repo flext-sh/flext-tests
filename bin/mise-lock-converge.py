@@ -174,14 +174,21 @@ class MiseLockConverge:
         # informational warning on every version listing (newer releases are
         # hidden by the declared age window, by design). It is not a defect:
         # treating it as blocking would make every converge fail forever.
+        # Cross-platform lock-time listing noise is equally deterministic:
+        # third-party releases (jscpd, qlty) publish no SLSA attestations and
+        # some python-build releases ship assets for only a subset of the
+        # six lockfile platforms, so their listings resolve on fewer targets.
         expected_warnings = (
             "hidden by minimum_release_age",
+            "lock-time provenance verification failed",
+            "failed to resolve",
         )
         warned = [line for line in diagnostics.splitlines() if "mise WARN" in line]
+        expected_folded = [expected.lower() for expected in expected_warnings]
         unexpected = [
             line
             for line in warned
-            if not any(expected in line for expected in expected_warnings)
+            if not any(expected in line.lower() for expected in expected_folded)
         ]
         if unexpected:
             sys.stderr.write(diagnostics)
@@ -222,7 +229,9 @@ class MiseLockConverge:
         return tools
 
     @classmethod
-    def release_candidates(cls, listing: str, failed_version: str) -> list[str]:
+    def release_candidates(
+        cls, listing: str, failed_version: str, selector: str
+    ) -> list[str]:
         """List releases of an ``ls-remote`` listing strictly older than the failed one."""
 
         def release_key(version: str) -> tuple[int, ...] | None:
@@ -232,18 +241,15 @@ class MiseLockConverge:
                 return None
 
         failed = release_key(failed_version)
-        candidates: list[str] = []
+        scored: list[tuple[tuple[int, ...], str]] = []
         for line in listing.splitlines():
             version = line.strip().lstrip("v")
             parsed = release_key(version)
             if parsed is None or (failed is not None and parsed >= failed):
                 continue
-            candidates.append(version)
-        # Unparseable versions cannot order; drop them before the sort so the
-        # key stays total (a None key would raise at comparison time).
-        candidates = [c for c in candidates if release_key(c) is not None]
-        candidates.sort(key=lambda c: release_key(c) or (), reverse=True)
-        return candidates[: cls.CANDIDATE_LIMIT]
+            scored.append((parsed, version))
+        scored.sort(reverse=True)
+        return [version for _, version in scored[: cls.CANDIDATE_LIMIT]]
 
     @staticmethod
     def hold_manifest_version(manifest: Path, selector: str, version: str) -> None:
@@ -306,7 +312,9 @@ class MiseLockConverge:
         """Hold one failing tool at its newest release that installs in the stage."""
         listing = cls._run(runtime, ["ls-remote", selector], environment)
         manifest = cls.staged_manifest(stage)
-        for candidate in cls.release_candidates(listing, failed_version):
+        for candidate in cls.release_candidates(
+            listing, failed_version, selector
+        ):
             cls.hold_manifest_version(manifest, selector, candidate)
             try:
                 cls._run(runtime, ["-C", str(stage), "lock"], environment)

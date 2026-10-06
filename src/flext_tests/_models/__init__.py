@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING
 from flext_core import install_lazy_exports
 
 if TYPE_CHECKING:
+    from flext_tests._models._rebuild import rebuild_nested_models
     from flext_tests._models.base import FlextTestsFlextModelsBase
     from flext_tests._models.batch import FlextTestsBatchModelsMixin
     from flext_tests._models.docker import FlextTestsDockerModelsMixin
@@ -42,6 +43,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsValidatorModelsMixin",
     "FlextTestsWorkspaceCleanupModelsMixin",
     "TestsNamespace",
+    "rebuild_nested_models",
 )
 
 install_lazy_exports(
@@ -60,6 +62,7 @@ install_lazy_exports(
         "FlextTestsValidatorModelsMixin": ".validator",
         "FlextTestsWorkspaceCleanupModelsMixin": ".workspace_cleanup",
         "TestsNamespace": ".tests_namespace",
+        "rebuild_nested_models": "._rebuild",
     }),
     public_exports=__all__,
 )
