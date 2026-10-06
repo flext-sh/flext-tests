@@ -380,7 +380,7 @@ def _payload_sequence_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
         children = tuple(
             sorted(
                 children,
-                key=FlextTestsPayloadUtilities._stable_sort_key,
+                key=_stable_sort_key,
             ),
         )
     for sequence_type, kind in _PAYLOAD_SEQUENCE_KINDS:
