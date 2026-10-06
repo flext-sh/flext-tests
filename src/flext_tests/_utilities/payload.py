@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 class FlextTestsFlextUtilitiesPayload:
     """Canonical namespace owner."""
 
-    _PAYLOAD_SEQUENCE_KINDS: Final[MappingProxyType[type, str]] = (
+    _PAYLOAD_SEQUENCE_KINDS: Final[MappingProxyType[type, t.Tests.PayloadKind]] = (
         MappingProxyType({
             list: "list",
             tuple: "tuple",
@@ -268,10 +268,10 @@ class FlextTestsFlextUtilitiesPayload:
                     key=FlextTestsFlextUtilitiesPayload._stable_sort_key,
                 ),
             )
-        for (
-            sequence_type,
-            kind,
-        ) in FlextTestsFlextUtilitiesPayload._PAYLOAD_SEQUENCE_KINDS:
+        kinds: Mapping[type, t.Tests.PayloadKind] = (
+            FlextTestsFlextUtilitiesPayload._PAYLOAD_SEQUENCE_KINDS
+        )
+        for sequence_type, kind in kinds.items():
             if isinstance(value, sequence_type):
                 return FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload(
                     kind=kind,
@@ -513,14 +513,23 @@ class FlextTestsFlextUtilitiesPayload:
                     return result_model(
                         path=path,
                         expected="<predicate>",
-                        actual=node,
+                        actual=cast(
+                            "FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload",
+                            node,
+                        ),
                         matched=False,
                         reason="Predicate failed",
                     )
             return result_model(
                 path="",
-                expected=subject,
-                actual=subject,
+                expected=cast(
+                    "FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload",
+                    subject,
+                ),
+                actual=cast(
+                    "FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload",
+                    subject,
+                ),
                 matched=True,
                 reason="",
             )

@@ -21,6 +21,9 @@ from typing import cast, TYPE_CHECKING
 
 import pytest
 
+if TYPE_CHECKING:
+    from flext_tests.base import FlextTestsServiceBase
+
 from flext_core import FlextContainer, FlextContext, FlextSettings
 from flext_tests import FlextTestsCase, FlextTestsSettings, s
 
@@ -82,7 +85,7 @@ def _bind_runtime_aliases(
             "which is not a FlextTestsServiceBase subclass"
         )
         raise TypeError(msg)
-    service = cast("FlextTestsServiceBase[Base]", service_type.fetch_global())
+    service = cast("FlextTestsServiceBase", service_type.fetch_global())
     instance.service = service
     instance.settings = service.fetch_settings()
     instance.logger = service.logger
