@@ -337,9 +337,11 @@ class FlextTestsFlextUtilitiesPayload:
                 # models, paths); NativeMatchValue stays JsonValue-only because
                 # pyrefly cannot resolve a class-scoped self-referential alias.
                 pairs = value.entries.items()
+                # pyrefly: ignore[bad-return]
                 return {key: project(item) for key, item in pairs}
             items = value.items
-            return [project(item) for item in items]  # pyrefly: ignore[bad-return]
+            # pyrefly: ignore[bad-return]
+            return [project(item) for item in items]
 
         @staticmethod
         def to_normalized_value(value: p.Tests.Payload) -> t.JsonValue:

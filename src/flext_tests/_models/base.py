@@ -38,7 +38,7 @@ class FlextTestsFlextModelsBase:
 
     @staticmethod
     def _payload_entries_default() -> t.Tests.PayloadEntries[
-        FlextTestsBaseModelsMixin.Payload
+        FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
     ]:
         """Late-bound empty mapping arm, bound the same way as the entity default.
 

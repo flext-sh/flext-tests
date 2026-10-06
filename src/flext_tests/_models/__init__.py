@@ -41,8 +41,8 @@ __all__: tuple[str, ...] = (
     "FlextTestsSpecModelsMixin",
     "FlextTestsValidatorModelsMixin",
     "FlextTestsWorkspaceCleanupModelsMixin",
-    "TestsNamespace",
     "rebuild_nested_models",
+    "TestsNamespace",
 )
 
 install_lazy_exports(

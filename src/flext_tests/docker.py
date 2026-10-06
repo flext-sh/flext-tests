@@ -282,6 +282,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
             WhalesDockerException,
         )
 
+    @override
     def _compose_path(self, compose_file: str) -> Path:
         """Resolve a compose path against the configured workspace root.
 
@@ -295,6 +296,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
             else self.repository_root / compose_file
         )
 
+    @override
     def _compose_down(self, compose_path: Path, project: str) -> p.Result[str]:
         """Remove one compose project with its volumes.
 
@@ -311,6 +313,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
             return r[str].fail_op("Compose down", exc)
         return r[str].ok("Compose down successful")
 
+    @override
     def _compose_up(
         self,
         compose_path: Path,
@@ -347,6 +350,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
             return r[str].fail_op("Compose up", exc)
         return r[str].ok("Compose up successful")
 
+    @override
     def _inspect(self, container_name: str) -> p.Result[m.Tests.ContainerInspect]:
         """Inspect one container; an absent one fails NOT_PROVISIONED.
 
