@@ -239,7 +239,10 @@ class MiseLockConverge:
             if parsed is None or (failed is not None and parsed >= failed):
                 continue
             candidates.append(version)
-        candidates.sort(key=release_key, reverse=True)
+        # Unparseable versions cannot order; drop them before the sort so the
+        # key stays total (a None key would raise at comparison time).
+        candidates = [c for c in candidates if release_key(c) is not None]
+        candidates.sort(key=lambda c: release_key(c) or (), reverse=True)
         return candidates[: cls.CANDIDATE_LIMIT]
 
     @staticmethod

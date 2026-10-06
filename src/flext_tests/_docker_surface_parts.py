@@ -18,7 +18,7 @@ from flext_tests import r, u
 if TYPE_CHECKING:
     from flext_tests import m, p, t
 
-    class _DockerFacadeInternals(Protocol):
+    class _DockerFacadeInternals:
         """The facade-own internals the surface verbs delegate to."""
 
         def _compose_path(self, compose_file: str) -> Path: ...
