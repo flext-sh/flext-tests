@@ -46,7 +46,9 @@ class FlextTestsFlextUtilitiesPayload:
         return type(native).__name__, str(native)
 
     @staticmethod
-    def _payload_model_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_model_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own matcher model leaves (payload, root model, enum) recursively.
 
         Returns:
@@ -65,7 +67,9 @@ class FlextTestsFlextUtilitiesPayload:
         return None
 
     @staticmethod
-    def _payload_none_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_none_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own ``None`` as the canonical empty atom.
 
         Returns:
@@ -76,7 +80,9 @@ class FlextTestsFlextUtilitiesPayload:
         return None
 
     @staticmethod
-    def _payload_scalar_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_scalar_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own supported native scalars and model leaves as atoms.
 
         Returns:
@@ -102,7 +108,9 @@ class FlextTestsFlextUtilitiesPayload:
         return None
 
     @staticmethod
-    def _payload_annotated_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_annotated_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own ``typing.Annotated`` constructs as their textual atom.
 
         Returns:
@@ -115,7 +123,9 @@ class FlextTestsFlextUtilitiesPayload:
         return None
 
     @staticmethod
-    def _payload_match_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_match_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own a regex match through its matched text.
 
         Returns:
@@ -128,7 +138,9 @@ class FlextTestsFlextUtilitiesPayload:
         return None
 
     @staticmethod
-    def _payload_runtime_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_runtime_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own typing constructs and runtime machinery as textual atoms.
 
         Returns:
@@ -155,7 +167,9 @@ class FlextTestsFlextUtilitiesPayload:
         return None
 
     @staticmethod
-    def _payload_view_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_view_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own dict and set views through their native iteration order.
 
         Returns:
@@ -168,7 +182,9 @@ class FlextTestsFlextUtilitiesPayload:
         return None
 
     @staticmethod
-    def _payload_mapping_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_mapping_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own a native mapping with stringified, collision-checked keys.
 
         Returns:
@@ -191,7 +207,9 @@ class FlextTestsFlextUtilitiesPayload:
         return flext_tests.m.Tests.Payload(kind="mapping", entries=entries)
 
     @staticmethod
-    def _payload_sequence_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_sequence_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own a native sequence or set with deterministic set ordering.
 
         Returns:

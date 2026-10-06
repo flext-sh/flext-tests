@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from types import MappingProxyType
-from typing import Annotated, Any, Self, TYPE_CHECKING
+from typing import Annotated, Any, Self
 
 from flext_cli import m, p
 from pydantic import field_validator, model_validator
