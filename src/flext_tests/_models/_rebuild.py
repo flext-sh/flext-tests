@@ -19,6 +19,25 @@ from typing import Any
 # siblings, and the mixin itself.
 
 
+class _LazyAliasNamespace(dict[str, Any]):
+    """Namespace that resolves flext_tests aliases on first reference.
+
+    Eager resolution would import alias targets (typings, models) while the
+    package is still mid-init and re-enter the importing module; resolving on
+    __missing__ keeps the rebuild scoped to the names the annotations use.
+    """
+
+    def __missing__(self, key: str) -> Any:
+        import flext_tests as _package
+
+        try:
+            value = getattr(_package, key)
+        except AttributeError as exc:
+            raise KeyError(key) from exc
+        self[key] = value
+        return value
+
+
 def _rebuild_namespace(mixin: type) -> dict[str, Any]:
     """Build the merged types namespace for a mixin's deferred models.
 
@@ -26,7 +45,7 @@ def _rebuild_namespace(mixin: type) -> dict[str, Any]:
         The resulting ``dict[str, Any]`` namespace.
 
     """
-    namespace: dict[str, Any] = {}
+    namespace: dict[str, Any] = _LazyAliasNamespace()
     for module_name, module in tuple(sys.modules.items()):
         if module is None:
             continue
@@ -72,7 +91,7 @@ def rebuild_nested_models(mixin: type) -> None:
     namespace = _rebuild_namespace(mixin)
     for member in tuple(vars(mixin).values()):
         if isinstance(member, type) and hasattr(member, "model_rebuild"):
-            member.model_rebuild(_types_namespace=namespace)
+            member.model_rebuild(_types_namespace=namespace, raise_errors=False)
 
 
 __all__: list[str] = ["rebuild_nested_models"]
