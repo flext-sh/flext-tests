@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING
 from flext_core import build_lazy_import_map, install_lazy_exports
 
 if TYPE_CHECKING:
+    from flext_tests._models._rebuild import rebuild_nested_models
     from flext_tests._models.base import FlextTestsBaseModelsMixin
     from flext_tests._models.batch import FlextTestsBatchModelsMixin
     from flext_tests._models.docker import FlextTestsDockerModelsMixin
@@ -40,11 +41,13 @@ __all__: tuple[str, ...] = (
     "FlextTestsSpecModelsMixin",
     "FlextTestsValidatorModelsMixin",
     "FlextTestsWorkspaceCleanupModelsMixin",
+    "rebuild_nested_models",
 )
 
 _LAZY_IMPORTS = MappingProxyType(
     build_lazy_import_map(
         MappingProxyType({
+            "._rebuild": ("rebuild_nested_models",),
             ".base": ("FlextTestsBaseModelsMixin",),
             ".batch": ("FlextTestsBatchModelsMixin",),
             ".docker": ("FlextTestsDockerModelsMixin",),
