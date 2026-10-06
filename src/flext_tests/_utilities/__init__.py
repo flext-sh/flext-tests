@@ -49,14 +49,14 @@ if TYPE_CHECKING:
     from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
     from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
     from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
-    from flext_tests._utilities.governance import FlextTestsModuleGovernanceMixin
+    from flext_tests._utilities.governance import FlextTestsFlextUtilitiesGovernance
     from flext_tests._utilities.handler import (
         FlextTestsHandlerConfigParams,
         FlextTestsHandlerHelpersUtilitiesMixin,
     )
     from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
     from flext_tests._utilities.make_contract import (
-        FlextTestsMakeContractUtilitiesMixin,
+        FlextTestsFlextUtilitiesMakeContract,
     )
     from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
     from flext_tests._utilities.make_registry import (
@@ -67,7 +67,7 @@ if TYPE_CHECKING:
     )
     from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
     from flext_tests._utilities.namespace import FlextTestsNamespaceUtilitiesMixin
-    from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+    from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
     from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
     from flext_tests._utilities.scratch_storage import (
         FlextTestsScratchStorageUtilitiesMixin,
@@ -107,10 +107,12 @@ __all__: tuple[str, ...] = (
     "FlextTestsFilesReadingMixin",
     "FlextTestsFilesUtilitiesMixin",
     "FlextTestsFixturesDSLMixin",
+    "FlextTestsFlextUtilitiesGovernance",
+    "FlextTestsFlextUtilitiesMakeContract",
+    "FlextTestsFlextUtilitiesPayload",
     "FlextTestsGenericHelpersUtilitiesMixin",
     "FlextTestsHandlerConfigParams",
     "FlextTestsHandlerHelpersUtilitiesMixin",
-    "FlextTestsMakeContractUtilitiesMixin",
     "FlextTestsMakeParsingUtilitiesMixin",
     "FlextTestsMakeRegistryUtilitiesMixin",
     "FlextTestsMakeRenderingUtilitiesMixin",
@@ -123,9 +125,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsMatchersThatMixin",
     "FlextTestsMatchersTypeGuardsMixin",
     "FlextTestsMatchersUtilities",
-    "FlextTestsModuleGovernanceMixin",
     "FlextTestsNamespaceUtilitiesMixin",
-    "FlextTestsPayloadUtilities",
     "FlextTestsResultUtilitiesMixin",
     "FlextTestsScratchStorageUtilitiesMixin",
     "FlextTestsTestContextUtilitiesMixin",
@@ -158,10 +158,12 @@ install_lazy_exports(
         "FlextTestsFilesReadingMixin": "._files._reading",
         "FlextTestsFilesUtilitiesMixin": ".files",
         "FlextTestsFixturesDSLMixin": ".fixtures_dsl",
+        "FlextTestsFlextUtilitiesGovernance": ".governance",
+        "FlextTestsFlextUtilitiesMakeContract": ".make_contract",
+        "FlextTestsFlextUtilitiesPayload": ".payload",
         "FlextTestsGenericHelpersUtilitiesMixin": ".generic",
         "FlextTestsHandlerConfigParams": ".handler",
         "FlextTestsHandlerHelpersUtilitiesMixin": ".handler",
-        "FlextTestsMakeContractUtilitiesMixin": ".make_contract",
         "FlextTestsMakeParsingUtilitiesMixin": ".make_parsing",
         "FlextTestsMakeRegistryUtilitiesMixin": ".make_registry",
         "FlextTestsMakeRenderingUtilitiesMixin": ".make_rendering",
@@ -174,9 +176,7 @@ install_lazy_exports(
         "FlextTestsMatchersThatMixin": "._matchers._that",
         "FlextTestsMatchersTypeGuardsMixin": "._matchers._typeguards",
         "FlextTestsMatchersUtilities": ".matchers",
-        "FlextTestsModuleGovernanceMixin": ".governance",
         "FlextTestsNamespaceUtilitiesMixin": ".namespace",
-        "FlextTestsPayloadUtilities": ".payload",
         "FlextTestsResultUtilitiesMixin": ".result",
         "FlextTestsScratchStorageUtilitiesMixin": ".scratch_storage",
         "FlextTestsTestContextUtilitiesMixin": ".testcontext",
