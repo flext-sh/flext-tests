@@ -27,7 +27,7 @@ from types import (
 from typing import Final, TypeAliasType
 
 import flext_tests
-from flext_core import m, u
+from flext_core import u
 from flext_tests import p, t
 from flext_tests._models.base import FlextTestsBaseModelsMixin
 
@@ -54,6 +54,7 @@ def _payload_model_leaf(
 def _payload_root_model_leaf(
     value: p.AttributeProbe,
 ) -> FlextTestsBaseModelsMixin.Payload | None:
+    from flext_tests import m  # lazy: models.py aggregates payload
     """Unwrap a root model into its validated root value.
 
     Returns:
@@ -255,8 +256,10 @@ _PAYLOAD_LEAF_HANDLERS: Final[
 )
 
 
-def _payload_model_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+def _payload_model_leaf(value: p.AttributeProbe) -> "m.Tests.Payload | None":
     """Own matcher model leaves (payload, root model, enum) recursively."""
+    from flext_tests import m
+
     if isinstance(value, m.Tests.Payload):
         return value
     if isinstance(value, m.RootModel):
@@ -266,14 +269,17 @@ def _payload_model_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
     return None
 
 
-def _payload_none_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+def _payload_none_leaf(value: p.AttributeProbe) -> "m.Tests.Payload | None":
     """Own ``None`` as the canonical empty atom."""
+    from flext_tests import m
+
     if value is None:
         return m.Tests.Payload(kind="atom", atom=None)
     return None
 
 
 def _payload_scalar_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+    from flext_tests import m  # lazy: models.py aggregates payload
     """Own supported native scalars and model leaves as atoms."""
     if isinstance(
         value,
@@ -284,6 +290,7 @@ def _payload_scalar_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
 
 
 def _payload_annotated_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+    from flext_tests import m  # lazy: models.py aggregates payload
     """Own ``typing.Annotated`` constructs as their textual atom."""
     if hasattr(value, "__metadata__") and hasattr(value, "__origin__"):
         # typing.Annotated[...] constructs are type-level atoms under
@@ -293,6 +300,7 @@ def _payload_annotated_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
 
 
 def _payload_match_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+    from flext_tests import m  # lazy: models.py aggregates payload
     """Own a regex match through its matched text."""
     if isinstance(value, Match):
         # A regex match compares by its matched text — the pattern
@@ -302,6 +310,7 @@ def _payload_match_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
 
 
 def _payload_runtime_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+    from flext_tests import m  # lazy: models.py aggregates payload
     """Own typing constructs and runtime machinery as textual atoms."""
     if isinstance(
         value,
@@ -332,6 +341,7 @@ def _payload_view_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
 
 
 def _payload_mapping_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+    from flext_tests import m  # lazy: models.py aggregates payload
     """Own a native mapping with stringified, collision-checked keys.
 
     Returns:
@@ -361,6 +371,7 @@ _PAYLOAD_SEQUENCE_KINDS: Final[tuple[tuple[type, t.Tests.PayloadKind], ...]] = (
 
 
 def _payload_sequence_leaf(value: p.AttributeProbe) -> m.Tests.Payload | None:
+    from flext_tests import m  # lazy: models.py aggregates payload
     """Own a native sequence or set with deterministic set ordering."""
     if not isinstance(value, (list, tuple, set, frozenset)):
         return None
@@ -432,6 +443,7 @@ class FlextTestsPayloadUtilities:
 
     @staticmethod
     def to_normalized_value(value: p.Tests.Payload) -> t.JsonValue:
+        from flext_tests import m  # lazy: models.py aggregates payload
         """Project an owned tree at an explicit textual/metadata boundary.
 
         Returns:
@@ -466,6 +478,7 @@ class FlextTestsPayloadUtilities:
             | t.JsonMapping
         ),
     ) -> m.ConfigMap:
+        from flext_tests import m  # lazy: models.py aggregates payload
         """Convert a model or payload mapping to the canonical ConfigMap shape.
 
         Returns:
