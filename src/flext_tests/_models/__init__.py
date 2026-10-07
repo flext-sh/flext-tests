@@ -23,7 +23,6 @@ if TYPE_CHECKING:
     from flext_tests._models.namespace import FlextTestsNamespaceModelsMixin
     from flext_tests._models.spec import FlextTestsSpecModelsMixin
     from flext_tests._models.tests_namespace import FlextTestsNamespace
-    from flext_tests._models.tests_namespace import FlextTestsNamespace
     from flext_tests._models.validator import FlextTestsValidatorModelsMixin
     from flext_tests._models.workspace_cleanup import (
         FlextTestsWorkspaceCleanupModelsMixin,
@@ -38,7 +37,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsFlextModelsBase",
     "FlextTestsMakeModelsMixin",
     "FlextTestsMatchersModelsMixin",
-    "FlextTestsNamespace",
     "FlextTestsNamespace",
     "FlextTestsNamespaceModelsMixin",
     "FlextTestsSpecModelsMixin",
