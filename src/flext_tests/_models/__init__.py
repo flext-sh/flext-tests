@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
     from flext_tests._models.namespace import FlextTestsNamespaceModelsMixin
     from flext_tests._models.spec import FlextTestsSpecModelsMixin
-    from flext_tests._models.tests_namespace import TestsNamespace
+    from flext_tests._models.tests_namespace import FlextTestsNamespace
     from flext_tests._models.validator import FlextTestsValidatorModelsMixin
     from flext_tests._models.workspace_cleanup import (
         FlextTestsWorkspaceCleanupModelsMixin,
@@ -37,11 +37,11 @@ __all__: tuple[str, ...] = (
     "FlextTestsFlextModelsBase",
     "FlextTestsMakeModelsMixin",
     "FlextTestsMatchersModelsMixin",
+    "FlextTestsNamespace",
     "FlextTestsNamespaceModelsMixin",
     "FlextTestsSpecModelsMixin",
     "FlextTestsValidatorModelsMixin",
     "FlextTestsWorkspaceCleanupModelsMixin",
-    "TestsNamespace",
 )
 
 install_lazy_exports(
@@ -59,7 +59,7 @@ install_lazy_exports(
         "FlextTestsSpecModelsMixin": ".spec",
         "FlextTestsValidatorModelsMixin": ".validator",
         "FlextTestsWorkspaceCleanupModelsMixin": ".workspace_cleanup",
-        "TestsNamespace": ".tests_namespace",
+        "FlextTestsNamespace": ".tests_namespace",
     }),
     public_exports=__all__,
 )

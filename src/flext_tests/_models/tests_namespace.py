@@ -10,7 +10,7 @@ from __future__ import annotations
 from flext_tests import m
 
 
-class TestsNamespace(m.BaseModel):
+class FlextTestsNamespace(m.BaseModel):
     """Open, frozen namespace exposing every ``config/*.yaml`` domain model-less."""
 
     model_config = m.ConfigDict(extra="allow", frozen=True)
