@@ -220,9 +220,8 @@ class FlextTestsFlextUtilitiesMakeContract:
             """
             if not registry.commands_by_verb:
                 return r[bool].fail("no command found in scripts/cmd/<verb>/<what>")
-            contract = (
-                FlextTestsFlextUtilitiesMakeContract.FlextTestsMakeContractUtilitiesMixin
-            )
+            contract = FlextTestsFlextUtilitiesMakeContract
+            contract = contract.FlextTestsMakeContractUtilitiesMixin
             for verb, commands in sorted(registry.commands_by_verb.items()):
                 if c.Tests.MAKE_DEFAULT_COMMAND not in commands:
                     return r[bool].fail(

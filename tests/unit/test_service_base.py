@@ -17,7 +17,6 @@ from typing import override
 
 import pytest
 from flext_infra import FlextInfraConstants, config as infra_config
-from pydantic import ValidationError
 
 from flext_core import FlextSettings
 from flext_tests import FlextTestsServiceBase, m, tm
@@ -65,7 +64,7 @@ class TestsFlextTestsServiceBase:
     def test_isolated_test_runtime_without_build_still_needs_fetch_global() -> None:
         """Omitting ``build`` for a port-bearing service still fails validated."""
         with (
-            pytest.raises(ValidationError, match="port"),
+            pytest.raises(m.ValidationError, match="port"),
             u.Tests.EchoService.isolated_test_runtime(),
         ):
             pytest.fail("unreachable: fetch_global() must raise ValidationError")

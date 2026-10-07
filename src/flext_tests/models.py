@@ -22,6 +22,11 @@ from flext_tests._models.namespace import FlextTestsNamespaceModelsMixin
 from flext_tests._models.validator import FlextTestsValidatorModelsMixin
 from flext_tests._models.workspace_cleanup import FlextTestsWorkspaceCleanupModelsMixin
 
+try:
+    from flext_tests import t
+except ImportError:  # mid-init: the tail completion tolerates and defers
+    t = None  # type: ignore[assignment]
+
 
 class FlextTestsModels(FlextCliModels):
     """Test models extending m with test-specific factory models."""

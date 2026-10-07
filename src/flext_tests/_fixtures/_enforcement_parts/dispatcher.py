@@ -16,12 +16,14 @@ from __future__ import annotations
 import math
 from importlib import import_module
 from pathlib import Path
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, ClassVar, cast
 
 import pytest
 
 from flext_tests import c, m
-from flext_tests.enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
+
+SLOW_TIMEOUT_INI_OPTION = "flext_slow_timeout_seconds"
+"""Config-owned timeout option for slow pytest items."""
 
 if TYPE_CHECKING:
     import warnings
@@ -108,7 +110,7 @@ class FlextTestsEnforcementDispatcher:
             repository_root=repository_root,
         )
         config.stash[cls.stash_config] = resolved
-        return resolved
+        return cast("m.Tests.EnforcementDispatcherConfig", resolved)
 
     @classmethod
     def configure(cls, config: pytest.Config) -> None:

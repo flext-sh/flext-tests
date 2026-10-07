@@ -23,12 +23,15 @@ from types import (
     ModuleType,
     UnionType,
 )
-from typing import Final, TypeAliasType, cast
+from typing import TYPE_CHECKING, Final, TypeAliasType, cast
 
 import flext_tests
 from flext_core import m, u
 from flext_tests import c, p, t
 from flext_tests._models.base import FlextTestsFlextModelsBase
+
+if TYPE_CHECKING:
+    from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
 
 
 class FlextTestsFlextUtilitiesPayload:
@@ -43,7 +46,9 @@ class FlextTestsFlextUtilitiesPayload:
         return type(native).__name__, str(native)
 
     @staticmethod
-    def _payload_model_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_model_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own matcher model leaves (payload, root model, enum) recursively.
 
         Returns:
@@ -62,7 +67,9 @@ class FlextTestsFlextUtilitiesPayload:
         return None
 
     @staticmethod
-    def _payload_none_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_none_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own ``None`` as the canonical empty atom.
 
         Returns:
@@ -73,7 +80,9 @@ class FlextTestsFlextUtilitiesPayload:
         return None
 
     @staticmethod
-    def _payload_scalar_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_scalar_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own supported native scalars and model leaves as atoms.
 
         Returns:
@@ -99,7 +108,9 @@ class FlextTestsFlextUtilitiesPayload:
         return None
 
     @staticmethod
-    def _payload_annotated_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_annotated_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own ``typing.Annotated`` constructs as their textual atom.
 
         Returns:
@@ -112,7 +123,9 @@ class FlextTestsFlextUtilitiesPayload:
         return None
 
     @staticmethod
-    def _payload_match_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_match_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own a regex match through its matched text.
 
         Returns:
@@ -125,7 +138,9 @@ class FlextTestsFlextUtilitiesPayload:
         return None
 
     @staticmethod
-    def _payload_runtime_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_runtime_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own typing constructs and runtime machinery as textual atoms.
 
         Returns:
@@ -152,7 +167,9 @@ class FlextTestsFlextUtilitiesPayload:
         return None
 
     @staticmethod
-    def _payload_view_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_view_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own dict and set views through their native iteration order.
 
         Returns:
@@ -165,7 +182,9 @@ class FlextTestsFlextUtilitiesPayload:
         return None
 
     @staticmethod
-    def _payload_mapping_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_mapping_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own a native mapping with stringified, collision-checked keys.
 
         Returns:
@@ -188,7 +207,9 @@ class FlextTestsFlextUtilitiesPayload:
         return flext_tests.m.Tests.Payload(kind="mapping", entries=entries)
 
     @staticmethod
-    def _payload_sequence_leaf(value: p.AttributeProbe) -> flext_tests.m.Tests.Payload | None:
+    def _payload_sequence_leaf(
+        value: p.AttributeProbe,
+    ) -> flext_tests.m.Tests.Payload | None:
         """Own a native sequence or set with deterministic set ordering.
 
         Returns:
@@ -262,8 +283,13 @@ class FlextTestsFlextUtilitiesPayload:
                 # Match values intentionally carry non-JSON sentinels (exceptions,
                 # models, paths); NativeMatchValue stays JsonValue-only because
                 # pyrefly cannot resolve a class-scoped self-referential alias.
-                return {key: project(item) for key, item in value.entries.items()}  # pyrefly: ignore[bad-return]
-            return [project(item) for item in value.items]  # pyrefly: ignore[bad-return]
+                pairs = value.entries.items()
+                return cast(
+                    "t.Tests.NativeMatchValue",
+                    {key: project(item) for key, item in pairs},
+                )
+            items = value.items
+            return cast("t.Tests.NativeMatchValue", [project(item) for item in items])
 
         @staticmethod
         def to_normalized_value(value: p.Tests.Payload) -> t.JsonValue:
@@ -389,7 +415,7 @@ class FlextTestsFlextUtilitiesPayload:
             spec: t.Tests.DeepSpec,
             *,
             path_sep: str = ".",
-        ) -> flext_tests.m.Tests.DeepMatchResult:
+        ) -> FlextTestsMatchersModelsMixin.DeepMatchResult:
             """Match an owned payload tree against a path -> expectation spec.
 
             Literal expectations compare native projections; predicates receive the
@@ -426,7 +452,10 @@ class FlextTestsFlextUtilitiesPayload:
                         return result_model(
                             path=path,
                             expected=expected,
-                            actual=node,
+                            actual=cast(
+                                "FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload",
+                                node,
+                            ),
                             matched=False,
                             reason="Value mismatch",
                         )
@@ -434,14 +463,23 @@ class FlextTestsFlextUtilitiesPayload:
                     return result_model(
                         path=path,
                         expected="<predicate>",
-                        actual=node,
+                        actual=cast(
+                            "FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload",
+                            node,
+                        ),
                         matched=False,
                         reason="Predicate failed",
                     )
             return result_model(
                 path="",
-                expected=subject,
-                actual=subject,
+                expected=cast(
+                    "FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload",
+                    subject,
+                ),
+                actual=cast(
+                    "FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload",
+                    subject,
+                ),
                 matched=True,
                 reason="",
             )
