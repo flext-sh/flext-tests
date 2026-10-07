@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 
     import pytest
 
+
 def pytest_addoption(parser: pytest.Parser) -> None:
     """Register the enforcement dispatcher's stable command-line contract."""
     parser.addini(
