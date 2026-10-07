@@ -13,6 +13,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_tests._fixtures._enforcement_parts.dispatcher import (
+    SLOW_TIMEOUT_INI_OPTION,
     FlextTestsEnforcementDispatcher,
 )
 
@@ -20,10 +21,6 @@ if TYPE_CHECKING:
     import warnings
 
     import pytest
-
-SLOW_TIMEOUT_INI_OPTION = "flext_slow_timeout_seconds"
-"""Config-owned timeout option for slow pytest items."""
-
 
 def pytest_addoption(parser: pytest.Parser) -> None:
     """Register the enforcement dispatcher's stable command-line contract."""

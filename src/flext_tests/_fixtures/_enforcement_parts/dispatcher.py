@@ -21,7 +21,9 @@ from typing import TYPE_CHECKING, ClassVar, cast
 import pytest
 
 from flext_tests import c, m
-from flext_tests.enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
+
+SLOW_TIMEOUT_INI_OPTION = "flext_slow_timeout_seconds"
+"""Config-owned timeout option for slow pytest items."""
 
 if TYPE_CHECKING:
     import warnings
