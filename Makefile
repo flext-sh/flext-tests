@@ -2,7 +2,7 @@
 # @flext-owner: flext-infra/config/codegen.yaml + flext-infra/src/flext_infra/templates/project/base/Makefile.j2
 # @flext-adjust: edit the owner configuration or template; never this projection
 # @flext-regenerate: make gen
-# flext-infra — selector-free generated project interface.
+# flext-tests — selector-free generated project interface.
 # Managed by flext-infra codegen conform for new and existing repositories.
 # === SECTION: header (managed) ===
 # Source: template (base/Makefile.j2)
@@ -89,7 +89,7 @@ unexport GITHUB_API_TOKEN
 
 # === SECTION: project identity (managed) ===
 # Source: config:dist / config:make_profile / config:repository_root_rel / config:uv_link_mode
-PROJECT_NAME := flext-infra
+PROJECT_NAME := flext-tests
 MAKE_PROFILE := standalone
 REPOSITORY_ROOT_REL := .
 # === SECTION: workspace subprojects (managed) ===
@@ -107,7 +107,7 @@ UV_LINK_MODE := copy
 # unconsumed variable is ignored.
 PYTEST_DIAG_ARGS := -rA --durations=0 --tb=long --showlocals
 PYTEST_REPORT_ARGS := -ra --durations=25 --durations-min=0.001 --tb=short
-PYTEST_PROCESS_TIMEOUT_SECONDS := 1204
+PYTEST_PROCESS_TIMEOUT_SECONDS := 124
 # The pytest process inherits a hard wall-clock boundary, so a hung
 # run is terminated even if the runner itself stalls.
 override PYTEST_BOUNDED = timeout --signal=TERM --kill-after=5s "$(PYTEST_PROCESS_TIMEOUT_SECONDS)s"
@@ -121,7 +121,7 @@ override FLEXT_PYTEST_TESTMON_DATABASE = $(if $(strip $(PYTEST_CACHE_HOME)),$(PY
 # Profiles sit beside the other reports of this checkout (.reports is ignored).
 PROFILE_REPORTS_DIR = $(PROJECT_ROOT)/$(dir $(PYTEST_REPORTS_DIR))profiles
 override PYTEST_CASE_TIMEOUT_SECONDS := 10
-override PYTEST_RUN_TIMEOUT_SECONDS := 1200
+override PYTEST_RUN_TIMEOUT_SECONDS := 120
 override PYTEST_TERMINATION_GRACE_SECONDS := 2
 override PYTEST_TIMEOUT_EXIT_CODE := 124
 override PYTEST_ENFORCEMENT_PLUGIN := flext_tests_enforcement
@@ -1061,6 +1061,12 @@ fi; \
 # Provisioning is declared once and shared by every profile. A venv records the
 # exact base interpreter used to create it, so setup replaces it when Mise moves
 # the configured Python minor line to a newer patch.
+# Dev environments consume present members as LIVE editable installs (operator
+# law 2026-10-06: a commit never influences dev behavior — the worktree is the
+# behavior). The overlay replaces only each member distribution, --no-deps, so
+# every version position still comes from what make upg froze in uv.lock,
+# pyproject.toml and mise.toml; CI and standalone installs keep the frozen
+# git-pinned members untouched.
 SETUP_ENVIRONMENT_RECIPE = set -eu; \
 	trap 'if [ -n "$${FLEXT_SETUP_CREDENTIAL_STORE:-}" ]; then rm -f "$$FLEXT_SETUP_CREDENTIAL_STORE"; fi' EXIT; \
 	$(REQUIRE_WORKSPACE_ENVIRONMENT); \
@@ -1079,6 +1085,14 @@ SETUP_ENVIRONMENT_RECIPE = set -eu; \
 		env GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=credential.helper GIT_CONFIG_VALUE_0="store --file=$$FLEXT_SETUP_CREDENTIAL_STORE" $(UV) sync --project "$(UV_PROJECT)" $(UV_SYNC_FLAGS) --locked --link-mode "$(UV_LINK_MODE)"; \
 	else \
 		$(UV) sync --project "$(UV_PROJECT)" $(UV_SYNC_FLAGS) --locked --link-mode "$(UV_LINK_MODE)"; \
+	fi; \
+	if [ "$(strip $(CI))" != "Y" ]; then \
+	for member in $(WORKSPACE_SUBPROJECTS); do \
+		if [ -f "$(PROJECT_ROOT)/$$member/pyproject.toml" ]; then \
+			printf 'setup: editable workspace member %s\n' "$$member"; \
+			$(UV) pip install --python "$(RUNTIME_VENV)" --no-deps -e "$(PROJECT_ROOT)/$$member"; \
+		fi; \
+	done; \
 	fi; \
 	if [ "$(strip $(CI))" != "Y" ]; then \
 	XDG_DATA_HOME="$${SETUP_DIRENV_XDG_DATA_HOME:?missing persistent direnv data home}" \
@@ -1113,7 +1127,7 @@ _bootstrap_setup_tools: _builtin_require_workspace
 
 # Execute the interpreter provisioned by setup without discovering a project
 # workspace or creating a dependency-resolution file during a runtime command.
-override UV_RUN := env -u MYPYPATH -u VIRTUAL_ENV -u UV_PROJECT -u PROJECT_ROOT PYTHONPATH="$(PROJECT_ROOT)/src" $(UV) run --no-project --python "$(RUNTIME_PYTHON)"
+override UV_RUN := env -u MYPYPATH -u VIRTUAL_ENV -u UV_PROJECT -u PROJECT_ROOT PYTHONPATH="$(PROJECT_ROOT)/src" $(UV) run --directory "$(PROJECT_ROOT)" --no-project --python "$(RUNTIME_PYTHON)"
 # The checked-out flext-infra lane owns every lifecycle verb: a workspace
 # runs the generator it carries (the submodule src), so a broken published
 # dependency tip can never block the local recovery cycle. A checkout without
@@ -1808,7 +1822,7 @@ _setup_activated:
 	esac
 
 _builtin-help:
-	@printf '%s\n' 'flext-infra [standalone]' '';
+	@printf '%s\n' 'flext-tests [standalone]' '';
 
 	@printf '  %-16s %s\n' 'help' 'Show the complete selector-free public interface.';
 
@@ -2439,7 +2453,7 @@ profile-gen: _builtin_require_environment
 	@$(PROJECT_TOOL_EXEC) "$(RUNTIME_PYTHON)" -c \
 		'import cProfile, sys; from flext_infra.cli import main; profile = cProfile.Profile(); status = profile.runcall(main, sys.argv[2:]); profile.dump_stats(sys.argv[1]); raise SystemExit(status)' \
 		"$(PROFILE_REPORTS_DIR)/lazy-init.pstats" codegen lazy-init \
-		--repository-root "$(PROJECT_ROOT)" --module flext_infra --dry-run
+		--repository-root "$(PROJECT_ROOT)" --module flext_tests --dry-run
 
 .PHONY: profile-gen-report
 profile-gen-report: _builtin_require_environment
@@ -2582,8 +2596,14 @@ _builtin_mod_snapshots: _builtin_require_environment
 
 # Namespace and accessor migration are the same selector-free refactor surface
 # as `mod`: each public verb owns one fixed rewrite of every resolved consumer.
+# The workspace profile sweeps every namespace-enabled project of the topology
+# (the root repository and each declared member) in one process: the report
+# aggregates per project and one project's findings never stop the sweep. A
+# member profile enforces only itself.
+
 _builtin_fix_namespace: _builtin_require_environment
 	@$(PROJECT_FLEXT_INFRA) refactor namespace-enforce --repository-root "$(PROJECT_ROOT)" --projects . --apply
+
 
 _builtin_fix_accessors: _builtin_require_environment
 	@$(PROJECT_FLEXT_INFRA) refactor accessor-migrate --repository-root "$(PROJECT_ROOT)" --projects . --apply
