@@ -18,27 +18,35 @@ from flext_tests import r, u
 if TYPE_CHECKING:
     from flext_tests import m, p, t
 
-    class _DockerFacadeInternals:
-        """The facade-own internals the surface verbs delegate to."""
 
-        def _compose_path(self, compose_file: str) -> Path: ...
+class _DockerFacadeInternals:
+    """The facade-own internals the surface verbs delegate to.
 
-        def _compose_down(self, compose_path: Path, project: str) -> p.Result[str]: ...
+    Declared unconditionally: annotations resolve lazily (PEP 563), so the
+    TYPE_CHECKING-only ``m``/``p``/``t`` names never evaluate at runtime, and
+    the audit's base walker demands class declarations outside conditionals.
+    """
 
-        def _compose_up(
-            self,
-            compose_path: Path,
-            project: str,
-            service: str | None,
-            *,
-            force_recreate: bool,
-        ) -> p.Result[str]: ...
+    def _compose_path(self, compose_file: str) -> Path: ...
 
-        def _inspect(
-            self,
-            container_name: str,
-        ) -> p.Result[m.Tests.ContainerInspect]: ...
+    def _compose_down(self, compose_path: Path, project: str) -> p.Result[str]: ...
 
+    def _compose_up(
+        self,
+        compose_path: Path,
+        project: str,
+        service: str | None,
+        *,
+        force_recreate: bool,
+    ) -> p.Result[str]: ...
+
+    def _inspect(
+        self,
+        container_name: str,
+    ) -> p.Result[m.Tests.ContainerInspect]: ...
+
+
+if TYPE_CHECKING:
     _PartsBase = _DockerFacadeInternals
 else:
     _PartsBase = object
