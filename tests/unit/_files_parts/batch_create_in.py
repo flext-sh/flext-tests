@@ -148,7 +148,13 @@ class TestsFlextTestsFilesBatchCreateInMixin:
     def test_create_in_with_flextresult(tmp_path: Path) -> None:
         """Test create_in() with r content extraction."""
         result = r[t.Tests.FileContentPlain].ok(m.ConfigMap(root={"status": "success"}))
-        path = FlextTestsFiles(base_dir=tmp_path).create(result, "result.json")
+        # The generic create() solver cannot bind the protocol-carried payload
+        # through the result union; unwrap explicitly so ContentT binds to the
+        # concrete config map the file carries.
+        path = FlextTestsFiles(base_dir=tmp_path).create(
+            result.unwrap(),
+            "result.json",
+        )
         tm.that(path.exists(), eq=True)
         empty_content: t.JsonMapping = {}
         content = u.Cli.json_read(path).unwrap_or(empty_content)

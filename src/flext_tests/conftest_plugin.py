@@ -18,20 +18,28 @@ from __future__ import annotations
 from importlib import import_module
 from typing import TYPE_CHECKING
 
+from flext_tests._fixtures import (
+    connectivity as _fixtures_connectivity,
+    scratch_storage as _fixtures_scratch_storage,
+)
+
 if TYPE_CHECKING:
     import pytest
+
+# `_fixtures/__init__` exports a fixture function named `settings`, which
+# shadows the submodule of the same name: `from ... import settings` binds the
+# fixture, and registering a function as a plugin silently registers no
+# fixtures at all. The top-level ``import_module`` calls name the modules
+# unambiguously without touching the shadowed package attribute.
+_SETTINGS_FIXTURE_MODULE = import_module("flext_tests._fixtures.settings")
+_NAMESPACE_MODULE = import_module("flext_tests._fixtures.namespace")
 
 
 def pytest_configure(config: pytest.Config) -> None:
     """Register fixture plugins after startup instrumentation is active."""
-    # `_fixtures/__init__` exports a fixture function named `settings`, which
-    # shadows the submodule of the same name: `from ... import settings` binds
-    # the fixture, and registering a function as a plugin silently registers no
-    # fixtures at all. `import_module` names the module unambiguously.
-    settings = import_module("flext_tests._fixtures.settings")
-    connectivity_module = import_module("flext_tests._fixtures.connectivity")
-    namespace_module = import_module("flext_tests._fixtures.namespace")
-    scratch_module = import_module("flext_tests._fixtures.scratch_storage")
+    settings = _SETTINGS_FIXTURE_MODULE
+    namespace_module = _NAMESPACE_MODULE
+    scratch_module = _fixtures_scratch_storage
 
     if settings not in config.pluginmanager.get_plugins():
         config.pluginmanager.register(settings, settings.__name__)
@@ -41,7 +49,7 @@ def pytest_configure(config: pytest.Config) -> None:
         config.pluginmanager.register(scratch_module, scratch_module.__name__)
     # Capability-bound tests are DESELECTED (typed NOT EXECUTED) when their
     # capability is absent; a capable host executes and a service failure is RED.
-    connectivity = connectivity_module.FlextTestsCapabilityPlugin()
+    connectivity = _fixtures_connectivity.FlextTestsCapabilityPlugin()
     if not config.pluginmanager.hasplugin("flext_tests._fixtures.connectivity"):
         config.pluginmanager.register(
             connectivity,

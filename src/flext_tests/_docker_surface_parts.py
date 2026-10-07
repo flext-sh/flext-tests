@@ -10,19 +10,44 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from flext_tests import r, u
 
 if TYPE_CHECKING:
     from flext_tests import m, p, t
-    from flext_tests.docker import FlextTestsDocker
+
+    class _DockerFacadeInternals:
+        """The facade-own internals the surface verbs delegate to."""
+
+        def _compose_path(self, compose_file: str) -> Path: ...
+
+        def _compose_down(self, compose_path: Path, project: str) -> p.Result[str]: ...
+
+        def _compose_up(
+            self,
+            compose_path: Path,
+            project: str,
+            service: str | None,
+            *,
+            force_recreate: bool,
+        ) -> p.Result[str]: ...
+
+        def _inspect(
+            self,
+            container_name: str,
+        ) -> p.Result[m.Tests.ContainerInspect]: ...
+
+    _PartsBase = _DockerFacadeInternals
+else:
+    _PartsBase = object
 
 
-class FlextTestsDockerSurfaceParts:
+class FlextTestsDockerSurfaceParts(_PartsBase):
     """Public compose and container verbs of the Docker facade."""
 
-    def compose_down(self: FlextTestsDocker, compose_file: str) -> p.Result[str]:
+    def compose_down(self, compose_file: str) -> p.Result[str]:
         """Remove the project of one compose file with its volumes.
 
         Returns:
@@ -35,7 +60,7 @@ class FlextTestsDockerSurfaceParts:
         )
 
     def compose_up(
-        self: FlextTestsDocker,
+        self,
         compose_file: str,
         service: str | None = None,
         *,
@@ -55,7 +80,7 @@ class FlextTestsDockerSurfaceParts:
         )
 
     def fetch_container_info(
-        self: FlextTestsDocker,
+        self,
         container_name: str,
     ) -> p.Result[m.Tests.ContainerInfo]:
         """Inspect one container; an absent one fails NOT_PROVISIONED.
@@ -68,7 +93,7 @@ class FlextTestsDockerSurfaceParts:
         )
 
     def fetch_container_status(
-        self: FlextTestsDocker,
+        self,
         container_name: str,
     ) -> p.Result[m.Tests.ContainerInfo]:
         """Fetch container status.
@@ -79,7 +104,7 @@ class FlextTestsDockerSurfaceParts:
         return self.fetch_container_info(container_name)
 
     def fetch_container_environment(
-        self: FlextTestsDocker,
+        self,
         container_name: str,
         keys: t.StrSequence,
     ) -> p.Result[t.MappingKV[str, t.SecretStr]]:
@@ -100,7 +125,7 @@ class FlextTestsDockerSurfaceParts:
         )
 
     def start_compose_stack(
-        self: FlextTestsDocker,
+        self,
         compose_file: str,
         network_name: str | None = None,
     ) -> p.Result[str]:

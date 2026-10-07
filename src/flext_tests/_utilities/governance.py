@@ -17,7 +17,7 @@ import importlib.metadata
 import inspect
 from collections.abc import Iterator
 from pathlib import Path
-from typing import TYPE_CHECKING, ClassVar, Final, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, ClassVar, Protocol, runtime_checkable
 
 from flext_tests import p, tm
 
@@ -67,8 +67,8 @@ class FlextTestsFlextUtilitiesGovernance:
         class _GovernanceConfigProto(Protocol):
             """Structural type for a project ``c.<Package>.Tests`` namespace."""
 
-            SRC_DIR: Final[str]
-            PACKAGE_DIR: Final[str]
+            SRC_DIR: str
+            PACKAGE_DIR: str
 
         _test_file: ClassVar[str]
         _tests_config: ClassVar[

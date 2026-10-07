@@ -10,7 +10,7 @@ import sys
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, ClassVar, TypeAliasType, Any
+from typing import Annotated, Any, ClassVar, TypeAliasType, cast
 
 from _pytest.python_api import ApproxBase  # ruff: ignore[import-private-name] -- ApproxBase has no public pytest path in the supported versions; justified per fleet suppression law.
 from flext_cli import m, u
@@ -33,13 +33,20 @@ type DeepExpected = (
 )
 
 
+type _OwnedEntries = Mapping[
+    str,
+    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+    | Callable[[t.Tests.NativeMatchValue], bool],
+]
+
+
 class FlextTestsMatchersModelsMixin:
     """Matcher model group (result, that, scope, and chain parameters)."""
 
     class PayloadParams(m.Value):
         """Own matcher operand trees once at parameter ingress."""
 
-        @u.field_validator(
+        @m.field_validator(
             "eq",
             "ne",
             "has",
@@ -64,7 +71,7 @@ class FlextTestsMatchersModelsMixin:
                 value,
             )
 
-        @u.field_validator(
+        @m.field_validator(
             "settings",
             "container",
             "context",
@@ -99,7 +106,7 @@ class FlextTestsMatchersModelsMixin:
                 raise ValueError(msg)
             return node.entries
 
-        @u.field_validator("values", mode="before", check_fields=False)
+        @m.field_validator("values", mode="before", check_fields=False)
         @classmethod
         def own_values(
             cls,
@@ -126,7 +133,7 @@ class FlextTestsMatchersModelsMixin:
                 raise ValueError(msg)
             return node.items
 
-        @u.field_validator("deep", mode="before", check_fields=False)
+        @m.field_validator("deep", mode="before", check_fields=False)
         @classmethod
         def own_deep[ValueT](
             cls,
@@ -147,14 +154,15 @@ class FlextTestsMatchersModelsMixin:
             """
             if value is None:
                 return None
-            return {
-                key: item
-                if callable(item)
-                else FlextTestsPayloadUtilities.to_payload(
-                    item,
-                )
-                for key, item in value.items()
-            }
+            return cast(
+                "_OwnedEntries",
+                {
+                    key: item
+                    if callable(item)
+                    else FlextTestsPayloadUtilities.to_payload(item)
+                    for key, item in value.items()
+                },
+            )
 
     class MatchRule(PayloadParams):
         """One matcher rule parsed from a scalar, type, predicate, or mapping."""
@@ -248,19 +256,28 @@ class FlextTestsMatchersModelsMixin:
             if isinstance(value, cls):
                 return value
             if isinstance(value, Mapping):
+                mapping_value: Mapping[str, object] = value
                 rule_keys = frozenset({*cls.model_fields, "is", "excludes"})
-                if value and set(value).issubset(rule_keys):
-                    return cls.model_validate(value)
+                if mapping_value and set(mapping_value).issubset(rule_keys):
+                    return cls.model_validate(dict(mapping_value))
                 # Own the mapping operand here; own_operand is idempotent, so
                 # the field validator re-running on the owned payload is a no-op.
-                return cls(eq=cls.own_operand(value))
-            if isinstance(value, type) or (
-                isinstance(value, tuple)
-                and all(isinstance(item, type) for item in value)
-            ):
-                return cls(is_=value)
+                return cls(eq=cls.own_operand(mapping_value))
+            if isinstance(value, (type, tuple)):
+                candidates = (value,) if isinstance(value, type) else tuple(value)
+                members = tuple(item for item in candidates if isinstance(item, type))
+                if len(members) == len(candidates):
+                    # A bare type keeps its nominal form; a tuple of types
+                    # narrows to the type members the rule accepts.
+                    is_spec = members[0] if len(members) == 1 else members
+                    return cls(is_=is_spec)
             if callable(value):
-                return cls(where=value)
+                return cls(
+                    where=cast(
+                        "Callable[[t.Tests.NativeMatchValue], bool]",
+                        value,
+                    ),
+                )
             return cls(eq=cls.own_operand(value))
 
         @classmethod
@@ -363,17 +380,17 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Extract nested value via dot notation."),
         ] = None
         paths: Annotated[
-            Mapping[str, MatchRule] | None,
+            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
             u.Field(description="Multiple path-based assertions."),
         ] = None
         items: Annotated[
-            Sequence[MatchRule]
-            | Mapping[str | int, MatchRule]
+            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
+            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
             | None,
             u.Field(description="Sequence item assertions by selector."),
         ] = None
         attrs_match: Annotated[
-            Mapping[str, MatchRule] | None,
+            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
             u.Field(description="Attribute assertions by attribute path."),
         ] = None
         where: Annotated[
@@ -382,7 +399,7 @@ class FlextTestsMatchersModelsMixin:
         ] = None
         msg: Annotated[str | None, u.Field(description="Custom error message.")] = None
 
-        @u.field_validator("paths", "items", "attrs_match", mode="before")
+        @m.field_validator("paths", "items", "attrs_match", mode="before")
         @classmethod
         def parse_rules(
             cls,
@@ -444,7 +461,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Error data contains key-value pairs."),
         ] = None
 
-        @u.field_validator("data", mode="before")
+        @m.field_validator("data", mode="before")
         @classmethod
         def own_data(
             cls,
@@ -597,8 +614,8 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Paths."),
         ] = None
         items: Annotated[
-            Sequence[MatchRule]
-            | Mapping[str | int, MatchRule]
+            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
+            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
             | None,
             u.Field(description="Items."),
         ] = None
@@ -611,7 +628,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Predicate."),
         ] = None
 
-        @u.field_validator("paths", "items", "attrs_match", mode="before")
+        @m.field_validator("paths", "items", "attrs_match", mode="before")
         @classmethod
         def parse_rules(
             cls,
@@ -631,7 +648,7 @@ class FlextTestsMatchersModelsMixin:
             """
             return FlextTestsMatchersModelsMixin.MatchRule.parse_rule_fields(value)
 
-        @u.model_validator(mode="after")
+        @m.model_validator(mode="after")
         def normalize_legacy_parameters(
             self,
         ) -> FlextTestsMatchersModelsMixin.ThatParams:
@@ -730,7 +747,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Temporary working directory."),
         ] = None
 
-        @u.field_validator("cwd", mode="before")
+        @m.field_validator("cwd", mode="before")
         @classmethod
         def convert_cwd(cls, value: Path | str | None) -> Path | str | None:
             """Convert string cwd to Path.

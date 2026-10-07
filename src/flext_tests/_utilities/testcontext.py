@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import os
+import sys
 import time
 import types
 from pathlib import Path
@@ -14,7 +15,7 @@ from typing import BinaryIO
 
 from flext_tests import c
 
-if os.name == "nt":
+if sys.platform == "win32":
     import msvcrt
 else:
     import fcntl
@@ -44,7 +45,7 @@ class FlextTestsTestContextUtilitiesMixin:
             shared: bool = False,
             timeout_seconds: float | None = None,
         ) -> None:
-            if os.name == "nt" and (shared or timeout_seconds is not None):
+            if sys.platform == "win32" and (shared or timeout_seconds is not None):
                 msg = c.Tests.ERR_FILE_LOCK_POSIX_ONLY.format(path=lock_file)
                 raise ValueError(msg)
             self.lock_file = lock_file
@@ -74,9 +75,10 @@ class FlextTestsTestContextUtilitiesMixin:
 
         def _acquire(self, descriptor: int) -> None:
             """Take the lock on an open descriptor in this lock's mode."""
-            if os.name == "nt":
+            if sys.platform == "win32":
                 os.lseek(descriptor, 0, os.SEEK_SET)
-                msvcrt.locking(descriptor, msvcrt.LK_LOCK, 1)
+                locking = msvcrt.locking
+                locking(descriptor, msvcrt.LK_LOCK, 1)
             elif self.timeout_seconds is None:
                 fcntl.flock(descriptor, self._posix_flags())
             else:
@@ -122,9 +124,10 @@ class FlextTestsTestContextUtilitiesMixin:
             file_obj = self._file_obj
             self._file_obj = None
             try:
-                if os.name == "nt":
+                if sys.platform == "win32":
                     os.lseek(file_obj.fileno(), 0, os.SEEK_SET)
-                    msvcrt.locking(file_obj.fileno(), msvcrt.LK_UNLCK, 1)
+                    locking = msvcrt.locking
+                    locking(file_obj.fileno(), msvcrt.LK_UNLCK, 1)
                 else:
                     fcntl.flock(file_obj.fileno(), fcntl.LOCK_UN)
             finally:

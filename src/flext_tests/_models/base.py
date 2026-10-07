@@ -7,9 +7,9 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from types import MappingProxyType
-from typing import Annotated, Any, Self, TYPE_CHECKING
+from typing import Annotated, Any, Self
 
-from flext_cli import m, p, u
+from flext_cli import m, p
 
 # Runtime import: the nested models' field annotations reference ``t.Tests.*``
 # names, and pydantic resolves field annotations at runtime. A TYPE_CHECKING-only
@@ -21,7 +21,9 @@ except ImportError:  # mid-init: the models-end pass completes the deferred mode
     pass
 
 
-def _entity_payload_default() -> m.Tests.Payload:
+def _entity_payload_default() -> (
+    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+):
     """Late-bound entity default.
 
     Defined before the mixin so the class body binds the bare name while the
@@ -42,7 +44,7 @@ class FlextTestsFlextModelsBase:
 
     @staticmethod
     def _payload_entries_default() -> t.Tests.PayloadEntries[
-        FlextTestsBaseModelsMixin.Payload
+        FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
     ]:
         """Late-bound empty mapping arm, bound the same way as the entity default.
 
@@ -81,13 +83,19 @@ class FlextTestsFlextModelsBase:
                     FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
                 ],
                 m.Field(
-                    default_factory=FlextTestsFlextModelsBase._payload_entries_default,
+                    # default_factory, not a literal: pydantic smart-copies the
+                    # class default on every construction, and a mappingproxy
+                    # default cannot be deep-copied (TypeError at Payload()).
+                    # Pyright cannot see either default through the facade base
+                    # chain, so it reports Payload(entries=...) as missing the
+                    # parameter — a static-only gap the runtime contract owns.
+                    default_factory=dict,
                     frozen=True,
                     description="String-keyed payload children.",
                 ),
             ]
 
-            @u.field_validator("entries", mode="after")
+            @m.field_validator("entries", mode="after")
             @classmethod
             def freeze_entries(
                 cls,
@@ -105,7 +113,7 @@ class FlextTestsFlextModelsBase:
                 """
                 return MappingProxyType(dict(value))
 
-            @u.model_validator(mode="after")
+            @m.model_validator(mode="after")
             def validate_arm(self) -> Self:
                 """Reject data in fields belonging to a different native value arm.
 
