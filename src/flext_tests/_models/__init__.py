@@ -55,11 +55,11 @@ install_lazy_exports(
         "FlextTestsFlextModelsBase": ".base",
         "FlextTestsMakeModelsMixin": ".make",
         "FlextTestsMatchersModelsMixin": ".matchers",
+        "FlextTestsNamespace": ".tests_namespace",
         "FlextTestsNamespaceModelsMixin": ".namespace",
         "FlextTestsSpecModelsMixin": ".spec",
         "FlextTestsValidatorModelsMixin": ".validator",
         "FlextTestsWorkspaceCleanupModelsMixin": ".workspace_cleanup",
-        "FlextTestsNamespace": ".tests_namespace",
     }),
     public_exports=__all__,
 )
