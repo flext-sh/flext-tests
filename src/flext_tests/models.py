@@ -9,6 +9,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import contextlib
+
 from flext_cli import FlextCliModels
 
 from flext_tests._models.base import FlextTestsFlextModelsBase
@@ -22,10 +24,11 @@ from flext_tests._models.namespace import FlextTestsNamespaceModelsMixin
 from flext_tests._models.validator import FlextTestsValidatorModelsMixin
 from flext_tests._models.workspace_cleanup import FlextTestsWorkspaceCleanupModelsMixin
 
-try:
-    from flext_tests import t
-except ImportError:  # mid-init: the tail completion tolerates and defers
-    t = None  # type: ignore[assignment]
+# mid-init: the tail completion tolerates and defers — a None tail is legal
+# until the models-end pass completes it.
+t = None  # type: ignore[assignment]
+with contextlib.suppress(ImportError):
+    from flext_tests import t  # ruff: ignore[unused-import] -- the deferred-models tail rebind; consumed package-wide through the lazy descriptor
 
 
 class FlextTestsModels(FlextCliModels):
