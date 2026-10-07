@@ -638,6 +638,7 @@ preserve_quotes = true
 section_whitelines = 1
 whitelines = 1
 
+
 [tool.uv]
 link-mode = "copy"
 constraint-dependencies = ["mypy<2.4.0"]
