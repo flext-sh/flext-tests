@@ -10,7 +10,7 @@ import sys
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, Any, ClassVar, TypeAliasType, cast
+from typing import Annotated, ClassVar, TypeAliasType, cast
 
 from _pytest.python_api import ApproxBase  # ruff: ignore[import-private-name] -- ApproxBase has no public pytest path in the supported versions; justified per fleet suppression law.
 from flext_cli import m, u
