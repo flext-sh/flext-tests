@@ -28,7 +28,7 @@ from flext_tests._models.workspace_cleanup import FlextTestsWorkspaceCleanupMode
 # until the models-end pass completes it.
 t = None  # type: ignore[assignment]
 with contextlib.suppress(ImportError):
-    from flext_tests import t  # noqa: F401 -- the deferred-models tail rebind; consumed package-wide through the lazy descriptor
+    from flext_tests import t  # ruff: ignore[unused-import] -- the deferred-models tail rebind; consumed package-wide through the lazy descriptor
 
 
 class FlextTestsModels(FlextCliModels):
