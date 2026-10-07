@@ -653,4 +653,3 @@ name = "flext-infra"
 severity = "MEDIUM"
 skips = ["B101"]
 targets = ["src"]
-
