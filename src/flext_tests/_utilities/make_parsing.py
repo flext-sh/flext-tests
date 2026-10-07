@@ -44,7 +44,9 @@ class FlextTestsMakeParsingUtilitiesMixin:
         if mapping is None:
             return r[t.Tests.MakeTomlTable].fail(f"{path}: header TOML invalido")
         try:
-            table = u.type_adapter(t.Tests.MakeTomlTable).validate_python(mapping)
+            table: t.Tests.MakeTomlTable = u.type_adapter(
+                t.Tests.MakeTomlTable,
+            ).validate_python(mapping)
         except (TypeError, ValueError) as exc:
             return r[t.Tests.MakeTomlTable].fail(f"{path}: header TOML invalido: {exc}")
         return r[t.Tests.MakeTomlTable].ok(table)
@@ -186,7 +188,9 @@ class FlextTestsMakeParsingUtilitiesMixin:
                 return r[t.SequenceOf[m.Tests.MakeParam]].fail(
                     f"{path}: params must contain TOML objects",
                 )
-            parsed = u.type_adapter(t.Tests.MakeTomlTable).validate_python(item)
+            parsed: t.Tests.MakeTomlTable = u.type_adapter(
+                t.Tests.MakeTomlTable,
+            ).validate_python(item)
             param_result = FlextTestsMakeParsingUtilitiesMixin.make_parse_param(
                 parsed,
                 path,
@@ -218,7 +222,9 @@ class FlextTestsMakeParsingUtilitiesMixin:
                 return r[t.SequenceOf[m.Tests.MakeMutationCondition]].fail(
                     f"{path}: mutates_when must contain TOML objects",
                 )
-            parsed = u.type_adapter(t.Tests.MakeTomlTable).validate_python(item)
+            parsed: t.Tests.MakeTomlTable = u.type_adapter(
+                t.Tests.MakeTomlTable,
+            ).validate_python(item)
             condition_result = (
                 FlextTestsMakeParsingUtilitiesMixin.make_parse_mutation_condition(
                     parsed,

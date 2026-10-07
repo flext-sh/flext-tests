@@ -160,7 +160,10 @@ class FlextTestsCapabilityPlugin:
         if not reasons:
             return
         items[:] = [item for item in items if item.nodeid not in reasons]
-        recorded = dict(config.stash.get(_DESELECTED_CAPABILITY_RECEIPT, {}))
+        recorded_raw = config.stash.get(_DESELECTED_CAPABILITY_RECEIPT, None)
+        recorded: dict[str, str] = (
+            dict(recorded_raw) if recorded_raw is not None else {}
+        )
         recorded.update(reasons)
         config.stash[_DESELECTED_CAPABILITY_RECEIPT] = recorded
 

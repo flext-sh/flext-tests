@@ -9,6 +9,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import ClassVar
+
 from flext_cli import FlextCliUtilities
 
 from flext_tests._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
@@ -68,6 +70,14 @@ class FlextTestsUtilities(FlextCliUtilities):
         FlextTestsNamespaceUtilitiesMixin,
     ):
         """Test utilities namespace."""
+
+        # Single consumer surface for the options model of create_handler_config:
+        # callers reach it as u.Tests.FlextTestsHandlerConfigParams. ClassVar
+        # keeps the class object out of any pydantic field synthesis in the
+        # composed namespace.
+        FlextTestsHandlerConfigParams: ClassVar[
+            type[FlextTestsFlextUtilitiesHandler.FlextTestsHandlerConfigParams]
+        ] = FlextTestsFlextUtilitiesHandler.FlextTestsHandlerConfigParams
 
 
 u = FlextTestsUtilities
