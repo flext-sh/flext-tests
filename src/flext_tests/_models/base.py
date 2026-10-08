@@ -35,13 +35,15 @@ def _entity_payload_default() -> (
     return FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload.atom_default()
 
 
-def _payload_entries_default() -> t.Tests.PayloadEntries[
-    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
-]:
+def _payload_entries_default[NodeT]() -> t.Tests.PayloadEntries[NodeT]:
     """Create immutable entries without evaluating the enclosing model owner.
 
+    Generic over the payload node so the assignment-form field default binds
+    the declaring model's own node type statically while the value is always
+    the empty immutable mapping.
+
     Returns:
-        The resulting ``t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload]``.
+        The resulting ``t.Tests.PayloadEntries[NodeT]``.
     """
     return MappingProxyType({})
 
@@ -77,11 +79,10 @@ class FlextTestsFlextModelsBase:
             entries: Annotated[
                 t.Tests.PayloadEntries[Self],
                 m.Field(
-                    default_factory=_payload_entries_default,
                     frozen=True,
                     description="String-keyed payload children.",
                 ),
-            ]
+            ] = m.Field(default_factory=_payload_entries_default)
 
             @m.field_validator("entries", mode="after")
             @classmethod
