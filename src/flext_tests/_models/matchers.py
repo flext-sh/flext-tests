@@ -380,17 +380,15 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Extract nested value via dot notation."),
         ] = None
         paths: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, MatchRule] | None,
             u.Field(description="Multiple path-based assertions."),
         ] = None
         items: Annotated[
-            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
-            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
-            | None,
+            Sequence[MatchRule] | Mapping[str | int, MatchRule] | None,
             u.Field(description="Sequence item assertions by selector."),
         ] = None
         attrs_match: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, MatchRule] | None,
             u.Field(description="Attribute assertions by attribute path."),
         ] = None
         where: Annotated[
@@ -610,17 +608,15 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Deep spec."),
         ] = None
         paths: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, MatchRule] | None,
             u.Field(description="Paths."),
         ] = None
         items: Annotated[
-            Sequence[FlextTestsMatchersModelsMixin.MatchRule]
-            | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
-            | None,
+            Sequence[MatchRule] | Mapping[str | int, MatchRule] | None,
             u.Field(description="Items."),
         ] = None
         attrs_match: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, MatchRule] | None,
             u.Field(description="Attr rules."),
         ] = None
         where: Annotated[
@@ -829,10 +825,4 @@ class FlextTestsMatchersModelsMixin:
         )
 
 
-# Nested models capture their enclosing class-body frame as the pydantic
-# parent namespace, which cannot see module-level names while the module is
-# still executing; their field schemas therefore stay deferred (mock
-# validators) and would raise ``not fully defined`` at first use. Completing
-# them here, once the full module namespace is bound, keeps every declaration
-# strictly resolved before the facade exposes it.
 __all__: list[str] = ["FlextTestsMatchersModelsMixin"]
