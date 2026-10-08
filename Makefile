@@ -279,7 +279,28 @@ endif
 ifeq ($(RUNTIME_LINKED_WORKTREE),Y)
 override RUNTIME_VENV := $(abspath $(RUNTIME_ROOT)/../.flext-venvs/$(notdir $(RUNTIME_ROOT)))
 else
+# Git identity distinguishes a linked worktree from a primary submodule:
+# both can have a .git file, but only a linked worktree has distinct Git
+# directory and common directory. The environment path cannot be overridden.
+RUNTIME_LINKED_WORKTREE :=
+ifneq ($(wildcard $(RUNTIME_ROOT)/.git),)
+RUNTIME_GIT_DIR := $(shell git -C "$(RUNTIME_ROOT)" rev-parse --path-format=absolute --git-dir)
+ifneq ($(.SHELLSTATUS),0)
+$(error Cannot resolve Git directory for $(RUNTIME_ROOT))
+endif
+RUNTIME_GIT_COMMON_DIR := $(shell git -C "$(RUNTIME_ROOT)" rev-parse --path-format=absolute --git-common-dir)
+ifneq ($(.SHELLSTATUS),0)
+$(error Cannot resolve Git common directory for $(RUNTIME_ROOT))
+endif
+ifneq ($(RUNTIME_GIT_DIR),$(RUNTIME_GIT_COMMON_DIR))
+RUNTIME_LINKED_WORKTREE := Y
+endif
+endif
+ifeq ($(RUNTIME_LINKED_WORKTREE),Y)
+override RUNTIME_VENV := $(abspath $(RUNTIME_ROOT)/../.flext-venvs/$(notdir $(RUNTIME_ROOT)))
+else
 override RUNTIME_VENV := $(RUNTIME_ROOT)/.venv
+endif
 endif
 ifeq ($(OS),Windows_NT)
 override RUNTIME_BIN := $(RUNTIME_VENV)/Scripts
@@ -1152,6 +1173,10 @@ _builtin-help:
 #       VERIFIES an established checkout. An initial clone has no physical index,
 #       no worktree content, and only its clone reflog entry. Established work
 #       is never destroyed: git checkout, git reset,
+# Rule: setup PROVISIONS an absent or proven unfinished initial clone and
+#       VERIFIES an established checkout. An initial clone has no physical index,
+#       no worktree content, and only its clone reflog entry. Established work
+#       is never destroyed: git checkout, git reset,
 #       fetch, and branch attachment are forbidden. Pin validity is HEAD contains
 #       gitlink. Declared branch is the named integration line;
 #       legacy branch=. still resolves to the superproject named branch if present.
@@ -1163,6 +1188,12 @@ _builtin-help:
 # Why: runners expose umask 002 and `submodule update --init`
 # materializes tracked files as 0664; canonical Mise artifact gates demand
 # exact modes, so provisioning normalizes the umask before checkout.
+# An absent gitlink is cloned at depth 1, the same flag private submodule
+# init uses. Setup's contract is the recorded commit, and a full history
+# cannot finish inside submodule_timeout_seconds when the object database
+# is large.
+# Derive the physical index from its Git directory: --git-path resolves
+# a final symlink and cannot prove that the index entry itself is absent.
 # An absent gitlink is cloned at depth 1, the same flag private submodule
 # init uses. Setup's contract is the recorded commit, and a full history
 # cannot finish inside submodule_timeout_seconds when the object database
@@ -1202,6 +1233,10 @@ _builtin_setup_submodules:
 	fi; \
 	managed=$$(printf '%s' "$$managed" | tr ' ' '\n' | sort -u | tr '\n' ' '); \
 	if [ -z "$$managed" ]; then exit 0; fi; \
+	if [ "$${GIT_INDEX_FILE+x}" = x ]; then \
+		printf 'ERROR: submodule setup cannot authenticate a relocated Git index\n' >&2; \
+		exit 2; \
+	fi; \
 	if [ "$${GIT_INDEX_FILE+x}" = x ]; then \
 		printf 'ERROR: submodule setup cannot authenticate a relocated Git index\n' >&2; \
 		exit 2; \
@@ -1259,12 +1294,64 @@ _builtin_setup_submodules:
 		fi; \
 		printf 'setup: resuming unfinished initial clone: %s\n' "$$path"; \
 		absent="$$absent $$path"; \
+		child="$$root/$$path"; \
+		if [ ! -e "$$child/.git" ]; then \
+			absent="$$absent $$path"; \
+			continue; \
+		fi; \
+		owner=$$(git -C "$$child" rev-parse --show-superproject-working-tree); \
+		checkout_root=$$(git -C "$$child" rev-parse --show-toplevel); \
+		if [ "$$owner" != "$$root" ] || [ "$$checkout_root" != "$$child" ]; then \
+			printf 'ERROR: %s: checkout identity does not match the governed child\n' "$$path" >&2; \
+			exit 2; \
+		fi; \
+		git_dir=$$(git -C "$$child" rev-parse --absolute-git-dir); \
+		index="$$git_dir/index"; \
+		if [ -e "$$index" ] || [ -L "$$index" ]; then continue; fi; \
+		content=$$(git -C "$$child" ls-files --others --directory); \
+		reflog=$$(git -C "$$child" reflog show --format=%gs HEAD); \
+		initial=$$(git -C "$$child" reflog show --format=%gs -1 HEAD); \
+		if [ -n "$$content" ] || [ "$$reflog" != "$$initial" ]; then \
+			printf 'ERROR: %s: missing index with unproven initial-clone state; preserve and review\n' "$$path" >&2; \
+			exit 2; \
+		fi; \
+		case "$$initial" in \
+			'clone: from '*) ;; \
+			*) printf 'ERROR: %s: missing index without initial clone receipt\n' "$$path" >&2; exit 2 ;; \
+		esac; \
+		local_refs=$$(git -C "$$child" for-each-ref --format='%(refname)' refs/heads refs/stash); \
+		if active_ref=$$(git -C "$$child" symbolic-ref -q HEAD); then \
+			:; \
+		else \
+			ref_status=$$?; \
+			[ "$$ref_status" -eq 1 ] || exit "$$ref_status"; \
+		fi; \
+		if [ "$$local_refs" != "$$active_ref" ]; then \
+			printf 'ERROR: %s: missing index with local branch or stash work; preserve and review\n' "$$path" >&2; \
+			exit 2; \
+		fi; \
+		entry=$$(git -C "$$root" ls-files --stage -- "$$path"); \
+		set -- $$entry; \
+		if [ "$$#" -ne 4 ] || [ "$$1" != 160000 ] || [ "$$3" != 0 ] || [ "$$4" != "$$path" ]; then \
+			printf 'ERROR: governed path is not a gitlink: %s\n' "$$path" >&2; \
+			exit 2; \
+		fi; \
+		head=$$(git -C "$$child" rev-parse HEAD); \
+		if [ "$$head" = "$$2" ]; then \
+			printf 'setup: materializing unfinished initial clone at recorded pin: %s\n' "$$path"; \
+			GIT_TERMINAL_PROMPT=0 timeout --signal=TERM --kill-after=5s "120s" \
+				git -C "$$child" -c submodule.recurse=false checkout --detach --no-overwrite-ignore "$$head"; \
+			continue; \
+		fi; \
+		printf 'setup: resuming unfinished initial clone: %s\n' "$$path"; \
+		absent="$$absent $$path"; \
 	done; \
 	if [ -n "$$absent" ]; then \
 		credential_helper='!f() { if [ "$$1" = get ]; then printf "username=x-access-token\npassword=%s\n" "$$GITHUB_TOKEN"; fi; }; f'; \
 		GIT_TERMINAL_PROMPT=0 timeout --signal=TERM --kill-after=5s "120s" \
 			git -C "$$root" -c credential.helper= \
 			-c "credential.https://$${GH_HOST:-github.com}.helper=$$credential_helper" \
+			submodule update --init --checkout --depth 1 --jobs "$${FLEXT_SUBMODULE_JOBS:-8}" -- $$absent; \
 			submodule update --init --checkout --depth 1 --jobs "$${FLEXT_SUBMODULE_JOBS:-8}" -- $$absent; \
 	fi; \
 	validate_submodule() { \
@@ -1563,6 +1650,59 @@ _builtin_tests_all: _builtin_require_environment
 	+@$(SELF_MAKE) test
 	@$(PYTEST_BOUNDED) $(UV_RUN) python -m flext_infra._pytest_entry full
 
+_builtin_test_file_all: _builtin_require_environment
+	@if [ -z "$(strip $(FILE))" ]; then printf 'ERROR: test-file requires FILE=<repository-relative test file path>\n' >&2; exit 2; fi; \
+case "$(FILE)" in /*|*..*) printf 'ERROR: FILE must stay a repository-relative path: %s\n' "$(FILE)" >&2; exit 2 ;; esac; \
+if [ ! -f "$(PROJECT_ROOT)/$(FILE)" ]; then printf 'ERROR: FILE is not an existing repository file: %s\n' "$(FILE)" >&2; exit 2; fi; \
+set -eu; \
+database="$(FLEXT_PYTEST_TESTMON_DATABASE)"; \
+case "$$database" in /*) ;; *) printf 'ERROR: persistent testmon database requires XDG_CACHE_HOME or HOME\n' >&2; exit 2 ;; esac; \
+case "$$database" in "$(PROJECT_ROOT)"/*) printf 'ERROR: persistent testmon database must be outside the checkout: %s\n' "$$database" >&2; exit 2 ;; esac; \
+case "$$database" in "$${TMPDIR:-/tmp}"/*|/tmp/*) printf 'ERROR: persistent testmon database must not live under the temporary directory: %s\n' "$$database" >&2; exit 2 ;; esac; \
+mkdir -p "$$(dirname "$$database")"; \
+project_root="$(PROJECT_ROOT)"; \
+project_parent="$${project_root%/*}"; \
+if [ -z "$$project_parent" ]; then project_parent=/; fi; \
+scratch="$$(mktemp -d "$$project_parent/.$${project_root##*/}.pytest-scratch.XXXXXX")"; \
+trap 'find "$$scratch" -depth -delete' EXIT; \
+mkdir -p "$$scratch/tmp"; \
+scratch_tmp="$$(cd "$$scratch/tmp" && pwd -P)"; \
+TMPDIR="$$scratch_tmp"; TMP="$$scratch_tmp"; TEMP="$$scratch_tmp"; \
+export TMPDIR TMP TEMP; \
+export FLEXT_PYTEST_TARGET_FILE="$(FILE)"; TESTMON_DATAFILE="$$database" $(PYTEST_BOUNDED) $(PROJECT_TOOL_EXEC) $(UV_RUN) python -m flext_infra._pytest_entry file
+
+# The fast per-file pre-gate (operator P0, val2026100417xx): `make file-gate
+# FILE=<repository-relative path>` gates exactly one file with the fast gates
+# (ruff lint, ruff format, pyrefly, pyright, ast-grep, typos) before the file
+# ever reaches the tree-wide `make mod`/`make check` pipeline. Ruff lint and
+# format are the hard gates; the type and spelling scanners report advisories.
+# Empty or non-relative FILE fails loud. This pre-gate never substitutes the
+# tree-wide verbs: code is accepted only after `make mod`, with fmt/fix/check/
+# mod/spells green (ADR-004 §3, ADR-018).
+_builtin_file_gate_all: _builtin_require_environment
+	@set -eu; \
+	if [ -z "$(strip $(FILE))" ]; then printf 'ERROR: file-gate requires FILE=<repository-relative path>\n' >&2; exit 2; fi; \
+	case "$(FILE)" in /*|*..*) printf 'ERROR: FILE must stay a repository-relative path: %s\n' "$(FILE)" >&2; exit 2 ;; esac; \
+	if [ ! -f "$(PROJECT_ROOT)/$(FILE)" ]; then printf 'ERROR: FILE is not an existing repository file: %s\n' "$(FILE)" >&2; exit 2; fi; \
+	file="$(PROJECT_ROOT)/$(FILE)"; \
+	echo "file-gate: ruff check $(FILE)"; \
+	$(RUNTIME_PYTHON) -m ruff check "$$file"; \
+	echo "file-gate: ruff format --check $(FILE)"; \
+	$(RUNTIME_PYTHON) -m ruff format --check "$$file"; \
+	echo "file-gate: pyrefly $(FILE)"; \
+	$(RUNTIME_PYTHON) -m pyrefly check "$$file" || true; \
+	echo "file-gate: pyright $(FILE)"; \
+	$(RUNTIME_PYTHON) -m pyright "$$file" || true; \
+	echo "file-gate: ast-grep scan $(FILE)"; \
+	ast-grep scan "$$file" || true; \
+	echo "file-gate: typos $(FILE)"; \
+	typos "$$file" || true; \
+	echo "file-gate: OK (pre-gate only; tree-wide make mod/check remain the acceptance gates)"
+
+_builtin_tests_all: _builtin_require_environment
+	+@$(SELF_MAKE) test
+	@$(PYTEST_BOUNDED) $(UV_RUN) python -m flext_infra._pytest_entry full
+
 # fmt is format-only (single-pass verb law): ruff formats Python, the
 # fmt_gates formatters run once through the checker's apply mode, and every
 # lint repair belongs to `make fix`. Only a real tool failure (exit >= 2)
@@ -1642,7 +1782,12 @@ profile-gen-report: _builtin_require_environment
 # The parent adapter starts profiling before runner/model/pytest imports; each
 # child runs under a stdlib-only launcher, so pytest imports before any plugin
 # package. The runner binds every child profile to the exact run;
+# The parent adapter starts profiling before runner/model/pytest imports; each
+# child runs under a stdlib-only launcher, so pytest imports before any plugin
+# package. The runner binds every child profile to the exact run;
 # reports never combine a parent profile with the mutable latest.txt pointer.
+# Public names come from make.verbs; these targets are the implementations.
+_builtin-profile-test: _builtin_require_environment
 # Public names come from make.verbs; these targets are the implementations.
 _builtin-profile-test: _builtin_require_environment
 	@mkdir -p "$(PROFILE_REPORTS_DIR)"
@@ -1790,6 +1935,8 @@ _builtin-test: _builtin_test_all
 _builtin-test-full: _builtin_test_full_all
 _builtin-test-file: _builtin_test_file_all
 _builtin-file-gate: _builtin_file_gate_all
+_builtin-test-file: _builtin_test_file_all
+_builtin-file-gate: _builtin_file_gate_all
 _builtin-fmt: _builtin_fmt_all
 _builtin-fix: _builtin_fix_all
 _builtin-fix-namespace: _builtin_fix_namespace
@@ -1826,4 +1973,5 @@ _builtin-smells:
 _builtin-duplication:
 	@$(PROJECT_FLEXT_INFRA) check run --repository-root "$(PROJECT_ROOT)" --gates "duplication"
 _builtin-sonarcloud-sync: _builtin_sonarcloud_sync_all
+_builtin-sonarcloud-issues: _builtin_sonarcloud_issues_all
 _builtin-sonarcloud-issues: _builtin_sonarcloud_issues_all

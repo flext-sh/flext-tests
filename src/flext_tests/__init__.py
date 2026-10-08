@@ -11,6 +11,7 @@ from types import MappingProxyType
 from typing import TYPE_CHECKING
 
 from flext_core import install_lazy_exports
+from flext_core import install_lazy_exports
 from flext_tests.__version__ import (
     __author__,
     __author_email__,

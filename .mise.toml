@@ -35,6 +35,9 @@ compile = false
 # bun installs the npm CLIs with the --trust lifecycle approval the inline
 # tool below declares; the lock keeps the top-level pin only.
 package_manager = "bun"
+# bun installs the npm CLIs with the --trust lifecycle approval the inline
+# tool below declares; the lock keeps the top-level pin only.
+package_manager = "bun"
 [tool_config]
 locked = true
 # End SECTION: settings
@@ -57,17 +60,21 @@ kind = "latest"
 direnv = "latest"
 taplo = "latest"
 "npm:@ast-grep/cli" = { version = "latest", bun_args = "--trust" }
+"npm:@ast-grep/cli" = { version = "latest", bun_args = "--trust" }
 gitleaks = "latest"
 "aqua:boyter/scc" = "latest"
 kubeconform = "latest"
 node = "latest"
+bun = "latest"
 bun = "latest"
 "npm:prettier" = "3.5.3"
 go = "latest"
 make = "latest"
 [tools."github:qltysh/qlty"]
 version = "0.645.0"
+version = "0.645.0"
 [tools."github:kucherenko/jscpd"]
+version = "5.3.2"
 version = "5.3.2"
 [tools."github:microsoft/waza"]
 version = "latest"
