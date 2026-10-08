@@ -24,7 +24,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Final
 
 if TYPE_CHECKING:
-    from flext_tests.typings import t
+    from flext_core import t
 
 _LOCAL_PACKAGES: Final[t.StrSequence] = ("tests",)
 
