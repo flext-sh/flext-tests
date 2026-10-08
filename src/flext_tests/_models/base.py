@@ -11,7 +11,8 @@ from typing import Annotated, Self
 
 from flext_cli import m, p
 
-from flext_tests import t
+if TYPE_CHECKING:
+    from flext_tests import t
 
 
 def _entity_payload_default() -> (
