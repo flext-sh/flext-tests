@@ -10,7 +10,7 @@ from __future__ import annotations
 from types import MappingProxyType
 from typing import TYPE_CHECKING
 
-from flext_core import build_lazy_import_map, install_lazy_exports
+from flext_core import install_lazy_exports
 from flext_tests.__version__ import (
     __author__,
     __author_email__,
@@ -101,38 +101,49 @@ __all__: tuple[str, ...] = (
     "x",
 )
 
-_LAZY_IMPORTS = MappingProxyType(
-    build_lazy_import_map(
-        MappingProxyType({
-            "._config": ("FlextTestsConfig", "config"),
-            "._settings": ("FlextTestsSettings", "settings"),
-            ".api": ("FlextTests", "api"),
-            ".base": ("FlextTestsServiceBase", "s"),
-            ".case": ("FlextTestsCase",),
-            ".cli": ("FlextTestsCli",),
-            ".constants": ("FlextTestsConstants", "c"),
-            ".docker": ("FlextTestsDocker", "tk"),
-            ".domains": ("FlextTestsDomains", "td"),
-            ".enforcement_plugin": ("SLOW_TIMEOUT_INI_OPTION",),
-            ".files": ("FlextTestsFiles", "tf"),
-            ".kube": ("FlextTestsKube",),
-            ".models": ("FlextTestsModels", "m"),
-            ".protocols": ("FlextTestsProtocols", "p"),
-            ".pytest_bootstrap": ("install_local_packages",),
-            ".services": ("services",),
-            ".tmatchers": ("FlextTestsMatchersUtilities", "tm"),
-            ".typings": ("FlextTestsTypes", "t"),
-            ".utilities": (
-                "FlextTestsFixturesDSLMixin",
-                "FlextTestsModuleGovernanceMixin",
-                "FlextTestsUtilities",
-                "u",
-            ),
-            "flext_cli": ("d", "e", "h", "r", "x"),
-        }),
-        alias_groups=MappingProxyType({}),
-        sort_keys=False,
-    ),
+install_lazy_exports(
+    __name__,
+    globals(),
+    MappingProxyType({
+        "SLOW_TIMEOUT_INI_OPTION": ".enforcement_plugin",
+        "FlextTests": ".api",
+        "FlextTestsCase": ".case",
+        "FlextTestsCli": ".cli",
+        "FlextTestsConfig": "._config",
+        "FlextTestsConstants": ".constants",
+        "FlextTestsDocker": ".docker",
+        "FlextTestsDomains": ".domains",
+        "FlextTestsFiles": ".files",
+        "FlextTestsFixturesDSLMixin": ".utilities",
+        "FlextTestsKube": ".kube",
+        "FlextTestsMatchersUtilities": ".tmatchers",
+        "FlextTestsModels": ".models",
+        "FlextTestsModuleGovernanceMixin": ".utilities",
+        "FlextTestsProtocols": ".protocols",
+        "FlextTestsServiceBase": ".base",
+        "FlextTestsSettings": "._settings",
+        "FlextTestsTypes": ".typings",
+        "FlextTestsUtilities": ".utilities",
+        "api": ".api",
+        "c": ".constants",
+        "config": "._config",
+        "d": "flext_cli",
+        "e": "flext_cli",
+        "h": "flext_cli",
+        "install_local_packages": ".pytest_bootstrap",
+        "m": ".models",
+        "p": ".protocols",
+        "r": "flext_cli",
+        "s": ".base",
+        "services": ".services",
+        "settings": "._settings",
+        "t": ".typings",
+        "td": ".domains",
+        "tf": ".files",
+        "tk": ".docker",
+        "tm": ".tmatchers",
+        "u": ".utilities",
+        "x": "flext_cli",
+    }),
+    public_exports=__all__,
 )
-
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)

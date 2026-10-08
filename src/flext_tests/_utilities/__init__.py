@@ -10,7 +10,7 @@ from __future__ import annotations
 from types import MappingProxyType
 from typing import TYPE_CHECKING
 
-from flext_core import build_lazy_import_map, install_lazy_exports
+from flext_core import install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tests._utilities import _files, _matchers
@@ -50,7 +50,10 @@ if TYPE_CHECKING:
     from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
     from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
     from flext_tests._utilities.governance import FlextTestsModuleGovernanceMixin
-    from flext_tests._utilities.handler import FlextTestsHandlerHelpersUtilitiesMixin
+    from flext_tests._utilities.handler import (
+        FlextTestsHandlerConfigParams,
+        FlextTestsHandlerHelpersUtilitiesMixin,
+    )
     from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
     from flext_tests._utilities.make_contract import (
         FlextTestsMakeContractUtilitiesMixin,
@@ -105,6 +108,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsFilesUtilitiesMixin",
     "FlextTestsFixturesDSLMixin",
     "FlextTestsGenericHelpersUtilitiesMixin",
+    "FlextTestsHandlerConfigParams",
     "FlextTestsHandlerHelpersUtilitiesMixin",
     "FlextTestsMakeContractUtilitiesMixin",
     "FlextTestsMakeParsingUtilitiesMixin",
@@ -135,63 +139,55 @@ __all__: tuple[str, ...] = (
     "_matchers",
 )
 
-_LAZY_IMPORTS = MappingProxyType(
-    build_lazy_import_map(
-        MappingProxyType({
-            "._files": ("_files",),
-            "._files._assertions": ("FlextTestsFilesAssertionsMixin",),
-            "._files._batch": ("FlextTestsFilesBatchMixin",),
-            "._files._comparison": ("FlextTestsFilesComparisonMixin",),
-            "._files._contexts": ("FlextTestsFilesContextsMixin",),
-            "._files._creation": ("FlextTestsFilesCreationMixin",),
-            "._files._info": ("FlextTestsFilesInfoMixin",),
-            "._files._lifecycle": ("FlextTestsFilesLifecycleMixin",),
-            "._files._reading": ("FlextTestsFilesReadingMixin",),
-            "._matchers": ("_matchers",),
-            "._matchers._assertions": ("FlextTestsMatchersAssertionsMixin",),
-            "._matchers._containment": ("FlextTestsMatchersContainmentMixin",),
-            "._matchers._immutability": ("FlextTestsMatchersImmutabilityMixin",),
-            "._matchers._result": ("FlextTestsMatchersResultMixin",),
-            "._matchers._scope": ("FlextTestsMatchersScopeMixin",),
-            "._matchers._that": ("FlextTestsMatchersThatMixin",),
-            "._matchers._typeguards": ("FlextTestsMatchersTypeGuardsMixin",),
-            ".base": ("FlextTestsUtilitiesBase",),
-            ".container": ("FlextTestsContainerHelpersUtilitiesMixin",),
-            ".docker_lifecycle": ("FlextTestsDockerLifecycleUtilitiesMixin",),
-            ".docker_state": ("FlextTestsDockerStateUtilitiesMixin",),
-            ".enforcement": ("FlextTestsEnforcementUtilitiesMixin",),
-            ".files": ("FlextTestsFilesUtilitiesMixin",),
-            ".fixtures_dsl": ("FlextTestsFixturesDSLMixin",),
-            ".generic": ("FlextTestsGenericHelpersUtilitiesMixin",),
-            ".governance": ("FlextTestsModuleGovernanceMixin",),
-            ".handler": ("FlextTestsHandlerHelpersUtilitiesMixin",),
-            ".make": ("FlextTestsMakeUtilitiesMixin",),
-            ".make_contract": ("FlextTestsMakeContractUtilitiesMixin",),
-            ".make_parsing": ("FlextTestsMakeParsingUtilitiesMixin",),
-            ".make_registry": ("FlextTestsMakeRegistryUtilitiesMixin",),
-            ".make_rendering": ("FlextTestsMakeRenderingUtilitiesMixin",),
-            ".matchers": ("FlextTestsMatchersUtilities",),
-            ".namespace": ("FlextTestsNamespaceUtilitiesMixin",),
-            ".payload": ("FlextTestsPayloadUtilities",),
-            ".result": ("FlextTestsResultUtilitiesMixin",),
-            ".scratch_storage": ("FlextTestsScratchStorageUtilitiesMixin",),
-            ".settings": ("FlextTestsConfigHelpersUtilitiesMixin",),
-            ".testcontext": ("FlextTestsTestContextUtilitiesMixin",),
-            ".workspace_cleanup": ("FlextTestsWorkspaceCleanupUtilitiesMixin",),
-            ".workspace_cleanup_git": ("FlextTestsWorkspaceCleanupGitUtilitiesMixin",),
-            ".workspace_cleanup_inspect": (
-                "FlextTestsWorkspaceCleanupInspectUtilitiesMixin",
-            ),
-            ".workspace_cleanup_paths": (
-                "FlextTestsWorkspaceCleanupPathsUtilitiesMixin",
-            ),
-            ".workspace_cleanup_plan": (
-                "FlextTestsWorkspaceCleanupPlanUtilitiesMixin",
-            ),
-        }),
-        alias_groups=MappingProxyType({}),
-        sort_keys=False,
-    ),
+install_lazy_exports(
+    __name__,
+    globals(),
+    MappingProxyType({
+        "FlextTestsConfigHelpersUtilitiesMixin": ".settings",
+        "FlextTestsContainerHelpersUtilitiesMixin": ".container",
+        "FlextTestsDockerLifecycleUtilitiesMixin": ".docker_lifecycle",
+        "FlextTestsDockerStateUtilitiesMixin": ".docker_state",
+        "FlextTestsEnforcementUtilitiesMixin": ".enforcement",
+        "FlextTestsFilesAssertionsMixin": "._files._assertions",
+        "FlextTestsFilesBatchMixin": "._files._batch",
+        "FlextTestsFilesComparisonMixin": "._files._comparison",
+        "FlextTestsFilesContextsMixin": "._files._contexts",
+        "FlextTestsFilesCreationMixin": "._files._creation",
+        "FlextTestsFilesInfoMixin": "._files._info",
+        "FlextTestsFilesLifecycleMixin": "._files._lifecycle",
+        "FlextTestsFilesReadingMixin": "._files._reading",
+        "FlextTestsFilesUtilitiesMixin": ".files",
+        "FlextTestsFixturesDSLMixin": ".fixtures_dsl",
+        "FlextTestsGenericHelpersUtilitiesMixin": ".generic",
+        "FlextTestsHandlerConfigParams": ".handler",
+        "FlextTestsHandlerHelpersUtilitiesMixin": ".handler",
+        "FlextTestsMakeContractUtilitiesMixin": ".make_contract",
+        "FlextTestsMakeParsingUtilitiesMixin": ".make_parsing",
+        "FlextTestsMakeRegistryUtilitiesMixin": ".make_registry",
+        "FlextTestsMakeRenderingUtilitiesMixin": ".make_rendering",
+        "FlextTestsMakeUtilitiesMixin": ".make",
+        "FlextTestsMatchersAssertionsMixin": "._matchers._assertions",
+        "FlextTestsMatchersContainmentMixin": "._matchers._containment",
+        "FlextTestsMatchersImmutabilityMixin": "._matchers._immutability",
+        "FlextTestsMatchersResultMixin": "._matchers._result",
+        "FlextTestsMatchersScopeMixin": "._matchers._scope",
+        "FlextTestsMatchersThatMixin": "._matchers._that",
+        "FlextTestsMatchersTypeGuardsMixin": "._matchers._typeguards",
+        "FlextTestsMatchersUtilities": ".matchers",
+        "FlextTestsModuleGovernanceMixin": ".governance",
+        "FlextTestsNamespaceUtilitiesMixin": ".namespace",
+        "FlextTestsPayloadUtilities": ".payload",
+        "FlextTestsResultUtilitiesMixin": ".result",
+        "FlextTestsScratchStorageUtilitiesMixin": ".scratch_storage",
+        "FlextTestsTestContextUtilitiesMixin": ".testcontext",
+        "FlextTestsUtilitiesBase": ".base",
+        "FlextTestsWorkspaceCleanupGitUtilitiesMixin": ".workspace_cleanup_git",
+        "FlextTestsWorkspaceCleanupInspectUtilitiesMixin": ".workspace_cleanup_inspect",
+        "FlextTestsWorkspaceCleanupPathsUtilitiesMixin": ".workspace_cleanup_paths",
+        "FlextTestsWorkspaceCleanupPlanUtilitiesMixin": ".workspace_cleanup_plan",
+        "FlextTestsWorkspaceCleanupUtilitiesMixin": ".workspace_cleanup",
+        "_files": "._files",
+        "_matchers": "._matchers",
+    }),
+    public_exports=__all__,
 )
-
-install_lazy_exports(__name__, globals(), _LAZY_IMPORTS, public_exports=__all__)
