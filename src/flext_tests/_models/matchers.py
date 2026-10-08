@@ -12,7 +12,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated, ClassVar, TypeAliasType, cast
 
-from _pytest.python_api import ApproxBase  # ruff: ignore[import-private-name] -- ApproxBase has no public pytest path in the supported versions; justified per fleet suppression law.
+from _pytest.python_api import ApproxBase
 from flext_cli import m, u
 
 from flext_tests import p, t
@@ -256,21 +256,27 @@ class FlextTestsMatchersModelsMixin:
             if isinstance(value, cls):
                 return value
             if isinstance(value, Mapping):
-                mapping_value: Mapping[str, object] = value
+                mapping_value = cast("Mapping[str, object]", value)
                 rule_keys = frozenset({*cls.model_fields, "is", "excludes"})
                 if mapping_value and set(mapping_value).issubset(rule_keys):
                     return cls.model_validate(dict(mapping_value))
                 # Own the mapping operand here; own_operand is idempotent, so
                 # the field validator re-running on the owned payload is a no-op.
                 return cls(eq=cls.own_operand(mapping_value))
-            if isinstance(value, (type, tuple)):
-                candidates = (value,) if isinstance(value, type) else tuple(value)
+            if isinstance(value, type):
+                # A bare type keeps its nominal form.
+                return cls(is_=value)
+            if isinstance(value, tuple):
+                candidates = tuple(cast("Sequence[object]", value))
                 members = tuple(item for item in candidates if isinstance(item, type))
                 if len(members) == len(candidates):
-                    # A bare type keeps its nominal form; a tuple of types
-                    # narrows to the type members the rule accepts.
+                    # A tuple of types narrows to the type members the rule
+                    # accepts.
                     is_spec = members[0] if len(members) == 1 else members
                     return cls(is_=is_spec)
+                # A non-type tuple is its own operand: tuples are never
+                # callable, so the arms below collapse to the equality arm.
+                return cls(eq=cls.own_operand(cast("Sequence[object]", value)))
             if callable(value):
                 return cls(
                     where=cast(
@@ -300,9 +306,12 @@ class FlextTestsMatchersModelsMixin:
             if value is None:
                 return None
             if isinstance(value, Mapping):
-                return {key: cls.parse(rule) for key, rule in value.items()}
+                return {
+                    key: cls.parse(rule)
+                    for key, rule in cast("Mapping[str, object]", value).items()
+                }
             if isinstance(value, Sequence) and not isinstance(value, str | bytes):
-                return [cls.parse(rule) for rule in value]
+                return [cls.parse(rule) for rule in cast("Sequence[object]", value)]
             return value
 
     class OkParams(PayloadParams):

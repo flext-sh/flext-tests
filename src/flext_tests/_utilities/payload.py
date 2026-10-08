@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable, KeysView, Mapping, ValuesView
+from collections.abc import Callable, Iterable, KeysView, Mapping, Sequence, ValuesView
 from datetime import datetime, tzinfo
 from enum import Enum
 from importlib.machinery import ModuleSpec
@@ -58,7 +58,7 @@ class FlextTestsFlextUtilitiesPayload:
             return value
         if isinstance(value, m.RootModel):
             return FlextTestsPayloadUtilities.to_payload(
-                value.root,
+                cast("m.RootModel[object]", value).root,
             )
         if isinstance(value, Enum):
             return FlextTestsPayloadUtilities.to_payload(
@@ -134,7 +134,8 @@ class FlextTestsFlextUtilitiesPayload:
         if isinstance(value, Match):
             # A regex match compares by its matched text — the pattern
             # contract (semver, id shape) is what an expectation asserts.
-            return flext_tests.m.Tests.Payload(kind="atom", atom=value.group(0))
+            matched = cast("Match[str]", value).group(0)
+            return flext_tests.m.Tests.Payload(kind="atom", atom=matched)
         return None
 
     @staticmethod
@@ -177,7 +178,7 @@ class FlextTestsFlextUtilitiesPayload:
         """
         if isinstance(value, (KeysView, ValuesView)):
             return FlextTestsPayloadUtilities.to_payload(
-                list(value),
+                list(cast("Iterable[object]", value)),
             )
         return None
 
@@ -196,7 +197,7 @@ class FlextTestsFlextUtilitiesPayload:
         if not isinstance(value, Mapping):
             return None
         entries: t.MutableMappingKV[str, flext_tests.m.Tests.Payload] = {}
-        for key, item in value.items():
+        for key, item in cast("Mapping[object, object]", value).items():
             normalized_key = str(key)
             if normalized_key in entries:
                 msg = f"Native payload mapping key collision: {normalized_key!r}"
@@ -217,7 +218,10 @@ class FlextTestsFlextUtilitiesPayload:
         """
         if not isinstance(value, (list, tuple, set, frozenset)):
             return None
-        children = tuple(FlextTestsPayloadUtilities.to_payload(item) for item in value)
+        children = tuple(
+            FlextTestsPayloadUtilities.to_payload(item)
+            for item in cast("Sequence[object]", value)
+        )
         if isinstance(value, (set, frozenset)):
             children = tuple(
                 sorted(

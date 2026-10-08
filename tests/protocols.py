@@ -44,6 +44,7 @@ class TestsFlextTestsProtocols(FlextTestsProtocols):
 
             def echo(self, value: str) -> str:
                 """Return the transformed echo value."""
+                ...
 
 
 p = TestsFlextTestsProtocols

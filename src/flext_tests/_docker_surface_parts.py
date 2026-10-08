@@ -27,9 +27,11 @@ class _DockerFacadeInternals:
     the audit's base walker demands class declarations outside conditionals.
     """
 
-    def _compose_path(self, compose_file: str) -> Path: ...
+    def _compose_path(self, compose_file: str) -> Path:
+        raise NotImplementedError
 
-    def _compose_down(self, compose_path: Path, project: str) -> p.Result[str]: ...
+    def _compose_down(self, compose_path: Path, project: str) -> p.Result[str]:
+        raise NotImplementedError
 
     def _compose_up(
         self,
@@ -38,12 +40,14 @@ class _DockerFacadeInternals:
         service: str | None,
         *,
         force_recreate: bool,
-    ) -> p.Result[str]: ...
+    ) -> p.Result[str]:
+        raise NotImplementedError
 
     def _inspect(
         self,
         container_name: str,
-    ) -> p.Result[m.Tests.ContainerInspect]: ...
+    ) -> p.Result[m.Tests.ContainerInspect]:
+        raise NotImplementedError
 
 
 if TYPE_CHECKING:

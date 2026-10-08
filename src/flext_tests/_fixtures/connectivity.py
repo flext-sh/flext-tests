@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import socket
 from importlib import import_module
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import pytest
 from flext_infra import config as infra_config
@@ -75,7 +75,10 @@ class FlextTestsCapabilityPlugin:
             Returns:
                 The resulting ``p.Result[int]``.
             """
-            return root.u.Tests.resolve_host_port(info, container_port)
+            return cast(
+                "p.Result[int]",
+                root.u.Tests.resolve_host_port(info, container_port),
+            )
 
         published = (
             root

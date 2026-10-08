@@ -67,10 +67,15 @@ class FlextTestsFlextUtilitiesGovernance:
         class _GovernanceConfigProto(Protocol):
             """Structural type for a project ``c.<Package>.Tests`` namespace."""
 
-            # Instance-valued readonly scalars on the config namespace; the
-            # structural match must not demand ClassVar binding.
-            SRC_DIR: str
-            PACKAGE_DIR: str
+            @property
+            def SRC_DIR(self) -> str:
+                """Source directory holding the package."""
+                ...
+
+            @property
+            def PACKAGE_DIR(self) -> str:
+                """Package directory under the source directory."""
+                ...
 
         _test_file: ClassVar[str]
         _tests_config: ClassVar[

@@ -38,9 +38,11 @@ class FlextTestsConfigHelpersUtilitiesMixin(FlextSettings):
     def __setattr__(self, name: str, value: object) -> None:
         object.__setattr__(self, name, value)
 
-    __eq__ = object.__eq__
+    def __eq__(self, other: object) -> bool:
+        return self is other
 
-    __hash__ = object.__hash__
+    def __hash__(self) -> int:
+        return id(self)
 
     @staticmethod
     @contextmanager

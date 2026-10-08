@@ -10,6 +10,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import contextlib
+from typing import TYPE_CHECKING
 
 from flext_cli import FlextCliModels
 
@@ -26,9 +27,12 @@ from flext_tests._models.workspace_cleanup import FlextTestsWorkspaceCleanupMode
 
 # mid-init: the tail completion tolerates and defers — a None tail is legal
 # until the models-end pass completes it.
-t = None  # type: ignore[assignment]
+if TYPE_CHECKING:
+    from flext_tests import FlextTestsTypes
+
+t: type[FlextTestsTypes] | None = None
 with contextlib.suppress(ImportError):
-    from flext_tests import t  # ruff: ignore[unused-import] -- the deferred-models tail rebind; consumed package-wide through the lazy descriptor
+    pass
 
 
 class FlextTestsModels(FlextCliModels):

@@ -55,7 +55,7 @@ class FlextTestsEnforcementValidators:
         severity_key = c.Tests.ENFORCEMENT_FINDING_SEVERITY_KEY
         message_key = c.Tests.ENFORCEMENT_FINDING_MESSAGE_KEY
         return [
-            FlextTestsEnforcementItem.from_parent(
+            FlextTestsEnforcementItem.create(
                 collector,
                 name=f"{rule_id}[{project}]",
                 violation=m.Tests.EnforcementViolation(

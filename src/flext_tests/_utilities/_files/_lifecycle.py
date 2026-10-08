@@ -19,12 +19,21 @@ from typing import Self
 from flext_tests import c, t, u
 
 
+def _created_paths_default() -> list[Path]:
+    """Create the typed empty created-paths registry.
+
+    Returns:
+        The resulting ``list[Path]``.
+    """
+    return []
+
+
 class FlextTestsFilesLifecycleMixin:
     """File-manager lifecycle: init, context manager, cleanup, base_dir."""
 
     base_dir: Path | None
-    _created_files: list[Path] = u.PrivateAttr(default_factory=list)
-    _created_dirs: list[Path] = u.PrivateAttr(default_factory=list)
+    _created_files: list[Path] = u.PrivateAttr(default_factory=_created_paths_default)
+    _created_dirs: list[Path] = u.PrivateAttr(default_factory=_created_paths_default)
 
     @classmethod
     def _create_file_manager(cls, base_dir: Path | None) -> Self:
