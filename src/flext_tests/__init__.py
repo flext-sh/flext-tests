@@ -35,7 +35,6 @@ if TYPE_CHECKING:
     from flext_tests.constants import FlextTestsConstants, c
     from flext_tests.docker import FlextTestsDocker, tk
     from flext_tests.domains import FlextTestsDomains, td
-    from flext_tests.enforcement_plugin import SLOW_TIMEOUT_INI_OPTION
     from flext_tests.files import FlextTestsFiles, tf
     from flext_tests.kube import FlextTestsKube
     from flext_tests.models import FlextTestsModels, m
@@ -47,7 +46,6 @@ if TYPE_CHECKING:
 
 
 __all__: tuple[str, ...] = (
-    "SLOW_TIMEOUT_INI_OPTION",
     "FlextTests",
     "FlextTestsCase",
     "FlextTestsCli",
@@ -99,7 +97,6 @@ install_lazy_exports(
     __name__,
     globals(),
     MappingProxyType({
-        "SLOW_TIMEOUT_INI_OPTION": ".enforcement_plugin",
         "FlextTests": ".api",
         "FlextTestsCase": ".case",
         "FlextTestsCli": ".cli",

@@ -21,26 +21,27 @@ from typing import TYPE_CHECKING, cast
 
 import pytest
 
-if TYPE_CHECKING:
-    from flext_tests.base import FlextTestsServiceBase
-
 from flext_core import FlextContainer, FlextContext, FlextSettings
-from flext_tests import FlextTestsCase, FlextTestsSettings, s
+from flext_tests import FlextTestsCase
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
     from pathlib import Path
 
-    from flext_tests import p, t
+    from flext_tests import FlextTestsSettings, p, t
+    from flext_tests.base import FlextTestsServiceBase
 
-# pytest imports this module while registering fixtures at configure time.
-# The runtime facades it needs are imported at module top level with it.
+# pytest registers this module at configure time, before any test runs. The
+# model-backed facades (``FlextTestsSettings``, ``s``) therefore resolve through
+# the deferred ``import_module`` form inside the hook and fixture bodies that
+# use them, so an inactive or collect-only session never loads
+# ``flext_tests.models``.
 
 
 def _reset_runtime_state() -> None:
     """Reset root/test settings singletons and the DI container."""
     FlextSettings.reset_for_testing()
-    FlextTestsSettings.reset_for_testing()
+    importlib.import_module("flext_tests").FlextTestsSettings.reset_for_testing()
     FlextContainer.reset_for_testing()
 
 
@@ -69,6 +70,7 @@ def _bind_runtime_aliases(
     # lazy generated component packages).
     if instance is None:
         return
+    canonical_service = importlib.import_module("flext_tests").s
     package_name = package_root.split(".", maxsplit=1)[0]
     tests_package = importlib.import_module(package_name)
     try:
@@ -79,7 +81,10 @@ def _bind_runtime_aliases(
             "from its package root for the shared test runtime"
         )
         raise AttributeError(msg) from exc
-    if not isinstance(service_type, type) or not issubclass(service_type, s):
+    if not isinstance(service_type, type) or not issubclass(
+        service_type,
+        canonical_service,
+    ):
         msg = (
             f"{package_name} declares 's' as {service_type!r}, "
             "which is not a FlextTestsServiceBase subclass"
@@ -160,9 +165,12 @@ def settings() -> FlextTestsSettings:
     Returns:
         The resulting ``FlextTestsSettings``.
     """
+    settings_type: type[FlextTestsSettings] = importlib.import_module(
+        "flext_tests",
+    ).FlextTestsSettings
     FlextSettings.reset_for_testing()
-    FlextTestsSettings.reset_for_testing()
-    return FlextTestsSettings(debug=True, trace=False)
+    settings_type.reset_for_testing()
+    return settings_type(debug=True, trace=False)
 
 
 @pytest.fixture

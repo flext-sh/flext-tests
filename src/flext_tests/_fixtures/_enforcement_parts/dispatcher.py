@@ -20,15 +20,12 @@ from typing import TYPE_CHECKING, ClassVar, cast
 
 import pytest
 
-from flext_tests import c, m
-
-SLOW_TIMEOUT_INI_OPTION = "flext_slow_timeout_seconds"
-"""Config-owned timeout option for slow pytest items."""
+from flext_tests import c
 
 if TYPE_CHECKING:
     import warnings
 
-    from flext_tests import t
+    from flext_tests import m, t
 
 
 class FlextTestsEnforcementDispatcher:
@@ -136,12 +133,15 @@ class FlextTestsEnforcementDispatcher:
             UsageError: If FLEXT slow timeout policy; or if FLEXT slow timeout policy
                 requires the pytest-timeout plugin.
         """
-        raw_timeout = str(config.getini(SLOW_TIMEOUT_INI_OPTION)).strip()
+        raw_timeout = str(
+            config.getini(c.Tests.ENFORCEMENT_SLOW_TIMEOUT_INI_OPTION)
+        ).strip()
         if not raw_timeout:
             return None
         msg = (
             "FLEXT slow timeout policy: "
-            f"{SLOW_TIMEOUT_INI_OPTION} must be a positive finite number"
+            f"{c.Tests.ENFORCEMENT_SLOW_TIMEOUT_INI_OPTION} must be a positive "
+            "finite number"
         )
         try:
             slow_timeout = float(raw_timeout)
