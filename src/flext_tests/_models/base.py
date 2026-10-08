@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from types import MappingProxyType
-from typing import Annotated, Self
+from typing import TYPE_CHECKING, Annotated, Self
 
 from flext_cli import m, p
 
@@ -143,7 +143,7 @@ class FlextTestsFlextModelsBase:
                 Returns:
                     The resulting ``FlextTestsBaseModelsMixin.Payload``.
                 """
-                return cls(kind="atom")
+                return cls(kind="atom", entries={})
 
         class Entity(m.Entity):
             """Factory entity class for tests."""
