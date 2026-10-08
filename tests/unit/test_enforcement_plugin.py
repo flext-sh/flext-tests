@@ -18,6 +18,7 @@ from importlib.metadata import entry_points
 import pytest
 
 from flext_tests import tm
+from tests import u
 
 
 class TestsFlextTestsEnforcementPlugin:
@@ -77,6 +78,45 @@ class TestsFlextTestsEnforcementPlugin:
         )
         pytester.makepyfile(test_probe="def test_probe() -> None:\n    assert True\n")
         result = pytester.runpytest_subprocess("--collect-only", "-q")
+        tm.that(result.ret, eq=pytest.ExitCode.OK)
+        result.stdout.fnmatch_lines(["*test_probe*"])
+
+    @staticmethod
+    @pytest.mark.slow
+    def test_inactive_enforcement_session_never_imports_flext_infra(
+        pytester: pytest.Pytester,
+    ) -> None:
+        """The enforcement plugin alone keeps an ungoverned session off flext-infra.
+
+        Mirrors the nested run of flext-infra's collection-manifest contract
+        with only the flext-tests enforcement plugin loaded: flext-infra is
+        reached through its CLI and its own pytest plugin, so an ungoverned
+        enforcement session imports no ``flext_infra`` module at all.
+        """
+        pytester.makeini("[pytest]\n")
+        pytester.makeconftest(
+            "import sys\n"
+            "\n"
+            "\n"
+            "def pytest_sessionfinish(session):\n"
+            "    loaded = sorted(\n"
+            "        name for name in sys.modules\n"
+            "        if name.split('.')[0] == 'flext_infra'\n"
+            "    )\n"
+            "    if loaded:\n"
+            "        raise RuntimeError(f'flext_infra imported: {loaded}')\n",
+        )
+        pytester.makepyfile(test_probe="def test_probe() -> None:\n    assert True\n")
+        with u.Tests.env_vars_context(
+            {"PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"},
+            vars_to_clear=("PYTEST_ADDOPTS",),
+        ):
+            result = pytester.runpytest_subprocess(
+                "-p",
+                "flext_tests.enforcement_plugin",
+                "--collect-only",
+                "-q",
+            )
         tm.that(result.ret, eq=pytest.ExitCode.OK)
         result.stdout.fnmatch_lines(["*test_probe*"])
 
