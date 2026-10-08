@@ -11,7 +11,6 @@ from types import MappingProxyType
 from typing import TYPE_CHECKING
 
 from flext_core import install_lazy_exports
-from flext_core import install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tests._models.base import FlextTestsFlextModelsBase
