@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from flext_infra import c, u
+from flext_infra import c, m, u
 
 from flext_core import r
 from flext_tests import p
@@ -36,7 +36,7 @@ class FlextTestsWorkspaceCleanupGitUtilitiesMixin:
         result = u.Cli.run_raw(
             [c.Infra.GIT, *arguments],
             cwd=repository_root,
-            options=u.Cli.ProcessOptions(input_data=input_data),
+            options=m.Cli.ProcessOptions(input_data=input_data),
         )
         if result.failure and result.error is None:
             return r[p.Cli.CommandOutput].fail(
