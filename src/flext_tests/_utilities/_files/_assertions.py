@@ -54,11 +54,13 @@ class FlextTestsFilesAssertionsMixin(FlextTestsFilesBatchMixin):
         try:
             u.Cli.files_assert_exists(
                 path,
-                is_file=params.is_file,
-                is_dir=params.is_dir,
-                not_empty=params.not_empty,
-                readable=params.readable,
-                writable=params.writable,
+                options=u.Cli.FileAssertionOptions(
+                    is_file=params.is_file,
+                    is_dir=params.is_dir,
+                    not_empty=params.not_empty,
+                    readable=params.readable,
+                    writable=params.writable,
+                ),
             )
         except AssertionError as exc:
             raise AssertionError(msg or str(exc)) from exc

@@ -14,7 +14,7 @@ from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
 from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
 
 if TYPE_CHECKING:
-    from flext_tests.protocols import p
+    from flext_core import p
 
 
 class FlextTestsFilesComparisonMixin:

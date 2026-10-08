@@ -54,8 +54,8 @@ class FlextTestsFlextUtilitiesGovernance:
 
         - ``_test_file``: the test module's own ``__file__`` (so root-discovery
           is anchored relative to the test file, not this utility module).
-        - ``_tests_config``: the project ``c.<Package>.Tests`` constants namespace
-          that holds ``SRC_DIR`` and ``PACKAGE_DIR``.
+        - ``_tests_config``: a project ``c.<Package>.Tests()`` namespace instance
+          exposing read-only ``SRC_DIR`` and ``PACKAGE_DIR``.
 
         The only approved top-level functions are the console entrypoints the
         project declares in ``[project.scripts]``. They are derived from the
@@ -67,14 +67,12 @@ class FlextTestsFlextUtilitiesGovernance:
         class _GovernanceConfigProto(Protocol):
             """Structural type for a project ``c.<Package>.Tests`` namespace."""
 
-            SRC_DIR: str
-            PACKAGE_DIR: str
+            SRC_DIR: ClassVar[str]
+            PACKAGE_DIR: ClassVar[str]
 
         _test_file: ClassVar[str]
         _tests_config: ClassVar[
-            type[
-                FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin._GovernanceConfigProto
-            ]
+            FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin._GovernanceConfigProto
         ]
         _warn_on_import_error: ClassVar[bool] = True
 

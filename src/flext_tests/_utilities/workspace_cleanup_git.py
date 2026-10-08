@@ -36,7 +36,7 @@ class FlextTestsWorkspaceCleanupGitUtilitiesMixin:
         result = u.Cli.run_raw(
             [c.Infra.GIT, *arguments],
             cwd=repository_root,
-            input_data=input_data,
+            options=u.Cli.ProcessOptions(input_data=input_data),
         )
         if result.failure and result.error is None:
             return r[p.Cli.CommandOutput].fail(
