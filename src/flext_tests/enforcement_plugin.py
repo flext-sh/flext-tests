@@ -1,8 +1,11 @@
 """Lightweight ``pytest11`` adapter for the enforcement dispatcher.
 
-This module owns only the external pytest hook boundary; the enforcement
-contract itself lives in ``flext_tests._fixtures._enforcement_parts.dispatcher``,
-imported at module level per the fleet's no-mid-code-imports law.
+Pytest imports installed entry points before pytest-cov starts measurement.
+This module therefore owns only the external hook boundary and defers the
+enforcement contract until each lifecycle hook is actually called: every hook
+resolves the dispatcher through ``import_module`` with the config-owned module
+name ``c.Tests.ENFORCEMENT_DISPATCHER_MODULE``, so loading the entry point
+imports no ``flext_tests._fixtures`` module.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -10,12 +13,10 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from importlib import import_module
 from typing import TYPE_CHECKING
 
-from flext_tests._fixtures._enforcement_parts.dispatcher import (
-    SLOW_TIMEOUT_INI_OPTION,
-    FlextTestsEnforcementDispatcher,
-)
+from flext_tests import c
 
 if TYPE_CHECKING:
     import warnings
@@ -26,7 +27,7 @@ if TYPE_CHECKING:
 def pytest_addoption(parser: pytest.Parser) -> None:
     """Register the enforcement dispatcher's stable command-line contract."""
     parser.addini(
-        SLOW_TIMEOUT_INI_OPTION,
+        c.Tests.ENFORCEMENT_SLOW_TIMEOUT_INI_OPTION,
         "Config-owned timeout in seconds for items explicitly marked slow.",
         default="",
     )
@@ -74,7 +75,9 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 
 def pytest_configure(config: pytest.Config) -> None:
     """Resolve enforcement only after startup instrumentation is active."""
-    dispatcher = FlextTestsEnforcementDispatcher
+    dispatcher = import_module(
+        c.Tests.ENFORCEMENT_DISPATCHER_MODULE,
+    ).FlextTestsEnforcementDispatcher
     dispatcher.configure(config)
 
 
@@ -84,7 +87,9 @@ def pytest_collection_modifyitems(
     items: list[pytest.Item],
 ) -> None:
     """Delegate collection-time enforcement."""
-    dispatcher = FlextTestsEnforcementDispatcher
+    dispatcher = import_module(
+        c.Tests.ENFORCEMENT_DISPATCHER_MODULE,
+    ).FlextTestsEnforcementDispatcher
     dispatcher.collection_modifyitems(session, config, items)
 
 
@@ -96,13 +101,17 @@ def pytest_warning_recorded(
 ) -> None:
     """Track runtime enforcement warnings."""
     _ = when, nodeid, location
-    dispatcher = FlextTestsEnforcementDispatcher
+    dispatcher = import_module(
+        c.Tests.ENFORCEMENT_DISPATCHER_MODULE,
+    ).FlextTestsEnforcementDispatcher
     dispatcher.record_warning(warning_message)
 
 
 def pytest_sessionstart(session: pytest.Session) -> None:
     """Expose the session config for warning-capture plumbing."""
-    dispatcher = FlextTestsEnforcementDispatcher
+    dispatcher = import_module(
+        c.Tests.ENFORCEMENT_DISPATCHER_MODULE,
+    ).FlextTestsEnforcementDispatcher
     dispatcher.session_config = session.config
 
 
@@ -113,12 +122,13 @@ def pytest_terminal_summary(
 ) -> None:
     """Delegate the enforcement summary."""
     _ = exitstatus
-    dispatcher = FlextTestsEnforcementDispatcher
+    dispatcher = import_module(
+        c.Tests.ENFORCEMENT_DISPATCHER_MODULE,
+    ).FlextTestsEnforcementDispatcher
     dispatcher.terminal_summary(terminalreporter, config)
 
 
 __all__: list[str] = [
-    "SLOW_TIMEOUT_INI_OPTION",
     "pytest_addoption",
     "pytest_collection_modifyitems",
     "pytest_configure",

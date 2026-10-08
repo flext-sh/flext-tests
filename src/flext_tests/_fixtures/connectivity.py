@@ -24,13 +24,17 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import socket
+from importlib import import_module
 from typing import TYPE_CHECKING
 
 import pytest
 from flext_infra import config as infra_config
 
-from flext_tests import c, u
-from flext_tests.docker import FlextTestsDocker
+from flext_tests import c
+
+# The Docker manager and the ``u`` facade load the model tree, so they resolve
+# through the deferred ``import_module`` form inside the probes that need them:
+# a session without capability-marked tests never loads ``flext_tests.models``.
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -63,10 +67,14 @@ class FlextTestsCapabilityPlugin:
     @staticmethod
     def _published_port(container_name: str, container_port: int) -> int | None:
         """Return the host port a running container publishes, if any."""
+        root = import_module("flext_tests")
         published = (
-            FlextTestsDocker()
+            root
+            .FlextTestsDocker()
             .fetch_container_info(container_name)
-            .flat_map(lambda info: u.Tests.resolve_host_port(info, container_port))
+            .flat_map(
+                lambda info: root.u.Tests.resolve_host_port(info, container_port),
+            )
         )
         return published.value if published.success else None
 
@@ -75,7 +83,7 @@ class FlextTestsCapabilityPlugin:
         if marker in self._probe_cache:
             return self._probe_cache[marker]
         if marker == c.Tests.DOCKER_CONNECTIVITY_MARKER:
-            manager = FlextTestsDocker()
+            manager = import_module("flext_tests").FlextTestsDocker()
             client = manager.client
             docker_reason: str | None
             if client is None:
@@ -148,7 +156,10 @@ class FlextTestsCapabilityPlugin:
         Returns:
             The resulting ``bool``.
         """
-        return FlextTestsDocker.ci_disables_docker()
+        ci_disables: bool = import_module(
+            "flext_tests",
+        ).FlextTestsDocker.ci_disables_docker()
+        return ci_disables
 
     def pytest_collection_modifyitems(
         self,

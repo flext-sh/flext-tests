@@ -8,8 +8,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_core import u
-from flext_tests import m
+from flext_tests import m, u
 from flext_tests._fixtures._enforcement_parts._collector import (
     FlextTestsEnforcementCollector,
 )
