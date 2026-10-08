@@ -11,8 +11,10 @@ from typing import Annotated, Self
 
 from flext_cli import m, p
 
-if TYPE_CHECKING:
-    from flext_tests import t
+# Runtime import: pydantic resolves the nested models' ``t.Tests.*`` field
+# annotations at runtime, so a TYPE_CHECKING-only import leaves them
+# undefined (PydanticUserError: not fully defined).
+from flext_tests import t
 
 
 def _entity_payload_default() -> (

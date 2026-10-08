@@ -13,6 +13,7 @@ from typing import Annotated
 from flext_cli import m, u
 
 from flext_tests import c, p, t
+from flext_tests._models.base import FlextTestsFlextModelsBase
 
 
 class FlextTestsFilesystemModelsMixin:

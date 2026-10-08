@@ -212,10 +212,6 @@ follow_untyped_imports = true
 module = ["flext_tests.base"]
 disable_error_code = ["misc", "no-redef", "assignment"]
 
-[[tool.mypy.overrides]]
-module = ["flext_tests.base"]
-disable_error_code = ["misc", "no-redef", "assignment"]
-
 [tool.pydantic-mypy]
 init_forbid_extra = true
 init_typed = true
@@ -629,7 +625,11 @@ split-on-trailing-comma = false
   "verbose-raise",
   "write-whole-file",
 ]
-"scripts/**/*.py" = ["commented-out-code", "line-too-long"]
+"scripts/**/*.py" = [
+  "commented-out-code",
+  "line-too-long",
+  "typing-only-first-party-import",
+]
 "tests/**/*.py" = ["assert"]
 "tests/test_snapshot_drill.py" = ["import-private-name"]
 
