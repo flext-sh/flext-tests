@@ -6,19 +6,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import contextlib
 from types import MappingProxyType
 from typing import Annotated, Self
 
 from flext_cli import m, p
 
-# Runtime import: the nested models' field annotations reference ``t.Tests.*``
-# names, and pydantic resolves field annotations at runtime. A TYPE_CHECKING-only
-# import leaves the names unresolvable, deferring the models forever (PydanticUserError:
-# not fully defined). The package-level lazy descriptor resolves ``t`` without cycles.
-# mid-init: the models-end pass completes the deferred models.
-with contextlib.suppress(ImportError):
-    from flext_tests import t
+from flext_tests import t
 
 
 def _entity_payload_default() -> (
