@@ -90,7 +90,8 @@ def _bind_runtime_aliases(
             "which is not a FlextTestsServiceBase subclass"
         )
         raise TypeError(msg)
-    service = cast("FlextTestsServiceBase", service_type.fetch_global())
+    service_cls = cast("type[FlextTestsServiceBase]", service_type)
+    service = service_cls.fetch_global()
     instance.service = service
     instance.settings = service.fetch_settings()
     instance.logger = service.logger
