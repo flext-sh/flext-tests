@@ -11,6 +11,9 @@ from typing import Annotated, Self
 
 from flext_cli import m, p
 
+# Runtime import: pydantic resolves the nested models' ``t.Tests.*`` field
+# annotations at runtime, so a TYPE_CHECKING-only import leaves them
+# undefined (PydanticUserError: not fully defined).
 from flext_tests import t
 
 
@@ -32,19 +35,19 @@ def _entity_payload_default() -> (
     return FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload.atom_default()
 
 
-def _payload_entries_default() -> t.Tests.PayloadEntries[
-    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
-]:
-    """Create immutable entries without evaluating the enclosing model owner.
-
-    Returns:
-        The resulting ``t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload]``.
-    """
-    return MappingProxyType({})
-
-
 class FlextTestsFlextModelsBase:
     """Canonical namespace owner."""
+
+    @staticmethod
+    def _payload_entries_default() -> t.Tests.PayloadEntries[
+        FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+    ]:
+        """Late-bound empty mapping arm, bound the same way as the entity default.
+
+        Returns:
+            The resulting ``t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload]``.
+        """
+        return MappingProxyType({})
 
     class FlextTestsBaseModelsMixin:
         class Payload(m.ArbitraryTypesModel):
@@ -72,9 +75,17 @@ class FlextTestsFlextModelsBase:
                 ),
             ] = ()
             entries: Annotated[
-                t.Tests.PayloadEntries[Self],
+                t.Tests.PayloadEntries[
+                    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                ],
                 m.Field(
-                    default_factory=_payload_entries_default,
+                    # default_factory, not a literal: pydantic smart-copies the
+                    # class default on every construction, and a mappingproxy
+                    # default cannot be deep-copied (TypeError at Payload()).
+                    # Pyright cannot see either default through the facade base
+                    # chain, so it reports Payload(entries=...) as missing the
+                    # parameter — a static-only gap the runtime contract owns.
+                    default_factory=dict,
                     frozen=True,
                     description="String-keyed payload children.",
                 ),
@@ -139,7 +150,7 @@ class FlextTestsFlextModelsBase:
 
             name: Annotated[str, m.Field(description="Entity display name.")] = ""
             value: Annotated[
-                Payload,
+                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
                 m.Field(description="Arbitrary serializable payload."),
             ] = m.Field(default_factory=_entity_payload_default)
 
@@ -150,4 +161,10 @@ class FlextTestsFlextModelsBase:
             count: Annotated[int, m.Field(description="Occurrence counter.")] = 0
 
 
+# Nested models capture their enclosing class-body frame as the pydantic
+# parent namespace, which cannot see module-level names while the module is
+# still executing; their field schemas therefore stay deferred (mock
+# validators) and would raise ``not fully defined`` at first use. Completing
+# them here, once the full module namespace is bound, keeps every declaration
+# strictly resolved before the facade exposes it.
 __all__: list[str] = ["FlextTestsFlextModelsBase"]
