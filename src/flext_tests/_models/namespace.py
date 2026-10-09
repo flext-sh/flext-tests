@@ -27,7 +27,7 @@ class FlextTestsNamespaceModelsMixin:
         token: Annotated[
             str,
             u.Field(
-                pattern=FlextTestsConstantsNamespace.NAMESPACE_TOKEN_PATTERN,
+                pattern=FlextTestsConstantsNamespace.NAMESPACE_ID_PATTERN,
                 description="Lowercase namespace token (23 chars).",
             ),
         ]

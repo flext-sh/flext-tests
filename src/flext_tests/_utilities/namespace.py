@@ -35,7 +35,7 @@ class FlextTestsNamespaceUtilitiesMixin:
         """Derive one collision-free namespace for worker and run.
 
         The token is ``base36(epoch_milliseconds) + checkout_digest +
-        worker_code + tail``, exactly ``NAMESPACE_TOKEN_LENGTH`` lowercase
+        worker_code + tail``, exactly ``NAMESPACE_ID_LENGTH`` lowercase
         characters. The tail is monotonic within one millisecond of one
         process (the previous tail plus one), so a process never issues the
         same token twice; a new millisecond starts the tail from ``secrets``
@@ -55,7 +55,7 @@ class FlextTestsNamespaceUtilitiesMixin:
         ).hexdigest()[: namespace_constants.NAMESPACE_CHECKOUT_DIGEST_LENGTH]
         worker_code = FlextTestsNamespaceUtilitiesMixin._worker_code(worker_id)
         prefix = f"{epoch_stamp}{checkout_digest}{worker_code}"
-        tail_width = namespace_constants.NAMESPACE_TOKEN_LENGTH - len(prefix)
+        tail_width = namespace_constants.NAMESPACE_ID_LENGTH - len(prefix)
         tail = FlextTestsNamespaceUtilitiesMixin._monotonic_tail(issued_ms, tail_width)
         run_digest = hashlib.sha256(testrun_uid.encode(encoding="utf-8")).hexdigest()[
             :6

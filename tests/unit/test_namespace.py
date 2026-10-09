@@ -32,7 +32,7 @@ class TestsFlextTestsNamespace:
             testrun_uid="run-1",
             checkout_root=tmp_path,
         )
-        tm_match = re.match(c.Tests.NAMESPACE_TOKEN_PATTERN, namespace.token)
+        tm_match = re.match(c.Tests.NAMESPACE_ID_PATTERN, namespace.token)
         assert tm_match is not None
 
     @staticmethod
@@ -116,7 +116,7 @@ class TestsFlextTestsNamespace:
         test_namespace: m.Tests.TestNamespace,
     ) -> None:
         """The function fixture yields a valid per-test token."""
-        assert re.match(c.Tests.NAMESPACE_TOKEN_PATTERN, test_namespace.token)
+        assert re.match(c.Tests.NAMESPACE_ID_PATTERN, test_namespace.token)
 
 
 @pytest.fixture

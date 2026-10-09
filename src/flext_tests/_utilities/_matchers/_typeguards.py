@@ -7,13 +7,16 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Sized
-from typing import TypeAliasType
+from typing import Final, TypeAliasType
 
-from _pytest.python_api import ApproxBase
+import pytest
 from flext_cli import u
 
 from flext_tests import c, m, p
 from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
+
+ApproxBase: Final[type] = type(pytest.approx(0))
+"""Approximation sentinel base resolved through pytest's public ``approx`` API."""
 
 
 class FlextTestsMatchersTypeGuardsMixin:
