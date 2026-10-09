@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import socket
 from importlib import import_module
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import pytest
 from flext_infra import config as infra_config
@@ -39,7 +39,7 @@ from flext_tests import c
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
-    from flext_tests import t
+    from flext_tests import m, p, t
 
 _DESELECTED_CAPABILITY_RECEIPT: pytest.StashKey[dict[str, str]] = pytest.StashKey()
 """Typed config-stash key carrying the NOT EXECUTED receipt for the runner."""
@@ -68,13 +68,23 @@ class FlextTestsCapabilityPlugin:
     def _published_port(container_name: str, container_port: int) -> int | None:
         """Return the host port a running container publishes, if any."""
         root = import_module("flext_tests")
+
+        def resolve_published(info: m.Tests.ContainerInfo) -> p.Result[int]:
+            """Resolve the published host port of one inspected container.
+
+            Returns:
+                The resulting ``p.Result[int]``.
+            """
+            return cast(
+                "p.Result[int]",
+                root.u.Tests.resolve_host_port(info, container_port),
+            )
+
         published = (
             root
             .FlextTestsDocker()
             .fetch_container_info(container_name)
-            .flat_map(
-                lambda info: root.u.Tests.resolve_host_port(info, container_port),
-            )
+            .flat_map(resolve_published)
         )
         return published.value if published.success else None
 

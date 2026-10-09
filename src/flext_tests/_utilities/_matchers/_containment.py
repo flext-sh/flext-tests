@@ -6,7 +6,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
+from typing import cast
 
 from flext_tests import c, p
 from flext_tests._utilities._matchers._assertions import (
@@ -48,14 +49,18 @@ class FlextTestsMatchersContainmentMixin:
                     present = str(expected) in str(target)
                 elif isinstance(target, Mapping):
                     present = isinstance(expected, str) and any(
-                        key == expected for key in target
+                        key == expected
+                        for key in cast("Mapping[object, object]", target)
                     )
                 elif isinstance(target, str):
                     present = str(expected) in target
                 elif isinstance(target, bytes):
                     present = isinstance(expected, bytes) and expected in target
                 elif isinstance(target, list):
-                    present = any(candidate == expected for candidate in target)
+                    present = any(
+                        candidate == expected
+                        for candidate in cast("Sequence[object]", target)
+                    )
                 else:
                     FlextTestsMatchersAssertionsMixin.raise_match_assertion(
                         c.Tests.ERR_CONTAINS_FAILED

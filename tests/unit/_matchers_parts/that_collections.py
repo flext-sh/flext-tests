@@ -6,9 +6,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from types import MappingProxyType
+
 import pytest
 
-from flext_tests import tm
+from flext_tests import m, r, tm
 from tests import c, t
 from tests.unit._matchers_parts.predicates import TestsFlextTestsMatchersPredicates
 
@@ -110,6 +112,24 @@ class TestsFlextTestsMatchersThatCollectionsMixin(
     def test_that_with_has_parameter() -> None:
         """Test tm.that() with has parameter."""
         tm.that(["a", "b", "c"], has="a")
+
+    @staticmethod
+    def test_that_rule_declarations_resolve_at_public_ingress() -> None:
+        """Containment and nested rules validate without rebuilding models."""
+        subject: t.StrMapping = {"entry": "value"}
+        tm.that(subject, has="entry", paths={"entry": {"eq": subject["entry"]}})
+        tm.that([subject["entry"]], items=[{"eq": subject["entry"]}])
+        tm.ok(r[t.StrMapping].ok(subject), paths={"entry": {"eq": subject["entry"]}})
+        with pytest.raises(AssertionError):
+            tm.that(subject, paths={"entry": {"ne": subject["entry"]}})
+
+    @staticmethod
+    def test_payload_default_entries_are_immutable_at_public_ingress() -> None:
+        """Omitted entries retain the same immutable contract as explicit entries."""
+        defaulted = m.Tests.Payload.model_validate({"kind": "mapping"})
+        explicit = m.Tests.Payload.model_validate({"kind": "mapping", "entries": {}})
+        tm.that(defaulted.entries, is_=MappingProxyType, empty=True)
+        tm.that(explicit.entries, is_=MappingProxyType, empty=True)
 
     @staticmethod
     def test_that_with_has_parameter_supports_strenum_sets() -> None:

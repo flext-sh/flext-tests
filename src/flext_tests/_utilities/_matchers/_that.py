@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
+from typing import cast
 
 from flext_core import r
 from flext_tests import c, m, p, t
@@ -193,7 +194,7 @@ class FlextTestsMatchersThatMixin:
                 """
                 if not isinstance(subject, r):
                     return subject
-                result_obj = subject
+                result_obj = cast("p.Result[object]", subject)
                 if params.ok is not None:
                     return FlextTestsPayloadUtilities.to_payload(
                         cls._ok_value(result_obj, params),
@@ -1004,12 +1005,17 @@ class FlextTestsMatchersThatMixin:
         inherited_msg: str | None = None,
     ) -> None:
         for attr_path, rule in rules.items():
-            current = subject
+            current: object = subject
             for segment in attr_path.split("."):
-                if isinstance(current, Mapping) and segment in current:
-                    current = current[segment]
+                probe: object = current
+                mapping_current = cast(
+                    "Mapping[object, object] | None",
+                    probe if isinstance(probe, Mapping) else None,
+                )
+                if mapping_current is not None and segment in mapping_current:
+                    current = mapping_current[segment]
                 elif hasattr(current, segment):
-                    current = getattr(current, segment)
+                    current = cast("object", getattr(current, segment))
                 else:
                     msg = f"Object missing attribute path: {attr_path}"
                     raise AssertionError(msg)

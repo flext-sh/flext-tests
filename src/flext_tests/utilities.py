@@ -38,16 +38,12 @@ from flext_tests._utilities.workspace_cleanup import (
 )
 
 
-class FlextTestsUtilities(FlextCliUtilities):
+class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance):
     """Test utilities for FLEXT ecosystem - extends u.
 
     Provides essential test helpers that complement u.
     All u functionality is available via inheritance.
     """
-
-    FlextTestsModuleGovernanceMixin = (
-        FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin
-    )
 
     class Tests(
         FlextTestsResultUtilitiesMixin,

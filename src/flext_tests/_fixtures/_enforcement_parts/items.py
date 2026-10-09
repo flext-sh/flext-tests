@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING, Self, cast, override
 
 import pytest
 
@@ -15,6 +15,7 @@ from flext_tests._fixtures._enforcement_parts._error import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from pathlib import Path
 
     from flext_tests import m
@@ -23,6 +24,26 @@ if TYPE_CHECKING:
 class FlextTestsEnforcementItem(pytest.Item):
     """Pytest item representing one ``(rule_id, project)`` violation group."""
 
+    @classmethod
+    def create(
+        cls,
+        parent: pytest.Collector,
+        name: str,
+        *,
+        violation: m.Tests.EnforcementViolation,
+    ) -> Self:
+        """Build one item through a fully typed factory boundary.
+
+        ``pytest.Node.from_parent`` carries a partially unknown ``**kw`` in
+        the supported pytest stubs; this wrapper owns the single cast.
+
+        Returns:
+            The resulting ``Self``.
+
+        """
+        factory = cast("Callable[..., Self]", cls.from_parent)
+        return factory(parent=parent, name=name, violation=violation)
+
     def __init__(
         self,
         name: str,
@@ -30,7 +51,8 @@ class FlextTestsEnforcementItem(pytest.Item):
         *,
         violation: m.Tests.EnforcementViolation,
     ) -> None:
-        super().__init__(name, parent)
+        node_init = cast("Callable[..., None]", super().__init__)
+        node_init(name, parent)
         self._rule_id = violation.rule_id
         self._severity = violation.severity
         self._description = violation.description

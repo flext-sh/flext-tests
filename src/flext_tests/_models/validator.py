@@ -13,6 +13,15 @@ from typing import Annotated, ClassVar
 from flext_cli import m, p, u
 
 
+def _warning_counter_default() -> MutableMapping[str, int]:
+    """Create the typed empty runtime-warning counter.
+
+    Returns:
+        The resulting ``MutableMapping[str, int]``.
+    """
+    return {}
+
+
 class FlextTestsValidatorModelsMixin:
     class EnforcementBuildContext(m.ArbitraryTypesModel):
         """Validated immutable inputs shared by enforcement item builders."""
@@ -55,7 +64,7 @@ class FlextTestsValidatorModelsMixin:
             u.Field(
                 description="Captured runtime warning counts keyed by dotted category.",
             ),
-        ] = u.Field(default_factory=dict)
+        ] = u.Field(default_factory=_warning_counter_default)
 
     class EnforcementViolation(m.Value):
         """One grouped ``(rule_id, project)`` enforcement violation payload."""

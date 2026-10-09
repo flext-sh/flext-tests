@@ -433,7 +433,7 @@ dependencies = [
 [[package]]
 name = "flext-core"
 version = "0.12.0"
-source = { git = "https://github.com/flext-sh/flext-core.git?rev=0.12.0-dev#616b861f73e02d7e7a1f7bb81d741154d5d09bdf" }
+source = { git = "https://github.com/flext-sh/flext-core.git?rev=0.12.0-dev#5d2d15f9c6127b2b7f7b1b85bb8e9feb8f144510" }
 dependencies = [
     { name = "annotated-types" },
     { name = "beartype" },
@@ -449,7 +449,7 @@ dependencies = [
 [[package]]
 name = "flext-infra"
 version = "0.12.0"
-source = { git = "https://github.com/flext-sh/flext-infra.git?rev=0.12.0-dev#5583a103a1047c8be68b9484a2791f3b76ee9efe" }
+source = { git = "https://github.com/flext-sh/flext-infra.git?rev=0.12.0-dev#9040e85c8fdfcf67152ab6d3ee181c0621652856" }
 dependencies = [
     { name = "annotated-types" },
     { name = "beartype" },
@@ -580,7 +580,7 @@ requires-dist = [
     { name = "flext-infra", git = "https://github.com/flext-sh/flext-infra.git?rev=0.12.0-dev" },
     { name = "hypothesis" },
     { name = "packaging", specifier = ">=26.3" },
-    { name = "pydantic", specifier = ">=2.13.5,<3" },
+    { name = "pydantic", specifier = ">=2.14.0,<3" },
     { name = "pydantic-settings", specifier = ">=2.15.0" },
     { name = "pytest", specifier = ">=9.1.1" },
     { name = "pytest-asyncio" },

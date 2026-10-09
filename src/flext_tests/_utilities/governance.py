@@ -67,8 +67,15 @@ class FlextTestsFlextUtilitiesGovernance:
         class _GovernanceConfigProto(Protocol):
             """Structural type for a project ``c.<Package>.Tests`` namespace."""
 
-            SRC_DIR: ClassVar[str]
-            PACKAGE_DIR: ClassVar[str]
+            @property
+            def SRC_DIR(self) -> str:
+                """Source directory holding the package."""
+                ...
+
+            @property
+            def PACKAGE_DIR(self) -> str:
+                """Package directory under the source directory."""
+                ...
 
         _test_file: ClassVar[str]
         _tests_config: ClassVar[
