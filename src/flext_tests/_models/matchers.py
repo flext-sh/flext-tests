@@ -10,14 +10,17 @@ import sys
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, ClassVar, TypeAliasType, cast
+from typing import Annotated, ClassVar, Final, TypeAliasType, cast
 
-from _pytest.python_api import ApproxBase
+import pytest
 from flext_cli import m, u
 
 from flext_tests import p, t
 from flext_tests._models.base import FlextTestsFlextModelsBase
 from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+
+ApproxBase: Final[type] = type(pytest.approx(0))
+"""Approximation sentinel base resolved through pytest's public ``approx`` API."""
 
 type MatchExpectedValue = (
     FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
@@ -244,6 +247,26 @@ class FlextTestsMatchersModelsMixin:
         ] = None
 
         @classmethod
+        def parse_type_tuple(
+            cls,
+            value: p.AttributeProbe,
+        ) -> FlextTestsMatchersModelsMixin.MatchRule:
+            """Parse a tuple operand into its nominal type-membership rule.
+
+            Returns:
+                The resulting ``FlextTestsMatchersMixin.MatchRule``.
+            """
+            candidates = tuple(cast("Sequence[object]", value))
+            members = tuple(item for item in candidates if isinstance(item, type))
+            if len(members) == len(candidates):
+                # A tuple of types narrows to the type members the rule accepts.
+                is_spec = members[0] if len(members) == 1 else members
+                return cls(is_=is_spec)
+            # A non-type tuple is its own operand: tuples are never callable,
+            # so the remaining arms collapse to the equality arm.
+            return cls(eq=cls.own_operand(cast("Sequence[object]", value)))
+
+        @classmethod
         def parse(
             cls,
             value: p.AttributeProbe,
@@ -251,32 +274,17 @@ class FlextTestsMatchersModelsMixin:
             """Parse one public matcher rule into its nominal representation.
 
             Returns:
-                The resulting ``FlextTestsMatchersModelsMixin.MatchRule``.
+                The resulting ``FlextTestsMatchersMixin.MatchRule``.
             """
             if isinstance(value, cls):
                 return value
             if isinstance(value, Mapping):
-                mapping_value = cast("Mapping[str, object]", value)
-                rule_keys = frozenset({*cls.model_fields, "is", "excludes"})
-                if mapping_value and set(mapping_value).issubset(rule_keys):
-                    return cls.model_validate(dict(mapping_value))
-                # Own the mapping operand here; own_operand is idempotent, so
-                # the field validator re-running on the owned payload is a no-op.
-                return cls(eq=cls.own_operand(mapping_value))
+                return cls.parse_mapping(value)
+            if isinstance(value, tuple):
+                return cls.parse_type_tuple(value)
             if isinstance(value, type):
                 # A bare type keeps its nominal form.
                 return cls(is_=value)
-            if isinstance(value, tuple):
-                candidates = tuple(cast("Sequence[object]", value))
-                members = tuple(item for item in candidates if isinstance(item, type))
-                if len(members) == len(candidates):
-                    # A tuple of types narrows to the type members the rule
-                    # accepts.
-                    is_spec = members[0] if len(members) == 1 else members
-                    return cls(is_=is_spec)
-                # A non-type tuple is its own operand: tuples are never
-                # callable, so the arms below collapse to the equality arm.
-                return cls(eq=cls.own_operand(cast("Sequence[object]", value)))
             if callable(value):
                 return cls(
                     where=cast(
@@ -285,6 +293,24 @@ class FlextTestsMatchersModelsMixin:
                     ),
                 )
             return cls(eq=cls.own_operand(value))
+
+        @classmethod
+        def parse_mapping(
+            cls,
+            value: p.AttributeProbe,
+        ) -> FlextTestsMatchersModelsMixin.MatchRule:
+            """Parse a mapping operand into a validated or owned-equality rule.
+
+            Returns:
+                The resulting ``FlextTestsMatchersMixin.MatchRule``.
+            """
+            mapping_value = cast("Mapping[str, object]", value)
+            rule_keys = frozenset({*cls.model_fields, "is", "excludes"})
+            if mapping_value and set(mapping_value).issubset(rule_keys):
+                return cls.model_validate(dict(mapping_value))
+            # Own the mapping operand here; own_operand is idempotent, so
+            # the field validator re-running on the owned payload is a no-op.
+            return cls(eq=cls.own_operand(mapping_value))
 
         @classmethod
         def parse_rule_fields(
