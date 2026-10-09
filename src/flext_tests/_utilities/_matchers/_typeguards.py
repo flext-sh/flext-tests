@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Sized
-from typing import Final, TypeAliasType
+from typing import Final, Protocol, TypeAliasType, runtime_checkable
 
 import pytest
 from flext_cli import u
@@ -17,6 +17,11 @@ from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
 
 ApproxBase: Final[type] = type(pytest.approx(0))
 """Approximation sentinel base resolved through pytest's public ``approx`` API."""
+
+
+@runtime_checkable
+class ApproxLike(Protocol):
+    """Structural stand-in for pytest approximation objects in type positions."""
 
 
 class FlextTestsMatchersTypeGuardsMixin:
@@ -46,8 +51,8 @@ class FlextTestsMatchersTypeGuardsMixin:
     @staticmethod
     def prepare_eq_ne_payloads(
         actual_payload: p.Tests.Payload,
-        eq_value: p.Tests.Payload | ApproxBase | TypeAliasType | None,
-        ne_value: p.Tests.Payload | ApproxBase | TypeAliasType | None,
+        eq_value: p.Tests.Payload | ApproxLike | TypeAliasType | None,
+        ne_value: p.Tests.Payload | ApproxLike | TypeAliasType | None,
         *,
         msg: str | None,
         default_msg: str,
