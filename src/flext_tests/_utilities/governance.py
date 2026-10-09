@@ -14,10 +14,13 @@ from __future__ import annotations
 import functools
 import importlib
 import importlib.metadata
+import importlib.util
 import inspect
 from collections.abc import Iterator
 from pathlib import Path
-from typing import TYPE_CHECKING, ClassVar, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, ClassVar
+
+from flext_cli import c, u
 
 from flext_tests import p, tm
 
@@ -50,12 +53,10 @@ class FlextTestsFlextUtilitiesGovernance:
         """Shared module-governance test helpers for FLEXT submodules.
 
         Each submodule's ``test_module_governance.py`` subclasses this mixin and
-        supplies two class attributes:
-
-        - ``_test_file``: the test module's own ``__file__`` (so root-discovery
-          is anchored relative to the test file, not this utility module).
-        - ``_tests_config``: a project ``c.<Package>.Tests()`` namespace instance
-          exposing read-only ``SRC_DIR`` and ``PACKAGE_DIR``.
+        supplies ``_test_file``, the test module's own ``__file__``. Everything
+        else is derived: the owning project is the nearest ancestor holding a
+        ``pyproject.toml``, its import package comes from the canonical project
+        metadata, and the package directory is the live imported package.
 
         The only approved top-level functions are the console entrypoints the
         project declares in ``[project.scripts]``. They are derived from the
@@ -63,50 +64,40 @@ class FlextTestsFlextUtilitiesGovernance:
         project.
         """
 
-        @runtime_checkable
-        class _GovernanceConfigProto(Protocol):
-            """Structural type for a project ``c.<Package>.Tests`` namespace."""
-
-            @property
-            def SRC_DIR(self) -> str:
-                """Source directory holding the package."""
-                ...
-
-            @property
-            def PACKAGE_DIR(self) -> str:
-                """Package directory under the source directory."""
-                ...
-
         _test_file: ClassVar[str]
-        _tests_config: ClassVar[
-            FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin._GovernanceConfigProto
-        ]
-        _warn_on_import_error: ClassVar[bool] = True
 
         @classmethod
         def _package_root(cls) -> Path:
-            """Resolve the live package source root from the test file location.
-
-            Walks up the ancestor chain from ``_test_file`` until it finds a
-            directory containing ``<SRC_DIR>/<PACKAGE_DIR>`` — anchoring discovery
-            to the real package rather than a fixed, brittle parent depth.
+            """Resolve the live package directory of the project under test.
 
             Returns:
                 The resulting ``Path``.
 
             Raises:
-                FileNotFoundError: If could not locate.
+                FileNotFoundError: If no ancestor of ``_test_file`` holds a
+                    ``pyproject.toml`` or the project package is not importable.
             """
-            tests = cls._tests_config
-            for ancestor in Path(cls._test_file).resolve().parents:
-                candidate = ancestor / tests.SRC_DIR / tests.PACKAGE_DIR
-                if candidate.is_dir():
-                    return candidate
-            msg = (
-                f"could not locate {tests.SRC_DIR}/{tests.PACKAGE_DIR}"
-                f" above {cls._test_file}"
+            test_path = Path(cls._test_file).resolve()
+            project_root = next(
+                (
+                    ancestor
+                    for ancestor in test_path.parents
+                    if (ancestor / c.PYPROJECT_FILENAME).is_file()
+                ),
+                None,
             )
-            raise FileNotFoundError(msg)
+            if project_root is None:
+                msg = f"no {c.PYPROJECT_FILENAME} above {test_path}"
+                raise FileNotFoundError(msg)
+            metadata = u.build_project_metadata(
+                project_root,
+                u.read_project_document_cached(project_root),
+            )
+            spec = importlib.util.find_spec(metadata.package_name)
+            if spec is None or not spec.submodule_search_locations:
+                msg = f"package {metadata.package_name} is not importable"
+                raise FileNotFoundError(msg)
+            return Path(spec.submodule_search_locations[0])
 
         @classmethod
         def _iter_package_modules(cls) -> list[Path]:
