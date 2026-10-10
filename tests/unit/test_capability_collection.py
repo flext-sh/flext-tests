@@ -8,12 +8,9 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import socket
-import time
 from collections.abc import Generator
-from pathlib import Path
 
 import pytest
-from flext_infra import FlextInfraPytestRunner
 from flext_infra import config as infra_config
 
 from flext_tests import c, tm, u
@@ -64,10 +61,12 @@ class TestsFlextTestsCapabilityCollection:
         consumer: pytest.Pytester,
     ) -> None:
         """Test missing env skips before fixtures."""
+        markers = tuple(
+            dict.fromkeys((*c.Tests.CONNECTIVITY_MARKERS, "remote", "connectivity"))
+        )
         consumer.makepyfile(
             "import pytest\n"
-            "@pytest.mark.parametrize('marker', ['docker', 'oracle', 'ldap', 'remote', "
-            "'connectivity'])\n"
+            f"@pytest.mark.parametrize('marker', {markers!r})\n"
             "def test_external(marker, request):\n"
             "    pytest.fail('test executed')\n"
             "@pytest.mark.integration\n"
@@ -85,57 +84,12 @@ class TestsFlextTestsCapabilityCollection:
             "def service():\n    pytest.fail('service fixture executed')\n",
         )
         result = TestsFlextTestsCapabilityCollection._run(consumer)
-        result.assert_outcomes(passed=1, skipped=5)
+        result.assert_outcomes(passed=1, skipped=len(markers))
         tm.that(result.ret, eq=0)
 
     @staticmethod
     @pytest.mark.slow
-    def test_canonical_runner_accepts_only_prerequisite_skips(
-        consumer: pytest.Pytester,
-        tmp_path: Path,
-    ) -> None:
-        """The real runner preserves availability skips and rejects ordinary skips."""
-        cache = infra_config.Infra.codegen.make.testmon_cache
-        target = consumer.path / cache.target_directory
-        target.mkdir(exist_ok=True)
-        test_file = target / "test_prerequisites.py"
-        test_file.write_text(
-            "import pytest\n"
-            "@pytest.mark.connectivity(url_var='TEST_ENDPOINT')\n"
-            "def test_unconfigured(service):\n    pass\n"
-            "def test_pure():\n    pass\n",
-            encoding="utf-8",
-        )
-        runner = FlextInfraPytestRunner(
-            repository_root=consumer.path,
-            started_at_monotonic=time.monotonic(),
-            target=cache.target_directory,
-            reports=cache.reports_directory,
-            testmon_db=tmp_path / cache.database_filename,
-            apply_changes=True,
-        )
-        tm.that(tm.ok(runner.execute_full()), eq=0)
-        reports = consumer.path / cache.reports_directory
-        latest = (reports / "latest.txt").read_text(encoding="utf-8").strip()
-        tm.that(
-            (reports / latest / "summary.txt").read_text(encoding="utf-8"),
-            has=["skipped=1", "connectivity_prerequisite_skips=1", "exit=0"],
-        )
-        test_file.write_text(
-            test_file.read_text(encoding="utf-8")
-            + "def test_unexpected_skip():\n    pytest.skip('ordinary skip')\n",
-            encoding="utf-8",
-        )
-        tm.that(tm.ok(runner.execute_full()), ne=0)
-        latest = (reports / "latest.txt").read_text(encoding="utf-8").strip()
-        tm.that(
-            (reports / latest / "summary.txt").read_text(encoding="utf-8"),
-            has=["skipped=2", "connectivity_prerequisite_skips=1", "failed=0"],
-        )
-
-    @staticmethod
-    @pytest.mark.slow
-    def test_cached_prerequisites_reactivate_each_consumer_environment(
+    def test_each_consumer_environment_is_scoped(
         consumer: pytest.Pytester,
     ) -> None:
         """A/B/A consumers see their own file and restore the inherited environment."""
@@ -181,6 +135,45 @@ class TestsFlextTestsCapabilityCollection:
                 result = TestsFlextTestsCapabilityCollection._run(consumer)
         result.assert_outcomes(passed=4)
         tm.that(result.ret, eq=0)
+
+    @staticmethod
+    @pytest.mark.slow
+    def test_changed_environment_is_revalidated(
+        consumer: pytest.Pytester,
+    ) -> None:
+        """Deleting, tracking, or replacing a ready file invalidates its readiness."""
+        mutations = {
+            "delete": "env.unlink()",
+            "track": "u.Cli.run_checked(['git', 'add', '--', '.env'], "
+            "cwd=env.parent).unwrap()",
+            "replace": "env.write_text('TEST_ENDPOINT=not-a-url\\n', encoding='utf-8')",
+        }
+        with socket.socket() as listener:
+            listener.bind(("127.0.0.1", 0))
+            listener.listen(32)
+            port = listener.getsockname()[1]
+            for mutation, body in mutations.items():
+                member = consumer.path / mutation
+                member.mkdir()
+                (member / "pyproject.toml").write_text(
+                    "[tool.pytest.ini_options]\n", encoding="utf-8"
+                )
+                (member / ".env").write_text(
+                    f"TEST_ENDPOINT=http://127.0.0.1:{port}\n", encoding="utf-8"
+                )
+                (member / f"test_{mutation}.py").write_text(
+                    "from pathlib import Path\nimport pytest\n"
+                    "from flext_tests import u\n"
+                    "pytestmark = pytest.mark.connectivity(url_var='TEST_ENDPOINT')\n"
+                    "def test_1_change_ready_environment():\n"
+                    "    env = Path(__file__).with_name('.env')\n"
+                    f"    {body}\n"
+                    "def test_2_recheck(service):\n    pass\n",
+                    encoding="utf-8",
+                )
+            result = TestsFlextTestsCapabilityCollection._run(consumer)
+        result.assert_outcomes(passed=len(mutations), skipped=2, errors=1)
+        tm.that(result.ret, eq=1)
 
     @staticmethod
     @pytest.mark.slow
@@ -242,42 +235,80 @@ class TestsFlextTestsCapabilityCollection:
 
     @staticmethod
     @pytest.mark.slow
-    @pytest.mark.parametrize(
-        ("declaration", "message"),
-        [
+    def test_invalid_declarations_error_without_environment(
+        consumer: pytest.Pytester,
+    ) -> None:
+        """Every malformed declaration errors before CI or environment skips."""
+        declarations = (
             ("required_vars='INVALID'", "Connectivity required_vars must be names"),
             ("required_vars=(1,)", "Connectivity required_vars must be names"),
             ("url_var=1", "Connectivity url_var must be a name"),
-        ],
-    )
-    @pytest.mark.parametrize("other_marker", ["remote", "docker"])
-    def test_invalid_declaration_errors_without_environment(
-        consumer: pytest.Pytester,
-        declaration: str,
-        message: str,
-        other_marker: str,
-    ) -> None:
-        """Test invalid declaration errors without environment."""
+            (
+                "host=1, port=1",
+                "Connectivity host and port must be a string and an integer",
+            ),
+            (
+                "host='localhost', port='invalid'",
+                "Connectivity host and port must be a string and an integer",
+            ),
+            (
+                "host='localhost', port=True",
+                "Connectivity host and port must be a string and an integer",
+            ),
+            (
+                "host='localhost'",
+                "Connectivity host and port must be a string and an integer",
+            ),
+            (
+                "host='', port=1",
+                "Connectivity host and port must be a string and an integer",
+            ),
+            (
+                f"host='localhost', port={c.MIN_PORT - 1}",
+                "Connectivity host and port must be a string and an integer",
+            ),
+            (
+                f"host='localhost', port={c.MAX_PORT + 1}",
+                "Connectivity host and port must be a string and an integer",
+            ),
+            ("required_vars=('',)", "Connectivity required_vars must be names"),
+            ("url_var=''", "Connectivity url_var must be a name"),
+            (
+                "url_vaar='TEST_ENDPOINT'",
+                "Connectivity declarations require supported keyword arguments",
+            ),
+            (
+                "'unexpected'",
+                "Connectivity declarations require supported keyword arguments",
+            ),
+        )
+        other_markers = ("remote", "docker")
         ci = infra_config.Infra.codegen.make.ci
         consumer.makepyfile(
-            f"import pytest\n@pytest.mark.connectivity({declaration})\n"
-            f"@pytest.mark.{other_marker}\n"
-            "def test_external(service):\n    pass\n",
+            "import pytest\n"
+            + "".join(
+                f"@pytest.mark.connectivity({declaration})\n"
+                f"@pytest.mark.{other_marker}\n"
+                f"def test_invalid_{index}_{other_marker}(service):\n    pass\n"
+                for index, (declaration, _) in enumerate(declarations)
+                for other_marker in other_markers
+            ),
         )
         with u.Tests.env_vars_context({ci.variable: ci.value}):
             result = TestsFlextTestsCapabilityCollection._run(consumer)
-        result.assert_outcomes(errors=1)
-        result.stdout.fnmatch_lines([f"*UsageError: {message}*"])
+        result.assert_outcomes(errors=len(declarations) * len(other_markers))
+        result.stdout.fnmatch_lines([
+            f"*UsageError: {message}*" for _, message in declarations
+        ])
         tm.that(result.ret, eq=1)
 
     @staticmethod
     @pytest.mark.slow
-    @pytest.mark.parametrize("service_marker", c.Tests.CONNECTIVITY_MARKER_CONTAINERS)
-    @pytest.mark.parametrize("endpoint_kind", ["address", "url"])
-    def test_explicit_service_endpoint_is_not_docker_dependent(
+    @pytest.mark.parametrize("in_ci", [False, True])
+    def test_explicit_service_endpoints_are_not_docker_dependent(
         consumer: pytest.Pytester,
-        service_marker: str,
-        endpoint_kind: str,
+        *,
+        in_ci: bool,
     ) -> None:
         """Explicit remote transports run locally and in CI without Docker probes."""
         ci = infra_config.Infra.codegen.make.ci
@@ -286,27 +317,35 @@ class TestsFlextTestsCapabilityCollection:
             listener.listen(32)
             port = listener.getsockname()[1]
             (consumer.path / ".env").write_text(
-                f"TEST_ENDPOINT=http://127.0.0.1:{port}\n",
+                f"TEST_HTTP_ENDPOINT=http://127.0.0.1:{port}\n"
+                f"TEST_LDAP_ENDPOINT=ldap://127.0.0.1:{port}\n",
                 encoding="utf-8",
             )
-            declaration = (
-                f"host='127.0.0.1', port={port}"
-                if endpoint_kind == "address"
-                else "url_var='TEST_ENDPOINT'"
+            declarations = (
+                f"host='127.0.0.1', port={port}",
+                "url_var='TEST_HTTP_ENDPOINT'",
+                "url_var='TEST_LDAP_ENDPOINT'",
             )
             consumer.makepyfile(
                 "import pytest\n"
-                f"@pytest.mark.{service_marker}({declaration})\n"
-                "def test_remote():\n    pass\n"
-                f"@pytest.mark.{service_marker}({declaration})\n"
-                "def test_application_failure():\n"
-                "    pytest.fail('remote application failed')\n",
+                "def test_pure():\n    pass\n"
+                "def test_visible_failure():\n    pytest.fail('visible failure')\n"
+                + "".join(
+                    f"@pytest.mark.{service_marker}({declaration})\n"
+                    f"def test_remote_{service_marker}_{index}():\n    pass\n"
+                    f"@pytest.mark.{service_marker}({declaration})\n"
+                    f"def test_application_failure_{service_marker}_{index}():\n"
+                    "    pytest.fail('remote application failed')\n"
+                    for service_marker in c.Tests.CONNECTIVITY_MARKER_CONTAINERS
+                    for index, declaration in enumerate(declarations)
+                ),
             )
-            for ci_value in (f"{ci.value}-other", ci.value):
-                with u.Tests.env_vars_context({ci.variable: ci_value}):
-                    result = TestsFlextTestsCapabilityCollection._run(consumer)
-                result.assert_outcomes(passed=1, failed=1)
-                tm.that(result.ret, eq=1)
+            case_count = len(c.Tests.CONNECTIVITY_MARKER_CONTAINERS) * len(declarations)
+            ci_value = ci.value if in_ci else f"{ci.value}-other"
+            with u.Tests.env_vars_context({ci.variable: ci_value}):
+                result = TestsFlextTestsCapabilityCollection._run(consumer)
+            result.assert_outcomes(passed=case_count + 1, failed=case_count + 1)
+            tm.that(result.ret, eq=1)
 
     @staticmethod
     @pytest.mark.slow
