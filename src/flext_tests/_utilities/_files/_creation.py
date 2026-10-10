@@ -176,7 +176,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             actual_content.atom,
             m.BaseModel,
         ):
-            return t.json_value_adapter().validate_python(
+            return u.json_value_adapter().validate_python(
                 actual_content.atom.model_dump(mode="json"),
             )
         normalized = FlextTestsPayloadUtilities.to_normalized_value(
@@ -184,7 +184,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         )
         if actual_content.kind == "mapping":
             return normalized
-        file_json = t.json_value_adapter().dump_python(normalized, mode="json")
+        file_json = u.json_value_adapter().dump_python(normalized, mode="json")
         return {"value": file_json} if normalized else {}
 
     @staticmethod

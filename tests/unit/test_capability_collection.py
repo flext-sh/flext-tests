@@ -8,9 +8,12 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import socket
+import time
 from collections.abc import Generator
+from pathlib import Path
 
 import pytest
+from flext_infra import FlextInfraPytestRunner
 from flext_infra import config as infra_config
 
 from flext_tests import c, tm, u
@@ -87,6 +90,100 @@ class TestsFlextTestsCapabilityCollection:
 
     @staticmethod
     @pytest.mark.slow
+    def test_canonical_runner_accepts_only_prerequisite_skips(
+        consumer: pytest.Pytester,
+        tmp_path: Path,
+    ) -> None:
+        """The real runner preserves availability skips and rejects ordinary skips."""
+        cache = infra_config.Infra.codegen.make.testmon_cache
+        target = consumer.path / cache.target_directory
+        target.mkdir(exist_ok=True)
+        test_file = target / "test_prerequisites.py"
+        test_file.write_text(
+            "import pytest\n"
+            "@pytest.mark.connectivity(url_var='TEST_ENDPOINT')\n"
+            "def test_unconfigured(service):\n    pass\n"
+            "def test_pure():\n    pass\n",
+            encoding="utf-8",
+        )
+        runner = FlextInfraPytestRunner(
+            repository_root=consumer.path,
+            started_at_monotonic=time.monotonic(),
+            target=cache.target_directory,
+            reports=cache.reports_directory,
+            testmon_db=tmp_path / cache.database_filename,
+            apply_changes=True,
+        )
+        tm.that(tm.ok(runner.execute_full()), eq=0)
+        reports = consumer.path / cache.reports_directory
+        latest = (reports / "latest.txt").read_text(encoding="utf-8").strip()
+        tm.that(
+            (reports / latest / "summary.txt").read_text(encoding="utf-8"),
+            has=["skipped=1", "connectivity_prerequisite_skips=1", "exit=0"],
+        )
+        test_file.write_text(
+            test_file.read_text(encoding="utf-8")
+            + "def test_unexpected_skip():\n    pytest.skip('ordinary skip')\n",
+            encoding="utf-8",
+        )
+        tm.that(tm.ok(runner.execute_full()), ne=0)
+        latest = (reports / "latest.txt").read_text(encoding="utf-8").strip()
+        tm.that(
+            (reports / latest / "summary.txt").read_text(encoding="utf-8"),
+            has=["skipped=2", "connectivity_prerequisite_skips=1", "failed=0"],
+        )
+
+    @staticmethod
+    @pytest.mark.slow
+    def test_cached_prerequisites_reactivate_each_consumer_environment(
+        consumer: pytest.Pytester,
+    ) -> None:
+        """A/B/A consumers see their own file and restore the inherited environment."""
+        consumer.makeconftest(
+            "import os\nimport pytest\n"
+            "def pytest_collection_modifyitems(items):\n"
+            "    items.sort(key=lambda item: item.name)\n"
+            "@pytest.fixture\n"
+            "def service():\n    return os.environ['TEST_LABEL']\n",
+        )
+        with socket.socket() as listener:
+            listener.bind(("127.0.0.1", 0))
+            listener.listen(32)
+            port = listener.getsockname()[1]
+            for label, indices in (("A", (1, 3)), ("B", (2,))):
+                member = consumer.path / label
+                member.mkdir()
+                (member / "pyproject.toml").write_text(
+                    "[tool.pytest.ini_options]\n", encoding="utf-8"
+                )
+                (member / ".env").write_text(
+                    f"TEST_LABEL={label}\nTEST_ENDPOINT=http://127.0.0.1:{port}\n",
+                    encoding="utf-8",
+                )
+                (member / f"test_consumer_{label}.py").write_text(
+                    "import pytest\n"
+                    "pytestmark = pytest.mark.connectivity(url_var='TEST_ENDPOINT')\n"
+                    + "".join(
+                        f"def test_{index}(service):\n"
+                        f"    if service != '{label}':\n"
+                        "        pytest.fail('wrong consumer environment')\n"
+                        for index in indices
+                    ),
+                    encoding="utf-8",
+                )
+            consumer.makepyfile(
+                "import os\nimport pytest\n"
+                "def test_4_restored():\n"
+                "    if 'TEST_LABEL' in os.environ:\n"
+                "        pytest.fail('consumer environment leaked')\n",
+            )
+            with u.Tests.env_vars_context(vars_to_clear=("TEST_LABEL",)):
+                result = TestsFlextTestsCapabilityCollection._run(consumer)
+        result.assert_outcomes(passed=4)
+        tm.that(result.ret, eq=0)
+
+    @staticmethod
+    @pytest.mark.slow
     @pytest.mark.parametrize("service_marker", c.Tests.CONNECTIVITY_MARKER_CONTAINERS)
     @pytest.mark.parametrize(
         "ordering", ["service-only", "service-first", "docker-first"]
@@ -115,11 +212,28 @@ class TestsFlextTestsCapabilityCollection:
             "    if 'FLEXT_TEST_ENV_EFFECT' in os.environ:\n"
             "        pytest.fail('environment loaded before CI skip')\n",
         )
-        with u.Tests.env_vars_context(
-            {ci.variable: ci.value},
-            vars_to_clear=("FLEXT_TEST_ENV_EFFECT",),
-        ):
-            result = TestsFlextTestsCapabilityCollection._run(consumer)
+        with socket.socket() as docker_endpoint:
+            docker_endpoint.bind(("127.0.0.1", 0))
+            port = docker_endpoint.getsockname()[1]
+            consumer.makeconftest(
+                "import sys\nimport pytest\n"
+                "def audit(event, args):\n"
+                "    if event == 'socket.connect' "
+                f"and args[1] == ('127.0.0.1', {port}):\n"
+                "        raise RuntimeError('Docker probe attempted before CI skip')\n"
+                "sys.addaudithook(audit)\n"
+                "@pytest.fixture\n"
+                "def service():\n    pytest.fail('service fixture executed')\n",
+            )
+            with u.Tests.env_vars_context(
+                {ci.variable: ci.value, "DOCKER_HOST": f"tcp://127.0.0.1:{port}"},
+                vars_to_clear=(
+                    "FLEXT_TEST_ENV_EFFECT",
+                    "DOCKER_TLS_VERIFY",
+                    "DOCKER_CERT_PATH",
+                ),
+            ):
+                result = TestsFlextTestsCapabilityCollection._run(consumer)
         result.assert_outcomes(passed=1, skipped=1)
         result.stdout.fnmatch_lines([
             "*Docker-dependent connectivity tests are disabled in CI*",
@@ -155,6 +269,79 @@ class TestsFlextTestsCapabilityCollection:
         result.assert_outcomes(errors=1)
         result.stdout.fnmatch_lines([f"*UsageError: {message}*"])
         tm.that(result.ret, eq=1)
+
+    @staticmethod
+    @pytest.mark.slow
+    @pytest.mark.parametrize("service_marker", c.Tests.CONNECTIVITY_MARKER_CONTAINERS)
+    @pytest.mark.parametrize("endpoint_kind", ["address", "url"])
+    def test_explicit_service_endpoint_is_not_docker_dependent(
+        consumer: pytest.Pytester,
+        service_marker: str,
+        endpoint_kind: str,
+    ) -> None:
+        """Explicit remote transports run locally and in CI without Docker probes."""
+        ci = infra_config.Infra.codegen.make.ci
+        with socket.socket() as listener:
+            listener.bind(("127.0.0.1", 0))
+            listener.listen(32)
+            port = listener.getsockname()[1]
+            (consumer.path / ".env").write_text(
+                f"TEST_ENDPOINT=http://127.0.0.1:{port}\n",
+                encoding="utf-8",
+            )
+            declaration = (
+                f"host='127.0.0.1', port={port}"
+                if endpoint_kind == "address"
+                else "url_var='TEST_ENDPOINT'"
+            )
+            consumer.makepyfile(
+                "import pytest\n"
+                f"@pytest.mark.{service_marker}({declaration})\n"
+                "def test_remote():\n    pass\n"
+                f"@pytest.mark.{service_marker}({declaration})\n"
+                "def test_application_failure():\n"
+                "    pytest.fail('remote application failed')\n",
+            )
+            for ci_value in (f"{ci.value}-other", ci.value):
+                with u.Tests.env_vars_context({ci.variable: ci_value}):
+                    result = TestsFlextTestsCapabilityCollection._run(consumer)
+                result.assert_outcomes(passed=1, failed=1)
+                tm.that(result.ret, eq=1)
+
+    @staticmethod
+    @pytest.mark.slow
+    @pytest.mark.parametrize("tracked", [False, True])
+    def test_tracking_check_distinguishes_tracked_file_from_git_error(
+        consumer: pytest.Pytester,
+        *,
+        tracked: bool,
+    ) -> None:
+        """A tracked .env skips, but a real Git repository error remains an error."""
+        (consumer.path / ".env").write_text(
+            "TEST_ENVIRONMENT=declared\n", encoding="utf-8"
+        )
+        if tracked:
+            u.Cli.run_checked(["git", "add", "--", ".env"], cwd=consumer.path).unwrap()
+        else:
+            (consumer.path / ".git" / "HEAD").unlink()
+        consumer.makepyfile(
+            "import pytest\n"
+            "@pytest.mark.connectivity(host='127.0.0.1', port=1)\n"
+            "def test_external(service):\n    pass\n",
+        )
+        result = TestsFlextTestsCapabilityCollection._run(consumer)
+        if tracked:
+            result.assert_outcomes(skipped=1)
+            result.stdout.fnmatch_lines([
+                "*External tests require a local untracked .env*"
+            ])
+            tm.that(result.ret, eq=0)
+        else:
+            result.assert_outcomes(errors=1)
+            result.stdout.fnmatch_lines([
+                "*RuntimeError: Git test-environment tracking check failed (exit 128)*"
+            ])
+            tm.that(result.ret, eq=1)
 
     @staticmethod
     @pytest.mark.slow

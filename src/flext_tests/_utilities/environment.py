@@ -6,10 +6,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import os
 import socket
-from collections.abc import Generator, Sequence
-from contextlib import contextmanager
+from collections.abc import Sequence
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -17,7 +15,7 @@ import pytest
 from dotenv import dotenv_values
 from flext_cli import u
 
-from flext_tests import c
+from flext_tests import c, t
 
 
 class FlextTestsEnvironmentUtilitiesMixin:
@@ -62,13 +60,17 @@ class FlextTestsEnvironmentUtilitiesMixin:
             [*c.Cli.GIT_TRACKED_FILE_COMMAND, path.name],
             cwd=path.parent,
         ).unwrap()
-        if tracked.outcome.raw_return_code != c.Cli.EXIT_CODE_FAILURE:
+        return_code = tracked.outcome.raw_return_code
+        if return_code == c.Cli.EXIT_CODE_SUCCESS:
             return "External tests require a local untracked .env"
+        if return_code != c.Cli.EXIT_CODE_FAILURE:
+            msg = f"Git test-environment tracking check failed (exit {return_code})"
+            raise RuntimeError(msg)
         return None
 
     @staticmethod
     def _values_reason(
-        values: dict[str, str | None],
+        values: t.OptionalStrMapping,
         required_vars: Sequence[str],
     ) -> str | None:
         if not values or any(not values.get(name) for name in required_vars):
@@ -77,7 +79,7 @@ class FlextTestsEnvironmentUtilitiesMixin:
 
     @staticmethod
     def _endpoint_reason(
-        values: dict[str, str | None],
+        values: t.OptionalStrMapping,
         url_var: str | None,
         endpoint: tuple[str, int] | None,
     ) -> str | None:
@@ -105,22 +107,18 @@ class FlextTestsEnvironmentUtilitiesMixin:
         return None
 
     @staticmethod
-    @contextmanager
-    def external_environment(env_file: Path) -> Generator[None]:
-        """Activate one consumer file for its test, restoring inherited state."""
-        values = dotenv_values(env_file, interpolate=False)
-        previous = {name: os.environ.get(name) for name in values}
-        try:
-            for name, value in values.items():
-                if value is not None:
-                    os.environ[name] = value
-            yield
-        finally:
-            for name, value in previous.items():
-                if value is None:
-                    os.environ.pop(name, None)
-                else:
-                    os.environ[name] = value
+    def external_environment_values(env_file: Path) -> t.StrMapping:
+        """Read declared values for the canonical test environment scope.
+
+        Returns:
+            Only values explicitly assigned in the consumer's local file.
+
+        """
+        return {
+            name: value
+            for name, value in dotenv_values(env_file, interpolate=False).items()
+            if value is not None
+        }
 
     @staticmethod
     def has_external_environment(
