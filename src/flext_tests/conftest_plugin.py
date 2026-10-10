@@ -33,8 +33,7 @@ def pytest_configure(config: pytest.Config) -> None:
     # that shadows the submodule of the same name. Registration is idempotent.
     for fixture_module in c.Tests.FIXTURE_PLUGIN_MODULES:
         config.pluginmanager.import_plugin(fixture_module)
-    # Capability-bound tests are DESELECTED (typed NOT EXECUTED) when their
-    # capability is absent; a capable host executes and a service failure is RED.
+    # Connectivity prerequisites skip before fixtures; real service failures fail.
     if not config.pluginmanager.hasplugin(c.Tests.CAPABILITY_PLUGIN_MODULE):
         capability = import_module(c.Tests.CAPABILITY_PLUGIN_MODULE)
         config.pluginmanager.register(
