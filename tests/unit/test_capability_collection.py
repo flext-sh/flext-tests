@@ -8,7 +8,6 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import socket
-import subprocess
 from collections.abc import Generator
 
 import pytest
@@ -31,7 +30,9 @@ class TestsFlextTestsCapabilityCollection:
             Each ``pytest.Pytester``.
         """
         pytester.makepyprojecttoml("[tool.pytest.ini_options]\n")
-        subprocess.run(["git", "init", "--quiet", str(pytester.path)], check=True)
+        u.Cli.run_checked(
+            [*c.Cli.GIT_INIT_COMMAND, str(pytester.path)],
+        ).unwrap()
         pytester.makeconftest(
             "import pytest\n"
             "@pytest.fixture\n"

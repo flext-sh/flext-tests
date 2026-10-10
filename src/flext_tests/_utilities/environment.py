@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import os
 import socket
-import subprocess
 from collections.abc import Generator, Sequence
 from contextlib import contextmanager
 from pathlib import Path
@@ -16,6 +15,7 @@ from urllib.parse import urlsplit
 
 import pytest
 from dotenv import dotenv_values
+from flext_cli import u
 
 from flext_tests import c
 
@@ -58,13 +58,11 @@ class FlextTestsEnvironmentUtilitiesMixin:
     def _untracked_reason(path: Path) -> str | None:
         if not path.is_file() or path.is_symlink():
             return "External tests require a local untracked .env"
-        tracked = subprocess.run(
-            ["git", "ls-files", "--error-unmatch", "--", path.name],
+        tracked = u.Cli.run_raw(
+            [*c.Cli.GIT_TRACKED_FILE_COMMAND, path.name],
             cwd=path.parent,
-            capture_output=True,
-            check=False,
-        )
-        if tracked.returncode != 1:
+        ).unwrap()
+        if tracked.outcome.raw_return_code != c.Cli.EXIT_CODE_FAILURE:
             return "External tests require a local untracked .env"
         return None
 
