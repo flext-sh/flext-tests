@@ -37,7 +37,11 @@ class TestsFlextTestsCapabilityCollection:
     @staticmethod
     def _run(consumer: pytest.Pytester) -> pytest.RunResult:
         return consumer.runpytest_subprocess(
-            "-p", "no:flext_tests_enforcement", "-p", "no:cacheprovider", "-rs",
+            "-p",
+            "no:flext_tests_enforcement",
+            "-p",
+            "no:cacheprovider",
+            "-rs",
         )
 
     @staticmethod
@@ -70,9 +74,13 @@ class TestsFlextTestsCapabilityCollection:
     @staticmethod
     @pytest.mark.slow
     @pytest.mark.parametrize("service_marker", c.Tests.CONNECTIVITY_MARKER_CONTAINERS)
-    @pytest.mark.parametrize("ordering", ["service-only", "service-first", "docker-first"])
+    @pytest.mark.parametrize(
+        "ordering", ["service-only", "service-first", "docker-first"]
+    )
     def test_docker_backed_markers_skip_in_ci_before_effects(
-        consumer: pytest.Pytester, service_marker: str, ordering: str,
+        consumer: pytest.Pytester,
+        service_marker: str,
+        ordering: str,
     ) -> None:
         ci = infra_config.Infra.codegen.make.ci
         markers = [service_marker]
@@ -81,7 +89,8 @@ class TestsFlextTestsCapabilityCollection:
         elif ordering == "docker-first":
             markers.insert(0, "docker")
         (consumer.path / ".env").write_text(
-            "FLEXT_TEST_ENV_EFFECT=loaded\n", encoding="utf-8",
+            "FLEXT_TEST_ENV_EFFECT=loaded\n",
+            encoding="utf-8",
         )
         consumer.makepyfile(
             "import os\nimport pytest\n"
@@ -92,7 +101,8 @@ class TestsFlextTestsCapabilityCollection:
             "        pytest.fail('environment loaded before CI skip')\n",
         )
         with u.Tests.env_vars_context(
-            {ci.variable: ci.value}, vars_to_clear=("FLEXT_TEST_ENV_EFFECT",),
+            {ci.variable: ci.value},
+            vars_to_clear=("FLEXT_TEST_ENV_EFFECT",),
         ):
             result = TestsFlextTestsCapabilityCollection._run(consumer)
         result.assert_outcomes(passed=1, skipped=1)
@@ -113,7 +123,10 @@ class TestsFlextTestsCapabilityCollection:
     )
     @pytest.mark.parametrize("other_marker", ["remote", "docker"])
     def test_invalid_declaration_errors_without_environment(
-        consumer: pytest.Pytester, declaration: str, message: str, other_marker: str,
+        consumer: pytest.Pytester,
+        declaration: str,
+        message: str,
+        other_marker: str,
     ) -> None:
         ci = infra_config.Infra.codegen.make.ci
         consumer.makepyfile(
@@ -137,7 +150,8 @@ class TestsFlextTestsCapabilityCollection:
             port = listener.getsockname()[1]
             # A bound socket that does not listen gives a real refused connection.
             (consumer.path / ".env").write_text(
-                f"TEST_ENDPOINT=http://127.0.0.1:{port}\n", encoding="utf-8",
+                f"TEST_ENDPOINT=http://127.0.0.1:{port}\n",
+                encoding="utf-8",
             )
             consumer.makepyfile(
                 "import pytest\n@pytest.mark.connectivity(url_var='TEST_ENDPOINT')\n"
@@ -156,7 +170,8 @@ class TestsFlextTestsCapabilityCollection:
             listener.listen()
             port = listener.getsockname()[1]
             (consumer.path / ".env").write_text(
-                f"TEST_ENDPOINT=http://127.0.0.1:{port}\n", encoding="utf-8",
+                f"TEST_ENDPOINT=http://127.0.0.1:{port}\n",
+                encoding="utf-8",
             )
             consumer.makepyfile(
                 "import pytest\n"

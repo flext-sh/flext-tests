@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import datetime
+import datetime as dt
 from pathlib import Path
 from typing import Annotated
 
@@ -45,11 +45,11 @@ class FlextTestsFilesystemModelsMixin:
             u.Field(description="True when the file parses cleanly."),
         ] = True
         created: Annotated[
-            datetime.datetime | None,
+            dt.datetime | None,
             u.Field(description="File creation timestamp."),
         ] = None
         modified: Annotated[
-            datetime.datetime | None,
+            dt.datetime | None,
             u.Field(description="File last-modified timestamp."),
         ] = None
         permissions: Annotated[
