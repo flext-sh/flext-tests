@@ -1,211 +1,132 @@
-"""Capability-gated collection: typed NOT EXECUTED, never skip.
+"""Skip unavailable connectivity prerequisites before consumer fixtures run.
 
-Operator law (2026-09-29, OUD program decision 5): capability gating is
-declarative and automatic. A test declares the capability it needs through a
-marker; at collection time the marker maps to a capability probe:
-
-- CI=Y (the exact Make token) or an absent host capability (no Docker
-  daemon, service endpoint unreachable) → the test is DESELECTED with a
-  typed reason recorded for the runner receipts — it is NOT EXECUTED and
-  is never reported as passed, and it is never a runtime ``pytest.skip``.
-- A capable host executes the test: a real service failure is RED.
-
-The gate is marker-driven and data-owned: ``CONNECTIVITY_MARKER_CONTAINERS``
-maps a pytest marker to the shared container whose declared host/port is
-probed. Each endpoint is probed at most once per session, and only when a
-collected test actually carries the marker, so suites that need nothing
-external pay nothing. This replaces the historical skip-based behaviour and
-its stale "AGENTS.md skip rule" citation.
-
-Copyright (c) 2026 FLEXT Team. All rights reserved.
-SPDX-License-Identifier: MIT
+An integration marker alone never selects this policy. Authentication, protocol,
+and application failures after transport readiness remain ordinary failures.
 """
 
 from __future__ import annotations
 
-import socket
-from importlib import import_module
-from typing import TYPE_CHECKING, cast
+from collections.abc import Generator
+from pathlib import Path
 
 import pytest
-from flext_infra import config as infra_config
 
-from flext_tests import c
-
-# The Docker manager and the ``u`` facade load the model tree, so they resolve
-# through the deferred ``import_module`` form inside the probes that need them:
-# a session without capability-marked tests never loads ``flext_tests.models``.
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable
-
-    from flext_tests import m, p, t
-
-_DESELECTED_CAPABILITY_RECEIPT: pytest.StashKey[dict[str, str]] = pytest.StashKey()
-"""Typed config-stash key carrying the NOT EXECUTED receipt for the runner."""
+from flext_tests import FlextTestsDocker, c, u
 
 
 class FlextTestsCapabilityPlugin:
-    """Deselect capability-bound tests with typed NOT EXECUTED reasons."""
+    """Shared marker-driven applicability owner for every consumer conftest."""
 
     def __init__(self) -> None:
-        """Per-session probe cache: one probe per marker per pytest process."""
-        self._probe_cache: t.MutableMappingKV[str, str | None] = {}
+        self._probe_cache: dict[tuple[Path, str], str | None] = {}
 
     @staticmethod
-    def _endpoint(container_name: str) -> tuple[str, int] | None:
-        """Return the declared host and container port of one shared container."""
-        settings = c.Tests.SHARED_CONTAINERS.get(container_name)
-        if settings is None:
-            return None
-        host = settings.get("host")
-        port = settings.get("port")
-        if host is None or port is None:
-            return None
-        return str(host), int(port)
-
-    @staticmethod
-    def _published_port(container_name: str, container_port: int) -> int | None:
-        """Return the host port a running container publishes, if any."""
-        root = import_module("flext_tests")
-
-        def resolve_published(info: m.Tests.ContainerInfo) -> p.Result[int]:
-            """Resolve the published host port of one inspected container.
-
-            Returns:
-                The resulting ``p.Result[int]``.
-            """
-            return cast(
-                "p.Result[int]",
-                root.u.Tests.resolve_host_port(info, container_port),
-            )
-
-        published = (
-            root
-            .FlextTestsDocker()
-            .fetch_container_info(container_name)
-            .flat_map(resolve_published)
+    def pytest_configure(config: pytest.Config) -> None:
+        config.addinivalue_line(
+            "markers",
+            "connectivity(required_vars=(), url_var=None): external test environment",
         )
-        return published.value if published.success else None
 
-    def _unreachable_reason(self, marker: str) -> str | None:
-        """Return a deselect reason when the marker's service is unavailable."""
-        if marker in self._probe_cache:
-            return self._probe_cache[marker]
-        if marker == c.Tests.DOCKER_CONNECTIVITY_MARKER:
-            manager = import_module("flext_tests").FlextTestsDocker()
-            client = manager.client
-            docker_reason: str | None
-            if client is None:
-                docker_reason = c.Tests.DOCKER_UNREACHABLE_DESELECT_REASON
-            else:
-                client.close()
-                docker_reason = None
-            self._probe_cache[marker] = docker_reason
-            return docker_reason
-        reason: str | None = None
-        container = c.Tests.CONNECTIVITY_MARKER_CONTAINERS.get(marker)
-        endpoint = None if container is None else self._endpoint(container)
-        if container is not None and endpoint is not None:
-            host, port = endpoint
-            unreachable = c.Tests.UNREACHABLE_DESELECT_REASON.format(
-                marker=marker,
-                host=host,
-                port=port,
-            )
-            host_port = self._published_port(container, port)
-            reason = unreachable
-            if host_port is not None:
-                try:
-                    with socket.create_connection(
-                        (host, host_port),
-                        timeout=c.Tests.CONNECTIVITY_PROBE_TIMEOUT_SECONDS,
-                    ):
-                        reason = None
-                except OSError:
-                    reason = unreachable
-        self._probe_cache[marker] = reason
+    @staticmethod
+    def _declaration(marker: pytest.Mark) -> tuple[tuple[str, ...], str | None]:
+        required = marker.kwargs.get("required_vars", ())
+        url_var = marker.kwargs.get("url_var")
+        if not isinstance(required, (tuple, list)) or not all(
+            isinstance(name, str) for name in required
+        ):
+            raise pytest.UsageError("Connectivity required_vars must be names")
+        if url_var is not None and not isinstance(url_var, str):
+            raise pytest.UsageError("Connectivity url_var must be a name")
+        return tuple(required), url_var
+
+    def _reason(self, item: pytest.Item, marker: pytest.Mark) -> str | None:
+        required, url_var = self._declaration(marker)
+        # Resolve each member's own .env even during workspace-wide collection.
+        root = self._environment_file(item).parent
+        key = (root, str(marker))
+        if key in self._probe_cache:
+            return self._probe_cache[key]
+        if marker.name == "docker" and FlextTestsDocker.ci_disables_docker():
+            reason = "Docker-dependent connectivity tests are disabled in CI"
+        else:
+            reason = u.Tests.external_environment_reason(env_file=root / ".env")
+            if reason is None and marker.name == "docker":
+                client = FlextTestsDocker().client
+                if client is None:
+                    reason = "Docker test environment is unreachable"
+                else:
+                    client.close()
+            elif reason is None:
+                container = c.Tests.CONNECTIVITY_MARKER_CONTAINERS.get(marker.name)
+                endpoint: tuple[str, int] | None = None
+                host = marker.kwargs.get("host")
+                port_number = marker.kwargs.get("port")
+                if isinstance(host, str) and isinstance(port_number, int):
+                    endpoint = (host, port_number)
+                if container is not None:
+                    declared = c.Tests.SHARED_CONTAINERS[container]
+                    info = FlextTestsDocker().fetch_container_info(container)
+                    if info.failure:
+                        reason = "External test service is unavailable"
+                    else:
+                        port = u.Tests.resolve_host_port(info.value, int(declared["port"]))
+                        if port.failure:
+                            reason = "External test service port is unavailable"
+                        else:
+                            endpoint = (str(declared["host"]), port.value)
+                if reason is None:
+                    if endpoint is None and url_var is None:
+                        reason = "External test endpoint is not declared"
+                    else:
+                        reason = u.Tests.external_environment_reason(
+                            required, root / ".env", endpoint=endpoint, url_var=url_var,
+                        )
+        self._probe_cache[key] = reason
         return reason
 
-    def deselect_reasons(
-        self,
-        config: pytest.Config,
-        items: Iterable[pytest.Item],
-    ) -> t.MutableMappingKV[str, str]:
-        """Compute {nodeid: reason} for capability tests this host cannot run.
-
-        Returns:
-            The resulting ``t.MutableMappingKV[str, str]``.
-        """
-        reasons: dict[str, str] = {}
-        ci_disabled: bool | None = None
-        for item in items:
-            for marker in c.Tests.CONNECTIVITY_MARKERS:
-                if item.get_closest_marker(marker) is None:
-                    continue
-                if marker == c.Tests.DOCKER_CONNECTIVITY_MARKER and ci_disabled is None:
-                    ci_disabled = self._ci_disables_docker()
-                if marker == c.Tests.DOCKER_CONNECTIVITY_MARKER and ci_disabled:
-                    ci = infra_config.Infra.codegen.make.ci
-                    reasons[item.nodeid] = c.Tests.ERR_DOCKER_DISABLED_BY_CI.format(
-                        variable=ci.variable,
-                        value=ci.value,
-                    )
-                else:
-                    unreachable = self._unreachable_reason(marker)
-                    if unreachable is not None:
-                        reasons[item.nodeid] = unreachable
-                break
-        del config
-        return reasons
-
     @staticmethod
-    def _ci_disables_docker() -> bool:
-        """True when the Make CI token (config SSOT) is active.
+    def _environment_file(item: pytest.Item) -> Path:
+        root = item.path.parent
+        while root != root.parent and not (root / "pyproject.toml").is_file():
+            root = root.parent
+        return root / ".env"
 
-        Returns:
-            The resulting ``bool``.
-        """
-        ci_disables: bool = import_module(
-            "flext_tests",
-        ).FlextTestsDocker.ci_disables_docker()
-        return ci_disables
+    @pytest.hookimpl(wrapper=True)
+    def pytest_runtest_protocol(
+        self, item: pytest.Item,
+    ) -> Generator[None, None, bool | None]:
+        """Scope configuration to this consumer, including its service fixtures."""
+        markers = [
+            marker for marker in item.iter_markers()
+            if marker.name in (*c.Tests.CONNECTIVITY_MARKERS, "remote", "connectivity")
+        ]
+        if markers and all(self._reason(item, marker) is None for marker in markers):
+            with u.Tests.external_environment(self._environment_file(item)):
+                return (yield)
+        return (yield)
 
-    def pytest_collection_modifyitems(
-        self,
-        config: pytest.Config,
-        items: list[pytest.Item],
-    ) -> None:
-        """Deselect capability tests this host cannot run; record the reasons."""
-        reasons = self.deselect_reasons(config, items)
-        if not reasons:
-            return
-        items[:] = [item for item in items if item.nodeid not in reasons]
-        recorded_raw = config.stash.get(_DESELECTED_CAPABILITY_RECEIPT, None)
-        recorded: dict[str, str] = (
-            dict(recorded_raw) if recorded_raw is not None else {}
-        )
-        recorded.update(reasons)
-        config.stash[_DESELECTED_CAPABILITY_RECEIPT] = recorded
-
-    @staticmethod
-    def pytest_terminal_summary(
-        terminalreporter: pytest.TerminalReporter,
-    ) -> None:
-        """Report the typed NOT EXECUTED accounting for the runner receipts."""
-        empty_receipt: dict[str, str] = {}
-        recorded = terminalreporter.config.stash.get(
-            _DESELECTED_CAPABILITY_RECEIPT,
-            empty_receipt,
-        )
-        if not recorded:
-            return
-        terminalreporter.section(
-            f"NOT EXECUTED (capability deselected): {len(recorded)}",
-            sep="=",
-        )
-        for nodeid, reason in sorted(recorded.items()):
-            terminalreporter.write_line(f"  {nodeid}: {reason}")
+    @pytest.hookimpl(tryfirst=True)
+    def pytest_runtest_setup(self, item: pytest.Item) -> None:
+        """Skip before fixtures, after all consumer collection hooks added markers."""
+        markers = [
+            marker for marker in item.iter_markers()
+            if marker.name in (*c.Tests.CONNECTIVITY_MARKERS, "remote", "connectivity")
+        ]
+        for marker in markers:
+            self._declaration(marker)
+        if any(
+            marker.name == "docker"
+            or marker.name in c.Tests.CONNECTIVITY_MARKER_CONTAINERS
+            for marker in markers
+        ) and FlextTestsDocker.ci_disables_docker():
+            reason = "Docker-dependent connectivity tests are disabled in CI"
+            item.user_properties.append(("flext_connectivity_prerequisite", reason))
+            pytest.skip(reason)
+        for marker in markers:
+            reason = self._reason(item, marker)
+            if reason is not None:
+                item.user_properties.append(("flext_connectivity_prerequisite", reason))
+                pytest.skip(reason)
 
 
-__all__: list[str] = ["FlextTestsCapabilityPlugin"]
+__all__ = ["FlextTestsCapabilityPlugin"]

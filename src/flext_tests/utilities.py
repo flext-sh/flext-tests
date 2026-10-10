@@ -19,6 +19,7 @@ from flext_tests._utilities.docker_lifecycle import (
 )
 from flext_tests._utilities.docker_state import FlextTestsDockerStateUtilitiesMixin
 from flext_tests._utilities.enforcement import FlextTestsEnforcementUtilitiesMixin
+from flext_tests._utilities.environment import FlextTestsEnvironmentUtilitiesMixin
 from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
 from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
 from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
@@ -46,6 +47,7 @@ class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance)
     """
 
     class Tests(
+        FlextTestsEnvironmentUtilitiesMixin,
         FlextTestsResultUtilitiesMixin,
         FlextTestsTestContextUtilitiesMixin,
         FlextTestsDockerStateUtilitiesMixin,
@@ -78,4 +80,8 @@ class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance)
 
 u = FlextTestsUtilities
 
-__all__: list[str] = ["FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"]
+__all__: list[str] = [
+    "FlextTestsFixturesDSLMixin",
+    "FlextTestsUtilities",
+    "u",
+]
