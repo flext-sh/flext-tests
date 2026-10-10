@@ -6,18 +6,16 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import os
 import socket
-import subprocess
-from collections.abc import Generator, Sequence
-from contextlib import contextmanager
+from collections.abc import Sequence
 from pathlib import Path
 from urllib.parse import urlsplit
 
 import pytest
 from dotenv import dotenv_values
+from flext_cli import u
 
-from flext_tests import c
+from flext_tests import c, t
 
 
 class FlextTestsEnvironmentUtilitiesMixin:
@@ -58,19 +56,21 @@ class FlextTestsEnvironmentUtilitiesMixin:
     def _untracked_reason(path: Path) -> str | None:
         if not path.is_file() or path.is_symlink():
             return "External tests require a local untracked .env"
-        tracked = subprocess.run(
-            ["git", "ls-files", "--error-unmatch", "--", path.name],
+        tracked = u.Cli.run_raw(
+            [*c.Cli.GIT_TRACKED_FILE_COMMAND, path.name],
             cwd=path.parent,
-            capture_output=True,
-            check=False,
-        )
-        if tracked.returncode != 1:
+        ).unwrap()
+        return_code = tracked.outcome.raw_return_code
+        if return_code == c.Cli.EXIT_CODE_SUCCESS:
             return "External tests require a local untracked .env"
+        if return_code != c.Cli.EXIT_CODE_FAILURE:
+            msg = f"Git test-environment tracking check failed (exit {return_code})"
+            raise RuntimeError(msg)
         return None
 
     @staticmethod
     def _values_reason(
-        values: dict[str, str | None],
+        values: t.OptionalStrMapping,
         required_vars: Sequence[str],
     ) -> str | None:
         if not values or any(not values.get(name) for name in required_vars):
@@ -79,7 +79,7 @@ class FlextTestsEnvironmentUtilitiesMixin:
 
     @staticmethod
     def _endpoint_reason(
-        values: dict[str, str | None],
+        values: t.OptionalStrMapping,
         url_var: str | None,
         endpoint: tuple[str, int] | None,
     ) -> str | None:
@@ -87,13 +87,28 @@ class FlextTestsEnvironmentUtilitiesMixin:
             value = values.get(url_var)
             if not value:
                 return "External test endpoint is not configured"
-            url = urlsplit(value)
-            if not url.hostname:
-                return "External test endpoint is not configured"
-            endpoint = (
-                url.hostname,
-                url.port or (443 if url.scheme == "https" else 80),
-            )
+            try:
+                url = urlsplit(value)
+                host = url.hostname
+                port = url.port
+                if not url.scheme or not host:
+                    raise ValueError
+                if port is None:
+                    port = {
+                        "http": c.HTTP_PORT,
+                        "https": c.HTTPS_PORT,
+                        "ldap": c.LDAP_PORT,
+                        "ldaps": c.LDAPS_PORT,
+                    }.get(url.scheme)
+                    if port is None:
+                        raise ValueError
+                if not c.MIN_PORT <= port <= c.MAX_PORT:
+                    raise ValueError
+            except ValueError:
+                # Configured endpoints may contain credentials; never echo them.
+                msg = "External test endpoint is invalid or lacks a transport port"
+                raise pytest.UsageError(msg) from None
+            endpoint = (host, port)
         if endpoint is None:
             return None
         try:
@@ -107,22 +122,18 @@ class FlextTestsEnvironmentUtilitiesMixin:
         return None
 
     @staticmethod
-    @contextmanager
-    def external_environment(env_file: Path) -> Generator[None]:
-        """Activate one consumer file for its test, restoring inherited state."""
-        values = dotenv_values(env_file, interpolate=False)
-        previous = {name: os.environ.get(name) for name in values}
-        try:
-            for name, value in values.items():
-                if value is not None:
-                    os.environ[name] = value
-            yield
-        finally:
-            for name, value in previous.items():
-                if value is None:
-                    os.environ.pop(name, None)
-                else:
-                    os.environ[name] = value
+    def external_environment_values(env_file: Path) -> t.StrMapping:
+        """Read declared values for the canonical test environment scope.
+
+        Returns:
+            Only values explicitly assigned in the consumer's local file.
+
+        """
+        return {
+            name: value
+            for name, value in dotenv_values(env_file, interpolate=False).items()
+            if value is not None
+        }
 
     @staticmethod
     def has_external_environment(
