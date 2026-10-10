@@ -1,4 +1,9 @@
-"""Public consumer runs prove connectivity applicability and failure visibility."""
+"""Public consumer runs prove connectivity applicability and failure visibility.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+tests/unit/test_capability_collection
+SPDX-License-Identifier: MIT
+"""
 
 from __future__ import annotations
 
@@ -20,6 +25,11 @@ class TestsFlextTestsCapabilityCollection:
     @staticmethod
     @pytest.fixture
     def consumer(pytester: pytest.Pytester) -> Generator[pytest.Pytester]:
+        """Provide ``consumer``.
+
+        Yields:
+            Each ``pytest.Pytester``.
+        """
         pytester.makepyprojecttoml("[tool.pytest.ini_options]\n")
         subprocess.run(["git", "init", "--quiet", str(pytester.path)], check=True)
         pytester.makeconftest(
@@ -49,9 +59,11 @@ class TestsFlextTestsCapabilityCollection:
     def test_missing_env_skips_before_fixtures(
         consumer: pytest.Pytester,
     ) -> None:
+        """Test missing env skips before fixtures."""
         consumer.makepyfile(
             "import pytest\n"
-            "@pytest.mark.parametrize('marker', ['docker', 'oracle', 'ldap', 'remote', 'connectivity'])\n"
+            "@pytest.mark.parametrize('marker', ['docker', 'oracle', 'ldap', 'remote', "
+            "'connectivity'])\n"
             "def test_external(marker, request):\n"
             "    pytest.fail('test executed')\n"
             "@pytest.mark.integration\n"
@@ -62,7 +74,8 @@ class TestsFlextTestsCapabilityCollection:
             "def pytest_collection_modifyitems(items):\n"
             "    for item in items:\n"
             "        if 'test_external' in item.name:\n"
-            "            item.add_marker(getattr(pytest.mark, item.callspec.params['marker']))\n"
+            "            item.add_marker(getattr(pytest.mark, "
+            "item.callspec.params['marker']))\n"
             "            item.add_marker(pytest.mark.usefixtures('service'))\n"
             "@pytest.fixture\n"
             "def service():\n    pytest.fail('service fixture executed')\n",
@@ -82,6 +95,7 @@ class TestsFlextTestsCapabilityCollection:
         service_marker: str,
         ordering: str,
     ) -> None:
+        """Test docker backed markers skip in ci before effects."""
         ci = infra_config.Infra.codegen.make.ci
         markers = [service_marker]
         if ordering == "service-first":
@@ -128,6 +142,7 @@ class TestsFlextTestsCapabilityCollection:
         message: str,
         other_marker: str,
     ) -> None:
+        """Test invalid declaration errors without environment."""
         ci = infra_config.Infra.codegen.make.ci
         consumer.makepyfile(
             f"import pytest\n@pytest.mark.connectivity({declaration})\n"
@@ -145,6 +160,7 @@ class TestsFlextTestsCapabilityCollection:
     def test_unreachable_env_skips(
         consumer: pytest.Pytester,
     ) -> None:
+        """Test unreachable env skips."""
         with socket.socket() as listener:
             listener.bind(("127.0.0.1", 0))
             port = listener.getsockname()[1]
@@ -165,6 +181,7 @@ class TestsFlextTestsCapabilityCollection:
     def test_ready_endpoint_executes_and_real_failures_stay_failures(
         consumer: pytest.Pytester,
     ) -> None:
+        """Test ready endpoint executes and real failures stay failures."""
         with socket.socket() as listener:
             listener.bind(("127.0.0.1", 0))
             listener.listen()
@@ -177,7 +194,8 @@ class TestsFlextTestsCapabilityCollection:
                 "import pytest\n"
                 "pytestmark = pytest.mark.connectivity(url_var='TEST_ENDPOINT')\n"
                 "def test_success():\n    pass\n"
-                "def test_application_failure():\n    pytest.fail('application failed')\n"
+                "def test_application_failure():\n    pytest.fail('application "
+                "failed')\n"
                 "def test_fixture_failure(service):\n    pass\n",
             )
             result = TestsFlextTestsCapabilityCollection._run(consumer)
