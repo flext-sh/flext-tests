@@ -10,8 +10,7 @@ from copy import deepcopy
 
 import pytest
 
-from flext_tests import tm
-from tests import c, p, r, t
+from tests import c, p, r, t, tm
 
 
 class TestsFlextTestsMatchersValidationMixin:

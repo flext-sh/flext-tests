@@ -11,8 +11,7 @@ import re
 
 import pytest
 
-from flext_tests import tm
-from tests import m
+from tests import m, tm
 
 
 class _Frozen(m.BaseModel):
