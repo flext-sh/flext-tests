@@ -87,27 +87,25 @@ class FlextTestsEnvironmentUtilitiesMixin:
             value = values.get(url_var)
             if not value:
                 return "External test endpoint is not configured"
+            # Configured endpoints may contain credentials; never echo them.
+            msg = "External test endpoint is invalid or lacks a transport port"
             try:
                 url = urlsplit(value)
                 host = url.hostname
                 port = url.port
-                if not url.scheme or not host:
-                    raise ValueError
-                if port is None:
-                    port = {
-                        "http": c.HTTP_PORT,
-                        "https": c.HTTPS_PORT,
-                        "ldap": c.LDAP_PORT,
-                        "ldaps": c.LDAPS_PORT,
-                    }.get(url.scheme)
-                    if port is None:
-                        raise ValueError
-                if not c.MIN_PORT <= port <= c.MAX_PORT:
-                    raise ValueError
             except ValueError:
-                # Configured endpoints may contain credentials; never echo them.
-                msg = "External test endpoint is invalid or lacks a transport port"
                 raise pytest.UsageError(msg) from None
+            if not url.scheme or not host:
+                raise pytest.UsageError(msg)
+            if port is None:
+                port = {
+                    "http": c.HTTP_PORT,
+                    "https": c.HTTPS_PORT,
+                    "ldap": c.LDAP_PORT,
+                    "ldaps": c.LDAPS_PORT,
+                }.get(url.scheme)
+            if port is None or not c.MIN_PORT <= port <= c.MAX_PORT:
+                raise pytest.UsageError(msg)
             endpoint = (host, port)
         if endpoint is None:
             return None

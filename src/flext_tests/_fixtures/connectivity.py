@@ -190,7 +190,11 @@ class FlextTestsCapabilityPlugin:
     def _skip_prerequisite(
         self, item: pytest.Item, marker: pytest.Mark, reason: str
     ) -> None:
-        """Retain the exact owner exception, never a caller-supplied property."""
+        """Retain the exact owner exception, never a caller-supplied property.
+
+        Raises:
+            Exception: If a ``pytest.skip.Exception`` is caught.
+        """
         try:
             pytest.skip(reason)
         except pytest.skip.Exception as exc:
