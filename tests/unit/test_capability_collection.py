@@ -35,6 +35,8 @@ class TestsFlextTestsCapabilityCollection:
         ).unwrap()
         pytester.makeconftest(
             "import pytest\n"
+            "def pytest_collection_modifyitems(items):\n"
+            "    items.sort(key=lambda item: item.name)\n"
             "@pytest.fixture\n"
             "def service():\n"
             "    pytest.fail('service fixture executed')\n",
@@ -401,7 +403,65 @@ class TestsFlextTestsCapabilityCollection:
                 "def test_external(service):\n    pass\n",
             )
             result = TestsFlextTestsCapabilityCollection._run(consumer)
-            result.assert_outcomes(skipped=1)
+        result.assert_outcomes(skipped=1)
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "endpoint",
+        [
+            "http://user:secret@[invalid",
+            "http://user:secret@localhost:invalid",
+            f"http://user:secret@localhost:{c.MAX_PORT + 1}",
+            f"http://user:secret@localhost:{c.MIN_PORT - 1}",
+            "http://user:secret@",
+            "//user:secret@localhost:80",
+            "unknown://user:secret@localhost",
+        ],
+    )
+    def test_invalid_endpoint_values_fail_without_exposing_credentials(
+        consumer: pytest.Pytester,
+        endpoint: str,
+    ) -> None:
+        """Malformed configured URLs fail before transport and hide credentials."""
+        env_file = consumer.path / ".env"
+        env_file.write_text(
+            f"TEST_ENDPOINT={endpoint}\n",
+            encoding=c.DEFAULT_ENCODING,
+        )
+        with pytest.raises(pytest.UsageError) as error:
+            u.Tests.external_environment_reason(
+                env_file=env_file,
+                url_var="TEST_ENDPOINT",
+            )
+        tm.that(
+            str(error.value),
+            eq="External test endpoint is invalid or lacks a transport port",
+            lacks=[endpoint, "secret"],
+        )
+
+    @staticmethod
+    @pytest.mark.parametrize("scheme", ["http", "https", "ldap", "ldaps", "custom"])
+    def test_explicit_endpoint_ports_use_the_real_transport(
+        consumer: pytest.Pytester,
+        scheme: str,
+    ) -> None:
+        """An explicit transport port needs no scheme-specific default."""
+        with socket.socket() as listener:
+            listener.bind(("127.0.0.1", 0))
+            listener.listen()
+            port = listener.getsockname()[1]
+            env_file = consumer.path / ".env"
+            env_file.write_text(
+                f"TEST_ENDPOINT={scheme}://127.0.0.1:{port}\n",
+                encoding=c.DEFAULT_ENCODING,
+            )
+            tm.that(
+                u.Tests.external_environment_reason(
+                    env_file=env_file,
+                    url_var="TEST_ENDPOINT",
+                ),
+                eq=None,
+            )
 
     @staticmethod
     @pytest.mark.slow
