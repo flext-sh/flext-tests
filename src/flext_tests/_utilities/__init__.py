@@ -46,6 +46,7 @@ if TYPE_CHECKING:
     )
     from flext_tests._utilities.docker_state import FlextTestsDockerStateUtilitiesMixin
     from flext_tests._utilities.enforcement import FlextTestsEnforcementUtilitiesMixin
+    from flext_tests._utilities.environment import FlextTestsEnvironmentUtilitiesMixin
     from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
     from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
     from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
@@ -98,6 +99,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsDockerLifecycleUtilitiesMixin",
     "FlextTestsDockerStateUtilitiesMixin",
     "FlextTestsEnforcementUtilitiesMixin",
+    "FlextTestsEnvironmentUtilitiesMixin",
     "FlextTestsFilesAssertionsMixin",
     "FlextTestsFilesBatchMixin",
     "FlextTestsFilesComparisonMixin",
@@ -150,6 +152,7 @@ install_lazy_exports(
         "FlextTestsDockerLifecycleUtilitiesMixin": ".docker_lifecycle",
         "FlextTestsDockerStateUtilitiesMixin": ".docker_state",
         "FlextTestsEnforcementUtilitiesMixin": ".enforcement",
+        "FlextTestsEnvironmentUtilitiesMixin": ".environment",
         "FlextTestsFilesAssertionsMixin": "._files._assertions",
         "FlextTestsFilesBatchMixin": "._files._batch",
         "FlextTestsFilesComparisonMixin": "._files._comparison",
