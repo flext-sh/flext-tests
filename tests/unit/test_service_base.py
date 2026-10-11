@@ -19,7 +19,7 @@ import pytest
 from flext_infra import FlextInfraConstants, config as infra_config
 
 from flext_core import FlextSettings
-from flext_tests import FlextTestsServiceBase, m, tm
+from flext_tests import FlextTestsServiceBase, m, s, tm
 from tests import u
 
 
@@ -47,6 +47,22 @@ class TestsFlextTestsServiceBase:
 
     class Tests:
         """flext-tests service-base test namespace."""
+
+    @staticmethod
+    def test_public_service_alias_preserves_generic_test_runtime() -> None:
+        """The public short alias remains a generic class with test settings."""
+
+        class _TestService(s[str]):
+            """A consumer subclass of the public generic service alias."""
+
+        tm.that(s is FlextTestsServiceBase, eq=True)
+        with _TestService.isolated_test_runtime() as service:
+            tm.that(isinstance(service, _TestService), eq=True)
+            tm.that(
+                isinstance(service.settings, _TestService.test_settings_type()),
+                eq=True,
+            )
+            tm.that(service is _TestService.fetch_global(), eq=True)
 
     # ---- isolated_test_runtime(build=...) for port-bearing services --------
 
