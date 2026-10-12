@@ -9,7 +9,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from flext_infra import FlextInfraModGateEngine, m as _infra_m, u as _infra_u
+from flext_infra import m as _infra_m, u as _infra_u
+from flext_infra.codemod.batch_gates import FlextInfraModGateEngine
 
 from flext_core import r, u as _core_u
 from flext_tests import c, m, p, t

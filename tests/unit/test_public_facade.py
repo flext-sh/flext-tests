@@ -46,6 +46,26 @@ class TestsFlextTestsPublicFacade:
         )
 
     @staticmethod
+    def test_plugin_configure_hooks_keep_their_registered_module_owners(
+        pytestconfig: pytest.Config,
+    ) -> None:
+        """Both pytest11 configure hooks run without competing for root exports."""
+        entries = {
+            entry.name: entry
+            for entry in entry_points(group="pytest11")
+            if entry.value.startswith(f"{flext_tests.__name__}.")
+        }
+        configure = {
+            hook.plugin_name: hook.plugin
+            for hook in pytestconfig.hook.pytest_configure.get_hookimpls()
+            if hook.plugin_name in entries
+        }
+        tm.that(set(configure), eq=set(entries))
+        for name, entry in entries.items():
+            tm.that(configure[name] is entry.load(), eq=True)
+        tm.that("pytest_configure" in flext_tests.__all__, eq=False)
+
+    @staticmethod
     def test_consumer_facade_imports_without_container_lifecycle() -> None:
         """Test consumer facade imports without container lifecycle."""
         for name, exported in (

@@ -12,10 +12,9 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from flext_cli import FlextCliConfig
+from flext_cli import FlextCliConfig, m
 
-from flext_tests import m
-from flext_tests._models import FlextTestsNamespace
+from flext_tests._models.tests_namespace import FlextTestsNamespace
 
 
 class FlextTestsConfig(FlextCliConfig):

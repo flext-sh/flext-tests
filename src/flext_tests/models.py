@@ -39,18 +39,17 @@ class FlextTestsModels(FlextCliModels):
     """Test models extending m with test-specific factory models."""
 
     class Tests(
+        FlextTestsFlextModelsBase,
+        FlextTestsFilesystemModelsMixin,
+        FlextTestsMakeModelsMixin,
+        FlextTestsMatchersModelsMixin,
+        FlextTestsWorkspaceCleanupModelsMixin,
         FlextTestsDockerModelsMixin,
         FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin,
         FlextTestsDomainModelsMixin,
-        FlextTestsFilesystemModelsMixin,
         FlextTestsNamespaceModelsMixin,
         FlextTestsBatchModelsMixin,
-        FlextTestsMakeModelsMixin,
         FlextTestsValidatorModelsMixin,
-        FlextTestsMatchersModelsMixin,
-        # NOTE (multi-agent): expose the approved typed cleanup contract
-        # through m.Tests.
-        FlextTestsWorkspaceCleanupModelsMixin,
     ):
         """Test-specific models namespace."""
 

@@ -10,7 +10,7 @@ from __future__ import annotations
 from types import MappingProxyType
 from typing import TYPE_CHECKING
 
-from flext_core import install_lazy_exports
+from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tests._fixtures import _enforcement_parts
@@ -25,22 +25,11 @@ if TYPE_CHECKING:
         FlextTestsEnforcementValidators,
     )
     from flext_tests._fixtures.connectivity import FlextTestsCapabilityPlugin
-    from flext_tests._fixtures.namespace import run_namespace, test_namespace
     from flext_tests._fixtures.project_metadata import (
         project_metadata,
         project_tool_flext,
     )
-    from flext_tests._fixtures.settings import (
-        clean_container,
-        reset_settings,
-        sample_data,
-        settings,
-        settings_factory,
-        temp_dir,
-        temp_file,
-        test_context,
-        test_runtime,
-    )
+    from flext_tests._fixtures.scratch_storage import pytest_addoption, pytest_configure
 
 
 __all__: tuple[str, ...] = (
@@ -50,19 +39,10 @@ __all__: tuple[str, ...] = (
     "FlextTestsEnforcementItem",
     "FlextTestsEnforcementValidators",
     "_enforcement_parts",
-    "clean_container",
     "project_metadata",
     "project_tool_flext",
-    "reset_settings",
-    "run_namespace",
-    "sample_data",
-    "settings",
-    "settings_factory",
-    "temp_dir",
-    "temp_file",
-    "test_context",
-    "test_namespace",
-    "test_runtime",
+    "pytest_addoption",
+    "pytest_configure",
 )
 
 install_lazy_exports(
@@ -75,19 +55,10 @@ install_lazy_exports(
         "FlextTestsEnforcementItem": "._enforcement_parts.items",
         "FlextTestsEnforcementValidators": "._enforcement_parts.validators",
         "_enforcement_parts": "._enforcement_parts",
-        "clean_container": ".settings",
         "project_metadata": ".project_metadata",
         "project_tool_flext": ".project_metadata",
-        "reset_settings": ".settings",
-        "run_namespace": ".namespace",
-        "sample_data": ".settings",
-        "settings": ".settings",
-        "settings_factory": ".settings",
-        "temp_dir": ".settings",
-        "temp_file": ".settings",
-        "test_context": ".settings",
-        "test_namespace": ".namespace",
-        "test_runtime": ".settings",
+        "pytest_addoption": ".scratch_storage",
+        "pytest_configure": ".scratch_storage",
     }),
     public_exports=__all__,
 )
