@@ -35,6 +35,7 @@ class TestsFlextTestsCapabilityCollection:
         ).unwrap()
         pytester.makeconftest(
             "import pytest\n"
+            "@pytest.hookimpl(trylast=True)\n"
             "def pytest_collection_modifyitems(items):\n"
             "    items.sort(key=lambda item: item.name)\n"
             "@pytest.fixture\n"
@@ -97,6 +98,7 @@ class TestsFlextTestsCapabilityCollection:
         """A/B/A consumers see their own file and restore the inherited environment."""
         consumer.makeconftest(
             "import os\nimport pytest\n"
+            "@pytest.hookimpl(trylast=True)\n"
             "def pytest_collection_modifyitems(items):\n"
             "    items.sort(key=lambda item: item.name)\n"
             "@pytest.fixture\n"
@@ -436,8 +438,8 @@ class TestsFlextTestsCapabilityCollection:
         tm.that(
             str(error.value),
             eq="External test endpoint is invalid or lacks a transport port",
-            lacks=[endpoint, "secret"],
         )
+        tm.that(str(error.value), lacks="secret")
 
     @staticmethod
     @pytest.mark.parametrize("scheme", ["http", "https", "ldap", "ldaps", "custom"])
