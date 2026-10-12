@@ -10,8 +10,7 @@ import time
 from pathlib import Path
 from typing import Annotated, Self, override
 
-from flext_tests import c, m, p, r, t, u
-from flext_tests.docker import FlextTestsDocker
+from flext_tests import FlextTestsDocker, c, m, p, r, t, u
 
 
 class FlextTestsKube(FlextTestsDocker):

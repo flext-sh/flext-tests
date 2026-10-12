@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_tests import c, m, p
-from flext_tests._fixtures._enforcement_parts.items import FlextTestsEnforcementItem
+from flext_tests._fixtures._enforcement_parts import FlextTestsEnforcementItem
 
 if TYPE_CHECKING:
     import pytest

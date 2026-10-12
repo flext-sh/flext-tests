@@ -12,8 +12,7 @@ from typing import Self
 
 import flext_core
 from flext_core import FlextContainer
-from flext_tests import m, p, t
-from flext_tests._settings import FlextTestsSettings
+from flext_tests import FlextTestsSettings, m, p, t
 
 
 class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](

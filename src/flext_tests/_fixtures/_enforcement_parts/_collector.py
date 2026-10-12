@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
 
     from flext_tests import t
-    from flext_tests._fixtures._enforcement_parts.items import FlextTestsEnforcementItem
+    from flext_tests._fixtures._enforcement_parts import FlextTestsEnforcementItem
 
 
 class FlextTestsEnforcementCollector(pytest.Collector):

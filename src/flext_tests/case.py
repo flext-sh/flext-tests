@@ -9,9 +9,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from flext_tests import p
-    from flext_tests._settings import FlextTestsSettings
-    from flext_tests.base import FlextTestsServiceBase
+    from flext_tests import FlextTestsServiceBase, FlextTestsSettings, p
 
 
 class FlextTestsCase:

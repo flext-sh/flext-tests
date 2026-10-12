@@ -12,9 +12,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_tests._utilities.workspace_cleanup_plan import (
-    FlextTestsWorkspaceCleanupPlanUtilitiesMixin,
-)
+from flext_tests._utilities import FlextTestsWorkspaceCleanupPlanUtilitiesMixin
 
 if TYPE_CHECKING:
     from flext_core import t

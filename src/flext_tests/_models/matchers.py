@@ -24,8 +24,8 @@ import pytest
 from flext_cli import m, u
 
 from flext_tests import p, t
-from flext_tests._models.base import FlextTestsFlextModelsBase
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests._models import FlextTestsFlextModelsBase
+from flext_tests._utilities import FlextTestsPayloadUtilities
 
 ApproxBase: Final[type] = type(pytest.approx(0))
 

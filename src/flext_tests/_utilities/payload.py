@@ -28,10 +28,10 @@ from typing import TYPE_CHECKING, Final, TypeAliasType, cast
 import flext_tests
 from flext_core import m, u
 from flext_tests import c, p, t
-from flext_tests._models.base import FlextTestsFlextModelsBase
+from flext_tests._models import FlextTestsFlextModelsBase
 
 if TYPE_CHECKING:
-    from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
+    from flext_tests._models import FlextTestsMatchersModelsMixin
 
 
 class FlextTestsFlextUtilitiesPayload:

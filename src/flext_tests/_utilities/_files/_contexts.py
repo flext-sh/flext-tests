@@ -14,8 +14,10 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from flext_tests import c, m, t
-from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
-from flext_tests._utilities._files._reading import FlextTestsFilesReadingMixin
+from flext_tests._utilities._files import (
+    FlextTestsFilesCreationMixin,
+    FlextTestsFilesReadingMixin,
+)
 
 
 class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):

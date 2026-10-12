@@ -23,7 +23,6 @@ if TYPE_CHECKING:
         _protocols,
         _typings,
         _utilities,
-        services,
     )
     from flext_tests.__version__ import (
         FlextTestsVersion,
@@ -100,7 +99,6 @@ __all__: tuple[str, ...] = (
     "p",
     "r",
     "s",
-    "services",
     "settings",
     "t",
     "td",
@@ -158,7 +156,6 @@ install_lazy_exports(
         "p": ".protocols",
         "r": "flext_cli",
         "s": ".base",
-        "services": ".services",
         "settings": "._settings",
         "t": ".typings",
         "td": ".domains",

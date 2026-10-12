@@ -10,10 +10,8 @@ from collections.abc import Mapping, Sequence
 from typing import cast
 
 from flext_tests import c, p
-from flext_tests._utilities._matchers._assertions import (
-    FlextTestsMatchersAssertionsMixin,
-)
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests._utilities import FlextTestsPayloadUtilities
+from flext_tests._utilities._matchers import FlextTestsMatchersAssertionsMixin
 
 
 class FlextTestsMatchersContainmentMixin:

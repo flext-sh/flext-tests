@@ -10,8 +10,7 @@ from typing import Annotated
 
 from flext_cli import m, u
 
-from flext_tests import t
-from flext_tests._constants.namespace import FlextTestsConstantsNamespace
+from flext_tests import c, t
 
 
 class FlextTestsNamespaceModelsMixin:
@@ -27,7 +26,7 @@ class FlextTestsNamespaceModelsMixin:
         token: Annotated[
             str,
             u.Field(
-                pattern=FlextTestsConstantsNamespace.NAMESPACE_ID_PATTERN,
+                pattern=c.Tests.NAMESPACE_ID_PATTERN,
                 description="Lowercase namespace token (23 chars).",
             ),
         ]

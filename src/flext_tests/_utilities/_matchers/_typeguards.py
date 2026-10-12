@@ -13,7 +13,7 @@ import pytest
 from flext_cli import u
 
 from flext_tests import c, m, p
-from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
+from flext_tests._utilities import FlextTestsFlextUtilitiesPayload
 
 ApproxBase: Final[type] = type(pytest.approx(0))
 """Approximation sentinel base resolved through pytest's public ``approx`` API."""

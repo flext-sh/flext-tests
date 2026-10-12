@@ -12,8 +12,7 @@ import threading
 import time
 from typing import TYPE_CHECKING, ClassVar
 
-from flext_tests import m
-from flext_tests._constants.namespace import FlextTestsConstantsNamespace
+from flext_tests import c, m
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -47,7 +46,7 @@ class FlextTestsNamespaceUtilitiesMixin:
         Returns:
             The resulting ``m.Tests.TestNamespace``.
         """
-        namespace_constants = FlextTestsConstantsNamespace
+        namespace_constants = c.Tests
         issued_ms = time.time_ns() // 1_000_000
         epoch_stamp = FlextTestsNamespaceUtilitiesMixin._base36(issued_ms)
         checkout_digest = hashlib.sha256(
@@ -76,7 +75,7 @@ class FlextTestsNamespaceUtilitiesMixin:
         Raises:
             OverflowError: If namespace tail space exhausted within.
         """
-        space = len(FlextTestsConstantsNamespace.NAMESPACE_BASE36_ALPHABET) ** width
+        space = len(c.Tests.NAMESPACE_BASE36_ALPHABET) ** width
         with cls._issue_lock:
             last = cls._last_issue
             if last is not None and last[0] >= issued_ms:
@@ -89,7 +88,7 @@ class FlextTestsNamespaceUtilitiesMixin:
             cls._last_issue = (stamp_ms, value)
         return cls._base36(value).rjust(
             width,
-            FlextTestsConstantsNamespace.NAMESPACE_BASE36_ALPHABET[0],
+            c.Tests.NAMESPACE_BASE36_ALPHABET[0],
         )
 
     @staticmethod
@@ -99,7 +98,7 @@ class FlextTestsNamespaceUtilitiesMixin:
         Returns:
             The resulting ``str``.
         """
-        alphabet = FlextTestsConstantsNamespace.NAMESPACE_BASE36_ALPHABET
+        alphabet = c.Tests.NAMESPACE_BASE36_ALPHABET
         if value == 0:
             return alphabet[0]
         encoded: list[str] = []
@@ -115,9 +114,9 @@ class FlextTestsNamespaceUtilitiesMixin:
         Returns:
             The resulting ``str``.
         """
-        alphabet = FlextTestsConstantsNamespace.NAMESPACE_BASE36_ALPHABET
+        alphabet = c.Tests.NAMESPACE_BASE36_ALPHABET
         digest = hashlib.sha256(worker_id.encode(encoding="utf-8")).hexdigest()
-        width = FlextTestsConstantsNamespace.NAMESPACE_WORKER_CODE_LENGTH
+        width = c.Tests.NAMESPACE_WORKER_CODE_LENGTH
         return "".join(
             alphabet[int(digest[index * 8 : (index + 1) * 8], 16) % len(alphabet)]
             for index in range(width)

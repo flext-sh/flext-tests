@@ -26,8 +26,7 @@ from flext_infra import config as infra_config, settings as infra_settings
 from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
-from flext_tests import c, m, p, r, s, t, u
-from flext_tests._docker_surface_parts import FlextTestsDockerSurfaceParts
+from flext_tests import FlextTestsDockerSurfaceParts, c, m, p, r, s, t, u
 
 if TYPE_CHECKING:
     from docker.models.containers import Container
