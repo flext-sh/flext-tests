@@ -11,22 +11,32 @@ from types import MappingProxyType
 from typing import TYPE_CHECKING
 
 from flext_core import install_lazy_exports
-from flext_tests.__version__ import (
-    __author__,
-    __author_email__,
-    __description__,
-    __license__,
-    __title__,
-    __url__,
-    __version__,
-    __version_info__,
-)
+from flext_tests.__version__ import __version__
 
 if TYPE_CHECKING:
     from flext_cli import d, e, h, r, x
 
-    from flext_tests import services
+    from flext_tests import (
+        _constants,
+        _fixtures,
+        _models,
+        _protocols,
+        _typings,
+        _utilities,
+        services,
+    )
+    from flext_tests.__version__ import (
+        FlextTestsVersion,
+        __author__,
+        __author_email__,
+        __description__,
+        __license__,
+        __title__,
+        __url__,
+        __version_info__,
+    )
     from flext_tests._config import FlextTestsConfig, config
+    from flext_tests._docker_surface_parts import FlextTestsDockerSurfaceParts
     from flext_tests._settings import FlextTestsSettings, settings
     from flext_tests.api import FlextTests, api
     from flext_tests.base import FlextTestsServiceBase, s
@@ -52,6 +62,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsConfig",
     "FlextTestsConstants",
     "FlextTestsDocker",
+    "FlextTestsDockerSurfaceParts",
     "FlextTestsDomains",
     "FlextTestsFiles",
     "FlextTestsFixturesDSLMixin",
@@ -63,6 +74,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsSettings",
     "FlextTestsTypes",
     "FlextTestsUtilities",
+    "FlextTestsVersion",
     "__author__",
     "__author_email__",
     "__description__",
@@ -71,6 +83,12 @@ __all__: tuple[str, ...] = (
     "__url__",
     "__version__",
     "__version_info__",
+    "_constants",
+    "_fixtures",
+    "_models",
+    "_protocols",
+    "_typings",
+    "_utilities",
     "api",
     "c",
     "config",
@@ -103,6 +121,7 @@ install_lazy_exports(
         "FlextTestsConfig": "._config",
         "FlextTestsConstants": ".constants",
         "FlextTestsDocker": ".docker",
+        "FlextTestsDockerSurfaceParts": "._docker_surface_parts",
         "FlextTestsDomains": ".domains",
         "FlextTestsFiles": ".files",
         "FlextTestsFixturesDSLMixin": ".utilities",
@@ -114,6 +133,20 @@ install_lazy_exports(
         "FlextTestsSettings": "._settings",
         "FlextTestsTypes": ".typings",
         "FlextTestsUtilities": ".utilities",
+        "FlextTestsVersion": ".__version__",
+        "__author__": ".__version__",
+        "__author_email__": ".__version__",
+        "__description__": ".__version__",
+        "__license__": ".__version__",
+        "__title__": ".__version__",
+        "__url__": ".__version__",
+        "__version_info__": ".__version__",
+        "_constants": "._constants",
+        "_fixtures": "._fixtures",
+        "_models": "._models",
+        "_protocols": "._protocols",
+        "_typings": "._typings",
+        "_utilities": "._utilities",
         "api": ".api",
         "c": ".constants",
         "config": "._config",

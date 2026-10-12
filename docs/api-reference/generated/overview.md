@@ -20,12 +20,13 @@
 - Project class: `test`
 - Keywords: `builders`, `factories`, `flext`, `test-infrastructure`, `testing`
 - Main facades: `FlextTests`, `FlextTestsCase`, `FlextTestsCli`, `FlextTestsConfig`,
-  `FlextTestsConstants`, `FlextTestsDocker`, `FlextTestsDomains`, `FlextTestsFiles` (+9
-  more)
+  `FlextTestsConstants`, `FlextTestsDocker`, `FlextTestsDockerSurfaceParts`,
+  `FlextTestsDomains` (+11 more)
 - Alias exports: `c`, `d`, `e`, `h`, `m`, `p`, `r`, `s`, `t`, `u`, `x`
 - Public symbol exports: `FlextTests`, `FlextTestsCase`, `FlextTestsCli`,
-  `FlextTestsConfig`, `FlextTestsConstants`, `FlextTestsDocker`, `FlextTestsDomains`,
-  `FlextTestsFiles`, `FlextTestsFixturesDSLMixin`, `FlextTestsKube` (+14 more)
+  `FlextTestsConfig`, `FlextTestsConstants`, `FlextTestsDocker`,
+  `FlextTestsDockerSurfaceParts`, `FlextTestsDomains`, `FlextTestsFiles`,
+  `FlextTestsFixturesDSLMixin` (+16 more)
 - Exported module shortcuts: `api`, `services`
 - Generated module pages: `17`
 

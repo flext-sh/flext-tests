@@ -128,11 +128,5 @@ def pytest_terminal_summary(
     dispatcher.terminal_summary(terminalreporter, config)
 
 
-__all__: list[str] = [
-    "pytest_addoption",
-    "pytest_collection_modifyitems",
-    "pytest_configure",
-    "pytest_sessionstart",
-    "pytest_terminal_summary",
-    "pytest_warning_recorded",
-]
+# Pytest discovers these module hooks independently of package re-exports.
+__all__: list[str] = []

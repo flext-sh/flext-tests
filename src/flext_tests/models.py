@@ -48,9 +48,8 @@ class FlextTestsModels(FlextCliModels):
         FlextTestsMakeModelsMixin,
         FlextTestsValidatorModelsMixin,
         FlextTestsMatchersModelsMixin,
-        # NOTE (multi-agent): expose the approved typed cleanup contract
-        # through m.Tests.
         FlextTestsWorkspaceCleanupModelsMixin,
+        FlextTestsFlextModelsBase,
     ):
         """Test-specific models namespace."""
 

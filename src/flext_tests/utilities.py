@@ -37,6 +37,16 @@ from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMix
 from flext_tests._utilities.workspace_cleanup import (
     FlextTestsWorkspaceCleanupUtilitiesMixin,
 )
+from flext_tests._utilities.base import FlextTestsUtilitiesBase
+from flext_tests._utilities.make_contract import FlextTestsFlextUtilitiesMakeContract
+from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
+from flext_tests._utilities.make_registry import FlextTestsMakeRegistryUtilitiesMixin
+from flext_tests._utilities.make_rendering import FlextTestsMakeRenderingUtilitiesMixin
+from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
+from flext_tests._utilities.workspace_cleanup_git import FlextTestsWorkspaceCleanupGitUtilitiesMixin
+from flext_tests._utilities.workspace_cleanup_inspect import FlextTestsWorkspaceCleanupInspectUtilitiesMixin
+from flext_tests._utilities.workspace_cleanup_paths import FlextTestsWorkspaceCleanupPathsUtilitiesMixin
+from flext_tests._utilities.workspace_cleanup_plan import FlextTestsWorkspaceCleanupPlanUtilitiesMixin
 
 
 class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance):
@@ -59,13 +69,25 @@ class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance)
         FlextTestsFlextUtilitiesHandler.FlextTestsHandlerHelpersUtilitiesMixin,
         FlextTestsFilesUtilitiesMixin,
         FlextTestsMakeUtilitiesMixin,
+        FlextTestsMakeRenderingUtilitiesMixin,
+        FlextTestsMakeRegistryUtilitiesMixin,
+        FlextTestsMakeParsingUtilitiesMixin,
         FlextTestsMatchersUtilities.Tests,
         FlextTestsFixturesDSLMixin,
-        # NOTE (multi-agent): compose guarded cleanup planning/apply into u.Tests.
         FlextTestsWorkspaceCleanupUtilitiesMixin,
+        FlextTestsWorkspaceCleanupPlanUtilitiesMixin,
+        FlextTestsWorkspaceCleanupInspectUtilitiesMixin,
+        FlextTestsWorkspaceCleanupPathsUtilitiesMixin,
+        FlextTestsWorkspaceCleanupGitUtilitiesMixin,
         FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin,
         FlextTestsEnforcementUtilitiesMixin,
         FlextTestsNamespaceUtilitiesMixin,
+        FlextTestsUtilitiesBase,
+        FlextTestsFlextUtilitiesGovernance,
+        FlextTestsFlextUtilitiesHandler,
+        FlextTestsFlextUtilitiesMakeContract,
+        FlextTestsMatchersUtilities,
+        FlextTestsFlextUtilitiesPayload,
     ):
         """Test utilities namespace."""
 

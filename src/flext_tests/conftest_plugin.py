@@ -51,4 +51,5 @@ def pytest_configure(config: pytest.Config) -> None:
 # before pytest-cov starts measuring the product package.
 
 
-__all__: list[str] = ["pytest_configure"]
+# Hooks belong to this pytest11 module, not the package's public facade.
+__all__: list[str] = []

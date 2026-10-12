@@ -13,30 +13,14 @@ from typing import TYPE_CHECKING
 from flext_core import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._typings.base import FlextTestsBaseTypesMixin
-    from flext_tests._typings.files import FlextTestsFilesTypesMixin
-    from flext_tests._typings.guards import FlextTestsGuardsTypesMixin
     from flext_tests._typings.make import FlextTestsMakeTypesMixin
-    from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
 
 
-__all__: tuple[str, ...] = (
-    "FlextTestsBaseTypesMixin",
-    "FlextTestsFilesTypesMixin",
-    "FlextTestsGuardsTypesMixin",
-    "FlextTestsMakeTypesMixin",
-    "FlextTestsMatchersTypesMixin",
-)
+__all__: tuple[str, ...] = ("FlextTestsMakeTypesMixin",)
 
 install_lazy_exports(
     __name__,
     globals(),
-    MappingProxyType({
-        "FlextTestsBaseTypesMixin": ".base",
-        "FlextTestsFilesTypesMixin": ".files",
-        "FlextTestsGuardsTypesMixin": ".guards",
-        "FlextTestsMakeTypesMixin": ".make",
-        "FlextTestsMatchersTypesMixin": ".matchers",
-    }),
+    MappingProxyType({"FlextTestsMakeTypesMixin": ".make"}),
     public_exports=__all__,
 )
