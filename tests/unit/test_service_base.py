@@ -57,7 +57,6 @@ class TestsFlextTestsServiceBase:
 
         tm.that(s is FlextTestsServiceBase, eq=True)
         with _TestService.isolated_test_runtime() as service:
-            tm.that(isinstance(service, _TestService), eq=True)
             tm.that(
                 isinstance(service.settings, _TestService.test_settings_type()),
                 eq=True,

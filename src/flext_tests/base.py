@@ -16,7 +16,9 @@ from flext_tests import m, p, t
 from flext_tests._settings import FlextTestsSettings
 
 
-class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](flext_core.s[TDomainResult]):
+class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](
+    flext_core.s[TDomainResult]
+):
     """Base service for test packages with the ``Tests`` settings namespace."""
 
     @classmethod
