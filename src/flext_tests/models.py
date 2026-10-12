@@ -39,17 +39,17 @@ class FlextTestsModels(FlextCliModels):
     """Test models extending m with test-specific factory models."""
 
     class Tests(
+        FlextTestsFlextModelsBase,
+        FlextTestsFilesystemModelsMixin,
+        FlextTestsMakeModelsMixin,
+        FlextTestsMatchersModelsMixin,
+        FlextTestsWorkspaceCleanupModelsMixin,
         FlextTestsDockerModelsMixin,
         FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin,
         FlextTestsDomainModelsMixin,
-        FlextTestsFilesystemModelsMixin,
         FlextTestsNamespaceModelsMixin,
         FlextTestsBatchModelsMixin,
-        FlextTestsMakeModelsMixin,
         FlextTestsValidatorModelsMixin,
-        FlextTestsMatchersModelsMixin,
-        FlextTestsWorkspaceCleanupModelsMixin,
-        FlextTestsFlextModelsBase,
     ):
         """Test-specific models namespace."""
 
