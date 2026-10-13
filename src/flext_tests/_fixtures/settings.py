@@ -148,12 +148,13 @@ def reset_settings() -> Iterator[None]:
 def test_runtime(request: pytest.FixtureRequest, reset_settings: None) -> None:
     """Bind the canonical FLEXT test runtime aliases onto pytest class instances."""
     _ = reset_settings
-    node = cast("object", request.node)
+    # FixtureRequest.node is unannotated upstream and depends on fixture scope.
+    node: pytest.Item | pytest.Collector = getattr(request, "node")
     if not isinstance(node, pytest.Function):
         return
-    instance = request.instance
+    instance = node.instance
     _bind_runtime_aliases(
-        module=cast("ModuleType", request.module),
+        module=node.module,
         instance=instance if isinstance(instance, FlextTestsCase) else None,
     )
 
