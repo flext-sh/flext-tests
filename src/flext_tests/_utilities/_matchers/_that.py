@@ -58,9 +58,9 @@ class FlextTestsMatchersThatMixin:
 
                 Raises:
                     AssertionError: If
-                        ``any((FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(value,
-                        forbidden_type, owned_payload=owned_payload) for forbidden_type
-                        in not_types))``.
+                        ``any((FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(
+                            value, forbidden_type, owned_payload=owned_payload
+                        ) for forbidden_type in not_types))``.
                 """
                 value_type_name = type(value).__name__
                 if params.is_ is not None:
@@ -439,8 +439,9 @@ class FlextTestsMatchersThatMixin:
 
                 Raises:
                     AssertionError: If ``callable(params.any_) and (not
-                        any((params.any_(FlextTestsPayloadUtilities.to_match_value(item))
-                        for item in seq_value)))``; or if ``not
+                        any((params.any_(FlextTestsPayloadUtilities.to_match_value(
+                            item
+                        )) for item in seq_value)))``; or if ``not
                         any((isinstance(FlextTestsPayloadUtilities.to_match_value(item),
                         any_type) for item in seq_value))``.
                 """
@@ -751,7 +752,8 @@ class FlextTestsMatchersThatMixin:
 
                 Raises:
                     AssertionError: If any of the validation rules are violated.
-                    ValueError: If the native truth requires the original subject and it is not provided.
+                    ValueError: If the native truth requires the original
+                        subject and it is not provided.
                 """
                 params = cls._that_params(kwargs)
                 if params.truth is not None:

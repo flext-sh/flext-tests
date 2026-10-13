@@ -541,7 +541,9 @@ class FlextTestsMatchersModelsMixin:
         assertion_message: Annotated[
             p.AttributeProbe | None,
             u.Field(
-                description="Original assertion message, passed inside its failure branch."
+                description=(
+                    "Original assertion message, passed inside its failure branch."
+                )
             ),
         ] = None
         eq: Annotated[MatchExpectedValue, u.Field(description="Equals.")] = None
