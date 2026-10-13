@@ -15,7 +15,7 @@ from flext_tests._utilities import FlextTestsPayloadUtilities
 from flext_tests._utilities._matchers import (
     FlextTestsMatchersAssertionsMixin,
     FlextTestsMatchersContainmentMixin,
-    FlextTestsMatchersThatMixin as FlextTestsMatchersRulesMixin,
+    FlextTestsMatchersThatMixin,
     FlextTestsMatchersTypeGuardsMixin,
 )
 from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
@@ -431,19 +431,19 @@ class FlextTestsMatchersResultMixin:
                         params,
                     )
                 if params.paths is not None:
-                    FlextTestsMatchersRulesMixin.apply_path_rules(
+                    FlextTestsMatchersThatMixin.apply_path_rules(
                         result_payload,
                         params.paths,
                         inherited_msg=params.msg,
                     )
                 if params.items is not None:
-                    FlextTestsMatchersRulesMixin.apply_item_rules(
+                    FlextTestsMatchersThatMixin.apply_item_rules(
                         result_payload,
                         params.items,
                         inherited_msg=params.msg,
                     )
                 if params.attrs_match is not None:
-                    FlextTestsMatchersRulesMixin.apply_attribute_rules(
+                    FlextTestsMatchersThatMixin.apply_attribute_rules(
                         result.value,
                         params.attrs_match,
                         inherited_msg=params.msg,
