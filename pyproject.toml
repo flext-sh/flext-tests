@@ -169,6 +169,9 @@ pep621_dev_dependency_groups = ["dev"]
 [tool.flext.docs]
 package_name = "flext_tests"
 
+[tool.flext.namespace]
+scan_dirs = ["src"]
+
 [tool.hatch.metadata]
 allow-direct-references = true
 
@@ -615,12 +618,6 @@ constraint-dependencies = ["mypy<2.4.0"]
 environments = ["sys_platform == 'linux'", "sys_platform == 'darwin'"]
 link-mode = "copy"
 override-dependencies = ["flext-tests"]
-
-[[tool.uv.exclude-dependencies]]
-dependencies = ["flext-tests"]
-
-[tool.uv.exclude-dependencies.package]
-name = "flext-infra"
 
 [tool.bandit]
 severity = "MEDIUM"
