@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from flext_tests import m, p, t
 
 
-class _DockerFacadeInternals:
+class FlextTestsDockerFacadeInternals:
     """The facade-own internals the surface verbs delegate to.
 
     Declared unconditionally: annotations resolve lazily (PEP 563), so the
@@ -51,7 +51,7 @@ class _DockerFacadeInternals:
 
 
 if TYPE_CHECKING:
-    _PartsBase = _DockerFacadeInternals
+    _PartsBase = FlextTestsDockerFacadeInternals
 else:
     _PartsBase = object
 

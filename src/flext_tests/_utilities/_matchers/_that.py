@@ -1001,9 +1001,9 @@ class FlextTestsMatchersThatMixin:
         inherited_msg: str | None = None,
     ) -> None:
         for attr_path, rule in rules.items():
-            current: object = subject
+            current: t.UnconstrainedValue = subject
             for segment in attr_path.split("."):
-                probe: object = current
+                probe: t.UnconstrainedValue = current
                 mapping_current = cast(
                     "Mapping[object, object] | None",
                     probe if isinstance(probe, Mapping) else None,

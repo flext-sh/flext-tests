@@ -28,17 +28,25 @@ class FlextTestsConfigHelpersUtilitiesMixin(FlextSettings):
     # namespacing only — instance machinery stays plain object semantics so the
     # settings singleton/validation machinery cannot leak into instantiated
     # facade composites (e.g. the ``u`` logging facade).
-    def __new__(cls, *args: object, **kwargs: object) -> Self:
+    def __new__(
+        cls,
+        *args: t.UnconstrainedValue,
+        **kwargs: t.UnconstrainedValue,
+    ) -> Self:
         _ = args, kwargs
         return object.__new__(cls)
 
-    def __init__(self, *args: object, **kwargs: object) -> None:
+    def __init__(
+        self,
+        *args: t.UnconstrainedValue,
+        **kwargs: t.UnconstrainedValue,
+    ) -> None:
         _ = self, args, kwargs
 
-    def __setattr__(self, name: str, value: object) -> None:
+    def __setattr__(self, name: str, value: t.UnconstrainedValue) -> None:
         object.__setattr__(self, name, value)
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: t.UnconstrainedValue) -> bool:
         return self is other
 
     def __hash__(self) -> int:

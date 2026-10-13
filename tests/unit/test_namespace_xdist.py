@@ -40,7 +40,8 @@ class TestsFlextTestsNamespaceXdist:
             "        testrun_uid=run_uid,\n"
             "        checkout_root=Path(request.config.rootpath),\n"
             "    ).token\n"
-            "    (Path(request.config.rootpath) / f'{worker_id}.txt').write_text(token)\n"
+            "    (Path(request.config.rootpath) / "
+            "f'{worker_id}.txt').write_text(token)\n"
             "    return token\n",
         )
         pytester.makepyfile(
