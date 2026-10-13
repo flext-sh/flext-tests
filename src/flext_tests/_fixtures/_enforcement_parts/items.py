@@ -42,7 +42,7 @@ class FlextTestsEnforcementItem(pytest.Item):
             The resulting ``Self``.
 
         """
-        factory: p.Tests.EnforcementItemFactory[Self] = getattr(cls, "from_parent")
+        factory: p.Tests.EnforcementItemFactory[Self] = cls.from_parent
         return factory(parent=parent, name=name, violation=violation)
 
     def __init__(
@@ -53,7 +53,7 @@ class FlextTestsEnforcementItem(pytest.Item):
         violation: m.Tests.EnforcementViolation,
     ) -> None:
         # Item.__init__ forwards name/parent to Node and initializes reporting.
-        node_init: Callable[[str, pytest.Collector], None] = getattr(super(), "__init__")
+        node_init: Callable[[str, pytest.Collector], None] = super().__init__
         node_init(name, parent)
         self._rule_id = violation.rule_id
         self._severity = violation.severity

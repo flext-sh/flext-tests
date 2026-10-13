@@ -37,7 +37,7 @@ class FlextTestsEnforcementCollector(pytest.Collector):
             The resulting ``Self``.
 
         """
-        factory: p.Tests.EnforcementCollectorFactory[Self] = getattr(cls, "from_parent")
+        factory: p.Tests.EnforcementCollectorFactory[Self] = cls.from_parent
         return factory(parent=parent, name=name)
 
     def __init__(
