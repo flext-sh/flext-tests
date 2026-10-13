@@ -92,6 +92,52 @@ class TestsFlextTestsFileLock:
         tm.that(errors[0] is errors[1], eq=True)
 
     @staticmethod
+    def test_session_runtime_rejects_replaced_parent_before_snapshot_or_yield(
+        tmp_path: Path,
+    ) -> None:
+        """A callback cannot redirect the provision parent into a foreign checkout."""
+        allocation = tmp_path / "runtime"
+        allocation.mkdir()
+        foreign = tmp_path / "foreign"
+        checkout = foreign / "checkout"
+        checkout.mkdir(parents=True)
+        sentinel = checkout / "sentinel"
+        sentinel.write_bytes(b"foreign-owned content")
+        content = sentinel.read_bytes()
+        attempts: list[Path] = []
+
+        def redirected(parent: Path) -> Path:
+            attempts.append(parent)
+            parent.rmdir()
+            parent.symlink_to(foreign, target_is_directory=True)
+            return parent / checkout.name
+
+        runtime = u.Tests.SessionRuntime(allocation)
+        errors: list[ValueError] = []
+        for _ in range(2):
+            with (
+                pytest.raises(
+                    ValueError, match="original physical allocation"
+                ) as error,
+                runtime.lease(redirected),
+            ):
+                pytest.fail("A redirected checkout must never reach the case body")
+            errors.append(error.value)
+        tm.that(len(attempts), eq=1)
+        tm.that(errors[0] is errors[1], eq=True)
+        physical_directories = (
+            child
+            for child in allocation.iterdir()
+            if child.is_dir() and not child.is_symlink()
+        )
+        tm.that(tuple(physical_directories), eq=())
+        runtime.close()
+        tm.that(allocation.exists(), eq=False)
+        tm.that(tuple(foreign.iterdir()), eq=(checkout,))
+        tm.that(tuple(checkout.iterdir()), eq=(sentinel,))
+        tm.that(sentinel.read_bytes(), eq=content)
+
+    @staticmethod
     def test_timed_out_request_holds_nothing(tmp_path: Path) -> None:
         """A request that timed out leaves the lock to the next holder."""
         lock_path = tmp_path / "lease.lock"

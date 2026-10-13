@@ -43,13 +43,46 @@ class FlextTestsTestContextUtilitiesMixin:
         """
 
         def __init__(self, directory: Path) -> None:
-            self.directory = directory
+            self.directory = directory.resolve(strict=True)
+            self._allocation = self.directory.stat()
             self._root: Path | None = None
             self._provision: p.Tests.RuntimeProvision | None = None
             self._failure: BaseException | None = None
             self._active_thread: int | None = None
-            self._source = directory / "source"
-            self._environment = directory / "environment"
+            self._source = self.directory / "source"
+            self._environment = self.directory / "environment"
+
+        def _assert_owned(self, path: Path) -> None:
+            """Reject redirected paths using the original physical allocation identity.
+
+            Args:
+                path: The path to check against the original physical allocation.
+
+            Raises:
+                ValueError: If the path has escaped its original physical allocation.
+            """
+            allocation = self._source.parent
+            state = allocation.stat(follow_symlinks=False)
+            candidate = path.absolute()
+            if (
+                self.directory != allocation
+                or allocation.resolve() != allocation
+                or (state.st_dev, state.st_ino)
+                != (self._allocation.st_dev, self._allocation.st_ino)
+                or not candidate.resolve().is_relative_to(allocation)
+                or any(
+                    ancestor.is_symlink()
+                    for ancestor in (candidate, *candidate.parents)
+                    if ancestor.is_relative_to(allocation)
+                )
+            ):
+                msg = "Session runtime path escaped its original physical allocation"
+                raise ValueError(msg)
+
+        def close(self) -> None:
+            """Remove only the unchanged physical session allocation."""
+            self._assert_owned(self.directory)
+            shutil.rmtree(self.directory)
 
         @contextmanager
         def lease(
@@ -68,21 +101,21 @@ class FlextTestsTestContextUtilitiesMixin:
                 provision: The canonical provision callback for the session.
                 mutable_environment: Whether the environment should be mutable.
 
-            Returns:
-                The path to the source directory.
-
             Yields:
-                The path to the source directory.
+                The path to the leased session runtime directory.
 
             Raises:
                 RuntimeError: If the session runtime leases are nested.
                 ValueError: If the provision callback is incompatible or the environment is invalid.
-                BaseException: If any other error occurs during the lease.
+                BaseExceptionGroup: If multiple errors occur during the lease.
             """
             thread = get_ident()
             if self._active_thread == thread:
                 msg = "Session runtime leases cannot be nested"
                 raise RuntimeError(msg)
+            if self._failure is not None:
+                raise self._failure
+            self._assert_owned(self.directory)
             with FlextTestsTestContextUtilitiesMixin.FileLock(
                 self.directory / "runtime.lock",
             ):
@@ -98,17 +131,15 @@ class FlextTestsTestContextUtilitiesMixin:
                         parent = self.directory / "project"
                         parent.mkdir()
                         root = provision(parent)
-                        if root.is_symlink() or not root.resolve().is_relative_to(
-                            parent.resolve(),
-                        ):
+                        self._assert_owned(parent)
+                        self._assert_owned(root)
+                        if not root.resolve().is_relative_to(parent):
                             msg = "Session runtime checkout must belong to its own area"
                             raise ValueError(msg)
-                        self._root = root
+                        self._root = root.resolve()
                     environment = self._root / c.VENV_DIR_NAME
-                    if (
-                        environment.is_symlink()
-                        or not (environment / "pyvenv.cfg").is_file()
-                    ):
+                    self._assert_owned(environment)
+                    if not (environment / "pyvenv.cfg").is_file():
                         msg = "Session runtime requires its own physical environment"
                         raise ValueError(msg)
                     targets = [(self._root, self._source)]
@@ -133,16 +164,8 @@ class FlextTestsTestContextUtilitiesMixin:
                     failure = sys.exception()
                     try:
                         for target, baseline in targets:
-                            if (
-                                self.directory.is_symlink()
-                                or target.is_symlink()
-                                or environment.is_symlink()
-                                or not target.resolve().is_relative_to(
-                                    self.directory.resolve(),
-                                )
-                            ):
-                                msg = "Session runtime cleanup target escaped its own area"
-                                raise ValueError(msg)
+                            self._assert_owned(target)
+                            self._assert_owned(environment)
                             target.mkdir(parents=True, exist_ok=True)
                             for child in target.iterdir():
                                 if (

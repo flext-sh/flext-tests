@@ -76,7 +76,9 @@ class TestsFlextTestsNamespaceXdist:
                 + "\nSTDERR:\n"
                 + result.stderr.str()[-1500:],
             )
-        records = [path.read_text().splitlines() for path in pytester.path.glob("*.txt")]
+        records = [
+            path.read_text().splitlines() for path in pytester.path.glob("*.txt")
+        ]
         tokens = {record[0] for record in records}
         assert len(tokens) == XDIST_WORKER_COUNT
         directories = {Path(record[1]) for record in records}

@@ -16,7 +16,6 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import importlib
-import shutil
 from types import ModuleType
 from typing import TYPE_CHECKING, cast
 
@@ -46,14 +45,25 @@ def session_runtime(
     """Provide every installed consumer a lazy, isolated worker-session runtime.
 
     Pure tests never provision tools. Consumers lease one shared locked seed;
-    pytest teardown removes the random physical area, including on errors.
+    Pytest teardown validates allocation identity before removing its owned area.
     Each xdist worker creates its own area, never borrowing another environment.
+
+    Args:
+        tmp_path_factory: Pytest temporary path factory for creating isolated
+          directories.
+        run_namespace: The test run namespace containing the unique token for this
+          session.
+
+    Yields:
+        An instance of ``p.Tests.SessionRuntime`` representing the isolated session
+          runtime.
     """
     directory = tmp_path_factory.mktemp(run_namespace.token)
+    runtime = u.Tests.SessionRuntime(directory)
     try:
-        yield u.Tests.SessionRuntime(directory)
+        yield runtime
     finally:
-        shutil.rmtree(directory)
+        runtime.close()
 
 
 def _reset_runtime_state() -> None:
