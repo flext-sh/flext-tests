@@ -143,7 +143,12 @@ def reset_settings() -> Iterator[None]:
 
 @pytest.fixture
 def test_runtime(request: pytest.FixtureRequest, reset_settings: None) -> None:
-    """Bind the canonical FLEXT test runtime aliases onto pytest class instances."""
+    """Bind the canonical FLEXT test runtime aliases onto pytest class instances.
+
+    Raises:
+        TypeError: If the pytest function does not belong to a Python module.
+
+    """
     _ = reset_settings
     # FixtureRequest.node is unannotated upstream and depends on fixture scope.
     node: pytest.Item | pytest.Collector = request.node
