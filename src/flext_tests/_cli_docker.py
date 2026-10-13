@@ -16,8 +16,7 @@ from pathlib import Path
 
 from flext_cli import u as cli_u
 
-from flext_tests import FlextTestsDocker
-from flext_tests._models.spec import FlextTestsSpecModelsMixin
+from flext_tests import FlextTestsDocker, m
 
 
 class FlextTestsCliDocker:
@@ -27,10 +26,8 @@ class FlextTestsCliDocker:
         "usage: flext-tests docker {ensure|verify|down} --spec <yaml> [--target <name>]"
     )
 
-    ContainerSpec = FlextTestsSpecModelsMixin.ContainerSpec
-
     @staticmethod
-    def load_spec(path: Path) -> FlextTestsCliDocker.ContainerSpec:
+    def load_spec(path: Path) -> m.Tests.ContainerSpec:
         """Parse one YAML spec document into the typed model (exits on failure).
 
         Returns:
@@ -47,13 +44,13 @@ class FlextTestsCliDocker:
         if parsed.failure:
             raise SystemExit(1)
         try:
-            return FlextTestsCliDocker.ContainerSpec.model_validate(parsed.value)
+            return m.Tests.ContainerSpec.model_validate(parsed.value)
         except Exception as exc:
             raise SystemExit(1) from exc
 
     @staticmethod
     def resolve_targets(
-        spec: FlextTestsCliDocker.ContainerSpec,
+        spec: m.Tests.ContainerSpec,
         target: str | None,
     ) -> list[str]:
         """Resolve the requested target names (all when omitted).

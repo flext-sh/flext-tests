@@ -18,6 +18,46 @@ class TestsFlextTestsDockerBuildersMixin:
     """Docker builder tests."""
 
     @staticmethod
+    def test_container_spec_roundtrip_retains_typed_targets() -> None:
+        """The public spec owns the same target contract the Docker DSL consumes."""
+        target_name = "spec-target"
+        target = m.Tests.ContainerConfig(container_name=target_name)
+        spec = m.Tests.ContainerSpec(containers={target_name: target})
+        restored = m.Tests.ContainerSpec.model_validate_json(spec.model_dump_json())
+        manager = FlextTestsDocker(target_config=restored.containers[target_name])
+        resolved = tm.not_none(manager.target_config)
+        tm.that(resolved.model_dump(), eq=target.model_dump())
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        ("verb", "document", "target", "succeeds"),
+        [
+            ("ensure", "containers: {}\n", None, True),
+            ("verify", "containers: {}\n", None, True),
+            ("down", "containers: {}\n", None, True),
+            ("down", "containers: {}\n", "missing-target", False),
+            ("down", "containers: []\n", None, False),
+            ("down", "containers: {spec-target: {}}\n", "spec-target", False),
+        ],
+    )
+    def test_spec_cli_validates_and_resolves_targets_without_docker(
+        tmp_path: Path,
+        verb: str,
+        document: str,
+        target: str | None,
+        succeeds: bool,
+    ) -> None:
+        """The shipped CLI parses specs and rejects invalid targets before Docker."""
+        spec_path = tmp_path / "containers.yaml"
+        _ = tm.ok(u.Cli.files_write_text(spec_path, document))
+        arguments = ["flext-tests", "docker", verb, "--spec", str(spec_path)]
+        if target is not None:
+            arguments.extend(("--target", target))
+        output = tm.ok(u.Cli.run_raw(arguments, cwd=tmp_path))
+        expected = c.Cli.EXIT_CODE_SUCCESS if succeeds else c.Cli.EXIT_CODE_FAILURE
+        tm.that(output.outcome.raw_return_code, eq=expected)
+
+    @staticmethod
     @pytest.mark.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))
     def test_shared_builder_resolves_every_declared_container(
         container_name: str,
