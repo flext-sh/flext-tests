@@ -169,9 +169,6 @@ pep621_dev_dependency_groups = ["dev"]
 [tool.flext.docs]
 package_name = "flext_tests"
 
-[tool.flext.namespace]
-scan_dirs = ["src"]
-
 [tool.hatch.metadata]
 allow-direct-references = true
 
@@ -483,9 +480,9 @@ runtime-evaluated-base-classes = [
   "flext_tests.FlextTestsDocker",
   "flext_tests.FlextTestsServiceBase",
   "flext_tests.FlextTestsUtilities.Tests",
+  "flext_tests._models.filesystem.PathCoercingParams",
   "flext_tests._models.matchers.PayloadParams",
   "flext_tests._utilities.settings.FlextTestsConfigHelpersUtilitiesMixin",
-  "flext_tests.base.FlextTestsServiceBase",
   "flext_tests.m.BaseModel",
   "flext_tests.m.Value",
   "flext_tests.s",
