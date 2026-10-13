@@ -9,7 +9,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Protocol, Self, runtime_checkable
 
 from flext_core import p
-
 from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 if TYPE_CHECKING:
