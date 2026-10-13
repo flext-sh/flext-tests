@@ -22,7 +22,7 @@ from typing import TYPE_CHECKING, cast
 import pytest
 
 from flext_core import FlextContainer, FlextContext, FlextSettings
-from flext_tests import FlextTestsCase
+from flext_tests.case import FlextTestsCase
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator

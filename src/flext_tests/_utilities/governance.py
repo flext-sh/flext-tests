@@ -22,7 +22,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 from flext_cli import c, u
 
-from flext_tests import p, tm
+from flext_tests import p, t, tm
 
 if TYPE_CHECKING:
     from types import ModuleType
@@ -33,7 +33,7 @@ class FlextTestsFlextUtilitiesGovernance:
 
     @staticmethod
     @functools.lru_cache(maxsize=1)
-    def _console_script_functions() -> dict[str, frozenset[str]]:
+    def _console_script_functions() -> t.MappingKV[str, frozenset[str]]:
         """Map each installed console-script module to its exposed function names.
 
         One scan per session: ``importlib.metadata.entry_points`` walks every
@@ -43,7 +43,7 @@ class FlextTestsFlextUtilitiesGovernance:
         Returns:
             The resulting ``dict[str, frozenset[str]]``.
         """
-        mapping: dict[str, set[str]] = {}
+        mapping: t.MutableMappingKV[str, set[str]] = {}
         for entry in importlib.metadata.entry_points(group="console_scripts"):
             if "." not in entry.attr:
                 mapping.setdefault(entry.module, set()).add(entry.attr)

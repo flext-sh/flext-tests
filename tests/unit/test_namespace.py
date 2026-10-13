@@ -14,7 +14,7 @@ from typing import Final
 import pytest
 
 from flext_tests import m
-from tests import c, u as test_u
+from tests import c, u
 
 NAMESPACE_SEED_COUNT: Final[int] = 100
 NAMESPACE_TOKENS_PER_SEED: Final[int] = 100
@@ -27,7 +27,7 @@ class TestsFlextTestsNamespace:
     @staticmethod
     def test_token_matches_the_declared_pattern(tmp_path: Path) -> None:
         """Tokens are 23 lowercase chars starting with a letter."""
-        namespace = test_u.Tests.namespace(
+        namespace = u.Tests.namespace(
             worker_id="w1",
             testrun_uid="run-1",
             checkout_root=tmp_path,
@@ -58,7 +58,7 @@ class TestsFlextTestsNamespace:
         for seed in range(NAMESPACE_SEED_COUNT):
             random.seed(seed)
             for _ in range(NAMESPACE_TOKENS_PER_SEED):
-                namespace = test_u.Tests.namespace(
+                namespace = u.Tests.namespace(
                     worker_id=f"w{seed % 7}",
                     testrun_uid=f"run-{seed}",
                     checkout_root=tmp_path,
@@ -70,12 +70,12 @@ class TestsFlextTestsNamespace:
     @staticmethod
     def test_worker_change_changes_the_token(tmp_path: Path) -> None:
         """Two workers on the same run derive different tokens."""
-        first = test_u.Tests.namespace(
+        first = u.Tests.namespace(
             worker_id="w0",
             testrun_uid="run",
             checkout_root=tmp_path,
         )
-        second = test_u.Tests.namespace(
+        second = u.Tests.namespace(
             worker_id="w1",
             testrun_uid="run",
             checkout_root=tmp_path,
@@ -90,12 +90,12 @@ class TestsFlextTestsNamespace:
     ) -> None:
         """Two checkouts derive different tokens and checkout digests."""
         other = tmp_path_factory.mktemp("other-checkout")
-        first = test_u.Tests.namespace(
+        first = u.Tests.namespace(
             worker_id="w0",
             testrun_uid="run",
             checkout_root=tmp_path,
         )
-        second = test_u.Tests.namespace(
+        second = u.Tests.namespace(
             worker_id="w0",
             testrun_uid="run",
             checkout_root=other,

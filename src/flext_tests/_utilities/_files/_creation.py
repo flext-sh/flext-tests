@@ -11,8 +11,8 @@ from pathlib import Path
 from typing import Annotated, cast
 
 from flext_tests import c, m, p, t, u
-from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
+from flext_tests._utilities import FlextTestsPayloadUtilities
+from flext_tests._utilities._files import FlextTestsFilesLifecycleMixin
 
 
 class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
@@ -95,8 +95,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             if content.failure:
                 msg = f"Cannot create file from failed result: {content.error}"
                 raise ValueError(msg)
-            owned = cast("p.Result[ContentT]", content)
-            return self._coerce_file_content(owned.value)
+            return self._coerce_file_content(content.value)
         return self._coerce_file_content(content)
 
     @staticmethod

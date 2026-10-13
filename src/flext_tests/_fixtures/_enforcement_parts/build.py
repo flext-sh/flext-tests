@@ -9,11 +9,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_tests import m, u
+from flext_tests._fixtures._enforcement_parts import FlextTestsEnforcementValidators
 from flext_tests._fixtures._enforcement_parts._collector import (
     FlextTestsEnforcementCollector,
-)
-from flext_tests._fixtures._enforcement_parts.validators import (
-    FlextTestsEnforcementValidators,
 )
 
 if TYPE_CHECKING:

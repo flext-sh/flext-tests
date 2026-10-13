@@ -23,8 +23,10 @@ from flext_tests import m, p, r, s, u
 
 if TYPE_CHECKING:
     from flext_tests import t
-from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
-from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
+from flext_tests._utilities._files import (
+    FlextTestsFilesComparisonMixin,
+    FlextTestsFilesInfoMixin,
+)
 
 
 class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixin):

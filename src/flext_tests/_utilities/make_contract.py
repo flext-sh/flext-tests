@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from flext_core import r
 from flext_tests import c, m, p, t
-from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
+from flext_tests._utilities import FlextTestsMakeParsingUtilitiesMixin
 
 
 class FlextTestsFlextUtilitiesMakeContract:

@@ -11,10 +11,10 @@ from __future__ import annotations
 
 from flext_cli import FlextCliTypes
 
+from flext_tests._typings import FlextTestsMakeTypesMixin
 from flext_tests._typings.base import FlextTestsBaseTypesMixin
 from flext_tests._typings.files import FlextTestsFilesTypesMixin
 from flext_tests._typings.guards import FlextTestsGuardsTypesMixin
-from flext_tests._typings.make import FlextTestsMakeTypesMixin
 from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
 
 

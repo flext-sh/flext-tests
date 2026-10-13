@@ -11,12 +11,14 @@ from typing import TYPE_CHECKING, TypeIs
 from flext_core import m
 
 if TYPE_CHECKING:
-    from flext_tests._typings.base import FlextTestsBaseTypesMixin as tb
+    from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 
 class FlextTestsGuardsTypesMixin:
     @staticmethod
-    def general_value(value: tb.Testobject) -> TypeIs[tb.Testobject]:
+    def general_value(
+        value: FlextTestsBaseTypesMixin.Testobject,
+    ) -> TypeIs[FlextTestsBaseTypesMixin.Testobject]:
         if value is None:
             return True
         if isinstance(value, (str, int, float, bool, bytes)):

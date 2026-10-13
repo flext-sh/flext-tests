@@ -27,7 +27,7 @@
   `FlextTestsConfig`, `FlextTestsConstants`, `FlextTestsDocker`,
   `FlextTestsDockerSurfaceParts`, `FlextTestsDomains`, `FlextTestsFiles`,
   `FlextTestsFixturesDSLMixin` (+16 more)
-- Exported module shortcuts: `api`, `services`
+- Exported module shortcuts: `api`
 - Generated module pages: `17`
 
 ## Next Pages

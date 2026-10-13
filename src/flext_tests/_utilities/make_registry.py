@@ -10,11 +10,11 @@ from pathlib import Path
 
 from flext_core import r
 from flext_tests import c, m, p, t
-from flext_tests._utilities.make_contract import (
+from flext_tests._utilities import (
     FlextTestsFlextUtilitiesMakeContract,
     FlextTestsMakeContractUtilitiesMixin,
+    FlextTestsMakeParsingUtilitiesMixin,
 )
-from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
 
 
 class FlextTestsMakeRegistryUtilitiesMixin(

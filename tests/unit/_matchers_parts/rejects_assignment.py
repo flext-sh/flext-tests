@@ -14,21 +14,21 @@ import pytest
 from tests import m, tm
 
 
-class _Frozen(m.BaseModel):
+class TestsFlextTestsFrozen(m.BaseModel):
     model_config = m.ConfigDict(frozen=True)
 
     host: str
 
 
-class _Mutable(m.BaseModel):
+class TestsFlextTestsMutable(m.BaseModel):
     host: str
 
 
-class _PluginType(enum.StrEnum):
+class TestsFlextTestsPluginType(enum.StrEnum):
     EXTRACTORS = "extractors"
 
 
-class _RejectedAssignment:
+class TestsFlextTestsRejectedAssignment:
     """Write-only descriptor target with an identifiable rejection cause."""
 
     def __init__(self, rejection: ValueError) -> None:
@@ -48,7 +48,7 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
     def test_rejects_assignment_on_frozen_model() -> None:
         """A frozen pydantic model rejects field assignment."""
         tm.rejects_assignment(
-            _Frozen(host="h"),
+            TestsFlextTestsFrozen(host="h"),
             "host",
             "other",
             expected=m.ValidationError,
@@ -58,7 +58,7 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
     def test_rejects_assignment_matches_error_text() -> None:
         """The rejection reason is assertable through ``match``."""
         tm.rejects_assignment(
-            _Frozen(host="h"),
+            TestsFlextTestsFrozen(host="h"),
             "host",
             "other",
             expected=m.ValidationError,
@@ -69,7 +69,7 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
     def test_rejects_assignment_on_enum_member() -> None:
         """Enum members cannot be reassigned through the public class."""
         tm.rejects_assignment(
-            _PluginType,
+            TestsFlextTestsPluginType,
             "EXTRACTORS",
             "mutated",
             expected=(AttributeError, TypeError),
@@ -80,7 +80,7 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
         """A target that accepts the assignment fails the matcher."""
         with pytest.raises(AssertionError):
             tm.rejects_assignment(
-                _Mutable(host="h"),
+                TestsFlextTestsMutable(host="h"),
                 "host",
                 "other",
                 expected=m.ValidationError,
@@ -93,7 +93,7 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
 
         with pytest.raises(ValueError, match=re.escape(str(rejection))) as caught:
             tm.rejects_assignment(
-                _RejectedAssignment(rejection),
+                TestsFlextTestsRejectedAssignment(rejection),
                 "host",
                 "other",
                 expected=TypeError,
@@ -108,7 +108,7 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
 
         with pytest.raises(AssertionError) as caught:
             tm.rejects_assignment(
-                _RejectedAssignment(rejection),
+                TestsFlextTestsRejectedAssignment(rejection),
                 "host",
                 "other",
                 expected=ValueError,

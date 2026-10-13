@@ -11,14 +11,16 @@ from __future__ import annotations
 
 from flext_cli import FlextCliConstants
 
-from flext_tests._constants.data_cases import FlextTestsConstantsDataCases
+from flext_tests._constants import (
+    FlextTestsConstantsDataCases,
+    FlextTestsConstantsFiles,
+    FlextTestsConstantsKube,
+    FlextTestsConstantsMake,
+    FlextTestsConstantsValidator,
+)
 from flext_tests._constants.docker import FlextTestsConstantsDocker
-from flext_tests._constants.files import FlextTestsConstantsFiles
-from flext_tests._constants.kube import FlextTestsConstantsKube
-from flext_tests._constants.make import FlextTestsConstantsMake
 from flext_tests._constants.matcher import FlextTestsConstantsMatcher
 from flext_tests._constants.namespace import FlextTestsConstantsNamespace
-from flext_tests._constants.validator import FlextTestsConstantsValidator
 
 
 class FlextTestsConstants(FlextCliConstants):

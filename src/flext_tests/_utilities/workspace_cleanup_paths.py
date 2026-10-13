@@ -11,9 +11,7 @@ from typing import TYPE_CHECKING
 
 from flext_core import r
 from flext_tests import c, p
-from flext_tests._utilities.workspace_cleanup_git import (
-    FlextTestsWorkspaceCleanupGitUtilitiesMixin,
-)
+from flext_tests._utilities import FlextTestsWorkspaceCleanupGitUtilitiesMixin
 
 if TYPE_CHECKING:
     from flext_core import t

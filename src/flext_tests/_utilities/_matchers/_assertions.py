@@ -12,7 +12,7 @@ from collections.abc import Sized
 from typing import Never
 
 from flext_tests import c, p
-from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
+from flext_tests._utilities import FlextTestsFlextUtilitiesPayload
 
 
 class FlextTestsMatchersAssertionsMixin:

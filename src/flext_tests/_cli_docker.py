@@ -16,8 +16,8 @@ from pathlib import Path
 
 from flext_cli import u as cli_u
 
+from flext_tests import FlextTestsDocker
 from flext_tests._models.spec import FlextTestsSpecModelsMixin
-from flext_tests.docker import FlextTestsDocker
 
 USAGE = "usage: flext-tests docker {ensure|verify|down} --spec <yaml> [--target <name>]"
 

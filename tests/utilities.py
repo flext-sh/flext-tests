@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import override
 
 from flext_tests import FlextTestsUtilities, m, p, r, t
-from flext_tests.base import FlextTestsServiceBase as s
+from flext_tests.base import FlextTestsServiceBase
 from tests.protocols import TestsFlextTestsProtocols
 
 
@@ -27,7 +27,7 @@ class TestsFlextTestsUtilities(FlextTestsUtilities):
                 """Return the upper-cased echo value."""
                 return value.upper()
 
-        class EchoService(s[str]):
+        class EchoService(FlextTestsServiceBase[str]):
             """Port-bearing service whose only collaborator is the echo port."""
 
             port: t.Port[TestsFlextTestsProtocols.Tests.Echo] = m.Field(

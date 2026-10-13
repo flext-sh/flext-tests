@@ -11,16 +11,12 @@ from typing import cast
 
 from flext_core import r
 from flext_tests import c, m, p, t
-from flext_tests._utilities._matchers._assertions import (
+from flext_tests._utilities import FlextTestsPayloadUtilities
+from flext_tests._utilities._matchers import (
     FlextTestsMatchersAssertionsMixin,
-)
-from flext_tests._utilities._matchers._containment import (
     FlextTestsMatchersContainmentMixin,
-)
-from flext_tests._utilities._matchers._typeguards import (
     FlextTestsMatchersTypeGuardsMixin,
 )
-from flext_tests._utilities.payload import FlextTestsPayloadUtilities
 
 
 class FlextTestsMatchersThatMixin:
@@ -1005,9 +1001,9 @@ class FlextTestsMatchersThatMixin:
         inherited_msg: str | None = None,
     ) -> None:
         for attr_path, rule in rules.items():
-            current: object = subject
+            current: t.UnconstrainedValue = subject
             for segment in attr_path.split("."):
-                probe: object = current
+                probe: t.UnconstrainedValue = current
                 mapping_current = cast(
                     "Mapping[object, object] | None",
                     probe if isinstance(probe, Mapping) else None,

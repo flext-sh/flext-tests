@@ -199,7 +199,9 @@ class TestsFlextTestsDockerLifecycleMixin:
         health: t.MappingKV[str, str] | None,
         env: t.StrSequence | None,
     ) -> m.Tests.ContainerInspect:
-        state: dict[str, str | t.MappingKV[str, str]] = {"Status": "running"}
+        state: t.MutableMappingKV[str, str | t.MappingKV[str, str]] = {
+            "Status": "running"
+        }
         if health is not None:
             state["Health"] = health
         return m.Tests.ContainerInspect.model_validate({
