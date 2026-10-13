@@ -37,12 +37,22 @@ from flext_tests._utilities.make_rendering import FlextTestsMakeRenderingUtiliti
 from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
 from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
 from flext_tests._utilities.namespace import FlextTestsNamespaceUtilitiesMixin
-from flext_tests._utilities.scratch_storage import FlextTestsScratchStorageUtilitiesMixin
+from flext_tests._utilities.scratch_storage import (
+    FlextTestsScratchStorageUtilitiesMixin,
+)
 from flext_tests._utilities.base import FlextTestsUtilitiesBase
-from flext_tests._utilities.workspace_cleanup_git import FlextTestsWorkspaceCleanupGitUtilitiesMixin
-from flext_tests._utilities.workspace_cleanup_inspect import FlextTestsWorkspaceCleanupInspectUtilitiesMixin
-from flext_tests._utilities.workspace_cleanup_paths import FlextTestsWorkspaceCleanupPathsUtilitiesMixin
-from flext_tests._utilities.workspace_cleanup_plan import FlextTestsWorkspaceCleanupPlanUtilitiesMixin
+from flext_tests._utilities.workspace_cleanup_git import (
+    FlextTestsWorkspaceCleanupGitUtilitiesMixin,
+)
+from flext_tests._utilities.workspace_cleanup_inspect import (
+    FlextTestsWorkspaceCleanupInspectUtilitiesMixin,
+)
+from flext_tests._utilities.workspace_cleanup_paths import (
+    FlextTestsWorkspaceCleanupPathsUtilitiesMixin,
+)
+from flext_tests._utilities.workspace_cleanup_plan import (
+    FlextTestsWorkspaceCleanupPlanUtilitiesMixin,
+)
 
 
 class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance):
