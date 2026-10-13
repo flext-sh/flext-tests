@@ -16,24 +16,41 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import importlib
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from types import ModuleType
 from typing import TYPE_CHECKING, cast
 
 import pytest
 
 from flext_core import FlextContainer, FlextContext, FlextSettings, t
+from flext_tests import c, u
 from flext_tests._settings import FlextTestsSettings
 from flext_tests.case import FlextTestsCase
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
-    from pathlib import Path
-
-    from flext_core import p
+    from flext_tests import p
     from flext_tests.base import FlextTestsServiceBase
 
 # pytest registers shared fixture modules at configure time. Their public
 # facades may load during registration; reset and binding happen during runtime.
+
+
+@pytest.fixture(scope="session")
+def session_runtime(request: pytest.FixtureRequest) -> Iterator[p.Tests.SessionRuntime]:
+    """Provide every installed consumer a lazy, isolated worker-session runtime.
+
+    Pure tests never provision tools. Consumers lease one shared locked seed;
+    pytest teardown removes the random physical area, including on errors.
+    Each xdist worker creates its own area, never borrowing another environment.
+    """
+    scratch = u.Tests.scratch_root(
+        checkout_root=Path(request.config.rootpath),
+        override=request.config.getini(c.Tests.SCRATCH_ROOT_INI) or None,
+    )
+    with TemporaryDirectory(prefix="runtime-", dir=scratch) as directory:
+        yield u.Tests.SessionRuntime(Path(directory))
 
 
 def _reset_runtime_state() -> None:

@@ -1,11 +1,8 @@
 """Pytest plugin wiring the canonical flext-tests fixture modules.
 
-Usage in any project's conftest.py::
-
-    pytest_plugins = ["flext_tests.conftest_plugin"]
-
-This plugin registers the shared test-runtime fixture modules so projects get
-one canonical owner for autouse runtime setup and shared helper fixtures.
+The installed ``pytest11`` entry point registers shared fixtures automatically;
+projects do not copy plugin wiring. ``session_runtime`` lazily provisions one
+physical locked consumer per worker, with exclusive, isolated case leases.
 Markdown code blocks are executed by pytest-markdown-docs; there is no local
 markdown rule fallback.
 
