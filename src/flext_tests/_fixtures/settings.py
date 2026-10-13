@@ -152,9 +152,13 @@ def test_runtime(request: pytest.FixtureRequest, reset_settings: None) -> None:
     node: pytest.Item | pytest.Collector = getattr(request, "node")
     if not isinstance(node, pytest.Function):
         return
+    module = node.module
+    if not isinstance(module, ModuleType):
+        msg = f"pytest function {node.nodeid} must belong to a Python module"
+        raise TypeError(msg)
     instance = node.instance
     _bind_runtime_aliases(
-        module=node.module,
+        module=module,
         instance=instance if isinstance(instance, FlextTestsCase) else None,
     )
 

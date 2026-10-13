@@ -241,10 +241,12 @@ class TestsFlextTestsServiceBase:
             encoding="utf-8",
         )
         (package_dir / "test_probe.py").write_text(
+            "import pytest\n"
             "import flext_core\n"
             "from flext_tests import FlextTestsCase\n"
             "\n"
             "class TestsProbe(FlextTestsCase):\n"
+            "    @pytest.mark.usefixtures('test_runtime')\n"
             "    def test_probe(self) -> None:\n"
             "        assert self.u is flext_core.u\n",
             encoding="utf-8",
