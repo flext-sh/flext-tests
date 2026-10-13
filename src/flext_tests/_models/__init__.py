@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from flext_tests._models.filesystem import FlextTestsFilesystemModelsMixin
     from flext_tests._models.make import FlextTestsMakeModelsMixin
     from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
+    from flext_tests._models.spec import FlextTestsSpecModelsMixin
     from flext_tests._models.workspace_cleanup import (
         FlextTestsWorkspaceCleanupModelsMixin,
     )
@@ -27,6 +28,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsFlextModelsBase",
     "FlextTestsMakeModelsMixin",
     "FlextTestsMatchersModelsMixin",
+    "FlextTestsSpecModelsMixin",
     "FlextTestsWorkspaceCleanupModelsMixin",
 )
 
@@ -38,6 +40,7 @@ install_lazy_exports(
         "FlextTestsFlextModelsBase": ".base",
         "FlextTestsMakeModelsMixin": ".make",
         "FlextTestsMatchersModelsMixin": ".matchers",
+        "FlextTestsSpecModelsMixin": ".spec",
         "FlextTestsWorkspaceCleanupModelsMixin": ".workspace_cleanup",
     }),
     public_exports=__all__,
