@@ -84,7 +84,7 @@ class FlextTestsBatchModelsMixin:
         errors: Annotated[
             t.StrMapping,
             u.Field(description="Mapping of file names to error messages"),
-        ] = u.Field(default_factory=lambda: MappingProxyType(dict[str, str]()))
+        ] = u.Field(default_factory=lambda: MappingProxyType(t.StrDict()))
 
         @u.computed_field
         @property

@@ -100,7 +100,7 @@ class FlextTestsMakeModelsMixin:
         aliases_by_name: Annotated[
             t.MappingKV[str, str],
             u.Field(description="Verb aliases keyed by alias name."),
-        ] = u.Field(default_factory=lambda: MappingProxyType(dict[str, str]()))
+        ] = u.Field(default_factory=lambda: MappingProxyType(t.StrDict()))
 
     class MakeSurfaceProbe(m.Value):
         """One in-process dispatcher probe for surface validation."""
@@ -110,7 +110,7 @@ class FlextTestsMakeModelsMixin:
         env: Annotated[
             t.MappingKV[str, str],
             u.Field(description="Environment values for this probe."),
-        ] = u.Field(default_factory=lambda: MappingProxyType(dict[str, str]()))
+        ] = u.Field(default_factory=lambda: MappingProxyType(t.StrDict()))
         expected_output: Annotated[
             t.StrSequence,
             u.Field(description="Output fragments expected from the probe."),

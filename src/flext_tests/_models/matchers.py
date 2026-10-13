@@ -319,7 +319,7 @@ class FlextTestsMatchersModelsMixin:
             Returns:
                 The resulting ``FlextTestsMatchersMixin.MatchRule``.
             """
-            mapping_value = cast("Mapping[str, object]", value)
+            mapping_value = cast("t.JsonMapping", value)
             rule_keys = frozenset({*cls.model_fields, "is", "excludes"})
             if mapping_value and set(mapping_value).issubset(rule_keys):
                 return cls.model_validate(dict(mapping_value))
@@ -349,7 +349,7 @@ class FlextTestsMatchersModelsMixin:
             if isinstance(value, Mapping):
                 return {
                     key: cls.parse(rule)
-                    for key, rule in cast("Mapping[str, object]", value).items()
+                    for key, rule in cast("t.JsonMapping", value).items()
                 }
             if isinstance(value, Sequence) and not isinstance(value, str | bytes):
                 return [cls.parse(rule) for rule in cast("Sequence[object]", value)]
