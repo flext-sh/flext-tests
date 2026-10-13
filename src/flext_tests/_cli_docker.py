@@ -24,8 +24,7 @@ class FlextTestsCliDocker:
     """Spec-driven docker provisioning CLI surface."""
 
     USAGE = (
-        "usage: flext-tests docker {ensure|verify|down} "
-        "--spec <yaml> [--target <name>]"
+        "usage: flext-tests docker {ensure|verify|down} --spec <yaml> [--target <name>]"
     )
 
     ContainerSpec = FlextTestsSpecModelsMixin.ContainerSpec
