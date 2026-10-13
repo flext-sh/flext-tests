@@ -534,6 +534,16 @@ class FlextTestsMatchersModelsMixin:
         )
 
         msg: Annotated[str | None, u.Field(description="Message.")] = None
+        truth: Annotated[
+            bool | None,
+            u.Field(description="Native truth value of the original subject."),
+        ] = None
+        assertion_message: Annotated[
+            p.AttributeProbe | None,
+            u.Field(
+                description="Original assertion message, passed inside its failure branch."
+            ),
+        ] = None
         eq: Annotated[MatchExpectedValue, u.Field(description="Equals.")] = None
         ne: Annotated[MatchExpectedValue, u.Field(description="Not equals.")] = None
         is_: Annotated[
@@ -683,7 +693,20 @@ class FlextTestsMatchersModelsMixin:
 
             Returns:
                 The resulting ``FlextTestsMatchersModelsMixin.ThatParams``.
+
+            Raises:
+                ValueError: If legacy parameter normalization fails.
             """
+            if "assertion_message" in self.model_fields_set and self.truth is None:
+                message = "assertion_message requires the native truth criterion"
+                raise ValueError(message)
+            if self.truth is not None and self.model_fields_set.difference({
+                "truth",
+                "msg",
+                "assertion_message",
+            }):
+                message = "native truth cannot be combined with payload criteria"
+                raise ValueError(message)
             # Why: precise union of the two fields actually assigned below
             # ("has" <- self.error: str | StrSequence; "len" <- LengthSpec
             # tuple); TestobjectSerializable rejected tuple[int, int] once the

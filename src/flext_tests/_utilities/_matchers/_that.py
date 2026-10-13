@@ -744,11 +744,27 @@ class FlextTestsMatchersThatMixin:
             ) -> None:
                 """Assert original subjects using validated owned criteria.
 
+                Args:
+                    value: The subject to be asserted.
+                    owned_payload: Whether the value is an owned payload.
+                    **kwargs: Additional attribute probes for validation.
+
                 Raises:
-                    AssertionError: If ``params.none is not None and (value is None) is
-                        not params.none``.
+                    AssertionError: If any of the validation rules are violated.
+                    ValueError: If the native truth requires the original subject and it is not provided.
                 """
                 params = cls._that_params(kwargs)
+                if params.truth is not None:
+                    if owned_payload:
+                        message = "native truth requires the original subject"
+                        raise ValueError(message)
+                    if bool(value) is not params.truth:
+                        if "assertion_message" in params.model_fields_set:
+                            raise AssertionError(params.assertion_message)
+                        if "msg" in params.model_fields_set:
+                            raise AssertionError(params.msg)
+                        raise AssertionError
+                    return
                 if owned_payload:
                     payload = FlextTestsPayloadUtilities.to_payload(
                         value,
