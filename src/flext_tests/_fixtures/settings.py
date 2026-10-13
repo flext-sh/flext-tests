@@ -21,21 +21,19 @@ from typing import TYPE_CHECKING, cast
 
 import pytest
 
-from flext_core import FlextContainer, FlextContext, FlextSettings
+from flext_core import FlextContainer, FlextContext, FlextSettings, t
+from flext_tests._settings import FlextTestsSettings
 from flext_tests.case import FlextTestsCase
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
     from pathlib import Path
 
-    from flext_tests import FlextTestsSettings, p, t
+    from flext_core import p
     from flext_tests.base import FlextTestsServiceBase
 
-# pytest registers this module at configure time, before any test runs. The
-# model-backed facades (``FlextTestsSettings``, ``s``) therefore resolve through
-# the deferred ``import_module`` form inside the hook and fixture bodies that
-# use them, so an inactive or collect-only session never loads
-# ``flext_tests.models``.
+# pytest registers shared fixture modules at configure time. Their public
+# facades may load during registration; reset and binding happen during runtime.
 
 
 def _reset_runtime_state() -> None:
@@ -145,14 +143,24 @@ def reset_settings() -> Iterator[None]:
 
 @pytest.fixture
 def test_runtime(request: pytest.FixtureRequest, reset_settings: None) -> None:
-    """Bind the canonical FLEXT test runtime aliases onto pytest class instances."""
+    """Bind the canonical FLEXT test runtime aliases onto pytest class instances.
+
+    Raises:
+        TypeError: If the pytest function does not belong to a Python module.
+
+    """
     _ = reset_settings
-    node = cast("object", request.node)
+    # FixtureRequest.node is unannotated upstream and depends on fixture scope.
+    node: pytest.Item | pytest.Collector = request.node
     if not isinstance(node, pytest.Function):
         return
-    instance = request.instance
+    module = node.module
+    if not isinstance(module, ModuleType):
+        msg = f"pytest function {node.nodeid} must belong to a Python module"
+        raise TypeError(msg)
+    instance = node.instance
     _bind_runtime_aliases(
-        module=cast("ModuleType", request.module),
+        module=module,
         instance=instance if isinstance(instance, FlextTestsCase) else None,
     )
 

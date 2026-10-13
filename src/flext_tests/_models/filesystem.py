@@ -193,7 +193,26 @@ class FlextTestsFilesystemModelsMixin:
             """
             return Path(value) if isinstance(value, str) else value
 
-    class CompareParams(m.Value):
+    class PathCoercingParams(m.Value):
+        """Coerce declared path operands to ``Path`` before validation."""
+
+        @m.field_validator(
+            "file1",
+            "file2",
+            "path",
+            mode="before",
+            check_fields=False,
+        )
+        @classmethod
+        def convert_path(cls, value: Path | str) -> Path:
+            """Convert string to Path.
+
+            Returns:
+                The resulting ``Path``.
+            """
+            return Path(value)
+
+    class CompareParams(PathCoercingParams):
         """Parameters for file comparison operations."""
 
         file1: Annotated[Path, u.Field(description="First file to compare.")]
@@ -226,17 +245,7 @@ class FlextTestsFilesystemModelsMixin:
             u.Field(description="Exclude these keys from comparison."),
         ] = None
 
-        @m.field_validator("file1", "file2", mode="before")
-        @classmethod
-        def convert_path(cls, value: Path | str) -> Path:
-            """Convert string to Path.
-
-            Returns:
-                The resulting ``Path``.
-            """
-            return Path(value)
-
-    class InfoParams(m.Value):
+    class InfoParams(PathCoercingParams):
         """Parameters for file info operations."""
 
         path: Annotated[Path, u.Field(description="Path to file.")]
@@ -252,16 +261,6 @@ class FlextTestsFilesystemModelsMixin:
             type[m.BaseModel] | None,
             u.Field(description="Pydantic model to validate content against."),
         ] = None
-
-        @m.field_validator("path", mode="before")
-        @classmethod
-        def convert_path(cls, value: Path | str) -> Path:
-            """Convert string to Path.
-
-            Returns:
-                The resulting ``Path``.
-            """
-            return Path(value)
 
     class AssertExistsParams(m.Value):
         """Validation options for file/dir existence assertions."""

@@ -20,12 +20,12 @@ from typing import TYPE_CHECKING, ClassVar, cast
 
 import pytest
 
-from flext_tests import c
+from flext_tests import c, t
 
 if TYPE_CHECKING:
     import warnings
 
-    from flext_tests import m, t
+    from flext_tests import m
 
 
 class FlextTestsEnforcementDispatcher:

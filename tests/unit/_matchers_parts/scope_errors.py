@@ -7,15 +7,10 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import c, r, tm
-from tests import m
-
-if TYPE_CHECKING:
-    from tests import p
+from tests import c, m, p, r, tm
 
 
 class TestsFlextTestsMatchersScopeErrorsMixin:

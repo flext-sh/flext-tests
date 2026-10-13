@@ -6,16 +6,17 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Self, cast, override
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Self, override
 
 import pytest
 
+from flext_tests import p
 from flext_tests._fixtures._enforcement_parts._error import (
     FlextTestsEnforcementViolationError,
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
     from pathlib import Path
 
     from flext_tests import m
@@ -34,14 +35,14 @@ class FlextTestsEnforcementItem(pytest.Item):
     ) -> Self:
         """Build one item through a fully typed factory boundary.
 
-        ``pytest.Node.from_parent`` carries a partially unknown ``**kw`` in
-        the supported pytest stubs; this wrapper owns the single cast.
+        Pytest's unannotated ``**kw`` forwards these exact arguments to the
+        item constructor; the protocol records that public boundary.
 
         Returns:
             The resulting ``Self``.
 
         """
-        factory = cast("Callable[..., Self]", cls.from_parent)
+        factory: p.Tests.EnforcementItemFactory[Self] = cls.from_parent
         return factory(parent=parent, name=name, violation=violation)
 
     def __init__(
@@ -51,7 +52,8 @@ class FlextTestsEnforcementItem(pytest.Item):
         *,
         violation: m.Tests.EnforcementViolation,
     ) -> None:
-        node_init = cast("Callable[..., None]", super().__init__)
+        # Item.__init__ forwards name/parent to Node and initializes reporting.
+        node_init: Callable[[str, pytest.Collector], None] = super().__init__
         node_init(name, parent)
         self._rule_id = violation.rule_id
         self._severity = violation.severity

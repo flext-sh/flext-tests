@@ -10,15 +10,7 @@ import sys
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from pathlib import Path
 from types import MappingProxyType
-from typing import (
-    Annotated,
-    ClassVar,
-    Final,
-    Protocol,
-    TypeAliasType,
-    cast,
-    runtime_checkable,
-)
+from typing import Annotated, ClassVar, Final, TypeAliasType, cast
 
 import pytest
 from flext_cli import m, u
@@ -28,24 +20,17 @@ from flext_tests._models import FlextTestsFlextModelsBase
 from flext_tests._utilities import FlextTestsPayloadUtilities
 
 ApproxBase: Final[type] = type(pytest.approx(0))
-
-
-@runtime_checkable
-class ApproxLike(Protocol):
-    """Structural stand-in for pytest approximation objects in type positions."""
-
-
 """Approximation sentinel base resolved through pytest's public ``approx`` API."""
 
 type MatchExpectedValue = (
     FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
-    | ApproxLike
+    | p.Tests.ApproxLike
     | TypeAliasType
     | None
 )
 type DeepExpected = (
     FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
-    | Callable[[t.Tests.NativeMatchValue], bool]
+    | Callable[[p.Tests.NativeMatchValue], bool]
     | str
     | None
 )
@@ -54,12 +39,18 @@ type DeepExpected = (
 type _OwnedEntries = Mapping[
     str,
     FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
-    | Callable[[t.Tests.NativeMatchValue], bool],
+    | Callable[[p.Tests.NativeMatchValue], bool],
 ]
 
 
 class FlextTestsMatchersModelsMixin:
     """Matcher model group (result, that, scope, and chain parameters)."""
+
+    type DeepSpec = Mapping[
+        str,
+        FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+        | Callable[[p.Tests.NativeMatchValue], bool],
+    ]
 
     class PayloadParams(m.Value):
         """Own matcher operand trees once at parameter ingress."""
@@ -160,7 +151,7 @@ class FlextTestsMatchersModelsMixin:
             Mapping[
                 str,
                 FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
-                | Callable[[t.Tests.NativeMatchValue], bool],
+                | Callable[[p.Tests.NativeMatchValue], bool],
             ]
             | None
         ):
@@ -168,7 +159,7 @@ class FlextTestsMatchersModelsMixin:
 
             Returns:
                 The resulting ``Mapping[str, FlextTestsBaseModelsMixin.Payload |
-                    Callable[[t.Tests.NativeMatchValue], bool]] | None``.
+                    Callable[[p.Tests.NativeMatchValue], bool]] | None``.
             """
             if value is None:
                 return None
@@ -181,6 +172,32 @@ class FlextTestsMatchersModelsMixin:
                     for key, item in value.items()
                 },
             )
+
+        @m.field_validator(
+            "paths",
+            "items",
+            "attrs_match",
+            mode="before",
+            check_fields=False,
+        )
+        @classmethod
+        def parse_rules(
+            cls,
+            value: p.AttributeProbe,
+        ) -> (
+            p.AttributeProbe
+            | Mapping[str, FlextTestsMatchersModelsMixin.MatchRule]
+            | Sequence[FlextTestsMatchersModelsMixin.MatchRule]
+            | None
+        ):
+            """Parse public rule collections into nominal rules.
+
+            Returns:
+                The resulting ``p.AttributeProbe | Mapping[str,
+                    FlextTestsMatchersModelsMixin.MatchRule] |
+                    Sequence[FlextTestsMatchersModelsMixin.MatchRule] | None``.
+            """
+            return FlextTestsMatchersModelsMixin.MatchRule.parse_rule_fields(value)
 
     class MatchRule(PayloadParams):
         """One matcher rule parsed from a scalar, type, predicate, or mapping."""
@@ -253,7 +270,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Required length."),
         ] = None
         where: Annotated[
-            Callable[[t.Tests.NativeMatchValue], bool] | None,
+            Callable[[p.Tests.NativeMatchValue], bool] | None,
             u.Field(description="Predicate applied to the subject."),
         ] = None
         msg: Annotated[
@@ -294,16 +311,16 @@ class FlextTestsMatchersModelsMixin:
             if isinstance(value, cls):
                 return value
             if isinstance(value, Mapping):
-                return cls.parse_mapping(value)
+                return cls.parse_mapping(cast("t.JsonMapping", value))
             if isinstance(value, tuple):
-                return cls.parse_type_tuple(value)
+                return cls.parse_type_tuple(cast("tuple[object, ...]", value))
             if isinstance(value, type):
                 # A bare type keeps its nominal form.
                 return cls(is_=value)
             if callable(value):
                 return cls(
                     where=cast(
-                        "Callable[[t.Tests.NativeMatchValue], bool]",
+                        "Callable[[p.Tests.NativeMatchValue], bool]",
                         value,
                     ),
                 )
@@ -420,7 +437,7 @@ class FlextTestsMatchersModelsMixin:
             Mapping[
                 str,
                 FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
-                | Callable[[t.Tests.NativeMatchValue], bool],
+                | Callable[[p.Tests.NativeMatchValue], bool],
             ]
             | None,
             u.Field(description="Deep structural matching."),
@@ -444,30 +461,10 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Attribute assertions by attribute path."),
         ] = None
         where: Annotated[
-            Callable[[t.Tests.NativeMatchValue], bool] | None,
+            Callable[[p.Tests.NativeMatchValue], bool] | None,
             u.Field(description="Custom predicate function."),
         ] = None
         msg: Annotated[str | None, u.Field(description="Custom error message.")] = None
-
-        @m.field_validator("paths", "items", "attrs_match", mode="before")
-        @classmethod
-        def parse_rules(
-            cls,
-            value: p.AttributeProbe,
-        ) -> (
-            p.AttributeProbe
-            | Mapping[str, FlextTestsMatchersModelsMixin.MatchRule]
-            | Sequence[FlextTestsMatchersModelsMixin.MatchRule]
-            | None
-        ):
-            """Parse public rule collections into nominal rules.
-
-            Returns:
-                The resulting ``p.AttributeProbe | Mapping[str,
-                    FlextTestsMatchersModelsMixin.MatchRule] |
-                    Sequence[FlextTestsMatchersModelsMixin.MatchRule] | None``.
-            """
-            return FlextTestsMatchersModelsMixin.MatchRule.parse_rule_fields(value)
 
     class FailParams(m.Value):
         """Matcher parameters for failure result assertions."""
@@ -537,6 +534,18 @@ class FlextTestsMatchersModelsMixin:
         )
 
         msg: Annotated[str | None, u.Field(description="Message.")] = None
+        truth: Annotated[
+            bool | None,
+            u.Field(description="Native truth value of the original subject."),
+        ] = None
+        assertion_message: Annotated[
+            p.AttributeProbe | None,
+            u.Field(
+                description=(
+                    "Original assertion message, passed inside its failure branch."
+                )
+            ),
+        ] = None
         eq: Annotated[MatchExpectedValue, u.Field(description="Equals.")] = None
         ne: Annotated[MatchExpectedValue, u.Field(description="Not equals.")] = None
         is_: Annotated[
@@ -605,16 +614,16 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Last item."),
         ] = None
         all_: Annotated[
-            type | Callable[[t.Tests.NativeMatchValue], bool] | None,
+            type | Callable[[p.Tests.NativeMatchValue], bool] | None,
             u.Field(validation_alias=t.AliasChoices("all_", "all"), description="All."),
         ] = None
         any_: Annotated[
-            type | Callable[[t.Tests.NativeMatchValue], bool] | None,
+            type | Callable[[p.Tests.NativeMatchValue], bool] | None,
             u.Field(validation_alias=t.AliasChoices("any_", "any"), description="Any."),
         ] = None
         sorted: Annotated[
             bool
-            | Callable[[t.Tests.NativeMatchValue], t.Tests.NativeMatchValue]
+            | Callable[[p.Tests.NativeMatchValue], p.Tests.NativeMatchValue]
             | None,
             u.Field(description="Sort key."),
         ] = None
@@ -654,7 +663,7 @@ class FlextTestsMatchersModelsMixin:
             Mapping[
                 str,
                 FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
-                | Callable[[t.Tests.NativeMatchValue], bool],
+                | Callable[[p.Tests.NativeMatchValue], bool],
             ]
             | None,
             u.Field(description="Deep spec."),
@@ -674,29 +683,9 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Attr rules."),
         ] = None
         where: Annotated[
-            Callable[[t.Tests.NativeMatchValue], bool] | None,
+            Callable[[p.Tests.NativeMatchValue], bool] | None,
             u.Field(description="Predicate."),
         ] = None
-
-        @m.field_validator("paths", "items", "attrs_match", mode="before")
-        @classmethod
-        def parse_rules(
-            cls,
-            value: p.AttributeProbe,
-        ) -> (
-            p.AttributeProbe
-            | Mapping[str, FlextTestsMatchersModelsMixin.MatchRule]
-            | Sequence[FlextTestsMatchersModelsMixin.MatchRule]
-            | None
-        ):
-            """Parse public rule collections into nominal rules.
-
-            Returns:
-                The resulting ``p.AttributeProbe | Mapping[str,
-                    FlextTestsMatchersModelsMixin.MatchRule] |
-                    Sequence[FlextTestsMatchersModelsMixin.MatchRule] | None``.
-            """
-            return FlextTestsMatchersModelsMixin.MatchRule.parse_rule_fields(value)
 
         @m.model_validator(mode="after")
         def normalize_legacy_parameters(
@@ -706,7 +695,20 @@ class FlextTestsMatchersModelsMixin:
 
             Returns:
                 The resulting ``FlextTestsMatchersModelsMixin.ThatParams``.
+
+            Raises:
+                ValueError: If legacy parameter normalization fails.
             """
+            if "assertion_message" in self.model_fields_set and self.truth is None:
+                message = "assertion_message requires the native truth criterion"
+                raise ValueError(message)
+            if self.truth is not None and self.model_fields_set.difference({
+                "truth",
+                "msg",
+                "assertion_message",
+            }):
+                message = "native truth cannot be combined with payload criteria"
+                raise ValueError(message)
             # Why: precise union of the two fields actually assigned below
             # ("has" <- self.error: str | StrSequence; "len" <- LengthSpec
             # tuple); TestobjectSerializable rejected tuple[int, int] once the

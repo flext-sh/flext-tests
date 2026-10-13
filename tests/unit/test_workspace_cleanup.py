@@ -9,7 +9,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from flext_tests import c, m, p, tm, u
+from tests import c, m, p, tm, u
 
 
 class TestsFlextTestsWorkspaceCleanup:
@@ -42,6 +42,23 @@ class TestsFlextTestsWorkspaceCleanup:
             residues=tuple(Path(residue) for residue in residues),
         )
         return m.Tests.WorkspaceCleanupRequest(repository_root=root, policy=policy)
+
+    @classmethod
+    def _commit_tracked(cls, root: Path, message: str) -> None:
+        cls._git(root, "add", "-f", "--", ".cache/tracked.bin")
+        cls._git(
+            root,
+            "-c",
+            "user.name=FLEXT Tests",
+            "-c",
+            "user.email=tests@example.invalid",
+            "commit",
+            "--quiet",
+            "-m",
+            message,
+            "--",
+            ".cache/tracked.bin",
+        )
 
     def test_plan_is_deterministic_and_retains_source_request(
         self,
@@ -131,20 +148,7 @@ class TestsFlextTestsWorkspaceCleanup:
         """Refuse clean tracked content even when an ignore rule matches."""
         root = self._repository(tmp_path, ".cache/\n")
         _ = self._write(root / ".cache" / "tracked.bin")
-        self._git(root, "add", "-f", "--", ".cache/tracked.bin")
-        self._git(
-            root,
-            "-c",
-            "user.name=FLEXT Tests",
-            "-c",
-            "user.email=tests@example.invalid",
-            "commit",
-            "--quiet",
-            "-m",
-            "tracked cleanup fixture",
-            "--",
-            ".cache/tracked.bin",
-        )
+        self._commit_tracked(root, "tracked cleanup fixture")
 
         result = u.Tests.workspace_cleanup_plan(self._request(root, ".cache"))
 
@@ -154,20 +158,7 @@ class TestsFlextTestsWorkspaceCleanup:
         """Refuse dirty tracked work before evaluating tracked ownership."""
         root = self._repository(tmp_path, ".cache/\n")
         tracked = self._write(root / ".cache" / "tracked.bin")
-        self._git(root, "add", "-f", "--", ".cache/tracked.bin")
-        self._git(
-            root,
-            "-c",
-            "user.name=FLEXT Tests",
-            "-c",
-            "user.email=tests@example.invalid",
-            "commit",
-            "--quiet",
-            "-m",
-            "dirty cleanup fixture",
-            "--",
-            ".cache/tracked.bin",
-        )
+        self._commit_tracked(root, "dirty cleanup fixture")
         _ = self._write(tracked, "important WIP")
 
         result = u.Tests.workspace_cleanup_plan(self._request(root, ".cache"))

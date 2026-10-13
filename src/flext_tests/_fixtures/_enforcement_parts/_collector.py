@@ -6,15 +6,17 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Self, cast, override
+from typing import TYPE_CHECKING, Self, override
 
 import pytest
 
+from flext_tests import p
+from flext_tests._fixtures._enforcement_parts import FlextTestsEnforcementItem
+
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterable
+    from collections.abc import Iterable
 
     from flext_tests import t
-    from flext_tests._fixtures._enforcement_parts import FlextTestsEnforcementItem
 
 
 class FlextTestsEnforcementCollector(pytest.Collector):
@@ -28,14 +30,14 @@ class FlextTestsEnforcementCollector(pytest.Collector):
     ) -> Self:
         """Build one collector through a fully typed factory boundary.
 
-        ``pytest.Node.from_parent`` carries a partially unknown ``**kw`` in
-        the supported pytest stubs; this wrapper owns the single cast.
+        Pytest's unannotated ``**kw`` forwards these exact arguments to the
+        collector constructor; the protocol records that public boundary.
 
         Returns:
             The resulting ``Self``.
 
         """
-        factory = cast("Callable[..., Self]", cls.from_parent)
+        factory: p.Tests.EnforcementCollectorFactory[Self] = cls.from_parent
         return factory(parent=parent, name=name)
 
     def __init__(

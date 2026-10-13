@@ -1,8 +1,8 @@
 """Canonical namespace fixtures shared by every consumer suite.
 
-The ``u`` facade loads the model tree, so it resolves through the deferred
-``import_module`` form inside the fixture bodies: registering this module at
-configure time never loads ``flext_tests.models``.
+The model facade supplies the typed namespace contract at registration time.
+Namespace creation remains fixture-driven; importing a shared facade does not
+activate enforcement or execute consumer tests.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -12,12 +12,10 @@ from __future__ import annotations
 
 from importlib import import_module
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import pytest
 
-if TYPE_CHECKING:
-    from flext_tests import m
+from flext_tests import m
 
 
 def _worker_id(config: pytest.Config) -> str:

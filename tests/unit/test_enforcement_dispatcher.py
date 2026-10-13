@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import c, m, tm, u
+from tests import c, m, tm, u
 
 
 class TestsFlextTestsEnforcementDispatcher:

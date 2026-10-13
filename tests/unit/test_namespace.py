@@ -13,8 +13,7 @@ from typing import Final
 
 import pytest
 
-from flext_tests import m
-from tests import c, u
+from tests import c, m, u
 
 NAMESPACE_SEED_COUNT: Final[int] = 100
 NAMESPACE_TOKENS_PER_SEED: Final[int] = 100

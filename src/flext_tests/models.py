@@ -11,11 +11,7 @@ from __future__ import annotations
 
 from flext_cli import FlextCliModels
 
-from flext_tests._models import (
-    FlextTestsFilesystemModelsMixin,
-    FlextTestsFlextModelsBase,
-    FlextTestsMakeModelsMixin,
-    FlextTestsMatchersModelsMixin,
+from flext_tests._models.workspace_cleanup import (
     FlextTestsWorkspaceCleanupModelsMixin,
 )
 from flext_tests._models.batch import FlextTestsBatchModelsMixin
@@ -23,6 +19,11 @@ from flext_tests._models.docker import FlextTestsDockerModelsMixin
 from flext_tests._models.domains import FlextTestsDomainModelsMixin
 from flext_tests._models.namespace import FlextTestsNamespaceModelsMixin
 from flext_tests._models.validator import FlextTestsValidatorModelsMixin
+from flext_tests._models.filesystem import FlextTestsFilesystemModelsMixin
+from flext_tests._models.base import FlextTestsFlextModelsBase
+from flext_tests._models.make import FlextTestsMakeModelsMixin
+from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
+from flext_tests._models.spec import FlextTestsSpecModelsMixin
 
 
 class FlextTestsModels(FlextCliModels):
@@ -33,6 +34,7 @@ class FlextTestsModels(FlextCliModels):
         FlextTestsFilesystemModelsMixin,
         FlextTestsMakeModelsMixin,
         FlextTestsMatchersModelsMixin,
+        FlextTestsSpecModelsMixin,
         FlextTestsWorkspaceCleanupModelsMixin,
         FlextTestsDockerModelsMixin,
         FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin,

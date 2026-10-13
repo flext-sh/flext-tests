@@ -195,11 +195,11 @@ class FlextTestsDomains:
         }
 
     @staticmethod
-    def default_handler_case_specs() -> t.SequenceOf[t.Tests.HandlerCaseSpec]:
+    def default_handler_case_specs() -> t.SequenceOf[m.Tests.HandlerCaseSpec]:
         """Create shared handler test-case specs for service-base tests.
 
         Returns:
-            The resulting ``t.SequenceOf[t.Tests.HandlerCaseSpec]``.
+            The resulting ``t.SequenceOf[m.Tests.HandlerCaseSpec]``.
         """
         return [
             m.Tests.HandlerCaseSpec(

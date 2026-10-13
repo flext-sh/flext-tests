@@ -376,6 +376,7 @@ addopts = [
   "--strict-markers",
   "--markdown-docs",
   "--durations=10",
+  "--flext-enforce-strict",
   "--timeout=10",
 ]
 flext_slow_timeout_seconds = "30"
@@ -449,6 +450,7 @@ ignore = [
   "typing-only-first-party-import",
   "typing-only-standard-library-import",
   "typing-only-third-party-import",
+  "unsorted-imports",
 ]
 select = ["ALL"]
 unfixable = [
@@ -481,9 +483,9 @@ runtime-evaluated-base-classes = [
   "flext_tests.FlextTestsDocker",
   "flext_tests.FlextTestsServiceBase",
   "flext_tests.FlextTestsUtilities.Tests",
+  "flext_tests._models.filesystem.PathCoercingParams",
   "flext_tests._models.matchers.PayloadParams",
   "flext_tests._utilities.settings.FlextTestsConfigHelpersUtilitiesMixin",
-  "flext_tests.base.FlextTestsServiceBase",
   "flext_tests.m.BaseModel",
   "flext_tests.m.Value",
   "flext_tests.s",
@@ -615,12 +617,7 @@ whitelines = 1
 constraint-dependencies = ["mypy<2.4.0"]
 environments = ["sys_platform == 'linux'", "sys_platform == 'darwin'"]
 link-mode = "copy"
-
-[[tool.uv.exclude-dependencies]]
-dependencies = ["flext-tests"]
-
-[tool.uv.exclude-dependencies.package]
-name = "flext-infra"
+override-dependencies = ["flext-tests"]
 
 [tool.bandit]
 severity = "MEDIUM"

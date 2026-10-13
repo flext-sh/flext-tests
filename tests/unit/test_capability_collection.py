@@ -13,7 +13,7 @@ from collections.abc import Generator
 import pytest
 from flext_infra import config as infra_config
 
-from flext_tests import c, tm, u
+from tests import c, tm, u
 
 pytest_plugins = ["pytester"]
 

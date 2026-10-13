@@ -10,8 +10,7 @@ from collections.abc import Mapping
 
 import pytest
 
-from flext_tests import r, tm
-from tests import c, m, t
+from tests import c, m, p, r, t, tm
 
 
 class TestsFlextTestsMatchersDataDrivenMixin:
@@ -118,7 +117,7 @@ class TestsFlextTestsMatchersDataDrivenMixin:
     def test_ok_with_composed_data_driven_validations() -> None:
         """Validate result payload with path extraction plus composed rules."""
 
-        def is_mapping(data: t.Tests.NativeMatchValue) -> bool:
+        def is_mapping(data: p.Tests.NativeMatchValue) -> bool:
             return isinstance(data, Mapping)
 
         result = r[t.JsonMapping].ok({

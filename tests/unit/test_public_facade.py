@@ -17,7 +17,8 @@ from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
 
 import flext_tests
-from flext_tests import FlextTestsCase, d, e, h, m, r, tf, tk, tm, u, x
+from flext_tests import FlextTestsCase, FlextTestsModels, FlextTestsUtilities
+from tests import d, e, h, m, r, tf, tk, tm, u, x
 
 
 class TestsFlextTestsPublicFacade:
@@ -28,9 +29,15 @@ class TestsFlextTestsPublicFacade:
 
     @staticmethod
     def test_models_and_utilities_import_together() -> None:
-        """Test models and utilities import together."""
-        tm.that(m.__name__, eq="FlextTestsModels")
-        tm.that(u.__name__, eq="FlextTestsUtilities")
+        """Test models and utilities import together.
+
+        The ``tests`` facade deliberately enriches the public models and
+        utilities; the letters must resolve to subclasses of the public
+        families, keeping both facades importable side by side.
+
+        """
+        tm.that(issubclass(m, FlextTestsModels), eq=True)
+        tm.that(issubclass(u, FlextTestsUtilities), eq=True)
 
     @staticmethod
     def test_selected_enforcement_plugin_uses_its_declared_identity(

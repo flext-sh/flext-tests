@@ -14,17 +14,17 @@ from __future__ import annotations
 import multiprocessing
 import secrets
 import time
+from multiprocessing.queues import Queue
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import FlextTestsDocker, m, r, tm
-from tests import c, t, u
+from flext_tests import FlextTestsDocker
+from tests import c, m, r, t, tm, u
 
 if TYPE_CHECKING:
     from collections.abc import Generator
-    from multiprocessing.queues import Queue
 
     from tests import p
 

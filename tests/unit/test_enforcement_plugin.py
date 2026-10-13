@@ -62,23 +62,21 @@ class TestsFlextTestsEnforcementPlugin:
 
     @staticmethod
     @pytest.mark.slow
-    def test_inactive_session_collects_without_the_model_facade(
+    def test_inactive_session_collects_only_consumer_tests(
         pytester: pytest.Pytester,
     ) -> None:
-        """An ungoverned session configures and collects without ``m`` loaded."""
+        """Shared fixtures register without activating enforcement in a sandbox."""
         pytester.makeini("[pytest]\n")
-        pytester.makeconftest(
-            "import sys\n"
-            "\n"
-            "\n"
-            "def pytest_collection_finish(session):\n"
-            "    if 'flext_tests.models' in sys.modules:\n"
-            "        raise RuntimeError('flext_tests.models loaded at collection')\n",
+        pytester.makepyfile(
+            test_probe=(
+                "def test_probe() -> None:\n"
+                "    raise RuntimeError('collection must not execute tests')\n"
+            ),
         )
-        pytester.makepyfile(test_probe="def test_probe() -> None:\n    assert True\n")
-        result = pytester.runpytest_subprocess("--collect-only", "-q")
+        result = pytester.runpytest_subprocess("--collect-only")
         tm.that(result.ret, eq=pytest.ExitCode.OK)
-        result.stdout.fnmatch_lines(["*test_probe*"])
+        result.stdout.fnmatch_lines(["*collected 1 item*", "*test_probe*"])
+        result.stdout.no_fnmatch_line("*flext-enforce*")
 
     @staticmethod
     @pytest.mark.slow

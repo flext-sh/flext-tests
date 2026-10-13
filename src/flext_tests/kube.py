@@ -50,19 +50,33 @@ class FlextTestsKube(FlextTestsDocker):
             state_dir=state_dir,
         )
 
+    def _require_cluster_target(self) -> p.Result[m.Tests.ContainerConfig]:
+        """Resolve the configured kind target or its typed configuration failure.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerConfig]``.
+        """
+        target = self.target_config
+        if target is None:
+            return r[m.Tests.ContainerConfig].fail(
+                "Kubernetes target not configured. Use FlextTestsKube.kind(...) first.",
+            )
+        if target.compose_file is None:
+            return r[m.Tests.ContainerConfig].fail(
+                "Kubernetes target has no compose file configured.",
+            )
+        return r[m.Tests.ContainerConfig].ok(target)
+
     def cluster_up(self) -> p.Result[str]:
         """Start the kind stack and wait for the apiserver to accept TCP.
 
         Returns:
             The resulting ``p.Result[str]``.
         """
-        target = self.target_config
-        if target is None:
-            return r[str].fail(
-                "Kubernetes target not configured. Use FlextTestsKube.kind(...) first.",
-            )
-        if target.compose_file is None:
-            return r[str].fail("Kubernetes target has no compose file configured.")
+        target_result = self._require_cluster_target()
+        if target_result.failure:
+            return r[str].from_failure(target_result)
+        target = target_result.unwrap()
         up_result = self.up()
         if up_result.failure:
             return up_result.map_error(
@@ -97,13 +111,9 @@ class FlextTestsKube(FlextTestsDocker):
         Returns:
             The resulting ``p.Result[str]``.
         """
-        target = self.target_config
-        if target is None:
-            return r[str].fail(
-                "Kubernetes target not configured. Use FlextTestsKube.kind(...) first.",
-            )
-        if target.compose_file is None:
-            return r[str].fail("Kubernetes target has no compose file configured.")
+        target_result = self._require_cluster_target()
+        if target_result.failure:
+            return r[str].from_failure(target_result)
         return self.down()
 
     def nodes_ready(self) -> p.Result[bool]:

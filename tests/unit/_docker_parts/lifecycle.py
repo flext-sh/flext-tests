@@ -11,8 +11,8 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import FlextTestsDocker, m, tm
-from tests import c, t, u
+from flext_tests import FlextTestsDocker
+from tests import c, m, t, tm, u
 
 
 class TestsFlextTestsDockerLifecycleMixin:

@@ -23,6 +23,26 @@ if TYPE_CHECKING:
 class FlextTestsEnforcementProtocolsMixin:
     """Protocols for enforcement dispatch boundaries."""
 
+    class EnforcementItemFactory[T](Protocol):
+        """Bound pytest ``from_parent`` contract for violation items."""
+
+        def __call__(
+            self,
+            *,
+            parent: pytest.Collector,
+            name: str,
+            violation: m.Tests.EnforcementViolation,
+        ) -> T:
+            """Construct an item through pytest's public node factory."""
+            ...
+
+    class EnforcementCollectorFactory[T](Protocol):
+        """Bound pytest ``from_parent`` contract for session collectors."""
+
+        def __call__(self, *, parent: pytest.Session, name: str) -> T:
+            """Construct a collector through pytest's public node factory."""
+            ...
+
     class EnforcementBuilder(ABC):
         """Callable contract implemented by enforcement contribution builders."""
 

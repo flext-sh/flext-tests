@@ -8,13 +8,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_tests import tf, tm
-from tests import c, m, u
+from tests import c, m, t, tf, tm, u
 
 if TYPE_CHECKING:
     from pathlib import Path
-
-    from tests import t
 
 
 class TestsFlextTestsFilesReadMixin:

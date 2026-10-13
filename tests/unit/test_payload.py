@@ -12,7 +12,8 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import FlextTestsFiles, c, m, t, tm, u
+from flext_tests import FlextTestsFiles
+from tests import c, m, p, t, tm, u
 
 
 class FlextTestsPayloadIdentityParts:
@@ -53,7 +54,7 @@ class FlextTestsPayloadIdentityParts:
         """Test matcher preserves native model identity."""
         model = m.Tests.Value(data="native matcher model", count=2)
 
-        def is_original_model(value: t.Tests.NativeMatchValue) -> bool:
+        def is_original_model(value: p.Tests.NativeMatchValue) -> bool:
             return value is model
 
         tm.that(model, is_=type(model), where=is_original_model)
@@ -69,7 +70,7 @@ class FlextTestsPayloadIdentityParts:
         model = m.Tests.Value(data="nested matcher model", count=2)
         leaves = (model, b"\x00\xff", datetime.now(UTC), Path("native"))
 
-        def is_original_model(value: t.Tests.NativeMatchValue) -> bool:
+        def is_original_model(value: p.Tests.NativeMatchValue) -> bool:
             return value is model
 
         tm.that(
@@ -122,7 +123,7 @@ class FlextTestsPayloadIdentityParts:
         """Test matcher preserves exception atom identity."""
         error = ValueError("native exception atom")
 
-        def is_original_error(value: t.Tests.NativeMatchValue) -> bool:
+        def is_original_error(value: p.Tests.NativeMatchValue) -> bool:
             return value is error
 
         tm.that(error, is_=ValueError, eq=error, where=is_original_error)
@@ -132,7 +133,7 @@ class FlextTestsPayloadIdentityParts:
         """Test matcher propagates callback exception identity."""
         error = ValueError("predicate rejected the subject")
 
-        def reject(_value: t.Tests.NativeMatchValue) -> bool:
+        def reject(_value: p.Tests.NativeMatchValue) -> bool:
             raise error
 
         with pytest.raises(ValueError, match=re.escape(str(error))) as caught:

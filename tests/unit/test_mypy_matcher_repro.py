@@ -6,8 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_core import r
-from tests import tm
+from tests import r, tm
 
 
 class TestsFlextTestsMypyMatcherRepro:

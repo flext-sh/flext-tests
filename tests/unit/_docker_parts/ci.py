@@ -11,8 +11,8 @@ from pathlib import Path
 import pytest
 from flext_infra import config as infra_config
 
-from flext_tests import FlextTestsDocker, FlextTestsKube, m, tm
-from tests import c, t, u
+from flext_tests import FlextTestsDocker, FlextTestsKube
+from tests import c, m, t, tm, u
 
 
 class TestsFlextTestsDockerCiMixin:

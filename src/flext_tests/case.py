@@ -15,16 +15,17 @@ if TYPE_CHECKING:
 class FlextTestsCase:
     """Pytest class MRO surface populated by the shared test runtime fixture."""
 
-    service: FlextTestsServiceBase[p.Base]
-    settings: FlextTestsSettings
-    logger: p.Logger
-    c: type
-    e: type
-    m: type
-    p: type
-    r: type
-    t: type
-    u: type
+    if TYPE_CHECKING:
+        service: FlextTestsServiceBase[p.Base]
+        settings: FlextTestsSettings
+        logger: p.Logger
+        c: type
+        e: type
+        m: type
+        p: type
+        r: type
+        t: type
+        u: type
 
 
 __all__: list[str] = ["FlextTestsCase"]

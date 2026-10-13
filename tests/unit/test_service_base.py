@@ -19,8 +19,8 @@ import pytest
 from flext_infra import FlextInfraConstants, config as infra_config
 
 from flext_core import FlextSettings
-from flext_tests import FlextTestsServiceBase, m, s, tm
-from tests import u
+from flext_tests import FlextTestsServiceBase
+from tests import m, s, tm, u
 
 
 class TestsFlextTestsServiceBase:
@@ -241,10 +241,12 @@ class TestsFlextTestsServiceBase:
             encoding="utf-8",
         )
         (package_dir / "test_probe.py").write_text(
+            "import pytest\n"
             "import flext_core\n"
             "from flext_tests import FlextTestsCase\n"
             "\n"
             "class TestsProbe(FlextTestsCase):\n"
+            "    @pytest.mark.usefixtures('test_runtime')\n"
             "    def test_probe(self) -> None:\n"
             "        assert self.u is flext_core.u\n",
             encoding="utf-8",

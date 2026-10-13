@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from copy import deepcopy
+from pathlib import Path
 
 import pytest
 
@@ -15,6 +16,56 @@ from tests import c, p, r, t, tm
 
 class TestsFlextTestsMatchersValidationMixin:
     """Matcher validation tests."""
+
+    @staticmethod
+    def test_native_truth_preserves_original_collection_semantics() -> None:
+        """Truth checks use Python's original subject without payload conversion."""
+        tm.that(["value"], truth=True)
+        tm.that([], truth=False)
+        with pytest.raises(AssertionError):
+            tm.that([], truth=True)
+        result = r[int].ok(1)
+        tm.that(result, eq=1)
+        with pytest.raises(AssertionError):
+            tm.that(result == 1, truth=True)
+
+    @staticmethod
+    def test_native_truth_evaluates_failure_message_only_on_failure(
+        tmp_path: Path,
+    ) -> None:
+        """A failure message's real file effect never runs on a passing condition."""
+        destination = tmp_path / "assertion-message.txt"
+
+        def failure_message() -> str:
+            destination.write_text("failure observed", encoding="utf-8")
+            return "native assertion message"
+
+        condition = True
+        if not condition:
+            tm.that(False, truth=True, assertion_message=failure_message())
+        tm.that(destination.exists(), eq=False)
+        with pytest.raises(AssertionError, match="native assertion message"):
+            tm.that(False, truth=True, assertion_message=failure_message())
+        tm.that(destination.read_text(encoding="utf-8"), eq="failure observed")
+
+    @staticmethod
+    def test_native_truth_preserves_message_exception_and_empty_message() -> None:
+        """Message failures escape unchanged; an empty message remains empty."""
+        with pytest.raises(ZeroDivisionError):
+            tm.that(False, truth=True, assertion_message=1 / 0)
+        with pytest.raises(AssertionError) as raised:
+            tm.that(False, truth=True, assertion_message="")
+        tm.that(raised.value.args, eq=("",))
+
+    @staticmethod
+    def test_native_truth_rejects_payload_criteria_before_evaluation() -> None:
+        """Native truth never silently ignores payload-owned matcher constraints."""
+        with pytest.raises(ValueError, match="cannot be combined"):
+            tm.that(1, truth=True, eq=1)
+        with pytest.raises(ValueError, match="requires the native truth"):
+            tm.that(1, assertion_message="unused")
+        with pytest.raises(ValueError, match="requires the original subject"):
+            tm.that(1, truth=True, owned_payload=True)
 
     @staticmethod
     def test_assert_valid_email_passes() -> None:
