@@ -11,12 +11,13 @@ import shutil
 import sys
 import time
 import types
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
+from threading import get_ident
 from typing import TYPE_CHECKING, BinaryIO
 
 from flext_tests import c
-from collections.abc import Generator
 
 if TYPE_CHECKING:
     from flext_tests import p
@@ -46,6 +47,7 @@ class FlextTestsTestContextUtilitiesMixin:
             self._root: Path | None = None
             self._provision: p.Tests.RuntimeProvision | None = None
             self._failure: BaseException | None = None
+            self._active_thread: int | None = None
             self._source = directory / "source"
             self._environment = directory / "environment"
 
@@ -61,7 +63,26 @@ class FlextTestsTestContextUtilitiesMixin:
             A failed provision is never retried. Different callbacks are
             rejected rather than silently serving an incompatible locked seed.
             The blocking native lease imposes no artificial item deadline.
+
+            Args:
+                provision: The canonical provision callback for the session.
+                mutable_environment: Whether the environment should be mutable.
+
+            Returns:
+                The path to the source directory.
+
+            Yields:
+                The path to the source directory.
+
+            Raises:
+                RuntimeError: If the session runtime leases are nested.
+                ValueError: If the provision callback is incompatible or the environment is invalid.
+                BaseException: If any other error occurs during the lease.
             """
+            thread = get_ident()
+            if self._active_thread == thread:
+                msg = "Session runtime leases cannot be nested"
+                raise RuntimeError(msg)
             with FlextTestsTestContextUtilitiesMixin.FileLock(
                 self.directory / "runtime.lock",
             ):
@@ -70,6 +91,7 @@ class FlextTestsTestContextUtilitiesMixin:
                 if self._provision is not None and self._provision is not provision:
                     msg = "Session runtime requires one canonical provision callback"
                     raise ValueError(msg)
+                self._active_thread = thread
                 try:
                     if self._root is None:
                         self._provision = provision
@@ -81,43 +103,47 @@ class FlextTestsTestContextUtilitiesMixin:
                         ):
                             msg = "Session runtime checkout must belong to its own area"
                             raise ValueError(msg)
-                        environment = root / c.VENV_DIR_NAME
-                        if (
-                            environment.is_symlink()
-                            or not (environment / "pyvenv.cfg").is_file()
-                        ):
-                            msg = (
-                                "Session runtime requires its own physical environment"
-                            )
-                            raise ValueError(msg)
-                        shutil.copytree(
-                            root,
-                            self._source,
-                            symlinks=True,
-                            ignore=shutil.ignore_patterns(c.VENV_DIR_NAME),
-                        )
                         self._root = root
-                    if mutable_environment and not self._environment.exists():
-                        shutil.copytree(
-                            self._root / c.VENV_DIR_NAME,
-                            self._environment,
-                            symlinks=True,
-                        )
+                    environment = self._root / c.VENV_DIR_NAME
+                    if (
+                        environment.is_symlink()
+                        or not (environment / "pyvenv.cfg").is_file()
+                    ):
+                        msg = "Session runtime requires its own physical environment"
+                        raise ValueError(msg)
+                    targets = [(self._root, self._source)]
+                    if mutable_environment:
+                        targets.append((environment, self._environment))
+                    exclude_venv = shutil.ignore_patterns(c.VENV_DIR_NAME)
+                    for target, baseline in targets:
+                        if not baseline.exists():
+                            shutil.copytree(
+                                target,
+                                baseline,
+                                symlinks=True,
+                                ignore=exclude_venv if target == self._root else None,
+                            )
                 except BaseException as error:
                     self._failure = error
+                    self._active_thread = None
                     raise
                 try:
                     yield self._root
                 finally:
                     failure = sys.exception()
                     try:
-                        targets = [(self._root, self._source)]
-                        if mutable_environment:
-                            targets.append((
-                                self._root / c.VENV_DIR_NAME,
-                                self._environment,
-                            ))
                         for target, baseline in targets:
+                            if (
+                                self.directory.is_symlink()
+                                or target.is_symlink()
+                                or environment.is_symlink()
+                                or not target.resolve().is_relative_to(
+                                    self.directory.resolve(),
+                                )
+                            ):
+                                msg = "Session runtime cleanup target escaped its own area"
+                                raise ValueError(msg)
+                            target.mkdir(parents=True, exist_ok=True)
                             for child in target.iterdir():
                                 if (
                                     target == self._root
@@ -140,6 +166,8 @@ class FlextTestsTestContextUtilitiesMixin:
                             msg = "Session runtime case and cleanup failed"
                             raise BaseExceptionGroup(msg, [failure, error]) from None
                         raise
+                    finally:
+                        self._active_thread = None
 
     class FileLock:
         """Advisory lock on one file, coordinating every process of the host.

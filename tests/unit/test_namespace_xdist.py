@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Final
 
 import pytest
@@ -30,7 +31,7 @@ class TestsFlextTestsNamespaceXdist:
             "from flext_tests import u\n"
             "\n"
             "@pytest.fixture(scope='session')\n"
-            "def record_token(worker_id, request):\n"
+            "def record_token(worker_id, request, session_runtime):\n"
             "    run_uid = 'master'\n"
             "    if hasattr(request.config, 'workerinput'):\n"
             "        run_uid = request.config.workerinput.get("
@@ -41,7 +42,9 @@ class TestsFlextTestsNamespaceXdist:
             "        checkout_root=Path(request.config.rootpath),\n"
             "    ).token\n"
             "    (Path(request.config.rootpath) / "
-            "f'{worker_id}.txt').write_text(token)\n"
+            "f'{worker_id}.txt').write_text("
+            "f'{token}\\n{session_runtime.directory}')\n"
+            "    assert not (session_runtime.directory / 'project').exists()\n"
             "    return token\n",
         )
         pytester.makepyfile(
@@ -73,5 +76,9 @@ class TestsFlextTestsNamespaceXdist:
                 + "\nSTDERR:\n"
                 + result.stderr.str()[-1500:],
             )
-        tokens = {path.read_text().strip() for path in pytester.path.glob("*.txt")}
+        records = [path.read_text().splitlines() for path in pytester.path.glob("*.txt")]
+        tokens = {record[0] for record in records}
         assert len(tokens) == XDIST_WORKER_COUNT
+        directories = {Path(record[1]) for record in records}
+        assert len(directories) == XDIST_WORKER_COUNT
+        assert all(not directory.exists() for directory in directories)

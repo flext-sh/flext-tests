@@ -72,6 +72,26 @@ class TestsFlextTestsFileLock:
             tm.that(lock_path.is_file(), eq=True)
 
     @staticmethod
+    def test_session_runtime_preserves_failed_provision_without_retry(
+        tmp_path: Path,
+    ) -> None:
+        """A missing physical seed fails once and retains its native exception."""
+        attempts: list[Path] = []
+
+        def unavailable(parent: Path) -> Path:
+            attempts.append(parent)
+            return (parent / "missing-seed").resolve(strict=True)
+
+        runtime = u.Tests.SessionRuntime(tmp_path)
+        errors: list[FileNotFoundError] = []
+        for _ in range(2):
+            with pytest.raises(FileNotFoundError) as error, runtime.lease(unavailable):
+                pytest.fail("A missing seed must not produce a runtime")
+            errors.append(error.value)
+        tm.that(len(attempts), eq=1)
+        tm.that(errors[0] is errors[1], eq=True)
+
+    @staticmethod
     def test_timed_out_request_holds_nothing(tmp_path: Path) -> None:
         """A request that timed out leaves the lock to the next holder."""
         lock_path = tmp_path / "lease.lock"
