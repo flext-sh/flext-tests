@@ -12,12 +12,10 @@ from __future__ import annotations
 
 from importlib import import_module
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import pytest
 
-if TYPE_CHECKING:
-    from flext_tests import m
+from flext_tests import m
 
 
 def _worker_id(config: pytest.Config) -> str:

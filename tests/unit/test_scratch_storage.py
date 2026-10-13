@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import c, u
+from tests import c, u
 
 
 class TestsFlextTestsScratchStorage:

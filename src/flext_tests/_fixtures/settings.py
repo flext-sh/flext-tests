@@ -21,14 +21,15 @@ from typing import TYPE_CHECKING, cast
 
 import pytest
 
-from flext_core import FlextContainer, FlextContext, FlextSettings
+from flext_core import FlextContainer, FlextContext, FlextSettings, t
+from flext_tests._settings import FlextTestsSettings
 from flext_tests.case import FlextTestsCase
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
     from pathlib import Path
 
-    from flext_tests import FlextTestsSettings, p, t
+    from flext_core import p
     from flext_tests.base import FlextTestsServiceBase
 
 # pytest registers this module at configure time, before any test runs. The

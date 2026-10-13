@@ -19,18 +19,11 @@ from datetime import datetime, timezone, tzinfo
 from enum import Enum
 from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
-from typing import TYPE_CHECKING, Literal
+from typing import Literal
 
 from flext_cli import m, t, t as it
 
 from flext_core import p
-from flext_tests._models.domains import FlextTestsDomainModelsMixin
-from flext_tests._protocols.payload import FlextTestsPayloadProtocolsMixin
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
-
-    from flext_tests._models.base import FlextTestsFlextModelsBase
 
 
 class FlextTestsBaseTypesMixin:
@@ -77,18 +70,6 @@ class FlextTestsBaseTypesMixin:
         | Mapping[str, TestobjectNode]
         | None
     )
-    type NativeMatchValue = (
-        FlextTestsBaseTypesMixin.PayloadAtom
-        | p.Model
-        | FlextTestsPayloadProtocolsMixin.NativeSequence
-        | FlextTestsPayloadProtocolsMixin.NativeMapping
-        | None
-    )
-    type DeepSpec = Mapping[
-        str,
-        FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
-        | Callable[[FlextTestsBaseTypesMixin.NativeMatchValue], bool],
-    ]
     type TestobjectHashable = (
         str | int | float | bool | bytes | datetime | tzinfo | Path | type | None
     )
@@ -99,8 +80,6 @@ class FlextTestsBaseTypesMixin:
         | set[TestobjectHashable]
         | None
     )
-
-    type HandlerCaseSpec = FlextTestsDomainModelsMixin.HandlerCaseSpec
 
     type TestResultValue = (
         FlextTestsBaseTypesMixin.TestobjectSerializable

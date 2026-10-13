@@ -7,12 +7,9 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING
 
-from flext_tests import FlextTestsFiles, tm
-
-if TYPE_CHECKING:
-    from tests import m, t
+from flext_tests import FlextTestsFiles
+from tests import m, t, tm
 
 
 class TestsFlextTestsFilesCreationMixin:

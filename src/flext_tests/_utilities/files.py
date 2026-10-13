@@ -28,7 +28,7 @@ class FlextTestsFilesUtilitiesMixin:
         | bytes
         | m.ConfigMap
         | m.Dict
-        | t.MappingKV[str, t.Tests.TestobjectSerializable]
+        | t.JsonMapping
         | t.SequenceOf[t.StrSequence],
         name: str,
         fmt: str,

@@ -10,8 +10,8 @@ from pathlib import Path
 
 from flext_infra import config as infra_config
 
-from flext_tests import FlextTestsDocker, tm
-from tests import c, u
+from flext_tests import FlextTestsDocker
+from tests import c, tm, u
 
 
 class TestsFlextTestsDockerOperationsMixin:

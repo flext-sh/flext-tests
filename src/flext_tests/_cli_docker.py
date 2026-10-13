@@ -19,104 +19,114 @@ from flext_cli import u as cli_u
 from flext_tests import FlextTestsDocker
 from flext_tests._models.spec import FlextTestsSpecModelsMixin
 
-USAGE = "usage: flext-tests docker {ensure|verify|down} --spec <yaml> [--target <name>]"
 
-ContainerSpec = FlextTestsSpecModelsMixin.ContainerSpec
+class FlextTestsCliDocker:
+    """Spec-driven docker provisioning CLI surface."""
 
+    USAGE = (
+        "usage: flext-tests docker {ensure|verify|down} "
+        "--spec <yaml> [--target <name>]"
+    )
 
-def load_spec(path: Path) -> ContainerSpec:
-    """Parse one YAML spec document into the typed model (exits on failure).
+    ContainerSpec = FlextTestsSpecModelsMixin.ContainerSpec
 
-    Returns:
-        The resulting ``ContainerSpec``.
+    @staticmethod
+    def load_spec(path: Path) -> FlextTestsCliDocker.ContainerSpec:
+        """Parse one YAML spec document into the typed model (exits on failure).
 
-    Raises:
-        SystemExit: If ``read.failure``; or if ``parsed.failure``; or if a ``Exception``
-            is caught.
-    """
-    read = cli_u.Cli.files_read_text(path)
-    if read.failure:
-        raise SystemExit(1)
-    parsed = cli_u.Cli.yaml_parse(read.value)
-    if parsed.failure:
-        raise SystemExit(1)
-    try:
-        return ContainerSpec.model_validate(parsed.value)
-    except Exception as exc:
-        raise SystemExit(1) from exc
+        Returns:
+            The resulting ``ContainerSpec``.
 
+        Raises:
+            SystemExit: If ``read.failure``; or if ``parsed.failure``; or if a
+                ``Exception`` is caught.
+        """
+        read = cli_u.Cli.files_read_text(path)
+        if read.failure:
+            raise SystemExit(1)
+        parsed = cli_u.Cli.yaml_parse(read.value)
+        if parsed.failure:
+            raise SystemExit(1)
+        try:
+            return FlextTestsCliDocker.ContainerSpec.model_validate(parsed.value)
+        except Exception as exc:
+            raise SystemExit(1) from exc
 
-def resolve_targets(spec: ContainerSpec, target: str | None) -> list[str]:
-    """Resolve the requested target names (all when omitted).
+    @staticmethod
+    def resolve_targets(
+        spec: FlextTestsCliDocker.ContainerSpec,
+        target: str | None,
+    ) -> list[str]:
+        """Resolve the requested target names (all when omitted).
 
-    Returns:
-        The resulting ``list[str]``.
+        Returns:
+            The resulting ``list[str]``.
 
-    Raises:
-        SystemExit: If ``target not in spec.containers``.
-    """
-    if target is None:
-        return list(spec.containers)
-    if target not in spec.containers:
-        raise SystemExit(1)
-    return [target]
+        Raises:
+            SystemExit: If ``target not in spec.containers``.
+        """
+        if target is None:
+            return list(spec.containers)
+        if target not in spec.containers:
+            raise SystemExit(1)
+        return [target]
 
+    @staticmethod
+    def run_ensure(path: Path, target: str | None) -> int:
+        """Ensure every requested container is up, healthy, and sealed.
 
-def run_ensure(path: Path, target: str | None) -> int:
-    """Ensure every requested container is up, healthy, and sealed.
+        Returns:
+            The resulting ``int``.
+        """
+        spec = FlextTestsCliDocker.load_spec(path)
+        exit_code = 0
+        for name in FlextTestsCliDocker.resolve_targets(spec, target):
+            config = spec.containers[name].model_copy(update={"container_name": name})
+            manager = FlextTestsDocker(target_config=config, repository_root=Path.cwd())
+            ensured = manager.execute()
+            if ensured.failure:
+                exit_code = 1
+                continue
+        return exit_code
 
-    Returns:
-        The resulting ``int``.
-    """
-    spec = load_spec(path)
-    exit_code = 0
-    for name in resolve_targets(spec, target):
-        config = spec.containers[name].model_copy(update={"container_name": name})
-        manager = FlextTestsDocker(target_config=config, repository_root=Path.cwd())
-        ensured = manager.execute()
-        if ensured.failure:
-            exit_code = 1
-            continue
-    return exit_code
+    @staticmethod
+    def run_verify(path: Path, target: str | None) -> int:
+        """Read-only verification: up, healthy, sealed against the fingerprint.
 
+        Returns:
+            The resulting ``int``.
+        """
+        spec = FlextTestsCliDocker.load_spec(path)
+        exit_code = 0
+        for name in FlextTestsCliDocker.resolve_targets(spec, target):
+            config = spec.containers[name].model_copy(update={"container_name": name})
+            manager = FlextTestsDocker(target_config=config, repository_root=Path.cwd())
+            verified = manager.verify()
+            if verified.failure:
+                exit_code = 1
+                continue
+        return exit_code
 
-def run_verify(path: Path, target: str | None) -> int:
-    """Read-only verification: up, healthy, sealed against the fingerprint.
+    @staticmethod
+    def run_down(path: Path, target: str | None) -> int:
+        """Stop the compose projects of the requested targets.
 
-    Returns:
-        The resulting ``int``.
-    """
-    spec = load_spec(path)
-    exit_code = 0
-    for name in resolve_targets(spec, target):
-        config = spec.containers[name].model_copy(update={"container_name": name})
-        manager = FlextTestsDocker(target_config=config, repository_root=Path.cwd())
-        verified = manager.verify()
-        if verified.failure:
-            exit_code = 1
-            continue
-    return exit_code
-
-
-def run_down(path: Path, target: str | None) -> int:
-    """Stop the compose projects of the requested targets.
-
-    Returns:
-        The resulting ``int``.
-    """
-    spec = load_spec(path)
-    exit_code = 0
-    for name in resolve_targets(spec, target):
-        config = spec.containers[name]
-        if config.compose_file is None:
-            exit_code = 1
-            continue
-        manager = FlextTestsDocker(target_config=config, repository_root=Path.cwd())
-        stopped = manager.compose_down(str(config.compose_file))
-        if stopped.failure:
-            exit_code = 1
-            continue
-    return exit_code
+        Returns:
+            The resulting ``int``.
+        """
+        spec = FlextTestsCliDocker.load_spec(path)
+        exit_code = 0
+        for name in FlextTestsCliDocker.resolve_targets(spec, target):
+            config = spec.containers[name]
+            if config.compose_file is None:
+                exit_code = 1
+                continue
+            manager = FlextTestsDocker(target_config=config, repository_root=Path.cwd())
+            stopped = manager.compose_down(str(config.compose_file))
+            if stopped.failure:
+                exit_code = 1
+                continue
+        return exit_code
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -126,7 +136,11 @@ def main(argv: list[str] | None = None) -> int:
         The resulting ``int``.
     """
     args = list(sys.argv[1:] if argv is None else argv)
-    verbs = {"ensure": run_ensure, "verify": run_verify, "down": run_down}
+    verbs = {
+        "ensure": FlextTestsCliDocker.run_ensure,
+        "verify": FlextTestsCliDocker.run_verify,
+        "down": FlextTestsCliDocker.run_down,
+    }
     minimum_args = 3  # docker <verb> --spec <path>
     if len(args) < minimum_args or args[0] != "docker" or args[1] not in verbs:
         return 2

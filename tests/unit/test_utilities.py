@@ -15,13 +15,10 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import r, tm
-from tests import u
+from tests import p, r, t, tm, u
 
 if TYPE_CHECKING:
     from pathlib import Path
-
-    from tests import p, t
 
 
 class TestsFlextTestsUtilities:

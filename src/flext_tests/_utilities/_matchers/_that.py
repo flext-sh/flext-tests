@@ -528,8 +528,8 @@ class FlextTestsMatchersThatMixin:
             @staticmethod
             def _comparable_key(
                 user_key_fn: Callable[
-                    [t.Tests.NativeMatchValue],
-                    t.Tests.NativeMatchValue,
+                    [p.Tests.NativeMatchValue],
+                    p.Tests.NativeMatchValue,
                 ],
                 item: p.Tests.Payload,
             ) -> t.StrPair:

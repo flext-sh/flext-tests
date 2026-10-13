@@ -8,10 +8,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Protocol, Self, runtime_checkable
 
+from flext_core import p
+
+from flext_tests._typings.base import FlextTestsBaseTypesMixin
+
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
 
-    from flext_core import p
     from flext_tests import t
 
 
@@ -110,3 +113,11 @@ class FlextTestsPayloadProtocolsMixin:
         def entries(self) -> t.Tests.PayloadEntries[Self]:
             """Read children of a mapping arm."""
             ...
+
+    type NativeMatchValue = (
+        FlextTestsBaseTypesMixin.PayloadAtom
+        | p.Model
+        | FlextTestsPayloadProtocolsMixin.NativeSequence
+        | FlextTestsPayloadProtocolsMixin.NativeMapping
+        | None
+    )

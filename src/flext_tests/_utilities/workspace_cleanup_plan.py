@@ -8,16 +8,13 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from pathlib import Path
-from typing import TYPE_CHECKING, Literal
+from typing import Literal
 
 from flext_cli import u
 
-from flext_core import r
+from flext_core import r, t
 from flext_tests import m, p
 from flext_tests._utilities import FlextTestsWorkspaceCleanupInspectUtilitiesMixin
-
-if TYPE_CHECKING:
-    from flext_core import t
 
 
 class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(

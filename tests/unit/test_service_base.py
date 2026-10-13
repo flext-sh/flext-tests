@@ -19,8 +19,8 @@ import pytest
 from flext_infra import FlextInfraConstants, config as infra_config
 
 from flext_core import FlextSettings
-from flext_tests import FlextTestsServiceBase, m, s, tm
-from tests import u
+from flext_tests import FlextTestsServiceBase
+from tests import m, s, tm, u
 
 
 class TestsFlextTestsServiceBase:

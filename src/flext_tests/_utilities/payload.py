@@ -274,11 +274,11 @@ class FlextTestsFlextUtilitiesPayload:
             raise TypeError(msg)
 
         @staticmethod
-        def to_match_value(value: p.Tests.Payload) -> t.Tests.NativeMatchValue:
+        def to_match_value(value: p.Tests.Payload) -> p.Tests.NativeMatchValue:
             """Project a native tree into the established list/mapping match semantics.
 
             Returns:
-                The resulting ``t.Tests.NativeMatchValue``.
+                The resulting ``p.Tests.NativeMatchValue``.
             """
             project = FlextTestsPayloadUtilities.to_match_value
             if value.kind == "atom":
@@ -289,11 +289,11 @@ class FlextTestsFlextUtilitiesPayload:
                 # pyrefly cannot resolve a class-scoped self-referential alias.
                 pairs = value.entries.items()
                 return cast(
-                    "t.Tests.NativeMatchValue",
+                    "p.Tests.NativeMatchValue",
                     {key: project(item) for key, item in pairs},
                 )
             items = value.items
-            return cast("t.Tests.NativeMatchValue", [project(item) for item in items])
+            return cast("p.Tests.NativeMatchValue", [project(item) for item in items])
 
         @staticmethod
         def to_normalized_value(value: p.Tests.Payload) -> t.JsonValue:
@@ -416,7 +416,7 @@ class FlextTestsFlextUtilitiesPayload:
         @staticmethod
         def deep_match(
             subject: p.Tests.Payload,
-            spec: t.Tests.DeepSpec,
+            spec: FlextTestsMatchersModelsMixin.DeepSpec,
             *,
             path_sep: str = ".",
         ) -> FlextTestsMatchersModelsMixin.DeepMatchResult:

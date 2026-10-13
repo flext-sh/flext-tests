@@ -17,7 +17,8 @@ from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
 
 import flext_tests
-from flext_tests import FlextTestsCase, d, e, h, m, r, tf, tk, tm, u, x
+from flext_tests import FlextTestsCase
+from tests import d, e, h, m, r, tf, tk, tm, u, x
 
 
 class TestsFlextTestsPublicFacade:

@@ -333,13 +333,13 @@ class FlextTestsMatchersResultMixin:
             def ok[TResult](
                 result: core_p.ResultView[TResult],
                 **kwargs: p.AttributeProbe,
-            ) -> TResult | t.Tests.NativeMatchValue: ...
+            ) -> TResult | p.Tests.NativeMatchValue: ...
 
             @staticmethod
             def ok[TResult](
                 result: core_p.ResultView[TResult],
                 **kwargs: p.AttributeProbe,
-            ) -> TResult | t.Tests.NativeMatchValue:
+            ) -> TResult | p.Tests.NativeMatchValue:
                 # mro-j47u: matchers observe the protocol and preserve source identity.
                 if not kwargs:
                     return FlextTestsResultUtilitiesMixin.assert_success(result)

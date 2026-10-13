@@ -95,7 +95,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             if content.failure:
                 msg = f"Cannot create file from failed result: {content.error}"
                 raise ValueError(msg)
-            return self._coerce_file_content(content.value)
+            return self._coerce_file_content(
+                cast("p.AttributeProbe", content.unwrap()),
+            )
         return self._coerce_file_content(content)
 
     @staticmethod

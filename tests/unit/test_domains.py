@@ -15,7 +15,8 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import FlextTestsDomains, t, tm
+from flext_tests import FlextTestsDomains
+from tests import t, tm
 
 
 class FlextTestsDomainsFixtureParts:

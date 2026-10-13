@@ -10,8 +10,7 @@ from types import MappingProxyType
 
 import pytest
 
-from flext_tests import m, r, tm
-from tests import c, t
+from tests import c, m, r, t, tm
 from tests.unit._matchers_parts.predicates import TestsFlextTestsMatchersPredicates
 
 

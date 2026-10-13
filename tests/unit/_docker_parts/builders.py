@@ -10,8 +10,8 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import FlextTestsDocker, m, tm
-from tests import c, u
+from flext_tests import FlextTestsDocker
+from tests import c, m, tm, u
 
 
 class TestsFlextTestsDockerBuildersMixin:

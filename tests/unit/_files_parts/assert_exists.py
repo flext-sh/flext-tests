@@ -10,7 +10,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from flext_tests import FlextTestsFiles, m
+from flext_tests import FlextTestsFiles
+from tests import m
 
 if TYPE_CHECKING:
     from pathlib import Path
