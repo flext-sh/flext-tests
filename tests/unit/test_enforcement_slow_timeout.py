@@ -16,21 +16,16 @@ from tests import tm
 class TestsFlextTestsSlowTimeoutPolicy:
     """Exercise the installed enforcement adapter through nested pytest runs."""
 
-    regular_timeout_seconds = 0.25
     slow_timeout_seconds = 0.75
 
-    @classmethod
+    @staticmethod
     def _make_ini(
-        cls,
         pytester: pytest.Pytester,
         *,
         slow_timeout: str | None,
-        include_regular_timeout: bool = True,
     ) -> None:
         """Write one isolated policy using arbitrary non-production budgets."""
         lines = ["[pytest]", "markers = slow: explicitly slow contract"]
-        if include_regular_timeout:
-            lines.append(f"addopts = --timeout={cls.regular_timeout_seconds}")
         if slow_timeout is not None:
             lines.append(f"flext_slow_timeout_seconds = {slow_timeout}")
         pytester.makeini("\n".join(lines))
@@ -67,7 +62,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
         self,
         pytester: pytest.Pytester,
     ) -> None:
-        """Slow items receive the extension while regular items keep the global cap."""
+        """Only slow items receive a timer; regular items have no item budget."""
         self._make_ini(pytester, slow_timeout=str(self.slow_timeout_seconds))
         pytester.makepyfile(
             "import pytest\n"
@@ -84,19 +79,17 @@ class TestsFlextTestsSlowTimeoutPolicy:
             "\n"
             "\n"
             "def test_regular_budget(request: pytest.FixtureRequest) -> None:\n"
-            "    tm.that(request.node.get_closest_marker('timeout'), none=True)\n"
-            f"    tm.that(request.config.getoption('timeout'), "
-            f"eq={self.regular_timeout_seconds})\n",
+            "    tm.that(request.node.get_closest_marker('timeout'), none=True)\n",
         )
 
         self._run_pytest(pytester).assert_outcomes(passed=2)
 
     @pytest.mark.slow
-    def test_absent_slow_budget_keeps_the_stricter_global_policy(
+    def test_absent_slow_budget_requires_no_timeout_plugin(
         self,
         pytester: pytest.Pytester,
     ) -> None:
-        """A project not yet configured receives no item-level extension."""
+        """An unconfigured project needs no timer for slow or regular items."""
         self._make_ini(pytester, slow_timeout=None)
         pytester.makepyfile(
             "import pytest\n"
@@ -105,11 +98,17 @@ class TestsFlextTestsSlowTimeoutPolicy:
             "\n"
             "\n"
             "@pytest.mark.slow\n"
-            "def test_slow_without_extension(request: pytest.FixtureRequest) -> None:\n"
+            "def test_slow_without_budget(request: pytest.FixtureRequest) -> None:\n"
+            "    tm.that(request.node.get_closest_marker('timeout'), none=True)\n"
+            "\n"
+            "\n"
+            "def test_regular_without_budget(request: pytest.FixtureRequest) -> None:\n"
             "    tm.that(request.node.get_closest_marker('timeout'), none=True)\n",
         )
 
-        self._run_pytest(pytester).assert_outcomes(passed=1)
+        self._run_pytest(pytester, include_timeout_plugin=False).assert_outcomes(
+            passed=2
+        )
 
     @pytest.mark.slow
     @pytest.mark.parametrize("invalid_timeout", ["0", "nan", "not-a-number"])
@@ -130,17 +129,18 @@ class TestsFlextTestsSlowTimeoutPolicy:
         ])
 
     @pytest.mark.slow
-    def test_explicit_timeout_marker_fails_closed(
+    def test_explicit_slow_timeout_marker_fails_closed(
         self,
         pytester: pytest.Pytester,
     ) -> None:
-        """Test code cannot restate or weaken the config-owned item budget."""
+        """Slow test code cannot restate or weaken its config-owned budget."""
         self._make_ini(pytester, slow_timeout=str(self.slow_timeout_seconds))
         pytester.makepyfile(
             "import pytest\n"
             "\n"
             "\n"
-            f"@pytest.mark.timeout({self.regular_timeout_seconds})\n"
+            "@pytest.mark.slow\n"
+            f"@pytest.mark.timeout({self.slow_timeout_seconds})\n"
             "def test_explicit_timeout() -> None:\n"
             "    pass\n",
         )
@@ -157,12 +157,8 @@ class TestsFlextTestsSlowTimeoutPolicy:
         self,
         pytester: pytest.Pytester,
     ) -> None:
-        """Configured extensions fail if the timer owner is not loaded."""
-        self._make_ini(
-            pytester,
-            slow_timeout=str(self.slow_timeout_seconds),
-            include_regular_timeout=False,
-        )
+        """Configured slow budgets fail if the timer owner is not loaded."""
+        self._make_ini(pytester, slow_timeout=str(self.slow_timeout_seconds))
         pytester.makepyfile("def test_policy_probe() -> None:\n    pass\n")
 
         result = self._run_pytest(pytester, include_timeout_plugin=False)

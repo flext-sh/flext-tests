@@ -7,13 +7,20 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import os
+import shutil
 import sys
 import time
 import types
+from collections.abc import Generator
+from contextlib import contextmanager
 from pathlib import Path
-from typing import BinaryIO
+from threading import get_ident
+from typing import TYPE_CHECKING, BinaryIO
 
 from flext_tests import c
+
+if TYPE_CHECKING:
+    from flext_tests import p
 
 if sys.platform == "win32":
     import msvcrt
@@ -23,6 +30,167 @@ else:
 
 class FlextTestsTestContextUtilitiesMixin:
     """Context managers for tests."""
+
+    class SessionRuntime:
+        """Single-flight, lazy consumer runtime in one random worker-session area.
+
+        The installed pytest fixture owns allocation and cleanup. A single
+        provision callback performs canonical locked Make setup/upgrade once.
+        Each exclusive lease restores the seed's source, Git and case data at
+        the same absolute path, preserving real editable imports. Scenarios
+        that mutate installed packages also restore the physical environment,
+        without resolving or reinstalling dependencies between cases.
+        """
+
+        def __init__(self, directory: Path) -> None:
+            self.directory = directory.resolve(strict=True)
+            self._allocation = self.directory.stat()
+            self._root: Path | None = None
+            self._provision: p.Tests.RuntimeProvision | None = None
+            self._failure: BaseException | None = None
+            self._active_thread: int | None = None
+            self._source = self.directory / "source"
+            self._environment = self.directory / "environment"
+
+        def _assert_owned(self, path: Path) -> None:
+            """Reject redirected paths using the original physical allocation identity.
+
+            Args:
+                path: The path to check against the original physical allocation.
+
+            Raises:
+                ValueError: If the path has escaped its original physical allocation.
+            """
+            allocation = self._source.parent
+            state = allocation.stat(follow_symlinks=False)
+            candidate = path.absolute()
+            if (
+                self.directory != allocation
+                or allocation.resolve() != allocation
+                or (state.st_dev, state.st_ino)
+                != (self._allocation.st_dev, self._allocation.st_ino)
+                or not candidate.resolve().is_relative_to(allocation)
+                or any(
+                    ancestor.is_symlink()
+                    for ancestor in (candidate, *candidate.parents)
+                    if ancestor.is_relative_to(allocation)
+                )
+            ):
+                msg = "Session runtime path escaped its original physical allocation"
+                raise ValueError(msg)
+
+        def close(self) -> None:
+            """Remove only the unchanged physical session allocation."""
+            self._assert_owned(self.directory)
+            shutil.rmtree(self.directory)
+
+        @contextmanager
+        def lease(
+            self,
+            provision: p.Tests.RuntimeProvision,
+            *,
+            mutable_environment: bool = False,
+        ) -> Generator[Path]:
+            """Serialize cases and preserve provision, test and cleanup failures.
+
+            A failed provision is never retried. Different callbacks are
+            rejected rather than silently serving an incompatible locked seed.
+            The blocking native lease imposes no artificial item deadline.
+
+            Args:
+                provision: The canonical provision callback for the session.
+                mutable_environment: Whether the environment should be mutable.
+
+            Yields:
+                The path to the leased session runtime directory.
+
+            Raises:
+                RuntimeError: If the session runtime leases are nested.
+                ValueError: If the provision callback is incompatible or the environment is invalid.
+                BaseExceptionGroup: If multiple errors occur during the lease.
+            """
+            thread = get_ident()
+            if self._active_thread == thread:
+                msg = "Session runtime leases cannot be nested"
+                raise RuntimeError(msg)
+            if self._failure is not None:
+                raise self._failure
+            self._assert_owned(self.directory)
+            with FlextTestsTestContextUtilitiesMixin.FileLock(
+                self.directory / "runtime.lock",
+            ):
+                if self._failure is not None:
+                    raise self._failure
+                if self._provision is not None and self._provision is not provision:
+                    msg = "Session runtime requires one canonical provision callback"
+                    raise ValueError(msg)
+                self._active_thread = thread
+                try:
+                    if self._root is None:
+                        self._provision = provision
+                        parent = self.directory / "project"
+                        parent.mkdir()
+                        root = provision(parent)
+                        self._assert_owned(parent)
+                        self._assert_owned(root)
+                        if not root.resolve().is_relative_to(parent):
+                            msg = "Session runtime checkout must belong to its own area"
+                            raise ValueError(msg)
+                        self._root = root.resolve()
+                    environment = self._root / c.VENV_DIR_NAME
+                    self._assert_owned(environment)
+                    if not (environment / "pyvenv.cfg").is_file():
+                        msg = "Session runtime requires its own physical environment"
+                        raise ValueError(msg)
+                    targets = [(self._root, self._source)]
+                    if mutable_environment:
+                        targets.append((environment, self._environment))
+                    exclude_venv = shutil.ignore_patterns(c.VENV_DIR_NAME)
+                    for target, baseline in targets:
+                        if not baseline.exists():
+                            shutil.copytree(
+                                target,
+                                baseline,
+                                symlinks=True,
+                                ignore=exclude_venv if target == self._root else None,
+                            )
+                except BaseException as error:
+                    self._failure = error
+                    self._active_thread = None
+                    raise
+                try:
+                    yield self._root
+                finally:
+                    failure = sys.exception()
+                    try:
+                        for target, baseline in targets:
+                            self._assert_owned(target)
+                            self._assert_owned(environment)
+                            target.mkdir(parents=True, exist_ok=True)
+                            for child in target.iterdir():
+                                if (
+                                    target == self._root
+                                    and child.name == c.VENV_DIR_NAME
+                                ):
+                                    continue
+                                if child.is_dir() and not child.is_symlink():
+                                    shutil.rmtree(child)
+                                else:
+                                    child.unlink()
+                            shutil.copytree(
+                                baseline,
+                                target,
+                                dirs_exist_ok=True,
+                                symlinks=True,
+                            )
+                    except BaseException as error:
+                        self._failure = error
+                        if failure is not None:
+                            msg = "Session runtime case and cleanup failed"
+                            raise BaseExceptionGroup(msg, [failure, error]) from None
+                        raise
+                    finally:
+                        self._active_thread = None
 
     class FileLock:
         """Advisory lock on one file, coordinating every process of the host.
