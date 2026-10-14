@@ -13,6 +13,7 @@ import pytest
 from flext_tests._fixtures._enforcement_parts._error import (
     FlextTestsEnforcementViolationError,
 )
+from flext_tests._protocols.enforcement import FlextTestsEnforcementItemNodeMixin
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -20,7 +21,10 @@ if TYPE_CHECKING:
     from flext_tests import m
 
 
-class FlextTestsEnforcementItem(pytest.Item):
+class FlextTestsEnforcementItem(
+    FlextTestsEnforcementItemNodeMixin,
+    pytest.Item,
+):
     """Pytest item representing one ``(rule_id, project)`` violation group."""
 
     @classmethod
@@ -50,8 +54,12 @@ class FlextTestsEnforcementItem(pytest.Item):
         *,
         violation: m.Tests.EnforcementViolation,
     ) -> None:
-        # Item forwards name/parent to Node and initializes reporting.
-        super().__init__(name, parent)
+        # pytest.Item.__init__ is unannotated upstream, so bind the fully
+        # typed Node base and initialize the documented public Item
+        # attributes this item's failure reporting consumes.
+        super(pytest.Item, self).__init__(name, parent)
+        self._report_sections: list[tuple[str, str, str]] = []
+        self.user_properties = []
         self._rule_id = violation.rule_id
         self._severity = violation.severity
         self._description = violation.description

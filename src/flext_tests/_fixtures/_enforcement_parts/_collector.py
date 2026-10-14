@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Self, override
 import pytest
 
 from flext_tests._fixtures._enforcement_parts import FlextTestsEnforcementItem
+from flext_tests._protocols.enforcement import FlextTestsEnforcementCollectorNodeMixin
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -18,7 +19,10 @@ if TYPE_CHECKING:
     from flext_tests import t
 
 
-class FlextTestsEnforcementCollector(pytest.Collector):
+class FlextTestsEnforcementCollector(
+    FlextTestsEnforcementCollectorNodeMixin,
+    pytest.Collector,
+):
     """Synthetic collector owning session ``FlextTestsEnforcementItem`` items."""
 
     @classmethod

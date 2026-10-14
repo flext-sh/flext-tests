@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Protocol, Self, runtime_checkable
 
 from flext_cli import p
 
@@ -122,3 +122,31 @@ class FlextTestsEnforcementProtocolsMixin:
         ) -> Sequence[FlextTestsEnforcementProtocolsMixin.EnforcementScanFinding]:
             """Every finding in stable order."""
             ...
+
+
+class FlextTestsEnforcementItemNodeMixin:
+    """Typed node boundary mixin for violation items.
+
+    ``pytest.Item.from_parent`` is unannotated upstream (its ``**kw`` forward
+    is ``Unknown``), so enforcement items inherit this mixin to record the
+    typed public factory contract; at runtime the attribute still resolves to
+    pytest's own ``from_parent`` through the MRO.
+    """
+
+    if TYPE_CHECKING:
+        from_parent: FlextTestsEnforcementProtocolsMixin.EnforcementItemFactory[Self]
+
+
+class FlextTestsEnforcementCollectorNodeMixin:
+    """Typed node boundary mixin for session collectors.
+
+    ``pytest.Collector.from_parent`` is unannotated upstream, so enforcement
+    collectors inherit this mixin to record the typed public factory
+    contract; at runtime the attribute still resolves to pytest's own
+    ``from_parent`` through the MRO.
+    """
+
+    if TYPE_CHECKING:
+        from_parent: FlextTestsEnforcementProtocolsMixin.EnforcementCollectorFactory[
+            Self
+        ]
