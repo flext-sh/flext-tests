@@ -87,14 +87,18 @@ class FlextTestsTestContextUtilitiesMixin:
         def _provision_session_root(
             self,
             provision: p.Tests.RuntimeProvision,
-        ) -> None:
+        ) -> Path:
             """Create and authenticate the session checkout exactly once.
+
+            Returns:
+                The provisioned session root.
 
             Raises:
                 ValueError: If the checkout leaves its own area.
             """
-            if self._root is not None:
-                return
+            root = self._root
+            if root is not None:
+                return root
             self._provision = provision
             parent = self.directory / "project"
             parent.mkdir()
@@ -104,7 +108,9 @@ class FlextTestsTestContextUtilitiesMixin:
             if not root.resolve().is_relative_to(parent):
                 msg = "Session runtime checkout must belong to its own area"
                 raise ValueError(msg)
-            self._root = root.resolve()
+            root = root.resolve()
+            self._root = root
+            return root
 
         def _lease_targets(
             self,
@@ -117,15 +123,19 @@ class FlextTestsTestContextUtilitiesMixin:
                 The owned runtime directories and their seed baselines.
 
             Raises:
-                ValueError: If the environment is not a physical runtime.
+                ValueError: If the runtime root or environment is invalid.
 
             """
-            environment = self._root / c.VENV_DIR_NAME
+            root = self._root
+            if root is None:
+                msg = "Session runtime requires its provisioned root"
+                raise ValueError(msg)
+            environment = root / c.VENV_DIR_NAME
             self._assert_owned(environment)
             if not (environment / "pyvenv.cfg").is_file():
                 msg = "Session runtime requires its own physical environment"
                 raise ValueError(msg)
-            targets = [(self._root, self._source)]
+            targets = [(root, self._source)]
             if mutable_environment:
                 targets.append((environment, self._environment))
             return targets
@@ -149,10 +159,18 @@ class FlextTestsTestContextUtilitiesMixin:
             self,
             targets: t.SequenceOf[t.Pair[Path, Path]],
         ) -> None:
-            """Restore every leased runtime directory from its baseline."""
+            """Restore every leased runtime directory from its baseline.
+
+            Raises:
+                ValueError: If the runtime root escaped its original allocation.
+            """
+            root = self._root
+            if root is None:
+                msg = "Session runtime requires its provisioned root"
+                raise ValueError(msg)
             for target, baseline in targets:
                 self._assert_owned(target)
-                self._assert_owned(self._root / c.VENV_DIR_NAME)
+                self._assert_owned(root / c.VENV_DIR_NAME)
                 target.mkdir(parents=True, exist_ok=True)
                 for child in target.iterdir():
                     if target == self._root and child.name == c.VENV_DIR_NAME:
@@ -224,7 +242,7 @@ class FlextTestsTestContextUtilitiesMixin:
                 self._active_thread = thread
                 targets: list[t.Pair[Path, Path]] = []
                 try:
-                    self._provision_session_root(provision)
+                    root = self._provision_session_root(provision)
                     targets = self._lease_targets(
                         mutable_environment=mutable_environment,
                     )
@@ -234,7 +252,7 @@ class FlextTestsTestContextUtilitiesMixin:
                     self._active_thread = None
                     raise
                 try:
-                    yield self._root
+                    yield root
                 finally:
                     self._finish_lease(targets)
 

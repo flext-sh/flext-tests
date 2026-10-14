@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import importlib
 from types import ModuleType
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Protocol, cast
 
 import pytest
 
@@ -35,6 +35,20 @@ if TYPE_CHECKING:
 
 # pytest registers shared fixture modules at configure time. Their public
 # facades may load during registration; reset and binding happen during runtime.
+
+
+class FixtureNodeRequest(Protocol):
+    """Typed fixture-request boundary exposing the owning collection node.
+
+    ``pytest.FixtureRequest.node`` is unannotated upstream and its concrete
+    node type depends on the fixture scope; this protocol records the public
+    contract the runtime fixture consumes.
+    """
+
+    @property
+    def node(self) -> pytest.Item | pytest.Collector:
+        """The item or collector owning the current fixture context."""
+        ...
 
 
 @pytest.fixture(scope="session")
@@ -172,16 +186,19 @@ def reset_settings() -> Iterator[None]:
 
 
 @pytest.fixture
-def test_runtime(request: pytest.FixtureRequest, reset_settings: None) -> None:
+def test_runtime(request: FixtureNodeRequest, reset_settings: None) -> None:
     """Bind the canonical FLEXT test runtime aliases onto pytest class instances.
+
+    Args:
+        request: The typed fixture request exposing the owning collection node.
+        reset_settings: The autouse reset fixture sequencing runtime state.
 
     Raises:
         TypeError: If the pytest function does not belong to a Python module.
 
     """
     _ = reset_settings
-    # FixtureRequest.node is unannotated upstream and depends on fixture scope.
-    node: pytest.Item | pytest.Collector = request.node
+    node = request.node
     if not isinstance(node, pytest.Function):
         return
     module = node.module

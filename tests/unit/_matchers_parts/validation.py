@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from copy import deepcopy
+from operator import eq
 from pathlib import Path
 
 import pytest
@@ -26,8 +27,11 @@ class TestsFlextTestsMatchersValidationMixin:
             tm.that([], truth=True)
         result = r[int].ok(1)
         tm.that(result, eq=1)
+        # Native equality between a Result and a raw scalar is False; the
+        # callable form expresses that cross-type comparison without the
+        # statically impossible operator usage pyright rejects.
         with pytest.raises(AssertionError):
-            tm.that(result == 1, truth=True)
+            tm.that(eq(result, 1), truth=True)
 
     @staticmethod
     def test_native_truth_evaluates_failure_message_only_on_failure(
