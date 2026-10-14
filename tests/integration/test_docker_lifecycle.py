@@ -72,7 +72,7 @@ class TestsFlextTestsDockerLifecycle:
 
     @staticmethod
     def _marker(marker_file: Path) -> p.Tests.ContainerInitializer:
-        """Initializer appending the created container id to a file.
+        """Build an initializer appending the created container id to a file.
 
         Returns:
             The resulting ``p.Tests.ContainerInitializer``.
@@ -106,10 +106,10 @@ class TestsFlextTestsDockerLifecycle:
 
     @pytest.fixture
     def project(self, tmp_path: Path) -> Generator[str]:
-        """A fresh compose project whose containers and volumes are removed.
+        """Yield a fresh compose project whose containers and volumes are removed.
 
         Yields:
-            Each ``str``.
+            The unique compose project name.
         """
         name = f"flext-tests-lc-{secrets.token_hex(4)}"
         yield name

@@ -63,7 +63,12 @@ class FlextTestsFilesComparisonMixin(
         *,
         options: FlextTestsFilesComparisonMixin.CompareOptions | None = None,
     ) -> p.Result[bool]:
-        """Compare two files.
+        """Compare two files under the configured comparison options.
+
+        Args:
+            file1: The first file to compare.
+            file2: The second file to compare.
+            options: Optional comparison options; defaults apply when omitted.
 
         Returns:
             The resulting ``p.Result[bool]``.

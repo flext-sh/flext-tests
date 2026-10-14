@@ -55,6 +55,18 @@ class FlextTestsFixturesDSLMixin:
 
     @classmethod
     def path(cls, group: str, kind: str) -> Path:
+        """Resolve the fixture file path for one server group and kind.
+
+        Args:
+            group: The server group directory name.
+            kind: The fixture kind within the group.
+
+        Returns:
+            The resulting ``Path``.
+
+        Raises:
+            FileNotFoundError: If the resolved fixture file does not exist.
+        """
         fp = cls._resolve_path(group, kind)
         if not fp.exists():
             msg = f"Fixture not found: {fp}"
@@ -63,14 +75,37 @@ class FlextTestsFixturesDSLMixin:
 
     @classmethod
     def load(cls, group: str, kind: str) -> str:
+        """Load one fixture file's text for a server group and kind.
+
+        Args:
+            group: The server group directory name.
+            kind: The fixture kind within the group.
+
+        Returns:
+            The resulting ``str``.
+        """
         return cls.path(group, kind).read_text(encoding="utf-8")
 
     @classmethod
     def exists(cls, group: str, kind: str) -> bool:
+        """Return whether the fixture file for a server group and kind exists.
+
+        Args:
+            group: The server group directory name.
+            kind: The fixture kind within the group.
+
+        Returns:
+            The resulting ``bool``.
+        """
         return cls._resolve_path(group, kind).exists()
 
     @classmethod
     def servers(cls) -> t.StrSequence:
+        """List the server group directories under the fixtures root.
+
+        Returns:
+            The resulting ``t.StrSequence``.
+        """
         root = cls._root()
         if not root.exists():
             return ()
@@ -78,6 +113,14 @@ class FlextTestsFixturesDSLMixin:
 
     @classmethod
     def kinds(cls, group: str) -> t.StrSequence:
+        """List the fixture kinds available for one server group.
+
+        Args:
+            group: The server group directory name.
+
+        Returns:
+            The resulting ``t.StrSequence``.
+        """
         root = cls._root()
         server_dir = root / group
         if not server_dir.exists():

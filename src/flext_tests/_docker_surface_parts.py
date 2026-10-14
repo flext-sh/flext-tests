@@ -108,7 +108,7 @@ class FlextTestsDockerSurfaceParts(_PartsBase):
         self,
         container_name: str,
     ) -> p.Result[m.Tests.ContainerInfo]:
-        """Fetch container status.
+        """Fetch the current status info of one container.
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInfo]``.

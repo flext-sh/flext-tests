@@ -70,7 +70,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
     @staticmethod
     def ci_disables_docker() -> bool:
-        """True when the Make CI token (not GitHub's CI=true) is active.
+        """Return True when the Make CI token (not GitHub's CI=true) is active.
 
         Returns:
             The resulting ``bool``.

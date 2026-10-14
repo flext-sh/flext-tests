@@ -186,7 +186,10 @@ class FlextTestsFilesystemModelsMixin:
         @m.field_validator("path", mode="before")
         @classmethod
         def convert_path(cls, value: Path | str) -> Path:
-            """Convert string to Path.
+            """Coerce a string path operand to ``Path`` before validation.
+
+            Args:
+                value: The declared path operand as ``Path`` or string.
 
             Returns:
                 The resulting ``Path``.
@@ -205,7 +208,10 @@ class FlextTestsFilesystemModelsMixin:
         )
         @classmethod
         def convert_path(cls, value: Path | str) -> Path:
-            """Convert string to Path.
+            """Coerce a string path operand to ``Path`` before validation.
+
+            Args:
+                value: The declared path operand as ``Path`` or string.
 
             Returns:
                 The resulting ``Path``.

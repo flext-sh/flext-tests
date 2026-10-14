@@ -224,7 +224,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def ok_preserves_result_identity(params: m.Tests.OkParams) -> bool:
-                """True when no structural extraction kwargs are set (return TResult).
+                """Return True when no structural extraction kwargs are set.
 
                 Returns:
                     The resulting ``bool``.

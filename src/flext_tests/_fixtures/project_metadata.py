@@ -40,14 +40,22 @@ def _find_project_root() -> Path:
 
 @pytest.fixture
 def project_metadata() -> p.ProjectMetadata:
-    """Return the canonical ``m.ProjectMetadata`` for the project under test."""
+    """Return the canonical ``m.ProjectMetadata`` for the project under test.
+
+    Returns:
+        The resulting ``p.ProjectMetadata``.
+    """
     document = u.read_project_document_cached(_find_project_root())
     return u.build_project_metadata(_find_project_root(), document)
 
 
 @pytest.fixture
 def project_tool_flext() -> p.ProjectToolFlext:
-    """Return the ``[tool.flext]`` config for the project under test."""
+    """Return the ``[tool.flext]`` config for the project under test.
+
+    Returns:
+        The resulting ``p.ProjectToolFlext``.
+    """
     document = u.read_project_document_cached(_find_project_root())
     return u.build_project_metadata(_find_project_root(), document).flext
 
