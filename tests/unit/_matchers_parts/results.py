@@ -37,6 +37,40 @@ class TestsFlextTestsMatchersResultsMixin:
         )
 
     @staticmethod
+    def test_native_matchers_preserve_range_type_and_identity() -> None:
+        """Native equality and typed predicates need no payload representation."""
+        original = range(2, 9, 2)
+        tm.that(
+            original,
+            eq=range(2, 9, 2),
+            where=lambda value: value is original and value.step == 2,
+        )
+        resolved = tm.ok(
+            r[range].ok(original),
+            eq=original,
+            where=lambda value: value is original and value.start == 2,
+        )
+        assert_type(resolved, range)
+        tm.that(resolved is original, truth=True)
+        with pytest.raises(AssertionError):
+            tm.that(original, eq=range(3))
+        with pytest.raises(AssertionError):
+            tm.that(original, where=lambda value: value.step == 1)
+
+    @staticmethod
+    def test_structural_checks_preserve_original_collection() -> None:
+        """Adding structural criteria never changes the success payload type."""
+        original = [3, 1, 2]
+        resolved = tm.ok(
+            r[list[int]].ok(original),
+            len=3,
+            has=1,
+            where=lambda values: values is original and values[0] == 3,
+        )
+        assert_type(resolved, list[int])
+        tm.that(resolved is original, truth=True)
+
+    @staticmethod
     def test_ok_preserves_arbitrary_result_payload() -> None:
         """The no-matcher overload accepts payloads outside the matcher union."""
 
@@ -50,6 +84,13 @@ class TestsFlextTestsMatchersResultsMixin:
 
         assert_type(resolved, Payload)
         tm.that(resolved, eq=payload)
+        checked = tm.ok(
+            result,
+            eq=payload,
+            where=lambda value: value is payload and value.value == "typed",
+        )
+        assert_type(checked, Payload)
+        tm.that(checked is payload, truth=True)
 
     @staticmethod
     def test_assert_result_success_fails() -> None:

@@ -6,8 +6,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import MutableMapping
-from typing import cast, overload
+from collections.abc import Callable, MutableMapping
+from typing import TypeAliasType, overload
 
 from flext_core import p as core_p, u
 from flext_tests import c, m, p, t
@@ -326,34 +326,85 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             @overload
-            def ok[TResult](result: core_p.ResultView[TResult]) -> TResult: ...
+            def ok[TResult](
+                result: core_p.ResultView[TResult],
+                *,
+                path: None = None,
+                eq: TResult
+                | p.Tests.ApproxLike
+                | TypeAliasType
+                | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
+                ne: TResult
+                | p.Tests.ApproxLike
+                | TypeAliasType
+                | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
+                where: Callable[[TResult], bool] | None = None,
+                **kwargs: t.Tests.MatcherOption,
+            ) -> TResult: ...
 
             @staticmethod
             @overload
             def ok[TResult](
                 result: core_p.ResultView[TResult],
-                **kwargs: p.AttributeProbe,
-            ) -> TResult | p.Tests.NativeMatchValue: ...
+                *,
+                path: t.Tests.PathSpec,
+                eq: p.Tests.NativeMatchValue
+                | p.Tests.ApproxLike
+                | TypeAliasType
+                | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
+                ne: p.Tests.NativeMatchValue
+                | p.Tests.ApproxLike
+                | TypeAliasType
+                | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
+                where: Callable[[TResult], bool] | None = None,
+                **kwargs: t.Tests.MatcherOption,
+            ) -> p.Tests.NativeMatchValue: ...
 
             @staticmethod
             def ok[TResult](
                 result: core_p.ResultView[TResult],
-                **kwargs: p.AttributeProbe,
+                *,
+                path: t.Tests.PathSpec | None = None,
+                eq: TResult
+                | p.Tests.NativeMatchValue
+                | p.Tests.ApproxLike
+                | TypeAliasType
+                | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
+                ne: TResult
+                | p.Tests.NativeMatchValue
+                | p.Tests.ApproxLike
+                | TypeAliasType
+                | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
+                where: Callable[[TResult], bool] | None = None,
+                **kwargs: t.Tests.MatcherOption,
             ) -> TResult | p.Tests.NativeMatchValue:
-                # mro-j47u: matchers observe the protocol and preserve source identity.
-                if not kwargs:
-                    return FlextTestsResultUtilitiesMixin.assert_success(result)
-                params = m.Tests.OkParams.model_validate(kwargs)
+                """Validate native success values; only explicit paths select a value."""
+                params = m.Tests.OkParams.model_validate({"path": path, **kwargs})
                 matchers = FlextTestsMatchersResultMixin.Tests.Matchers
-                result_value: TResult | p.Tests.Payload = (
-                    FlextTestsResultUtilitiesMixin.assert_success(
-                        result,
-                        error_msg=params.msg,
-                    )
+                original = FlextTestsResultUtilitiesMixin.assert_success(
+                    result,
+                    error_msg=params.msg,
                 )
+                if where is not None and not where(original):
+                    raise AssertionError(
+                        params.msg
+                        or c.Tests.ERR_PREDICATE_FAILED.format(value=original),
+                    )
+                result_value: TResult | p.Tests.Payload = original
                 result_value, extracted_payload = matchers.ok_extract_path(
                     result_value,
                     params,
+                )
+                comparison_value = (
+                    FlextTestsPayloadUtilities.to_match_value(extracted_payload)
+                    if extracted_payload is not None
+                    else original
+                )
+                FlextTestsMatchersThatMixin.Tests.Matchers.that(
+                    comparison_value,
+                    eq=eq,
+                    ne=ne,
+                    msg=params.msg,
                 )
                 result_value = matchers.ok_validate_scalar(
                     result_value,
@@ -376,7 +427,7 @@ class FlextTestsMatchersResultMixin:
                     # No structural extraction was requested, so ok_extract_path
                     # returned the success value unchanged; the subject keeps its
                     # TResult identity across the scalar/type validators.
-                    return cast("TResult", result_value)
+                    return original
                 result_payload = matchers.ok_payload(
                     result,
                     result_value,
@@ -389,8 +440,10 @@ class FlextTestsMatchersResultMixin:
                     result_payload,
                     params,
                 )
-                return FlextTestsPayloadUtilities.to_match_value(
-                    result_payload,
+                return (
+                    FlextTestsPayloadUtilities.to_match_value(result_payload)
+                    if path is not None
+                    else original
                 )
 
             @staticmethod

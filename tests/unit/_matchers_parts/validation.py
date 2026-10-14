@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from tests import c, p, r, t, tm
+from tests import c, m, p, r, t, tm
 
 
 class TestsFlextTestsMatchersValidationMixin:
@@ -68,8 +68,12 @@ class TestsFlextTestsMatchersValidationMixin:
             tm.that(1, truth=True, eq=1)
         with pytest.raises(ValueError, match="requires the native truth"):
             tm.that(1, assertion_message="unused")
-        with pytest.raises(ValueError, match="requires the original subject"):
-            tm.that(1, truth=True, owned_payload=True)
+
+    @staticmethod
+    def test_native_matcher_rejects_undeclared_criteria() -> None:
+        """A typed operand never opens the matcher to arbitrary option names."""
+        with pytest.raises(m.ValidationError):
+            tm.that(1, undeclared_criterion=True)
 
     @staticmethod
     def test_assert_valid_email_passes() -> None:

@@ -749,15 +749,18 @@ class FlextTestsMatchersModelsMixin:
                 return self.model_copy(update=updates)
             return self
 
-    class ScopeParams(PayloadParams):
+    class ScopeParams(m.Value):
         """Parameters for temporary test scope configuration."""
 
-        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
+            populate_by_name=True,
+            arbitrary_types_allowed=True,
+        )
 
         settings: Annotated[
             t.MappingKV[
                 str,
-                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                p.Tests.NativeMatchValue,
             ]
             | None,
             u.Field(description="Initial configuration values."),
@@ -765,7 +768,7 @@ class FlextTestsMatchersModelsMixin:
         container: Annotated[
             t.MappingKV[
                 str,
-                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                p.Tests.NativeMatchValue,
             ]
             | None,
             u.Field(description="Initial container/service mappings."),
@@ -773,7 +776,7 @@ class FlextTestsMatchersModelsMixin:
         context: Annotated[
             t.MappingKV[
                 str,
-                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                p.Tests.NativeMatchValue,
             ]
             | None,
             u.Field(description="Initial context values."),
@@ -799,18 +802,6 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Temporary working directory."),
         ] = None
 
-        @m.field_validator("cwd", mode="before")
-        @classmethod
-        def convert_cwd(cls, value: Path | str | None) -> Path | str | None:
-            """Convert string cwd to Path.
-
-            Returns:
-                The resulting ``Path | str | None``.
-            """
-            if isinstance(value, str):
-                return Path(value)
-            return value
-
     class DeepMatchResult(m.Value):
         """Structured output for deep-match comparisons."""
 
@@ -834,48 +825,52 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Result being chained."),
         ]
 
-    class TestScope(PayloadParams):
+    class TestScope(m.Value):
         """Scope container for test configuration and runtime state."""
+
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
+            arbitrary_types_allowed=True
+        )
 
         settings: Annotated[
             t.MappingKV[
                 str,
-                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                p.Tests.NativeMatchValue,
             ],
             u.Field(description="Configuration dictionary."),
         ] = u.Field(
             default_factory=lambda: MappingProxyType(
                 dict[
                     str,
-                    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                    p.Tests.NativeMatchValue,
                 ](),
             ),
         )
         container: Annotated[
             t.MappingKV[
                 str,
-                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                p.Tests.NativeMatchValue,
             ],
             u.Field(description="Container/service mappings."),
         ] = u.Field(
             default_factory=lambda: MappingProxyType(
                 dict[
                     str,
-                    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                    p.Tests.NativeMatchValue,
                 ](),
             ),
         )
         context: Annotated[
             t.MappingKV[
                 str,
-                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                p.Tests.NativeMatchValue,
             ],
             u.Field(description="Context values."),
         ] = u.Field(
             default_factory=lambda: MappingProxyType(
                 dict[
                     str,
-                    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                    p.Tests.NativeMatchValue,
                 ](),
             ),
         )
