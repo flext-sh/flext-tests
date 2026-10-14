@@ -43,4 +43,5 @@ class FlextTestsMatchersTypesMixin:
             | p.Tests.Payload
             | Callable[[p.Tests.NativeMatchValue], bool],
         ]
+        | t.StrSequence
     )
