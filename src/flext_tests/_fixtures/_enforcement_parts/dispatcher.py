@@ -171,14 +171,15 @@ class FlextTestsEnforcementDispatcher:
         """
         slow_timeout = cls.slow_budget_seconds(config)
         for item in items if slow_timeout is not None else ():
+            if item.get_closest_marker("slow") is None:
+                continue
             if item.get_closest_marker("timeout") is not None:
                 msg = (
                     "FLEXT slow timeout policy: explicit pytest.mark.timeout is "
-                    f"forbidden; {item.nodeid} must use the config-owned item budget"
+                    f"forbidden; {item.nodeid} must use the config-owned slow budget"
                 )
                 raise pytest.UsageError(msg)
-            if item.get_closest_marker("slow") is not None:
-                item.add_marker(pytest.mark.timeout(slow_timeout), append=False)
+            item.add_marker(pytest.mark.timeout(slow_timeout), append=False)
         repository_root = cls.active_root(config)
         if repository_root is None or hasattr(config, "workerinput"):
             return

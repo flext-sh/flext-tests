@@ -22,6 +22,7 @@ from typing import TYPE_CHECKING, cast
 import pytest
 
 from flext_core import FlextContainer, FlextContext, FlextSettings, t
+from flext_tests import u
 from flext_tests._settings import FlextTestsSettings
 from flext_tests.case import FlextTestsCase
 
@@ -29,11 +30,40 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
     from pathlib import Path
 
-    from flext_core import p
+    from flext_tests import m, p
     from flext_tests.base import FlextTestsServiceBase
 
 # pytest registers shared fixture modules at configure time. Their public
 # facades may load during registration; reset and binding happen during runtime.
+
+
+@pytest.fixture(scope="session")
+def session_runtime(
+    tmp_path_factory: pytest.TempPathFactory,
+    run_namespace: m.Tests.TestNamespace,
+) -> Iterator[p.Tests.SessionRuntime]:
+    """Provide every installed consumer a lazy, isolated worker-session runtime.
+
+    Pure tests never provision tools. Consumers lease one shared locked seed;
+    Pytest teardown validates allocation identity before removing its owned area.
+    Each xdist worker creates its own area, never borrowing another environment.
+
+    Args:
+        tmp_path_factory: Pytest temporary path factory for creating isolated
+          directories.
+        run_namespace: The test run namespace containing the unique token for this
+          session.
+
+    Yields:
+        An instance of ``p.Tests.SessionRuntime`` representing the isolated session
+          runtime.
+    """
+    directory = tmp_path_factory.mktemp(run_namespace.token)
+    runtime = u.Tests.SessionRuntime(directory)
+    try:
+        yield runtime
+    finally:
+        runtime.close()
 
 
 def _reset_runtime_state() -> None:
