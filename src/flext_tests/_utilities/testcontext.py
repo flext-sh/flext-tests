@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING, BinaryIO
 from flext_tests import c
 
 if TYPE_CHECKING:
-    from flext_tests import p
+    from flext_tests import p, t
 
 if sys.platform == "win32":
     import msvcrt
@@ -84,6 +84,103 @@ class FlextTestsTestContextUtilitiesMixin:
             self._assert_owned(self.directory)
             shutil.rmtree(self.directory)
 
+        def _provision_session_root(
+            self,
+            provision: p.Tests.RuntimeProvision,
+        ) -> None:
+            """Create and authenticate the session checkout exactly once.
+
+            Raises:
+                ValueError: If the checkout leaves its own area.
+            """
+            if self._root is not None:
+                return
+            self._provision = provision
+            parent = self.directory / "project"
+            parent.mkdir()
+            root = provision(parent)
+            self._assert_owned(parent)
+            self._assert_owned(root)
+            if not root.resolve().is_relative_to(parent):
+                msg = "Session runtime checkout must belong to its own area"
+                raise ValueError(msg)
+            self._root = root.resolve()
+
+        def _lease_targets(
+            self,
+            *,
+            mutable_environment: bool,
+        ) -> list[t.Pair[Path, Path]]:
+            """Return the runtime directories with their baseline mirrors.
+
+            Returns:
+                The owned runtime directories and their seed baselines.
+
+            Raises:
+                ValueError: If the environment is not a physical runtime.
+
+            """
+            environment = self._root / c.VENV_DIR_NAME
+            self._assert_owned(environment)
+            if not (environment / "pyvenv.cfg").is_file():
+                msg = "Session runtime requires its own physical environment"
+                raise ValueError(msg)
+            targets = [(self._root, self._source)]
+            if mutable_environment:
+                targets.append((environment, self._environment))
+            return targets
+
+        def _seed_lease_baselines(
+            self,
+            targets: t.SequenceOf[t.Pair[Path, Path]],
+        ) -> None:
+            """Mirror each absent runtime baseline from its live directory."""
+            for target, baseline in targets:
+                if baseline.exists():
+                    continue
+                ignore = (
+                    shutil.ignore_patterns(c.VENV_DIR_NAME)
+                    if target == self._root
+                    else None
+                )
+                shutil.copytree(target, baseline, symlinks=True, ignore=ignore)
+
+        def _restore_lease_targets(
+            self,
+            targets: t.SequenceOf[t.Pair[Path, Path]],
+        ) -> None:
+            """Restore every leased runtime directory from its baseline."""
+            for target, baseline in targets:
+                self._assert_owned(target)
+                self._assert_owned(self._root / c.VENV_DIR_NAME)
+                target.mkdir(parents=True, exist_ok=True)
+                for child in target.iterdir():
+                    if target == self._root and child.name == c.VENV_DIR_NAME:
+                        continue
+                    if child.is_dir() and not child.is_symlink():
+                        shutil.rmtree(child)
+                    else:
+                        child.unlink()
+                shutil.copytree(baseline, target, dirs_exist_ok=True, symlinks=True)
+
+        def _finish_lease(self, targets: t.SequenceOf[t.Pair[Path, Path]]) -> None:
+            """Restore baselines after one lease, folding concurrent failures.
+
+            Raises:
+                BaseExceptionGroup: If the case and the cleanup both failed.
+            """
+            failure = sys.exception()
+            try:
+                self._restore_lease_targets(targets)
+            except BaseException as error:
+                self._failure = error
+                if failure is not None:
+                    msg = "Session runtime case and cleanup failed"
+                    raise BaseExceptionGroup(msg, [failure, error]) from None
+                raise
+            finally:
+                self._active_thread = None
+
         @contextmanager
         def lease(
             self,
@@ -106,8 +203,8 @@ class FlextTestsTestContextUtilitiesMixin:
 
             Raises:
                 RuntimeError: If the session runtime leases are nested.
-                ValueError: If the provision callback is incompatible or the environment is invalid.
-                BaseExceptionGroup: If multiple errors occur during the lease.
+                ValueError: If the provision callback is incompatible or the
+                    environment is invalid.
             """
             thread = get_ident()
             if self._active_thread == thread:
@@ -125,35 +222,13 @@ class FlextTestsTestContextUtilitiesMixin:
                     msg = "Session runtime requires one canonical provision callback"
                     raise ValueError(msg)
                 self._active_thread = thread
+                targets: list[t.Pair[Path, Path]] = []
                 try:
-                    if self._root is None:
-                        self._provision = provision
-                        parent = self.directory / "project"
-                        parent.mkdir()
-                        root = provision(parent)
-                        self._assert_owned(parent)
-                        self._assert_owned(root)
-                        if not root.resolve().is_relative_to(parent):
-                            msg = "Session runtime checkout must belong to its own area"
-                            raise ValueError(msg)
-                        self._root = root.resolve()
-                    environment = self._root / c.VENV_DIR_NAME
-                    self._assert_owned(environment)
-                    if not (environment / "pyvenv.cfg").is_file():
-                        msg = "Session runtime requires its own physical environment"
-                        raise ValueError(msg)
-                    targets = [(self._root, self._source)]
-                    if mutable_environment:
-                        targets.append((environment, self._environment))
-                    exclude_venv = shutil.ignore_patterns(c.VENV_DIR_NAME)
-                    for target, baseline in targets:
-                        if not baseline.exists():
-                            shutil.copytree(
-                                target,
-                                baseline,
-                                symlinks=True,
-                                ignore=exclude_venv if target == self._root else None,
-                            )
+                    self._provision_session_root(provision)
+                    targets = self._lease_targets(
+                        mutable_environment=mutable_environment,
+                    )
+                    self._seed_lease_baselines(targets)
                 except BaseException as error:
                     self._failure = error
                     self._active_thread = None
@@ -161,36 +236,7 @@ class FlextTestsTestContextUtilitiesMixin:
                 try:
                     yield self._root
                 finally:
-                    failure = sys.exception()
-                    try:
-                        for target, baseline in targets:
-                            self._assert_owned(target)
-                            self._assert_owned(environment)
-                            target.mkdir(parents=True, exist_ok=True)
-                            for child in target.iterdir():
-                                if (
-                                    target == self._root
-                                    and child.name == c.VENV_DIR_NAME
-                                ):
-                                    continue
-                                if child.is_dir() and not child.is_symlink():
-                                    shutil.rmtree(child)
-                                else:
-                                    child.unlink()
-                            shutil.copytree(
-                                baseline,
-                                target,
-                                dirs_exist_ok=True,
-                                symlinks=True,
-                            )
-                    except BaseException as error:
-                        self._failure = error
-                        if failure is not None:
-                            msg = "Session runtime case and cleanup failed"
-                            raise BaseExceptionGroup(msg, [failure, error]) from None
-                        raise
-                    finally:
-                        self._active_thread = None
+                    self._finish_lease(targets)
 
     class FileLock:
         """Advisory lock on one file, coordinating every process of the host.
