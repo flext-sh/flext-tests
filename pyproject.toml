@@ -75,6 +75,8 @@ Repository = "https://github.com/flext-sh/flext-tests"
 flext_tests = "flext_tests.conftest_plugin"
 flext_tests_enforcement = "flext_tests.enforcement_plugin"
 
+[project.optional-dependencies]
+
 [dependency-groups]
 dev = [
   "actionlint-py>=1.7.12.24",
