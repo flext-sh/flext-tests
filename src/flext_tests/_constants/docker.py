@@ -224,3 +224,6 @@ class FlextTestsConstantsDocker:
         STARTING = "starting"
         STOPPING = "stopping"
         RESTARTING = "restarting"
+
+
+__all__: list[str] = ["FlextTestsConstantsDocker"]

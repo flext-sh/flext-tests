@@ -102,3 +102,6 @@ class FlextTestsConstantsMatcher:
     )
     EMAIL_PATTERN: ClassVar[str] = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
     EMAIL_PATTERN_RE: ClassVar[t.RegexPattern] = re.compile(EMAIL_PATTERN)
+
+
+__all__: list[str] = ["FlextTestsConstantsMatcher"]

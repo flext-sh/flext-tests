@@ -224,3 +224,6 @@ class FlextTestsDockerStateUtilitiesMixin:
                 return r[t.SequenceOf[m.Tests.ContainerState]].from_failure(read)
             states.append(read.value)
         return r[t.SequenceOf[m.Tests.ContainerState]].ok(tuple(states))
+
+
+__all__: list[str] = ["FlextTestsDockerStateUtilitiesMixin"]

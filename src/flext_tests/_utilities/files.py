@@ -73,3 +73,6 @@ class FlextTestsFilesUtilitiesMixin:
                 return f"{value:.1f} {unit}" if unit != "B" else f"{value} {unit}"
             value //= c.Tests.SIZE_THRESHOLD
         return f"{value:.1f} PB"
+
+
+__all__: list[str] = ["FlextTestsFilesUtilitiesMixin"]
