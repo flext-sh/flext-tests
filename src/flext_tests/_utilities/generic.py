@@ -170,3 +170,6 @@ class FlextTestsGenericHelpersUtilitiesMixin:
                 return r[T].ok(default_on_none)
             return r[T].fail(error_on_none)
         return r[T].ok(value)
+
+
+__all__: list[str] = ["FlextTestsGenericHelpersUtilitiesMixin"]

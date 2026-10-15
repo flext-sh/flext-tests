@@ -54,3 +54,6 @@ class FlextTestsEnforcementCollector(pytest.Collector):
     @override
     def collect(self) -> Iterable[pytest.Item]:
         return list(self._items)
+
+
+__all__: list[str] = ["FlextTestsEnforcementCollector"]

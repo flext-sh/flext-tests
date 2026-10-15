@@ -236,3 +236,6 @@ class FlextTestsDockerModelsMixin:
             int,
             u.Field(description="Retry budget on transient failure."),
         ] = 3
+
+
+__all__: list[str] = ["FlextTestsDockerModelsMixin"]

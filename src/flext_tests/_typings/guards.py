@@ -24,3 +24,6 @@ class FlextTestsGuardsTypesMixin:
         if isinstance(value, m.BaseModel):
             return True
         return isinstance(value, (list, dict))
+
+
+__all__: list[str] = ["FlextTestsGuardsTypesMixin"]

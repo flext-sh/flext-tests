@@ -35,3 +35,6 @@ class FlextTestsDomainModelsMixin:
             str | None,
             m.Field(description="Expected error text."),
         ] = None
+
+
+__all__: list[str] = ["FlextTestsDomainModelsMixin"]

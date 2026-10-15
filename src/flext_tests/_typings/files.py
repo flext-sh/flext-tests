@@ -20,3 +20,6 @@ class FlextTestsFilesTypesMixin:
         t.MappingKV[str, tb.TestobjectSerializable] | m.BaseModel
     )
     type FileContentPlain = ReadContent | FileContentStructured
+
+
+__all__: list[str] = ["FlextTestsFilesTypesMixin"]

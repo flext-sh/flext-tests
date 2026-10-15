@@ -110,3 +110,6 @@ class FlextTestsPayloadProtocolsMixin:
         def entries(self) -> t.Tests.PayloadEntries[Self]:
             """Read children of a mapping arm."""
             ...
+
+
+__all__: list[str] = ["FlextTestsPayloadProtocolsMixin"]

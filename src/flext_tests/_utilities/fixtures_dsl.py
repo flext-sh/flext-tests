@@ -148,3 +148,6 @@ class FlextTestsFixturesDSLMixin:
             for server in cls.servers()
             for kind in cls.kinds(server)
         ]
+
+
+__all__: list[str] = ["FlextTestsFixturesDSLMixin"]

@@ -13,8 +13,8 @@ from __future__ import annotations
 from typing import Annotated
 
 from flext_cli import FlextCliConfig
+from flext_core import m
 
-from flext_tests import m
 from flext_tests._models import FlextTestsNamespace
 
 

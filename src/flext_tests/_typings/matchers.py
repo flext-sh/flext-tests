@@ -24,3 +24,6 @@ class FlextTestsMatchersTypesMixin:
     type ErrorCodeSpec = str | t.StrSequence
     type CleanupSpec = t.SequenceOf[Callable[[], None]]
     type EnvironmentSpec = t.StrMapping
+
+
+__all__: list[str] = ["FlextTestsMatchersTypesMixin"]

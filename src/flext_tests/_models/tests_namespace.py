@@ -7,10 +7,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_tests import m
+from flext_core import m
 
 
 class FlextTestsNamespace(m.BaseModel):
     """Open, frozen namespace exposing every ``config/*.yaml`` domain model-less."""
 
     model_config = m.ConfigDict(extra="allow", frozen=True)
+
+
+__all__: list[str] = ["FlextTestsNamespace"]

@@ -42,3 +42,6 @@ class FlextTestsSpecModelsMixin:
                 ),
             ),
         ] = None
+
+
+__all__: list[str] = ["FlextTestsSpecModelsMixin"]

@@ -102,3 +102,6 @@ class FlextTestsEnforcementProtocolsMixin:
         ) -> Sequence[FlextTestsEnforcementProtocolsMixin.EnforcementScanFinding]:
             """Every finding in stable order."""
             ...
+
+
+__all__: list[str] = ["FlextTestsEnforcementProtocolsMixin"]

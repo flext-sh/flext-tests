@@ -51,3 +51,6 @@ class FlextTestsNamespaceModelsMixin:
             t.NonEmptyStr,
             u.Field(description="Absolute checkout root path."),
         ]
+
+
+__all__: list[str] = ["FlextTestsNamespaceModelsMixin"]

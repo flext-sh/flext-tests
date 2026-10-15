@@ -41,3 +41,6 @@ class FlextTestsDockerProtocolsMixin:
         def __call__(self, info: m.Tests.ContainerInfo) -> p.Result[bool]:
             """Probe the container once."""
             ...
+
+
+__all__: list[str] = ["FlextTestsDockerProtocolsMixin"]

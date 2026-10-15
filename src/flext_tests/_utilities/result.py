@@ -69,3 +69,6 @@ class FlextTestsResultUtilitiesMixin:
             msg = f"Expected success value {expected_value!r} but got {value!r}"
             raise AssertionError(msg)
         return value
+
+
+__all__: list[str] = ["FlextTestsResultUtilitiesMixin"]
