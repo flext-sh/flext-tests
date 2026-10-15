@@ -18,6 +18,7 @@ def _warning_counter_default() -> MutableMapping[str, int]:
 
     Returns:
         The resulting ``MutableMapping[str, int]``.
+
     """
     return {}
 

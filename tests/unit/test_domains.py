@@ -37,6 +37,7 @@ class FlextTestsDomainsFixtureParts:
 
         Returns:
             The resulting ``Path``.
+
         """
         payloads: t.MappingKV[tuple[str, str], str] = {
             ("oid", "schema"): "dn: cn=schema,dc=oid\n",

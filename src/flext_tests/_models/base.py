@@ -31,6 +31,7 @@ def _entity_payload_default() -> (
 
     Returns:
         The resulting ``FlextTestsBaseModelsMixin.Payload``.
+
     """
     return FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload.atom_default()
 
@@ -42,6 +43,7 @@ def _payload_entries_default() -> t.Tests.PayloadEntries[
 
     Returns:
         The resulting ``t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload]``.
+
     """
     return MappingProxyType({})
 
@@ -99,6 +101,7 @@ class FlextTestsFlextModelsBase:
                 Returns:
                     The resulting
                         ``t.Tests.PayloadEntries[FlextTestsBaseModelsMixin.Payload]``.
+
                 """
                 return MappingProxyType(dict(value))
 
@@ -113,6 +116,7 @@ class FlextTestsFlextModelsBase:
                     ValueError: If an atom payload contains children; if a mapping
                         payload contains an atom or items; or if a collection payload
                         contains an atom or entries.
+
                 """
                 if self.kind == "atom":
                     if self.items or self.entries:
@@ -135,6 +139,7 @@ class FlextTestsFlextModelsBase:
 
                 Returns:
                     The resulting ``FlextTestsBaseModelsMixin.Payload``.
+
                 """
                 return cls(kind="atom", entries={})
 

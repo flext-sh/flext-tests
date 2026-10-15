@@ -23,6 +23,7 @@ def _worker_id(config: pytest.Config) -> str:
 
     Returns:
         The resulting ``str``.
+
     """
     worker_input = getattr(config, "workerinput", None)
     if worker_input is not None:
@@ -35,6 +36,7 @@ def _run_token(config: pytest.Config) -> str:
 
     Returns:
         The resulting ``str``.
+
     """
     worker_input = getattr(config, "workerinput", None)
     if worker_input is not None:
@@ -59,6 +61,7 @@ def run_namespace(request: pytest.FixtureRequest) -> m.Tests.TestNamespace:
 
     Returns:
         The resulting ``m.Tests.TestNamespace``.
+
     """
     config = request.config
     namespace: m.Tests.TestNamespace = import_module("flext_tests").u.Tests.namespace(
@@ -75,6 +78,7 @@ def test_namespace(run_namespace: m.Tests.TestNamespace) -> m.Tests.TestNamespac
 
     Returns:
         The resulting ``m.Tests.TestNamespace``.
+
     """
     namespace: m.Tests.TestNamespace = import_module("flext_tests").u.Tests.namespace(
         worker_id=run_namespace.worker,

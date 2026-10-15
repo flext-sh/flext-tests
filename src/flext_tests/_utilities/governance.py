@@ -42,6 +42,7 @@ class FlextTestsFlextUtilitiesGovernance:
 
         Returns:
             The resulting ``dict[str, frozenset[str]]``.
+
         """
         mapping: t.MutableMappingKV[str, set[str]] = {}
         for entry in importlib.metadata.entry_points(group="console_scripts"):
@@ -76,6 +77,7 @@ class FlextTestsFlextUtilitiesGovernance:
             Raises:
                 FileNotFoundError: If no ancestor of ``_test_file`` holds a
                     ``pyproject.toml`` or the project package is not importable.
+
             """
             test_path = Path(cls._test_file).resolve()
             project_root = next(
@@ -105,6 +107,7 @@ class FlextTestsFlextUtilitiesGovernance:
 
             Returns:
                 The resulting ``list[Path]``.
+
             """
             return sorted(cls._package_root().rglob("*.py"))
 
@@ -114,6 +117,7 @@ class FlextTestsFlextUtilitiesGovernance:
 
             Returns:
                 The resulting ``str``.
+
             """
             package_root = cls._package_root()
             relative = module_path.relative_to(package_root.parent)
@@ -128,6 +132,7 @@ class FlextTestsFlextUtilitiesGovernance:
 
             Returns:
                 The resulting ``ModuleType``.
+
             """
             return importlib.import_module(cls._module_dotted_name(module_path))
 

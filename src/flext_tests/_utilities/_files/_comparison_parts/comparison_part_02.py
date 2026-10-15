@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Annotated
 
 from flext_core import r
+
 from flext_tests import c, m, p, t, u
 from flext_tests._utilities import FlextTestsFlextUtilitiesPayload
 from flext_tests._utilities._files._comparison_parts import comparison_part_01
@@ -63,10 +64,16 @@ class FlextTestsFilesComparisonMixin(
         *,
         options: FlextTestsFilesComparisonMixin.CompareOptions | None = None,
     ) -> p.Result[bool]:
-        """Compare two files.
+        """Compare two files under the configured comparison options.
+
+        Args:
+            file1: The first file to compare.
+            file2: The second file to compare.
+            options: Optional comparison options; defaults apply when omitted.
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         compare_options = (
             options
@@ -105,6 +112,7 @@ class FlextTestsFilesComparisonMixin(
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         if params.pattern is not None:
             text1 = params.file1.read_text(encoding=c.Tests.DEFAULT_ENCODING)
@@ -129,6 +137,7 @@ class FlextTestsFilesComparisonMixin(
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         c1, c2 = self._read_both(params)
         # Structured comparison is selected by the files' declared format,
@@ -161,6 +170,7 @@ class FlextTestsFilesComparisonMixin(
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         filter_keys_set = set(params.keys) if params.keys is not None else None
         exclude_keys_set = (
@@ -189,6 +199,7 @@ class FlextTestsFilesComparisonMixin(
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         c1, c2 = self._read_both(params)
         lines1, lines2 = c1.splitlines(), c2.splitlines()

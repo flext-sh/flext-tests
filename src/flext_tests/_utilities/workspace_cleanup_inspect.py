@@ -11,8 +11,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from flext_cli import u
-
 from flext_core import r
+
 from flext_tests import c, p
 from flext_tests._utilities import FlextTestsWorkspaceCleanupPathsUtilitiesMixin
 
@@ -31,6 +31,7 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         try:
             info = lexical.lstat()
@@ -63,6 +64,7 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         result = cls._git(
             root,
@@ -86,6 +88,7 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         status_result = cls._successful_git_output(
             root,
@@ -124,6 +127,7 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[str]``.
+
         """
         try:
             stat = entry.lstat()
@@ -175,6 +179,7 @@ class FlextTestsWorkspaceCleanupInspectUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[str]``.
+
         """
 
         def relative_path_key(item: Path) -> str:

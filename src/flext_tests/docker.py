@@ -70,10 +70,11 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
     @staticmethod
     def ci_disables_docker() -> bool:
-        """True when the Make CI token (not GitHub's CI=true) is active.
+        """Return True when the Make CI token (not GitHub's CI=true) is active.
 
         Returns:
             The resulting ``bool``.
+
         """
         ci = infra_config.Infra.codegen.make.ci
         return (infra_settings.env_lookup(ci.variable) or "").strip() == ci.value
@@ -84,6 +85,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         if not cls.ci_disables_docker():
             return r[bool].ok(value=True)
@@ -110,6 +112,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Raises:
             ValueError: If Unknown shared container; or if Shared container.
+
         """
         settings = c.Tests.SHARED_CONTAINERS.get(container_name)
         if settings is None:
@@ -138,6 +141,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``str | None``.
+
         """
         uid_socket = Path(f"/run/user/{os.getuid()}/docker.sock")
         if uid_socket.exists():
@@ -155,6 +159,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         Raises:
             FileNotFoundError: If ``isinstance(adapter, UnixHTTPAdapter) and (not
                 Path(adapter.socket_path).exists())``.
+
         """
         if self.docker_client is None and self.client_error is None:
             client: DockerSDKClient | None = None
@@ -210,6 +215,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``bool``.
+
         """
         return (
             u.Tests.read_container_state(self.state_dir, container_name).unwrap().dirty
@@ -220,6 +226,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         return self._record_dirty(container_name, dirty=False)
 
@@ -228,6 +235,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         return self._record_dirty(container_name, dirty=True)
 
@@ -236,6 +244,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         updated = u.Tests.update_container_state(
             self.state_dir,
@@ -261,6 +270,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``WhalesDockerClient``.
+
         """
         return WhalesDockerClient(
             client_type="docker",
@@ -287,6 +297,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``Path``.
+
         """
         compose_path = Path(compose_file)
         return (
@@ -301,6 +312,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[str]``.
+
         """
         enabled = self.lifecycle_enabled()
         if enabled.failure:
@@ -325,6 +337,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[str]``.
+
         """
         enabled = self.lifecycle_enabled()
         if enabled.failure:
@@ -355,6 +368,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInspect]``.
+
         """
         client = self.client
         if client is None:
@@ -382,6 +396,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         enabled = self.lifecycle_enabled()
         if enabled.failure:
@@ -410,6 +425,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         try:
             if container.status == c.Tests.ContainerStatus.RUNNING:
@@ -435,6 +451,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         probe_budget = (
             max_wait if max_wait is not None else c.Tests.DOCKER_PROBE_MAX_WAIT_SECONDS
@@ -467,6 +484,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``Self``.
+
         """
         return cls(
             repository_root=repository_root or Path.cwd(),
@@ -487,6 +505,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``Self``.
+
         """
         resolved_root = repository_root or Path.cwd()
         compose_path = Path(compose_file)
@@ -512,6 +531,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``Self``.
+
         """
         return cls.compose(
             compose_file,
@@ -525,6 +545,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[str]``.
+
         """
         target = self.target_config
         if target is None:
@@ -543,6 +564,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[str]``.
+
         """
         target = self.target_config
         if target is None:
@@ -564,6 +586,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         target = self.target_config
         if target is None:
@@ -590,6 +613,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[t.StrSequence]``.
+
         """
         enabled = self.lifecycle_enabled()
         if enabled.failure:
@@ -614,6 +638,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``str | None``.
+
         """
         target = self.target_config
         if target is None:
@@ -630,6 +655,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[str]``.
+
         """
         resolved = target or self.target_config
         if resolved is None:
@@ -648,6 +674,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         Raises:
             ValueError: If ``target is None or target.container_name is None or error is
                 not None``.
+
         """
         target = self.target_config
         error = self._target_error()
@@ -669,6 +696,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         Returns:
             The resulting ``p.Result[t.Pair[m.Tests.ContainerInfo | None,
                 m.Tests.ContainerState]]``.
+
         """
         state = u.Tests.read_container_state(self.state_dir, container_name)
         if state.failure:
@@ -709,6 +737,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInfo]``.
+
         """
         target = self.target_config
         error = self._target_error()
@@ -749,6 +778,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInfo]``.
+
         """
         target = self.target_config
         error = self._target_error()
@@ -796,6 +826,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInfo]``.
+
         """
         observed = self._observe(container_name)
         if observed.failure:
@@ -843,6 +874,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInfo]``.
+
         """
         fetched = self.fetch_container_info(container_name)
         if fetched.failure:
@@ -879,6 +911,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         compose_file = target.compose_file
         if compose_file is None:
@@ -914,6 +947,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInfo]``.
+
         """
         deadline = time.monotonic() + target.startup_timeout
         settled = self._await_health(info, deadline, target.startup_timeout)
@@ -957,6 +991,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         host_port = u.Tests.resolve_host_port(info, target.port or 0)
         if host_port.failure:
@@ -988,6 +1023,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInfo]``.
+
         """
         current = info
         while current.health == c.Tests.ContainerHealth.STARTING:
@@ -1018,6 +1054,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         while True:
             probed = readiness_probe(info)
@@ -1049,6 +1086,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInfo]``.
+
         """
         target = self.target_config
         error = self._target_error()
@@ -1093,6 +1131,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInfo]``.
+
         """
         observed = self._observe(container_name)
         if observed.failure:

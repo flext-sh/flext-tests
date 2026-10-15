@@ -36,8 +36,8 @@ class TestsFlextTestsPublicFacade:
         families, keeping both facades importable side by side.
 
         """
-        tm.that(issubclass(m, FlextTestsModels), eq=True)
-        tm.that(issubclass(u, FlextTestsUtilities), eq=True)
+        tm.that(FlextTestsModels in m.__mro__, eq=True)
+        tm.that(FlextTestsUtilities in u.__mro__, eq=True)
 
     @staticmethod
     def test_selected_enforcement_plugin_uses_its_declared_identity(

@@ -54,6 +54,7 @@ class FlextTestsFlextUtilitiesHandler:
 
             Returns:
                 The resulting ``m.Handler``.
+
             """
             params = (
                 options

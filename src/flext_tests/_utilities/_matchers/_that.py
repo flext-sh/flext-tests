@@ -7,9 +7,10 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
-from typing import cast
+from typing import TypeAliasType, cast
 
 from flext_core import r
+
 from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsPayloadUtilities
 from flext_tests._utilities._matchers import (
@@ -32,12 +33,13 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _that_params(
-                kwargs: Mapping[str, p.AttributeProbe],
+                kwargs: Mapping[str, t.Tests.MatcherOption],
             ) -> m.Tests.ThatParams:
                 """Parse all criteria once; invalid operands are never discarded.
 
                 Returns:
                     The resulting ``m.Tests.ThatParams``.
+
                 """
                 params = m.Tests.ThatParams.model_validate(kwargs)
                 if "eq" in kwargs and kwargs["eq"] is None and params.none is None:
@@ -47,20 +49,17 @@ class FlextTestsMatchersThatMixin:
                 return params
 
             @classmethod
-            def _validate_declared_types(
+            def _validate_declared_types[SubjectT](
                 cls,
-                value: p.AttributeProbe,
+                value: SubjectT,
                 params: m.Tests.ThatParams,
-                *,
-                owned_payload: bool = False,
             ) -> None:
                 """Validate declared types with the caller's explicit ownership.
 
                 Raises:
                     AssertionError: If
-                        ``any((FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(
-                            value, forbidden_type, owned_payload=owned_payload
-                        ) for forbidden_type in not_types))``.
+                        any declared forbidden type matches the original value.
+
                 """
                 value_type_name = type(value).__name__
                 if params.is_ is not None:
@@ -68,7 +67,6 @@ class FlextTestsMatchersThatMixin:
                         value,
                         params,
                         value_type_name,
-                        owned_payload=owned_payload,
                     )
                 if params.not_ is not None:
                     not_types = (
@@ -80,7 +78,6 @@ class FlextTestsMatchersThatMixin:
                         FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(
                             value,
                             forbidden_type,
-                            owned_payload=owned_payload,
                         )
                         for forbidden_type in not_types
                     ):
@@ -93,17 +90,16 @@ class FlextTestsMatchersThatMixin:
                         )
 
             @staticmethod
-            def _validate_is_type(
-                value: p.AttributeProbe,
+            def _validate_is_type[SubjectT](
+                value: SubjectT,
                 params: m.Tests.ThatParams,
                 value_type_name: str,
-                *,
-                owned_payload: bool = False,
             ) -> None:
-                """Validate ``is_`` including FLEXT wrapper/model shortcuts.
+                """Validate the actual runtime type without wrapper substitutions.
 
                 Raises:
                     AssertionError: Always.
+
                 """
                 is_types = (
                     params.is_ if isinstance(params.is_, tuple) else (params.is_,)
@@ -111,34 +107,14 @@ class FlextTestsMatchersThatMixin:
                 expected_types = tuple(
                     item for item in is_types if isinstance(item, type)
                 )
-                root_value = getattr(value, "root", None)
-                is_mapping_wrapper = (
-                    dict in expected_types
-                    and isinstance(root_value, dict)
-                    and value.__class__.__name__ == "Dict"
-                )
-                is_model_mapping = (
-                    dict in expected_types
-                    and isinstance(value, m.BaseModel)
-                    and not isinstance(value, m.RootModel)
-                )
-                is_sequence_wrapper = (
-                    list in expected_types
-                    and isinstance(root_value, c.SEQUENCE_PAIR_TYPES)
-                    and value_type_name == "ObjectList"
-                )
                 matches_declared_type = any(
                     FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(
                         value,
                         expected_type,
-                        owned_payload=owned_payload,
                     )
                     for expected_type in expected_types
                 )
-                if matches_declared_type or (
-                    not owned_payload
-                    and (is_mapping_wrapper or is_model_mapping or is_sequence_wrapper)
-                ):
+                if matches_declared_type:
                     return
                 type_error = c.Tests.ERR_TYPE_FAILED.format(
                     expected=params.is_,
@@ -158,6 +134,7 @@ class FlextTestsMatchersThatMixin:
 
                 Returns:
                     The resulting ``bool``.
+
                 """
                 subject_fields = {
                     "msg",
@@ -187,6 +164,7 @@ class FlextTestsMatchersThatMixin:
 
                 Raises:
                     AssertionError: Always.
+
                 """
                 if not isinstance(subject, r):
                     return subject
@@ -228,6 +206,7 @@ class FlextTestsMatchersThatMixin:
                 Raises:
                     AssertionError: If ``params.ok and (not result_obj.success)``; or if
                         ``not params.ok and result_obj.success``.
+
                 """
                 if params.ok and not result_obj.success:
                     raise AssertionError(
@@ -292,6 +271,7 @@ class FlextTestsMatchersThatMixin:
 
                 Returns:
                     The resulting ``t.SequenceOf[p.Tests.Payload]``.
+
                 """
                 return subject_payload.items
 
@@ -308,6 +288,7 @@ class FlextTestsMatchersThatMixin:
                         FlextTestsPayloadUtilities.to_match_value(params.first)``; or if
                         ``FlextTestsPayloadUtilities.to_match_value(seq_value[-1]) !=
                         FlextTestsPayloadUtilities.to_match_value(params.last)``.
+
                 """
                 if params.first is not None:
                     if not seq_value:
@@ -380,6 +361,7 @@ class FlextTestsMatchersThatMixin:
                 Raises:
                     AssertionError: If ``isinstance(params.all_, type)``; or if
                         ``failed_idx is not None``.
+
                 """
                 if isinstance(params.all_, type):
                     all_type = params.all_
@@ -444,6 +426,7 @@ class FlextTestsMatchersThatMixin:
                         )) for item in seq_value)))``; or if ``not
                         any((isinstance(FlextTestsPayloadUtilities.to_match_value(item),
                         any_type) for item in seq_value))``.
+
                 """
                 if isinstance(params.any_, type):
                     any_type = params.any_
@@ -482,6 +465,7 @@ class FlextTestsMatchersThatMixin:
                         FlextTestsPayloadUtilities.to_match_value(previous) for index,
                         item in enumerate(seq_value) for previous in
                         seq_value[:index]))``; or if ``value_list != sorted_list``.
+
                 """
                 sorted_param = params.sorted
                 if sorted_param is not None:
@@ -538,6 +522,7 @@ class FlextTestsMatchersThatMixin:
 
                 Returns:
                     The resulting ``t.StrPair``.
+
                 """
                 result = user_key_fn(
                     FlextTestsPayloadUtilities.to_match_value(
@@ -554,6 +539,7 @@ class FlextTestsMatchersThatMixin:
 
                 Returns:
                     The resulting ``t.MappingKV[str, p.Tests.Payload]``.
+
                 """
                 return subject_payload.entries
 
@@ -569,6 +555,7 @@ class FlextTestsMatchersThatMixin:
                     AssertionError: If ``missing``; or if ``present``; or if
                         ``FlextTestsPayloadUtilities.to_match_value(expected_val) not in
                         value_list``.
+
                 """
                 mapping_value = cls._mapping_value(subject_payload)
                 if subject_payload.kind != "mapping":
@@ -621,6 +608,7 @@ class FlextTestsMatchersThatMixin:
                 Raises:
                     AssertionError: If ``key not in mapping_value``; or if ``actual !=
                         wanted``.
+
                 """
                 if params.kv is None:
                     return
@@ -655,6 +643,7 @@ class FlextTestsMatchersThatMixin:
                     AssertionError: If ``not hasattr(subject, attr)``; or if ``not
                         hasattr(subject, method)``; or if ``params.methods is not
                         None``.
+
                 """
                 if params.attrs is not None:
                     attr_list: t.StrSequence = (
@@ -699,6 +688,7 @@ class FlextTestsMatchersThatMixin:
                 Raises:
                     AssertionError: If ``not hasattr(subject, name)``; or if ``actual !=
                         wanted``.
+
                 """
                 if params.attr_eq is None:
                     return
@@ -730,36 +720,63 @@ class FlextTestsMatchersThatMixin:
 
                 Raises:
                     AssertionError: If ``value is None``.
+
                 """
                 if value is None:
                     raise AssertionError(msg or "Expected a non-None value")
                 return value
 
             @classmethod
-            def that(
+            def that[SubjectT](
                 cls,
-                value: p.AttributeProbe,
+                value: SubjectT,
                 *,
-                owned_payload: bool = False,
-                **kwargs: p.AttributeProbe,
+                eq: SubjectT
+                | p.Tests.ApproxLike
+                | TypeAliasType
+                | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
+                ne: SubjectT
+                | p.Tests.ApproxLike
+                | TypeAliasType
+                | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
+                where: Callable[[SubjectT], bool] | None = None,
+                **kwargs: t.Tests.MatcherOption,
             ) -> None:
-                """Assert original subjects using validated owned criteria.
+                """Assert native operands and apply a predicate to the original type.
 
                 Args:
                     value: The subject to be asserted.
-                    owned_payload: Whether the value is an owned payload.
-                    **kwargs: Additional attribute probes for validation.
+                    eq: Native equality operand.
+                    ne: Native inequality operand.
+                    where: Predicate receiving the original subject.
+                    **kwargs: Closed matcher criteria validated at ingress.
 
                 Raises:
                     AssertionError: If any of the validation rules are violated.
                     ValueError: If the native truth requires the original
                         subject and it is not provided.
+
                 """
                 params = cls._that_params(kwargs)
+                message = params.msg or c.Tests.ERR_CONSTRAINTS_FAILED.format(
+                    value=value
+                )
+                if params.truth is not None and (
+                    eq is not c.Tests.MatcherMissing.OMITTED
+                    or ne is not c.Tests.MatcherMissing.OMITTED
+                    or where is not None
+                ):
+                    msg = "Native truth cannot be combined with value criteria"
+                    raise ValueError(msg)
+                if eq is not c.Tests.MatcherMissing.OMITTED and value != eq:
+                    raise AssertionError(message)
+                if ne is not c.Tests.MatcherMissing.OMITTED and value == ne:
+                    raise AssertionError(message)
+                if where is not None and not where(value):
+                    raise AssertionError(
+                        params.msg or c.Tests.ERR_PREDICATE_FAILED.format(value=value),
+                    )
                 if params.truth is not None:
-                    if owned_payload:
-                        message = "native truth requires the original subject"
-                        raise ValueError(message)
                     if bool(value) is not params.truth:
                         if "assertion_message" in params.model_fields_set:
                             raise AssertionError(params.assertion_message)
@@ -767,12 +784,7 @@ class FlextTestsMatchersThatMixin:
                             raise AssertionError(params.msg)
                         raise AssertionError
                     return
-                if owned_payload:
-                    payload = FlextTestsPayloadUtilities.to_payload(
-                        value,
-                    )
-                    value = payload.atom if payload.kind == "atom" else payload
-                cls._validate_declared_types(value, params, owned_payload=owned_payload)
+                cls._validate_declared_types(value, params)
                 cls._validate_attrs(value, params)
                 if cls._is_subject_only(value, params):
                     if params.none is not None and (value is None) is not params.none:
@@ -807,6 +819,7 @@ class FlextTestsMatchersThatMixin:
 
                 Raises:
                     AssertionError: If ``not match_result.matched``.
+
                 """
                 if params.deep is None:
                     return
@@ -833,6 +846,7 @@ class FlextTestsMatchersThatMixin:
 
                 Raises:
                     AssertionError: If ``not params.where(native)``.
+
                 """
                 if params.paths is not None:
                     FlextTestsMatchersThatMixin.apply_path_rules(
@@ -873,6 +887,7 @@ class FlextTestsMatchersThatMixin:
 
         Raises:
             ValueError: If Expected a mapping or a (name, value) tuple.
+
         """
         if value.kind == "mapping":
             return tuple(value.entries.items())
@@ -914,18 +929,38 @@ class FlextTestsMatchersThatMixin:
         subject: p.AttributeProbe,
         rule: m.Tests.MatchRule,
         *,
-        owned_payload: bool,
         inherited_msg: str | None = None,
     ) -> None:
         kwargs = dict(cls._rule_kwargs(rule))
-        raw_owned = kwargs.pop("owned_payload", owned_payload)
-        owned = raw_owned if isinstance(raw_owned, bool) else owned_payload
+        kwargs.pop("eq", None)
+        kwargs.pop("ne", None)
+        kwargs.pop("where", None)
         if inherited_msg is not None and "msg" not in kwargs:
             kwargs["msg"] = inherited_msg
         if not hasattr(cls.Tests.Matchers, "that"):
             message = "Matcher rule runner missing"
             raise AssertionError(message)
-        cls.Tests.Matchers.that(subject, owned_payload=owned, **kwargs)
+        expected_eq = (
+            FlextTestsPayloadUtilities.to_match_value(rule.eq)
+            if isinstance(rule.eq, m.Tests.Payload)
+            else rule.eq
+        )
+        expected_ne = (
+            FlextTestsPayloadUtilities.to_match_value(rule.ne)
+            if isinstance(rule.ne, m.Tests.Payload)
+            else rule.ne
+        )
+        cls.Tests.Matchers.that(
+            subject,
+            eq=expected_eq
+            if "eq" in rule.model_fields_set
+            else c.Tests.MatcherMissing.OMITTED,
+            ne=expected_ne
+            if "ne" in rule.model_fields_set
+            else c.Tests.MatcherMissing.OMITTED,
+            where=rule.where,
+            **kwargs,
+        )
 
     @classmethod
     def apply_path_rules(
@@ -945,7 +980,6 @@ class FlextTestsMatchersThatMixin:
                         ),
                     ),
                     rule,
-                    owned_payload=True,
                     inherited_msg=inherited_msg,
                 )
             except AssertionError as exc:
@@ -975,7 +1009,6 @@ class FlextTestsMatchersThatMixin:
                     cls._apply_rule(
                         sequence_value[index],
                         rule,
-                        owned_payload=False,
                         inherited_msg=inherited_msg,
                     )
                 return
@@ -992,7 +1025,6 @@ class FlextTestsMatchersThatMixin:
                     cls._apply_rule(
                         item,
                         rule,
-                        owned_payload=True,
                         inherited_msg=inherited_msg,
                     )
                 continue
@@ -1006,7 +1038,6 @@ class FlextTestsMatchersThatMixin:
             cls._apply_rule(
                 sequence_value[target_index],
                 rule,
-                owned_payload=True,
                 inherited_msg=inherited_msg,
             )
 
@@ -1036,7 +1067,6 @@ class FlextTestsMatchersThatMixin:
             cls._apply_rule(
                 current,
                 rule,
-                owned_payload=False,
                 inherited_msg=inherited_msg,
             )
 

@@ -9,6 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_core import r
+
 from flext_tests import c, m, p, t
 from flext_tests._utilities import (
     FlextTestsFlextUtilitiesMakeContract,
@@ -40,6 +41,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         by_what = commands_by_verb.setdefault(command.verb, {})
         if command.what in by_what:
@@ -67,6 +69,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[m.Tests.MakeCommand]``.
+
         """
         values: t.MutableStrMapping = {}
         for field in ("domain", "summary", "description", "example"):
@@ -166,6 +169,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[m.Tests.MakeRegistry]``.
+
         """
         if not scripts_dir.exists():
             return r[m.Tests.MakeRegistry].fail("diretorio scripts/cmd missing")
@@ -214,6 +218,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[m.Tests.MakeCommand] | None``.
+
         """
         if path.name == "__pycache__":
             return r[m.Tests.MakeCommand].fail(f"{path}: cache publico invalido")
@@ -236,6 +241,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[tuple[str, str]]``.
+
         """
         verb_result = FlextTestsMakeParsingUtilitiesMixin.make_require_string(
             data,
@@ -263,6 +269,7 @@ class FlextTestsMakeRegistryUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[m.Tests.MakeCommand]``.
+
         """
         path_failure = cls._load_command_path_failure(path)
         if path_failure is not None:

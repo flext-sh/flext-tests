@@ -23,24 +23,16 @@ class FlextTestsMatchersTypeGuardsMixin:
     """Preserve native comparison semantics at the matcher boundary."""
 
     @staticmethod
-    def matches_runtime_type(
-        value: p.AttributeProbe,
+    def matches_runtime_type[SubjectT](
+        value: SubjectT,
         expected_type: type | tuple[type, ...],
-        *,
-        owned_payload: bool = False,
     ) -> bool:
         """Check original subjects or explicitly owned internal rule nodes.
 
         Returns:
             The resulting ``bool``.
+
         """
-        if owned_payload and isinstance(value, m.Tests.Payload):
-            if value.kind == "atom":
-                return isinstance(value.atom, expected_type)
-            return issubclass(
-                c.Tests.PAYLOAD_COLLECTION_TYPES[value.kind],
-                expected_type,
-            )
         return isinstance(value, expected_type)
 
     @staticmethod
@@ -56,6 +48,7 @@ class FlextTestsMatchersTypeGuardsMixin:
 
         Raises:
             AssertionError: If ``(actual == operand) is not equal``.
+
         """
         actual = (
             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
@@ -87,6 +80,7 @@ class FlextTestsMatchersTypeGuardsMixin:
                 params.none``; or if ``params.match is not None and (not
                 isinstance(native, str) or params.match.search(native) is None)``; or if
                 ``not matches``; or if ``not (isinstance(native, Sized))``.
+
         """
         native = (
             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(

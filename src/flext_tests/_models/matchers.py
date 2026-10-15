@@ -73,6 +73,7 @@ class FlextTestsMatchersModelsMixin:
 
             Returns:
                 The resulting ``MatchExpectedValue``.
+
             """
             if value is None or isinstance(value, ApproxBase | TypeAliasType):
                 return value
@@ -104,6 +105,7 @@ class FlextTestsMatchersModelsMixin:
 
             Raises:
                 ValueError: If Matcher mapping requires a mapping payload.
+
             """
             if value is None:
                 return None
@@ -131,6 +133,7 @@ class FlextTestsMatchersModelsMixin:
 
             Raises:
                 ValueError: If Matcher values require a sequence payload.
+
             """
             if value is None:
                 return None
@@ -160,6 +163,7 @@ class FlextTestsMatchersModelsMixin:
             Returns:
                 The resulting ``Mapping[str, FlextTestsBaseModelsMixin.Payload |
                     Callable[[p.Tests.NativeMatchValue], bool]] | None``.
+
             """
             if value is None:
                 return None
@@ -196,6 +200,7 @@ class FlextTestsMatchersModelsMixin:
                 The resulting ``p.AttributeProbe | Mapping[str,
                     FlextTestsMatchersModelsMixin.MatchRule] |
                     Sequence[FlextTestsMatchersModelsMixin.MatchRule] | None``.
+
             """
             return FlextTestsMatchersModelsMixin.MatchRule.parse_rule_fields(value)
 
@@ -287,6 +292,7 @@ class FlextTestsMatchersModelsMixin:
 
             Returns:
                 The resulting ``FlextTestsMatchersMixin.MatchRule``.
+
             """
             candidates = tuple(cast("Sequence[object]", value))
             members = tuple(item for item in candidates if isinstance(item, type))
@@ -307,6 +313,7 @@ class FlextTestsMatchersModelsMixin:
 
             Returns:
                 The resulting ``FlextTestsMatchersMixin.MatchRule``.
+
             """
             if isinstance(value, cls):
                 return value
@@ -335,6 +342,7 @@ class FlextTestsMatchersModelsMixin:
 
             Returns:
                 The resulting ``FlextTestsMatchersMixin.MatchRule``.
+
             """
             mapping_value = cast("t.JsonMapping", value)
             rule_keys = frozenset({*cls.model_fields, "is", "excludes"})
@@ -360,6 +368,7 @@ class FlextTestsMatchersModelsMixin:
                 The resulting ``p.AttributeProbe | Mapping[str,
                     FlextTestsMatchersModelsMixin.MatchRule] |
                     Sequence[FlextTestsMatchersModelsMixin.MatchRule] | None``.
+
             """
             if value is None:
                 return None
@@ -522,6 +531,7 @@ class FlextTestsMatchersModelsMixin:
             Returns:
                 The resulting ``Mapping[str, FlextTestsBaseModelsMixin.Payload] |
                     None``.
+
             """
             return FlextTestsMatchersModelsMixin.PayloadParams.own_mapping(value)
 
@@ -698,6 +708,7 @@ class FlextTestsMatchersModelsMixin:
 
             Raises:
                 ValueError: If legacy parameter normalization fails.
+
             """
             if "assertion_message" in self.model_fields_set and self.truth is None:
                 message = "assertion_message requires the native truth criterion"
@@ -749,15 +760,18 @@ class FlextTestsMatchersModelsMixin:
                 return self.model_copy(update=updates)
             return self
 
-    class ScopeParams(PayloadParams):
+    class ScopeParams(m.Value):
         """Parameters for temporary test scope configuration."""
 
-        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
+            populate_by_name=True,
+            arbitrary_types_allowed=True,
+        )
 
         settings: Annotated[
             t.MappingKV[
                 str,
-                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                p.Tests.NativeMatchValue,
             ]
             | None,
             u.Field(description="Initial configuration values."),
@@ -765,7 +779,7 @@ class FlextTestsMatchersModelsMixin:
         container: Annotated[
             t.MappingKV[
                 str,
-                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                p.Tests.NativeMatchValue,
             ]
             | None,
             u.Field(description="Initial container/service mappings."),
@@ -773,7 +787,7 @@ class FlextTestsMatchersModelsMixin:
         context: Annotated[
             t.MappingKV[
                 str,
-                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                p.Tests.NativeMatchValue,
             ]
             | None,
             u.Field(description="Initial context values."),
@@ -799,18 +813,6 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Temporary working directory."),
         ] = None
 
-        @m.field_validator("cwd", mode="before")
-        @classmethod
-        def convert_cwd(cls, value: Path | str | None) -> Path | str | None:
-            """Convert string cwd to Path.
-
-            Returns:
-                The resulting ``Path | str | None``.
-            """
-            if isinstance(value, str):
-                return Path(value)
-            return value
-
     class DeepMatchResult(m.Value):
         """Structured output for deep-match comparisons."""
 
@@ -834,48 +836,52 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Result being chained."),
         ]
 
-    class TestScope(PayloadParams):
+    class TestScope(m.Value):
         """Scope container for test configuration and runtime state."""
+
+        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
+            arbitrary_types_allowed=True
+        )
 
         settings: Annotated[
             t.MappingKV[
                 str,
-                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                p.Tests.NativeMatchValue,
             ],
             u.Field(description="Configuration dictionary."),
         ] = u.Field(
             default_factory=lambda: MappingProxyType(
                 dict[
                     str,
-                    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                    p.Tests.NativeMatchValue,
                 ](),
             ),
         )
         container: Annotated[
             t.MappingKV[
                 str,
-                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                p.Tests.NativeMatchValue,
             ],
             u.Field(description="Container/service mappings."),
         ] = u.Field(
             default_factory=lambda: MappingProxyType(
                 dict[
                     str,
-                    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                    p.Tests.NativeMatchValue,
                 ](),
             ),
         )
         context: Annotated[
             t.MappingKV[
                 str,
-                FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                p.Tests.NativeMatchValue,
             ],
             u.Field(description="Context values."),
         ] = u.Field(
             default_factory=lambda: MappingProxyType(
                 dict[
                     str,
-                    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                    p.Tests.NativeMatchValue,
                 ](),
             ),
         )

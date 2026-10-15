@@ -16,9 +16,9 @@ from __future__ import annotations
 from typing import override
 
 import pytest
+from flext_core import FlextSettings
 from flext_infra import FlextInfraConstants, config as infra_config
 
-from flext_core import FlextSettings
 from flext_tests import FlextTestsServiceBase
 from tests import m, s, tm, u
 
@@ -36,6 +36,7 @@ class TestsFlextTestsServiceBase:
 
         Returns:
             The resulting ``tuple[str, ...]``.
+
         """
         loop_scope = (
             infra_config.Infra.tooling.tools.pytest.asyncio_default_fixture_loop_scope

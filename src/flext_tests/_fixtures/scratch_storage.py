@@ -30,6 +30,7 @@ def _scratch_root(config: pytest.Config) -> Path:
 
     Returns:
         The resulting ``Path``.
+
     """
     return FlextTestsScratchStorageUtilitiesMixin.scratch_root(
         checkout_root=Path(config.rootpath),

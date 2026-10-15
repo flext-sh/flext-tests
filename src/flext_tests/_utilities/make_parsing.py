@@ -11,8 +11,8 @@ from pathlib import Path
 from typing import ClassVar, cast
 
 from flext_cli import u
-
 from flext_core import r
+
 from flext_tests import c, m, p, t
 
 
@@ -127,6 +127,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[t.StrSequence]``.
+
         """
         return FlextTestsMakeParsingUtilitiesMixin.make_parse_string_value_list(
             value,
@@ -144,6 +145,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[t.StrSequence]``.
+
         """
         return FlextTestsMakeParsingUtilitiesMixin.make_parse_string_value_list(
             data.get(field),
@@ -161,6 +163,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[t.StrSequence]``.
+
         """
         if value is None:
             return r[t.StrSequence].ok(())
@@ -182,6 +185,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[t.SequenceOf[m.Tests.MakeParam]]``.
+
         """
         if value is None:
             return r[t.SequenceOf[m.Tests.MakeParam]].ok(())
@@ -218,6 +222,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[t.SequenceOf[m.Tests.MakeMutationCondition]]``.
+
         """
         if value is None:
             return r[t.SequenceOf[m.Tests.MakeMutationCondition]].ok(())
@@ -258,6 +263,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[m.Tests.MakeMutationCondition]``.
+
         """
         name_result = FlextTestsMakeParsingUtilitiesMixin.make_require_string(
             data,
@@ -293,6 +299,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[m.Tests.MakeParam]``.
+
         """
         name_result = FlextTestsMakeParsingUtilitiesMixin.make_require_string(
             data,
@@ -342,6 +349,7 @@ class FlextTestsMakeParsingUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[t.StrPairSequence]``.
+
         """
         if value is None:
             return r[t.StrPairSequence].ok(())

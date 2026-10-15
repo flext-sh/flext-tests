@@ -22,6 +22,7 @@ class FlextTestsDomains:
 
         Returns:
             The resulting ``str``.
+
         """
         return f"{group}_{kind}_fixtures{file_extension}"
 
@@ -38,6 +39,7 @@ class FlextTestsDomains:
 
         Returns:
             The resulting ``Path``.
+
         """
         fixtures_root = fixtures_root or Path.cwd()
         return (
@@ -59,6 +61,7 @@ class FlextTestsDomains:
 
         Raises:
             FileNotFoundError: If Fixture file not found.
+
         """
         file_path = cls._resolve_fixture_path(
             group,
@@ -87,6 +90,7 @@ class FlextTestsDomains:
 
         Raises:
             ValueError: If ``text_result.failure``.
+
         """
         text_result: p.Result[str] = cli_u.Cli.files_read_text(
             cls.fixture_path(
@@ -128,6 +132,7 @@ class FlextTestsDomains:
 
         Returns:
             The resulting ``t.StrSequence``.
+
         """
         fixtures_root = fixtures_root or Path.cwd()
         if not fixtures_root.exists():
@@ -152,6 +157,7 @@ class FlextTestsDomains:
 
         Returns:
             The resulting ``t.StrSequence``.
+
         """
         fixtures_root = fixtures_root or Path.cwd()
         server_dir = fixtures_root / group
@@ -179,6 +185,7 @@ class FlextTestsDomains:
 
         Returns:
             The resulting ``t.MappingKV[str, str]``.
+
         """
         return {
             fixture_type: cls.load_fixture(
@@ -200,6 +207,7 @@ class FlextTestsDomains:
 
         Returns:
             The resulting ``t.SequenceOf[m.Tests.HandlerCaseSpec]``.
+
         """
         return [
             m.Tests.HandlerCaseSpec(
@@ -242,6 +250,7 @@ class FlextTestsDomains:
 
         Returns:
             The resulting ``t.SequenceOf[tuple[str, bool]]``.
+
         """
         return [
             ("test@example.com", True),
@@ -280,6 +289,7 @@ class FlextTestsDomains:
 
             Returns:
                 The resulting ``str``.
+
             """
             return FlextTestsDomains.load_fixture(
                 group,
@@ -302,6 +312,7 @@ class FlextTestsDomains:
 
             Returns:
                 The resulting ``t.StrSequence``.
+
             """
             return FlextTestsDomains.available_fixture_servers(
                 fixtures_root=self._fixtures_root,
@@ -312,6 +323,7 @@ class FlextTestsDomains:
 
             Returns:
                 The resulting ``t.StrSequence``.
+
             """
             return FlextTestsDomains.available_fixture_types(
                 group,
@@ -324,6 +336,7 @@ class FlextTestsDomains:
 
             Returns:
                 The resulting ``t.MappingKV[str, str]``.
+
             """
             return FlextTestsDomains.load_server_fixtures(
                 group,
@@ -336,6 +349,7 @@ class FlextTestsDomains:
 
             Returns:
                 The resulting ``t.MappingKV[str, str]``.
+
             """
             return {
                 group: self.load_fixture(group, kind)
@@ -348,6 +362,7 @@ class FlextTestsDomains:
 
             Returns:
                 The resulting ``t.MappingKV[str, t.MappingKV[str, str]]``.
+
             """
             return {
                 group: self.load_server_fixtures(group)

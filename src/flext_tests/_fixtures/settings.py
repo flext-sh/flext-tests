@@ -17,11 +17,11 @@ from __future__ import annotations
 
 import importlib
 from types import ModuleType
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Protocol, cast
 
 import pytest
-
 from flext_core import FlextContainer, FlextContext, FlextSettings, t
+
 from flext_tests import u
 from flext_tests._settings import FlextTestsSettings
 from flext_tests.case import FlextTestsCase
@@ -35,6 +35,20 @@ if TYPE_CHECKING:
 
 # pytest registers shared fixture modules at configure time. Their public
 # facades may load during registration; reset and binding happen during runtime.
+
+
+class FixtureNodeRequest(Protocol):
+    """Typed fixture-request boundary exposing the owning collection node.
+
+    ``pytest.FixtureRequest.node`` is unannotated upstream and its concrete
+    node type depends on the fixture scope; this protocol records the public
+    contract the runtime fixture consumes.
+    """
+
+    @property
+    def node(self) -> pytest.Item | pytest.Collector:
+        """The item or collector owning the current fixture context."""
+        ...
 
 
 @pytest.fixture(scope="session")
@@ -57,6 +71,7 @@ def session_runtime(
     Yields:
         An instance of ``p.Tests.SessionRuntime`` representing the isolated session
           runtime.
+
     """
     directory = tmp_path_factory.mktemp(run_namespace.token)
     runtime = u.Tests.SessionRuntime(directory)
@@ -84,6 +99,7 @@ def _bind_runtime_aliases(
         TypeError: If ``not isinstance(service_type, type) or not
             issubclass(service_type, s)``.
         AttributeError: If a ``AttributeError`` is caught.
+
     """
     # A bare top-level module (e.g. a pytester probe file) has no package
     # contract: there is no package root to resolve aliases from, so the
@@ -172,16 +188,19 @@ def reset_settings() -> Iterator[None]:
 
 
 @pytest.fixture
-def test_runtime(request: pytest.FixtureRequest, reset_settings: None) -> None:
+def test_runtime(request: FixtureNodeRequest, reset_settings: None) -> None:
     """Bind the canonical FLEXT test runtime aliases onto pytest class instances.
+
+    Args:
+        request: The typed fixture request exposing the owning collection node.
+        reset_settings: The autouse reset fixture sequencing runtime state.
 
     Raises:
         TypeError: If the pytest function does not belong to a Python module.
 
     """
     _ = reset_settings
-    # FixtureRequest.node is unannotated upstream and depends on fixture scope.
-    node: pytest.Item | pytest.Collector = request.node
+    node = request.node
     if not isinstance(node, pytest.Function):
         return
     module = node.module
@@ -204,6 +223,7 @@ def settings() -> FlextTestsSettings:
 
     Returns:
         The resulting ``FlextTestsSettings``.
+
     """
     settings_type: type[FlextTestsSettings] = importlib.import_module(
         "flext_tests",
@@ -228,6 +248,7 @@ def settings_factory() -> Callable[..., FlextSettings]:
 
     Returns:
         The resulting ``Callable[..., FlextSettings]``.
+
     """
 
     def _create[TSettings: FlextSettings](
@@ -249,6 +270,7 @@ def test_context() -> FlextContext:
 
     Returns:
         The resulting ``FlextContext``.
+
     """
     return FlextContext()
 
@@ -259,6 +281,7 @@ def clean_container() -> Iterator[p.Container]:
 
     Yields:
         Each ``p.Container``.
+
     """
     FlextContainer.reset_for_testing()
     try:
@@ -273,6 +296,7 @@ def temp_dir(tmp_path: Path) -> Path:
 
     Returns:
         The resulting ``Path``.
+
     """
     return tmp_path
 
@@ -283,6 +307,7 @@ def temp_file(temp_dir: Path) -> Path:
 
     Returns:
         The resulting ``Path``.
+
     """
     return temp_dir / "test_file.txt"
 
@@ -293,5 +318,6 @@ def sample_data() -> t.JsonMapping:
 
     Returns:
         The resulting ``t.JsonMapping``.
+
     """
     return {"string": "test_value", "number": 42, "enabled": True}

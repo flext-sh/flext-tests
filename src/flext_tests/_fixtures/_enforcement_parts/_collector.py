@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING, Self, override
 
 import pytest
 
-from flext_tests import p
 from flext_tests._fixtures._enforcement_parts import FlextTestsEnforcementItem
+from flext_tests._protocols.enforcement import FlextTestsEnforcementCollectorNodeMixin
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -19,7 +19,10 @@ if TYPE_CHECKING:
     from flext_tests import t
 
 
-class FlextTestsEnforcementCollector(pytest.Collector):
+class FlextTestsEnforcementCollector(
+    FlextTestsEnforcementCollectorNodeMixin,
+    pytest.Collector,
+):
     """Synthetic collector owning session ``FlextTestsEnforcementItem`` items."""
 
     @classmethod
@@ -28,17 +31,17 @@ class FlextTestsEnforcementCollector(pytest.Collector):
         parent: pytest.Session,
         name: str,
     ) -> Self:
-        """Build one collector through a fully typed factory boundary.
+        """Build one collector through pytest's public node factory.
 
-        Pytest's unannotated ``**kw`` forwards these exact arguments to the
-        collector constructor; the protocol records that public boundary.
+        ``from_parent`` forwards these exact arguments to the fully typed
+        collector constructor and derives the configuration and session from
+        the parent, as pytest's node creation contract requires.
 
         Returns:
             The resulting ``Self``.
 
         """
-        factory: p.Tests.EnforcementCollectorFactory[Self] = cls.from_parent
-        return factory(parent=parent, name=name)
+        return cls.from_parent(parent=parent, name=name)
 
     def __init__(
         self,

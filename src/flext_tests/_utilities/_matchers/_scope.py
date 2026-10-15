@@ -10,13 +10,11 @@ from __future__ import annotations
 
 import os
 import sys
-import warnings
 from collections.abc import Generator
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
 
-from flext_core import u
-from flext_tests import c, m, t
+from flext_tests import m, t
 from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
 
 
@@ -81,53 +79,19 @@ class FlextTestsMatchersScopeMixin:
                         sys.path[:0] = list(params.python_paths)
                         if params.cwd is not None:
                             original_cwd = Path.cwd()
-                            cwd_path = (
-                                Path(params.cwd)
-                                if u.matches_type(params.cwd, "str")
-                                else params.cwd
-                            )
-                            os.chdir(cwd_path)
-                        cfg: t.MappingKV[str, t.Tests.TestobjectSerializable] = {}
-                        if params.settings:
-                            cfg = dict(params.settings)
-                        container_dict = {
-                            k: v
-                            for k, v in (params.container or {}).items()
-                            if t.Tests.general_value(v)
-                        }
-                        context_map: t.MappingKV[
-                            str,
-                            t.Tests.TestobjectSerializable,
-                        ] = {}
-                        if params.context:
-                            context_map = dict(params.context)
-                        yield m.Tests.TestScope.model_validate({
-                            "settings": cfg,
-                            "container": container_dict,
-                            "context": context_map,
-                        })
+                            os.chdir(params.cwd)
+                        yield m.Tests.TestScope(
+                            settings=params.settings or {},
+                            container=params.container or {},
+                            context=params.context or {},
+                        )
                 finally:
                     sys.path[:] = original_python_path
                     if original_cwd is not None:
                         os.chdir(original_cwd)
                     if params.cleanup is not None:
                         for cleanup_func in params.cleanup:
-                            try:
-                                cleanup_func()
-                            except (
-                                OSError,
-                                RuntimeError,
-                                TypeError,
-                                ValueError,
-                                AttributeError,
-                            ) as e:
-                                warnings.warn(
-                                    c.Tests.ERR_SCOPE_CLEANUP_FAILED.format(
-                                        error=str(e),
-                                    ),
-                                    RuntimeWarning,
-                                    stacklevel=2,
-                                )
+                            cleanup_func()
 
 
 __all__: list[str] = ["FlextTestsMatchersScopeMixin"]

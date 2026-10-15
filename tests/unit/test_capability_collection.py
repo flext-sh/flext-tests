@@ -28,6 +28,7 @@ class TestsFlextTestsCapabilityCollection:
 
         Yields:
             Each ``pytest.Pytester``.
+
         """
         pytester.makepyprojecttoml("[tool.pytest.ini_options]\n")
         u.Cli.run_checked(

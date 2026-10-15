@@ -7,11 +7,12 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from copy import deepcopy
+from operator import eq
 from pathlib import Path
 
 import pytest
 
-from tests import c, p, r, t, tm
+from tests import c, m, p, r, t, tm
 
 
 class TestsFlextTestsMatchersValidationMixin:
@@ -26,8 +27,11 @@ class TestsFlextTestsMatchersValidationMixin:
             tm.that([], truth=True)
         result = r[int].ok(1)
         tm.that(result, eq=1)
+        # Native equality between a Result and a raw scalar is False; the
+        # callable form expresses that cross-type comparison without the
+        # statically impossible operator usage pyright rejects.
         with pytest.raises(AssertionError):
-            tm.that(result == 1, truth=True)
+            tm.that(eq(result, 1), truth=True)
 
     @staticmethod
     def test_native_truth_evaluates_failure_message_only_on_failure(
@@ -64,8 +68,12 @@ class TestsFlextTestsMatchersValidationMixin:
             tm.that(1, truth=True, eq=1)
         with pytest.raises(ValueError, match="requires the native truth"):
             tm.that(1, assertion_message="unused")
-        with pytest.raises(ValueError, match="requires the original subject"):
-            tm.that(1, truth=True, owned_payload=True)
+
+    @staticmethod
+    def test_native_matcher_rejects_undeclared_criteria() -> None:
+        """A typed operand never opens the matcher to arbitrary option names."""
+        with pytest.raises(m.ValidationError):
+            tm.that(1, undeclared_criterion=True)
 
     @staticmethod
     def test_assert_valid_email_passes() -> None:

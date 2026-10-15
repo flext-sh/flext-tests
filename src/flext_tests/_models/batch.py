@@ -89,7 +89,7 @@ class FlextTestsBatchModelsMixin:
         @u.computed_field
         @property
         def failure_count(self) -> int:
-            """Alias for failed count."""
+            """Number of failed entries in the batch."""
             failed_count: int = self.failed
             return failed_count
 

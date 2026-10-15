@@ -53,6 +53,7 @@ class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixi
 
         Returns:
             The resulting ``Self``.
+
         """
         return cls(base_dir=base_dir)
 
@@ -65,6 +66,7 @@ class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixi
 
         Returns:
             The resulting ``p.Result[p.Base]``.
+
         """
         return r[p.Base].fail(
             "Use specific file methods: create, compare, read, info, ...",

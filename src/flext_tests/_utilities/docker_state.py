@@ -10,8 +10,8 @@ from collections.abc import Callable
 from pathlib import Path
 
 from flext_cli import u
-
 from flext_core import r
+
 from flext_tests import c, m, p, t
 from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
 
@@ -59,6 +59,7 @@ class FlextTestsDockerStateUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerState]``.
+
         """
         unprovisioned = FlextTestsDockerStateUtilitiesMixin._unprovisioned(
             container_name,
@@ -96,6 +97,7 @@ class FlextTestsDockerStateUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerState]``.
+
         """
         return r[m.Tests.ContainerState].from_validation(
             {"container_name": container_name},
@@ -112,6 +114,7 @@ class FlextTestsDockerStateUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerState]``.
+
         """
         if state.container_name == container_name:
             return r[m.Tests.ContainerState].ok(state)
@@ -138,6 +141,7 @@ class FlextTestsDockerStateUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerState]``.
+
         """
         named = FlextTestsDockerStateUtilitiesMixin._unprovisioned(container_name)
         if named.failure:
@@ -189,6 +193,7 @@ class FlextTestsDockerStateUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerState]``.
+
         """
         return u.Cli.atomic_write_text_file(state_file, state.model_dump_json()).map(
             lambda _: state,
@@ -202,6 +207,7 @@ class FlextTestsDockerStateUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[t.SequenceOf[m.Tests.ContainerState]]``.
+
         """
         states: list[m.Tests.ContainerState] = []
         record_files = (

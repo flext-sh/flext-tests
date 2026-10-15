@@ -124,5 +124,6 @@ def run_namespace_again(run_namespace: m.Tests.TestNamespace) -> m.Tests.TestNam
 
     Returns:
         The resulting ``m.Tests.TestNamespace``.
+
     """
     return run_namespace

@@ -24,6 +24,7 @@ def _created_paths_default() -> list[Path]:
 
     Returns:
         The resulting ``list[Path]``.
+
     """
     return []
 
@@ -50,6 +51,7 @@ class FlextTestsFilesLifecycleMixin:
 
         Returns:
             The resulting ``Self``.
+
         """
         return self
 
@@ -107,6 +109,7 @@ class FlextTestsFilesLifecycleMixin:
 
         Returns:
             The resulting ``Path``.
+
         """
         target_dir = directory or self.base_dir
         if target_dir is not None:

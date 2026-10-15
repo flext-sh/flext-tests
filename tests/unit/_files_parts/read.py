@@ -108,6 +108,7 @@ class TestsFlextTestsFilesReadMixin:
 
         Raises:
             TypeError: If Expected error to be not None.
+
         """
         manager = tf(base_dir=tmp_path)
         path = tmp_path / "nonexistent.txt"

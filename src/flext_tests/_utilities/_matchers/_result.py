@@ -6,10 +6,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import MutableMapping
-from typing import cast, overload
+from collections.abc import Callable, MutableMapping
+from typing import TypeAliasType, overload
 
 from flext_core import p as core_p, u
+
 from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsPayloadUtilities
 from flext_tests._utilities._matchers import (
@@ -36,6 +37,7 @@ class FlextTestsMatchersResultMixin:
 
                 Returns:
                     The resulting ``m.Tests.Chain[TResult]``.
+
                 """
                 return m.Tests.Chain(result=result)
 
@@ -48,6 +50,7 @@ class FlextTestsMatchersResultMixin:
 
                 Returns:
                     The resulting ``str``.
+
                 """
                 params = m.Tests.FailParams.model_validate(kwargs)
                 err: str = FlextTestsResultUtilitiesMixin.assert_failure(result)
@@ -66,6 +69,7 @@ class FlextTestsMatchersResultMixin:
                         is not None and (not u.chk(err,
                         m.GuardCheckSpec(ends=params.ends)))``; or if ``params.match is
                         not None and params.match.search(err) is None``.
+
                 """
                 if not any(
                     getattr(params, name)
@@ -118,6 +122,7 @@ class FlextTestsMatchersResultMixin:
                 Raises:
                     AssertionError: If ``params.code is not None and result.error_code
                         != params.code``; or if ``item not in actual_code``.
+
                 """
                 if params.code is not None and result.error_code != params.code:
                     raise AssertionError(
@@ -156,6 +161,7 @@ class FlextTestsMatchersResultMixin:
                     AssertionError: If ``key not in actual_data``; or if
                         ``FlextTestsPayloadUtilities.to_match_value(actual_data[key]) !=
                         FlextTestsPayloadUtilities.to_match_value(expected_value)``.
+
                 """
                 if params.data is None:
                     return
@@ -198,6 +204,7 @@ class FlextTestsMatchersResultMixin:
                 Returns:
                     The resulting ``tuple[TResult | p.Tests.Payload, p.Tests.Payload |
                         None]``.
+
                 """
                 if params.path is None:
                     return result_value, None
@@ -224,10 +231,11 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def ok_preserves_result_identity(params: m.Tests.OkParams) -> bool:
-                """True when no structural extraction kwargs are set (return TResult).
+                """Return True when no structural extraction kwargs are set.
 
                 Returns:
                     The resulting ``bool``.
+
                 """
                 return all(
                     getattr(params, name) is None
@@ -257,6 +265,7 @@ class FlextTestsMatchersResultMixin:
 
                 Raises:
                     AssertionError: If ``(native is None) is not params.none``.
+
                 """
                 matchers = FlextTestsMatchersResultMixin.Tests.Matchers
                 presence_only = params.none is not None and all(
@@ -302,6 +311,7 @@ class FlextTestsMatchersResultMixin:
                     AssertionError: If ``not
                         FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(native,
                         params.is_)``.
+
                 """
                 if params.is_ is not None:
                     native = (
@@ -326,34 +336,85 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             @overload
-            def ok[TResult](result: core_p.ResultView[TResult]) -> TResult: ...
+            def ok[TResult](
+                result: core_p.ResultView[TResult],
+                *,
+                path: None = None,
+                eq: TResult
+                | p.Tests.ApproxLike
+                | TypeAliasType
+                | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
+                ne: TResult
+                | p.Tests.ApproxLike
+                | TypeAliasType
+                | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
+                where: Callable[[TResult], bool] | None = None,
+                **kwargs: t.Tests.MatcherOption,
+            ) -> TResult: ...
 
             @staticmethod
             @overload
             def ok[TResult](
                 result: core_p.ResultView[TResult],
-                **kwargs: p.AttributeProbe,
-            ) -> TResult | p.Tests.NativeMatchValue: ...
+                *,
+                path: t.Tests.PathSpec,
+                eq: p.Tests.NativeMatchValue
+                | p.Tests.ApproxLike
+                | TypeAliasType
+                | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
+                ne: p.Tests.NativeMatchValue
+                | p.Tests.ApproxLike
+                | TypeAliasType
+                | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
+                where: Callable[[TResult], bool] | None = None,
+                **kwargs: t.Tests.MatcherOption,
+            ) -> p.Tests.NativeMatchValue: ...
 
             @staticmethod
             def ok[TResult](
                 result: core_p.ResultView[TResult],
-                **kwargs: p.AttributeProbe,
+                *,
+                path: t.Tests.PathSpec | None = None,
+                eq: TResult
+                | p.Tests.NativeMatchValue
+                | p.Tests.ApproxLike
+                | TypeAliasType
+                | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
+                ne: TResult
+                | p.Tests.NativeMatchValue
+                | p.Tests.ApproxLike
+                | TypeAliasType
+                | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
+                where: Callable[[TResult], bool] | None = None,
+                **kwargs: t.Tests.MatcherOption,
             ) -> TResult | p.Tests.NativeMatchValue:
-                # mro-j47u: matchers observe the protocol and preserve source identity.
-                if not kwargs:
-                    return FlextTestsResultUtilitiesMixin.assert_success(result)
-                params = m.Tests.OkParams.model_validate(kwargs)
+                """Validate native success values; only explicit paths select a value."""
+                params = m.Tests.OkParams.model_validate({"path": path, **kwargs})
                 matchers = FlextTestsMatchersResultMixin.Tests.Matchers
-                result_value: TResult | p.Tests.Payload = (
-                    FlextTestsResultUtilitiesMixin.assert_success(
-                        result,
-                        error_msg=params.msg,
-                    )
+                original = FlextTestsResultUtilitiesMixin.assert_success(
+                    result,
+                    error_msg=params.msg,
                 )
+                if where is not None and not where(original):
+                    raise AssertionError(
+                        params.msg
+                        or c.Tests.ERR_PREDICATE_FAILED.format(value=original),
+                    )
+                result_value: TResult | p.Tests.Payload = original
                 result_value, extracted_payload = matchers.ok_extract_path(
                     result_value,
                     params,
+                )
+                comparison_value = (
+                    FlextTestsPayloadUtilities.to_match_value(extracted_payload)
+                    if extracted_payload is not None
+                    else original
+                )
+                FlextTestsMatchersThatMixin.Tests.Matchers.that(
+                    comparison_value,
+                    eq=eq,
+                    ne=ne,
+                    msg=params.msg,
                 )
                 result_value = matchers.ok_validate_scalar(
                     result_value,
@@ -376,7 +437,7 @@ class FlextTestsMatchersResultMixin:
                     # No structural extraction was requested, so ok_extract_path
                     # returned the success value unchanged; the subject keeps its
                     # TResult identity across the scalar/type validators.
-                    return cast("TResult", result_value)
+                    return original
                 result_payload = matchers.ok_payload(
                     result,
                     result_value,
@@ -389,8 +450,10 @@ class FlextTestsMatchersResultMixin:
                     result_payload,
                     params,
                 )
-                return FlextTestsPayloadUtilities.to_match_value(
-                    result_payload,
+                return (
+                    FlextTestsPayloadUtilities.to_match_value(result_payload)
+                    if path is not None
+                    else original
                 )
 
             @staticmethod
@@ -470,6 +533,7 @@ class FlextTestsMatchersResultMixin:
 
                 Raises:
                     AssertionError: If ``not match_result.matched``.
+
                 """
                 if params.deep is None:
                     return result_value

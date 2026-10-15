@@ -12,6 +12,7 @@ from typing import Self
 
 import flext_core
 from flext_core import FlextContainer
+
 from flext_tests import FlextTestsSettings, m, p, t
 
 
@@ -27,6 +28,7 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](
         Raises:
             TypeError: If ``settings_type is None``; or if ``not
                 issubclass(settings_type, FlextTestsSettings)``.
+
         """
         settings_type = cls.runtime_bootstrap_options().settings_type
         if settings_type is None:
@@ -61,6 +63,7 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](
 
         Returns:
             The resulting ``Self``.
+
         """
         return cls.with_settings(cls.fetch_settings().clone(**overrides))
 
@@ -102,6 +105,7 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](
 
         Returns:
             The resulting ``m.RuntimeBootstrapOptions``.
+
         """
         return m.RuntimeBootstrapOptions(settings_type=FlextTestsSettings)
 

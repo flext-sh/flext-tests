@@ -37,6 +37,7 @@ class FlextTestsFilesUtilitiesMixin:
 
         Returns:
             The resulting ``str``.
+
         """
         detected_format: str = u.Cli.files_detect_format_from_content(
             content,
@@ -51,6 +52,7 @@ class FlextTestsFilesUtilitiesMixin:
 
         Returns:
             The resulting ``str``.
+
         """
         detected_format: str = u.Cli.files_detect_format_from_path(path, fmt)
         return detected_format
@@ -63,6 +65,7 @@ class FlextTestsFilesUtilitiesMixin:
 
         Returns:
             The resulting ``str``.
+
         """
         value = size
         for unit in c.Tests.SIZE_UNITS:

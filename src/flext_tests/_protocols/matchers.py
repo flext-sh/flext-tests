@@ -29,5 +29,17 @@ class FlextTestsMatchersProtocolsMixin(Protocol):
     class ApproxLike(Protocol):
         """Structural stand-in for pytest approximation objects in type positions."""
 
+        @property
+        def expected(self) -> FlextTestsPayloadProtocolsMixin.NativeMatchValue: ...
+
+        @property
+        def rel(self) -> float | None: ...
+
+        @property
+        def abs(self) -> float | None: ...
+
+        @property
+        def nan_ok(self) -> bool: ...
+
 
 __all__: list[str] = ["FlextTestsMatchersProtocolsMixin"]
