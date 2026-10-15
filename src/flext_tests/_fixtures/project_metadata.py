@@ -28,6 +28,7 @@ def _find_project_root() -> Path:
 
     Raises:
         FileNotFoundError: If no pyproject.toml found above.
+
     """
     cwd = Path.cwd().resolve()
     for parent in (cwd, *cwd.parents):
@@ -44,6 +45,7 @@ def project_metadata() -> p.ProjectMetadata:
 
     Returns:
         The resulting ``p.ProjectMetadata``.
+
     """
     document = u.read_project_document_cached(_find_project_root())
     return u.build_project_metadata(_find_project_root(), document)
@@ -55,6 +57,7 @@ def project_tool_flext() -> p.ProjectToolFlext:
 
     Returns:
         The resulting ``p.ProjectToolFlext``.
+
     """
     document = u.read_project_document_cached(_find_project_root())
     return u.build_project_metadata(_find_project_root(), document).flext

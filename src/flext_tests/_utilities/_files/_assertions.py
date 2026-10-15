@@ -42,6 +42,7 @@ class FlextTestsFilesAssertionsMixin(FlextTestsFilesBatchMixin):
         Raises:
             AssertionError: If ``not path.exists()``; or if a ``AssertionError`` is
                 caught.
+
         """
         params = (
             options

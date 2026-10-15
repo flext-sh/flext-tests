@@ -11,8 +11,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_cli import u
-
 from flext_core import r
+
 from flext_tests import c, m, p, t
 from flext_tests._utilities._files import FlextTestsFilesAssertionsMixin
 from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
@@ -70,6 +70,7 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
 
         Returns:
             The resulting ``m.Tests.FileInfo``.
+
         """
         stat = params.path.stat()
         size = stat.st_size
@@ -116,6 +117,7 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
 
         Returns:
             The resulting ``tuple[str, int, bool, str, str]``.
+
         """
         try:
             text = path.read_text(encoding=c.Tests.DEFAULT_ENCODING, errors="replace")

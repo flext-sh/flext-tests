@@ -12,8 +12,8 @@ from pathlib import Path
 from typing import Annotated, cast, overload
 
 from flext_cli import u
-
 from flext_core import r
+
 from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsPayloadUtilities
 from flext_tests._utilities._files import FlextTestsFilesCreationMixin
@@ -64,6 +64,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
 
         Returns:
             The resulting ``p.Result[t.Tests.ReadContent] | p.Result[TModelRead]``.
+
         """
         if model_cls is not None:
             return r[TModelRead].fail(error)
@@ -175,6 +176,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         Raises:
             OSError: If ``csv_result.failure``.
             ValueError: If ``parsed_yaml.failure``.
+
         """
         content: t.Tests.ReadContent
         match actual_fmt:

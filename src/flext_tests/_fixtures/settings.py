@@ -20,8 +20,8 @@ from types import ModuleType
 from typing import TYPE_CHECKING, Protocol, cast
 
 import pytest
-
 from flext_core import FlextContainer, FlextContext, FlextSettings, t
+
 from flext_tests import u
 from flext_tests._settings import FlextTestsSettings
 from flext_tests.case import FlextTestsCase
@@ -71,6 +71,7 @@ def session_runtime(
     Yields:
         An instance of ``p.Tests.SessionRuntime`` representing the isolated session
           runtime.
+
     """
     directory = tmp_path_factory.mktemp(run_namespace.token)
     runtime = u.Tests.SessionRuntime(directory)
@@ -98,6 +99,7 @@ def _bind_runtime_aliases(
         TypeError: If ``not isinstance(service_type, type) or not
             issubclass(service_type, s)``.
         AttributeError: If a ``AttributeError`` is caught.
+
     """
     # A bare top-level module (e.g. a pytester probe file) has no package
     # contract: there is no package root to resolve aliases from, so the
@@ -221,6 +223,7 @@ def settings() -> FlextTestsSettings:
 
     Returns:
         The resulting ``FlextTestsSettings``.
+
     """
     settings_type: type[FlextTestsSettings] = importlib.import_module(
         "flext_tests",
@@ -245,6 +248,7 @@ def settings_factory() -> Callable[..., FlextSettings]:
 
     Returns:
         The resulting ``Callable[..., FlextSettings]``.
+
     """
 
     def _create[TSettings: FlextSettings](
@@ -266,6 +270,7 @@ def test_context() -> FlextContext:
 
     Returns:
         The resulting ``FlextContext``.
+
     """
     return FlextContext()
 
@@ -276,6 +281,7 @@ def clean_container() -> Iterator[p.Container]:
 
     Yields:
         Each ``p.Container``.
+
     """
     FlextContainer.reset_for_testing()
     try:
@@ -290,6 +296,7 @@ def temp_dir(tmp_path: Path) -> Path:
 
     Returns:
         The resulting ``Path``.
+
     """
     return tmp_path
 
@@ -300,6 +307,7 @@ def temp_file(temp_dir: Path) -> Path:
 
     Returns:
         The resulting ``Path``.
+
     """
     return temp_dir / "test_file.txt"
 
@@ -310,5 +318,6 @@ def sample_data() -> t.JsonMapping:
 
     Returns:
         The resulting ``t.JsonMapping``.
+
     """
     return {"string": "test_value", "number": 42, "enabled": True}

@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from flext_core import r
+
 from flext_tests import c, p
 from flext_tests._utilities import FlextTestsWorkspaceCleanupGitUtilitiesMixin
 
@@ -48,6 +49,7 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[Path]``.
+
         """
         try:
             root = request.repository_root.resolve(strict=True)
@@ -71,6 +73,7 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[p.Cli.CommandOutput]``.
+
         """
         git_result = cls._git(root, arguments)
         if git_result.failure:
@@ -86,6 +89,7 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[Path]``.
+
         """
         output_result = cls._successful_git_output(
             root,
@@ -116,6 +120,7 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[Path]``.
+
         """
         root_result = cls._validated_request_root(request)
         if root_result.failure:
@@ -132,6 +137,7 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[Path]``.
+
         """
         if path.is_absolute() or not path.parts:
             return r[Path].fail(f"cleanup residue must be a relative path: {path}")
@@ -148,6 +154,7 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[Path]``.
+
         """
         lexical = root.joinpath(relative_path)
         try:
@@ -167,6 +174,7 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         if any(part in cls._PROTECTED_COMPONENTS for part in relative_path.parts):
             return r[bool].fail(
@@ -210,6 +218,7 @@ class FlextTestsWorkspaceCleanupPathsUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         current = root
         for part in relative_path.parts[:-1]:

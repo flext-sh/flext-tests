@@ -43,6 +43,7 @@ class FlextTestsKube(FlextTestsDocker):
 
         Returns:
             The resulting ``Self``.
+
         """
         return cls.shared(
             c.Tests.KIND_CONTAINER_NAME,
@@ -55,6 +56,7 @@ class FlextTestsKube(FlextTestsDocker):
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerConfig]``.
+
         """
         target = self.target_config
         if target is None:
@@ -72,6 +74,7 @@ class FlextTestsKube(FlextTestsDocker):
 
         Returns:
             The resulting ``p.Result[str]``.
+
         """
         target_result = self._require_cluster_target()
         if target_result.failure:
@@ -110,6 +113,7 @@ class FlextTestsKube(FlextTestsDocker):
 
         Returns:
             The resulting ``p.Result[str]``.
+
         """
         target_result = self._require_cluster_target()
         if target_result.failure:
@@ -121,6 +125,7 @@ class FlextTestsKube(FlextTestsDocker):
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         target = self.target_config
         if target is None or target.compose_file is None:
@@ -166,6 +171,7 @@ class FlextTestsKube(FlextTestsDocker):
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInfo]``.
+
         """
         target = self.target_config
         if target is None:
@@ -199,6 +205,7 @@ class FlextTestsKube(FlextTestsDocker):
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInfo]``.
+
         """
         container_name = target.container_name
         info = (

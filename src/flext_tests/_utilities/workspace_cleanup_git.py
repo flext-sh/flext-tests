@@ -9,9 +9,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from flext_core import r
 from flext_infra import c, m, u
 
-from flext_core import r
 from flext_tests import p
 
 if TYPE_CHECKING:
@@ -32,6 +32,7 @@ class FlextTestsWorkspaceCleanupGitUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[p.Cli.CommandOutput]``.
+
         """
         result = u.Cli.run_raw(
             [c.Infra.GIT, *arguments],
@@ -50,6 +51,7 @@ class FlextTestsWorkspaceCleanupGitUtilitiesMixin:
 
         Returns:
             The resulting ``str``.
+
         """
         detail = output.stderr.strip()
         if not detail:

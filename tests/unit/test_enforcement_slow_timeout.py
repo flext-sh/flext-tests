@@ -40,6 +40,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
 
         Returns:
             The resulting ``pytest.RunResult``.
+
         """
         variable = "PYTEST_DISABLE_PLUGIN_AUTOLOAD"
         previous = os.environ.get(variable)

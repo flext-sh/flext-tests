@@ -9,8 +9,8 @@ from __future__ import annotations
 from typing import assert_type
 
 import pytest
-
 from flext_core import p as core_p, r as core_r
+
 from tests import m, r, t, tm
 
 

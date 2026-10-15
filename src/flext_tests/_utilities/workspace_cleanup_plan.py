@@ -11,8 +11,8 @@ from pathlib import Path
 from typing import Literal
 
 from flext_cli import u
-
 from flext_core import r, t
+
 from flext_tests import m, p
 from flext_tests._utilities import FlextTestsWorkspaceCleanupInspectUtilitiesMixin
 
@@ -37,6 +37,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[m.Tests.WorkspaceCleanupCandidate]``.
+
         """
         lexical_result = cls._lexical_path(root, relative_path)
         if lexical_result.failure:
@@ -77,6 +78,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         for index, parent in enumerate(candidates):
             for child in candidates[index + 1 :]:
@@ -96,6 +98,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[Path]``.
+
         """
         relative_result = cls._relative_path(declared)
         if relative_result.failure:
@@ -118,6 +121,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         lexical_result = cls._lexical_path(root, relative_path)
         if lexical_result.failure:
@@ -140,6 +144,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[p.Tests.WorkspaceCleanupPlan]``.
+
         """
         if not isinstance(request, m.Tests.WorkspaceCleanupRequest):
             return r[p.Tests.WorkspaceCleanupPlan].fail(
@@ -178,6 +183,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         fresh_result = cls._candidate(root, candidate.relative_path)
         if fresh_result.failure:
@@ -211,6 +217,7 @@ class FlextTestsWorkspaceCleanupPlanUtilitiesMixin(
 
         Returns:
             The resulting ``p.Result[p.Tests.WorkspaceCleanupReport]``.
+
         """
         if not isinstance(plan, m.Tests.WorkspaceCleanupPlan):
             return r[p.Tests.WorkspaceCleanupReport].fail(

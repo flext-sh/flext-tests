@@ -194,6 +194,7 @@ class FlextTestsCapabilityPlugin:
 
         Raises:
             Exception: If a ``pytest.skip.Exception`` is caught.
+
         """
         try:
             pytest.skip(reason)
@@ -212,6 +213,7 @@ class FlextTestsCapabilityPlugin:
 
         Returns:
             The sanitized report.
+
         """
         report = yield
         report.user_properties = [

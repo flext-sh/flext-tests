@@ -31,6 +31,7 @@ class FlextTestsMatchersTypeGuardsMixin:
 
         Returns:
             The resulting ``bool``.
+
         """
         return isinstance(value, expected_type)
 
@@ -47,6 +48,7 @@ class FlextTestsMatchersTypeGuardsMixin:
 
         Raises:
             AssertionError: If ``(actual == operand) is not equal``.
+
         """
         actual = (
             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
@@ -78,6 +80,7 @@ class FlextTestsMatchersTypeGuardsMixin:
                 params.none``; or if ``params.match is not None and (not
                 isinstance(native, str) or params.match.search(native) is None)``; or if
                 ``not matches``; or if ``not (isinstance(native, Sized))``.
+
         """
         native = (
             FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(

@@ -10,6 +10,7 @@ from collections.abc import Callable, MutableMapping
 from typing import TypeAliasType, overload
 
 from flext_core import p as core_p, u
+
 from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsPayloadUtilities
 from flext_tests._utilities._matchers import (
@@ -36,6 +37,7 @@ class FlextTestsMatchersResultMixin:
 
                 Returns:
                     The resulting ``m.Tests.Chain[TResult]``.
+
                 """
                 return m.Tests.Chain(result=result)
 
@@ -48,6 +50,7 @@ class FlextTestsMatchersResultMixin:
 
                 Returns:
                     The resulting ``str``.
+
                 """
                 params = m.Tests.FailParams.model_validate(kwargs)
                 err: str = FlextTestsResultUtilitiesMixin.assert_failure(result)
@@ -66,6 +69,7 @@ class FlextTestsMatchersResultMixin:
                         is not None and (not u.chk(err,
                         m.GuardCheckSpec(ends=params.ends)))``; or if ``params.match is
                         not None and params.match.search(err) is None``.
+
                 """
                 if not any(
                     getattr(params, name)
@@ -118,6 +122,7 @@ class FlextTestsMatchersResultMixin:
                 Raises:
                     AssertionError: If ``params.code is not None and result.error_code
                         != params.code``; or if ``item not in actual_code``.
+
                 """
                 if params.code is not None and result.error_code != params.code:
                     raise AssertionError(
@@ -156,6 +161,7 @@ class FlextTestsMatchersResultMixin:
                     AssertionError: If ``key not in actual_data``; or if
                         ``FlextTestsPayloadUtilities.to_match_value(actual_data[key]) !=
                         FlextTestsPayloadUtilities.to_match_value(expected_value)``.
+
                 """
                 if params.data is None:
                     return
@@ -198,6 +204,7 @@ class FlextTestsMatchersResultMixin:
                 Returns:
                     The resulting ``tuple[TResult | p.Tests.Payload, p.Tests.Payload |
                         None]``.
+
                 """
                 if params.path is None:
                     return result_value, None
@@ -228,6 +235,7 @@ class FlextTestsMatchersResultMixin:
 
                 Returns:
                     The resulting ``bool``.
+
                 """
                 return all(
                     getattr(params, name) is None
@@ -257,6 +265,7 @@ class FlextTestsMatchersResultMixin:
 
                 Raises:
                     AssertionError: If ``(native is None) is not params.none``.
+
                 """
                 matchers = FlextTestsMatchersResultMixin.Tests.Matchers
                 presence_only = params.none is not None and all(
@@ -302,6 +311,7 @@ class FlextTestsMatchersResultMixin:
                     AssertionError: If ``not
                         FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(native,
                         params.is_)``.
+
                 """
                 if params.is_ is not None:
                     native = (
@@ -523,6 +533,7 @@ class FlextTestsMatchersResultMixin:
 
                 Raises:
                     AssertionError: If ``not match_result.matched``.
+
                 """
                 if params.deep is None:
                     return result_value

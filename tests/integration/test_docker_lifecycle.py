@@ -76,6 +76,7 @@ class TestsFlextTestsDockerLifecycle:
 
         Returns:
             The resulting ``p.Tests.ContainerInitializer``.
+
         """
 
         def append(info: m.Tests.ContainerInfo) -> p.Result[bool]:
@@ -95,6 +96,7 @@ class TestsFlextTestsDockerLifecycle:
 
         Returns:
             The resulting ``m.Tests.ContainerInfo``.
+
         """
         deadline = time.monotonic() + 15
         while True:
@@ -110,6 +112,7 @@ class TestsFlextTestsDockerLifecycle:
 
         Yields:
             The unique compose project name.
+
         """
         name = f"flext-tests-lc-{secrets.token_hex(4)}"
         yield name

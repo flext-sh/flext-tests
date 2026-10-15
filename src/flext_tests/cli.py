@@ -20,6 +20,7 @@ def main() -> None:
 
     Raises:
         SystemExit: Always.
+
     """
     raise SystemExit(_cli_docker.main())
 

@@ -31,6 +31,7 @@ class FlextTestsResultUtilitiesMixin:
         Raises:
             AssertionError: If Expected failure but got success; or if Expected error
                 but got None; or if Expected error containing.
+
         """
         if result.success:
             msg = f"Expected failure but got success: {result.value}"
@@ -58,6 +59,7 @@ class FlextTestsResultUtilitiesMixin:
 
         Raises:
             AssertionError: If ``not result.success``; or if Expected success value.
+
         """
         # mro-p68a.17.3.2.1.7: observation stays covariant across result payloads.
         if not result.success:

@@ -39,6 +39,7 @@ class TestsFlextTestsUtilities(FlextTestsUtilities):
 
                 Returns:
                     The resulting ``p.Result[str]``.
+
                 """
                 return r.ok(self.port.echo("hi"))
 

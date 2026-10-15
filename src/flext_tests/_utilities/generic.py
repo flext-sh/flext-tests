@@ -10,8 +10,8 @@ from collections.abc import MutableSequence
 from typing import TYPE_CHECKING, Annotated
 
 from flext_cli import m, u
-
 from flext_core import r
+
 from flext_tests import p
 
 if TYPE_CHECKING:

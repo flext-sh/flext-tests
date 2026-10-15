@@ -60,6 +60,7 @@ class FlextTestsTestContextUtilitiesMixin:
 
             Raises:
                 ValueError: If the path has escaped its original physical allocation.
+
             """
             allocation = self._source.parent
             state = allocation.stat(follow_symlinks=False)
@@ -95,6 +96,7 @@ class FlextTestsTestContextUtilitiesMixin:
 
             Raises:
                 ValueError: If the checkout leaves its own area.
+
             """
             root = self._root
             if root is not None:
@@ -163,6 +165,7 @@ class FlextTestsTestContextUtilitiesMixin:
 
             Raises:
                 ValueError: If the runtime root escaped its original allocation.
+
             """
             root = self._root
             if root is None:
@@ -186,6 +189,7 @@ class FlextTestsTestContextUtilitiesMixin:
 
             Raises:
                 BaseExceptionGroup: If the case and the cleanup both failed.
+
             """
             failure = sys.exception()
             try:
@@ -223,6 +227,7 @@ class FlextTestsTestContextUtilitiesMixin:
                 RuntimeError: If the session runtime leases are nested.
                 ValueError: If the provision callback is incompatible or the
                     environment is invalid.
+
             """
             thread = get_ident()
             if self._active_thread == thread:
@@ -325,6 +330,7 @@ class FlextTestsTestContextUtilitiesMixin:
 
             Raises:
                 TimeoutError: If ``time.monotonic() >= deadline``.
+
             """
             timeout = self.timeout_seconds or 0.0
             deadline = time.monotonic() + timeout

@@ -11,8 +11,8 @@ from pathlib import Path
 from typing import Annotated
 
 from flext_cli import u
-
 from flext_core import r
+
 from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsPayloadUtilities
 from flext_tests._utilities._files import FlextTestsFilesContextsMixin
@@ -65,6 +65,7 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
 
         Returns:
             The payload-owned content.
+
         """
         if isinstance(content, Mapping):
             return {
@@ -84,6 +85,7 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
 
         Returns:
             The resulting ``p.Result[Path]``.
+
         """
         name, content = name_and_content
         path = Path(content) if isinstance(content, (Path, str)) else Path(name)

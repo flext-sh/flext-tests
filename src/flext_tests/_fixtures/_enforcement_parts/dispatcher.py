@@ -43,6 +43,7 @@ class FlextTestsEnforcementDispatcher:
 
         Returns:
             The resulting ``Path | None``.
+
         """
         for candidate in (start, *start.parents):
             if all(
@@ -58,6 +59,7 @@ class FlextTestsEnforcementDispatcher:
 
         Returns:
             The resulting ``frozenset[str]``.
+
         """
         if not raw:
             return frozenset()
@@ -93,6 +95,7 @@ class FlextTestsEnforcementDispatcher:
 
         Returns:
             The resulting ``m.Tests.EnforcementDispatcherConfig``.
+
         """
         stashed = config.stash.get(cls.stash_config, None)
         if stashed is not None:
@@ -132,6 +135,7 @@ class FlextTestsEnforcementDispatcher:
         Raises:
             UsageError: If FLEXT slow timeout policy; or if FLEXT slow timeout policy
                 requires the pytest-timeout plugin.
+
         """
         raw_timeout = str(
             config.getini(c.Tests.ENFORCEMENT_SLOW_TIMEOUT_INI_OPTION)
@@ -168,6 +172,7 @@ class FlextTestsEnforcementDispatcher:
 
         Raises:
             UsageError: If FLEXT slow timeout policy.
+
         """
         slow_timeout = cls.slow_budget_seconds(config)
         for item in items if slow_timeout is not None else ():

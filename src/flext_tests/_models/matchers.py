@@ -73,6 +73,7 @@ class FlextTestsMatchersModelsMixin:
 
             Returns:
                 The resulting ``MatchExpectedValue``.
+
             """
             if value is None or isinstance(value, ApproxBase | TypeAliasType):
                 return value
@@ -104,6 +105,7 @@ class FlextTestsMatchersModelsMixin:
 
             Raises:
                 ValueError: If Matcher mapping requires a mapping payload.
+
             """
             if value is None:
                 return None
@@ -131,6 +133,7 @@ class FlextTestsMatchersModelsMixin:
 
             Raises:
                 ValueError: If Matcher values require a sequence payload.
+
             """
             if value is None:
                 return None
@@ -160,6 +163,7 @@ class FlextTestsMatchersModelsMixin:
             Returns:
                 The resulting ``Mapping[str, FlextTestsBaseModelsMixin.Payload |
                     Callable[[p.Tests.NativeMatchValue], bool]] | None``.
+
             """
             if value is None:
                 return None
@@ -196,6 +200,7 @@ class FlextTestsMatchersModelsMixin:
                 The resulting ``p.AttributeProbe | Mapping[str,
                     FlextTestsMatchersModelsMixin.MatchRule] |
                     Sequence[FlextTestsMatchersModelsMixin.MatchRule] | None``.
+
             """
             return FlextTestsMatchersModelsMixin.MatchRule.parse_rule_fields(value)
 
@@ -287,6 +292,7 @@ class FlextTestsMatchersModelsMixin:
 
             Returns:
                 The resulting ``FlextTestsMatchersMixin.MatchRule``.
+
             """
             candidates = tuple(cast("Sequence[object]", value))
             members = tuple(item for item in candidates if isinstance(item, type))
@@ -307,6 +313,7 @@ class FlextTestsMatchersModelsMixin:
 
             Returns:
                 The resulting ``FlextTestsMatchersMixin.MatchRule``.
+
             """
             if isinstance(value, cls):
                 return value
@@ -335,6 +342,7 @@ class FlextTestsMatchersModelsMixin:
 
             Returns:
                 The resulting ``FlextTestsMatchersMixin.MatchRule``.
+
             """
             mapping_value = cast("t.JsonMapping", value)
             rule_keys = frozenset({*cls.model_fields, "is", "excludes"})
@@ -360,6 +368,7 @@ class FlextTestsMatchersModelsMixin:
                 The resulting ``p.AttributeProbe | Mapping[str,
                     FlextTestsMatchersModelsMixin.MatchRule] |
                     Sequence[FlextTestsMatchersModelsMixin.MatchRule] | None``.
+
             """
             if value is None:
                 return None
@@ -522,6 +531,7 @@ class FlextTestsMatchersModelsMixin:
             Returns:
                 The resulting ``Mapping[str, FlextTestsBaseModelsMixin.Payload] |
                     None``.
+
             """
             return FlextTestsMatchersModelsMixin.PayloadParams.own_mapping(value)
 
@@ -698,6 +708,7 @@ class FlextTestsMatchersModelsMixin:
 
             Raises:
                 ValueError: If legacy parameter normalization fails.
+
             """
             if "assertion_message" in self.model_fields_set and self.truth is None:
                 message = "assertion_message requires the native truth criterion"

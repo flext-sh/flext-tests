@@ -13,8 +13,8 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from flext_cli import u
-
 from flext_core import r
+
 from flext_tests import c, m, p, t
 
 
@@ -38,6 +38,7 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
 
         Returns:
             The resulting ``c.Tests.ContainerAction``.
+
         """
         if info is None:
             return c.Tests.ContainerAction.CREATE
@@ -69,6 +70,7 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInfo]``.
+
         """
         codes = c.Tests.DockerErrorCode
         name = state.container_name
@@ -125,6 +127,7 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
 
         Returns:
             The resulting ``str``.
+
         """
         return compose_file.stem.replace(".", "-").replace("_", "-")
 
@@ -137,6 +140,7 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[str]``.
+
         """
         compose_file = target.compose_file
         if compose_file is None:
@@ -187,6 +191,7 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
 
         Returns:
             The resulting ``m.Tests.ContainerInfo``.
+
         """
         bindings = inspect.network_settings.ports or {}
         return m.Tests.ContainerInfo(
@@ -217,6 +222,7 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[t.MappingKV[str, t.SecretStr]]``.
+
         """
         entries = dict(
             entry.split(c.Tests.DOCKER_ENV_SEPARATOR, 1)
@@ -244,6 +250,7 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
 
         Returns:
             The resulting ``p.Result[bool]``.
+
         """
         for key, secret in environment.items():
             value = secret.get_secret_value()
@@ -270,6 +277,7 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
 
         Raises:
             OSError: If ``failure is None``.
+
         """
         if not environment:
             yield ()

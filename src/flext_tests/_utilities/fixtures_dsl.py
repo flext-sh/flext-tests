@@ -49,6 +49,7 @@ class FlextTestsFixturesDSLMixin:
 
         Returns:
             The resulting ``Path``.
+
         """
         root = cls._root()
         return root / group / f"{group}_{kind}_fixtures{cls._FILE_EXTENSION}"
@@ -66,6 +67,7 @@ class FlextTestsFixturesDSLMixin:
 
         Raises:
             FileNotFoundError: If the resolved fixture file does not exist.
+
         """
         fp = cls._resolve_path(group, kind)
         if not fp.exists():
@@ -83,6 +85,7 @@ class FlextTestsFixturesDSLMixin:
 
         Returns:
             The resulting ``str``.
+
         """
         return cls.path(group, kind).read_text(encoding="utf-8")
 
@@ -96,6 +99,7 @@ class FlextTestsFixturesDSLMixin:
 
         Returns:
             The resulting ``bool``.
+
         """
         return cls._resolve_path(group, kind).exists()
 
@@ -105,6 +109,7 @@ class FlextTestsFixturesDSLMixin:
 
         Returns:
             The resulting ``t.StrSequence``.
+
         """
         root = cls._root()
         if not root.exists():
@@ -120,6 +125,7 @@ class FlextTestsFixturesDSLMixin:
 
         Returns:
             The resulting ``t.StrSequence``.
+
         """
         root = cls._root()
         server_dir = root / group
@@ -141,6 +147,7 @@ class FlextTestsFixturesDSLMixin:
 
         Returns:
             The resulting ``t.MappingKV[str, str]``.
+
         """
         return {kind: cls.load(group, kind) for kind in cls.kinds(group)}
 
@@ -150,6 +157,7 @@ class FlextTestsFixturesDSLMixin:
 
         Returns:
             The resulting ``t.MappingKV[str, str]``.
+
         """
         return {
             server: cls.load(server, kind)
@@ -163,6 +171,7 @@ class FlextTestsFixturesDSLMixin:
 
         Returns:
             The resulting ``t.MappingKV[str, t.MappingKV[str, str]]``.
+
         """
         return {server: cls.for_group(server) for server in cls.servers()}
 
@@ -172,6 +181,7 @@ class FlextTestsFixturesDSLMixin:
 
         Returns:
             The resulting ``t.StrPairSequence``.
+
         """
         return [
             (server, cls.load(server, kind))
@@ -185,6 +195,7 @@ class FlextTestsFixturesDSLMixin:
 
         Returns:
             The resulting ``t.SequenceOf[tuple[str, str, str]]``.
+
         """
         return [
             (server, kind, cls.load(server, kind))

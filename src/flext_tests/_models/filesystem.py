@@ -152,6 +152,7 @@ class FlextTestsFilesystemModelsMixin:
 
             Returns:
                 The resulting ``str``.
+
             """
             if isinstance(value, str):
                 return value.strip()
@@ -193,6 +194,7 @@ class FlextTestsFilesystemModelsMixin:
 
             Returns:
                 The resulting ``Path``.
+
             """
             return Path(value) if isinstance(value, str) else value
 
@@ -215,6 +217,7 @@ class FlextTestsFilesystemModelsMixin:
 
             Returns:
                 The resulting ``Path``.
+
             """
             return Path(value)
 

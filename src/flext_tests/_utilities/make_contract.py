@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_core import r
+
 from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsMakeParsingUtilitiesMixin
 
@@ -23,6 +24,7 @@ class FlextTestsFlextUtilitiesMakeContract:
 
         Returns:
             The resulting ``p.Result[bool] | None``.
+
         """
         if not command.mutates:
             return None
@@ -45,6 +47,7 @@ class FlextTestsFlextUtilitiesMakeContract:
 
         Returns:
             The resulting ``p.Result[bool] | None``.
+
         """
         if command.path.suffix not in c.Tests.MAKE_COMMAND_SUFFIXES:
             return r[bool].fail(
@@ -70,6 +73,7 @@ class FlextTestsFlextUtilitiesMakeContract:
 
         Returns:
             The resulting ``p.Result[bool] | None``.
+
         """
         if not command.target:
             return None
@@ -113,6 +117,7 @@ class FlextTestsFlextUtilitiesMakeContract:
 
             Returns:
                 The resulting ``p.Result[bool]``.
+
             """
             for param in command.params:
                 value = FlextTestsMakeContractUtilitiesMixin.make_param_value(
@@ -141,6 +146,7 @@ class FlextTestsFlextUtilitiesMakeContract:
 
             Returns:
                 The resulting ``p.Result[bool]``.
+
             """
             param_by_name = {param.name: param for param in command.params}
             mutation_failure = (
@@ -180,6 +186,7 @@ class FlextTestsFlextUtilitiesMakeContract:
 
             Returns:
                 The resulting ``p.Result[bool]``.
+
             """
             if not command.mutates_when:
                 return r[bool].ok(value=True)
@@ -217,6 +224,7 @@ class FlextTestsFlextUtilitiesMakeContract:
 
             Returns:
                 The resulting ``p.Result[bool]``.
+
             """
             if not registry.commands_by_verb:
                 return r[bool].fail("no command found in scripts/cmd/<verb>/<what>")
@@ -250,6 +258,7 @@ class FlextTestsFlextUtilitiesMakeContract:
 
             Returns:
                 The resulting ``p.Result[bool]``.
+
             """
             if command.what != c.Tests.MAKE_DEFAULT_COMMAND and command.aliases:
                 return r[bool].fail(
@@ -269,6 +278,7 @@ class FlextTestsFlextUtilitiesMakeContract:
 
             Returns:
                 The resulting ``p.Result[bool]``.
+
             """
             all_command = commands[c.Tests.MAKE_DEFAULT_COMMAND]
             what_param = next(
@@ -305,6 +315,7 @@ class FlextTestsFlextUtilitiesMakeContract:
 
             Returns:
                 The resulting ``p.Result[str]``.
+
             """
             resolved = registry.aliases_by_name.get(verb, verb)
             if resolved not in registry.commands_by_verb:

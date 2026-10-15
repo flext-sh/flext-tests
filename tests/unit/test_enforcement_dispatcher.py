@@ -36,6 +36,7 @@ class TestsFlextTestsEnforcementDispatcher:
 
         Returns:
             The resulting ``Path``.
+
         """
         root = tmp_path / "ws"
         root.mkdir()
@@ -65,6 +66,7 @@ class TestsFlextTestsEnforcementDispatcher:
 
         Returns:
             The resulting ``Path``.
+
         """
         project = workspace / "flext-core"
         project.mkdir(parents=True, exist_ok=True)
@@ -96,6 +98,7 @@ class TestsFlextTestsEnforcementDispatcher:
 
         Returns:
             The resulting ``pytest.RunResult``.
+
         """
         return pytester.runpytest_subprocess(
             "--collect-only",

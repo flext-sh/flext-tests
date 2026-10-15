@@ -22,7 +22,6 @@ from types import FrameType, GenericAlias, ModuleType
 from typing import Literal
 
 from flext_cli import m, t, t as it
-
 from flext_core import p
 
 

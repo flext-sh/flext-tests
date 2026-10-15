@@ -25,6 +25,7 @@ def docker_manager(tmp_path: Path) -> FlextTestsDocker:
 
     Returns:
         The resulting ``FlextTestsDocker``.
+
     """
     return FlextTestsDocker(
         repository_root=Path(__file__).parent / "fixtures",

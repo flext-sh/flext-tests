@@ -9,6 +9,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from flext_core import r
+
 from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsMakeRegistryUtilitiesMixin
 
@@ -22,6 +23,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
         Returns:
             The resulting ``str``.
+
         """
         parts: list[str] = []
         for param in params:
@@ -63,6 +65,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
         Returns:
             The resulting ``str``.
+
         """
         return "; ".join(
             f"{condition.name}={('|'.join(condition.values))}"
@@ -85,6 +88,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
         Returns:
             The resulting ``str``.
+
         """
         lines = ["flext - make <verb> WHAT=<action> [PARAM=value ...]", ""]
         for verb in FlextTestsMakeRegistryUtilitiesMixin.make_registry_verbs(registry):
@@ -117,6 +121,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
         Returns:
             The resulting ``p.Result[str]``.
+
         """
         verb_result = FlextTestsMakeRegistryUtilitiesMixin.make_registry_resolve_verb(
             registry,
@@ -187,6 +192,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
         Returns:
             The resulting ``p.Result[str]``.
+
         """
         command_result = FlextTestsMakeRegistryUtilitiesMixin.make_registry_command(
             registry,
@@ -250,6 +256,7 @@ class FlextTestsMakeRenderingUtilitiesMixin(FlextTestsMakeRegistryUtilitiesMixin
 
         Returns:
             The resulting ``str``.
+
         """
         lines = [
             "DRY-RUN: nenhuma mutacao executada.",

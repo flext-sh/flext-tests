@@ -31,6 +31,7 @@ class FlextTestsEnforcementValidators:
 
         Raises:
             TypeError: If engine findings lack the scan-report contract.
+
         """
         report = context.infra_findings
         if report is None:

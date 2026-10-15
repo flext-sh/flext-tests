@@ -64,6 +64,7 @@ class FlextTestsDockerSurfaceParts(_PartsBase):
 
         Returns:
             The resulting ``p.Result[str]``.
+
         """
         compose_path = self._compose_path(compose_file)
         return self._compose_down(
@@ -82,6 +83,7 @@ class FlextTestsDockerSurfaceParts(_PartsBase):
 
         Returns:
             The resulting ``p.Result[str]``.
+
         """
         compose_path = self._compose_path(compose_file)
         return self._compose_up(
@@ -99,6 +101,7 @@ class FlextTestsDockerSurfaceParts(_PartsBase):
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInfo]``.
+
         """
         return self._inspect(container_name).map(
             lambda inspect: u.Tests.container_info(container_name, inspect),
@@ -112,6 +115,7 @@ class FlextTestsDockerSurfaceParts(_PartsBase):
 
         Returns:
             The resulting ``p.Result[m.Tests.ContainerInfo]``.
+
         """
         return self.fetch_container_info(container_name)
 
@@ -127,6 +131,7 @@ class FlextTestsDockerSurfaceParts(_PartsBase):
 
         Returns:
             The resulting ``p.Result[t.MappingKV[str, t.SecretStr]]``.
+
         """
         return self._inspect(container_name).flat_map(
             lambda inspect: u.Tests.container_environment(
@@ -145,6 +150,7 @@ class FlextTestsDockerSurfaceParts(_PartsBase):
 
         Returns:
             The resulting ``p.Result[str]``.
+
         """
         _ = network_name
         result = self.compose_up(compose_file)
