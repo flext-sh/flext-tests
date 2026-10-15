@@ -388,7 +388,24 @@ class FlextTestsMatchersResultMixin:
                 where: Callable[[TResult], bool] | None = None,
                 **kwargs: t.Tests.MatcherOption,
             ) -> TResult | p.Tests.NativeMatchValue:
-                """Validate native success values; only explicit paths select a value."""
+                """Validate native success values; only explicit paths select a value.
+
+                Args:
+                    result: The result object to validate.
+                    path: The explicit path to select a value from the result.
+                    eq: The expected value for comparison.
+                    ne: The value that should not match the result.
+                    where: A callable predicate to further validate the result.
+                    **kwargs: Additional matcher options.
+
+                Returns:
+                    The validated result value or a native match value if applicable.
+
+                Raises:
+                    AssertionError: If the `where` predicate fails or other validation
+                      checks fail.
+
+                """
                 params = m.Tests.OkParams.model_validate({"path": path, **kwargs})
                 matchers = FlextTestsMatchersResultMixin.Tests.Matchers
                 original = FlextTestsResultUtilitiesMixin.assert_success(
