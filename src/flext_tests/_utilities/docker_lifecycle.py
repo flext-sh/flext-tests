@@ -311,3 +311,6 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
                 if failure is None:
                     raise
                 failure.add_note(f"creation env file cleanup failed: {cleanup_error}")
+
+
+__all__: list[str] = ["FlextTestsDockerLifecycleUtilitiesMixin"]

@@ -9,3 +9,6 @@ from __future__ import annotations
 
 class FlextTestsEnforcementViolationError(Exception):
     """Raised by ``FlextTestsEnforcementItem.runtest`` when violations are present."""
+
+
+__all__: list[str] = ["FlextTestsEnforcementViolationError"]

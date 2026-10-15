@@ -109,3 +109,6 @@ class FlextTestsBatchModelsMixin:
                 return 0.0
             succeeded: int = self.succeeded
             return (succeeded / total) * 100.0
+
+
+__all__: list[str] = ["FlextTestsBatchModelsMixin"]

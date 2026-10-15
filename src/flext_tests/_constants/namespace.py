@@ -19,3 +19,6 @@ class FlextTestsConstantsNamespace:
     """Lowercase base36 digits of every encoded token field."""
     NAMESPACE_CHECKOUT_DIGEST_LENGTH: ClassVar[int] = 8
     NAMESPACE_WORKER_CODE_LENGTH: ClassVar[int] = 2
+
+
+__all__: list[str] = ["FlextTestsConstantsNamespace"]
