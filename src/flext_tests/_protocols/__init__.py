@@ -14,7 +14,14 @@ from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tests._protocols.base import FlextTestsProtocolsBase
+    from flext_tests._protocols.docker import FlextTestsDockerProtocolsMixin
+    from flext_tests._protocols.enforcement import (
+        FlextTestsEnforcementCollectorNodeMixin,
+        FlextTestsEnforcementItemNodeMixin,
+        FlextTestsEnforcementProtocolsMixin,
+    )
     from flext_tests._protocols.matchers import FlextTestsMatchersProtocolsMixin
+    from flext_tests._protocols.payload import FlextTestsPayloadProtocolsMixin
     from flext_tests._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
     from flext_tests._protocols.workspace_cleanup import (
         FlextTestsWorkspaceCleanupProtocols,
@@ -22,7 +29,12 @@ if TYPE_CHECKING:
 
 
 __all__: tuple[str, ...] = (
+    "FlextTestsDockerProtocolsMixin",
+    "FlextTestsEnforcementCollectorNodeMixin",
+    "FlextTestsEnforcementItemNodeMixin",
+    "FlextTestsEnforcementProtocolsMixin",
     "FlextTestsMatchersProtocolsMixin",
+    "FlextTestsPayloadProtocolsMixin",
     "FlextTestsProtocolsBase",
     "FlextTestsValueFactoryProtocolsMixin",
     "FlextTestsWorkspaceCleanupProtocols",
@@ -32,7 +44,12 @@ install_lazy_exports(
     __name__,
     globals(),
     MappingProxyType({
+        "FlextTestsDockerProtocolsMixin": ".docker",
+        "FlextTestsEnforcementCollectorNodeMixin": ".enforcement",
+        "FlextTestsEnforcementItemNodeMixin": ".enforcement",
+        "FlextTestsEnforcementProtocolsMixin": ".enforcement",
         "FlextTestsMatchersProtocolsMixin": ".matchers",
+        "FlextTestsPayloadProtocolsMixin": ".payload",
         "FlextTestsProtocolsBase": ".base",
         "FlextTestsValueFactoryProtocolsMixin": ".valuefactory",
         "FlextTestsWorkspaceCleanupProtocols": ".workspace_cleanup",
