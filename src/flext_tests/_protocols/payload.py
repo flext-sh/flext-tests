@@ -123,3 +123,4 @@ class FlextTestsPayloadProtocolsMixin:
         | FlextTestsPayloadProtocolsMixin.NativeMapping
         | None
     )
+__all__: list[str] = ["FlextTestsPayloadProtocolsMixin"]
