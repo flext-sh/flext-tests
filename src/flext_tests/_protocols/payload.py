@@ -44,6 +44,7 @@ class FlextTestsPayloadProtocolsMixin:
         def __getitem__(
             self,
             index: int,
+            /,
         ) -> (
             t.Tests.PayloadAtom
             | p.Model
@@ -80,6 +81,7 @@ class FlextTestsPayloadProtocolsMixin:
         def __getitem__(
             self,
             key: str,
+            /,
         ) -> (
             t.Tests.PayloadAtom
             | p.Model

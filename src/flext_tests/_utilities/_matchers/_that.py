@@ -155,6 +155,36 @@ class FlextTestsMatchersThatMixin:
                 )
 
             @classmethod
+            def _validate_subject_only(
+                cls,
+                value: p.AttributeProbe,
+                params: m.Tests.ThatParams,
+            ) -> bool:
+                """Apply presence and attribute rules to the original subject.
+
+                Returns:
+                    Whether the subject-only branch completed validation.
+
+                Raises:
+                    AssertionError: The original presence or attribute rule failed.
+
+                """
+                if not cls._is_subject_only(value, params):
+                    return False
+                if params.none is not None and (value is None) is not params.none:
+                    raise AssertionError(
+                        params.msg
+                        or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=value),
+                    )
+                if params.attrs_match is not None:
+                    FlextTestsMatchersThatMixin.apply_attribute_rules(
+                        value,
+                        params.attrs_match,
+                        inherited_msg=params.msg,
+                    )
+                return True
+
+            @classmethod
             def _result_subject[SubjectT](
                 cls,
                 subject: SubjectT,
@@ -786,18 +816,7 @@ class FlextTestsMatchersThatMixin:
                     return
                 cls._validate_declared_types(value, params)
                 cls._validate_attrs(value, params)
-                if cls._is_subject_only(value, params):
-                    if params.none is not None and (value is None) is not params.none:
-                        raise AssertionError(
-                            params.msg
-                            or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=value),
-                        )
-                    if params.attrs_match is not None:
-                        FlextTestsMatchersThatMixin.apply_attribute_rules(
-                            value,
-                            params.attrs_match,
-                            inherited_msg=params.msg,
-                        )
+                if cls._validate_subject_only(value, params):
                     return
                 subject = cls._result_subject(value, params)
                 subject_payload = FlextTestsPayloadUtilities.to_payload(
