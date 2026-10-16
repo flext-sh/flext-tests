@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from copy import deepcopy
-from operator import eq
+from operator import eq, truediv
 from pathlib import Path
 
 import pytest
@@ -56,7 +56,7 @@ class TestsFlextTestsMatchersValidationMixin:
     def test_native_truth_preserves_message_exception_and_empty_message() -> None:
         """Message failures escape unchanged; an empty message remains empty."""
         with pytest.raises(ZeroDivisionError):
-            tm.that(False, truth=True, assertion_message=1 / 0)
+            tm.that(False, truth=True, assertion_message=truediv(1, 0))
         with pytest.raises(AssertionError) as raised:
             tm.that(False, truth=True, assertion_message="")
         tm.that(raised.value.args, eq=("",))

@@ -43,6 +43,8 @@ class FlextTestsMatchersTypesMixin:
             | p.Tests.Payload
             | Callable[[p.Tests.NativeMatchValue], bool],
         ]
+        | p.Tests.MatcherCriteriaMapping
+        | p.Tests.MatcherCriteriaSequence
         | t.StrSequence
         | LengthSpec
     )

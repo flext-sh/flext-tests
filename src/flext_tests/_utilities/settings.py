@@ -70,3 +70,6 @@ class FlextTestsConfigHelpersUtilitiesMixin(FlextSettings):
         finally:
             os.environ.clear()
             os.environ.update(original_environment)
+
+
+__all__: list[str] = ["FlextTestsConfigHelpersUtilitiesMixin"]
