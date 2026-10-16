@@ -105,7 +105,8 @@ class TestsFlextTestsMatchersThatCollectionsMixin(
     def test_that_with_empty_parameter() -> None:
         """Test tm.that() with empty parameter."""
         tm.that(["a"], empty=False)
-        tm.that([], empty=True)
+        empty: list[str] = []
+        tm.that(empty, empty=True)
 
     @staticmethod
     def test_that_with_has_parameter() -> None:

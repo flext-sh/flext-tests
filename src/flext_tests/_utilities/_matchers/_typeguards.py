@@ -23,8 +23,8 @@ class FlextTestsMatchersTypeGuardsMixin:
     """Preserve native comparison semantics at the matcher boundary."""
 
     @staticmethod
-    def matches_runtime_type[SubjectT](
-        value: SubjectT,
+    def matches_runtime_type(
+        value: p.AttributeProbe,
         expected_type: type | tuple[type, ...],
     ) -> bool:
         """Check original subjects or explicitly owned internal rule nodes.

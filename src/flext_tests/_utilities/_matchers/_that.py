@@ -49,9 +49,9 @@ class FlextTestsMatchersThatMixin:
                 return params
 
             @classmethod
-            def _validate_declared_types[SubjectT](
+            def _validate_declared_types(
                 cls,
-                value: SubjectT,
+                value: p.AttributeProbe,
                 params: m.Tests.ThatParams,
             ) -> None:
                 """Validate declared types with the caller's explicit ownership.
@@ -90,8 +90,8 @@ class FlextTestsMatchersThatMixin:
                         )
 
             @staticmethod
-            def _validate_is_type[SubjectT](
-                value: SubjectT,
+            def _validate_is_type(
+                value: p.AttributeProbe,
                 params: m.Tests.ThatParams,
                 value_type_name: str,
             ) -> None:

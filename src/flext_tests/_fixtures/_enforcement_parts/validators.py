@@ -53,16 +53,14 @@ class FlextTestsEnforcementValidators:
             grouped.setdefault((finding.rule_id, finding.repository), []).append(
                 finding,
             )
-        severity_key = c.Tests.ENFORCEMENT_FINDING_SEVERITY_KEY
-        message_key = c.Tests.ENFORCEMENT_FINDING_MESSAGE_KEY
         return [
             FlextTestsEnforcementItem.create(
                 collector,
                 name=f"{rule_id}[{project}]",
                 violation=m.Tests.EnforcementViolation(
                     rule_id=rule_id,
-                    severity=str(findings[0].payload[severity_key]),
-                    description=str(findings[0].payload[message_key]),
+                    severity=findings[0].severity,
+                    description=str(findings[0].message),
                     project=project,
                     violations=tuple(
                         f"{finding.file.as_posix()} | {finding.text.splitlines()[0]}"

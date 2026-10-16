@@ -10,17 +10,13 @@ import sys
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, ClassVar, Final, Self, TypeAliasType, cast
+from typing import Annotated, ClassVar, Self, TypeAliasType, cast
 
-import pytest
 from flext_cli import m, u
 
 from flext_tests import p, t
 from flext_tests._models import FlextTestsFlextModelsBase
 from flext_tests._utilities import FlextTestsPayloadUtilities
-
-ApproxBase: Final[type] = type(pytest.approx(0))
-"""Approximation sentinel base resolved through pytest's public ``approx`` API."""
 
 type MatchExpectedValue = (
     FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
@@ -75,7 +71,7 @@ class FlextTestsMatchersModelsMixin:
                 The resulting ``MatchExpectedValue``.
 
             """
-            if value is None or isinstance(value, ApproxBase | TypeAliasType):
+            if value is None or isinstance(value, p.Tests.ApproxLike | TypeAliasType):
                 return value
             return FlextTestsPayloadUtilities.to_payload(
                 value,
