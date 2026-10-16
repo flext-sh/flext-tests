@@ -9,11 +9,42 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable, Iterator
+
+    from flext_tests import t
     from flext_tests._protocols.payload import FlextTestsPayloadProtocolsMixin
 
 
 class FlextTestsMatchersProtocolsMixin(Protocol):
     """Structural matcher capabilities without recursive type aliases."""
+
+    class MatcherCriteriaMapping(Protocol):
+        """Read nested native matcher criteria independently of payload values."""
+
+        def __len__(self) -> int:
+            """Return the number of declared criteria."""
+            ...
+
+        def items(
+            self,
+        ) -> Iterable[tuple[str | int, t.Tests.MatcherOption]]:
+            """Iterate selectors and their unchanged native criteria."""
+            ...
+
+    class MatcherCriteriaSequence(Protocol):
+        """Read ordered native criteria without converting their operands."""
+
+        def __len__(self) -> int:
+            """Return the number of positional criteria."""
+            ...
+
+        def __iter__(self) -> Iterator[t.Tests.MatcherOption]:
+            """Iterate the original criteria."""
+            ...
+
+        def __getitem__(self, index: int, /) -> t.Tests.MatcherOption:
+            """Read one positional criterion."""
+            ...
 
     @runtime_checkable
     class MatchPredicate(Protocol):

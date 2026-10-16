@@ -10,7 +10,7 @@ import sys
 from collections.abc import Callable, Mapping, MutableMapping, Sequence
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, ClassVar, Final, TypeAliasType, cast
+from typing import Annotated, ClassVar, Final, Self, TypeAliasType, cast
 
 import pytest
 from flext_cli import m, u
@@ -180,7 +180,6 @@ class FlextTestsMatchersModelsMixin:
         @m.field_validator(
             "paths",
             "items",
-            "attrs_match",
             mode="before",
             check_fields=False,
         )
@@ -204,7 +203,23 @@ class FlextTestsMatchersModelsMixin:
             """
             return FlextTestsMatchersModelsMixin.MatchRule.parse_rule_fields(value)
 
-    class MatchRule(PayloadParams):
+        @m.field_validator("attrs_match", mode="before", check_fields=False)
+        @classmethod
+        def parse_attribute_rules(
+            cls,
+            value: p.AttributeProbe,
+        ) -> p.AttributeProbe:
+            """Parse rules whose callbacks receive unchanged attribute values.
+
+            Returns:
+                Rules parameterized by the original attribute capability.
+
+            """
+            return FlextTestsMatchersModelsMixin.MatchRule[
+                p.AttributeProbe
+            ].parse_rule_fields(value)
+
+    class MatchRule[SubjectT = p.Tests.NativeMatchValue](PayloadParams):
         """One matcher rule parsed from a scalar, type, predicate, or mapping."""
 
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
@@ -275,7 +290,7 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Required length."),
         ] = None
         where: Annotated[
-            Callable[[p.Tests.NativeMatchValue], bool] | None,
+            Callable[[SubjectT], bool] | None,
             u.Field(description="Predicate applied to the subject."),
         ] = None
         msg: Annotated[
@@ -287,7 +302,7 @@ class FlextTestsMatchersModelsMixin:
         def parse_type_tuple(
             cls,
             value: p.AttributeProbe,
-        ) -> FlextTestsMatchersModelsMixin.MatchRule:
+        ) -> Self:
             """Parse a tuple operand into its nominal type-membership rule.
 
             Returns:
@@ -308,7 +323,7 @@ class FlextTestsMatchersModelsMixin:
         def parse(
             cls,
             value: p.AttributeProbe,
-        ) -> FlextTestsMatchersModelsMixin.MatchRule:
+        ) -> Self:
             """Parse one public matcher rule into its nominal representation.
 
             Returns:
@@ -325,19 +340,14 @@ class FlextTestsMatchersModelsMixin:
                 # A bare type keeps its nominal form.
                 return cls(is_=value)
             if callable(value):
-                return cls(
-                    where=cast(
-                        "Callable[[p.Tests.NativeMatchValue], bool]",
-                        value,
-                    ),
-                )
+                return cls.model_validate({"where": value})
             return cls(eq=cls.own_operand(value))
 
         @classmethod
         def parse_mapping(
             cls,
             value: p.AttributeProbe,
-        ) -> FlextTestsMatchersModelsMixin.MatchRule:
+        ) -> Self:
             """Parse a mapping operand into a validated or owned-equality rule.
 
             Returns:
@@ -356,12 +366,7 @@ class FlextTestsMatchersModelsMixin:
         def parse_rule_fields(
             cls,
             value: p.AttributeProbe,
-        ) -> (
-            p.AttributeProbe
-            | Mapping[str, FlextTestsMatchersModelsMixin.MatchRule]
-            | Sequence[FlextTestsMatchersModelsMixin.MatchRule]
-            | None
-        ):
+        ) -> p.AttributeProbe | Mapping[str, Self] | Sequence[Self] | None:
             """Parse paths, items, and attribute rule collections before validation.
 
             Returns:
@@ -466,7 +471,8 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Sequence item assertions by selector."),
         ] = None
         attrs_match: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule[p.AttributeProbe]]
+            | None,
             u.Field(description="Attribute assertions by attribute path."),
         ] = None
         where: Annotated[
@@ -689,7 +695,8 @@ class FlextTestsMatchersModelsMixin:
             u.Field(description="Items."),
         ] = None
         attrs_match: Annotated[
-            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
+            Mapping[str, FlextTestsMatchersModelsMixin.MatchRule[p.AttributeProbe]]
+            | None,
             u.Field(description="Attr rules."),
         ] = None
         where: Annotated[

@@ -757,15 +757,15 @@ class FlextTestsMatchersThatMixin:
                 return value
 
             @classmethod
-            def that[SubjectT](
+            def that[SubjectT, ExpectedT](
                 cls,
                 value: SubjectT,
                 *,
-                eq: SubjectT
+                eq: ExpectedT
                 | p.Tests.ApproxLike
                 | TypeAliasType
                 | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
-                ne: SubjectT
+                ne: ExpectedT
                 | p.Tests.ApproxLike
                 | TypeAliasType
                 | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
@@ -922,13 +922,12 @@ class FlextTestsMatchersThatMixin:
         raise ValueError(msg)
 
     @staticmethod
-    def _rule_kwargs(
-        rule: m.Tests.MatchRule,
+    def _rule_kwargs[SubjectT](
+        rule: m.Tests.MatchRule[SubjectT],
     ) -> Mapping[
         str,
         p.Tests.Payload
         | t.Tests.PayloadAtom
-        | p.Tests.MatchPredicate
         | t.Tests.LengthSpec
         | t.RegexPattern
         | type
@@ -939,21 +938,21 @@ class FlextTestsMatchersThatMixin:
         return {
             key: getattr(parsed, key)
             for key in type(parsed).model_fields
-            if key in parsed.model_fields_set or getattr(parsed, key) is not None
+            if key != "where"
+            and (key in parsed.model_fields_set or getattr(parsed, key) is not None)
         }
 
     @classmethod
-    def _apply_rule(
+    def _apply_rule[SubjectT](
         cls,
-        subject: p.AttributeProbe,
-        rule: m.Tests.MatchRule,
+        subject: SubjectT,
+        rule: m.Tests.MatchRule[SubjectT],
         *,
         inherited_msg: str | None = None,
     ) -> None:
         kwargs = dict(cls._rule_kwargs(rule))
         kwargs.pop("eq", None)
         kwargs.pop("ne", None)
-        kwargs.pop("where", None)
         if inherited_msg is not None and "msg" not in kwargs:
             kwargs["msg"] = inherited_msg
         if not hasattr(cls.Tests.Matchers, "that"):
@@ -1064,7 +1063,7 @@ class FlextTestsMatchersThatMixin:
     def apply_attribute_rules(
         cls,
         subject: p.AttributeProbe,
-        rules: Mapping[str, m.Tests.MatchRule],
+        rules: Mapping[str, m.Tests.MatchRule[p.AttributeProbe]],
         *,
         inherited_msg: str | None = None,
     ) -> None:
