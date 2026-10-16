@@ -1,3 +1,4 @@
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Protocols for FLEXT tests.
 
 Provides FlextTestsProtocols, extending p and FlextCoreProtocols
@@ -12,13 +13,13 @@ from __future__ import annotations
 from flext_cli import FlextCliProtocols
 
 from flext_tests._protocols import (
+    FlextTestsDockerProtocolsMixin,
+    FlextTestsEnforcementProtocolsMixin,
     FlextTestsMatchersProtocolsMixin,
+    FlextTestsPayloadProtocolsMixin,
+    FlextTestsValueFactoryProtocolsMixin,
     FlextTestsWorkspaceCleanupProtocols,
 )
-from flext_tests._protocols.docker import FlextTestsDockerProtocolsMixin
-from flext_tests._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
-from flext_tests._protocols.payload import FlextTestsPayloadProtocolsMixin
-from flext_tests._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
 
 
 class FlextTestsProtocols(FlextCliProtocols):
