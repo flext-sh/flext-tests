@@ -10,6 +10,8 @@ import os
 
 import pytest
 
+from flext_infra import config
+
 from tests import tm
 
 
@@ -46,10 +48,11 @@ class TestsFlextTestsSlowTimeoutPolicy:
         variable = "PYTEST_DISABLE_PLUGIN_AUTOLOAD"
         previous = os.environ.get(variable)
         os.environ[variable] = "1"
+        enforcement = config.Infra.tooling.tools.pytest.enforcement_plugin
         plugins = (
-            ("-p", "pytest_timeout", "-p", "flext_tests.enforcement_plugin")
+            ("-p", "pytest_timeout", "-p", enforcement)
             if include_timeout_plugin
-            else ("-p", "flext_tests.enforcement_plugin")
+            else ("-p", enforcement)
         )
         try:
             return pytester.runpytest_subprocess(

@@ -13,9 +13,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from importlib.metadata import entry_points
+from importlib import import_module
+from importlib.metadata import EntryPoint, distribution
+from inspect import getattr_static
+from pathlib import Path
 
 import pytest
+from flext_infra import config
 
 from tests import c, tm, u
 
@@ -28,20 +32,38 @@ class TestsFlextTestsEnforcementPlugin:
     # only its explicit owner plugins.
 
     @staticmethod
+    def _declared_pytest_entries() -> tuple[EntryPoint, ...]:
+        """Round-trip CUSTOM declarations through their installed distribution."""
+        root = Path(__file__).resolve().parents[2]
+        metadata = u.build_project_metadata(root, u.read_project_document_cached(root))
+        document = tm.ok(u.Cli.toml_read_json(root / "pyproject.toml"))
+        declared = u.Cli.toml_mapping_path(
+            document,
+            ("project", "entry-points", "pytest11"),
+        )
+        if declared is None:
+            pytest.fail("The project must declare its pytest11 plugin objects")
+        entries = tuple(
+            entry
+            for entry in distribution(metadata.project.name).entry_points
+            if entry.group == "pytest11"
+        )
+        tm.that({entry.name: entry.value for entry in entries}, eq=declared)
+        tm.that(bool(entries), eq=True)
+        return entries
+
+    @staticmethod
     def test_flext_pytest11_entrypoints_have_one_package_owner() -> None:
-        """The flext-tests distribution publishes exactly its two pytest plugins."""
-        names = {
-            entry.name
-            for entry in entry_points(group="pytest11")
-            if entry.dist is not None and entry.dist.name == "flext-tests"
-        }
-        tm.that(names, eq={"flext_tests", "flext_tests_enforcement"})
+        """Installed plugin identities and targets match their CUSTOM owner."""
+        TestsFlextTestsEnforcementPlugin._declared_pytest_entries()
 
     @staticmethod
     def test_flext_pytest11_entrypoint_load_defers_fixture_imports(
         pytester: pytest.Pytester,
     ) -> None:
         """Cold entry-point discovery does not pre-import measured product code."""
+        entries = TestsFlextTestsEnforcementPlugin._declared_pytest_entries()
+        selected = tuple((entry.name, entry.value) for entry in entries)
         probe = (
             "from importlib.metadata import entry_points\n"
             "import sys\n"
@@ -49,7 +71,9 @@ class TestsFlextTestsEnforcementPlugin:
             "entries = {entry.name: entry for entry "
             "in entry_points(group='pytest11')}\n"
             "manager = pytest.PytestPluginManager()\n"
-            "for name in ('flext_tests', 'flext_tests_enforcement'):\n"
+            f"for name, target in {selected!r}:\n"
+            "    if entries[name].value != target:\n"
+            "        raise RuntimeError(f'entry target drift: {name}')\n"
             "    manager.register(entries[name].load(), name=name)\n"
             "eager = sorted(\n"
             "    name for name in sys.modules\n"
@@ -67,18 +91,39 @@ class TestsFlextTestsEnforcementPlugin:
         pytestconfig: pytest.Config,
     ) -> None:
         """Installed metadata registers static hooks, not a module or factory."""
-        entry = next(iter(entry_points(group="pytest11", name="flext_tests")))
-        plugin = entry.load()
-        tm.that(isinstance(plugin, type), eq=True)
-        tm.that(pytestconfig.pluginmanager.get_plugin(entry.name) is plugin, eq=True)
-        implementations = [
-            hook
-            for hook in pytestconfig.hook.pytest_configure.get_hookimpls()
-            if hook.plugin is plugin
-        ]
-        tm.that(len(implementations), eq=1)
+        for entry in TestsFlextTestsEnforcementPlugin._declared_pytest_entries():
+            plugin = entry.load()
+            tm.that(isinstance(plugin, type), eq=True)
+            tm.that(callable(plugin), eq=True)
+            tm.that(f"{plugin.__module__}:{plugin.__qualname__}", eq=entry.value)
+            tm.that(
+                isinstance(getattr_static(plugin, "pytest_configure"), staticmethod),
+                eq=True,
+            )
+            tm.that(
+                [
+                    name
+                    for name, value in vars(import_module(entry.module)).items()
+                    if name.startswith("pytest_") and callable(value)
+                ],
+                eq=[],
+            )
+            tm.that(
+                pytestconfig.pluginmanager.get_plugin(entry.name) is plugin, eq=True
+            )
+            implementations = [
+                hook
+                for hook in pytestconfig.hook.pytest_configure.get_hookimpls()
+                if hook.plugin is plugin
+            ]
+            tm.that(
+                [hook.function for hook in implementations],
+                eq=[plugin.pytest_configure],
+            )
         for module in c.Tests.FIXTURE_PLUGIN_MODULES:
-            tm.that(pytestconfig.pluginmanager.hasplugin(module), eq=True)
+            registered = pytestconfig.pluginmanager.get_plugin(module)
+            tm.that(isinstance(registered, type), eq=True)
+            tm.that(registered.__module__, eq=module)
         tm.that(
             pytestconfig.pluginmanager.hasplugin(c.Tests.CAPABILITY_PLUGIN_MODULE),
             eq=True,
@@ -93,6 +138,8 @@ class TestsFlextTestsEnforcementPlugin:
         autoload: bool,
     ) -> None:
         """Named loading preserves pre-parse options, fixtures and registry identity."""
+        entries = TestsFlextTestsEnforcementPlugin._declared_pytest_entries()
+        selected = tuple((entry.name, entry.value) for entry in entries)
         pytester.makeini("[pytest]\n")
         pytester.makepyfile(
             test_plugin=(
@@ -105,18 +152,24 @@ class TestsFlextTestsEnforcementPlugin:
                 "    def test_registered(pytestconfig: pytest.Config,\n"
                 "                        run_namespace: m.Tests.TestNamespace) -> None:\n"
                 "        manager = pytestconfig.pluginmanager\n"
-                "        entry = next(iter(entry_points(\n"
-                "            group='pytest11', name='flext_tests')))\n"
-                "        plugin = manager.get_plugin(entry.name)\n"
-                "        tm.that(plugin is entry.load(), eq=True)\n"
                 "        before = manager.list_name_plugin()\n"
-                "        plugin.pytest_configure(pytestconfig)\n"
+                f"        for name, target in {selected!r}:\n"
+                "            entry = next(iter(entry_points(group='pytest11', name=name)))\n"
+                "            tm.that(entry.value, eq=target)\n"
+                "            plugin = manager.get_plugin(name)\n"
+                "            tm.that(plugin is entry.load(), eq=True)\n"
+                "            plugin.pytest_configure(pytestconfig)\n"
                 "        tm.that(manager.list_name_plugin(), eq=before)\n"
                 "        for module in c.Tests.FIXTURE_PLUGIN_MODULES:\n"
-                "            tm.that(manager.hasplugin(module), eq=True)\n"
+                "            owner = manager.get_plugin(module)\n"
+                "            tm.that(isinstance(owner, type), eq=True)\n"
+                "            tm.that(owner.__module__, eq=module)\n"
                 "        tm.that(manager.hasplugin(\n"
                 "            c.Tests.CAPABILITY_PLUGIN_MODULE), eq=True)\n"
                 "        tm.that(bool(run_namespace.token), eq=True)\n"
+                "        tm.that(pytestconfig.getoption('no_flext_enforce'), eq=True)\n"
+                "        tm.that(pytestconfig.getoption('flext_enforce_strict'), eq=True)\n"
+                "        tm.that(pytestconfig.getoption('flext_enforce_rules'), eq='probe')\n"
             ),
         )
         with u.Tests.env_vars_context(
@@ -124,14 +177,96 @@ class TestsFlextTestsEnforcementPlugin:
             vars_to_clear=("PYTEST_ADDOPTS", "PYTEST_DISABLE_PLUGIN_AUTOLOAD"),
         ):
             result = pytester.runpytest_subprocess(
-                "-p",
-                "flext_tests",
-                "-p",
-                "flext_tests_enforcement",
+                *(argument for entry in entries for argument in ("-p", entry.name)),
                 "--no-flext-enforce",
+                "--flext-enforce-strict",
+                "--flext-enforce-rules=probe",
             )
         result.assert_outcomes(passed=1)
         tm.that(result.ret, eq=pytest.ExitCode.OK)
+
+    @staticmethod
+    @pytest.mark.slow
+    @pytest.mark.parametrize("autoload", [False, True])
+    def test_class_fixture_plugins_preserve_shared_lifecycle(
+        pytester: pytest.Pytester,
+        *,
+        autoload: bool,
+    ) -> None:
+        """Cold consumers share sessions, reset every item and close on failure."""
+        entries = TestsFlextTestsEnforcementPlugin._declared_pytest_entries()
+        pytester.makeini("[pytest]\n")
+        pytester.makepyfile(
+            test_lifecycle="""
+            from pathlib import Path
+            import pytest
+            from flext_core import FlextContainer, FlextSettings
+            from flext_tests import FlextTestsSettings, m, p, tm
+
+            class TestsFirstConsumer:
+                previous = None
+                runtime = None
+                namespace = None
+
+                @staticmethod
+                @pytest.mark.parametrize('case', range(2))
+                def test_shared(case: int, session_runtime: p.Tests.SessionRuntime,
+                                run_namespace: m.Tests.TestNamespace,
+                                test_namespace: m.Tests.TestNamespace,
+                                temp_dir: Path, temp_file: Path) -> None:
+                    current = (FlextSettings.fetch_global(),
+                               FlextTestsSettings.fetch_global(), FlextContainer())
+                    if TestsFirstConsumer.previous is not None:
+                        for before, after in zip(TestsFirstConsumer.previous, current, strict=True):
+                            tm.that(before is after, eq=False)
+                        tm.that(session_runtime is TestsFirstConsumer.runtime, eq=True)
+                        tm.that(run_namespace is TestsFirstConsumer.namespace, eq=True)
+                    TestsFirstConsumer.previous = current
+                    TestsFirstConsumer.runtime = session_runtime
+                    TestsFirstConsumer.namespace = run_namespace
+                    tm.that(temp_file.parent, eq=temp_dir)
+                    tm.that(bool(test_namespace.token), eq=True)
+                    tm.that(session_runtime.directory.is_dir(), eq=True)
+                    Path(f'runtime-{case}').write_text(str(session_runtime.directory))
+
+            class TestsSecondConsumer:
+                @staticmethod
+                def test_shared(session_runtime: p.Tests.SessionRuntime,
+                                run_namespace: m.Tests.TestNamespace, reset_settings: None,
+                                clean_container: p.Container, settings: FlextTestsSettings,
+                                settings_factory) -> None:
+                    tm.that(session_runtime is TestsFirstConsumer.runtime, eq=True)
+                    tm.that(run_namespace is TestsFirstConsumer.namespace, eq=True)
+                    tm.that(clean_container is not None, eq=True)
+                    tm.that(isinstance(settings, FlextTestsSettings), eq=True)
+                    created = settings_factory(FlextTestsSettings)
+                    tm.that(created is FlextTestsSettings.fetch_global(), eq=True)
+                    Path('runtime-second').write_text(str(session_runtime.directory))
+
+                @staticmethod
+                def test_failure_still_closes(session_runtime: p.Tests.SessionRuntime) -> None:
+                    Path('runtime-failure').write_text(str(session_runtime.directory))
+                    raise RuntimeError('intentional consumer failure')
+            """,
+        )
+        with u.Tests.env_vars_context(
+            {} if autoload else {"PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"},
+            vars_to_clear=("PYTEST_ADDOPTS", "PYTEST_DISABLE_PLUGIN_AUTOLOAD"),
+        ):
+            result = pytester.runpytest_subprocess(
+                *(argument for entry in entries for argument in ("-p", entry.name)),
+                "-p",
+                "no:randomly",
+                "--no-flext-enforce",
+            )
+        result.assert_outcomes(passed=3, failed=1)
+        tm.that(result.ret, eq=pytest.ExitCode.TESTS_FAILED)
+        records = sorted(pytester.path.glob("runtime-*"))
+        tm.that(len(records), eq=4)
+        directories = {record.read_text() for record in records}
+        tm.that(len(directories), eq=1)
+        for directory in directories:
+            tm.that(Path(directory).exists(), eq=False)
 
     @staticmethod
     @pytest.mark.slow
@@ -177,13 +312,19 @@ class TestsFlextTestsEnforcementPlugin:
             "        raise RuntimeError(f'flext_infra imported: {loaded}')\n",
         )
         pytester.makepyfile(test_probe="def test_probe() -> None:\n    assert True\n")
+        entries = TestsFlextTestsEnforcementPlugin._declared_pytest_entries()
+        enforcement = next(
+            entry
+            for entry in entries
+            if entry.name == config.Infra.tooling.tools.pytest.enforcement_plugin
+        )
         with u.Tests.env_vars_context(
             {"PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"},
             vars_to_clear=("PYTEST_ADDOPTS",),
         ):
             result = pytester.runpytest_subprocess(
                 "-p",
-                "flext_tests.enforcement_plugin",
+                enforcement.name,
                 "--collect-only",
                 "-q",
             )

@@ -1,9 +1,7 @@
-"""Scratch-storage plugin for flext_tests (T6).
+"""Scratch-storage class plugin for flext_tests (T6).
 
-Storage law: caches never live inside the checkout. This plugin relocates
-the Hypothesis database and the pytest-benchmark storage under the host
-scratch root (``~/.flext/scratch/<checkout-identity>/``), keyed by the
-checkout identity so two checkouts never share a database.
+Storage law: caches never live inside the checkout. Hypothesis and benchmark
+storage use the checkout-keyed host scratch root.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -21,42 +19,37 @@ from flext_tests import c
 from flext_tests._utilities import FlextTestsScratchStorageUtilitiesMixin
 
 
-def _scratch_root(config: pytest.Config) -> Path:
-    """Transport hook: resolve the scratch root through its pure owner.
+class FlextTestsScratchStoragePlugin:
+    """Native hooks retaining the canonical scratch-storage configuration."""
 
-    The owner mixin is reached directly, not through the composed ``u``
-    facade: configuring an ungoverned session must not load the model facade
-    that the other utility mixins import.
+    @staticmethod
+    def _scratch_root(config: pytest.Config) -> Path:
+        """Resolve storage through its pure owner, not the composed facade."""
+        return FlextTestsScratchStorageUtilitiesMixin.scratch_root(
+            checkout_root=Path(config.rootpath),
+            override=config.getini(c.Tests.SCRATCH_ROOT_INI) or None,
+        )
 
-    Returns:
-        The resulting ``Path``.
+    @staticmethod
+    def pytest_configure(config: pytest.Config) -> None:
+        """Relocate hypothesis/benchmark storage under the scratch root."""
+        scratch = FlextTestsScratchStoragePlugin._scratch_root(config)
+        hypothesis_dir = scratch / "hypothesis"
+        hypothesis_dir.mkdir(parents=True, exist_ok=True)
+        if find_spec("hypothesis") is not None:
+            set_hypothesis_home_dir(hypothesis_dir)
+        benchmark_dir = scratch / "benchmarks"
+        benchmark_dir.mkdir(parents=True, exist_ok=True)
+        config.option.benchmark_storage = str(benchmark_dir)
 
-    """
-    return FlextTestsScratchStorageUtilitiesMixin.scratch_root(
-        checkout_root=Path(config.rootpath),
-        override=config.getini(c.Tests.SCRATCH_ROOT_INI) or None,
-    )
-
-
-def pytest_configure(config: pytest.Config) -> None:
-    """Relocate hypothesis/benchmark storage under the scratch root."""
-    scratch = _scratch_root(config)
-    hypothesis_dir = scratch / "hypothesis"
-    hypothesis_dir.mkdir(parents=True, exist_ok=True)
-    if find_spec("hypothesis") is not None:
-        set_hypothesis_home_dir(hypothesis_dir)
-    benchmark_dir = scratch / "benchmarks"
-    benchmark_dir.mkdir(parents=True, exist_ok=True)
-    config.option.benchmark_storage = str(benchmark_dir)
-
-
-def pytest_addoption(parser: pytest.Parser) -> None:
-    """Declare the scratch-root override (defaults to ~/.flext/scratch)."""
-    parser.addini(
-        c.Tests.SCRATCH_ROOT_INI,
-        default="",
-        help="Override the scratch root for hypothesis/benchmark storage.",
-    )
+    @staticmethod
+    def pytest_addoption(parser: pytest.Parser) -> None:
+        """Declare the scratch-root override (defaults to ~/.flext/scratch)."""
+        parser.addini(
+            c.Tests.SCRATCH_ROOT_INI,
+            default="",
+            help="Override the scratch root for hypothesis/benchmark storage.",
+        )
 
 
-__all__: list[str] = ["pytest_addoption", "pytest_configure"]
+__all__: list[str] = ["FlextTestsScratchStoragePlugin"]

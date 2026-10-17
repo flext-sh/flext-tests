@@ -1,6 +1,5 @@
 """Canonical namespace fixtures shared by every consumer suite.
 
-The model facade supplies the typed namespace contract at registration time.
 Namespace creation remains fixture-driven; importing a shared facade does not
 activate enforcement or execute consumer tests.
 
@@ -18,71 +17,59 @@ import pytest
 from flext_tests import m
 
 
-def _worker_id(config: pytest.Config) -> str:
-    """Resolve the xdist worker id (master outside xdist).
+class FlextTestsNamespaceFixtures:
+    """One native plugin owner for worker-session and function namespaces."""
 
-    Returns:
-        The resulting ``str``.
+    @staticmethod
+    def _worker_id(config: pytest.Config) -> str:
+        """Resolve the xdist worker id (master outside xdist)."""
+        worker_input = getattr(config, "workerinput", None)
+        if worker_input is not None:
+            return str(worker_input.get("workerid", "master"))
+        return "master"
 
-    """
-    worker_input = getattr(config, "workerinput", None)
-    if worker_input is not None:
-        return str(worker_input.get("workerid", "master"))
-    return "master"
-
-
-def _run_token(config: pytest.Config) -> str:
-    """Resolve the shared run token (xdist testrunuid or session-stable id).
-
-    Returns:
-        The resulting ``str``.
-
-    """
-    worker_input = getattr(config, "workerinput", None)
-    if worker_input is not None:
-        return str(worker_input.get("testrunuid", ""))
-    stash_key = pytest.StashKey[str]()
-    if stash_key not in config.stash:
-        config.stash[stash_key] = (
-            import_module("flext_tests")
-            .u.Tests.namespace(
-                worker_id="master",
-                testrun_uid=f"master-{id(config)}",
-                checkout_root=Path(config.rootpath),
+    @staticmethod
+    def _run_token(config: pytest.Config) -> str:
+        """Resolve the shared run token (xdist testrunuid or session-stable id)."""
+        worker_input = getattr(config, "workerinput", None)
+        if worker_input is not None:
+            return str(worker_input.get("testrunuid", ""))
+        stash_key = pytest.StashKey[str]()
+        if stash_key not in config.stash:
+            config.stash[stash_key] = (
+                import_module("flext_tests")
+                .u.Tests.namespace(
+                    worker_id="master",
+                    testrun_uid=f"master-{id(config)}",
+                    checkout_root=Path(config.rootpath),
+                )
+                .token
             )
-            .token
+        return config.stash[stash_key]
+
+    @staticmethod
+    @pytest.fixture(scope="session")
+    def run_namespace(request: pytest.FixtureRequest) -> m.Tests.TestNamespace:
+        """Session namespace: one token per pytest run per worker."""
+        config = request.config
+        namespace: m.Tests.TestNamespace = import_module(
+            "flext_tests"
+        ).u.Tests.namespace(
+            worker_id=FlextTestsNamespaceFixtures._worker_id(config),
+            testrun_uid=FlextTestsNamespaceFixtures._run_token(config),
+            checkout_root=Path(config.rootpath),
         )
-    return config.stash[stash_key]
+        return namespace
 
-
-@pytest.fixture(scope="session")
-def run_namespace(request: pytest.FixtureRequest) -> m.Tests.TestNamespace:
-    """Session namespace: one token per pytest run per worker.
-
-    Returns:
-        The resulting ``m.Tests.TestNamespace``.
-
-    """
-    config = request.config
-    namespace: m.Tests.TestNamespace = import_module("flext_tests").u.Tests.namespace(
-        worker_id=_worker_id(config),
-        testrun_uid=_run_token(config),
-        checkout_root=Path(config.rootpath),
-    )
-    return namespace
-
-
-@pytest.fixture
-def test_namespace(run_namespace: m.Tests.TestNamespace) -> m.Tests.TestNamespace:
-    """Function namespace: the run token plus a fresh per-test token.
-
-    Returns:
-        The resulting ``m.Tests.TestNamespace``.
-
-    """
-    namespace: m.Tests.TestNamespace = import_module("flext_tests").u.Tests.namespace(
-        worker_id=run_namespace.worker,
-        testrun_uid=f"{run_namespace.run_token}-{run_namespace.issued_at_ns}",
-        checkout_root=Path(run_namespace.root),
-    )
-    return namespace
+    @staticmethod
+    @pytest.fixture
+    def test_namespace(run_namespace: m.Tests.TestNamespace) -> m.Tests.TestNamespace:
+        """Function namespace: the run token plus a fresh per-test token."""
+        namespace: m.Tests.TestNamespace = import_module(
+            "flext_tests"
+        ).u.Tests.namespace(
+            worker_id=run_namespace.worker,
+            testrun_uid=f"{run_namespace.run_token}-{run_namespace.issued_at_ns}",
+            checkout_root=Path(run_namespace.root),
+        )
+        return namespace

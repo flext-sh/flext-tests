@@ -1,4 +1,4 @@
-"""Pytest plugin wiring the canonical flext-tests fixture modules.
+"""Pytest plugin registering the canonical fixture modules' class objects.
 
 The installed ``pytest11`` entry point targets ``FlextTestsConftestPlugin``
 directly and registers its static hooks before configuration. Shared fixtures
@@ -15,6 +15,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from importlib import import_module
+from inspect import getmembers, isclass
 from typing import TYPE_CHECKING
 
 from flext_tests import c
@@ -32,7 +33,21 @@ class FlextTestsConftestPlugin:
         # Import at configure time, after pytest-cov starts measuring. The module
         # name avoids the settings fixture shadowing its submodule attribute.
         for fixture_module in c.Tests.FIXTURE_PLUGIN_MODULES:
-            config.pluginmanager.import_plugin(fixture_module)
+            if config.pluginmanager.hasplugin(fixture_module):
+                continue
+            module = import_module(fixture_module)
+            owners = [
+                owner
+                for _, owner in getmembers(module, isclass)
+                if owner.__module__ == module.__name__
+            ]
+            if len(owners) != 1:
+                msg = (
+                    f"{fixture_module} must declare exactly one plugin owner; "
+                    f"found {len(owners)}"
+                )
+                raise ValueError(msg)
+            config.pluginmanager.register(owners[0], fixture_module)
         # Prerequisites skip before fixtures; real service failures stay failures.
         if not config.pluginmanager.hasplugin(c.Tests.CAPABILITY_PLUGIN_MODULE):
             capability = import_module(c.Tests.CAPABILITY_PLUGIN_MODULE)
@@ -45,7 +60,7 @@ class FlextTestsConftestPlugin:
 # Enforcement dispatcher (flext_tests.enforcement_plugin) is loaded via
 # the ``flext_tests_enforcement`` pytest11 entry point in pyproject.toml —
 # re-exporting its hooks here would double-register CLI options when both
-# paths are active. The plugin class registers the canonical fixture modules
+# paths are active. The plugin class registers each canonical fixture class
 # during ``pytest_configure``. It must not expose ``pytest_plugins``: pytest
 # processes that declaration while loading the ``pytest11`` entry point,
 # before pytest-cov starts measuring the product package.
