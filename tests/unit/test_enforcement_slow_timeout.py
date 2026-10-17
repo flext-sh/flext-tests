@@ -9,7 +9,6 @@ from __future__ import annotations
 import os
 
 import pytest
-
 from flext_infra import config
 
 from tests import tm

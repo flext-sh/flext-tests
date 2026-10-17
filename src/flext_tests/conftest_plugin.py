@@ -33,8 +33,6 @@ class FlextTestsConftestPlugin:
         # Import at configure time, after pytest-cov starts measuring. The module
         # name avoids the settings fixture shadowing its submodule attribute.
         for fixture_module in c.Tests.FIXTURE_PLUGIN_MODULES:
-            if config.pluginmanager.hasplugin(fixture_module):
-                continue
             module = import_module(fixture_module)
             owners = [
                 owner
@@ -47,7 +45,11 @@ class FlextTestsConftestPlugin:
                     f"found {len(owners)}"
                 )
                 raise ValueError(msg)
-            config.pluginmanager.register(owners[0], fixture_module)
+            if config.pluginmanager.get_plugin(fixture_module) is owners[0]:
+                continue
+            if config.pluginmanager.register(owners[0], fixture_module) is None:
+                msg = f"required fixture plugin is blocked: {fixture_module}"
+                raise ValueError(msg)
         # Prerequisites skip before fixtures; real service failures stay failures.
         if not config.pluginmanager.hasplugin(c.Tests.CAPABILITY_PLUGIN_MODULE):
             capability = import_module(c.Tests.CAPABILITY_PLUGIN_MODULE)

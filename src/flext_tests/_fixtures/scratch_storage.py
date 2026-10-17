@@ -9,7 +9,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from importlib.util import find_spec
 from pathlib import Path
 
 import pytest
@@ -36,8 +35,7 @@ class FlextTestsScratchStoragePlugin:
         scratch = FlextTestsScratchStoragePlugin._scratch_root(config)
         hypothesis_dir = scratch / "hypothesis"
         hypothesis_dir.mkdir(parents=True, exist_ok=True)
-        if find_spec("hypothesis") is not None:
-            set_hypothesis_home_dir(hypothesis_dir)
+        set_hypothesis_home_dir(hypothesis_dir)
         benchmark_dir = scratch / "benchmarks"
         benchmark_dir.mkdir(parents=True, exist_ok=True)
         config.option.benchmark_storage = str(benchmark_dir)
