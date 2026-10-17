@@ -51,7 +51,10 @@ make test-full
 ```
 
 The runner first completes the incremental operation, then executes the full suite using
-the same database and one monotonic deadline. The first failure stops the sequence. The
+the same database. Full execution has no process, suite, or item timeout; the shared
+slow-item policy honors the runner's explicit `--timeout=0` override. Invalid configured
+budgets and explicit test timeout markers still fail policy validation. The first
+failure stops the sequence. The
 full phase includes both configured `external-gate-markers` and `ci-excluded-markers` in
 every context. External tests retain their declared services, network access, and
 authentication requirements.
