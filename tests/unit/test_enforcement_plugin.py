@@ -17,7 +17,7 @@ from importlib.metadata import entry_points
 
 import pytest
 
-from tests import tm, u
+from tests import c, tm, u
 
 
 class TestsFlextTestsEnforcementPlugin:
@@ -45,10 +45,12 @@ class TestsFlextTestsEnforcementPlugin:
         probe = (
             "from importlib.metadata import entry_points\n"
             "import sys\n"
+            "import pytest\n"
             "entries = {entry.name: entry for entry "
             "in entry_points(group='pytest11')}\n"
-            "entries['flext_tests'].load()\n"
-            "entries['flext_tests_enforcement'].load()\n"
+            "manager = pytest.PytestPluginManager()\n"
+            "for name in ('flext_tests', 'flext_tests_enforcement'):\n"
+            "    manager.register(entries[name].load(), name=name)\n"
             "eager = sorted(\n"
             "    name for name in sys.modules\n"
             "    if name.startswith('flext_tests._fixtures')\n"
@@ -59,6 +61,77 @@ class TestsFlextTestsEnforcementPlugin:
         completed = pytester.runpython_c(probe)
         tm.that(completed.ret, eq=0)
         tm.that(completed.errlines, eq=[])
+
+    @staticmethod
+    def test_fixture_entrypoint_registers_the_class_object(
+        pytestconfig: pytest.Config,
+    ) -> None:
+        """Installed metadata registers static hooks, not a module or factory."""
+        entry = next(iter(entry_points(group="pytest11", name="flext_tests")))
+        plugin = entry.load()
+        tm.that(isinstance(plugin, type), eq=True)
+        tm.that(pytestconfig.pluginmanager.get_plugin(entry.name) is plugin, eq=True)
+        implementations = [
+            hook
+            for hook in pytestconfig.hook.pytest_configure.get_hookimpls()
+            if hook.plugin is plugin
+        ]
+        tm.that(len(implementations), eq=1)
+        for module in c.Tests.FIXTURE_PLUGIN_MODULES:
+            tm.that(pytestconfig.pluginmanager.hasplugin(module), eq=True)
+        tm.that(
+            pytestconfig.pluginmanager.hasplugin(c.Tests.CAPABILITY_PLUGIN_MODULE),
+            eq=True,
+        )
+
+    @staticmethod
+    @pytest.mark.slow
+    @pytest.mark.parametrize("autoload", [False, True])
+    def test_fixture_entrypoint_supports_explicit_loading_and_autoload(
+        pytester: pytest.Pytester,
+        *,
+        autoload: bool,
+    ) -> None:
+        """Named loading preserves pre-parse options, fixtures and registry identity."""
+        pytester.makeini("[pytest]\n")
+        pytester.makepyfile(
+            test_plugin=(
+                "import pytest\n"
+                "from importlib.metadata import entry_points\n"
+                "from flext_tests import c, m, tm\n"
+                "\n"
+                "class TestsPluginConsumer:\n"
+                "    @staticmethod\n"
+                "    def test_registered(pytestconfig: pytest.Config,\n"
+                "                        run_namespace: m.Tests.TestNamespace) -> None:\n"
+                "        manager = pytestconfig.pluginmanager\n"
+                "        entry = next(iter(entry_points(\n"
+                "            group='pytest11', name='flext_tests')))\n"
+                "        plugin = manager.get_plugin(entry.name)\n"
+                "        tm.that(plugin is entry.load(), eq=True)\n"
+                "        before = manager.list_name_plugin()\n"
+                "        plugin.pytest_configure(pytestconfig)\n"
+                "        tm.that(manager.list_name_plugin(), eq=before)\n"
+                "        for module in c.Tests.FIXTURE_PLUGIN_MODULES:\n"
+                "            tm.that(manager.hasplugin(module), eq=True)\n"
+                "        tm.that(manager.hasplugin(\n"
+                "            c.Tests.CAPABILITY_PLUGIN_MODULE), eq=True)\n"
+                "        tm.that(bool(run_namespace.token), eq=True)\n"
+            ),
+        )
+        with u.Tests.env_vars_context(
+            {} if autoload else {"PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"},
+            vars_to_clear=("PYTEST_ADDOPTS", "PYTEST_DISABLE_PLUGIN_AUTOLOAD"),
+        ):
+            result = pytester.runpytest_subprocess(
+                "-p",
+                "flext_tests",
+                "-p",
+                "flext_tests_enforcement",
+                "--no-flext-enforce",
+            )
+        result.assert_outcomes(passed=1)
+        tm.that(result.ret, eq=pytest.ExitCode.OK)
 
     @staticmethod
     @pytest.mark.slow
