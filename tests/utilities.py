@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import override
 
 from flext_tests import FlextTestsServiceBase, FlextTestsUtilities
-from tests import TestsFlextTestsProtocols, m, p, r, t
+from tests import m, p, r, t
 
 
 class TestsFlextTestsUtilities(FlextTestsUtilities):
@@ -18,7 +18,7 @@ class TestsFlextTestsUtilities(FlextTestsUtilities):
     class Tests(FlextTestsUtilities.Tests):
         """flext-tests test utilities namespace."""
 
-        class MemoryEcho(TestsFlextTestsProtocols.Tests.Echo):
+        class MemoryEcho(p.Tests.Echo):
             """Real in-memory adapter of the ``Tests.Echo`` port (no mock/patch)."""
 
             @override
@@ -29,7 +29,7 @@ class TestsFlextTestsUtilities(FlextTestsUtilities):
         class EchoService(FlextTestsServiceBase[str]):
             """Port-bearing service whose only collaborator is the echo port."""
 
-            port: t.Port[TestsFlextTestsProtocols.Tests.Echo] = m.Field(
+            port: t.Port[p.Tests.Echo] = m.Field(
                 exclude=True,
                 description="Echo port the service delegates to.",
             )

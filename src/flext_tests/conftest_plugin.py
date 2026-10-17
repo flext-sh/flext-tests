@@ -21,11 +21,28 @@ from typing import TYPE_CHECKING
 from flext_tests import c
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping, MutableMapping
+
     import pytest
 
 
 class FlextTestsConftestPlugin:
     """Native pytest plugin object loaded directly by the installed entry point."""
+
+    @staticmethod
+    def publish[TBinding](
+        *,
+        module_globals: MutableMapping[str, TBinding],
+        bindings: Mapping[str, TBinding],
+    ) -> None:
+        """Publish explicit class-owned bindings on their original pytest module.
+
+        Called during module execution, before pytest registers the conftest.
+        Actual fixture descriptors and hook callables retain their native identity;
+        the original module path, not a globally registered class plugin, continues
+        to own directory visibility. No members are discovered or copied implicitly.
+        """
+        module_globals.update(bindings)
 
     @staticmethod
     def pytest_configure(config: pytest.Config) -> None:
