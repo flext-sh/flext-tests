@@ -184,7 +184,8 @@ class FlextTestsEnforcementDispatcher:
                     f"forbidden; {item.nodeid} must use the config-owned slow budget"
                 )
                 raise pytest.UsageError(msg)
-            item.add_marker(pytest.mark.timeout(slow_timeout), append=False)
+            if config.getoption("timeout") != 0:
+                item.add_marker(pytest.mark.timeout(slow_timeout), append=False)
         repository_root = cls.active_root(config)
         if repository_root is None or hasattr(config, "workerinput"):
             return

@@ -35,6 +35,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
         pytester: pytest.Pytester,
         *,
         include_timeout_plugin: bool = True,
+        unbounded: bool = False,
     ) -> pytest.RunResult:
         """Run only the two owner plugins in a subprocess-isolated session.
 
@@ -51,7 +52,10 @@ class TestsFlextTestsSlowTimeoutPolicy:
             else ("-p", "flext_tests.enforcement_plugin")
         )
         try:
-            return pytester.runpytest_subprocess(*plugins)
+            return pytester.runpytest_subprocess(
+                *plugins,
+                *(("--timeout=0",) if unbounded else ()),
+            )
         finally:
             if previous is None:
                 os.environ.pop(variable, None)
@@ -86,6 +90,29 @@ class TestsFlextTestsSlowTimeoutPolicy:
         self._run_pytest(pytester).assert_outcomes(passed=2)
 
     @pytest.mark.slow
+    def test_unbounded_run_disables_regular_and_slow_item_timers(
+        self,
+        pytester: pytest.Pytester,
+    ) -> None:
+        """The full-run override disables timers without weakening policy."""
+        self._make_ini(pytester, slow_timeout=str(self.slow_timeout_seconds))
+        pytester.makepyfile(
+            "import pytest\n"
+            "from tests import tm\n"
+            "\n"
+            "def test_regular_unbounded(request: pytest.FixtureRequest) -> None:\n"
+            "    tm.that(request.config.getoption('timeout'), eq=0)\n"
+            "    tm.that(request.node.get_closest_marker('timeout'), none=True)\n"
+            "\n"
+            "@pytest.mark.slow\n"
+            "def test_slow_unbounded(request: pytest.FixtureRequest) -> None:\n"
+            "    tm.that(request.config.getoption('timeout'), eq=0)\n"
+            "    tm.that(request.node.get_closest_marker('timeout'), none=True)\n",
+        )
+
+        self._run_pytest(pytester, unbounded=True).assert_outcomes(passed=2)
+
+    @pytest.mark.slow
     def test_absent_slow_budget_requires_no_timeout_plugin(
         self,
         pytester: pytest.Pytester,
@@ -113,16 +140,19 @@ class TestsFlextTestsSlowTimeoutPolicy:
 
     @pytest.mark.slow
     @pytest.mark.parametrize("invalid_timeout", ["0", "nan", "not-a-number"])
+    @pytest.mark.parametrize("unbounded", [False, True])
     def test_invalid_slow_budget_fails_closed(
         self,
         pytester: pytest.Pytester,
         invalid_timeout: str,
+        *,
+        unbounded: bool,
     ) -> None:
         """Non-positive, non-finite, and malformed policy values are rejected."""
         self._make_ini(pytester, slow_timeout=invalid_timeout)
         pytester.makepyfile("def test_policy_probe() -> None:\n    pass\n")
 
-        result = self._run_pytest(pytester)
+        result = self._run_pytest(pytester, unbounded=unbounded)
 
         tm.that(result.ret, ne=pytest.ExitCode.OK)
         result.stderr.fnmatch_lines([
@@ -130,9 +160,12 @@ class TestsFlextTestsSlowTimeoutPolicy:
         ])
 
     @pytest.mark.slow
+    @pytest.mark.parametrize("unbounded", [False, True])
     def test_explicit_slow_timeout_marker_fails_closed(
         self,
         pytester: pytest.Pytester,
+        *,
+        unbounded: bool,
     ) -> None:
         """Slow test code cannot restate or weaken its config-owned budget."""
         self._make_ini(pytester, slow_timeout=str(self.slow_timeout_seconds))
@@ -146,7 +179,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
             "    pass\n",
         )
 
-        result = self._run_pytest(pytester)
+        result = self._run_pytest(pytester, unbounded=unbounded)
 
         tm.that(result.ret, ne=pytest.ExitCode.OK)
         result.stderr.fnmatch_lines([

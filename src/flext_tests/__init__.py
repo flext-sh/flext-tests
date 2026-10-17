@@ -17,14 +17,6 @@ from flext_tests.__version__ import __version__
 if TYPE_CHECKING:
     from flext_cli import d, e, h, r, x
 
-    from flext_tests import (
-        _constants,
-        _fixtures,
-        _models,
-        _protocols,
-        _typings,
-        _utilities,
-    )
     from flext_tests.__version__ import (
         FlextTestsVersion,
         __author__,
@@ -83,12 +75,6 @@ __all__: tuple[str, ...] = (
     "__url__",
     "__version__",
     "__version_info__",
-    "_constants",
-    "_fixtures",
-    "_models",
-    "_protocols",
-    "_typings",
-    "_utilities",
     "api",
     "c",
     "config",
@@ -140,12 +126,6 @@ install_lazy_exports(
         "__title__": ".__version__",
         "__url__": ".__version__",
         "__version_info__": ".__version__",
-        "_constants": "._constants",
-        "_fixtures": "._fixtures",
-        "_models": "._models",
-        "_protocols": "._protocols",
-        "_typings": "._typings",
-        "_utilities": "._utilities",
         "api": ".api",
         "c": ".constants",
         "config": "._config",
