@@ -14,6 +14,12 @@ from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tests._fixtures import _enforcement_parts
+    from flext_tests._fixtures._enforcement_parts._collector import (
+        FlextTestsEnforcementCollector,
+    )
+    from flext_tests._fixtures._enforcement_parts._error import (
+        FlextTestsEnforcementViolationError,
+    )
     from flext_tests._fixtures._enforcement_parts.build import (
         FlextTestsEnforcementBuilder,
     )
@@ -35,9 +41,11 @@ if TYPE_CHECKING:
 __all__: tuple[str, ...] = (
     "FlextTestsCapabilityPlugin",
     "FlextTestsEnforcementBuilder",
+    "FlextTestsEnforcementCollector",
     "FlextTestsEnforcementDispatcher",
     "FlextTestsEnforcementItem",
     "FlextTestsEnforcementValidators",
+    "FlextTestsEnforcementViolationError",
     "_enforcement_parts",
     "project_metadata",
     "project_tool_flext",
@@ -51,9 +59,11 @@ install_lazy_exports(
     MappingProxyType({
         "FlextTestsCapabilityPlugin": ".connectivity",
         "FlextTestsEnforcementBuilder": "._enforcement_parts.build",
+        "FlextTestsEnforcementCollector": "._enforcement_parts._collector",
         "FlextTestsEnforcementDispatcher": "._enforcement_parts.dispatcher",
         "FlextTestsEnforcementItem": "._enforcement_parts.items",
         "FlextTestsEnforcementValidators": "._enforcement_parts.validators",
+        "FlextTestsEnforcementViolationError": "._enforcement_parts._error",
         "_enforcement_parts": "._enforcement_parts",
         "project_metadata": ".project_metadata",
         "project_tool_flext": ".project_metadata",

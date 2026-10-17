@@ -104,8 +104,13 @@ class FlextTestsEnforcementProtocolsMixin:
             ...
 
         @property
-        def payload(self) -> t.JsonMapping:
-            """Complete engine finding payload."""
+        def severity(self) -> str:
+            """Severity supplied by the native rule result."""
+            ...
+
+        @property
+        def message(self) -> str | None:
+            """Native finding message, when supplied by the producer."""
             ...
 
     @runtime_checkable
@@ -150,3 +155,10 @@ class FlextTestsEnforcementCollectorNodeMixin:
         from_parent: FlextTestsEnforcementProtocolsMixin.EnforcementCollectorFactory[
             Self
         ]
+
+
+__all__: list[str] = [
+    "FlextTestsEnforcementCollectorNodeMixin",
+    "FlextTestsEnforcementItemNodeMixin",
+    "FlextTestsEnforcementProtocolsMixin",
+]

@@ -53,7 +53,11 @@ class FlextTestsEnforcementUtilitiesMixin:
                 "enforcement names flext-infra rules that config/rules does not "
                 f"declare: {', '.join(missing)}",
             )
-        return FlextInfraModGateEngine.scan(repository_root, fix=False)
+        return FlextInfraModGateEngine.scan(
+            repository_root,
+            fix=False,
+            plan=planned.value,
+        )
 
     @staticmethod
     def project_name_for_path(*, path: Path, repository_root: Path) -> str | None:

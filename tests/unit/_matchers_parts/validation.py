@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from copy import deepcopy
-from operator import eq, truediv
+from operator import eq
 from pathlib import Path
 
 import pytest
@@ -22,11 +22,12 @@ class TestsFlextTestsMatchersValidationMixin:
     def test_native_truth_preserves_original_collection_semantics() -> None:
         """Truth checks use Python's original subject without payload conversion."""
         tm.that(["value"], truth=True)
-        tm.that([], truth=False)
+        empty: list[str] = []
+        tm.that(empty, truth=False)
         with pytest.raises(AssertionError):
-            tm.that([], truth=True)
+            tm.that(empty, truth=True)
         result = r[int].ok(1)
-        tm.that(result, eq=1)
+        tm.ok(result, eq=1)
         # Native equality between a Result and a raw scalar is False; the
         # callable form expresses that cross-type comparison without the
         # statically impossible operator usage pyright rejects.
@@ -55,8 +56,9 @@ class TestsFlextTestsMatchersValidationMixin:
     @staticmethod
     def test_native_truth_preserves_message_exception_and_empty_message() -> None:
         """Message failures escape unchanged; an empty message remains empty."""
+        denominator = len("")
         with pytest.raises(ZeroDivisionError):
-            tm.that(False, truth=True, assertion_message=truediv(1, 0))
+            tm.that(False, truth=True, assertion_message=1 / denominator)
         with pytest.raises(AssertionError) as raised:
             tm.that(False, truth=True, assertion_message="")
         tm.that(raised.value.args, eq=("",))

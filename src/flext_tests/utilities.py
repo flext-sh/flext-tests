@@ -1,3 +1,4 @@
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Test utilities for FLEXT ecosystem tests.
 
 Provides essential test utilities extending u with test-specific
@@ -11,47 +12,35 @@ from __future__ import annotations
 
 from flext_cli import FlextCliUtilities
 
-from flext_tests._utilities.base import FlextTestsUtilitiesBase
-from flext_tests._utilities.container import FlextTestsContainerHelpersUtilitiesMixin
-from flext_tests._utilities.docker_lifecycle import (
+from flext_tests._utilities import (
+    FlextTestsConfigHelpersUtilitiesMixin,
+    FlextTestsContainerHelpersUtilitiesMixin,
     FlextTestsDockerLifecycleUtilitiesMixin,
-)
-from flext_tests._utilities.docker_state import FlextTestsDockerStateUtilitiesMixin
-from flext_tests._utilities.enforcement import FlextTestsEnforcementUtilitiesMixin
-from flext_tests._utilities.environment import FlextTestsEnvironmentUtilitiesMixin
-from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
-from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
-from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
-from flext_tests._utilities.governance import FlextTestsFlextUtilitiesGovernance
-from flext_tests._utilities.handler import FlextTestsFlextUtilitiesHandler
-from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
-from flext_tests._utilities.make_contract import FlextTestsFlextUtilitiesMakeContract
-from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
-from flext_tests._utilities.make_registry import FlextTestsMakeRegistryUtilitiesMixin
-from flext_tests._utilities.make_rendering import FlextTestsMakeRenderingUtilitiesMixin
-from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
-from flext_tests._utilities.namespace import FlextTestsNamespaceUtilitiesMixin
-from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
-from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
-from flext_tests._utilities.scratch_storage import (
+    FlextTestsDockerStateUtilitiesMixin,
+    FlextTestsEnforcementUtilitiesMixin,
+    FlextTestsEnvironmentUtilitiesMixin,
+    FlextTestsFilesUtilitiesMixin,
+    FlextTestsFixturesDSLMixin,
+    FlextTestsFlextUtilitiesGovernance,
+    FlextTestsFlextUtilitiesHandler,
+    FlextTestsFlextUtilitiesMakeContract,
+    FlextTestsFlextUtilitiesPayload,
+    FlextTestsGenericHelpersUtilitiesMixin,
+    FlextTestsMakeParsingUtilitiesMixin,
+    FlextTestsMakeRegistryUtilitiesMixin,
+    FlextTestsMakeRenderingUtilitiesMixin,
+    FlextTestsMakeUtilitiesMixin,
+    FlextTestsMatchersUtilities,
+    FlextTestsNamespaceUtilitiesMixin,
+    FlextTestsResultUtilitiesMixin,
     FlextTestsScratchStorageUtilitiesMixin,
-)
-from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
-from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
-from flext_tests._utilities.workspace_cleanup import (
-    FlextTestsWorkspaceCleanupUtilitiesMixin,
-)
-from flext_tests._utilities.workspace_cleanup_git import (
+    FlextTestsTestContextUtilitiesMixin,
+    FlextTestsUtilitiesBase,
     FlextTestsWorkspaceCleanupGitUtilitiesMixin,
-)
-from flext_tests._utilities.workspace_cleanup_inspect import (
     FlextTestsWorkspaceCleanupInspectUtilitiesMixin,
-)
-from flext_tests._utilities.workspace_cleanup_paths import (
     FlextTestsWorkspaceCleanupPathsUtilitiesMixin,
-)
-from flext_tests._utilities.workspace_cleanup_plan import (
     FlextTestsWorkspaceCleanupPlanUtilitiesMixin,
+    FlextTestsWorkspaceCleanupUtilitiesMixin,
 )
 
 
@@ -64,8 +53,14 @@ class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance)
 
     class Tests(
         FlextTestsUtilitiesBase,
+        FlextTestsContainerHelpersUtilitiesMixin,
+        FlextTestsDockerLifecycleUtilitiesMixin,
+        FlextTestsDockerStateUtilitiesMixin,
         FlextTestsEnforcementUtilitiesMixin,
         FlextTestsEnvironmentUtilitiesMixin,
+        FlextTestsFilesUtilitiesMixin,
+        FlextTestsFixturesDSLMixin,
+        FlextTestsGenericHelpersUtilitiesMixin,
         FlextTestsFlextUtilitiesGovernance,
         FlextTestsFlextUtilitiesHandler,
         FlextTestsMakeUtilitiesMixin,
@@ -76,23 +71,17 @@ class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance)
         FlextTestsMatchersUtilities,
         FlextTestsNamespaceUtilitiesMixin,
         FlextTestsFlextUtilitiesPayload,
+        FlextTestsResultUtilitiesMixin,
         FlextTestsScratchStorageUtilitiesMixin,
+        FlextTestsConfigHelpersUtilitiesMixin,
+        FlextTestsTestContextUtilitiesMixin,
         FlextTestsWorkspaceCleanupUtilitiesMixin,
         FlextTestsWorkspaceCleanupPlanUtilitiesMixin,
         FlextTestsWorkspaceCleanupInspectUtilitiesMixin,
         FlextTestsWorkspaceCleanupPathsUtilitiesMixin,
         FlextTestsWorkspaceCleanupGitUtilitiesMixin,
-        FlextTestsResultUtilitiesMixin,
-        FlextTestsTestContextUtilitiesMixin,
-        FlextTestsDockerStateUtilitiesMixin,
-        FlextTestsDockerLifecycleUtilitiesMixin,
-        FlextTestsGenericHelpersUtilitiesMixin,
-        FlextTestsConfigHelpersUtilitiesMixin,
-        FlextTestsContainerHelpersUtilitiesMixin,
         FlextTestsFlextUtilitiesHandler.FlextTestsHandlerHelpersUtilitiesMixin,
-        FlextTestsFilesUtilitiesMixin,
         FlextTestsMatchersUtilities.Tests,
-        FlextTestsFixturesDSLMixin,
         FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin,
     ):
         """Test utilities namespace."""

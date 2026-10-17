@@ -1,3 +1,4 @@
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Models for FLEXT tests.
 
 Provides FlextTestsModels, extending m with test-specific model definitions
@@ -11,17 +12,20 @@ from __future__ import annotations
 
 from flext_cli import FlextCliModels
 
-from flext_tests._models.base import FlextTestsFlextModelsBase
-from flext_tests._models.batch import FlextTestsBatchModelsMixin
-from flext_tests._models.docker import FlextTestsDockerModelsMixin
-from flext_tests._models.domains import FlextTestsDomainModelsMixin
-from flext_tests._models.filesystem import FlextTestsFilesystemModelsMixin
-from flext_tests._models.make import FlextTestsMakeModelsMixin
-from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
-from flext_tests._models.namespace import FlextTestsNamespaceModelsMixin
-from flext_tests._models.spec import FlextTestsSpecModelsMixin
-from flext_tests._models.validator import FlextTestsValidatorModelsMixin
-from flext_tests._models.workspace_cleanup import FlextTestsWorkspaceCleanupModelsMixin
+from flext_tests._models import (
+    FlextTestsBatchModelsMixin,
+    FlextTestsDockerModelsMixin,
+    FlextTestsDomainModelsMixin,
+    FlextTestsFilesystemModelsMixin,
+    FlextTestsFlextModelsBase,
+    FlextTestsMakeModelsMixin,
+    FlextTestsMatchersModelsMixin,
+    FlextTestsNamespace,
+    FlextTestsNamespaceModelsMixin,
+    FlextTestsSpecModelsMixin,
+    FlextTestsValidatorModelsMixin,
+    FlextTestsWorkspaceCleanupModelsMixin,
+)
 
 
 class FlextTestsModels(FlextCliModels):
@@ -29,17 +33,18 @@ class FlextTestsModels(FlextCliModels):
 
     class Tests(
         FlextTestsFlextModelsBase,
+        FlextTestsBatchModelsMixin,
+        FlextTestsDockerModelsMixin,
+        FlextTestsDomainModelsMixin,
         FlextTestsFilesystemModelsMixin,
         FlextTestsMakeModelsMixin,
         FlextTestsMatchersModelsMixin,
-        FlextTestsSpecModelsMixin,
-        FlextTestsWorkspaceCleanupModelsMixin,
-        FlextTestsDockerModelsMixin,
-        FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin,
-        FlextTestsDomainModelsMixin,
         FlextTestsNamespaceModelsMixin,
-        FlextTestsBatchModelsMixin,
+        FlextTestsSpecModelsMixin,
+        FlextTestsNamespace,
         FlextTestsValidatorModelsMixin,
+        FlextTestsWorkspaceCleanupModelsMixin,
+        FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin,
     ):
         """Test-specific models namespace."""
 

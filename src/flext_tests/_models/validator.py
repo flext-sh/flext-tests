@@ -90,3 +90,6 @@ class FlextTestsValidatorModelsMixin:
             tuple[str, ...],
             u.Field(description="Formatted per-finding lines for the failure body."),
         ] = ()
+
+
+__all__: list[str] = ["FlextTestsValidatorModelsMixin"]

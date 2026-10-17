@@ -79,6 +79,7 @@ flext_tests_enforcement = "flext_tests.enforcement_plugin"
 
 [dependency-groups]
 dev = [
+  "mkdocstrings-python>=2.0.9",
   "actionlint-py>=1.7.12.24",
   "bandit>=1.9.4",
   "deptry",
@@ -94,7 +95,6 @@ dev = [
   "mkdocs-redirects>=1.2.3",
   "mkdocs-section-index>=0.3.12",
   "mkdocstrings>=1.0.6",
-  "mkdocstrings-python>=2.0.8",
   "msgpack-types",
   "mypy>=2.3.1",
   "platformdirs>=4.12.0",
@@ -166,7 +166,6 @@ omit = [
 
 [tool.deptry]
 known_first_party = ["flext_tests"]
-optional_dependencies_dev_groups = ["dev"]
 
 [tool.flext.docs]
 package_name = "flext_tests"
@@ -178,7 +177,7 @@ scan_dirs = ["src"]
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-include = ["/src/flext_tests/**"]
+only-include = ["src/flext_tests"]
 
 [tool.hatch.build.targets.wheel.sources]
 "src/flext_tests" = "flext_tests"
@@ -187,7 +186,7 @@ include = ["/src/flext_tests/**"]
 "pyproject.toml" = "flext_tests/pyproject.toml"
 
 [tool.hatch.build.targets.sdist]
-include = ["/src/flext_tests/**"]
+only-include = ["src/flext_tests"]
 
 [tool.hatch.build.targets.sdist.force-include]
 "pyproject.toml" = "pyproject.toml"
@@ -484,12 +483,13 @@ runtime-evaluated-base-classes = [
   "flext_core.m.FrozenModel",
   "flext_core.s",
   "flext_tests.FlextTestsDocker",
+  "flext_tests.FlextTestsModels.Tests",
   "flext_tests.FlextTestsServiceBase",
   "flext_tests.FlextTestsUtilities.Tests",
+  "flext_tests._models.FlextTestsNamespace",
   "flext_tests._models.filesystem.PathCoercingParams",
   "flext_tests._models.matchers.PayloadParams",
-  "flext_tests._utilities.settings.FlextTestsConfigHelpersUtilitiesMixin",
-  "flext_tests.m.BaseModel",
+  "flext_tests._utilities.FlextTestsConfigHelpersUtilitiesMixin",
   "flext_tests.m.Value",
   "flext_tests.s",
   "pydantic.BaseModel",

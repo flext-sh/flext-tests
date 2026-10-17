@@ -13,6 +13,12 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
+    from flext_tests._fixtures._enforcement_parts._collector import (
+        FlextTestsEnforcementCollector,
+    )
+    from flext_tests._fixtures._enforcement_parts._error import (
+        FlextTestsEnforcementViolationError,
+    )
     from flext_tests._fixtures._enforcement_parts.build import (
         FlextTestsEnforcementBuilder,
     )
@@ -27,9 +33,11 @@ if TYPE_CHECKING:
 
 __all__: tuple[str, ...] = (
     "FlextTestsEnforcementBuilder",
+    "FlextTestsEnforcementCollector",
     "FlextTestsEnforcementDispatcher",
     "FlextTestsEnforcementItem",
     "FlextTestsEnforcementValidators",
+    "FlextTestsEnforcementViolationError",
 )
 
 install_lazy_exports(
@@ -37,9 +45,11 @@ install_lazy_exports(
     globals(),
     MappingProxyType({
         "FlextTestsEnforcementBuilder": ".build",
+        "FlextTestsEnforcementCollector": "._collector",
         "FlextTestsEnforcementDispatcher": ".dispatcher",
         "FlextTestsEnforcementItem": ".items",
         "FlextTestsEnforcementValidators": ".validators",
+        "FlextTestsEnforcementViolationError": "._error",
     }),
     public_exports=__all__,
 )
