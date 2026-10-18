@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import sys
 from importlib import import_module
-from importlib.metadata import entry_points
+from importlib.metadata import distribution
 from pathlib import Path
 
 import pytest
@@ -45,23 +45,38 @@ class TestsFlextTestsPublicFacade:
     ) -> None:
         """Test selected enforcement plugin uses its declared identity."""
         plugin = config.Infra.tooling.tools.pytest.enforcement_plugin
-        entries = entry_points(group="pytest11", name=plugin)
-        tm.that(len(entries), eq=1)
+        root = Path(__file__).resolve().parents[2]
+        metadata = u.build_project_metadata(root, u.read_project_document_cached(root))
+        (entry,) = (
+            entry
+            for entry in distribution(metadata.project.name).entry_points
+            if entry.group == "pytest11" and entry.name == plugin
+        )
         tm.that(
-            pytestconfig.pluginmanager.get_plugin(plugin) is next(iter(entries)).load(),
+            pytestconfig.pluginmanager.get_plugin(plugin) is entry.load(),
             eq=True,
         )
 
     @staticmethod
-    def test_plugin_configure_hooks_keep_their_registered_module_owners(
+    def test_plugin_configure_hooks_keep_their_registered_class_owners(
         pytestconfig: pytest.Config,
     ) -> None:
-        """Both pytest11 configure hooks run without competing for root exports."""
+        """Declared pytest11 class hooks run without competing for root exports."""
+        root = Path(__file__).resolve().parents[2]
+        metadata = u.build_project_metadata(root, u.read_project_document_cached(root))
+        document = tm.ok(u.Cli.toml_read_json(root / "pyproject.toml"))
+        declared = u.Cli.toml_mapping_path(
+            document,
+            ("project", "entry-points", "pytest11"),
+        )
+        if declared is None:
+            pytest.fail("The project must declare its pytest11 plugin objects")
         entries = {
             entry.name: entry
-            for entry in entry_points(group="pytest11")
-            if entry.value.startswith(f"{flext_tests.__name__}.")
+            for entry in distribution(metadata.project.name).entry_points
+            if entry.group == "pytest11"
         }
+        tm.that({name: entry.value for name, entry in entries.items()}, eq=declared)
         configure = {
             hook.plugin_name: hook.plugin
             for hook in pytestconfig.hook.pytest_configure.get_hookimpls()
@@ -70,6 +85,11 @@ class TestsFlextTestsPublicFacade:
         tm.that(set(configure), eq=set(entries))
         for name, entry in entries.items():
             tm.that(configure[name] is entry.load(), eq=True)
+            tm.that(isinstance(configure[name], type), eq=True)
+            tm.that(
+                f"{configure[name].__module__}:{configure[name].__qualname__}",
+                eq=entry.value,
+            )
         tm.that("pytest_configure" in flext_tests.__all__, eq=False)
 
     @staticmethod
