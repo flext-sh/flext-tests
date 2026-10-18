@@ -14,18 +14,15 @@ from types import ModuleType
 from typing import TYPE_CHECKING, Protocol, cast
 
 import pytest
-from flext_core import FlextContainer, FlextContext, FlextSettings, t
+from flext_core import FlextContainer, FlextContext, FlextSettings
 
-from flext_tests import u
-from flext_tests._settings import FlextTestsSettings
-from flext_tests.case import FlextTestsCase
+from flext_tests import FlextTestsCase, FlextTestsSettings, t, u
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
     from pathlib import Path
 
-    from flext_tests import m, p
-    from flext_tests.base import FlextTestsServiceBase
+    from flext_tests import FlextTestsServiceBase, m, p
 
 
 class FlextTestsSettingsFixtures:
@@ -49,6 +46,9 @@ class FlextTestsSettingsFixtures:
 
         Pure tests never provision tools. Consumers lease one shared locked seed;
         teardown validates allocation identity before removing its owned area.
+
+        Yields:
+            p.Tests.SessionRuntime: One lazy isolated worker runtime.
         """
         directory = tmp_path_factory.mktemp(run_namespace.token)
         runtime = u.Tests.SessionRuntime(directory)
@@ -180,7 +180,11 @@ class FlextTestsSettingsFixtures:
     @staticmethod
     @pytest.fixture
     def settings() -> FlextTestsSettings:
-        """Provide clean typed test settings with the existing test defaults."""
+        """Provide clean typed test settings with the existing test defaults.
+
+        Returns:
+            FlextTestsSettings: Fresh typed test settings with test defaults.
+        """
         settings_type: type[FlextTestsSettings] = importlib.import_module(
             "flext_tests",
         ).FlextTestsSettings
@@ -193,7 +197,11 @@ class FlextTestsSettingsFixtures:
         settings_cls: type[TSettings],
         **overrides: t.Scalar | None,
     ) -> TSettings:
-        """Create project settings after resetting their singleton."""
+        """Create project settings after resetting their singleton.
+
+        Returns:
+            TSettings: The global settings instance with the filtered overrides.
+        """
         settings_cls.reset_for_testing()
         filtered_overrides: t.ScalarMapping = {
             key: value for key, value in overrides.items() if value is not None
@@ -203,19 +211,31 @@ class FlextTestsSettingsFixtures:
     @staticmethod
     @pytest.fixture
     def settings_factory() -> Callable[..., FlextSettings]:
-        """Supply the settings factory without wrapping its native callable."""
+        """Supply the settings factory without wrapping its native callable.
+
+        Returns:
+            Callable[..., FlextSettings]: The unwrapped settings factory.
+        """
         return FlextTestsSettingsFixtures._create
 
     @staticmethod
     @pytest.fixture
     def test_context() -> FlextContext:
-        """Provide the canonical FlextContext fixture for test runtimes."""
+        """Provide the canonical FlextContext fixture for test runtimes.
+
+        Returns:
+            FlextContext: A new canonical test context.
+        """
         return FlextContext()
 
     @staticmethod
     @pytest.fixture
     def clean_container() -> Iterator[p.Container]:
-        """Provide isolated container state and reset it even on test failure."""
+        """Provide isolated container state and reset it even on test failure.
+
+        Yields:
+            p.Container: A fresh isolated DI container.
+        """
         FlextContainer.reset_for_testing()
         try:
             yield FlextContainer()
@@ -225,17 +245,29 @@ class FlextTestsSettingsFixtures:
     @staticmethod
     @pytest.fixture
     def temp_dir(tmp_path: Path) -> Path:
-        """Provide the canonical temporary directory fixture for tests."""
+        """Provide the canonical temporary directory fixture for tests.
+
+        Returns:
+            Path: The per-test temporary directory.
+        """
         return tmp_path
 
     @staticmethod
     @pytest.fixture
     def temp_file(temp_dir: Path) -> Path:
-        """Provide the canonical temporary file path rooted at temp_dir."""
+        """Provide the canonical temporary file path rooted at temp_dir.
+
+        Returns:
+            Path: Path to the temporary file inside the temporary directory.
+        """
         return temp_dir / "test_file.txt"
 
     @staticmethod
     @pytest.fixture
     def sample_data() -> t.JsonMapping:
-        """Provide the existing canonical JSON payload for generic test cases."""
+        """Provide the existing canonical JSON payload for generic test cases.
+
+        Returns:
+            t.JsonMapping: The canonical generic JSON test payload.
+        """
         return {"string": "test_value", "number": 42, "enabled": True}

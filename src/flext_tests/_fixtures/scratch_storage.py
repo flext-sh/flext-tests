@@ -23,7 +23,11 @@ class FlextTestsScratchStoragePlugin:
 
     @staticmethod
     def _scratch_root(config: pytest.Config) -> Path:
-        """Resolve storage through its pure owner, not the composed facade."""
+        """Resolve storage through its pure owner, not the composed facade.
+
+        Returns:
+            Path: The resolved scratch root for this checkout.
+        """
         return FlextTestsScratchStorageUtilitiesMixin.scratch_root(
             checkout_root=Path(config.rootpath),
             override=config.getini(c.Tests.SCRATCH_ROOT_INI) or None,

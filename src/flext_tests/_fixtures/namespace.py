@@ -22,7 +22,11 @@ class FlextTestsNamespaceFixtures:
 
     @staticmethod
     def _worker_id(config: pytest.Config) -> str:
-        """Resolve the xdist worker id (master outside xdist)."""
+        """Resolve the xdist worker id (master outside xdist).
+
+        Returns:
+            str: The xdist worker id, or "master" outside xdist.
+        """
         worker_input = getattr(config, "workerinput", None)
         if worker_input is not None:
             return str(worker_input.get("workerid", "master"))
@@ -30,7 +34,11 @@ class FlextTestsNamespaceFixtures:
 
     @staticmethod
     def _run_token(config: pytest.Config) -> str:
-        """Resolve the shared run token (xdist testrunuid or session-stable id)."""
+        """Resolve the shared run token (xdist testrunuid or session-stable id).
+
+        Returns:
+            str: The shared run token for this pytest run.
+        """
         worker_input = getattr(config, "workerinput", None)
         if worker_input is not None:
             return str(worker_input.get("testrunuid", ""))
@@ -50,7 +58,11 @@ class FlextTestsNamespaceFixtures:
     @staticmethod
     @pytest.fixture(scope="session")
     def run_namespace(request: pytest.FixtureRequest) -> m.Tests.TestNamespace:
-        """Session namespace: one token per pytest run per worker."""
+        """Session namespace: one token per pytest run per worker.
+
+        Returns:
+            m.Tests.TestNamespace: The session-scoped test namespace.
+        """
         config = request.config
         namespace: m.Tests.TestNamespace = import_module(
             "flext_tests"
@@ -64,7 +76,11 @@ class FlextTestsNamespaceFixtures:
     @staticmethod
     @pytest.fixture
     def test_namespace(run_namespace: m.Tests.TestNamespace) -> m.Tests.TestNamespace:
-        """Function namespace: the run token plus a fresh per-test token."""
+        """Function namespace: the run token plus a fresh per-test token.
+
+        Returns:
+            m.Tests.TestNamespace: A function-scoped test namespace.
+        """
         namespace: m.Tests.TestNamespace = import_module(
             "flext_tests"
         ).u.Tests.namespace(

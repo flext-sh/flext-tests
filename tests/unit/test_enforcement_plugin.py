@@ -33,7 +33,11 @@ class TestsFlextTestsEnforcementPlugin:
 
     @staticmethod
     def _declared_pytest_entries() -> tuple[EntryPoint, ...]:
-        """Round-trip CUSTOM declarations through their installed distribution."""
+        """Round-trip CUSTOM declarations through their installed distribution.
+
+        Returns:
+            tuple[EntryPoint, ...]: The installed pytest11 entry points.
+        """
         root = Path(__file__).resolve().parents[2]
         metadata = u.build_project_metadata(root, u.read_project_document_cached(root))
         document = tm.ok(u.Cli.toml_read_json(root / "pyproject.toml"))
@@ -149,12 +153,15 @@ class TestsFlextTestsEnforcementPlugin:
                 "\n"
                 "class TestsPluginConsumer:\n"
                 "    @staticmethod\n"
-                "    def test_registered(pytestconfig: pytest.Config,\n"
-                "                        run_namespace: m.Tests.TestNamespace) -> None:\n"
+                "    def test_registered(\n"
+                "        pytestconfig: pytest.Config,\n"
+                "        run_namespace: m.Tests.TestNamespace,\n"
+                "    ) -> None:\n"
                 "        manager = pytestconfig.pluginmanager\n"
                 "        before = manager.list_name_plugin()\n"
                 f"        for name, target in {selected!r}:\n"
-                "            entry = next(iter(entry_points(group='pytest11', name=name)))\n"
+                "            entry = next(\n"
+                "                iter(entry_points(group='pytest11', name=name)))\n"
                 "            tm.that(entry.value, eq=target)\n"
                 "            plugin = manager.get_plugin(name)\n"
                 "            tm.that(plugin is entry.load(), eq=True)\n"
@@ -168,8 +175,11 @@ class TestsFlextTestsEnforcementPlugin:
                 "            c.Tests.CAPABILITY_PLUGIN_MODULE), eq=True)\n"
                 "        tm.that(bool(run_namespace.token), eq=True)\n"
                 "        tm.that(pytestconfig.getoption('no_flext_enforce'), eq=True)\n"
-                "        tm.that(pytestconfig.getoption('flext_enforce_strict'), eq=True)\n"
-                "        tm.that(pytestconfig.getoption('flext_enforce_rules'), eq='probe')\n"
+                "        tm.that(\n"
+                "            pytestconfig.getoption('flext_enforce_strict'), eq=True)\n"
+                "        tm.that(\n"
+                "            pytestconfig.getoption(\n"
+                "                'flext_enforce_rules'), eq='probe')\n"
             ),
         )
         with u.Tests.env_vars_context(
@@ -217,7 +227,9 @@ class TestsFlextTestsEnforcementPlugin:
                     current = (FlextSettings.fetch_global(),
                                FlextTestsSettings.fetch_global(), FlextContainer())
                     if TestsFirstConsumer.previous is not None:
-                        for before, after in zip(TestsFirstConsumer.previous, current, strict=True):
+                        for before, after in zip(
+                            TestsFirstConsumer.previous, current, strict=True
+                        ):
                             tm.that(before is after, eq=False)
                         tm.that(session_runtime is TestsFirstConsumer.runtime, eq=True)
                         tm.that(run_namespace is TestsFirstConsumer.namespace, eq=True)
@@ -232,8 +244,9 @@ class TestsFlextTestsEnforcementPlugin:
             class TestsSecondConsumer:
                 @staticmethod
                 def test_shared(session_runtime: p.Tests.SessionRuntime,
-                                run_namespace: m.Tests.TestNamespace, reset_settings: None,
-                                clean_container: p.Container, settings: FlextTestsSettings,
+                                run_namespace: m.Tests.TestNamespace,
+                                reset_settings: None, clean_container: p.Container,
+                                settings: FlextTestsSettings,
                                 settings_factory) -> None:
                     tm.that(session_runtime is TestsFirstConsumer.runtime, eq=True)
                     tm.that(run_namespace is TestsFirstConsumer.namespace, eq=True)
@@ -244,7 +257,8 @@ class TestsFlextTestsEnforcementPlugin:
                     Path('runtime-second').write_text(str(session_runtime.directory))
 
                 @staticmethod
-                def test_failure_still_closes(session_runtime: p.Tests.SessionRuntime) -> None:
+                def test_failure_still_closes(
+                    session_runtime: p.Tests.SessionRuntime) -> None:
                     Path('runtime-failure').write_text(str(session_runtime.directory))
                     raise RuntimeError('intentional consumer failure')
             """,

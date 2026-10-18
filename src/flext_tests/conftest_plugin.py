@@ -46,7 +46,12 @@ class FlextTestsConftestPlugin:
 
     @staticmethod
     def pytest_configure(config: pytest.Config) -> None:
-        """Register fixture plugins after startup instrumentation is active."""
+        """Register fixture plugins after startup instrumentation is active.
+
+        Raises:
+            ValueError: If a fixture module declares more than one owner or a
+                required fixture plugin is blocked from registration.
+        """
         # Import at configure time, after pytest-cov starts measuring. The module
         # name avoids the settings fixture shadowing its submodule attribute.
         for fixture_module in c.Tests.FIXTURE_PLUGIN_MODULES:
