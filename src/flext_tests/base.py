@@ -100,11 +100,11 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](
             FlextContainer.reset_for_testing()
 
     @classmethod
-    def runtime_bootstrap_options(cls) -> m.RuntimeBootstrapOptions:
+    def runtime_bootstrap_options(cls) -> p.RuntimeBootstrapOptions:
         """Provide the runtime bootstrap options bound to the test settings type.
 
         Returns:
-            The resulting ``m.RuntimeBootstrapOptions``.
+            The runtime bootstrap capability consumed by the core service.
 
         """
         return m.RuntimeBootstrapOptions(settings_type=FlextTestsSettings)
