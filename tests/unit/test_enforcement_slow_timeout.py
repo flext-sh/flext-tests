@@ -96,13 +96,13 @@ class TestsFlextTestsSlowTimeoutPolicy:
         self,
         pytester: pytest.Pytester,
     ) -> None:
-        """The full-run override disables timers without weakening policy."""
+        """The full-run override disables timers without changing owned budgets."""
         self._make_ini(pytester, slow_timeout=str(self.slow_timeout_seconds))
         pytester.makepyfile(
             "import pytest\n"
-            "from tests import tm\n"
+            "from flext_tests import tm\n"
             "\n"
-            "def test_regular_unbounded(request: pytest.FixtureRequest) -> None:\n"
+            "def test_unbounded(request: pytest.FixtureRequest) -> None:\n"
             "    tm.that(request.config.getoption('timeout'), eq=0)\n"
             "    tm.that(request.node.get_closest_marker('timeout'), none=True)\n"
             "\n"
