@@ -13,28 +13,24 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._utilities import _files, _matchers
-    from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
-    from flext_tests._utilities._files._batch import FlextTestsFilesBatchMixin
-    from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
-    from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
-    from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
-    from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
-    from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
-    from flext_tests._utilities._files._reading import FlextTestsFilesReadingMixin
-    from flext_tests._utilities._matchers._assertions import (
+    from flext_tests._utilities import _files as _files, _matchers as _matchers
+    from flext_tests._utilities._files import (
+        FlextTestsFilesAssertionsMixin,
+        FlextTestsFilesBatchMixin,
+        FlextTestsFilesComparisonMixin,
+        FlextTestsFilesContextsMixin,
+        FlextTestsFilesCreationMixin,
+        FlextTestsFilesInfoMixin,
+        FlextTestsFilesLifecycleMixin,
+        FlextTestsFilesReadingMixin,
+    )
+    from flext_tests._utilities._matchers import (
         FlextTestsMatchersAssertionsMixin,
-    )
-    from flext_tests._utilities._matchers._containment import (
         FlextTestsMatchersContainmentMixin,
-    )
-    from flext_tests._utilities._matchers._immutability import (
         FlextTestsMatchersImmutabilityMixin,
-    )
-    from flext_tests._utilities._matchers._result import FlextTestsMatchersResultMixin
-    from flext_tests._utilities._matchers._scope import FlextTestsMatchersScopeMixin
-    from flext_tests._utilities._matchers._that import FlextTestsMatchersThatMixin
-    from flext_tests._utilities._matchers._typeguards import (
+        FlextTestsMatchersResultMixin,
+        FlextTestsMatchersScopeMixin,
+        FlextTestsMatchersThatMixin,
         FlextTestsMatchersTypeGuardsMixin,
     )
     from flext_tests._utilities.base import FlextTestsUtilitiesBase
