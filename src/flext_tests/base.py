@@ -10,12 +10,15 @@ from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from typing import Self
 
-from flext_core import FlextContainer, s
+import flext_core
+from flext_core import FlextContainer
 
-from flext_tests import FlextTestsSettings, m, p, t
+from flext_tests import FlextTestsSettings, m, p
 
 
-class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
+class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](
+    flext_core.s[TDomainResult]
+):
     """Base service for test packages with the ``Tests`` settings namespace."""
 
     @classmethod
@@ -31,14 +34,16 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
         if settings_type is None:
             msg = f"{cls.__name__} must declare a FlextTestsSettings subclass"
             raise TypeError(msg)
-        if not issubclass(settings_type, FlextTestsSettings):
+        if not isinstance(settings_type, type):
+            msg = f"{cls.__name__} must bootstrap a FlextTestsSettings class"
+            raise TypeError(msg)
+        if not flext_core.u.subclass_view(settings_type, FlextTestsSettings):
             msg = (
                 f"{cls.__name__} must bootstrap a FlextTestsSettings subclass, "
                 f"got {settings_type.__name__}"
             )
             raise TypeError(msg)
-        concrete_settings_type: type[FlextTestsSettings] = settings_type
-        return concrete_settings_type
+        return settings_type
 
     @classmethod
     def fetch_logger(cls) -> p.Logger:
@@ -55,7 +60,7 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
         return settings_type.model_validate(resolved_settings)
 
     @classmethod
-    def with_test_settings(cls, **overrides: t.SettingsOverride | None) -> Self:
+    def with_test_settings(cls, **overrides: p.SettingsOverride | None) -> Self:
         """Bind an isolated snapshot of the most specific test settings tree.
 
         Returns:
@@ -69,7 +74,7 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
     def isolated_test_runtime(
         cls,
         build: Callable[[], Self] | None = None,
-        **overrides: t.SettingsOverride | None,
+        **overrides: p.SettingsOverride | None,
     ) -> Generator[Self]:
         """Yield one isolated service/settings/container cycle for a test body.
 

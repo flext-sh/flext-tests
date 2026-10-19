@@ -19,6 +19,112 @@ class TestsFlextTestsMatchersValidationMixin:
     """Matcher validation tests."""
 
     @staticmethod
+    @pytest.mark.parametrize("truth", [True, False])
+    @pytest.mark.parametrize("repr_raises", [True, False])
+    def test_native_truth_never_formats_the_subject(
+        *, truth: bool, repr_raises: bool
+    ) -> None:
+        """Success and failure evaluate native truth once without representation."""
+        events: list[str] = []
+
+        class Subject:
+            def __bool__(self) -> bool:
+                events.append("bool")
+                return truth
+
+            def __repr__(self) -> str:
+                events.append("repr")
+                if repr_raises:
+                    message = "representation must not run"
+                    raise ValueError(message)
+                return "subject representation"
+
+        subject = Subject()
+        result = tm.that(subject, truth=truth)
+        tm.that(result, none=True)
+        tm.that(events, eq=["bool"])
+        with pytest.raises(AssertionError) as raised:
+            tm.that(subject, truth=not truth)
+        tm.that(raised.value.args, eq=())
+        tm.that(events, eq=["bool", "bool"])
+
+    @staticmethod
+    @pytest.mark.parametrize("truth", [True, False])
+    def test_native_truth_preserves_the_original_bool_exception(*, truth: bool) -> None:
+        """A failing bool is the first exception, even when representation raises."""
+        events: list[str] = []
+        failure = RuntimeError("original bool failure")
+
+        class Subject:
+            def __bool__(self) -> bool:
+                events.append("bool")
+                raise failure
+
+            def __repr__(self) -> str:
+                events.append("repr")
+                message = "unexpected representation failure"
+                raise ValueError(message)
+
+        with pytest.raises(RuntimeError) as raised:
+            tm.that(Subject(), truth=truth)
+        tm.that(raised.value is failure, truth=True)
+        tm.that(events, eq=["bool"])
+
+    @staticmethod
+    def test_native_truth_preserves_noncomplementary_comparison_operators() -> None:
+        """Expression truth keeps independently defined equality and inequality."""
+        events: list[str] = []
+
+        class Subject:
+            def __hash__(self) -> int:
+                return hash(type(self))
+
+            def __eq__(self, other: p.AttributeProbe) -> bool:
+                events.append("eq")
+                return self is not other
+
+            def __ne__(self, other: p.AttributeProbe) -> bool:
+                events.append("ne")
+                return self is not other
+
+        left = Subject()
+        right = Subject()
+        tm.that(left == right, truth=True)
+        tm.that(left != right, truth=True)
+        tm.that(events, eq=["eq", "ne"])
+
+    @staticmethod
+    def test_native_truth_keeps_callable_messages_as_unevaluated_values() -> None:
+        """assertion_message is an assertion argument, not a lazy factory API."""
+        events: list[str] = []
+
+        def message(value: p.Tests.NativeMatchValue) -> str:
+            events.append("message")
+            return str(value)
+
+        tm.that(True, truth=True, assertion_message=message)
+        with pytest.raises(AssertionError) as raised:
+            tm.that(False, truth=True, assertion_message=message)
+        tm.that(raised.value.args[0] is message, truth=True)
+        tm.that(events, eq=[])
+
+    @staticmethod
+    def test_native_truth_distinguishes_omitted_and_explicit_messages() -> None:
+        """Explicit empty/None messages retain their exact AssertionError args."""
+        with pytest.raises(AssertionError) as omitted:
+            tm.that(False, truth=True)
+        tm.that(omitted.value.args, eq=())
+        with pytest.raises(AssertionError) as empty:
+            tm.that(False, truth=True, msg="")
+        tm.that(empty.value.args, eq=("",))
+        with pytest.raises(AssertionError) as explicit_none:
+            tm.that(False, truth=True, assertion_message=None)
+        tm.that(explicit_none.value.args, eq=(None,))
+        with pytest.raises(AssertionError) as explicit_empty:
+            tm.that(False, truth=True, msg="secondary", assertion_message="")
+        tm.that(explicit_empty.value.args, eq=("",))
+
+    @staticmethod
     def test_native_truth_preserves_original_collection_semantics() -> None:
         """Truth checks use Python's original subject without payload conversion."""
         tm.that(["value"], truth=True)

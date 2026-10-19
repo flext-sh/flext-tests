@@ -7,9 +7,9 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
-from typing import TypeAliasType, cast
+from typing import TypeAliasType
 
-from flext_core import r
+from flext_core import p as core_p, u as core_u
 
 from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsPayloadUtilities
@@ -146,7 +146,7 @@ class FlextTestsMatchersThatMixin:
                     "attr_eq",
                     "attrs_match",
                 }
-                if params.none is not None and isinstance(value, r):
+                if params.none is not None and core_u.result_view(value):
                     return False
                 return all(
                     getattr(params, name) is None
@@ -196,9 +196,9 @@ class FlextTestsMatchersThatMixin:
                     AssertionError: Always.
 
                 """
-                if not isinstance(subject, r):
+                if not core_u.result_view(subject):
                     return subject
-                result_obj = cast("p.Result[object]", subject)
+                result_obj: core_p.ResultView[p.AttributeProbe] = subject
                 if params.ok is not None:
                     return FlextTestsPayloadUtilities.to_payload(
                         cls._ok_value(result_obj, params),
@@ -225,7 +225,7 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _ok_value[ValueT](
-                result_obj: p.Result[ValueT],
+                result_obj: core_p.ResultView[ValueT],
                 params: m.Tests.ThatParams,
             ) -> ValueT | str:
                 """Validate result ok/fail expectation and return success value.
@@ -248,7 +248,7 @@ class FlextTestsMatchersThatMixin:
                     raise AssertionError(
                         params.msg or c.Tests.ERR_FAIL_EXPECTED.format(value=value_str),
                     )
-                return getattr(result_obj, "value", "") if result_obj.success else ""
+                return result_obj.value if result_obj.success else ""
 
             @staticmethod
             def _has_scalar_validation(params: m.Tests.ThatParams) -> bool:
@@ -788,9 +788,6 @@ class FlextTestsMatchersThatMixin:
 
                 """
                 params = cls._that_params(kwargs)
-                message = params.msg or c.Tests.ERR_CONSTRAINTS_FAILED.format(
-                    value=value
-                )
                 if params.truth is not None and (
                     eq is not c.Tests.MatcherMissing.OMITTED
                     or ne is not c.Tests.MatcherMissing.OMITTED
@@ -798,14 +795,6 @@ class FlextTestsMatchersThatMixin:
                 ):
                     msg = "Native truth cannot be combined with value criteria"
                     raise ValueError(msg)
-                if eq is not c.Tests.MatcherMissing.OMITTED and value != eq:
-                    raise AssertionError(message)
-                if ne is not c.Tests.MatcherMissing.OMITTED and value == ne:
-                    raise AssertionError(message)
-                if where is not None and not where(value):
-                    raise AssertionError(
-                        params.msg or c.Tests.ERR_PREDICATE_FAILED.format(value=value),
-                    )
                 if params.truth is not None:
                     if bool(value) is not params.truth:
                         if "assertion_message" in params.model_fields_set:
@@ -814,6 +803,17 @@ class FlextTestsMatchersThatMixin:
                             raise AssertionError(params.msg)
                         raise AssertionError
                     return
+                message = params.msg or c.Tests.ERR_CONSTRAINTS_FAILED.format(
+                    value=value
+                )
+                if eq is not c.Tests.MatcherMissing.OMITTED and value != eq:
+                    raise AssertionError(message)
+                if ne is not c.Tests.MatcherMissing.OMITTED and value == ne:
+                    raise AssertionError(message)
+                if where is not None and not where(value):
+                    raise AssertionError(
+                        params.msg or c.Tests.ERR_PREDICATE_FAILED.format(value=value),
+                    )
                 cls._validate_declared_types(value, params)
                 cls._validate_attrs(value, params)
                 if cls._validate_subject_only(value, params):
@@ -1068,9 +1068,9 @@ class FlextTestsMatchersThatMixin:
         inherited_msg: str | None = None,
     ) -> None:
         for attr_path, rule in rules.items():
-            current = subject
+            current: p.AttributeProbe = subject
             for segment in attr_path.split("."):
-                if isinstance(current, Mapping) and segment in current:
+                if core_u.mapping_view(current) and segment in current:
                     current = current[segment]
                 elif hasattr(current, segment):
                     current = getattr(current, segment)

@@ -14,8 +14,8 @@ from tests import c, m, r, t, tm
 from tests.unit._matchers_parts.predicates import TestsFlextTestsMatchersPredicates
 
 
-class TestsFlextTestsMatchersThatCollectionsNarrowingMixin:
-    """Narrowing tests for ``tm.that()`` value and None constraints."""
+class TestsFlextTestsMatchersThatCollectionsMixin:
+    """Matcher collection, native value and None constraint tests."""
 
     @staticmethod
     def test_that_with_eq_parameter() -> None:
@@ -89,11 +89,15 @@ class TestsFlextTestsMatchersThatCollectionsNarrowingMixin:
         value: str | None = "test"
         tm.that(tm.not_none(value), eq="test")
 
-
-class TestsFlextTestsMatchersThatCollectionsMixin(
-    TestsFlextTestsMatchersThatCollectionsNarrowingMixin,
-):
-    """Matcher that collection tests."""
+    @staticmethod
+    def test_not_none_preserves_generic_collection_identity() -> None:
+        """The narrowed collection is the same mutable subject, not a projection."""
+        subject: list[str] = []
+        value: list[str] | None = subject
+        narrowed = tm.not_none(value)
+        tm.that(narrowed is subject, truth=True)
+        narrowed.append("value")
+        tm.that(subject, eq=["value"])
 
     @staticmethod
     def test_not_none_rejects_none_with_context() -> None:

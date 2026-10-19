@@ -75,6 +75,7 @@ class TestsFlextTestsServiceBase:
             result = service.run()
             tm.that(result.success, eq=True)
             tm.that(result.unwrap(), eq="HI")
+            tm.that("port" in service.model_dump(), truth=False)
 
     @staticmethod
     def test_isolated_test_runtime_without_build_still_needs_fetch_global() -> None:

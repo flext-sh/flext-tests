@@ -320,11 +320,11 @@ class FlextTestsFlextUtilitiesPayload:
             """
             to_n = FlextTestsPayloadUtilities.to_normalized_value
             if value.kind == "mapping":
-                return u.normalize_to_metadata({
+                return u.normalize_to_json_value({
                     key: to_n(item) for key, item in value.entries.items()
                 })
             if value.kind != "atom":
-                return u.normalize_to_metadata([to_n(item) for item in value.items])
+                return u.normalize_to_json_value([to_n(item) for item in value.items])
             atom = value.atom
             if isinstance(atom, bytes):
                 return atom.decode()
@@ -334,7 +334,7 @@ class FlextTestsFlextUtilitiesPayload:
                 atom,
                 bool | datetime | Path | str | int | float,
             ):
-                return u.normalize_to_metadata(atom)
+                return u.normalize_to_json_value(atom)
             msg = f"Unsupported textual payload leaf: {type(atom).__name__}"
             raise TypeError(msg)
 
