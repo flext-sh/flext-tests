@@ -10,7 +10,7 @@ import datetime as dt
 from pathlib import Path
 from typing import Annotated
 
-from flext_cli import m, u
+from flext_cli import m
 
 from flext_tests import c, p, t
 from flext_tests._models import FlextTestsFlextModelsBase
@@ -22,51 +22,51 @@ class FlextTestsFilesystemModelsMixin:
     class FileInfo(m.Value):
         """Comprehensive file information model."""
 
-        exists: Annotated[bool, u.Field(description="True when the file exists.")]
+        exists: Annotated[bool, m.Field(description="True when the file exists.")]
         path: Annotated[
             Path | None,
-            u.Field(description="Absolute path to the file."),
+            m.Field(description="Absolute path to the file."),
         ] = None
-        size: Annotated[int, u.Field(description="File size in bytes.")] = 0
-        size_human: Annotated[str, u.Field(description="Human-readable size.")] = ""
-        lines: Annotated[int, u.Field(description="Line count for text files.")] = 0
+        size: Annotated[int, m.Field(description="File size in bytes.")] = 0
+        size_human: Annotated[str, m.Field(description="Human-readable size.")] = ""
+        lines: Annotated[int, m.Field(description="Line count for text files.")] = 0
         encoding: Annotated[
             str,
-            u.Field(description="Text encoding detected or assumed."),
+            m.Field(description="Text encoding detected or assumed."),
         ] = c.Tests.DEFAULT_ENCODING
         is_empty: Annotated[
             bool,
-            u.Field(description="True when the file has zero bytes."),
+            m.Field(description="True when the file has zero bytes."),
         ] = False
-        first_line: Annotated[str, u.Field(description="First line of the file.")] = ""
-        fmt: Annotated[str, u.Field(description="Detected format label.")] = "unknown"
+        first_line: Annotated[str, m.Field(description="First line of the file.")] = ""
+        fmt: Annotated[str, m.Field(description="Detected format label.")] = "unknown"
         valid: Annotated[
             bool,
-            u.Field(description="True when the file parses cleanly."),
+            m.Field(description="True when the file parses cleanly."),
         ] = True
         created: Annotated[
             dt.datetime | None,
-            u.Field(description="File creation timestamp."),
+            m.Field(description="File creation timestamp."),
         ] = None
         modified: Annotated[
             dt.datetime | None,
-            u.Field(description="File last-modified timestamp."),
+            m.Field(description="File last-modified timestamp."),
         ] = None
         permissions: Annotated[
             int,
-            u.Field(description="Unix-style permission bits."),
+            m.Field(description="Unix-style permission bits."),
         ] = 0
         is_readonly: Annotated[
             bool,
-            u.Field(description="True when the file is not writable."),
+            m.Field(description="True when the file is not writable."),
         ] = False
         sha256: Annotated[
             str | None,
-            u.Field(description="Hex-encoded SHA-256 digest."),
+            m.Field(description="Hex-encoded SHA-256 digest."),
         ] = None
         content_meta: Annotated[
             FlextTestsFilesystemModelsMixin.ContentMeta | None,
-            u.Field(description="Optional content metadata for parsed files."),
+            m.Field(description="Optional content metadata for parsed files."),
         ] = None
 
     class ContentMeta(m.Value):
@@ -74,27 +74,27 @@ class FlextTestsFilesystemModelsMixin:
 
         key_count: Annotated[
             int | None,
-            u.Field(description="Number of keys for JSON/YAML dicts."),
+            m.Field(description="Number of keys for JSON/YAML dicts."),
         ] = None
         item_count: Annotated[
             int | None,
-            u.Field(description="Number of items for JSON/YAML lists."),
+            m.Field(description="Number of items for JSON/YAML lists."),
         ] = None
         row_count: Annotated[
             int | None,
-            u.Field(description="Number of rows for CSV files."),
+            m.Field(description="Number of rows for CSV files."),
         ] = None
         column_count: Annotated[
             int | None,
-            u.Field(description="Number of columns for CSV files."),
+            m.Field(description="Number of columns for CSV files."),
         ] = None
         model_valid: Annotated[
             bool | None,
-            u.Field(description="Whether content is valid for a specific model."),
+            m.Field(description="Whether content is valid for a specific model."),
         ] = None
         model_name: Annotated[
             str | None,
-            u.Field(description="Model class name if validated."),
+            m.Field(description="Model class name if validated."),
         ] = None
 
     class CreateParams(m.Value):
@@ -102,13 +102,13 @@ class FlextTestsFilesystemModelsMixin:
 
         content: Annotated[
             FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
-            u.Field(description="Owned native file content to create."),
+            m.Field(description="Owned native file content to create."),
         ]
         name: Annotated[
             t.NonEmptyStr,
-            u.Field(description="Filename for the created file."),
+            m.Field(description="Filename for the created file."),
         ] = c.Tests.DEFAULT_FILENAME
-        directory: Annotated[Path | None, u.Field(description="Target directory.")] = (
+        directory: Annotated[Path | None, m.Field(description="Target directory.")] = (
             None
         )
         fmt: Annotated[
@@ -118,31 +118,31 @@ class FlextTestsFilesystemModelsMixin:
                     type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
                 ),
             ),
-            u.Field(
+            m.Field(
                 default=c.Tests.FILE_FORMAT_AUTO,
                 description="File format override.",
             ),
         ]
-        enc: Annotated[t.NonEmptyStr, u.Field(description="File encoding.")] = (
+        enc: Annotated[t.NonEmptyStr, m.Field(description="File encoding.")] = (
             c.Tests.DEFAULT_ENCODING
         )
         indent: Annotated[
             t.NonNegativeInt,
-            u.Field(description="JSON/YAML indentation."),
+            m.Field(description="JSON/YAML indentation."),
         ] = c.Tests.DEFAULT_JSON_INDENT
-        delim: Annotated[str, u.Field(description="CSV delimiter.")] = (
+        delim: Annotated[str, m.Field(description="CSV delimiter.")] = (
             c.Tests.DEFAULT_CSV_DELIMITER
         )
         headers: Annotated[
             t.StrSequence | None,
-            u.Field(description="CSV headers."),
+            m.Field(description="CSV headers."),
         ] = None
-        readonly: Annotated[bool, u.Field(description="Create file as read-only.")] = (
+        readonly: Annotated[bool, m.Field(description="Create file as read-only.")] = (
             False
         )
         extract_result: Annotated[
             bool,
-            u.Field(description="Auto-extract result value."),
+            m.Field(description="Auto-extract result value."),
         ] = True
 
         @m.field_validator("name", mode="before")
@@ -161,10 +161,10 @@ class FlextTestsFilesystemModelsMixin:
     class ReadParams(m.Value):
         """Parameters for file read operations."""
 
-        path: Annotated[Path, u.Field(description="Path to file to read.")]
+        path: Annotated[Path, m.Field(description="Path to file to read.")]
         model_cls: Annotated[
             type[m.BaseModel] | None,
-            u.Field(description="Optional Pydantic model class."),
+            m.Field(description="Optional Pydantic model class."),
         ] = None
         fmt: Annotated[
             c.Tests.FileFormat,
@@ -173,16 +173,16 @@ class FlextTestsFilesystemModelsMixin:
                     type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
                 ),
             ),
-            u.Field(default=c.Tests.FILE_FORMAT_AUTO, description="Format override."),
+            m.Field(default=c.Tests.FILE_FORMAT_AUTO, description="Format override."),
         ]
-        enc: Annotated[t.NonEmptyStr, u.Field(description="File encoding.")] = (
+        enc: Annotated[t.NonEmptyStr, m.Field(description="File encoding.")] = (
             c.Tests.DEFAULT_ENCODING
         )
         delim: Annotated[
             str,
-            u.Field(min_length=1, max_length=1, description="CSV delimiter."),
+            m.Field(min_length=1, max_length=1, description="CSV delimiter."),
         ] = c.Tests.DEFAULT_CSV_DELIMITER
-        has_headers: Annotated[bool, u.Field(description="CSV has headers.")] = True
+        has_headers: Annotated[bool, m.Field(description="CSV has headers.")] = True
 
         @m.field_validator("path", mode="before")
         @classmethod
@@ -224,74 +224,74 @@ class FlextTestsFilesystemModelsMixin:
     class CompareParams(PathCoercingParams):
         """Parameters for file comparison operations."""
 
-        file1: Annotated[Path, u.Field(description="First file to compare.")]
-        file2: Annotated[Path, u.Field(description="Second file to compare.")]
-        mode: Annotated[str, u.Field(description="Comparison mode.")] = (
+        file1: Annotated[Path, m.Field(description="First file to compare.")]
+        file2: Annotated[Path, m.Field(description="Second file to compare.")]
+        mode: Annotated[str, m.Field(description="Comparison mode.")] = (
             c.Tests.CompareMode.CONTENT.value
         )
         ignore_ws: Annotated[
             bool,
-            u.Field(description="Ignore whitespace in comparison."),
+            m.Field(description="Ignore whitespace in comparison."),
         ] = False
         ignore_case: Annotated[
             bool,
-            u.Field(description="Case-insensitive comparison."),
+            m.Field(description="Case-insensitive comparison."),
         ] = False
         pattern: Annotated[
             str | None,
-            u.Field(description="Pattern to check if both files contain."),
+            m.Field(description="Pattern to check if both files contain."),
         ] = None
         deep: Annotated[
             bool,
-            u.Field(description="Use deep comparison for nested structures."),
+            m.Field(description="Use deep comparison for nested structures."),
         ] = True
         keys: Annotated[
             t.StrSequence | None,
-            u.Field(description="Only compare these keys."),
+            m.Field(description="Only compare these keys."),
         ] = None
         exclude_keys: Annotated[
             t.StrSequence | None,
-            u.Field(description="Exclude these keys from comparison."),
+            m.Field(description="Exclude these keys from comparison."),
         ] = None
 
     class InfoParams(PathCoercingParams):
         """Parameters for file info operations."""
 
-        path: Annotated[Path, u.Field(description="Path to file.")]
-        compute_hash: Annotated[bool, u.Field(description="Compute SHA256 hash.")] = (
+        path: Annotated[Path, m.Field(description="Path to file.")]
+        compute_hash: Annotated[bool, m.Field(description="Compute SHA256 hash.")] = (
             False
         )
-        detect_fmt: Annotated[bool, u.Field(description="Auto-detect format.")] = True
+        detect_fmt: Annotated[bool, m.Field(description="Auto-detect format.")] = True
         parse_content: Annotated[
             bool,
-            u.Field(description="Parse content and include metadata."),
+            m.Field(description="Parse content and include metadata."),
         ] = False
         validate_model: Annotated[
             type[m.BaseModel] | None,
-            u.Field(description="Pydantic model to validate content against."),
+            m.Field(description="Pydantic model to validate content against."),
         ] = None
 
     class AssertExistsParams(m.Value):
         """Validation options for file/dir existence assertions."""
 
-        is_file: Annotated[bool | None, u.Field(description="Assert path is file.")] = (
+        is_file: Annotated[bool | None, m.Field(description="Assert path is file.")] = (
             None
         )
         is_dir: Annotated[
             bool | None,
-            u.Field(description="Assert path is directory."),
+            m.Field(description="Assert path is directory."),
         ] = None
         not_empty: Annotated[
             bool | None,
-            u.Field(description="Assert path content emptiness state."),
+            m.Field(description="Assert path content emptiness state."),
         ] = None
         readable: Annotated[
             bool | None,
-            u.Field(description="Assert readable permission when True."),
+            m.Field(description="Assert readable permission when True."),
         ] = None
         writable: Annotated[
             bool | None,
-            u.Field(description="Assert writable permission when True."),
+            m.Field(description="Assert writable permission when True."),
         ] = None
 
     class CreateKwargsParams(m.Value):
@@ -299,7 +299,7 @@ class FlextTestsFilesystemModelsMixin:
 
         directory: Annotated[
             Path | None,
-            u.Field(description="Directory to create file in."),
+            m.Field(description="Directory to create file in."),
         ] = None
         fmt: Annotated[
             c.Tests.FileFormat,
@@ -308,24 +308,24 @@ class FlextTestsFilesystemModelsMixin:
                     type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
                 ),
             ),
-            u.Field(description="File format override."),
+            m.Field(description="File format override."),
         ] = c.Tests.FILE_FORMAT_AUTO
-        enc: Annotated[t.NonEmptyStr, u.Field(description="File encoding.")] = (
+        enc: Annotated[t.NonEmptyStr, m.Field(description="File encoding.")] = (
             c.Tests.DEFAULT_ENCODING
         )
         indent: Annotated[
             t.NonNegativeInt,
-            u.Field(description="JSON indentation level."),
+            m.Field(description="JSON indentation level."),
         ] = c.Tests.DEFAULT_JSON_INDENT
         delim: Annotated[
             str,
-            u.Field(min_length=1, max_length=1, description="CSV delimiter."),
+            m.Field(min_length=1, max_length=1, description="CSV delimiter."),
         ] = c.Tests.DEFAULT_CSV_DELIMITER
         headers: Annotated[
             t.StrSequence | None,
-            u.Field(description="CSV column headers."),
+            m.Field(description="CSV column headers."),
         ] = None
-        readonly: Annotated[bool, u.Field(description="Create file as read-only.")] = (
+        readonly: Annotated[bool, m.Field(description="Create file as read-only.")] = (
             False
         )
 

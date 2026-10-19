@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import MutableSequence
 from typing import TYPE_CHECKING, Annotated
 
-from flext_cli import m, u
+from flext_cli import m
 from flext_core import r
 
 from flext_tests import p
@@ -29,23 +29,23 @@ class FlextTestsGenericHelpersUtilitiesMixin:
 
         expected_successes: Annotated[
             int | None,
-            u.Field(description="Expected number of successes."),
+            m.Field(description="Expected number of successes."),
         ] = None
         expected_failures: Annotated[
             int | None,
-            u.Field(description="Expected number of failures."),
+            m.Field(description="Expected number of failures."),
         ] = None
         expected_success_count: Annotated[
             int | None,
-            u.Field(description="Alias for expected_successes."),
+            m.Field(description="Alias for expected_successes."),
         ] = None
         expected_failure_count: Annotated[
             int | None,
-            u.Field(description="Alias for expected_failures."),
+            m.Field(description="Alias for expected_failures."),
         ] = None
         first_failure_index: Annotated[
             int | None,
-            u.Field(description="Expected index of the first failure (if any)."),
+            m.Field(description="Expected index of the first failure (if any)."),
         ] = None
 
     # mro-j47u: explicit raises preserve assertion behavior under optimized Python.

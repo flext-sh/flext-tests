@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Annotated, Literal
 
-from flext_cli import m, u
+from flext_cli import m
 from flext_core import t
 
 
@@ -21,7 +21,7 @@ class FlextTestsWorkspaceCleanupModelsMixin:
 
         residues: Annotated[
             t.VariadicTuple[Path],
-            u.Field(
+            m.Field(
                 strict=False,
                 description="Exact workspace-relative development residue paths.",
             ),
@@ -32,11 +32,11 @@ class FlextTestsWorkspaceCleanupModelsMixin:
 
         repository_root: Annotated[
             Path,
-            u.Field(strict=False, description="Exact Git workspace root."),
+            m.Field(strict=False, description="Exact Git workspace root."),
         ]
         policy: Annotated[
             FlextTestsWorkspaceCleanupModelsMixin.WorkspaceCleanupPolicy,
-            u.Field(description="Original config-owned cleanup policy."),
+            m.Field(description="Original config-owned cleanup policy."),
         ]
 
     class WorkspaceCleanupCandidate(m.Value):
@@ -44,20 +44,20 @@ class FlextTestsWorkspaceCleanupModelsMixin:
 
         relative_path: Annotated[
             Path,
-            u.Field(strict=False, description="Workspace-relative residue path."),
+            m.Field(strict=False, description="Workspace-relative residue path."),
         ]
         path: Annotated[
             Path,
-            u.Field(strict=False, description="Absolute lexical residue path."),
+            m.Field(strict=False, description="Absolute lexical residue path."),
         ]
         kind: Annotated[
             Literal["file", "directory", "symlink"],
-            u.Field(description="Observed filesystem kind during planning."),
+            m.Field(description="Observed filesystem kind during planning."),
         ]
         # NOTE (multi-agent): bind apply to the exact dry-run filesystem state.
         fingerprint: Annotated[
             str,
-            u.Field(description="SHA-256 fingerprint of the planned residue tree."),
+            m.Field(description="SHA-256 fingerprint of the planned residue tree."),
         ]
 
     class WorkspaceCleanupPlan(m.Value):
@@ -65,11 +65,11 @@ class FlextTestsWorkspaceCleanupModelsMixin:
 
         request: Annotated[
             FlextTestsWorkspaceCleanupModelsMixin.WorkspaceCleanupRequest,
-            u.Field(description="Original cleanup request."),
+            m.Field(description="Original cleanup request."),
         ]
         candidates: Annotated[
             tuple[FlextTestsWorkspaceCleanupModelsMixin.WorkspaceCleanupCandidate, ...],
-            u.Field(description="Sorted validated cleanup candidates."),
+            m.Field(description="Sorted validated cleanup candidates."),
         ]
 
     class WorkspaceCleanupReport(m.Value):
@@ -77,11 +77,11 @@ class FlextTestsWorkspaceCleanupModelsMixin:
 
         plan: Annotated[
             FlextTestsWorkspaceCleanupModelsMixin.WorkspaceCleanupPlan,
-            u.Field(description="Exact dry-run plan applied by the operation."),
+            m.Field(description="Exact dry-run plan applied by the operation."),
         ]
         removed: Annotated[
             t.VariadicTuple[Path],
-            u.Field(strict=False, description="Sorted paths removed successfully."),
+            m.Field(strict=False, description="Sorted paths removed successfully."),
         ]
 
 

@@ -10,7 +10,7 @@ from collections.abc import MutableMapping
 from pathlib import Path
 from typing import Annotated, ClassVar
 
-from flext_cli import m, p, u
+from flext_cli import m, p
 
 
 def _warning_counter_default() -> MutableMapping[str, int]:
@@ -31,14 +31,14 @@ class FlextTestsValidatorModelsMixin:
 
         infra_findings: Annotated[
             p.Model | None,
-            u.Field(
+            m.Field(
                 description="flext-infra rule-engine findings keyed by rule id, "
                 "absent when no engine rule is selected.",
             ),
         ] = None
         project_names: Annotated[
             frozenset[str],
-            u.Field(description="FLEXT projects represented by collected items."),
+            m.Field(description="FLEXT projects represented by collected items."),
         ] = frozenset()
 
     class EnforcementDispatcherConfig(m.Value):
@@ -46,49 +46,49 @@ class FlextTestsValidatorModelsMixin:
 
         strict: Annotated[
             bool,
-            u.Field(description="Promote runtime warnings to failures when true."),
+            m.Field(description="Promote runtime warnings to failures when true."),
         ]
         include: Annotated[
             frozenset[str],
-            u.Field(description="Optional allow-list of enforcement rule IDs."),
+            m.Field(description="Optional allow-list of enforcement rule IDs."),
         ] = frozenset()
         exclude: Annotated[
             frozenset[str],
-            u.Field(description="Optional block-list of enforcement rule IDs."),
+            m.Field(description="Optional block-list of enforcement rule IDs."),
         ] = frozenset()
         repository_root: Annotated[
             Path | None,
-            u.Field(description="Resolved FLEXT workspace root for the session."),
+            m.Field(description="Resolved FLEXT workspace root for the session."),
         ] = None
         warning_counter: Annotated[
             MutableMapping[str, int],
-            u.Field(
+            m.Field(
                 description="Captured runtime warning counts keyed by dotted category.",
             ),
-        ] = u.Field(default_factory=_warning_counter_default)
+        ] = m.Field(default_factory=_warning_counter_default)
 
     class EnforcementViolation(m.Value):
         """One grouped ``(rule_id, project)`` enforcement violation payload."""
 
         rule_id: Annotated[
             str,
-            u.Field(description="Enforcement rule ID the findings belong to."),
+            m.Field(description="Enforcement rule ID the findings belong to."),
         ]
         severity: Annotated[
             str,
-            u.Field(description="Severity declared by the finding payload."),
+            m.Field(description="Severity declared by the finding payload."),
         ]
         description: Annotated[
             str,
-            u.Field(description="Human-readable finding message of the first hit."),
+            m.Field(description="Human-readable finding message of the first hit."),
         ]
         project: Annotated[
             str,
-            u.Field(description="FLEXT project the findings belong to."),
+            m.Field(description="FLEXT project the findings belong to."),
         ]
         violations: Annotated[
             tuple[str, ...],
-            u.Field(description="Formatted per-finding lines for the failure body."),
+            m.Field(description="Formatted per-finding lines for the failure body."),
         ] = ()
 
 

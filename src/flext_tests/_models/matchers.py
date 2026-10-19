@@ -12,7 +12,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated, ClassVar, Self, TypeAliasType, cast
 
-from flext_cli import m, u
+from flext_cli import m
 
 from flext_tests import p, t
 from flext_tests._models import FlextTestsFlextModelsBase
@@ -226,72 +226,72 @@ class FlextTestsMatchersModelsMixin:
 
         eq: Annotated[
             MatchExpectedValue,
-            u.Field(description="Expected equality value."),
+            m.Field(description="Expected equality value."),
         ] = None
         ne: Annotated[
             MatchExpectedValue,
-            u.Field(description="Expected inequality value."),
+            m.Field(description="Expected inequality value."),
         ] = None
         is_: Annotated[
             type | t.VariadicTuple[type] | None,
-            u.Field(
+            m.Field(
                 validation_alias=t.AliasChoices("is_", "is"),
                 description="Expected runtime type.",
             ),
         ] = None
         has: Annotated[
             FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
-            u.Field(description="Required contained value."),
+            m.Field(description="Required contained value."),
         ] = None
         lacks: Annotated[
             FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
-            u.Field(
+            m.Field(
                 validation_alias=t.AliasChoices("lacks", "excludes"),
                 description="Forbidden contained value.",
             ),
         ] = None
-        none: Annotated[bool | None, u.Field(description="Expected null state.")] = None
-        empty: Annotated[bool | None, u.Field(description="Expected empty state.")] = (
+        none: Annotated[bool | None, m.Field(description="Expected null state.")] = None
+        empty: Annotated[bool | None, m.Field(description="Expected empty state.")] = (
             None
         )
         gt: Annotated[
             t.Tests.ComparableScalar | None,
-            u.Field(description="Exclusive lower bound."),
+            m.Field(description="Exclusive lower bound."),
         ] = None
         gte: Annotated[
             t.Tests.ComparableScalar | None,
-            u.Field(description="Inclusive lower bound."),
+            m.Field(description="Inclusive lower bound."),
         ] = None
         lt: Annotated[
             t.Tests.ComparableScalar | None,
-            u.Field(description="Exclusive upper bound."),
+            m.Field(description="Exclusive upper bound."),
         ] = None
         lte: Annotated[
             t.Tests.ComparableScalar | None,
-            u.Field(description="Inclusive upper bound."),
+            m.Field(description="Inclusive upper bound."),
         ] = None
         starts: Annotated[
             str | None,
-            u.Field(description="Required string prefix."),
+            m.Field(description="Required string prefix."),
         ] = None
-        ends: Annotated[str | None, u.Field(description="Required string suffix.")] = (
+        ends: Annotated[str | None, m.Field(description="Required string suffix.")] = (
             None
         )
         match: Annotated[
             t.RegexPattern | None,
-            u.Field(description="Required regular expression."),
+            m.Field(description="Required regular expression."),
         ] = None
         len: Annotated[
             t.Tests.LengthSpec | None,
-            u.Field(description="Required length."),
+            m.Field(description="Required length."),
         ] = None
         where: Annotated[
             Callable[[SubjectT], bool] | None,
-            u.Field(description="Predicate applied to the subject."),
+            m.Field(description="Predicate applied to the subject."),
         ] = None
         msg: Annotated[
             str | None,
-            u.Field(description="Inherited assertion message."),
+            m.Field(description="Inherited assertion message."),
         ] = None
 
         @classmethod
@@ -390,58 +390,58 @@ class FlextTestsMatchersModelsMixin:
             arbitrary_types_allowed=True,
         )
 
-        eq: Annotated[MatchExpectedValue, u.Field(description="Expected value.")] = None
+        eq: Annotated[MatchExpectedValue, m.Field(description="Expected value.")] = None
         ne: Annotated[
             MatchExpectedValue,
-            u.Field(description="Value must not equal."),
+            m.Field(description="Value must not equal."),
         ] = None
         is_: Annotated[
             type | t.VariadicTuple[type] | None,
-            u.Field(
+            m.Field(
                 validation_alias=t.AliasChoices("is_", "is"),
                 description="Runtime type check.",
             ),
         ] = None
-        none: Annotated[bool | None, u.Field(description="None check.")] = None
-        empty: Annotated[bool | None, u.Field(description="Empty check.")] = None
+        none: Annotated[bool | None, m.Field(description="None check.")] = None
+        empty: Annotated[bool | None, m.Field(description="Empty check.")] = None
         gt: Annotated[
             t.Tests.ComparableScalar | None,
-            u.Field(description="Greater than."),
+            m.Field(description="Greater than."),
         ] = None
         gte: Annotated[
             t.Tests.ComparableScalar | None,
-            u.Field(description="Greater than or equal."),
+            m.Field(description="Greater than or equal."),
         ] = None
         lt: Annotated[
             t.Tests.ComparableScalar | None,
-            u.Field(description="Less than."),
+            m.Field(description="Less than."),
         ] = None
         lte: Annotated[
             t.Tests.ComparableScalar | None,
-            u.Field(description="Less than or equal."),
+            m.Field(description="Less than or equal."),
         ] = None
         has: Annotated[
             FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
-            u.Field(description="Unified containment check."),
+            m.Field(description="Unified containment check."),
         ] = None
         lacks: Annotated[
             FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
-            u.Field(description="Unified non-containment check."),
+            m.Field(description="Unified non-containment check."),
         ] = None
         starts: Annotated[
             str | None,
-            u.Field(description="String starts with prefix."),
+            m.Field(description="String starts with prefix."),
         ] = None
-        ends: Annotated[str | None, u.Field(description="String ends with suffix.")] = (
+        ends: Annotated[str | None, m.Field(description="String ends with suffix.")] = (
             None
         )
         match: Annotated[
             t.RegexPattern | None,
-            u.Field(description="Compiled regex pattern."),
+            m.Field(description="Compiled regex pattern."),
         ] = None
         len: Annotated[
             t.Tests.LengthSpec | None,
-            u.Field(description="Length spec."),
+            m.Field(description="Length spec."),
         ] = None
         deep: Annotated[
             Mapping[
@@ -450,73 +450,73 @@ class FlextTestsMatchersModelsMixin:
                 | Callable[[p.Tests.NativeMatchValue], bool],
             ]
             | None,
-            u.Field(description="Deep structural matching."),
+            m.Field(description="Deep structural matching."),
         ] = None
         path: Annotated[
             t.Tests.PathSpec | None,
-            u.Field(description="Extract nested value via dot notation."),
+            m.Field(description="Extract nested value via dot notation."),
         ] = None
         paths: Annotated[
             Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
-            u.Field(description="Multiple path-based assertions."),
+            m.Field(description="Multiple path-based assertions."),
         ] = None
         items: Annotated[
             Sequence[FlextTestsMatchersModelsMixin.MatchRule]
             | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
             | None,
-            u.Field(description="Sequence item assertions by selector."),
+            m.Field(description="Sequence item assertions by selector."),
         ] = None
         attrs_match: Annotated[
             Mapping[str, FlextTestsMatchersModelsMixin.MatchRule[p.AttributeProbe]]
             | None,
-            u.Field(description="Attribute assertions by attribute path."),
+            m.Field(description="Attribute assertions by attribute path."),
         ] = None
         where: Annotated[
             Callable[[p.Tests.NativeMatchValue], bool] | None,
-            u.Field(description="Custom predicate function."),
+            m.Field(description="Custom predicate function."),
         ] = None
-        msg: Annotated[str | None, u.Field(description="Custom error message.")] = None
+        msg: Annotated[str | None, m.Field(description="Custom error message.")] = None
 
     class FailParams(m.Value):
         """Matcher parameters for failure result assertions."""
 
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
 
-        msg: Annotated[str | None, u.Field(description="Custom error message.")] = None
+        msg: Annotated[str | None, m.Field(description="Custom error message.")] = None
         has: Annotated[
             t.Tests.ExclusionSpec | None,
-            u.Field(
+            m.Field(
                 validation_alias=t.AliasChoices("has", "contains"),
                 description="Error contains substrings.",
             ),
         ] = None
         lacks: Annotated[
             t.Tests.ExclusionSpec | None,
-            u.Field(
+            m.Field(
                 validation_alias=t.AliasChoices("lacks", "excludes"),
                 description="Error does not contain substrings.",
             ),
         ] = None
         starts: Annotated[
             str | None,
-            u.Field(description="Error starts with prefix."),
+            m.Field(description="Error starts with prefix."),
         ] = None
-        ends: Annotated[str | None, u.Field(description="Error ends with suffix.")] = (
+        ends: Annotated[str | None, m.Field(description="Error ends with suffix.")] = (
             None
         )
         match: Annotated[
             t.RegexPattern | None,
-            u.Field(description="Error matches compiled regex."),
+            m.Field(description="Error matches compiled regex."),
         ] = None
-        code: Annotated[str | None, u.Field(description="Error code equals.")] = None
+        code: Annotated[str | None, m.Field(description="Error code equals.")] = None
         code_has: Annotated[
             t.Tests.ErrorCodeSpec | None,
-            u.Field(description="Error code contains substrings."),
+            m.Field(description="Error code contains substrings."),
         ] = None
         data: Annotated[
             Mapping[str, FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload]
             | None,
-            u.Field(description="Error data contains key-value pairs."),
+            m.Field(description="Error data contains key-value pairs."),
         ] = None
 
         @m.field_validator("data", mode="before")
@@ -545,131 +545,131 @@ class FlextTestsMatchersModelsMixin:
             arbitrary_types_allowed=True,
         )
 
-        msg: Annotated[str | None, u.Field(description="Message.")] = None
+        msg: Annotated[str | None, m.Field(description="Message.")] = None
         truth: Annotated[
             bool | None,
-            u.Field(description="Native truth value of the original subject."),
+            m.Field(description="Native truth value of the original subject."),
         ] = None
         assertion_message: Annotated[
             p.AttributeProbe | None,
-            u.Field(
+            m.Field(
                 description=(
                     "Original assertion message, passed inside its failure branch."
                 )
             ),
         ] = None
-        eq: Annotated[MatchExpectedValue, u.Field(description="Equals.")] = None
-        ne: Annotated[MatchExpectedValue, u.Field(description="Not equals.")] = None
+        eq: Annotated[MatchExpectedValue, m.Field(description="Equals.")] = None
+        ne: Annotated[MatchExpectedValue, m.Field(description="Not equals.")] = None
         is_: Annotated[
             type | t.VariadicTuple[type] | None,
-            u.Field(validation_alias=t.AliasChoices("is_", "is"), description="Type."),
+            m.Field(validation_alias=t.AliasChoices("is_", "is"), description="Type."),
         ] = None
         not_: Annotated[
             type | t.VariadicTuple[type] | None,
-            u.Field(
+            m.Field(
                 validation_alias=t.AliasChoices("not_", "not"),
                 description="Not type.",
             ),
         ] = None
-        none: Annotated[bool | None, u.Field(description="None check.")] = None
-        empty: Annotated[bool | None, u.Field(description="Empty check.")] = None
+        none: Annotated[bool | None, m.Field(description="None check.")] = None
+        empty: Annotated[bool | None, m.Field(description="Empty check.")] = None
         gt: Annotated[
             t.Tests.ComparableScalar | None,
-            u.Field(description="Greater than."),
+            m.Field(description="Greater than."),
         ] = None
         gte: Annotated[
             t.Tests.ComparableScalar | None,
-            u.Field(description="Greater/equal."),
+            m.Field(description="Greater/equal."),
         ] = None
         lt: Annotated[
             t.Tests.ComparableScalar | None,
-            u.Field(description="Less than."),
+            m.Field(description="Less than."),
         ] = None
         lte: Annotated[
             t.Tests.ComparableScalar | None,
-            u.Field(description="Less/equal."),
+            m.Field(description="Less/equal."),
         ] = None
         len: Annotated[
             t.Tests.LengthSpec | None,
-            u.Field(
+            m.Field(
                 validation_alias=t.AliasChoices("len", "length"),
                 description="Length.",
             ),
         ] = None
-        length_gt: Annotated[int | None, u.Field(description="Length >.")] = None
-        length_gte: Annotated[int | None, u.Field(description="Length >=.")] = None
-        length_lt: Annotated[int | None, u.Field(description="Length <.")] = None
-        length_lte: Annotated[int | None, u.Field(description="Length <=.")] = None
+        length_gt: Annotated[int | None, m.Field(description="Length >.")] = None
+        length_gte: Annotated[int | None, m.Field(description="Length >=.")] = None
+        length_lt: Annotated[int | None, m.Field(description="Length <.")] = None
+        length_lte: Annotated[int | None, m.Field(description="Length <=.")] = None
         has: Annotated[
             FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
-            u.Field(
+            m.Field(
                 validation_alias=t.AliasChoices("has", "contains"),
                 description="Contains.",
             ),
         ] = None
         lacks: Annotated[
             FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
-            u.Field(
+            m.Field(
                 validation_alias=t.AliasChoices("lacks", "excludes"),
                 description="Lacks.",
             ),
         ] = None
-        starts: Annotated[str | None, u.Field(description="Prefix.")] = None
-        ends: Annotated[str | None, u.Field(description="Suffix.")] = None
-        match: Annotated[t.RegexPattern | None, u.Field(description="Regex.")] = None
+        starts: Annotated[str | None, m.Field(description="Prefix.")] = None
+        ends: Annotated[str | None, m.Field(description="Suffix.")] = None
+        match: Annotated[t.RegexPattern | None, m.Field(description="Regex.")] = None
         first: Annotated[
             FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
-            u.Field(description="First item."),
+            m.Field(description="First item."),
         ] = None
         last: Annotated[
             FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
-            u.Field(description="Last item."),
+            m.Field(description="Last item."),
         ] = None
         all_: Annotated[
             type | Callable[[p.Tests.NativeMatchValue], bool] | None,
-            u.Field(validation_alias=t.AliasChoices("all_", "all"), description="All."),
+            m.Field(validation_alias=t.AliasChoices("all_", "all"), description="All."),
         ] = None
         any_: Annotated[
             type | Callable[[p.Tests.NativeMatchValue], bool] | None,
-            u.Field(validation_alias=t.AliasChoices("any_", "any"), description="Any."),
+            m.Field(validation_alias=t.AliasChoices("any_", "any"), description="Any."),
         ] = None
         sorted: Annotated[
             bool
             | Callable[[p.Tests.NativeMatchValue], p.Tests.NativeMatchValue]
             | None,
-            u.Field(description="Sort key."),
+            m.Field(description="Sort key."),
         ] = None
-        unique: Annotated[bool | None, u.Field(description="Unique.")] = None
-        keys: Annotated[t.Tests.KeySpec | None, u.Field(description="Keys.")] = None
+        unique: Annotated[bool | None, m.Field(description="Unique.")] = None
+        keys: Annotated[t.Tests.KeySpec | None, m.Field(description="Keys.")] = None
         lacks_keys: Annotated[
             t.Tests.KeySpec | None,
-            u.Field(description="No keys."),
+            m.Field(description="No keys."),
         ] = None
         values: Annotated[
             t.SequenceOf[FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload]
             | None,
-            u.Field(description="Values."),
+            m.Field(description="Values."),
         ] = None
         kv: Annotated[
             FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
-            u.Field(description="Key-values."),
+            m.Field(description="Key-values."),
         ] = None
         attrs: Annotated[
             t.Tests.AttributeSpec | None,
-            u.Field(description="Attrs."),
+            m.Field(description="Attrs."),
         ] = None
         methods: Annotated[
             t.Tests.AttributeSpec | None,
-            u.Field(description="Methods."),
+            m.Field(description="Methods."),
         ] = None
         attr_eq: Annotated[
             FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
-            u.Field(description="Attr equals."),
+            m.Field(description="Attr equals."),
         ] = None
-        ok: Annotated[bool | None, u.Field(description="Result ok.")] = None
+        ok: Annotated[bool | None, m.Field(description="Result ok.")] = None
         error: Annotated[
             str | t.StrSequence | None,
-            u.Field(description="Result error."),
+            m.Field(description="Result error."),
         ] = None
         deep: Annotated[
             Mapping[
@@ -678,26 +678,26 @@ class FlextTestsMatchersModelsMixin:
                 | Callable[[p.Tests.NativeMatchValue], bool],
             ]
             | None,
-            u.Field(description="Deep spec."),
+            m.Field(description="Deep spec."),
         ] = None
         paths: Annotated[
             Mapping[str, FlextTestsMatchersModelsMixin.MatchRule] | None,
-            u.Field(description="Paths."),
+            m.Field(description="Paths."),
         ] = None
         items: Annotated[
             Sequence[FlextTestsMatchersModelsMixin.MatchRule]
             | Mapping[str | int, FlextTestsMatchersModelsMixin.MatchRule]
             | None,
-            u.Field(description="Items."),
+            m.Field(description="Items."),
         ] = None
         attrs_match: Annotated[
             Mapping[str, FlextTestsMatchersModelsMixin.MatchRule[p.AttributeProbe]]
             | None,
-            u.Field(description="Attr rules."),
+            m.Field(description="Attr rules."),
         ] = None
         where: Annotated[
             Callable[[p.Tests.NativeMatchValue], bool] | None,
-            u.Field(description="Predicate."),
+            m.Field(description="Predicate."),
         ] = None
 
         @m.model_validator(mode="after")
@@ -777,7 +777,7 @@ class FlextTestsMatchersModelsMixin:
                 p.Tests.NativeMatchValue,
             ]
             | None,
-            u.Field(description="Initial configuration values."),
+            m.Field(description="Initial configuration values."),
         ] = None
         container: Annotated[
             t.MappingKV[
@@ -785,7 +785,7 @@ class FlextTestsMatchersModelsMixin:
                 p.Tests.NativeMatchValue,
             ]
             | None,
-            u.Field(description="Initial container/service mappings."),
+            m.Field(description="Initial container/service mappings."),
         ] = None
         context: Annotated[
             t.MappingKV[
@@ -793,50 +793,50 @@ class FlextTestsMatchersModelsMixin:
                 p.Tests.NativeMatchValue,
             ]
             | None,
-            u.Field(description="Initial context values."),
+            m.Field(description="Initial context values."),
         ] = None
         cleanup: Annotated[
             t.Tests.CleanupSpec | None,
-            u.Field(description="Cleanup functions."),
+            m.Field(description="Cleanup functions."),
         ] = None
         env: Annotated[
             t.Tests.EnvironmentSpec | None,
-            u.Field(description="Temporary environment variables."),
+            m.Field(description="Temporary environment variables."),
         ] = None
         remove_env_keys: Annotated[
             t.StrSequence,
-            u.Field(description="Environment variables absent inside the scope."),
+            m.Field(description="Environment variables absent inside the scope."),
         ] = ()
         python_paths: Annotated[
             t.StrSequence,
-            u.Field(description="Import roots prepended inside the scope."),
+            m.Field(description="Import roots prepended inside the scope."),
         ] = ()
         cwd: Annotated[
             Path | str | None,
-            u.Field(description="Temporary working directory."),
+            m.Field(description="Temporary working directory."),
         ] = None
 
     class DeepMatchResult(m.Value):
         """Structured output for deep-match comparisons."""
 
-        path: Annotated[str, u.Field(description="Path where matching occurred.")]
+        path: Annotated[str, m.Field(description="Path where matching occurred.")]
         expected: Annotated[
             DeepExpected,
-            u.Field(description="Expected value or predicate."),
+            m.Field(description="Expected value or predicate."),
         ]
         actual: Annotated[
             FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload | None,
-            u.Field(description="Actual value found."),
+            m.Field(description="Actual value found."),
         ] = None
-        matched: Annotated[bool, u.Field(description="Whether match succeeded.")]
-        reason: Annotated[str, u.Field(description="Reason for match failure.")] = ""
+        matched: Annotated[bool, m.Field(description="Whether match succeeded.")]
+        reason: Annotated[str, m.Field(description="Reason for match failure.")] = ""
 
     class Chain[TResult](m.Value):
         """Container for chained result assertions."""
 
         result: Annotated[
             p.Result[TResult],
-            u.Field(description="Result being chained."),
+            m.Field(description="Result being chained."),
         ]
 
     class TestScope(m.Value):
@@ -851,8 +851,8 @@ class FlextTestsMatchersModelsMixin:
                 str,
                 p.Tests.NativeMatchValue,
             ],
-            u.Field(description="Configuration dictionary."),
-        ] = u.Field(
+            m.Field(description="Configuration dictionary."),
+        ] = m.Field(
             default_factory=lambda: MappingProxyType(
                 dict[
                     str,
@@ -865,8 +865,8 @@ class FlextTestsMatchersModelsMixin:
                 str,
                 p.Tests.NativeMatchValue,
             ],
-            u.Field(description="Container/service mappings."),
-        ] = u.Field(
+            m.Field(description="Container/service mappings."),
+        ] = m.Field(
             default_factory=lambda: MappingProxyType(
                 dict[
                     str,
@@ -879,8 +879,8 @@ class FlextTestsMatchersModelsMixin:
                 str,
                 p.Tests.NativeMatchValue,
             ],
-            u.Field(description="Context values."),
-        ] = u.Field(
+            m.Field(description="Context values."),
+        ] = m.Field(
             default_factory=lambda: MappingProxyType(
                 dict[
                     str,

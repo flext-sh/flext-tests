@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from flext_cli import m, u
+from flext_cli import m
 
 from flext_tests import c, t
 
@@ -25,30 +25,30 @@ class FlextTestsNamespaceModelsMixin:
 
         token: Annotated[
             str,
-            u.Field(
+            m.Field(
                 pattern=c.Tests.NAMESPACE_ID_PATTERN,
                 description="Lowercase namespace token (23 chars).",
             ),
         ]
         run_token: Annotated[
             str,
-            u.Field(description="Shared token of the whole pytest run."),
+            m.Field(description="Shared token of the whole pytest run."),
         ]
         worker: Annotated[
             str,
-            u.Field(description="Worker identifier (master outside xdist)."),
+            m.Field(description="Worker identifier (master outside xdist)."),
         ]
         checkout: Annotated[
             str,
-            u.Field(description="Checkout identity digest prefix."),
+            m.Field(description="Checkout identity digest prefix."),
         ]
         issued_at_ns: Annotated[
             int,
-            u.Field(ge=0, description="Issue time in nanoseconds."),
+            m.Field(ge=0, description="Issue time in nanoseconds."),
         ]
         root: Annotated[
             t.NonEmptyStr,
-            u.Field(description="Absolute checkout root path."),
+            m.Field(description="Absolute checkout root path."),
         ]
 
 

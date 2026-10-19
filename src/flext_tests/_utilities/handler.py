@@ -8,8 +8,6 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from flext_cli import u
-
 from flext_tests import c, m
 
 
@@ -21,23 +19,23 @@ class FlextTestsFlextUtilitiesHandler:
 
         handler_type: Annotated[
             c.HandlerType | None,
-            u.Field(description="Explicit handler type override."),
+            m.Field(description="Explicit handler type override."),
         ] = None
         handler_mode: Annotated[
             c.HandlerType | None,
-            u.Field(description="Explicit handler mode override."),
+            m.Field(description="Explicit handler mode override."),
         ] = None
         command_timeout: Annotated[
             int | None,
-            u.Field(description="Explicit command timeout override."),
+            m.Field(description="Explicit command timeout override."),
         ] = None
         max_command_retries: Annotated[
             int | None,
-            u.Field(description="Explicit command retry-count override."),
+            m.Field(description="Explicit command retry-count override."),
         ] = None
         metadata: Annotated[
             m.Metadata | None,
-            u.Field(description="Explicit handler metadata override."),
+            m.Field(description="Explicit handler metadata override."),
         ] = None
 
     class FlextTestsHandlerHelpersUtilitiesMixin:

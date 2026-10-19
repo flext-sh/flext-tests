@@ -19,7 +19,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated, ClassVar, Self, override
 
-from flext_tests import m, p, r, s, u
+from flext_tests import m, p, r, s
 
 if TYPE_CHECKING:
     from flext_tests import t
@@ -38,7 +38,7 @@ class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixi
         m.BeforeValidator(
             lambda value: Path(value) if isinstance(value, str) else value,
         ),
-    ] = u.Field(default=None, description="Base directory used for file operations.")
+    ] = m.Field(default=None, description="Base directory used for file operations.")
 
     @override
     def model_post_init(self, __context: t.JsonValue | None, /) -> None:

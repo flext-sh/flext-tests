@@ -45,27 +45,27 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
     repository_root: Annotated[
         Path,
-        u.Field(description="Workspace root used to resolve compose files."),
-    ] = u.Field(default_factory=Path.cwd)
+        m.Field(description="Workspace root used to resolve compose files."),
+    ] = m.Field(default_factory=Path.cwd)
 
     state_dir: Annotated[
         Path,
-        u.Field(description="Host directory of the container state records."),
-    ] = u.Field(default_factory=u.Tests.docker_state_dir)
+        m.Field(description="Host directory of the container state records."),
+    ] = m.Field(default_factory=u.Tests.docker_state_dir)
 
     docker_client: Annotated[
         DockerSDKClient | None,
-        u.Field(exclude=True, description="Cached Docker SDK client instance."),
+        m.Field(exclude=True, description="Cached Docker SDK client instance."),
     ] = None
 
     client_error: Annotated[
         str | None,
-        u.Field(exclude=True, description="Last Docker client initialization error."),
+        m.Field(exclude=True, description="Last Docker client initialization error."),
     ] = None
 
     target_config: Annotated[
         m.Tests.ContainerConfig | None,
-        u.Field(description="Configured Docker target used by the public DSL."),
+        m.Field(description="Configured Docker target used by the public DSL."),
     ] = None
 
     @staticmethod

@@ -10,7 +10,6 @@ from collections.abc import Mapping, MutableMapping
 from pathlib import Path
 from typing import Annotated
 
-from flext_cli import u
 from flext_core import r
 
 from flext_tests import c, m, p, t
@@ -26,35 +25,35 @@ class FlextTestsFilesBatchMixin(FlextTestsFilesContextsMixin):
 
         directory: Annotated[
             Path | None,
-            u.Field(description="Target directory for create operations"),
+            m.Field(description="Target directory for create operations"),
         ] = None
         operation: Annotated[
             c.Tests.Operation,
             m.BeforeValidator(
                 lambda v: c.Tests.Operation(v) if isinstance(v, str) else v,
             ),
-            u.Field(
+            m.Field(
                 default=c.Tests.Operation.CREATE,
                 description="Operation type: create, read, or delete",
             ),
         ] = c.Tests.Operation.CREATE
         model: Annotated[
             type[m.BaseModel] | None,
-            u.Field(description="Optional model class for read operations"),
+            m.Field(description="Optional model class for read operations"),
         ] = None
         on_error: Annotated[
             c.Tests.ErrorMode,
             m.BeforeValidator(
                 lambda v: c.Tests.ErrorMode(v) if isinstance(v, str) else v,
             ),
-            u.Field(
+            m.Field(
                 default=c.Tests.ErrorMode.COLLECT,
                 description="Error handling mode: stop, skip, or collect",
             ),
         ] = c.Tests.ErrorMode.COLLECT
         parallel: Annotated[
             bool,
-            u.Field(description="Run operations in parallel (not implemented yet)"),
+            m.Field(description="Run operations in parallel (not implemented yet)"),
         ] = False
 
     @staticmethod
