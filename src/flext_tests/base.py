@@ -10,15 +10,12 @@ from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from typing import Self
 
-import flext_core
-from flext_core import FlextContainer
+from flext_core import FlextContainer, s
 
 from flext_tests import FlextTestsSettings, m, p, t
 
 
-class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](
-    flext_core.s[TDomainResult]
-):
+class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
     """Base service for test packages with the ``Tests`` settings namespace."""
 
     @classmethod

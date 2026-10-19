@@ -1068,17 +1068,12 @@ class FlextTestsMatchersThatMixin:
         inherited_msg: str | None = None,
     ) -> None:
         for attr_path, rule in rules.items():
-            current: t.UnconstrainedValue = subject
+            current = subject
             for segment in attr_path.split("."):
-                probe: t.UnconstrainedValue = current
-                mapping_current = cast(
-                    "Mapping[object, object] | None",
-                    probe if isinstance(probe, Mapping) else None,
-                )
-                if mapping_current is not None and segment in mapping_current:
-                    current = mapping_current[segment]
+                if isinstance(current, Mapping) and segment in current:
+                    current = current[segment]
                 elif hasattr(current, segment):
-                    current = cast("object", getattr(current, segment))
+                    current = getattr(current, segment)
                 else:
                     msg = f"Object missing attribute path: {attr_path}"
                     raise AssertionError(msg)
