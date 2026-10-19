@@ -10,7 +10,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated
 
-from flext_cli import m, u
+from flext_cli import m
 
 from flext_tests import t
 
@@ -21,73 +21,73 @@ class FlextTestsMakeModelsMixin:
     class MakeParam(m.Value):
         """One environment-backed command parameter."""
 
-        name: Annotated[str, u.Field(description="Environment variable name.")]
-        help: Annotated[str, u.Field(description="Human-readable parameter help.")]
+        name: Annotated[str, m.Field(description="Environment variable name.")]
+        help: Annotated[str, m.Field(description="Human-readable parameter help.")]
         required: Annotated[
             bool,
-            u.Field(description="Whether the parameter is required."),
+            m.Field(description="Whether the parameter is required."),
         ] = False
         default: Annotated[
             str,
-            u.Field(description="Default value when the environment is unset."),
+            m.Field(description="Default value when the environment is unset."),
         ] = ""
         choices: Annotated[
             t.StrSequence,
-            u.Field(description="Allowed values for the parameter."),
+            m.Field(description="Allowed values for the parameter."),
         ] = ()
 
     class MakeMutationCondition(m.Value):
         """One environment-backed conditional mutation predicate."""
 
-        name: Annotated[str, u.Field(description="Environment variable name.")]
+        name: Annotated[str, m.Field(description="Environment variable name.")]
         values: Annotated[
             t.StrSequence,
-            u.Field(description="Values that make the command mutating."),
+            m.Field(description="Values that make the command mutating."),
         ]
 
     class MakeCommand(m.Value):
         """One promoted command discovered from a flext-command header."""
 
-        verb: Annotated[str, u.Field(description="Canonical make verb.")]
-        what: Annotated[str, u.Field(description="Canonical WHAT value.")]
-        domain: Annotated[str, u.Field(description="Functional command domain.")]
-        summary: Annotated[str, u.Field(description="Short help summary.")]
-        description: Annotated[str, u.Field(description="Detailed help text.")]
-        example: Annotated[str, u.Field(description="Canonical invocation example.")]
-        path: Annotated[Path, u.Field(description="Source script path.")]
+        verb: Annotated[str, m.Field(description="Canonical make verb.")]
+        what: Annotated[str, m.Field(description="Canonical WHAT value.")]
+        domain: Annotated[str, m.Field(description="Functional command domain.")]
+        summary: Annotated[str, m.Field(description="Short help summary.")]
+        description: Annotated[str, m.Field(description="Detailed help text.")]
+        example: Annotated[str, m.Field(description="Canonical invocation example.")]
+        path: Annotated[Path, m.Field(description="Source script path.")]
         mutates: Annotated[
             bool,
-            u.Field(description="Whether execution can mutate workspace state."),
+            m.Field(description="Whether execution can mutate workspace state."),
         ]
         mutates_when: Annotated[
             t.SequenceOf[FlextTestsMakeModelsMixin.MakeMutationCondition],
-            u.Field(description="Conditional mutation predicates."),
+            m.Field(description="Conditional mutation predicates."),
         ] = ()
         aliases: Annotated[
             t.StrSequence,
-            u.Field(description="Verb aliases declared on."),
+            m.Field(description="Verb aliases declared on."),
         ] = ()
         params: Annotated[
             t.SequenceOf[FlextTestsMakeModelsMixin.MakeParam],
-            u.Field(description="Environment-backed parameter contract."),
+            m.Field(description="Environment-backed parameter contract."),
         ] = ()
         rules: Annotated[
             t.StrSequence,
-            u.Field(description="Governance rules enforced by this command."),
+            m.Field(description="Governance rules enforced by this command."),
         ] = ()
         target: Annotated[
             str,
-            u.Field(description="Optional Make target for header-only commands."),
+            m.Field(description="Optional Make target for header-only commands."),
         ] = ""
         surface: Annotated[
             str,
-            u.Field(
+            m.Field(
                 description="Declared surface-validation route for Python commands.",
             ),
         ] = ""
         target_env: Annotated[
             t.StrPairSequence,
-            u.Field(description="Environment overrides for target dispatch."),
+            m.Field(description="Environment overrides for target dispatch."),
         ] = ()
 
     class MakeRegistry(m.Value):
@@ -95,33 +95,33 @@ class FlextTestsMakeModelsMixin:
 
         commands_by_verb: Annotated[
             t.MappingKV[str, t.MappingKV[str, FlextTestsMakeModelsMixin.MakeCommand]],
-            u.Field(description="Commands keyed by verb then WHAT."),
+            m.Field(description="Commands keyed by verb then WHAT."),
         ]
         aliases_by_name: Annotated[
             t.MappingKV[str, str],
-            u.Field(description="Verb aliases keyed by alias name."),
-        ] = u.Field(default_factory=lambda: MappingProxyType(dict[str, str]()))
+            m.Field(description="Verb aliases keyed by alias name."),
+        ] = m.Field(default_factory=lambda: MappingProxyType(dict[str, str]()))
 
     class MakeSurfaceProbe(m.Value):
         """One in-process dispatcher probe for surface validation."""
 
-        name: Annotated[str, u.Field(description="Stable probe name.")]
-        argv: Annotated[t.StrSequence, u.Field(description="Dispatcher argv.")]
+        name: Annotated[str, m.Field(description="Stable probe name.")]
+        argv: Annotated[t.StrSequence, m.Field(description="Dispatcher argv.")]
         env: Annotated[
             t.MappingKV[str, str],
-            u.Field(description="Environment values for this probe."),
-        ] = u.Field(default_factory=lambda: MappingProxyType(dict[str, str]()))
+            m.Field(description="Environment values for this probe."),
+        ] = m.Field(default_factory=lambda: MappingProxyType(dict[str, str]()))
         expected_output: Annotated[
             t.StrSequence,
-            u.Field(description="Output fragments expected from the probe."),
+            m.Field(description="Output fragments expected from the probe."),
         ] = ()
 
     class MakeSurfaceProbeResult(m.Value):
         """Captured output from one dispatcher probe."""
 
-        returncode: Annotated[int, u.Field(description="Dispatcher return code.")]
-        stdout: Annotated[str, u.Field(description="Captured standard output.")] = ""
-        stderr: Annotated[str, u.Field(description="Captured standard error.")] = ""
+        returncode: Annotated[int, m.Field(description="Dispatcher return code.")]
+        stdout: Annotated[str, m.Field(description="Captured standard output.")] = ""
+        stderr: Annotated[str, m.Field(description="Captured standard error.")] = ""
 
 
 __all__: list[str] = ["FlextTestsMakeModelsMixin"]

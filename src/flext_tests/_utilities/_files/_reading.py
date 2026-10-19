@@ -27,19 +27,19 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
 
         fmt: Annotated[
             c.Tests.FileFormat,
-            u.Field(description="Source file format; AUTO detects from extension."),
+            m.Field(description="Source file format; AUTO detects from extension."),
         ] = c.Tests.FILE_FORMAT_AUTO
         enc: Annotated[
             str,
-            u.Field(description="Text encoding for textual formats."),
+            m.Field(description="Text encoding for textual formats."),
         ] = c.Tests.DEFAULT_ENCODING
         delim: Annotated[
             str,
-            u.Field(description="Delimiter for CSV input."),
+            m.Field(description="Delimiter for CSV input."),
         ] = c.Tests.DEFAULT_CSV_DELIMITER
         has_headers: Annotated[
             bool,
-            u.Field(description="Whether CSV input carries a header row."),
+            m.Field(description="Whether CSV input carries a header row."),
         ] = True
 
     """Read test files with format detection and model loading."""

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from flext_cli import m, u
+from flext_cli import m
 
 from flext_tests import t
 from flext_tests._models.docker import FlextTestsDockerModelsMixin
@@ -26,7 +26,7 @@ class FlextTestsSpecModelsMixin:
 
         containers: Annotated[
             t.MutableMappingKV[str, FlextTestsDockerModelsMixin.ContainerConfig],
-            u.Field(
+            m.Field(
                 description=(
                     "Target name → container config; the target name is what "
                     "CLI --target and the in-session plugin resolve."
@@ -35,7 +35,7 @@ class FlextTestsSpecModelsMixin:
         ]
         initializer_command: Annotated[
             str | None,
-            u.Field(
+            m.Field(
                 description=(
                     "Optional shell command run once after ensure, receiving "
                     "the container environment readback as env vars."

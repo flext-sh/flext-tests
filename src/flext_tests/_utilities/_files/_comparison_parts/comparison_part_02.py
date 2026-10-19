@@ -30,31 +30,31 @@ class FlextTestsFilesComparisonMixin(
 
         mode: Annotated[
             c.Tests.CompareMode,
-            u.Field(description="Comparison mode."),
+            m.Field(description="Comparison mode."),
         ] = c.Tests.CompareMode.CONTENT
         ignore_ws: Annotated[
             bool,
-            u.Field(description="Ignore whitespace in comparison."),
+            m.Field(description="Ignore whitespace in comparison."),
         ] = False
         ignore_case: Annotated[
             bool,
-            u.Field(description="Case-insensitive comparison."),
+            m.Field(description="Case-insensitive comparison."),
         ] = False
         pattern: Annotated[
             str | None,
-            u.Field(description="Pattern to check if both files contain."),
+            m.Field(description="Pattern to check if both files contain."),
         ] = None
         deep: Annotated[
             bool,
-            u.Field(description="Use deep comparison for nested structures."),
+            m.Field(description="Use deep comparison for nested structures."),
         ] = True
         keys: Annotated[
             t.StrSequence | None,
-            u.Field(description="Only compare these keys."),
+            m.Field(description="Only compare these keys."),
         ] = None
         exclude_keys: Annotated[
             t.StrSequence | None,
-            u.Field(description="Exclude these keys from comparison."),
+            m.Field(description="Exclude these keys from comparison."),
         ] = None
 
     def compare(

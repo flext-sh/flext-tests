@@ -24,7 +24,7 @@ class FlextTestsKube(FlextTestsDocker):
 
     kubectl_service: Annotated[
         str,
-        u.Field(
+        m.Field(
             min_length=1,
             description=(
                 "Compose service exposing kubectl against the kind kubeconfig."

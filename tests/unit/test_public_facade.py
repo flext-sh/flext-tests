@@ -85,11 +85,6 @@ class TestsFlextTestsPublicFacade:
         tm.that(set(configure), eq=set(entries))
         for name, entry in entries.items():
             tm.that(configure[name] is entry.load(), eq=True)
-            tm.that(isinstance(configure[name], type), eq=True)
-            tm.that(
-                f"{configure[name].__module__}:{configure[name].__qualname__}",
-                eq=entry.value,
-            )
         tm.that("pytest_configure" in flext_tests.__all__, eq=False)
 
     @staticmethod

@@ -232,31 +232,31 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                     type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
                 ),
             ),
-            u.Field(description="Target file format; AUTO detects from content."),
+            m.Field(description="Target file format; AUTO detects from content."),
         ] = c.Tests.FILE_FORMAT_AUTO
         enc: Annotated[
             str,
-            u.Field(description="Text encoding for textual formats."),
+            m.Field(description="Text encoding for textual formats."),
         ] = c.Tests.DEFAULT_ENCODING
         indent: Annotated[
             int,
-            u.Field(description="Indent width for JSON output."),
+            m.Field(description="Indent width for JSON output."),
         ] = c.Tests.DEFAULT_JSON_INDENT
         delim: Annotated[
             str,
-            u.Field(description="Delimiter for CSV output."),
+            m.Field(description="Delimiter for CSV output."),
         ] = c.Tests.DEFAULT_CSV_DELIMITER
         headers: Annotated[
             t.StrSequence | None,
-            u.Field(description="Optional CSV header row."),
+            m.Field(description="Optional CSV header row."),
         ] = None
         readonly: Annotated[
             bool,
-            u.Field(description="chmod the created file read-only when true."),
+            m.Field(description="chmod the created file read-only when true."),
         ] = False
         extract_result: Annotated[
             bool,
-            u.Field(description="Unwrap a passed Result payload before validation."),
+            m.Field(description="Unwrap a passed Result payload before validation."),
         ] = True
 
     def create[ContentT](

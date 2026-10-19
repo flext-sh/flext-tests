@@ -82,7 +82,7 @@ class FlextTestsBaseTypesMixin:
 
     type TestResultValue = (
         FlextTestsBaseTypesMixin.TestobjectSerializable
-        | t.RegisterableService
+        | p.RegisterableService
         | t.TypeHintSpecifier
         | BaseException
         | Exception

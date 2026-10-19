@@ -24,37 +24,37 @@ class FlextTestsBatchModelsMixin:
                 t.MappingKV[str, t.Tests.TestobjectSerializable]
                 | t.SequenceOf[tuple[str, t.Tests.TestobjectSerializable]]
             ),
-            u.Field(description="Mapping or Sequence of files to process"),
+            m.Field(description="Mapping or Sequence of files to process"),
         ]
         directory: Annotated[
             Path | None,
-            u.Field(description="Target directory for create operations"),
+            m.Field(description="Target directory for create operations"),
         ] = None
         operation: Annotated[
             c.Tests.Operation,
             m.BeforeValidator(
                 lambda v: c.Tests.Operation(v) if isinstance(v, str) else v,
             ),
-            u.Field(
+            m.Field(
                 default=c.Tests.Operation.CREATE,
                 description="Operation type: create, read, or delete",
             ),
         ]
         model: Annotated[
             type[m.BaseModel] | None,
-            u.Field(description="Optional model class for read operations"),
+            m.Field(description="Optional model class for read operations"),
         ] = None
         on_error: Annotated[
             c.Tests.ErrorMode,
             m.BeforeValidator(
                 lambda v: c.Tests.ErrorMode(v) if isinstance(v, str) else v,
             ),
-            u.Field(
+            m.Field(
                 default=c.Tests.ErrorMode.COLLECT,
                 description="Error handling mode: stop, skip, or collect",
             ),
         ]
-        parallel: Annotated[bool, u.Field(description="Run operations in parallel")] = (
+        parallel: Annotated[bool, m.Field(description="Run operations in parallel")] = (
             False
         )
 
@@ -63,28 +63,28 @@ class FlextTestsBatchModelsMixin:
 
         succeeded: Annotated[
             int,
-            u.Field(ge=0, description="Number of successful operations"),
+            m.Field(ge=0, description="Number of successful operations"),
         ]
         failed: Annotated[
             t.NonNegativeInt,
-            u.Field(description="Number of failed operations"),
+            m.Field(description="Number of failed operations"),
         ]
         total: Annotated[
             t.NonNegativeInt,
-            u.Field(description="Total number of operations"),
+            m.Field(description="Total number of operations"),
         ]
         results: Annotated[
             t.MappingKV[str, p.Result[t.Tests.TestResultValue]],
-            u.Field(description="Mapping of file names to operation results"),
-        ] = u.Field(
+            m.Field(description="Mapping of file names to operation results"),
+        ] = m.Field(
             default_factory=lambda: MappingProxyType(
                 dict[str, p.Result[t.Tests.TestResultValue]](),
             ),
         )
         errors: Annotated[
             t.StrMapping,
-            u.Field(description="Mapping of file names to error messages"),
-        ] = u.Field(default_factory=lambda: MappingProxyType(dict[str, str]()))
+            m.Field(description="Mapping of file names to error messages"),
+        ] = m.Field(default_factory=lambda: MappingProxyType(dict[str, str]()))
 
         @u.computed_field
         @property
