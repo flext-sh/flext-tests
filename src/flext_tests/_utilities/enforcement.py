@@ -56,7 +56,7 @@ class FlextTestsEnforcementUtilitiesMixin:
         return FlextInfraModGateEngine.scan(
             repository_root,
             fix=False,
-            plan=planned.value,
+            selection=planned.value,
         )
 
     @staticmethod
