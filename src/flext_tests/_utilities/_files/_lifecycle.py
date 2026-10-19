@@ -16,7 +16,7 @@ from pathlib import Path
 from types import TracebackType
 from typing import Self
 
-from flext_tests import c, t, u
+from flext_tests import c, m, t
 
 
 def _created_paths_default() -> list[Path]:
@@ -33,8 +33,8 @@ class FlextTestsFilesLifecycleMixin:
     """File-manager lifecycle: init, context manager, cleanup, base_dir."""
 
     base_dir: Path | None
-    _created_files: list[Path] = u.PrivateAttr(default_factory=_created_paths_default)
-    _created_dirs: list[Path] = u.PrivateAttr(default_factory=_created_paths_default)
+    _created_files: list[Path] = m.PrivateAttr(default_factory=_created_paths_default)
+    _created_dirs: list[Path] = m.PrivateAttr(default_factory=_created_paths_default)
 
     @classmethod
     def _create_file_manager(cls, base_dir: Path | None) -> Self:
