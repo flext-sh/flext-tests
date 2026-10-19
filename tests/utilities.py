@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import override
+from typing import Annotated, override
 
 from flext_tests import FlextTestsServiceBase, FlextTestsUtilities
 from tests import m, p, r, t
@@ -29,10 +29,13 @@ class TestsFlextTestsUtilities(FlextTestsUtilities):
         class EchoService(FlextTestsServiceBase[str]):
             """Port-bearing service whose only collaborator is the echo port."""
 
-            port: t.Port[p.Tests.Echo] = m.Field(
-                exclude=True,
-                description="Echo port the service delegates to.",
-            )
+            port: Annotated[
+                t.Port[p.Tests.Echo],
+                m.Field(
+                    exclude=True,
+                    description="Echo port the service delegates to.",
+                ),
+            ]
 
             def run(self) -> p.Result[str]:
                 """Delegate the echo call to the port and return its result.

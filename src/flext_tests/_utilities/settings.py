@@ -9,48 +9,14 @@ from __future__ import annotations
 import os
 from collections.abc import Generator
 from contextlib import contextmanager
-from typing import TYPE_CHECKING, Self
-
-from flext_core import FlextSettings
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from flext_tests import t
 
 
-class FlextTestsConfigHelpersUtilitiesMixin(FlextSettings):
-    """Config testing helpers - use FlextSettings directly when possible.
-
-    MRO carries ``FlextSettings`` (ENFORCE-042); the class is a namespace
-    holder mixin, never instantiated — helpers resolve via the MRO.
-    """
-
-    # ENFORCE-042 namespace-holder contract: ``FlextSettings`` contributes
-    # namespacing only — instance machinery stays plain object semantics so the
-    # settings singleton/validation machinery cannot leak into instantiated
-    # facade composites (e.g. the ``u`` logging facade).
-    def __new__(
-        cls,
-        *args: t.UnconstrainedValue,
-        **kwargs: t.UnconstrainedValue,
-    ) -> Self:
-        _ = args, kwargs
-        return object.__new__(cls)
-
-    def __init__(
-        self,
-        *args: t.UnconstrainedValue,
-        **kwargs: t.UnconstrainedValue,
-    ) -> None:
-        _ = self, args, kwargs
-
-    def __setattr__(self, name: str, value: t.UnconstrainedValue) -> None:
-        object.__setattr__(self, name, value)
-
-    def __eq__(self, other: t.UnconstrainedValue) -> bool:
-        return self is other
-
-    def __hash__(self) -> int:
-        return id(self)
+class FlextTestsConfigHelpersUtilitiesMixin:
+    """Environment scopes for tests, without settings-model instance machinery."""
 
     @staticmethod
     @contextmanager
