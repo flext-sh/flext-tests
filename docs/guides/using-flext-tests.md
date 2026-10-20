@@ -89,27 +89,43 @@ FlextContainer.reset_for_testing()
 
 ## Testing result flows
 
+`tm.ok(True)` validates a boolean predicate; `tm.false(False)` and
+`tm.fail(False)` validate a negative boolean predicate. Boolean forms return the
+unchanged boolean and accept `msg` for assertion diagnostics. Result-only criteria
+such as `path`, `has`, and `code` are rejected for booleans.
+
+For results, `tm.ok(result)` returns the original successful payload, even when it
+is `False`, zero, or empty. `tm.fail(result)` returns the failure's error string.
+`r.ok(None)` is rejected by the result constructor. Payload truthiness never
+determines result state.
+
+`tm.that(condition)` with a boolean and no criteria requires `True`. Explicit
+criteria such as `tm.that(False, eq=False)` and `tm.that(False, truth=False)` keep
+their declared semantics. General Python truthiness requires the `truth` criterion.
+
 Use the `r` alias instead of importing from `returns` directly:
 
 ```python
 from math import isclose
 
-from flext_tests import p, r
+from flext_tests import p, r, tm
 
 
 def safe_divide(a: float, b: float) -> p.Result[float]:
+    """Divide by a nonzero divisor, or return a division failure."""
     if b == 0:
         return r[float].fail("division_by_zero")
     return r[float].ok(a / b)
 
 
 def test_safe_divide() -> None:
+    """Observe result success, its payload, and a genuine failure."""
     result = safe_divide(10, 2)
     tm.ok(result.success)
-    assert isclose(result.unwrap(), 5.0)
+    tm.ok(isclose(tm.ok(result), 5.0))
 
     failure = safe_divide(10, 0)
-    assert failure.failure
+    tm.fail(failure)
 ```
 
 ## Good practices

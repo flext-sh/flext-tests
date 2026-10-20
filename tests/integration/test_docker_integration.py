@@ -80,7 +80,7 @@ class TestsFlextTestsDockerIntegration:
         ]
 
         expected = u.Tests.docker_shared_assets_dir() / str(settings["compose_file"])
-        tm.that(expected.is_absolute(), eq=True)
+        tm.ok(expected.is_absolute())
         tm.that(resolved, eq=[expected, expected])
 
     @staticmethod
@@ -91,7 +91,7 @@ class TestsFlextTestsDockerIntegration:
 
         target = tm.not_none(FlextTestsDocker.shared(container_name).target_config)
 
-        tm.that(tm.not_none(target.compose_file).is_file(), eq=True)
+        tm.ok(tm.not_none(target.compose_file).is_file())
 
     @staticmethod
     def test_shared_rejects_unknown_container_with_value_error(

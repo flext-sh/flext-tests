@@ -99,7 +99,7 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
                 expected=TypeError,
             )
 
-        tm.that(caught.value is rejection, eq=True)
+        tm.ok(caught.value is rejection)
 
     @staticmethod
     def test_rejects_assignment_chains_original_on_regex_mismatch() -> None:
@@ -115,4 +115,4 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
                 match="^a different rejection$",
             )
 
-        tm.that(caught.value.__cause__ is rejection, eq=True)
+        tm.ok(caught.value.__cause__ is rejection)

@@ -772,7 +772,7 @@ class FlextTestsMatchersThatMixin:
                 where: Callable[[SubjectT], bool] | None = None,
                 **kwargs: t.Tests.MatcherOption,
             ) -> None:
-                """Assert native operands and apply a predicate to the original type.
+                """Assert native operands, defaulting bare boolean subjects to True.
 
                 Args:
                     value: The subject to be asserted.
@@ -787,6 +787,14 @@ class FlextTestsMatchersThatMixin:
                         subject and it is not provided.
 
                 """
+                if (
+                    isinstance(value, bool)
+                    and eq is c.Tests.MatcherMissing.OMITTED
+                    and ne is c.Tests.MatcherMissing.OMITTED
+                    and where is None
+                    and not kwargs.keys() - {"msg"}
+                ):
+                    kwargs = {**kwargs, "truth": True}
                 params = cls._that_params(kwargs)
                 if params.truth is not None and (
                     eq is not c.Tests.MatcherMissing.OMITTED

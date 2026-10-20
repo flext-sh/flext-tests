@@ -39,7 +39,7 @@ class TestsFlextTestsScratchStorage:
             "no:flext_tests_enforcement",
         )
         result.assert_outcomes(passed=1)
-        tm.that((pytester.path / ".hypothesis").exists(), eq=False)
+        tm.fail((pytester.path / ".hypothesis").exists())
 
     @staticmethod
     @pytest.mark.slow
@@ -84,7 +84,7 @@ class TestsFlextTestsScratchStorage:
             f"{c.Tests.SCRATCH_ROOT_INI}={override}",
         )
         result.assert_outcomes(passed=1)
-        tm.that(override.exists(), eq=True)
+        tm.ok(override.exists())
 
     @staticmethod
     def test_scratch_root_utility_keys_by_checkout(

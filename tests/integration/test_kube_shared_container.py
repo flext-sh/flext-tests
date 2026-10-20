@@ -40,10 +40,10 @@ class TestsFlextTestsKubeSharedContainer:
         """
         mod = importlib.import_module("flext_tests.kube")
 
-        tm.that(hasattr(mod, "FlextTestsKube"), eq=True)
+        tm.ok(hasattr(mod, "FlextTestsKube"))
 
     @staticmethod
     @pytest.mark.integration
     def test_kind_registered_in_shared_containers() -> None:
         """``flext-kind-test`` is registered in the shared-container catalog."""
-        tm.that("flext-kind-test" in c.Tests.SHARED_CONTAINERS, eq=True)
+        tm.ok("flext-kind-test" in c.Tests.SHARED_CONTAINERS)

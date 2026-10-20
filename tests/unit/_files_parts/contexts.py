@@ -22,12 +22,12 @@ class TestsFlextTestsFilesContextsMixin:
         with FlextTestsFiles.files({"a": "content A", "b": "content B"}) as paths:
             tm.that(paths, has="a")
             tm.that(paths, has="b")
-            tm.that(paths["a"].exists(), eq=True)
-            tm.that(paths["b"].exists(), eq=True)
+            tm.ok(paths["a"].exists())
+            tm.ok(paths["b"].exists())
             tm.that(paths["a"].read_text(), eq="content A")
             tm.that(paths["b"].read_text(), eq="content B")
-        tm.that(not paths["a"].exists(), eq=True)
-        tm.that(not paths["b"].exists(), eq=True)
+        tm.ok(not paths["a"].exists())
+        tm.ok(not paths["b"].exists())
 
     @staticmethod
     def test_files_context_manager_json_auto_detect() -> None:
@@ -68,19 +68,19 @@ class TestsFlextTestsFilesContextsMixin:
         """Test FlextTestsFiles alias can be used to create files."""
         with FlextTestsFiles(base_dir=tmp_path) as files:
             path = files.create("test content", "test.txt")
-            tm.that(path.exists(), eq=True)
+            tm.ok(path.exists())
 
     @staticmethod
     def test_tf_files_context_manager() -> None:
         """Test FlextTestsFiles.files() context manager works."""
         with FlextTestsFiles.files({"test": "content"}) as paths:
-            tm.that(paths["test"].exists(), eq=True)
+            tm.ok(paths["test"].exists())
 
     @staticmethod
     def test_fileinfo_import_from_models() -> None:
         """Test FlextTestsFiles.FileInfo can be imported from models."""
         info = m.Tests.FileInfo(exists=True, size=100, lines=5)
-        tm.that(info.exists is True, eq=True)
+        tm.ok(info.exists is True)
         tm.that(info.size, eq=100)
         tm.that(info.lines, eq=5)
 
@@ -88,9 +88,9 @@ class TestsFlextTestsFilesContextsMixin:
     def test_fileinfo_backward_compatibility() -> None:
         """Test FlextTestsFiles.FileInfo alias works for backward compatibility."""
         info = FlextTestsFiles.FileInfo(exists=True)
-        tm.that(info.exists is True, eq=True)
+        tm.ok(info.exists is True)
         info2 = m.Tests.FileInfo(exists=True)
-        tm.that(info2.exists is True, eq=True)
+        tm.ok(info2.exists is True)
 
     @staticmethod
     def test_fileinfo_all_fields() -> None:
@@ -113,7 +113,7 @@ class TestsFlextTestsFilesContextsMixin:
             is_readonly=False,
             sha256="abc123" * 10 + "abcd",
         )
-        tm.that(info.exists is True, eq=True)
+        tm.ok(info.exists is True)
         tm.that(info.size, eq=1024)
         tm.that(info.size_human, eq="1.0 KB")
         tm.that(info.lines, eq=50)

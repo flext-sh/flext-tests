@@ -333,7 +333,7 @@ class TestsFlextTestsDockerLifecycleMixin:
                 env_file.read_text(encoding="utf-8"),
                 eq="FLEXT_TESTS_SECRET='s3cr=t value'\n",
             )
-        tm.that(env_file.exists(), eq=False)
+        tm.fail(env_file.exists())
         with u.Tests.creation_env_file(tmp_path, "env-owner", {}) as no_files:
             tm.that(no_files, eq=())
 
@@ -349,7 +349,7 @@ class TestsFlextTestsDockerLifecycleMixin:
             pytest.raises(FileExistsError),
             u.Tests.creation_env_file(tmp_path, "env-owner", environment),
         ):
-            tm.that(leftover.exists(), eq=True)
+            tm.ok(leftover.exists())
         tm.that(leftover.read_text(encoding="utf-8"), eq="LEFT=over\n")
 
     @staticmethod

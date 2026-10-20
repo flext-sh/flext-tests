@@ -22,7 +22,7 @@ class TestsFlextTestsFilesCompareMixin:
         path2 = manager.create("same content", "file2.txt")
         result = manager.compare(path1, path2)
         _ = u.Tests.assert_success(result)
-        tm.that(result.value is True, eq=True)
+        tm.ok(result.value is True)
 
     @staticmethod
     def test_compare_different_content(tmp_path: Path) -> None:
@@ -32,7 +32,7 @@ class TestsFlextTestsFilesCompareMixin:
         path2 = manager.create("content B", "file2.txt")
         result = manager.compare(path1, path2)
         _ = u.Tests.assert_success(result)
-        tm.that(result.value is False, eq=True)
+        tm.ok(result.value is False)
 
     @staticmethod
     def test_compare_size_mode(tmp_path: Path) -> None:
@@ -46,7 +46,7 @@ class TestsFlextTestsFilesCompareMixin:
             options=tf.CompareOptions(mode=c.Tests.CompareMode.SIZE),
         )
         _ = u.Tests.assert_success(result)
-        tm.that(result.value is True, eq=True)
+        tm.ok(result.value is True)
 
     @staticmethod
     def test_compare_size_mode_different(tmp_path: Path) -> None:
@@ -60,7 +60,7 @@ class TestsFlextTestsFilesCompareMixin:
             options=tf.CompareOptions(mode=c.Tests.CompareMode.SIZE),
         )
         _ = u.Tests.assert_success(result)
-        tm.that(result.value is False, eq=True)
+        tm.ok(result.value is False)
 
     @staticmethod
     def test_compare_hash_mode(tmp_path: Path) -> None:
@@ -74,7 +74,7 @@ class TestsFlextTestsFilesCompareMixin:
             options=tf.CompareOptions(mode=c.Tests.CompareMode.HASH),
         )
         _ = u.Tests.assert_success(result)
-        tm.that(result.value is True, eq=True)
+        tm.ok(result.value is True)
 
     @staticmethod
     def test_compare_lines_mode(tmp_path: Path) -> None:
@@ -88,7 +88,7 @@ class TestsFlextTestsFilesCompareMixin:
             options=tf.CompareOptions(mode=c.Tests.CompareMode.LINES),
         )
         _ = u.Tests.assert_success(result)
-        tm.that(result.value is True, eq=True)
+        tm.ok(result.value is True)
 
     @staticmethod
     def test_compare_lines_mode_different(tmp_path: Path) -> None:
@@ -102,7 +102,7 @@ class TestsFlextTestsFilesCompareMixin:
             options=tf.CompareOptions(mode=c.Tests.CompareMode.LINES),
         )
         _ = u.Tests.assert_success(result)
-        tm.that(result.value is False, eq=True)
+        tm.ok(result.value is False)
 
     @staticmethod
     def test_compare_ignore_whitespace(tmp_path: Path) -> None:
@@ -116,7 +116,7 @@ class TestsFlextTestsFilesCompareMixin:
             options=tf.CompareOptions(ignore_ws=True),
         )
         _ = u.Tests.assert_success(result)
-        tm.that(result.value is True, eq=True)
+        tm.ok(result.value is True)
 
     @staticmethod
     def test_compare_ignore_case(tmp_path: Path) -> None:
@@ -130,7 +130,7 @@ class TestsFlextTestsFilesCompareMixin:
             options=tf.CompareOptions(ignore_case=True),
         )
         _ = u.Tests.assert_success(result)
-        tm.that(result.value is True, eq=True)
+        tm.ok(result.value is True)
 
     @staticmethod
     def test_compare_pattern_match(tmp_path: Path) -> None:
@@ -144,7 +144,7 @@ class TestsFlextTestsFilesCompareMixin:
             options=tf.CompareOptions(pattern="ERROR"),
         )
         _ = u.Tests.assert_success(result)
-        tm.that(result.value is True, eq=True)
+        tm.ok(result.value is True)
 
     @staticmethod
     def test_compare_pattern_no_match(tmp_path: Path) -> None:
@@ -158,7 +158,7 @@ class TestsFlextTestsFilesCompareMixin:
             options=tf.CompareOptions(pattern="ERROR"),
         )
         _ = u.Tests.assert_success(result)
-        tm.that(result.value is False, eq=True)
+        tm.ok(result.value is False)
 
     @staticmethod
     def test_compare_json_mappings_ignore_key_order(tmp_path: Path) -> None:
@@ -168,7 +168,7 @@ class TestsFlextTestsFilesCompareMixin:
         path2 = manager.create(m.ConfigMap(root={"b": 2, "a": 1}), "second.json")
         result = manager.compare(path1, path2)
         _ = u.Tests.assert_success(result)
-        tm.that(result.value, eq=True)
+        tm.ok(result.value)
 
     @staticmethod
     def test_compare_invalid_json_surfaces_the_parse_error(

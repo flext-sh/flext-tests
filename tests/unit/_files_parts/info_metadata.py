@@ -23,10 +23,10 @@ class TestsFlextTestsFilesInfoMetadataMixin:
         result = manager.info(path)
         _ = u.Tests.assert_success(result)
         info = result.value
-        tm.that(info.exists is True, eq=True)
+        tm.ok(info.exists is True)
         tm.that(info.size, gt=0)
         tm.that(info.lines, eq=3)
-        tm.that(info.is_empty is False, eq=True)
+        tm.ok(info.is_empty is False)
         tm.that(info.first_line, eq="line1")
 
     @staticmethod
@@ -37,7 +37,7 @@ class TestsFlextTestsFilesInfoMetadataMixin:
         result = manager.info(path)
         _ = u.Tests.assert_success(result)
         info = result.value
-        tm.that(info.exists is False, eq=True)
+        tm.ok(info.exists is False)
 
     @staticmethod
     def test_info_with_hash(tmp_path: Path) -> None:
@@ -68,9 +68,9 @@ class TestsFlextTestsFilesInfoMetadataMixin:
         result = manager.info(path)
         _ = u.Tests.assert_success(result)
         info = result.value
-        tm.that(info.exists is True, eq=True)
+        tm.ok(info.exists is True)
         tm.that(info.size, eq=0)
-        tm.that(info.is_empty is True, eq=True)
+        tm.ok(info.is_empty is True)
 
     @staticmethod
     def test_info_size_human_readable(tmp_path: Path) -> None:

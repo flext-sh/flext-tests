@@ -88,7 +88,7 @@ class TestsFlextTestsFilesContentMetaMixin:
         _ = u.Tests.assert_success(result)
         info = result.value
         content_meta = tm.not_none(info.content_meta)
-        tm.that(content_meta.model_valid is True, eq=True)
+        tm.ok(content_meta.model_valid is True)
         tm.that(content_meta.model_name, eq="SimpleModel")
 
     @staticmethod
@@ -107,5 +107,5 @@ class TestsFlextTestsFilesContentMetaMixin:
         _ = u.Tests.assert_success(result)
         info = result.value
         content_meta = tm.not_none(info.content_meta)
-        tm.that(content_meta.model_valid is False, eq=True)
+        tm.ok(content_meta.model_valid is False)
         tm.that(content_meta.model_name, eq="StrictModel")

@@ -21,13 +21,13 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
         """tm.check() chains assertions over the result it was given."""
         result = r[int].ok(42)
         chain: m.Tests.Chain[int] = tm.check(result)
-        tm.that(chain.result is result, eq=True)
+        tm.ok(chain.result is result)
 
     @staticmethod
     def test_scope_with_settings() -> None:
         """Test tm.scope() with settings parameter."""
         with tm.scope(settings={"debug": True}) as scope:
-            tm.that(scope.settings["debug"] is True, eq=True)
+            tm.ok(scope.settings["debug"] is True)
 
     @staticmethod
     def test_scope_with_container() -> None:
@@ -50,9 +50,9 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
         with tm.scope(env={removed_key: "outer"}):
             with tm.scope(env={present_key: "inner"}, remove_env_keys=(removed_key,)):
                 tm.that(os.environ[present_key], eq="inner")
-                tm.that(removed_key in os.environ, eq=False)
+                tm.fail(removed_key in os.environ)
             tm.that(os.environ[removed_key], eq="outer")
-            tm.that(present_key in os.environ, eq=False)
+            tm.fail(present_key in os.environ)
 
     @staticmethod
     def test_ok_invalid_parameter_type() -> None:

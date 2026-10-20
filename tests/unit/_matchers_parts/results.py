@@ -18,6 +18,69 @@ class TestsFlextTestsMatchersResultsMixin:
     """Matcher result assertion tests."""
 
     @staticmethod
+    def test_boolean_matchers_preserve_values_and_types() -> None:
+        """Boolean predicates need no result wrapper and keep their type."""
+        assert_type(tm.ok(True), bool)
+        assert_type(tm.fail(False), bool)
+        assert_type(tm.false(False), bool)
+        tm.that(tm.ok(True), eq=True)
+        tm.that(tm.fail(False), eq=False)
+        tm.that(tm.false(False), eq=False)
+
+    @staticmethod
+    def test_boolean_matchers_reject_opposite_states() -> None:
+        """The migrated boolean assertions still detect actual failures."""
+        with pytest.raises(AssertionError):
+            tm.ok(False)
+        with pytest.raises(AssertionError):
+            tm.fail(True)
+        with pytest.raises(AssertionError):
+            tm.false(True)
+
+    @staticmethod
+    def test_boolean_matchers_keep_custom_messages() -> None:
+        """Predicate failures retain their caller's diagnostic message."""
+        with pytest.raises(AssertionError, match="positive predicate"):
+            tm.ok(False, msg="positive predicate")
+        with pytest.raises(AssertionError, match="negative predicate"):
+            tm.fail(True, msg="negative predicate")
+        with pytest.raises(AssertionError, match="false predicate"):
+            tm.false(True, msg="false predicate")
+
+    @staticmethod
+    def test_boolean_matchers_reject_result_only_options() -> None:
+        """Dynamic criteria cannot silently turn predicate checks into no-ops."""
+        options: t.StrMapping = {"has": "error text"}
+        with pytest.raises(ValueError, match="accept only msg"):
+            tm.ok(True, **options)
+        with pytest.raises(ValueError, match="accept only msg"):
+            tm.fail(False, **options)
+
+    @staticmethod
+    @pytest.mark.parametrize("payload", [False, 0, "", [], {}])
+    def test_successful_falsey_payload_is_not_a_failure(payload: t.JsonValue) -> None:
+        """Result state, never payload truthiness, determines success."""
+        result = core_r[t.JsonValue].ok(payload)
+        tm.that(tm.ok(result) is payload, truth=True)
+        with pytest.raises(AssertionError, match="Expected failure but got success"):
+            tm.fail(result)
+
+    @staticmethod
+    def test_none_is_rejected_by_result_construction_not_the_matcher() -> None:
+        """Boolean support does not weaken the result owner's payload contract."""
+        with pytest.raises(ValueError):
+            core_r[t.JsonValue].ok(None)
+
+    @staticmethod
+    def test_false_payload_accepts_explicit_type_and_predicate_checks() -> None:
+        """Successful False values keep result, type, and predicate semantics."""
+        result = core_r[bool].ok(False)
+        tm.that(tm.ok(result, is_=bool), eq=False)
+        tm.that(tm.ok(result, where=lambda value: value is False), eq=False)
+        tm.that(tm.ok(result, eq=False), eq=False)
+        tm.that(tm.ok(result, ne=True), eq=False)
+
+    @staticmethod
     def test_assert_result_success_passes() -> None:
         """Test tm.ok() with successful result."""
         result: core_p.Result[str] = r[str].ok("success")

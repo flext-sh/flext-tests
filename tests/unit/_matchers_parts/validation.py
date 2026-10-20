@@ -19,6 +19,18 @@ class TestsFlextTestsMatchersValidationMixin:
     """Matcher validation tests."""
 
     @staticmethod
+    def test_bare_boolean_assertion_is_not_a_noop() -> None:
+        """A false comparison cannot silently pass after assert migration."""
+        tm.that(True)
+        with pytest.raises(AssertionError):
+            tm.that(False)
+        with pytest.raises(AssertionError, match="comparison failed"):
+            tm.that(False, msg="comparison failed")
+        tm.that(False, eq=False)
+        tm.that(False, truth=False)
+        tm.that(False, is_=bool)
+
+    @staticmethod
     @pytest.mark.parametrize("truth", [True, False])
     @pytest.mark.parametrize("repr_raises", [True, False])
     def test_native_truth_never_formats_the_subject(
@@ -154,7 +166,7 @@ class TestsFlextTestsMatchersValidationMixin:
         condition = True
         if not condition:
             tm.that(False, truth=True, assertion_message=failure_message())
-        tm.that(destination.exists(), eq=False)
+        tm.fail(destination.exists())
         with pytest.raises(AssertionError, match="native assertion message"):
             tm.that(False, truth=True, assertion_message=failure_message())
         tm.that(destination.read_text(encoding="utf-8"), eq="failure observed")

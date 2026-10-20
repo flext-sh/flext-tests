@@ -19,11 +19,11 @@ class TestsFlextTestsFilesModelsMixin:
     def test_file_info_exists_false() -> None:
         """Test FlextTestsFiles.FileInfo with exists=False."""
         info = FlextTestsFiles.FileInfo(exists=False)
-        tm.that(info.exists is False, eq=True)
+        tm.ok(info.exists is False)
         tm.that(info.size, eq=0)
         tm.that(info.lines, eq=0)
         tm.that(info.encoding, eq="utf-8")
-        tm.that(info.is_empty is False, eq=True)
+        tm.ok(info.is_empty is False)
         tm.that(info.first_line, eq="")
 
     @staticmethod
@@ -37,11 +37,11 @@ class TestsFlextTestsFilesModelsMixin:
             is_empty=False,
             first_line="first line",
         )
-        tm.that(info.exists is True, eq=True)
+        tm.ok(info.exists is True)
         tm.that(info.size, eq=100)
         tm.that(info.lines, eq=5)
         tm.that(info.encoding, eq="utf-8")
-        tm.that(info.is_empty is False, eq=True)
+        tm.ok(info.is_empty is False)
         tm.that(info.first_line, eq="first line")
 
     @staticmethod
@@ -69,8 +69,8 @@ class TestsFlextTestsFilesModelsMixin:
         first = manager.create("content", "first.txt")
         second = manager.create("content", "second.txt")
 
-        tm.that(manager.info(first).value.exists, eq=True)
-        tm.that(manager.compare(first, second).value, eq=True)
+        tm.ok(manager.info(first).value.exists)
+        tm.ok(manager.compare(first, second).value)
 
     @staticmethod
     def test_model_validation_owns_file_manager_base_dir(tmp_path: Path) -> None:
@@ -89,6 +89,6 @@ class TestsFlextTestsFilesModelsMixin:
         manager = FlextTestsFiles()
         with manager.temporary_directory() as temp_dir:
             tm.that(temp_dir, is_=Path)
-            tm.that(temp_dir.exists(), eq=True)
-            tm.that(temp_dir.is_dir(), eq=True)
-        tm.that(not temp_dir.exists(), eq=True)
+            tm.ok(temp_dir.exists())
+            tm.ok(temp_dir.is_dir())
+        tm.ok(not temp_dir.exists())

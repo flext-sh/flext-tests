@@ -81,7 +81,7 @@ class TestsFlextTestsDockerOperationsMixin:
             result = docker_manager.cleanup_dirty_containers()
         _ = u.Tests.assert_success(result)
         tm.that(result.value, empty=True)
-        tm.that(docker_manager.container_dirty(foreign), eq=True)
+        tm.ok(docker_manager.container_dirty(foreign))
 
     @staticmethod
     def test_default_state_dir_is_host_scoped() -> None:

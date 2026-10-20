@@ -40,7 +40,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         batch_result: m.Tests.BatchResult = u.Tests.assert_success(result)
         tm.that(batch_result.success_count, eq=2)
         settings1 = tmp_path / "settings1.json"
-        tm.that(settings1.exists(), eq=True)
+        tm.ok(settings1.exists())
         tm.that(u.Cli.json_read(settings1).unwrap()["key"], eq="value1")
 
     @staticmethod
@@ -78,7 +78,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
     def test_create_in_text_content(tmp_path: Path) -> None:
         """Test create_in() for text content."""
         path = FlextTestsFiles(base_dir=tmp_path).create("hello world", "test.txt")
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         tm.that(path.read_text(), eq="hello world")
 
     @staticmethod
@@ -88,7 +88,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
             m.ConfigMap(root={"key": "value"}),
             "settings.json",
         )
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         empty_content: t.JsonMapping = {}
         content = u.Cli.json_read(path).unwrap_or(empty_content)
         tm.that(content, eq={"key": "value"})
@@ -100,7 +100,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
             m.ConfigMap(root={"setting": True}),
             "settings.yaml",
         )
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         empty_content: t.JsonMapping = {}
         content = u.Cli.yaml_parse(path.read_text()).unwrap_or(empty_content)
         tm.that(content, eq={"setting": True})
@@ -115,7 +115,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
 
         user = UserModel(name="Alice", age=30)
         path = FlextTestsFiles(base_dir=tmp_path).create(user, "user.json")
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         empty_content: t.JsonMapping = {}
         content = u.Cli.json_read(path).unwrap_or(empty_content)
         expected: t.Tests.TestobjectSerializable = {"name": "Alice", "age": 30}
@@ -128,19 +128,19 @@ class TestsFlextTestsFilesBatchCreateInMixin:
             m.ConfigMap(root={"key": "value"}),
             "settings.json",
         )
-        tm.that(path1.exists(), eq=True)
+        tm.ok(path1.exists())
         tm.that(u.Cli.json_read(path1).unwrap(), eq={"key": "value"})
         path2 = FlextTestsFiles(base_dir=tmp_path).create(
             m.ConfigMap(root={"key": "value"}),
             "settings.yaml",
         )
-        tm.that(path2.exists(), eq=True)
+        tm.ok(path2.exists())
         tm.that(u.Cli.yaml_parse(path2.read_text()).unwrap(), eq={"key": "value"})
         path3 = FlextTestsFiles(base_dir=tmp_path).create(
             [["a", "b"], ["1", "2"]],
             "data.csv",
         )
-        tm.that(path3.exists(), eq=True)
+        tm.ok(path3.exists())
         lines = path3.read_text().strip().split("\n")
         tm.that(len(lines), gte=2)
 
@@ -155,7 +155,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
             result.unwrap(),
             "result.json",
         )
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         empty_content: t.JsonMapping = {}
         content = u.Cli.json_read(path).unwrap_or(empty_content)
         tm.that(content, eq={"status": "success"})
@@ -168,7 +168,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
             "data.dat",
             options=FlextTestsFiles.CreateOptions(fmt=c.Tests.FILE_FORMAT_BIN),
         )
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         tm.that(path.read_bytes(), eq=b"binary data")
 
     @staticmethod
@@ -179,7 +179,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
             "unicode.txt",
             options=FlextTestsFiles.CreateOptions(enc="utf-16"),
         )
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         tm.that(path.read_text(encoding="utf-16"), eq="áéíóú")
 
     @staticmethod
@@ -191,7 +191,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
             "settings.json",
             options=FlextTestsFiles.CreateOptions(indent=4),
         )
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         text = path.read_text()
         tm.that(text, has="    ")
 
@@ -204,7 +204,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
             "data.csv",
             options=FlextTestsFiles.CreateOptions(headers=["col1", "col2"]),
         )
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         lines = path.read_text().strip().split("\n")
         tm.that(lines[0], eq="col1,col2")
         tm.that(len(lines), eq=3)

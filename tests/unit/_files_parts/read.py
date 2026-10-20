@@ -59,7 +59,7 @@ class TestsFlextTestsFilesReadMixin:
         result = manager.read(path)
         _ = u.Tests.assert_success(result)
         read_value = m.ConfigMap.model_validate(result.value)
-        tm.that(read_value.model_dump() == content.model_dump(), eq=True)
+        tm.ok(read_value.model_dump() == content.model_dump())
 
     @staticmethod
     def test_read_csv_file(tmp_path: Path) -> None:

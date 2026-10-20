@@ -53,7 +53,7 @@ class TestsFlextTestsEnforcementPlugin:
             if entry.group == "pytest11"
         )
         tm.that({entry.name: entry.value for entry in entries}, eq=declared)
-        tm.that(bool(entries), eq=True)
+        tm.ok(bool(entries))
         return entries
 
     @staticmethod
@@ -97,8 +97,8 @@ class TestsFlextTestsEnforcementPlugin:
         """Installed metadata registers static hooks, not a module or factory."""
         for entry in TestsFlextTestsEnforcementPlugin._declared_pytest_entries():
             plugin = entry.load()
-            tm.that(isinstance(plugin, type), eq=True)
-            tm.that(callable(plugin), eq=True)
+            tm.ok(isinstance(plugin, type))
+            tm.ok(callable(plugin))
             tm.that(f"{plugin.__module__}:{plugin.__qualname__}", eq=entry.value)
             tm.that(
                 isinstance(getattr_static(plugin, "pytest_configure"), staticmethod),
@@ -126,7 +126,7 @@ class TestsFlextTestsEnforcementPlugin:
             )
         for module in c.Tests.FIXTURE_PLUGIN_MODULES:
             registered = pytestconfig.pluginmanager.get_plugin(module)
-            tm.that(isinstance(registered, type), eq=True)
+            tm.ok(isinstance(registered, type))
             tm.that(registered.__module__, eq=module)
         tm.that(
             pytestconfig.pluginmanager.hasplugin(c.Tests.CAPABILITY_PLUGIN_MODULE),
@@ -164,17 +164,17 @@ class TestsFlextTestsEnforcementPlugin:
                 "                iter(entry_points(group='pytest11', name=name)))\n"
                 "            tm.that(entry.value, eq=target)\n"
                 "            plugin = manager.get_plugin(name)\n"
-                "            tm.that(plugin is entry.load(), eq=True)\n"
+                "            tm.ok(plugin is entry.load())\n"
                 "            plugin.pytest_configure(pytestconfig)\n"
                 "        tm.that(manager.list_name_plugin(), eq=before)\n"
                 "        for module in c.Tests.FIXTURE_PLUGIN_MODULES:\n"
                 "            owner = manager.get_plugin(module)\n"
-                "            tm.that(isinstance(owner, type), eq=True)\n"
+                "            tm.ok(isinstance(owner, type))\n"
                 "            tm.that(owner.__module__, eq=module)\n"
                 "        tm.that(manager.hasplugin(\n"
                 "            c.Tests.CAPABILITY_PLUGIN_MODULE), eq=True)\n"
-                "        tm.that(bool(run_namespace.token), eq=True)\n"
-                "        tm.that(pytestconfig.getoption('no_flext_enforce'), eq=True)\n"
+                "        tm.ok(bool(run_namespace.token))\n"
+                "        tm.ok(pytestconfig.getoption('no_flext_enforce'))\n"
                 "        tm.that(\n"
                 "            pytestconfig.getoption('flext_enforce_strict'), eq=True)\n"
                 "        tm.that(\n"
@@ -230,15 +230,15 @@ class TestsFlextTestsEnforcementPlugin:
                         for before, after in zip(
                             TestsFirstConsumer.previous, current, strict=True
                         ):
-                            tm.that(before is after, eq=False)
-                        tm.that(session_runtime is TestsFirstConsumer.runtime, eq=True)
-                        tm.that(run_namespace is TestsFirstConsumer.namespace, eq=True)
+                            tm.fail(before is after)
+                        tm.ok(session_runtime is TestsFirstConsumer.runtime)
+                        tm.ok(run_namespace is TestsFirstConsumer.namespace)
                     TestsFirstConsumer.previous = current
                     TestsFirstConsumer.runtime = session_runtime
                     TestsFirstConsumer.namespace = run_namespace
                     tm.that(temp_file.parent, eq=temp_dir)
-                    tm.that(bool(test_namespace.token), eq=True)
-                    tm.that(session_runtime.directory.is_dir(), eq=True)
+                    tm.ok(bool(test_namespace.token))
+                    tm.ok(session_runtime.directory.is_dir())
                     Path(f'runtime-{case}').write_text(str(session_runtime.directory))
 
             class TestsSecondConsumer:
@@ -248,12 +248,12 @@ class TestsFlextTestsEnforcementPlugin:
                                 reset_settings: None, clean_container: p.Container,
                                 settings: FlextTestsSettings,
                                 settings_factory) -> None:
-                    tm.that(session_runtime is TestsFirstConsumer.runtime, eq=True)
-                    tm.that(run_namespace is TestsFirstConsumer.namespace, eq=True)
-                    tm.that(clean_container is not None, eq=True)
-                    tm.that(isinstance(settings, FlextTestsSettings), eq=True)
+                    tm.ok(session_runtime is TestsFirstConsumer.runtime)
+                    tm.ok(run_namespace is TestsFirstConsumer.namespace)
+                    tm.ok(clean_container is not None)
+                    tm.ok(isinstance(settings, FlextTestsSettings))
                     created = settings_factory(FlextTestsSettings)
-                    tm.that(created is FlextTestsSettings.fetch_global(), eq=True)
+                    tm.ok(created is FlextTestsSettings.fetch_global())
                     Path('runtime-second').write_text(str(session_runtime.directory))
 
                 @staticmethod
@@ -280,7 +280,7 @@ class TestsFlextTestsEnforcementPlugin:
         directories = {record.read_text() for record in records}
         tm.that(len(directories), eq=1)
         for directory in directories:
-            tm.that(Path(directory).exists(), eq=False)
+            tm.fail(Path(directory).exists())
 
     @staticmethod
     @pytest.mark.slow

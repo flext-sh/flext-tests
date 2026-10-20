@@ -73,12 +73,12 @@ class TestsFlextTestsWorkspaceCleanup:
 
         plan = u.Tests.assert_success(u.Tests.workspace_cleanup_plan(request))
 
-        tm.that(plan.request is request, eq=True)
+        tm.ok(plan.request is request)
         tm.that(
             tuple(candidate.relative_path.as_posix() for candidate in plan.candidates),
             eq=(".cache", "artifact.tmp"),
         )
-        tm.that((root / "unlisted.tmp").exists(), eq=True)
+        tm.ok((root / "unlisted.tmp").exists())
 
     def test_apply_removes_only_the_exact_dry_run_plan(self, tmp_path: Path) -> None:
         """Delete planned residues without touching other ignored content."""
@@ -94,10 +94,10 @@ class TestsFlextTestsWorkspaceCleanup:
 
         report = u.Tests.assert_success(u.Tests.workspace_cleanup_apply(plan))
 
-        tm.that(report.plan is plan, eq=True)
-        tm.that((root / ".cache").exists(), eq=False)
-        tm.that((root / "artifact.tmp").exists(), eq=False)
-        tm.that((root / "unlisted.tmp").exists(), eq=True)
+        tm.ok(report.plan is plan)
+        tm.fail((root / ".cache").exists())
+        tm.fail((root / "artifact.tmp").exists())
+        tm.ok((root / "unlisted.tmp").exists())
 
     def test_apply_rejects_content_changed_after_dry_run(self, tmp_path: Path) -> None:
         """Preserve ignored WIP whose content changed after dry-run."""
@@ -107,7 +107,7 @@ class TestsFlextTestsWorkspaceCleanup:
             u.Tests.workspace_cleanup_plan(self._request(root, "artifact.tmp")),
         )
         # NOTE (multi-agent): prove the dry-run captured real filesystem state.
-        tm.that(bool(plan.candidates[0].fingerprint), eq=True)
+        tm.ok(bool(plan.candidates[0].fingerprint))
         _ = self._write(target, "important WIP after dry-run")
 
         result = u.Tests.workspace_cleanup_apply(plan)
@@ -177,7 +177,7 @@ class TestsFlextTestsWorkspaceCleanup:
         result = u.Tests.workspace_cleanup_apply(plan)
 
         _ = u.Tests.assert_failure(result, "cleanup plan is stale")
-        tm.that((root / ".cache" / "artifact.bin").exists(), eq=True)
+        tm.ok((root / ".cache" / "artifact.bin").exists())
 
     def test_plan_rejects_nested_targets(self, tmp_path: Path) -> None:
         """Refuse parent and child declarations that overlap."""
@@ -208,7 +208,7 @@ class TestsFlextTestsWorkspaceCleanup:
             blocked.chmod(0o700)
 
         _ = u.Tests.assert_failure(result, "cleanup deletion failed")
-        tm.that(blocked.exists(), eq=True)
+        tm.ok(blocked.exists())
 
     def test_plan_rejects_protected_git_directory(self, tmp_path: Path) -> None:
         """Refuse a residue that targets the resolved Git directory."""
@@ -217,7 +217,7 @@ class TestsFlextTestsWorkspaceCleanup:
         result = u.Tests.workspace_cleanup_plan(self._request(root, ".git"))
 
         _ = u.Tests.assert_failure(result, "protected")
-        tm.that((root / ".git").exists(), eq=True)
+        tm.ok((root / ".git").exists())
 
     def test_plan_rejects_protected_beads_directory(self, tmp_path: Path) -> None:
         """Refuse a residue that targets the .beads durable store."""
@@ -227,7 +227,7 @@ class TestsFlextTestsWorkspaceCleanup:
         result = u.Tests.workspace_cleanup_plan(self._request(root, ".beads"))
 
         _ = u.Tests.assert_failure(result, "protected")
-        tm.that((root / ".beads" / "issues.jsonl").exists(), eq=True)
+        tm.ok((root / ".beads" / "issues.jsonl").exists())
 
     def test_plan_rejects_internal_symlink_candidate(self, tmp_path: Path) -> None:
         """Refuse an ignored symlink even when its target stays inside the worktree."""
@@ -238,8 +238,8 @@ class TestsFlextTestsWorkspaceCleanup:
         result = u.Tests.workspace_cleanup_plan(self._request(root, "link"))
 
         _ = u.Tests.assert_failure(result, "symlink")
-        tm.that((root / "link").is_symlink(), eq=True)
-        tm.that((root / "real" / "artifact.bin").exists(), eq=True)
+        tm.ok((root / "link").is_symlink())
+        tm.ok((root / "real" / "artifact.bin").exists())
 
     def test_plan_rejects_symlink_ancestor(self, tmp_path: Path) -> None:
         """Refuse a residue whose ancestor path component is a symlink."""
@@ -252,7 +252,7 @@ class TestsFlextTestsWorkspaceCleanup:
         )
 
         _ = u.Tests.assert_failure(result, "symlink")
-        tm.that((root / "realdir" / "artifact.bin").exists(), eq=True)
+        tm.ok((root / "realdir" / "artifact.bin").exists())
 
     def test_plan_rejects_hardlinked_file(self, tmp_path: Path) -> None:
         """Refuse an ignored regular file that shares its inode with another link."""
@@ -263,7 +263,7 @@ class TestsFlextTestsWorkspaceCleanup:
         result = u.Tests.workspace_cleanup_plan(self._request(root, "artifact.tmp"))
 
         _ = u.Tests.assert_failure(result, "hardlink")
-        tm.that((root / "artifact.tmp").exists(), eq=True)
+        tm.ok((root / "artifact.tmp").exists())
 
     def test_plan_rejects_non_regular_file(self, tmp_path: Path) -> None:
         """Refuse an ignored filesystem node that is not a regular file."""
@@ -273,7 +273,7 @@ class TestsFlextTestsWorkspaceCleanup:
         result = u.Tests.workspace_cleanup_plan(self._request(root, "artifact.pipe"))
 
         _ = u.Tests.assert_failure(result, "regular file")
-        tm.that((root / "artifact.pipe").exists(), eq=True)
+        tm.ok((root / "artifact.pipe").exists())
 
     def test_apply_rejects_hardlink_created_after_dry_run(self, tmp_path: Path) -> None:
         """Reject apply when a hardlink appears after the dry-run fingerprint."""
@@ -287,4 +287,4 @@ class TestsFlextTestsWorkspaceCleanup:
         result = u.Tests.workspace_cleanup_apply(plan)
 
         _ = u.Tests.assert_failure(result, "hardlink")
-        tm.that((root / "artifact.tmp").exists(), eq=True)
+        tm.ok((root / "artifact.tmp").exists())

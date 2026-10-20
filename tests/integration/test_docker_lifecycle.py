@@ -132,7 +132,7 @@ class TestsFlextTestsDockerLifecycle:
         tm.that(second.container_id, eq=first.container_id)
         tm.that(created.read_text(encoding="utf-8").splitlines(), len=1)
         record = tm.ok(u.Tests.read_container_state(state_dir, first.name))
-        tm.that(record.sealed, eq=True)
+        tm.ok(record.sealed)
         tm.that(record.container_id, eq=first.container_id)
         tm.that(record.fingerprint, eq=tm.ok(docker.fingerprint()))
         tm.that(tm.ok(docker.verify()).container_id, eq=first.container_id)
@@ -276,4 +276,4 @@ class TestsFlextTestsDockerLifecycle:
         record = tm.ok(
             u.Tests.read_container_state(state_dir, f"{project}-never-healthy-1"),
         )
-        tm.that(record.sealed, eq=False)
+        tm.fail(record.sealed)

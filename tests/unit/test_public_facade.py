@@ -36,8 +36,8 @@ class TestsFlextTestsPublicFacade:
         families, keeping both facades importable side by side.
 
         """
-        tm.that(FlextTestsModels in m.__mro__, eq=True)
-        tm.that(FlextTestsUtilities in u.__mro__, eq=True)
+        tm.ok(FlextTestsModels in m.__mro__)
+        tm.ok(FlextTestsUtilities in u.__mro__)
 
     @staticmethod
     def test_selected_enforcement_plugin_uses_its_declared_identity(
@@ -84,8 +84,8 @@ class TestsFlextTestsPublicFacade:
         }
         tm.that(set(configure), eq=set(entries))
         for name, entry in entries.items():
-            tm.that(configure[name] is entry.load(), eq=True)
-        tm.that("pytest_configure" in flext_tests.__all__, eq=False)
+            tm.ok(configure[name] is entry.load())
+        tm.fail("pytest_configure" in flext_tests.__all__)
 
     @staticmethod
     def test_consumer_facade_imports_without_container_lifecycle() -> None:
@@ -101,7 +101,7 @@ class TestsFlextTestsPublicFacade:
             ("tm", tm),
             ("x", x),
         ):
-            tm.that(exported is getattr(flext_tests, name), eq=True)
+            tm.ok(exported is getattr(flext_tests, name))
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -130,7 +130,7 @@ class TestsFlextTestsPublicFacade:
             for requirement in (Requirement(value),)
         }
         name = canonicalize_name(distribution_name)
-        tm.that(name in requirements, eq=True)
+        tm.ok(name in requirements)
         tm.that(requirements[name].marker, eq=None)
         import_module(module_name)
-        tm.that(module_name in sys.modules, eq=True)
+        tm.ok(module_name in sys.modules)

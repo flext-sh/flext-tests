@@ -42,17 +42,48 @@ class FlextTestsMatchersResultMixin:
                 return m.Tests.Chain(result=result)
 
             @staticmethod
+            def false(value: bool, *, msg: str | None = None) -> bool:
+                """Require a false boolean, independently of result state.
+
+                Returns:
+                    The validated boolean unchanged.
+
+                """
+                FlextTestsMatchersThatMixin.Tests.Matchers.that(
+                    value, eq=False, is_=bool, msg=msg
+                )
+                return value
+
+            @staticmethod
+            @overload
+            def fail(result: bool, *, msg: str | None = None) -> bool: ...
+
+            @staticmethod
+            @overload
             def fail[TResult](
                 result: core_p.ResultView[TResult],
                 **kwargs: p.AttributeProbe,
-            ) -> str:
-                """Assert that a result failed and validate its error payload.
+            ) -> str: ...
+
+            @staticmethod
+            def fail[TResult](
+                result: core_p.ResultView[TResult] | bool,
+                **kwargs: p.AttributeProbe,
+            ) -> str | bool:
+                """Require a false boolean or validate a failed result's error.
 
                 Returns:
-                    The resulting ``str``.
+                    The unchanged false boolean or the result's error string.
 
                 """
                 params = m.Tests.FailParams.model_validate(kwargs)
+                if isinstance(result, bool):
+                    if params.model_fields_set - {"msg"}:
+                        msg = "Boolean failure checks accept only msg"
+                        raise ValueError(msg)
+                    return FlextTestsMatchersResultMixin.Tests.Matchers.false(
+                        result, msg=params.msg
+                    )
                 err: str = FlextTestsResultUtilitiesMixin.assert_failure(result)
                 FlextTestsMatchersResultMixin.Tests.Matchers.fail_text(err, params)
                 FlextTestsMatchersResultMixin.Tests.Matchers.fail_code(result, params)
@@ -336,6 +367,10 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             @overload
+            def ok(result: bool, *, msg: str | None = None) -> bool: ...
+
+            @staticmethod
+            @overload
             def ok[TResult](
                 result: core_p.ResultView[TResult],
                 *,
@@ -372,7 +407,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def ok[TResult](
-                result: core_p.ResultView[TResult],
+                result: core_p.ResultView[TResult] | bool,
                 *,
                 path: t.Tests.PathSpec | None = None,
                 eq: TResult
@@ -387,8 +422,8 @@ class FlextTestsMatchersResultMixin:
                 | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
                 where: Callable[[TResult], bool] | None = None,
                 **kwargs: t.Tests.MatcherOption,
-            ) -> TResult | p.Tests.NativeMatchValue:
-                """Validate native success values; only explicit paths select a value.
+            ) -> TResult | p.Tests.NativeMatchValue | bool:
+                """Require a true boolean or validate a successful result's value.
 
                 Args:
                     result: The result object to validate.
@@ -408,6 +443,20 @@ class FlextTestsMatchersResultMixin:
                 """
                 params = m.Tests.OkParams.model_validate({"path": path, **kwargs})
                 matchers = FlextTestsMatchersResultMixin.Tests.Matchers
+                if isinstance(result, bool):
+                    if (
+                        path is not None
+                        or eq is not c.Tests.MatcherMissing.OMITTED
+                        or ne is not c.Tests.MatcherMissing.OMITTED
+                        or where is not None
+                        or params.model_fields_set - {"msg", "path"}
+                    ):
+                        msg = "Boolean success checks accept only msg"
+                        raise ValueError(msg)
+                    FlextTestsMatchersThatMixin.Tests.Matchers.that(
+                        result, eq=True, msg=params.msg
+                    )
+                    return result
                 original = FlextTestsResultUtilitiesMixin.assert_success(
                     result,
                     error_msg=params.msg,
@@ -427,12 +476,16 @@ class FlextTestsMatchersResultMixin:
                     if extracted_payload is not None
                     else original
                 )
-                FlextTestsMatchersThatMixin.Tests.Matchers.that(
-                    comparison_value,
-                    eq=eq,
-                    ne=ne,
-                    msg=params.msg,
-                )
+                if (
+                    eq is not c.Tests.MatcherMissing.OMITTED
+                    or ne is not c.Tests.MatcherMissing.OMITTED
+                ):
+                    FlextTestsMatchersThatMixin.Tests.Matchers.that(
+                        comparison_value,
+                        eq=eq,
+                        ne=ne,
+                        msg=params.msg,
+                    )
                 result_value = matchers.ok_validate_scalar(
                     result_value,
                     params,

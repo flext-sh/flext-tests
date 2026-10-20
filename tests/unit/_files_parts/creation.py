@@ -21,7 +21,7 @@ class TestsFlextTestsFilesCreationMixin:
         manager = FlextTestsFiles(base_dir=tmp_path)
         content = "test content"
         file_path = manager.create(content, "test.txt")
-        tm.that(file_path.exists(), eq=True)
+        tm.ok(file_path.exists())
         tm.that(file_path.read_text(), eq=content)
         tm.that(file_path.name, eq="test.txt")
         tm.that(manager.created_files, has=file_path)
@@ -34,7 +34,7 @@ class TestsFlextTestsFilesCreationMixin:
         filename = "custom.txt"
         custom_dir = tmp_path / "subdir"
         file_path = manager.create(content, filename, directory=custom_dir)
-        tm.that(file_path.exists(), eq=True)
+        tm.ok(file_path.exists())
         tm.that(file_path.read_text(), eq=content)
         tm.that(file_path.name, eq=filename)
         tm.that(file_path.parent, eq=custom_dir)
@@ -51,7 +51,7 @@ class TestsFlextTestsFilesCreationMixin:
             "test.txt",
             options=FlextTestsFiles.CreateOptions(enc=encoding),
         )
-        tm.that(file_path.exists(), eq=True)
+        tm.ok(file_path.exists())
         tm.that(file_path.read_text(encoding=encoding), eq=content)
 
     @staticmethod
@@ -60,7 +60,7 @@ class TestsFlextTestsFilesCreationMixin:
         manager = FlextTestsFiles(base_dir=tmp_path)
         content = b"binary content"
         file_path = manager.create(content, "binary_data.bin")
-        tm.that(file_path.exists(), eq=True)
+        tm.ok(file_path.exists())
         tm.that(file_path.read_bytes(), eq=content)
         tm.that(file_path.name, eq="binary_data.bin")
         tm.that(manager.created_files, has=file_path)
@@ -73,7 +73,7 @@ class TestsFlextTestsFilesCreationMixin:
         filename = "custom.bin"
         custom_dir = tmp_path / "subdir"
         file_path = manager.create(content, filename, directory=custom_dir)
-        tm.that(file_path.exists(), eq=True)
+        tm.ok(file_path.exists())
         tm.that(file_path.read_bytes(), eq=content)
         tm.that(file_path.name, eq=filename)
         tm.that(file_path.parent, eq=custom_dir)
@@ -83,7 +83,7 @@ class TestsFlextTestsFilesCreationMixin:
         """Test creating empty file."""
         manager = FlextTestsFiles(base_dir=tmp_path)
         file_path = manager.create("", "empty.txt")
-        tm.that(file_path.exists(), eq=True)
+        tm.ok(file_path.exists())
         tm.that(file_path.read_text(), eq="")
         tm.that(file_path.name, eq="empty.txt")
 
@@ -93,7 +93,7 @@ class TestsFlextTestsFilesCreationMixin:
         manager = FlextTestsFiles(base_dir=tmp_path)
         filename = "custom_empty.txt"
         file_path = manager.create("", filename)
-        tm.that(file_path.exists(), eq=True)
+        tm.ok(file_path.exists())
         tm.that(file_path.read_text(), eq="")
         tm.that(file_path.name, eq=filename)
 

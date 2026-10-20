@@ -87,7 +87,7 @@ class FlextTestsDomainsFixtureParts:
             fixtures_root=fixtures_root,
         )
 
-        tm.that(resolved.exists(), eq=True)
+        tm.ok(resolved.exists())
         tm.that(resolved.parent.name, eq="oid")
         tm.that(resolved.name, eq="oid_schema_fixtures.ldif")
 
@@ -213,10 +213,10 @@ class TestsFlextTestsDomains(FlextTestsDomainsFixtureParts):
         """Each email case is a ``(value, is_valid)`` pair with stable verdicts."""
         cases = dict(FlextTestsDomains.valid_email_cases())
 
-        tm.that(cases["test@example.com"], eq=True)
-        tm.that(cases["user.name@domain.co.uk"], eq=True)
-        tm.that(cases["invalid-email"], eq=False)
-        tm.that(cases[""], eq=False)
+        tm.ok(cases["test@example.com"])
+        tm.ok(cases["user.name@domain.co.uk"])
+        tm.fail(cases["invalid-email"])
+        tm.fail(cases[""])
 
     @staticmethod
     def test_valid_email_cases_verdicts_are_deterministic() -> None:
@@ -286,7 +286,7 @@ class TestsFlextTestsDomains(FlextTestsDomainsFixtureParts):
             ),
         )
         tm.that(bound.available_fixture_servers(), eq=("oid", "oud"))
-        tm.that(bound.fixture_exists("oud", "schema"), eq=True)
+        tm.ok(bound.fixture_exists("oud", "schema"))
 
     @staticmethod
     def test_bind_load_all_aggregates_every_server_and_kind(

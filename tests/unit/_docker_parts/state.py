@@ -23,7 +23,7 @@ class TestsFlextTestsDockerStateMixin:
         manager = FlextTestsDocker()
         client1 = manager.client
         client2 = manager.client
-        tm.that(client1 is client2, eq=True)
+        tm.ok(client1 is client2)
 
     @staticmethod
     def test_dirty_state_is_shared_by_every_facade_of_the_host(
@@ -34,7 +34,7 @@ class TestsFlextTestsDockerStateMixin:
         writer = FlextTestsDocker(state_dir=state_dir)
         _ = u.Tests.assert_success(writer.mark_container_dirty("container1"))
         reader = FlextTestsDocker(state_dir=state_dir)
-        tm.that(reader.container_dirty("container1"), eq=True)
+        tm.ok(reader.container_dirty("container1"))
         tm.that(reader.dirty_containers, eq=("container1",))
 
     @staticmethod
@@ -42,7 +42,7 @@ class TestsFlextTestsDockerStateMixin:
         """Test marking container as dirty."""
         result = docker_manager.mark_container_dirty("test_container")
         _ = u.Tests.assert_success(result)
-        tm.that(docker_manager.container_dirty("test_container"), eq=True)
+        tm.ok(docker_manager.container_dirty("test_container"))
 
     @staticmethod
     def test_mark_container_clean(docker_manager: FlextTestsDocker) -> None:
@@ -50,14 +50,14 @@ class TestsFlextTestsDockerStateMixin:
         _ = docker_manager.mark_container_dirty("test_container")
         result = docker_manager.mark_container_clean("test_container")
         _ = u.Tests.assert_success(result)
-        tm.that(docker_manager.container_dirty("test_container"), eq=False)
+        tm.fail(docker_manager.container_dirty("test_container"))
 
     @staticmethod
     def test_container_dirty(docker_manager: FlextTestsDocker) -> None:
         """Test checking if container is dirty."""
         _ = docker_manager.mark_container_dirty("dirty_container")
-        tm.that(docker_manager.container_dirty("dirty_container"), eq=True)
-        tm.that(docker_manager.container_dirty("clean_container"), eq=False)
+        tm.ok(docker_manager.container_dirty("dirty_container"))
+        tm.fail(docker_manager.container_dirty("clean_container"))
 
     @staticmethod
     def test_dirty_containers(docker_manager: FlextTestsDocker) -> None:
@@ -74,8 +74,8 @@ class TestsFlextTestsDockerStateMixin:
         tm.that(state.container_name, eq="never-seen")
         tm.that(state.container_id, empty=True)
         tm.that(state.fingerprint, empty=True)
-        tm.that(state.dirty, eq=False)
-        tm.that(state.sealed, eq=False)
+        tm.fail(state.dirty)
+        tm.fail(state.sealed)
 
     @staticmethod
     def test_state_record_round_trips_every_field(tmp_path: Path) -> None:
@@ -150,4 +150,4 @@ class TestsFlextTestsDockerStateMixin:
                 timeout_seconds=0.2,
             )
         tm.fail(result, code=c.Tests.DockerErrorCode.LOCK_TIMEOUT)
-        tm.that(u.Tests.docker_state_file(tmp_path, "held").exists(), eq=False)
+        tm.fail(u.Tests.docker_state_file(tmp_path, "held").exists())

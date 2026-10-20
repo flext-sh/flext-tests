@@ -118,7 +118,7 @@ class TestsFlextTestsMatchersThatAttrsMixin:
         tm.that(conn, none=False)
         tm.that(conn, ne=None)
         tm.that(conn, none=False, is_=Connection)
-        tm.that(tm.ok(r[Connection].ok(conn), none=False) is conn, eq=True)
+        tm.ok(tm.ok(r[Connection].ok(conn), none=False) is conn)
         with pytest.raises(AssertionError, match="did not satisfy constraints"):
             tm.that(conn, none=True)
 

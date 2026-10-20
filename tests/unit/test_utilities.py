@@ -54,7 +54,7 @@ class TestsFlextTestsUtilities:
             raise body_failure
 
         with u.Tests.FileLock(lock_path):
-            tm.that(lock_path.is_file(), eq=True)
+            tm.ok(lock_path.is_file())
 
     # ------------------------------------------------------------------
     # assert_success / assert_failure — return values on the happy path
@@ -234,12 +234,12 @@ class TestsFlextTestsUtilities:
         tm.that(len(cases), eq=2)
         success_row = cases[0]
         tm.that(u.Tests.assert_success(success_row[0]), eq="ok")
-        tm.that(success_row[1], eq=True)
+        tm.ok(success_row[1])
         tm.that(success_row[2], eq="ok")
 
         failure_row = cases[1]
         tm.that(u.Tests.assert_failure(failure_row[0]), has="boom")
-        tm.that(failure_row[1], eq=False)
+        tm.fail(failure_row[1])
         tm.that(failure_row[3], eq="boom")
         tm.that(failure_row[0].error_code, eq="E1")
 

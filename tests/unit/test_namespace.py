@@ -62,7 +62,7 @@ class TestsFlextTestsNamespace:
                     testrun_uid=f"run-{seed}",
                     checkout_root=tmp_path,
                 )
-                tm.that(namespace.token in seen, eq=False)
+                tm.fail(namespace.token in seen)
                 seen.add(namespace.token)
         tm.that(len(seen), eq=EXPECTED_UNIQUE_TOKENS)
 

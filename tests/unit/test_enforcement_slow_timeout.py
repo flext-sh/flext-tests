@@ -80,7 +80,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
             "@pytest.mark.slow\n"
             "def test_slow_budget(request: pytest.FixtureRequest) -> None:\n"
             "    marker = request.node.get_closest_marker('timeout')\n"
-            "    tm.that(marker is not None, eq=True)\n"
+            "    tm.ok(marker is not None)\n"
             "    if marker is not None:\n"
             f"        tm.that(marker.args, eq=({self.slow_timeout_seconds},))\n"
             "\n"

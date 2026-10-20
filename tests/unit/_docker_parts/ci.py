@@ -46,7 +46,7 @@ class TestsFlextTestsDockerCiMixin:
         if disabled:
             tm.fail(gate, code=c.Tests.DockerErrorCode.DISABLED_BY_CI)
         else:
-            tm.that(tm.ok(gate), eq=True)
+            tm.ok(tm.ok(gate))
 
     @staticmethod
     def test_lifecycle_effects_fail_disabled_by_ci(tmp_path: Path) -> None:
@@ -96,4 +96,4 @@ class TestsFlextTestsDockerCiMixin:
         docker = FlextTestsDocker(state_dir=tmp_path)
         with u.Tests.env_vars_context({ci.variable: ci.value}):
             _ = u.Tests.assert_success(docker.mark_container_dirty("flext-tests-ci"))
-        tm.that(docker.container_dirty("flext-tests-ci"), eq=True)
+        tm.ok(docker.container_dirty("flext-tests-ci"))

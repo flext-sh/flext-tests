@@ -36,7 +36,7 @@ class FlextTestsPayloadIdentityParts:
         )
         for leaf in leaves:
             payload = m.Tests.Payload(kind="atom", atom=leaf)
-            tm.that(payload.atom is leaf, eq=True)
+            tm.ok(payload.atom is leaf)
 
     @staticmethod
     def test_owned_tree_validation_preserves_nested_model_identity() -> None:
@@ -47,7 +47,7 @@ class FlextTestsPayloadIdentityParts:
         payload = m.Tests.Payload(kind="mapping", entries={"nested": collection})
         validated = m.Tests.Payload.model_validate(payload)
         tm.that(validated.entries["nested"].kind, eq="frozenset")
-        tm.that(validated.entries["nested"].items[0].atom is leaf, eq=True)
+        tm.ok(validated.entries["nested"].items[0].atom is leaf)
 
     @staticmethod
     def test_matcher_preserves_native_model_identity() -> None:
@@ -139,7 +139,7 @@ class FlextTestsPayloadIdentityParts:
         with pytest.raises(ValueError, match=re.escape(str(error))) as caught:
             tm.that({"native": None}, where=reject)
 
-        tm.that(caught.value is error, eq=True)
+        tm.ok(caught.value is error)
 
     @staticmethod
     def test_nested_rich_values_survive_owned_tree_validation() -> None:
@@ -158,7 +158,7 @@ class FlextTestsPayloadIdentityParts:
         )
         validated = m.Tests.Payload.model_validate(payload)
         for index, leaf in enumerate(leaves):
-            tm.that(validated.entries["nested"].items[index].atom is leaf, eq=True)
+            tm.ok(validated.entries["nested"].items[index].atom is leaf)
 
     @staticmethod
     def test_empty_arms_remain_distinct() -> None:
@@ -166,9 +166,9 @@ class FlextTestsPayloadIdentityParts:
         for kind in ("atom", "list", "tuple", "set", "frozenset", "mapping"):
             payload = m.Tests.Payload.model_validate({"kind": kind})
             tm.that(payload.kind, eq=kind)
-            tm.that(payload.atom is None, eq=True)
-            tm.that(bool(payload.items), eq=False)
-            tm.that(bool(payload.entries), eq=False)
+            tm.ok(payload.atom is None)
+            tm.fail(bool(payload.items))
+            tm.fail(bool(payload.entries))
 
     @staticmethod
     def test_rejects_atom_with_children() -> None:
@@ -221,7 +221,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
     def test_none_is_an_atom_not_a_payload_document() -> None:
         """Test none is an atom not a payload document."""
         payload = m.Tests.Payload(kind="atom", atom=None)
-        tm.that(payload.atom is None, eq=True)
+        tm.ok(payload.atom is None)
         with pytest.raises(c.ValidationError):
             m.Tests.Payload.model_validate(None)
 
@@ -258,7 +258,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
         children = {"value": child}
         payload = m.Tests.Payload(kind="mapping", entries=children)
         children.clear()
-        tm.that(payload.entries["value"] is child, eq=True)
+        tm.ok(payload.entries["value"] is child)
         tm.rejects_assignment(
             payload,
             "entries",
@@ -266,7 +266,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
             expected=c.ValidationError,
             match="frozen",
         )
-        tm.that(payload.entries["value"] is child, eq=True)
+        tm.ok(payload.entries["value"] is child)
 
     @staticmethod
     def test_binary_file_roundtrip_preserves_non_utf8_bytes(
@@ -279,7 +279,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
             "native.bin",
             options=FlextTestsFiles.CreateOptions(fmt=c.Tests.FILE_FORMAT_BIN),
         )
-        tm.that(path.read_bytes() == content, eq=True)
+        tm.ok(path.read_bytes() == content)
 
     @staticmethod
     def test_textual_projection_rejects_invalid_utf8(tmp_path: Path) -> None:
@@ -290,7 +290,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
                 "native.json",
                 options=FlextTestsFiles.CreateOptions(fmt=c.Tests.FILE_FORMAT_JSON),
             )
-        tm.that((tmp_path / "native.json").exists(), eq=False)
+        tm.fail((tmp_path / "native.json").exists())
 
     @staticmethod
     def test_native_ingress_rejects_string_key_collisions(tmp_path: Path) -> None:
@@ -300,7 +300,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
                 {1: "numeric", "1": "text"},
                 "collision.json",
             )
-        tm.that((tmp_path / "collision.json").exists(), eq=False)
+        tm.fail((tmp_path / "collision.json").exists())
 
     @staticmethod
     def test_native_ingress_rejects_unsupported_nested_leaf(
@@ -312,7 +312,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
                 {"nested": [range(3)]},
                 "unsupported.json",
             )
-        tm.that((tmp_path / "unsupported.json").exists(), eq=False)
+        tm.fail((tmp_path / "unsupported.json").exists())
 
     @staticmethod
     def test_format_detection_does_not_serialize_a_native_model() -> None:
@@ -330,7 +330,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
             c.Cli.FILE_FORMAT_JSON,
         )
         tm.that(detected, eq=c.Cli.FILE_FORMAT_JSON)
-        tm.that(model.atom is str, eq=True)
+        tm.ok(model.atom is str)
         with pytest.raises(c.PydanticSerializationError):
             model.model_dump_json()
 

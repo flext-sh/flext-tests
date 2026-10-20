@@ -56,13 +56,13 @@ class TestsFlextTestsServiceBase:
         class _TestService(s[str]):
             """A consumer subclass of the public generic service alias."""
 
-        tm.that(s is FlextTestsServiceBase, eq=True)
+        tm.ok(s is FlextTestsServiceBase)
         with _TestService.isolated_test_runtime() as service:
             tm.that(
                 isinstance(service.settings, _TestService.test_settings_type()),
                 eq=True,
             )
-            tm.that(service is _TestService.fetch_global(), eq=True)
+            tm.ok(service is _TestService.fetch_global())
 
     # ---- isolated_test_runtime(build=...) for port-bearing services --------
 
@@ -73,7 +73,7 @@ class TestsFlextTestsServiceBase:
             build=lambda: u.Tests.EchoService(port=u.Tests.MemoryEcho()),
         ) as service:
             result = service.run()
-            tm.that(result.success, eq=True)
+            tm.ok(result.success)
             tm.that(result.unwrap(), eq="HI")
             tm.that("port" in service.model_dump(), truth=False)
 
@@ -90,7 +90,7 @@ class TestsFlextTestsServiceBase:
     def test_isolated_test_runtime_without_build_resolves_a_port_free_service() -> None:
         """A port-free service keeps resolving through ``fetch_global()``."""
         with FlextTestsServiceBase.isolated_test_runtime() as service:
-            tm.that(service is FlextTestsServiceBase.fetch_global(), eq=True)
+            tm.ok(service is FlextTestsServiceBase.fetch_global())
 
     # ---- test_settings_type: raise, never fall back -------------------------
 

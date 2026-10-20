@@ -19,7 +19,7 @@ class TestsFlextTestsFilesFormatsMixin:
         """Test create() auto-detects text from str content."""
         manager = tf(base_dir=tmp_path)
         path = manager.create("hello world", "test.txt")
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         tm.that(path.read_text(), eq="hello world")
         tm.that(path.suffix, eq=".txt")
 
@@ -28,7 +28,7 @@ class TestsFlextTestsFilesFormatsMixin:
         """Test create() auto-detects binary from bytes content."""
         manager = tf(base_dir=tmp_path)
         path = manager.create(b"\x00\x01\x02", "data.bin")
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         tm.that(path.read_bytes(), eq=b"\x00\x01\x02")
 
     @staticmethod
@@ -37,7 +37,7 @@ class TestsFlextTestsFilesFormatsMixin:
         manager = tf(base_dir=tmp_path)
         content: m.ConfigMap = m.ConfigMap(root={"key": "value", "number": 42})
         path = manager.create(content, "settings.json")
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         empty_data: t.JsonMapping = {}
         data = u.Cli.json_read(path).unwrap_or(empty_data)
         tm.that(data, eq=content.root)
@@ -48,7 +48,7 @@ class TestsFlextTestsFilesFormatsMixin:
         manager = tf(base_dir=tmp_path)
         content: m.ConfigMap = m.ConfigMap(root={"name": "test", "enabled": True})
         path = manager.create(content, "settings.yaml")
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         empty_data: t.JsonMapping = {}
         data = u.Cli.yaml_parse(path.read_text()).unwrap_or(empty_data)
         tm.that(data, eq=content.root)
@@ -59,7 +59,7 @@ class TestsFlextTestsFilesFormatsMixin:
         manager = tf(base_dir=tmp_path)
         content = [["a", "b"], ["1", "2"]]
         path = manager.create(content, "data.csv")
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         lines = path.read_text().strip().split("\n")
         tm.that(len(lines), eq=2)
 
@@ -73,7 +73,7 @@ class TestsFlextTestsFilesFormatsMixin:
             "data.csv",
             options=tf.CreateOptions(headers=["col1", "col2"]),
         )
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         lines = path.read_text().strip().split("\n")
         tm.that(lines[0], eq="col1,col2")
         tm.that(len(lines), eq=3)
@@ -87,7 +87,7 @@ class TestsFlextTestsFilesFormatsMixin:
             "data.dat",
             options=tf.CreateOptions(fmt=c.Tests.FILE_FORMAT_BIN),
         )
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         tm.that(path.read_bytes(), eq=b"raw bytes")
 
     @staticmethod
@@ -99,7 +99,7 @@ class TestsFlextTestsFilesFormatsMixin:
             "unicode.txt",
             options=tf.CreateOptions(enc="utf-16"),
         )
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         tm.that(path.read_text(encoding="utf-16"), eq="áéíóú")
 
     @staticmethod
@@ -112,7 +112,7 @@ class TestsFlextTestsFilesFormatsMixin:
             "settings.json",
             options=tf.CreateOptions(indent=4),
         )
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         text = path.read_text()
         tm.that(text, has="    ")
 
@@ -122,5 +122,5 @@ class TestsFlextTestsFilesFormatsMixin:
         manager = tf(base_dir=tmp_path)
         custom_dir = tmp_path / "subdir"
         path = manager.create("content", "test.txt", directory=custom_dir)
-        tm.that(path.exists(), eq=True)
+        tm.ok(path.exists())
         tm.that(path.parent, eq=custom_dir)
