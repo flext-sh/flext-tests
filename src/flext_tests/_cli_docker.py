@@ -14,7 +14,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from flext_cli import u as cli_u
+from flext_cli import u
 
 from flext_tests import FlextTestsDocker, m
 
@@ -38,10 +38,10 @@ class FlextTestsCliDocker:
                 ``Exception`` is caught.
 
         """
-        read = cli_u.Cli.files_read_text(path)
+        read = u.Cli.files_read_text(path)
         if read.failure:
             raise SystemExit(1)
-        parsed = cli_u.Cli.yaml_parse(read.value)
+        parsed = u.Cli.yaml_parse(read.value)
         if parsed.failure:
             raise SystemExit(1)
         try:

@@ -19,7 +19,7 @@ from inspect import getattr_static
 from pathlib import Path
 
 import pytest
-from flext_infra import config
+from flext_infra import config, u as infra_u
 
 from tests import c, tm, u
 
@@ -435,7 +435,7 @@ class TestsFlextTestsEnforcementPlugin:
             test_public_boundary=(
                 "from pathlib import Path\n"
                 "\n"
-                "from flext_tests import u\n"
+                "from flext_tests import tm, u\n"
                 "\n"
                 "\n"
                 "class TestsPublicInfraRuleBoundary:\n"
@@ -458,13 +458,16 @@ class TestsFlextTestsEnforcementPlugin:
                 "        missing = u.Tests.infra_rule_findings(\n"
                 "            project, required_rule_ids=frozenset({'no-such-rule'})\n"
                 "        )\n"
-                "        assert missing.failure\n"
-                "        assert 'no-such-rule' in str(missing.error)\n"
+                "        tm.fail(missing, has='no-such-rule')\n"
                 "        scanned = u.Tests.infra_rule_findings(\n"
                 "            project, required_rule_ids=frozenset()\n"
                 "        )\n"
-                "        assert scanned.success\n"
+                "        tm.ok(scanned)\n"
             ),
         )
-        result = pytester.runpytest_subprocess()
+        runtime_root = tm.ok(
+            infra_u.Infra.runtime_owner_root(Path(__file__).resolve().parents[2])
+        )
+        with u.Tests.env_vars_context({"RUNTIME_ROOT": runtime_root}):
+            result = pytester.runpytest_subprocess()
         result.assert_outcomes(passed=1)
