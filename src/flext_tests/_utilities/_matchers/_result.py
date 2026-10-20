@@ -42,7 +42,7 @@ class FlextTestsMatchersResultMixin:
                 return m.Tests.Chain(result=result)
 
             @staticmethod
-            def false(value: bool, *, msg: str | None = None) -> bool:
+            def false(value: t.StrictBool, *, msg: str | None = None) -> bool:
                 """Require a false boolean, independently of result state.
 
                 Returns:
@@ -56,7 +56,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             @overload
-            def fail(result: bool, *, msg: str | None = None) -> bool: ...
+            def fail(result: t.StrictBool, *, msg: str | None = None) -> bool: ...
 
             @staticmethod
             @overload
@@ -67,13 +67,16 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def fail[TResult](
-                result: core_p.ResultView[TResult] | bool,
+                result: core_p.ResultView[TResult] | t.StrictBool,
                 **kwargs: p.AttributeProbe,
             ) -> str | bool:
                 """Require a false boolean or validate a failed result's error.
 
                 Returns:
                     The unchanged false boolean or the result's error string.
+
+                Raises:
+                    ValueError: If a boolean is combined with result-only criteria.
 
                 """
                 params = m.Tests.FailParams.model_validate(kwargs)
@@ -367,7 +370,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             @overload
-            def ok(result: bool, *, msg: str | None = None) -> bool: ...
+            def ok(result: t.StrictBool, *, msg: str | None = None) -> bool: ...
 
             @staticmethod
             @overload
@@ -407,7 +410,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def ok[TResult](
-                result: core_p.ResultView[TResult] | bool,
+                result: core_p.ResultView[TResult] | t.StrictBool,
                 *,
                 path: t.Tests.PathSpec | None = None,
                 eq: TResult
@@ -439,6 +442,7 @@ class FlextTestsMatchersResultMixin:
                 Raises:
                     AssertionError: If the `where` predicate fails or other validation
                       checks fail.
+                    ValueError: If a boolean is combined with result-only criteria.
 
                 """
                 params = m.Tests.OkParams.model_validate({"path": path, **kwargs})
