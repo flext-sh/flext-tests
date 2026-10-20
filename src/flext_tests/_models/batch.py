@@ -10,7 +10,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated
 
-from flext_cli import m, u
+from flext_cli import m
 
 from flext_tests import c, p, t
 
@@ -86,21 +86,21 @@ class FlextTestsBatchModelsMixin:
             m.Field(description="Mapping of file names to error messages"),
         ] = m.Field(default_factory=lambda: MappingProxyType(dict[str, str]()))
 
-        @u.computed_field
+        @m.computed_field
         @property
         def failure_count(self) -> int:
             """Number of failed entries in the batch."""
             failed_count: int = self.failed
             return failed_count
 
-        @u.computed_field
+        @m.computed_field
         @property
         def success_count(self) -> int:
             """Alias for succeeded count."""
             succeeded_count: int = self.succeeded
             return succeeded_count
 
-        @u.computed_field
+        @m.computed_field
         @property
         def success_rate(self) -> float:
             """Success rate as percentage."""
