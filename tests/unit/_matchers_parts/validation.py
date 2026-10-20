@@ -280,13 +280,13 @@ class TestsFlextTestsMatchersValidationMixin:
             # Bind the result so ok's payload typevar solves from the family
             # subscript instead of the outer matcher's contextual inference.
             result: p.Result[t.JsonValue] = r[t.JsonValue].ok(value)
-            tm.that(tm.ok(result, eq=value), eq=value)
+            tm.that(tm.ok(result), eq=value)
 
     @staticmethod
     def test_public_matcher_boundary_accepts_approximation() -> None:
         expected = pytest.approx(1.5)
         tm.that(1.5, eq=expected)
-        tm.that(tm.ok(r[float].ok(1.5), eq=expected), eq=expected)
+        tm.that(tm.ok(r[float].ok(1.5)), eq=expected)
 
     @staticmethod
     def test_that_with_ne_sequence_parameter_fails() -> None:

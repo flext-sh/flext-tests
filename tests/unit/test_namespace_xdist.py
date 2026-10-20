@@ -11,6 +11,8 @@ from typing import Final
 
 import pytest
 
+from tests import tm
+
 pytest_plugins = ["pytester"]
 
 XDIST_WORKER_COUNT: Final[int] = 2
@@ -80,7 +82,7 @@ class TestsFlextTestsNamespaceXdist:
             path.read_text().splitlines() for path in pytester.path.glob("*.txt")
         ]
         tokens = {record[0] for record in records}
-        assert len(tokens) == XDIST_WORKER_COUNT
+        tm.that(len(tokens), eq=XDIST_WORKER_COUNT)
         directories = {Path(record[1]) for record in records}
-        assert len(directories) == XDIST_WORKER_COUNT
-        assert all(not directory.exists() for directory in directories)
+        tm.that(len(directories), eq=XDIST_WORKER_COUNT)
+        tm.that(all(not directory.exists() for directory in directories), truth=True)

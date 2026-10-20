@@ -13,7 +13,7 @@ from typing import Final
 
 import pytest
 
-from tests import c, m, u
+from tests import c, m, tm, u
 
 NAMESPACE_SEED_COUNT: Final[int] = 100
 NAMESPACE_TOKENS_PER_SEED: Final[int] = 100
@@ -32,7 +32,7 @@ class TestsFlextTestsNamespace:
             checkout_root=tmp_path,
         )
         tm_match = re.match(c.Tests.NAMESPACE_ID_PATTERN, namespace.token)
-        assert tm_match is not None
+        tm.that(tm_match, none=False)
 
     @staticmethod
     def test_model_rejects_wrong_shape(tmp_path: Path) -> None:
@@ -62,9 +62,9 @@ class TestsFlextTestsNamespace:
                     testrun_uid=f"run-{seed}",
                     checkout_root=tmp_path,
                 )
-                assert namespace.token not in seen
+                tm.that(namespace.token in seen, eq=False)
                 seen.add(namespace.token)
-        assert len(seen) == EXPECTED_UNIQUE_TOKENS
+        tm.that(len(seen), eq=EXPECTED_UNIQUE_TOKENS)
 
     @staticmethod
     def test_worker_change_changes_the_token(tmp_path: Path) -> None:
@@ -79,8 +79,8 @@ class TestsFlextTestsNamespace:
             testrun_uid="run",
             checkout_root=tmp_path,
         )
-        assert first.token != second.token
-        assert first.run_token == second.run_token
+        tm.that(first.token, ne=second.token)
+        tm.that(first.run_token, eq=second.run_token)
 
     @staticmethod
     def test_checkout_change_changes_the_token(
@@ -99,8 +99,8 @@ class TestsFlextTestsNamespace:
             testrun_uid="run",
             checkout_root=other,
         )
-        assert first.token != second.token
-        assert first.checkout != second.checkout
+        tm.that(first.token, ne=second.token)
+        tm.that(first.checkout, ne=second.checkout)
 
     @staticmethod
     def test_run_namespace_fixture_is_session_stable(
@@ -108,14 +108,16 @@ class TestsFlextTestsNamespace:
         run_namespace_again: m.Tests.TestNamespace,
     ) -> None:
         """The session fixture returns the same namespace within a run."""
-        assert run_namespace.token == run_namespace_again.token
+        tm.that(run_namespace.token, eq=run_namespace_again.token)
 
     @staticmethod
     def test_test_namespace_differs_per_test(
         test_namespace: m.Tests.TestNamespace,
     ) -> None:
         """The function fixture yields a valid per-test token."""
-        assert re.match(c.Tests.NAMESPACE_ID_PATTERN, test_namespace.token)
+        tm.that(
+            re.match(c.Tests.NAMESPACE_ID_PATTERN, test_namespace.token), none=False
+        )
 
 
 @pytest.fixture
