@@ -4,8 +4,8 @@ The end-to-end pytest11 pipeline (entry-point load -> ``pytest_configure``
 filterwarnings -> ``pytest_warning_recorded`` -> ``pytest_terminal_summary``)
 is driven inside a ``pytester`` subprocess sandbox and asserted on observable
 outcomes plus the terminal summary the plugin promises to print. Subprocess
-runs keep the real workspace untouched and prove entry-point loading without
-any manual ``-p`` wiring.
+runs keep the real workspace untouched. Discovery contracts retain installed
+plugin autoloading; dispatcher-only consumers load their declared owner alone.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -349,7 +349,11 @@ class TestsFlextTestsEnforcementPlugin:
 
     @staticmethod
     def _write_violation_module(pytester: pytest.Pytester) -> None:
-        """Write a sandbox test that emits one runtime enforcement warning."""
+        """Write a warning consumer with only its installed dispatcher selected."""
+        pytester.makeini(
+            "[pytest]\naddopts = --disable-plugin-autoload -p "
+            f"{config.Infra.tooling.tools.pytest.enforcement_plugin}\n"
+        )
         pytester.makepyfile(
             test_violation=(
                 "import warnings\n"
@@ -369,7 +373,6 @@ class TestsFlextTestsEnforcementPlugin:
     @classmethod
     def _make_workspace_sandbox(cls, pytester: pytest.Pytester) -> None:
         """Shape the sandbox as a FLEXT workspace root so auto-activation fires."""
-        pytester.makeini("[pytest]\n")
         (pytester.path / "AGENTS.md").write_text("# sandbox workspace stub")
         (pytester.path / "flext-core").mkdir()
         (pytester.path / "flext-tests").mkdir()
@@ -414,7 +417,6 @@ class TestsFlextTestsEnforcementPlugin:
         pytester: pytest.Pytester,
     ) -> None:
         """Without workspace markers the dispatcher stays silent and passive."""
-        pytester.makeini("[pytest]\n")
         self._write_violation_module(pytester)
         result = pytester.runpytest_subprocess()
         result.assert_outcomes(passed=1, warnings=1)
@@ -469,5 +471,5 @@ class TestsFlextTestsEnforcementPlugin:
             infra_u.Infra.runtime_owner_root(Path(__file__).resolve().parents[2])
         )
         with u.Tests.env_vars_context({"RUNTIME_ROOT": runtime_root}):
-            result = pytester.runpytest_subprocess()
+            result = pytester.runpytest_subprocess("--disable-plugin-autoload")
         result.assert_outcomes(passed=1)
