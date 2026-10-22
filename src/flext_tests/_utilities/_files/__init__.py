@@ -39,7 +39,7 @@ install_lazy_exports(
     globals(),
     MappingProxyType({
         "FlextTestsFilesAssertionsMixin": "._assertions",
-        "FlextTestsFilesComparisonMixin": "._comparison",
+        "FlextTestsFilesComparisonMixin": "._comparison.comparison_part_02",
         "FlextTestsFilesContextsMixin": "._contexts",
         "FlextTestsFilesCreationMixin": "._creation",
         "FlextTestsFilesInfoMixin": "._info",

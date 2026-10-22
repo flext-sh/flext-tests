@@ -57,7 +57,7 @@ required validation.
   by `flext-*`. The FLEXT cascade is encoded in the inheritance lists of the facade
   classes listed under Module Map above.
 - Public extensions exposed by this project: `FlextTests`, `FlextTestsCase`,
-  `FlextTestsCli`, `FlextTestsConfig`, `FlextTestsConstants`, `FlextTestsDocker` (+13
+  `FlextTestsCli`, `FlextTestsCliDocker`, `FlextTestsConfig`, `FlextTestsConstants` (+13
   more).
 - Library abstraction boundaries: see the project `AGENTS.md` and the referenced parent
   architecture rules.

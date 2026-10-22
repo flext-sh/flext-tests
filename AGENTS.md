@@ -23,13 +23,14 @@ framework. Every FLEXT package test suite consumes it.
 
 ```text
 src/flext_tests/
-├── base.py                 # FlextTestsServiceBase, FlextTestsCase
+├── api.py base.py case.py  # FlextTests facade, FlextTestsServiceBase, FlextTestsCase
 ├── tmatchers.py            # public tm (matchers)
-├── conftest_plugin.py      # pytest11 plugin registration
-├── enforcement.py files.py domains.py docker.py
-├── _fixtures/ _domains_parts/ _docker_parts/
+├── conftest_plugin.py enforcement_plugin.py  # pytest11 entry points
+├── cli.py _cli_docker.py   # flext-tests console script
+├── files.py domains.py docker.py _docker_surface.py
 ├── constants.py typings.py protocols.py models.py utilities.py
-└── _constants/ _models/ _protocols/ _typings/ _utilities/
+├── _constants/ _models/ _protocols/ _typings/ _utilities/ _fixtures/
+└── assets/ config/
 ```
 
 ## Code Map
@@ -40,7 +41,8 @@ src/flext_tests/
 | `FlextTestsServiceBase`, `FlextTestsCase` | classes | `base.py`            | test service anchors                       |
 | pytest plugin                             | module  | `conftest_plugin.py` | pytest11 entry (fixtures/enforcement)      |
 
-There is **no runtime `api.py`** — this is test tooling.
+`api.py` is the thin `FlextTests` MRO facade over `FlextTestsServiceBase`; the package
+is test tooling, not a runtime dependency.
 
 ## Conventions (specific to this package)
 

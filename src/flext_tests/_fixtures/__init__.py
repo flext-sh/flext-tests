@@ -27,7 +27,7 @@ if TYPE_CHECKING:
         project_metadata,
         project_tool_flext,
     )
-    from flext_tests._fixtures.scratch_storage import pytest_addoption, pytest_configure
+    from flext_tests._fixtures.scratch_storage import FlextTestsScratchStoragePlugin
 
 
 __all__: tuple[str, ...] = (
@@ -38,11 +38,10 @@ __all__: tuple[str, ...] = (
     "FlextTestsEnforcementItem",
     "FlextTestsEnforcementValidators",
     "FlextTestsEnforcementViolationError",
+    "FlextTestsScratchStoragePlugin",
     "_enforcement",
     "project_metadata",
     "project_tool_flext",
-    "pytest_addoption",
-    "pytest_configure",
 )
 
 install_lazy_exports(
@@ -56,11 +55,10 @@ install_lazy_exports(
         "FlextTestsEnforcementItem": "._enforcement.items",
         "FlextTestsEnforcementValidators": "._enforcement.validators",
         "FlextTestsEnforcementViolationError": "._enforcement._error",
+        "FlextTestsScratchStoragePlugin": ".scratch_storage",
         "_enforcement": "._enforcement",
         "project_metadata": ".project_metadata",
         "project_tool_flext": ".project_metadata",
-        "pytest_addoption": ".scratch_storage",
-        "pytest_configure": ".scratch_storage",
     }),
     public_exports=__all__,
 )

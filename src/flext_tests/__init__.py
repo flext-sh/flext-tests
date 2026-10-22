@@ -27,6 +27,7 @@ if TYPE_CHECKING:
         __url__,
         __version_info__,
     )
+    from flext_tests._cli_docker import FlextTestsCliDocker
     from flext_tests._config import FlextTestsConfig, config
     from flext_tests._docker_surface import FlextTestsDockerSurfaceParts
     from flext_tests._settings import FlextTestsSettings, settings
@@ -50,6 +51,7 @@ __all__: tuple[str, ...] = (
     "FlextTests",
     "FlextTestsCase",
     "FlextTestsCli",
+    "FlextTestsCliDocker",
     "FlextTestsConfig",
     "FlextTestsConstants",
     "FlextTestsDocker",
@@ -101,6 +103,7 @@ install_lazy_exports(
         "FlextTests": ".api",
         "FlextTestsCase": ".case",
         "FlextTestsCli": ".cli",
+        "FlextTestsCliDocker": "._cli_docker",
         "FlextTestsConfig": "._config",
         "FlextTestsConstants": ".constants",
         "FlextTestsDocker": ".docker",

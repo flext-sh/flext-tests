@@ -1,5 +1,5 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""Flext Tests. Fixtures. Enforcement Parts package.
+"""Flext Tests. Fixtures. Enforcement package.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -19,9 +19,7 @@ if TYPE_CHECKING:
     from flext_tests._fixtures._enforcement._error import (
         FlextTestsEnforcementViolationError,
     )
-    from flext_tests._fixtures._enforcement.build import (
-        FlextTestsEnforcementBuilder,
-    )
+    from flext_tests._fixtures._enforcement.build import FlextTestsEnforcementBuilder
     from flext_tests._fixtures._enforcement.dispatcher import (
         FlextTestsEnforcementDispatcher,
     )

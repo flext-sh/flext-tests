@@ -108,7 +108,7 @@ install_lazy_exports(
         "FlextTestsEnforcementUtilitiesMixin": ".enforcement",
         "FlextTestsEnvironmentUtilitiesMixin": ".environment",
         "FlextTestsFilesAssertionsMixin": "._files._assertions",
-        "FlextTestsFilesComparisonMixin": "._files._comparison",
+        "FlextTestsFilesComparisonMixin": "._files._comparison.comparison_part_02",
         "FlextTestsFilesContextsMixin": "._files._contexts",
         "FlextTestsFilesCreationMixin": "._files._creation",
         "FlextTestsFilesInfoMixin": "._files._info",
