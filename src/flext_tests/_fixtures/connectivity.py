@@ -24,6 +24,7 @@ class FlextTestsCapabilityPlugin:
     """Shared marker-driven applicability owner for every consumer conftest."""
 
     def __init__(self) -> None:
+        """Per-session probe cache: one probe per marker per pytest process."""
         self._environment_stack_key = pytest.StashKey[ExitStack]()
         self._prerequisite_skip_key = pytest.StashKey[
             tuple[BaseException, pytest.Mark, str]
