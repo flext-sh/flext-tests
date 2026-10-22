@@ -61,7 +61,7 @@ class FlextTestsEnforcementBuilder:
             else None,
             project_names=project_names,
         )
-        collector = FlextTestsEnforcementCollector.create(
+        collector = FlextTestsEnforcementCollector.from_parent(
             parent=session,
             name="flext-enforcement",
         )

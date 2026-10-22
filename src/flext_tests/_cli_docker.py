@@ -22,10 +22,6 @@ from flext_tests import FlextTestsDocker, m
 class FlextTestsCliDocker:
     """Spec-driven docker provisioning CLI surface."""
 
-    USAGE = (
-        "usage: flext-tests docker {ensure|verify|down} --spec <yaml> [--target <name>]"
-    )
-
     @staticmethod
     def load_spec(path: Path) -> m.Tests.ContainerSpec:
         """Parse one YAML spec document into the typed model (exits on failure).
@@ -129,36 +125,39 @@ class FlextTestsCliDocker:
                 continue
         return exit_code
 
+    @staticmethod
+    def main(argv: list[str] | None = None) -> int:
+        """Entry point: flext-tests docker <verb> --spec <yaml> [--target <name>].
 
-def main(argv: list[str] | None = None) -> int:
-    """Entry point: flext-tests docker <verb> --spec <yaml> [--target <name>].
+        Returns:
+            The resulting ``int``.
 
-    Returns:
-        The resulting ``int``.
-
-    """
-    args = list(sys.argv[1:] if argv is None else argv)
-    verbs = {
-        "ensure": FlextTestsCliDocker.run_ensure,
-        "verify": FlextTestsCliDocker.run_verify,
-        "down": FlextTestsCliDocker.run_down,
-    }
-    minimum_args = 3  # docker <verb> --spec <path>
-    if len(args) < minimum_args or args[0] != "docker" or args[1] not in verbs:
-        return 2
-    spec_path: Path | None = None
-    target: str | None = None
-    rest = args[2:]
-    index = 0
-    while index < len(rest):
-        if rest[index] == "--spec" and index + 1 < len(rest):
-            spec_path = Path(rest[index + 1])
-            index += 2
-        elif rest[index] == "--target" and index + 1 < len(rest):
-            target = rest[index + 1]
-            index += 2
-        else:
+        """
+        args = list(sys.argv[1:] if argv is None else argv)
+        verbs = {
+            "ensure": FlextTestsCliDocker.run_ensure,
+            "verify": FlextTestsCliDocker.run_verify,
+            "down": FlextTestsCliDocker.run_down,
+        }
+        minimum_args = 3  # docker <verb> --spec <path>
+        if len(args) < minimum_args or args[0] != "docker" or args[1] not in verbs:
             return 2
-    if spec_path is None:
-        return 2
-    return verbs[args[1]](spec_path, target)
+        spec_path: Path | None = None
+        target: str | None = None
+        rest = args[2:]
+        index = 0
+        while index < len(rest):
+            if rest[index] == "--spec" and index + 1 < len(rest):
+                spec_path = Path(rest[index + 1])
+                index += 2
+            elif rest[index] == "--target" and index + 1 < len(rest):
+                target = rest[index + 1]
+                index += 2
+            else:
+                return 2
+        if spec_path is None:
+            return 2
+        return verbs[args[1]](spec_path, target)
+
+
+__all__: list[str] = ["FlextTestsCliDocker"]

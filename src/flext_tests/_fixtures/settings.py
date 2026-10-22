@@ -203,10 +203,9 @@ class FlextTestsSettingsFixtures:
             TSettings: The global settings instance with the filtered overrides.
         """
         settings_cls.reset_for_testing()
-        filtered_overrides: t.ScalarMapping = {
+        return settings_cls.update_global(**{
             key: value for key, value in overrides.items() if value is not None
-        }
-        return settings_cls.fetch_global(overrides=filtered_overrides)
+        })
 
     @staticmethod
     @pytest.fixture

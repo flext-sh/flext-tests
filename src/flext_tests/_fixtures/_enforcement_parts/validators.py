@@ -54,7 +54,7 @@ class FlextTestsEnforcementValidators:
                 finding,
             )
         return [
-            FlextTestsEnforcementItem.create(
+            FlextTestsEnforcementItem.from_parent(
                 collector,
                 name=f"{rule_id}[{project}]",
                 violation=m.Tests.EnforcementViolation(

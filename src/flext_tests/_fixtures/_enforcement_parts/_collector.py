@@ -6,12 +6,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Self, override
+from typing import TYPE_CHECKING, override
 
 import pytest
 
 from flext_tests._fixtures._enforcement_parts import FlextTestsEnforcementItem
-from flext_tests._protocols.enforcement import FlextTestsEnforcementCollectorNodeMixin
+from flext_tests._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -20,28 +20,10 @@ if TYPE_CHECKING:
 
 
 class FlextTestsEnforcementCollector(
-    FlextTestsEnforcementCollectorNodeMixin,
+    FlextTestsEnforcementProtocolsMixin.TypedNode,
     pytest.Collector,
 ):
     """Synthetic collector owning session ``FlextTestsEnforcementItem`` items."""
-
-    @classmethod
-    def create(
-        cls,
-        parent: pytest.Session,
-        name: str,
-    ) -> Self:
-        """Build one collector through pytest's public node factory.
-
-        ``from_parent`` forwards these exact arguments to the fully typed
-        collector constructor and derives the configuration and session from
-        the parent, as pytest's node creation contract requires.
-
-        Returns:
-            The resulting ``Self``.
-
-        """
-        return cls.from_parent(parent=parent, name=name)
 
     def __init__(
         self,

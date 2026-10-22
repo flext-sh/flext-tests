@@ -12,11 +12,11 @@ if TYPE_CHECKING:
     from contextlib import AbstractContextManager
     from pathlib import Path
 
-    from flext_tests import p
     from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 
 class FlextTestsValueFactoryProtocolsMixin:
+    @runtime_checkable
     class RuntimeProvision(Protocol):
         """Provision one locked consumer through its canonical Make lifecycle."""
 
@@ -24,6 +24,7 @@ class FlextTestsValueFactoryProtocolsMixin:
             """Return the physical checkout provisioned inside ``parent``."""
             ...
 
+    @runtime_checkable
     class SessionRuntime(Protocol):
         """One lazy physical runtime per pytest session and worker."""
 
@@ -31,7 +32,7 @@ class FlextTestsValueFactoryProtocolsMixin:
 
         def lease(
             self,
-            provision: p.Tests.RuntimeProvision,
+            provision: FlextTestsValueFactoryProtocolsMixin.RuntimeProvision,
             *,
             mutable_environment: bool = False,
         ) -> AbstractContextManager[Path]:

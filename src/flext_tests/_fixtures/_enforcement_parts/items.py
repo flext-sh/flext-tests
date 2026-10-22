@@ -6,14 +6,14 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Self, override
+from typing import TYPE_CHECKING, override
 
 import pytest
 
 from flext_tests._fixtures._enforcement_parts._error import (
     FlextTestsEnforcementViolationError,
 )
-from flext_tests._protocols.enforcement import FlextTestsEnforcementItemNodeMixin
+from flext_tests._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -22,30 +22,10 @@ if TYPE_CHECKING:
 
 
 class FlextTestsEnforcementItem(
-    FlextTestsEnforcementItemNodeMixin,
+    FlextTestsEnforcementProtocolsMixin.TypedNode,
     pytest.Item,
 ):
     """Pytest item representing one ``(rule_id, project)`` violation group."""
-
-    @classmethod
-    def create(
-        cls,
-        parent: pytest.Collector,
-        name: str,
-        *,
-        violation: m.Tests.EnforcementViolation,
-    ) -> Self:
-        """Build one item through pytest's public node factory.
-
-        ``from_parent`` forwards these exact arguments to the fully typed
-        item constructor and derives the configuration and session from the
-        parent, as pytest's node creation contract requires.
-
-        Returns:
-            The resulting ``Self``.
-
-        """
-        return cls.from_parent(parent=parent, name=name, violation=violation)
 
     def __init__(
         self,

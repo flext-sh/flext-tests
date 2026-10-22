@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Protocol, Self, runtime_checkable
+from typing import TYPE_CHECKING, ClassVar, Protocol, Self, runtime_checkable
 
 from flext_cli import p
 
@@ -23,25 +23,32 @@ if TYPE_CHECKING:
 class FlextTestsEnforcementProtocolsMixin:
     """Protocols for enforcement dispatch boundaries."""
 
-    class EnforcementItemFactory[T](Protocol):
-        """Bound pytest ``from_parent`` contract for violation items."""
+    @runtime_checkable
+    class PytestNode(Protocol):
+        """Public structural view that every pytest node satisfies."""
+
+        @property
+        def nodeid(self) -> str:
+            """Node identifier."""
+            ...
+
+    @runtime_checkable
+    class NodeFactory[T](Protocol):
+        """Typed ``from_parent`` contract; pytest leaves its ``**kw`` unannotated."""
 
         def __call__(
             self,
-            *,
-            parent: pytest.Collector,
-            name: str,
-            violation: m.Tests.EnforcementViolation,
+            parent: FlextTestsEnforcementProtocolsMixin.PytestNode,
+            **kw: str | m.Tests.EnforcementViolation,
         ) -> T:
-            """Construct an item through pytest's public node factory."""
+            """Construct a node through pytest's public node factory."""
             ...
 
-    class EnforcementCollectorFactory[T](Protocol):
-        """Bound pytest ``from_parent`` contract for session collectors."""
+    class TypedNode:
+        """Record the typed factory; at runtime pytest's own resolves via MRO."""
 
-        def __call__(self, *, parent: pytest.Session, name: str) -> T:
-            """Construct a collector through pytest's public node factory."""
-            ...
+        if TYPE_CHECKING:
+            from_parent: ClassVar[FlextTestsEnforcementProtocolsMixin.NodeFactory[Self]]
 
     class EnforcementBuilder(ABC):
         """Callable contract implemented by enforcement contribution builders."""
@@ -129,36 +136,4 @@ class FlextTestsEnforcementProtocolsMixin:
             ...
 
 
-class FlextTestsEnforcementItemNodeMixin:
-    """Typed node boundary mixin for violation items.
-
-    ``pytest.Item.from_parent`` is unannotated upstream (its ``**kw`` forward
-    is ``Unknown``), so enforcement items inherit this mixin to record the
-    typed public factory contract; at runtime the attribute still resolves to
-    pytest's own ``from_parent`` through the MRO.
-    """
-
-    if TYPE_CHECKING:
-        from_parent: FlextTestsEnforcementProtocolsMixin.EnforcementItemFactory[Self]
-
-
-class FlextTestsEnforcementCollectorNodeMixin:
-    """Typed node boundary mixin for session collectors.
-
-    ``pytest.Collector.from_parent`` is unannotated upstream, so enforcement
-    collectors inherit this mixin to record the typed public factory
-    contract; at runtime the attribute still resolves to pytest's own
-    ``from_parent`` through the MRO.
-    """
-
-    if TYPE_CHECKING:
-        from_parent: FlextTestsEnforcementProtocolsMixin.EnforcementCollectorFactory[
-            Self
-        ]
-
-
-__all__: list[str] = [
-    "FlextTestsEnforcementCollectorNodeMixin",
-    "FlextTestsEnforcementItemNodeMixin",
-    "FlextTestsEnforcementProtocolsMixin",
-]
+__all__: list[str] = ["FlextTestsEnforcementProtocolsMixin"]

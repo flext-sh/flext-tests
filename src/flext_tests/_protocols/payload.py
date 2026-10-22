@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 class FlextTestsPayloadProtocolsMixin:
     """Consumer-owned native payload access; no serialization capability required."""
 
+    @runtime_checkable
     class CapturedText(Protocol):
         """Read captured streams without depending on a concrete pytest result."""
 
@@ -30,6 +31,7 @@ class FlextTestsPayloadProtocolsMixin:
         @property
         def err(self) -> str: ...
 
+    @runtime_checkable
     class OutputCapture(Protocol):
         """The public stream-reading capability provided by pytest capture."""
 

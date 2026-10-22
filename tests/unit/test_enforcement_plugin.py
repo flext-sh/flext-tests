@@ -203,7 +203,11 @@ class TestsFlextTestsEnforcementPlugin:
         *,
         autoload: bool,
     ) -> None:
-        """Cold consumers share sessions, reset every item and close on failure."""
+        """Cold consumers share sessions, reset every item and close on failure.
+
+        Settings roots keep one published identity and reload their sources in
+        place per item; the DI container is rebuilt per item.
+        """
         entries = TestsFlextTestsEnforcementPlugin._declared_pytest_entries()
         pytester.makeini("[pytest]\n")
         pytester.makepyfile(
@@ -224,16 +228,23 @@ class TestsFlextTestsEnforcementPlugin:
                                 run_namespace: m.Tests.TestNamespace,
                                 test_namespace: m.Tests.TestNamespace,
                                 temp_dir: Path, temp_file: Path) -> None:
-                    current = (FlextSettings.fetch_global(),
-                               FlextTestsSettings.fetch_global(), FlextContainer())
+                    root = FlextSettings.fetch_global()
+                    tests_root = FlextTestsSettings.fetch_global()
+                    container = FlextContainer()
                     if TestsFirstConsumer.previous is not None:
-                        for before, after in zip(
-                            TestsFirstConsumer.previous, current, strict=True
-                        ):
-                            tm.fail(before is after)
+                        before_root, before_tests, before_container, trace = (
+                            TestsFirstConsumer.previous
+                        )
+                        tm.ok(root is before_root)
+                        tm.ok(tests_root is before_tests)
+                        tm.fail(container is before_container)
+                        tm.that(tests_root.trace, eq=trace)
                         tm.ok(session_runtime is TestsFirstConsumer.runtime)
                         tm.ok(run_namespace is TestsFirstConsumer.namespace)
-                    TestsFirstConsumer.previous = current
+                    TestsFirstConsumer.previous = (
+                        root, tests_root, container, tests_root.trace
+                    )
+                    FlextTestsSettings.update_global(trace=not tests_root.trace)
                     TestsFirstConsumer.runtime = session_runtime
                     TestsFirstConsumer.namespace = run_namespace
                     tm.that(temp_file.parent, eq=temp_dir)
