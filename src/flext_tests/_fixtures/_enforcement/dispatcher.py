@@ -193,7 +193,7 @@ class FlextTestsEnforcementDispatcher:
         if repository_root is None or hasattr(config, "workerinput"):
             return
         builder = import_module(
-            "flext_tests._fixtures._enforcement_parts.build",
+            "flext_tests._fixtures._enforcement.build",
         ).FlextTestsEnforcementBuilder
         items.extend(
             builder.build_items(

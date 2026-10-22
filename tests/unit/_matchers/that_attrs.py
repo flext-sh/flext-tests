@@ -9,7 +9,7 @@ from __future__ import annotations
 import pytest
 
 from tests import p, r, t, tm
-from tests.unit._matchers_parts.predicates import TestsFlextTestsMatchersPredicates
+from tests.unit._matchers.predicates import TestsFlextTestsMatchersPredicates
 
 
 class TestsFlextTestsMatchersThatAttrsMixin:

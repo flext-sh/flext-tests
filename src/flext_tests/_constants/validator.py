@@ -28,7 +28,7 @@ class FlextTestsConstantsValidator:
     ENFORCEMENT_SLOW_TIMEOUT_INI_OPTION: ClassVar[str] = "flext_slow_timeout_seconds"
     """Ini option carrying the config-owned timeout for slow pytest items."""
     ENFORCEMENT_DISPATCHER_MODULE: ClassVar[str] = (
-        "flext_tests._fixtures._enforcement_parts.dispatcher"
+        "flext_tests._fixtures._enforcement.dispatcher"
     )
     """Module the ``pytest11`` enforcement adapter resolves inside its hooks."""
     FIXTURE_PLUGIN_MODULES: ClassVar[t.StrSequence] = (

@@ -12,10 +12,6 @@ from flext_tests._typings.base import FlextTestsBaseTypesMixin
 
 
 class FlextTestsFilesTypesMixin:
-    type BatchFiles = (
-        t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
-    )
     type ReadContent = str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence]
     type FileContentStructured = (
         t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable] | m.BaseModel

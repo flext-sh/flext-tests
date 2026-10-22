@@ -13,8 +13,8 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._fixtures import _enforcement_parts as _enforcement_parts
-    from flext_tests._fixtures._enforcement_parts import (
+    from flext_tests._fixtures import _enforcement as _enforcement
+    from flext_tests._fixtures._enforcement import (
         FlextTestsEnforcementBuilder,
         FlextTestsEnforcementCollector,
         FlextTestsEnforcementDispatcher,
@@ -38,7 +38,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsEnforcementItem",
     "FlextTestsEnforcementValidators",
     "FlextTestsEnforcementViolationError",
-    "_enforcement_parts",
+    "_enforcement",
     "project_metadata",
     "project_tool_flext",
     "pytest_addoption",
@@ -50,13 +50,13 @@ install_lazy_exports(
     globals(),
     MappingProxyType({
         "FlextTestsCapabilityPlugin": ".connectivity",
-        "FlextTestsEnforcementBuilder": "._enforcement_parts.build",
-        "FlextTestsEnforcementCollector": "._enforcement_parts._collector",
-        "FlextTestsEnforcementDispatcher": "._enforcement_parts.dispatcher",
-        "FlextTestsEnforcementItem": "._enforcement_parts.items",
-        "FlextTestsEnforcementValidators": "._enforcement_parts.validators",
-        "FlextTestsEnforcementViolationError": "._enforcement_parts._error",
-        "_enforcement_parts": "._enforcement_parts",
+        "FlextTestsEnforcementBuilder": "._enforcement.build",
+        "FlextTestsEnforcementCollector": "._enforcement._collector",
+        "FlextTestsEnforcementDispatcher": "._enforcement.dispatcher",
+        "FlextTestsEnforcementItem": "._enforcement.items",
+        "FlextTestsEnforcementValidators": "._enforcement.validators",
+        "FlextTestsEnforcementViolationError": "._enforcement._error",
+        "_enforcement": "._enforcement",
         "project_metadata": ".project_metadata",
         "project_tool_flext": ".project_metadata",
         "pytest_addoption": ".scratch_storage",

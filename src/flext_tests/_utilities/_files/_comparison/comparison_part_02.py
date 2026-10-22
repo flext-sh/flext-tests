@@ -13,7 +13,7 @@ from flext_core import r
 
 from flext_tests import c, m, p, t, u
 from flext_tests._utilities import FlextTestsFlextUtilitiesPayload
-from flext_tests._utilities._files._comparison_parts import comparison_part_01
+from flext_tests._utilities._files._comparison import comparison_part_01
 
 
 class FlextTestsFilesComparisonMixin(

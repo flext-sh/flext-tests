@@ -1,4 +1,4 @@
-"""Private file batch and create_in test mixins.
+"""Private file create_in test mixins.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -13,66 +13,7 @@ from tests import c, m, r, t, tm, u
 
 
 class TestsFlextTestsFilesBatchCreateInMixin:
-    """File batch and create_in tests."""
-
-    @staticmethod
-    def test_batch_create_multiple_files(tmp_path: Path) -> None:
-        """Test batch create for multiple files."""
-        manager = FlextTestsFiles(base_dir=tmp_path)
-        result = manager.batch_files(
-            {"file1.txt": "content1", "file2.txt": "content2", "file3.txt": "content3"},
-            options=FlextTestsFiles.BatchOptions(directory=tmp_path),
-        )
-        batch_result: m.Tests.BatchResult = u.Tests.assert_success(result)
-        tm.that(batch_result.total, eq=3)
-        tm.that(batch_result.success_count, eq=3)
-        tm.that(batch_result.failure_count, eq=0)
-        tm.that(batch_result.succeeded, eq=3)
-
-    @staticmethod
-    def test_batch_create_json_files(tmp_path: Path) -> None:
-        """Test batch create for JSON files."""
-        manager = FlextTestsFiles(base_dir=tmp_path)
-        result = manager.batch_files(
-            {"settings1.json": {"key": "value1"}, "settings2.json": {"key": "value2"}},
-            options=FlextTestsFiles.BatchOptions(directory=tmp_path),
-        )
-        batch_result: m.Tests.BatchResult = u.Tests.assert_success(result)
-        tm.that(batch_result.success_count, eq=2)
-        settings1 = tmp_path / "settings1.json"
-        tm.ok(settings1.exists())
-        tm.that(u.Cli.json_read(settings1).unwrap()["key"], eq="value1")
-
-    @staticmethod
-    def test_batch_on_error_collect(tmp_path: Path) -> None:
-        """Test batch with on_error='collect' continues on failures."""
-        manager = FlextTestsFiles(base_dir=tmp_path)
-        readonly_dir = tmp_path / "readonly"
-        readonly_dir.mkdir()
-        result = manager.batch_files(
-            {"valid.txt": "content"},
-            options=FlextTestsFiles.BatchOptions(
-                directory=tmp_path,
-                on_error=c.Tests.ErrorMode.COLLECT,
-            ),
-        )
-        _ = u.Tests.assert_success(result)
-        batch_result = result.value
-        tm.that(batch_result.succeeded, gte=1)
-
-    @staticmethod
-    def test_batch_result_model_structure(tmp_path: Path) -> None:
-        """Test BatchResult model has correct structure."""
-        manager = FlextTestsFiles(base_dir=tmp_path)
-        result = manager.batch_files(
-            {"file.txt": "content"},
-            options=FlextTestsFiles.BatchOptions(directory=tmp_path),
-        )
-        _ = u.Tests.assert_success(result)
-        batch_result = result.value
-        tm.that(batch_result.succeeded, is_=int)
-        tm.that(batch_result.failed, is_=int)
-        tm.that(batch_result.total, is_=int)
+    """File create_in tests."""
 
     @staticmethod
     def test_create_in_text_content(tmp_path: Path) -> None:

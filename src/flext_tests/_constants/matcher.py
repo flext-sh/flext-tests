@@ -7,9 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import re
-from datetime import datetime
 from enum import Enum
-from pathlib import Path
 from types import MappingProxyType
 from typing import TYPE_CHECKING, ClassVar
 
@@ -33,19 +31,7 @@ class FlextTestsConstantsMatcher:
         "mapping": dict,
     })
 
-    MATCHER_GUARD_EQ_TYPES: ClassVar[t.VariadicTuple[type]] = (
-        str,
-        int,
-        float,
-        bool,
-        bytes,
-        datetime,
-        Path,
-    )
-
     MATCHER_SCALAR_CRITERIA: ClassVar[t.VariadicTuple[str]] = (
-        "eq",
-        "ne",
         "none",
         "empty",
         "gt",
@@ -57,8 +43,6 @@ class FlextTestsConstantsMatcher:
         "match",
     )
 
-    ERR_NOT_STARTSWITH: ClassVar[str] = "Expected '{text}' to start with '{prefix}'"
-    ERR_NOT_ENDSWITH: ClassVar[str] = "Expected '{text}' to end with '{suffix}'"
     ERR_NOT_MATCHES: ClassVar[str] = (
         "Assertion failed: Expected '{text}' to match pattern '{pattern}'"
     )
@@ -82,9 +66,6 @@ class FlextTestsConstantsMatcher:
     ERR_ANY_ITEMS_FAILED: ClassVar[str] = "No items match the predicate"
     ERR_KEYS_MISSING: ClassVar[str] = "Missing required keys: {keys}"
     ERR_KEYS_EXTRA: ClassVar[str] = "Unexpected keys present: {keys}"
-    ERR_SCOPE_PATH_NOT_FOUND: ClassVar[str] = (
-        "Path '{path}' not found in value: {error}"
-    )
     ERR_ERROR_CODE_MISMATCH: ClassVar[str] = (
         "Expected error code {expected!r} but got {actual!r}"
     )
@@ -96,9 +77,6 @@ class FlextTestsConstantsMatcher:
     )
     ERR_ERROR_DATA_VALUE_MISMATCH: ClassVar[str] = (
         "Error data key {key!r}: expected {expected!r}, got {actual!r}"
-    )
-    ERR_SCOPE_CLEANUP_FAILED: ClassVar[str] = (
-        "Cleanup function failed in scope: {error}"
     )
     EMAIL_PATTERN: ClassVar[str] = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
     EMAIL_PATTERN_RE: ClassVar[t.RegexPattern] = re.compile(EMAIL_PATTERN)

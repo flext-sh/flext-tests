@@ -11,7 +11,7 @@ from pathlib import Path
 import pytest
 from flext_infra import config as infra_config
 
-from flext_tests import FlextTestsDocker, FlextTestsKube
+from flext_tests import FlextTestsDocker
 from tests import c, m, t, tm, u
 
 
@@ -76,18 +76,6 @@ class TestsFlextTestsDockerCiMixin:
                 code=disabled,
             )
             tm.fail(docker.cleanup_dirty_containers(), code=disabled)
-
-    @staticmethod
-    def test_kube_effects_fail_disabled_by_ci(tmp_path: Path) -> None:
-        """The kind specialization inherits the same typed CI gate."""
-        ci = infra_config.Infra.codegen.make.ci
-        disabled = c.Tests.DockerErrorCode.DISABLED_BY_CI
-        kube = FlextTestsKube.kind(repository_root=tmp_path, state_dir=tmp_path)
-        with u.Tests.env_vars_context({ci.variable: ci.value}):
-            tm.fail(kube.execute(), code=disabled)
-            tm.fail(kube.cluster_up(), code=disabled)
-            tm.fail(kube.cluster_down(), code=disabled)
-            tm.fail(kube.nodes_ready(), code=disabled)
 
     @staticmethod
     def test_ci_token_leaves_host_records_writable(tmp_path: Path) -> None:

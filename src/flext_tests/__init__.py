@@ -28,7 +28,7 @@ if TYPE_CHECKING:
         __version_info__,
     )
     from flext_tests._config import FlextTestsConfig, config
-    from flext_tests._docker_surface_parts import FlextTestsDockerSurfaceParts
+    from flext_tests._docker_surface import FlextTestsDockerSurfaceParts
     from flext_tests._settings import FlextTestsSettings, settings
     from flext_tests.api import FlextTests, api
     from flext_tests.base import FlextTestsServiceBase, s
@@ -38,7 +38,6 @@ if TYPE_CHECKING:
     from flext_tests.docker import FlextTestsDocker, tk
     from flext_tests.domains import FlextTestsDomains, td
     from flext_tests.files import FlextTestsFiles, tf
-    from flext_tests.kube import FlextTestsKube
     from flext_tests.models import FlextTestsModels, m
     from flext_tests.protocols import FlextTestsProtocols, p
     from flext_tests.pytest_bootstrap import install_local_packages
@@ -58,7 +57,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsDomains",
     "FlextTestsFiles",
     "FlextTestsFixturesDSLMixin",
-    "FlextTestsKube",
     "FlextTestsMatchersUtilities",
     "FlextTestsModels",
     "FlextTestsProtocols",
@@ -106,11 +104,10 @@ install_lazy_exports(
         "FlextTestsConfig": "._config",
         "FlextTestsConstants": ".constants",
         "FlextTestsDocker": ".docker",
-        "FlextTestsDockerSurfaceParts": "._docker_surface_parts",
+        "FlextTestsDockerSurfaceParts": "._docker_surface",
         "FlextTestsDomains": ".domains",
         "FlextTestsFiles": ".files",
         "FlextTestsFixturesDSLMixin": ".utilities",
-        "FlextTestsKube": ".kube",
         "FlextTestsMatchersUtilities": ".tmatchers",
         "FlextTestsModels": ".models",
         "FlextTestsProtocols": ".protocols",

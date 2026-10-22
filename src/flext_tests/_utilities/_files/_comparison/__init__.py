@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._utilities._files._comparison_parts.comparison_part_02 import (
+    from flext_tests._utilities._files._comparison.comparison_part_02 import (
         FlextTestsFilesComparisonMixin,
     )
 

@@ -14,8 +14,6 @@ from flext_cli import FlextCliConstants
 from flext_tests._constants import (
     FlextTestsConstantsDataCases,
     FlextTestsConstantsFiles,
-    FlextTestsConstantsKube,
-    FlextTestsConstantsMake,
     FlextTestsConstantsValidator,
 )
 from flext_tests._constants.docker import FlextTestsConstantsDocker
@@ -36,8 +34,6 @@ class FlextTestsConstants(FlextCliConstants):
         FlextTestsConstantsDataCases,
         FlextTestsConstantsDocker,
         FlextTestsConstantsFiles,
-        FlextTestsConstantsKube,
-        FlextTestsConstantsMake,
         FlextTestsConstantsMatcher,
         FlextTestsConstantsNamespace,
         FlextTestsConstantsValidator,

@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, override
 
 import pytest
 
-from flext_tests._fixtures._enforcement_parts._error import (
+from flext_tests._fixtures._enforcement._error import (
     FlextTestsEnforcementViolationError,
 )
 from flext_tests._protocols.enforcement import FlextTestsEnforcementProtocolsMixin

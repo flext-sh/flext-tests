@@ -32,22 +32,6 @@ class FlextTestsConstantsFiles:
         HASH = "hash"
         LINES = "lines"
 
-    @unique
-    class Operation(StrEnum):
-        """File operation type enumeration."""
-
-        CREATE = "create"
-        READ = "read"
-        DELETE = "delete"
-
-    @unique
-    class ErrorMode(StrEnum):
-        """Error handling mode enumeration."""
-
-        STOP = "stop"
-        SKIP = "skip"
-        COLLECT = "collect"
-
     # ── Test-specific file constants ────────────────────────────
 
     DEFAULT_ENCODING: ClassVar[str] = cli_c.DEFAULT_ENCODING
