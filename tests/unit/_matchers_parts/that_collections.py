@@ -106,6 +106,18 @@ class TestsFlextTestsMatchersThatCollectionsMixin:
             tm.not_none(None, msg="missing channel")
 
     @staticmethod
+    def test_instance_returns_the_same_narrowed_subject() -> None:
+        """instance returns the original subject narrowed to the declared kind."""
+        subject: list[str] = []
+        tm.that(tm.instance(subject, list) is subject, truth=True)
+
+    @staticmethod
+    def test_instance_rejects_another_kind_with_context() -> None:
+        """instance raises the caller-provided assertion context on a kind mismatch."""
+        with pytest.raises(AssertionError, match="wrong kind"):
+            tm.instance("text", int, msg="wrong kind")
+
+    @staticmethod
     def test_that_with_empty_parameter() -> None:
         """Test tm.that() with empty parameter."""
         tm.that(["a"], empty=False)

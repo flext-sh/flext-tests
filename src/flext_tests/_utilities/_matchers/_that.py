@@ -756,6 +756,25 @@ class FlextTestsMatchersThatMixin:
                     raise AssertionError(msg or "Expected a non-None value")
                 return value
 
+            @staticmethod
+            def instance[T](
+                value: p.AttributeProbe, kind: type[T], *, msg: str | None = None
+            ) -> T:
+                """Assert and return ``value`` narrowed to ``kind`` without copying it.
+
+                Returns:
+                    The resulting ``T``.
+
+                Raises:
+                    AssertionError: If ``value`` is not an instance of ``kind``.
+
+                """
+                if isinstance(value, kind):
+                    return value
+                raise AssertionError(
+                    msg or f"Expected {kind.__name__}, got {type(value).__name__}"
+                )
+
             @classmethod
             def that[SubjectT, ExpectedT](
                 cls,
@@ -804,12 +823,7 @@ class FlextTestsMatchersThatMixin:
                     msg = "Native truth cannot be combined with value criteria"
                     raise ValueError(msg)
                 if params.truth is not None:
-                    if bool(value) is not params.truth:
-                        if "assertion_message" in params.model_fields_set:
-                            raise AssertionError(params.assertion_message)
-                        if "msg" in params.model_fields_set:
-                            raise AssertionError(params.msg)
-                        raise AssertionError
+                    cls._assert_truth(value, params)
                     return
                 message = params.msg or c.Tests.ERR_CONSTRAINTS_FAILED.format(
                     value=value
@@ -836,6 +850,29 @@ class FlextTestsMatchersThatMixin:
                 cls._validate_mapping(subject_payload, params)
                 cls._validate_deep(subject_payload, params)
                 cls._validate_rule_sets(subject, subject_payload, params)
+
+            @staticmethod
+            def _assert_truth(
+                value: p.AttributeProbe, params: m.Tests.ThatParams
+            ) -> None:
+                """Compare native truth, raising the explicitly declared message only.
+
+                Raises:
+                    AssertionError: If ``bool(value)`` differs from the declared truth.
+
+                """
+                if bool(value) is params.truth:
+                    return
+                raise AssertionError(
+                    *next(
+                        (
+                            (getattr(params, field),)
+                            for field in ("assertion_message", "msg")
+                            if field in params.model_fields_set
+                        ),
+                        (),
+                    )
+                )
 
             @staticmethod
             def _validate_deep(
