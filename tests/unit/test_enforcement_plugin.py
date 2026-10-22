@@ -37,6 +37,7 @@ class TestsFlextTestsEnforcementPlugin:
 
         Returns:
             tuple[EntryPoint, ...]: The installed pytest11 entry points.
+
         """
         root = Path(__file__).resolve().parents[2]
         metadata = u.build_project_metadata(root, u.read_project_document_cached(root))

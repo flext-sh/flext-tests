@@ -27,6 +27,7 @@ class FlextTestsScratchStoragePlugin:
 
         Returns:
             Path: The resolved scratch root for this checkout.
+
         """
         return FlextTestsScratchStorageUtilitiesMixin.scratch_root(
             checkout_root=Path(config.rootpath),

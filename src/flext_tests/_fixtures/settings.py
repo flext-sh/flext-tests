@@ -49,6 +49,7 @@ class FlextTestsSettingsFixtures:
 
         Yields:
             p.Tests.SessionRuntime: One lazy isolated worker runtime.
+
         """
         directory = tmp_path_factory.mktemp(run_namespace.token)
         runtime = u.Tests.SessionRuntime(directory)
@@ -75,6 +76,7 @@ class FlextTestsSettingsFixtures:
         Raises:
             TypeError: If the package service alias has the wrong base.
             AttributeError: If the package omits a required public alias.
+
         """
         package_root = module.__package__ or ""
         if not package_root or instance is None:
@@ -162,6 +164,7 @@ class FlextTestsSettingsFixtures:
 
         Raises:
             TypeError: If the pytest function does not belong to a Python module.
+
         """
         _ = reset_settings
         node = request.node
@@ -184,6 +187,7 @@ class FlextTestsSettingsFixtures:
 
         Returns:
             FlextTestsSettings: Fresh typed test settings with test defaults.
+
         """
         settings_type: type[FlextTestsSettings] = importlib.import_module(
             "flext_tests",
@@ -201,6 +205,7 @@ class FlextTestsSettingsFixtures:
 
         Returns:
             TSettings: The global settings instance with the filtered overrides.
+
         """
         settings_cls.reset_for_testing()
         return settings_cls.update_global(**{
@@ -214,6 +219,7 @@ class FlextTestsSettingsFixtures:
 
         Returns:
             Callable[..., FlextSettings]: The unwrapped settings factory.
+
         """
         return FlextTestsSettingsFixtures._create
 
@@ -224,6 +230,7 @@ class FlextTestsSettingsFixtures:
 
         Returns:
             FlextContext: A new canonical test context.
+
         """
         return FlextContext()
 
@@ -234,6 +241,7 @@ class FlextTestsSettingsFixtures:
 
         Yields:
             p.Container: A fresh isolated DI container.
+
         """
         FlextContainer.reset_for_testing()
         try:
@@ -248,6 +256,7 @@ class FlextTestsSettingsFixtures:
 
         Returns:
             Path: The per-test temporary directory.
+
         """
         return tmp_path
 
@@ -258,6 +267,7 @@ class FlextTestsSettingsFixtures:
 
         Returns:
             Path: Path to the temporary file inside the temporary directory.
+
         """
         return temp_dir / "test_file.txt"
 
@@ -268,5 +278,6 @@ class FlextTestsSettingsFixtures:
 
         Returns:
             t.JsonMapping: The canonical generic JSON test payload.
+
         """
         return {"string": "test_value", "number": 42, "enabled": True}
