@@ -74,7 +74,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
         pytester.makepyfile(
             "import pytest\n"
             "\n"
-            "from tests import tm\n"
+            "from flext_tests import tm\n"
             "\n"
             "\n"
             "@pytest.mark.slow\n"
@@ -124,7 +124,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
         pytester.makepyfile(
             "import pytest\n"
             "\n"
-            "from tests import tm\n"
+            "from flext_tests import tm\n"
             "\n"
             "\n"
             "@pytest.mark.slow\n"

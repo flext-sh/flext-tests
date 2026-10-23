@@ -150,12 +150,14 @@ package_name = "flext_tests"
 scan_dirs = ["src"]
 
 [tool.hatch.build.targets.wheel]
+exclude = ["/src/flext_tests/config"]
 only-include = ["src/flext_tests"]
 
 [tool.hatch.build.targets.wheel.sources]
 "src/flext_tests" = "flext_tests"
 
 [tool.hatch.build.targets.wheel.force-include]
+"src/flext_tests/config" = "flext_tests/config"
 "pyproject.toml" = "flext_tests/pyproject.toml"
 
 [tool.hatch.build.targets.sdist]

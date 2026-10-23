@@ -302,7 +302,7 @@ class TestsFlextTestsCapabilityCollection:
         with u.Tests.env_vars_context({ci.variable: ci.value}):
             result = TestsFlextTestsCapabilityCollection._run(consumer)
         result.assert_outcomes(errors=len(declarations) * len(other_markers))
-        result.stdout.fnmatch_lines([
+        result.stdout.fnmatch_lines_random([
             f"*UsageError: {message}*" for _, message in declarations
         ])
         tm.that(result.ret, eq=1)
