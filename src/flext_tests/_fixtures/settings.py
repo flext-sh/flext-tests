@@ -16,13 +16,14 @@ from typing import TYPE_CHECKING, Protocol, cast
 import pytest
 from flext_core import FlextContainer, FlextContext, FlextSettings
 
-from flext_tests import FlextTestsCase, FlextTestsSettings, t, u
+import flext_tests
+from flext_tests import FlextTestsSettings, t
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
     from pathlib import Path
 
-    from flext_tests import FlextTestsServiceBase, m, p
+    from flext_tests import FlextTestsCase, FlextTestsServiceBase, m, p
 
 
 class FlextTestsSettingsFixtures:
@@ -52,7 +53,7 @@ class FlextTestsSettingsFixtures:
 
         """
         directory = tmp_path_factory.mktemp(run_namespace.token)
-        runtime = u.Tests.SessionRuntime(directory)
+        runtime = flext_tests.u.Tests.SessionRuntime(directory)
         try:
             yield runtime
         finally:
@@ -129,7 +130,12 @@ class FlextTestsSettingsFixtures:
         instance = item.instance
         FlextTestsSettingsFixtures._bind_runtime_aliases(
             module=module,
-            instance=instance if isinstance(instance, FlextTestsCase) else None,
+            instance=(
+                instance
+                if instance is not None
+                and isinstance(instance, flext_tests.FlextTestsCase)
+                else None
+            ),
         )
 
     @staticmethod
@@ -177,7 +183,12 @@ class FlextTestsSettingsFixtures:
         instance = node.instance
         FlextTestsSettingsFixtures._bind_runtime_aliases(
             module=module,
-            instance=instance if isinstance(instance, FlextTestsCase) else None,
+            instance=(
+                instance
+                if instance is not None
+                and isinstance(instance, flext_tests.FlextTestsCase)
+                else None
+            ),
         )
 
     @staticmethod

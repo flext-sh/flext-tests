@@ -7,13 +7,17 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
+import flext_infra
+import flext_infra.codemod
 import pytest
 from flext_core import r, u as _core_u
-from flext_infra import m as _infra_m, u as _infra_u
-from flext_infra.codemod.batch_gates import FlextInfraModGateEngine
 
 from flext_tests import c, m, p, t
+
+if TYPE_CHECKING:
+    from flext_infra import m as _infra_m
 
 
 class FlextTestsEnforcementUtilitiesMixin:
@@ -42,18 +46,18 @@ class FlextTestsEnforcementUtilitiesMixin:
         Every id in ``required_rule_ids`` must be declared by the engine's rule
         plan; a missing rule is a failure, never an empty scan.
         """
-        planned = _infra_u.Infra.codemod_rule_plan(repository_root)
+        planned = flext_infra.u.Infra.codemod_rule_plan(repository_root)
         if planned.failure:
-            return r[_infra_m.Infra.ModScanReport].from_failure(planned)
+            return r[flext_infra.m.Infra.ModScanReport].from_failure(planned)
         missing = sorted(
             required_rule_ids - {rule.id for rule in planned.value.rules},
         )
         if missing:
-            return r[_infra_m.Infra.ModScanReport].fail(
+            return r[flext_infra.m.Infra.ModScanReport].fail(
                 "enforcement names flext-infra rules that config/rules does not "
                 f"declare: {', '.join(missing)}",
             )
-        return FlextInfraModGateEngine.scan(
+        return flext_infra.codemod.FlextInfraModGateEngine.scan(
             repository_root,
             fix=False,
             selection=planned.value,

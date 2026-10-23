@@ -11,7 +11,7 @@ import os
 import pytest
 from flext_infra import config
 
-from tests import tm
+from tests import tm, u
 
 
 class TestsFlextTestsSlowTimeoutPolicy:
@@ -54,7 +54,8 @@ class TestsFlextTestsSlowTimeoutPolicy:
             else ("-p", enforcement)
         )
         try:
-            return pytester.runpytest_subprocess(
+            return u.Tests.pytest_subprocess(
+                pytester,
                 *plugins,
                 *(("--timeout=0",) if unbounded else ()),
             )

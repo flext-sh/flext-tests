@@ -149,7 +149,8 @@ class TestsFlextTestsServiceBase:
             "        pass\n",
             encoding="utf-8",
         )
-        result = pytester.runpytest_subprocess(
+        result = u.Tests.pytest_subprocess(
+            pytester,
             *self._consumer_options(),
             str(package_dir / "test_probe.py"),
         )

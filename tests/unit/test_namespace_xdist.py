@@ -6,12 +6,15 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import os
+import signal
 from pathlib import Path
-from typing import Final
+from types import FrameType
+from typing import Final, NoReturn
 
 import pytest
 
-from tests import tm
+from tests import tm, u
 
 pytest_plugins = ["pytester"]
 
@@ -20,6 +23,45 @@ XDIST_WORKER_COUNT: Final[int] = 2
 
 class TestsFlextTestsNamespaceXdist:
     """xdist-parallel namespace acceptance (T3)."""
+
+    @staticmethod
+    @pytest.mark.slow
+    def test_pytest_subprocess_reaps_on_base_exception(
+        pytester: pytest.Pytester,
+    ) -> None:
+        """An external cancellation reaps its exact child before propagating."""
+
+        class Cancelled(BaseException):
+            """External item cancellation, not a child execution failure."""
+
+        cancellation = Cancelled("cancel isolated consumer")
+
+        def cancel(_number: int, _frame: FrameType | None) -> NoReturn:
+            raise cancellation
+
+        pytester.makepyfile(
+            test_cancel=(
+                "import os\n"
+                "import signal\n"
+                "from pathlib import Path\n"
+                "def test_cancel():\n"
+                "    Path('child.pid').write_text(str(os.getpid()))\n"
+                f"    os.kill({os.getpid()}, signal.SIGUSR1)\n"
+                "    signal.pause()\n"
+            ),
+        )
+        previous = signal.signal(signal.SIGUSR1, cancel)
+        try:
+            with pytest.raises(Cancelled) as raised:
+                u.Tests.pytest_subprocess(pytester)
+        finally:
+            signal.signal(signal.SIGUSR1, previous)
+        tm.ok(raised.value is cancellation)
+        child_pid = int((pytester.path / "child.pid").read_text(encoding="utf-8"))
+        with pytest.raises(ProcessLookupError):
+            os.kill(child_pid, 0)
+        with pytest.raises(ChildProcessError):
+            os.waitpid(child_pid, os.WNOHANG)
 
     @pytest.mark.slow
     @staticmethod
@@ -59,7 +101,8 @@ class TestsFlextTestsNamespaceXdist:
                 assert record_token
             """,
         )
-        result = pytester.runpytest_subprocess(
+        result = u.Tests.pytest_subprocess(
+            pytester,
             "-n",
             "2",
             "-p",

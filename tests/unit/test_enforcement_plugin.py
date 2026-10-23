@@ -187,7 +187,8 @@ class TestsFlextTestsEnforcementPlugin:
             {} if autoload else {"PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"},
             vars_to_clear=("PYTEST_ADDOPTS", "PYTEST_DISABLE_PLUGIN_AUTOLOAD"),
         ):
-            result = pytester.runpytest_subprocess(
+            result = u.Tests.pytest_subprocess(
+                pytester,
                 *(argument for entry in entries for argument in ("-p", entry.name)),
                 "--no-flext-enforce",
                 "--flext-enforce-strict",
@@ -277,7 +278,8 @@ class TestsFlextTestsEnforcementPlugin:
             {} if autoload else {"PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"},
             vars_to_clear=("PYTEST_ADDOPTS", "PYTEST_DISABLE_PLUGIN_AUTOLOAD"),
         ):
-            result = pytester.runpytest_subprocess(
+            result = u.Tests.pytest_subprocess(
+                pytester,
                 *(argument for entry in entries for argument in ("-p", entry.name)),
                 "-p",
                 "no:randomly",
@@ -305,7 +307,7 @@ class TestsFlextTestsEnforcementPlugin:
                 "    raise RuntimeError('collection must not execute tests')\n"
             ),
         )
-        result = pytester.runpytest_subprocess("--collect-only")
+        result = u.Tests.pytest_subprocess(pytester, "--collect-only")
         tm.that(result.ret, eq=pytest.ExitCode.OK)
         result.stdout.fnmatch_lines(["*collected 1 item*", "*test_probe*"])
         result.stdout.no_fnmatch_line("*flext-enforce*")
@@ -346,7 +348,8 @@ class TestsFlextTestsEnforcementPlugin:
             {"PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"},
             vars_to_clear=("PYTEST_ADDOPTS",),
         ):
-            result = pytester.runpytest_subprocess(
+            result = u.Tests.pytest_subprocess(
+                pytester,
                 "-p",
                 enforcement.name,
                 "--collect-only",
@@ -395,7 +398,9 @@ class TestsFlextTestsEnforcementPlugin:
     ) -> None:
         """Non-strict run captures the warning and reports it in the summary."""
         self._make_workspace_sandbox(pytester)
-        result = pytester.runpytest_subprocess("--flext-enforce-rules=ENFORCE-022")
+        result = u.Tests.pytest_subprocess(
+            pytester, "--flext-enforce-rules=ENFORCE-022"
+        )
         result.assert_outcomes(passed=1, warnings=1)
         result.stdout.fnmatch_lines([
             "*flext-enforce*",
@@ -411,7 +416,8 @@ class TestsFlextTestsEnforcementPlugin:
     ) -> None:
         """--flext-enforce-strict promotes the configured warning to a failure."""
         self._make_workspace_sandbox(pytester)
-        result = pytester.runpytest_subprocess(
+        result = u.Tests.pytest_subprocess(
+            pytester,
             "--flext-enforce-rules=ENFORCE-022",
             "--flext-enforce-strict",
         )
@@ -428,7 +434,7 @@ class TestsFlextTestsEnforcementPlugin:
     ) -> None:
         """Without workspace markers the dispatcher stays silent and passive."""
         self._write_violation_module(pytester)
-        result = pytester.runpytest_subprocess()
+        result = u.Tests.pytest_subprocess(pytester)
         result.assert_outcomes(passed=1, warnings=1)
         result.stdout.no_fnmatch_line("*flext-enforce*")
         result.stdout.no_fnmatch_line("runtime warnings captured:*")
@@ -481,5 +487,5 @@ class TestsFlextTestsEnforcementPlugin:
             infra_u.Infra.runtime_owner_root(Path(__file__).resolve().parents[2])
         )
         with u.Tests.env_vars_context({"RUNTIME_ROOT": runtime_root}):
-            result = pytester.runpytest_subprocess("--disable-plugin-autoload")
+            result = u.Tests.pytest_subprocess(pytester, "--disable-plugin-autoload")
         result.assert_outcomes(passed=1)

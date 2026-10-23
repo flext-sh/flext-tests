@@ -32,7 +32,8 @@ class TestsFlextTestsScratchStorage:
                 assert isinstance(value, int)
             """,
         )
-        result = pytester.runpytest_subprocess(
+        result = u.Tests.pytest_subprocess(
+            pytester,
             "-p",
             "no:cacheprovider",
             "-p",
@@ -53,7 +54,8 @@ class TestsFlextTestsScratchStorage:
                 benchmark(lambda: sum(range(100)))
             """,
         )
-        result = pytester.runpytest_subprocess(
+        result = u.Tests.pytest_subprocess(
+            pytester,
             "--benchmark-only",
             "-p",
             "no:cacheprovider",
@@ -75,7 +77,8 @@ class TestsFlextTestsScratchStorage:
         """The flext_scratch_root ini redirects the storage base."""
         override = tmp_path / "custom-scratch"
         pytester.makepyfile(test_plain="def test_plain():\n    assert True\n")
-        result = pytester.runpytest_subprocess(
+        result = u.Tests.pytest_subprocess(
+            pytester,
             "-p",
             "no:cacheprovider",
             "-p",

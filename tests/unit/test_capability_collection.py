@@ -51,7 +51,8 @@ class TestsFlextTestsCapabilityCollection:
 
     @staticmethod
     def _run(consumer: pytest.Pytester) -> pytest.RunResult:
-        return consumer.runpytest_subprocess(
+        return u.Tests.pytest_subprocess(
+            consumer,
             "-p",
             "no:flext_tests_enforcement",
             "-p",
