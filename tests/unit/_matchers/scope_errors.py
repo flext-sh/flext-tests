@@ -33,6 +33,27 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
         tm.that(failure.value.args[0] is message, truth=True)
 
     @staticmethod
+    def test_reject_keeps_guard_narrowing_and_lazy_message() -> None:
+        """A failed guard exits once and only then evaluates its message."""
+        events: list[str] = []
+
+        def explain() -> list[str]:
+            events.append("message")
+            return events
+
+        def guarded(value: str | None) -> str:
+            if value is None:
+                tm.reject(explain())
+            return value
+
+        tm.that(guarded("valid"), eq="valid")
+        tm.that(events, eq=[])
+        with pytest.raises(AssertionError) as failure:
+            guarded(None)
+        tm.that(events, eq=["message"])
+        tm.that(failure.value.args[0] is events, truth=True)
+
+    @staticmethod
     def test_check_returns_chain() -> None:
         """tm.check() chains assertions over the result it was given."""
         result = r[int].ok(42)

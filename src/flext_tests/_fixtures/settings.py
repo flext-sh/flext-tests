@@ -17,13 +17,19 @@ import pytest
 from flext_core import FlextContainer, FlextContext, FlextSettings
 
 import flext_tests
-from flext_tests import FlextTestsSettings, t
+from flext_tests import t
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
     from pathlib import Path
 
-    from flext_tests import FlextTestsCase, FlextTestsServiceBase, m, p
+    from flext_tests import (
+        FlextTestsCase,
+        FlextTestsServiceBase,
+        FlextTestsSettings,
+        m,
+        p,
+    )
 
 
 class FlextTestsSettingsFixtures:
@@ -63,7 +69,7 @@ class FlextTestsSettingsFixtures:
     def _reset_runtime_state() -> None:
         """Reset root/test settings singletons and the DI container."""
         FlextSettings.reset_for_testing()
-        importlib.import_module("flext_tests").FlextTestsSettings.reset_for_testing()
+        flext_tests.FlextTestsSettings.reset_for_testing()
         FlextContainer.reset_for_testing()
 
     @staticmethod
@@ -82,7 +88,7 @@ class FlextTestsSettingsFixtures:
         package_root = module.__package__ or ""
         if not package_root or instance is None:
             return
-        canonical_service = importlib.import_module("flext_tests").s
+        canonical_service = flext_tests.s
         package_name = package_root.split(".", maxsplit=1)[0]
         tests_package = importlib.import_module(package_name)
         try:
@@ -200,9 +206,7 @@ class FlextTestsSettingsFixtures:
             FlextTestsSettings: Fresh typed test settings with test defaults.
 
         """
-        settings_type: type[FlextTestsSettings] = importlib.import_module(
-            "flext_tests",
-        ).FlextTestsSettings
+        settings_type = flext_tests.FlextTestsSettings
         FlextSettings.reset_for_testing()
         settings_type.reset_for_testing()
         return settings_type(debug=True, trace=False)
@@ -281,3 +285,6 @@ class FlextTestsSettingsFixtures:
 
         """
         return {"string": "test_value", "number": 42, "enabled": True}
+
+
+__all__ = ["FlextTestsSettingsFixtures"]
