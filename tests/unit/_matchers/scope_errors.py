@@ -76,8 +76,8 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
     @staticmethod
     def test_scope_with_context() -> None:
         """Test tm.scope() with context parameter."""
-        with tm.scope(context={"user_id": 123}) as scope:
-            tm.that(scope.context["user_id"], eq=123)
+        with tm.scope(context={c.ContextKey.USER_ID: 123}) as scope:
+            tm.that(scope.context[c.ContextKey.USER_ID], eq=123)
 
     @staticmethod
     def test_scope_applies_removes_and_restores_real_environment() -> None:

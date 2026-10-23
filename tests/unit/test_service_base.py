@@ -212,18 +212,16 @@ class TestsFlextTestsServiceBase:
         state_key = "runtime-isolation-probe"
         result = self._run_consumer(
             pytester,
-            "from flext_tests import FlextTestsCase, FlextTestsUtilities, p, u\n\n"
+            "from flext_tests import FlextTestsCase, FlextTestsUtilities, p, s, tm, u\n\n"
             "class TestProbe(FlextTestsCase):\n"
             "    def test_success(self, checked_container: p.Container) -> None:\n"
             "        assert u is FlextTestsUtilities\n"
-            "        with u.Tests.EchoService.isolated_test_runtime(\n"
-            "            build=lambda: u.Tests.EchoService(port=u.Tests.MemoryEcho())\n"
-            "        ) as service:\n"
-            "            assert service.run().unwrap() == 'HI'\n"
+            "        with s[bool].isolated_test_runtime() as service:\n"
+            "            assert service.settings is s[bool].fetch_settings()\n"
             f"        checked_container.bind({state_key!r}, True)\n"
             "    def test_failure(self, checked_container: p.Container) -> None:\n"
             f"        checked_container.bind({state_key!r}, True)\n"
-            "        raise AssertionError('intentional runtime failure')\n",
+            "        tm.reject('intentional runtime failure')\n",
             conftest=(
                 "from collections.abc import Iterator\n"
                 "import pytest\n"
@@ -241,5 +239,11 @@ class TestsFlextTestsServiceBase:
                 f"        assert FlextContainer().resolve({state_key!r}).failure\n"
             ),
         )
-        result.assert_outcomes(passed=1, failed=1)
+        expected = {"passed": 1, "failed": 1}
+        tm.that(
+            result.parseoutcomes() == expected,
+            truth=True,
+            assertion_message=f"{result.stdout.str()}\n{result.stderr.str()}",
+        )
+        result.assert_outcomes(**expected)
         result.stdout.fnmatch_lines(["*intentional runtime failure*"])

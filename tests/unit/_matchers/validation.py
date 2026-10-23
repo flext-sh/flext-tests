@@ -19,6 +19,104 @@ class TestsFlextTestsMatchersNativeTruthMixin:
     """Native truth and assertion-message behavior tests."""
 
     @staticmethod
+    @pytest.mark.parametrize("criterion", ["eq", "ne"])
+    @pytest.mark.parametrize("verdict", [True, False])
+    def test_value_criteria_use_the_requested_native_operator(
+        criterion: str, *, verdict: bool
+    ) -> None:
+        """Equality and inequality dispatch independently and exactly once."""
+        events: list[str] = []
+
+        class Subject:
+            def __hash__(self) -> int:
+                return hash(type(self))
+
+            def __eq__(self, other: p.AttributeProbe) -> bool:
+                events.append("eq")
+                return verdict
+
+            def __ne__(self, other: p.AttributeProbe) -> bool:
+                events.append("ne")
+                return verdict
+
+        subject = Subject()
+
+        def compare() -> None:
+            if criterion == "eq":
+                tm.that(subject, eq=subject, msg="native comparison failed")
+            else:
+                tm.that(subject, ne=subject, msg="native comparison failed")
+
+        if verdict:
+            compare()
+        else:
+            with pytest.raises(AssertionError, match="native comparison failed"):
+                compare()
+        tm.that(events, eq=[criterion])
+
+    @staticmethod
+    def test_passing_value_criteria_do_not_render_the_subject() -> None:
+        """Successful native comparisons and predicates never request a repr."""
+        events: list[str] = []
+
+        class Subject:
+            def __hash__(self) -> int:
+                return hash(type(self))
+
+            def __eq__(self, other: p.AttributeProbe) -> bool:
+                events.append("eq")
+                return True
+
+            def __ne__(self, other: p.AttributeProbe) -> bool:
+                events.append("ne")
+                return True
+
+            def __repr__(self) -> str:
+                message = "a successful native check must not render its subject"
+                raise RuntimeError(message)
+
+        subject = Subject()
+        tm.that(subject, eq=subject, ne=subject)
+        tm.that(subject, where=lambda value: value is subject)
+        tm.that(events, eq=["eq", "ne"])
+
+    @staticmethod
+    @pytest.mark.parametrize("criterion", ["eq", "ne", "where"])
+    def test_value_criteria_preserve_the_first_native_exception(
+        criterion: str,
+    ) -> None:
+        """Rendering cannot replace a comparison or predicate's original failure."""
+        failure = RuntimeError("original operand failure")
+
+        class Subject:
+            def __hash__(self) -> int:
+                return hash(type(self))
+
+            def __eq__(self, other: p.AttributeProbe) -> bool:
+                raise failure
+
+            def __ne__(self, other: p.AttributeProbe) -> bool:
+                raise failure
+
+            def __repr__(self) -> str:
+                message = "diagnostic rendering must not precede the operation"
+                raise ValueError(message)
+
+        subject = Subject()
+
+        def operation() -> None:
+            if criterion == "eq":
+                tm.that(subject, eq=subject)
+            elif criterion == "ne":
+                tm.that(subject, ne=subject)
+            else:
+                tm.that(subject, where=subject.__eq__)
+
+        with pytest.raises(RuntimeError) as raised:
+            operation()
+        tm.that(raised.value is failure, truth=True)
+
+    @staticmethod
     def test_bare_boolean_assertion_is_not_a_noop() -> None:
         """A false comparison cannot silently pass after assert migration."""
         tm.that(value=True)

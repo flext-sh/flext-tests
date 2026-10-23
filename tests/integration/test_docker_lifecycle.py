@@ -26,7 +26,7 @@ from tests import c, m, r, t, tm, u
 if TYPE_CHECKING:
     from collections.abc import Generator
 
-    from tests import p
+from tests import p
 
 pytestmark = [pytest.mark.docker, pytest.mark.integration, pytest.mark.slow]
 

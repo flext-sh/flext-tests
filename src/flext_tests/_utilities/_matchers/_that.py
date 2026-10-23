@@ -44,12 +44,11 @@ class FlextTestsMatchersThatMixin:
                         any declared forbidden type matches the original value.
 
                 """
-                value_type_name = type(value).__name__
                 if params.is_ is not None:
                     cls._validate_is_type(
                         value,
                         params,
-                        value_type_name,
+                        type(value).__name__,
                     )
                 if params.not_ is not None:
                     not_types = (
@@ -62,7 +61,7 @@ class FlextTestsMatchersThatMixin:
                             params.msg
                             or c.Tests.ERR_TYPE_FAILED.format(
                                 expected=f"not {params.not_}",
-                                actual=value_type_name,
+                                actual=type(value).__name__,
                             ),
                         )
 
@@ -732,13 +731,20 @@ class FlextTestsMatchersThatMixin:
                 if params.truth is not None:
                     cls._assert_truth(value, params)
                     return
-                message = params.msg or c.Tests.ERR_CONSTRAINTS_FAILED.format(
-                    value=value
-                )
-                if eq is not c.Tests.MatcherMissing.OMITTED and value != eq:
-                    raise AssertionError(message)
-                if ne is not c.Tests.MatcherMissing.OMITTED and value == ne:
-                    raise AssertionError(message)
+                if eq is c.Tests.MatcherMissing.OMITTED or value == eq:
+                    pass
+                else:
+                    raise AssertionError(
+                        params.msg
+                        or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=value),
+                    )
+                if ne is c.Tests.MatcherMissing.OMITTED or value != ne:
+                    pass
+                else:
+                    raise AssertionError(
+                        params.msg
+                        or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=value),
+                    )
                 if where is not None and not where(value):
                     raise AssertionError(
                         params.msg or c.Tests.ERR_PREDICATE_FAILED.format(value=value),

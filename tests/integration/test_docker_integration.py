@@ -168,7 +168,7 @@ class TestsFlextTestsDockerIntegration:
 
     @staticmethod
     @pytest.mark.parametrize(
-        "operation",
+        c.ContextScope.OPERATION,
         ["execute", "up", "down", "ready"],
         ids=["execute", "up", "down", "ready"],
     )

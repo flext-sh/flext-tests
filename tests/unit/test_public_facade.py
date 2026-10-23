@@ -18,7 +18,7 @@ from packaging.utils import canonicalize_name
 
 import flext_tests
 from flext_tests import FlextTestsCase, FlextTestsModels, FlextTestsUtilities
-from tests import d, e, h, m, r, tf, tk, tm, u, x
+from tests import c, d, e, h, m, r, tf, tk, tm, u, x
 
 
 class TestsFlextTestsPublicFacade:
@@ -64,7 +64,7 @@ class TestsFlextTestsPublicFacade:
         """Declared pytest11 class hooks run without competing for root exports."""
         root = Path(__file__).resolve().parents[2]
         metadata = u.build_project_metadata(root, u.read_project_document_cached(root))
-        document = tm.ok(u.Cli.toml_read_json(root / "pyproject.toml"))
+        document = tm.ok(u.Cli.toml_read_json(root / c.PYPROJECT_FILENAME))
         declared = u.Cli.toml_mapping_path(
             document,
             ("project", "entry-points", "pytest11"),

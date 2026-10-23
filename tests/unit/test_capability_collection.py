@@ -113,7 +113,7 @@ class TestsFlextTestsCapabilityCollection:
             for label, indices in (("A", (1, 3)), ("B", (2,))):
                 member = consumer.path / label
                 member.mkdir()
-                (member / "pyproject.toml").write_text(
+                (member / c.PYPROJECT_FILENAME).write_text(
                     "[tool.pytest.ini_options]\n", encoding="utf-8"
                 )
                 (member / ".env").write_text(
@@ -161,7 +161,7 @@ class TestsFlextTestsCapabilityCollection:
             for mutation, body in mutations.items():
                 member = consumer.path / mutation
                 member.mkdir()
-                (member / "pyproject.toml").write_text(
+                (member / c.PYPROJECT_FILENAME).write_text(
                     "[tool.pytest.ini_options]\n", encoding="utf-8"
                 )
                 (member / ".env").write_text(
@@ -368,7 +368,7 @@ class TestsFlextTestsCapabilityCollection:
         if tracked:
             u.Cli.run_checked(["git", "add", "--", ".env"], cwd=consumer.path).unwrap()
         else:
-            (consumer.path / ".git" / "HEAD").unlink()
+            (consumer.path / c.GIT_DIR_NAME / "HEAD").unlink()
         consumer.makepyfile(
             "import pytest\n"
             "@pytest.mark.connectivity(host='127.0.0.1', port=1)\n"

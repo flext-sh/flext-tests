@@ -7,14 +7,11 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import pytest
 
 from flext_tests import FlextTestsDocker
-
-if TYPE_CHECKING:
-    from tests import t
+from tests import t
 
 pytest_plugins: t.VariadicTuple[str] = ("pytester",)
 

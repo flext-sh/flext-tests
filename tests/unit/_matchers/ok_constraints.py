@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import pytest
 
-from tests import r, t, tm
+from tests import c, r, t, tm
 from tests.unit._matchers.predicates import TestsFlextTestsMatchersPredicates
 
 
@@ -70,7 +70,7 @@ class TestsFlextTestsMatchersOkConstraintsBaseMixin:
     @staticmethod
     def test_ok_with_deep_parameter() -> None:
         """Test tm.ok() with deep parameter."""
-        data: t.JsonMapping = {"user": {"name": "John", "age": 30}}
+        data: t.JsonMapping = {c.ContextScope.USER: {"name": "John", "age": 30}}
         result = r[t.JsonMapping].ok(data)
         value = tm.ok(result, deep={"user.name": "John"})
         tm.that(value, eq=data)
@@ -78,7 +78,7 @@ class TestsFlextTestsMatchersOkConstraintsBaseMixin:
     @staticmethod
     def test_ok_with_deep_predicate_parameter() -> None:
         """Test tm.ok() with deep predicate parameter."""
-        data: t.JsonMapping = {"user": {"email": "test@example.com"}}
+        data: t.JsonMapping = {c.ContextScope.USER: {"email": "test@example.com"}}
         result = r[t.JsonMapping].ok(data)
         value = tm.ok(
             result,
@@ -89,7 +89,7 @@ class TestsFlextTestsMatchersOkConstraintsBaseMixin:
     @staticmethod
     def test_ok_with_missing_deep_predicate_path_fails_cleanly() -> None:
         """Report a missing predicate path through the public matcher contract."""
-        data: t.JsonMapping = {"user": {"email": "test@example.com"}}
+        data: t.JsonMapping = {c.ContextScope.USER: {"email": "test@example.com"}}
         result = r[t.JsonMapping].ok(data)
         with pytest.raises(AssertionError, match=r"Path not found: user.missing"):
             tm.ok(
@@ -100,7 +100,7 @@ class TestsFlextTestsMatchersOkConstraintsBaseMixin:
     @staticmethod
     def test_ok_with_path_parameter() -> None:
         """Test tm.ok() with path parameter."""
-        data: t.JsonMapping = {"user": {"name": "John"}}
+        data: t.JsonMapping = {c.ContextScope.USER: {"name": "John"}}
         result = r[t.JsonMapping].ok(data)
         value = tm.ok(result, path="user.name", eq="John")
         tm.that(value, eq="John")

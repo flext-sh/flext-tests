@@ -43,7 +43,11 @@ class TestsFlextTestsMatchersDataDrivenMixin:
     def test_that_with_paths_data_driven_rules() -> None:
         """Validate multiple dotted paths with a single declarative matcher call."""
         payload: t.JsonMapping = {
-            "user": {"name": "John", "age": 33, "email": "john@example.com"},
+            c.ContextScope.USER: {
+                "name": "John",
+                "age": 33,
+                "email": "john@example.com",
+            },
             "status": "active",
         }
         paths: t.MappingKV[str | int, t.Tests.MatcherOption] = {

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import pytest
 
-from tests import p, r, t, tm
+from tests import c, p, r, t, tm
 from tests.unit._matchers.predicates import TestsFlextTestsMatchersPredicates
 
 
@@ -82,7 +82,7 @@ class TestsFlextTestsMatchersThatAttrsMixin:
     def test_that_with_deep_parameter() -> None:
         """Test tm.that() with deep parameter."""
         data: t.MappingKV[str, t.Tests.TestobjectSerializable] = {
-            "user": {"name": "John", "age": 30},
+            c.ContextScope.USER: {"name": "John", "age": 30},
         }
         tm.that(data, deep={"user.name": "John"})
 
@@ -90,7 +90,7 @@ class TestsFlextTestsMatchersThatAttrsMixin:
     def test_that_with_deep_parameter_rejects_mismatch() -> None:
         """A deep literal expectation fails when the value at the path differs."""
         data: t.MappingKV[str, t.Tests.TestobjectSerializable] = {
-            "user": {"name": "John"},
+            c.ContextScope.USER: {"name": "John"},
         }
         with pytest.raises(AssertionError, match="Value mismatch"):
             tm.that(data, deep={"user.name": "Jane"})

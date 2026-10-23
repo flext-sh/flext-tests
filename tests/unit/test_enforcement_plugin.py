@@ -41,7 +41,7 @@ class TestsFlextTestsEnforcementPlugin:
         """
         root = Path(__file__).resolve().parents[2]
         metadata = u.build_project_metadata(root, u.read_project_document_cached(root))
-        document = tm.ok(u.Cli.toml_read_json(root / "pyproject.toml"))
+        document = tm.ok(u.Cli.toml_read_json(root / c.PYPROJECT_FILENAME))
         declared = u.Cli.toml_mapping_path(
             document,
             ("project", "entry-points", "pytest11"),

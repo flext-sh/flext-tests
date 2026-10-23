@@ -6,10 +6,9 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Final
+from typing import Final
 
-if TYPE_CHECKING:
-    from tests import p
+from tests import p
 
 GREATER_THAN_TWO_THRESHOLD: Final[int] = 2
 

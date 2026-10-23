@@ -162,7 +162,7 @@ class FlextTestsCapabilityPlugin:
     @staticmethod
     def _environment_file(item: pytest.Item) -> Path:
         root = item.path.parent
-        while root != root.parent and not (root / "pyproject.toml").is_file():
+        while root != root.parent and not (root / c.PYPROJECT_FILENAME).is_file():
             root = root.parent
         return root / ".env"
 
