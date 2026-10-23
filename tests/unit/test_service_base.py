@@ -212,7 +212,8 @@ class TestsFlextTestsServiceBase:
         state_key = "runtime-isolation-probe"
         result = self._run_consumer(
             pytester,
-            "from flext_tests import FlextTestsCase, FlextTestsUtilities, p, s, tm, u\n\n"
+            "from flext_tests import "
+            "FlextTestsCase, FlextTestsUtilities, p, s, tm, u\n\n"
             "class TestProbe(FlextTestsCase):\n"
             "    def test_success(self, checked_container: p.Container) -> None:\n"
             "        assert u is FlextTestsUtilities\n"
