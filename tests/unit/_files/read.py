@@ -41,14 +41,14 @@ class TestsFlextTestsFilesReadMixin:
 
     @staticmethod
     def test_read_json_file(tmp_path: Path) -> None:
-        """Test read() returns dict content for .json files."""
+        """Test read() returns validated ConfigMap content for .json files."""
         manager = tf(base_dir=tmp_path)
         content_root: t.JsonMapping = {"key": "value", "number": 42}
         content = m.ConfigMap.model_validate(content_root)
         path = manager.create(content, "settings.json")
         result = manager.read(path)
         _ = u.Tests.assert_success(result)
-        tm.that(result.value, eq=content_root)
+        tm.that(result.value, eq=content)
 
     @staticmethod
     def test_read_yaml_file(tmp_path: Path) -> None:

@@ -17,7 +17,7 @@ from typing import override
 
 import pytest
 from flext_core import FlextSettings
-from flext_infra import FlextInfraConstants, config as infra_config
+from flext_infra import FlextInfraConstants, config as infra_config, u as infra_u
 
 from flext_tests import FlextTestsServiceBase
 from tests import m, s, tm, u
@@ -38,8 +38,11 @@ class TestsFlextTestsServiceBase:
             The resulting ``tuple[str, ...]``.
 
         """
-        loop_scope = (
-            infra_config.Infra.tooling.tools.pytest.asyncio_default_fixture_loop_scope
+        loop_scope = infra_u.Infra.native_tool_setting(
+            infra_config.Infra.tooling,
+            "pytest.ini_options",
+            FlextInfraConstants.Infra.ASYNCIO_DEFAULT_FIXTURE_LOOP_SCOPE,
+            str,
         )
         return (
             "-o",

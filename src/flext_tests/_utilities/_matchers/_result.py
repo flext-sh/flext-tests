@@ -283,7 +283,7 @@ class FlextTestsMatchersResultMixin:
                     )
                 if path is None:
                     if value_criteria:
-                        that(original, eq=eq, ne=ne, **kwargs)
+                        that(original, eq=eq, ne=ne, where=None, **kwargs)
                     return original
                 selected = FlextTestsPayloadUtilities.to_match_value(
                     FlextTestsPayloadUtilities.extract_path_value(
@@ -292,7 +292,7 @@ class FlextTestsMatchersResultMixin:
                     ),
                 )
                 if value_criteria:
-                    that(selected, eq=eq, ne=ne, **kwargs)
+                    that(selected, eq=eq, ne=ne, where=None, **kwargs)
                 return selected
 
 

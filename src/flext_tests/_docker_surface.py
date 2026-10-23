@@ -27,15 +27,16 @@ class FlextTestsDockerFacadeInternals:
     the audit's base walker demands class declarations outside conditionals.
     """
 
-    def _compose_path(self, _compose_file: str) -> Path:
+    def _compose_path(self, _compose_file: str, /) -> Path:
         raise NotImplementedError
 
-    def _compose_down(self, _compose_path: Path, _project: str) -> p.Result[str]:
+    def _compose_down(self, _compose_path: Path, _project: str, /) -> p.Result[str]:
         raise NotImplementedError
 
     def _inspect(
         self,
         _container_name: str,
+        /,
     ) -> p.Result[m.Tests.ContainerInspect]:
         raise NotImplementedError
 

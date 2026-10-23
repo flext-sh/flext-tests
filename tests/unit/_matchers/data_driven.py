@@ -10,7 +10,7 @@ from collections.abc import Mapping
 
 import pytest
 
-from tests import c, m, p, r, t, tm
+from tests import c, m, r, t, tm
 
 
 class TestsFlextTestsMatchersDataDrivenMixin:
@@ -43,15 +43,13 @@ class TestsFlextTestsMatchersDataDrivenMixin:
             "user": {"name": "John", "age": 33, "email": "john@example.com"},
             "status": "active",
         }
-        tm.that(
-            payload,
-            paths={
-                "user.name": "John",
-                "user.age": {"gte": 18, "lt": 120},
-                "user.email": {"match": c.Tests.EMAIL_PATTERN_RE},
-                "status": {"eq": "active"},
-            },
-        )
+        paths: t.MappingKV[str | int, t.Tests.MatcherOption] = {
+            "user.name": "John",
+            "user.age": {"gte": 18, "lt": 120},
+            "user.email": {"match": c.Tests.EMAIL_PATTERN_RE},
+            "status": {"eq": "active"},
+        }
+        tm.that(payload, paths=paths)
 
     @staticmethod
     def test_path_rule_preserves_explicit_none_constraint() -> None:
@@ -73,15 +71,13 @@ class TestsFlextTestsMatchersDataDrivenMixin:
     def test_that_with_items_data_driven_rules() -> None:
         """Validate indexed, first/last and all-item rules declaratively."""
         rows: t.StrSequence = ["alpha", "beta", "gamma"]
-        tm.that(
-            rows,
-            items={
-                "first": {"starts": "al"},
-                1: {"eq": "beta"},
-                "last": {"ends": "ma"},
-                "all": {"is_": str},
-            },
-        )
+        items: t.MappingKV[str | int, t.Tests.MatcherOption] = {
+            "first": {"starts": "al"},
+            1: {"eq": "beta"},
+            "last": {"ends": "ma"},
+            "all": {"is_": str},
+        }
+        tm.that(rows, items=items)
 
     @staticmethod
     def test_item_rules_reject_string_rule_container() -> None:
@@ -104,29 +100,31 @@ class TestsFlextTestsMatchersDataDrivenMixin:
                 self.active = True
 
         user = User()
-        tm.that(
-            user,
-            attrs_match={
-                "profile.name": {"eq": "Ada"},
-                "profile.level": {"gte": 1, "lte": 10},
-                "active": {"eq": True},
-            },
-        )
+        attrs_match: t.MappingKV[str | int, t.Tests.MatcherOption] = {
+            "profile.name": {"eq": "Ada"},
+            "profile.level": {"gte": 1, "lte": 10},
+            "active": {"eq": True},
+        }
+        tm.that(user, attrs_match=attrs_match)
 
     @staticmethod
     def test_ok_with_composed_data_driven_validations() -> None:
         """Validate result payload with path extraction plus composed rules."""
 
-        def is_mapping(data: p.Tests.NativeMatchValue) -> bool:
+        def is_mapping(data: t.JsonMapping) -> bool:
             return isinstance(data, Mapping)
 
         result = r[t.JsonMapping].ok({
             "meta": {"version": "v1", "count": 3},
             "items": ["a", "b", "c"],
         })
+        paths: t.MappingKV[str | int, t.Tests.MatcherOption] = {
+            "meta.version": {"starts": "v"},
+            "meta.count": {"eq": 3},
+        }
         value = tm.ok(
             result,
-            paths={"meta.version": {"starts": "v"}, "meta.count": {"eq": 3}},
+            paths=paths,
             where=is_mapping,
         )
         tm.that(value, is_=dict)

@@ -37,7 +37,7 @@ class FlextTestsFilesLifecycleMixin:
     _created_dirs: list[Path] = m.PrivateAttr(default_factory=_created_paths_default)
 
     @classmethod
-    def _create_file_manager(cls, _base_dir: Path | None) -> Self:
+    def _create_file_manager(cls, _base_dir: Path | None, /) -> Self:
         """Construct the concrete validated file manager."""
         raise NotImplementedError
 
