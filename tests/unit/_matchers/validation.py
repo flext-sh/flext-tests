@@ -165,7 +165,7 @@ class TestsFlextTestsMatchersValidationMixin:
 
         condition = True
         if not condition:
-            tm.that(False, truth=True, assertion_message=failure_message())
+            tm.that(value=False, truth=True, assertion_message=failure_message())
         tm.fail(destination.exists())
         with pytest.raises(AssertionError, match="native assertion message"):
             tm.that(False, truth=True, assertion_message=failure_message())

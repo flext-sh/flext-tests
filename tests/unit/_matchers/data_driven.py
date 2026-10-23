@@ -10,7 +10,7 @@ from collections.abc import Mapping
 
 import pytest
 
-from tests import c, m, r, t, tm
+from tests import c, m, p, r, t, tm
 
 
 class TestsFlextTestsMatchersDataDrivenMixin:
@@ -20,7 +20,8 @@ class TestsFlextTestsMatchersDataDrivenMixin:
     @pytest.mark.parametrize("value", ["first operand", "different operand"])
     def test_matcher_parameters_resolve_before_public_use(value: str) -> None:
         """Resolve scalar and composed rules on the first public matcher call."""
-        tm.that(value, eq=value)
+        with pytest.raises(AssertionError, match="mismatched scalar"):
+            tm.that(value, eq=value.upper(), msg="mismatched scalar")
         tm.that({"value": value}, paths={"value": {"eq": value}})
         tm.that([value], items=[{"eq": value}])
         tm.that({"value": value}, attrs_match={"value": {"eq": value}})
@@ -111,10 +112,10 @@ class TestsFlextTestsMatchersDataDrivenMixin:
     def test_ok_with_composed_data_driven_validations() -> None:
         """Validate result payload with path extraction plus composed rules."""
 
-        def is_mapping(data: t.JsonMapping) -> bool:
+        def is_mapping(data: p.Tests.NativeMatchValue) -> bool:
             return isinstance(data, Mapping)
 
-        result = r[t.JsonMapping].ok({
+        result: p.Result[t.JsonMapping] = r[t.JsonMapping].ok({
             "meta": {"version": "v1", "count": 3},
             "items": ["a", "b", "c"],
         })

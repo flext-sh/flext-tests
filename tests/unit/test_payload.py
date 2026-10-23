@@ -62,7 +62,9 @@ class FlextTestsPayloadIdentityParts:
     @staticmethod
     def test_matcher_type_only_does_not_require_payload_conversion() -> None:
         """Test matcher type only does not require payload conversion."""
-        tm.that(range(3), is_=range)
+        tm.that(range(3), not_=str)
+        with pytest.raises(AssertionError, match="wrong native type"):
+            tm.that(range(3), is_=str, msg="wrong native type")
 
     @staticmethod
     def test_deep_matcher_preserves_native_nested_leaves() -> None:
