@@ -14,7 +14,7 @@ from tests import c, m, r, t, tm
 from tests.unit._matchers.predicates import TestsFlextTestsMatchersPredicates
 
 
-class TestsFlextTestsMatchersThatCollectionsMixin:
+class TestsFlextTestsMatchersThatTypesMixin:
     """Matcher collection, native value and None constraint tests."""
 
     @staticmethod
@@ -117,6 +117,10 @@ class TestsFlextTestsMatchersThatCollectionsMixin:
         with pytest.raises(AssertionError, match="wrong kind"):
             tm.instance("text", int, msg="wrong kind")
 
+
+class TestsFlextTestsMatchersThatSequencesMixin(TestsFlextTestsMatchersThatTypesMixin):
+    """Collection criteria composed with type and optional-value checks."""
+
     @staticmethod
     def test_that_with_empty_parameter() -> None:
         """Test tm.that() with empty parameter."""
@@ -209,6 +213,12 @@ class TestsFlextTestsMatchersThatCollectionsMixin:
     def test_that_with_unique_parameter() -> None:
         """Test tm.that() with unique parameter."""
         tm.that([1, 2, 3], unique=True)
+
+
+class TestsFlextTestsMatchersThatCollectionsMixin(
+    TestsFlextTestsMatchersThatSequencesMixin,
+):
+    """Mapping criteria composed with collection and type checks."""
 
     @staticmethod
     def test_that_with_keys_parameter() -> None:

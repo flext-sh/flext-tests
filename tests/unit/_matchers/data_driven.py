@@ -20,8 +20,9 @@ class TestsFlextTestsMatchersDataDrivenMixin:
     @pytest.mark.parametrize("value", ["first operand", "different operand"])
     def test_matcher_parameters_resolve_before_public_use(value: str) -> None:
         """Resolve scalar and composed rules on the first public matcher call."""
+        mismatched = value.upper()
         with pytest.raises(AssertionError, match="mismatched scalar"):
-            tm.that(value, eq=value.upper(), msg="mismatched scalar")
+            tm.that(value, eq=mismatched, msg="mismatched scalar")
         tm.that({"value": value}, paths={"value": {"eq": value}})
         tm.that([value], items=[{"eq": value}])
         tm.that({"value": value}, attrs_match={"value": {"eq": value}})
@@ -32,10 +33,11 @@ class TestsFlextTestsMatchersDataDrivenMixin:
             r[t.JsonMapping].ok({"value": value}),
             attrs_match={"value": {"eq": value}},
         )
+        sequence_result = r[t.StrSequence].ok([value])
         with pytest.raises(AssertionError):
-            tm.that({"value": value}, paths={"value": {"eq": value.upper()}})
+            tm.that({"value": value}, paths={"value": {"eq": mismatched}})
         with pytest.raises(AssertionError):
-            tm.ok(r[t.StrSequence].ok([value]), items=[{"eq": value.upper()}])
+            tm.ok(sequence_result, items=[{"eq": mismatched}])
 
     @staticmethod
     def test_that_with_paths_data_driven_rules() -> None:

@@ -23,19 +23,6 @@ class FlextTestsMatchersTypeGuardsMixin:
     """Preserve native comparison semantics at the matcher boundary."""
 
     @staticmethod
-    def matches_runtime_type(
-        value: p.AttributeProbe,
-        expected_type: type | tuple[type, ...],
-    ) -> bool:
-        """Check original subjects or explicitly owned internal rule nodes.
-
-        Returns:
-            The resulting ``bool``.
-
-        """
-        return isinstance(value, expected_type)
-
-    @staticmethod
     def assert_scalar_match(
         payload: p.Tests.Payload,
         params: m.Tests.ThatParams,

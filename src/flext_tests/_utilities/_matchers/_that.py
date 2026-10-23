@@ -57,13 +57,7 @@ class FlextTestsMatchersThatMixin:
                         if isinstance(params.not_, tuple)
                         else (params.not_,)
                     )
-                    if any(
-                        FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(
-                            value,
-                            forbidden_type,
-                        )
-                        for forbidden_type in not_types
-                    ):
+                    if isinstance(value, not_types):
                         raise AssertionError(
                             params.msg
                             or c.Tests.ERR_TYPE_FAILED.format(
@@ -90,14 +84,7 @@ class FlextTestsMatchersThatMixin:
                 expected_types = tuple(
                     item for item in is_types if isinstance(item, type)
                 )
-                matches_declared_type = any(
-                    FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(
-                        value,
-                        expected_type,
-                    )
-                    for expected_type in expected_types
-                )
-                if matches_declared_type:
+                if isinstance(value, expected_types):
                     return
                 type_error = c.Tests.ERR_TYPE_FAILED.format(
                     expected=params.is_,

@@ -35,12 +35,6 @@ class TestsFlextTestsDockerOperationsMixin:
         tm.that(result.error, is_=str)
 
     @staticmethod
-    def test_fetch_container_status(docker_manager: FlextTestsDocker) -> None:
-        """Test fetch_container_status delegates to container lookup."""
-        result = docker_manager.fetch_container_status("nonexistent")
-        _ = u.Tests.assert_failure(result)
-
-    @staticmethod
     def test_wait_for_port_ready_immediate(
         docker_manager: FlextTestsDocker,
     ) -> None:

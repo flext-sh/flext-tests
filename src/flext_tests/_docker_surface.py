@@ -77,18 +77,6 @@ class FlextTestsDockerSurfaceParts(_PartsBase):
             lambda inspect: u.Tests.container_info(container_name, inspect),
         )
 
-    def fetch_container_status(
-        self,
-        container_name: str,
-    ) -> p.Result[m.Tests.ContainerInfo]:
-        """Fetch the current status info of one container.
-
-        Returns:
-            The resulting ``p.Result[m.Tests.ContainerInfo]``.
-
-        """
-        return self.fetch_container_info(container_name)
-
     def fetch_container_environment(
         self,
         container_name: str,

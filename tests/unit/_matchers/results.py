@@ -6,49 +6,50 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from re import escape
 from typing import assert_type
 
 import pytest
 from flext_core import p as core_p, r as core_r
 
-from tests import m, r, t, tm
+from tests import c, m, r, t, tm
 
 
-class TestsFlextTestsMatchersResultsMixin:
-    """Matcher result assertion tests."""
+class TestsFlextTestsMatchersBooleanResultsMixin:
+    """Boolean predicates and falsey result payload behavior."""
 
     @staticmethod
     def test_boolean_matchers_preserve_values_and_types() -> None:
         """Boolean predicates need no result wrapper and keep their type."""
-        assert_type(tm.ok(True), bool)
-        assert_type(tm.fail(False), bool)
-        tm.that(tm.ok(True), eq=True)
-        tm.that(tm.fail(False), eq=False)
+        assert_type(tm.ok(result=True), bool)
+        assert_type(tm.fail(result=False), bool)
+        tm.that(tm.ok(result=True), eq=True)
+        tm.that(tm.fail(result=False), eq=False)
 
     @staticmethod
     def test_boolean_matchers_reject_opposite_states() -> None:
         """The migrated boolean assertions still detect actual failures."""
         with pytest.raises(AssertionError):
-            tm.ok(False)
+            tm.ok(result=False)
         with pytest.raises(AssertionError):
-            tm.fail(True)
+            tm.fail(result=True)
 
     @staticmethod
     def test_boolean_matchers_keep_custom_messages() -> None:
         """Predicate failures retain their caller's diagnostic message."""
         with pytest.raises(AssertionError, match="positive predicate"):
-            tm.ok(False, msg="positive predicate")
+            tm.ok(result=False, msg="positive predicate")
         with pytest.raises(AssertionError, match="negative predicate"):
-            tm.fail(True, msg="negative predicate")
+            tm.fail(result=True, msg="negative predicate")
 
     @staticmethod
     def test_boolean_matchers_reject_result_only_options() -> None:
         """Dynamic criteria cannot silently turn predicate checks into no-ops."""
         options: t.StrMapping = {"has": "error text"}
         with pytest.raises(ValueError, match="accept only msg"):
-            tm.ok(True, **options)
+            tm.ok(result=True, **options)
         with pytest.raises(ValueError, match="accept only msg"):
-            tm.fail(False, **options)
+            tm.fail(result=False, **options)
 
     @staticmethod
     @pytest.mark.parametrize("payload", [False, 0, "", [], {}])
@@ -62,17 +63,23 @@ class TestsFlextTestsMatchersResultsMixin:
     @staticmethod
     def test_none_is_rejected_by_result_construction_not_the_matcher() -> None:
         """Boolean support does not weaken the result owner's payload contract."""
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match=escape(c.ERR_RESULT_SUCCESS_PAYLOAD_CANNOT_BE_NONE)
+        ):
             core_r[t.JsonValue].ok(None)
 
     @staticmethod
     def test_false_payload_accepts_explicit_type_and_predicate_checks() -> None:
         """Successful False values keep result, type, and predicate semantics."""
-        result = core_r[bool].ok(False)
+        result = core_r[bool].ok(value=False)
         tm.that(tm.ok(result, is_=bool), eq=False)
         tm.that(tm.ok(result, where=lambda value: value is False), eq=False)
         tm.that(tm.ok(result, eq=False), eq=False)
         tm.that(tm.ok(result, ne=True), eq=False)
+
+
+class TestsFlextTestsMatchersResultsMixin(TestsFlextTestsMatchersBooleanResultsMixin):
+    """Typed result and collection assertion tests."""
 
     @staticmethod
     def test_assert_result_success_passes() -> None:
@@ -100,12 +107,12 @@ class TestsFlextTestsMatchersResultsMixin:
         tm.that(
             original,
             eq=range(2, 9, 2),
-            where=lambda value: value is original and value.step == 2,
+            where=lambda value: value is original and value.step == original.step,
         )
         resolved = tm.ok(
             r[range].ok(original),
             eq=original,
-            where=lambda value: value is original and value.start == 2,
+            where=lambda value: value is original and value.start == original.start,
         )
         assert_type(resolved, range)
         tm.that(resolved is original, truth=True)
@@ -122,7 +129,7 @@ class TestsFlextTestsMatchersResultsMixin:
             r[list[int]].ok(original),
             len=3,
             has=1,
-            where=lambda values: values is original and values[0] == 3,
+            where=lambda values: values is original and values[0] == original[0],
         )
         assert_type(resolved, list[int])
         tm.that(resolved is original, truth=True)

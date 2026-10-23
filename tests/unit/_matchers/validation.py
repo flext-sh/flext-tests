@@ -15,20 +15,20 @@ import pytest
 from tests import c, m, p, r, t, tm
 
 
-class TestsFlextTestsMatchersValidationMixin:
-    """Matcher validation tests."""
+class TestsFlextTestsMatchersNativeTruthMixin:
+    """Native truth and assertion-message behavior tests."""
 
     @staticmethod
     def test_bare_boolean_assertion_is_not_a_noop() -> None:
         """A false comparison cannot silently pass after assert migration."""
-        tm.that(True)
+        tm.that(value=True)
         with pytest.raises(AssertionError):
-            tm.that(False)
+            tm.that(value=False)
         with pytest.raises(AssertionError, match="comparison failed"):
-            tm.that(False, msg="comparison failed")
-        tm.that(False, eq=False)
-        tm.that(False, truth=False)
-        tm.that(False, is_=bool)
+            tm.that(value=False, msg="comparison failed")
+        tm.that(value=False, eq=False)
+        tm.that(value=False, truth=False)
+        tm.that(value=False, is_=bool)
 
     @staticmethod
     @pytest.mark.parametrize("truth", [True, False])
@@ -114,9 +114,9 @@ class TestsFlextTestsMatchersValidationMixin:
             events.append("message")
             return str(value)
 
-        tm.that(True, truth=True, assertion_message=message)
+        tm.that(value=True, truth=True, assertion_message=message)
         with pytest.raises(AssertionError) as raised:
-            tm.that(False, truth=True, assertion_message=message)
+            tm.that(value=False, truth=True, assertion_message=message)
         tm.that(raised.value.args[0] is message, truth=True)
         tm.that(events, eq=[])
 
@@ -124,16 +124,16 @@ class TestsFlextTestsMatchersValidationMixin:
     def test_native_truth_distinguishes_omitted_and_explicit_messages() -> None:
         """Explicit empty/None messages retain their exact AssertionError args."""
         with pytest.raises(AssertionError) as omitted:
-            tm.that(False, truth=True)
+            tm.that(value=False, truth=True)
         tm.that(omitted.value.args, eq=())
         with pytest.raises(AssertionError) as empty:
-            tm.that(False, truth=True, msg="")
+            tm.that(value=False, truth=True, msg="")
         tm.that(empty.value.args, eq=("",))
         with pytest.raises(AssertionError) as explicit_none:
-            tm.that(False, truth=True, assertion_message=None)
+            tm.that(value=False, truth=True, assertion_message=None)
         tm.that(explicit_none.value.args, eq=(None,))
         with pytest.raises(AssertionError) as explicit_empty:
-            tm.that(False, truth=True, msg="secondary", assertion_message="")
+            tm.that(value=False, truth=True, msg="secondary", assertion_message="")
         tm.that(explicit_empty.value.args, eq=("",))
 
     @staticmethod
@@ -168,7 +168,7 @@ class TestsFlextTestsMatchersValidationMixin:
             tm.that(value=False, truth=True, assertion_message=failure_message())
         tm.fail(destination.exists())
         with pytest.raises(AssertionError, match="native assertion message"):
-            tm.that(False, truth=True, assertion_message=failure_message())
+            tm.that(value=False, truth=True, assertion_message=failure_message())
         tm.that(destination.read_text(encoding="utf-8"), eq="failure observed")
 
     @staticmethod
@@ -176,9 +176,9 @@ class TestsFlextTestsMatchersValidationMixin:
         """Message failures escape unchanged; an empty message remains empty."""
         denominator = len("")
         with pytest.raises(ZeroDivisionError):
-            tm.that(False, truth=True, assertion_message=1 / denominator)
+            tm.that(value=False, truth=True, assertion_message=1 / denominator)
         with pytest.raises(AssertionError) as raised:
-            tm.that(False, truth=True, assertion_message="")
+            tm.that(value=False, truth=True, assertion_message="")
         tm.that(raised.value.args, eq=("",))
 
     @staticmethod
@@ -188,6 +188,10 @@ class TestsFlextTestsMatchersValidationMixin:
             tm.that(1, truth=True, eq=1)
         with pytest.raises(ValueError, match="requires the native truth"):
             tm.that(1, assertion_message="unused")
+
+
+class TestsFlextTestsMatchersValidationMixin(TestsFlextTestsMatchersNativeTruthMixin):
+    """Matcher criteria validation tests composed with native truth coverage."""
 
     @staticmethod
     def test_native_matcher_rejects_undeclared_criteria() -> None:

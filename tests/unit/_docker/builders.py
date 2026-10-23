@@ -45,6 +45,7 @@ class TestsFlextTestsDockerBuildersMixin:
         verb: str,
         document: str,
         target: str | None,
+        *,
         succeeds: bool,
     ) -> None:
         """The shipped CLI parses specs and rejects invalid targets before Docker."""

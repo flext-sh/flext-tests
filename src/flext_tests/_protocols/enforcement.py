@@ -44,7 +44,7 @@ class FlextTestsEnforcementProtocolsMixin:
             """Construct a node through pytest's public node factory."""
             ...
 
-    class TypedNode(ABC):
+    class TypedNode:
         """Record the typed factory; at runtime pytest's own resolves via MRO."""
 
         if TYPE_CHECKING:
