@@ -9,9 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import importlib
-from types import ModuleType
-from typing import TYPE_CHECKING, Protocol, cast
+from typing import TYPE_CHECKING
 
 import pytest
 from flext_core import FlextContainer, FlextContext, FlextSettings
@@ -23,25 +21,11 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
     from pathlib import Path
 
-    from flext_tests import (
-        FlextTestsCase,
-        FlextTestsServiceBase,
-        FlextTestsSettings,
-        m,
-        p,
-    )
+    from flext_tests import FlextTestsSettings, m, p
 
 
 class FlextTestsSettingsFixtures:
-    """Native shared fixtures and per-item reset/binding hooks."""
-
-    class FixtureNodeRequest(Protocol):
-        """Public request boundary with the scope-dependent collection node."""
-
-        @property
-        def node(self) -> pytest.Item | pytest.Collector:
-            """The item or collector owning the current fixture context."""
-            ...
+    """Native shared fixtures and per-item reset hooks."""
 
     @staticmethod
     @pytest.fixture(scope="session")
@@ -73,76 +57,10 @@ class FlextTestsSettingsFixtures:
         FlextContainer.reset_for_testing()
 
     @staticmethod
-    def _bind_runtime_aliases(
-        *,
-        module: ModuleType,
-        instance: FlextTestsCase | None,
-    ) -> None:
-        """Bind canonical aliases only to package-owned FlextTestsCase instances.
-
-        Raises:
-            TypeError: If the package service alias has the wrong base.
-            AttributeError: If the package omits a required public alias.
-
-        """
-        package_root = module.__package__ or ""
-        if not package_root or instance is None:
-            return
-        canonical_service = flext_tests.s
-        package_name = package_root.split(".", maxsplit=1)[0]
-        tests_package = importlib.import_module(package_name)
-        try:
-            service_type = tests_package.s
-        except AttributeError as exc:
-            msg = (
-                f"{package_name} must re-export the canonical service alias 's' "
-                "from its package root for the shared test runtime"
-            )
-            raise AttributeError(msg) from exc
-        if not isinstance(service_type, type) or not issubclass(
-            service_type,
-            canonical_service,
-        ):
-            msg = (
-                f"{package_name} declares 's' as {service_type!r}, "
-                "which is not a FlextTestsServiceBase subclass"
-            )
-            raise TypeError(msg)
-        service_cls = cast("type[FlextTestsServiceBase]", service_type)
-        service = service_cls.fetch_global()
-        instance.service = service
-        instance.settings = service.fetch_settings()
-        instance.logger = service.logger
-        for alias_name in ("c", "e", "m", "p", "r", "t", "u"):
-            try:
-                alias_value = getattr(tests_package, alias_name)
-            except AttributeError as exc:
-                msg = (
-                    f"{package_name} must re-export the canonical facade letter "
-                    f"'{alias_name}' from its package root for the shared test runtime"
-                )
-                raise AttributeError(msg) from exc
-            setattr(instance, alias_name, alias_value)
-
-    @staticmethod
     def pytest_runtest_setup(item: pytest.Item) -> None:
-        """Reset and bind the canonical runtime before each pytest function."""
+        """Reset the canonical runtime before each pytest item."""
+        _ = item
         FlextTestsSettingsFixtures._reset_runtime_state()
-        if not isinstance(item, pytest.Function):
-            return
-        module = item.module
-        if not isinstance(module, ModuleType):
-            return
-        instance = item.instance
-        FlextTestsSettingsFixtures._bind_runtime_aliases(
-            module=module,
-            instance=(
-                instance
-                if instance is not None
-                and isinstance(instance, flext_tests.FlextTestsCase)
-                else None
-            ),
-        )
 
     @staticmethod
     def pytest_runtest_teardown(
@@ -169,33 +87,10 @@ class FlextTestsSettingsFixtures:
     @staticmethod
     @pytest.fixture
     def test_runtime(
-        request: FlextTestsSettingsFixtures.FixtureNodeRequest,
         reset_settings: None,
     ) -> None:
-        """Bind canonical test runtime aliases after the explicit reset fixture.
-
-        Raises:
-            TypeError: If the pytest function does not belong to a Python module.
-
-        """
+        """Lease the reset lifecycle without constructing consumer dependencies."""
         _ = reset_settings
-        node = request.node
-        if not isinstance(node, pytest.Function):
-            return
-        module = node.module
-        if not isinstance(module, ModuleType):
-            msg = f"pytest function {node.nodeid} must belong to a Python module"
-            raise TypeError(msg)
-        instance = node.instance
-        FlextTestsSettingsFixtures._bind_runtime_aliases(
-            module=module,
-            instance=(
-                instance
-                if instance is not None
-                and isinstance(instance, flext_tests.FlextTestsCase)
-                else None
-            ),
-        )
 
     @staticmethod
     @pytest.fixture

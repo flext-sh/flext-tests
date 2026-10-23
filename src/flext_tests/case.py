@@ -6,26 +6,9 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from flext_tests import FlextTestsServiceBase, FlextTestsSettings, p
-
 
 class FlextTestsCase:
-    """Pytest class MRO surface populated by the shared test runtime fixture."""
-
-    if TYPE_CHECKING:
-        service: FlextTestsServiceBase[p.Base]
-        settings: FlextTestsSettings
-        logger: p.Logger
-        c: type
-        e: type
-        m: type
-        p: type
-        r: type
-        t: type
-        u: type
+    """Public class-style suite marker with explicitly supplied dependencies."""
 
 
 __all__: list[str] = ["FlextTestsCase"]
