@@ -19,6 +19,16 @@ class FlextTestsMatchersAssertionsMixin:
     """Centralized AssertionError factories with structured messages."""
 
     @staticmethod
+    def reject(*args: p.GuardInput) -> Never:
+        """Stop a failed native guard without coercing its assertion arguments.
+
+        Raises:
+            AssertionError: Always, retaining the supplied arguments by reference.
+
+        """
+        raise AssertionError(*args)
+
+    @staticmethod
     def raise_match_assertion(
         template: str,
         *,

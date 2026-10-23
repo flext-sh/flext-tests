@@ -17,6 +17,22 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
     """Matcher scope and error tests."""
 
     @staticmethod
+    def test_reject_preserves_an_argumentless_assertion() -> None:
+        """An unconditional matcher failure keeps native assertion arguments."""
+        with pytest.raises(AssertionError) as failure:
+            tm.reject()
+        tm.that(failure.value.args, eq=())
+
+    @staticmethod
+    def test_reject_preserves_the_message_object() -> None:
+        """Messages stay native objects rather than eagerly formatted strings."""
+        message = ["native", "message"]
+        with pytest.raises(AssertionError) as failure:
+            tm.reject(message)
+        tm.that(len(failure.value.args), eq=1)
+        tm.that(failure.value.args[0] is message, truth=True)
+
+    @staticmethod
     def test_check_returns_chain() -> None:
         """tm.check() chains assertions over the result it was given."""
         result = r[int].ok(42)
