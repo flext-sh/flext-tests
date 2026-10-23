@@ -38,7 +38,6 @@ class FlextTestsMatchersAssertionsMixin:
     def assert_len_match(
         *,
         payload: p.Tests.Payload,
-        sized: p.AttributeProbe,
         length_spec: int | tuple[int, int],
         msg: str | None,
     ) -> None:
@@ -62,7 +61,7 @@ class FlextTestsMatchersAssertionsMixin:
                 case (min_len, max_len):
                     if min_len <= payload_len <= max_len:
                         return
-        actual_len = len(sized) if isinstance(sized, Sized) else 0
+        actual_len = len(native) if isinstance(native, Sized) else 0
         # mro-j47u: both declared matcher forms fail with assertion semantics.
         match length_spec:
             case int() as exact_length:

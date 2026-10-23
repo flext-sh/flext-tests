@@ -12,7 +12,7 @@ import time
 from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING, Annotated, Self, override
+from typing import Annotated, Self, override
 
 from docker import (
     DockerClient as DockerSDKClient,
@@ -27,9 +27,6 @@ from python_on_whales import DockerClient as WhalesDockerClient
 from python_on_whales.exceptions import DockerException as WhalesDockerException
 
 from flext_tests import FlextTestsDockerSurfaceParts, c, m, p, r, s, t, u
-
-if TYPE_CHECKING:
-    from docker.models.containers import Container
 
 
 class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
@@ -210,17 +207,6 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         states = u.Tests.list_container_states(self.state_dir).unwrap()
         return tuple(state.container_name for state in states if state.dirty)
 
-    def container_dirty(self, container_name: str) -> bool:
-        """Whether the host record marks a container dirty.
-
-        Returns:
-            The resulting ``bool``.
-
-        """
-        return (
-            u.Tests.read_container_state(self.state_dir, container_name).unwrap().dirty
-        )
-
     def mark_container_clean(self, container_name: str) -> p.Result[bool]:
         """Mark a container clean in the host record.
 
@@ -324,7 +310,6 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
             return r[str].fail_op("Compose down", exc)
         return r[str].ok("Compose down successful")
 
-    @override
     def _compose_up(
         self,
         compose_path: Path,
@@ -390,53 +375,6 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
             catch=c.EXC_VALIDATION_VALUE,
             op_name=f"Parse docker inspect of {container_name}",
         )
-
-    def start_existing_container(self, container_name: str) -> p.Result[bool]:
-        """Start an existing stopped container by name.
-
-        Returns:
-            The resulting ``p.Result[bool]``.
-
-        """
-        enabled = self.lifecycle_enabled()
-        if enabled.failure:
-            return enabled
-        client = self.client
-        if client is None:
-            error = self.client_error or "Docker daemon unavailable"
-            return r[bool].fail(error)
-        try:
-            container = client.containers.get(container_name)
-        except NotFound:
-            return r[bool].fail(f"Container {container_name} not found")
-        except (DockerException, OSError, RuntimeError, AttributeError) as exc:
-            return r[bool].fail(
-                f"Failed to inspect container {container_name}: {exc}",
-                exception=exc,
-            )
-        return self._start_sdk_container(container_name, container)
-
-    @staticmethod
-    def _start_sdk_container(
-        container_name: str,
-        container: Container,
-    ) -> p.Result[bool]:
-        """Start a Docker SDK container when it is not already running.
-
-        Returns:
-            The resulting ``p.Result[bool]``.
-
-        """
-        try:
-            if container.status == c.Tests.ContainerStatus.RUNNING:
-                return r[bool].ok(value=True)
-            container.start()
-        except (DockerException, OSError, RuntimeError, AttributeError) as exc:
-            return r[bool].fail(
-                f"Failed to start container {container_name}: {exc}",
-                exception=exc,
-            )
-        return r[bool].ok(value=True)
 
     @staticmethod
     def wait_for_port_ready(

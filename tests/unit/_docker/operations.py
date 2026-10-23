@@ -26,15 +26,6 @@ class TestsFlextTestsDockerOperationsMixin:
         _ = u.Tests.assert_failure(result)
 
     @staticmethod
-    def test_start_existing_container_not_found(
-        docker_manager: FlextTestsDocker,
-    ) -> None:
-        """Test starting a container returns a failure result when unavailable."""
-        result = docker_manager.start_existing_container("nonexistent_container")
-        _ = u.Tests.assert_failure(result)
-        tm.that(result.error, is_=str)
-
-    @staticmethod
     def test_fetch_container_info_not_found(
         docker_manager: FlextTestsDocker,
     ) -> None:
@@ -81,7 +72,7 @@ class TestsFlextTestsDockerOperationsMixin:
             result = docker_manager.cleanup_dirty_containers()
         _ = u.Tests.assert_success(result)
         tm.that(result.value, empty=True)
-        tm.ok(docker_manager.container_dirty(foreign))
+        tm.that(docker_manager.dirty_containers, has=foreign)
 
     @staticmethod
     def test_default_state_dir_is_host_scoped() -> None:

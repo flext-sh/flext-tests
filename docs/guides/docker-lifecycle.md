@@ -30,14 +30,14 @@ unreadable or invalid record fails every reader and writer with its cause; it is
 replaced by the unprovisioned default. A container name outside Docker's own grammar is
 rejected before it becomes a path.
 
-`mark_container_dirty(name)`, `mark_container_clean(name)`, `container_dirty(name)` and
-`dirty_containers` read and write these host records. Marking a container dirty is
+`mark_container_dirty(name)`, `mark_container_clean(name)` and `dirty_containers` read
+and write these host records. Marking a container dirty is
 bookkeeping, not a Docker effect, so it also works under the CI token.
 `cleanup_dirty_containers()` recreates the dirty containers declared in
 `c.Tests.SHARED_CONTAINERS` and leaves the records of every other container to the
 lifecycle that declares it; the first recreation failure is returned.
 
-Every builder (`tk.shared`, `tk.compose`, `tk.stack`, `FlextTestsKube.kind`) and the
+Every builder (`tk.shared`, `tk.compose`, `tk.stack`) and the
 constructor accept `state_dir`. Tests pass a directory under `tmp_path`; nothing a test
 does reaches the host records.
 
@@ -119,10 +119,9 @@ the compose file stem (`u.Tests.docker_compose_project`).
 
 The CI token is owned by flext-infra (`config.Infra.codegen.make.ci`, variable `CI`).
 `tk.ci_disables_docker()` is true only for that exact value; GitHub's `CI=true` is not
-the token. Under the token every Docker effect of `tk` and `FlextTestsKube` (`execute`,
-`up`, `down`, `compose_up`, `compose_down`, `start_compose_stack`,
-`start_existing_container`, `cleanup_dirty_containers`, `verify`, `cluster_up`,
-`cluster_down`, `nodes_ready`) returns a failure whose `error_code` is
+the token. Under the token every Docker effect of `tk` (`execute`, `up`, `down`,
+`compose_down`, `cleanup_dirty_containers`, `verify`) returns a failure whose
+`error_code` is
 `c.Tests.DockerErrorCode.DISABLED_BY_CI`, before touching Docker.
 `tk.lifecycle_enabled()` exposes the same gate. Nothing skips: a suite that runs a
 Docker test under the token fails, typed. Docker tests carry the `docker` marker, which
@@ -132,7 +131,10 @@ not depend on the environment.
 
 ## Removed surfaces
 
-- `worker_id` (field, builder and `FlextTestsKube.kind` parameter): state is per host.
+- `worker_id` (field and builder parameter): state is per host.
+- `FlextTestsKube`, `compose_up`, `start_compose_stack`, `start_existing_container`
+  and `container_dirty`: no consumer used them; host dirty state is read through
+  `dirty_containers`.
 - `dirty_container_names`, `state_file_path` and the `docker_state_<worker>.json` files:
   replaced by the host records. Old files under `~/.flext/` are no longer read.
 - `skip_if_ci_disables_docker()` and `c.Tests.DOCKER_CI_SKIP_REASON`: the CI token is a

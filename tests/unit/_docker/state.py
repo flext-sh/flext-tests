@@ -34,7 +34,6 @@ class TestsFlextTestsDockerStateMixin:
         writer = FlextTestsDocker(state_dir=state_dir)
         _ = u.Tests.assert_success(writer.mark_container_dirty("container1"))
         reader = FlextTestsDocker(state_dir=state_dir)
-        tm.ok(reader.container_dirty("container1"))
         tm.that(reader.dirty_containers, eq=("container1",))
 
     @staticmethod
@@ -42,7 +41,7 @@ class TestsFlextTestsDockerStateMixin:
         """Test marking container as dirty."""
         result = docker_manager.mark_container_dirty("test_container")
         _ = u.Tests.assert_success(result)
-        tm.ok(docker_manager.container_dirty("test_container"))
+        tm.that(docker_manager.dirty_containers, has="test_container")
 
     @staticmethod
     def test_mark_container_clean(docker_manager: FlextTestsDocker) -> None:
@@ -50,14 +49,7 @@ class TestsFlextTestsDockerStateMixin:
         _ = docker_manager.mark_container_dirty("test_container")
         result = docker_manager.mark_container_clean("test_container")
         _ = u.Tests.assert_success(result)
-        tm.fail(docker_manager.container_dirty("test_container"))
-
-    @staticmethod
-    def test_container_dirty(docker_manager: FlextTestsDocker) -> None:
-        """Test checking if container is dirty."""
-        _ = docker_manager.mark_container_dirty("dirty_container")
-        tm.ok(docker_manager.container_dirty("dirty_container"))
-        tm.fail(docker_manager.container_dirty("clean_container"))
+        tm.that(docker_manager.dirty_containers, lacks="test_container")
 
     @staticmethod
     def test_dirty_containers(docker_manager: FlextTestsDocker) -> None:
@@ -109,9 +101,7 @@ class TestsFlextTestsDockerStateMixin:
         failure = u.Tests.read_container_state(docker_manager.state_dir, "corrupt")
         tm.fail(failure, has=str(record))
         tm.fail(docker_manager.mark_container_dirty("corrupt"), has=str(record))
-        with pytest.raises(RuntimeError):
-            docker_manager.container_dirty("corrupt")
-        with pytest.raises(RuntimeError):
+        with pytest.raises(m.ValidationError):
             _ = docker_manager.dirty_containers
         tm.that(record.read_text(encoding="utf-8"), eq="{not json")
 

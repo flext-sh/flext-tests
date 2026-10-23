@@ -68,13 +68,7 @@ class TestsFlextTestsDockerCiMixin:
             tm.fail(docker.verify(), code=disabled)
             tm.fail(docker.up(), code=disabled)
             tm.fail(docker.down(), code=disabled)
-            tm.fail(docker.compose_up(str(compose_file)), code=disabled)
             tm.fail(docker.compose_down(str(compose_file)), code=disabled)
-            tm.fail(docker.start_compose_stack(str(compose_file)), code=disabled)
-            tm.fail(
-                docker.start_existing_container("flext-tests-ci-gate"),
-                code=disabled,
-            )
             tm.fail(docker.cleanup_dirty_containers(), code=disabled)
 
     @staticmethod
@@ -84,4 +78,4 @@ class TestsFlextTestsDockerCiMixin:
         docker = FlextTestsDocker(state_dir=tmp_path)
         with u.Tests.env_vars_context({ci.variable: ci.value}):
             _ = u.Tests.assert_success(docker.mark_container_dirty("flext-tests-ci"))
-        tm.ok(docker.container_dirty("flext-tests-ci"))
+        tm.that(docker.dirty_containers, has="flext-tests-ci")

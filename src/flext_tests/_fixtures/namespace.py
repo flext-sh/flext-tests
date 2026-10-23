@@ -75,21 +75,3 @@ class FlextTestsNamespaceFixtures:
             checkout_root=Path(config.rootpath),
         )
         return namespace
-
-    @staticmethod
-    @pytest.fixture
-    def test_namespace(run_namespace: m.Tests.TestNamespace) -> m.Tests.TestNamespace:
-        """Function namespace: the run token plus a fresh per-test token.
-
-        Returns:
-            m.Tests.TestNamespace: A function-scoped test namespace.
-
-        """
-        namespace: m.Tests.TestNamespace = import_module(
-            "flext_tests"
-        ).u.Tests.namespace(
-            worker_id=run_namespace.worker,
-            testrun_uid=f"{run_namespace.run_token}-{run_namespace.issued_at_ns}",
-            checkout_root=Path(run_namespace.root),
-        )
-        return namespace

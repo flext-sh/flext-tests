@@ -227,8 +227,7 @@ class TestsFlextTestsEnforcementPlugin:
                 @pytest.mark.parametrize('case', range(2))
                 def test_shared(case: int, session_runtime: p.Tests.SessionRuntime,
                                 run_namespace: m.Tests.TestNamespace,
-                                test_namespace: m.Tests.TestNamespace,
-                                temp_dir: Path, temp_file: Path) -> None:
+                                temp_dir: Path) -> None:
                     root = FlextSettings.fetch_global()
                     tests_root = FlextTestsSettings.fetch_global()
                     container = FlextContainer()
@@ -248,8 +247,7 @@ class TestsFlextTestsEnforcementPlugin:
                     FlextTestsSettings.update_global(trace=not tests_root.trace)
                     TestsFirstConsumer.runtime = session_runtime
                     TestsFirstConsumer.namespace = run_namespace
-                    tm.that(temp_file.parent, eq=temp_dir)
-                    tm.ok(bool(test_namespace.token))
+                    tm.ok(temp_dir.is_dir())
                     tm.ok(session_runtime.directory.is_dir())
                     Path(f'runtime-{case}').write_text(str(session_runtime.directory))
 

@@ -58,7 +58,7 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
     def test_ok_invalid_parameter_type() -> None:
         """tm.ok() rejects an invalid criterion, naming the offending field."""
         result = r[int].ok(42)
-        with pytest.raises(m.ValidationError, match=r"for OkParams\nlen") as error:
+        with pytest.raises(m.ValidationError, match=r"for ThatParams\nlen") as error:
             tm.ok(result, len="invalid")
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"len"})
 

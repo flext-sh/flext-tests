@@ -25,12 +25,10 @@ class FlextTestsFixturesDSLMixin:
     Then test code calls::
 
         content = u.Project.Tests.load("oid", "schema")
-        all_s = u.Project.Tests.for_kind("schema")  # {server: content}
-        all_k = u.Project.Tests.for_group("oid")  # {kind: content}
-        nested = u.Project.Tests.all_fixtures()  # {server: {kind: content}}
+        fixture = u.Project.Tests.path("oid", "schema")  # existing file path
+        present = u.Project.Tests.exists("oid", "schema")
         servers = u.Project.Tests.servers()  # ("oid", "oud", …)
         kinds = u.Project.Tests.kinds("oid")  # ("acl", "entries", …)
-        p_params = u.Project.Tests.pytest_params("schema")  # [(server, content), …]
     """
 
     _FIXTURES_ROOT: ClassVar[Path | None] = None
@@ -140,68 +138,6 @@ class FlextTestsFixturesDSLMixin:
                 if name.startswith(prefix) and name.endswith(suffix)
             ),
         )
-
-    @classmethod
-    def for_group(cls, group: str) -> t.MappingKV[str, str]:
-        """All kinds for one server: {kind: content}.
-
-        Returns:
-            The resulting ``t.MappingKV[str, str]``.
-
-        """
-        return {kind: cls.load(group, kind) for kind in cls.kinds(group)}
-
-    @classmethod
-    def for_kind(cls, kind: str) -> t.MappingKV[str, str]:
-        """All servers that have that kind: {server: content}.
-
-        Returns:
-            The resulting ``t.MappingKV[str, str]``.
-
-        """
-        return {
-            server: cls.load(server, kind)
-            for server in cls.servers()
-            if cls.exists(server, kind)
-        }
-
-    @classmethod
-    def all_fixtures(cls) -> t.MappingKV[str, t.MappingKV[str, str]]:
-        """Full nested fixture dict: {server: {kind: content}}.
-
-        Returns:
-            The resulting ``t.MappingKV[str, t.MappingKV[str, str]]``.
-
-        """
-        return {server: cls.for_group(server) for server in cls.servers()}
-
-    @classmethod
-    def pytest_params(cls, kind: str) -> t.StrPairSequence:
-        """All (server, content) tuples for a given kind — ready for parametrize.
-
-        Returns:
-            The resulting ``t.StrPairSequence``.
-
-        """
-        return [
-            (server, cls.load(server, kind))
-            for server in cls.servers()
-            if cls.exists(server, kind)
-        ]
-
-    @classmethod
-    def all_pytest_params(cls) -> t.SequenceOf[tuple[str, str, str]]:
-        """All (server, kind, content) triples — ready for full-matrix parametrize.
-
-        Returns:
-            The resulting ``t.SequenceOf[tuple[str, str, str]]``.
-
-        """
-        return [
-            (server, kind, cls.load(server, kind))
-            for server in cls.servers()
-            for kind in cls.kinds(server)
-        ]
 
 
 __all__: list[str] = ["FlextTestsFixturesDSLMixin"]

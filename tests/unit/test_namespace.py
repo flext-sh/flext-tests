@@ -110,15 +110,6 @@ class TestsFlextTestsNamespace:
         """The session fixture returns the same namespace within a run."""
         tm.that(run_namespace.token, eq=run_namespace_again.token)
 
-    @staticmethod
-    def test_test_namespace_differs_per_test(
-        test_namespace: m.Tests.TestNamespace,
-    ) -> None:
-        """The function fixture yields a valid per-test token."""
-        tm.that(
-            re.match(c.Tests.NAMESPACE_ID_PATTERN, test_namespace.token), none=False
-        )
-
 
 @pytest.fixture
 def run_namespace_again(run_namespace: m.Tests.TestNamespace) -> m.Tests.TestNamespace:

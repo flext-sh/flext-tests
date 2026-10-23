@@ -262,17 +262,6 @@ class FlextTestsSettingsFixtures:
 
     @staticmethod
     @pytest.fixture
-    def temp_file(temp_dir: Path) -> Path:
-        """Provide the canonical temporary file path rooted at temp_dir.
-
-        Returns:
-            Path: Path to the temporary file inside the temporary directory.
-
-        """
-        return temp_dir / "test_file.txt"
-
-    @staticmethod
-    @pytest.fixture
     def sample_data() -> t.JsonMapping:
         """Provide the existing canonical JSON payload for generic test cases.
 

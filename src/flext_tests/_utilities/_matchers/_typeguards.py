@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Sized
-from typing import Final, TypeAliasType
+from typing import Final
 
 import pytest
 from flext_cli import u
@@ -36,44 +36,11 @@ class FlextTestsMatchersTypeGuardsMixin:
         return isinstance(value, expected_type)
 
     @staticmethod
-    def prepare_eq_ne_payloads(
-        actual_payload: p.Tests.Payload,
-        eq_value: p.Tests.Payload | p.Tests.ApproxLike | TypeAliasType | None,
-        ne_value: p.Tests.Payload | p.Tests.ApproxLike | TypeAliasType | None,
-        *,
-        msg: str | None,
-        default_msg: str,
-    ) -> None:
-        """Compare native values directly without JSON or envelope equality.
-
-        Raises:
-            AssertionError: If ``(actual == operand) is not equal``.
-
-        """
-        actual = (
-            FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                actual_payload,
-            )
-        )
-        for expected, equal in ((eq_value, True), (ne_value, False)):
-            if expected is None:
-                continue
-            operand = (
-                FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                    expected,
-                )
-                if isinstance(expected, m.Tests.Payload)
-                else expected
-            )
-            if (actual == operand) is not equal:
-                raise AssertionError(msg or default_msg)
-
-    @staticmethod
     def assert_scalar_match(
         payload: p.Tests.Payload,
-        params: m.Tests.ThatParams | m.Tests.OkParams,
+        params: m.Tests.ThatParams,
     ) -> None:
-        """Apply native equality then the canonical finite scalar guard.
+        """Apply the canonical finite scalar guard to the native projection.
 
         Raises:
             AssertionError: If ``params.none is not None and (native is None) is not
@@ -88,13 +55,6 @@ class FlextTestsMatchersTypeGuardsMixin:
             )
         )
         message = params.msg or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=native)
-        FlextTestsMatchersTypeGuardsMixin.prepare_eq_ne_payloads(
-            payload,
-            params.eq,
-            params.ne,
-            msg=params.msg,
-            default_msg=message,
-        )
         if params.none is not None and (native is None) is not params.none:
             raise AssertionError(message)
         scalar_criteria = (

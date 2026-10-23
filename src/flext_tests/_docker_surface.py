@@ -13,7 +13,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from flext_tests import r, u
+from flext_tests import u
 
 if TYPE_CHECKING:
     from flext_tests import m, p, t
@@ -31,16 +31,6 @@ class FlextTestsDockerFacadeInternals:
         raise NotImplementedError
 
     def _compose_down(self, _compose_path: Path, _project: str) -> p.Result[str]:
-        raise NotImplementedError
-
-    def _compose_up(
-        self,
-        _compose_path: Path,
-        _project: str,
-        _service: str | None,
-        *,
-        _force_recreate: bool,
-    ) -> p.Result[str]:
         raise NotImplementedError
 
     def _inspect(
@@ -70,27 +60,6 @@ class FlextTestsDockerSurfaceParts(_PartsBase):
         return self._compose_down(
             compose_path,
             u.Tests.docker_compose_project(compose_path),
-        )
-
-    def compose_up(
-        self,
-        compose_file: str,
-        service: str | None = None,
-        *,
-        force_recreate: bool = False,
-    ) -> p.Result[str]:
-        """Start the project of one compose file and wait for its health.
-
-        Returns:
-            The resulting ``p.Result[str]``.
-
-        """
-        compose_path = self._compose_path(compose_file)
-        return self._compose_up(
-            compose_path,
-            u.Tests.docker_compose_project(compose_path),
-            service,
-            force_recreate=force_recreate,
         )
 
     def fetch_container_info(
@@ -140,23 +109,6 @@ class FlextTestsDockerSurfaceParts(_PartsBase):
                 keys,
             ),
         )
-
-    def start_compose_stack(
-        self,
-        compose_file: str,
-        network_name: str | None = None,
-    ) -> p.Result[str]:
-        """Start a Docker Compose stack.
-
-        Returns:
-            The resulting ``p.Result[str]``.
-
-        """
-        _ = network_name
-        result = self.compose_up(compose_file)
-        if result.failure:
-            return result.map_error(lambda error: f"Stack start failed: {error}")
-        return r[str].ok("Stack started successfully")
 
 
 __all__: list[str] = ["FlextTestsDockerSurfaceParts"]
