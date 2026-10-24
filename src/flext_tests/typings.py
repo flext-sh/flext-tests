@@ -1,3 +1,4 @@
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Type system foundation for FLEXT tests.
 
 Provides FlextTestsTypes, extending t with test-specific type definitions
@@ -11,9 +12,12 @@ from __future__ import annotations
 
 from flext_cli import FlextCliTypes
 
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
-from flext_tests._typings.files import FlextTestsFilesTypesMixin
-from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
+from flext_tests._typings import (
+    FlextTestsBaseTypesMixin,
+    FlextTestsDockerTypesMixin,
+    FlextTestsFilesTypesMixin,
+    FlextTestsMatchersTypesMixin,
+)
 
 
 class FlextTestsTypes(FlextCliTypes):
@@ -25,6 +29,7 @@ class FlextTestsTypes(FlextCliTypes):
 
     class Tests(
         FlextTestsBaseTypesMixin,
+        FlextTestsDockerTypesMixin,
         FlextTestsFilesTypesMixin,
         FlextTestsMatchersTypesMixin,
     ):

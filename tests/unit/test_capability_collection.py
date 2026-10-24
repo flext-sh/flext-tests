@@ -50,7 +50,7 @@ class TestsFlextTestsCapabilityCollection:
             yield pytester
 
     @staticmethod
-    def _run(consumer: pytest.Pytester) -> pytest.RunResult:
+    def _run(consumer: pytest.Pytester, *paths: str) -> pytest.RunResult:
         return u.Tests.pytest_subprocess(
             consumer,
             "-p",
@@ -58,38 +58,53 @@ class TestsFlextTestsCapabilityCollection:
             "-p",
             "no:cacheprovider",
             "-rs",
+            *paths,
         )
 
     @staticmethod
     @pytest.mark.slow
-    def test_missing_env_skips_before_fixtures(
+    def test_remote_markers_skip_without_local_env(
         consumer: pytest.Pytester,
     ) -> None:
-        """Test missing env skips before fixtures."""
-        markers = tuple(
-            dict.fromkeys((*c.Tests.CONNECTIVITY_MARKERS, "remote", "connectivity"))
-        )
-        consumer.makepyfile(
-            "import pytest\n"
-            f"@pytest.mark.parametrize('marker', {markers!r})\n"
-            "def test_external(marker, request):\n"
-            "    pytest.fail('test executed')\n"
-            "@pytest.mark.integration\n"
-            "def test_pure_integration():\n    pass\n",
-        )
-        consumer.makeconftest(
-            "import pytest\n"
-            "def pytest_collection_modifyitems(items):\n"
-            "    for item in items:\n"
-            "        if 'test_external' in item.name:\n"
-            "            item.add_marker(getattr(pytest.mark, "
-            "item.callspec.params['marker']))\n"
-            "            item.add_marker(pytest.mark.usefixtures('service'))\n"
-            "@pytest.fixture\n"
-            "def service():\n    pytest.fail('service fixture executed')\n",
-        )
+        """Remote services need the developer's untracked .env; none is present."""
+        _ = consumer.copy_example("capability_markers")
+        result = TestsFlextTestsCapabilityCollection._run(consumer, "test_remote.py")
+        result.assert_outcomes(passed=1, skipped=2)
+        result.stdout.fnmatch_lines(["*External tests require a local untracked .env*"])
+        tm.that(result.ret, eq=0)
+
+    @staticmethod
+    @pytest.mark.slow
+    def test_docker_markers_skip_only_when_docker_unreachable(
+        consumer: pytest.Pytester,
+    ) -> None:
+        """Docker-provisioned markers never ask for .env; an absent daemon skips."""
+        _ = consumer.copy_example("capability_markers")
+        with socket.socket() as closed_endpoint:
+            closed_endpoint.bind(("127.0.0.1", 0))
+            port = closed_endpoint.getsockname()[1]
+            with u.Tests.env_vars_context(
+                {c.Tests.DOCKER_HOST_VARIABLE: f"tcp://127.0.0.1:{port}"},
+                vars_to_clear=("DOCKER_TLS_VERIFY", "DOCKER_CERT_PATH"),
+            ):
+                result = TestsFlextTestsCapabilityCollection._run(
+                    consumer, "test_docker_markers.py"
+                )
+        result.assert_outcomes(skipped=len(c.Tests.CONNECTIVITY_MARKERS))
+        result.stdout.fnmatch_lines(["*Docker test environment is unreachable*"])
+        result.stdout.no_fnmatch_line("*untracked .env*")
+        tm.that(result.ret, eq=0)
+
+    @staticmethod
+    @pytest.mark.slow
+    @pytest.mark.docker
+    def test_docker_marker_runs_with_isolated_environment(
+        consumer: pytest.Pytester,
+    ) -> None:
+        """With Docker up, the test runs on a generated, isolated .env."""
+        _ = consumer.copy_example("capability_docker_isolated_env")
         result = TestsFlextTestsCapabilityCollection._run(consumer)
-        result.assert_outcomes(passed=1, skipped=len(markers))
+        result.assert_outcomes(passed=1)
         tm.that(result.ret, eq=0)
 
     @staticmethod

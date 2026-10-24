@@ -10,6 +10,8 @@ from enum import StrEnum, unique
 from types import MappingProxyType
 from typing import TYPE_CHECKING, ClassVar
 
+from python_on_whales.exceptions import DockerException as ComposeDockerException
+
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
@@ -26,6 +28,14 @@ class FlextTestsConstantsDocker:
         "Docker lifecycle disabled under {variable}={value}: "
         "container tests are not executed in CI"
     )
+    DOCKER_TEST_ENVIRONMENT_DIR: ClassVar[str] = "docker-test-environment"
+    DOCKER_TEST_ENVIRONMENT_FIXTURE: ClassVar[str] = "docker_test_environment"
+    DOCKER_HOST_VARIABLE: ClassVar[str] = "DOCKER_HOST"
+    DOCKER_SYSTEM_HOST: ClassVar[str] = "unix:///var/run/docker.sock"
+    """Docker's own endpoint variable and system socket (external protocol)."""
+    DOCKER_CI_VARIABLE_INI: ClassVar[str] = "flext_make_ci_variable"
+    DOCKER_CI_VALUE_INI: ClassVar[str] = "flext_make_ci_value"
+    """Generated pytest ini keys projecting flext-infra's Make CI token."""
     DOCKER_CONNECTIVITY_MARKER: ClassVar[str] = "docker"
     DOCKER_CI_SKIP_REASON: ClassVar[str] = (
         "Docker lifecycle disabled under the Make CI token: "
@@ -76,6 +86,11 @@ class FlextTestsConstantsDocker:
     DOCKER_FINGERPRINT_SEPARATOR: ClassVar[bytes] = b"\0"
     DOCKER_FINGERPRINT_SIZE_BYTES: ClassVar[int] = 8
     ERR_DOCKER_NOT_PROVISIONED: ClassVar[str] = "Container {name} does not exist"
+    DOCKER_COMPOSE_ERRORS: ClassVar[tuple[type[Exception], ...]] = (
+        ComposeDockerException,
+        OSError,
+    )
+    """Failures a compose command reports: the CLI's own error and a missing binary."""
     ERR_DOCKER_UNHEALTHY: ClassVar[str] = (
         "Container {name} is {status} with health {health}"
     )

@@ -146,7 +146,7 @@ class TestsFlextTestsDockerLifecycle:
         """A failing healthcheck makes verify fail and ensure recreate."""
         docker = self._docker(project, tmp_path / "state")
         first = tm.ok(docker.execute())
-        client = tm.not_none(docker.client)
+        client = tm.ok(docker.client)
         _ = client.containers.get(first.name).exec_run(["touch", "/unhealthy"])
         _ = self._await_health(docker, first.name, c.Tests.ContainerHealth.UNHEALTHY)
         tm.fail(docker.verify(), code=c.Tests.DockerErrorCode.UNHEALTHY)

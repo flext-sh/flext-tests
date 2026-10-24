@@ -15,6 +15,7 @@ from flext_cli import FlextCliUtilities
 from flext_tests._utilities import (
     FlextTestsConfigHelpersUtilitiesMixin,
     FlextTestsContainerHelpersUtilitiesMixin,
+    FlextTestsDockerClientUtilitiesMixin,
     FlextTestsDockerLifecycleUtilitiesMixin,
     FlextTestsDockerStateUtilitiesMixin,
     FlextTestsEnforcementUtilitiesMixin,
@@ -43,6 +44,7 @@ class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance)
     class Tests(
         FlextTestsUtilitiesBase,
         FlextTestsContainerHelpersUtilitiesMixin,
+        FlextTestsDockerClientUtilitiesMixin,
         FlextTestsDockerLifecycleUtilitiesMixin,
         FlextTestsDockerStateUtilitiesMixin,
         FlextTestsEnforcementUtilitiesMixin,
