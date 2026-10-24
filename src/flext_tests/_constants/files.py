@@ -44,7 +44,7 @@ class FlextTestsConstantsFiles:
     PERMISSION_WRITABLE_DIR: ClassVar[int] = 493
     HASH_CHUNK_SIZE: ClassVar[int] = 8192
     FIXTURE_TREES_PARTS: ClassVar[t.StrSequence] = ("tests", "fixtures")
-    """Checkout-relative directory holding scenario fixture trees (ADR-028 point 9)."""
+    """Tests tier and its scenario fixture-tree directory (ADR-028 point 9)."""
     ERROR_FILE_NOT_FOUND: ClassVar[str] = "File not found: {path}"
     ERROR_INVALID_JSON: ClassVar[str] = "Invalid JSON: {error}"
     ERROR_INVALID_YAML: ClassVar[str] = "Invalid YAML: {error}"

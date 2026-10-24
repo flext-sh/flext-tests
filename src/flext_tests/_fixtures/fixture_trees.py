@@ -19,7 +19,7 @@ import pytest
 
 
 class FlextTestsFixtureTreesFixtures:
-    """Native plugin owner binding the checkout root and ``tmp_path``."""
+    """Native plugin owner binding the requesting test module and ``tmp_path``."""
 
     @staticmethod
     @pytest.fixture
@@ -36,11 +36,7 @@ class FlextTestsFixtureTreesFixtures:
         materialize: Callable[..., Path] = import_module(
             "flext_tests"
         ).u.Tests.materialize
-        return partial(
-            materialize,
-            Path(request.config.rootpath),
-            destination=tmp_path,
-        )
+        return partial(materialize, request.path, destination=tmp_path)
 
 
 __all__: list[str] = ["FlextTestsFixtureTreesFixtures"]

@@ -118,16 +118,17 @@ class FlextTestsFixturesDSLMixin:
         return tuple(sorted(d.name for d in root.iterdir() if d.is_dir()))
 
     @staticmethod
-    def materialize(checkout_root: Path, scenario: str, destination: Path) -> Path:
+    def materialize(test_path: Path, scenario: str, destination: Path) -> Path:
         """Copy one scenario fixture tree into a test-owned directory.
 
-        The tree lives at ``<checkout>/tests/fixtures/<scenario>`` (parts owned by
-        ``c.Tests.FIXTURE_TREES_PARTS``); its contents land directly under
-        ``destination``. This replaces source code or long text embedded as
-        string literals in tests (ADR-028 point 9).
+        The tree lives at ``tests/fixtures/<scenario>`` of the project owning
+        ``test_path`` (parts owned by ``c.Tests.FIXTURE_TREES_PARTS``), so the
+        result does not depend on the directory pytest was started from; its
+        contents land directly under ``destination``. This replaces source code
+        or long text embedded as string literals in tests (ADR-028 point 9).
 
         Args:
-            checkout_root: The project checkout root (pytest ``rootpath``).
+            test_path: A path inside the project's tests tier (the test module).
             scenario: The scenario directory name under the fixtures root.
             destination: The test-owned directory receiving the tree.
 
@@ -135,11 +136,17 @@ class FlextTestsFixturesDSLMixin:
             The ``destination`` path holding the materialized tree.
 
         Raises:
-            FileNotFoundError: If the scenario directory does not exist.
+            FileNotFoundError: If ``test_path`` is outside a tests tier or the
+                scenario directory does not exist.
             FileExistsError: If a scenario file already exists in ``destination``.
 
         """
-        source = checkout_root.joinpath(*c.Tests.FIXTURE_TREES_PARTS, scenario)
+        tier, *below = c.Tests.FIXTURE_TREES_PARTS
+        tests_dirs = [p for p in test_path.resolve().parents if p.name == tier]
+        if not tests_dirs:
+            msg = f"Not inside a {tier}/ tier: {test_path}"
+            raise FileNotFoundError(msg)
+        source = tests_dirs[0].joinpath(*below, scenario)
         if not source.is_dir():
             msg = f"Fixture tree not found: {source}"
             raise FileNotFoundError(msg)
