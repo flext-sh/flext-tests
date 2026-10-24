@@ -13,8 +13,8 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._fixtures import _enforcement_parts as _enforcement_parts
-    from flext_tests._fixtures._enforcement_parts import (
+    from flext_tests._fixtures import _enforcement as _enforcement
+    from flext_tests._fixtures._enforcement import (
         FlextTestsEnforcementBuilder,
         FlextTestsEnforcementCollector,
         FlextTestsEnforcementDispatcher,
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
         project_metadata,
         project_tool_flext,
     )
-    from flext_tests._fixtures.scratch_storage import pytest_addoption, pytest_configure
+    from flext_tests._fixtures.scratch_storage import FlextTestsScratchStoragePlugin
 
 
 __all__: tuple[str, ...] = (
@@ -38,11 +38,10 @@ __all__: tuple[str, ...] = (
     "FlextTestsEnforcementItem",
     "FlextTestsEnforcementValidators",
     "FlextTestsEnforcementViolationError",
-    "_enforcement_parts",
+    "FlextTestsScratchStoragePlugin",
+    "_enforcement",
     "project_metadata",
     "project_tool_flext",
-    "pytest_addoption",
-    "pytest_configure",
 )
 
 install_lazy_exports(
@@ -50,17 +49,16 @@ install_lazy_exports(
     globals(),
     MappingProxyType({
         "FlextTestsCapabilityPlugin": ".connectivity",
-        "FlextTestsEnforcementBuilder": "._enforcement_parts.build",
-        "FlextTestsEnforcementCollector": "._enforcement_parts._collector",
-        "FlextTestsEnforcementDispatcher": "._enforcement_parts.dispatcher",
-        "FlextTestsEnforcementItem": "._enforcement_parts.items",
-        "FlextTestsEnforcementValidators": "._enforcement_parts.validators",
-        "FlextTestsEnforcementViolationError": "._enforcement_parts._error",
-        "_enforcement_parts": "._enforcement_parts",
+        "FlextTestsEnforcementBuilder": "._enforcement.build",
+        "FlextTestsEnforcementCollector": "._enforcement._collector",
+        "FlextTestsEnforcementDispatcher": "._enforcement.dispatcher",
+        "FlextTestsEnforcementItem": "._enforcement.items",
+        "FlextTestsEnforcementValidators": "._enforcement.validators",
+        "FlextTestsEnforcementViolationError": "._enforcement._error",
+        "FlextTestsScratchStoragePlugin": ".scratch_storage",
+        "_enforcement": "._enforcement",
         "project_metadata": ".project_metadata",
         "project_tool_flext": ".project_metadata",
-        "pytest_addoption": ".scratch_storage",
-        "pytest_configure": ".scratch_storage",
     }),
     public_exports=__all__,
 )

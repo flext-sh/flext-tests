@@ -100,7 +100,8 @@ class TestsFlextTestsEnforcementDispatcher:
             The resulting ``pytest.RunResult``.
 
         """
-        return pytester.runpytest_subprocess(
+        return u.Tests.pytest_subprocess(
+            pytester,
             "--collect-only",
             "-q",
             f"--rootdir={project}",
@@ -257,7 +258,7 @@ class TestsFlextTestsEnforcementDispatcher:
         warning filters, so ``--help`` reflects a cold entry-point load.
         """
         pytester.makeini("[pytest]\n")
-        result = pytester.runpytest_subprocess("--help")
+        result = u.Tests.pytest_subprocess(pytester, "--help")
         result.stdout.fnmatch_lines([
             "*--flext-enforce *",
             "*--no-flext-enforce*",

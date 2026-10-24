@@ -18,7 +18,6 @@ from flext_tests._protocols import (
     FlextTestsMatchersProtocolsMixin,
     FlextTestsPayloadProtocolsMixin,
     FlextTestsValueFactoryProtocolsMixin,
-    FlextTestsWorkspaceCleanupProtocols,
 )
 
 
@@ -32,7 +31,6 @@ class FlextTestsProtocols(FlextCliProtocols):
         FlextTestsPayloadProtocolsMixin,
         FlextTestsMatchersProtocolsMixin,
         # NOTE (multi-agent): publish read-only cleanup contracts under p.Tests.
-        FlextTestsWorkspaceCleanupProtocols,
         FlextTestsEnforcementProtocolsMixin,
     ):
         """Test-specific protocols namespace.

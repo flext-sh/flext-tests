@@ -13,7 +13,7 @@ from __future__ import annotations
 from enum import StrEnum, unique
 from typing import ClassVar
 
-from flext_cli import c as cli_c
+from flext_cli import c
 
 
 class FlextTestsConstantsFiles:
@@ -32,25 +32,9 @@ class FlextTestsConstantsFiles:
         HASH = "hash"
         LINES = "lines"
 
-    @unique
-    class Operation(StrEnum):
-        """File operation type enumeration."""
-
-        CREATE = "create"
-        READ = "read"
-        DELETE = "delete"
-
-    @unique
-    class ErrorMode(StrEnum):
-        """Error handling mode enumeration."""
-
-        STOP = "stop"
-        SKIP = "skip"
-        COLLECT = "collect"
-
     # ── Test-specific file constants ────────────────────────────
 
-    DEFAULT_ENCODING: ClassVar[str] = cli_c.DEFAULT_ENCODING
+    DEFAULT_ENCODING: ClassVar[str] = c.DEFAULT_ENCODING
     DEFAULT_BINARY_ENCODING: ClassVar[str] = "binary"
     PERMISSION_READONLY_FILE: ClassVar[int] = 292
     PERMISSION_WRITABLE_FILE: ClassVar[int] = 420

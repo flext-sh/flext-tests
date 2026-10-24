@@ -8,12 +8,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import flext_infra
+import flext_infra.codemod
 import pytest
-from flext_core import r, u as _core_u
-from flext_infra import m as _infra_m, u as _infra_u
-from flext_infra.codemod.batch_gates import FlextInfraModGateEngine
+from flext_core import u
 
-from flext_tests import c, m, p, t
+from flext_tests import c, m, p, r, t
 
 
 class FlextTestsEnforcementUtilitiesMixin:
@@ -26,7 +26,7 @@ class FlextTestsEnforcementUtilitiesMixin:
         """Return catalog rules after applying the include/exclude filters."""
         return tuple(
             rule
-            for rule in _core_u.build_canonical_catalog().rules
+            for rule in u.build_canonical_catalog().rules
             if (not cfg.include or rule.id in cfg.include)
             and rule.id not in cfg.exclude
         )
@@ -36,24 +36,24 @@ class FlextTestsEnforcementUtilitiesMixin:
         repository_root: Path,
         *,
         required_rule_ids: frozenset[str],
-    ) -> p.Result[_infra_m.Infra.ModScanReport]:
+    ) -> p.Result[flext_infra.m.Infra.ModScanReport]:
         """Return the flext-infra rule-engine findings for the workspace.
 
         Every id in ``required_rule_ids`` must be declared by the engine's rule
         plan; a missing rule is a failure, never an empty scan.
         """
-        planned = _infra_u.Infra.codemod_rule_plan(repository_root)
+        planned = flext_infra.u.Infra.codemod_rule_plan(repository_root)
         if planned.failure:
-            return r[_infra_m.Infra.ModScanReport].from_failure(planned)
+            return r[flext_infra.m.Infra.ModScanReport].from_failure(planned)
         missing = sorted(
             required_rule_ids - {rule.id for rule in planned.value.rules},
         )
         if missing:
-            return r[_infra_m.Infra.ModScanReport].fail(
+            return r[flext_infra.m.Infra.ModScanReport].fail(
                 "enforcement names flext-infra rules that config/rules does not "
                 f"declare: {', '.join(missing)}",
             )
-        return FlextInfraModGateEngine.scan(
+        return flext_infra.codemod.FlextInfraModGateEngine.scan(
             repository_root,
             fix=False,
             selection=planned.value,

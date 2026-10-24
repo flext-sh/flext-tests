@@ -1,0 +1,122 @@
+"""Private matcher scope and error test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
+
+from __future__ import annotations
+
+import os
+
+import pytest
+
+from tests import c, m, p, r, tm
+
+
+class TestsFlextTestsMatchersScopeErrorsMixin:
+    """Matcher scope and error tests."""
+
+    @staticmethod
+    def test_reject_preserves_an_argumentless_assertion() -> None:
+        """An unconditional matcher failure keeps native assertion arguments."""
+        with pytest.raises(AssertionError) as failure:
+            tm.reject()
+        tm.that(failure.value.args, eq=())
+
+    @staticmethod
+    def test_reject_preserves_the_message_object() -> None:
+        """Messages stay native objects rather than eagerly formatted strings."""
+        message = ["native", "message"]
+        with pytest.raises(AssertionError) as failure:
+            tm.reject(message)
+        tm.that(len(failure.value.args), eq=1)
+        tm.that(failure.value.args[0] is message, truth=True)
+
+    @staticmethod
+    def test_reject_keeps_guard_narrowing_and_lazy_message() -> None:
+        """A failed guard exits once and only then evaluates its message."""
+        events: list[str] = []
+
+        def explain() -> list[str]:
+            events.append("message")
+            return events
+
+        def guarded(value: str | None) -> str:
+            if value is None:
+                tm.reject(explain())
+            return value
+
+        tm.that(guarded("valid"), eq="valid")
+        tm.that(events, eq=[])
+        with pytest.raises(AssertionError) as failure:
+            guarded(None)
+        tm.that(events, eq=["message"])
+        tm.that(failure.value.args[0] is events, truth=True)
+
+    @staticmethod
+    def test_check_returns_chain() -> None:
+        """tm.check() chains assertions over the result it was given."""
+        result = r[int].ok(42)
+        chain: m.Tests.Chain[int] = tm.check(result)
+        tm.ok(chain.result is result)
+
+    @staticmethod
+    def test_scope_with_settings() -> None:
+        """Test tm.scope() with settings parameter."""
+        with tm.scope(settings={"debug": True}) as scope:
+            tm.ok(scope.settings["debug"] is True)
+
+    @staticmethod
+    def test_scope_with_container() -> None:
+        """Test tm.scope() with container parameter."""
+        mock_service = "test_service_value"
+        with tm.scope(container={"service": mock_service}) as scope:
+            tm.that(scope.container["service"], eq=mock_service)
+
+    @staticmethod
+    def test_scope_with_context() -> None:
+        """Test tm.scope() with context parameter."""
+        with tm.scope(context={c.ContextKey.USER_ID: 123}) as scope:
+            tm.that(scope.context[c.ContextKey.USER_ID], eq=123)
+
+    @staticmethod
+    def test_scope_applies_removes_and_restores_real_environment() -> None:
+        """Environment scope restores both overridden and removed names."""
+        present_key = "FLEXT_TEST_SCOPE_PRESENT"
+        removed_key = "FLEXT_TEST_SCOPE_REMOVED"
+        with tm.scope(env={removed_key: "outer"}):
+            with tm.scope(env={present_key: "inner"}, remove_env_keys=(removed_key,)):
+                tm.that(os.environ[present_key], eq="inner")
+                tm.fail(removed_key in os.environ)
+            tm.that(os.environ[removed_key], eq="outer")
+            tm.fail(present_key in os.environ)
+
+    @staticmethod
+    def test_ok_invalid_parameter_type() -> None:
+        """tm.ok() rejects an invalid criterion, naming the offending field."""
+        result = r[int].ok(42)
+        with pytest.raises(m.ValidationError, match=r"for ThatParams\nlen") as error:
+            tm.ok(result, len="invalid")
+        tm.that({item["loc"][0] for item in error.value.errors()}, eq={"len"})
+
+    @staticmethod
+    def test_fail_invalid_parameter_type() -> None:
+        """tm.fail() rejects an invalid criterion, naming the offending field."""
+        result: p.Result[str] = r[str].fail("error")
+        with pytest.raises(m.ValidationError, match=r"for FailParams\ncode") as error:
+            tm.fail(result, code=123)
+        tm.that({item["loc"][0] for item in error.value.errors()}, eq={"code"})
+
+    @staticmethod
+    def test_that_invalid_parameter_type() -> None:
+        """tm.that() rejects an invalid criterion, naming the offending field."""
+        with pytest.raises(m.ValidationError, match=r"for ThatParams\nlen") as error:
+            tm.that([1, 2, 3], len="invalid")
+        tm.that({item["loc"][0] for item in error.value.errors()}, eq={"len"})
+
+    @staticmethod
+    def test_scope_invalid_parameter_type() -> None:
+        """Invalid scope input preserves Pydantic's structured validation error."""
+        with pytest.raises(c.ValidationError) as error, tm.scope(env="invalid"):
+            pass
+        tm.that({item["loc"][0] for item in error.value.errors()}, eq={"env"})

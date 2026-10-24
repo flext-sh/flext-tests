@@ -16,7 +16,6 @@ if TYPE_CHECKING:
     from flext_tests._utilities import _files as _files, _matchers as _matchers
     from flext_tests._utilities._files import (
         FlextTestsFilesAssertionsMixin,
-        FlextTestsFilesBatchMixin,
         FlextTestsFilesComparisonMixin,
         FlextTestsFilesContextsMixin,
         FlextTestsFilesCreationMixin,
@@ -45,21 +44,8 @@ if TYPE_CHECKING:
     from flext_tests._utilities.environment import FlextTestsEnvironmentUtilitiesMixin
     from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
     from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
-    from flext_tests._utilities.generic import FlextTestsGenericHelpersUtilitiesMixin
     from flext_tests._utilities.governance import FlextTestsFlextUtilitiesGovernance
     from flext_tests._utilities.handler import FlextTestsFlextUtilitiesHandler
-    from flext_tests._utilities.make import FlextTestsMakeUtilitiesMixin
-    from flext_tests._utilities.make_contract import (
-        FlextTestsFlextUtilitiesMakeContract,
-        FlextTestsMakeContractUtilitiesMixin,
-    )
-    from flext_tests._utilities.make_parsing import FlextTestsMakeParsingUtilitiesMixin
-    from flext_tests._utilities.make_registry import (
-        FlextTestsMakeRegistryUtilitiesMixin,
-    )
-    from flext_tests._utilities.make_rendering import (
-        FlextTestsMakeRenderingUtilitiesMixin,
-    )
     from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
     from flext_tests._utilities.namespace import FlextTestsNamespaceUtilitiesMixin
     from flext_tests._utilities.payload import (
@@ -72,21 +58,6 @@ if TYPE_CHECKING:
     )
     from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
     from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
-    from flext_tests._utilities.workspace_cleanup import (
-        FlextTestsWorkspaceCleanupUtilitiesMixin,
-    )
-    from flext_tests._utilities.workspace_cleanup_git import (
-        FlextTestsWorkspaceCleanupGitUtilitiesMixin,
-    )
-    from flext_tests._utilities.workspace_cleanup_inspect import (
-        FlextTestsWorkspaceCleanupInspectUtilitiesMixin,
-    )
-    from flext_tests._utilities.workspace_cleanup_paths import (
-        FlextTestsWorkspaceCleanupPathsUtilitiesMixin,
-    )
-    from flext_tests._utilities.workspace_cleanup_plan import (
-        FlextTestsWorkspaceCleanupPlanUtilitiesMixin,
-    )
 
 
 __all__: tuple[str, ...] = (
@@ -97,7 +68,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsEnforcementUtilitiesMixin",
     "FlextTestsEnvironmentUtilitiesMixin",
     "FlextTestsFilesAssertionsMixin",
-    "FlextTestsFilesBatchMixin",
     "FlextTestsFilesComparisonMixin",
     "FlextTestsFilesContextsMixin",
     "FlextTestsFilesCreationMixin",
@@ -108,14 +78,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsFixturesDSLMixin",
     "FlextTestsFlextUtilitiesGovernance",
     "FlextTestsFlextUtilitiesHandler",
-    "FlextTestsFlextUtilitiesMakeContract",
     "FlextTestsFlextUtilitiesPayload",
-    "FlextTestsGenericHelpersUtilitiesMixin",
-    "FlextTestsMakeContractUtilitiesMixin",
-    "FlextTestsMakeParsingUtilitiesMixin",
-    "FlextTestsMakeRegistryUtilitiesMixin",
-    "FlextTestsMakeRenderingUtilitiesMixin",
-    "FlextTestsMakeUtilitiesMixin",
     "FlextTestsMatchersAssertionsMixin",
     "FlextTestsMatchersContainmentMixin",
     "FlextTestsMatchersImmutabilityMixin",
@@ -130,11 +93,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsScratchStorageUtilitiesMixin",
     "FlextTestsTestContextUtilitiesMixin",
     "FlextTestsUtilitiesBase",
-    "FlextTestsWorkspaceCleanupGitUtilitiesMixin",
-    "FlextTestsWorkspaceCleanupInspectUtilitiesMixin",
-    "FlextTestsWorkspaceCleanupPathsUtilitiesMixin",
-    "FlextTestsWorkspaceCleanupPlanUtilitiesMixin",
-    "FlextTestsWorkspaceCleanupUtilitiesMixin",
     "_files",
     "_matchers",
 )
@@ -150,8 +108,7 @@ install_lazy_exports(
         "FlextTestsEnforcementUtilitiesMixin": ".enforcement",
         "FlextTestsEnvironmentUtilitiesMixin": ".environment",
         "FlextTestsFilesAssertionsMixin": "._files._assertions",
-        "FlextTestsFilesBatchMixin": "._files._batch",
-        "FlextTestsFilesComparisonMixin": "._files._comparison",
+        "FlextTestsFilesComparisonMixin": "._files._comparison.comparison_part_02",
         "FlextTestsFilesContextsMixin": "._files._contexts",
         "FlextTestsFilesCreationMixin": "._files._creation",
         "FlextTestsFilesInfoMixin": "._files._info",
@@ -161,14 +118,7 @@ install_lazy_exports(
         "FlextTestsFixturesDSLMixin": ".fixtures_dsl",
         "FlextTestsFlextUtilitiesGovernance": ".governance",
         "FlextTestsFlextUtilitiesHandler": ".handler",
-        "FlextTestsFlextUtilitiesMakeContract": ".make_contract",
         "FlextTestsFlextUtilitiesPayload": ".payload",
-        "FlextTestsGenericHelpersUtilitiesMixin": ".generic",
-        "FlextTestsMakeContractUtilitiesMixin": ".make_contract",
-        "FlextTestsMakeParsingUtilitiesMixin": ".make_parsing",
-        "FlextTestsMakeRegistryUtilitiesMixin": ".make_registry",
-        "FlextTestsMakeRenderingUtilitiesMixin": ".make_rendering",
-        "FlextTestsMakeUtilitiesMixin": ".make",
         "FlextTestsMatchersAssertionsMixin": "._matchers._assertions",
         "FlextTestsMatchersContainmentMixin": "._matchers._containment",
         "FlextTestsMatchersImmutabilityMixin": "._matchers._immutability",
@@ -183,11 +133,6 @@ install_lazy_exports(
         "FlextTestsScratchStorageUtilitiesMixin": ".scratch_storage",
         "FlextTestsTestContextUtilitiesMixin": ".testcontext",
         "FlextTestsUtilitiesBase": ".base",
-        "FlextTestsWorkspaceCleanupGitUtilitiesMixin": ".workspace_cleanup_git",
-        "FlextTestsWorkspaceCleanupInspectUtilitiesMixin": ".workspace_cleanup_inspect",
-        "FlextTestsWorkspaceCleanupPathsUtilitiesMixin": ".workspace_cleanup_paths",
-        "FlextTestsWorkspaceCleanupPlanUtilitiesMixin": ".workspace_cleanup_plan",
-        "FlextTestsWorkspaceCleanupUtilitiesMixin": ".workspace_cleanup",
         "_files": "._files",
         "_matchers": "._matchers",
     }),

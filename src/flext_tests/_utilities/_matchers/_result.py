@@ -9,16 +9,9 @@ from __future__ import annotations
 from collections.abc import Callable, MutableMapping
 from typing import TypeAliasType, overload
 
-from flext_core import p as core_p, u
-
 from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsPayloadUtilities
-from flext_tests._utilities._matchers import (
-    FlextTestsMatchersAssertionsMixin,
-    FlextTestsMatchersContainmentMixin,
-    FlextTestsMatchersThatMixin,
-    FlextTestsMatchersTypeGuardsMixin,
-)
+from flext_tests._utilities._matchers import FlextTestsMatchersThatMixin
 from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
 
 
@@ -42,79 +35,69 @@ class FlextTestsMatchersResultMixin:
                 return m.Tests.Chain(result=result)
 
             @staticmethod
+            @overload
+            def fail(result: t.StrictBool, *, msg: str | None = None) -> bool: ...
+
+            @staticmethod
+            @overload
             def fail[TResult](
-                result: core_p.ResultView[TResult],
+                result: p.ResultView[TResult],
                 **kwargs: p.AttributeProbe,
-            ) -> str:
-                """Assert that a result failed and validate its error payload.
+            ) -> str: ...
+
+            @staticmethod
+            def fail[TResult](
+                result: p.ResultView[TResult] | t.StrictBool,
+                **kwargs: p.AttributeProbe,
+            ) -> str | bool:
+                """Require a false boolean or validate a failed result's error.
+
+                Text criteria (``has``, ``lacks``, ``starts``, ``ends``, ``match``)
+                are checked by ``that`` against the error string; ``code``,
+                ``code_has`` and ``data`` are checked against the result.
 
                 Returns:
-                    The resulting ``str``.
+                    The unchanged false boolean or the result's error string.
+
+                Raises:
+                    ValueError: If a boolean is combined with result-only criteria.
 
                 """
                 params = m.Tests.FailParams.model_validate(kwargs)
+                that = FlextTestsMatchersThatMixin.Tests.Matchers.that
+                if isinstance(result, bool):
+                    if params.model_fields_set - {"msg"}:
+                        msg = "Boolean failure checks accept only msg"
+                        raise ValueError(msg)
+                    that(result, eq=False, is_=bool, msg=params.msg)
+                    return result
                 err: str = FlextTestsResultUtilitiesMixin.assert_failure(result)
-                FlextTestsMatchersResultMixin.Tests.Matchers.fail_text(err, params)
+                if any(
+                    criterion is not None
+                    for criterion in (
+                        params.has,
+                        params.lacks,
+                        params.starts,
+                        params.ends,
+                        params.match,
+                    )
+                ):
+                    that(
+                        err,
+                        has=params.has,
+                        lacks=params.lacks,
+                        starts=params.starts,
+                        ends=params.ends,
+                        match=params.match,
+                        msg=params.msg,
+                    )
                 FlextTestsMatchersResultMixin.Tests.Matchers.fail_code(result, params)
                 FlextTestsMatchersResultMixin.Tests.Matchers.fail_data(result, params)
                 return err
 
             @staticmethod
-            def fail_text(err: str, params: m.Tests.FailParams) -> None:
-                """Validate textual error constraints.
-
-                Raises:
-                    AssertionError: If ``params.starts is not None and (not u.chk(err,
-                        m.GuardCheckSpec(starts=params.starts)))``; or if ``params.ends
-                        is not None and (not u.chk(err,
-                        m.GuardCheckSpec(ends=params.ends)))``; or if ``params.match is
-                        not None and params.match.search(err) is None``.
-
-                """
-                if not any(
-                    getattr(params, name)
-                    for name in ("has", "lacks", "starts", "ends", "match")
-                ):
-                    return
-                FlextTestsMatchersContainmentMixin.check_has_lacks(
-                    err,
-                    params.has,
-                    params.lacks,
-                    params.msg,
-                    as_str=True,
-                )
-                if params.starts is not None and (
-                    not u.chk(err, m.GuardCheckSpec(starts=params.starts))
-                ):
-                    raise AssertionError(
-                        params.msg
-                        or c.Tests.ERR_NOT_STARTSWITH.format(
-                            text=err,
-                            prefix=params.starts,
-                        ),
-                    )
-                if params.ends is not None and (
-                    not u.chk(err, m.GuardCheckSpec(ends=params.ends))
-                ):
-                    raise AssertionError(
-                        params.msg
-                        or c.Tests.ERR_NOT_ENDSWITH.format(
-                            text=err,
-                            suffix=params.ends,
-                        ),
-                    )
-                if params.match is not None and params.match.search(err) is None:
-                    raise AssertionError(
-                        params.msg
-                        or c.Tests.ERR_NOT_MATCHES.format(
-                            text=err,
-                            pattern=params.match.pattern,
-                        ),
-                    )
-
-            @staticmethod
             def fail_code[TResult](
-                result: core_p.ResultView[TResult],
+                result: p.ResultView[TResult],
                 params: m.Tests.FailParams,
             ) -> None:
                 """Validate error code constraints.
@@ -152,7 +135,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def fail_data[TResult](
-                result: core_p.ResultView[TResult],
+                result: p.ResultView[TResult],
                 params: m.Tests.FailParams,
             ) -> None:
                 """Validate structured error data constraints.
@@ -195,149 +178,13 @@ class FlextTestsMatchersResultMixin:
                         )
 
             @staticmethod
-            def ok_extract_path[TResult](
-                result_value: TResult,
-                params: m.Tests.OkParams,
-            ) -> tuple[TResult | p.Tests.Payload, p.Tests.Payload | None]:
-                """Extract an owned node without dumping native model leaves.
-
-                Returns:
-                    The resulting ``tuple[TResult | p.Tests.Payload, p.Tests.Payload |
-                        None]``.
-
-                """
-                if params.path is None:
-                    return result_value, None
-                path = (
-                    params.path
-                    if isinstance(params.path, str)
-                    else ".".join(params.path)
-                )
-                payload = FlextTestsPayloadUtilities.extract_path_value(
-                    FlextTestsPayloadUtilities.to_payload(
-                        result_value,
-                    ),
-                    path,
-                )
-                return payload, payload
-
-            @staticmethod
-            def ok_has_scalar_validation(params: m.Tests.OkParams) -> bool:
-                """Return whether scalar guard validation is requested."""
-                return any(
-                    getattr(params, name) is not None
-                    for name in c.Tests.MATCHER_SCALAR_CRITERIA
-                )
-
-            @staticmethod
-            def ok_preserves_result_identity(params: m.Tests.OkParams) -> bool:
-                """Return True when no structural extraction kwargs are set.
-
-                Returns:
-                    The resulting ``bool``.
-
-                """
-                return all(
-                    getattr(params, name) is None
-                    for name in (
-                        "path",
-                        "len",
-                        "deep",
-                        "paths",
-                        "items",
-                        "attrs_match",
-                        "where",
-                    )
-                )
-
-            @staticmethod
-            def ok_validate_scalar[TResult](
-                result_value: TResult,
-                params: m.Tests.OkParams,
-            ) -> TResult:
-                """Validate native equality and finite scalar constraints.
-
-                A presence-only ``none`` check reads the original value, so it
-                holds for any runtime object without a payload conversion.
-
-                Returns:
-                    The resulting ``TResult``.
-
-                Raises:
-                    AssertionError: If ``(native is None) is not params.none``.
-
-                """
-                matchers = FlextTestsMatchersResultMixin.Tests.Matchers
-                presence_only = params.none is not None and all(
-                    getattr(params, name) is None
-                    for name in c.Tests.MATCHER_SCALAR_CRITERIA
-                    if name != "none"
-                )
-                if presence_only:
-                    native = (
-                        FlextTestsPayloadUtilities.to_match_value(
-                            result_value,
-                        )
-                        if isinstance(result_value, m.Tests.Payload)
-                        else result_value
-                    )
-                    if (native is None) is not params.none:
-                        raise AssertionError(
-                            params.msg
-                            or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=native),
-                        )
-                elif matchers.ok_has_scalar_validation(
-                    params,
-                ):
-                    FlextTestsMatchersTypeGuardsMixin.assert_scalar_match(
-                        FlextTestsPayloadUtilities.to_payload(
-                            result_value,
-                        ),
-                        params,
-                    )
-                return result_value
-
-            @staticmethod
-            def ok_validate_type[TResult](
-                result_value: TResult,
-                params: m.Tests.OkParams,
-            ) -> TResult:
-                """Check the original successful value's declared runtime types.
-
-                Returns:
-                    The resulting ``TResult``.
-
-                Raises:
-                    AssertionError: If ``not
-                        FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(native,
-                        params.is_)``.
-
-                """
-                if params.is_ is not None:
-                    native = (
-                        FlextTestsPayloadUtilities.to_match_value(
-                            result_value,
-                        )
-                        if isinstance(result_value, m.Tests.Payload)
-                        else result_value
-                    )
-                    if not FlextTestsMatchersTypeGuardsMixin.matches_runtime_type(
-                        native,
-                        params.is_,
-                    ):
-                        raise AssertionError(
-                            params.msg
-                            or c.Tests.ERR_TYPE_FAILED.format(
-                                expected=params.is_,
-                                actual=type(native).__name__,
-                            ),
-                        )
-                return result_value
+            @overload
+            def ok(result: t.StrictBool, *, msg: str | None = None) -> bool: ...
 
             @staticmethod
             @overload
             def ok[TResult](
-                result: core_p.ResultView[TResult],
+                result: p.ResultView[TResult],
                 *,
                 path: None = None,
                 eq: TResult
@@ -355,7 +202,7 @@ class FlextTestsMatchersResultMixin:
             @staticmethod
             @overload
             def ok[TResult](
-                result: core_p.ResultView[TResult],
+                result: p.ResultView[TResult],
                 *,
                 path: t.Tests.PathSpec,
                 eq: p.Tests.NativeMatchValue
@@ -372,7 +219,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def ok[TResult](
-                result: core_p.ResultView[TResult],
+                result: p.ResultView[TResult] | t.StrictBool,
                 *,
                 path: t.Tests.PathSpec | None = None,
                 eq: TResult
@@ -387,15 +234,18 @@ class FlextTestsMatchersResultMixin:
                 | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
                 where: Callable[[TResult], bool] | None = None,
                 **kwargs: t.Tests.MatcherOption,
-            ) -> TResult | p.Tests.NativeMatchValue:
-                """Validate native success values; only explicit paths select a value.
+            ) -> TResult | p.Tests.NativeMatchValue | bool:
+                """Require a true boolean or validate a successful result's value.
+
+                The success value, or the node selected by ``path``, is the subject
+                every matcher criterion of ``that`` is applied to.
 
                 Args:
                     result: The result object to validate.
                     path: The explicit path to select a value from the result.
                     eq: The expected value for comparison.
                     ne: The value that should not match the result.
-                    where: A callable predicate to further validate the result.
+                    where: A callable predicate applied to the original success value.
                     **kwargs: Additional matcher options.
 
                 Returns:
@@ -404,10 +254,22 @@ class FlextTestsMatchersResultMixin:
                 Raises:
                     AssertionError: If the `where` predicate fails or other validation
                       checks fail.
+                    ValueError: If a boolean is combined with result-only criteria.
 
                 """
-                params = m.Tests.OkParams.model_validate({"path": path, **kwargs})
-                matchers = FlextTestsMatchersResultMixin.Tests.Matchers
+                params = m.Tests.ThatParams.model_validate(kwargs)
+                that = FlextTestsMatchersThatMixin.Tests.Matchers.that
+                value_criteria = (
+                    eq is not c.Tests.MatcherMissing.OMITTED
+                    or ne is not c.Tests.MatcherMissing.OMITTED
+                    or bool(params.model_fields_set - {"msg"})
+                )
+                if isinstance(result, bool):
+                    if path is not None or where is not None or value_criteria:
+                        msg = "Boolean success checks accept only msg"
+                        raise ValueError(msg)
+                    that(result, eq=True, msg=params.msg)
+                    return result
                 original = FlextTestsResultUtilitiesMixin.assert_success(
                     result,
                     error_msg=params.msg,
@@ -417,158 +279,19 @@ class FlextTestsMatchersResultMixin:
                         params.msg
                         or c.Tests.ERR_PREDICATE_FAILED.format(value=original),
                     )
-                result_value: TResult | p.Tests.Payload = original
-                result_value, extracted_payload = matchers.ok_extract_path(
-                    result_value,
-                    params,
-                )
-                comparison_value = (
-                    FlextTestsPayloadUtilities.to_match_value(extracted_payload)
-                    if extracted_payload is not None
-                    else original
-                )
-                FlextTestsMatchersThatMixin.Tests.Matchers.that(
-                    comparison_value,
-                    eq=eq,
-                    ne=ne,
-                    msg=params.msg,
-                )
-                result_value = matchers.ok_validate_scalar(
-                    result_value,
-                    params,
-                )
-                result_value = matchers.ok_validate_type(
-                    result_value,
-                    params,
-                )
-                if params.has is not None or params.lacks is not None:
-                    FlextTestsMatchersContainmentMixin.check_has_lacks(
-                        result_value,
-                        params.has,
-                        params.lacks,
-                        params.msg,
-                    )
-                if matchers.ok_preserves_result_identity(
-                    params,
-                ):
-                    # No structural extraction was requested, so ok_extract_path
-                    # returned the success value unchanged; the subject keeps its
-                    # TResult identity across the scalar/type validators.
+                if path is None:
+                    if value_criteria:
+                        that(original, eq=eq, ne=ne, where=None, **kwargs)
                     return original
-                result_payload = matchers.ok_payload(
-                    result,
-                    result_value,
-                    extracted_payload,
-                    params,
-                )
-                matchers.ok_validate_structured(
-                    result,
-                    result_value,
-                    result_payload,
-                    params,
-                )
-                return (
-                    FlextTestsPayloadUtilities.to_match_value(result_payload)
-                    if path is not None
-                    else original
-                )
-
-            @staticmethod
-            def ok_payload[TResult](
-                result: core_p.ResultView[TResult],
-                result_value: TResult | p.Tests.Payload,
-                extracted_payload: p.Tests.Payload | None,
-                params: m.Tests.OkParams,
-            ) -> p.Tests.Payload:
-                if params.path is None:
-                    return FlextTestsPayloadUtilities.to_payload(
-                        result.value,
-                    )
-                if extracted_payload is not None:
-                    return extracted_payload
-                return FlextTestsPayloadUtilities.to_payload(
-                    result_value,
-                )
-
-            @staticmethod
-            def ok_validate_structured[TResult](
-                result: core_p.ResultView[TResult],
-                result_value: TResult | p.Tests.Payload,
-                result_payload: p.Tests.Payload,
-                params: m.Tests.OkParams,
-            ) -> None:
-                if params.len is not None:
-                    FlextTestsMatchersAssertionsMixin.assert_len_match(
-                        payload=result_payload,
-                        sized=result_value,
-                        length_spec=params.len,
-                        msg=params.msg,
-                    )
-                if params.deep is not None:
-                    matchers = FlextTestsMatchersResultMixin.Tests.Matchers
-                    matchers.ok_validate_deep(
-                        result_value,
-                        params,
-                    )
-                if params.paths is not None:
-                    FlextTestsMatchersThatMixin.apply_path_rules(
-                        result_payload,
-                        params.paths,
-                        inherited_msg=params.msg,
-                    )
-                if params.items is not None:
-                    FlextTestsMatchersThatMixin.apply_item_rules(
-                        result_payload,
-                        params.items,
-                        inherited_msg=params.msg,
-                    )
-                if params.attrs_match is not None:
-                    FlextTestsMatchersThatMixin.apply_attribute_rules(
-                        result.value,
-                        params.attrs_match,
-                        inherited_msg=params.msg,
-                    )
-                if params.where is not None:
-                    native = FlextTestsPayloadUtilities.to_match_value(
-                        result_payload,
-                    )
-                    if not params.where(native):
-                        raise AssertionError(
-                            params.msg
-                            or c.Tests.ERR_PREDICATE_FAILED.format(value=native),
-                        )
-
-            @staticmethod
-            def ok_validate_deep[TResult](
-                result_value: TResult,
-                params: m.Tests.OkParams,
-            ) -> TResult:
-                """Deep matching reads the canonical owned payload tree.
-
-                Returns:
-                    The resulting ``TResult``.
-
-                Raises:
-                    AssertionError: If ``not match_result.matched``.
-
-                """
-                if params.deep is None:
-                    return result_value
-                match_result = FlextTestsPayloadUtilities.deep_match(
-                    FlextTestsPayloadUtilities.to_payload(
-                        result_value,
+                selected = FlextTestsPayloadUtilities.to_match_value(
+                    FlextTestsPayloadUtilities.extract_path_value(
+                        FlextTestsPayloadUtilities.to_payload(original),
+                        path if isinstance(path, str) else ".".join(path),
                     ),
-                    params.deep,
                 )
-                if not match_result.matched:
-                    raise AssertionError(
-                        params.msg
-                        or c.Tests.ERR_DEEP_PATH_FAILED.format(
-                            path=match_result.path,
-                            reason=match_result.reason,
-                        ),
-                    )
-                return result_value
+                if value_criteria:
+                    that(selected, eq=eq, ne=ne, where=None, **kwargs)
+                return selected
 
 
 __all__: list[str] = ["FlextTestsMatchersResultMixin"]

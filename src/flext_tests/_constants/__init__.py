@@ -17,8 +17,6 @@ if TYPE_CHECKING:
     from flext_tests._constants.data_cases import FlextTestsConstantsDataCases
     from flext_tests._constants.docker import FlextTestsConstantsDocker
     from flext_tests._constants.files import FlextTestsConstantsFiles
-    from flext_tests._constants.kube import FlextTestsConstantsKube
-    from flext_tests._constants.make import FlextTestsConstantsMake
     from flext_tests._constants.matcher import FlextTestsConstantsMatcher
     from flext_tests._constants.namespace import FlextTestsConstantsNamespace
     from flext_tests._constants.validator import FlextTestsConstantsValidator
@@ -29,8 +27,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsConstantsDataCases",
     "FlextTestsConstantsDocker",
     "FlextTestsConstantsFiles",
-    "FlextTestsConstantsKube",
-    "FlextTestsConstantsMake",
     "FlextTestsConstantsMatcher",
     "FlextTestsConstantsNamespace",
     "FlextTestsConstantsValidator",
@@ -44,8 +40,6 @@ install_lazy_exports(
         "FlextTestsConstantsDataCases": ".data_cases",
         "FlextTestsConstantsDocker": ".docker",
         "FlextTestsConstantsFiles": ".files",
-        "FlextTestsConstantsKube": ".kube",
-        "FlextTestsConstantsMake": ".make",
         "FlextTestsConstantsMatcher": ".matcher",
         "FlextTestsConstantsNamespace": ".namespace",
         "FlextTestsConstantsValidator": ".validator",

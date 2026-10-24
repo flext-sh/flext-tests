@@ -9,6 +9,7 @@ from __future__ import annotations
 import os
 import shutil
 import sys
+import tempfile
 import time
 import types
 from collections.abc import Generator
@@ -16,6 +17,9 @@ from contextlib import contextmanager
 from pathlib import Path
 from threading import get_ident
 from typing import TYPE_CHECKING, BinaryIO
+
+import flext_cli
+import pytest
 
 from flext_tests import c
 
@@ -30,6 +34,61 @@ else:
 
 class FlextTestsTestContextUtilitiesMixin:
     """Context managers for tests."""
+
+    @staticmethod
+    def pytest_subprocess(
+        pytester: pytest.Pytester,
+        *args: str | Path,
+    ) -> pytest.RunResult:
+        """Run an isolated pytest consumer through the canonical process owner.
+
+        Preserve pytester's sandbox, interpreter, explicit plugins, inherited
+        options and independent numbered temporary directory. CLI owns signal
+        forwarding, descendant cleanup and reaping even when the calling item
+        is interrupted; stdout and stderr remain in the sandbox on failure.
+
+        Returns:
+            The native pytest result over the child's exact output and status.
+
+        Raises:
+            TypeError: If a subprocess plugin is not an importable name.
+
+        """
+        plugins: list[str] = []
+        for plugin in pytester.plugins:
+            if not isinstance(plugin, str):
+                msg = "Subprocess pytest plugins must be importable names"
+                raise TypeError(msg)
+            plugins.extend(("-p", plugin))
+        basetemp = tempfile.mkdtemp(prefix="runpytest-", dir=pytester.path)
+        stdout = pytester.path / "stdout"
+        stderr = pytester.path / "stderr"
+        started = time.monotonic()
+        outcome = flext_cli.u.Cli.run_to_file(
+            (
+                sys.executable,
+                "-mpytest",
+                *plugins,
+                f"--basetemp={basetemp}",
+                *(str(argument) for argument in args),
+            ),
+            stdout,
+            cwd=pytester.path,
+            options=flext_cli.m.Cli.ProcessOptions(
+                env={
+                    "PYTHONPATH": os.pathsep.join(
+                        filter(None, (str(pytester.path), os.environ.get("PYTHONPATH")))
+                    ),
+                },
+                stderr_file=stderr,
+            ),
+        ).unwrap()
+        return pytest.RunResult(
+            outcome.raw_return_code,
+            stdout.read_text(encoding="utf-8").splitlines(),
+            stderr.read_text(encoding="utf-8").splitlines(),
+            time.monotonic() - started,
+        )
 
     class SessionRuntime:
         """Single-flight, lazy consumer runtime in one random worker-session area.

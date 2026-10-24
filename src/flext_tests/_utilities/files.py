@@ -1,6 +1,6 @@
-"""Test-domain file helpers (format detection only).
+"""Test-domain file helpers (size formatting only).
 
-Format detection delegates to ``u.Cli`` canonical helpers; no I/O lives here.
+Format detection lives in the ``u.Cli`` canonical helpers; no I/O lives here.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -8,54 +8,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import TYPE_CHECKING
-
-from flext_cli import u
-
 from flext_tests import c
-
-if TYPE_CHECKING:
-    from flext_tests import m, t
 
 
 class FlextTestsFilesUtilitiesMixin:
-    """Test-only format-detection facade; delegates to ``u.Cli`` canonical helpers."""
-
-    @staticmethod
-    def detect_format(
-        content: str
-        | bytes
-        | m.ConfigMap
-        | m.Dict
-        | t.JsonMapping
-        | t.SequenceOf[t.StrSequence],
-        name: str,
-        fmt: str,
-    ) -> str:
-        """Detect format by content shape + name; honors explicit ``fmt``.
-
-        Returns:
-            The resulting ``str``.
-
-        """
-        detected_format: str = u.Cli.files_detect_format_from_content(
-            content,
-            name,
-            fmt,
-        )
-        return detected_format
-
-    @staticmethod
-    def detect_format_from_path(path: Path, fmt: str) -> str:
-        """Detect format from path extension; honors explicit ``fmt``.
-
-        Returns:
-            The resulting ``str``.
-
-        """
-        detected_format: str = u.Cli.files_detect_format_from_path(path, fmt)
-        return detected_format
+    """Test-only file helpers that have no ``u.Cli`` counterpart."""
 
     # NOTE (multi-agent): format_size moved here from c.Tests constants facet
     # (declaration purity - constants must not hold formatting behavior; mro-i6nq.11).

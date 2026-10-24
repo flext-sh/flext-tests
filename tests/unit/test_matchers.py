@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from tests.unit._matchers_parts import (
+from tests.unit._matchers import (
     data_driven,
     fail_constraints,
     ok_constraints,

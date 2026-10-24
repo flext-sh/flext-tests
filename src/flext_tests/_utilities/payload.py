@@ -105,7 +105,7 @@ class FlextTestsFlextUtilitiesPayload:
                 Path,
                 type,
                 BaseException,
-                p.Model,
+                p.Tests.PayloadModel,
             ),
         ):
             return flext_tests.m.Tests.Payload(kind="atom", atom=value)

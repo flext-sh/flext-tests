@@ -11,7 +11,7 @@ import os
 import pytest
 from flext_infra import config
 
-from tests import tm
+from tests import c, tm, u
 
 
 class TestsFlextTestsSlowTimeoutPolicy:
@@ -46,7 +46,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
         """
         variable = "PYTEST_DISABLE_PLUGIN_AUTOLOAD"
         previous = os.environ.get(variable)
-        os.environ[variable] = "1"
+        os.environ[variable] = c.ParserBooleanToken.ONE
         enforcement = config.Infra.tooling.tools.pytest.enforcement_plugin
         plugins = (
             ("-p", "pytest_timeout", "-p", enforcement)
@@ -54,7 +54,8 @@ class TestsFlextTestsSlowTimeoutPolicy:
             else ("-p", enforcement)
         )
         try:
-            return pytester.runpytest_subprocess(
+            return u.Tests.pytest_subprocess(
+                pytester,
                 *plugins,
                 *(("--timeout=0",) if unbounded else ()),
             )
@@ -74,13 +75,13 @@ class TestsFlextTestsSlowTimeoutPolicy:
         pytester.makepyfile(
             "import pytest\n"
             "\n"
-            "from tests import tm\n"
+            "from flext_tests import tm\n"
             "\n"
             "\n"
             "@pytest.mark.slow\n"
             "def test_slow_budget(request: pytest.FixtureRequest) -> None:\n"
             "    marker = request.node.get_closest_marker('timeout')\n"
-            "    tm.that(marker is not None, eq=True)\n"
+            "    tm.ok(marker is not None)\n"
             "    if marker is not None:\n"
             f"        tm.that(marker.args, eq=({self.slow_timeout_seconds},))\n"
             "\n"
@@ -124,7 +125,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
         pytester.makepyfile(
             "import pytest\n"
             "\n"
-            "from tests import tm\n"
+            "from flext_tests import tm\n"
             "\n"
             "\n"
             "@pytest.mark.slow\n"
@@ -141,7 +142,9 @@ class TestsFlextTestsSlowTimeoutPolicy:
         )
 
     @pytest.mark.slow
-    @pytest.mark.parametrize("invalid_timeout", ["0", "nan", "not-a-number"])
+    @pytest.mark.parametrize(
+        "invalid_timeout", [c.ParserBooleanToken.ZERO, "nan", "not-a-number"]
+    )
     @pytest.mark.parametrize("unbounded", [False, True])
     def test_invalid_slow_budget_fails_closed(
         self,

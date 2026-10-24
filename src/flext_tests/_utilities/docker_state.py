@@ -10,9 +10,8 @@ from collections.abc import Callable
 from pathlib import Path
 
 from flext_cli import u
-from flext_core import r
 
-from flext_tests import c, m, p, t
+from flext_tests import c, m, p, r, t
 from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
 
 

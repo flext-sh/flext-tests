@@ -24,6 +24,7 @@ class FlextTestsCapabilityPlugin:
     """Shared marker-driven applicability owner for every consumer conftest."""
 
     def __init__(self) -> None:
+        """Per-session probe cache: one probe per marker per pytest process."""
         self._environment_stack_key = pytest.StashKey[ExitStack]()
         self._prerequisite_skip_key = pytest.StashKey[
             tuple[BaseException, pytest.Mark, str]
@@ -161,7 +162,7 @@ class FlextTestsCapabilityPlugin:
     @staticmethod
     def _environment_file(item: pytest.Item) -> Path:
         root = item.path.parent
-        while root != root.parent and not (root / "pyproject.toml").is_file():
+        while root != root.parent and not (root / c.PYPROJECT_FILENAME).is_file():
             root = root.parent
         return root / ".env"
 

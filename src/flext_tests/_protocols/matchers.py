@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 class FlextTestsMatchersProtocolsMixin(Protocol):
     """Structural matcher capabilities without recursive type aliases."""
 
+    @runtime_checkable
     class MatcherCriteriaMapping(Protocol):
         """Read nested native matcher criteria independently of payload values."""
 
@@ -31,6 +32,7 @@ class FlextTestsMatchersProtocolsMixin(Protocol):
             """Iterate selectors and their unchanged native criteria."""
             ...
 
+    @runtime_checkable
     class MatcherCriteriaSequence(Protocol):
         """Read ordered native criteria without converting their operands."""
 

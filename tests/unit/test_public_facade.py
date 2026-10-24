@@ -18,7 +18,7 @@ from packaging.utils import canonicalize_name
 
 import flext_tests
 from flext_tests import FlextTestsCase, FlextTestsModels, FlextTestsUtilities
-from tests import d, e, h, m, r, tf, tk, tm, u, x
+from tests import c, d, e, h, m, r, tf, tk, tm, u, x
 
 
 class TestsFlextTestsPublicFacade:
@@ -36,8 +36,8 @@ class TestsFlextTestsPublicFacade:
         families, keeping both facades importable side by side.
 
         """
-        tm.that(FlextTestsModels in m.__mro__, eq=True)
-        tm.that(FlextTestsUtilities in u.__mro__, eq=True)
+        tm.ok(FlextTestsModels in m.__mro__)
+        tm.ok(FlextTestsUtilities in u.__mro__)
 
     @staticmethod
     def test_selected_enforcement_plugin_uses_its_declared_identity(
@@ -64,7 +64,7 @@ class TestsFlextTestsPublicFacade:
         """Declared pytest11 class hooks run without competing for root exports."""
         root = Path(__file__).resolve().parents[2]
         metadata = u.build_project_metadata(root, u.read_project_document_cached(root))
-        document = tm.ok(u.Cli.toml_read_json(root / "pyproject.toml"))
+        document = tm.ok(u.Cli.toml_read_json(root / c.PYPROJECT_FILENAME))
         declared = u.Cli.toml_mapping_path(
             document,
             ("project", "entry-points", "pytest11"),
@@ -84,8 +84,8 @@ class TestsFlextTestsPublicFacade:
         }
         tm.that(set(configure), eq=set(entries))
         for name, entry in entries.items():
-            tm.that(configure[name] is entry.load(), eq=True)
-        tm.that("pytest_configure" in flext_tests.__all__, eq=False)
+            tm.ok(configure[name] is entry.load())
+        tm.fail("pytest_configure" in flext_tests.__all__)
 
     @staticmethod
     def test_consumer_facade_imports_without_container_lifecycle() -> None:
@@ -101,7 +101,7 @@ class TestsFlextTestsPublicFacade:
             ("tm", tm),
             ("x", x),
         ):
-            tm.that(exported is getattr(flext_tests, name), eq=True)
+            tm.ok(exported is getattr(flext_tests, name))
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -130,7 +130,7 @@ class TestsFlextTestsPublicFacade:
             for requirement in (Requirement(value),)
         }
         name = canonicalize_name(distribution_name)
-        tm.that(name in requirements, eq=True)
+        tm.ok(name in requirements)
         tm.that(requirements[name].marker, eq=None)
         import_module(module_name)
-        tm.that(module_name in sys.modules, eq=True)
+        tm.ok(module_name in sys.modules)

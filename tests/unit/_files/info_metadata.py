@@ -1,0 +1,83 @@
+"""Private file metadata test mixins.
+
+Copyright (c) 2026 FLEXT Team. All rights reserved.
+SPDX-License-Identifier: MIT
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+from flext_tests import FlextTestsFiles
+from tests import m, tm, u
+
+
+class TestsFlextTestsFilesInfoMetadataMixin:
+    """File metadata tests."""
+
+    @staticmethod
+    def test_info_existing_file(tmp_path: Path) -> None:
+        """Test info() returns FlextTestsFiles.FileInfo for existing file."""
+        manager = FlextTestsFiles(base_dir=tmp_path)
+        path = manager.create("line1\nline2\nline3", "test.txt")
+        result = manager.info(path)
+        _ = u.Tests.assert_success(result)
+        info = result.value
+        tm.ok(info.exists is True)
+        tm.that(info.size, gt=0)
+        tm.that(info.lines, eq=3)
+        tm.ok(info.is_empty is False)
+        tm.that(info.first_line, eq="line1")
+
+    @staticmethod
+    def test_info_nonexistent_file(tmp_path: Path) -> None:
+        """Test info() returns FlextTestsFiles.FileInfo with exists=False."""
+        manager = FlextTestsFiles(base_dir=tmp_path)
+        path = tmp_path / "nonexistent.txt"
+        result = manager.info(path)
+        _ = u.Tests.assert_success(result)
+        info = result.value
+        tm.ok(info.exists is False)
+
+    @staticmethod
+    def test_info_with_hash(tmp_path: Path) -> None:
+        """Test info() computes SHA256 hash when requested."""
+        manager = FlextTestsFiles(base_dir=tmp_path)
+        path = manager.create("test content", "test.txt")
+        result = manager.info(path, compute_hash=True)
+        _ = u.Tests.assert_success(result)
+        info = result.value
+        sha256 = tm.not_none(info.sha256)
+        tm.that(len(sha256), eq=64)
+
+    @staticmethod
+    def test_info_format_detection(tmp_path: Path) -> None:
+        """Test info() detects file format."""
+        manager = FlextTestsFiles(base_dir=tmp_path)
+        path = manager.create(m.ConfigMap(root={"key": "value"}), "settings.json")
+        result = manager.info(path)
+        _ = u.Tests.assert_success(result)
+        info = result.value
+        tm.that(info.fmt, eq="json")
+
+    @staticmethod
+    def test_info_empty_file(tmp_path: Path) -> None:
+        """Test info() for empty file."""
+        manager = FlextTestsFiles(base_dir=tmp_path)
+        path = manager.create("", "empty.txt")
+        result = manager.info(path)
+        _ = u.Tests.assert_success(result)
+        info = result.value
+        tm.ok(info.exists is True)
+        tm.that(info.size, eq=0)
+        tm.ok(info.is_empty is True)
+
+    @staticmethod
+    def test_info_size_human_readable(tmp_path: Path) -> None:
+        """Test info() provides human-readable size."""
+        manager = FlextTestsFiles(base_dir=tmp_path)
+        path = manager.create("x" * 1024, "test.txt")
+        result = manager.info(path)
+        _ = u.Tests.assert_success(result)
+        info = result.value
+        tm.that(info.size_human, ne="")

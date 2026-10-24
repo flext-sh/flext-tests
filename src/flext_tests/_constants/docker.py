@@ -109,10 +109,6 @@ class FlextTestsConstantsDocker:
         "Docker target has no inspection container or compose file configured. "
         "Use up()/down()/ready() for stack-only lifecycles."
     )
-    ERR_DOCKER_KUBE_HOOKS_UNSUPPORTED: ClassVar[str] = (
-        "The kind cluster lifecycle creates no sealed container: "
-        "initializer and creation_environment do not apply"
-    )
 
     # Bounded condition polling of a non-blocking lock attempt.
     FILE_LOCK_POLL_SECONDS: ClassVar[float] = 0.05
@@ -134,7 +130,6 @@ class FlextTestsConstantsDocker:
     CONNECTIVITY_MARKER_CONTAINERS: ClassVar[Mapping[str, str]] = MappingProxyType({
         "oracle": "flext-oracle-db-test",
         "ldap": "flext-openldap-test",
-        "kubernetes": "flext-kind-test",
     })
     CONNECTIVITY_MARKERS: ClassVar[t.VariadicTuple[str]] = (
         DOCKER_CONNECTIVITY_MARKER,
@@ -165,13 +160,6 @@ class FlextTestsConstantsDocker:
             "port": 1521,
             "host": "localhost",
             "startup_timeout": 900,
-        }),
-        "flext-kind-test": MappingProxyType({
-            "compose_file": "docker/docker-compose.kubernetes.yml",
-            "service": "kind",
-            "port": 6443,
-            "host": "localhost",
-            "startup_timeout": 120,
         }),
     })
 

@@ -51,7 +51,8 @@ class TestsFlextTestsCapabilityCollection:
 
     @staticmethod
     def _run(consumer: pytest.Pytester) -> pytest.RunResult:
-        return consumer.runpytest_subprocess(
+        return u.Tests.pytest_subprocess(
+            consumer,
             "-p",
             "no:flext_tests_enforcement",
             "-p",
@@ -112,7 +113,7 @@ class TestsFlextTestsCapabilityCollection:
             for label, indices in (("A", (1, 3)), ("B", (2,))):
                 member = consumer.path / label
                 member.mkdir()
-                (member / "pyproject.toml").write_text(
+                (member / c.PYPROJECT_FILENAME).write_text(
                     "[tool.pytest.ini_options]\n", encoding="utf-8"
                 )
                 (member / ".env").write_text(
@@ -151,7 +152,9 @@ class TestsFlextTestsCapabilityCollection:
             "delete": "env.unlink()",
             "track": "u.Cli.run_checked(['git', 'add', '--', '.env'], "
             "cwd=env.parent).unwrap()",
-            "replace": "env.write_text('TEST_ENDPOINT=not-a-url\\n', encoding='utf-8')",
+            c.MergeStrategy.REPLACE: (
+                "env.write_text('TEST_ENDPOINT=not-a-url\\n', encoding='utf-8')"
+            ),
         }
         with socket.socket() as listener:
             listener.bind(("127.0.0.1", 0))
@@ -160,7 +163,7 @@ class TestsFlextTestsCapabilityCollection:
             for mutation, body in mutations.items():
                 member = consumer.path / mutation
                 member.mkdir()
-                (member / "pyproject.toml").write_text(
+                (member / c.PYPROJECT_FILENAME).write_text(
                     "[tool.pytest.ini_options]\n", encoding="utf-8"
                 )
                 (member / ".env").write_text(
@@ -302,7 +305,7 @@ class TestsFlextTestsCapabilityCollection:
         with u.Tests.env_vars_context({ci.variable: ci.value}):
             result = TestsFlextTestsCapabilityCollection._run(consumer)
         result.assert_outcomes(errors=len(declarations) * len(other_markers))
-        result.stdout.fnmatch_lines([
+        result.stdout.fnmatch_lines_random([
             f"*UsageError: {message}*" for _, message in declarations
         ])
         tm.that(result.ret, eq=1)
@@ -367,7 +370,7 @@ class TestsFlextTestsCapabilityCollection:
         if tracked:
             u.Cli.run_checked(["git", "add", "--", ".env"], cwd=consumer.path).unwrap()
         else:
-            (consumer.path / ".git" / "HEAD").unlink()
+            (consumer.path / c.GIT_DIR_NAME / "HEAD").unlink()
         consumer.makepyfile(
             "import pytest\n"
             "@pytest.mark.connectivity(host='127.0.0.1', port=1)\n"

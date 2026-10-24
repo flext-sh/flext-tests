@@ -17,7 +17,7 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import p, u
+from flext_tests import c, p, u
 
 
 def _find_project_root() -> Path:
@@ -32,7 +32,7 @@ def _find_project_root() -> Path:
     """
     cwd = Path.cwd().resolve()
     for parent in (cwd, *cwd.parents):
-        pyproject = parent / "pyproject.toml"
+        pyproject = parent / c.PYPROJECT_FILENAME
         if pyproject.is_file():
             return parent
     msg = f"no pyproject.toml found above {cwd}"

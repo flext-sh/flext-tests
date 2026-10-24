@@ -19,16 +19,15 @@
   Python :: 3.13, Topic :: Software Development :: Testing, Typing :: Typed
 - Project class: `test`
 - Keywords: `builders`, `factories`, `flext`, `test-infrastructure`, `testing`
-- Main facades: `FlextTests`, `FlextTestsCase`, `FlextTestsCli`, `FlextTestsConfig`,
-  `FlextTestsConstants`, `FlextTestsDocker`, `FlextTestsDockerSurfaceParts`,
-  `FlextTestsDomains` (+11 more)
+- Main facades: `FlextTests`, `FlextTestsCase`, `FlextTestsCli`, `FlextTestsCliDocker`,
+  `FlextTestsConfig`, `FlextTestsConstants`, `FlextTestsDocker`,
+  `FlextTestsDockerSurfaceParts` (+11 more)
 - Alias exports: `c`, `d`, `e`, `h`, `m`, `p`, `r`, `s`, `t`, `u`, `x`
 - Public symbol exports: `FlextTests`, `FlextTestsCase`, `FlextTestsCli`,
-  `FlextTestsConfig`, `FlextTestsConstants`, `FlextTestsDocker`,
-  `FlextTestsDockerSurfaceParts`, `FlextTestsDomains`, `FlextTestsFiles`,
-  `FlextTestsFixturesDSLMixin` (+16 more)
+  `FlextTestsCliDocker`, `FlextTestsConfig`, `FlextTestsConstants`, `FlextTestsDocker`,
+  `FlextTestsDockerSurfaceParts`, `FlextTestsDomains`, `FlextTestsFiles` (+16 more)
 - Exported module shortcuts: `api`
-- Generated module pages: `17`
+- Generated module pages: `16`
 
 ## Next Pages
 

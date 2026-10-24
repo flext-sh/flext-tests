@@ -22,7 +22,7 @@ def main() -> None:
         SystemExit: Always.
 
     """
-    raise SystemExit(_cli_docker.main())
+    raise SystemExit(_cli_docker.FlextTestsCliDocker.main())
 
 
 __all__: tuple[str, ...] = ("FlextTestsCli",)

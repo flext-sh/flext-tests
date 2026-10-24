@@ -32,7 +32,7 @@ class TestsFlextTestsFileLock:
             u.Tests.FileLock(lock_path, shared=True),
             u.Tests.FileLock(lock_path, shared=True, timeout_seconds=0.2),
         ):
-            tm.that(lock_path.is_file(), eq=True)
+            tm.ok(lock_path.is_file())
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -67,9 +67,9 @@ class TestsFlextTestsFileLock:
         """Once the holder leaves, a bounded request is granted."""
         lock_path = tmp_path / "lease.lock"
         with u.Tests.FileLock(lock_path, shared=True):
-            tm.that(lock_path.is_file(), eq=True)
+            tm.ok(lock_path.is_file())
         with u.Tests.FileLock(lock_path, timeout_seconds=0.2):
-            tm.that(lock_path.is_file(), eq=True)
+            tm.ok(lock_path.is_file())
 
     @staticmethod
     def test_session_runtime_preserves_failed_provision_without_retry(
@@ -89,7 +89,7 @@ class TestsFlextTestsFileLock:
                 pytest.fail("A missing seed must not produce a runtime")
             errors.append(error.value)
         tm.that(len(attempts), eq=1)
-        tm.that(errors[0] is errors[1], eq=True)
+        tm.ok(errors[0] is errors[1])
 
     @staticmethod
     def test_session_runtime_rejects_replaced_parent_before_snapshot_or_yield(
@@ -124,7 +124,7 @@ class TestsFlextTestsFileLock:
                 pytest.fail("A redirected checkout must never reach the case body")
             errors.append(error.value)
         tm.that(len(attempts), eq=1)
-        tm.that(errors[0] is errors[1], eq=True)
+        tm.ok(errors[0] is errors[1])
         physical_directories = (
             child
             for child in allocation.iterdir()
@@ -132,7 +132,7 @@ class TestsFlextTestsFileLock:
         )
         tm.that(tuple(physical_directories), eq=())
         runtime.close()
-        tm.that(allocation.exists(), eq=False)
+        tm.fail(allocation.exists())
         tm.that(tuple(foreign.iterdir()), eq=(checkout,))
         tm.that(tuple(checkout.iterdir()), eq=(sentinel,))
         tm.that(sentinel.read_bytes(), eq=content)
@@ -148,4 +148,4 @@ class TestsFlextTestsFileLock:
         ):
             stack.enter_context(u.Tests.FileLock(lock_path, timeout_seconds=0.1))
         with u.Tests.FileLock(lock_path, timeout_seconds=0.2):
-            tm.that(lock_path.is_file(), eq=True)
+            tm.ok(lock_path.is_file())

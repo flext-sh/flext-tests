@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from tests import c, u
+from tests import c, tm, u
 
 
 class TestsFlextTestsScratchStorage:
@@ -32,14 +32,15 @@ class TestsFlextTestsScratchStorage:
                 assert isinstance(value, int)
             """,
         )
-        result = pytester.runpytest_subprocess(
+        result = u.Tests.pytest_subprocess(
+            pytester,
             "-p",
             "no:cacheprovider",
             "-p",
             "no:flext_tests_enforcement",
         )
         result.assert_outcomes(passed=1)
-        assert not (pytester.path / ".hypothesis").exists()
+        tm.fail((pytester.path / ".hypothesis").exists())
 
     @staticmethod
     @pytest.mark.slow
@@ -53,7 +54,8 @@ class TestsFlextTestsScratchStorage:
                 benchmark(lambda: sum(range(100)))
             """,
         )
-        result = pytester.runpytest_subprocess(
+        result = u.Tests.pytest_subprocess(
+            pytester,
             "--benchmark-only",
             "-p",
             "no:cacheprovider",
@@ -64,7 +66,7 @@ class TestsFlextTestsScratchStorage:
         )
         result.assert_outcomes(passed=1)
         benchmarks = list(pytester.path.rglob(".benchmarks"))
-        assert benchmarks == []
+        tm.that(benchmarks, eq=[])
 
     @staticmethod
     @pytest.mark.slow
@@ -75,7 +77,8 @@ class TestsFlextTestsScratchStorage:
         """The flext_scratch_root ini redirects the storage base."""
         override = tmp_path / "custom-scratch"
         pytester.makepyfile(test_plain="def test_plain():\n    assert True\n")
-        result = pytester.runpytest_subprocess(
+        result = u.Tests.pytest_subprocess(
+            pytester,
             "-p",
             "no:cacheprovider",
             "-p",
@@ -84,7 +87,7 @@ class TestsFlextTestsScratchStorage:
             f"{c.Tests.SCRATCH_ROOT_INI}={override}",
         )
         result.assert_outcomes(passed=1)
-        assert override.exists()
+        tm.ok(override.exists())
 
     @staticmethod
     def test_scratch_root_utility_keys_by_checkout(
@@ -101,5 +104,5 @@ class TestsFlextTestsScratchStorage:
             checkout_root=checkout_a,
             override=str(override),
         )
-        assert root_a != root_b
-        assert root_override == override / root_a.name
+        tm.that(root_a, ne=root_b)
+        tm.that(root_override, eq=override / root_a.name)

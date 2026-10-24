@@ -26,6 +26,7 @@ class FlextTestsNamespaceFixtures:
 
         Returns:
             str: The xdist worker id, or "master" outside xdist.
+
         """
         worker_input = getattr(config, "workerinput", None)
         if worker_input is not None:
@@ -38,6 +39,7 @@ class FlextTestsNamespaceFixtures:
 
         Returns:
             str: The shared run token for this pytest run.
+
         """
         worker_input = getattr(config, "workerinput", None)
         if worker_input is not None:
@@ -62,6 +64,7 @@ class FlextTestsNamespaceFixtures:
 
         Returns:
             m.Tests.TestNamespace: The session-scoped test namespace.
+
         """
         config = request.config
         namespace: m.Tests.TestNamespace = import_module(
@@ -70,22 +73,5 @@ class FlextTestsNamespaceFixtures:
             worker_id=FlextTestsNamespaceFixtures._worker_id(config),
             testrun_uid=FlextTestsNamespaceFixtures._run_token(config),
             checkout_root=Path(config.rootpath),
-        )
-        return namespace
-
-    @staticmethod
-    @pytest.fixture
-    def test_namespace(run_namespace: m.Tests.TestNamespace) -> m.Tests.TestNamespace:
-        """Function namespace: the run token plus a fresh per-test token.
-
-        Returns:
-            m.Tests.TestNamespace: A function-scoped test namespace.
-        """
-        namespace: m.Tests.TestNamespace = import_module(
-            "flext_tests"
-        ).u.Tests.namespace(
-            worker_id=run_namespace.worker,
-            testrun_uid=f"{run_namespace.run_token}-{run_namespace.issued_at_ns}",
-            checkout_root=Path(run_namespace.root),
         )
         return namespace

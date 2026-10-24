@@ -13,9 +13,8 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._utilities._files import _comparison_parts as _comparison_parts
+    from flext_tests._utilities._files import _comparison as _comparison
     from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
-    from flext_tests._utilities._files._batch import FlextTestsFilesBatchMixin
     from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
     from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
     from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
@@ -26,14 +25,13 @@ if TYPE_CHECKING:
 
 __all__: tuple[str, ...] = (
     "FlextTestsFilesAssertionsMixin",
-    "FlextTestsFilesBatchMixin",
     "FlextTestsFilesComparisonMixin",
     "FlextTestsFilesContextsMixin",
     "FlextTestsFilesCreationMixin",
     "FlextTestsFilesInfoMixin",
     "FlextTestsFilesLifecycleMixin",
     "FlextTestsFilesReadingMixin",
-    "_comparison_parts",
+    "_comparison",
 )
 
 install_lazy_exports(
@@ -41,14 +39,13 @@ install_lazy_exports(
     globals(),
     MappingProxyType({
         "FlextTestsFilesAssertionsMixin": "._assertions",
-        "FlextTestsFilesBatchMixin": "._batch",
-        "FlextTestsFilesComparisonMixin": "._comparison",
+        "FlextTestsFilesComparisonMixin": "._comparison.comparison_part_02",
         "FlextTestsFilesContextsMixin": "._contexts",
         "FlextTestsFilesCreationMixin": "._creation",
         "FlextTestsFilesInfoMixin": "._info",
         "FlextTestsFilesLifecycleMixin": "._lifecycle",
         "FlextTestsFilesReadingMixin": "._reading",
-        "_comparison_parts": "._comparison_parts",
+        "_comparison": "._comparison",
     }),
     public_exports=__all__,
 )
