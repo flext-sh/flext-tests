@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import secrets
 from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
@@ -29,10 +30,12 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
     ) -> c.Tests.ContainerAction:
         """Decide what an ensure does with a container and its host record.
 
-        A missing container is created. A dirty, unsealed, unhealthy or foreign
-        container, or one sealed for other declared inputs, is recreated. A
-        stopped container that matches its seal is started. A running one that
-        matches is reused, including while its healthcheck is still starting:
+        A missing container is created. A dirty, unsealed or foreign container,
+        or one sealed for other declared inputs, is recreated. A stopped
+        container that matches its seal is started whatever its last health,
+        which Docker freezes at shutdown; compose then waits for it to become
+        healthy. A running one that matches is recreated when unhealthy and
+        otherwise reused, including while its healthcheck is still starting:
         the ensure then waits for the check to settle.
 
         Returns:
@@ -46,10 +49,13 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
             or not state.sealed
             or state.fingerprint != fingerprint
             or state.container_id != info.container_id
-            or info.health == c.Tests.ContainerHealth.UNHEALTHY
         ):
             return c.Tests.ContainerAction.RECREATE
         if info.status == c.Tests.ContainerStatus.RUNNING:
+            # Health is observed only while running; a stopped container keeps
+            # the result of the check that ran during its shutdown.
+            if info.health == c.Tests.ContainerHealth.UNHEALTHY:
+                return c.Tests.ContainerAction.RECREATE
             return c.Tests.ContainerAction.REUSE
         if info.status in {
             c.Tests.ContainerStatus.EXITED,
@@ -240,6 +246,21 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
         return r[t.MappingKV[str, t.SecretStr]].ok({
             key: t.SecretStr(entries[key]) for key in keys
         })
+
+    @staticmethod
+    def generate_creation_secrets(
+        keys: t.StrSequence,
+    ) -> t.MappingKV[str, t.SecretStr]:
+        """Generate one fresh secret per declared creation key.
+
+        Returns:
+            The resulting ``t.MappingKV[str, t.SecretStr]``.
+
+        """
+        return {
+            key: t.SecretStr(secrets.token_urlsafe(c.Tests.DOCKER_SECRET_BYTES))
+            for key in keys
+        }
 
     @staticmethod
     def validate_creation_environment(

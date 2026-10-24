@@ -15,7 +15,7 @@ class FlextTestsFixtureTreesProtocolsMixin:
 
     @runtime_checkable
     class FixtureTree(Protocol):
-        """Copy one scenario tree; ``destination`` defaults to the test's ``tmp_path``."""
+        """Copy one scenario tree; ``destination`` defaults to ``tmp_path``."""
 
         def __call__(self, scenario: str, destination: Path = ...) -> Path:
             """Materialize ``scenario`` and return its destination."""

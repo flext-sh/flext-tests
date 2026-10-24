@@ -12,13 +12,16 @@ services:
       LDAP_ORGANISATION: "FLEXT Shared Test Organization"
       LDAP_DOMAIN: "flext.local"
       LDAP_BASE_DN: "dc=flext,dc=local"
-      LDAP_ADMIN_PASSWORD: "admin123"
-      LDAP_CONFIG_PASSWORD: "config123"
+      # Secrets are keys only: flext-tests generates their values once per
+      # container (c.Tests.SHARED_CONTAINERS secret_keys) and passes them
+      # through a private env file; nothing here carries a value.
+      LDAP_ADMIN_PASSWORD:
+      LDAP_CONFIG_PASSWORD:
 
       # User Configuration
       LDAP_READONLY_USER: "true"
       LDAP_READONLY_USER_USERNAME: "readonly"
-      LDAP_READONLY_USER_PASSWORD: "readonly123"
+      LDAP_READONLY_USER_PASSWORD:
 
       # Schema and Backend
       LDAP_RFC2307BIS_SCHEMA: "true"
@@ -56,7 +59,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "ldapsearch -x -H ldap://localhost -b dc=flext,dc=local -D 'cn=admin,dc=flext,dc=local' -w admin123 -s base '(objectClass=*)'",
+          "ldapsearch -x -H ldap://localhost -b dc=flext,dc=local -D 'cn=admin,dc=flext,dc=local' -w \"$$LDAP_ADMIN_PASSWORD\" -s base '(objectClass=*)'",
         ]
       interval: 30s
       timeout: 10s

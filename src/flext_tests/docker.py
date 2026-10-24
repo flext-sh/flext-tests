@@ -561,6 +561,14 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         if target is None or target.container_name is None or error is not None:
             return r[m.Tests.ContainerInfo].fail(error)
         environment = creation_environment or {}
+        owned = sorted(set(environment).intersection(target.secret_keys))
+        if owned:
+            return r[m.Tests.ContainerInfo].fail(
+                c.Tests.ERR_DOCKER_GENERATED_KEYS.format(
+                    name=target.container_name,
+                    keys=", ".join(owned),
+                ),
+            )
         preflight = (
             self
             .lifecycle_enabled()
@@ -631,6 +639,31 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
                 return converged
             return self._serve(target, converged.value, readiness_probe)
 
+    def _start_sealed(
+        self,
+        target: m.Tests.ContainerConfig,
+        container_name: str,
+    ) -> p.Result[m.Tests.ContainerInfo]:
+        """Start a stopped sealed container with the secrets it was created with.
+
+        Compose recreates a container whose declared values differ, so the
+        start passes back exactly the values read from the container.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+
+        """
+        kept = self.fetch_container_environment(container_name, target.secret_keys)
+        if kept.failure:
+            return r[m.Tests.ContainerInfo].from_failure(kept)
+        with u.Tests.creation_env_file(
+            self.state_dir,
+            container_name,
+            kept.value,
+        ) as env_files:
+            started = u.Tests.docker_compose_up(target, env_files, recreate=False)
+        return started.flat_map(lambda _: self.fetch_container_info(container_name))
+
     def _converge(
         self,
         target: m.Tests.ContainerConfig,
@@ -657,9 +690,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         if info is not None and action == c.Tests.ContainerAction.REUSE:
             return r[m.Tests.ContainerInfo].ok(info)
         if action == c.Tests.ContainerAction.START:
-            return u.Tests.docker_compose_up(target, (), recreate=False).flat_map(
-                lambda _: self.fetch_container_info(container_name),
-            )
+            return self._start_sealed(target, container_name)
         unsealed = u.Tests.update_container_state(
             self.state_dir,
             container_name,
@@ -670,7 +701,10 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         with u.Tests.creation_env_file(
             self.state_dir,
             container_name,
-            environment,
+            {
+                **environment,
+                **u.Tests.generate_creation_secrets(target.secret_keys),
+            },
         ) as env_files:
             created = u.Tests.docker_compose_up(
                 target,

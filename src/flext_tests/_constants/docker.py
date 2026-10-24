@@ -83,6 +83,9 @@ class FlextTestsConstantsDocker:
     # Values are written single-quoted, which compose reads literally; a quote
     # or a line break cannot be represented.
     DOCKER_ENV_FORBIDDEN_MARKS: ClassVar[t.VariadicTuple[str]] = ("'", "\n", "\r")
+    # Entropy of each generated container secret (``secrets.token_urlsafe``),
+    # whose URL-safe alphabet never contains a forbidden mark.
+    DOCKER_SECRET_BYTES: ClassVar[int] = 24
     DOCKER_FINGERPRINT_SEPARATOR: ClassVar[bytes] = b"\0"
     DOCKER_FINGERPRINT_SIZE_BYTES: ClassVar[int] = 8
     ERR_DOCKER_NOT_PROVISIONED: ClassVar[str] = "Container {name} does not exist"
@@ -111,6 +114,9 @@ class FlextTestsConstantsDocker:
     )
     ERR_DOCKER_ENVIRONMENT_MISSING: ClassVar[str] = (
         "Container {name} environment lacks {keys}"
+    )
+    ERR_DOCKER_GENERATED_KEYS: ClassVar[str] = (
+        "Container {name} generates {keys} itself; a caller cannot supply them"
     )
     ERR_DOCKER_ENV_VALUE: ClassVar[str] = (
         "Creation value of {key} cannot be written to a compose env file: "
@@ -162,12 +168,22 @@ class FlextTestsConstantsDocker:
     # ``compose_file`` is relative to DOCKER_SHARED_ASSETS_DIR. ``port`` is the
     # container port a service listens on; the host port it is published on is
     # read from the running container (u.Tests.resolve_host_port).
-    SHARED_CONTAINERS: ClassVar[Mapping[str, t.HeaderMapping]] = MappingProxyType({
+    # ``secret_keys`` are creation variables the compose file declares without
+    # a value: the lifecycle generates them once per container and reads them
+    # back from it (FlextTestsDocker.fetch_container_environment).
+    SHARED_CONTAINERS: ClassVar[
+        Mapping[str, t.MappingKV[str, int | str | t.VariadicTuple[str]]]
+    ] = MappingProxyType({
         "flext-openldap-test": MappingProxyType({
             "compose_file": "docker/docker-compose.openldap.yml",
             "service": "openldap",
             "port": 389,
             "host": "localhost",
+            "secret_keys": (
+                "LDAP_ADMIN_PASSWORD",
+                "LDAP_CONFIG_PASSWORD",
+                "LDAP_READONLY_USER_PASSWORD",
+            ),
         }),
         "flext-oracle-db-test": MappingProxyType({
             "compose_file": "docker/docker-compose.oracle-db.yml",
