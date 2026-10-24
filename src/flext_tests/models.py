@@ -34,8 +34,8 @@ class FlextTestsModels(FlextCliModels):
         FlextTestsMatchersModelsMixin,
         FlextTestsNamespaceModelsMixin,
         FlextTestsSpecModelsMixin,
-        FlextTestsNamespace,
         FlextTestsValidatorModelsMixin,
+        FlextTestsNamespace,
         FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin,
     ):
         """Test-specific models namespace."""
