@@ -100,7 +100,7 @@ class FlextTestsPayloadIdentityParts:
     @staticmethod
     @pytest.mark.parametrize(
         "kind",
-        ["atom", "list", "tuple", "set", "frozenset", "mapping"],
+        ["atom", c.Action.LIST, "tuple", "set", "frozenset", "mapping"],
     )
     def test_attribute_rules_inspect_original_payload_subject(
         kind: t.Tests.PayloadKind,
@@ -170,7 +170,7 @@ class FlextTestsPayloadIdentityParts:
     @staticmethod
     def test_empty_arms_remain_distinct() -> None:
         """Test empty arms remain distinct."""
-        for kind in ("atom", "list", "tuple", "set", "frozenset", "mapping"):
+        for kind in ("atom", c.Action.LIST, "tuple", "set", "frozenset", "mapping"):
             payload = m.Tests.Payload.model_validate({"kind": kind})
             tm.that(payload.kind, eq=kind)
             tm.ok(payload.atom is None)
@@ -216,7 +216,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
         """Test rejects collection with entries."""
         child = m.Tests.Payload(kind="atom", atom=1)
         with pytest.raises(c.ValidationError, match="collection payload cannot"):
-            m.Tests.Payload(kind="list", entries={"discarded": child})
+            m.Tests.Payload(kind=c.Action.LIST, entries={"discarded": child})
 
     @staticmethod
     def test_rejects_unknown_arm() -> None:
@@ -304,7 +304,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
         """Test native ingress rejects string key collisions."""
         with pytest.raises(ValueError, match="mapping key collision"):
             FlextTestsFiles(base_dir=tmp_path).create(
-                {1: "numeric", "1": "text"},
+                {1: "numeric", c.ParserBooleanToken.ONE: "text"},
                 "collision.json",
             )
         tm.fail((tmp_path / "collision.json").exists())

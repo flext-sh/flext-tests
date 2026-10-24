@@ -57,7 +57,7 @@ class TestsFlextTestsFilesFormatsMixin:
     def test_create_csv_auto_detect_from_list(tmp_path: Path) -> None:
         """Test create() auto-detects CSV from t.SequenceOf[list] content."""
         manager = tf(base_dir=tmp_path)
-        content = [["a", "b"], ["1", "2"]]
+        content = [["a", "b"], [c.ParserBooleanToken.ONE, "2"]]
         path = manager.create(content, "data.csv")
         tm.ok(path.exists())
         lines = path.read_text().strip().split("\n")
@@ -67,7 +67,7 @@ class TestsFlextTestsFilesFormatsMixin:
     def test_create_csv_with_headers(tmp_path: Path) -> None:
         """Test create() CSV with explicit headers."""
         manager = tf(base_dir=tmp_path)
-        content = [["1", "2"], ["3", "4"]]
+        content = [[c.ParserBooleanToken.ONE, "2"], ["3", "4"]]
         path = manager.create(
             content,
             "data.csv",

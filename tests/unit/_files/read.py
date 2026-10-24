@@ -65,7 +65,7 @@ class TestsFlextTestsFilesReadMixin:
     def test_read_csv_file(tmp_path: Path) -> None:
         """Test read() returns t.SequenceOf[list] content for .csv files."""
         manager = tf(base_dir=tmp_path)
-        content = [["a", "b"], ["1", "2"]]
+        content = [["a", "b"], [c.ParserBooleanToken.ONE, "2"]]
         path = manager.create(content, "data.csv")
         result = manager.read(
             path,
@@ -80,7 +80,7 @@ class TestsFlextTestsFilesReadMixin:
     def test_read_csv_file_with_headers(tmp_path: Path) -> None:
         """Test read() CSV with headers skips first row by default."""
         manager = tf(base_dir=tmp_path)
-        content = [["header1", "header2"], ["1", "2"], ["3", "4"]]
+        content = [["header1", "header2"], [c.ParserBooleanToken.ONE, "2"], ["3", "4"]]
         path = manager.create(
             content,
             "data.csv",

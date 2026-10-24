@@ -21,14 +21,17 @@ from pathlib import Path
 from types import FrameType, GenericAlias, ModuleType
 from typing import Literal
 
-from flext_cli import m, t, t as it
-from flext_core import p
+from flext_cli import m, p, t
+
+from flext_tests import c
 
 
 class FlextTestsBaseTypesMixin:
     """Base generic primitives extending Flext core aliases."""
 
-    type PayloadKind = Literal["atom", "list", "tuple", "set", "frozenset", "mapping"]
+    type PayloadKind = Literal[
+        "atom", c.Action.LIST, "tuple", "set", "frozenset", "mapping"
+    ]
     type PayloadAtom = (
         t.InstanceOf[str]
         | t.InstanceOf[int]
@@ -96,7 +99,7 @@ class FlextTestsBaseTypesMixin:
         | p.Registry
         | p.AttributeProbe
         | p.Result[FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | it.RegexMatch
+        | t.RegexMatch
         | bt.UnionType
         | FrameType
         | ModuleType

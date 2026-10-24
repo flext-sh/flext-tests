@@ -122,7 +122,7 @@ class TestsFlextTestsMatchersDataDrivenMixin:
             return isinstance(data, Mapping)
 
         result: p.Result[t.JsonMapping] = r[t.JsonMapping].ok({
-            "meta": {"version": "v1", "count": 3},
+            "meta": {"version": "v1", c.Aggregation.COUNT: 3},
             "items": ["a", "b", "c"],
         })
         paths: t.MappingKV[str | int, t.Tests.MatcherOption] = {

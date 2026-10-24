@@ -10,9 +10,8 @@ from re import escape
 from typing import assert_type
 
 import pytest
-from flext_core import p as core_p, r as core_r
 
-from tests import c, m, r, t, tm
+from tests import c, m, p, r, t, tm
 
 
 class TestsFlextTestsMatchersBooleanResultsMixin:
@@ -55,7 +54,7 @@ class TestsFlextTestsMatchersBooleanResultsMixin:
     @pytest.mark.parametrize("payload", [False, 0, "", [], {}])
     def test_successful_falsey_payload_is_not_a_failure(payload: t.JsonValue) -> None:
         """Result state, never payload truthiness, determines success."""
-        result = core_r[t.JsonValue].ok(payload)
+        result = r[t.JsonValue].ok(payload)
         tm.that(tm.ok(result) is payload, truth=True)
         with pytest.raises(AssertionError, match="Expected failure but got success"):
             tm.fail(result)
@@ -66,12 +65,12 @@ class TestsFlextTestsMatchersBooleanResultsMixin:
         with pytest.raises(
             ValueError, match=escape(c.ERR_RESULT_SUCCESS_PAYLOAD_CANNOT_BE_NONE)
         ):
-            core_r[t.JsonValue].ok(None)
+            r[t.JsonValue].ok(None)
 
     @staticmethod
     def test_false_payload_accepts_explicit_type_and_predicate_checks() -> None:
         """Successful False values keep result, type, and predicate semantics."""
-        result = core_r[bool].ok(value=False)
+        result = r[bool].ok(value=False)
         tm.that(tm.ok(result, is_=bool), eq=False)
         tm.that(tm.ok(result, where=lambda value: value is False), eq=False)
         tm.that(tm.ok(result, eq=False), eq=False)
@@ -84,14 +83,14 @@ class TestsFlextTestsMatchersResultsMixin(TestsFlextTestsMatchersBooleanResultsM
     @staticmethod
     def test_assert_result_success_passes() -> None:
         """Test tm.ok() with successful result."""
-        result: core_p.Result[str] = r[str].ok("success")
+        result: p.Result[str] = r[str].ok("success")
         value: t.Tests.TestobjectSerializable = tm.ok(result)
         tm.that(value, eq="success")
 
     @staticmethod
     def test_ok_preserves_generic_result_payload() -> None:
         """The no-matcher overload preserves the producer's payload type."""
-        result: core_p.Result[str] = core_r[str].ok("success")
+        result: p.Result[str] = r[str].ok("success")
         assert_type(result.value, str)
         assert_type(tm.ok(result), str)
         tm.that(tm.ok(result), eq="success")
@@ -142,7 +141,7 @@ class TestsFlextTestsMatchersResultsMixin(TestsFlextTestsMatchersBooleanResultsM
             value: str
 
         payload = Payload(value="typed")
-        result = core_r[Payload].ok(payload)
+        result = r[Payload].ok(payload)
 
         resolved = tm.ok(result)
 
@@ -159,21 +158,21 @@ class TestsFlextTestsMatchersResultsMixin(TestsFlextTestsMatchersBooleanResultsM
     @staticmethod
     def test_assert_result_success_fails() -> None:
         """Test tm.ok() with failed result."""
-        result: core_p.Result[str] = r[str].fail("error")
+        result: p.Result[str] = r[str].fail("error")
         with pytest.raises(AssertionError, match="Expected success but got failure"):
             tm.ok(result)
 
     @staticmethod
     def test_assert_result_success_custom_message() -> None:
         """Test tm.ok() with custom error message."""
-        result: core_p.Result[str] = r[str].fail("error")
+        result: p.Result[str] = r[str].fail("error")
         with pytest.raises(AssertionError, match="Custom message"):
             tm.ok(result, msg="Custom message")
 
     @staticmethod
     def test_assert_result_failure_passes() -> None:
         """Test tm.fail() with failed result."""
-        result: core_p.Result[str] = r[str].fail("error")
+        result: p.Result[str] = r[str].fail("error")
         error = tm.fail(result)
         tm.that(error, eq="error")
 
@@ -187,14 +186,14 @@ class TestsFlextTestsMatchersResultsMixin(TestsFlextTestsMatchersBooleanResultsM
     @staticmethod
     def test_assert_result_failure_with_expected_error() -> None:
         """Test tm.fail() with expected error substring."""
-        result: core_p.Result[str] = r[str].fail("Database connection failed")
+        result: p.Result[str] = r[str].fail("Database connection failed")
         error = tm.fail(result, contains="connection")
         tm.that(error, has="connection")
 
     @staticmethod
     def test_assert_result_failure_expected_error_not_found() -> None:
         """Test tm.fail() when expected error substring not found."""
-        result: core_p.Result[str] = r[str].fail("Database error")
+        result: p.Result[str] = r[str].fail("Database error")
         with pytest.raises(AssertionError, match=r"Expected.*to contain 'connection'"):
             tm.fail(result, contains="connection")
 

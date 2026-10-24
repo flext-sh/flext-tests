@@ -11,7 +11,7 @@ import os
 import pytest
 from flext_infra import config
 
-from tests import tm, u
+from tests import c, tm, u
 
 
 class TestsFlextTestsSlowTimeoutPolicy:
@@ -46,7 +46,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
         """
         variable = "PYTEST_DISABLE_PLUGIN_AUTOLOAD"
         previous = os.environ.get(variable)
-        os.environ[variable] = "1"
+        os.environ[variable] = c.ParserBooleanToken.ONE
         enforcement = config.Infra.tooling.tools.pytest.enforcement_plugin
         plugins = (
             ("-p", "pytest_timeout", "-p", enforcement)
@@ -142,7 +142,9 @@ class TestsFlextTestsSlowTimeoutPolicy:
         )
 
     @pytest.mark.slow
-    @pytest.mark.parametrize("invalid_timeout", ["0", "nan", "not-a-number"])
+    @pytest.mark.parametrize(
+        "invalid_timeout", [c.ParserBooleanToken.ZERO, "nan", "not-a-number"]
+    )
     @pytest.mark.parametrize("unbounded", [False, True])
     def test_invalid_slow_budget_fails_closed(
         self,

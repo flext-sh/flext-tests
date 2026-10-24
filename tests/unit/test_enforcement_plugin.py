@@ -19,7 +19,7 @@ from inspect import getattr_static
 from pathlib import Path
 
 import pytest
-from flext_infra import config, u as infra_u
+from flext_infra import config
 
 from tests import c, tm, u
 
@@ -184,7 +184,9 @@ class TestsFlextTestsEnforcementPlugin:
             ),
         )
         with u.Tests.env_vars_context(
-            {} if autoload else {"PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"},
+            {}
+            if autoload
+            else {"PYTEST_DISABLE_PLUGIN_AUTOLOAD": c.ParserBooleanToken.ONE},
             vars_to_clear=("PYTEST_ADDOPTS", "PYTEST_DISABLE_PLUGIN_AUTOLOAD"),
         ):
             result = u.Tests.pytest_subprocess(
@@ -275,7 +277,9 @@ class TestsFlextTestsEnforcementPlugin:
             """,
         )
         with u.Tests.env_vars_context(
-            {} if autoload else {"PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"},
+            {}
+            if autoload
+            else {"PYTEST_DISABLE_PLUGIN_AUTOLOAD": c.ParserBooleanToken.ONE},
             vars_to_clear=("PYTEST_ADDOPTS", "PYTEST_DISABLE_PLUGIN_AUTOLOAD"),
         ):
             result = u.Tests.pytest_subprocess(
@@ -345,7 +349,7 @@ class TestsFlextTestsEnforcementPlugin:
             if entry.name == config.Infra.tooling.tools.pytest.enforcement_plugin
         )
         with u.Tests.env_vars_context(
-            {"PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"},
+            {"PYTEST_DISABLE_PLUGIN_AUTOLOAD": c.ParserBooleanToken.ONE},
             vars_to_clear=("PYTEST_ADDOPTS",),
         ):
             result = u.Tests.pytest_subprocess(
@@ -484,7 +488,7 @@ class TestsFlextTestsEnforcementPlugin:
             ),
         )
         runtime_root = tm.ok(
-            infra_u.Infra.runtime_owner_root(Path(__file__).resolve().parents[2])
+            u.Infra.runtime_owner_root(Path(__file__).resolve().parents[2])
         )
         with u.Tests.env_vars_context({"RUNTIME_ROOT": runtime_root}):
             result = u.Tests.pytest_subprocess(pytester, "--disable-plugin-autoload")

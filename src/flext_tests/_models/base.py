@@ -9,12 +9,9 @@ from __future__ import annotations
 from types import MappingProxyType
 from typing import Annotated, Self
 
-from flext_cli import m, p
+from flext_cli import m
 
-# Runtime import: pydantic resolves the nested models' ``t.Tests.*`` field
-# annotations at runtime, so a TYPE_CHECKING-only import leaves them
-# undefined (PydanticUserError: not fully defined).
-from flext_tests import t
+from flext_tests import p, t
 
 
 def _entity_payload_default() -> (

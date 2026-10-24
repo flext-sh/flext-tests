@@ -14,7 +14,7 @@ from typing import Annotated, ClassVar, Self, TypeAliasType, cast
 
 from flext_cli import m
 
-from flext_tests import p, t
+from flext_tests import c, p, t
 from flext_tests._models import FlextTestsFlextModelsBase
 from flext_tests._utilities import FlextTestsPayloadUtilities
 
@@ -141,7 +141,7 @@ class FlextTestsMatchersModelsMixin:
                 raise ValueError(msg)
             return node.items
 
-        @m.field_validator("deep", mode="before", check_fields=False)
+        @m.field_validator(c.MergeStrategy.DEEP, mode="before", check_fields=False)
         @classmethod
         def own_deep[ValueT](
             cls,

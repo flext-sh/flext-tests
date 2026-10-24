@@ -11,9 +11,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_cli import u
-from flext_core import r
 
-from flext_tests import c, m, p, t
+from flext_tests import c, m, p, r, t
 from flext_tests._utilities._files import FlextTestsFilesAssertionsMixin
 from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
 
@@ -120,7 +119,9 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
 
         """
         try:
-            text = path.read_text(encoding=c.Tests.DEFAULT_ENCODING, errors="replace")
+            text = path.read_text(
+                encoding=c.Tests.DEFAULT_ENCODING, errors=c.MergeStrategy.REPLACE
+            )
             lines = text.count("\n") + 1 if text else 0
             is_empty = not text.strip()
             first_line = text.split("\n")[0] if text else ""

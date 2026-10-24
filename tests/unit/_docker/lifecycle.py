@@ -247,9 +247,9 @@ class TestsFlextTestsDockerLifecycleMixin:
                 ["PLAIN", "WITH_EQ"],
             ),
         )
-        tm.that(environment["PLAIN"].get_secret_value(), eq="1")
+        tm.that(environment["PLAIN"].get_secret_value(), eq=c.ParserBooleanToken.ONE)
         tm.that(environment["WITH_EQ"].get_secret_value(), eq="a=b")
-        tm.that(str(environment["PLAIN"]), lacks="1")
+        tm.that(str(environment["PLAIN"]), lacks=c.ParserBooleanToken.ONE)
         missing = u.Tests.container_environment(
             "lifecycle-rule",
             inspect,

@@ -10,7 +10,9 @@ from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Annotated, cast
 
-from flext_tests import c, m, p, t, u
+from flext_cli import u
+
+from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsPayloadUtilities
 from flext_tests._utilities._files import FlextTestsFilesLifecycleMixin
 
@@ -117,9 +119,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             value,
         )
         return (
-            payload.kind in {"list", "tuple"}
+            payload.kind in {c.Action.LIST, "tuple"}
             and bool(payload.items)
-            and all(row.kind in {"list", "tuple"} for row in payload.items)
+            and all(row.kind in {c.Action.LIST, "tuple"} for row in payload.items)
         )
 
     def _write_content_by_format(
@@ -210,7 +212,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         rows: list[t.StrSequence] = []
         if headers:
             rows.append(list(headers))
-        if actual_content.kind in {"list", "tuple"}:
+        if actual_content.kind in {c.Action.LIST, "tuple"}:
             rows.extend(FlextTestsFilesCreationMixin._to_string_rows(actual_content))
         else:
             rows.append([

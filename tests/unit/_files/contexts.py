@@ -10,7 +10,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from flext_tests import FlextTestsFiles
-from tests import m, t, tm, u
+from tests import c, m, t, tm, u
 
 
 class TestsFlextTestsFilesContextsMixin:
@@ -45,7 +45,7 @@ class TestsFlextTestsFilesContextsMixin:
         with FlextTestsFiles.files({
             "text": "plain text",
             "json": m.ConfigMap(root={"key": "value"}),
-            "csv": [["a", "b"], ["1", "2"]],
+            "csv": [["a", "b"], [c.ParserBooleanToken.ONE, "2"]],
         }) as paths:
             tm.that(paths["text"].read_text(), eq="plain text")
             tm.that(u.Cli.json_read(paths["json"]).unwrap(), eq={"key": "value"})

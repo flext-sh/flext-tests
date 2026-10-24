@@ -20,9 +20,9 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar
 
-from flext_cli import c, u
+from flext_cli import u
 
-from flext_tests import p, t, tm
+from flext_tests import c, p, t, tm
 
 if TYPE_CHECKING:
     from types import ModuleType

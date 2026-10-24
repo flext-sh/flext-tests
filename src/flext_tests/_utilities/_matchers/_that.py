@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping, Sequence
 from typing import TypeAliasType
 
-from flext_core import p as core_p, u as core_u
+from flext_cli import u
 
 from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsPayloadUtilities
@@ -115,7 +115,7 @@ class FlextTestsMatchersThatMixin:
                     "attr_eq",
                     "attrs_match",
                 }
-                if params.none is not None and core_u.result_view(value):
+                if params.none is not None and u.result_view(value):
                     return False
                 return all(
                     getattr(params, name) is None
@@ -165,9 +165,9 @@ class FlextTestsMatchersThatMixin:
                     AssertionError: Always.
 
                 """
-                if not core_u.result_view(subject):
+                if not u.result_view(subject):
                     return subject
-                result_obj: core_p.ResultView[p.AttributeProbe] = subject
+                result_obj: p.ResultView[p.AttributeProbe] = subject
                 if params.ok is not None:
                     return FlextTestsPayloadUtilities.to_payload(
                         cls._ok_value(result_obj, params),
@@ -194,7 +194,7 @@ class FlextTestsMatchersThatMixin:
 
             @staticmethod
             def _ok_value[ValueT](
-                result_obj: core_p.ResultView[ValueT],
+                result_obj: p.ResultView[ValueT],
                 params: m.Tests.ThatParams,
             ) -> ValueT | str:
                 """Validate result ok/fail expectation and return success value.
@@ -1032,7 +1032,7 @@ class FlextTestsMatchersThatMixin:
         for attr_path, rule in rules.items():
             current: p.AttributeProbe = subject
             for segment in attr_path.split("."):
-                if core_u.mapping_view(current) and segment in current:
+                if u.mapping_view(current) and segment in current:
                     current = current[segment]
                 elif hasattr(current, segment):
                     current = getattr(current, segment)

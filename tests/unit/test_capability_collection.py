@@ -152,7 +152,7 @@ class TestsFlextTestsCapabilityCollection:
             "delete": "env.unlink()",
             "track": "u.Cli.run_checked(['git', 'add', '--', '.env'], "
             "cwd=env.parent).unwrap()",
-            "replace": "env.write_text('TEST_ENDPOINT=not-a-url\\n', encoding='utf-8')",
+            c.MergeStrategy.REPLACE: "env.write_text('TEST_ENDPOINT=not-a-url\\n', encoding='utf-8')",
         }
         with socket.socket() as listener:
             listener.bind(("127.0.0.1", 0))

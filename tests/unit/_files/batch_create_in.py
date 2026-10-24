@@ -78,7 +78,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
         tm.ok(path2.exists())
         tm.that(u.Cli.yaml_parse(path2.read_text()).unwrap(), eq={"key": "value"})
         path3 = FlextTestsFiles(base_dir=tmp_path).create(
-            [["a", "b"], ["1", "2"]],
+            [["a", "b"], [c.ParserBooleanToken.ONE, "2"]],
             "data.csv",
         )
         tm.ok(path3.exists())
@@ -139,7 +139,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
     @staticmethod
     def test_create_in_csv_with_headers(tmp_path: Path) -> None:
         """Test create_in() CSV with explicit headers."""
-        content = [["1", "2"], ["3", "4"]]
+        content = [[c.ParserBooleanToken.ONE, "2"], ["3", "4"]]
         path = FlextTestsFiles(base_dir=tmp_path).create(
             content,
             "data.csv",

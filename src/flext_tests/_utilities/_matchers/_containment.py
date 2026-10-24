@@ -35,7 +35,11 @@ class FlextTestsMatchersContainmentMixin:
             operand = FlextTestsPayloadUtilities.to_payload(
                 expectation,
             )
-            items = operand.items if operand.kind in {"list", "tuple"} else (operand,)
+            items = (
+                operand.items
+                if operand.kind in {c.Action.LIST, "tuple"}
+                else (operand,)
+            )
             for item in items:
                 expected = FlextTestsPayloadUtilities.to_match_value(
                     item,

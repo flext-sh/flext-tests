@@ -88,7 +88,7 @@ class FlextTestsFilesComparisonMixin(
                 "ignore_ws": compare_options.ignore_ws,
                 "ignore_case": compare_options.ignore_case,
                 "pattern": compare_options.pattern,
-                "deep": compare_options.deep,
+                c.MergeStrategy.DEEP: compare_options.deep,
                 "keys": compare_options.keys,
                 "exclude_keys": compare_options.exclude_keys,
             })

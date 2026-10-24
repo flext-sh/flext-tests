@@ -9,8 +9,6 @@ from __future__ import annotations
 from collections.abc import Callable, MutableMapping
 from typing import TypeAliasType, overload
 
-from flext_core import p as core_p
-
 from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsPayloadUtilities
 from flext_tests._utilities._matchers import FlextTestsMatchersThatMixin
@@ -43,13 +41,13 @@ class FlextTestsMatchersResultMixin:
             @staticmethod
             @overload
             def fail[TResult](
-                result: core_p.ResultView[TResult],
+                result: p.ResultView[TResult],
                 **kwargs: p.AttributeProbe,
             ) -> str: ...
 
             @staticmethod
             def fail[TResult](
-                result: core_p.ResultView[TResult] | t.StrictBool,
+                result: p.ResultView[TResult] | t.StrictBool,
                 **kwargs: p.AttributeProbe,
             ) -> str | bool:
                 """Require a false boolean or validate a failed result's error.
@@ -99,7 +97,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def fail_code[TResult](
-                result: core_p.ResultView[TResult],
+                result: p.ResultView[TResult],
                 params: m.Tests.FailParams,
             ) -> None:
                 """Validate error code constraints.
@@ -137,7 +135,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def fail_data[TResult](
-                result: core_p.ResultView[TResult],
+                result: p.ResultView[TResult],
                 params: m.Tests.FailParams,
             ) -> None:
                 """Validate structured error data constraints.
@@ -186,7 +184,7 @@ class FlextTestsMatchersResultMixin:
             @staticmethod
             @overload
             def ok[TResult](
-                result: core_p.ResultView[TResult],
+                result: p.ResultView[TResult],
                 *,
                 path: None = None,
                 eq: TResult
@@ -204,7 +202,7 @@ class FlextTestsMatchersResultMixin:
             @staticmethod
             @overload
             def ok[TResult](
-                result: core_p.ResultView[TResult],
+                result: p.ResultView[TResult],
                 *,
                 path: t.Tests.PathSpec,
                 eq: p.Tests.NativeMatchValue
@@ -221,7 +219,7 @@ class FlextTestsMatchersResultMixin:
 
             @staticmethod
             def ok[TResult](
-                result: core_p.ResultView[TResult] | t.StrictBool,
+                result: p.ResultView[TResult] | t.StrictBool,
                 *,
                 path: t.Tests.PathSpec | None = None,
                 eq: TResult

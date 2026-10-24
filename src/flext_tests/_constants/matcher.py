@@ -11,6 +11,8 @@ from enum import Enum
 from types import MappingProxyType
 from typing import TYPE_CHECKING, ClassVar
 
+from flext_cli import c
+
 if TYPE_CHECKING:
     from flext_cli import t
 
@@ -24,7 +26,7 @@ class FlextTestsConstantsMatcher:
         OMITTED = "omitted"
 
     PAYLOAD_COLLECTION_TYPES: ClassVar[t.MappingKV[str, type]] = MappingProxyType({
-        "list": list,
+        c.Action.LIST: list,
         "tuple": tuple,
         "set": set,
         "frozenset": frozenset,
