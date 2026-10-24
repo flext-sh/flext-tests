@@ -10,7 +10,7 @@ from collections.abc import MutableMapping
 from pathlib import Path
 from typing import Annotated, ClassVar
 
-from flext_cli import m, p
+from flext_cli import m, p, t
 
 
 def _warning_counter_default() -> MutableMapping[str, int]:
@@ -30,7 +30,7 @@ class FlextTestsValidatorModelsMixin:
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(frozen=True)
 
         infra_findings: Annotated[
-            p.Model | None,
+            t.Port[p.Model] | None,
             m.Field(
                 description="flext-infra rule-engine findings keyed by rule id, "
                 "absent when no engine rule is selected.",

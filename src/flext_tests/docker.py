@@ -51,7 +51,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
     ] = m.Field(default_factory=u.Tests.docker_state_dir)
 
     docker_client: Annotated[
-        DockerSDKClient | None,
+        t.Port[DockerSDKClient] | None,
         m.Field(exclude=True, description="Cached Docker SDK client instance."),
     ] = None
 
