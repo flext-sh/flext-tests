@@ -19,7 +19,7 @@ from inspect import getattr_static
 from pathlib import Path
 
 import pytest
-from flext_infra import config
+from flext_infra import config, u as infra_u
 
 from tests import c, tm, u
 
@@ -488,7 +488,7 @@ class TestsFlextTestsEnforcementPlugin:
             ),
         )
         runtime_root = tm.ok(
-            u.Infra.runtime_owner_root(Path(__file__).resolve().parents[2])
+            infra_u.Infra.runtime_owner_root(Path(__file__).resolve().parents[2])
         )
         with u.Tests.env_vars_context({"RUNTIME_ROOT": runtime_root}):
             result = u.Tests.pytest_subprocess(pytester, "--disable-plugin-autoload")

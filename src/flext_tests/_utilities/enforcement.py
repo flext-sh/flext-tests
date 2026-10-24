@@ -36,7 +36,7 @@ class FlextTestsEnforcementUtilitiesMixin:
         repository_root: Path,
         *,
         required_rule_ids: frozenset[str],
-    ) -> p.Result[m.Infra.ModScanReport]:
+    ) -> p.Result[flext_infra.m.Infra.ModScanReport]:
         """Return the flext-infra rule-engine findings for the workspace.
 
         Every id in ``required_rule_ids`` must be declared by the engine's rule
