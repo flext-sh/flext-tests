@@ -616,28 +616,6 @@ msg = "Use cli.render_table from flext_cli."
 [tool.ruff.lint.flake8-tidy-imports.banned-api.typer]
 msg = "Use cli.create_app_with_common_params / cli.register_command from flext_cli."
 
-[tool.ruff.lint.flake8-type-checking]
-runtime-evaluated-base-classes = [
-  "flext_cli.FlextCliConfig",
-  "flext_cli.m.ArbitraryTypesModel",
-  "flext_cli.m.Entity",
-  "flext_cli.m.FlexibleModel",
-  "flext_cli.m.Value",
-  "flext_cli.services.cli.FlextCliCli",
-  "flext_core.FlextSettings",
-  "flext_core.m.BaseModel",
-  "flext_core.s",
-  "flext_tests.FlextTestsModels.Tests",
-  "flext_tests.FlextTestsServiceBase",
-  "flext_tests._models.FlextTestsNamespace",
-  "flext_tests._models.filesystem.PathCoercingParams",
-  "flext_tests._models.matchers.PayloadParams",
-  "flext_tests.m.Value",
-  "flext_tests.s",
-  "pydantic.BaseModel",
-  "tests.m.BaseModel",
-]
-
 [tool.ruff.lint.isort]
 combine-as-imports = true
 force-single-line = false
@@ -669,13 +647,18 @@ section_whitelines = 1
 whitelines = 1
 
 [tool.uv]
+constraint-dependencies = [
+  "pillow>=13.0.0",
+  "certifi>=2026.10.19",
+  "setuptools>=84.1.0",
+  "virtualenv>=21.14.13",
+  "filelock>=4.2.1",
+  "uv>=0.13.4",
+]
 environments = ["sys_platform == 'linux'", "sys_platform == 'darwin'"]
 link-mode = "copy"
 override-dependencies = [
   "rope @ git+https://github.com/marlon-costa-dc/rope.git@ff1c992a100ae983baa79188a6a970c2858734de",
-  "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@fdf8a23f58bfcbcbc0f6b8b7855e3fb8859db9e8",
-  "flext-core @ git+https://github.com/flext-sh/flext-core.git@f98efceb2b4d6221e8e6aeaf478ab8ecf1f8e55e",
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@ac27fc75942a78e4787a74fc64f8a2b7db2a172d",
 ]
 
 [tool.bandit]
