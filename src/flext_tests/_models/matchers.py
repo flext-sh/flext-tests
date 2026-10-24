@@ -738,8 +738,8 @@ class FlextTestsMatchersModelsMixin:
         """Container for chained result assertions."""
 
         result: Annotated[
-            p.Result[TResult],
-            m.Field(description="Result being chained."),
+            t.Port[p.Result[TResult]],
+            m.Field(exclude=True, description="Result being chained."),
         ]
 
     class TestScope(m.Value):
