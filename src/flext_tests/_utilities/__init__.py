@@ -36,6 +36,9 @@ if TYPE_CHECKING:
     from flext_tests._utilities.container import (
         FlextTestsContainerHelpersUtilitiesMixin,
     )
+    from flext_tests._utilities.docker_client import (
+        FlextTestsDockerClientUtilitiesMixin,
+    )
     from flext_tests._utilities.docker_lifecycle import (
         FlextTestsDockerLifecycleUtilitiesMixin,
     )
@@ -63,6 +66,7 @@ if TYPE_CHECKING:
 __all__: tuple[str, ...] = (
     "FlextTestsConfigHelpersUtilitiesMixin",
     "FlextTestsContainerHelpersUtilitiesMixin",
+    "FlextTestsDockerClientUtilitiesMixin",
     "FlextTestsDockerLifecycleUtilitiesMixin",
     "FlextTestsDockerStateUtilitiesMixin",
     "FlextTestsEnforcementUtilitiesMixin",
@@ -103,6 +107,7 @@ install_lazy_exports(
     MappingProxyType({
         "FlextTestsConfigHelpersUtilitiesMixin": ".settings",
         "FlextTestsContainerHelpersUtilitiesMixin": ".container",
+        "FlextTestsDockerClientUtilitiesMixin": ".docker_client",
         "FlextTestsDockerLifecycleUtilitiesMixin": ".docker_lifecycle",
         "FlextTestsDockerStateUtilitiesMixin": ".docker_state",
         "FlextTestsEnforcementUtilitiesMixin": ".enforcement",

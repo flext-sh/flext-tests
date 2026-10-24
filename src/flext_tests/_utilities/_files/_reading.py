@@ -190,7 +190,6 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                         "type[t.MappingKV[str, t.Tests.TestobjectSerializable]]",
                         t.MappingKV[str, t.Tests.TestobjectSerializable],
                     ),
-                    config=m.ConfigDict(arbitrary_types_allowed=True),
                 )
                 parsed_json: t.MappingKV[str, t.Tests.TestobjectSerializable] = (
                     adapter.validate_json(text.encode())

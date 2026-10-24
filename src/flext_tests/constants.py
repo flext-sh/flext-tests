@@ -1,3 +1,4 @@
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Constants for FLEXT tests.
 
 Provides FlextTestsConstants, extending FlextCliConstants with test-specific constants
@@ -12,13 +13,14 @@ from __future__ import annotations
 from flext_cli import FlextCliConstants
 
 from flext_tests._constants import (
+    FlextTestsConstantsBase,
     FlextTestsConstantsDataCases,
+    FlextTestsConstantsDocker,
     FlextTestsConstantsFiles,
+    FlextTestsConstantsMatcher,
+    FlextTestsConstantsNamespace,
     FlextTestsConstantsValidator,
 )
-from flext_tests._constants.docker import FlextTestsConstantsDocker
-from flext_tests._constants.matcher import FlextTestsConstantsMatcher
-from flext_tests._constants.namespace import FlextTestsConstantsNamespace
 
 
 class FlextTestsConstants(FlextCliConstants):
@@ -30,13 +32,14 @@ class FlextTestsConstants(FlextCliConstants):
     """
 
     class Tests(
-        FlextCliConstants.Cli,
+        FlextTestsConstantsBase,
         FlextTestsConstantsDataCases,
         FlextTestsConstantsDocker,
         FlextTestsConstantsFiles,
         FlextTestsConstantsMatcher,
         FlextTestsConstantsNamespace,
         FlextTestsConstantsValidator,
+        FlextCliConstants.Cli,
     ):
         """Test-specific constants namespace.
 

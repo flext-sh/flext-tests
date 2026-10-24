@@ -1,0 +1,5 @@
+# AUTO-GENERATED FILE — Regenerate with: make gen
+id: exports--flext_tests
+language: Python
+rule:
+  regex: ^(?:FlextTests|FlextTestsCase|FlextTestsCli|FlextTestsCliDocker|FlextTestsConfig|FlextTestsConstants|FlextTestsDocker|FlextTestsDockerSurfaceParts|FlextTestsDomains|FlextTestsFiles|FlextTestsFixturesDSLMixin|FlextTestsMatchersUtilities|FlextTestsModels|FlextTestsProtocols|FlextTestsServiceBase|FlextTestsSettings|FlextTestsTypes|FlextTestsUtilities|FlextTestsVersion|__author__|__author_email__|__description__|__license__|__title__|__url__|__version__|__version_info__|api|c|config|d|e|h|install_local_packages|m|p|r|s|settings|t|td|tf|tk|tm|u|x)$

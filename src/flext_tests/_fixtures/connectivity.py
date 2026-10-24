@@ -32,6 +32,20 @@ class FlextTestsCapabilityPlugin:
         self._prerequisite_report_key = pytest.StashKey[bool]()
 
     @staticmethod
+    def pytest_addoption(parser: pytest.Parser) -> None:
+        """Declare the Make CI token keys the generated pytest config projects."""
+        parser.addini(
+            c.Tests.DOCKER_CI_VARIABLE_INI,
+            default="",
+            help="Make CI token variable (projected from flext-infra).",
+        )
+        parser.addini(
+            c.Tests.DOCKER_CI_VALUE_INI,
+            default="",
+            help="Make CI token value (projected from flext-infra).",
+        )
+
+    @staticmethod
     def pytest_configure(config: pytest.Config) -> None:
         config.addinivalue_line(
             "markers",
@@ -111,9 +125,14 @@ class FlextTestsCapabilityPlugin:
         url_var: str | None,
         root: Path,
     ) -> str | None:
+        if FlextTestsCapabilityPlugin._requires_docker(marker):
+            # Docker-provisioned: the suite builds its own isolated environment
+            # (docker_test_environment); only the daemon and container matter.
+            reason = FlextTestsCapabilityPlugin._docker_reason()
+            if reason is not None or marker.name == c.Tests.DOCKER_CONNECTIVITY_MARKER:
+                return reason
+            return FlextTestsCapabilityPlugin._provisioned_reason(marker)
         reason = u.Tests.external_environment_reason(env_file=root / ".env")
-        if reason is None and marker.name == "docker":
-            return FlextTestsCapabilityPlugin._docker_reason()
         if reason is not None:
             return reason
         return FlextTestsCapabilityPlugin._container_reason(
@@ -123,10 +142,28 @@ class FlextTestsCapabilityPlugin:
     @staticmethod
     def _docker_reason() -> str | None:
         client = FlextTestsDocker().client
-        if client is None:
-            return "Docker test environment is unreachable"
-        client.close()
+        if client.failure:
+            return f"Docker test environment is unreachable: {client.error}"
+        client.value.close()
         return None
+
+    @staticmethod
+    def _provisioned_reason(marker: pytest.Mark) -> str | None:
+        """Resolve a shared container's published endpoint and probe it.
+
+        Returns:
+            The unmet prerequisite, or ``None`` when the service accepts.
+
+        """
+        container = c.Tests.CONNECTIVITY_MARKER_CONTAINERS[marker.name]
+        declared = c.Tests.SHARED_CONTAINERS[container]
+        info = FlextTestsDocker().fetch_container_info(container)
+        if info.failure:
+            return "External test service is unavailable"
+        port = u.Tests.resolve_host_port(info.value, int(declared["port"]))
+        if port.failure:
+            return "External test service port is unavailable"
+        return u.Tests.endpoint_reason((str(declared["host"]), port.value))
 
     @staticmethod
     def _container_reason(
@@ -135,21 +172,11 @@ class FlextTestsCapabilityPlugin:
         url_var: str | None,
         root: Path,
     ) -> str | None:
-        container = c.Tests.CONNECTIVITY_MARKER_CONTAINERS.get(marker.name)
         endpoint: tuple[str, int] | None = None
         host = marker.kwargs.get("host")
         port_number = marker.kwargs.get("port")
         if isinstance(host, str) and isinstance(port_number, int):
             endpoint = (host, port_number)
-        if container is not None and endpoint is None and url_var is None:
-            declared = c.Tests.SHARED_CONTAINERS[container]
-            info = FlextTestsDocker().fetch_container_info(container)
-            if info.failure:
-                return "External test service is unavailable"
-            port = u.Tests.resolve_host_port(info.value, int(declared["port"]))
-            if port.failure:
-                return "External test service port is unavailable"
-            endpoint = (str(declared["host"]), port.value)
         if endpoint is None and url_var is None:
             return "External test endpoint is not declared"
         return u.Tests.external_environment_reason(
@@ -267,12 +294,44 @@ class FlextTestsCapabilityPlugin:
             reason = self._reason(item, marker)
             if reason is not None:
                 self._skip_prerequisite(item, marker, reason)
-        if markers:
+        if any(not self._requires_docker(marker) for marker in markers):
             item.stash[self._environment_stack_key].enter_context(
                 u.Tests.env_vars_context(
                     u.Tests.external_environment_values(self._environment_file(item))
                 )
             )
+
+    @pytest.hookimpl(trylast=True)
+    def pytest_collection_modifyitems(self, items: list[pytest.Item]) -> None:
+        """Request the isolated environment fixture for Docker-provisioned items.
+
+        Runs last, so markers added by consumer collection hooks count.
+        """
+        for item in items:
+            if isinstance(item, pytest.Function) and any(
+                marker.name in c.Tests.CONNECTIVITY_MARKERS
+                and self._requires_docker(marker)
+                for marker in item.iter_markers()
+            ):
+                item.fixturenames.append(c.Tests.DOCKER_TEST_ENVIRONMENT_FIXTURE)
+
+    @staticmethod
+    @pytest.fixture
+    def docker_test_environment(
+        request: pytest.FixtureRequest,
+    ) -> Generator[Path]:
+        """Give a Docker-provisioned test its own generated, isolated ``.env``.
+
+        Yields:
+            The generated environment file, applied for the test's duration.
+
+        """
+        factory: pytest.TempPathFactory = request.getfixturevalue("tmp_path_factory")
+        env_file = u.Tests.docker_environment_file(
+            factory.mktemp(c.Tests.DOCKER_TEST_ENVIRONMENT_DIR)
+        )
+        with u.Tests.env_vars_context(u.Tests.external_environment_values(env_file)):
+            yield env_file
 
 
 __all__ = ["FlextTestsCapabilityPlugin"]

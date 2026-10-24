@@ -14,12 +14,14 @@ from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tests._typings.base import FlextTestsBaseTypesMixin
+    from flext_tests._typings.docker import FlextTestsDockerTypesMixin
     from flext_tests._typings.files import FlextTestsFilesTypesMixin
     from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
 
 
 __all__: tuple[str, ...] = (
     "FlextTestsBaseTypesMixin",
+    "FlextTestsDockerTypesMixin",
     "FlextTestsFilesTypesMixin",
     "FlextTestsMatchersTypesMixin",
 )
@@ -29,6 +31,7 @@ install_lazy_exports(
     globals(),
     MappingProxyType({
         "FlextTestsBaseTypesMixin": ".base",
+        "FlextTestsDockerTypesMixin": ".docker",
         "FlextTestsFilesTypesMixin": ".files",
         "FlextTestsMatchersTypesMixin": ".matchers",
     }),

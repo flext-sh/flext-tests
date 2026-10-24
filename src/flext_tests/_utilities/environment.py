@@ -78,6 +78,16 @@ class FlextTestsEnvironmentUtilitiesMixin:
         return None
 
     @staticmethod
+    def endpoint_reason(endpoint: tuple[str, int]) -> str | None:
+        """Probe one transport endpoint that needs no local environment file.
+
+        Returns:
+            The unreachable reason, or ``None`` when the endpoint accepts.
+
+        """
+        return FlextTestsEnvironmentUtilitiesMixin._endpoint_reason({}, None, endpoint)
+
+    @staticmethod
     def _endpoint_reason(
         values: t.OptionalStrMapping,
         url_var: str | None,

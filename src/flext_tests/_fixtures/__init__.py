@@ -23,11 +23,13 @@ if TYPE_CHECKING:
         FlextTestsEnforcementViolationError,
     )
     from flext_tests._fixtures.connectivity import FlextTestsCapabilityPlugin
+    from flext_tests._fixtures.fixture_trees import FlextTestsFixtureTreesFixtures
     from flext_tests._fixtures.project_metadata import (
         project_metadata,
         project_tool_flext,
     )
     from flext_tests._fixtures.scratch_storage import FlextTestsScratchStoragePlugin
+    from flext_tests._fixtures.settings import FlextTestsSettingsFixtures
 
 
 __all__: tuple[str, ...] = (
@@ -38,7 +40,9 @@ __all__: tuple[str, ...] = (
     "FlextTestsEnforcementItem",
     "FlextTestsEnforcementValidators",
     "FlextTestsEnforcementViolationError",
+    "FlextTestsFixtureTreesFixtures",
     "FlextTestsScratchStoragePlugin",
+    "FlextTestsSettingsFixtures",
     "_enforcement",
     "project_metadata",
     "project_tool_flext",
@@ -55,7 +59,9 @@ install_lazy_exports(
         "FlextTestsEnforcementItem": "._enforcement.items",
         "FlextTestsEnforcementValidators": "._enforcement.validators",
         "FlextTestsEnforcementViolationError": "._enforcement._error",
+        "FlextTestsFixtureTreesFixtures": ".fixture_trees",
         "FlextTestsScratchStoragePlugin": ".scratch_storage",
+        "FlextTestsSettingsFixtures": ".settings",
         "_enforcement": "._enforcement",
         "project_metadata": ".project_metadata",
         "project_tool_flext": ".project_metadata",

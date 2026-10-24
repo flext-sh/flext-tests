@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import os
 import socket
 import time
 from collections.abc import Generator
@@ -14,17 +13,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Annotated, Self, override
 
-from docker import (
-    DockerClient as DockerSDKClient,
-    DockerClient as _DockerClientWithBaseUrl,
-    from_env as docker_from_env,
-)
-from docker.constants import DEFAULT_DOCKER_API_VERSION
-from docker.errors import DockerException, NotFound
-from docker.transport import UnixHTTPAdapter
 from flext_infra import config as infra_config, settings as infra_settings
-from python_on_whales import DockerClient as WhalesDockerClient
-from python_on_whales.exceptions import DockerException as WhalesDockerException
 
 from flext_tests import FlextTestsDockerSurfaceParts, c, m, p, r, s, t, u
 
@@ -51,13 +40,8 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
     ] = m.Field(default_factory=u.Tests.docker_state_dir)
 
     docker_client: Annotated[
-        t.Port[DockerSDKClient] | None,
+        t.Port[t.Tests.DockerSdkClient] | None,
         m.Field(exclude=True, description="Cached Docker SDK client instance."),
-    ] = None
-
-    client_error: Annotated[
-        str | None,
-        m.Field(exclude=True, description="Last Docker client initialization error."),
     ] = None
 
     target_config: Annotated[
@@ -128,78 +112,20 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
             update={"container_name": container_name, "compose_file": compose_path},
         )
 
-    @staticmethod
-    def _context_docker_host() -> str | None:
-        """Rootless endpoint of this user's docker daemon, when present.
-
-        The SDK's default endpoint is /var/run/docker.sock, which a rootless
-        installation does not provide; the per-user socket at
-        /run/user/<uid>/docker.sock is the standard rootless endpoint.
+    @property
+    def client(self) -> p.Result[t.Tests.DockerSdkClient]:
+        """Docker client connected on first use through ``u.Tests.docker_sdk_client``.
 
         Returns:
-            The resulting ``str | None``.
+            The connected client, or the daemon failure with its cause.
 
         """
-        uid_socket = Path(f"/run/user/{os.getuid()}/docker.sock")
-        if uid_socket.exists():
-            return f"unix://{uid_socket}"
-        return None
-
-    @property
-    def client(self) -> DockerSDKClient | None:
-        """Docker client with lazy initialization.
-
-        When the SDK default endpoint is absent (rootless docker), the
-        operator's `docker context` endpoint is adopted so the capability
-        matches the way the operator's docker actually runs.
-
-        Raises:
-            FileNotFoundError: If ``isinstance(adapter, UnixHTTPAdapter) and (not
-                Path(adapter.socket_path).exists())``.
-
-        """
-        if self.docker_client is None and self.client_error is None:
-            client: DockerSDKClient | None = None
-            try:
-                client = docker_from_env(version=DEFAULT_DOCKER_API_VERSION)
-                adapter = client.api.get_adapter(client.api.base_url)
-                if (
-                    isinstance(adapter, UnixHTTPAdapter)
-                    and not Path(adapter.socket_path).exists()
-                ):
-                    raise FileNotFoundError(adapter.socket_path)
-                _ = client.ping()
-            except (DockerException, OSError, TypeError, ValueError) as error:
-                if client is not None:
-                    client.close()
-                context_host = self._context_docker_host()
-                if context_host is not None:
-                    retry = _DockerClientWithBaseUrl(
-                        base_url=context_host,
-                        version=DEFAULT_DOCKER_API_VERSION,
-                    )
-                    try:
-                        _ = retry.ping()
-                    except (DockerException, OSError) as retry_error:
-                        self.logger.exception(
-                            "Failed to initialize Docker client",
-                            error=str(retry_error),
-                        )
-                        self.client_error = str(retry_error)
-                    else:
-                        self.docker_client = retry
-                        self.client_error = None
-                    if self.docker_client is not None:
-                        return self.docker_client
-                self.logger.exception(
-                    "Failed to initialize Docker client",
-                    error=str(error),
-                )
-                self.client_error = str(error)
-            else:
-                self.docker_client = client
-                self.client_error = None
-        return self.docker_client
+        if self.docker_client is None:
+            connected = u.Tests.docker_sdk_client()
+            if connected.failure:
+                return connected
+            self.docker_client = connected.value
+        return r[t.Tests.DockerSdkClient].ok(self.docker_client)
 
     @property
     def dirty_containers(self) -> t.StrSequence:
@@ -246,37 +172,6 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         )
         return r[bool].ok(value=True)
 
-    @staticmethod
-    def _compose_client(
-        compose_file: Path,
-        project: str,
-        env_files: t.VariadicTuple[Path] = (),
-    ) -> WhalesDockerClient:
-        """Bind one compose file, its project and its env files to a client.
-
-        Returns:
-            The resulting ``WhalesDockerClient``.
-
-        """
-        return WhalesDockerClient(
-            client_type="docker",
-            compose_files=[compose_file],
-            compose_project_name=project,
-            compose_env_files=list(env_files),
-        )
-
-    @staticmethod
-    def _compose_exception_types() -> tuple[type[Exception], ...]:
-        """Return compose exception types handled by this adapter."""
-        return (
-            AttributeError,
-            OSError,
-            RuntimeError,
-            TypeError,
-            ValueError,
-            WhalesDockerException,
-        )
-
     @override
     def _compose_path(self, compose_file: str) -> Path:
         """Resolve a compose path against the configured workspace root.
@@ -303,10 +198,10 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         enabled = self.lifecycle_enabled()
         if enabled.failure:
             return r[str].from_failure(enabled)
-        client = self._compose_client(compose_path, project)
+        client = u.Tests.docker_compose_client(compose_path, project)
         try:
             client.compose.down(volumes=True, remove_orphans=True)
-        except self._compose_exception_types() as exc:
+        except c.Tests.DOCKER_COMPOSE_ERRORS as exc:
             return r[str].fail_op("Compose down", exc)
         return r[str].ok("Compose down successful")
 
@@ -327,7 +222,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         enabled = self.lifecycle_enabled()
         if enabled.failure:
             return r[str].from_failure(enabled)
-        client = self._compose_client(compose_path, project)
+        client = u.Tests.docker_compose_client(compose_path, project)
         try:
             if force_recreate:
                 client.compose.down(remove_orphans=True, volumes=True)
@@ -342,7 +237,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
                 wait=True,
                 quiet=True,
             )
-        except self._compose_exception_types() as exc:
+        except c.Tests.DOCKER_COMPOSE_ERRORS as exc:
             self.logger.exception("Compose up failed")
             return r[str].fail_op("Compose up", exc)
         return r[str].ok("Compose up successful")
@@ -356,25 +251,9 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
 
         """
         client = self.client
-        if client is None:
-            return r[m.Tests.ContainerInspect].fail(
-                self.client_error or "Docker daemon unavailable",
-            )
-        try:
-            container = client.containers.get(container_name)
-        except NotFound as exc:
-            return r[m.Tests.ContainerInspect].fail(
-                c.Tests.ERR_DOCKER_NOT_PROVISIONED.format(name=container_name),
-                error_code=c.Tests.DockerErrorCode.NOT_PROVISIONED,
-                exception=exc,
-            )
-        except c.EXC_BROAD_RUNTIME as exc:
-            return r[m.Tests.ContainerInspect].fail(str(exc), exception=exc)
-        return u.try_(
-            lambda: m.Tests.ContainerInspect.model_validate(container.attrs),
-            catch=c.EXC_VALIDATION_VALUE,
-            op_name=f"Parse docker inspect of {container_name}",
-        )
+        if client.failure:
+            return r[m.Tests.ContainerInspect].from_failure(client)
+        return u.Tests.docker_inspect(client.value, container_name)
 
     @staticmethod
     def wait_for_port_ready(
@@ -682,6 +561,14 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         if target is None or target.container_name is None or error is not None:
             return r[m.Tests.ContainerInfo].fail(error)
         environment = creation_environment or {}
+        owned = sorted(set(environment).intersection(target.secret_keys))
+        if owned:
+            return r[m.Tests.ContainerInfo].fail(
+                c.Tests.ERR_DOCKER_GENERATED_KEYS.format(
+                    name=target.container_name,
+                    keys=", ".join(owned),
+                ),
+            )
         preflight = (
             self
             .lifecycle_enabled()
@@ -752,6 +639,31 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
                 return converged
             return self._serve(target, converged.value, readiness_probe)
 
+    def _start_sealed(
+        self,
+        target: m.Tests.ContainerConfig,
+        container_name: str,
+    ) -> p.Result[m.Tests.ContainerInfo]:
+        """Start a stopped sealed container with the secrets it was created with.
+
+        Compose recreates a container whose declared values differ, so the
+        start passes back exactly the values read from the container.
+
+        Returns:
+            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+
+        """
+        kept = self.fetch_container_environment(container_name, target.secret_keys)
+        if kept.failure:
+            return r[m.Tests.ContainerInfo].from_failure(kept)
+        with u.Tests.creation_env_file(
+            self.state_dir,
+            container_name,
+            kept.value,
+        ) as env_files:
+            started = u.Tests.docker_compose_up(target, env_files, recreate=False)
+        return started.flat_map(lambda _: self.fetch_container_info(container_name))
+
     def _converge(
         self,
         target: m.Tests.ContainerConfig,
@@ -778,9 +690,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         if info is not None and action == c.Tests.ContainerAction.REUSE:
             return r[m.Tests.ContainerInfo].ok(info)
         if action == c.Tests.ContainerAction.START:
-            return self._compose_to_health(target, (), recreate=False).flat_map(
-                lambda _: self.fetch_container_info(container_name),
-            )
+            return self._start_sealed(target, container_name)
         unsealed = u.Tests.update_container_state(
             self.state_dir,
             container_name,
@@ -791,9 +701,12 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         with u.Tests.creation_env_file(
             self.state_dir,
             container_name,
-            environment,
+            {
+                **environment,
+                **u.Tests.generate_creation_secrets(target.secret_keys),
+            },
         ) as env_files:
-            created = self._compose_to_health(
+            created = u.Tests.docker_compose_up(
                 target,
                 env_files,
                 recreate=action == c.Tests.ContainerAction.RECREATE,
@@ -837,43 +750,6 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         if sealed.failure:
             return r[m.Tests.ContainerInfo].from_failure(sealed)
         return fetched
-
-    def _compose_to_health(
-        self,
-        target: m.Tests.ContainerConfig,
-        env_files: t.VariadicTuple[Path],
-        *,
-        recreate: bool,
-    ) -> p.Result[bool]:
-        """Run compose up with --wait bounded by the target's startup timeout.
-
-        Returns:
-            The resulting ``p.Result[bool]``.
-
-        """
-        compose_file = target.compose_file
-        if compose_file is None:
-            return r[bool].fail(c.Tests.ERR_DOCKER_TARGET_NOT_INSPECTABLE)
-        client = self._compose_client(
-            compose_file,
-            target.project_name or u.Tests.docker_compose_project(compose_file),
-            env_files,
-        )
-        try:
-            if recreate:
-                client.compose.down(remove_orphans=True, volumes=True)
-            client.compose.up(
-                services=[target.service] if target.service else None,
-                detach=True,
-                remove_orphans=True,
-                recreate=recreate,
-                wait=True,
-                wait_timeout=target.startup_timeout,
-                quiet=True,
-            )
-        except self._compose_exception_types() as exc:
-            return r[bool].fail_op("Compose up", exc)
-        return r[bool].ok(value=True)
 
     def _serve(
         self,

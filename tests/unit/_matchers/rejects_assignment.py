@@ -77,8 +77,8 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
 
     @staticmethod
     def test_rejects_assignment_reports_a_mutable_target() -> None:
-        """A target that accepts the assignment fails the matcher."""
-        with pytest.raises(AssertionError):
+        """A target that accepts the assignment fails the test (pytest outcome)."""
+        with pytest.raises(pytest.fail.Exception):
             tm.rejects_assignment(
                 TestsFlextTestsMutable(host="h"),
                 "host",
@@ -102,8 +102,8 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
         tm.ok(caught.value is rejection)
 
     @staticmethod
-    def test_rejects_assignment_chains_original_on_regex_mismatch() -> None:
-        """A mismatched rejection message retains the original exception cause."""
+    def test_rejects_assignment_keeps_original_on_regex_mismatch() -> None:
+        """A mismatched rejection message keeps the original as its context."""
         rejection = ValueError("assignment rejected")
 
         with pytest.raises(AssertionError) as caught:
@@ -115,4 +115,4 @@ class TestsFlextTestsMatchersRejectsAssignmentMixin:
                 match="^a different rejection$",
             )
 
-        tm.ok(caught.value.__cause__ is rejection)
+        tm.ok(caught.value.__context__ is rejection)
