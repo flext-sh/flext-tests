@@ -6,8 +6,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import shutil
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar
+
+from flext_tests import c
 
 if TYPE_CHECKING:
     from flext_tests import t
@@ -113,6 +116,40 @@ class FlextTestsFixturesDSLMixin:
         if not root.exists():
             return ()
         return tuple(sorted(d.name for d in root.iterdir() if d.is_dir()))
+
+    @staticmethod
+    def materialize(checkout_root: Path, scenario: str, destination: Path) -> Path:
+        """Copy one scenario fixture tree into a test-owned directory.
+
+        The tree lives at ``<checkout>/tests/fixtures/<scenario>`` (parts owned by
+        ``c.Tests.FIXTURE_TREES_PARTS``); its contents land directly under
+        ``destination``. This replaces source code or long text embedded as
+        string literals in tests (ADR-028 point 9).
+
+        Args:
+            checkout_root: The project checkout root (pytest ``rootpath``).
+            scenario: The scenario directory name under the fixtures root.
+            destination: The test-owned directory receiving the tree.
+
+        Returns:
+            The ``destination`` path holding the materialized tree.
+
+        Raises:
+            FileNotFoundError: If the scenario directory does not exist.
+            FileExistsError: If a scenario file already exists in ``destination``.
+
+        """
+        source = checkout_root.joinpath(*c.Tests.FIXTURE_TREES_PARTS, scenario)
+        if not source.is_dir():
+            msg = f"Fixture tree not found: {source}"
+            raise FileNotFoundError(msg)
+        for entry in source.rglob("*"):
+            target = destination / entry.relative_to(source)
+            if entry.is_file() and target.exists():
+                msg = f"Fixture tree target already exists: {target}"
+                raise FileExistsError(msg)
+        shutil.copytree(source, destination, dirs_exist_ok=True)
+        return destination
 
     @classmethod
     def kinds(cls, group: str) -> t.StrSequence:
