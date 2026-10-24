@@ -21,17 +21,15 @@ from __future__ import annotations
 import importlib.util
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from flext_tests import t
 
-_LOCAL_PACKAGES: Final[t.StrSequence] = ("tests",)
-
 
 def install_local_packages(
     project_root: Path,
-    package_names: t.StrSequence = _LOCAL_PACKAGES,
+    package_names: t.StrSequence | None = None,
 ) -> None:
     """Register local packages on ``sys.modules`` for in-place test collection.
 
@@ -41,14 +39,28 @@ def install_local_packages(
 
     Args:
         project_root: Directory containing the project's ``conftest.py``.
-        package_names: Ordered package names to bootstrap when present.
+        package_names: Ordered package names to bootstrap. When omitted, every
+            internal tier is derived from disk (ADR-018 point 4): each direct
+            child directory that is a package. ``src/`` holds the public
+            namespaces and is not itself a package, so it is never selected.
 
     Raises:
         ImportError: If the package directory exists but its spec cannot be
             resolved (loader is ``None``).
 
     """
-    for package_name in package_names:
+    names = (
+        tuple(
+            sorted(
+                child.name
+                for child in project_root.iterdir()
+                if child.is_dir() and (child / "__init__.py").is_file()
+            )
+        )
+        if package_names is None
+        else package_names
+    )
+    for package_name in names:
         package_dir = project_root / package_name
         if not (package_dir.is_dir() and (package_dir / "__init__.py").is_file()):
             continue
