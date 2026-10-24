@@ -25,9 +25,9 @@ dependencies = [
   "beartype>=0.22.9",
   "dependency-injector>=4.49.1",
   "docker>=7.2.0",
-  "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@0.12.0-dev",
-  "flext-core @ git+https://github.com/flext-sh/flext-core.git@0.12.0-dev",
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
+  "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@fdf8a23f58bfcbcbc0f6b8b7855e3fb8859db9e8",
+  "flext-core @ git+https://github.com/flext-sh/flext-core.git@f98efceb2b4d6221e8e6aeaf478ab8ecf1f8e55e",
+  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@ac27fc75942a78e4787a74fc64f8a2b7db2a172d",
   "hypothesis",
   "packaging>=26.3",
   "pydantic>=2.14.1,<3",
@@ -79,7 +79,8 @@ Repository = "https://github.com/flext-sh/flext-tests"
 
 [dependency-groups]
 dev = [
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
+  "types-networkx",
+  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@ac27fc75942a78e4787a74fc64f8a2b7db2a172d",
   "mkdocstrings-python>=2.0.9",
   "actionlint-py>=1.7.12.24",
   "bandit>=1.9.4",
@@ -140,7 +141,7 @@ dev = [
   "yamlfix>=1.19.1",
 ]
 codegen = [
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
+  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@ac27fc75942a78e4787a74fc64f8a2b7db2a172d",
 ]
 
 [tool.flext.docs]
@@ -279,6 +280,7 @@ project-excludes = [
   "**/site-packages/**",
   "**/site/**",
   "**/target/**",
+  "**/tests/fixtures/*/**",
   "**/venv/**",
 ]
 project-includes = ["src/**/*.py*", "tests/**/*.py*"]
@@ -422,6 +424,7 @@ exclude = [
   "**/site-packages/**",
   "**/site/**",
   "**/target/**",
+  "**/tests/fixtures/*/**",
   "**/venv/**",
 ]
 extraPaths = ["src", "."]
@@ -470,6 +473,8 @@ filterwarnings = [
   "module::flext_core._constants.enforcement.FlextMroViolation",
   "once::pytest.PytestAssertRewriteWarning",
 ]
+flext_make_ci_value = "Y"
+flext_make_ci_variable = "CI"
 flext_slow_timeout_seconds = "30"
 markers = [
   "smoke: public-interface smoke tests",
@@ -490,6 +495,7 @@ markers = [
   "requires_engine: native check engine required by this test",
 ]
 minversion = "8.0"
+pytester_example_dir = "tests/fixtures"
 python_classes = ["Test*"]
 python_files = ["*_test.py", "*_tests.py", "test_*.py"]
 testpaths = ["tests"]
@@ -547,6 +553,7 @@ extend-exclude = [
   "**/site-packages/**",
   "**/site/**",
   "**/target/**",
+  "**/tests/fixtures/*/**",
   "**/venv/**",
 ]
 fix = false
@@ -610,6 +617,30 @@ msg = "Use cli.render_table from flext_cli."
 [tool.ruff.lint.flake8-tidy-imports.banned-api.typer]
 msg = "Use cli.create_app_with_common_params / cli.register_command from flext_cli."
 
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = [
+  "flext_cli.FlextCliConfig",
+  "flext_cli.FlextCliModels",
+  "flext_cli.m.ArbitraryTypesModel",
+  "flext_cli.m.Entity",
+  "flext_cli.m.FlexibleModel",
+  "flext_cli.m.Value",
+  "flext_cli.services.cli.FlextCliCli",
+  "flext_core.FlextSettings",
+  "flext_core.m.BaseModel",
+  "flext_core.s",
+  "flext_tests.FlextTestsModels",
+  "flext_tests.FlextTestsModels.Tests",
+  "flext_tests.FlextTestsServiceBase",
+  "flext_tests._models.filesystem.PathCoercingParams",
+  "flext_tests._models.matchers.PayloadParams",
+  "flext_tests._models.tests_namespace.FlextTestsNamespace",
+  "flext_tests.m.Value",
+  "flext_tests.s",
+  "pydantic.BaseModel",
+  "tests.m.BaseModel",
+]
+
 [tool.ruff.lint.isort]
 combine-as-imports = true
 force-single-line = false
@@ -644,8 +675,25 @@ whitelines = 1
 environments = ["sys_platform == 'linux'", "sys_platform == 'darwin'"]
 link-mode = "copy"
 override-dependencies = [
-  "rope @ git+https://github.com/marlon-costa-dc/rope.git@2bf3ad55a32cc117f5321e1467695eba540be97b",
+  "rope @ git+https://github.com/marlon-costa-dc/rope.git@ff1c992a100ae983baa79188a6a970c2858734de",
+  "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@fdf8a23f58bfcbcbc0f6b8b7855e3fb8859db9e8",
+  "flext-core @ git+https://github.com/flext-sh/flext-core.git@f98efceb2b4d6221e8e6aeaf478ab8ecf1f8e55e",
+  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@ac27fc75942a78e4787a74fc64f8a2b7db2a172d",
 ]
+[[tool.uv.cache-keys]]
+file = "pyproject.toml"
+
+[[tool.uv.cache-keys]]
+file = "setup.py"
+
+[[tool.uv.cache-keys]]
+file = "setup.cfg"
+
+[[tool.uv.cache-keys]]
+dir = "src"
+
+[[tool.uv.cache-keys]]
+file = "src/flext_tests/config/**/*"
 
 [tool.bandit]
 severity = "MEDIUM"
