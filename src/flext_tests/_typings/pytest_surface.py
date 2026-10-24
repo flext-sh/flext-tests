@@ -15,18 +15,23 @@ import pytest
 
 
 class FlextTestsPytestTypesMixin:
-    """pytest classes published under ``t.Tests``."""
+    """pytest types published under ``t.Tests``.
 
-    CaptureFixture = pytest.CaptureFixture
-    Config = pytest.Config
-    FixtureRequest = pytest.FixtureRequest
-    LogCaptureFixture = pytest.LogCaptureFixture
-    Metafunc = pytest.Metafunc
-    MonkeyPatch = pytest.MonkeyPatch
-    Pytester = pytest.Pytester
-    RunResult = pytest.RunResult
+    Test modules use these only in annotations, so they are PEP 695 aliases
+    (not fields). ``StashKey`` is constructed at runtime
+    (``StashKey[T]()``), so it stays a field bound to the class itself.
+    """
+
+    type CaptureFixture[AnyStrT: (str, bytes)] = pytest.CaptureFixture[AnyStrT]
+    type Config = pytest.Config
+    type FixtureRequest = pytest.FixtureRequest
+    type LogCaptureFixture = pytest.LogCaptureFixture
+    type Metafunc = pytest.Metafunc
+    type MonkeyPatch = pytest.MonkeyPatch
+    type Pytester = pytest.Pytester
+    type RunResult = pytest.RunResult
+    type TempPathFactory = pytest.TempPathFactory
     StashKey = pytest.StashKey
-    TempPathFactory = pytest.TempPathFactory
 
 
 __all__: list[str] = ["FlextTestsPytestTypesMixin"]
