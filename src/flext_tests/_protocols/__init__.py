@@ -16,6 +16,9 @@ if TYPE_CHECKING:
     from flext_tests._protocols.base import FlextTestsProtocolsBase
     from flext_tests._protocols.docker import FlextTestsDockerProtocolsMixin
     from flext_tests._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
+    from flext_tests._protocols.fixture_trees import (
+        FlextTestsFixtureTreesProtocolsMixin,
+    )
     from flext_tests._protocols.matchers import FlextTestsMatchersProtocolsMixin
     from flext_tests._protocols.payload import FlextTestsPayloadProtocolsMixin
     from flext_tests._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
@@ -24,6 +27,7 @@ if TYPE_CHECKING:
 __all__: tuple[str, ...] = (
     "FlextTestsDockerProtocolsMixin",
     "FlextTestsEnforcementProtocolsMixin",
+    "FlextTestsFixtureTreesProtocolsMixin",
     "FlextTestsMatchersProtocolsMixin",
     "FlextTestsPayloadProtocolsMixin",
     "FlextTestsProtocolsBase",
@@ -36,6 +40,7 @@ install_lazy_exports(
     MappingProxyType({
         "FlextTestsDockerProtocolsMixin": ".docker",
         "FlextTestsEnforcementProtocolsMixin": ".enforcement",
+        "FlextTestsFixtureTreesProtocolsMixin": ".fixture_trees",
         "FlextTestsMatchersProtocolsMixin": ".matchers",
         "FlextTestsPayloadProtocolsMixin": ".payload",
         "FlextTestsProtocolsBase": ".base",

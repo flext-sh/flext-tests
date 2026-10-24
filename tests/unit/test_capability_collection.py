@@ -11,9 +11,9 @@ import socket
 from collections.abc import Generator
 
 import pytest
-from flext_infra import config as infra_config
 
-from tests import c, tm, u
+from flext_tests import config
+from tests import c, p, tm, u
 
 pytest_plugins = ["pytester"]
 
@@ -43,7 +43,7 @@ class TestsFlextTestsCapabilityCollection:
             "def service():\n"
             "    pytest.fail('service fixture executed')\n",
         )
-        ci = infra_config.Infra.codegen.make.ci
+        ci = config.Infra.codegen.make.ci
         with u.Tests.env_vars_context(
             {ci.variable: f"{ci.value}-other"},
         ):
@@ -65,10 +65,15 @@ class TestsFlextTestsCapabilityCollection:
     @pytest.mark.slow
     def test_remote_markers_skip_without_local_env(
         consumer: pytest.Pytester,
+        fixture_tree: p.Tests.FixtureTree,
     ) -> None:
         """Remote services need the developer's untracked .env; none is present."""
-        _ = consumer.copy_example("capability_markers")
-        result = TestsFlextTestsCapabilityCollection._run(consumer, "test_remote.py")
+        tree = fixture_tree(
+            "capability_markers", destination=consumer.path / "capability_markers"
+        )
+        result = TestsFlextTestsCapabilityCollection._run(
+            consumer, str(tree / "test_remote.py")
+        )
         result.assert_outcomes(passed=1, skipped=2)
         result.stdout.fnmatch_lines(["*External tests require a local untracked .env*"])
         tm.that(result.ret, eq=0)
@@ -77,9 +82,12 @@ class TestsFlextTestsCapabilityCollection:
     @pytest.mark.slow
     def test_docker_markers_skip_only_when_docker_unreachable(
         consumer: pytest.Pytester,
+        fixture_tree: p.Tests.FixtureTree,
     ) -> None:
         """Docker-provisioned markers never ask for .env; an absent daemon skips."""
-        _ = consumer.copy_example("capability_markers")
+        tree = fixture_tree(
+            "capability_markers", destination=consumer.path / "capability_markers"
+        )
         with socket.socket() as closed_endpoint:
             closed_endpoint.bind(("127.0.0.1", 0))
             port = closed_endpoint.getsockname()[1]
@@ -88,7 +96,7 @@ class TestsFlextTestsCapabilityCollection:
                 vars_to_clear=("DOCKER_TLS_VERIFY", "DOCKER_CERT_PATH"),
             ):
                 result = TestsFlextTestsCapabilityCollection._run(
-                    consumer, "test_docker_markers.py"
+                    consumer, str(tree / "test_docker_markers.py")
                 )
         result.assert_outcomes(skipped=len(c.Tests.CONNECTIVITY_MARKERS))
         result.stdout.fnmatch_lines(["*Docker test environment is unreachable*"])
@@ -100,10 +108,14 @@ class TestsFlextTestsCapabilityCollection:
     @pytest.mark.docker
     def test_docker_marker_runs_with_isolated_environment(
         consumer: pytest.Pytester,
+        fixture_tree: p.Tests.FixtureTree,
     ) -> None:
         """With Docker up, the test runs on a generated, isolated .env."""
-        _ = consumer.copy_example("capability_docker_isolated_env")
-        result = TestsFlextTestsCapabilityCollection._run(consumer)
+        tree = fixture_tree(
+            "capability_docker_isolated_env",
+            destination=consumer.path / "capability_docker_isolated_env",
+        )
+        result = TestsFlextTestsCapabilityCollection._run(consumer, str(tree))
         result.assert_outcomes(passed=1)
         tm.that(result.ret, eq=0)
 
@@ -210,7 +222,7 @@ class TestsFlextTestsCapabilityCollection:
         ordering: str,
     ) -> None:
         """Test docker backed markers skip in ci before effects."""
-        ci = infra_config.Infra.codegen.make.ci
+        ci = config.Infra.codegen.make.ci
         markers = [service_marker]
         if ordering == "service-first":
             markers.append("docker")
@@ -306,7 +318,7 @@ class TestsFlextTestsCapabilityCollection:
             ),
         )
         other_markers = ("remote", "docker")
-        ci = infra_config.Infra.codegen.make.ci
+        ci = config.Infra.codegen.make.ci
         consumer.makepyfile(
             "import pytest\n"
             + "".join(
@@ -334,7 +346,7 @@ class TestsFlextTestsCapabilityCollection:
         in_ci: bool,
     ) -> None:
         """Explicit remote transports run locally and in CI without Docker probes."""
-        ci = infra_config.Infra.codegen.make.ci
+        ci = config.Infra.codegen.make.ci
         with socket.socket() as listener:
             listener.bind(("127.0.0.1", 0))
             listener.listen(32)

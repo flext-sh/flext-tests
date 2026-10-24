@@ -28,7 +28,6 @@ class FlextTestsModels(FlextCliModels):
     """Test models extending m with test-specific factory models."""
 
     class Tests(
-        FlextTestsFlextModelsBase,
         FlextTestsDockerModelsMixin,
         FlextTestsFilesystemModelsMixin,
         FlextTestsMatchersModelsMixin,

@@ -118,17 +118,54 @@ class FlextTestsFixturesDSLMixin:
         return tuple(sorted(d.name for d in root.iterdir() if d.is_dir()))
 
     @staticmethod
-    def materialize(test_path: Path, scenario: str, destination: Path) -> Path:
-        """Copy one scenario fixture tree into a test-owned directory.
+    def fixture_trees_root(rootpath: Path, trees_root: str) -> Path:
+        """Resolve the scenario fixture-tree root of one pytest run.
 
-        The tree lives at ``tests/fixtures/<scenario>`` of the project owning
-        ``test_path`` (parts owned by ``c.Tests.FIXTURE_TREES_PARTS``), so the
-        result does not depend on the directory pytest was started from; its
-        contents land directly under ``destination``. This replaces source code
-        or long text embedded as string literals in tests (ADR-028 point 9).
+        The root is the ``c.Tests.FIXTURE_TREES_INI`` ini value, projected by
+        flext-infra into every project, under the run's ``rootpath``.
 
         Args:
-            test_path: A path inside the project's tests tier (the test module).
+            rootpath: The pytest run's root directory.
+            trees_root: The configured ini value.
+
+        Returns:
+            The absolute scenario fixture-tree root.
+
+        Raises:
+            ValueError: If the project declares no scenario root.
+
+        """
+        if not trees_root:
+            msg = f"pytest ini {c.Tests.FIXTURE_TREES_INI} is not configured"
+            raise ValueError(msg)
+        return rootpath / trees_root
+
+    @staticmethod
+    def is_fixture_tree(path: Path, rootpath: Path, trees_root: str) -> bool:
+        """Return whether ``path`` is one scenario directory of the run.
+
+        Scenario trees hold consumer sources (``test_*.py`` included) that are
+        data for ``fixture_tree``, never live tests. A project that declares no
+        scenario root has none to exclude.
+
+        Returns:
+            Whether ``path`` is a direct child directory of the scenario root.
+
+        """
+        return (
+            bool(trees_root) and path.parent == rootpath / trees_root and path.is_dir()
+        )
+
+    @staticmethod
+    def materialize(examples_root: Path, scenario: str, destination: Path) -> Path:
+        """Copy one scenario fixture tree into a test-owned directory.
+
+        The tree lives at ``<examples_root>/<scenario>``; its contents land
+        directly under ``destination``. This replaces source code or long text
+        embedded as string literals in tests (ADR-028 point 9).
+
+        Args:
+            examples_root: The run's scenario root (``fixture_trees_root``).
             scenario: The scenario directory name under the fixtures root.
             destination: The test-owned directory receiving the tree.
 
@@ -136,17 +173,11 @@ class FlextTestsFixturesDSLMixin:
             The ``destination`` path holding the materialized tree.
 
         Raises:
-            FileNotFoundError: If ``test_path`` is outside a tests tier or the
-                scenario directory does not exist.
+            FileNotFoundError: If the scenario directory does not exist.
             FileExistsError: If a scenario file already exists in ``destination``.
 
         """
-        tier, *below = c.Tests.FIXTURE_TREES_PARTS
-        tests_dirs = [p for p in test_path.resolve().parents if p.name == tier]
-        if not tests_dirs:
-            msg = f"Not inside a {tier}/ tier: {test_path}"
-            raise FileNotFoundError(msg)
-        source = tests_dirs[0].joinpath(*below, scenario)
+        source = examples_root / scenario
         if not source.is_dir():
             msg = f"Fixture tree not found: {source}"
             raise FileNotFoundError(msg)

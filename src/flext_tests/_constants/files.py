@@ -11,12 +11,9 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from enum import StrEnum, unique
-from typing import TYPE_CHECKING, ClassVar
+from typing import ClassVar
 
 from flext_cli import c
-
-if TYPE_CHECKING:
-    from flext_cli import t
 
 
 class FlextTestsConstantsFiles:
@@ -43,8 +40,8 @@ class FlextTestsConstantsFiles:
     PERMISSION_WRITABLE_FILE: ClassVar[int] = 420
     PERMISSION_WRITABLE_DIR: ClassVar[int] = 493
     HASH_CHUNK_SIZE: ClassVar[int] = 8192
-    FIXTURE_TREES_PARTS: ClassVar[t.StrSequence] = ("tests", "fixtures")
-    """Tests tier and its scenario fixture-tree directory (ADR-028 point 9)."""
+    FIXTURE_TREES_INI: ClassVar[str] = "flext_fixture_trees_root"
+    """Ini key the fixture-tree plugin registers for the scenario (ADR-028 point 9)."""
     ERROR_FILE_NOT_FOUND: ClassVar[str] = "File not found: {path}"
     ERROR_INVALID_JSON: ClassVar[str] = "Invalid JSON: {error}"
     ERROR_INVALID_YAML: ClassVar[str] = "Invalid YAML: {error}"

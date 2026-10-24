@@ -1,0 +1,5 @@
+# AUTO-GENERATED FILE — Regenerate with: make gen
+id: exports--flext_tests._utilities._files._comparison
+language: Python
+rule:
+  regex: ^(?:FlextTestsFilesComparisonMixin)$
