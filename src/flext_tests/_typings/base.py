@@ -54,7 +54,7 @@ class FlextTestsBaseTypesMixin:
         | bool
         | bytes
         | datetime
-        | tzinfo
+        | t.InstanceOf[tzinfo]
         | Path
         | m.BaseModel
         | type
@@ -73,7 +73,16 @@ class FlextTestsBaseTypesMixin:
         | None
     )
     type TestobjectHashable = (
-        str | int | float | bool | bytes | datetime | tzinfo | Path | type | None
+        str
+        | int
+        | float
+        | bool
+        | bytes
+        | datetime
+        | t.InstanceOf[tzinfo]
+        | Path
+        | type
+        | None
     )
     type NormalizationInput = (
         TestobjectAtom
