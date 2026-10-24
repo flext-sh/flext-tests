@@ -19,7 +19,9 @@ class FlextTestsPytestTypesMixin:
 
     Test modules use these only in annotations, so they are PEP 695 aliases
     (not fields). ``StashKey`` is constructed at runtime
-    (``StashKey[T]()``), so it stays a field bound to the class itself.
+    (``StashKey[T]()``) and ``Failed`` is caught at runtime
+    (``u.Tests.raises(t.Tests.Failed)``), so both stay fields bound to the
+    class itself.
     """
 
     type CaptureFixture[AnyStrT: (str, bytes)] = pytest.CaptureFixture[AnyStrT]
@@ -32,6 +34,7 @@ class FlextTestsPytestTypesMixin:
     type RunResult = pytest.RunResult
     type TempPathFactory = pytest.TempPathFactory
     StashKey = pytest.StashKey
+    Failed = pytest.fail.Exception
 
 
 __all__: list[str] = ["FlextTestsPytestTypesMixin"]
