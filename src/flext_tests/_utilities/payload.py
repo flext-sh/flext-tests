@@ -25,10 +25,10 @@ from types import (
 )
 from typing import TYPE_CHECKING, Final, TypeAliasType, cast
 
-from flext_core import u
+from flext_core import m, u
 
 import flext_tests
-from flext_tests import c, m, p, t
+from flext_tests import c, p, t
 from flext_tests._models import FlextTestsFlextModelsBase
 
 if TYPE_CHECKING:
