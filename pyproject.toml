@@ -42,6 +42,7 @@ dependencies = [
   "pytest-testmon>=2.2.0",
   "pytest-timeout>=2.4.0",
   "pytest-xdist",
+  "python-dotenv>=1.2.4",
   "python-on-whales>=0.81.0",
   "pyyaml>=6.0.3",
   "structlog>=26.1.0,<27",
