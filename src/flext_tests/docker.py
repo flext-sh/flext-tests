@@ -80,7 +80,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         )
 
     @staticmethod
-    def _resolve_shared_target_config(
+    def shared_target_config(
         container_name: str,
     ) -> m.Tests.ContainerConfig:
         """Resolve one shared-container entry into the canonical target config.
@@ -306,7 +306,7 @@ class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
         return cls(
             repository_root=repository_root or Path.cwd(),
             state_dir=state_dir or u.Tests.docker_state_dir(),
-            target_config=cls._resolve_shared_target_config(container_name),
+            target_config=cls.shared_target_config(container_name),
         )
 
     @classmethod

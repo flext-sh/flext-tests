@@ -129,8 +129,8 @@ class TestsFlextTestsDockerLifecycleMixin:
     @staticmethod
     def test_generated_secrets_cover_declared_keys_and_are_writable() -> None:
         """Each declared key gets its own fresh value an env file can carry."""
-        for settings in c.Tests.SHARED_CONTAINERS.values():
-            keys = tuple(settings.get("secret_keys", ()))
+        for name in c.Tests.SHARED_CONTAINERS:
+            keys = FlextTestsDocker.shared_target_config(name).secret_keys
             first = u.Tests.generate_creation_secrets(keys)
             second = u.Tests.generate_creation_secrets(keys)
             tm.that(tuple(first), eq=keys)
@@ -147,8 +147,8 @@ class TestsFlextTestsDockerLifecycleMixin:
     @staticmethod
     def test_caller_cannot_supply_a_generated_secret() -> None:
         """An owned secret key from the caller fails before any effect."""
-        for name, settings in c.Tests.SHARED_CONTAINERS.items():
-            keys = tuple(settings.get("secret_keys", ()))
+        for name in c.Tests.SHARED_CONTAINERS:
+            keys = FlextTestsDocker.shared_target_config(name).secret_keys
             if not keys:
                 continue
             supplied = {keys[0]: t.SecretStr("caller-value")}

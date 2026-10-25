@@ -17,6 +17,7 @@ from flext_tests._typings import (
     FlextTestsDockerTypesMixin,
     FlextTestsFilesTypesMixin,
     FlextTestsMatchersTypesMixin,
+    FlextTestsPytestTypesMixin,
 )
 
 
@@ -32,6 +33,7 @@ class FlextTestsTypes(FlextCliTypes):
         FlextTestsDockerTypesMixin,
         FlextTestsFilesTypesMixin,
         FlextTestsMatchersTypesMixin,
+        FlextTestsPytestTypesMixin,
     ):
         """Test-specific type definitions namespace.
 
@@ -40,5 +42,4 @@ class FlextTestsTypes(FlextCliTypes):
 
 
 t = FlextTestsTypes
-
 __all__: list[str] = ["FlextTestsTypes", "t"]

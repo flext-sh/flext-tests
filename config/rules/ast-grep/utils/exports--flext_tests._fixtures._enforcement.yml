@@ -1,5 +1,0 @@
-# AUTO-GENERATED FILE — Regenerate with: make gen
-id: exports--flext_tests._fixtures._enforcement
-language: Python
-rule:
-  regex: ^(?:FlextTestsEnforcementBuilder|FlextTestsEnforcementCollector|FlextTestsEnforcementDispatcher|FlextTestsEnforcementItem|FlextTestsEnforcementValidators|FlextTestsEnforcementViolationError)$

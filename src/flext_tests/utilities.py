@@ -27,6 +27,7 @@ from flext_tests._utilities import (
     FlextTestsFlextUtilitiesPayload,
     FlextTestsMatchersUtilities,
     FlextTestsNamespaceUtilitiesMixin,
+    FlextTestsPytestUtilitiesMixin,
     FlextTestsResultUtilitiesMixin,
     FlextTestsScratchStorageUtilitiesMixin,
     FlextTestsTestContextUtilitiesMixin,
@@ -53,6 +54,7 @@ class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance)
         FlextTestsFixturesDSLMixin,
         FlextTestsNamespaceUtilitiesMixin,
         FlextTestsFlextUtilitiesPayload,
+        FlextTestsPytestUtilitiesMixin,
         FlextTestsResultUtilitiesMixin,
         FlextTestsScratchStorageUtilitiesMixin,
         FlextTestsConfigHelpersUtilitiesMixin,
@@ -65,9 +67,4 @@ class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance)
 
 
 u = FlextTestsUtilities
-
-__all__: list[str] = [
-    "FlextTestsFixturesDSLMixin",
-    "FlextTestsUtilities",
-    "u",
-]
+__all__: list[str] = ["FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"]

@@ -13,7 +13,6 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._fixtures import _enforcement as _enforcement
     from flext_tests._fixtures._enforcement import (
         FlextTestsEnforcementBuilder,
         FlextTestsEnforcementCollector,
@@ -43,7 +42,6 @@ __all__: tuple[str, ...] = (
     "FlextTestsFixtureTreesFixtures",
     "FlextTestsScratchStoragePlugin",
     "FlextTestsSettingsFixtures",
-    "_enforcement",
     "project_metadata",
     "project_tool_flext",
 )
@@ -62,7 +60,6 @@ install_lazy_exports(
         "FlextTestsFixtureTreesFixtures": ".fixture_trees",
         "FlextTestsScratchStoragePlugin": ".scratch_storage",
         "FlextTestsSettingsFixtures": ".settings",
-        "_enforcement": "._enforcement",
         "project_metadata": ".project_metadata",
         "project_tool_flext": ".project_metadata",
     }),

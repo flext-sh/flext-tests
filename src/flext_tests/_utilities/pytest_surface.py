@@ -2,8 +2,9 @@
 
 flext-tests is the pytest plugin, so pytest is a layer-zero library of its
 facade families (ADR-028, operator ruling 2026-10-24); a test module never
-imports pytest and calls these members instead. Each member is the pytest
-function itself, read from the class namespace.
+imports pytest and calls these members instead. The functions are declared
+once, by flext-infra's ``u.Infra.Pytest``; this mixin publishes them under
+``u.Tests`` by inheritance.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -11,19 +12,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import pytest
+from flext_infra import FlextInfraUtilities
 
 
-class FlextTestsPytestUtilitiesMixin:
-    """pytest functions published under ``u.Tests``."""
-
-    approx = staticmethod(pytest.approx)
-    fixture = staticmethod(pytest.fixture)
-    importorskip = staticmethod(pytest.importorskip)
-    main = staticmethod(pytest.main)
-    param = staticmethod(pytest.param)
-    raises = staticmethod(pytest.raises)
-    warns = staticmethod(pytest.warns)
+class FlextTestsPytestUtilitiesMixin(FlextInfraUtilities.Infra.Pytest):
+    """pytest functions published under ``u.Tests``, owned by ``u.Infra.Pytest``."""
 
 
 __all__: list[str] = ["FlextTestsPytestUtilitiesMixin"]

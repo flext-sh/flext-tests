@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from flext_tests._typings.docker import FlextTestsDockerTypesMixin
     from flext_tests._typings.files import FlextTestsFilesTypesMixin
     from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
+    from flext_tests._typings.pytest_surface import FlextTestsPytestTypesMixin
 
 
 __all__: tuple[str, ...] = (
@@ -24,6 +25,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsDockerTypesMixin",
     "FlextTestsFilesTypesMixin",
     "FlextTestsMatchersTypesMixin",
+    "FlextTestsPytestTypesMixin",
 )
 
 install_lazy_exports(
@@ -34,6 +36,7 @@ install_lazy_exports(
         "FlextTestsDockerTypesMixin": ".docker",
         "FlextTestsFilesTypesMixin": ".files",
         "FlextTestsMatchersTypesMixin": ".matchers",
+        "FlextTestsPytestTypesMixin": ".pytest_surface",
     }),
     public_exports=__all__,
 )

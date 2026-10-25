@@ -14,18 +14,15 @@ from typing import Annotated
 
 from flext_cli import FlextCliConfig, m
 
-from flext_tests._models.tests_namespace import FlextTestsNamespace
+from flext_tests._models.tests_namespace import FlextTestsModelsTestsNamespace
 
 
 class FlextTestsConfig(FlextCliConfig):
     """Tests config auto-loaded model-less from ``config/*.yaml``."""
 
-    Tests: Annotated[
-        FlextTestsNamespace,
-        m.Field(
-            description="Open namespace exposing ``config/*.yaml`` under ``Tests``.",
-        ),
-    ] = FlextTestsNamespace()
+    Tests: Annotated[FlextTestsModelsTestsNamespace.ConfigNamespace, m.Field(
+        description="Open namespace exposing ``config/*.yaml`` under ``Tests``.",
+    )] = FlextTestsModelsTestsNamespace.ConfigNamespace()
 
 
 config: FlextTestsConfig = FlextTestsConfig.fetch_global()

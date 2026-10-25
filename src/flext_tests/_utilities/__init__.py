@@ -13,7 +13,6 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._utilities import _files as _files, _matchers as _matchers
     from flext_tests._utilities._files import (
         FlextTestsFilesAssertionsMixin,
         FlextTestsFilesComparisonMixin,
@@ -55,6 +54,7 @@ if TYPE_CHECKING:
         FlextTestsFlextUtilitiesPayload,
         FlextTestsPayloadUtilities,
     )
+    from flext_tests._utilities.pytest_surface import FlextTestsPytestUtilitiesMixin
     from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
     from flext_tests._utilities.scratch_storage import (
         FlextTestsScratchStorageUtilitiesMixin,
@@ -93,12 +93,11 @@ __all__: tuple[str, ...] = (
     "FlextTestsMatchersUtilities",
     "FlextTestsNamespaceUtilitiesMixin",
     "FlextTestsPayloadUtilities",
+    "FlextTestsPytestUtilitiesMixin",
     "FlextTestsResultUtilitiesMixin",
     "FlextTestsScratchStorageUtilitiesMixin",
     "FlextTestsTestContextUtilitiesMixin",
     "FlextTestsUtilitiesBase",
-    "_files",
-    "_matchers",
 )
 
 install_lazy_exports(
@@ -134,12 +133,11 @@ install_lazy_exports(
         "FlextTestsMatchersUtilities": ".matchers",
         "FlextTestsNamespaceUtilitiesMixin": ".namespace",
         "FlextTestsPayloadUtilities": ".payload",
+        "FlextTestsPytestUtilitiesMixin": ".pytest_surface",
         "FlextTestsResultUtilitiesMixin": ".result",
         "FlextTestsScratchStorageUtilitiesMixin": ".scratch_storage",
         "FlextTestsTestContextUtilitiesMixin": ".testcontext",
         "FlextTestsUtilitiesBase": ".base",
-        "_files": "._files",
-        "_matchers": "._matchers",
     }),
     public_exports=__all__,
 )

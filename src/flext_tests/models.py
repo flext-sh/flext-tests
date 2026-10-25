@@ -17,7 +17,7 @@ from flext_tests._models import (
     FlextTestsFilesystemModelsMixin,
     FlextTestsFlextModelsBase,
     FlextTestsMatchersModelsMixin,
-    FlextTestsNamespace,
+    FlextTestsModelsTestsNamespace,
     FlextTestsNamespaceModelsMixin,
     FlextTestsSpecModelsMixin,
     FlextTestsValidatorModelsMixin,
@@ -33,13 +33,12 @@ class FlextTestsModels(FlextCliModels):
         FlextTestsMatchersModelsMixin,
         FlextTestsNamespaceModelsMixin,
         FlextTestsSpecModelsMixin,
+        FlextTestsModelsTestsNamespace,
         FlextTestsValidatorModelsMixin,
-        FlextTestsNamespace,
         FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin,
     ):
         """Test-specific models namespace."""
 
 
 m = FlextTestsModels
-
 __all__: list[str] = ["FlextTestsModels", "m"]

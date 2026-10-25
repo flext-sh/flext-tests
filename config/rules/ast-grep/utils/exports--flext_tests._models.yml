@@ -1,5 +1,0 @@
-# AUTO-GENERATED FILE — Regenerate with: make gen
-id: exports--flext_tests._models
-language: Python
-rule:
-  regex: ^(?:FlextTestsDockerModelsMixin|FlextTestsFilesystemModelsMixin|FlextTestsFlextModelsBase|FlextTestsMatchersModelsMixin|FlextTestsNamespace|FlextTestsNamespaceModelsMixin|FlextTestsSpecModelsMixin|FlextTestsValidatorModelsMixin)$

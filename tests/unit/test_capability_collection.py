@@ -11,8 +11,8 @@ import socket
 from collections.abc import Generator
 
 import pytest
+from flext_infra import config
 
-from flext_tests import config
 from tests import c, p, tm, u
 
 pytest_plugins = ["pytester"]

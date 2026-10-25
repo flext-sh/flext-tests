@@ -154,16 +154,22 @@ class FlextTestsCapabilityPlugin:
         Returns:
             The unmet prerequisite, or ``None`` when the service accepts.
 
+        Raises:
+            ValueError: If the connectivity container declares no port.
+
         """
         container = c.Tests.CONNECTIVITY_MARKER_CONTAINERS[marker.name]
-        declared = c.Tests.SHARED_CONTAINERS[container]
+        declared = FlextTestsDocker.shared_target_config(container)
+        if declared.port is None:
+            msg = f"Connectivity container declares no port: {container}"
+            raise ValueError(msg)
         info = FlextTestsDocker().fetch_container_info(container)
         if info.failure:
             return "External test service is unavailable"
-        port = u.Tests.resolve_host_port(info.value, int(declared["port"]))
+        port = u.Tests.resolve_host_port(info.value, declared.port)
         if port.failure:
             return "External test service port is unavailable"
-        return u.Tests.endpoint_reason((str(declared["host"]), port.value))
+        return u.Tests.endpoint_reason((declared.host, port.value))
 
     @staticmethod
     def _container_reason(

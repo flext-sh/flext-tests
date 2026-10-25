@@ -1,5 +1,0 @@
-# AUTO-GENERATED FILE — Regenerate with: make gen
-id: runtime-package
-language: Python
-rule:
-  regex: ^(?:6ec57f84c680d3a3778b__mypyc|PIL|_hypothesis_ftz_detector|_hypothesis_globals|_hypothesis_pytestplugin|_pytest|_yaml|_yaml_ft|annotated_doc|annotated_types|ast_serialize|attr|attrs|beartype|certifi|charset_normalizer|click|coverage|cpuinfo|dateutil|defusedxml|dependency_injector|docker|docx|dotenv|et_xmlfile|execnet|filelock|flext_infra|ghp_import|git|gitdb|griffe|grimp|hypothesis|idna|importlinter|iniconfig|jinja2|jsonschema|jsonschema_specifications|libcst|librt|lxml|markdown|markdown_it|markupsafe|mdurl|mergedeep|mkdocs|mkdocs_get_deps|mypy|mypy_extensions|mypyc|networkx|openpyxl|packaging|pathspec|platformdirs|pluggy|pptx|py|pydantic|pydantic_core|pydantic_settings|pygments|pymdownx|pytest|pytest_asyncio|pytest_benchmark|pytest_cov|pytest_markdown_docs|pytest_randomly|pytest_reportlog|pytest_timeout|python_on_whales|pytoolconfig|referencing|requests|rich|rope|rpds|ruamel|shellingham|six|smmap|sortedcontainers|structlog|testmon|tomlkit|typer|typing_extensions|typing_inspection|tzdata|urllib3|watchdog|xdist|xlsxwriter|yaml|yaml_env_tag|yaml_ft)(?:[.\s]|$)

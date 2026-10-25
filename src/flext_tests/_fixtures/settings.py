@@ -95,16 +95,16 @@ class FlextTestsSettingsFixtures:
     @staticmethod
     @pytest.fixture
     def settings() -> FlextTestsSettings:
-        """Provide clean typed test settings with the existing test defaults.
+        """Provide the reset typed test settings singleton with the test defaults.
 
         Returns:
-            FlextTestsSettings: Fresh typed test settings with test defaults.
+            FlextTestsSettings: The published singleton carrying the test defaults.
 
         """
         settings_type = flext_tests.FlextTestsSettings
         FlextSettings.reset_for_testing()
         settings_type.reset_for_testing()
-        return settings_type(debug=True, trace=False)
+        return settings_type.update_global(debug=True, trace=False)
 
     @staticmethod
     def _create[TSettings: FlextSettings](
@@ -158,6 +158,46 @@ class FlextTestsSettingsFixtures:
             yield FlextContainer()
         finally:
             FlextContainer.reset_for_testing()
+
+    @staticmethod
+    @pytest.fixture
+    def logging_trace() -> bool:
+        """Provide the trace selection ``restore_logging`` applies.
+
+        A module selects trace through pytest's direct parametrization of
+        this name: ``pytest.mark.parametrize("logging_trace", [True])``.
+
+        Returns:
+            bool: ``False``; trace stays off unless a module selects it.
+
+        """
+        return False
+
+    @staticmethod
+    @pytest.fixture
+    def restore_logging(*, logging_trace: bool) -> Iterator[None]:
+        """Select DEBUG logging for one test, then restore the captured policy.
+
+        Yields:
+            None: While the DEBUG selection is active.
+
+        """
+        tests = flext_tests
+        original_settings = tests.u.logging_settings()
+        original_options = tests.u.logging_options()
+        try:
+            selected = tests.u.resolve_logging_settings(
+                log_level=tests.c.LogLevel.DEBUG, trace=logging_trace
+            )
+            tests.u.configure_structlog(
+                settings=tests.m.StructlogOptions(async_logging=False),
+                runtime_settings=selected,
+            )
+            yield
+        finally:
+            tests.u.configure_structlog(
+                settings=original_options, runtime_settings=original_settings
+            )
 
     @staticmethod
     @pytest.fixture

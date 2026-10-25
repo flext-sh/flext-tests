@@ -19,6 +19,7 @@ from flext_tests._constants import (
     FlextTestsConstantsFiles,
     FlextTestsConstantsMatcher,
     FlextTestsConstantsNamespace,
+    FlextTestsConstantsPytest,
     FlextTestsConstantsValidator,
 )
 
@@ -38,6 +39,7 @@ class FlextTestsConstants(FlextCliConstants):
         FlextTestsConstantsFiles,
         FlextTestsConstantsMatcher,
         FlextTestsConstantsNamespace,
+        FlextTestsConstantsPytest,
         FlextTestsConstantsValidator,
         FlextCliConstants.Cli,
     ):
@@ -50,5 +52,4 @@ class FlextTestsConstants(FlextCliConstants):
 
 
 c = FlextTestsConstants
-
-__all__ = ("FlextTestsConstants", "c")
+__all__: list[str] = ["FlextTestsConstants", "c"]

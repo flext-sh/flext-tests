@@ -1,5 +1,0 @@
-# AUTO-GENERATED FILE — Regenerate with: make gen
-id: exports--flext_tests._utilities._matchers
-language: Python
-rule:
-  regex: ^(?:FlextTestsMatchersAssertionsMixin|FlextTestsMatchersContainmentMixin|FlextTestsMatchersImmutabilityMixin|FlextTestsMatchersResultMixin|FlextTestsMatchersScopeMixin|FlextTestsMatchersThatMixin|FlextTestsMatchersTypeGuardsMixin)$
