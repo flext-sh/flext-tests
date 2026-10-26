@@ -3,6 +3,8 @@
 The installed ``pytest11`` entry point targets ``FlextTestsConftestPlugin``
 directly and registers its static hooks before configuration. Shared fixtures
 register automatically; projects do not copy plugin wiring.
+The same plugin applies config-owned slow budgets independently of static
+enforcement activation.
 ``session_runtime`` lazily provisions one
 physical locked consumer per worker, with exclusive, isolated case leases.
 Markdown code blocks are executed by pytest-markdown-docs; there is no local
@@ -37,6 +39,17 @@ class FlextTestsConftestPlugin:
             "Config-owned timeout in seconds for items explicitly marked slow.",
             default="",
         )
+
+    @staticmethod
+    def pytest_collection_modifyitems(
+        config: pytest.Config,
+        items: list[pytest.Item],
+    ) -> None:
+        """Apply the shared slow policy through its existing timing owner."""
+        dispatcher = import_module(
+            c.Tests.ENFORCEMENT_DISPATCHER_MODULE,
+        ).FlextTestsEnforcementDispatcher
+        dispatcher.apply_slow_budget(config, items)
 
     @staticmethod
     def publish[TBinding](
@@ -91,11 +104,10 @@ class FlextTestsConftestPlugin:
             )
 
 
-# Enforcement dispatcher (flext_tests.enforcement_plugin) is loaded via
-# the ``flext_tests_enforcement`` pytest11 entry point in pyproject.toml —
-# re-exporting its hooks here would double-register CLI options when both
-# paths are active. The plugin class registers each canonical fixture class
-# during ``pytest_configure``. It must not expose ``pytest_plugins``: pytest
+# The optional static-enforcement adapter owns its own hooks and options;
+# shared timing belongs to this always-loaded plugin. The plugin class registers
+# each canonical fixture class during ``pytest_configure``. It must not expose
+# ``pytest_plugins``: pytest
 # processes that declaration while loading the ``pytest11`` entry point,
 # before pytest-cov starts measuring the product package.
 
