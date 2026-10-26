@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_cli import c
+from flext_cli import c as flext_cli_c
 
 from flext_tests._constants import (
     FlextTestsConstantsBase,
@@ -24,7 +24,7 @@ from flext_tests._constants import (
 )
 
 
-class FlextTestsConstants(c):
+class FlextTestsConstants(flext_cli_c):
     """Constants for FLEXT tests - extends FlextCliConstants.
 
     Architecture layer: Layer 0 foundation constants with test extensions.
@@ -41,7 +41,7 @@ class FlextTestsConstants(c):
         FlextTestsConstantsNamespace,
         FlextTestsConstantsPytest,
         FlextTestsConstantsValidator,
-        c.Cli,
+        flext_cli_c.Cli,
     ):
         """Test-specific constants namespace.
 

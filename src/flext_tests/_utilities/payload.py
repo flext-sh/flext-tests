@@ -23,7 +23,7 @@ from types import (
     ModuleType,
     UnionType,
 )
-from typing import TYPE_CHECKING, ClassVar, Final, TypeAliasType, cast
+from typing import TYPE_CHECKING, ClassVar, TypeAliasType, cast
 
 from flext_core import m, u
 
@@ -248,9 +248,7 @@ class FlextTestsFlextUtilitiesPayload:
         return None
 
     _PAYLOAD_LEAF_HANDLERS: ClassVar[
-        Final[
-            tuple[Callable[[p.AttributeProbe], flext_tests.m.Tests.Payload | None], ...]
-        ]
+        tuple[Callable[[p.AttributeProbe], flext_tests.m.Tests.Payload | None], ...]
     ] = (
         _payload_model_leaf,
         _payload_none_leaf,

@@ -37,9 +37,9 @@ receive the native match value of their subject: an atom arrives as the original
 collection as a `list`. Predicate exceptions and Pydantic parameter validation errors
 propagate unchanged.
 
-Payload leaf dispatch is immutable class metadata on its utility owner. Its
-`ClassVar[Final[...]]` annotation preserves both class ownership and the fixed
-handler order; it is not an instance field or a constants-family dependency.
+Payload leaf dispatch is a tuple stored as class metadata on its utility owner.
+Its `ClassVar` annotation declares class ownership, and the tuple preserves
+handler order without introducing an instance field or a constants-family dependency.
 
 ## Boundary changes
 
