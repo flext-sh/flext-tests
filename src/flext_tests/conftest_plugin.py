@@ -30,6 +30,15 @@ class FlextTestsConftestPlugin:
     """Native pytest plugin object loaded directly by the installed entry point."""
 
     @staticmethod
+    def pytest_addoption(parser: pytest.Parser) -> None:
+        """Register shared runner configuration before pytest validates it."""
+        parser.addini(
+            c.Tests.ENFORCEMENT_SLOW_TIMEOUT_INI_OPTION,
+            "Config-owned timeout in seconds for items explicitly marked slow.",
+            default="",
+        )
+
+    @staticmethod
     def publish[TBinding](
         *,
         module_globals: MutableMapping[str, TBinding],

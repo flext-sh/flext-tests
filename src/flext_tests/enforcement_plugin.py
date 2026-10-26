@@ -26,11 +26,6 @@ class FlextTestsEnforcementPlugin:
     @staticmethod
     def pytest_addoption(parser: pytest.Parser) -> None:
         """Register the enforcement dispatcher's stable command-line contract."""
-        parser.addini(
-            c.Tests.ENFORCEMENT_SLOW_TIMEOUT_INI_OPTION,
-            "Config-owned timeout in seconds for items explicitly marked slow.",
-            default="",
-        )
         group = parser.getgroup(
             "flext-enforce", "FLEXT cross-layer enforcement catalog"
         )

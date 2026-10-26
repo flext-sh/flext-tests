@@ -56,7 +56,10 @@ is test tooling, not a runtime dependency.
 ## Anti-Patterns / Gotchas
 
 - `conftest_plugin.py` is the pytest11 entry point. Packages receive fixtures and
-  enforcement through it and never duplicate them locally.
+  shared pytest configuration through it and never duplicate them locally.
+  It registers the runner's shared ini options independently of the optional
+  enforcement adapter. Disabling static enforcement must not make those options
+  unknown or require a consumer-side warning filter.
 - `project.runtime_dependency_overlay` in `config/workspace.yaml` owns the additional
   pytest plugins shipped to installed consumers. `make gen` projects those requirements
   into package metadata.
