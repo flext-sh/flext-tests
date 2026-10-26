@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_cli import FlextCliModels
+from flext_cli import m
 
 from flext_tests._models import (
     FlextTestsDockerModelsMixin,
@@ -24,7 +24,7 @@ from flext_tests._models import (
 )
 
 
-class FlextTestsModels(FlextCliModels):
+class FlextTestsModels(m):
     """Test models extending m with test-specific factory models."""
 
     class Tests(

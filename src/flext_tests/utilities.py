@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_cli import FlextCliUtilities
+from flext_cli import u
 
 from flext_tests._utilities import (
     FlextTestsConfigHelpersUtilitiesMixin,
@@ -35,7 +35,7 @@ from flext_tests._utilities import (
 )
 
 
-class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance):
+class FlextTestsUtilities(u, FlextTestsFlextUtilitiesGovernance):
     """Test utilities for FLEXT ecosystem - extends u.
 
     Provides essential test helpers that complement u.
@@ -43,7 +43,6 @@ class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance)
     """
 
     class Tests(
-        FlextTestsUtilitiesBase,
         FlextTestsContainerHelpersUtilitiesMixin,
         FlextTestsDockerClientUtilitiesMixin,
         FlextTestsDockerLifecycleUtilitiesMixin,
@@ -54,11 +53,12 @@ class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance)
         FlextTestsFixturesDSLMixin,
         FlextTestsNamespaceUtilitiesMixin,
         FlextTestsFlextUtilitiesPayload,
-        FlextTestsPytestUtilitiesMixin,
         FlextTestsResultUtilitiesMixin,
         FlextTestsScratchStorageUtilitiesMixin,
         FlextTestsConfigHelpersUtilitiesMixin,
         FlextTestsTestContextUtilitiesMixin,
+        FlextTestsUtilitiesBase,
+        FlextTestsPytestUtilitiesMixin,
         FlextTestsFlextUtilitiesHandler.FlextTestsHandlerHelpersUtilitiesMixin,
         FlextTestsMatchersUtilities.Tests,
         FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin,

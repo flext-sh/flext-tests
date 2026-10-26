@@ -13,13 +13,19 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._fixtures._enforcement import (
-        FlextTestsEnforcementBuilder,
+    from flext_tests._fixtures._enforcement._collector import (
         FlextTestsEnforcementCollector,
-        FlextTestsEnforcementDispatcher,
-        FlextTestsEnforcementItem,
-        FlextTestsEnforcementValidators,
+    )
+    from flext_tests._fixtures._enforcement._error import (
         FlextTestsEnforcementViolationError,
+    )
+    from flext_tests._fixtures._enforcement.build import FlextTestsEnforcementBuilder
+    from flext_tests._fixtures._enforcement.dispatcher import (
+        FlextTestsEnforcementDispatcher,
+    )
+    from flext_tests._fixtures._enforcement.items import FlextTestsEnforcementItem
+    from flext_tests._fixtures._enforcement.validators import (
+        FlextTestsEnforcementValidators,
     )
     from flext_tests._fixtures.connectivity import FlextTestsCapabilityPlugin
     from flext_tests._fixtures.fixture_trees import FlextTestsFixtureTreesFixtures

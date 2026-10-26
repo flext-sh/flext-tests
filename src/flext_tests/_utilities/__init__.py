@@ -13,22 +13,28 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._utilities._files import (
-        FlextTestsFilesAssertionsMixin,
+    from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
+    from flext_tests._utilities._files._comparison.comparison_part_02 import (
         FlextTestsFilesComparisonMixin,
-        FlextTestsFilesContextsMixin,
-        FlextTestsFilesCreationMixin,
-        FlextTestsFilesInfoMixin,
-        FlextTestsFilesLifecycleMixin,
-        FlextTestsFilesReadingMixin,
     )
-    from flext_tests._utilities._matchers import (
+    from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
+    from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
+    from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
+    from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
+    from flext_tests._utilities._files._reading import FlextTestsFilesReadingMixin
+    from flext_tests._utilities._matchers._assertions import (
         FlextTestsMatchersAssertionsMixin,
+    )
+    from flext_tests._utilities._matchers._containment import (
         FlextTestsMatchersContainmentMixin,
+    )
+    from flext_tests._utilities._matchers._immutability import (
         FlextTestsMatchersImmutabilityMixin,
-        FlextTestsMatchersResultMixin,
-        FlextTestsMatchersScopeMixin,
-        FlextTestsMatchersThatMixin,
+    )
+    from flext_tests._utilities._matchers._result import FlextTestsMatchersResultMixin
+    from flext_tests._utilities._matchers._scope import FlextTestsMatchersScopeMixin
+    from flext_tests._utilities._matchers._that import FlextTestsMatchersThatMixin
+    from flext_tests._utilities._matchers._typeguards import (
         FlextTestsMatchersTypeGuardsMixin,
     )
     from flext_tests._utilities.base import FlextTestsUtilitiesBase

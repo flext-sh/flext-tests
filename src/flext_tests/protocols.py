@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_cli import FlextCliProtocols
+from flext_cli import p
 
 from flext_tests._protocols import (
     FlextTestsDockerProtocolsMixin,
@@ -22,7 +22,7 @@ from flext_tests._protocols import (
 )
 
 
-class FlextTestsProtocols(FlextCliProtocols):
+class FlextTestsProtocols(p):
     """Protocols for FLEXT tests - extends p."""
 
     class Tests(

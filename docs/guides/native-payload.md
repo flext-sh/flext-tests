@@ -37,6 +37,10 @@ receive the native match value of their subject: an atom arrives as the original
 collection as a `list`. Predicate exceptions and Pydantic parameter validation errors
 propagate unchanged.
 
+Payload leaf dispatch is immutable class metadata on its utility owner. Its
+`ClassVar[Final[...]]` annotation preserves both class ownership and the fixed
+handler order; it is not an instance field or a constants-family dependency.
+
 ## Boundary changes
 
 Native ingress rejects unsupported objects instead of silently converting them to

@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_cli import d, e, h, r, x
+    from flext_cli import cli, d, e, h, main, r, x
 
     from flext_tests.__version__ import (
         FlextTestsVersion,
@@ -76,12 +76,14 @@ __all__: tuple[str, ...] = (
     "__version_info__",
     "api",
     "c",
+    "cli",
     "config",
     "d",
     "e",
     "h",
     "install_local_packages",
     "m",
+    "main",
     "p",
     "r",
     "s",
@@ -127,12 +129,14 @@ install_lazy_exports(
         "__version_info__": ".__version__",
         "api": ".api",
         "c": ".constants",
+        "cli": "flext_cli",
         "config": "._config",
         "d": "flext_cli",
         "e": "flext_cli",
         "h": "flext_cli",
         "install_local_packages": ".pytest_bootstrap",
         "m": ".models",
+        "main": "flext_cli",
         "p": ".protocols",
         "r": "flext_cli",
         "s": ".base",
