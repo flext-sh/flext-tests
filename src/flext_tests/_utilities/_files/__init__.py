@@ -25,7 +25,6 @@ if TYPE_CHECKING:
 
 __all__: tuple[str, ...] = (
     "FlextTestsFilesAssertionsMixin",
-    "FlextTestsFilesComparisonMixin",
     "FlextTestsFilesContextsMixin",
     "FlextTestsFilesCreationMixin",
     "FlextTestsFilesInfoMixin",
