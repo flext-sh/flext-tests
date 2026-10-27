@@ -695,7 +695,7 @@ class FlextTestsMatchersThatMixin:
                 | TypeAliasType
                 | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
                 where: Callable[[SubjectT], bool] | None = None,
-                **kwargs: t.Tests.MatcherOption,
+                **kwargs: p.Tests.MatcherOption,
             ) -> None:
                 """Assert native operands, defaulting bare boolean subjects to True.
 

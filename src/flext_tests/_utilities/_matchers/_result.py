@@ -196,7 +196,7 @@ class FlextTestsMatchersResultMixin:
                 | TypeAliasType
                 | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
                 where: Callable[[TResult], bool] | None = None,
-                **kwargs: t.Tests.MatcherOption,
+                **kwargs: p.Tests.MatcherOption,
             ) -> TResult: ...
 
             @staticmethod
@@ -214,7 +214,7 @@ class FlextTestsMatchersResultMixin:
                 | TypeAliasType
                 | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
                 where: Callable[[TResult], bool] | None = None,
-                **kwargs: t.Tests.MatcherOption,
+                **kwargs: p.Tests.MatcherOption,
             ) -> p.Tests.NativeMatchValue: ...
 
             @staticmethod
@@ -233,7 +233,7 @@ class FlextTestsMatchersResultMixin:
                 | TypeAliasType
                 | c.Tests.MatcherMissing = c.Tests.MatcherMissing.OMITTED,
                 where: Callable[[TResult], bool] | None = None,
-                **kwargs: t.Tests.MatcherOption,
+                **kwargs: p.Tests.MatcherOption,
             ) -> TResult | p.Tests.NativeMatchValue | bool:
                 """Require a true boolean or validate a successful result's value.
 

@@ -8,15 +8,40 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator
+from flext_tests import t
 
-    from flext_tests import t
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable, Iterator
+
     from flext_tests._protocols.payload import FlextTestsPayloadProtocolsMixin
+    from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
 
 
 class FlextTestsMatchersProtocolsMixin(Protocol):
     """Structural matcher capabilities without recursive type aliases."""
+
+    type MatcherOption = (
+        FlextTestsPayloadProtocolsMixin.NativeMatchValue
+        | FlextTestsPayloadProtocolsMixin.Payload
+        | t.RegexPattern
+        | type
+        | t.VariadicTuple[type]
+        | Callable[[FlextTestsPayloadProtocolsMixin.NativeMatchValue], bool]
+        | Callable[
+            [FlextTestsPayloadProtocolsMixin.NativeMatchValue],
+            FlextTestsPayloadProtocolsMixin.NativeMatchValue,
+        ]
+        | t.MappingKV[
+            str | int,
+            FlextTestsPayloadProtocolsMixin.NativeMatchValue
+            | FlextTestsPayloadProtocolsMixin.Payload
+            | Callable[[FlextTestsPayloadProtocolsMixin.NativeMatchValue], bool],
+        ]
+        | FlextTestsMatchersProtocolsMixin.MatcherCriteriaMapping
+        | FlextTestsMatchersProtocolsMixin.MatcherCriteriaSequence
+        | t.StrSequence
+        | FlextTestsMatchersTypesMixin.LengthSpec
+    )
 
     @runtime_checkable
     class MatcherCriteriaMapping(Protocol):
@@ -28,7 +53,7 @@ class FlextTestsMatchersProtocolsMixin(Protocol):
 
         def items(
             self,
-        ) -> Iterable[tuple[str | int, t.Tests.MatcherOption]]:
+        ) -> Iterable[tuple[str | int, FlextTestsMatchersProtocolsMixin.MatcherOption]]:
             """Iterate selectors and their unchanged native criteria."""
             ...
 
@@ -40,11 +65,13 @@ class FlextTestsMatchersProtocolsMixin(Protocol):
             """Return the number of positional criteria."""
             ...
 
-        def __iter__(self) -> Iterator[t.Tests.MatcherOption]:
+        def __iter__(self) -> Iterator[FlextTestsMatchersProtocolsMixin.MatcherOption]:
             """Iterate the original criteria."""
             ...
 
-        def __getitem__(self, index: int, /) -> t.Tests.MatcherOption:
+        def __getitem__(
+            self, index: int, /
+        ) -> FlextTestsMatchersProtocolsMixin.MatcherOption:
             """Read one positional criterion."""
             ...
 

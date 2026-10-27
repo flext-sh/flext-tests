@@ -50,7 +50,7 @@ class TestsFlextTestsMatchersDataDrivenMixin:
             },
             "status": "active",
         }
-        paths: t.MappingKV[str | int, t.Tests.MatcherOption] = {
+        paths: t.MappingKV[str | int, p.Tests.MatcherOption] = {
             "user.name": "John",
             "user.age": {"gte": 18, "lt": 120},
             "user.email": {"match": c.Tests.EMAIL_PATTERN_RE},
@@ -78,7 +78,7 @@ class TestsFlextTestsMatchersDataDrivenMixin:
     def test_that_with_items_data_driven_rules() -> None:
         """Validate indexed, first/last and all-item rules declaratively."""
         rows: t.StrSequence = ["alpha", "beta", "gamma"]
-        items: t.MappingKV[str | int, t.Tests.MatcherOption] = {
+        items: t.MappingKV[str | int, p.Tests.MatcherOption] = {
             "first": {"starts": "al"},
             1: {"eq": "beta"},
             "last": {"ends": "ma"},
@@ -107,7 +107,7 @@ class TestsFlextTestsMatchersDataDrivenMixin:
                 self.active = True
 
         user = User()
-        attrs_match: t.MappingKV[str | int, t.Tests.MatcherOption] = {
+        attrs_match: t.MappingKV[str | int, p.Tests.MatcherOption] = {
             "profile.name": {"eq": "Ada"},
             "profile.level": {"gte": 1, "lte": 10},
             "active": {"eq": True},
@@ -125,7 +125,7 @@ class TestsFlextTestsMatchersDataDrivenMixin:
             "meta": {"version": "v1", c.Aggregation.COUNT: 3},
             "items": ["a", "b", "c"],
         })
-        paths: t.MappingKV[str | int, t.Tests.MatcherOption] = {
+        paths: t.MappingKV[str | int, p.Tests.MatcherOption] = {
             "meta.version": {"starts": "v"},
             "meta.count": {"eq": 3},
         }
