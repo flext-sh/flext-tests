@@ -13,20 +13,6 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._fixtures._enforcement._collector import (
-        FlextTestsEnforcementCollector,
-    )
-    from flext_tests._fixtures._enforcement._error import (
-        FlextTestsEnforcementViolationError,
-    )
-    from flext_tests._fixtures._enforcement.build import FlextTestsEnforcementBuilder
-    from flext_tests._fixtures._enforcement.dispatcher import (
-        FlextTestsEnforcementDispatcher,
-    )
-    from flext_tests._fixtures._enforcement.items import FlextTestsEnforcementItem
-    from flext_tests._fixtures._enforcement.validators import (
-        FlextTestsEnforcementValidators,
-    )
     from flext_tests._fixtures.connectivity import FlextTestsCapabilityPlugin
     from flext_tests._fixtures.fixture_trees import FlextTestsFixtureTreesFixtures
     from flext_tests._fixtures.project_metadata import (
@@ -39,12 +25,6 @@ if TYPE_CHECKING:
 
 __all__: tuple[str, ...] = (
     "FlextTestsCapabilityPlugin",
-    "FlextTestsEnforcementBuilder",
-    "FlextTestsEnforcementCollector",
-    "FlextTestsEnforcementDispatcher",
-    "FlextTestsEnforcementItem",
-    "FlextTestsEnforcementValidators",
-    "FlextTestsEnforcementViolationError",
     "FlextTestsFixtureTreesFixtures",
     "FlextTestsScratchStoragePlugin",
     "FlextTestsSettingsFixtures",
@@ -57,12 +37,6 @@ install_lazy_exports(
     globals(),
     MappingProxyType({
         "FlextTestsCapabilityPlugin": ".connectivity",
-        "FlextTestsEnforcementBuilder": "._enforcement.build",
-        "FlextTestsEnforcementCollector": "._enforcement._collector",
-        "FlextTestsEnforcementDispatcher": "._enforcement.dispatcher",
-        "FlextTestsEnforcementItem": "._enforcement.items",
-        "FlextTestsEnforcementValidators": "._enforcement.validators",
-        "FlextTestsEnforcementViolationError": "._enforcement._error",
         "FlextTestsFixtureTreesFixtures": ".fixture_trees",
         "FlextTestsScratchStoragePlugin": ".scratch_storage",
         "FlextTestsSettingsFixtures": ".settings",

@@ -14,24 +14,22 @@ from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
-    from flext_tests._utilities._files._comparison.comparison_part_02 import (
-        FlextTestsFilesComparisonMixin,
-    )
     from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
     from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
     from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
     from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
     from flext_tests._utilities._files._reading import FlextTestsFilesReadingMixin
+    from flext_tests._utilities._files.size import FlextTestsFilesUtilitiesMixin
 
 
 __all__: tuple[str, ...] = (
     "FlextTestsFilesAssertionsMixin",
-    "FlextTestsFilesComparisonMixin",
     "FlextTestsFilesContextsMixin",
     "FlextTestsFilesCreationMixin",
     "FlextTestsFilesInfoMixin",
     "FlextTestsFilesLifecycleMixin",
     "FlextTestsFilesReadingMixin",
+    "FlextTestsFilesUtilitiesMixin",
 )
 
 install_lazy_exports(
@@ -39,12 +37,12 @@ install_lazy_exports(
     globals(),
     MappingProxyType({
         "FlextTestsFilesAssertionsMixin": "._assertions",
-        "FlextTestsFilesComparisonMixin": "._comparison.comparison_part_02",
         "FlextTestsFilesContextsMixin": "._contexts",
         "FlextTestsFilesCreationMixin": "._creation",
         "FlextTestsFilesInfoMixin": "._info",
         "FlextTestsFilesLifecycleMixin": "._lifecycle",
         "FlextTestsFilesReadingMixin": "._reading",
+        "FlextTestsFilesUtilitiesMixin": ".size",
     }),
     public_exports=__all__,
 )
