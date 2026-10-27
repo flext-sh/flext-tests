@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
-from typing import TypeAliasType
+from typing import ClassVar, TypeAliasType
 
 from flext_cli import u
 
@@ -23,7 +23,7 @@ from flext_tests._utilities._matchers import (
 class FlextTestsMatchersThatMixin:
     """Fluent matcher assertions."""
 
-    _TUPLE_NAME_VALUE_PAIR_LEN: int = 2
+    _TUPLE_NAME_VALUE_PAIR_LEN: ClassVar[int] = 2
 
     class Tests:
         """Test utility namespace."""

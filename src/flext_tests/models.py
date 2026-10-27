@@ -17,7 +17,6 @@ from flext_tests._models import (
     FlextTestsFilesystemModelsMixin,
     FlextTestsFlextModelsBase,
     FlextTestsMatchersModelsMixin,
-    FlextTestsModelsTestsNamespace,
     FlextTestsNamespaceModelsMixin,
     FlextTestsSpecModelsMixin,
     FlextTestsValidatorModelsMixin,
@@ -33,7 +32,6 @@ class FlextTestsModels(flext_cli_m):
         FlextTestsMatchersModelsMixin,
         FlextTestsNamespaceModelsMixin,
         FlextTestsSpecModelsMixin,
-        FlextTestsModelsTestsNamespace,
         FlextTestsValidatorModelsMixin,
         FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin,
     ):

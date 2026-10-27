@@ -14,6 +14,7 @@ from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
+    from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonMixin
     from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
     from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
     from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
@@ -24,6 +25,7 @@ if TYPE_CHECKING:
 
 __all__: tuple[str, ...] = (
     "FlextTestsFilesAssertionsMixin",
+    "FlextTestsFilesComparisonMixin",
     "FlextTestsFilesContextsMixin",
     "FlextTestsFilesCreationMixin",
     "FlextTestsFilesInfoMixin",
@@ -37,6 +39,7 @@ install_lazy_exports(
     globals(),
     MappingProxyType({
         "FlextTestsFilesAssertionsMixin": "._assertions",
+        "FlextTestsFilesComparisonMixin": "._comparison",
         "FlextTestsFilesContextsMixin": "._contexts",
         "FlextTestsFilesCreationMixin": "._creation",
         "FlextTestsFilesInfoMixin": "._info",
