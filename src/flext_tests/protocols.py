@@ -10,18 +10,19 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_cli import FlextCliProtocols
+from flext_cli import p as flext_cli_p
 
 from flext_tests._protocols import (
     FlextTestsDockerProtocolsMixin,
     FlextTestsEnforcementProtocolsMixin,
+    FlextTestsFixtureTreesProtocolsMixin,
     FlextTestsMatchersProtocolsMixin,
     FlextTestsPayloadProtocolsMixin,
     FlextTestsValueFactoryProtocolsMixin,
 )
 
 
-class FlextTestsProtocols(FlextCliProtocols):
+class FlextTestsProtocols(flext_cli_p):
     """Protocols for FLEXT tests - extends p."""
 
     class Tests(
@@ -32,6 +33,7 @@ class FlextTestsProtocols(FlextCliProtocols):
         FlextTestsMatchersProtocolsMixin,
         # NOTE (multi-agent): publish read-only cleanup contracts under p.Tests.
         FlextTestsEnforcementProtocolsMixin,
+        FlextTestsFixtureTreesProtocolsMixin,
     ):
         """Test-specific protocols namespace.
 
@@ -41,5 +43,4 @@ class FlextTestsProtocols(FlextCliProtocols):
 
 
 p = FlextTestsProtocols
-
 __all__: list[str] = ["FlextTestsProtocols", "p"]

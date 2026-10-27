@@ -79,15 +79,27 @@ class TestsFlextTestsDockerLifecycleMixin:
                 )
                 tm.that(action, eq=c.Tests.ContainerAction.RECREATE)
 
-    def test_unhealthy_container_recreates_in_every_status(self) -> None:
-        """A failed healthcheck recreates even a sealed matching container."""
+    def test_unhealthy_health_decides_only_while_running(self) -> None:
+        """A running unhealthy container recreates; a stopped one starts.
+
+        Docker freezes the last check of a stopped container, which a shutdown
+        fails, so only a running container's health is observed.
+        """
+        expected = {
+            c.Tests.ContainerStatus.RUNNING: c.Tests.ContainerAction.RECREATE,
+            c.Tests.ContainerStatus.EXITED: c.Tests.ContainerAction.START,
+            c.Tests.ContainerStatus.CREATED: c.Tests.ContainerAction.START,
+        }
         for status in c.Tests.ContainerStatus:
             action = u.Tests.docker_action(
                 self._info(status, c.Tests.ContainerHealth.UNHEALTHY),
                 self._sealed(),
                 fingerprint="sealed-fingerprint",
             )
-            tm.that(action, eq=c.Tests.ContainerAction.RECREATE)
+            tm.that(
+                action,
+                eq=expected.get(status, c.Tests.ContainerAction.RECREATE),
+            )
 
     def test_sealed_matching_container_follows_its_status(self) -> None:
         """Running reuses, stopped starts, any other status recreates."""
@@ -113,6 +125,37 @@ class TestsFlextTestsDockerLifecycleMixin:
                     eq=expected.get(status, c.Tests.ContainerAction.RECREATE),
                     msg=f"{status}/{health}",
                 )
+
+    @staticmethod
+    def test_generated_secrets_cover_declared_keys_and_are_writable() -> None:
+        """Each declared key gets its own fresh value an env file can carry."""
+        for name in c.Tests.SHARED_CONTAINERS:
+            keys = FlextTestsDocker.shared_target_config(name).secret_keys
+            first = u.Tests.generate_creation_secrets(keys)
+            second = u.Tests.generate_creation_secrets(keys)
+            tm.that(tuple(first), eq=keys)
+            tm.ok(u.Tests.validate_creation_environment(first))
+            values = {secret.get_secret_value() for secret in first.values()}
+            tm.that(len(values), eq=len(keys))
+            tm.that(
+                values.isdisjoint(
+                    secret.get_secret_value() for secret in second.values()
+                ),
+                truth=True,
+            )
+
+    @staticmethod
+    def test_caller_cannot_supply_a_generated_secret() -> None:
+        """An owned secret key from the caller fails before any effect."""
+        for name in c.Tests.SHARED_CONTAINERS:
+            keys = FlextTestsDocker.shared_target_config(name).secret_keys
+            if not keys:
+                continue
+            supplied = {keys[0]: t.SecretStr("caller-value")}
+            result = FlextTestsDocker.shared(name).execute(
+                creation_environment=supplied,
+            )
+            tm.fail(result, has=keys[0])
 
     @pytest.mark.parametrize(
         ("info_status", "health", "stale", "code"),

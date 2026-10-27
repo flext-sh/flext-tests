@@ -10,11 +10,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_cli import FlextCliUtilities
+from flext_cli import u as flext_cli_u
 
 from flext_tests._utilities import (
     FlextTestsConfigHelpersUtilitiesMixin,
     FlextTestsContainerHelpersUtilitiesMixin,
+    FlextTestsDockerClientUtilitiesMixin,
     FlextTestsDockerLifecycleUtilitiesMixin,
     FlextTestsDockerStateUtilitiesMixin,
     FlextTestsEnforcementUtilitiesMixin,
@@ -26,6 +27,7 @@ from flext_tests._utilities import (
     FlextTestsFlextUtilitiesPayload,
     FlextTestsMatchersUtilities,
     FlextTestsNamespaceUtilitiesMixin,
+    FlextTestsPytestUtilitiesMixin,
     FlextTestsResultUtilitiesMixin,
     FlextTestsScratchStorageUtilitiesMixin,
     FlextTestsTestContextUtilitiesMixin,
@@ -33,7 +35,7 @@ from flext_tests._utilities import (
 )
 
 
-class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance):
+class FlextTestsUtilities(flext_cli_u, FlextTestsFlextUtilitiesGovernance):
     """Test utilities for FLEXT ecosystem - extends u.
 
     Provides essential test helpers that complement u.
@@ -41,23 +43,22 @@ class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance)
     """
 
     class Tests(
-        FlextTestsUtilitiesBase,
         FlextTestsContainerHelpersUtilitiesMixin,
+        FlextTestsDockerClientUtilitiesMixin,
         FlextTestsDockerLifecycleUtilitiesMixin,
         FlextTestsDockerStateUtilitiesMixin,
         FlextTestsEnforcementUtilitiesMixin,
         FlextTestsEnvironmentUtilitiesMixin,
         FlextTestsFilesUtilitiesMixin,
         FlextTestsFixturesDSLMixin,
-        FlextTestsFlextUtilitiesGovernance,
-        FlextTestsFlextUtilitiesHandler,
-        FlextTestsMatchersUtilities,
         FlextTestsNamespaceUtilitiesMixin,
         FlextTestsFlextUtilitiesPayload,
         FlextTestsResultUtilitiesMixin,
         FlextTestsScratchStorageUtilitiesMixin,
         FlextTestsConfigHelpersUtilitiesMixin,
         FlextTestsTestContextUtilitiesMixin,
+        FlextTestsUtilitiesBase,
+        FlextTestsPytestUtilitiesMixin,
         FlextTestsFlextUtilitiesHandler.FlextTestsHandlerHelpersUtilitiesMixin,
         FlextTestsMatchersUtilities.Tests,
         FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin,
@@ -66,9 +67,4 @@ class FlextTestsUtilities(FlextCliUtilities, FlextTestsFlextUtilitiesGovernance)
 
 
 u = FlextTestsUtilities
-
-__all__: list[str] = [
-    "FlextTestsFixturesDSLMixin",
-    "FlextTestsUtilities",
-    "u",
-]
+__all__: list[str] = ["FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"]

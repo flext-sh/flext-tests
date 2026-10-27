@@ -1,3 +1,4 @@
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Constants for FLEXT tests.
 
 Provides FlextTestsConstants, extending FlextCliConstants with test-specific constants
@@ -9,19 +10,21 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_cli import FlextCliConstants
+from flext_cli import c as flext_cli_c
 
 from flext_tests._constants import (
+    FlextTestsConstantsBase,
     FlextTestsConstantsDataCases,
+    FlextTestsConstantsDocker,
     FlextTestsConstantsFiles,
+    FlextTestsConstantsMatcher,
+    FlextTestsConstantsNamespace,
+    FlextTestsConstantsPytest,
     FlextTestsConstantsValidator,
 )
-from flext_tests._constants.docker import FlextTestsConstantsDocker
-from flext_tests._constants.matcher import FlextTestsConstantsMatcher
-from flext_tests._constants.namespace import FlextTestsConstantsNamespace
 
 
-class FlextTestsConstants(FlextCliConstants):
+class FlextTestsConstants(flext_cli_c):
     """Constants for FLEXT tests - extends FlextCliConstants.
 
     Architecture layer: Layer 0 foundation constants with test extensions.
@@ -30,13 +33,15 @@ class FlextTestsConstants(FlextCliConstants):
     """
 
     class Tests(
-        FlextCliConstants.Cli,
+        FlextTestsConstantsBase,
         FlextTestsConstantsDataCases,
         FlextTestsConstantsDocker,
         FlextTestsConstantsFiles,
         FlextTestsConstantsMatcher,
         FlextTestsConstantsNamespace,
+        FlextTestsConstantsPytest,
         FlextTestsConstantsValidator,
+        flext_cli_c.Cli,
     ):
         """Test-specific constants namespace.
 
@@ -47,5 +52,4 @@ class FlextTestsConstants(FlextCliConstants):
 
 
 c = FlextTestsConstants
-
-__all__ = ("FlextTestsConstants", "c")
+__all__: list[str] = ["FlextTestsConstants", "c"]

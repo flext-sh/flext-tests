@@ -67,7 +67,9 @@ class FlextTestsFlextModelsBase:
                 ),
             ] = None
             items: Annotated[
-                t.Tests.PayloadItems[Self],
+                t.Tests.PayloadItems[
+                    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
+                ],
                 m.Field(
                     frozen=True,
                     description="Ordered children; kind retains the source collection.",

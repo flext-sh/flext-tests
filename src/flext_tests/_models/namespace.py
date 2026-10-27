@@ -51,5 +51,29 @@ class FlextTestsNamespaceModelsMixin:
             m.Field(description="Absolute checkout root path."),
         ]
 
+    class HandlerConfigParams(m.Value):
+        """Optional handler configuration knobs for ``create_handler_config``."""
+
+        handler_type: Annotated[
+            c.HandlerType | None,
+            m.Field(description="Explicit handler type override."),
+        ] = None
+        handler_mode: Annotated[
+            c.HandlerType | None,
+            m.Field(description="Explicit handler mode override."),
+        ] = None
+        command_timeout: Annotated[
+            int | None,
+            m.Field(description="Explicit command timeout override."),
+        ] = None
+        max_command_retries: Annotated[
+            int | None,
+            m.Field(description="Explicit command retry-count override."),
+        ] = None
+        metadata: Annotated[
+            m.Metadata | None,
+            m.Field(description="Explicit handler metadata override."),
+        ] = None
+
 
 __all__: list[str] = ["FlextTestsNamespaceModelsMixin"]

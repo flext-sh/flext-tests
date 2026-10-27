@@ -21,17 +21,11 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "annotated-types>=0.8.0",
-  "beartype>=0.22.9",
-  "dependency-injector>=4.49.1",
   "docker>=7.2.0",
-  "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@0.12.0-dev",
-  "flext-core @ git+https://github.com/flext-sh/flext-core.git@0.12.0-dev",
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
+  "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@fdf8a23f58bfcbcbc0f6b8b7855e3fb8859db9e8",
+  "flext-core @ git+https://github.com/flext-sh/flext-core.git@f98efceb2b4d6221e8e6aeaf478ab8ecf1f8e55e",
+  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@ac27fc75942a78e4787a74fc64f8a2b7db2a172d",
   "hypothesis",
-  "packaging>=26.3",
-  "pydantic>=2.14.1,<3",
-  "pydantic-settings>=2.15.0",
   "pytest>=9.1.1",
   "pytest-asyncio",
   "pytest-benchmark",
@@ -42,10 +36,8 @@ dependencies = [
   "pytest-testmon>=2.2.0",
   "pytest-timeout>=2.4.0",
   "pytest-xdist",
+  "python-dotenv>=1.2.4",
   "python-on-whales>=0.81.0",
-  "pyyaml>=6.0.3",
-  "structlog>=26.1.0,<27",
-  "typing-extensions>=4.16.0",
 ]
 description = "FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem"
 keywords = ["builders", "factories", "flext", "test-infrastructure", "testing"]
@@ -61,7 +53,6 @@ name = "FLEXT Team"
 
 [project.entry-points.pytest11]
 flext_tests = "flext_tests.conftest_plugin:FlextTestsConftestPlugin"
-flext_tests_enforcement = "flext_tests.enforcement_plugin:FlextTestsEnforcementPlugin"
 
 [[project.maintainers]]
 email = "team@flext.sh"
@@ -79,7 +70,8 @@ Repository = "https://github.com/flext-sh/flext-tests"
 
 [dependency-groups]
 dev = [
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
+  "types-networkx",
+  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@ac27fc75942a78e4787a74fc64f8a2b7db2a172d",
   "mkdocstrings-python>=2.0.9",
   "actionlint-py>=1.7.12.24",
   "bandit>=1.9.4",
@@ -140,7 +132,7 @@ dev = [
   "yamlfix>=1.19.1",
 ]
 codegen = [
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
+  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@ac27fc75942a78e4787a74fc64f8a2b7db2a172d",
 ]
 
 [tool.flext.docs]
@@ -150,15 +142,13 @@ package_name = "flext_tests"
 scan_dirs = ["src"]
 
 [tool.hatch.build.targets.wheel]
-exclude = ["/src/flext_tests/config"]
 only-include = ["src/flext_tests"]
 
 [tool.hatch.build.targets.wheel.sources]
 "src/flext_tests" = "flext_tests"
 
-[tool.hatch.build.targets.wheel.force-include]
-"src/flext_tests/config" = "flext_tests/config"
-"pyproject.toml" = "flext_tests/pyproject.toml"
+[tool.hatch.build.targets.wheel.extra-metadata]
+"pyproject.toml" = "pyproject.toml"
 
 [tool.hatch.build.targets.sdist]
 only-include = ["src/flext_tests"]
@@ -199,6 +189,7 @@ optional_dependencies_dev_groups = []
 allow_redefinition = true
 check_untyped_defs = true
 disable_error_code = ["call-arg", "prop-decorator"]
+exclude = "(?s:(?:.+/)?[^/]*\\.bak)\\Z|(?s:(?:.+/)?[^/]*\\.egg\\-info/.*)\\Z|(?s:(?:.+/)?[^/]*\\.orig)\\Z|(?s:(?:.+/)?[^/]*\\.rej)\\Z|(?s:(?:.+/)?[^/]*\\.swp)\\Z|(?s:(?:.+/)?\\.agents\\-sync\\-home/.*)\\Z|(?s:(?:.+/)?\\.agents/.*)\\Z|(?s:(?:.+/)?\\.archive/.*)\\Z|(?s:(?:.+/)?\\.beads/.*)\\Z|(?s:(?:.+/)?\\.benchmarks/.*)\\Z|(?s:(?:.+/)?\\.bkp/.*)\\Z|(?s:(?:.+/)?\\.cache/.*)\\Z|(?s:(?:.+/)?\\.claude/.*)\\Z|(?s:(?:.+/)?\\.codex/.*)\\Z|(?s:(?:.+/)?\\.cursor/.*)\\Z|(?s:(?:.+/)?\\.gemini/.*)\\Z|(?s:(?:.+/)?\\.git/.*)\\Z|(?s:(?:.+/)?\\.hypothesis/.*)\\Z|(?s:(?:.+/)?\\.kilo/.*)\\Z|(?s:(?:.+/)?\\.mypy_cache/.*)\\Z|(?s:(?:.+/)?\\.omo/.*)\\Z|(?s:(?:.+/)?\\.opencode/.*)\\Z|(?s:(?:.+/)?\\.pylance_cache/.*)\\Z|(?s:(?:.+/)?\\.pyrefly_cache/.*)\\Z|(?s:(?:.+/)?\\.pytest_cache/.*)\\Z|(?s:(?:.+/)?\\.reports/.*)\\Z|(?s:(?:.+/)?\\.ruff_cache/.*)\\Z|(?s:(?:.+/)?\\.serena/.*)\\Z|(?s:(?:.+/)?\\.snapshots/.*)\\Z|(?s:(?:.+/)?\\.test\\-tmp/.*)\\Z|(?s:(?:.+/)?\\.tmp/.*)\\Z|(?s:(?:.+/)?\\.tox/.*)\\Z|(?s:(?:.+/)?\\.venv\\.[^/]*/.*)\\Z|(?s:(?:.+/)?\\.venv/.*)\\Z|(?s:(?:.+/)?\\.vscode/.*)\\Z|(?s:(?:.+/)?\\.worktrees/.*)\\Z|(?s:(?:.+/)?__pycache__/.*)\\Z|(?s:(?:.+/)?__pyrefly_virtual__/.*)\\Z|(?s:(?:.+/)?_tmp_[^/]*/.*)\\Z|(?s:(?:.+/)?build/.*)\\Z|(?s:(?:.+/)?dist\\-packages/.*)\\Z|(?s:(?:.+/)?dist/.*)\\Z|(?s:(?:.+/)?htmlcov/.*)\\Z|(?s:(?:.+/)?incoming/.*)\\Z|(?s:(?:.+/)?legado/.*)\\Z|(?s:(?:.+/)?node_modules/.*)\\Z|(?s:(?:.+/)?protos/.*)\\Z|(?s:(?:.+/)?reports/.*)\\Z|(?s:(?:.+/)?site\\-packages/.*)\\Z|(?s:(?:.+/)?site/.*)\\Z|(?s:(?:.+/)?target/.*)\\Z|(?s:(?:.+/)?tests/fixtures/.*)\\Z|(?s:(?:.+/)?venv/.*)\\Z"
 explicit_package_bases = true
 extra_checks = true
 follow_imports = "normal"
@@ -279,6 +270,7 @@ project-excludes = [
   "**/site-packages/**",
   "**/site/**",
   "**/target/**",
+  "**/tests/fixtures/**",
   "**/venv/**",
 ]
 project-includes = ["src/**/*.py*", "tests/**/*.py*"]
@@ -422,6 +414,7 @@ exclude = [
   "**/site-packages/**",
   "**/site/**",
   "**/target/**",
+  "**/tests/fixtures/**",
   "**/venv/**",
 ]
 extraPaths = ["src", "."]
@@ -462,15 +455,14 @@ addopts = [
   "--strict-markers",
   "--markdown-docs",
   "--durations=10",
-  "--flext-enforce-strict",
+  "--ignore=tests/fixtures",
 ]
 asyncio_default_fixture_loop_scope = "function"
-filterwarnings = [
-  "error",
-  "module::flext_core._constants.enforcement.FlextMroViolation",
-  "once::pytest.PytestAssertRewriteWarning",
-]
-flext_slow_timeout_seconds = "30"
+filterwarnings = ["error", "once::pytest.PytestAssertRewriteWarning"]
+flext_fixture_trees_root = "tests/fixtures"
+flext_make_ci_value = "Y"
+flext_make_ci_variable = "CI"
+flext_slow_timeout_seconds = "25"
 markers = [
   "smoke: public-interface smoke tests",
   "unit: unit tests",
@@ -547,6 +539,7 @@ extend-exclude = [
   "**/site-packages/**",
   "**/site/**",
   "**/target/**",
+  "**/tests/fixtures/**",
   "**/venv/**",
 ]
 fix = false
@@ -584,6 +577,7 @@ select = ["ALL"]
 unfixable = [
   "multi-value-repeated-key-literal",
   "multi-value-repeated-key-variable",
+  "non-pep695-type-alias",
   "p-print",
   "print",
   "pytest-duplicate-parametrize-test-cases",
@@ -609,6 +603,26 @@ msg = "Use cli.render_table from flext_cli."
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api.typer]
 msg = "Use cli.create_app_with_common_params / cli.register_command from flext_cli."
+
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = [
+  "flext_cli.FlextCliConfig",
+  "flext_cli.m.ArbitraryTypesModel",
+  "flext_cli.m.Entity",
+  "flext_cli.m.FlexibleModel",
+  "flext_cli.m.Value",
+  "flext_cli.services.cli.FlextCliCli",
+  "flext_core.FlextSettings",
+  "flext_core.m.BaseModel",
+  "flext_core.s",
+  "flext_tests.FlextTestsServiceBase",
+  "flext_tests._models.filesystem.PathCoercingParams",
+  "flext_tests._models.matchers.PayloadParams",
+  "flext_tests.m.Value",
+  "flext_tests.s",
+  "pydantic.BaseModel",
+  "tests.m.BaseModel",
+]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
@@ -641,11 +655,40 @@ section_whitelines = 1
 whitelines = 1
 
 [tool.uv]
+constraint-dependencies = [
+  "pillow>=13.0.0",
+  "certifi>=2026.10.19",
+  "setuptools>=84.1.0",
+  "virtualenv>=21.14.13",
+  "filelock>=4.2.1",
+  "uv>=0.13.4",
+]
 environments = ["sys_platform == 'linux'", "sys_platform == 'darwin'"]
 link-mode = "copy"
 override-dependencies = [
-  "rope @ git+https://github.com/marlon-costa-dc/rope.git@2bf3ad55a32cc117f5321e1467695eba540be97b",
+  "rope @ git+https://github.com/marlon-costa-dc/rope.git@8414232e12b6328ba812bf49fe465fde65774dfd",
+  "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@fdf8a23f58bfcbcbc0f6b8b7855e3fb8859db9e8",
+  "flext-core @ git+https://github.com/flext-sh/flext-core.git@f98efceb2b4d6221e8e6aeaf478ab8ecf1f8e55e",
+  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@ac27fc75942a78e4787a74fc64f8a2b7db2a172d",
 ]
+
+[[tool.uv.exclude-dependencies]]
+dependencies = ["flext-tests"]
+
+[tool.uv.exclude-dependencies.package]
+name = "flext-cli"
+
+[[tool.uv.exclude-dependencies]]
+dependencies = ["flext-tests"]
+
+[tool.uv.exclude-dependencies.package]
+name = "flext-core"
+
+[[tool.uv.exclude-dependencies]]
+dependencies = ["flext-tests"]
+
+[tool.uv.exclude-dependencies.package]
+name = "flext-infra"
 
 [tool.bandit]
 severity = "MEDIUM"

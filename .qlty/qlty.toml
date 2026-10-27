@@ -7,6 +7,30 @@ config_version = "0"
 
 exclude_patterns = [
   "**/protos/**",
+  "**/conftest.py",
+  "**/src/flext_tests/__init__.py",
+  "**/src/flext_tests/__version__.py",
+  "**/src/flext_tests/_constants/__init__.py",
+  "**/src/flext_tests/_fixtures/__init__.py",
+  "**/src/flext_tests/_fixtures/_enforcement/__init__.py",
+  "**/src/flext_tests/_models/__init__.py",
+  "**/src/flext_tests/_protocols/__init__.py",
+  "**/src/flext_tests/_typings/__init__.py",
+  "**/src/flext_tests/_utilities/__init__.py",
+  "**/src/flext_tests/_utilities/_files/__init__.py",
+  "**/src/flext_tests/_utilities/_files/_comparison/__init__.py",
+  "**/src/flext_tests/_utilities/_matchers/__init__.py",
+  "**/src/flext_tests/constants.py",
+  "**/src/flext_tests/models.py",
+  "**/src/flext_tests/protocols.py",
+  "**/src/flext_tests/typings.py",
+  "**/src/flext_tests/utilities.py",
+  "**/tests/__init__.py",
+  "**/tests/integration/__init__.py",
+  "**/tests/unit/__init__.py",
+  "**/tests/unit/_docker/__init__.py",
+  "**/tests/unit/_files/__init__.py",
+  "**/tests/unit/_matchers/__init__.py",
 ]
 
 [smells]

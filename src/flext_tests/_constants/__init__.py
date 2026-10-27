@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from flext_tests._constants.files import FlextTestsConstantsFiles
     from flext_tests._constants.matcher import FlextTestsConstantsMatcher
     from flext_tests._constants.namespace import FlextTestsConstantsNamespace
+    from flext_tests._constants.pytest_surface import FlextTestsConstantsPytest
     from flext_tests._constants.validator import FlextTestsConstantsValidator
 
 
@@ -29,6 +30,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsConstantsFiles",
     "FlextTestsConstantsMatcher",
     "FlextTestsConstantsNamespace",
+    "FlextTestsConstantsPytest",
     "FlextTestsConstantsValidator",
 )
 
@@ -42,6 +44,7 @@ install_lazy_exports(
         "FlextTestsConstantsFiles": ".files",
         "FlextTestsConstantsMatcher": ".matcher",
         "FlextTestsConstantsNamespace": ".namespace",
+        "FlextTestsConstantsPytest": ".pytest_surface",
         "FlextTestsConstantsValidator": ".validator",
     }),
     public_exports=__all__,

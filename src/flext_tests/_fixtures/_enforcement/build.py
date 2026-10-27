@@ -53,6 +53,7 @@ class FlextTestsEnforcementBuilder:
         context = m.Tests.EnforcementBuildContext(
             infra_findings=u.Tests.infra_rule_findings(
                 repository_root,
+                project_names=project_names,
                 required_rule_ids=required_rule_ids,
             ).unwrap()
             if project_names and engine_selected

@@ -50,13 +50,16 @@ is test tooling, not a runtime dependency.
   facades, without mocks or patching the system under test.
 - Use `c/t/p/m/u` for typed fixtures and `FlextTestsMakeUtilitiesMixin` for the Make
   domain.
-- Config/settings canonical pattern: ADR-012.
+- Config/settings canonical pattern: ADR-005 (SSOT) and ADR-024 (DI config contract).
 - Codemod governance (ast-grep + make mod): ADR-014.
 
 ## Anti-Patterns / Gotchas
 
 - `conftest_plugin.py` is the pytest11 entry point. Packages receive fixtures and
-  enforcement through it and never duplicate them locally.
+  shared pytest configuration through it and never duplicate them locally.
+  It registers the runner's shared ini options independently of the optional
+  enforcement adapter. Disabling static enforcement must not make those options
+  unknown or require a consumer-side warning filter.
 - `project.runtime_dependency_overlay` in `config/workspace.yaml` owns the additional
   pytest plugins shipped to installed consumers. `make gen` projects those requirements
   into package metadata.
@@ -68,7 +71,7 @@ member — `PROJECT=` is not a root Make variable):
 
 ```bash
 make check
-make test
+make tests
 ```
 
 <!-- AIHUB-AGENTS-SCOPE-LOCAL-END -->

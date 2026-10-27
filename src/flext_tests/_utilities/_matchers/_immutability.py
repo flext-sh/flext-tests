@@ -10,8 +10,9 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import re
 from typing import TYPE_CHECKING
+
+import pytest
 
 if TYPE_CHECKING:
     from flext_tests import p
@@ -44,29 +45,15 @@ class FlextTestsMatchersImmutabilityMixin:
                     expected: Exception type(s) the rejection must raise.
                     match: Optional regex the rejection message must contain.
 
-                Raises:
-                    AssertionError: If the assignment is accepted, or the raised
-                        expected error does not match ``match``.
-
-                Exceptions outside ``expected`` propagate unchanged.
+                The rejection is asserted by ``pytest.raises``: an accepted
+                assignment fails the test, a reason that does not match
+                ``match`` raises ``AssertionError`` whose ``__context__`` is the
+                original rejection, and exceptions outside ``expected``
+                propagate unchanged.
 
                 """
-                label = getattr(target, "__name__", type(target).__name__)
-                try:
+                with pytest.raises(expected, match=match):
                     setattr(target, field, value)
-                except expected as exc:
-                    if match is not None and not re.search(match, str(exc)):
-                        message = (
-                            f"{label}.{field} rejected the assignment but the "
-                            f"reason did not match {match!r}: {exc}"
-                        )
-                        raise AssertionError(message) from exc
-                    return
-                message = (
-                    f"{label}.{field} accepted the assignment {value!r}; "
-                    f"the surface is mutable"
-                )
-                raise AssertionError(message)
 
 
 __all__: list[str] = ["FlextTestsMatchersImmutabilityMixin"]

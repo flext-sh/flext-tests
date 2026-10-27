@@ -56,7 +56,13 @@ class TestsFlextTestsDockerBuildersMixin:
             arguments.extend(("--target", target))
         output = tm.ok(u.Cli.run_raw(arguments, cwd=tmp_path))
         expected = c.Cli.EXIT_CODE_SUCCESS if succeeds else c.Cli.EXIT_CODE_FAILURE
-        tm.that(output.outcome.raw_return_code, eq=expected)
+        diagnostic = (
+            f"{arguments!r}: outcome={output.outcome!r}; "
+            f"stdout={output.stdout!r}; stderr={output.stderr!r}"
+        )
+        tm.that(output.outcome.timed_out, eq=False, msg=diagnostic)
+        tm.that(output.outcome.forwarded_signal, eq=None, msg=diagnostic)
+        tm.that(output.outcome.raw_return_code, eq=expected, msg=diagnostic)
 
     @staticmethod
     @pytest.mark.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))

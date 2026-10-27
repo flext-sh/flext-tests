@@ -162,13 +162,12 @@ class FlextTestsEnforcementDispatcher:
         return slow_timeout
 
     @classmethod
-    def collection_modifyitems(
+    def apply_slow_budget(
         cls,
-        session: pytest.Session,
         config: pytest.Config,
         items: list[pytest.Item],
     ) -> None:
-        """Apply the slow budget, then append dispatcher items when active.
+        """Apply the shared slow budget independently of static enforcement.
 
         Raises:
             UsageError: If FLEXT slow timeout policy.
@@ -189,6 +188,15 @@ class FlextTestsEnforcementDispatcher:
                 and config.getoption("timeout") != 0
             ):
                 item.add_marker(pytest.mark.timeout(slow_timeout), append=False)
+
+    @classmethod
+    def collection_modifyitems(
+        cls,
+        session: pytest.Session,
+        config: pytest.Config,
+        items: list[pytest.Item],
+    ) -> None:
+        """Append dispatcher items when static enforcement is active."""
         repository_root = cls.active_root(config)
         if repository_root is None or hasattr(config, "workerinput"):
             return

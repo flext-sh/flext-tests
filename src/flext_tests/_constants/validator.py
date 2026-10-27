@@ -35,6 +35,7 @@ class FlextTestsConstantsValidator:
         "flext_tests._fixtures.settings",
         "flext_tests._fixtures.namespace",
         "flext_tests._fixtures.scratch_storage",
+        "flext_tests._fixtures.fixture_trees",
     )
     """Fixture modules the ``pytest11`` fixture adapter registers at configure."""
     CAPABILITY_PLUGIN_MODULE: ClassVar[str] = "flext_tests._fixtures.connectivity"

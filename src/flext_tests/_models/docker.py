@@ -62,6 +62,15 @@ class FlextTestsDockerModelsMixin:
             t.VariadicTuple[Path],
             m.Field(description="Files hashed with the compose file into the seal."),
         ] = ()
+        secret_keys: Annotated[
+            t.VariadicTuple[str],
+            m.Field(
+                description=(
+                    "Creation variables generated once per container and read "
+                    "back from it whenever compose runs again."
+                ),
+            ),
+        ] = ()
         lock_timeout_seconds: Annotated[
             float,
             m.Field(

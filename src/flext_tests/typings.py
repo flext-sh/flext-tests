@@ -1,3 +1,4 @@
+# AUTO-GENERATED FILE — Regenerate with: make gen
 """Type system foundation for FLEXT tests.
 
 Provides FlextTestsTypes, extending t with test-specific type definitions
@@ -9,14 +10,18 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_cli import FlextCliTypes
+from flext_cli import t as flext_cli_t
 
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
-from flext_tests._typings.files import FlextTestsFilesTypesMixin
-from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
+from flext_tests._typings import (
+    FlextTestsBaseTypesMixin,
+    FlextTestsDockerTypesMixin,
+    FlextTestsFilesTypesMixin,
+    FlextTestsMatchersTypesMixin,
+    FlextTestsPytestTypesMixin,
+)
 
 
-class FlextTestsTypes(FlextCliTypes):
+class FlextTestsTypes(flext_cli_t):
     """Type system foundation for FLEXT tests - extends t.
 
     Architecture: Extends t with test-specific type aliases and definitions.
@@ -25,8 +30,10 @@ class FlextTestsTypes(FlextCliTypes):
 
     class Tests(
         FlextTestsBaseTypesMixin,
+        FlextTestsDockerTypesMixin,
         FlextTestsFilesTypesMixin,
         FlextTestsMatchersTypesMixin,
+        FlextTestsPytestTypesMixin,
     ):
         """Test-specific type definitions namespace.
 
@@ -35,5 +42,4 @@ class FlextTestsTypes(FlextCliTypes):
 
 
 t = FlextTestsTypes
-
 __all__: list[str] = ["FlextTestsTypes", "t"]

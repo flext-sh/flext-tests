@@ -8,10 +8,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import flext_infra
-import flext_infra.codemod
 import pytest
 from flext_core import u
+from flext_infra import m as infra_m, u as infra_u
+from flext_infra.codemod import FlextInfraModGateEngine
 
 from flext_tests import c, m, p, r, t
 
@@ -35,28 +35,56 @@ class FlextTestsEnforcementUtilitiesMixin:
     def infra_rule_findings(
         repository_root: Path,
         *,
+        project_names: frozenset[str],
         required_rule_ids: frozenset[str],
-    ) -> p.Result[flext_infra.m.Infra.ModScanReport]:
-        """Return the flext-infra rule-engine findings for the workspace.
+    ) -> p.Result[infra_m.Infra.ModScanReport]:
+        """Scan each collected member with its own native snapshot and rule plan.
 
         Every id in ``required_rule_ids`` must be declared by the engine's rule
-        plan; a missing rule is a failure, never an empty scan.
+        plan for each member; a missing rule is a failure, never an empty scan.
+
+        Returns:
+            The combined native findings, or the first member planning/scan failure.
+
         """
-        planned = flext_infra.u.Infra.codemod_rule_plan(repository_root)
-        if planned.failure:
-            return r[flext_infra.m.Infra.ModScanReport].from_failure(planned)
-        missing = sorted(
-            required_rule_ids - {rule.id for rule in planned.value.rules},
-        )
-        if missing:
-            return r[flext_infra.m.Infra.ModScanReport].fail(
-                "enforcement names flext-infra rules that config/rules does not "
-                f"declare: {', '.join(missing)}",
+        if not project_names:
+            return r[infra_m.Infra.ModScanReport].fail(
+                "enforcement requires at least one collected project to scan",
             )
-        return flext_infra.codemod.FlextInfraModGateEngine.scan(
-            repository_root,
-            fix=False,
-            selection=planned.value,
+        reports: list[infra_m.Infra.ModScanReport] = []
+        for project_name in sorted(project_names):
+            project_root = repository_root / project_name
+            with infra_u.Infra.codemod_workspace_snapshot(project_root) as snapshot:
+                planned = infra_u.Infra.codemod_rule_plan(snapshot)
+            if planned.failure:
+                return r[infra_m.Infra.ModScanReport].from_failure(planned)
+            missing = sorted(
+                required_rule_ids - {rule.id for rule in planned.value.rules},
+            )
+            if missing:
+                return r[infra_m.Infra.ModScanReport].fail(
+                    "enforcement names flext-infra rules that config/rules does not "
+                    f"declare for {project_name}: {', '.join(missing)}",
+                )
+            scanned = FlextInfraModGateEngine.scan(
+                project_root,
+                fix=False,
+                selection=planned.value,
+            )
+            if scanned.failure:
+                return r[infra_m.Infra.ModScanReport].from_failure(scanned)
+            reports.append(scanned.value)
+        return r[infra_m.Infra.ModScanReport].ok(
+            FlextInfraModGateEngine.recounted(
+                tuple(entry for report in reports for entry in report.entries),
+                native_artifacts=tuple(
+                    {
+                        artifact.path: artifact
+                        for report in reports
+                        for artifact in report.native_artifacts
+                    }.values()
+                ),
+            ),
         )
 
     @staticmethod

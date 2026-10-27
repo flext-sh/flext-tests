@@ -6,37 +6,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import Annotated
-
 from flext_tests import c, m
 
 
 class FlextTestsFlextUtilitiesHandler:
     """Canonical namespace owner."""
-
-    class FlextTestsHandlerConfigParams(m.Value):
-        """Optional handler configuration knobs for ``create_handler_config``."""
-
-        handler_type: Annotated[
-            c.HandlerType | None,
-            m.Field(description="Explicit handler type override."),
-        ] = None
-        handler_mode: Annotated[
-            c.HandlerType | None,
-            m.Field(description="Explicit handler mode override."),
-        ] = None
-        command_timeout: Annotated[
-            int | None,
-            m.Field(description="Explicit command timeout override."),
-        ] = None
-        max_command_retries: Annotated[
-            int | None,
-            m.Field(description="Explicit command retry-count override."),
-        ] = None
-        metadata: Annotated[
-            m.Metadata | None,
-            m.Field(description="Explicit handler metadata override."),
-        ] = None
 
     class FlextTestsHandlerHelpersUtilitiesMixin:
         """Helpers for handler testing."""
@@ -45,8 +19,7 @@ class FlextTestsFlextUtilitiesHandler:
         def create_handler_config(
             handler_id: str,
             handler_name: str,
-            options: FlextTestsFlextUtilitiesHandler.FlextTestsHandlerConfigParams
-            | None = None,
+            options: m.Tests.HandlerConfigParams | None = None,
         ) -> m.Handler:
             """Create a handler configuration model using canonical model defaults.
 
@@ -54,11 +27,7 @@ class FlextTestsFlextUtilitiesHandler:
                 The resulting ``m.Handler``.
 
             """
-            params = (
-                options
-                if options is not None
-                else FlextTestsFlextUtilitiesHandler.FlextTestsHandlerConfigParams()
-            )
+            params = options if options is not None else m.Tests.HandlerConfigParams()
             resolved_handler_type = params.handler_type or c.HandlerType.COMMAND
             handler: m.Handler = m.Handler.model_validate({
                 "handler_id": handler_id,

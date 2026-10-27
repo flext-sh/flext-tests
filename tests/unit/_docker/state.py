@@ -21,9 +21,9 @@ class TestsFlextTestsDockerStateMixin:
     def test_client_cached() -> None:
         """The Docker client is resolved once and reused."""
         manager = FlextTestsDocker()
-        client1 = manager.client
-        client2 = manager.client
-        tm.ok(client1 is client2)
+        client1 = tm.ok(manager.client)
+        client2 = tm.ok(manager.client)
+        tm.that(client2 is client1, truth=True)
 
     @staticmethod
     def test_dirty_state_is_shared_by_every_facade_of_the_host(

@@ -20,8 +20,8 @@ from flext_tests._utilities import FlextTestsPayloadUtilities
 
 type MatchExpectedValue = (
     FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload
-    | p.Tests.ApproxLike
-    | TypeAliasType
+    | t.Port[p.Tests.ApproxLike]
+    | t.Port[TypeAliasType]
     | None
 )
 type DeepExpected = (
@@ -220,7 +220,6 @@ class FlextTestsMatchersModelsMixin:
 
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
             frozen=True,
-            arbitrary_types_allowed=True,
             populate_by_name=True,
         )
 
@@ -447,7 +446,6 @@ class FlextTestsMatchersModelsMixin:
 
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
             populate_by_name=True,
-            arbitrary_types_allowed=True,
         )
 
         msg: Annotated[str | None, m.Field(description="Message.")] = None
@@ -456,7 +454,7 @@ class FlextTestsMatchersModelsMixin:
             m.Field(description="Native truth value of the original subject."),
         ] = None
         assertion_message: Annotated[
-            p.AttributeProbe | None,
+            t.Port[p.AttributeProbe] | None,
             m.Field(
                 description=(
                     "Original assertion message, passed inside its failure branch."
@@ -671,13 +669,12 @@ class FlextTestsMatchersModelsMixin:
 
         model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
             populate_by_name=True,
-            arbitrary_types_allowed=True,
         )
 
         settings: Annotated[
             t.MappingKV[
                 str,
-                p.Tests.NativeMatchValue,
+                t.Port[p.Tests.NativeMatchValue],
             ]
             | None,
             m.Field(description="Initial configuration values."),
@@ -685,7 +682,7 @@ class FlextTestsMatchersModelsMixin:
         container: Annotated[
             t.MappingKV[
                 str,
-                p.Tests.NativeMatchValue,
+                t.Port[p.Tests.NativeMatchValue],
             ]
             | None,
             m.Field(description="Initial container/service mappings."),
@@ -693,7 +690,7 @@ class FlextTestsMatchersModelsMixin:
         context: Annotated[
             t.MappingKV[
                 str,
-                p.Tests.NativeMatchValue,
+                t.Port[p.Tests.NativeMatchValue],
             ]
             | None,
             m.Field(description="Initial context values."),
@@ -745,14 +742,10 @@ class FlextTestsMatchersModelsMixin:
     class TestScope(m.Value):
         """Scope container for test configuration and runtime state."""
 
-        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
-            arbitrary_types_allowed=True
-        )
-
         settings: Annotated[
             t.MappingKV[
                 str,
-                p.Tests.NativeMatchValue,
+                t.Port[p.Tests.NativeMatchValue],
             ],
             m.Field(description="Configuration dictionary."),
         ] = m.Field(
@@ -766,7 +759,7 @@ class FlextTestsMatchersModelsMixin:
         container: Annotated[
             t.MappingKV[
                 str,
-                p.Tests.NativeMatchValue,
+                t.Port[p.Tests.NativeMatchValue],
             ],
             m.Field(description="Container/service mappings."),
         ] = m.Field(
@@ -780,7 +773,7 @@ class FlextTestsMatchersModelsMixin:
         context: Annotated[
             t.MappingKV[
                 str,
-                p.Tests.NativeMatchValue,
+                t.Port[p.Tests.NativeMatchValue],
             ],
             m.Field(description="Context values."),
         ] = m.Field(
