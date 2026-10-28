@@ -6,6 +6,15 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import (
+    Iterable,
+    Iterator,
+    Mapping,
+    MutableMapping,
+    MutableSequence,
+    Sequence,
+)
+
 from collections.abc import Callable, MutableMapping, Sequence
 from typing import TypeAliasType, overload
 
@@ -17,8 +26,8 @@ from flext_tests._utilities._matchers import FlextTestsUtilitiesMatchersThat
 class FlextTestsUtilitiesMatchersResult:
     """Assertions over r[T] result values."""
 
-    @staticmethod
-    def check[TResult](result: p.Result[TResult]) -> m.Tests.Chain[TResult]:
+    @classmethod
+    def check[TResult](cls, result: p.Result[TResult]) -> m.Tests.Chain[TResult]:
         """Start chained assertions on result.
 
         Returns:
@@ -27,19 +36,17 @@ class FlextTestsUtilitiesMatchersResult:
         """
         return m.Tests.Chain(result=result)
 
-    @staticmethod
+    @classmethod
     @overload
-    def fail(result: t.StrictBool, *, msg: str | None = None) -> bool: ...
+    def fail(cls, result: t.StrictBool, *, msg: str | None = None) -> bool: ...
 
-    @staticmethod
+    @classmethod
     @overload
-    def fail[TResult](
-        result: p.ResultView[TResult],
-        **kwargs: p.AttributeProbe,
-    ) -> str: ...
+    def fail(cls, result: p.ResultView[TResult], **kwargs: p.AttributeProbe) -> str: ...
 
-    @staticmethod
+    @classmethod
     def fail[TResult](
+        cls,
         result: p.ResultView[TResult] | t.StrictBool,
         **kwargs: p.AttributeProbe,
     ) -> str | bool:
@@ -84,12 +91,13 @@ class FlextTestsUtilitiesMatchersResult:
                 match=params.match,
                 msg=params.msg,
             )
-        FlextTestsUtilitiesMatchersResult.fail_code(result, params)
-        FlextTestsUtilitiesMatchersResult.fail_data(result, params)
+        cls.fail_code(result, params)
+        cls.fail_data(result, params)
         return err
 
-    @staticmethod
+    @classmethod
     def fail_code[TResult](
+        cls,
         result: p.ResultView[TResult],
         params: m.Tests.FailParams,
     ) -> None:
@@ -126,8 +134,9 @@ class FlextTestsUtilitiesMatchersResult:
                     ),
                 )
 
-    @staticmethod
+    @classmethod
     def fail_data[TResult](
+        cls,
         result: p.ResultView[TResult],
         params: m.Tests.FailParams,
     ) -> None:
@@ -169,13 +178,14 @@ class FlextTestsUtilitiesMatchersResult:
                     ),
                 )
 
-    @staticmethod
+    @classmethod
     @overload
-    def ok(result: t.StrictBool, *, msg: str | None = None) -> bool: ...
+    def ok(cls, result: t.StrictBool, *, msg: str | None = None) -> bool: ...
 
-    @staticmethod
+    @classmethod
     @overload
-    def ok[TResult](
+    def ok(
+        cls,
         result: p.ResultView[TResult],
         *,
         path: None = None,
@@ -191,9 +201,10 @@ class FlextTestsUtilitiesMatchersResult:
         **kwargs: p.Tests.MatcherOption,
     ) -> TResult: ...
 
-    @staticmethod
+    @classmethod
     @overload
-    def ok[TResult](
+    def ok(
+        cls,
         result: p.ResultView[TResult],
         *,
         path: t.Tests.PathSpec,
@@ -209,8 +220,9 @@ class FlextTestsUtilitiesMatchersResult:
         **kwargs: p.Tests.MatcherOption,
     ) -> p.Tests.NativeMatchValue: ...
 
-    @staticmethod
+    @classmethod
     def ok[TResult](
+        cls,
         result: p.ResultView[TResult] | t.StrictBool,
         *,
         path: t.Tests.PathSpec | None = None,
