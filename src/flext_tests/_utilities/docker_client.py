@@ -117,7 +117,7 @@ class FlextTestsUtilitiesDockerClient:
     def docker_compose_client(
         compose_file: Path,
         project: str,
-        env_files: t.VariadicTuple[Path] = (),
+        env_files: tuple[Path, ...] = (),
     ) -> t.Tests.ComposeClient:
         """Bind one compose file, its project and its env files to a client.
 
@@ -135,7 +135,7 @@ class FlextTestsUtilitiesDockerClient:
     @staticmethod
     def docker_compose_up(
         target: m.Tests.ContainerConfig,
-        env_files: t.VariadicTuple[Path],
+        env_files: tuple[Path, ...],
         *,
         recreate: bool,
     ) -> p.Result[bool]:

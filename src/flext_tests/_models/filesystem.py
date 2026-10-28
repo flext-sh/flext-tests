@@ -13,7 +13,7 @@ from typing import Annotated
 from flext_cli import m
 
 from flext_tests import c, p, t
-from flext_tests._models import FlextTestsModelsBase
+from flext_tests._models import FlextTestsModelsFlextBase
 
 
 class FlextTestsModelsFilesystem:
@@ -101,7 +101,7 @@ class FlextTestsModelsFilesystem:
         """Parameters for file creation operations."""
 
         content: Annotated[
-            FlextTestsModelsBase.Payload,
+            FlextTestsModelsFlextBase.Payload,
             m.Field(description="Owned native file content to create."),
         ]
         name: Annotated[

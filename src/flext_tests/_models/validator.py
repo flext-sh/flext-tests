@@ -69,7 +69,7 @@ class FlextTestsModelsValidator:
         """The composed catalog of enforcement rules for one governed root."""
 
         rules: Annotated[
-            t.VariadicTuple[FlextTestsModelsValidator.EnforcementRuleSpec,],
+            tuple[FlextTestsModelsValidator.EnforcementRuleSpec, ...],
             m.Field(description="Canonical catalog rules in composed order."),
         ] = ()
 

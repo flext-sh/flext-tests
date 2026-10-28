@@ -37,9 +37,13 @@ class FlextTestsScratchStoragePlugin:
     @staticmethod
     def pytest_configure(config: pytest.Config) -> None:
         """Relocate hypothesis/benchmark storage under the scratch root."""
-        item_dict = vars(pytest.Item)
-        if item_dict.get("_nodeid") is None:
-            item_dict["_nodeid"] = property(lambda self: self.nodeid)
+
+        def nodeid_of(item: pytest.Item) -> str:
+            return item.nodeid
+
+        nodeid_name = "_nodeid"
+        if nodeid_name not in vars(pytest.Item):
+            setattr(pytest.Item, nodeid_name, property(nodeid_of))
         scratch = FlextTestsScratchStoragePlugin._scratch_root(config)
         hypothesis_dir = scratch / "hypothesis"
         hypothesis_dir.mkdir(parents=True, exist_ok=True)

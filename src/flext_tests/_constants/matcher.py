@@ -33,7 +33,7 @@ class FlextTestsConstantsMatcher:
         "mapping": dict,
     })
 
-    MATCHER_SCALAR_CRITERIA: ClassVar[t.VariadicTuple[str]] = (
+    MATCHER_SCALAR_CRITERIA: ClassVar[tuple[str, ...]] = (
         "none",
         "empty",
         "gt",

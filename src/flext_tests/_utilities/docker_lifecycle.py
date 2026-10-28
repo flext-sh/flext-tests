@@ -284,7 +284,7 @@ class FlextTestsUtilitiesDockerLifecycle:
         state_dir: Path,
         container_name: str,
         environment: t.MappingKV[str, t.SecretStr],
-    ) -> Generator[t.VariadicTuple[Path]]:
+    ) -> Generator[tuple[Path, ...]]:
         """Expose creation-only values to compose through a private env file.
 
         The file is created 0600 next to the host records, exists only inside

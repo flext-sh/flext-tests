@@ -25,7 +25,7 @@ class FlextTestsProtocolsMatchers(Protocol):
         | FlextTestsProtocolsPayload.Payload
         | t.RegexPattern
         | type
-        | t.VariadicTuple[type]
+        | tuple[type, ...]
         | Callable[[FlextTestsProtocolsPayload.NativeMatchValue], bool]
         | Callable[
             [FlextTestsProtocolsPayload.NativeMatchValue],

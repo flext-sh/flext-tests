@@ -44,7 +44,7 @@ class FlextTestsTypesBase:
         | t.InstanceOf[type]
         | t.InstanceOf[BaseException]
     )
-    type PayloadItems[NodeT] = t.VariadicTuple[NodeT]
+    type PayloadItems[NodeT] = tuple[NodeT, ...]
     type PayloadEntries[NodeT] = Mapping[str, NodeT]
 
     type TestobjectAtom = (

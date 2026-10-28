@@ -29,7 +29,7 @@ from flext_core import m, u
 
 import flext_tests
 from flext_tests import c, p, t
-from flext_tests._models import FlextTestsModelsBase
+from flext_tests._models import FlextTestsModelsFlextBase
 
 if TYPE_CHECKING:
     from flext_tests._models import FlextTestsModelsMatchers
@@ -267,7 +267,7 @@ class FlextTestsUtilitiesFlextPayload:
         @staticmethod
         def to_payload(
             value: p.AttributeProbe,
-        ) -> FlextTestsModelsBase.Payload:
+        ) -> FlextTestsModelsFlextBase.Payload:
             """Own supported native values without serializing their model leaves.
 
             Returns:
@@ -467,14 +467,14 @@ class FlextTestsUtilitiesFlextPayload:
                     )
                 if isinstance(
                     expected,
-                    FlextTestsModelsBase.Payload,
+                    FlextTestsModelsFlextBase.Payload,
                 ):
                     if project(node) != project(expected):
                         return result_model(
                             path=path,
                             expected=expected,
                             actual=cast(
-                                "FlextTestsModelsBase.Payload",
+                                "FlextTestsModelsFlextBase.Payload",
                                 node,
                             ),
                             matched=False,
@@ -485,7 +485,7 @@ class FlextTestsUtilitiesFlextPayload:
                         path=path,
                         expected="<predicate>",
                         actual=cast(
-                            "FlextTestsModelsBase.Payload",
+                            "FlextTestsModelsFlextBase.Payload",
                             node,
                         ),
                         matched=False,
@@ -494,11 +494,11 @@ class FlextTestsUtilitiesFlextPayload:
             return result_model(
                 path="",
                 expected=cast(
-                    "FlextTestsModelsBase.Payload",
+                    "FlextTestsModelsFlextBase.Payload",
                     subject,
                 ),
                 actual=cast(
-                    "FlextTestsModelsBase.Payload",
+                    "FlextTestsModelsFlextBase.Payload",
                     subject,
                 ),
                 matched=True,

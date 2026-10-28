@@ -15,17 +15,17 @@ from typing import Annotated, ClassVar, Self, TypeAliasType, cast
 from flext_cli import m
 
 from flext_tests import c, p, t
-from flext_tests._models import FlextTestsModelsBase
+from flext_tests._models import FlextTestsModelsFlextBase
 from flext_tests._utilities import FlextTestsUtilitiesPayload
 
 type MatchExpectedValue = (
-    FlextTestsModelsBase.Payload
+    FlextTestsModelsFlextBase.Payload
     | t.Port[p.Tests.ApproxLike]
     | t.Port[TypeAliasType]
     | None
 )
 type DeepExpected = (
-    FlextTestsModelsBase.Payload
+    FlextTestsModelsFlextBase.Payload
     | Callable[[p.Tests.NativeMatchValue], bool]
     | str
     | None
@@ -34,7 +34,7 @@ type DeepExpected = (
 
 type _OwnedEntries = Mapping[
     str,
-    FlextTestsModelsBase.Payload | Callable[[p.Tests.NativeMatchValue], bool],
+    FlextTestsModelsFlextBase.Payload | Callable[[p.Tests.NativeMatchValue], bool],
 ]
 
 
@@ -43,7 +43,7 @@ class FlextTestsModelsMatchers:
 
     type DeepSpec = Mapping[
         str,
-        FlextTestsModelsBase.Payload | Callable[[p.Tests.NativeMatchValue], bool],
+        FlextTestsModelsFlextBase.Payload | Callable[[p.Tests.NativeMatchValue], bool],
     ]
 
     class PayloadParams(m.Value):
@@ -87,7 +87,7 @@ class FlextTestsModelsMatchers:
         def own_mapping(
             cls,
             value: p.AttributeProbe,
-        ) -> Mapping[str, FlextTestsModelsBase.Payload] | None:
+        ) -> Mapping[str, FlextTestsModelsFlextBase.Payload] | None:
             """Own mapping leaves without changing native model identity.
 
             Returns:
@@ -113,7 +113,7 @@ class FlextTestsModelsMatchers:
         def own_values(
             cls,
             value: p.AttributeProbe,
-        ) -> tuple[FlextTestsModelsBase.Payload, ...] | None:
+        ) -> tuple[FlextTestsModelsFlextBase.Payload, ...] | None:
             """Own sequence value expectations.
 
             Returns:
@@ -141,7 +141,7 @@ class FlextTestsModelsMatchers:
         ) -> (
             Mapping[
                 str,
-                FlextTestsModelsBase.Payload
+                FlextTestsModelsFlextBase.Payload
                 | Callable[[p.Tests.NativeMatchValue], bool],
             ]
             | None
@@ -224,18 +224,18 @@ class FlextTestsModelsMatchers:
             m.Field(description="Expected inequality value."),
         ] = None
         is_: Annotated[
-            type | t.VariadicTuple[type] | None,
+            type | tuple[type, ...] | None,
             m.Field(
                 validation_alias=t.AliasChoices("is_", "is"),
                 description="Expected runtime type.",
             ),
         ] = None
         has: Annotated[
-            FlextTestsModelsBase.Payload | None,
+            FlextTestsModelsFlextBase.Payload | None,
             m.Field(description="Required contained value."),
         ] = None
         lacks: Annotated[
-            FlextTestsModelsBase.Payload | None,
+            FlextTestsModelsFlextBase.Payload | None,
             m.Field(
                 validation_alias=t.AliasChoices("lacks", "excludes"),
                 description="Forbidden contained value.",
@@ -410,7 +410,7 @@ class FlextTestsModelsMatchers:
             m.Field(description="Error code contains substrings."),
         ] = None
         data: Annotated[
-            Mapping[str, FlextTestsModelsBase.Payload] | None,
+            Mapping[str, FlextTestsModelsFlextBase.Payload] | None,
             m.Field(description="Error data contains key-value pairs."),
         ] = None
 
@@ -419,7 +419,7 @@ class FlextTestsModelsMatchers:
         def own_data(
             cls,
             value: p.AttributeProbe,
-        ) -> Mapping[str, FlextTestsModelsBase.Payload] | None:
+        ) -> Mapping[str, FlextTestsModelsFlextBase.Payload] | None:
             """Own expected error data through the shared mapping owner.
 
             Returns:
@@ -450,11 +450,11 @@ class FlextTestsModelsMatchers:
             ),
         ] = None
         is_: Annotated[
-            type | t.VariadicTuple[type] | None,
+            type | tuple[type, ...] | None,
             m.Field(validation_alias=t.AliasChoices("is_", "is"), description="Type."),
         ] = None
         not_: Annotated[
-            type | t.VariadicTuple[type] | None,
+            type | tuple[type, ...] | None,
             m.Field(
                 validation_alias=t.AliasChoices("not_", "not"),
                 description="Not type.",
@@ -490,14 +490,14 @@ class FlextTestsModelsMatchers:
         length_lt: Annotated[int | None, m.Field(description="Length <.")] = None
         length_lte: Annotated[int | None, m.Field(description="Length <=.")] = None
         has: Annotated[
-            FlextTestsModelsBase.Payload | None,
+            FlextTestsModelsFlextBase.Payload | None,
             m.Field(
                 validation_alias=t.AliasChoices("has", "contains"),
                 description="Contains.",
             ),
         ] = None
         lacks: Annotated[
-            FlextTestsModelsBase.Payload | None,
+            FlextTestsModelsFlextBase.Payload | None,
             m.Field(
                 validation_alias=t.AliasChoices("lacks", "excludes"),
                 description="Lacks.",
@@ -507,11 +507,11 @@ class FlextTestsModelsMatchers:
         ends: Annotated[str | None, m.Field(description="Suffix.")] = None
         match: Annotated[t.RegexPattern | None, m.Field(description="Regex.")] = None
         first: Annotated[
-            FlextTestsModelsBase.Payload | None,
+            FlextTestsModelsFlextBase.Payload | None,
             m.Field(description="First item."),
         ] = None
         last: Annotated[
-            FlextTestsModelsBase.Payload | None,
+            FlextTestsModelsFlextBase.Payload | None,
             m.Field(description="Last item."),
         ] = None
         all_: Annotated[
@@ -535,11 +535,11 @@ class FlextTestsModelsMatchers:
             m.Field(description="No keys."),
         ] = None
         values: Annotated[
-            t.SequenceOf[FlextTestsModelsBase.Payload] | None,
+            t.SequenceOf[FlextTestsModelsFlextBase.Payload] | None,
             m.Field(description="Values."),
         ] = None
         kv: Annotated[
-            FlextTestsModelsBase.Payload | None,
+            FlextTestsModelsFlextBase.Payload | None,
             m.Field(description="Key-values."),
         ] = None
         attrs: Annotated[
@@ -551,7 +551,7 @@ class FlextTestsModelsMatchers:
             m.Field(description="Methods."),
         ] = None
         attr_eq: Annotated[
-            FlextTestsModelsBase.Payload | None,
+            FlextTestsModelsFlextBase.Payload | None,
             m.Field(description="Attr equals."),
         ] = None
         ok: Annotated[bool | None, m.Field(description="Result ok.")] = None
@@ -562,7 +562,7 @@ class FlextTestsModelsMatchers:
         deep: Annotated[
             Mapping[
                 str,
-                FlextTestsModelsBase.Payload
+                FlextTestsModelsFlextBase.Payload
                 | Callable[[p.Tests.NativeMatchValue], bool],
             ]
             | None,
@@ -616,7 +616,7 @@ class FlextTestsModelsMatchers:
             # recursive-alias fix made mypy/pyrefly evaluate it for real.
             updates: MutableMapping[
                 str,
-                t.Tests.LengthSpec | FlextTestsModelsBase.Payload | None,
+                t.Tests.LengthSpec | FlextTestsModelsFlextBase.Payload | None,
             ] = {}
             if self.error is not None and self.has is None:
                 # self.error is a non-None native sequence/scalar, so owning it
@@ -709,7 +709,7 @@ class FlextTestsModelsMatchers:
             m.Field(description="Expected value or predicate."),
         ]
         actual: Annotated[
-            FlextTestsModelsBase.Payload | None,
+            FlextTestsModelsFlextBase.Payload | None,
             m.Field(description="Actual value found."),
         ] = None
         matched: Annotated[bool, m.Field(description="Whether match succeeded.")]

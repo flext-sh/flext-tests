@@ -13,9 +13,9 @@ from __future__ import annotations
 from flext_cli import m as flext_cli_m
 
 from flext_tests._models import (
-    FlextTestsModelsBase,
     FlextTestsModelsDocker,
     FlextTestsModelsFilesystem,
+    FlextTestsModelsFlextBase,
     FlextTestsModelsMatchers,
     FlextTestsModelsNamespace,
     FlextTestsModelsSpec,
@@ -33,7 +33,7 @@ class FlextTestsModels(flext_cli_m):
         FlextTestsModelsNamespace,
         FlextTestsModelsSpec,
         FlextTestsModelsValidator,
-        FlextTestsModelsBase,
+        FlextTestsModelsFlextBase,
     ):
         """Test-specific models namespace."""
 

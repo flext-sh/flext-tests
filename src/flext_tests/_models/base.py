@@ -14,7 +14,7 @@ from flext_cli import m
 from flext_tests import p, t
 
 
-def _entity_payload_default() -> FlextTestsModelsBase.Payload:
+def _entity_payload_default() -> FlextTestsModelsFlextBase.Payload:
     """Late-bound entity default.
 
     Defined before the mixin so the class body binds the bare name while the
@@ -28,10 +28,12 @@ def _entity_payload_default() -> FlextTestsModelsBase.Payload:
         The resulting `.Payload``.
 
     """
-    return FlextTestsModelsBase.Payload.atom_default()
+    return FlextTestsModelsFlextBase.Payload.atom_default()
 
 
-def _payload_entries_default() -> t.Tests.PayloadEntries[FlextTestsModelsBase.Payload]:
+def _payload_entries_default() -> t.Tests.PayloadEntries[
+    FlextTestsModelsFlextBase.Payload
+]:
     """Create the empty immutable entries arm at the declaring node type.
 
     Returns:
@@ -41,7 +43,7 @@ def _payload_entries_default() -> t.Tests.PayloadEntries[FlextTestsModelsBase.Pa
     return MappingProxyType({})
 
 
-class FlextTestsModelsBase:
+class FlextTestsModelsFlextBase:
     """Canonical namespace owner."""
 
     class Payload(m.ArbitraryTypesModel):
@@ -62,14 +64,14 @@ class FlextTestsModelsBase:
             ),
         ] = None
         items: Annotated[
-            t.Tests.PayloadItems[FlextTestsModelsBase.Payload],
+            t.Tests.PayloadItems[FlextTestsModelsFlextBase.Payload],
             m.Field(
                 frozen=True,
                 description="Ordered children; kind retains the source collection.",
             ),
         ] = ()
         entries: Annotated[
-            t.Tests.PayloadEntries[FlextTestsModelsBase.Payload],
+            t.Tests.PayloadEntries[FlextTestsModelsFlextBase.Payload],
             m.Field(
                 frozen=True,
                 description="String-keyed payload children.",
@@ -80,8 +82,8 @@ class FlextTestsModelsBase:
         @classmethod
         def freeze_entries(
             cls,
-            value: t.Tests.PayloadEntries[FlextTestsModelsBase.Payload],
-        ) -> t.Tests.PayloadEntries[FlextTestsModelsBase.Payload]:
+            value: t.Tests.PayloadEntries[FlextTestsModelsFlextBase.Payload],
+        ) -> t.Tests.PayloadEntries[FlextTestsModelsFlextBase.Payload]:
             """Own an immutable copy so caller mutation cannot invalidate the arm.
 
             Returns:
@@ -120,7 +122,7 @@ class FlextTestsModelsBase:
         @classmethod
         def atom_default(
             cls,
-        ) -> FlextTestsModelsBase.Payload:
+        ) -> FlextTestsModelsFlextBase.Payload:
             """Build the default atom payload used by entity value defaults.
 
             Returns:
@@ -134,7 +136,7 @@ class FlextTestsModelsBase:
 
         name: Annotated[str, m.Field(description="Entity display name.")] = ""
         value: Annotated[
-            FlextTestsModelsBase.Payload,
+            FlextTestsModelsFlextBase.Payload,
             m.Field(description="Arbitrary serializable payload."),
         ] = m.Field(default_factory=_entity_payload_default)
 
@@ -145,4 +147,4 @@ class FlextTestsModelsBase:
         count: Annotated[int, m.Field(description="Occurrence counter.")] = 0
 
 
-__all__: list[str] = ["FlextTestsModelsBase"]
+__all__: list[str] = ["FlextTestsModelsFlextBase"]

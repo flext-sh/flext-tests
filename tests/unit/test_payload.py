@@ -70,7 +70,7 @@ class FlextTestsPayloadIdentityParts:
     def test_deep_matcher_preserves_native_nested_leaves() -> None:
         """Test deep matcher preserves native nested leaves."""
         model = m.Tests.Value(data="nested matcher model", count=2)
-        leaves: t.VariadicTuple[p.Tests.NativeMatchValue] = (
+        leaves: tuple[p.Tests.NativeMatchValue, ...] = (
             model,
             b"\x00\xff",
             datetime.now(UTC),

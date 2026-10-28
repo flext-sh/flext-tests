@@ -59,11 +59,11 @@ class FlextTestsModelsDocker:
             m.Field(description="Compose project; the compose file stem when absent."),
         ] = None
         fingerprint_inputs: Annotated[
-            t.VariadicTuple[Path],
+            tuple[Path, ...],
             m.Field(description="Files hashed with the compose file into the seal."),
         ] = ()
         secret_keys: Annotated[
-            t.VariadicTuple[str],
+            tuple[str, ...],
             m.Field(
                 description=(
                     "Creation variables generated once per container and read "

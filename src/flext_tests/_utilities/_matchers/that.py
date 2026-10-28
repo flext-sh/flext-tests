@@ -893,7 +893,7 @@ class FlextTestsUtilitiesMatchersThat:
         | t.Tests.LengthSpec
         | t.RegexPattern
         | type
-        | t.VariadicTuple[type]
+        | tuple[type, ...]
         | None,
     ]:
         parsed = rule

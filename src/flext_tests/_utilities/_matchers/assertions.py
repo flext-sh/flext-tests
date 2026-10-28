@@ -48,7 +48,7 @@ class FlextTestsUtilitiesMatchersAssertions:
     def assert_len_match(
         *,
         payload: p.Tests.Payload,
-        length_spec: int | tuple[int, int],
+        length_spec: int | tuple[int, ...],
         msg: str | None,
     ) -> None:
         """Raise AssertionError if ``payload`` length doesn't match ``length_spec``.
