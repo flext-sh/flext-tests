@@ -22,8 +22,8 @@ if TYPE_CHECKING:
 
 
 __all__: tuple[str, ...] = (
-    "FlextTestsUtilitiesFilesComparisonParsing",
     "FlextTestsUtilitiesFilesComparison",
+    "FlextTestsUtilitiesFilesComparisonParsing",
 )
 
 install_lazy_exports(
