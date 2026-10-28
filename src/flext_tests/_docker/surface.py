@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from flext_tests import m, p, t
 
 
-class FlextTestsDockerFacadeInternals:
+class FlextTestsDockerSurface:
     """The facade-own internals the surface verbs delegate to.
 
     Declared unconditionally: annotations resolve lazily (PEP 563), so the
@@ -42,12 +42,12 @@ class FlextTestsDockerFacadeInternals:
 
 
 if TYPE_CHECKING:
-    _PartsBase = FlextTestsDockerFacadeInternals
+    _PartsBase = FlextTestsDockerSurface
 else:
     _PartsBase = object
 
 
-class FlextTestsDockerSurfaceParts(_PartsBase):
+class FlextTestsDockerSurface(_PartsBase):
     """Public compose and container verbs of the Docker facade."""
 
     def compose_down(self, compose_file: str) -> p.Result[str]:
@@ -100,4 +100,4 @@ class FlextTestsDockerSurfaceParts(_PartsBase):
         )
 
 
-__all__: list[str] = ["FlextTestsDockerSurfaceParts"]
+__all__: list[str] = ["FlextTestsDockerSurface"]

@@ -13,11 +13,13 @@ from pathlib import Path
 from flext_cli import u
 
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities._files import FlextTestsFilesAssertionsMixin
-from flext_tests._utilities._files.size import FlextTestsFilesUtilitiesMixin
+from flext_tests._utilities._files import (
+    FlextTestsFilesUtilitiesMixin,
+    FlextTestsUtilitiesFilesAssertions,
+)
 
 
-class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
+class FlextTestsUtilitiesFilesInfo(FlextTestsUtilitiesFilesAssertions):
     """Get comprehensive file information and content metadata."""
 
     def info(
@@ -195,4 +197,4 @@ class FlextTestsFilesInfoMixin(FlextTestsFilesAssertionsMixin):
         })
 
 
-__all__: list[str] = ["FlextTestsFilesInfoMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesFilesInfo"]

@@ -15,10 +15,10 @@ from flext_cli import u
 
 from flext_tests import c, m, p, r, t
 from flext_tests._utilities import FlextTestsPayloadUtilities
-from flext_tests._utilities._files import FlextTestsFilesCreationMixin
+from flext_tests._utilities._files import FlextTestsUtilitiesFilesCreation
 
 
-class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
+class FlextTestsUtilitiesFilesReading(FlextTestsUtilitiesFilesCreation):
     """Read-side of the test files utility."""
 
     class ReadOptions(m.Value):
@@ -75,7 +75,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         path: Path,
         *,
         model_cls: None = None,
-        options: FlextTestsFilesReadingMixin.ReadOptions | None = None,
+        options: FlextTestsUtilitiesFilesReading.ReadOptions | None = None,
     ) -> p.Result[t.Tests.ReadContent]: ...
 
     @overload
@@ -84,7 +84,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         path: Path,
         *,
         model_cls: type[TModelRead],
-        options: FlextTestsFilesReadingMixin.ReadOptions | None = None,
+        options: FlextTestsUtilitiesFilesReading.ReadOptions | None = None,
     ) -> p.Result[TModelRead]: ...
 
     def read[TModelRead: m.BaseModel](
@@ -92,7 +92,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         path: Path,
         *,
         model_cls: type[TModelRead] | None = None,
-        options: FlextTestsFilesReadingMixin.ReadOptions | None = None,
+        options: FlextTestsUtilitiesFilesReading.ReadOptions | None = None,
     ) -> p.Result[t.Tests.ReadContent] | p.Result[TModelRead]:
         """Read file with auto-detection or explicit format.
 
@@ -109,7 +109,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         """
         result: p.Result[t.Tests.ReadContent] | p.Result[TModelRead]
         try:
-            chosen = options or FlextTestsFilesReadingMixin.ReadOptions()
+            chosen = options or FlextTestsUtilitiesFilesReading.ReadOptions()
             params = m.Tests.ReadParams.model_validate({
                 **chosen.model_dump(),
                 "path": path,
@@ -198,7 +198,9 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                     FlextTestsPayloadUtilities.to_config_map(
                         parsed_json,
                     )
-                    if FlextTestsFilesCreationMixin.matches_native_mapping(parsed_json)
+                    if FlextTestsUtilitiesFilesCreation.matches_native_mapping(
+                        parsed_json
+                    )
                     else text
                 )
             case _ if actual_fmt == c.Tests.FILE_FORMAT_YAML:
@@ -225,4 +227,4 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         return content
 
 
-__all__: list[str] = ["FlextTestsFilesReadingMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesFilesReading"]

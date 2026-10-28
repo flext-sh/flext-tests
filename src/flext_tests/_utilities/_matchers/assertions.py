@@ -15,7 +15,7 @@ from flext_tests import c, p
 from flext_tests._utilities import FlextTestsFlextUtilitiesPayload
 
 
-class FlextTestsMatchersAssertionsMixin:
+class FlextTestsUtilitiesMatchersAssertions:
     """Centralized AssertionError factories with structured messages."""
 
     @staticmethod
@@ -93,4 +93,4 @@ class FlextTestsMatchersAssertionsMixin:
                 )
 
 
-__all__: list[str] = ["FlextTestsMatchersAssertionsMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesMatchersAssertions"]

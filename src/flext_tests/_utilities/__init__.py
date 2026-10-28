@@ -1,5 +1,5 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""Flext Tests. Utilities package.
+"""Internal package for utilities.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -13,13 +13,6 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
-    from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
-    from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
-    from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
-    from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
-    from flext_tests._utilities._files._reading import FlextTestsFilesReadingMixin
-    from flext_tests._utilities._files.size import FlextTestsFilesUtilitiesMixin
     from flext_tests._utilities.base import FlextTestsUtilitiesBase
     from flext_tests._utilities.container import (
         FlextTestsContainerHelpersUtilitiesMixin,
@@ -33,15 +26,13 @@ if TYPE_CHECKING:
     from flext_tests._utilities.docker_state import FlextTestsDockerStateUtilitiesMixin
     from flext_tests._utilities.enforcement import FlextTestsEnforcementUtilitiesMixin
     from flext_tests._utilities.environment import FlextTestsEnvironmentUtilitiesMixin
+    from flext_tests._utilities.files import FlextTestsUtilitiesFiles
     from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
     from flext_tests._utilities.governance import FlextTestsFlextUtilitiesGovernance
     from flext_tests._utilities.handler import FlextTestsFlextUtilitiesHandler
     from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
     from flext_tests._utilities.namespace import FlextTestsNamespaceUtilitiesMixin
-    from flext_tests._utilities.payload import (
-        FlextTestsFlextUtilitiesPayload,
-        FlextTestsPayloadUtilities,
-    )
+    from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
     from flext_tests._utilities.pytest_surface import FlextTestsPytestUtilitiesMixin
     from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
     from flext_tests._utilities.scratch_storage import (
@@ -49,7 +40,6 @@ if TYPE_CHECKING:
     )
     from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
     from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
-
 
 __all__: tuple[str, ...] = (
     "FlextTestsConfigHelpersUtilitiesMixin",
@@ -59,38 +49,24 @@ __all__: tuple[str, ...] = (
     "FlextTestsDockerStateUtilitiesMixin",
     "FlextTestsEnforcementUtilitiesMixin",
     "FlextTestsEnvironmentUtilitiesMixin",
-    "FlextTestsFilesAssertionsMixin",
-    "FlextTestsFilesContextsMixin",
-    "FlextTestsFilesCreationMixin",
-    "FlextTestsFilesInfoMixin",
-    "FlextTestsFilesLifecycleMixin",
-    "FlextTestsFilesReadingMixin",
-    "FlextTestsFilesUtilitiesMixin",
     "FlextTestsFixturesDSLMixin",
     "FlextTestsFlextUtilitiesGovernance",
     "FlextTestsFlextUtilitiesHandler",
     "FlextTestsFlextUtilitiesPayload",
     "FlextTestsMatchersUtilities",
     "FlextTestsNamespaceUtilitiesMixin",
-    "FlextTestsPayloadUtilities",
     "FlextTestsPytestUtilitiesMixin",
     "FlextTestsResultUtilitiesMixin",
     "FlextTestsScratchStorageUtilitiesMixin",
     "FlextTestsTestContextUtilitiesMixin",
     "FlextTestsUtilitiesBase",
+    "FlextTestsUtilitiesFiles",
 )
 
 install_lazy_exports(
     __name__,
     globals(),
     MappingProxyType({
-        "FlextTestsFilesAssertionsMixin": "._files._assertions",
-        "FlextTestsFilesContextsMixin": "._files._contexts",
-        "FlextTestsFilesCreationMixin": "._files._creation",
-        "FlextTestsFilesInfoMixin": "._files._info",
-        "FlextTestsFilesLifecycleMixin": "._files._lifecycle",
-        "FlextTestsFilesReadingMixin": "._files._reading",
-        "FlextTestsFilesUtilitiesMixin": "._files.size",
         "FlextTestsConfigHelpersUtilitiesMixin": ".settings",
         "FlextTestsContainerHelpersUtilitiesMixin": ".container",
         "FlextTestsDockerClientUtilitiesMixin": ".docker_client",
@@ -104,12 +80,12 @@ install_lazy_exports(
         "FlextTestsFlextUtilitiesPayload": ".payload",
         "FlextTestsMatchersUtilities": ".matchers",
         "FlextTestsNamespaceUtilitiesMixin": ".namespace",
-        "FlextTestsPayloadUtilities": ".payload",
         "FlextTestsPytestUtilitiesMixin": ".pytest_surface",
         "FlextTestsResultUtilitiesMixin": ".result",
         "FlextTestsScratchStorageUtilitiesMixin": ".scratch_storage",
         "FlextTestsTestContextUtilitiesMixin": ".testcontext",
         "FlextTestsUtilitiesBase": ".base",
+        "FlextTestsUtilitiesFiles": ".files",
     }),
     public_exports=__all__,
 )

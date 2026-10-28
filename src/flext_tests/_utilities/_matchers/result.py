@@ -10,12 +10,14 @@ from collections.abc import Callable, MutableMapping
 from typing import TypeAliasType, overload
 
 from flext_tests import c, m, p, t
-from flext_tests._utilities import FlextTestsPayloadUtilities
-from flext_tests._utilities._matchers import FlextTestsMatchersThatMixin
-from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
+from flext_tests._utilities import (
+    FlextTestsPayloadUtilities,
+    FlextTestsResultUtilitiesMixin,
+)
+from flext_tests._utilities._matchers import FlextTestsUtilitiesMatchersThat
 
 
-class FlextTestsMatchersResultMixin:
+class FlextTestsUtilitiesMatchersResult:
     """Assertions over r[T] result values."""
 
     class Tests:
@@ -64,7 +66,7 @@ class FlextTestsMatchersResultMixin:
 
                 """
                 params = m.Tests.FailParams.model_validate(kwargs)
-                that = FlextTestsMatchersThatMixin.Tests.Matchers.that
+                that = FlextTestsUtilitiesMatchersThat.Tests.Matchers.that
                 if isinstance(result, bool):
                     if params.model_fields_set - {"msg"}:
                         msg = "Boolean failure checks accept only msg"
@@ -91,8 +93,12 @@ class FlextTestsMatchersResultMixin:
                         match=params.match,
                         msg=params.msg,
                     )
-                FlextTestsMatchersResultMixin.Tests.Matchers.fail_code(result, params)
-                FlextTestsMatchersResultMixin.Tests.Matchers.fail_data(result, params)
+                FlextTestsUtilitiesMatchersResult.Tests.Matchers.fail_code(
+                    result, params
+                )
+                FlextTestsUtilitiesMatchersResult.Tests.Matchers.fail_data(
+                    result, params
+                )
                 return err
 
             @staticmethod
@@ -258,7 +264,7 @@ class FlextTestsMatchersResultMixin:
 
                 """
                 params = m.Tests.ThatParams.model_validate(kwargs)
-                that = FlextTestsMatchersThatMixin.Tests.Matchers.that
+                that = FlextTestsUtilitiesMatchersThat.Tests.Matchers.that
                 value_criteria = (
                     eq is not c.Tests.MatcherMissing.OMITTED
                     or ne is not c.Tests.MatcherMissing.OMITTED
@@ -294,4 +300,4 @@ class FlextTestsMatchersResultMixin:
                 return selected
 
 
-__all__: list[str] = ["FlextTestsMatchersResultMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesMatchersResult"]

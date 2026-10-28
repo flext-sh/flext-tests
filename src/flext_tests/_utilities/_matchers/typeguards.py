@@ -19,7 +19,7 @@ ApproxBase: Final[type] = type(pytest.approx(0))
 """Approximation sentinel base resolved through pytest's public ``approx`` API."""
 
 
-class FlextTestsMatchersTypeGuardsMixin:
+class FlextTestsUtilitiesMatchersTypeguards:
     """Preserve native comparison semantics at the matcher boundary."""
 
     @staticmethod
@@ -83,4 +83,4 @@ class FlextTestsMatchersTypeGuardsMixin:
             )
 
 
-__all__: list[str] = ["FlextTestsMatchersTypeGuardsMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesMatchersTypeguards"]

@@ -14,10 +14,10 @@ from flext_cli import u
 
 from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsPayloadUtilities
-from flext_tests._utilities._files import FlextTestsFilesLifecycleMixin
+from flext_tests._utilities._files import FlextTestsUtilitiesFilesLifecycle
 
 
-class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
+class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
     """Create files from one validated native payload boundary."""
 
     @staticmethod
@@ -213,7 +213,9 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         if headers:
             rows.append(list(headers))
         if actual_content.kind in {c.Action.LIST, "tuple"}:
-            rows.extend(FlextTestsFilesCreationMixin._to_string_rows(actual_content))
+            rows.extend(
+                FlextTestsUtilitiesFilesCreation._to_string_rows(actual_content)
+            )
         else:
             rows.append([
                 str(
@@ -267,7 +269,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         name: str = c.Tests.DEFAULT_FILENAME,
         directory: Path | None = None,
         *,
-        options: FlextTestsFilesCreationMixin.CreateOptions | None = None,
+        options: FlextTestsUtilitiesFilesCreation.CreateOptions | None = None,
     ) -> Path:
         """Create a file after validating the complete native input tree.
 
@@ -275,7 +277,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             The resulting ``Path``.
 
         """
-        chosen = options or FlextTestsFilesCreationMixin.CreateOptions()
+        chosen = options or FlextTestsUtilitiesFilesCreation.CreateOptions()
         content_to_validate = self._extract_content(
             content,
             extract_result=chosen.extract_result,
@@ -314,4 +316,4 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         return file_path
 
 
-__all__: list[str] = ["FlextTestsFilesCreationMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesFilesCreation"]

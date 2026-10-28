@@ -10,14 +10,14 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_tests._utilities._matchers import (
-    FlextTestsMatchersAssertionsMixin,
-    FlextTestsMatchersContainmentMixin,
-    FlextTestsMatchersImmutabilityMixin,
-    FlextTestsMatchersResultMixin,
-    FlextTestsMatchersScopeMixin,
-    FlextTestsMatchersThatMixin,
-    FlextTestsMatchersTypeGuardsMixin,
+from flext_tests._utilities import (
+    FlextTestsUtilitiesMatchersAssertions,
+    FlextTestsUtilitiesMatchersContainment,
+    FlextTestsUtilitiesMatchersImmutability,
+    FlextTestsUtilitiesMatchersResult,
+    FlextTestsUtilitiesMatchersScope,
+    FlextTestsUtilitiesMatchersThat,
+    FlextTestsUtilitiesMatchersTypeguards,
 )
 
 
@@ -28,13 +28,13 @@ class FlextTestsMatchersUtilities:
         """Container for test utility storages and aliases."""
 
         class Matchers(
-            FlextTestsMatchersContainmentMixin,
-            FlextTestsMatchersImmutabilityMixin.Tests.Matchers,
-            FlextTestsMatchersResultMixin.Tests.Matchers,
-            FlextTestsMatchersScopeMixin.Tests.Matchers,
-            FlextTestsMatchersThatMixin.Tests.Matchers,
-            FlextTestsMatchersTypeGuardsMixin,
-            FlextTestsMatchersAssertionsMixin,
+            FlextTestsUtilitiesMatchersContainment,
+            FlextTestsUtilitiesMatchersImmutability.Tests.Matchers,
+            FlextTestsUtilitiesMatchersResult.Tests.Matchers,
+            FlextTestsUtilitiesMatchersScope.Tests.Matchers,
+            FlextTestsUtilitiesMatchersThat.Tests.Matchers,
+            FlextTestsUtilitiesMatchersTypeguards,
+            FlextTestsUtilitiesMatchersAssertions,
         ):
             """Test matchers with powerful generalist methods."""
 

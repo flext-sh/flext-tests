@@ -20,16 +20,18 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Annotated, ClassVar, Self, override
 
 from flext_tests import m, p, r, s
+from flext_tests._utilities import FlextTestsUtilitiesFiles
 
 if TYPE_CHECKING:
     from flext_tests import t
-from flext_tests._utilities._files import (
+from flext_tests._utilities import FlextTestsFilesComparisonMixin
+
+
+class FlextTestsFiles(
+    s,
+    FlextTestsUtilitiesFiles,
     FlextTestsFilesComparisonMixin,
-    FlextTestsFilesInfoMixin,
-)
-
-
-class FlextTestsFiles(s, FlextTestsFilesInfoMixin, FlextTestsFilesComparisonMixin):
+):
     """Manages test files for FLEXT ecosystem testing."""
 
     FileInfo: ClassVar[type[m.Tests.FileInfo]] = m.Tests.FileInfo

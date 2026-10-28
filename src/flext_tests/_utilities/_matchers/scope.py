@@ -15,10 +15,10 @@ from contextlib import contextmanager, nullcontext
 from pathlib import Path
 
 from flext_tests import m, t
-from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
+from flext_tests._utilities import FlextTestsConfigHelpersUtilitiesMixin
 
 
-class FlextTestsMatchersScopeMixin:
+class FlextTestsUtilitiesMatchersScope:
     """Isolated test-scope helper exposed under ``Tests.Matchers``."""
 
     class Tests:
@@ -94,4 +94,4 @@ class FlextTestsMatchersScopeMixin:
                             cleanup_func()
 
 
-__all__: list[str] = ["FlextTestsMatchersScopeMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesMatchersScope"]

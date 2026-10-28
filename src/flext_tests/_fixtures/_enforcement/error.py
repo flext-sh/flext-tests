@@ -7,8 +7,8 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 
-class FlextTestsEnforcementViolationError(Exception):
+class FlextTestsFixturesEnforcementError(Exception):
     """Raised by ``FlextTestsEnforcementItem.runtest`` when violations are present."""
 
 
-__all__: list[str] = ["FlextTestsEnforcementViolationError"]
+__all__: list[str] = ["FlextTestsFixturesEnforcementError"]

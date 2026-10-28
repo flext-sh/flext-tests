@@ -9,8 +9,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from flext_tests import m, u
-from flext_tests._fixtures._enforcement import FlextTestsEnforcementValidators
-from flext_tests._fixtures._enforcement._collector import FlextTestsEnforcementCollector
+from flext_tests._fixtures._enforcement import (
+    FlextTestsEnforcementValidators,
+    FlextTestsFixturesEnforcementCollector,
+)
 
 if TYPE_CHECKING:
     import pytest
@@ -60,7 +62,7 @@ class FlextTestsEnforcementBuilder:
             else None,
             project_names=project_names,
         )
-        collector = FlextTestsEnforcementCollector.from_parent(
+        collector = FlextTestsFixturesEnforcementCollector.from_parent(
             parent=session,
             name="flext-enforcement",
         )

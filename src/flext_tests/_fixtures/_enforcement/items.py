@@ -10,9 +10,7 @@ from typing import TYPE_CHECKING, override
 
 import pytest
 
-from flext_tests._fixtures._enforcement._error import (
-    FlextTestsEnforcementViolationError,
-)
+from flext_tests._fixtures import FlextTestsFixturesEnforcementError
 from flext_tests._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
 
 if TYPE_CHECKING:
@@ -52,7 +50,7 @@ class FlextTestsEnforcementItem(
             f"{self._rule_id} ({self._severity}) in {self._project}: "
             f"{len(self._violations)} violation(s)"
         )
-        raise FlextTestsEnforcementViolationError(
+        raise FlextTestsFixturesEnforcementError(
             "\n".join([header, *(f"  - {line}" for line in self._violations)]),
         )
 

@@ -110,7 +110,7 @@ class TestsFlextTestsNamespaceXdist:
             "-p",
             "no:flext_tests_enforcement",
             "-p",
-            "no:flext_infra._pytest_collection",
+            "no:flext_infra._pytest.collection",
         )
         try:
             result.assert_outcomes(passed=2)

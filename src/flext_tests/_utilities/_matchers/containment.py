@@ -8,10 +8,10 @@ from __future__ import annotations
 
 from flext_tests import c, p
 from flext_tests._utilities import FlextTestsPayloadUtilities
-from flext_tests._utilities._matchers import FlextTestsMatchersAssertionsMixin
+from flext_tests._utilities._matchers import FlextTestsUtilitiesMatchersAssertions
 
 
-class FlextTestsMatchersContainmentMixin:
+class FlextTestsUtilitiesMatchersContainment:
     """Shared has/lacks checks with preserved model and binary leaves."""
 
     @staticmethod
@@ -57,7 +57,7 @@ class FlextTestsMatchersContainmentMixin:
                 elif isinstance(target, p.Tests.NativeSequence):
                     present = any(candidate == expected for candidate in target)
                 else:
-                    FlextTestsMatchersAssertionsMixin.raise_match_assertion(
+                    FlextTestsUtilitiesMatchersAssertions.raise_match_assertion(
                         c.Tests.ERR_CONTAINS_FAILED
                         if required
                         else c.Tests.ERR_LACKS_FAILED,
@@ -66,7 +66,7 @@ class FlextTestsMatchersContainmentMixin:
                         item=expected,
                     )
                 if present is not required:
-                    FlextTestsMatchersAssertionsMixin.raise_match_assertion(
+                    FlextTestsUtilitiesMatchersAssertions.raise_match_assertion(
                         c.Tests.ERR_CONTAINS_FAILED
                         if required
                         else c.Tests.ERR_LACKS_FAILED,
@@ -76,4 +76,4 @@ class FlextTestsMatchersContainmentMixin:
                     )
 
 
-__all__: list[str] = ["FlextTestsMatchersContainmentMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesMatchersContainment"]

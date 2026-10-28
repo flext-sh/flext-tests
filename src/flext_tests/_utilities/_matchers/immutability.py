@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from flext_tests import p
 
 
-class FlextTestsMatchersImmutabilityMixin:
+class FlextTestsUtilitiesMatchersImmutability:
     """Assignment-rejection matcher exposed under ``Tests.Matchers``."""
 
     class Tests:
@@ -56,4 +56,4 @@ class FlextTestsMatchersImmutabilityMixin:
                     setattr(target, field, value)
 
 
-__all__: list[str] = ["FlextTestsMatchersImmutabilityMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesMatchersImmutability"]

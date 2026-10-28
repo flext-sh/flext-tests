@@ -15,10 +15,10 @@ from typing import Annotated, Self, override
 
 from flext_infra import config as infra_config, settings as infra_settings
 
-from flext_tests import FlextTestsDockerSurfaceParts, c, m, p, r, s, t, u
+from flext_tests import FlextTestsDockerSurface, c, m, p, r, s, t, u
 
 
-class FlextTestsDocker(FlextTestsDockerSurfaceParts, s[m.Tests.ContainerInfo]):
+class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
     """Manage the Docker containers FLEXT tests share.
 
     One container per name serves the whole host. Its record under

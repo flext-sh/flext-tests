@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from flext_tests import t
 
 
-class FlextTestsEnforcementCollector(
+class FlextTestsFixturesEnforcementCollector(
     FlextTestsEnforcementProtocolsMixin.TypedNode,
     pytest.Collector,
 ):
@@ -43,4 +43,4 @@ class FlextTestsEnforcementCollector(
         return list(self._items)
 
 
-__all__: list[str] = ["FlextTestsEnforcementCollector"]
+__all__: list[str] = ["FlextTestsFixturesEnforcementCollector"]

@@ -12,15 +12,15 @@ from typing import ClassVar, TypeAliasType
 from flext_cli import u
 
 from flext_tests import c, m, p, t
-from flext_tests._utilities import FlextTestsPayloadUtilities
-from flext_tests._utilities._matchers import (
-    FlextTestsMatchersAssertionsMixin,
-    FlextTestsMatchersContainmentMixin,
-    FlextTestsMatchersTypeGuardsMixin,
+from flext_tests._utilities import (
+    FlextTestsPayloadUtilities,
+    FlextTestsUtilitiesMatchersAssertions,
+    FlextTestsUtilitiesMatchersContainment,
+    FlextTestsUtilitiesMatchersTypeguards,
 )
 
 
-class FlextTestsMatchersThatMixin:
+class FlextTestsUtilitiesMatchersThat:
     """Fluent matcher assertions."""
 
     _TUPLE_NAME_VALUE_PAIR_LEN: ClassVar[int] = 2
@@ -146,7 +146,7 @@ class FlextTestsMatchersThatMixin:
                         or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=value),
                     )
                 if params.attrs_match is not None:
-                    FlextTestsMatchersThatMixin.apply_attribute_rules(
+                    FlextTestsUtilitiesMatchersThat.apply_attribute_rules(
                         value,
                         params.attrs_match,
                         inherited_msg=params.msg,
@@ -174,7 +174,7 @@ class FlextTestsMatchersThatMixin:
                     )
                 if params.has is not None:
                     err = result_obj.error or ""
-                    FlextTestsMatchersContainmentMixin.check_has_lacks(
+                    FlextTestsUtilitiesMatchersContainment.check_has_lacks(
                         err,
                         params.has,
                         None,
@@ -235,14 +235,14 @@ class FlextTestsMatchersThatMixin:
                 effective_has: p.Tests.Payload | None,
             ) -> None:
                 """Validate containment and length predicates."""
-                FlextTestsMatchersContainmentMixin.check_has_lacks(
+                FlextTestsUtilitiesMatchersContainment.check_has_lacks(
                     subject_payload,
                     effective_has,
                     params.lacks,
                     params.msg,
                 )
                 if params.len is not None:
-                    FlextTestsMatchersAssertionsMixin.assert_len_match(
+                    FlextTestsUtilitiesMatchersAssertions.assert_len_match(
                         payload=subject_payload,
                         length_spec=params.len,
                         msg=params.msg,
@@ -548,7 +548,7 @@ class FlextTestsMatchersThatMixin:
                 """
                 if params.kv is None:
                     return
-                for key, expected in FlextTestsMatchersThatMixin._named_operands(
+                for key, expected in FlextTestsUtilitiesMatchersThat._named_operands(
                     params.kv,
                 ):
                     if key not in mapping_value:
@@ -628,7 +628,7 @@ class FlextTestsMatchersThatMixin:
                 """
                 if params.attr_eq is None:
                     return
-                for name, expected in FlextTestsMatchersThatMixin._named_operands(
+                for name, expected in FlextTestsUtilitiesMatchersThat._named_operands(
                     params.attr_eq,
                 ):
                     if not hasattr(subject, name):
@@ -758,7 +758,7 @@ class FlextTestsMatchersThatMixin:
                     subject,
                 )
                 if cls._has_scalar_validation(params):
-                    FlextTestsMatchersTypeGuardsMixin.assert_scalar_match(
+                    FlextTestsUtilitiesMatchersTypeguards.assert_scalar_match(
                         subject_payload,
                         params,
                     )
@@ -830,19 +830,19 @@ class FlextTestsMatchersThatMixin:
 
                 """
                 if params.paths is not None:
-                    FlextTestsMatchersThatMixin.apply_path_rules(
+                    FlextTestsUtilitiesMatchersThat.apply_path_rules(
                         subject_payload,
                         params.paths,
                         inherited_msg=params.msg,
                     )
                 if params.items is not None:
-                    FlextTestsMatchersThatMixin.apply_item_rules(
+                    FlextTestsUtilitiesMatchersThat.apply_item_rules(
                         subject_payload,
                         params.items,
                         inherited_msg=params.msg,
                     )
                 if params.attrs_match is not None:
-                    FlextTestsMatchersThatMixin.apply_attribute_rules(
+                    FlextTestsUtilitiesMatchersThat.apply_attribute_rules(
                         subject,
                         params.attrs_match,
                         inherited_msg=params.msg,
@@ -875,7 +875,7 @@ class FlextTestsMatchersThatMixin:
         if (
             value.kind == "tuple"
             and len(value.items)
-            == FlextTestsMatchersThatMixin._TUPLE_NAME_VALUE_PAIR_LEN
+            == FlextTestsUtilitiesMatchersThat._TUPLE_NAME_VALUE_PAIR_LEN
         ):
             key, expected = value.items
             if key.kind == "atom" and isinstance(key.atom, str):
@@ -1046,4 +1046,4 @@ class FlextTestsMatchersThatMixin:
             )
 
 
-__all__: list[str] = ["FlextTestsMatchersThatMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesMatchersThat"]

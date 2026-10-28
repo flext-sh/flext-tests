@@ -20,7 +20,6 @@ from flext_tests._utilities import (
     FlextTestsDockerStateUtilitiesMixin,
     FlextTestsEnforcementUtilitiesMixin,
     FlextTestsEnvironmentUtilitiesMixin,
-    FlextTestsFilesUtilitiesMixin,
     FlextTestsFixturesDSLMixin,
     FlextTestsFlextUtilitiesGovernance,
     FlextTestsFlextUtilitiesHandler,
@@ -32,6 +31,7 @@ from flext_tests._utilities import (
     FlextTestsScratchStorageUtilitiesMixin,
     FlextTestsTestContextUtilitiesMixin,
     FlextTestsUtilitiesBase,
+    FlextTestsUtilitiesFiles,
 )
 
 
@@ -49,7 +49,7 @@ class FlextTestsUtilities(flext_cli_u, FlextTestsFlextUtilitiesGovernance):
         FlextTestsDockerStateUtilitiesMixin,
         FlextTestsEnforcementUtilitiesMixin,
         FlextTestsEnvironmentUtilitiesMixin,
-        FlextTestsFilesUtilitiesMixin,
+        FlextTestsUtilitiesFiles,
         FlextTestsFixturesDSLMixin,
         FlextTestsNamespaceUtilitiesMixin,
         FlextTestsFlextUtilitiesPayload,

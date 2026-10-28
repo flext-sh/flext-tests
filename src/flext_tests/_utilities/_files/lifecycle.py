@@ -29,7 +29,7 @@ def _created_paths_default() -> list[Path]:
     return []
 
 
-class FlextTestsFilesLifecycleMixin:
+class FlextTestsUtilitiesFilesLifecycle:
     """File-manager lifecycle: init, context manager, cleanup, base_dir."""
 
     base_dir: Path | None
@@ -120,4 +120,4 @@ class FlextTestsFilesLifecycleMixin:
         return temp_dir
 
 
-__all__: list[str] = ["FlextTestsFilesLifecycleMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesFilesLifecycle"]

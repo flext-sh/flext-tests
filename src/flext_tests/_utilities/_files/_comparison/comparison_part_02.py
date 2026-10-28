@@ -11,8 +11,7 @@ from pathlib import Path
 from flext_core import r
 
 from flext_tests import c, m, p, t, u
-from flext_tests._utilities import FlextTestsFlextUtilitiesPayload
-from flext_tests._utilities._files._comparison import comparison_parsing
+from flext_tests._utilities import FlextTestsFlextUtilitiesPayload, comparison_parsing
 
 
 class FlextTestsFilesComparisonMixin(

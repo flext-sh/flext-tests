@@ -12,7 +12,7 @@ from pathlib import Path
 from flext_cli import u
 
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
+from flext_tests._utilities import FlextTestsTestContextUtilitiesMixin
 
 
 class FlextTestsDockerStateUtilitiesMixin:

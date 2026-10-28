@@ -12,7 +12,7 @@ from flext_core import r
 
 from flext_tests import c, m, t, u
 from flext_tests._utilities import FlextTestsFlextUtilitiesPayload
-from flext_tests._utilities._files import FlextTestsFilesCreationMixin
+from flext_tests._utilities._files import FlextTestsUtilitiesFilesCreation
 
 if TYPE_CHECKING:
     from flext_core import p
@@ -97,12 +97,12 @@ class FlextTestsFilesComparisonMixin:
         if r2.failure:
             return r[FlextTestsFilesComparisonMixin.ParsedPair].from_failure(r2)
         d1, d2 = r1.value, r2.value
-        if FlextTestsFilesCreationMixin.matches_native_mapping(
+        if FlextTestsUtilitiesFilesCreation.matches_native_mapping(
             d1,
-        ) and FlextTestsFilesCreationMixin.matches_native_mapping(d2):
+        ) and FlextTestsUtilitiesFilesCreation.matches_native_mapping(d2):
             return r[FlextTestsFilesComparisonMixin.ParsedPair].ok((
-                FlextTestsFilesCreationMixin.to_payload_mapping(d1),
-                FlextTestsFilesCreationMixin.to_payload_mapping(d2),
+                FlextTestsUtilitiesFilesCreation.to_payload_mapping(d1),
+                FlextTestsUtilitiesFilesCreation.to_payload_mapping(d2),
             ))
         return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
             "comparison contents are not both mappings",
@@ -144,8 +144,12 @@ class FlextTestsFilesComparisonMixin:
             exclude_keys=exclude_keys_set,
         )
         if result1.success and result2.success:
-            filtered1 = FlextTestsFilesCreationMixin.to_payload_mapping(result1.value)
-            filtered2 = FlextTestsFilesCreationMixin.to_payload_mapping(result2.value)
+            filtered1 = FlextTestsUtilitiesFilesCreation.to_payload_mapping(
+                result1.value
+            )
+            filtered2 = FlextTestsUtilitiesFilesCreation.to_payload_mapping(
+                result2.value
+            )
             return (filtered1, filtered2)
         return (dict1, dict2)
 
