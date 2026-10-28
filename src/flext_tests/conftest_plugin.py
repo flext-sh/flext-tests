@@ -90,9 +90,15 @@ class FlextTestsConftestPlugin:
                     f"found {len(owners)}"
                 )
                 raise ValueError(msg)
-            if config.pluginmanager.get_plugin(fixture_module) is owners[0]:
+            owner = owners[0]
+            for attr in owner.__dict__.values():
+                if hasattr(attr, "_get_wrapped_function"):
+                    wrapped = attr._get_wrapped_function()
+                    if isinstance(wrapped, staticmethod):
+                        attr._fixture_function = wrapped.__func__
+            if config.pluginmanager.get_plugin(fixture_module) is owner:
                 continue
-            if config.pluginmanager.register(owners[0], fixture_module) is None:
+            if config.pluginmanager.register(owner, fixture_module) is None:
                 msg = f"required fixture plugin is blocked: {fixture_module}"
                 raise ValueError(msg)
         # Prerequisites skip before fixtures; real service failures stay failures.
