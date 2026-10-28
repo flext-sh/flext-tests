@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from re import escape
 
 import pytest
@@ -44,7 +45,7 @@ class TestsFlextTestsMatchersBooleanResultsMixin:
     @staticmethod
     def test_boolean_matchers_reject_result_only_options() -> None:
         """Dynamic criteria cannot silently turn predicate checks into no-ops."""
-        options: t.StrMapping = {"has": "error text"}
+        options: Mapping[str, str] = {"has": "error text"}
         with pytest.raises(ValueError, match="accept only msg"):
             tm.ok(result=True, **options)
         with pytest.raises(ValueError, match="accept only msg"):

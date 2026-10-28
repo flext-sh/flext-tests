@@ -13,7 +13,7 @@ from typing import Final
 import pytest
 
 from flext_tests import c, m, p
-from flext_tests._utilities import FlextTestsUtilitiesFlextPayload
+from flext_tests._utilities import FlextTestsUtilitiesPayload
 
 ApproxBase: Final[type] = type(pytest.approx(0))
 """Approximation sentinel base resolved through pytest's public ``approx`` API."""
@@ -72,10 +72,8 @@ class FlextTestsUtilitiesMatchersTypeguards:
                 ``not matches``; or if ``not (isinstance(native, Sized))``.
 
         """
-        native = (
-            FlextTestsUtilitiesFlextPayload.FlextTestsUtilitiesPayload.to_match_value(
-                payload,
-            )
+        native = FlextTestsUtilitiesPayload.FlextTestsUtilitiesPayload.to_match_value(
+            payload,
         )
         message = params.msg or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=native)
         if params.none is not None and (native is None) is not params.none:

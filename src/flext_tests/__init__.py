@@ -61,7 +61,11 @@ if TYPE_CHECKING:
     from flext_tests.pytest_bootstrap import install_local_packages
     from flext_tests.tmatchers import FlextTestsUtilitiesMatchers, tm
     from flext_tests.typings import FlextTestsTypes, t
-    from flext_tests.utilities import FlextTestsFixturesDSL, FlextTestsUtilities, u
+    from flext_tests.utilities import (
+        FlextTestsUtilities,
+        FlextTestsUtilitiesFixturesDSL,
+        u,
+    )
 
 
 __all__: tuple[str, ...] = (
@@ -76,13 +80,13 @@ __all__: tuple[str, ...] = (
     "FlextTestsDockerSurface",
     "FlextTestsDomains",
     "FlextTestsFiles",
-    "FlextTestsFixturesDSL",
     "FlextTestsModels",
     "FlextTestsProtocols",
     "FlextTestsServiceBase",
     "FlextTestsSettings",
     "FlextTestsTypes",
     "FlextTestsUtilities",
+    "FlextTestsUtilitiesFixturesDSL",
     "FlextTestsUtilitiesMatchers",
     "FlextTestsVersion",
     "__author__",
@@ -141,7 +145,7 @@ install_lazy_exports(
         "FlextTestsDockerSurface": "._docker_surface",
         "FlextTestsDomains": ".domains",
         "FlextTestsFiles": ".files",
-        "FlextTestsFixturesDSL": ".utilities",
+        "FlextTestsUtilitiesFixturesDSL": ".utilities",
         "FlextTestsUtilitiesMatchers": ".tmatchers",
         "FlextTestsModels": ".models",
         "FlextTestsProtocols": ".protocols",

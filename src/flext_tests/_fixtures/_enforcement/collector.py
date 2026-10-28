@@ -6,17 +6,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, override
+from collections.abc import Iterable, Sequence
+from typing import override
 
 import pytest
 
 from flext_tests._fixtures._enforcement import FlextTestsEnforcementItem
 from flext_tests._protocols.enforcement import FlextTestsProtocolsEnforcement
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable
-
-    from flext_tests import t
 
 
 class FlextTestsFixturesEnforcementCollector(
@@ -30,7 +26,7 @@ class FlextTestsFixturesEnforcementCollector(
         name: str,
         parent: pytest.Session,
         *,
-        items: t.SequenceOf[FlextTestsEnforcementItem] = (),
+        items: Sequence[FlextTestsEnforcementItem] = (),
     ) -> None:
         super().__init__(name, parent)
         self._items: list[FlextTestsEnforcementItem] = list(items)

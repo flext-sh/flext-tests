@@ -27,7 +27,7 @@ class FlextTestsUtilitiesFilesContexts(FlextTestsUtilitiesFilesReading):
     @contextmanager
     def files(
         cls,
-        content: t.MappingKV[str, t.Tests.FileContentPlain],
+        content: Mapping[str, t.Tests.FileContentPlain],
         *,
         directory: Path | None = None,
         ext: str | None = None,

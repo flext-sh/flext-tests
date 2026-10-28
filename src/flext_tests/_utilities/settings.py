@@ -7,12 +7,8 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import os
-from collections.abc import Generator
+from collections.abc import Generator, Mapping, Sequence
 from contextlib import contextmanager
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from flext_tests import t
 
 
 class FlextTestsUtilitiesConfigHelpers:
@@ -21,8 +17,8 @@ class FlextTestsUtilitiesConfigHelpers:
     @staticmethod
     @contextmanager
     def env_vars_context[ValueT](
-        env_vars: t.MappingKV[str, ValueT] | None = None,
-        vars_to_clear: t.StrSequence | None = None,
+        env_vars: Mapping[str, ValueT] | None = None,
+        vars_to_clear: Sequence[str] | None = None,
     ) -> Generator[None]:
         """Apply and atomically restore a real process-environment scope."""
         original_environment = os.environ.copy()

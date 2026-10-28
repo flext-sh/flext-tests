@@ -6,25 +6,21 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Annotated
 
 from flext_core import r
 
 from flext_tests import c, m, t, u
-from flext_tests._utilities import FlextTestsUtilitiesFlextPayload
+from flext_tests._utilities import FlextTestsUtilitiesPayload
 from flext_tests._utilities._files import FlextTestsUtilitiesFilesCreation
 
 if TYPE_CHECKING:
     from flext_core import p
 
 
-class FlextTestsFilesComparisonParsing:
+class FlextTestsUtilitiesFilesComparisonParsing:
     """Compare two files by content, lines, size, hash, or deep structure."""
-
-    type ParsedPair = tuple[
-        t.MappingKV[str, t.Tests.TestobjectSerializable],
-        t.MappingKV[str, t.Tests.TestobjectSerializable],
-    ]
 
     class CompareOptions(m.Value):
         """Grouped comparison knobs for ``compare``."""
@@ -50,16 +46,16 @@ class FlextTestsFilesComparisonParsing:
             m.Field(description="Use deep comparison for nested structures."),
         ] = True
         keys: Annotated[
-            t.StrSequence | None,
+            Sequence[str] | None,
             m.Field(description="Only compare these keys."),
         ] = None
         exclude_keys: Annotated[
-            t.StrSequence | None,
+            Sequence[str] | None,
             m.Field(description="Exclude these keys from comparison."),
         ] = None
 
     @staticmethod
-    def _read_both(params: m.Tests.CompareParams) -> t.StrPair:
+    def _read_both(params: m.Tests.CompareParams) -> tuple[str, str]:
         enc = c.Tests.DEFAULT_ENCODING
         return (
             params.file1.read_text(encoding=enc),
@@ -71,11 +67,11 @@ class FlextTestsFilesComparisonParsing:
         content1: str,
         content2: str,
         fmt: str,
-    ) -> p.Result[FlextTestsFilesComparisonParsing.ParsedPair]:
+    ) -> p.Result[t.Tests.ParsedPair]:
         """Parse both contents as mappings in the given format.
 
         Returns:
-            The resulting ``p.Result[FlextTestsFilesComparisonParsing.ParsedPair]``.
+            The resulting ``p.Result[t.Tests.ParsedPair]``.
 
         """
         parse = (
@@ -86,43 +82,43 @@ class FlextTestsFilesComparisonParsing:
             else None
         )
         if parse is None:
-            return r[FlextTestsFilesComparisonParsing.ParsedPair].fail(
+            return r[t.Tests.ParsedPair].fail(
                 f"unsupported comparison format: {fmt}",
             )
         # Each parser reports its own failure; that failure is the result.
         r1 = parse(content1)
         if r1.failure:
-            return r[FlextTestsFilesComparisonParsing.ParsedPair].from_failure(r1)
+            return r[t.Tests.ParsedPair].from_failure(r1)
         r2 = parse(content2)
         if r2.failure:
-            return r[FlextTestsFilesComparisonParsing.ParsedPair].from_failure(r2)
+            return r[t.Tests.ParsedPair].from_failure(r2)
         d1, d2 = r1.value, r2.value
         if FlextTestsUtilitiesFilesCreation.matches_native_mapping(
             d1,
         ) and FlextTestsUtilitiesFilesCreation.matches_native_mapping(d2):
-            return r[FlextTestsFilesComparisonParsing.ParsedPair].ok((
+            return r[t.Tests.ParsedPair].ok((
                 FlextTestsUtilitiesFilesCreation.to_payload_mapping(d1),
                 FlextTestsUtilitiesFilesCreation.to_payload_mapping(d2),
             ))
-        return r[FlextTestsFilesComparisonParsing.ParsedPair].fail(
+        return r[t.Tests.ParsedPair].fail(
             "comparison contents are not both mappings",
         )
 
     @staticmethod
     def _apply_key_filtering(
-        dict1: t.MappingKV[str, t.Tests.TestobjectSerializable],
-        dict2: t.MappingKV[str, t.Tests.TestobjectSerializable],
-        keys: t.StrSequence | None,
-        exclude_keys: t.StrSequence | None,
+        dict1: Mapping[str, t.Tests.TestobjectSerializable],
+        dict2: Mapping[str, t.Tests.TestobjectSerializable],
+        keys: Sequence[str] | None,
+        exclude_keys: Sequence[str] | None,
     ) -> tuple[
-        t.MappingKV[str, t.Tests.TestobjectSerializable],
-        t.MappingKV[str, t.Tests.TestobjectSerializable],
+        Mapping[str, t.Tests.TestobjectSerializable],
+        Mapping[str, t.Tests.TestobjectSerializable],
     ]:
         """Apply key filtering to both dicts if specified.
 
         Returns:
-            The resulting ``tuple[t.MappingKV[str, t.Tests.TestobjectSerializable],
-                t.MappingKV[str, t.Tests.TestobjectSerializable]]``.
+            The resulting ``tuple[Mapping[str, t.Tests.TestobjectSerializable],
+                Mapping[str, t.Tests.TestobjectSerializable]]``.
 
         """
         if keys is None and exclude_keys is None:
@@ -130,14 +126,14 @@ class FlextTestsFilesComparisonParsing:
         filter_keys_set = set(keys) if keys is not None else None
         exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
         result1 = u.transform(
-            FlextTestsUtilitiesFlextPayload.FlextTestsUtilitiesPayload.to_config_map(
+            FlextTestsUtilitiesPayload.FlextTestsUtilitiesPayload.to_config_map(
                 dict1,
             ),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
         result2 = u.transform(
-            FlextTestsUtilitiesFlextPayload.FlextTestsUtilitiesPayload.to_config_map(
+            FlextTestsUtilitiesPayload.FlextTestsUtilitiesPayload.to_config_map(
                 dict2,
             ),
             filter_keys=filter_keys_set,
@@ -154,4 +150,4 @@ class FlextTestsFilesComparisonParsing:
         return (dict1, dict2)
 
 
-__all__: list[str] = ["FlextTestsFilesComparisonParsing"]
+__all__: list[str] = ["FlextTestsUtilitiesFilesComparisonParsing"]

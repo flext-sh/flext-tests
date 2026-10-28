@@ -20,16 +20,13 @@ from __future__ import annotations
 
 import importlib.util
 import sys
+from collections.abc import Sequence
 from pathlib import Path
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from flext_tests import t
 
 
 def install_local_packages(
     project_root: Path,
-    package_names: t.StrSequence | None = None,
+    package_names: Sequence[str] | None = None,
 ) -> None:
     """Register local packages on ``sys.modules`` for in-place test collection.
 

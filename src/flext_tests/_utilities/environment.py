@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import socket
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -128,7 +128,7 @@ class FlextTestsUtilitiesEnvironment:
         return None
 
     @staticmethod
-    def external_environment_values(env_file: Path) -> t.StrMapping:
+    def external_environment_values(env_file: Path) -> Mapping[str, str]:
         """Read declared values for the canonical test environment scope.
 
         Returns:

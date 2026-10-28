@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import datetime as dt
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Annotated
 
@@ -134,7 +135,7 @@ class FlextTestsModelsFilesystem:
             c.Tests.DEFAULT_CSV_DELIMITER
         )
         headers: Annotated[
-            t.StrSequence | None,
+            Sequence[str] | None,
             m.Field(description="CSV headers."),
         ] = None
         readonly: Annotated[bool, m.Field(description="Create file as read-only.")] = (
@@ -246,11 +247,11 @@ class FlextTestsModelsFilesystem:
             m.Field(description="Use deep comparison for nested structures."),
         ] = True
         keys: Annotated[
-            t.StrSequence | None,
+            Sequence[str] | None,
             m.Field(description="Only compare these keys."),
         ] = None
         exclude_keys: Annotated[
-            t.StrSequence | None,
+            Sequence[str] | None,
             m.Field(description="Exclude these keys from comparison."),
         ] = None
 
@@ -322,7 +323,7 @@ class FlextTestsModelsFilesystem:
             m.Field(min_length=1, max_length=1, description="CSV delimiter."),
         ] = c.Tests.DEFAULT_CSV_DELIMITER
         headers: Annotated[
-            t.StrSequence | None,
+            Sequence[str] | None,
             m.Field(description="CSV column headers."),
         ] = None
         readonly: Annotated[bool, m.Field(description="Create file as read-only.")] = (

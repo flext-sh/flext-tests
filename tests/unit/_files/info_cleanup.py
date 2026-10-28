@@ -6,10 +6,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 from flext_tests import FlextTestsFiles
-from tests import m, t, tm, u
+from tests import m, tm, u
 
 
 class TestsFlextTestsFilesInfoCleanupMixin:
@@ -140,9 +141,9 @@ class TestsFlextTestsFilesInfoCleanupMixin:
     @staticmethod
     def test_temporary_files_classmethod() -> None:
         """Test files classmethod context manager."""
-        files: t.MappingKV[
+        files: Mapping[
             str,
-            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
+            str | bytes | m.ConfigMap | Sequence[Sequence[str]] | m.BaseModel,
         ] = {"file1": "content1", "file2": "content2"}
         with FlextTestsFiles.files(files) as created:
             tm.that(len(created), eq=2)
@@ -156,9 +157,9 @@ class TestsFlextTestsFilesInfoCleanupMixin:
     @staticmethod
     def test_temporary_files_custom_extension() -> None:
         """Test files with custom extension."""
-        files: t.MappingKV[
+        files: Mapping[
             str,
-            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
+            str | bytes | m.ConfigMap | Sequence[Sequence[str]] | m.BaseModel,
         ] = {"file1": "content1"}
         with FlextTestsFiles.files(files, ext=".md") as created:
             tm.that(created["file1"].name, eq="file1.md")
@@ -167,9 +168,9 @@ class TestsFlextTestsFilesInfoCleanupMixin:
     def test_create_file_set_nested_directory(tmp_path: Path) -> None:
         """Test creating files in nested directory."""
         nested_dir = tmp_path / "nested" / "subdir"
-        files: t.MappingKV[
+        files: Mapping[
             str,
-            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
+            str | bytes | m.ConfigMap | Sequence[Sequence[str]] | m.BaseModel,
         ] = {"file1": "content1"}
         with FlextTestsFiles.files(files, directory=nested_dir) as created:
             tm.that(created["file1"].parent, eq=nested_dir)

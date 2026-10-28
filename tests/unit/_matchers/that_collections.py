@@ -6,11 +6,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from types import MappingProxyType
 
 import pytest
 
-from tests import c, m, r, t, tm
+from tests import c, m, r, tm
 from tests.unit._matchers.predicates import TestsFlextTestsMatchersPredicates
 
 
@@ -71,7 +72,7 @@ class TestsFlextTestsTypesMatchersThatMixin:
     @staticmethod
     def test_that_eq_none_requires_none() -> None:
         """eq=None asserts the value is None instead of passing silently."""
-        absent: t.StrMapping = {}
+        absent: Mapping[str, str] = {}
         tm.that(absent.get("missing"), eq=None)
         with pytest.raises(AssertionError, match="did not satisfy constraints"):
             tm.that("x", eq=None)
@@ -136,10 +137,12 @@ class TestsFlextTestsMatchersThatSequencesMixin(TestsFlextTestsTypesMatchersThat
     @staticmethod
     def test_that_rule_declarations_resolve_at_public_ingress() -> None:
         """Containment and nested rules validate without rebuilding models."""
-        subject: t.StrMapping = {"entry": "value"}
+        subject: Mapping[str, str] = {"entry": "value"}
         tm.that(subject, has="entry", paths={"entry": {"eq": subject["entry"]}})
         tm.that([subject["entry"]], items=[{"eq": subject["entry"]}])
-        tm.ok(r[t.StrMapping].ok(subject), paths={"entry": {"eq": subject["entry"]}})
+        tm.ok(
+            r[Mapping[str, str]].ok(subject), paths={"entry": {"eq": subject["entry"]}}
+        )
         with pytest.raises(AssertionError):
             tm.that(subject, paths={"entry": {"ne": subject["entry"]}})
 

@@ -535,7 +535,7 @@ class FlextTestsModelsMatchers:
             m.Field(description="No keys."),
         ] = None
         values: Annotated[
-            t.SequenceOf[FlextTestsModelsFlextBase.Payload] | None,
+            Sequence[FlextTestsModelsFlextBase.Payload] | None,
             m.Field(description="Values."),
         ] = None
         kv: Annotated[
@@ -556,7 +556,7 @@ class FlextTestsModelsMatchers:
         ] = None
         ok: Annotated[bool | None, m.Field(description="Result ok.")] = None
         error: Annotated[
-            str | t.StrSequence | None,
+            str | Sequence[str] | None,
             m.Field(description="Result error."),
         ] = None
         deep: Annotated[
@@ -611,7 +611,7 @@ class FlextTestsModelsMatchers:
                 message = "native truth cannot be combined with payload criteria"
                 raise ValueError(message)
             # Why: precise union of the two fields actually assigned below
-            # ("has" <- self.error: str | StrSequence; "len" <- LengthSpec
+            # ("has" <- self.error: str | Sequence[str]; "len" <- LengthSpec
             # tuple); TestobjectSerializable rejected tuple[int, int] once the
             # recursive-alias fix made mypy/pyrefly evaluate it for real.
             updates: MutableMapping[
@@ -656,7 +656,7 @@ class FlextTestsModelsMatchers:
         )
 
         settings: Annotated[
-            t.MappingKV[
+            Mapping[
                 str,
                 t.Port[p.Tests.NativeMatchValue],
             ]
@@ -664,7 +664,7 @@ class FlextTestsModelsMatchers:
             m.Field(description="Initial configuration values."),
         ] = None
         container: Annotated[
-            t.MappingKV[
+            Mapping[
                 str,
                 t.Port[p.Tests.NativeMatchValue],
             ]
@@ -672,7 +672,7 @@ class FlextTestsModelsMatchers:
             m.Field(description="Initial container/service mappings."),
         ] = None
         context: Annotated[
-            t.MappingKV[
+            Mapping[
                 str,
                 t.Port[p.Tests.NativeMatchValue],
             ]
@@ -688,11 +688,11 @@ class FlextTestsModelsMatchers:
             m.Field(description="Temporary environment variables."),
         ] = None
         remove_env_keys: Annotated[
-            t.StrSequence,
+            Sequence[str],
             m.Field(description="Environment variables absent inside the scope."),
         ] = ()
         python_paths: Annotated[
-            t.StrSequence,
+            Sequence[str],
             m.Field(description="Import roots prepended inside the scope."),
         ] = ()
         cwd: Annotated[
@@ -727,7 +727,7 @@ class FlextTestsModelsMatchers:
         """Scope container for test configuration and runtime state."""
 
         settings: Annotated[
-            t.MappingKV[
+            Mapping[
                 str,
                 t.Port[p.Tests.NativeMatchValue],
             ],
@@ -741,7 +741,7 @@ class FlextTestsModelsMatchers:
             ),
         )
         container: Annotated[
-            t.MappingKV[
+            Mapping[
                 str,
                 t.Port[p.Tests.NativeMatchValue],
             ],
@@ -755,7 +755,7 @@ class FlextTestsModelsMatchers:
             ),
         )
         context: Annotated[
-            t.MappingKV[
+            Mapping[
                 str,
                 t.Port[p.Tests.NativeMatchValue],
             ],

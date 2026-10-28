@@ -6,11 +6,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import MutableMapping
 from typing import Annotated
 
 from flext_cli import m
 
-from flext_tests import t
 from flext_tests._models.docker import FlextTestsModelsDocker
 
 
@@ -25,7 +25,7 @@ class FlextTestsModelsSpec:
         """
 
         containers: Annotated[
-            t.MutableMappingKV[str, FlextTestsModelsDocker.ContainerConfig],
+            MutableMapping[str, FlextTestsModelsDocker.ContainerConfig],
             m.Field(
                 description=(
                     "Target name → container config; the target name is what "

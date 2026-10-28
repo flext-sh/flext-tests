@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from pathlib import Path
 from typing import ClassVar
 
@@ -13,7 +14,7 @@ import pytest
 from flext_infra import m as infra_m, u as infra_u
 from flext_infra.codemod import FlextInfraModGateEngine
 
-from flext_tests import c, m, p, r, t
+from flext_tests import c, m, p, r
 
 
 class FlextTestsUtilitiesEnforcement:
@@ -167,7 +168,7 @@ class FlextTestsUtilitiesEnforcement:
     def collected_project_names(
         cls,
         *,
-        items: t.SequenceOf[pytest.Item],
+        items: Sequence[pytest.Item],
         repository_root: Path,
     ) -> frozenset[str]:
         """Return the FLEXT project names represented by collected items."""

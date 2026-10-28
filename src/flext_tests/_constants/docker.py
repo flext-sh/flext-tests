@@ -6,16 +6,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from enum import StrEnum, unique
 from types import MappingProxyType
-from typing import TYPE_CHECKING, ClassVar
+from typing import ClassVar
 
 from python_on_whales.exceptions import DockerException as ComposeDockerException
-
-if TYPE_CHECKING:
-    from collections.abc import Mapping
-
-    from flext_cli import t
 
 
 class FlextTestsConstantsDocker:
@@ -172,7 +168,7 @@ class FlextTestsConstantsDocker:
     # a value: the lifecycle generates them once per container and reads them
     # back from it (FlextTestsDocker.fetch_container_environment).
     SHARED_CONTAINERS: ClassVar[
-        Mapping[str, t.MappingKV[str, int | str | tuple[str, ...]]]
+        Mapping[str, Mapping[str, int | str | tuple[str, ...]]]
     ] = MappingProxyType({
         "flext-openldap-test": MappingProxyType({
             "compose_file": "docker/docker-compose.openldap.yml",

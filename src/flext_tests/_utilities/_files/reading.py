@@ -8,6 +8,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Annotated, cast, overload
 
@@ -184,14 +185,14 @@ class FlextTestsUtilitiesFilesReading(FlextTestsUtilitiesFilesCreation):
             case _ if actual_fmt == c.Tests.FILE_FORMAT_JSON:
                 text = path.read_text(encoding=params.enc)
                 adapter: u.type_adapter[
-                    t.MappingKV[str, t.Tests.TestobjectSerializable]
+                    Mapping[str, t.Tests.TestobjectSerializable]
                 ] = u.type_adapter(
                     cast(
-                        "type[t.MappingKV[str, t.Tests.TestobjectSerializable]]",
-                        t.MappingKV[str, t.Tests.TestobjectSerializable],
+                        "type[Mapping[str, t.Tests.TestobjectSerializable]]",
+                        Mapping[str, t.Tests.TestobjectSerializable],
                     ),
                 )
-                parsed_json: t.MappingKV[str, t.Tests.TestobjectSerializable] = (
+                parsed_json: Mapping[str, t.Tests.TestobjectSerializable] = (
                     adapter.validate_json(text.encode())
                 )
                 content = (

@@ -7,17 +7,17 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from typing import TYPE_CHECKING, ClassVar, Protocol, Self, runtime_checkable
 
 from flext_cli import p
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
     from pathlib import Path
 
     import pytest
 
-    from flext_tests import m, t
+    from flext_tests import m
 
 
 class FlextTestsProtocolsEnforcement:
@@ -70,7 +70,7 @@ class FlextTestsProtocolsEnforcement:
 
         # NOTE (multi-agent, mro-wkii.17.21): Result wrapping belongs to the
         # flext-tests boundary; the external enforcer returns its report directly.
-        def enforce(self, *, project_names: t.StrSequence) -> p.AttributeProbe:
+        def enforce(self, *, project_names: Sequence[str]) -> p.AttributeProbe:
             """Run namespace enforcement for the selected projects."""
             ...
 

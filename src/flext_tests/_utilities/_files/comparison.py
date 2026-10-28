@@ -1,4 +1,4 @@
-"""File-comparison execution helpers (part 2) for FlextTestsFiles.
+"""Facade for FlextTestsUtilitiesFilesComparison.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -6,21 +6,24 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from pathlib import Path
 
 from flext_core import r
 
 from flext_tests import c, m, p, t, u
-from flext_tests._utilities import FlextTestsUtilitiesFlextPayload
-from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonParsing
+from flext_tests._utilities import FlextTestsUtilitiesPayload
+from flext_tests._utilities._files._comparison import (
+    FlextTestsUtilitiesFilesComparisonParsing,
+)
 
 
-class FlextTestsFilesComparison(
-    FlextTestsFilesComparisonParsing,
+class FlextTestsUtilitiesFilesComparison(
+    FlextTestsUtilitiesFilesComparisonParsing,
 ):
-    """File-comparison execution helpers — part 2 of the modular split.
+    """Compose the comparison domain through its native MRO.
 
-    Extends the parsing helpers from ``comparison_parsing`` with the
+    Extends the parsing helpers from ``parsing`` with the
     dispatch, mode comparison, and deep-compare methods.
     """
 
@@ -29,7 +32,7 @@ class FlextTestsFilesComparison(
         file1: Path,
         file2: Path,
         *,
-        options: FlextTestsFilesComparison.CompareOptions | None = None,
+        options: FlextTestsUtilitiesFilesComparison.CompareOptions | None = None,
     ) -> p.Result[bool]:
         """Compare two files under the configured comparison options.
 
@@ -45,7 +48,7 @@ class FlextTestsFilesComparison(
         compare_options = (
             options
             if options is not None
-            else FlextTestsFilesComparison.CompareOptions()
+            else FlextTestsUtilitiesFilesComparison.CompareOptions()
         )
         try:
             params = m.Tests.CompareParams.model_validate({
@@ -129,8 +132,8 @@ class FlextTestsFilesComparison(
 
     @staticmethod
     def _deep_compare_mappings(
-        dict1: t.MappingKV[str, t.Tests.TestobjectSerializable],
-        dict2: t.MappingKV[str, t.Tests.TestobjectSerializable],
+        dict1: Mapping[str, t.Tests.TestobjectSerializable],
+        dict2: Mapping[str, t.Tests.TestobjectSerializable],
         params: m.Tests.CompareParams,
     ) -> p.Result[bool]:
         """Deeply compare already-parsed structured mappings.
@@ -144,14 +147,14 @@ class FlextTestsFilesComparison(
             set(params.exclude_keys) if params.exclude_keys is not None else None
         )
         left_result = u.transform(
-            FlextTestsUtilitiesFlextPayload.FlextTestsUtilitiesPayload.to_config_map(
+            FlextTestsUtilitiesPayload.FlextTestsUtilitiesPayload.to_config_map(
                 dict1,
             ),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
         right_result = u.transform(
-            FlextTestsUtilitiesFlextPayload.FlextTestsUtilitiesPayload.to_config_map(
+            FlextTestsUtilitiesPayload.FlextTestsUtilitiesPayload.to_config_map(
                 dict2,
             ),
             filter_keys=filter_keys_set,
@@ -179,4 +182,4 @@ class FlextTestsFilesComparison(
         return r[bool].ok(lines1 == lines2)
 
 
-__all__: list[str] = ["FlextTestsFilesComparison"]
+__all__: list[str] = ["FlextTestsUtilitiesFilesComparison"]

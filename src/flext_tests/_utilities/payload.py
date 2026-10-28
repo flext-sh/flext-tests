@@ -9,7 +9,15 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable, KeysView, Mapping, Sequence, ValuesView
+from collections.abc import (
+    Callable,
+    Iterable,
+    KeysView,
+    Mapping,
+    MutableMapping,
+    Sequence,
+    ValuesView,
+)
 from datetime import datetime, tzinfo
 from enum import Enum
 from importlib.machinery import ModuleSpec
@@ -35,11 +43,11 @@ if TYPE_CHECKING:
     from flext_tests._models import FlextTestsModelsMatchers
 
 
-class FlextTestsUtilitiesFlextPayload:
+class FlextTestsUtilitiesPayload:
     """Canonical namespace owner."""
 
     @staticmethod
-    def _stable_sort_key(value: p.Tests.Payload) -> t.StrPair:
+    def _stable_sort_key(value: p.Tests.Payload) -> tuple[str, str]:
         """Return a total deterministic key for heterogeneous payload values."""
         native = FlextTestsUtilitiesPayload.to_match_value(
             value,
@@ -205,7 +213,7 @@ class FlextTestsUtilitiesFlextPayload:
         """
         if not isinstance(value, Mapping):
             return None
-        entries: t.MutableMappingKV[str, flext_tests.m.Tests.Payload] = {}
+        entries: MutableMapping[str, flext_tests.m.Tests.Payload] = {}
         for key, item in cast("Mapping[object, object]", value).items():
             normalized_key = str(key)
             if normalized_key in entries:
@@ -236,7 +244,7 @@ class FlextTestsUtilitiesFlextPayload:
             children = tuple(
                 sorted(
                     children,
-                    key=FlextTestsUtilitiesFlextPayload._stable_sort_key,
+                    key=FlextTestsUtilitiesPayload._stable_sort_key,
                 ),
             )
         for kind, sequence_type in c.Tests.PAYLOAD_COLLECTION_TYPES.items():
@@ -277,7 +285,7 @@ class FlextTestsUtilitiesFlextPayload:
                 TypeError: If Unsupported native payload leaf.
 
             """
-            for handler in FlextTestsUtilitiesFlextPayload._PAYLOAD_LEAF_HANDLERS:
+            for handler in FlextTestsUtilitiesPayload._PAYLOAD_LEAF_HANDLERS:
                 payload = handler(value)
                 if payload is not None:
                     return payload
@@ -342,8 +350,8 @@ class FlextTestsUtilitiesFlextPayload:
         def to_config_map(
             value: (
                 m.BaseModel
-                | t.MappingKV[str, t.Tests.TestobjectSerializable]
-                | t.MappingKV[str, t.JsonPayload]
+                | Mapping[str, t.Tests.TestobjectSerializable]
+                | Mapping[str, t.JsonPayload]
                 | t.JsonMapping
             ),
         ) -> m.ConfigMap:
@@ -506,9 +514,8 @@ class FlextTestsUtilitiesFlextPayload:
             )
 
 
-FlextTestsUtilitiesPayload = FlextTestsUtilitiesFlextPayload.FlextTestsUtilitiesPayload
+FlextTestsUtilitiesPayload = FlextTestsUtilitiesPayload.FlextTestsUtilitiesPayload
 
 __all__: list[str] = [
-    "FlextTestsUtilitiesFlextPayload",
     "FlextTestsUtilitiesPayload",
 ]

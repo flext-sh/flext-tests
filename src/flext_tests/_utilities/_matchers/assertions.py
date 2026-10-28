@@ -12,7 +12,7 @@ from collections.abc import Sized
 from typing import Never
 
 from flext_tests import c, p
-from flext_tests._utilities import FlextTestsUtilitiesFlextPayload
+from flext_tests._utilities import FlextTestsUtilitiesPayload
 
 
 class FlextTestsUtilitiesMatchersAssertions:
@@ -57,10 +57,8 @@ class FlextTestsUtilitiesMatchersAssertions:
             AssertionError: Always.
 
         """
-        native = (
-            FlextTestsUtilitiesFlextPayload.FlextTestsUtilitiesPayload.to_match_value(
-                payload,
-            )
+        native = FlextTestsUtilitiesPayload.FlextTestsUtilitiesPayload.to_match_value(
+            payload,
         )
         if isinstance(native, Sized):
             payload_len = len(native)

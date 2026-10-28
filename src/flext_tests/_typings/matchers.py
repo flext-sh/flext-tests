@@ -6,9 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable
-
-from flext_core import t
+from collections.abc import Callable, Mapping, Sequence
 
 
 class FlextTestsTypesMatchers:
@@ -17,13 +15,13 @@ class FlextTestsTypesMatchers:
     type LengthSpec = int | tuple[int, int]
     type ComparableScalar = float | int | str
     type ItemSelector = int | str
-    type PathSpec = str | t.StrSequence
-    type ExclusionSpec = str | t.StrSequence
-    type KeySpec = t.StrSequence | set[str]
-    type AttributeSpec = str | t.StrSequence
-    type ErrorCodeSpec = str | t.StrSequence
-    type CleanupSpec = t.SequenceOf[Callable[[], None]]
-    type EnvironmentSpec = t.StrMapping
+    type PathSpec = str | Sequence[str]
+    type ExclusionSpec = str | Sequence[str]
+    type KeySpec = Sequence[str] | set[str]
+    type AttributeSpec = str | Sequence[str]
+    type ErrorCodeSpec = str | Sequence[str]
+    type CleanupSpec = Sequence[Callable[[], None]]
+    type EnvironmentSpec = Mapping[str, str]
 
 
 __all__: list[str] = ["FlextTestsTypesMatchers"]

@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Annotated, ClassVar, Self, override
 
 from flext_tests import m, p, r, s
-from flext_tests._utilities._files import FlextTestsFilesComparison
+from flext_tests._utilities._files import FlextTestsUtilitiesFilesComparison
 
 if TYPE_CHECKING:
     from flext_tests import t
@@ -30,7 +30,7 @@ from flext_tests._utilities import FlextTestsUtilitiesFiles
 class FlextTestsFiles(
     s,
     FlextTestsUtilitiesFiles,
-    FlextTestsFilesComparison,
+    FlextTestsUtilitiesFilesComparison,
 ):
     """Manages test files for FLEXT ecosystem testing."""
 

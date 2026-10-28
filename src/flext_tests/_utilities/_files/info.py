@@ -8,6 +8,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from pathlib import Path
 
 from flext_cli import u
@@ -155,7 +156,7 @@ class FlextTestsUtilitiesFilesInfo(FlextTestsUtilitiesFilesAssertions):
         key_count = item_count = row_count = column_count = None
         model_valid: bool | None = None
         model_name = validate_model.__name__ if validate_model else None
-        parsed_mapping: t.MappingKV[str, t.Tests.TestobjectSerializable] | None = None
+        parsed_mapping: Mapping[str, t.Tests.TestobjectSerializable] | None = None
         match fmt:
             case "json" | "yaml" if text.strip():
                 parse_result = (

@@ -16,13 +16,13 @@ import importlib
 import importlib.metadata
 import importlib.util
 import inspect
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping, MutableMapping
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar
 
 from flext_cli import u
 
-from flext_tests import c, p, t, tm
+from flext_tests import c, p, tm
 
 if TYPE_CHECKING:
     from types import ModuleType
@@ -33,7 +33,7 @@ class FlextTestsUtilitiesFlextGovernance:
 
     @staticmethod
     @functools.lru_cache(maxsize=1)
-    def _console_script_functions() -> t.MappingKV[str, frozenset[str]]:
+    def _console_script_functions() -> Mapping[str, frozenset[str]]:
         """Map each installed console-script module to its exposed function names.
 
         One scan per session: ``importlib.metadata.entry_points`` walks every
@@ -44,7 +44,7 @@ class FlextTestsUtilitiesFlextGovernance:
             The resulting ``dict[str, frozenset[str]]``.
 
         """
-        mapping: t.MutableMappingKV[str, set[str]] = {}
+        mapping: MutableMapping[str, set[str]] = {}
         for entry in importlib.metadata.entry_points(group="console_scripts"):
             if "." not in entry.attr:
                 mapping.setdefault(entry.module, set()).add(entry.attr)

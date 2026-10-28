@@ -21,22 +21,16 @@ from flext_tests._utilities._matchers import (
 )
 
 
-class FlextTestsUtilitiesMatchers:
+class FlextTestsUtilitiesMatchers(
+    FlextTestsUtilitiesMatchersAssertions,
+    FlextTestsUtilitiesMatchersContainment,
+    FlextTestsUtilitiesMatchersImmutability,
+    FlextTestsUtilitiesMatchersResult,
+    FlextTestsUtilitiesMatchersScope,
+    FlextTestsUtilitiesMatchersThat,
+    FlextTestsUtilitiesMatchersTypeguards,
+):
     """Namespace for test matcher utilities used in flext-tests."""
-
-    class Tests:
-        """Container for test utility storages and aliases."""
-
-        class Matchers(
-            FlextTestsUtilitiesMatchersContainment,
-            FlextTestsUtilitiesMatchersImmutability.Tests.Matchers,
-            FlextTestsUtilitiesMatchersResult.Tests.Matchers,
-            FlextTestsUtilitiesMatchersScope.Tests.Matchers,
-            FlextTestsUtilitiesMatchersThat.Tests.Matchers,
-            FlextTestsUtilitiesMatchersTypeguards,
-            FlextTestsUtilitiesMatchersAssertions,
-        ):
-            """Test matchers with powerful generalist methods."""
 
 
 __all__: list[str] = ["FlextTestsUtilitiesMatchers"]

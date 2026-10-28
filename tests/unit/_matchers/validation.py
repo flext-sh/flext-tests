@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from copy import deepcopy
 from operator import eq
 from pathlib import Path
@@ -375,7 +376,7 @@ class TestsFlextTestsMatchersValidationMixin(TestsFlextTestsMatchersNativeTruthM
     @staticmethod
     def test_ok_with_eq_sequence_parameter() -> None:
         """Test tm.ok() with structural sequence equality."""
-        result = r[t.StrSequence].ok(["a", "b", "c"])
+        result = r[Sequence[str]].ok(["a", "b", "c"])
         value = tm.ok(result, eq=["a", "b", "c"])
         tm.that(value, eq=["a", "b", "c"])
 

@@ -6,12 +6,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Annotated
 
 from flext_cli import m
 
-from flext_tests import c, t
+from flext_tests import c
 
 
 class FlextTestsModelsDocker:
@@ -88,7 +89,7 @@ class FlextTestsModelsDocker:
             m.Field(description="Runtime lifecycle status."),
         ]
         ports: Annotated[
-            t.StrMapping,
+            Mapping[str, str],
             m.Field(description="Published ports: '<port>/<proto>' to host port."),
         ]
         image: Annotated[
@@ -133,7 +134,7 @@ class FlextTestsModelsDocker:
             m.Field(alias="Image", description="Configured image reference."),
         ] = ""
         env: Annotated[
-            t.StrSequence | None,
+            Sequence[str] | None,
             m.Field(alias="Env", description="Environment as KEY=VALUE entries."),
         ] = None
 
@@ -149,9 +150,9 @@ class FlextTestsModelsDocker:
         """``NetworkSettings`` of ``docker inspect``."""
 
         ports: Annotated[
-            t.MappingKV[
+            Mapping[
                 str,
-                t.SequenceOf[FlextTestsModelsDocker.ContainerInspectBinding] | None,
+                Sequence[FlextTestsModelsDocker.ContainerInspectBinding] | None,
             ]
             | None,
             m.Field(alias="Ports", description="Bindings per '<port>/<proto>'."),

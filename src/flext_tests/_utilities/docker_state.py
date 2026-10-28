@@ -6,12 +6,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from pathlib import Path
 
 from flext_cli import u
 
-from flext_tests import c, m, p, r, t
+from flext_tests import c, m, p, r
 from flext_tests._utilities import FlextTestsUtilitiesTestContext
 
 
@@ -201,11 +201,11 @@ class FlextTestsUtilitiesDockerState:
     @staticmethod
     def list_container_states(
         state_dir: Path,
-    ) -> p.Result[t.SequenceOf[m.Tests.ContainerState]]:
+    ) -> p.Result[Sequence[m.Tests.ContainerState]]:
         """Read every record of the host, ordered by container name.
 
         Returns:
-            The resulting ``p.Result[t.SequenceOf[m.Tests.ContainerState]]``.
+            The resulting ``p.Result[Sequence[m.Tests.ContainerState]]``.
 
         """
         states: list[m.Tests.ContainerState] = []
@@ -220,9 +220,9 @@ class FlextTestsUtilitiesDockerState:
                 record_file.name.removesuffix(c.Tests.DOCKER_STATE_FILE_SUFFIX),
             )
             if read.failure:
-                return r[t.SequenceOf[m.Tests.ContainerState]].from_failure(read)
+                return r[Sequence[m.Tests.ContainerState]].from_failure(read)
             states.append(read.value)
-        return r[t.SequenceOf[m.Tests.ContainerState]].ok(tuple(states))
+        return r[Sequence[m.Tests.ContainerState]].ok(tuple(states))
 
 
 __all__: list[str] = ["FlextTestsUtilitiesDockerState"]

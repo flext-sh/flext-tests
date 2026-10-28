@@ -6,12 +6,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from flext_tests import t
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterable, Iterator
+    from collections.abc import Callable
 
     from flext_tests._protocols.payload import FlextTestsProtocolsPayload
     from flext_tests._typings.matchers import FlextTestsTypesMatchers
@@ -31,7 +32,7 @@ class FlextTestsProtocolsMatchers(Protocol):
             [FlextTestsProtocolsPayload.NativeMatchValue],
             FlextTestsProtocolsPayload.NativeMatchValue,
         ]
-        | t.MappingKV[
+        | Mapping[
             str | int,
             FlextTestsProtocolsPayload.NativeMatchValue
             | FlextTestsProtocolsPayload.Payload
@@ -39,7 +40,7 @@ class FlextTestsProtocolsMatchers(Protocol):
         ]
         | FlextTestsProtocolsMatchers.MatcherCriteriaMapping
         | FlextTestsProtocolsMatchers.MatcherCriteriaSequence
-        | t.StrSequence
+        | Sequence[str]
         | FlextTestsTypesMatchers.LengthSpec
     )
 

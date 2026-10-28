@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import socket
 import time
-from collections.abc import Generator
+from collections.abc import Generator, Mapping, Sequence
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Annotated, Self, override
@@ -128,7 +128,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         return r[t.Tests.DockerSdkClient].ok(self.docker_client)
 
     @property
-    def dirty_containers(self) -> t.StrSequence:
+    def dirty_containers(self) -> Sequence[str]:
         """Names of the host's containers marked dirty, in name order."""
         states = u.Tests.list_container_states(self.state_dir).unwrap()
         return tuple(state.container_name for state in states if state.dirty)
@@ -420,7 +420,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
             max_wait=target.startup_timeout if max_wait is None else max_wait,
         )
 
-    def cleanup_dirty_containers(self) -> p.Result[t.StrSequence]:
+    def cleanup_dirty_containers(self) -> p.Result[Sequence[str]]:
         """Recreate every dirty shared container of the host.
 
         Each one goes through the same locked lifecycle as ``execute``. A dirty
@@ -429,12 +429,12 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         returned.
 
         Returns:
-            The resulting ``p.Result[t.StrSequence]``.
+            The resulting ``p.Result[Sequence[str]]``.
 
         """
         enabled = self.lifecycle_enabled()
         if enabled.failure:
-            return r[t.StrSequence].from_failure(enabled)
+            return r[Sequence[str]].from_failure(enabled)
         cleaned: list[str] = []
         for container_name in self.dirty_containers:
             if container_name not in c.Tests.SHARED_CONTAINERS:
@@ -446,9 +446,9 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
                 state_dir=self.state_dir,
             ).execute()
             if recreated.failure:
-                return r[t.StrSequence].from_failure(recreated)
+                return r[Sequence[str]].from_failure(recreated)
             cleaned.append(container_name)
-        return r[t.StrSequence].ok(tuple(cleaned))
+        return r[Sequence[str]].ok(tuple(cleaned))
 
     def _target_error(self) -> str | None:
         """Explain why the configured target cannot run the lifecycle.
@@ -507,32 +507,32 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
     def _observe(
         self,
         container_name: str,
-    ) -> p.Result[t.Pair[m.Tests.ContainerInfo | None, m.Tests.ContainerState]]:
+    ) -> p.Result[tuple[m.Tests.ContainerInfo | None, m.Tests.ContainerState]]:
         """Read the container (absent is None) and its host record.
 
         Returns:
-            The resulting ``p.Result[t.Pair[m.Tests.ContainerInfo | None,
+            The resulting ``p.Result[tuple[m.Tests.ContainerInfo | None,
                 m.Tests.ContainerState]]``.
 
         """
         state = u.Tests.read_container_state(self.state_dir, container_name)
         if state.failure:
             return r[
-                t.Pair[m.Tests.ContainerInfo | None, m.Tests.ContainerState]
+                tuple[m.Tests.ContainerInfo | None, m.Tests.ContainerState]
             ].from_failure(state)
         info = self.fetch_container_info(container_name)
         if info.success:
-            return r[t.Pair[m.Tests.ContainerInfo | None, m.Tests.ContainerState]].ok((
+            return r[tuple[m.Tests.ContainerInfo | None, m.Tests.ContainerState]].ok((
                 info.value,
                 state.value,
             ))
         if info.error_code == c.Tests.DockerErrorCode.NOT_PROVISIONED:
-            return r[t.Pair[m.Tests.ContainerInfo | None, m.Tests.ContainerState]].ok((
+            return r[tuple[m.Tests.ContainerInfo | None, m.Tests.ContainerState]].ok((
                 None,
                 state.value,
             ))
         return r[
-            t.Pair[m.Tests.ContainerInfo | None, m.Tests.ContainerState]
+            tuple[m.Tests.ContainerInfo | None, m.Tests.ContainerState]
         ].from_failure(info)
 
     @override
@@ -541,7 +541,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         *,
         initializer: p.Tests.ContainerInitializer | None = None,
         readiness_probe: p.Tests.ReadinessProbe | None = None,
-        creation_environment: t.MappingKV[str, t.SecretStr] | None = None,
+        creation_environment: Mapping[str, t.SecretStr] | None = None,
     ) -> p.Result[m.Tests.ContainerInfo]:
         """Ensure the configured container exists, is sealed, healthy and ready.
 
@@ -597,7 +597,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         fingerprint: str,
         initializer: p.Tests.ContainerInitializer | None,
         readiness_probe: p.Tests.ReadinessProbe | None,
-        environment: t.MappingKV[str, t.SecretStr],
+        environment: Mapping[str, t.SecretStr],
     ) -> p.Result[m.Tests.ContainerInfo]:
         """Reuse under the shared lease, otherwise converge under the exclusive one.
 
@@ -670,7 +670,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         container_name: str,
         fingerprint: str,
         initializer: p.Tests.ContainerInitializer | None,
-        environment: t.MappingKV[str, t.SecretStr],
+        environment: Mapping[str, t.SecretStr],
     ) -> p.Result[m.Tests.ContainerInfo]:
         """Under the exclusive lease, decide again and apply the decision.
 
@@ -890,7 +890,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         self,
         *,
         readiness_probe: p.Tests.ReadinessProbe | None = None,
-        required_environment: t.StrSequence = (),
+        required_environment: Sequence[str] = (),
     ) -> p.Result[m.Tests.ContainerInfo]:
         """Check, without changing anything, that the container is usable.
 
@@ -939,7 +939,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         container_name: str,
         fingerprint: str,
         readiness_probe: p.Tests.ReadinessProbe | None,
-        required_environment: t.StrSequence,
+        required_environment: Sequence[str],
     ) -> p.Result[m.Tests.ContainerInfo]:
         """Verify under a held shared lease.
 

@@ -10,6 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -80,15 +81,15 @@ class FlextTestsDockerSurface(_PartsBase):
     def fetch_container_environment(
         self,
         container_name: str,
-        keys: t.StrSequence,
-    ) -> p.Result[t.MappingKV[str, t.SecretStr]]:
+        keys: Sequence[str],
+    ) -> p.Result[Mapping[str, t.SecretStr]]:
         """Read named creation variables of a container as secrets.
 
         A key the container does not carry fails ``ENVIRONMENT_MISSING``,
         naming the key and never a value.
 
         Returns:
-            The resulting ``p.Result[t.MappingKV[str, t.SecretStr]]``.
+            The resulting ``p.Result[Mapping[str, t.SecretStr]]``.
 
         """
         return self._inspect(container_name).flat_map(

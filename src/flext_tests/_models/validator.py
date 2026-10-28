@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import MutableMapping
+from collections.abc import MutableMapping, Sequence
 from pathlib import Path
 from typing import Annotated, ClassVar, Literal
 
@@ -32,7 +32,7 @@ class FlextTestsModelsValidator:
             m.Field(description="Closed discriminator of the declarative rule source."),
         ] = "flext_infra_rule"
         rule_ids: Annotated[
-            t.StrSequence,
+            Sequence[str],
             m.Field(description="Engine rule IDs this catalog entry selects."),
         ] = ()
 

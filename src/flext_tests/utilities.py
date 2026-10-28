@@ -13,7 +13,6 @@ from __future__ import annotations
 from flext_cli import u as flext_cli_u
 
 from flext_tests._utilities import (
-    FlextTestsFixturesDSL,
     FlextTestsUtilitiesBase,
     FlextTestsUtilitiesConfigHelpers,
     FlextTestsUtilitiesContainerHelpers,
@@ -23,11 +22,12 @@ from flext_tests._utilities import (
     FlextTestsUtilitiesEnforcement,
     FlextTestsUtilitiesEnvironment,
     FlextTestsUtilitiesFiles,
+    FlextTestsUtilitiesFixturesDSL,
     FlextTestsUtilitiesFlextGovernance,
     FlextTestsUtilitiesFlextHandler,
-    FlextTestsUtilitiesFlextPayload,
     FlextTestsUtilitiesMatchers,
     FlextTestsUtilitiesNamespace,
+    FlextTestsUtilitiesPayload,
     FlextTestsUtilitiesPytest,
     FlextTestsUtilitiesResult,
     FlextTestsUtilitiesScratchStorage,
@@ -50,9 +50,9 @@ class FlextTestsUtilities(flext_cli_u, FlextTestsUtilitiesFlextGovernance):
         FlextTestsUtilitiesEnforcement,
         FlextTestsUtilitiesEnvironment,
         FlextTestsUtilitiesFiles,
-        FlextTestsFixturesDSL,
+        FlextTestsUtilitiesFixturesDSL,
         FlextTestsUtilitiesNamespace,
-        FlextTestsUtilitiesFlextPayload,
+        FlextTestsUtilitiesPayload,
         FlextTestsUtilitiesResult,
         FlextTestsUtilitiesScratchStorage,
         FlextTestsUtilitiesConfigHelpers,
@@ -67,4 +67,4 @@ class FlextTestsUtilities(flext_cli_u, FlextTestsUtilitiesFlextGovernance):
 
 
 u = FlextTestsUtilities
-__all__: list[str] = ["FlextTestsFixturesDSL", "FlextTestsUtilities", "u"]
+__all__: list[str] = ["FlextTestsUtilities", "FlextTestsUtilitiesFixturesDSL", "u"]

@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Iterator
 from typing import TYPE_CHECKING, Protocol, Self, runtime_checkable
 
 from flext_core import p
@@ -13,8 +14,6 @@ from flext_core import p
 from flext_tests._typings.base import FlextTestsTypesBase
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator
-
     from flext_tests import t
 
 

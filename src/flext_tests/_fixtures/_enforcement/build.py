@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 from flext_tests import m, u
@@ -17,8 +18,6 @@ from flext_tests._fixtures._enforcement import (
 if TYPE_CHECKING:
     import pytest
 
-    from flext_tests import t
-
 
 class FlextTestsEnforcementBuilder:
     """Build synthetic enforcement items for active collection-time rules."""
@@ -29,7 +28,7 @@ class FlextTestsEnforcementBuilder:
         session: pytest.Session,
         cfg: m.Tests.EnforcementDispatcherConfig,
         *,
-        collected_items: t.SequenceOf[pytest.Item],
+        collected_items: Sequence[pytest.Item],
     ) -> list[pytest.Item]:
         """Return one enforcement item per rule and offending project."""
         repository_root = cfg.repository_root

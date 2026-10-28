@@ -16,6 +16,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping, MutableMapping
 from importlib import import_module
 from inspect import getmembers, isclass
 from typing import TYPE_CHECKING
@@ -23,8 +24,6 @@ from typing import TYPE_CHECKING
 from flext_tests import c
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, MutableMapping
-
     import pytest
 
 

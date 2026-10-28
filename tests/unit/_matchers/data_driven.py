@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 
 import pytest
 
@@ -28,12 +28,12 @@ class TestsFlextTestsMatchersDataDrivenMixin:
         tm.that({"value": value}, attrs_match={"value": {"eq": value}})
         tm.ok(r[str].ok(value), eq=value)
         tm.ok(r[t.JsonMapping].ok({"value": value}), paths={"value": {"eq": value}})
-        tm.ok(r[t.StrSequence].ok([value]), items=[{"eq": value}])
+        tm.ok(r[Sequence[str]].ok([value]), items=[{"eq": value}])
         tm.ok(
             r[t.JsonMapping].ok({"value": value}),
             attrs_match={"value": {"eq": value}},
         )
-        sequence_result = r[t.StrSequence].ok([value])
+        sequence_result = r[Sequence[str]].ok([value])
         with pytest.raises(AssertionError):
             tm.that({"value": value}, paths={"value": {"eq": mismatched}})
         with pytest.raises(AssertionError):
@@ -50,7 +50,7 @@ class TestsFlextTestsMatchersDataDrivenMixin:
             },
             "status": "active",
         }
-        paths: t.MappingKV[str | int, p.Tests.MatcherOption] = {
+        paths: Mapping[str | int, p.Tests.MatcherOption] = {
             "user.name": "John",
             "user.age": {"gte": 18, "lt": 120},
             "user.email": {"match": c.Tests.EMAIL_PATTERN_RE},
@@ -77,8 +77,8 @@ class TestsFlextTestsMatchersDataDrivenMixin:
     @staticmethod
     def test_that_with_items_data_driven_rules() -> None:
         """Validate indexed, first/last and all-item rules declaratively."""
-        rows: t.StrSequence = ["alpha", "beta", "gamma"]
-        items: t.MappingKV[str | int, p.Tests.MatcherOption] = {
+        rows: Sequence[str] = ["alpha", "beta", "gamma"]
+        items: Mapping[str | int, p.Tests.MatcherOption] = {
             "first": {"starts": "al"},
             1: {"eq": "beta"},
             "last": {"ends": "ma"},
@@ -107,7 +107,7 @@ class TestsFlextTestsMatchersDataDrivenMixin:
                 self.active = True
 
         user = User()
-        attrs_match: t.MappingKV[str | int, p.Tests.MatcherOption] = {
+        attrs_match: Mapping[str | int, p.Tests.MatcherOption] = {
             "profile.name": {"eq": "Ada"},
             "profile.level": {"gte": 1, "lte": 10},
             "active": {"eq": True},
@@ -123,9 +123,9 @@ class TestsFlextTestsMatchersDataDrivenMixin:
 
         result: p.Result[t.JsonMapping] = r[t.JsonMapping].ok({
             "meta": {"version": "v1", c.Aggregation.COUNT: 3},
-            "items": ["a", "b", ...],
+            "items": ["a", "b"],
         })
-        paths: t.MappingKV[str | int, p.Tests.MatcherOption] = {
+        paths: Mapping[str | int, p.Tests.MatcherOption] = {
             "meta.version": {"starts": "v"},
             "meta.count": {"eq": 3},
         }

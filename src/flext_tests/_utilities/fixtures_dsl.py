@@ -7,21 +7,19 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import shutil
+from collections.abc import Sequence
 from pathlib import Path
-from typing import TYPE_CHECKING, ClassVar
+from typing import ClassVar
 
 from flext_tests import c
 
-if TYPE_CHECKING:
-    from flext_tests import t
 
-
-class FlextTestsFixturesDSL:
+class FlextTestsUtilitiesFixturesDSL:
     """DSL mixin that exposes flat fixture-loading verbs on a project Tests class.
 
     Usage — in your project's tests/utilities.py::
 
-        class Tests(FlextTestsFixturesDSL):
+        class Tests(FlextTestsUtilitiesFixturesDSL):
             _FIXTURES_ROOT = c.Project.Tests.FIXTURES_DIR
             _FILE_EXTENSION = ".ldif"  # optional, default is ".ldif"
 
@@ -105,11 +103,11 @@ class FlextTestsFixturesDSL:
         return cls._resolve_path(group, kind).exists()
 
     @classmethod
-    def servers(cls) -> t.StrSequence:
+    def servers(cls) -> Sequence[str]:
         """List the server group directories under the fixtures root.
 
         Returns:
-            The resulting ``t.StrSequence``.
+            The resulting ``Sequence[str]``.
 
         """
         root = cls._root()
@@ -190,14 +188,14 @@ class FlextTestsFixturesDSL:
         return destination
 
     @classmethod
-    def kinds(cls, group: str) -> t.StrSequence:
+    def kinds(cls, group: str) -> Sequence[str]:
         """List the fixture kinds available for one server group.
 
         Args:
             group: The server group directory name.
 
         Returns:
-            The resulting ``t.StrSequence``.
+            The resulting ``Sequence[str]``.
 
         """
         root = cls._root()
@@ -215,4 +213,4 @@ class FlextTestsFixturesDSL:
         )
 
 
-__all__: list[str] = ["FlextTestsFixturesDSL"]
+__all__: list[str] = ["FlextTestsUtilitiesFixturesDSL"]

@@ -12,6 +12,7 @@ from collections.abc import (
     KeysView,
     Mapping,
     MutableMapping,
+    Sequence,
     Set as AbstractSet,
     ValuesView,
 )
@@ -61,8 +62,8 @@ class FlextTestsTypesBase:
         | frozenset[str]
     )
     type TestobjectCollection = (
-        t.SequenceOf[FlextTestsTypesBase.TestobjectSerializable]
-        | t.MappingKV[str, FlextTestsTypesBase.TestobjectSerializable]
+        Sequence[FlextTestsTypesBase.TestobjectSerializable]
+        | Mapping[str, FlextTestsTypesBase.TestobjectSerializable]
     )
     type TestobjectNode = TestobjectAtom | t.JsonValue | None
     type TestobjectSerializable = (
@@ -86,8 +87,8 @@ class FlextTestsTypesBase:
     )
     type NormalizationInput = (
         TestobjectAtom
-        | t.SequenceOf[TestobjectNode]
-        | t.MappingKV[str, TestobjectNode]
+        | Sequence[TestobjectNode]
+        | Mapping[str, TestobjectNode]
         | set[TestobjectHashable]
         | None
     )

@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Annotated, cast
 
@@ -33,11 +33,11 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
     @staticmethod
     def to_payload_mapping(
         value: p.AttributeProbe,
-    ) -> t.MappingKV[str, m.Tests.Payload]:
+    ) -> Mapping[str, m.Tests.Payload]:
         """Own a native mapping and retain every rich child value.
 
         Returns:
-            The resulting ``t.MappingKV[str, m.Tests.Payload]``.
+            The resulting ``Mapping[str, m.Tests.Payload]``.
 
         Raises:
             TypeError: If File content requires a native mapping.
@@ -52,11 +52,11 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
         return payload.entries
 
     @staticmethod
-    def _to_string_rows(value: p.Tests.Payload) -> t.SequenceOf[t.StrSequence]:
+    def _to_string_rows(value: p.Tests.Payload) -> Sequence[Sequence[str]]:
         """Render validated CSV cells only at their textual output boundary.
 
         Returns:
-            The resulting ``t.SequenceOf[t.StrSequence]``.
+            The resulting ``Sequence[Sequence[str]]``.
 
         """
         return [
@@ -201,15 +201,15 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
     def _build_csv_rows(
         *,
         actual_content: p.Tests.Payload,
-        headers: t.StrSequence | None,
-    ) -> list[t.StrSequence]:
+        headers: Sequence[str] | None,
+    ) -> list[Sequence[str]]:
         """Build CSV rows while keeping native matching independent of text.
 
         Returns:
-            The resulting ``list[t.StrSequence]``.
+            The resulting ``list[Sequence[str]]``.
 
         """
-        rows: list[t.StrSequence] = []
+        rows: list[Sequence[str]] = []
         if headers:
             rows.append(list(headers))
         if actual_content.kind in {c.Action.LIST, "tuple"}:
@@ -251,7 +251,7 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
             m.Field(description="Delimiter for CSV output."),
         ] = c.Tests.DEFAULT_CSV_DELIMITER
         headers: Annotated[
-            t.StrSequence | None,
+            Sequence[str] | None,
             m.Field(description="Optional CSV header row."),
         ] = None
         readonly: Annotated[

@@ -23,15 +23,12 @@ if TYPE_CHECKING:
     from flext_tests._utilities.enforcement import FlextTestsUtilitiesEnforcement
     from flext_tests._utilities.environment import FlextTestsUtilitiesEnvironment
     from flext_tests._utilities.files import FlextTestsUtilitiesFiles
-    from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSL
+    from flext_tests._utilities.fixtures_dsl import FlextTestsUtilitiesFixturesDSL
     from flext_tests._utilities.governance import FlextTestsUtilitiesFlextGovernance
     from flext_tests._utilities.handler import FlextTestsUtilitiesFlextHandler
     from flext_tests._utilities.matchers import FlextTestsUtilitiesMatchers
     from flext_tests._utilities.namespace import FlextTestsUtilitiesNamespace
-    from flext_tests._utilities.payload import (
-        FlextTestsUtilitiesFlextPayload,
-        FlextTestsUtilitiesPayload,
-    )
+    from flext_tests._utilities.payload import FlextTestsUtilitiesPayload
     from flext_tests._utilities.pytest_surface import FlextTestsUtilitiesPytest
     from flext_tests._utilities.result import FlextTestsUtilitiesResult
     from flext_tests._utilities.scratch_storage import FlextTestsUtilitiesScratchStorage
@@ -39,7 +36,6 @@ if TYPE_CHECKING:
     from flext_tests._utilities.testcontext import FlextTestsUtilitiesTestContext
 
 __all__: tuple[str, ...] = (
-    "FlextTestsFixturesDSL",
     "FlextTestsUtilitiesBase",
     "FlextTestsUtilitiesConfigHelpers",
     "FlextTestsUtilitiesContainerHelpers",
@@ -49,9 +45,9 @@ __all__: tuple[str, ...] = (
     "FlextTestsUtilitiesEnforcement",
     "FlextTestsUtilitiesEnvironment",
     "FlextTestsUtilitiesFiles",
+    "FlextTestsUtilitiesFixturesDSL",
     "FlextTestsUtilitiesFlextGovernance",
     "FlextTestsUtilitiesFlextHandler",
-    "FlextTestsUtilitiesFlextPayload",
     "FlextTestsUtilitiesMatchers",
     "FlextTestsUtilitiesNamespace",
     "FlextTestsUtilitiesPayload",
@@ -72,10 +68,10 @@ install_lazy_exports(
         "FlextTestsUtilitiesDockerState": ".docker_state",
         "FlextTestsUtilitiesEnforcement": ".enforcement",
         "FlextTestsUtilitiesEnvironment": ".environment",
-        "FlextTestsFixturesDSL": ".fixtures_dsl",
+        "FlextTestsUtilitiesFixturesDSL": ".fixtures_dsl",
         "FlextTestsUtilitiesFlextGovernance": ".governance",
         "FlextTestsUtilitiesFlextHandler": ".handler",
-        "FlextTestsUtilitiesFlextPayload": ".payload",
+        "FlextTestsUtilitiesPayload": ".payload",
         "FlextTestsUtilitiesMatchers": ".matchers",
         "FlextTestsUtilitiesNamespace": ".namespace",
         "FlextTestsUtilitiesPayload": ".payload",
