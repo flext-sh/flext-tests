@@ -10,9 +10,9 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_tests._utilities import FlextTestsMatchersUtilities
+from flext_tests._utilities import FlextTestsUtilitiesMatchers
 
-tm = FlextTestsMatchersUtilities.Tests.Matchers
+tm = FlextTestsUtilitiesMatchers.Tests.Matchers
 """Public test-matchers facade alias for flext_tests."""
 
-__all__: list[str] = ["FlextTestsMatchersUtilities", "tm"]
+__all__: list[str] = ["FlextTestsUtilitiesMatchers", "tm"]

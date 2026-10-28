@@ -11,15 +11,16 @@ from pathlib import Path
 from flext_core import r
 
 from flext_tests import c, m, p, t, u
-from flext_tests._utilities import FlextTestsFlextUtilitiesPayload, comparison_parsing
+from flext_tests._utilities import FlextTestsFlextUtilitiesPayload
+from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonParsing
 
 
 class FlextTestsFilesComparisonMixin(
-    comparison_parsing.FlextTestsFilesComparisonMixin,
+    FlextTestsFilesComparisonParsing,
 ):
     """File-comparison execution helpers — part 2 of the modular split.
 
-    Extends the parsing helpers from ``comparison_part_01`` with the
+    Extends the parsing helpers from ``comparison_parsing`` with the
     dispatch, mode comparison, and deep-compare methods.
     """
 

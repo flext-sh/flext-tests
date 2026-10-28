@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from collections.abc import MutableMapping
 from pathlib import Path
-from typing import Annotated, ClassVar
+from typing import Annotated, ClassVar, Literal
 
 from flext_cli import m, p, t
 
@@ -24,6 +24,55 @@ def _warning_counter_default() -> MutableMapping[str, int]:
 
 
 class FlextTestsValidatorModelsMixin:
+    class EnforcementInfraRuleSource(m.Value):
+        """Declarative flext-infra engine rules owning one catalog entry."""
+
+        kind: Annotated[
+            Literal["flext_infra_rule"],
+            m.Field(description="Closed discriminator of the declarative rule source."),
+        ] = "flext_infra_rule"
+        rule_ids: Annotated[
+            t.StrSequence,
+            m.Field(description="Engine rule IDs this catalog entry selects."),
+        ] = ()
+
+    class EnforcementRuntimeWarningSource(m.Value):
+        """Runtime warning category promoted or counted by the dispatcher."""
+
+        kind: Annotated[
+            Literal["runtime_warning"],
+            m.Field(description="Closed discriminator of the runtime warning source."),
+        ] = "runtime_warning"
+        category: Annotated[
+            t.NonEmptyStr,
+            m.Field(description="Dotted warning category the dispatcher filters."),
+        ]
+
+    class EnforcementRuleSpec(m.Value):
+        """One catalog entry: a stable ID and its closed rule source."""
+
+        id: Annotated[
+            t.NonEmptyStr,
+            m.Field(description="Canonical catalog rule ID."),
+        ]
+        description: Annotated[
+            str,
+            m.Field(description="Human-readable catalog rule description."),
+        ] = ""
+        source: Annotated[
+            FlextTestsValidatorModelsMixin.EnforcementInfraRuleSource
+            | FlextTestsValidatorModelsMixin.EnforcementRuntimeWarningSource,
+            m.Field(description="Closed rule source behind this catalog entry."),
+        ]
+
+    class EnforcementCatalog(m.Value):
+        """The composed catalog of enforcement rules for one governed root."""
+
+        rules: Annotated[
+            t.VariadicTuple[FlextTestsValidatorModelsMixin.EnforcementRuleSpec,],
+            m.Field(description="Canonical catalog rules in composed order."),
+        ] = ()
+
     class EnforcementBuildContext(m.ArbitraryTypesModel):
         """Validated immutable inputs shared by enforcement item builders."""
 

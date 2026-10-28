@@ -12,7 +12,6 @@ from flext_tests._fixtures._enforcement import (
     FlextTestsEnforcementItem,
     FlextTestsEnforcementValidators,
     FlextTestsFixturesEnforcementCollector,
-    FlextTestsFixturesEnforcementError,
 )
 
 
@@ -22,7 +21,6 @@ class FlextTestsFixturesEnforcement(
     FlextTestsEnforcementItem,
     FlextTestsEnforcementValidators,
     FlextTestsFixturesEnforcementCollector,
-    FlextTestsFixturesEnforcementError,
 ):
     """Facade for enforcement."""
 

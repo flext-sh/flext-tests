@@ -24,7 +24,6 @@ from flext_tests._utilities import (
     FlextTestsFlextUtilitiesGovernance,
     FlextTestsFlextUtilitiesHandler,
     FlextTestsFlextUtilitiesPayload,
-    FlextTestsMatchersUtilities,
     FlextTestsNamespaceUtilitiesMixin,
     FlextTestsPytestUtilitiesMixin,
     FlextTestsResultUtilitiesMixin,
@@ -32,6 +31,7 @@ from flext_tests._utilities import (
     FlextTestsTestContextUtilitiesMixin,
     FlextTestsUtilitiesBase,
     FlextTestsUtilitiesFiles,
+    FlextTestsUtilitiesMatchers,
 )
 
 
@@ -60,7 +60,7 @@ class FlextTestsUtilities(flext_cli_u, FlextTestsFlextUtilitiesGovernance):
         FlextTestsUtilitiesBase,
         FlextTestsPytestUtilitiesMixin,
         FlextTestsFlextUtilitiesHandler.FlextTestsHandlerHelpersUtilitiesMixin,
-        FlextTestsMatchersUtilities.Tests,
+        FlextTestsUtilitiesMatchers.Tests,
         FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin,
     ):
         """Test utilities namespace."""

@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from flext_core import p
 
 
-class FlextTestsFilesComparisonMixin:
+class FlextTestsFilesComparisonParsing:
     """Compare two files by content, lines, size, hash, or deep structure."""
 
     type ParsedPair = tuple[
@@ -71,11 +71,11 @@ class FlextTestsFilesComparisonMixin:
         content1: str,
         content2: str,
         fmt: str,
-    ) -> p.Result[FlextTestsFilesComparisonMixin.ParsedPair]:
+    ) -> p.Result[FlextTestsFilesComparisonParsing.ParsedPair]:
         """Parse both contents as mappings in the given format.
 
         Returns:
-            The resulting ``p.Result[FlextTestsFilesComparisonMixin.ParsedPair]``.
+            The resulting ``p.Result[FlextTestsFilesComparisonParsing.ParsedPair]``.
 
         """
         parse = (
@@ -86,25 +86,25 @@ class FlextTestsFilesComparisonMixin:
             else None
         )
         if parse is None:
-            return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
+            return r[FlextTestsFilesComparisonParsing.ParsedPair].fail(
                 f"unsupported comparison format: {fmt}",
             )
         # Each parser reports its own failure; that failure is the result.
         r1 = parse(content1)
         if r1.failure:
-            return r[FlextTestsFilesComparisonMixin.ParsedPair].from_failure(r1)
+            return r[FlextTestsFilesComparisonParsing.ParsedPair].from_failure(r1)
         r2 = parse(content2)
         if r2.failure:
-            return r[FlextTestsFilesComparisonMixin.ParsedPair].from_failure(r2)
+            return r[FlextTestsFilesComparisonParsing.ParsedPair].from_failure(r2)
         d1, d2 = r1.value, r2.value
         if FlextTestsUtilitiesFilesCreation.matches_native_mapping(
             d1,
         ) and FlextTestsUtilitiesFilesCreation.matches_native_mapping(d2):
-            return r[FlextTestsFilesComparisonMixin.ParsedPair].ok((
+            return r[FlextTestsFilesComparisonParsing.ParsedPair].ok((
                 FlextTestsUtilitiesFilesCreation.to_payload_mapping(d1),
                 FlextTestsUtilitiesFilesCreation.to_payload_mapping(d2),
             ))
-        return r[FlextTestsFilesComparisonMixin.ParsedPair].fail(
+        return r[FlextTestsFilesComparisonParsing.ParsedPair].fail(
             "comparison contents are not both mappings",
         )
 
@@ -154,4 +154,4 @@ class FlextTestsFilesComparisonMixin:
         return (dict1, dict2)
 
 
-__all__: list[str] = ["FlextTestsFilesComparisonMixin"]
+__all__: list[str] = ["FlextTestsFilesComparisonParsing"]

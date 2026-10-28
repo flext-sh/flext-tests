@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import ClassVar
 
 import pytest
-from flext_core import u
 from flext_infra import m as infra_m, u as infra_u
 from flext_infra.codemod import FlextInfraModGateEngine
 
@@ -21,15 +20,55 @@ class FlextTestsEnforcementUtilitiesMixin:
     """Catalog filtering, engine findings and collected-project discovery."""
 
     _plan_cache: ClassVar[dict[str, infra_m.Infra.CodemodRulePlan]] = {}
+    _catalog_cache: ClassVar[dict[str, m.Tests.EnforcementCatalog]] = {}
 
-    @staticmethod
+    @classmethod
+    def build_canonical_catalog(
+        cls,
+        repository_root: Path,
+    ) -> m.Tests.EnforcementCatalog:
+        """Compose the catalog from the declarative flext-infra rule plan.
+
+        The declarative rule catalog in flext-infra owns enforcement law; the
+        dispatcher only maps its elected engine rules into catalog entries.
+
+        Returns:
+            The composed catalog for the governed root.
+
+        """
+        cache_key = str(repository_root.resolve())
+        if cache_key in cls._catalog_cache:
+            return cls._catalog_cache[cache_key]
+        with infra_u.Infra.codemod_workspace_snapshot(repository_root) as snapshot:
+            planned = infra_u.Infra.codemod_rule_plan(snapshot)
+        plan = planned.unwrap()
+        catalog = m.Tests.EnforcementCatalog(
+            rules=tuple(
+                m.Tests.EnforcementRuleSpec(
+                    id=engine_rule.id,
+                    description=engine_rule.message,
+                    source=m.Tests.EnforcementInfraRuleSource(
+                        rule_ids=(engine_rule.id,),
+                    ),
+                )
+                for engine_rule in plan.rules
+            ),
+        )
+        cls._catalog_cache[cache_key] = catalog
+        return catalog
+
+    @classmethod
     def active_rules(
+        cls,
         cfg: m.Tests.EnforcementDispatcherConfig,
-    ) -> tuple[m.EnforcementRuleSpec, ...]:
+    ) -> tuple[m.Tests.EnforcementRuleSpec, ...]:
         """Return catalog rules after applying the include/exclude filters."""
+        if cfg.repository_root is None:
+            return ()
+        catalog = cls.build_canonical_catalog(cfg.repository_root)
         return tuple(
             rule
-            for rule in u.build_canonical_catalog().rules
+            for rule in catalog.rules
             if (not cfg.include or rule.id in cfg.include)
             and rule.id not in cfg.exclude
         )

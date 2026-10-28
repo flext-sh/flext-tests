@@ -14,7 +14,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from flext_tests import c, m, t
-from flext_tests._utilities import (
+from flext_tests._utilities._files import (
     FlextTestsUtilitiesFilesCreation,
     FlextTestsUtilitiesFilesReading,
 )

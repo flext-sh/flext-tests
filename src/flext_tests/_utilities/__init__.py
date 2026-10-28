@@ -30,9 +30,12 @@ if TYPE_CHECKING:
     from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
     from flext_tests._utilities.governance import FlextTestsFlextUtilitiesGovernance
     from flext_tests._utilities.handler import FlextTestsFlextUtilitiesHandler
-    from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
+    from flext_tests._utilities.matchers import FlextTestsUtilitiesMatchers
     from flext_tests._utilities.namespace import FlextTestsNamespaceUtilitiesMixin
-    from flext_tests._utilities.payload import FlextTestsFlextUtilitiesPayload
+    from flext_tests._utilities.payload import (
+        FlextTestsFlextUtilitiesPayload,
+        FlextTestsPayloadUtilities,
+    )
     from flext_tests._utilities.pytest_surface import FlextTestsPytestUtilitiesMixin
     from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
     from flext_tests._utilities.scratch_storage import (
@@ -53,14 +56,15 @@ __all__: tuple[str, ...] = (
     "FlextTestsFlextUtilitiesGovernance",
     "FlextTestsFlextUtilitiesHandler",
     "FlextTestsFlextUtilitiesPayload",
-    "FlextTestsMatchersUtilities",
     "FlextTestsNamespaceUtilitiesMixin",
+    "FlextTestsPayloadUtilities",
     "FlextTestsPytestUtilitiesMixin",
     "FlextTestsResultUtilitiesMixin",
     "FlextTestsScratchStorageUtilitiesMixin",
     "FlextTestsTestContextUtilitiesMixin",
     "FlextTestsUtilitiesBase",
     "FlextTestsUtilitiesFiles",
+    "FlextTestsUtilitiesMatchers",
 )
 
 install_lazy_exports(
@@ -78,8 +82,9 @@ install_lazy_exports(
         "FlextTestsFlextUtilitiesGovernance": ".governance",
         "FlextTestsFlextUtilitiesHandler": ".handler",
         "FlextTestsFlextUtilitiesPayload": ".payload",
-        "FlextTestsMatchersUtilities": ".matchers",
+        "FlextTestsUtilitiesMatchers": ".matchers",
         "FlextTestsNamespaceUtilitiesMixin": ".namespace",
+        "FlextTestsPayloadUtilities": ".payload",
         "FlextTestsPytestUtilitiesMixin": ".pytest_surface",
         "FlextTestsResultUtilitiesMixin": ".result",
         "FlextTestsScratchStorageUtilitiesMixin": ".scratch_storage",

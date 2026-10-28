@@ -59,7 +59,7 @@ if TYPE_CHECKING:
     from flext_tests.models import FlextTestsModels, m
     from flext_tests.protocols import FlextTestsProtocols, p
     from flext_tests.pytest_bootstrap import install_local_packages
-    from flext_tests.tmatchers import FlextTestsMatchersUtilities, tm
+    from flext_tests.tmatchers import FlextTestsUtilitiesMatchers, tm
     from flext_tests.typings import FlextTestsTypes, t
     from flext_tests.utilities import FlextTestsFixturesDSLMixin, FlextTestsUtilities, u
 
@@ -77,13 +77,13 @@ __all__: tuple[str, ...] = (
     "FlextTestsDomains",
     "FlextTestsFiles",
     "FlextTestsFixturesDSLMixin",
-    "FlextTestsMatchersUtilities",
     "FlextTestsModels",
     "FlextTestsProtocols",
     "FlextTestsServiceBase",
     "FlextTestsSettings",
     "FlextTestsTypes",
     "FlextTestsUtilities",
+    "FlextTestsUtilitiesMatchers",
     "FlextTestsVersion",
     "__author__",
     "__author_email__",
@@ -142,7 +142,7 @@ install_lazy_exports(
         "FlextTestsDomains": ".domains",
         "FlextTestsFiles": ".files",
         "FlextTestsFixturesDSLMixin": ".utilities",
-        "FlextTestsMatchersUtilities": ".tmatchers",
+        "FlextTestsUtilitiesMatchers": ".tmatchers",
         "FlextTestsModels": ".models",
         "FlextTestsProtocols": ".protocols",
         "FlextTestsServiceBase": ".base",

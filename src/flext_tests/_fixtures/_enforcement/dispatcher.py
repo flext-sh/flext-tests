@@ -147,7 +147,8 @@ class FlextTestsEnforcementDispatcher:
             return None
         msg = (
             "FLEXT slow timeout policy: "
-            f"{FlextTestsConstantsValidator.ENFORCEMENT_SLOW_TIMEOUT_INI_OPTION} must be a positive "
+            f"{FlextTestsConstantsValidator.ENFORCEMENT_SLOW_TIMEOUT_INI_OPTION} must "
+            f"be a positive "
             "finite number"
         )
         try:

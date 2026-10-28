@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_tests._utilities import (
+from flext_tests._utilities._matchers import (
     FlextTestsUtilitiesMatchersAssertions,
     FlextTestsUtilitiesMatchersContainment,
     FlextTestsUtilitiesMatchersImmutability,
@@ -21,7 +21,7 @@ from flext_tests._utilities import (
 )
 
 
-class FlextTestsMatchersUtilities:
+class FlextTestsUtilitiesMatchers:
     """Namespace for test matcher utilities used in flext-tests."""
 
     class Tests:
@@ -39,4 +39,4 @@ class FlextTestsMatchersUtilities:
             """Test matchers with powerful generalist methods."""
 
 
-__all__: list[str] = ["FlextTestsMatchersUtilities"]
+__all__: list[str] = ["FlextTestsUtilitiesMatchers"]

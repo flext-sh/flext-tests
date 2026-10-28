@@ -1,6 +1,6 @@
 """Assertion-raising helpers for matchers — Group B.
 
-Static methods used internally by ``FlextTestsMatchersUtilities``.
+Static methods used internally by ``FlextTestsUtilitiesMatchers``.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT

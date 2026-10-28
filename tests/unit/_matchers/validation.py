@@ -76,8 +76,12 @@ class TestsFlextTestsMatchersNativeTruthMixin:
                 raise RuntimeError(message)
 
         subject = Subject()
+
+        def same_subject(value: Subject) -> bool:
+            return value is subject
+
         tm.that(subject, eq=subject, ne=subject)
-        tm.that(subject, where=lambda value: value is subject)
+        tm.that(subject, where=same_subject)
         tm.that(events, eq=["eq", "ne"])
 
     @staticmethod
