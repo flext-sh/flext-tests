@@ -13,15 +13,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import (
-    Iterable,
-    Iterator,
-    Mapping,
-    MutableMapping,
-    MutableSequence,
-    Sequence,
-)
-
 from importlib import import_module
 from importlib.metadata import EntryPoint, distribution
 from inspect import getattr_static
