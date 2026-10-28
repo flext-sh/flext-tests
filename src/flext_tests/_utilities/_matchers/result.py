@@ -33,7 +33,9 @@ class FlextTestsUtilitiesMatchersResult:
 
     @classmethod
     @overload
-    def fail(cls, result: p.ResultView[TResult], **kwargs: p.AttributeProbe) -> str: ...
+    def fail[TResult](
+        cls, result: p.ResultView[TResult], **kwargs: p.AttributeProbe
+    ) -> str: ...
 
     @classmethod
     def fail[TResult](
@@ -175,7 +177,7 @@ class FlextTestsUtilitiesMatchersResult:
 
     @classmethod
     @overload
-    def ok(
+    def ok[TResult](
         cls,
         result: p.ResultView[TResult],
         *,
@@ -194,7 +196,7 @@ class FlextTestsUtilitiesMatchersResult:
 
     @classmethod
     @overload
-    def ok(
+    def ok[TResult](
         cls,
         result: p.ResultView[TResult],
         *,

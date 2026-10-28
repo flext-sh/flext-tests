@@ -142,7 +142,7 @@ install_lazy_exports(
         "FlextTestsConfigNamespace": "._config",
         "FlextTestsConstants": ".constants",
         "FlextTestsDocker": ".docker",
-        "FlextTestsDockerSurface": "._docker_surface",
+        "FlextTestsDockerSurface": "._docker.surface",
         "FlextTestsDomains": ".domains",
         "FlextTestsFiles": ".files",
         "FlextTestsUtilitiesFixturesDSL": ".utilities",
