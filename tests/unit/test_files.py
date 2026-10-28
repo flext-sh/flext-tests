@@ -26,7 +26,7 @@ from tests.unit._files import (
 
 
 class TestsFlextTestsFiles(
-    file_models.TestsFlextTestsFilesModelsMixin,
+    file_models.TestsFlextTestsModelsFilesMixin,
     creation.TestsFlextTestsFilesCreationMixin,
     info_cleanup.TestsFlextTestsFilesInfoCleanupMixin,
     formats.TestsFlextTestsFilesFormatsMixin,
