@@ -29,8 +29,8 @@ class TestsFlextTestsEnforcementDispatcher:
     # Fixtures                                                           #
     # ------------------------------------------------------------------ #
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def workspace(tmp_path: Path) -> Path:
         """Create a directory carrying every FLEXT workspace marker.
 

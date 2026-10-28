@@ -321,8 +321,8 @@ class FlextTestsCapabilityPlugin:
             ):
                 item.fixturenames.append(c.Tests.DOCKER_TEST_ENVIRONMENT_FIXTURE)
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def docker_test_environment(
         request: pytest.FixtureRequest,
     ) -> Generator[Path]:
