@@ -18,7 +18,7 @@ from flext_cli import u
 from flext_tests import c, m, p, r, t
 
 
-class FlextTestsDockerLifecycleUtilitiesMixin:
+class FlextTestsUtilitiesDockerLifecycle:
     """Pure lifecycle rules over what Docker reports and what the host recorded."""
 
     @staticmethod
@@ -152,7 +152,7 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
             return r[str].fail(c.Tests.ERR_DOCKER_TARGET_NOT_INSPECTABLE)
         digest = hashlib.sha256()
         project = target.project_name or (
-            FlextTestsDockerLifecycleUtilitiesMixin.docker_compose_project(compose_file)
+            FlextTestsUtilitiesDockerLifecycle.docker_compose_project(compose_file)
         )
         for part in (project, target.service):
             digest.update(part.encode())
@@ -302,7 +302,7 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
         if not environment:
             yield ()
             return
-        _ = FlextTestsDockerLifecycleUtilitiesMixin.validate_creation_environment(
+        _ = FlextTestsUtilitiesDockerLifecycle.validate_creation_environment(
             environment,
         ).unwrap()
         lines = [
@@ -333,4 +333,4 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
                 failure.add_note(f"creation env file cleanup failed: {cleanup_error}")
 
 
-__all__: list[str] = ["FlextTestsDockerLifecycleUtilitiesMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesDockerLifecycle"]

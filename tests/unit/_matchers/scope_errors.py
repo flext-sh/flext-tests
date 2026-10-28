@@ -43,8 +43,7 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
 
         def guarded(value: str | None) -> str:
             if value is None:
-                tm.reject(explain())
-                raise AssertionError  # pragma: no cover - reject never returns
+                return tm.reject(explain())
             return value
 
         tm.that(guarded("valid"), eq="valid")

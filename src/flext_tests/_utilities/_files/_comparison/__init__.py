@@ -17,12 +17,12 @@ if TYPE_CHECKING:
         FlextTestsFilesComparisonParsing,
     )
     from flext_tests._utilities._files._comparison.comparison_part_02 import (
-        FlextTestsFilesComparisonMixin,
+        FlextTestsFilesComparison,
     )
 
 
 __all__: tuple[str, ...] = (
-    "FlextTestsFilesComparisonMixin",
+    "FlextTestsFilesComparison",
     "FlextTestsFilesComparisonParsing",
 )
 
@@ -30,7 +30,7 @@ install_lazy_exports(
     __name__,
     globals(),
     MappingProxyType({
-        "FlextTestsFilesComparisonMixin": ".comparison_part_02",
+        "FlextTestsFilesComparison": ".comparison_part_02",
         "FlextTestsFilesComparisonParsing": ".comparison_parsing",
     }),
     public_exports=__all__,

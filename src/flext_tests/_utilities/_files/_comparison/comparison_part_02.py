@@ -11,11 +11,11 @@ from pathlib import Path
 from flext_core import r
 
 from flext_tests import c, m, p, t, u
-from flext_tests._utilities import FlextTestsFlextUtilitiesPayload
+from flext_tests._utilities import FlextTestsUtilitiesFlextPayload
 from flext_tests._utilities._files._comparison import FlextTestsFilesComparisonParsing
 
 
-class FlextTestsFilesComparisonMixin(
+class FlextTestsFilesComparison(
     FlextTestsFilesComparisonParsing,
 ):
     """File-comparison execution helpers — part 2 of the modular split.
@@ -29,7 +29,7 @@ class FlextTestsFilesComparisonMixin(
         file1: Path,
         file2: Path,
         *,
-        options: FlextTestsFilesComparisonMixin.CompareOptions | None = None,
+        options: FlextTestsFilesComparison.CompareOptions | None = None,
     ) -> p.Result[bool]:
         """Compare two files under the configured comparison options.
 
@@ -45,7 +45,7 @@ class FlextTestsFilesComparisonMixin(
         compare_options = (
             options
             if options is not None
-            else FlextTestsFilesComparisonMixin.CompareOptions()
+            else FlextTestsFilesComparison.CompareOptions()
         )
         try:
             params = m.Tests.CompareParams.model_validate({
@@ -144,14 +144,14 @@ class FlextTestsFilesComparisonMixin(
             set(params.exclude_keys) if params.exclude_keys is not None else None
         )
         left_result = u.transform(
-            FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
+            FlextTestsUtilitiesFlextPayload.FlextTestsUtilitiesPayload.to_config_map(
                 dict1,
             ),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
         right_result = u.transform(
-            FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
+            FlextTestsUtilitiesFlextPayload.FlextTestsUtilitiesPayload.to_config_map(
                 dict2,
             ),
             filter_keys=filter_keys_set,
@@ -179,4 +179,4 @@ class FlextTestsFilesComparisonMixin(
         return r[bool].ok(lines1 == lines2)
 
 
-__all__: list[str] = ["FlextTestsFilesComparisonMixin"]
+__all__: list[str] = ["FlextTestsFilesComparison"]

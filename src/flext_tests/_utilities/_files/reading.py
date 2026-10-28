@@ -14,7 +14,7 @@ from typing import Annotated, cast, overload
 from flext_cli import u
 
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities import FlextTestsPayloadUtilities
+from flext_tests._utilities import FlextTestsUtilitiesPayload
 from flext_tests._utilities._files import FlextTestsUtilitiesFilesCreation
 
 
@@ -195,7 +195,7 @@ class FlextTestsUtilitiesFilesReading(FlextTestsUtilitiesFilesCreation):
                     adapter.validate_json(text.encode())
                 )
                 content = (
-                    FlextTestsPayloadUtilities.to_config_map(
+                    FlextTestsUtilitiesPayload.to_config_map(
                         parsed_json,
                     )
                     if FlextTestsUtilitiesFilesCreation.matches_native_mapping(
@@ -208,7 +208,7 @@ class FlextTestsUtilitiesFilesReading(FlextTestsUtilitiesFilesCreation):
                 parsed_yaml = u.Cli.yaml_parse(text)
                 if parsed_yaml.failure:
                     raise ValueError(parsed_yaml.error)
-                content = FlextTestsPayloadUtilities.to_config_map(
+                content = FlextTestsUtilitiesPayload.to_config_map(
                     parsed_yaml.value,
                 )
             case _ if actual_fmt == c.Tests.FILE_FORMAT_CSV:

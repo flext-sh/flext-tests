@@ -13,7 +13,7 @@ from typing import Final
 import pytest
 
 from flext_tests import c, m, p
-from flext_tests._utilities import FlextTestsFlextUtilitiesPayload
+from flext_tests._utilities import FlextTestsUtilitiesFlextPayload
 
 ApproxBase: Final[type] = type(pytest.approx(0))
 """Approximation sentinel base resolved through pytest's public ``approx`` API."""
@@ -73,7 +73,7 @@ class FlextTestsUtilitiesMatchersTypeguards:
 
         """
         native = (
-            FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
+            FlextTestsUtilitiesFlextPayload.FlextTestsUtilitiesPayload.to_match_value(
                 payload,
             )
         )

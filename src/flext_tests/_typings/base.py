@@ -26,7 +26,7 @@ from flext_cli import m, p, t
 from flext_tests import c
 
 
-class FlextTestsBaseTypesMixin:
+class FlextTestsTypesBase:
     """Base generic primitives extending Flext core aliases."""
 
     type PayloadKind = Literal[
@@ -61,8 +61,8 @@ class FlextTestsBaseTypesMixin:
         | frozenset[str]
     )
     type TestobjectCollection = (
-        t.SequenceOf[FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | t.MappingKV[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        t.SequenceOf[FlextTestsTypesBase.TestobjectSerializable]
+        | t.MappingKV[str, FlextTestsTypesBase.TestobjectSerializable]
     )
     type TestobjectNode = TestobjectAtom | t.JsonValue | None
     type TestobjectSerializable = (
@@ -93,7 +93,7 @@ class FlextTestsBaseTypesMixin:
     )
 
     type TestResultValue = (
-        FlextTestsBaseTypesMixin.TestobjectSerializable
+        FlextTestsTypesBase.TestobjectSerializable
         | p.RegisterableService
         | t.TypeHintSpecifier
         | BaseException
@@ -107,27 +107,27 @@ class FlextTestsBaseTypesMixin:
         | p.Context
         | p.Registry
         | p.AttributeProbe
-        | p.Result[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | p.Result[FlextTestsTypesBase.TestobjectSerializable]
         | t.RegexMatch
         | bt.UnionType
         | FrameType
         | ModuleType
         | GenericAlias
-        | set[FlextTestsBaseTypesMixin.TestobjectHashable]
-        | AbstractSet[FlextTestsBaseTypesMixin.TestobjectHashable]
-        | ValuesView[FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | set[FlextTestsTypesBase.TestobjectHashable]
+        | AbstractSet[FlextTestsTypesBase.TestobjectHashable]
+        | ValuesView[FlextTestsTypesBase.TestobjectSerializable]
         | KeysView[str]
-        | ItemsView[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
-        | MutableMapping[str, FlextTestsBaseTypesMixin.TestobjectSerializable]
+        | ItemsView[str, FlextTestsTypesBase.TestobjectSerializable]
+        | MutableMapping[str, FlextTestsTypesBase.TestobjectSerializable]
         | tzinfo
         | timezone
     )
     "Type for FLEXT test result payloads."
 
     type Testobject = (
-        FlextTestsBaseTypesMixin.TestResultValue
-        | p.Result[FlextTestsBaseTypesMixin.TestResultValue]
+        FlextTestsTypesBase.TestResultValue
+        | p.Result[FlextTestsTypesBase.TestResultValue]
     )
 
 
-__all__: list[str] = ["FlextTestsBaseTypesMixin"]
+__all__: list[str] = ["FlextTestsTypesBase"]

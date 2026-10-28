@@ -15,8 +15,8 @@ from __future__ import annotations
 from flext_infra import FlextInfraUtilities
 
 
-class FlextTestsPytestUtilitiesMixin(FlextInfraUtilities.Infra.Pytest):
+class FlextTestsUtilitiesPytest(FlextInfraUtilities.Infra.Pytest):
     """pytest functions published under ``u.Tests``, owned by ``u.Infra.Pytest``."""
 
 
-__all__: list[str] = ["FlextTestsPytestUtilitiesMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesPytest"]

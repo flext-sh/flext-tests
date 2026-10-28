@@ -14,7 +14,7 @@ from flext_cli import m
 from flext_tests import c, t
 
 
-class FlextTestsDockerModelsMixin:
+class FlextTestsModelsDocker:
     class ContainerConfig(m.Value):
         """Resolved Docker target configuration used by the public DSL."""
 
@@ -121,7 +121,7 @@ class FlextTestsDockerModelsMixin:
             m.Field(alias="Status", description="Container lifecycle status."),
         ]
         health: Annotated[
-            FlextTestsDockerModelsMixin.ContainerInspectHealth | None,
+            FlextTestsModelsDocker.ContainerInspectHealth | None,
             m.Field(alias="Health", description="Present when a check is set."),
         ] = None
 
@@ -151,8 +151,7 @@ class FlextTestsDockerModelsMixin:
         ports: Annotated[
             t.MappingKV[
                 str,
-                t.SequenceOf[FlextTestsDockerModelsMixin.ContainerInspectBinding]
-                | None,
+                t.SequenceOf[FlextTestsModelsDocker.ContainerInspectBinding] | None,
             ]
             | None,
             m.Field(alias="Ports", description="Bindings per '<port>/<proto>'."),
@@ -167,15 +166,15 @@ class FlextTestsDockerModelsMixin:
             m.Field(alias="Image", description="Resolved image id."),
         ]
         state: Annotated[
-            FlextTestsDockerModelsMixin.ContainerInspectState,
+            FlextTestsModelsDocker.ContainerInspectState,
             m.Field(alias="State", description="Lifecycle state."),
         ]
         config: Annotated[
-            FlextTestsDockerModelsMixin.ContainerInspectConfig,
+            FlextTestsModelsDocker.ContainerInspectConfig,
             m.Field(alias="Config", description="Creation configuration."),
         ]
         network_settings: Annotated[
-            FlextTestsDockerModelsMixin.ContainerInspectNetwork,
+            FlextTestsModelsDocker.ContainerInspectNetwork,
             m.Field(alias="NetworkSettings", description="Published ports."),
         ]
 
@@ -247,4 +246,4 @@ class FlextTestsDockerModelsMixin:
         ] = 3
 
 
-__all__: list[str] = ["FlextTestsDockerModelsMixin"]
+__all__: list[str] = ["FlextTestsModelsDocker"]

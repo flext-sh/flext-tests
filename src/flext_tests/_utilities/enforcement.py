@@ -16,7 +16,7 @@ from flext_infra.codemod import FlextInfraModGateEngine
 from flext_tests import c, m, p, r, t
 
 
-class FlextTestsEnforcementUtilitiesMixin:
+class FlextTestsUtilitiesEnforcement:
     """Catalog filtering, engine findings and collected-project discovery."""
 
     _plan_cache: ClassVar[dict[str, infra_m.Infra.CodemodRulePlan]] = {}
@@ -184,4 +184,4 @@ class FlextTestsEnforcementUtilitiesMixin:
         )
 
 
-__all__: list[str] = ["FlextTestsEnforcementUtilitiesMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesEnforcement"]

@@ -46,7 +46,7 @@ class FlextTestsEnforcementBuilder:
             *(
                 rule_id
                 for rule in rules
-                if isinstance(rule.source, m.EnforcementInfraRuleSource)
+                if isinstance(rule.source, m.Tests.EnforcementInfraRuleSource)
                 for rule_id in rule.source.rule_ids
             ),
             *(cfg.include - {rule.id for rule in rules}),

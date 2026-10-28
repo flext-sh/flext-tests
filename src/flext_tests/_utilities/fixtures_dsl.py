@@ -16,12 +16,12 @@ if TYPE_CHECKING:
     from flext_tests import t
 
 
-class FlextTestsFixturesDSLMixin:
+class FlextTestsFixturesDSL:
     """DSL mixin that exposes flat fixture-loading verbs on a project Tests class.
 
     Usage — in your project's tests/utilities.py::
 
-        class Tests(FlextTestsFixturesDSLMixin):
+        class Tests(FlextTestsFixturesDSL):
             _FIXTURES_ROOT = c.Project.Tests.FIXTURES_DIR
             _FILE_EXTENSION = ".ldif"  # optional, default is ".ldif"
 
@@ -215,4 +215,4 @@ class FlextTestsFixturesDSLMixin:
         )
 
 
-__all__: list[str] = ["FlextTestsFixturesDSLMixin"]
+__all__: list[str] = ["FlextTestsFixturesDSL"]

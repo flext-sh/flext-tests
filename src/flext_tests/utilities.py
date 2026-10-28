@@ -13,29 +13,29 @@ from __future__ import annotations
 from flext_cli import u as flext_cli_u
 
 from flext_tests._utilities import (
-    FlextTestsConfigHelpersUtilitiesMixin,
-    FlextTestsContainerHelpersUtilitiesMixin,
-    FlextTestsDockerClientUtilitiesMixin,
-    FlextTestsDockerLifecycleUtilitiesMixin,
-    FlextTestsDockerStateUtilitiesMixin,
-    FlextTestsEnforcementUtilitiesMixin,
-    FlextTestsEnvironmentUtilitiesMixin,
-    FlextTestsFixturesDSLMixin,
-    FlextTestsFlextUtilitiesGovernance,
-    FlextTestsFlextUtilitiesHandler,
-    FlextTestsFlextUtilitiesPayload,
-    FlextTestsNamespaceUtilitiesMixin,
-    FlextTestsPytestUtilitiesMixin,
-    FlextTestsResultUtilitiesMixin,
-    FlextTestsScratchStorageUtilitiesMixin,
-    FlextTestsTestContextUtilitiesMixin,
+    FlextTestsFixturesDSL,
     FlextTestsUtilitiesBase,
+    FlextTestsUtilitiesConfigHelpers,
+    FlextTestsUtilitiesContainerHelpers,
+    FlextTestsUtilitiesDockerClient,
+    FlextTestsUtilitiesDockerLifecycle,
+    FlextTestsUtilitiesDockerState,
+    FlextTestsUtilitiesEnforcement,
+    FlextTestsUtilitiesEnvironment,
     FlextTestsUtilitiesFiles,
+    FlextTestsUtilitiesFlextGovernance,
+    FlextTestsUtilitiesFlextHandler,
+    FlextTestsUtilitiesFlextPayload,
     FlextTestsUtilitiesMatchers,
+    FlextTestsUtilitiesNamespace,
+    FlextTestsUtilitiesPytest,
+    FlextTestsUtilitiesResult,
+    FlextTestsUtilitiesScratchStorage,
+    FlextTestsUtilitiesTestContext,
 )
 
 
-class FlextTestsUtilities(flext_cli_u, FlextTestsFlextUtilitiesGovernance):
+class FlextTestsUtilities(flext_cli_u, FlextTestsUtilitiesFlextGovernance):
     """Test utilities for FLEXT ecosystem - extends u.
 
     Provides essential test helpers that complement u.
@@ -43,28 +43,28 @@ class FlextTestsUtilities(flext_cli_u, FlextTestsFlextUtilitiesGovernance):
     """
 
     class Tests(
-        FlextTestsContainerHelpersUtilitiesMixin,
-        FlextTestsDockerClientUtilitiesMixin,
-        FlextTestsDockerLifecycleUtilitiesMixin,
-        FlextTestsDockerStateUtilitiesMixin,
-        FlextTestsEnforcementUtilitiesMixin,
-        FlextTestsEnvironmentUtilitiesMixin,
+        FlextTestsUtilitiesContainerHelpers,
+        FlextTestsUtilitiesDockerClient,
+        FlextTestsUtilitiesDockerLifecycle,
+        FlextTestsUtilitiesDockerState,
+        FlextTestsUtilitiesEnforcement,
+        FlextTestsUtilitiesEnvironment,
         FlextTestsUtilitiesFiles,
-        FlextTestsFixturesDSLMixin,
-        FlextTestsNamespaceUtilitiesMixin,
-        FlextTestsFlextUtilitiesPayload,
-        FlextTestsResultUtilitiesMixin,
-        FlextTestsScratchStorageUtilitiesMixin,
-        FlextTestsConfigHelpersUtilitiesMixin,
-        FlextTestsTestContextUtilitiesMixin,
+        FlextTestsFixturesDSL,
+        FlextTestsUtilitiesNamespace,
+        FlextTestsUtilitiesFlextPayload,
+        FlextTestsUtilitiesResult,
+        FlextTestsUtilitiesScratchStorage,
+        FlextTestsUtilitiesConfigHelpers,
+        FlextTestsUtilitiesTestContext,
         FlextTestsUtilitiesBase,
-        FlextTestsPytestUtilitiesMixin,
-        FlextTestsFlextUtilitiesHandler.FlextTestsHandlerHelpersUtilitiesMixin,
+        FlextTestsUtilitiesPytest,
+        FlextTestsUtilitiesFlextHandler.FlextTestsUtilitiesHandlerHelpers,
         FlextTestsUtilitiesMatchers.Tests,
-        FlextTestsFlextUtilitiesGovernance.FlextTestsModuleGovernanceMixin,
+        FlextTestsUtilitiesFlextGovernance.FlextTestsModuleGovernance,
     ):
         """Test utilities namespace."""
 
 
 u = FlextTestsUtilities
-__all__: list[str] = ["FlextTestsFixturesDSLMixin", "FlextTestsUtilities", "u"]
+__all__: list[str] = ["FlextTestsFixturesDSL", "FlextTestsUtilities", "u"]

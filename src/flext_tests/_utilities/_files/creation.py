@@ -13,7 +13,7 @@ from typing import Annotated, cast
 from flext_cli import u
 
 from flext_tests import c, m, p, t
-from flext_tests._utilities import FlextTestsPayloadUtilities
+from flext_tests._utilities import FlextTestsUtilitiesPayload
 from flext_tests._utilities._files import FlextTestsUtilitiesFilesLifecycle
 
 
@@ -43,7 +43,7 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
             TypeError: If File content requires a native mapping.
 
         """
-        payload = FlextTestsPayloadUtilities.to_payload(
+        payload = FlextTestsUtilitiesPayload.to_payload(
             value,
         )
         if payload.kind != "mapping":
@@ -62,7 +62,7 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
         return [
             [
                 str(
-                    FlextTestsPayloadUtilities.to_match_value(
+                    FlextTestsUtilitiesPayload.to_match_value(
                         cell,
                     ),
                 )
@@ -79,7 +79,7 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
             The resulting ``m.Tests.Payload``.
 
         """
-        return FlextTestsPayloadUtilities.to_payload(
+        return FlextTestsUtilitiesPayload.to_payload(
             value,
         )
 
@@ -115,7 +115,7 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
             The resulting ``bool``.
 
         """
-        payload = FlextTestsPayloadUtilities.to_payload(
+        payload = FlextTestsUtilitiesPayload.to_payload(
             value,
         )
         return (
@@ -140,7 +140,7 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
                     atom
                     if actual_content.kind == "atom" and isinstance(atom, bytes)
                     else str(
-                        FlextTestsPayloadUtilities.to_match_value(
+                        FlextTestsUtilitiesPayload.to_match_value(
                             actual_content,
                         ),
                     ).encode(params.enc)
@@ -167,7 +167,7 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
             case _:
                 file_path.write_text(
                     str(
-                        FlextTestsPayloadUtilities.to_match_value(
+                        FlextTestsUtilitiesPayload.to_match_value(
                             actual_content,
                         ),
                     ),
@@ -189,7 +189,7 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
             return u.json_value_adapter().validate_python(
                 actual_content.atom.model_dump(mode="json"),
             )
-        normalized = FlextTestsPayloadUtilities.to_normalized_value(
+        normalized = FlextTestsUtilitiesPayload.to_normalized_value(
             actual_content,
         )
         if actual_content.kind == "mapping":
@@ -219,7 +219,7 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
         else:
             rows.append([
                 str(
-                    FlextTestsPayloadUtilities.to_match_value(
+                    FlextTestsUtilitiesPayload.to_match_value(
                         actual_content,
                     ),
                 ),
@@ -289,7 +289,7 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
             "directory": directory,
         })
         actual_content = params.content
-        native_content = FlextTestsPayloadUtilities.to_match_value(
+        native_content = FlextTestsUtilitiesPayload.to_match_value(
             actual_content,
         )
         # files_detect_format_from_content dispatches purely on the runtime

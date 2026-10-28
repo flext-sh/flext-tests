@@ -12,7 +12,7 @@ from typing import ClassVar, TypeAliasType
 from flext_cli import u
 
 from flext_tests import c, m, p, t
-from flext_tests._utilities import FlextTestsPayloadUtilities
+from flext_tests._utilities import FlextTestsUtilitiesPayload
 from flext_tests._utilities._matchers import (
     FlextTestsUtilitiesMatchersAssertions,
     FlextTestsUtilitiesMatchersContainment,
@@ -169,7 +169,7 @@ class FlextTestsUtilitiesMatchersThat:
                     return subject
                 result_obj: p.ResultView[p.AttributeProbe] = subject
                 if params.ok is not None:
-                    return FlextTestsPayloadUtilities.to_payload(
+                    return FlextTestsUtilitiesPayload.to_payload(
                         cls._ok_value(result_obj, params),
                     )
                 if params.has is not None:
@@ -181,11 +181,11 @@ class FlextTestsUtilitiesMatchersThat:
                         params.msg,
                         as_str=True,
                     )
-                    return FlextTestsPayloadUtilities.to_payload(
+                    return FlextTestsUtilitiesPayload.to_payload(
                         err,
                     )
                 if result_obj.success:
-                    return FlextTestsPayloadUtilities.to_payload(
+                    return FlextTestsUtilitiesPayload.to_payload(
                         result_obj.value,
                     )
                 raise AssertionError(
@@ -257,10 +257,10 @@ class FlextTestsUtilitiesMatchersThat:
 
                 Raises:
                     AssertionError: If ``not seq_value``; or if
-                        ``FlextTestsPayloadUtilities.to_match_value(seq_value[0]) !=
-                        FlextTestsPayloadUtilities.to_match_value(params.first)``; or if
-                        ``FlextTestsPayloadUtilities.to_match_value(seq_value[-1]) !=
-                        FlextTestsPayloadUtilities.to_match_value(params.last)``.
+                        ``FlextTestsUtilitiesPayload.to_match_value(seq_value[0]) !=
+                        FlextTestsUtilitiesPayload.to_match_value(params.first)``; or if
+                        ``FlextTestsUtilitiesPayload.to_match_value(seq_value[-1]) !=
+                        FlextTestsUtilitiesPayload.to_match_value(params.last)``.
 
                 """
                 if params.first is not None:
@@ -268,9 +268,9 @@ class FlextTestsUtilitiesMatchersThat:
                         raise AssertionError(
                             params.msg or "Sequence is empty, cannot check first",
                         )
-                    if FlextTestsPayloadUtilities.to_match_value(
+                    if FlextTestsUtilitiesPayload.to_match_value(
                         seq_value[0],
-                    ) != FlextTestsPayloadUtilities.to_match_value(
+                    ) != FlextTestsUtilitiesPayload.to_match_value(
                         params.first,
                     ):
                         raise AssertionError(
@@ -285,9 +285,9 @@ class FlextTestsUtilitiesMatchersThat:
                         raise AssertionError(
                             params.msg or "Sequence is empty, cannot check last",
                         )
-                    if FlextTestsPayloadUtilities.to_match_value(
+                    if FlextTestsUtilitiesPayload.to_match_value(
                         seq_value[-1],
-                    ) != FlextTestsPayloadUtilities.to_match_value(
+                    ) != FlextTestsUtilitiesPayload.to_match_value(
                         params.last,
                     ):
                         raise AssertionError(
@@ -331,7 +331,7 @@ class FlextTestsUtilitiesMatchersThat:
                     all_type = params.all_
                     if all(
                         isinstance(
-                            FlextTestsPayloadUtilities.to_match_value(
+                            FlextTestsUtilitiesPayload.to_match_value(
                                 item,
                             ),
                             all_type,
@@ -344,7 +344,7 @@ class FlextTestsUtilitiesMatchersThat:
                             index
                             for index, item in enumerate(seq_value)
                             if not isinstance(
-                                FlextTestsPayloadUtilities.to_match_value(
+                                FlextTestsUtilitiesPayload.to_match_value(
                                     item,
                                 ),
                                 all_type,
@@ -363,7 +363,7 @@ class FlextTestsUtilitiesMatchersThat:
                             index
                             for index, item in enumerate(seq_value)
                             if not predicate(
-                                FlextTestsPayloadUtilities.to_match_value(
+                                FlextTestsUtilitiesPayload.to_match_value(
                                     item,
                                 ),
                             )
@@ -385,10 +385,10 @@ class FlextTestsUtilitiesMatchersThat:
 
                 Raises:
                     AssertionError: If ``callable(params.any_) and (not
-                        any((params.any_(FlextTestsPayloadUtilities.to_match_value(
+                        any((params.any_(FlextTestsUtilitiesPayload.to_match_value(
                             item
                         )) for item in seq_value)))``; or if ``not
-                        any((isinstance(FlextTestsPayloadUtilities.to_match_value(item),
+                        any((isinstance(FlextTestsUtilitiesPayload.to_match_value(item),
                         any_type) for item in seq_value))``.
 
                 """
@@ -396,7 +396,7 @@ class FlextTestsUtilitiesMatchersThat:
                     any_type = params.any_
                     if not any(
                         isinstance(
-                            FlextTestsPayloadUtilities.to_match_value(
+                            FlextTestsUtilitiesPayload.to_match_value(
                                 item,
                             ),
                             any_type,
@@ -407,7 +407,7 @@ class FlextTestsUtilitiesMatchersThat:
                     return
                 if callable(params.any_) and not any(
                     params.any_(
-                        FlextTestsPayloadUtilities.to_match_value(
+                        FlextTestsUtilitiesPayload.to_match_value(
                             item,
                         ),
                     )
@@ -425,8 +425,8 @@ class FlextTestsUtilitiesMatchersThat:
 
                 Raises:
                     AssertionError: If ``params.unique is not None and params.unique and
-                        any((FlextTestsPayloadUtilities.to_match_value(item) ==
-                        FlextTestsPayloadUtilities.to_match_value(previous) for index,
+                        any((FlextTestsUtilitiesPayload.to_match_value(item) ==
+                        FlextTestsUtilitiesPayload.to_match_value(previous) for index,
                         item in enumerate(seq_value) for previous in
                         seq_value[:index]))``; or if ``value_list != sorted_list``.
 
@@ -438,7 +438,7 @@ class FlextTestsUtilitiesMatchersThat:
                         sorted_list = sorted(
                             value_list,
                             key=lambda item: cls._sort_key(
-                                FlextTestsPayloadUtilities.to_match_value(item),
+                                FlextTestsUtilitiesPayload.to_match_value(item),
                             ),
                         )
                         if value_list != sorted_list:
@@ -448,7 +448,7 @@ class FlextTestsUtilitiesMatchersThat:
                             value_list,
                             key=lambda item: cls._sort_key(
                                 sorted_param(
-                                    FlextTestsPayloadUtilities.to_match_value(item),
+                                    FlextTestsUtilitiesPayload.to_match_value(item),
                                 ),
                             ),
                         )
@@ -460,10 +460,10 @@ class FlextTestsUtilitiesMatchersThat:
                     params.unique is not None
                     and params.unique
                     and any(
-                        FlextTestsPayloadUtilities.to_match_value(
+                        FlextTestsUtilitiesPayload.to_match_value(
                             item,
                         )
-                        == FlextTestsPayloadUtilities.to_match_value(
+                        == FlextTestsUtilitiesPayload.to_match_value(
                             previous,
                         )
                         for index, item in enumerate(seq_value)
@@ -489,7 +489,7 @@ class FlextTestsUtilitiesMatchersThat:
 
                 Raises:
                     AssertionError: If ``missing``; or if ``present``; or if
-                        ``FlextTestsPayloadUtilities.to_match_value(expected_val) not in
+                        ``FlextTestsUtilitiesPayload.to_match_value(expected_val) not in
                         value_list``.
 
                 """
@@ -512,14 +512,14 @@ class FlextTestsUtilitiesMatchersThat:
                         )
                 if params.values is not None:
                     value_list = [
-                        FlextTestsPayloadUtilities.to_match_value(
+                        FlextTestsUtilitiesPayload.to_match_value(
                             item,
                         )
                         for item in mapping_value.values()
                     ]
                     for expected_val in params.values:
                         if (
-                            FlextTestsPayloadUtilities.to_match_value(
+                            FlextTestsUtilitiesPayload.to_match_value(
                                 expected_val,
                             )
                             not in value_list
@@ -555,10 +555,10 @@ class FlextTestsUtilitiesMatchersThat:
                         raise AssertionError(
                             params.msg or f"Key {key!r} not found in mapping",
                         )
-                    actual = FlextTestsPayloadUtilities.to_match_value(
+                    actual = FlextTestsUtilitiesPayload.to_match_value(
                         mapping_value[key],
                     )
-                    wanted = FlextTestsPayloadUtilities.to_match_value(
+                    wanted = FlextTestsUtilitiesPayload.to_match_value(
                         expected,
                     )
                     if actual != wanted:
@@ -636,7 +636,7 @@ class FlextTestsUtilitiesMatchersThat:
                             params.msg or f"Object missing attribute: {name}",
                         )
                     actual = getattr(subject, name)
-                    wanted = FlextTestsPayloadUtilities.to_match_value(
+                    wanted = FlextTestsUtilitiesPayload.to_match_value(
                         expected,
                     )
                     if actual != wanted:
@@ -754,7 +754,7 @@ class FlextTestsUtilitiesMatchersThat:
                 if cls._validate_subject_only(value, params):
                     return
                 subject = cls._result_subject(value, params)
-                subject_payload = FlextTestsPayloadUtilities.to_payload(
+                subject_payload = FlextTestsUtilitiesPayload.to_payload(
                     subject,
                 )
                 if cls._has_scalar_validation(params):
@@ -804,7 +804,7 @@ class FlextTestsUtilitiesMatchersThat:
                 """
                 if params.deep is None:
                     return
-                match_result = FlextTestsPayloadUtilities.deep_match(
+                match_result = FlextTestsUtilitiesPayload.deep_match(
                     subject_payload,
                     params.deep,
                 )
@@ -848,7 +848,7 @@ class FlextTestsUtilitiesMatchersThat:
                         inherited_msg=params.msg,
                     )
                 if params.where is not None:
-                    native = FlextTestsPayloadUtilities.to_match_value(
+                    native = FlextTestsUtilitiesPayload.to_match_value(
                         subject_payload,
                     )
                     if not params.where(native):
@@ -921,12 +921,12 @@ class FlextTestsUtilitiesMatchersThat:
             message = "Matcher rule runner missing"
             raise AssertionError(message)
         expected_eq = (
-            FlextTestsPayloadUtilities.to_match_value(rule.eq)
+            FlextTestsUtilitiesPayload.to_match_value(rule.eq)
             if isinstance(rule.eq, m.Tests.Payload)
             else rule.eq
         )
         expected_ne = (
-            FlextTestsPayloadUtilities.to_match_value(rule.ne)
+            FlextTestsUtilitiesPayload.to_match_value(rule.ne)
             if isinstance(rule.ne, m.Tests.Payload)
             else rule.ne
         )
@@ -953,8 +953,8 @@ class FlextTestsUtilitiesMatchersThat:
         for path, rule in rules.items():
             try:
                 cls._apply_rule(
-                    FlextTestsPayloadUtilities.to_match_value(
-                        FlextTestsPayloadUtilities.extract_path_value(
+                    FlextTestsUtilitiesPayload.to_match_value(
+                        FlextTestsUtilitiesPayload.extract_path_value(
                             subject,
                             path,
                         ),
@@ -978,7 +978,7 @@ class FlextTestsUtilitiesMatchersThat:
         if subject.kind in {"atom", "mapping"}:
             raise AssertionError(inherited_msg or "Item assertions require a sequence")
         sequence_value = tuple(
-            FlextTestsPayloadUtilities.to_match_value(
+            FlextTestsUtilitiesPayload.to_match_value(
                 item,
             )
             for item in subject.items

@@ -18,7 +18,7 @@ from flext_cli import u
 from flext_tests import c, t
 
 
-class FlextTestsEnvironmentUtilitiesMixin:
+class FlextTestsUtilitiesEnvironment:
     """Resolve explicit, untracked test configuration without logging its values."""
 
     @staticmethod
@@ -39,16 +39,14 @@ class FlextTestsEnvironmentUtilitiesMixin:
 
         """
         path = Path.cwd() / ".env" if env_file is None else env_file
-        reason = FlextTestsEnvironmentUtilitiesMixin._untracked_reason(path)
+        reason = FlextTestsUtilitiesEnvironment._untracked_reason(path)
         if reason is not None:
             return reason
         values = dotenv_values(path, interpolate=False)
-        reason = FlextTestsEnvironmentUtilitiesMixin._values_reason(
-            values, required_vars
-        )
+        reason = FlextTestsUtilitiesEnvironment._values_reason(values, required_vars)
         if reason is not None:
             return reason
-        return FlextTestsEnvironmentUtilitiesMixin._endpoint_reason(
+        return FlextTestsUtilitiesEnvironment._endpoint_reason(
             values, url_var, endpoint
         )
 
@@ -85,7 +83,7 @@ class FlextTestsEnvironmentUtilitiesMixin:
             The unreachable reason, or ``None`` when the endpoint accepts.
 
         """
-        return FlextTestsEnvironmentUtilitiesMixin._endpoint_reason({}, None, endpoint)
+        return FlextTestsUtilitiesEnvironment._endpoint_reason({}, None, endpoint)
 
     @staticmethod
     def _endpoint_reason(
@@ -158,7 +156,7 @@ class FlextTestsEnvironmentUtilitiesMixin:
 
         """
         return (
-            FlextTestsEnvironmentUtilitiesMixin.external_environment_reason(
+            FlextTestsUtilitiesEnvironment.external_environment_reason(
                 required_vars,
                 env_file,
                 endpoint=endpoint,
@@ -176,7 +174,7 @@ class FlextTestsEnvironmentUtilitiesMixin:
         url_var: str | None = None,
     ) -> None:
         """Skip before constructing a service-dependent fixture."""
-        reason = FlextTestsEnvironmentUtilitiesMixin.external_environment_reason(
+        reason = FlextTestsUtilitiesEnvironment.external_environment_reason(
             required_vars,
             env_file,
             endpoint=endpoint,
@@ -186,4 +184,4 @@ class FlextTestsEnvironmentUtilitiesMixin:
             pytest.skip(reason)
 
 
-__all__ = ["FlextTestsEnvironmentUtilitiesMixin"]
+__all__ = ["FlextTestsUtilitiesEnvironment"]

@@ -10,10 +10,7 @@ from collections.abc import Callable, MutableMapping
 from typing import TypeAliasType, overload
 
 from flext_tests import c, m, p, t
-from flext_tests._utilities import (
-    FlextTestsPayloadUtilities,
-    FlextTestsResultUtilitiesMixin,
-)
+from flext_tests._utilities import FlextTestsUtilitiesPayload, FlextTestsUtilitiesResult
 from flext_tests._utilities._matchers import FlextTestsUtilitiesMatchersThat
 
 
@@ -73,7 +70,7 @@ class FlextTestsUtilitiesMatchersResult:
                         raise ValueError(msg)
                     that(result, eq=False, is_=bool, msg=params.msg)
                     return result
-                err: str = FlextTestsResultUtilitiesMixin.assert_failure(result)
+                err: str = FlextTestsUtilitiesResult.assert_failure(result)
                 if any(
                     criterion is not None
                     for criterion in (
@@ -148,8 +145,8 @@ class FlextTestsUtilitiesMatchersResult:
 
                 Raises:
                     AssertionError: If ``key not in actual_data``; or if
-                        ``FlextTestsPayloadUtilities.to_match_value(actual_data[key]) !=
-                        FlextTestsPayloadUtilities.to_match_value(expected_value)``.
+                        ``FlextTestsUtilitiesPayload.to_match_value(actual_data[key]) !=
+                        FlextTestsUtilitiesPayload.to_match_value(expected_value)``.
 
                 """
                 if params.data is None:
@@ -158,7 +155,7 @@ class FlextTestsUtilitiesMatchersResult:
                 actual_data: MutableMapping[str, p.Tests.Payload] = {}
                 if actual_raw is not None:
                     actual_data = {
-                        key: FlextTestsPayloadUtilities.to_payload(
+                        key: FlextTestsUtilitiesPayload.to_payload(
                             value,
                         )
                         for key, value in actual_raw.items()
@@ -169,9 +166,9 @@ class FlextTestsUtilitiesMatchersResult:
                             params.msg
                             or c.Tests.ERR_ERROR_DATA_KEY_MISSING.format(key=key),
                         )
-                    if FlextTestsPayloadUtilities.to_match_value(
+                    if FlextTestsUtilitiesPayload.to_match_value(
                         actual_data[key],
-                    ) != FlextTestsPayloadUtilities.to_match_value(
+                    ) != FlextTestsUtilitiesPayload.to_match_value(
                         expected_value,
                     ):
                         raise AssertionError(
@@ -276,7 +273,7 @@ class FlextTestsUtilitiesMatchersResult:
                         raise ValueError(msg)
                     that(result, eq=True, msg=params.msg)
                     return result
-                original = FlextTestsResultUtilitiesMixin.assert_success(
+                original = FlextTestsUtilitiesResult.assert_success(
                     result,
                     error_msg=params.msg,
                 )
@@ -289,9 +286,9 @@ class FlextTestsUtilitiesMatchersResult:
                     if value_criteria:
                         that(original, eq=eq, ne=ne, where=None, **kwargs)
                     return original
-                selected = FlextTestsPayloadUtilities.to_match_value(
-                    FlextTestsPayloadUtilities.extract_path_value(
-                        FlextTestsPayloadUtilities.to_payload(original),
+                selected = FlextTestsUtilitiesPayload.to_match_value(
+                    FlextTestsUtilitiesPayload.extract_path_value(
+                        FlextTestsUtilitiesPayload.to_payload(original),
                         path if isinstance(path, str) else ".".join(path),
                     ),
                 )

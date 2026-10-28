@@ -9,10 +9,10 @@ from __future__ import annotations
 from flext_tests import c, m
 
 
-class FlextTestsFlextUtilitiesHandler:
+class FlextTestsUtilitiesFlextHandler:
     """Canonical namespace owner."""
 
-    class FlextTestsHandlerHelpersUtilitiesMixin:
+    class FlextTestsUtilitiesHandlerHelpers:
         """Helpers for handler testing."""
 
         @staticmethod
@@ -51,4 +51,4 @@ class FlextTestsFlextUtilitiesHandler:
             return handler
 
 
-__all__: list[str] = ["FlextTestsFlextUtilitiesHandler"]
+__all__: list[str] = ["FlextTestsUtilitiesFlextHandler"]

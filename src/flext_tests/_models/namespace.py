@@ -13,7 +13,7 @@ from flext_cli import m
 from flext_tests import c, t
 
 
-class FlextTestsNamespaceModelsMixin:
+class FlextTestsModelsNamespace:
     class TestNamespace(m.Value):
         """Collision-free namespace token for one test run and one worker.
 
@@ -76,4 +76,4 @@ class FlextTestsNamespaceModelsMixin:
         ] = None
 
 
-__all__: list[str] = ["FlextTestsNamespaceModelsMixin"]
+__all__: list[str] = ["FlextTestsModelsNamespace"]

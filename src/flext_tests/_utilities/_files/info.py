@@ -14,7 +14,7 @@ from flext_cli import u
 
 from flext_tests import c, m, p, r, t
 from flext_tests._utilities._files import (
-    FlextTestsFilesUtilitiesMixin,
+    FlextTestsUtilitiesFiles,
     FlextTestsUtilitiesFilesAssertions,
 )
 
@@ -75,7 +75,7 @@ class FlextTestsUtilitiesFilesInfo(FlextTestsUtilitiesFilesAssertions):
         """
         stat = params.path.stat()
         size = stat.st_size
-        size_human = FlextTestsFilesUtilitiesMixin.format_size(size)
+        size_human = FlextTestsUtilitiesFiles.format_size(size)
         text, lines, is_empty, first_line, encoding = self._read_info_text(
             params.path,
             size,

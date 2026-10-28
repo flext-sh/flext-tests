@@ -13,30 +13,30 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._typings.base import FlextTestsBaseTypesMixin
-    from flext_tests._typings.docker import FlextTestsDockerTypesMixin
-    from flext_tests._typings.files import FlextTestsFilesTypesMixin
-    from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
-    from flext_tests._typings.pytest_surface import FlextTestsPytestTypesMixin
+    from flext_tests._typings.base import FlextTestsTypesBase
+    from flext_tests._typings.docker import FlextTestsTypesDocker
+    from flext_tests._typings.files import FlextTestsTypesFiles
+    from flext_tests._typings.matchers import FlextTestsTypesMatchers
+    from flext_tests._typings.pytest_surface import FlextTestsTypesPytest
 
 
 __all__: tuple[str, ...] = (
-    "FlextTestsBaseTypesMixin",
-    "FlextTestsDockerTypesMixin",
-    "FlextTestsFilesTypesMixin",
-    "FlextTestsMatchersTypesMixin",
-    "FlextTestsPytestTypesMixin",
+    "FlextTestsTypesBase",
+    "FlextTestsTypesDocker",
+    "FlextTestsTypesFiles",
+    "FlextTestsTypesMatchers",
+    "FlextTestsTypesPytest",
 )
 
 install_lazy_exports(
     __name__,
     globals(),
     MappingProxyType({
-        "FlextTestsBaseTypesMixin": ".base",
-        "FlextTestsDockerTypesMixin": ".docker",
-        "FlextTestsFilesTypesMixin": ".files",
-        "FlextTestsMatchersTypesMixin": ".matchers",
-        "FlextTestsPytestTypesMixin": ".pytest_surface",
+        "FlextTestsTypesBase": ".base",
+        "FlextTestsTypesDocker": ".docker",
+        "FlextTestsTypesFiles": ".files",
+        "FlextTestsTypesMatchers": ".matchers",
+        "FlextTestsTypesPytest": ".pytest_surface",
     }),
     public_exports=__all__,
 )

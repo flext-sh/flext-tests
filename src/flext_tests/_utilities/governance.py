@@ -28,7 +28,7 @@ if TYPE_CHECKING:
     from types import ModuleType
 
 
-class FlextTestsFlextUtilitiesGovernance:
+class FlextTestsUtilitiesFlextGovernance:
     """Canonical namespace owner."""
 
     @staticmethod
@@ -50,7 +50,7 @@ class FlextTestsFlextUtilitiesGovernance:
                 mapping.setdefault(entry.module, set()).add(entry.attr)
         return {module: frozenset(names) for module, names in mapping.items()}
 
-    class FlextTestsModuleGovernanceMixin:
+    class FlextTestsModuleGovernance:
         """Shared module-governance test helpers for FLEXT submodules.
 
         Each submodule's ``test_module_governance.py`` subclasses this mixin and
@@ -162,7 +162,7 @@ class FlextTestsFlextUtilitiesGovernance:
             per-module rescans pushed governance tests past their timeout.
             """
             module_name = cls._module_dotted_name(module_path)
-            return FlextTestsFlextUtilitiesGovernance._console_script_functions().get(
+            return FlextTestsUtilitiesFlextGovernance._console_script_functions().get(
                 module_name,
                 frozenset(),
             )
@@ -212,4 +212,4 @@ class FlextTestsFlextUtilitiesGovernance:
             )
 
 
-__all__: list[str] = ["FlextTestsFlextUtilitiesGovernance"]
+__all__: list[str] = ["FlextTestsUtilitiesFlextGovernance"]

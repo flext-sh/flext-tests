@@ -12,10 +12,10 @@ if TYPE_CHECKING:
     from contextlib import AbstractContextManager
     from pathlib import Path
 
-    from flext_tests._typings.base import FlextTestsBaseTypesMixin
+    from flext_tests._typings.base import FlextTestsTypesBase
 
 
-class FlextTestsValueFactoryProtocolsMixin:
+class FlextTestsProtocolsValueFactory:
     @runtime_checkable
     class RuntimeProvision(Protocol):
         """Provision one locked consumer through its canonical Make lifecycle."""
@@ -32,7 +32,7 @@ class FlextTestsValueFactoryProtocolsMixin:
 
         def lease(
             self,
-            provision: FlextTestsValueFactoryProtocolsMixin.RuntimeProvision,
+            provision: FlextTestsProtocolsValueFactory.RuntimeProvision,
             *,
             mutable_environment: bool = False,
         ) -> AbstractContextManager[Path]:
@@ -52,7 +52,7 @@ class FlextTestsValueFactoryProtocolsMixin:
             self,
             *,
             name: str,
-            value: FlextTestsBaseTypesMixin.Testobject,
+            value: FlextTestsTypesBase.Testobject,
         ) -> TEntity:
             """Build a typed entity instance."""
             ...
@@ -71,4 +71,4 @@ class FlextTestsValueFactoryProtocolsMixin:
             ...
 
 
-__all__: list[str] = ["FlextTestsValueFactoryProtocolsMixin"]
+__all__: list[str] = ["FlextTestsProtocolsValueFactory"]

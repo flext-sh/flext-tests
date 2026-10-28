@@ -12,7 +12,7 @@ from pathlib import Path
 from flext_tests import c
 
 
-class FlextTestsScratchStorageUtilitiesMixin:
+class FlextTestsUtilitiesScratchStorage:
     """Scratch-root derivation; pure path logic over the constants facade."""
 
     @staticmethod
@@ -37,4 +37,4 @@ class FlextTestsScratchStorageUtilitiesMixin:
         return scratch
 
 
-__all__: list[str] = ["FlextTestsScratchStorageUtilitiesMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesScratchStorage"]

@@ -13,34 +13,34 @@ from flext_tests import t
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable, Iterator
 
-    from flext_tests._protocols.payload import FlextTestsPayloadProtocolsMixin
-    from flext_tests._typings.matchers import FlextTestsMatchersTypesMixin
+    from flext_tests._protocols.payload import FlextTestsProtocolsPayload
+    from flext_tests._typings.matchers import FlextTestsTypesMatchers
 
 
-class FlextTestsMatchersProtocolsMixin(Protocol):
+class FlextTestsProtocolsMatchers(Protocol):
     """Structural matcher capabilities without recursive type aliases."""
 
     type MatcherOption = (
-        FlextTestsPayloadProtocolsMixin.NativeMatchValue
-        | FlextTestsPayloadProtocolsMixin.Payload
+        FlextTestsProtocolsPayload.NativeMatchValue
+        | FlextTestsProtocolsPayload.Payload
         | t.RegexPattern
         | type
         | t.VariadicTuple[type]
-        | Callable[[FlextTestsPayloadProtocolsMixin.NativeMatchValue], bool]
+        | Callable[[FlextTestsProtocolsPayload.NativeMatchValue], bool]
         | Callable[
-            [FlextTestsPayloadProtocolsMixin.NativeMatchValue],
-            FlextTestsPayloadProtocolsMixin.NativeMatchValue,
+            [FlextTestsProtocolsPayload.NativeMatchValue],
+            FlextTestsProtocolsPayload.NativeMatchValue,
         ]
         | t.MappingKV[
             str | int,
-            FlextTestsPayloadProtocolsMixin.NativeMatchValue
-            | FlextTestsPayloadProtocolsMixin.Payload
-            | Callable[[FlextTestsPayloadProtocolsMixin.NativeMatchValue], bool],
+            FlextTestsProtocolsPayload.NativeMatchValue
+            | FlextTestsProtocolsPayload.Payload
+            | Callable[[FlextTestsProtocolsPayload.NativeMatchValue], bool],
         ]
-        | FlextTestsMatchersProtocolsMixin.MatcherCriteriaMapping
-        | FlextTestsMatchersProtocolsMixin.MatcherCriteriaSequence
+        | FlextTestsProtocolsMatchers.MatcherCriteriaMapping
+        | FlextTestsProtocolsMatchers.MatcherCriteriaSequence
         | t.StrSequence
-        | FlextTestsMatchersTypesMixin.LengthSpec
+        | FlextTestsTypesMatchers.LengthSpec
     )
 
     @runtime_checkable
@@ -53,7 +53,7 @@ class FlextTestsMatchersProtocolsMixin(Protocol):
 
         def items(
             self,
-        ) -> Iterable[tuple[str | int, FlextTestsMatchersProtocolsMixin.MatcherOption]]:
+        ) -> Iterable[tuple[str | int, FlextTestsProtocolsMatchers.MatcherOption]]:
             """Iterate selectors and their unchanged native criteria."""
             ...
 
@@ -65,13 +65,13 @@ class FlextTestsMatchersProtocolsMixin(Protocol):
             """Return the number of positional criteria."""
             ...
 
-        def __iter__(self) -> Iterator[FlextTestsMatchersProtocolsMixin.MatcherOption]:
+        def __iter__(self) -> Iterator[FlextTestsProtocolsMatchers.MatcherOption]:
             """Iterate the original criteria."""
             ...
 
         def __getitem__(
             self, index: int, /
-        ) -> FlextTestsMatchersProtocolsMixin.MatcherOption:
+        ) -> FlextTestsProtocolsMatchers.MatcherOption:
             """Read one positional criterion."""
             ...
 
@@ -81,7 +81,7 @@ class FlextTestsMatchersProtocolsMixin(Protocol):
 
         def __call__(
             self,
-            value: FlextTestsPayloadProtocolsMixin.NativeMatchValue,
+            value: FlextTestsProtocolsPayload.NativeMatchValue,
             /,
         ) -> bool: ...
 
@@ -90,7 +90,7 @@ class FlextTestsMatchersProtocolsMixin(Protocol):
         """Structural stand-in for pytest approximation objects in type positions."""
 
         @property
-        def expected(self) -> FlextTestsPayloadProtocolsMixin.NativeMatchValue: ...
+        def expected(self) -> FlextTestsProtocolsPayload.NativeMatchValue: ...
 
         @property
         def rel(self) -> float | None: ...
@@ -102,4 +102,4 @@ class FlextTestsMatchersProtocolsMixin(Protocol):
         def nan_ok(self) -> bool: ...
 
 
-__all__: list[str] = ["FlextTestsMatchersProtocolsMixin"]
+__all__: list[str] = ["FlextTestsProtocolsMatchers"]

@@ -14,37 +14,35 @@ from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tests._protocols.base import FlextTestsProtocolsBase
-    from flext_tests._protocols.docker import FlextTestsDockerProtocolsMixin
-    from flext_tests._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
-    from flext_tests._protocols.fixture_trees import (
-        FlextTestsFixtureTreesProtocolsMixin,
-    )
-    from flext_tests._protocols.matchers import FlextTestsMatchersProtocolsMixin
-    from flext_tests._protocols.payload import FlextTestsPayloadProtocolsMixin
-    from flext_tests._protocols.valuefactory import FlextTestsValueFactoryProtocolsMixin
+    from flext_tests._protocols.docker import FlextTestsProtocolsDocker
+    from flext_tests._protocols.enforcement import FlextTestsProtocolsEnforcement
+    from flext_tests._protocols.fixture_trees import FlextTestsProtocolsFixtureTrees
+    from flext_tests._protocols.matchers import FlextTestsProtocolsMatchers
+    from flext_tests._protocols.payload import FlextTestsProtocolsPayload
+    from flext_tests._protocols.valuefactory import FlextTestsProtocolsValueFactory
 
 
 __all__: tuple[str, ...] = (
-    "FlextTestsDockerProtocolsMixin",
-    "FlextTestsEnforcementProtocolsMixin",
-    "FlextTestsFixtureTreesProtocolsMixin",
-    "FlextTestsMatchersProtocolsMixin",
-    "FlextTestsPayloadProtocolsMixin",
     "FlextTestsProtocolsBase",
-    "FlextTestsValueFactoryProtocolsMixin",
+    "FlextTestsProtocolsDocker",
+    "FlextTestsProtocolsEnforcement",
+    "FlextTestsProtocolsFixtureTrees",
+    "FlextTestsProtocolsMatchers",
+    "FlextTestsProtocolsPayload",
+    "FlextTestsProtocolsValueFactory",
 )
 
 install_lazy_exports(
     __name__,
     globals(),
     MappingProxyType({
-        "FlextTestsDockerProtocolsMixin": ".docker",
-        "FlextTestsEnforcementProtocolsMixin": ".enforcement",
-        "FlextTestsFixtureTreesProtocolsMixin": ".fixture_trees",
-        "FlextTestsMatchersProtocolsMixin": ".matchers",
-        "FlextTestsPayloadProtocolsMixin": ".payload",
+        "FlextTestsProtocolsDocker": ".docker",
+        "FlextTestsProtocolsEnforcement": ".enforcement",
+        "FlextTestsProtocolsFixtureTrees": ".fixture_trees",
+        "FlextTestsProtocolsMatchers": ".matchers",
+        "FlextTestsProtocolsPayload": ".payload",
         "FlextTestsProtocolsBase": ".base",
-        "FlextTestsValueFactoryProtocolsMixin": ".valuefactory",
+        "FlextTestsProtocolsValueFactory": ".valuefactory",
     }),
     public_exports=__all__,
 )

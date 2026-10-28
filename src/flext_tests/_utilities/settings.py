@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from flext_tests import t
 
 
-class FlextTestsConfigHelpersUtilitiesMixin:
+class FlextTestsUtilitiesConfigHelpers:
     """Environment scopes for tests, without settings-model instance machinery."""
 
     @staticmethod
@@ -38,4 +38,4 @@ class FlextTestsConfigHelpersUtilitiesMixin:
             os.environ.update(original_environment)
 
 
-__all__: list[str] = ["FlextTestsConfigHelpersUtilitiesMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesConfigHelpers"]

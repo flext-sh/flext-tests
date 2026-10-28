@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_tests import c, p
-from flext_tests._utilities import FlextTestsPayloadUtilities
+from flext_tests._utilities import FlextTestsUtilitiesPayload
 from flext_tests._utilities._matchers import FlextTestsUtilitiesMatchersAssertions
 
 
@@ -24,15 +24,15 @@ class FlextTestsUtilitiesMatchersContainment:
         as_str: bool = False,
     ) -> None:
         """Validate containment without converting native values to text."""
-        target = FlextTestsPayloadUtilities.to_match_value(
-            FlextTestsPayloadUtilities.to_payload(
+        target = FlextTestsUtilitiesPayload.to_match_value(
+            FlextTestsUtilitiesPayload.to_payload(
                 value,
             ),
         )
         for expectation, required in ((has, True), (lacks, False)):
             if expectation is None:
                 continue
-            operand = FlextTestsPayloadUtilities.to_payload(
+            operand = FlextTestsUtilitiesPayload.to_payload(
                 expectation,
             )
             items = (
@@ -41,7 +41,7 @@ class FlextTestsUtilitiesMatchersContainment:
                 else (operand,)
             )
             for item in items:
-                expected = FlextTestsPayloadUtilities.to_match_value(
+                expected = FlextTestsUtilitiesPayload.to_match_value(
                     item,
                 )
                 if as_str:

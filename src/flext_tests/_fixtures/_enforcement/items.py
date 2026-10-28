@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, override
 import pytest
 
 from flext_tests._fixtures._enforcement import FlextTestsFixturesEnforcementError
-from flext_tests._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
+from flext_tests._protocols.enforcement import FlextTestsProtocolsEnforcement
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 
 class FlextTestsEnforcementItem(
-    FlextTestsEnforcementProtocolsMixin.TypedNode,
+    FlextTestsProtocolsEnforcement.TypedNode,
     pytest.Item,
 ):
     """Pytest item representing one ``(rule_id, project)`` violation group."""

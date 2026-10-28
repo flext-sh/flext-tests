@@ -32,7 +32,7 @@ else:
     import fcntl
 
 
-class FlextTestsTestContextUtilitiesMixin:
+class FlextTestsUtilitiesTestContext:
     """Context managers for tests."""
 
     @staticmethod
@@ -295,7 +295,7 @@ class FlextTestsTestContextUtilitiesMixin:
             if self._failure is not None:
                 raise self._failure
             self._assert_owned(self.directory)
-            with FlextTestsTestContextUtilitiesMixin.FileLock(
+            with FlextTestsUtilitiesTestContext.FileLock(
                 self.directory / "runtime.lock",
             ):
                 if self._failure is not None:
@@ -431,4 +431,4 @@ class FlextTestsTestContextUtilitiesMixin:
                 file_obj.close()
 
 
-__all__: list[str] = ["FlextTestsTestContextUtilitiesMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesTestContext"]

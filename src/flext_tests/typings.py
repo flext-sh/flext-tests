@@ -13,11 +13,11 @@ from __future__ import annotations
 from flext_cli import t as flext_cli_t
 
 from flext_tests._typings import (
-    FlextTestsBaseTypesMixin,
-    FlextTestsDockerTypesMixin,
-    FlextTestsFilesTypesMixin,
-    FlextTestsMatchersTypesMixin,
-    FlextTestsPytestTypesMixin,
+    FlextTestsTypesBase,
+    FlextTestsTypesDocker,
+    FlextTestsTypesFiles,
+    FlextTestsTypesMatchers,
+    FlextTestsTypesPytest,
 )
 
 
@@ -29,11 +29,11 @@ class FlextTestsTypes(flext_cli_t):
     """
 
     class Tests(
-        FlextTestsBaseTypesMixin,
-        FlextTestsDockerTypesMixin,
-        FlextTestsFilesTypesMixin,
-        FlextTestsMatchersTypesMixin,
-        FlextTestsPytestTypesMixin,
+        FlextTestsTypesBase,
+        FlextTestsTypesDocker,
+        FlextTestsTypesFiles,
+        FlextTestsTypesMatchers,
+        FlextTestsTypesPytest,
     ):
         """Test-specific type definitions namespace.
 

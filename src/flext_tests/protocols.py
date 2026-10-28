@@ -13,12 +13,12 @@ from __future__ import annotations
 from flext_cli import p as flext_cli_p
 
 from flext_tests._protocols import (
-    FlextTestsDockerProtocolsMixin,
-    FlextTestsEnforcementProtocolsMixin,
-    FlextTestsFixtureTreesProtocolsMixin,
-    FlextTestsMatchersProtocolsMixin,
-    FlextTestsPayloadProtocolsMixin,
-    FlextTestsValueFactoryProtocolsMixin,
+    FlextTestsProtocolsDocker,
+    FlextTestsProtocolsEnforcement,
+    FlextTestsProtocolsFixtureTrees,
+    FlextTestsProtocolsMatchers,
+    FlextTestsProtocolsPayload,
+    FlextTestsProtocolsValueFactory,
 )
 
 
@@ -26,14 +26,14 @@ class FlextTestsProtocols(flext_cli_p):
     """Protocols for FLEXT tests - extends p."""
 
     class Tests(
-        FlextTestsDockerProtocolsMixin,
-        FlextTestsValueFactoryProtocolsMixin,
+        FlextTestsProtocolsDocker,
+        FlextTestsProtocolsValueFactory,
         # Owned payload and matcher capability contracts consumed by matchers.
-        FlextTestsPayloadProtocolsMixin,
-        FlextTestsMatchersProtocolsMixin,
+        FlextTestsProtocolsPayload,
+        FlextTestsProtocolsMatchers,
         # NOTE (multi-agent): publish read-only cleanup contracts under p.Tests.
-        FlextTestsEnforcementProtocolsMixin,
-        FlextTestsFixtureTreesProtocolsMixin,
+        FlextTestsProtocolsEnforcement,
+        FlextTestsProtocolsFixtureTrees,
     ):
         """Test-specific protocols namespace.
 

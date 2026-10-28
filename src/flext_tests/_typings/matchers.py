@@ -11,7 +11,7 @@ from collections.abc import Callable
 from flext_core import t
 
 
-class FlextTestsMatchersTypesMixin:
+class FlextTestsTypesMatchers:
     """Nonrecursive matcher scalar, selector, and callback shapes."""
 
     type LengthSpec = int | tuple[int, int]
@@ -26,4 +26,4 @@ class FlextTestsMatchersTypesMixin:
     type EnvironmentSpec = t.StrMapping
 
 
-__all__: list[str] = ["FlextTestsMatchersTypesMixin"]
+__all__: list[str] = ["FlextTestsTypesMatchers"]

@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
+    from flext_tests._utilities._files._comparison import FlextTestsFilesComparison
     from flext_tests._utilities._files.assertions import (
         FlextTestsUtilitiesFilesAssertions,
     )
@@ -23,10 +24,11 @@ if TYPE_CHECKING:
         FlextTestsUtilitiesFilesLifecycle,
     )
     from flext_tests._utilities._files.reading import FlextTestsUtilitiesFilesReading
-    from flext_tests._utilities._files.size import FlextTestsFilesUtilitiesMixin
+    from flext_tests._utilities._files.size import FlextTestsUtilitiesFiles
 
 __all__: tuple[str, ...] = (
-    "FlextTestsFilesUtilitiesMixin",
+    "FlextTestsFilesComparison",
+    "FlextTestsUtilitiesFiles",
     "FlextTestsUtilitiesFilesAssertions",
     "FlextTestsUtilitiesFilesContexts",
     "FlextTestsUtilitiesFilesCreation",
@@ -39,7 +41,8 @@ install_lazy_exports(
     __name__,
     globals(),
     MappingProxyType({
-        "FlextTestsFilesUtilitiesMixin": ".size",
+        "FlextTestsFilesComparison": "._comparison",
+        "FlextTestsUtilitiesFiles": ".size",
         "FlextTestsUtilitiesFilesAssertions": ".assertions",
         "FlextTestsUtilitiesFilesContexts": ".contexts",
         "FlextTestsUtilitiesFilesCreation": ".creation",

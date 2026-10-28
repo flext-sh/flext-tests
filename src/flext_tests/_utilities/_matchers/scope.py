@@ -15,7 +15,7 @@ from contextlib import contextmanager, nullcontext
 from pathlib import Path
 
 from flext_tests import m, t
-from flext_tests._utilities import FlextTestsConfigHelpersUtilitiesMixin
+from flext_tests._utilities import FlextTestsUtilitiesConfigHelpers
 
 
 class FlextTestsUtilitiesMatchersScope:
@@ -66,7 +66,7 @@ class FlextTestsUtilitiesMatchersScope:
                 params = m.Tests.ScopeParams.model_validate(kwargs)
                 original_cwd: Path | None = None
                 env_context = (
-                    FlextTestsConfigHelpersUtilitiesMixin.env_vars_context(
+                    FlextTestsUtilitiesConfigHelpers.env_vars_context(
                         params.env,
                         params.remove_env_keys,
                     )

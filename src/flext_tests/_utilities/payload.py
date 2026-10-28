@@ -29,19 +29,19 @@ from flext_core import m, u
 
 import flext_tests
 from flext_tests import c, p, t
-from flext_tests._models import FlextTestsFlextModelsBase
+from flext_tests._models import FlextTestsModelsBase
 
 if TYPE_CHECKING:
-    from flext_tests._models import FlextTestsMatchersModelsMixin
+    from flext_tests._models import FlextTestsModelsMatchers
 
 
-class FlextTestsFlextUtilitiesPayload:
+class FlextTestsUtilitiesFlextPayload:
     """Canonical namespace owner."""
 
     @staticmethod
     def _stable_sort_key(value: p.Tests.Payload) -> t.StrPair:
         """Return a total deterministic key for heterogeneous payload values."""
-        native = FlextTestsPayloadUtilities.to_match_value(
+        native = FlextTestsUtilitiesPayload.to_match_value(
             value,
         )
         return type(native).__name__, str(native)
@@ -59,11 +59,11 @@ class FlextTestsFlextUtilitiesPayload:
         if isinstance(value, flext_tests.m.Tests.Payload):
             return value
         if isinstance(value, m.RootModel):
-            return FlextTestsPayloadUtilities.to_payload(
+            return FlextTestsUtilitiesPayload.to_payload(
                 cast("m.RootModel[object]", value).root,
             )
         if isinstance(value, Enum):
-            return FlextTestsPayloadUtilities.to_payload(
+            return FlextTestsUtilitiesPayload.to_payload(
                 value.value,
             )
         return None
@@ -185,7 +185,7 @@ class FlextTestsFlextUtilitiesPayload:
 
         """
         if isinstance(value, (KeysView, ValuesView)):
-            return FlextTestsPayloadUtilities.to_payload(
+            return FlextTestsUtilitiesPayload.to_payload(
                 list(cast("Iterable[object]", value)),
             )
         return None
@@ -211,7 +211,7 @@ class FlextTestsFlextUtilitiesPayload:
             if normalized_key in entries:
                 msg = f"Native payload mapping key collision: {normalized_key!r}"
                 raise ValueError(msg)
-            entries[normalized_key] = FlextTestsPayloadUtilities.to_payload(
+            entries[normalized_key] = FlextTestsUtilitiesPayload.to_payload(
                 item,
             )
         return flext_tests.m.Tests.Payload(kind="mapping", entries=entries)
@@ -229,14 +229,14 @@ class FlextTestsFlextUtilitiesPayload:
         if not isinstance(value, (list, tuple, set, frozenset)):
             return None
         children = tuple(
-            FlextTestsPayloadUtilities.to_payload(item)
+            FlextTestsUtilitiesPayload.to_payload(item)
             for item in cast("Sequence[object]", value)
         )
         if isinstance(value, (set, frozenset)):
             children = tuple(
                 sorted(
                     children,
-                    key=FlextTestsFlextUtilitiesPayload._stable_sort_key,
+                    key=FlextTestsUtilitiesFlextPayload._stable_sort_key,
                 ),
             )
         for kind, sequence_type in c.Tests.PAYLOAD_COLLECTION_TYPES.items():
@@ -261,13 +261,13 @@ class FlextTestsFlextUtilitiesPayload:
         _payload_sequence_leaf,
     )
 
-    class FlextTestsPayloadUtilities:
+    class FlextTestsUtilitiesPayload:
         """Namespace class for shared payload conversion helpers in flext_tests."""
 
         @staticmethod
         def to_payload(
             value: p.AttributeProbe,
-        ) -> FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload:
+        ) -> FlextTestsModelsBase.Payload:
             """Own supported native values without serializing their model leaves.
 
             Returns:
@@ -277,7 +277,7 @@ class FlextTestsFlextUtilitiesPayload:
                 TypeError: If Unsupported native payload leaf.
 
             """
-            for handler in FlextTestsFlextUtilitiesPayload._PAYLOAD_LEAF_HANDLERS:
+            for handler in FlextTestsUtilitiesFlextPayload._PAYLOAD_LEAF_HANDLERS:
                 payload = handler(value)
                 if payload is not None:
                     return payload
@@ -292,7 +292,7 @@ class FlextTestsFlextUtilitiesPayload:
                 The resulting ``p.Tests.NativeMatchValue``.
 
             """
-            project = FlextTestsPayloadUtilities.to_match_value
+            project = FlextTestsUtilitiesPayload.to_match_value
             if value.kind == "atom":
                 return value.atom
             if value.kind == "mapping":
@@ -318,7 +318,7 @@ class FlextTestsFlextUtilitiesPayload:
                 TypeError: If Unsupported textual payload leaf.
 
             """
-            to_n = FlextTestsPayloadUtilities.to_normalized_value
+            to_n = FlextTestsUtilitiesPayload.to_normalized_value
             if value.kind == "mapping":
                 return u.normalize_to_json_value({
                     key: to_n(item) for key, item in value.entries.items()
@@ -363,13 +363,13 @@ class FlextTestsFlextUtilitiesPayload:
                     payload.atom
                     if isinstance(
                         (
-                            payload := FlextTestsPayloadUtilities.to_payload(
+                            payload := FlextTestsUtilitiesPayload.to_payload(
                                 item,
                             )
                         ).atom,
                         m.BaseModel,
                     )
-                    else FlextTestsPayloadUtilities.to_normalized_value(
+                    else FlextTestsUtilitiesPayload.to_normalized_value(
                         payload,
                     )
                 )
@@ -402,7 +402,7 @@ class FlextTestsFlextUtilitiesPayload:
                         return None
                     node = node.items[int(segment)]
                 elif hasattr(node.atom, segment):
-                    node = FlextTestsPayloadUtilities.to_payload(
+                    node = FlextTestsUtilitiesPayload.to_payload(
                         getattr(node.atom, segment),
                     )
                 else:
@@ -420,7 +420,7 @@ class FlextTestsFlextUtilitiesPayload:
                 AssertionError: If Path not found.
 
             """
-            node = FlextTestsPayloadUtilities.path_node(
+            node = FlextTestsUtilitiesPayload.path_node(
                 subject,
                 path,
             )
@@ -432,10 +432,10 @@ class FlextTestsFlextUtilitiesPayload:
         @staticmethod
         def deep_match(
             subject: p.Tests.Payload,
-            spec: FlextTestsMatchersModelsMixin.DeepSpec,
+            spec: FlextTestsModelsMatchers.DeepSpec,
             *,
             path_sep: str = ".",
-        ) -> FlextTestsMatchersModelsMixin.DeepMatchResult:
+        ) -> FlextTestsModelsMatchers.DeepMatchResult:
             """Match an owned payload tree against a path -> expectation spec.
 
             Literal expectations compare native projections; predicates receive the
@@ -450,9 +450,9 @@ class FlextTestsFlextUtilitiesPayload:
             # lazy ``flext_tests.m`` attribute here (never an import statement)
             # keeps both import orders cycle-free.
             result_model = flext_tests.m.Tests.DeepMatchResult
-            project = FlextTestsPayloadUtilities.to_match_value
+            project = FlextTestsUtilitiesPayload.to_match_value
             for path, expected in spec.items():
-                node = FlextTestsPayloadUtilities.path_node(
+                node = FlextTestsUtilitiesPayload.path_node(
                     subject,
                     path,
                     path_sep=path_sep,
@@ -467,14 +467,14 @@ class FlextTestsFlextUtilitiesPayload:
                     )
                 if isinstance(
                     expected,
-                    FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+                    FlextTestsModelsBase.Payload,
                 ):
                     if project(node) != project(expected):
                         return result_model(
                             path=path,
                             expected=expected,
                             actual=cast(
-                                "FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload",
+                                "FlextTestsModelsBase.Payload",
                                 node,
                             ),
                             matched=False,
@@ -485,7 +485,7 @@ class FlextTestsFlextUtilitiesPayload:
                         path=path,
                         expected="<predicate>",
                         actual=cast(
-                            "FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload",
+                            "FlextTestsModelsBase.Payload",
                             node,
                         ),
                         matched=False,
@@ -494,11 +494,11 @@ class FlextTestsFlextUtilitiesPayload:
             return result_model(
                 path="",
                 expected=cast(
-                    "FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload",
+                    "FlextTestsModelsBase.Payload",
                     subject,
                 ),
                 actual=cast(
-                    "FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload",
+                    "FlextTestsModelsBase.Payload",
                     subject,
                 ),
                 matched=True,
@@ -506,9 +506,9 @@ class FlextTestsFlextUtilitiesPayload:
             )
 
 
-FlextTestsPayloadUtilities = FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities
+FlextTestsUtilitiesPayload = FlextTestsUtilitiesFlextPayload.FlextTestsUtilitiesPayload
 
 __all__: list[str] = [
-    "FlextTestsFlextUtilitiesPayload",
-    "FlextTestsPayloadUtilities",
+    "FlextTestsUtilitiesFlextPayload",
+    "FlextTestsUtilitiesPayload",
 ]

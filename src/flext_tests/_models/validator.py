@@ -23,7 +23,7 @@ def _warning_counter_default() -> MutableMapping[str, int]:
     return {}
 
 
-class FlextTestsValidatorModelsMixin:
+class FlextTestsModelsValidator:
     class EnforcementInfraRuleSource(m.Value):
         """Declarative flext-infra engine rules owning one catalog entry."""
 
@@ -60,8 +60,8 @@ class FlextTestsValidatorModelsMixin:
             m.Field(description="Human-readable catalog rule description."),
         ] = ""
         source: Annotated[
-            FlextTestsValidatorModelsMixin.EnforcementInfraRuleSource
-            | FlextTestsValidatorModelsMixin.EnforcementRuntimeWarningSource,
+            FlextTestsModelsValidator.EnforcementInfraRuleSource
+            | FlextTestsModelsValidator.EnforcementRuntimeWarningSource,
             m.Field(description="Closed rule source behind this catalog entry."),
         ]
 
@@ -69,7 +69,7 @@ class FlextTestsValidatorModelsMixin:
         """The composed catalog of enforcement rules for one governed root."""
 
         rules: Annotated[
-            t.VariadicTuple[FlextTestsValidatorModelsMixin.EnforcementRuleSpec,],
+            t.VariadicTuple[FlextTestsModelsValidator.EnforcementRuleSpec,],
             m.Field(description="Canonical catalog rules in composed order."),
         ] = ()
 
@@ -141,4 +141,4 @@ class FlextTestsValidatorModelsMixin:
         ] = ()
 
 
-__all__: list[str] = ["FlextTestsValidatorModelsMixin"]
+__all__: list[str] = ["FlextTestsModelsValidator"]

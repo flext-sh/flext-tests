@@ -72,7 +72,7 @@ class TestsFlextTestsMatchersBooleanResultsMixin:
         """Successful False values keep result, type, and predicate semantics."""
         result = r[bool].ok(value=False)
 
-        def is_false(value: bool) -> bool:
+        def is_false(value: object) -> bool:
             return value is False
 
         tm.that(tm.ok(result, is_=bool), eq=False)

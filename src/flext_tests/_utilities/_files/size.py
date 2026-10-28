@@ -11,7 +11,7 @@ from __future__ import annotations
 from flext_tests import c
 
 
-class FlextTestsFilesUtilitiesMixin:
+class FlextTestsUtilitiesFiles:
     """Test-only file helpers that have no ``u.Cli`` counterpart."""
 
     # NOTE (multi-agent): format_size moved here from c.Tests constants facet
@@ -32,4 +32,4 @@ class FlextTestsFilesUtilitiesMixin:
         return f"{value:.1f} PB"
 
 
-__all__: list[str] = ["FlextTestsFilesUtilitiesMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesFiles"]

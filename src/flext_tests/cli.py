@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from flext_cli.services.cli import FlextCliCli
 
-from flext_tests import _cli_docker
+from flext_tests import FlextTestsCliDocker
 
 
 class FlextTestsCli(FlextCliCli):
@@ -22,7 +22,7 @@ def main() -> None:
         SystemExit: Always.
 
     """
-    raise SystemExit(_cli_docker.FlextTestsCliDocker.main())
+    raise SystemExit(FlextTestsCliDocker.main())
 
 
 __all__: tuple[str, ...] = ("FlextTestsCli",)

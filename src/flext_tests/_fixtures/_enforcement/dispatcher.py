@@ -123,7 +123,7 @@ class FlextTestsEnforcementDispatcher:
         action = "error" if cfg.strict else "default"
         root = import_module("flext_tests")
         for rule in root.u.Tests.active_rules(cfg):
-            if isinstance(rule.source, root.m.EnforcementRuntimeWarningSource):
+            if isinstance(rule.source, root.m.Tests.EnforcementRuntimeWarningSource):
                 config.addinivalue_line(
                     "filterwarnings",
                     f"{action}::{rule.source.category}",

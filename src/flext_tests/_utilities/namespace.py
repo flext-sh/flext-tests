@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-class FlextTestsNamespaceUtilitiesMixin:
+class FlextTestsUtilitiesNamespace:
     """Pure namespace-token derivation (no I/O beyond the checkout read)."""
 
     _issue_lock: ClassVar[threading.Lock] = threading.Lock()
@@ -49,14 +49,14 @@ class FlextTestsNamespaceUtilitiesMixin:
         """
         namespace_constants = c.Tests
         issued_ms = time.time_ns() // 1_000_000
-        epoch_stamp = FlextTestsNamespaceUtilitiesMixin._base36(issued_ms)
+        epoch_stamp = FlextTestsUtilitiesNamespace._base36(issued_ms)
         checkout_digest = hashlib.sha256(
             str(checkout_root).encode(encoding="utf-8"),
         ).hexdigest()[: namespace_constants.NAMESPACE_CHECKOUT_DIGEST_LENGTH]
-        worker_code = FlextTestsNamespaceUtilitiesMixin._worker_code(worker_id)
+        worker_code = FlextTestsUtilitiesNamespace._worker_code(worker_id)
         prefix = f"{epoch_stamp}{checkout_digest}{worker_code}"
         tail_width = namespace_constants.NAMESPACE_ID_LENGTH - len(prefix)
-        tail = FlextTestsNamespaceUtilitiesMixin._monotonic_tail(issued_ms, tail_width)
+        tail = FlextTestsUtilitiesNamespace._monotonic_tail(issued_ms, tail_width)
         run_digest = hashlib.sha256(testrun_uid.encode(encoding="utf-8")).hexdigest()[
             :6
         ]
@@ -127,4 +127,4 @@ class FlextTestsNamespaceUtilitiesMixin:
         )
 
 
-__all__: list[str] = ["FlextTestsNamespaceUtilitiesMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesNamespace"]

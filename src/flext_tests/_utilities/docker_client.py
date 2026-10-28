@@ -17,10 +17,10 @@ from flext_cli import u
 from python_on_whales import DockerClient as ComposeDockerClient
 
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities import FlextTestsDockerLifecycleUtilitiesMixin
+from flext_tests._utilities import FlextTestsUtilitiesDockerLifecycle
 
 
-class FlextTestsDockerClientUtilitiesMixin:
+class FlextTestsUtilitiesDockerClient:
     """One endpoint, chosen before connecting; failures keep their cause."""
 
     @staticmethod
@@ -55,7 +55,7 @@ class FlextTestsDockerClientUtilitiesMixin:
 
         """
         env_file = directory / ".env"
-        endpoint = FlextTestsDockerClientUtilitiesMixin.docker_endpoint()
+        endpoint = FlextTestsUtilitiesDockerClient.docker_endpoint()
         _ = env_file.write_text(
             f"{c.Tests.DOCKER_HOST_VARIABLE}{c.Tests.DOCKER_ENV_SEPARATOR}{endpoint}\n",
             encoding="utf-8",
@@ -73,7 +73,7 @@ class FlextTestsDockerClientUtilitiesMixin:
         """
         try:
             client = DockerClient(
-                base_url=FlextTestsDockerClientUtilitiesMixin.docker_endpoint(),
+                base_url=FlextTestsUtilitiesDockerClient.docker_endpoint(),
                 tls=kwargs_from_env().get("tls", False),
                 version=DEFAULT_DOCKER_API_VERSION,
             )
@@ -148,10 +148,10 @@ class FlextTestsDockerClientUtilitiesMixin:
         compose_file = target.compose_file
         if compose_file is None:
             return r[bool].fail(c.Tests.ERR_DOCKER_TARGET_NOT_INSPECTABLE)
-        client = FlextTestsDockerClientUtilitiesMixin.docker_compose_client(
+        client = FlextTestsUtilitiesDockerClient.docker_compose_client(
             compose_file,
             target.project_name
-            or FlextTestsDockerLifecycleUtilitiesMixin.docker_compose_project(
+            or FlextTestsUtilitiesDockerLifecycle.docker_compose_project(
                 compose_file,
             ),
             env_files,
@@ -173,4 +173,4 @@ class FlextTestsDockerClientUtilitiesMixin:
         return r[bool].ok(value=True)
 
 
-__all__: list[str] = ["FlextTestsDockerClientUtilitiesMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesDockerClient"]

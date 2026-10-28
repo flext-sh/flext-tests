@@ -13,13 +13,13 @@ from __future__ import annotations
 from flext_cli import m as flext_cli_m
 
 from flext_tests._models import (
-    FlextTestsDockerModelsMixin,
-    FlextTestsFilesystemModelsMixin,
-    FlextTestsFlextModelsBase,
-    FlextTestsMatchersModelsMixin,
-    FlextTestsNamespaceModelsMixin,
-    FlextTestsSpecModelsMixin,
-    FlextTestsValidatorModelsMixin,
+    FlextTestsModelsBase,
+    FlextTestsModelsDocker,
+    FlextTestsModelsFilesystem,
+    FlextTestsModelsMatchers,
+    FlextTestsModelsNamespace,
+    FlextTestsModelsSpec,
+    FlextTestsModelsValidator,
 )
 
 
@@ -27,13 +27,13 @@ class FlextTestsModels(flext_cli_m):
     """Test models extending m with test-specific factory models."""
 
     class Tests(
-        FlextTestsDockerModelsMixin,
-        FlextTestsFilesystemModelsMixin,
-        FlextTestsMatchersModelsMixin,
-        FlextTestsNamespaceModelsMixin,
-        FlextTestsSpecModelsMixin,
-        FlextTestsValidatorModelsMixin,
-        FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin,
+        FlextTestsModelsDocker,
+        FlextTestsModelsFilesystem,
+        FlextTestsModelsMatchers,
+        FlextTestsModelsNamespace,
+        FlextTestsModelsSpec,
+        FlextTestsModelsValidator,
+        FlextTestsModelsBase,
     ):
         """Test-specific models namespace."""
 

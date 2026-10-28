@@ -15,7 +15,7 @@ import pytest
 from hypothesis.configuration import set_hypothesis_home_dir
 
 from flext_tests import c
-from flext_tests._utilities import FlextTestsScratchStorageUtilitiesMixin
+from flext_tests._utilities import FlextTestsUtilitiesScratchStorage
 
 
 class FlextTestsScratchStoragePlugin:
@@ -29,7 +29,7 @@ class FlextTestsScratchStoragePlugin:
             Path: The resolved scratch root for this checkout.
 
         """
-        return FlextTestsScratchStorageUtilitiesMixin.scratch_root(
+        return FlextTestsUtilitiesScratchStorage.scratch_root(
             checkout_root=Path(config.rootpath),
             override=config.getini(c.Tests.SCRATCH_ROOT_INI) or None,
         )
@@ -37,8 +37,9 @@ class FlextTestsScratchStoragePlugin:
     @staticmethod
     def pytest_configure(config: pytest.Config) -> None:
         """Relocate hypothesis/benchmark storage under the scratch root."""
-        if not hasattr(pytest.Item, "_nodeid"):
-            pytest.Item._nodeid = property(lambda self: self.nodeid)  # type: ignore[attr-defined]
+        item_dict = vars(pytest.Item)
+        if item_dict.get("_nodeid") is None:
+            item_dict["_nodeid"] = property(lambda self: self.nodeid)
         scratch = FlextTestsScratchStoragePlugin._scratch_root(config)
         hypothesis_dir = scratch / "hypothesis"
         hypothesis_dir.mkdir(parents=True, exist_ok=True)

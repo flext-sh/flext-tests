@@ -13,10 +13,10 @@ from typing import Annotated
 from flext_cli import m
 
 from flext_tests import c, p, t
-from flext_tests._models import FlextTestsFlextModelsBase
+from flext_tests._models import FlextTestsModelsBase
 
 
-class FlextTestsFilesystemModelsMixin:
+class FlextTestsModelsFilesystem:
     """Filesystem model group (info, content, and operation parameters)."""
 
     class FileInfo(m.Value):
@@ -65,7 +65,7 @@ class FlextTestsFilesystemModelsMixin:
             m.Field(description="Hex-encoded SHA-256 digest."),
         ] = None
         content_meta: Annotated[
-            FlextTestsFilesystemModelsMixin.ContentMeta | None,
+            FlextTestsModelsFilesystem.ContentMeta | None,
             m.Field(description="Optional content metadata for parsed files."),
         ] = None
 
@@ -101,7 +101,7 @@ class FlextTestsFilesystemModelsMixin:
         """Parameters for file creation operations."""
 
         content: Annotated[
-            FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+            FlextTestsModelsBase.Payload,
             m.Field(description="Owned native file content to create."),
         ]
         name: Annotated[
@@ -330,4 +330,4 @@ class FlextTestsFilesystemModelsMixin:
         )
 
 
-__all__: list[str] = ["FlextTestsFilesystemModelsMixin"]
+__all__: list[str] = ["FlextTestsModelsFilesystem"]

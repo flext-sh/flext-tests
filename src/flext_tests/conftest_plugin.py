@@ -92,10 +92,11 @@ class FlextTestsConftestPlugin:
                 raise ValueError(msg)
             owner = owners[0]
             for attr in owner.__dict__.values():
-                if hasattr(attr, "_get_wrapped_function"):
-                    wrapped = attr._get_wrapped_function()
+                wrapped_getter = attr.__dict__.get("_get_wrapped_function")
+                if wrapped_getter is not None:
+                    wrapped = wrapped_getter()
                     if isinstance(wrapped, staticmethod):
-                        attr._fixture_function = wrapped.__func__
+                        attr.__dict__["_fixture_function"] = wrapped.__func__
             if config.pluginmanager.get_plugin(fixture_module) is owner:
                 continue
             if config.pluginmanager.register(owner, fixture_module) is None:
