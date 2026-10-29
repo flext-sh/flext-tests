@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Annotated, cast, overload
+from typing import Annotated, overload
 
 from flext_cli import u
 
@@ -186,12 +186,7 @@ class FlextTestsUtilitiesFilesReading(FlextTestsUtilitiesFilesCreation):
                 text = path.read_text(encoding=params.enc)
                 adapter: u.type_adapter[
                     Mapping[str, t.Tests.TestobjectSerializable]
-                ] = u.type_adapter(
-                    cast(
-                        "type[Mapping[str, t.Tests.TestobjectSerializable]]",
-                        Mapping[str, t.Tests.TestobjectSerializable],
-                    ),
-                )
+                ] = u.type_adapter(Mapping[str, t.Tests.TestobjectSerializable])
                 parsed_json: Mapping[str, t.Tests.TestobjectSerializable] = (
                     adapter.validate_json(text.encode())
                 )

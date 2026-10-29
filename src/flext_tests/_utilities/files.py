@@ -7,14 +7,14 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from flext_tests._utilities._files import (
-    FlextTestsUtilitiesFiles,
     FlextTestsUtilitiesFilesInfo,
+    FlextTestsUtilitiesFilesSize,
 )
 
 
 class FlextTestsUtilitiesFiles(
-    FlextTestsUtilitiesFiles,
     FlextTestsUtilitiesFilesInfo,
+    FlextTestsUtilitiesFilesSize,
 ):
     """Facade for files."""
 

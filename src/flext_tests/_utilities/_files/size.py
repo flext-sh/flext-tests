@@ -11,8 +11,8 @@ from __future__ import annotations
 from flext_tests import c
 
 
-class FlextTestsUtilitiesFiles:
-    """Test-only file helpers that have no ``u.Cli`` counterpart."""
+class FlextTestsUtilitiesFilesSize:
+    """Test-only file size helpers; size formatting has no ``u.Cli`` twin."""
 
     # NOTE (multi-agent): format_size moved here from c.Tests constants facet
     # (declaration purity - constants must not hold formatting behavior; mro-i6nq.11).
@@ -32,4 +32,4 @@ class FlextTestsUtilitiesFiles:
         return f"{value:.1f} PB"
 
 
-__all__: list[str] = ["FlextTestsUtilitiesFiles"]
+__all__: list[str] = ["FlextTestsUtilitiesFilesSize"]

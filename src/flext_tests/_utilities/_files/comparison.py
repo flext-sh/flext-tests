@@ -147,14 +147,14 @@ class FlextTestsUtilitiesFilesComparison(
             set(params.exclude_keys) if params.exclude_keys is not None else None
         )
         left_result = u.transform(
-            FlextTestsUtilitiesPayload.FlextTestsUtilitiesPayload.to_config_map(
+            FlextTestsUtilitiesPayload.to_config_map(
                 dict1,
             ),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
         right_result = u.transform(
-            FlextTestsUtilitiesPayload.FlextTestsUtilitiesPayload.to_config_map(
+            FlextTestsUtilitiesPayload.to_config_map(
                 dict2,
             ),
             filter_keys=filter_keys_set,

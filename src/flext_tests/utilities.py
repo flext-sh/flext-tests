@@ -25,6 +25,7 @@ from flext_tests._utilities import (
     FlextTestsUtilitiesFixturesDSL,
     FlextTestsUtilitiesFlextGovernance,
     FlextTestsUtilitiesFlextHandler,
+    FlextTestsUtilitiesMatchers,
     FlextTestsUtilitiesNamespace,
     FlextTestsUtilitiesPayload,
     FlextTestsUtilitiesPytest,
@@ -58,6 +59,9 @@ class FlextTestsUtilities(flext_cli_u, FlextTestsUtilitiesFlextGovernance):
         FlextTestsUtilitiesTestContext,
         FlextTestsUtilitiesBase,
         FlextTestsUtilitiesPytest,
+        # Assertion matchers publish `that` and siblings into the Tests
+        # namespace (ldap family precedent: Tests.that(subject, ...)).
+        FlextTestsUtilitiesMatchers,
         FlextTestsUtilitiesFlextHandler.FlextTestsUtilitiesHandlerHelpers,
         FlextTestsUtilitiesFlextGovernance.FlextTestsModuleGovernance,
     ):

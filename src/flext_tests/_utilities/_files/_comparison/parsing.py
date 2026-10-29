@@ -126,14 +126,14 @@ class FlextTestsUtilitiesFilesComparisonParsing:
         filter_keys_set = set(keys) if keys is not None else None
         exclude_keys_set = set(exclude_keys) if exclude_keys is not None else None
         result1 = u.transform(
-            FlextTestsUtilitiesPayload.FlextTestsUtilitiesPayload.to_config_map(
+            FlextTestsUtilitiesPayload.to_config_map(
                 dict1,
             ),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
         result2 = u.transform(
-            FlextTestsUtilitiesPayload.FlextTestsUtilitiesPayload.to_config_map(
+            FlextTestsUtilitiesPayload.to_config_map(
                 dict2,
             ),
             filter_keys=filter_keys_set,

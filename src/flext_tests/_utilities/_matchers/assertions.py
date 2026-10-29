@@ -57,7 +57,7 @@ class FlextTestsUtilitiesMatchersAssertions:
             AssertionError: Always.
 
         """
-        native = FlextTestsUtilitiesPayload.FlextTestsUtilitiesPayload.to_match_value(
+        native = FlextTestsUtilitiesPayload.to_match_value(
             payload,
         )
         if isinstance(native, Sized):

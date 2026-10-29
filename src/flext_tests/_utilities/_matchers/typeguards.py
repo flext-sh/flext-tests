@@ -72,7 +72,7 @@ class FlextTestsUtilitiesMatchersTypeguards:
                 ``not matches``; or if ``not (isinstance(native, Sized))``.
 
         """
-        native = FlextTestsUtilitiesPayload.FlextTestsUtilitiesPayload.to_match_value(
+        native = FlextTestsUtilitiesPayload.to_match_value(
             payload,
         )
         message = params.msg or c.Tests.ERR_CONSTRAINTS_FAILED.format(value=native)

@@ -26,10 +26,10 @@ if TYPE_CHECKING:
         FlextTestsUtilitiesFilesLifecycle,
     )
     from flext_tests._utilities._files.reading import FlextTestsUtilitiesFilesReading
-    from flext_tests._utilities._files.size import FlextTestsUtilitiesFiles
+    from flext_tests._utilities._files.size import FlextTestsUtilitiesFilesSize
 
 __all__: tuple[str, ...] = (
-    "FlextTestsUtilitiesFiles",
+    "FlextTestsUtilitiesFilesSize",
     "FlextTestsUtilitiesFilesAssertions",
     "FlextTestsUtilitiesFilesComparison",
     "FlextTestsUtilitiesFilesContexts",
@@ -44,7 +44,7 @@ install_lazy_exports(
     globals(),
     MappingProxyType({
         "FlextTestsUtilitiesFilesComparison": "._comparison",
-        "FlextTestsUtilitiesFiles": ".size",
+        "FlextTestsUtilitiesFilesSize": ".size",
         "FlextTestsUtilitiesFilesAssertions": ".assertions",
         "FlextTestsUtilitiesFilesContexts": ".contexts",
         "FlextTestsUtilitiesFilesCreation": ".creation",
