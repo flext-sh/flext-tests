@@ -6,16 +6,16 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from pathlib import Path
 
 from flext_cli import u
 
-from flext_tests import c, m, p, r, t
-from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
+from flext_tests import c, m, p, r
+from flext_tests._utilities import FlextTestsUtilitiesTestContext
 
 
-class FlextTestsDockerStateUtilitiesMixin:
+class FlextTestsUtilitiesDockerState:
     """One JSON record per container name, shared by every checkout of the host.
 
     A record is rewritten atomically while ``<name>.state.lock`` is held, so a
@@ -60,12 +60,12 @@ class FlextTestsDockerStateUtilitiesMixin:
             The resulting ``p.Result[m.Tests.ContainerState]``.
 
         """
-        unprovisioned = FlextTestsDockerStateUtilitiesMixin._unprovisioned(
+        unprovisioned = FlextTestsUtilitiesDockerState._unprovisioned(
             container_name,
         )
         if unprovisioned.failure:
             return unprovisioned
-        state_file = FlextTestsDockerStateUtilitiesMixin.docker_state_file(
+        state_file = FlextTestsUtilitiesDockerState.docker_state_file(
             state_dir,
             container_name,
         )
@@ -82,7 +82,7 @@ class FlextTestsDockerStateUtilitiesMixin:
                 ),
             )
             .flat_map(
-                lambda state: FlextTestsDockerStateUtilitiesMixin._own_record(
+                lambda state: FlextTestsUtilitiesDockerState._own_record(
                     state_file,
                     container_name,
                     state,
@@ -142,15 +142,15 @@ class FlextTestsDockerStateUtilitiesMixin:
             The resulting ``p.Result[m.Tests.ContainerState]``.
 
         """
-        named = FlextTestsDockerStateUtilitiesMixin._unprovisioned(container_name)
+        named = FlextTestsUtilitiesDockerState._unprovisioned(container_name)
         if named.failure:
             return named
-        state_file = FlextTestsDockerStateUtilitiesMixin.docker_state_file(
+        state_file = FlextTestsUtilitiesDockerState.docker_state_file(
             state_dir,
             container_name,
         )
-        lock = FlextTestsTestContextUtilitiesMixin.FileLock(
-            FlextTestsDockerStateUtilitiesMixin.docker_state_lock_file(
+        lock = FlextTestsUtilitiesTestContext.FileLock(
+            FlextTestsUtilitiesDockerState.docker_state_lock_file(
                 state_dir,
                 container_name,
             ),
@@ -159,18 +159,18 @@ class FlextTestsDockerStateUtilitiesMixin:
         try:
             with lock:
                 return (
-                    FlextTestsDockerStateUtilitiesMixin
+                    FlextTestsUtilitiesDockerState
                     .read_container_state(state_dir, container_name)
                     .map(change)
                     .flat_map(
-                        lambda changed: FlextTestsDockerStateUtilitiesMixin._own_record(
+                        lambda changed: FlextTestsUtilitiesDockerState._own_record(
                             state_file,
                             container_name,
                             changed,
                         ),
                     )
                     .flat_map(
-                        lambda owned: FlextTestsDockerStateUtilitiesMixin._publish(
+                        lambda owned: FlextTestsUtilitiesDockerState._publish(
                             state_file,
                             owned,
                         ),
@@ -201,11 +201,11 @@ class FlextTestsDockerStateUtilitiesMixin:
     @staticmethod
     def list_container_states(
         state_dir: Path,
-    ) -> p.Result[t.SequenceOf[m.Tests.ContainerState]]:
+    ) -> p.Result[Sequence[m.Tests.ContainerState]]:
         """Read every record of the host, ordered by container name.
 
         Returns:
-            The resulting ``p.Result[t.SequenceOf[m.Tests.ContainerState]]``.
+            The resulting ``p.Result[Sequence[m.Tests.ContainerState]]``.
 
         """
         states: list[m.Tests.ContainerState] = []
@@ -215,14 +215,14 @@ class FlextTestsDockerStateUtilitiesMixin:
             else []
         )
         for record_file in record_files:
-            read = FlextTestsDockerStateUtilitiesMixin.read_container_state(
+            read = FlextTestsUtilitiesDockerState.read_container_state(
                 state_dir,
                 record_file.name.removesuffix(c.Tests.DOCKER_STATE_FILE_SUFFIX),
             )
             if read.failure:
-                return r[t.SequenceOf[m.Tests.ContainerState]].from_failure(read)
+                return r[Sequence[m.Tests.ContainerState]].from_failure(read)
             states.append(read.value)
-        return r[t.SequenceOf[m.Tests.ContainerState]].ok(tuple(states))
+        return r[Sequence[m.Tests.ContainerState]].ok(tuple(states))
 
 
-__all__: list[str] = ["FlextTestsDockerStateUtilitiesMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesDockerState"]

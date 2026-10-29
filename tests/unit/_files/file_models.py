@@ -12,7 +12,7 @@ from flext_tests import FlextTestsFiles
 from tests import tm
 
 
-class TestsFlextTestsFilesModelsMixin:
+class TestsFlextTestsModelsFilesMixin:
     """File model tests."""
 
     @staticmethod

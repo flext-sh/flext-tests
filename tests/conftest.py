@@ -11,9 +11,8 @@ from pathlib import Path
 import pytest
 
 from flext_tests import FlextTestsDocker
-from tests import t
 
-pytest_plugins: t.VariadicTuple[str] = ("pytester",)
+pytest_plugins: tuple[str, ...] = ("pytester",)
 
 
 @pytest.fixture

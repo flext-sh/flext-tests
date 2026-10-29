@@ -6,48 +6,22 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import TYPE_CHECKING
-
-from flext_core import t
-
-if TYPE_CHECKING:
-    from flext_tests import p
+from collections.abc import Callable, Mapping, Sequence
 
 
-class FlextTestsMatchersTypesMixin:
+class FlextTestsTypesMatchers:
     """Nonrecursive matcher scalar, selector, and callback shapes."""
 
     type LengthSpec = int | tuple[int, int]
     type ComparableScalar = float | int | str
     type ItemSelector = int | str
-    type PathSpec = str | t.StrSequence
-    type ExclusionSpec = str | t.StrSequence
-    type KeySpec = t.StrSequence | set[str]
-    type AttributeSpec = str | t.StrSequence
-    type ErrorCodeSpec = str | t.StrSequence
-    type CleanupSpec = t.SequenceOf[Callable[[], None]]
-    type EnvironmentSpec = t.StrMapping
-
-    type MatcherOption = (
-        p.Tests.NativeMatchValue
-        | p.Tests.Payload
-        | t.RegexPattern
-        | type
-        | t.VariadicTuple[type]
-        | Callable[[p.Tests.NativeMatchValue], bool]
-        | Callable[[p.Tests.NativeMatchValue], p.Tests.NativeMatchValue]
-        | t.MappingKV[
-            str | int,
-            p.Tests.NativeMatchValue
-            | p.Tests.Payload
-            | Callable[[p.Tests.NativeMatchValue], bool],
-        ]
-        | p.Tests.MatcherCriteriaMapping
-        | p.Tests.MatcherCriteriaSequence
-        | t.StrSequence
-        | LengthSpec
-    )
+    type PathSpec = str | Sequence[str]
+    type ExclusionSpec = str | Sequence[str]
+    type KeySpec = Sequence[str] | set[str]
+    type AttributeSpec = str | Sequence[str]
+    type ErrorCodeSpec = str | Sequence[str]
+    type CleanupSpec = Sequence[Callable[[], None]]
+    type EnvironmentSpec = Mapping[str, str]
 
 
-__all__: list[str] = ["FlextTestsMatchersTypesMixin"]
+__all__: list[str] = ["FlextTestsTypesMatchers"]

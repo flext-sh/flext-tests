@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from copy import deepcopy
 from operator import eq
 from pathlib import Path
@@ -76,8 +77,12 @@ class TestsFlextTestsMatchersNativeTruthMixin:
                 raise RuntimeError(message)
 
         subject = Subject()
+
+        def same_subject(value: Subject) -> bool:
+            return value is subject
+
         tm.that(subject, eq=subject, ne=subject)
-        tm.that(subject, where=lambda value: value is subject)
+        tm.that(subject, where=same_subject)
         tm.that(events, eq=["eq", "ne"])
 
     @staticmethod
@@ -371,7 +376,7 @@ class TestsFlextTestsMatchersValidationMixin(TestsFlextTestsMatchersNativeTruthM
     @staticmethod
     def test_ok_with_eq_sequence_parameter() -> None:
         """Test tm.ok() with structural sequence equality."""
-        result = r[t.StrSequence].ok(["a", "b", "c"])
+        result = r[Sequence[str]].ok(["a", "b", "c"])
         value = tm.ok(result, eq=["a", "b", "c"])
         tm.that(value, eq=["a", "b", "c"])
 

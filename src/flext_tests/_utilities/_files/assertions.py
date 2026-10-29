@@ -13,10 +13,10 @@ from pathlib import Path
 from flext_cli import u
 
 from flext_tests import c, m
-from flext_tests._utilities._files import FlextTestsFilesContextsMixin
+from flext_tests._utilities._files import FlextTestsUtilitiesFilesContexts
 
 
-class FlextTestsFilesAssertionsMixin(FlextTestsFilesContextsMixin):
+class FlextTestsUtilitiesFilesAssertions(FlextTestsUtilitiesFilesContexts):
     """Generalized file existence and property assertions."""
 
     @staticmethod
@@ -68,4 +68,4 @@ class FlextTestsFilesAssertionsMixin(FlextTestsFilesContextsMixin):
         return path
 
 
-__all__: list[str] = ["FlextTestsFilesAssertionsMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesFilesAssertions"]

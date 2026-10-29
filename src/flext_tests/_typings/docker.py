@@ -11,10 +11,10 @@ from docker.models.containers import Container
 from python_on_whales import DockerClient as ComposeDockerClient
 
 
-class FlextTestsDockerTypesMixin:
+class FlextTestsTypesDocker:
     type DockerSdkClient = DockerClient
     type DockerContainer = Container
     type ComposeClient = ComposeDockerClient
 
 
-__all__: list[str] = ["FlextTestsDockerTypesMixin"]
+__all__: list[str] = ["FlextTestsTypesDocker"]

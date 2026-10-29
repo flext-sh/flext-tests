@@ -6,16 +6,14 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
-
-if TYPE_CHECKING:
-    from flext_cli import t
+from collections.abc import Sequence
+from typing import ClassVar
 
 
 class FlextTestsConstantsValidator:
     """Workspace discovery and engine-finding keys of the enforcement dispatch."""
 
-    ENFORCEMENT_WORKSPACE_MARKERS: ClassVar[t.StrSequence] = (
+    ENFORCEMENT_WORKSPACE_MARKERS: ClassVar[Sequence[str]] = (
         "AGENTS.md",
         "flext-core",
         "flext-tests",
@@ -31,7 +29,7 @@ class FlextTestsConstantsValidator:
         "flext_tests._fixtures._enforcement.dispatcher"
     )
     """Module the ``pytest11`` enforcement adapter resolves inside its hooks."""
-    FIXTURE_PLUGIN_MODULES: ClassVar[t.StrSequence] = (
+    FIXTURE_PLUGIN_MODULES: ClassVar[Sequence[str]] = (
         "flext_tests._fixtures.settings",
         "flext_tests._fixtures.namespace",
         "flext_tests._fixtures.scratch_storage",

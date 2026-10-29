@@ -13,39 +13,36 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._models.base import FlextTestsFlextModelsBase
-    from flext_tests._models.docker import FlextTestsDockerModelsMixin
-    from flext_tests._models.filesystem import FlextTestsFilesystemModelsMixin
-    from flext_tests._models.matchers import FlextTestsMatchersModelsMixin
-    from flext_tests._models.namespace import FlextTestsNamespaceModelsMixin
-    from flext_tests._models.spec import FlextTestsSpecModelsMixin
-    from flext_tests._models.tests_namespace import FlextTestsModelsTestsNamespace
-    from flext_tests._models.validator import FlextTestsValidatorModelsMixin
+    from flext_tests._models.base import FlextTestsModelsFlextBase
+    from flext_tests._models.docker import FlextTestsModelsDocker
+    from flext_tests._models.filesystem import FlextTestsModelsFilesystem
+    from flext_tests._models.matchers import FlextTestsModelsMatchers
+    from flext_tests._models.namespace import FlextTestsModelsNamespace
+    from flext_tests._models.spec import FlextTestsModelsSpec
+    from flext_tests._models.validator import FlextTestsModelsValidator
 
 
 __all__: tuple[str, ...] = (
-    "FlextTestsDockerModelsMixin",
-    "FlextTestsFilesystemModelsMixin",
-    "FlextTestsFlextModelsBase",
-    "FlextTestsMatchersModelsMixin",
-    "FlextTestsModelsTestsNamespace",
-    "FlextTestsNamespaceModelsMixin",
-    "FlextTestsSpecModelsMixin",
-    "FlextTestsValidatorModelsMixin",
+    "FlextTestsModelsDocker",
+    "FlextTestsModelsFilesystem",
+    "FlextTestsModelsFlextBase",
+    "FlextTestsModelsMatchers",
+    "FlextTestsModelsNamespace",
+    "FlextTestsModelsSpec",
+    "FlextTestsModelsValidator",
 )
 
 install_lazy_exports(
     __name__,
     globals(),
     MappingProxyType({
-        "FlextTestsDockerModelsMixin": ".docker",
-        "FlextTestsFilesystemModelsMixin": ".filesystem",
-        "FlextTestsFlextModelsBase": ".base",
-        "FlextTestsMatchersModelsMixin": ".matchers",
-        "FlextTestsModelsTestsNamespace": ".tests_namespace",
-        "FlextTestsNamespaceModelsMixin": ".namespace",
-        "FlextTestsSpecModelsMixin": ".spec",
-        "FlextTestsValidatorModelsMixin": ".validator",
+        "FlextTestsModelsDocker": ".docker",
+        "FlextTestsModelsFilesystem": ".filesystem",
+        "FlextTestsModelsFlextBase": ".base",
+        "FlextTestsModelsMatchers": ".matchers",
+        "FlextTestsModelsNamespace": ".namespace",
+        "FlextTestsModelsSpec": ".spec",
+        "FlextTestsModelsValidator": ".validator",
     }),
     public_exports=__all__,
 )

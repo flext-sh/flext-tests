@@ -9,6 +9,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
 import pytest
@@ -18,7 +19,7 @@ import flext_tests
 from flext_tests import t
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterator
+    from collections.abc import Callable
     from pathlib import Path
 
     from flext_tests import FlextTestsSettings, m, p
@@ -27,8 +28,8 @@ if TYPE_CHECKING:
 class FlextTestsSettingsFixtures:
     """Native shared fixtures and per-item reset hooks."""
 
-    @staticmethod
     @pytest.fixture(scope="session")
+    @staticmethod
     def session_runtime(
         tmp_path_factory: pytest.TempPathFactory,
         run_namespace: m.Tests.TestNamespace,
@@ -70,8 +71,8 @@ class FlextTestsSettingsFixtures:
         _ = item, nextitem
         FlextTestsSettingsFixtures._reset_runtime_state()
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def reset_settings() -> Iterator[None]:
         """Reset settings/container before and after an explicitly requested lease.
 
@@ -84,16 +85,16 @@ class FlextTestsSettingsFixtures:
         finally:
             FlextTestsSettingsFixtures._reset_runtime_state()
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def test_runtime(
         reset_settings: None,
     ) -> None:
         """Lease the reset lifecycle without constructing consumer dependencies."""
         _ = reset_settings
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def settings() -> FlextTestsSettings:
         """Provide the reset typed test settings singleton with the test defaults.
 
@@ -122,8 +123,8 @@ class FlextTestsSettingsFixtures:
             key: value for key, value in overrides.items() if value is not None
         })
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def settings_factory() -> Callable[..., FlextSettings]:
         """Supply the settings factory without wrapping its native callable.
 
@@ -133,8 +134,8 @@ class FlextTestsSettingsFixtures:
         """
         return FlextTestsSettingsFixtures._create
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def test_context() -> FlextContext:
         """Provide the canonical FlextContext fixture for test runtimes.
 
@@ -144,8 +145,8 @@ class FlextTestsSettingsFixtures:
         """
         return FlextContext()
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def clean_container() -> Iterator[p.Container]:
         """Provide isolated container state and reset it even on test failure.
 
@@ -159,8 +160,8 @@ class FlextTestsSettingsFixtures:
         finally:
             FlextContainer.reset_for_testing()
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def logging_trace() -> bool:
         """Provide the trace selection ``restore_logging`` applies.
 
@@ -173,8 +174,8 @@ class FlextTestsSettingsFixtures:
         """
         return False
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def restore_logging(*, logging_trace: bool) -> Iterator[None]:
         """Select DEBUG logging for one test, then restore the captured policy.
 
@@ -199,8 +200,8 @@ class FlextTestsSettingsFixtures:
                 settings=original_options, runtime_settings=original_settings
             )
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def temp_dir(tmp_path: Path) -> Path:
         """Provide the canonical temporary directory fixture for tests.
 
@@ -210,8 +211,8 @@ class FlextTestsSettingsFixtures:
         """
         return tmp_path
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def sample_data() -> t.JsonMapping:
         """Provide the existing canonical JSON payload for generic test cases.
 

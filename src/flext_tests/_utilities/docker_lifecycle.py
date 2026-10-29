@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 import os
 import secrets
-from collections.abc import Generator
+from collections.abc import Generator, Mapping, Sequence
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -18,7 +18,7 @@ from flext_cli import u
 from flext_tests import c, m, p, r, t
 
 
-class FlextTestsDockerLifecycleUtilitiesMixin:
+class FlextTestsUtilitiesDockerLifecycle:
     """Pure lifecycle rules over what Docker reports and what the host recorded."""
 
     @staticmethod
@@ -152,7 +152,7 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
             return r[str].fail(c.Tests.ERR_DOCKER_TARGET_NOT_INSPECTABLE)
         digest = hashlib.sha256()
         project = target.project_name or (
-            FlextTestsDockerLifecycleUtilitiesMixin.docker_compose_project(compose_file)
+            FlextTestsUtilitiesDockerLifecycle.docker_compose_project(compose_file)
         )
         for part in (project, target.service):
             digest.update(part.encode())
@@ -221,12 +221,12 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
     def container_environment(
         container_name: str,
         inspect: m.Tests.ContainerInspect,
-        keys: t.StrSequence,
-    ) -> p.Result[t.MappingKV[str, t.SecretStr]]:
+        keys: Sequence[str],
+    ) -> p.Result[Mapping[str, t.SecretStr]]:
         """Read named variables from a container's creation environment.
 
         Returns:
-            The resulting ``p.Result[t.MappingKV[str, t.SecretStr]]``.
+            The resulting ``p.Result[Mapping[str, t.SecretStr]]``.
 
         """
         entries = dict(
@@ -236,25 +236,25 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
         )
         missing = [key for key in keys if key not in entries]
         if missing:
-            return r[t.MappingKV[str, t.SecretStr]].fail(
+            return r[Mapping[str, t.SecretStr]].fail(
                 c.Tests.ERR_DOCKER_ENVIRONMENT_MISSING.format(
                     name=container_name,
                     keys=", ".join(missing),
                 ),
                 error_code=c.Tests.DockerErrorCode.ENVIRONMENT_MISSING,
             )
-        return r[t.MappingKV[str, t.SecretStr]].ok({
+        return r[Mapping[str, t.SecretStr]].ok({
             key: t.SecretStr(entries[key]) for key in keys
         })
 
     @staticmethod
     def generate_creation_secrets(
-        keys: t.StrSequence,
-    ) -> t.MappingKV[str, t.SecretStr]:
+        keys: Sequence[str],
+    ) -> Mapping[str, t.SecretStr]:
         """Generate one fresh secret per declared creation key.
 
         Returns:
-            The resulting ``t.MappingKV[str, t.SecretStr]``.
+            The resulting ``Mapping[str, t.SecretStr]``.
 
         """
         return {
@@ -264,7 +264,7 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
 
     @staticmethod
     def validate_creation_environment(
-        environment: t.MappingKV[str, t.SecretStr],
+        environment: Mapping[str, t.SecretStr],
     ) -> p.Result[bool]:
         """Reject a creation value a compose env file cannot carry literally.
 
@@ -283,8 +283,8 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
     def creation_env_file(
         state_dir: Path,
         container_name: str,
-        environment: t.MappingKV[str, t.SecretStr],
-    ) -> Generator[t.VariadicTuple[Path]]:
+        environment: Mapping[str, t.SecretStr],
+    ) -> Generator[tuple[Path, ...]]:
         """Expose creation-only values to compose through a private env file.
 
         The file is created 0600 next to the host records, exists only inside
@@ -293,7 +293,7 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
         files to pass to compose: none when there is nothing to expose.
 
         Yields:
-            Each ``t.VariadicTuple[Path]``.
+            Each ``tuple[Path, ...]``.
 
         Raises:
             OSError: If ``failure is None``.
@@ -302,7 +302,7 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
         if not environment:
             yield ()
             return
-        _ = FlextTestsDockerLifecycleUtilitiesMixin.validate_creation_environment(
+        _ = FlextTestsUtilitiesDockerLifecycle.validate_creation_environment(
             environment,
         ).unwrap()
         lines = [
@@ -333,4 +333,4 @@ class FlextTestsDockerLifecycleUtilitiesMixin:
                 failure.add_note(f"creation env file cleanup failed: {cleanup_error}")
 
 
-__all__: list[str] = ["FlextTestsDockerLifecycleUtilitiesMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesDockerLifecycle"]

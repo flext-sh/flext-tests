@@ -16,24 +16,24 @@ import importlib
 import importlib.metadata
 import importlib.util
 import inspect
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping, MutableMapping
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar
 
 from flext_cli import u
 
-from flext_tests import c, p, t, tm
+from flext_tests import c, p, tm
 
 if TYPE_CHECKING:
     from types import ModuleType
 
 
-class FlextTestsFlextUtilitiesGovernance:
+class FlextTestsUtilitiesFlextGovernance:
     """Canonical namespace owner."""
 
     @staticmethod
     @functools.lru_cache(maxsize=1)
-    def _console_script_functions() -> t.MappingKV[str, frozenset[str]]:
+    def _console_script_functions() -> Mapping[str, frozenset[str]]:
         """Map each installed console-script module to its exposed function names.
 
         One scan per session: ``importlib.metadata.entry_points`` walks every
@@ -44,13 +44,13 @@ class FlextTestsFlextUtilitiesGovernance:
             The resulting ``dict[str, frozenset[str]]``.
 
         """
-        mapping: t.MutableMappingKV[str, set[str]] = {}
+        mapping: MutableMapping[str, set[str]] = {}
         for entry in importlib.metadata.entry_points(group="console_scripts"):
             if "." not in entry.attr:
                 mapping.setdefault(entry.module, set()).add(entry.attr)
         return {module: frozenset(names) for module, names in mapping.items()}
 
-    class FlextTestsModuleGovernanceMixin:
+    class FlextTestsModuleGovernance:
         """Shared module-governance test helpers for FLEXT submodules.
 
         Each submodule's ``test_module_governance.py`` subclasses this mixin and
@@ -162,7 +162,7 @@ class FlextTestsFlextUtilitiesGovernance:
             per-module rescans pushed governance tests past their timeout.
             """
             module_name = cls._module_dotted_name(module_path)
-            return FlextTestsFlextUtilitiesGovernance._console_script_functions().get(
+            return FlextTestsUtilitiesFlextGovernance._console_script_functions().get(
                 module_name,
                 frozenset(),
             )
@@ -212,4 +212,4 @@ class FlextTestsFlextUtilitiesGovernance:
             )
 
 
-__all__: list[str] = ["FlextTestsFlextUtilitiesGovernance"]
+__all__: list[str] = ["FlextTestsUtilitiesFlextGovernance"]

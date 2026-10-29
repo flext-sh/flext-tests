@@ -6,18 +6,18 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Annotated, cast
 
 from flext_cli import u
 
 from flext_tests import c, m, p, t
-from flext_tests._utilities import FlextTestsPayloadUtilities
-from flext_tests._utilities._files import FlextTestsFilesLifecycleMixin
+from flext_tests._utilities import FlextTestsUtilitiesPayload
+from flext_tests._utilities._files import FlextTestsUtilitiesFilesLifecycle
 
 
-class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
+class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
     """Create files from one validated native payload boundary."""
 
     @staticmethod
@@ -33,17 +33,17 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
     @staticmethod
     def to_payload_mapping(
         value: p.AttributeProbe,
-    ) -> t.MappingKV[str, m.Tests.Payload]:
+    ) -> Mapping[str, m.Tests.Payload]:
         """Own a native mapping and retain every rich child value.
 
         Returns:
-            The resulting ``t.MappingKV[str, m.Tests.Payload]``.
+            The resulting ``Mapping[str, m.Tests.Payload]``.
 
         Raises:
             TypeError: If File content requires a native mapping.
 
         """
-        payload = FlextTestsPayloadUtilities.to_payload(
+        payload = FlextTestsUtilitiesPayload.to_payload(
             value,
         )
         if payload.kind != "mapping":
@@ -52,17 +52,17 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         return payload.entries
 
     @staticmethod
-    def _to_string_rows(value: p.Tests.Payload) -> t.SequenceOf[t.StrSequence]:
+    def _to_string_rows(value: p.Tests.Payload) -> Sequence[Sequence[str]]:
         """Render validated CSV cells only at their textual output boundary.
 
         Returns:
-            The resulting ``t.SequenceOf[t.StrSequence]``.
+            The resulting ``Sequence[Sequence[str]]``.
 
         """
         return [
             [
                 str(
-                    FlextTestsPayloadUtilities.to_match_value(
+                    FlextTestsUtilitiesPayload.to_match_value(
                         cell,
                     ),
                 )
@@ -79,7 +79,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             The resulting ``m.Tests.Payload``.
 
         """
-        return FlextTestsPayloadUtilities.to_payload(
+        return FlextTestsUtilitiesPayload.to_payload(
             value,
         )
 
@@ -115,7 +115,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             The resulting ``bool``.
 
         """
-        payload = FlextTestsPayloadUtilities.to_payload(
+        payload = FlextTestsUtilitiesPayload.to_payload(
             value,
         )
         return (
@@ -140,7 +140,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
                     atom
                     if actual_content.kind == "atom" and isinstance(atom, bytes)
                     else str(
-                        FlextTestsPayloadUtilities.to_match_value(
+                        FlextTestsUtilitiesPayload.to_match_value(
                             actual_content,
                         ),
                     ).encode(params.enc)
@@ -167,7 +167,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             case _:
                 file_path.write_text(
                     str(
-                        FlextTestsPayloadUtilities.to_match_value(
+                        FlextTestsUtilitiesPayload.to_match_value(
                             actual_content,
                         ),
                     ),
@@ -189,7 +189,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             return u.json_value_adapter().validate_python(
                 actual_content.atom.model_dump(mode="json"),
             )
-        normalized = FlextTestsPayloadUtilities.to_normalized_value(
+        normalized = FlextTestsUtilitiesPayload.to_normalized_value(
             actual_content,
         )
         if actual_content.kind == "mapping":
@@ -201,23 +201,25 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
     def _build_csv_rows(
         *,
         actual_content: p.Tests.Payload,
-        headers: t.StrSequence | None,
-    ) -> list[t.StrSequence]:
+        headers: Sequence[str] | None,
+    ) -> list[Sequence[str]]:
         """Build CSV rows while keeping native matching independent of text.
 
         Returns:
-            The resulting ``list[t.StrSequence]``.
+            The resulting ``list[Sequence[str]]``.
 
         """
-        rows: list[t.StrSequence] = []
+        rows: list[Sequence[str]] = []
         if headers:
             rows.append(list(headers))
         if actual_content.kind in {c.Action.LIST, "tuple"}:
-            rows.extend(FlextTestsFilesCreationMixin._to_string_rows(actual_content))
+            rows.extend(
+                FlextTestsUtilitiesFilesCreation._to_string_rows(actual_content)
+            )
         else:
             rows.append([
                 str(
-                    FlextTestsPayloadUtilities.to_match_value(
+                    FlextTestsUtilitiesPayload.to_match_value(
                         actual_content,
                     ),
                 ),
@@ -249,7 +251,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             m.Field(description="Delimiter for CSV output."),
         ] = c.Tests.DEFAULT_CSV_DELIMITER
         headers: Annotated[
-            t.StrSequence | None,
+            Sequence[str] | None,
             m.Field(description="Optional CSV header row."),
         ] = None
         readonly: Annotated[
@@ -267,7 +269,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         name: str = c.Tests.DEFAULT_FILENAME,
         directory: Path | None = None,
         *,
-        options: FlextTestsFilesCreationMixin.CreateOptions | None = None,
+        options: FlextTestsUtilitiesFilesCreation.CreateOptions | None = None,
     ) -> Path:
         """Create a file after validating the complete native input tree.
 
@@ -275,7 +277,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             The resulting ``Path``.
 
         """
-        chosen = options or FlextTestsFilesCreationMixin.CreateOptions()
+        chosen = options or FlextTestsUtilitiesFilesCreation.CreateOptions()
         content_to_validate = self._extract_content(
             content,
             extract_result=chosen.extract_result,
@@ -287,7 +289,7 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
             "directory": directory,
         })
         actual_content = params.content
-        native_content = FlextTestsPayloadUtilities.to_match_value(
+        native_content = FlextTestsUtilitiesPayload.to_match_value(
             actual_content,
         )
         # files_detect_format_from_content dispatches purely on the runtime
@@ -314,4 +316,4 @@ class FlextTestsFilesCreationMixin(FlextTestsFilesLifecycleMixin):
         return file_path
 
 
-__all__: list[str] = ["FlextTestsFilesCreationMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesFilesCreation"]

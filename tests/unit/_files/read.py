@@ -63,7 +63,7 @@ class TestsFlextTestsFilesReadMixin:
 
     @staticmethod
     def test_read_csv_file(tmp_path: Path) -> None:
-        """Test read() returns t.SequenceOf[list] content for .csv files."""
+        """Test read() returns Sequence[list] content for .csv files."""
         manager = tf(base_dir=tmp_path)
         content = [["a", "b"], [c.ParserBooleanToken.ONE, "2"]]
         path = manager.create(content, "data.csv")

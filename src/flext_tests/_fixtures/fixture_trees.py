@@ -51,8 +51,8 @@ class FlextTestsFixtureTreesFixtures:
         )
         return True if scenario else None
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def fixture_tree(
         request: pytest.FixtureRequest,
         tmp_path: Path,

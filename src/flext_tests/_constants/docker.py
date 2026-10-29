@@ -6,16 +6,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from enum import StrEnum, unique
 from types import MappingProxyType
-from typing import TYPE_CHECKING, ClassVar
+from typing import ClassVar
 
 from python_on_whales.exceptions import DockerException as ComposeDockerException
-
-if TYPE_CHECKING:
-    from collections.abc import Mapping
-
-    from flext_cli import t
 
 
 class FlextTestsConstantsDocker:
@@ -53,14 +49,14 @@ class FlextTestsConstantsDocker:
     # host: ``<home>/<parts>/<name>.json``, rewritten atomically under
     # ``<name>.state.lock``. The session lease owns ``<name>.lease.lock`` so
     # marking a container dirty never waits on the sessions that use it.
-    DOCKER_STATE_DIR_PARTS: ClassVar[t.VariadicTuple[str]] = (".flext", "docker")
+    DOCKER_STATE_DIR_PARTS: ClassVar[tuple[str, ...]] = (".flext", "docker")
     DOCKER_STATE_FILE_SUFFIX: ClassVar[str] = ".json"
     DOCKER_STATE_LOCK_SUFFIX: ClassVar[str] = ".state.lock"
     DOCKER_LEASE_LOCK_SUFFIX: ClassVar[str] = ".lease.lock"
     DOCKER_STATE_LOCK_TIMEOUT_SECONDS: ClassVar[float] = 30.0
     # Scratch root for relocated caches (hypothesis, benchmarks): never
     # inside the checkout; keyed per checkout identity under this root.
-    SCRATCH_DIR_PARTS: ClassVar[t.VariadicTuple[str]] = (".flext", "scratch")
+    SCRATCH_DIR_PARTS: ClassVar[tuple[str, ...]] = (".flext", "scratch")
     SCRATCH_ROOT_INI: ClassVar[str] = "flext_scratch_root"
     # Docker's own container-name grammar; the name is also the state file stem.
     DOCKER_CONTAINER_NAME_PATTERN: ClassVar[str] = r"^[a-zA-Z0-9][a-zA-Z0-9_.-]+$"
@@ -82,7 +78,7 @@ class FlextTestsConstantsDocker:
     DOCKER_ENV_SEPARATOR: ClassVar[str] = "="
     # Values are written single-quoted, which compose reads literally; a quote
     # or a line break cannot be represented.
-    DOCKER_ENV_FORBIDDEN_MARKS: ClassVar[t.VariadicTuple[str]] = ("'", "\n", "\r")
+    DOCKER_ENV_FORBIDDEN_MARKS: ClassVar[tuple[str, ...]] = ("'", "\n", "\r")
     # Entropy of each generated container secret (``secrets.token_urlsafe``),
     # whose URL-safe alphabet never contains a forbidden mark.
     DOCKER_SECRET_BYTES: ClassVar[int] = 24
@@ -152,7 +148,7 @@ class FlextTestsConstantsDocker:
         "oracle": "flext-oracle-db-test",
         "ldap": "flext-openldap-test",
     })
-    CONNECTIVITY_MARKERS: ClassVar[t.VariadicTuple[str]] = (
+    CONNECTIVITY_MARKERS: ClassVar[tuple[str, ...]] = (
         DOCKER_CONNECTIVITY_MARKER,
         *CONNECTIVITY_MARKER_CONTAINERS,
     )
@@ -172,7 +168,7 @@ class FlextTestsConstantsDocker:
     # a value: the lifecycle generates them once per container and reads them
     # back from it (FlextTestsDocker.fetch_container_environment).
     SHARED_CONTAINERS: ClassVar[
-        Mapping[str, t.MappingKV[str, int | str | t.VariadicTuple[str]]]
+        Mapping[str, Mapping[str, int | str | tuple[str, ...]]]
     ] = MappingProxyType({
         "flext-openldap-test": MappingProxyType({
             "compose_file": "docker/docker-compose.openldap.yml",

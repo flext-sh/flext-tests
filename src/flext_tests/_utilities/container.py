@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Callable
 
 
-class FlextTestsContainerHelpersUtilitiesMixin:
+class FlextTestsUtilitiesContainerHelpers:
     """Helpers for container testing."""
 
     @staticmethod
@@ -56,4 +56,4 @@ class FlextTestsContainerHelpersUtilitiesMixin:
         return factory
 
 
-__all__: list[str] = ["FlextTestsContainerHelpersUtilitiesMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesContainerHelpers"]

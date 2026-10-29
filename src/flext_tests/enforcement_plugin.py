@@ -12,12 +12,15 @@ from __future__ import annotations
 from importlib import import_module
 from typing import TYPE_CHECKING
 
-from flext_tests import c
+from flext_tests._constants.validator import FlextTestsConstantsValidator
 
 if TYPE_CHECKING:
     import warnings
 
     import pytest
+
+
+_DISPATCHER_MODULE = "flext_tests._fixtures._enforcement.dispatcher"
 
 
 class FlextTestsEnforcementPlugin:
@@ -26,6 +29,11 @@ class FlextTestsEnforcementPlugin:
     @staticmethod
     def pytest_addoption(parser: pytest.Parser) -> None:
         """Register the enforcement dispatcher's stable command-line contract."""
+        parser.addini(
+            FlextTestsConstantsValidator.ENFORCEMENT_SLOW_TIMEOUT_INI_OPTION,
+            "Config-owned timeout in seconds for items explicitly marked slow.",
+            default="",
+        )
         group = parser.getgroup(
             "flext-enforce", "FLEXT cross-layer enforcement catalog"
         )
@@ -73,7 +81,7 @@ class FlextTestsEnforcementPlugin:
     def pytest_configure(config: pytest.Config) -> None:
         """Resolve enforcement only after startup instrumentation is active."""
         dispatcher = import_module(
-            c.Tests.ENFORCEMENT_DISPATCHER_MODULE,
+            _DISPATCHER_MODULE,
         ).FlextTestsEnforcementDispatcher
         dispatcher.configure(config)
 
@@ -85,8 +93,9 @@ class FlextTestsEnforcementPlugin:
     ) -> None:
         """Delegate collection-time enforcement."""
         dispatcher = import_module(
-            c.Tests.ENFORCEMENT_DISPATCHER_MODULE,
+            _DISPATCHER_MODULE,
         ).FlextTestsEnforcementDispatcher
+        dispatcher.apply_slow_budget(config, items)
         dispatcher.collection_modifyitems(session, config, items)
 
     @staticmethod
@@ -99,7 +108,7 @@ class FlextTestsEnforcementPlugin:
         """Track runtime enforcement warnings."""
         _ = when, nodeid, location
         dispatcher = import_module(
-            c.Tests.ENFORCEMENT_DISPATCHER_MODULE,
+            _DISPATCHER_MODULE,
         ).FlextTestsEnforcementDispatcher
         dispatcher.record_warning(warning_message)
 
@@ -107,7 +116,7 @@ class FlextTestsEnforcementPlugin:
     def pytest_sessionstart(session: pytest.Session) -> None:
         """Expose the session config for warning-capture plumbing."""
         dispatcher = import_module(
-            c.Tests.ENFORCEMENT_DISPATCHER_MODULE,
+            _DISPATCHER_MODULE,
         ).FlextTestsEnforcementDispatcher
         dispatcher.session_config = session.config
 
@@ -120,7 +129,7 @@ class FlextTestsEnforcementPlugin:
         """Delegate the enforcement summary."""
         _ = exitstatus
         dispatcher = import_module(
-            c.Tests.ENFORCEMENT_DISPATCHER_MODULE,
+            _DISPATCHER_MODULE,
         ).FlextTestsEnforcementDispatcher
         dispatcher.terminal_summary(terminalreporter, config)
 

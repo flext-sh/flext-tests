@@ -21,8 +21,8 @@ pytest_plugins = ["pytester"]
 class TestsFlextTestsCapabilityCollection:
     """Exercise the installed plugin, without replacing any service or probe."""
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def consumer(pytester: pytest.Pytester) -> Generator[pytest.Pytester]:
         """Provide ``consumer``.
 

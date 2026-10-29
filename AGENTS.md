@@ -48,7 +48,7 @@ is test tooling, not a runtime dependency.
 
 - Assert via `tm.*`, never bare `assert`. Tests are behavior-only through public
   facades, without mocks or patching the system under test.
-- Use `c/t/p/m/u` for typed fixtures and `FlextTestsMakeUtilitiesMixin` for the Make
+- Use `c/t/p/m/u` for typed fixtures and `FlextTestsUtilitiesMake` for the Make
   domain.
 - Config/settings canonical pattern: ADR-005 (SSOT) and ADR-024 (DI config contract).
 - Codemod governance (ast-grep + make mod): ADR-014.

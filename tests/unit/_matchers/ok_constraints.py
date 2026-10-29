@@ -6,6 +6,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 import pytest
 
 from tests import c, r, t, tm
@@ -35,35 +37,35 @@ class TestsFlextTestsMatchersOkConstraintsBaseMixin:
     @staticmethod
     def test_ok_with_has_parameter() -> None:
         """Test tm.ok() with has parameter."""
-        result = r[t.StrSequence].ok(["a", "b", "c"])
+        result = r[Sequence[str]].ok(["a", "b", "c"])
         value = tm.ok(result, has="a")
         tm.that(value, eq=["a", "b", "c"])
 
     @staticmethod
     def test_ok_with_has_sequence_parameter() -> None:
         """Test tm.ok() with has sequence parameter."""
-        result = r[t.StrSequence].ok(["a", "b", "c"])
+        result = r[Sequence[str]].ok(["a", "b", "c"])
         value = tm.ok(result, has=["a", "b"])
         tm.that(value, eq=["a", "b", "c"])
 
     @staticmethod
     def test_ok_with_lacks_parameter() -> None:
         """Test tm.ok() with lacks parameter."""
-        result = r[t.StrSequence].ok(["a", "b", "c"])
+        result = r[Sequence[str]].ok(["a", "b", "c"])
         value = tm.ok(result, lacks="d")
         tm.that(value, eq=["a", "b", "c"])
 
     @staticmethod
     def test_ok_with_len_exact_parameter() -> None:
         """Test tm.ok() with len exact parameter."""
-        result = r[t.StrSequence].ok(["a", "b", "c"])
+        result = r[Sequence[str]].ok(["a", "b", "c"])
         value = tm.ok(result, len=3)
         tm.that(value, eq=["a", "b", "c"])
 
     @staticmethod
     def test_ok_with_len_range_parameter() -> None:
         """Test tm.ok() with len range parameter."""
-        result = r[t.StrSequence].ok(["a", "b", "c"])
+        result = r[Sequence[str]].ok(["a", "b", "c"])
         value = tm.ok(result, len=(2, 4))
         tm.that(value, eq=["a", "b", "c"])
 
@@ -184,6 +186,6 @@ class TestsFlextTestsMatchersOkConstraintsMixin(
     @staticmethod
     def test_ok_with_empty_parameter() -> None:
         """Test tm.ok() with empty parameter."""
-        result = r[t.StrSequence].ok(["a"])
+        result = r[Sequence[str]].ok(["a"])
         value = tm.ok(result, empty=False)
         tm.that(value, eq=["a"])

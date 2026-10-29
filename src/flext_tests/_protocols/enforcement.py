@@ -7,20 +7,20 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from typing import TYPE_CHECKING, ClassVar, Protocol, Self, runtime_checkable
 
 from flext_cli import p
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
     from pathlib import Path
 
     import pytest
 
-    from flext_tests import m, t
+    from flext_tests import m
 
 
-class FlextTestsEnforcementProtocolsMixin:
+class FlextTestsProtocolsEnforcement:
     """Protocols for enforcement dispatch boundaries."""
 
     @runtime_checkable
@@ -38,7 +38,7 @@ class FlextTestsEnforcementProtocolsMixin:
 
         def __call__(
             self,
-            parent: FlextTestsEnforcementProtocolsMixin.PytestNode,
+            parent: FlextTestsProtocolsEnforcement.PytestNode,
             **kw: str | m.Tests.EnforcementViolation,
         ) -> T:
             """Construct a node through pytest's public node factory."""
@@ -48,7 +48,7 @@ class FlextTestsEnforcementProtocolsMixin:
         """Record the typed factory; at runtime pytest's own resolves via MRO."""
 
         if TYPE_CHECKING:
-            from_parent: ClassVar[FlextTestsEnforcementProtocolsMixin.NodeFactory[Self]]
+            from_parent: ClassVar[FlextTestsProtocolsEnforcement.NodeFactory[Self]]
 
     class EnforcementBuilder(ABC):
         """Callable contract implemented by enforcement contribution builders."""
@@ -58,7 +58,7 @@ class FlextTestsEnforcementProtocolsMixin:
             self,
             session: pytest.Session,
             cfg: m.Tests.EnforcementDispatcherConfig,
-            rule: m.EnforcementRuleSpec,
+            rule: m.Tests.EnforcementRuleSpec,
             context: m.Tests.EnforcementBuildContext,
         ) -> list[pytest.Item]:
             """Build pytest items for one enforcement rule."""
@@ -70,7 +70,7 @@ class FlextTestsEnforcementProtocolsMixin:
 
         # NOTE (multi-agent, mro-wkii.17.21): Result wrapping belongs to the
         # flext-tests boundary; the external enforcer returns its report directly.
-        def enforce(self, *, project_names: t.StrSequence) -> p.AttributeProbe:
+        def enforce(self, *, project_names: Sequence[str]) -> p.AttributeProbe:
             """Run namespace enforcement for the selected projects."""
             ...
 
@@ -82,7 +82,7 @@ class FlextTestsEnforcementProtocolsMixin:
             self,
             *,
             repository_root: Path,
-        ) -> FlextTestsEnforcementProtocolsMixin.NamespaceEnforcer:
+        ) -> FlextTestsProtocolsEnforcement.NamespaceEnforcer:
             """Construct an enforcer for one workspace root."""
             ...
 
@@ -131,9 +131,9 @@ class FlextTestsEnforcementProtocolsMixin:
         @property
         def entries(
             self,
-        ) -> Sequence[FlextTestsEnforcementProtocolsMixin.EnforcementScanFinding]:
+        ) -> Sequence[FlextTestsProtocolsEnforcement.EnforcementScanFinding]:
             """Every finding in stable order."""
             ...
 
 
-__all__: list[str] = ["FlextTestsEnforcementProtocolsMixin"]
+__all__: list[str] = ["FlextTestsProtocolsEnforcement"]

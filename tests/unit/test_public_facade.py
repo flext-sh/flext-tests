@@ -112,7 +112,6 @@ class TestsFlextTestsPublicFacade:
             ("flext_cli", "flext-cli"),
             ("flext_core", "flext-core"),
             ("flext_infra", "flext-infra"),
-            ("pydantic_settings", "pydantic-settings"),
             ("pytest", "pytest"),
         ],
     )

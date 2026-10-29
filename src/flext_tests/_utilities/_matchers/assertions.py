@@ -1,6 +1,6 @@
 """Assertion-raising helpers for matchers — Group B.
 
-Static methods used internally by ``FlextTestsMatchersUtilities``.
+Static methods used internally by ``FlextTestsUtilitiesMatchers``.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -12,10 +12,10 @@ from collections.abc import Sized
 from typing import Never
 
 from flext_tests import c, p
-from flext_tests._utilities import FlextTestsFlextUtilitiesPayload
+from flext_tests._utilities import FlextTestsUtilitiesPayload
 
 
-class FlextTestsMatchersAssertionsMixin:
+class FlextTestsUtilitiesMatchersAssertions:
     """Centralized AssertionError factories with structured messages."""
 
     @staticmethod
@@ -48,7 +48,7 @@ class FlextTestsMatchersAssertionsMixin:
     def assert_len_match(
         *,
         payload: p.Tests.Payload,
-        length_spec: int | tuple[int, int],
+        length_spec: int | tuple[int, ...],
         msg: str | None,
     ) -> None:
         """Raise AssertionError if ``payload`` length doesn't match ``length_spec``.
@@ -57,10 +57,8 @@ class FlextTestsMatchersAssertionsMixin:
             AssertionError: Always.
 
         """
-        native = (
-            FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_match_value(
-                payload,
-            )
+        native = FlextTestsUtilitiesPayload.to_match_value(
+            payload,
         )
         if isinstance(native, Sized):
             payload_len = len(native)
@@ -93,4 +91,4 @@ class FlextTestsMatchersAssertionsMixin:
                 )
 
 
-__all__: list[str] = ["FlextTestsMatchersAssertionsMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesMatchersAssertions"]

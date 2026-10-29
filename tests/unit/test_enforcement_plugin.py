@@ -427,7 +427,7 @@ class TestsFlextTestsEnforcementPlugin:
         )
         result.assert_outcomes(failed=1)
         result.stdout.fnmatch_lines([
-            "*FlextMroViolation: synthetic MRO violation*",
+            "*FlextMroViolationError: synthetic MRO violation*",
             "runtime warnings captured: 0",
         ])
 

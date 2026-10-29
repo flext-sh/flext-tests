@@ -15,19 +15,19 @@ from pathlib import Path
 
 from flext_tests import c, m, t
 from flext_tests._utilities._files import (
-    FlextTestsFilesCreationMixin,
-    FlextTestsFilesReadingMixin,
+    FlextTestsUtilitiesFilesCreation,
+    FlextTestsUtilitiesFilesReading,
 )
 
 
-class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
+class FlextTestsUtilitiesFilesContexts(FlextTestsUtilitiesFilesReading):
     """Context managers for temporary files and directories."""
 
     @classmethod
     @contextmanager
     def files(
         cls,
-        content: t.MappingKV[str, t.Tests.FileContentPlain],
+        content: Mapping[str, t.Tests.FileContentPlain],
         *,
         directory: Path | None = None,
         ext: str | None = None,
@@ -73,7 +73,7 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
                     cls._coerce_file_content(data),
                     filename,
                     directory=validated_kwargs.directory,
-                    options=FlextTestsFilesCreationMixin.CreateOptions(
+                    options=FlextTestsUtilitiesFilesCreation.CreateOptions(
                         fmt=validated_kwargs.fmt,
                         enc=validated_kwargs.enc,
                         indent=validated_kwargs.indent,
@@ -99,4 +99,4 @@ class FlextTestsFilesContextsMixin(FlextTestsFilesReadingMixin):
             yield Path(temp_dir)
 
 
-__all__: list[str] = ["FlextTestsFilesContextsMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesFilesContexts"]

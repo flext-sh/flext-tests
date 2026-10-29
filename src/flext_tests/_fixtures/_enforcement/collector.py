@@ -6,21 +6,17 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, override
+from collections.abc import Iterable, Sequence
+from typing import override
 
 import pytest
 
 from flext_tests._fixtures._enforcement import FlextTestsEnforcementItem
-from flext_tests._protocols.enforcement import FlextTestsEnforcementProtocolsMixin
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable
-
-    from flext_tests import t
+from flext_tests._protocols.enforcement import FlextTestsProtocolsEnforcement
 
 
-class FlextTestsEnforcementCollector(
-    FlextTestsEnforcementProtocolsMixin.TypedNode,
+class FlextTestsFixturesEnforcementCollector(
+    FlextTestsProtocolsEnforcement.TypedNode,
     pytest.Collector,
 ):
     """Synthetic collector owning session ``FlextTestsEnforcementItem`` items."""
@@ -30,7 +26,7 @@ class FlextTestsEnforcementCollector(
         name: str,
         parent: pytest.Session,
         *,
-        items: t.SequenceOf[FlextTestsEnforcementItem] = (),
+        items: Sequence[FlextTestsEnforcementItem] = (),
     ) -> None:
         super().__init__(name, parent)
         self._items: list[FlextTestsEnforcementItem] = list(items)
@@ -43,4 +39,4 @@ class FlextTestsEnforcementCollector(
         return list(self._items)
 
 
-__all__: list[str] = ["FlextTestsEnforcementCollector"]
+__all__: list[str] = ["FlextTestsFixturesEnforcementCollector"]

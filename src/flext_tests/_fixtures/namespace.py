@@ -57,8 +57,8 @@ class FlextTestsNamespaceFixtures:
             )
         return config.stash[stash_key]
 
-    @staticmethod
     @pytest.fixture(scope="session")
+    @staticmethod
     def run_namespace(request: pytest.FixtureRequest) -> m.Tests.TestNamespace:
         """Session namespace: one token per pytest run per worker.
 

@@ -12,7 +12,7 @@ import sys
 import tempfile
 import time
 import types
-from collections.abc import Generator
+from collections.abc import Generator, Sequence
 from contextlib import contextmanager
 from pathlib import Path
 from threading import get_ident
@@ -24,7 +24,7 @@ import pytest
 from flext_tests import c
 
 if TYPE_CHECKING:
-    from flext_tests import p, t
+    from flext_tests import p
 
 if sys.platform == "win32":
     import msvcrt
@@ -32,7 +32,7 @@ else:
     import fcntl
 
 
-class FlextTestsTestContextUtilitiesMixin:
+class FlextTestsUtilitiesTestContext:
     """Context managers for tests."""
 
     @staticmethod
@@ -177,7 +177,7 @@ class FlextTestsTestContextUtilitiesMixin:
             self,
             *,
             mutable_environment: bool,
-        ) -> list[t.Pair[Path, Path]]:
+        ) -> list[tuple[Path, Path]]:
             """Return the runtime directories with their baseline mirrors.
 
             Returns:
@@ -203,7 +203,7 @@ class FlextTestsTestContextUtilitiesMixin:
 
         def _seed_lease_baselines(
             self,
-            targets: t.SequenceOf[t.Pair[Path, Path]],
+            targets: Sequence[tuple[Path, Path]],
         ) -> None:
             """Mirror each absent runtime baseline from its live directory."""
             for target, baseline in targets:
@@ -218,7 +218,7 @@ class FlextTestsTestContextUtilitiesMixin:
 
         def _restore_lease_targets(
             self,
-            targets: t.SequenceOf[t.Pair[Path, Path]],
+            targets: Sequence[tuple[Path, Path]],
         ) -> None:
             """Restore every leased runtime directory from its baseline.
 
@@ -243,7 +243,7 @@ class FlextTestsTestContextUtilitiesMixin:
                         child.unlink()
                 shutil.copytree(baseline, target, dirs_exist_ok=True, symlinks=True)
 
-        def _finish_lease(self, targets: t.SequenceOf[t.Pair[Path, Path]]) -> None:
+        def _finish_lease(self, targets: Sequence[tuple[Path, Path]]) -> None:
             """Restore baselines after one lease, folding concurrent failures.
 
             Raises:
@@ -295,7 +295,7 @@ class FlextTestsTestContextUtilitiesMixin:
             if self._failure is not None:
                 raise self._failure
             self._assert_owned(self.directory)
-            with FlextTestsTestContextUtilitiesMixin.FileLock(
+            with FlextTestsUtilitiesTestContext.FileLock(
                 self.directory / "runtime.lock",
             ):
                 if self._failure is not None:
@@ -304,7 +304,7 @@ class FlextTestsTestContextUtilitiesMixin:
                     msg = "Session runtime requires one canonical provision callback"
                     raise ValueError(msg)
                 self._active_thread = thread
-                targets: list[t.Pair[Path, Path]] = []
+                targets: list[tuple[Path, Path]] = []
                 try:
                     root = self._provision_session_root(provision)
                     targets = self._lease_targets(
@@ -431,4 +431,4 @@ class FlextTestsTestContextUtilitiesMixin:
                 file_obj.close()
 
 
-__all__: list[str] = ["FlextTestsTestContextUtilitiesMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesTestContext"]

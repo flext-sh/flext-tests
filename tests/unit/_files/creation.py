@@ -6,10 +6,11 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 from flext_tests import FlextTestsFiles
-from tests import m, t, tm
+from tests import m, tm
 
 
 class TestsFlextTestsFilesCreationMixin:
@@ -100,9 +101,9 @@ class TestsFlextTestsFilesCreationMixin:
     @staticmethod
     def test_create_file_set(tmp_path: Path) -> None:
         """Test creating multiple files from dictionary."""
-        files: t.MappingKV[
+        files: Mapping[
             str,
-            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
+            str | bytes | m.ConfigMap | Sequence[Sequence[str]] | m.BaseModel,
         ] = {"file1": "content1", "file2": "content2", "file3.txt": "content3"}
         with FlextTestsFiles.files(files, directory=tmp_path, ext=".txt") as created:
             tm.that(len(created), eq=3)
@@ -116,9 +117,9 @@ class TestsFlextTestsFilesCreationMixin:
     @staticmethod
     def test_create_file_set_custom_extension(tmp_path: Path) -> None:
         """Test creating file set with custom extension."""
-        files: t.MappingKV[
+        files: Mapping[
             str,
-            str | bytes | m.ConfigMap | t.SequenceOf[t.StrSequence] | m.BaseModel,
+            str | bytes | m.ConfigMap | Sequence[Sequence[str]] | m.BaseModel,
         ] = {"file1": "content1"}
         extension = ".md"
         with FlextTestsFiles.files(files, directory=tmp_path, ext=extension) as created:

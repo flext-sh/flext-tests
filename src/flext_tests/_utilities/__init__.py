@@ -1,5 +1,5 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""Flext Tests. Utilities package.
+"""Internal package for utilities.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -13,137 +13,73 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._utilities._files._assertions import FlextTestsFilesAssertionsMixin
-    from flext_tests._utilities._files._comparison.comparison_part_02 import (
-        FlextTestsFilesComparisonMixin,
-    )
-    from flext_tests._utilities._files._contexts import FlextTestsFilesContextsMixin
-    from flext_tests._utilities._files._creation import FlextTestsFilesCreationMixin
-    from flext_tests._utilities._files._info import FlextTestsFilesInfoMixin
-    from flext_tests._utilities._files._lifecycle import FlextTestsFilesLifecycleMixin
-    from flext_tests._utilities._files._reading import FlextTestsFilesReadingMixin
-    from flext_tests._utilities._matchers._assertions import (
-        FlextTestsMatchersAssertionsMixin,
-    )
-    from flext_tests._utilities._matchers._containment import (
-        FlextTestsMatchersContainmentMixin,
-    )
-    from flext_tests._utilities._matchers._immutability import (
-        FlextTestsMatchersImmutabilityMixin,
-    )
-    from flext_tests._utilities._matchers._result import FlextTestsMatchersResultMixin
-    from flext_tests._utilities._matchers._scope import FlextTestsMatchersScopeMixin
-    from flext_tests._utilities._matchers._that import FlextTestsMatchersThatMixin
-    from flext_tests._utilities._matchers._typeguards import (
-        FlextTestsMatchersTypeGuardsMixin,
-    )
     from flext_tests._utilities.base import FlextTestsUtilitiesBase
-    from flext_tests._utilities.container import (
-        FlextTestsContainerHelpersUtilitiesMixin,
-    )
-    from flext_tests._utilities.docker_client import (
-        FlextTestsDockerClientUtilitiesMixin,
-    )
+    from flext_tests._utilities.container import FlextTestsUtilitiesContainerHelpers
+    from flext_tests._utilities.docker_client import FlextTestsUtilitiesDockerClient
     from flext_tests._utilities.docker_lifecycle import (
-        FlextTestsDockerLifecycleUtilitiesMixin,
+        FlextTestsUtilitiesDockerLifecycle,
     )
-    from flext_tests._utilities.docker_state import FlextTestsDockerStateUtilitiesMixin
-    from flext_tests._utilities.enforcement import FlextTestsEnforcementUtilitiesMixin
-    from flext_tests._utilities.environment import FlextTestsEnvironmentUtilitiesMixin
-    from flext_tests._utilities.files import FlextTestsFilesUtilitiesMixin
-    from flext_tests._utilities.fixtures_dsl import FlextTestsFixturesDSLMixin
-    from flext_tests._utilities.governance import FlextTestsFlextUtilitiesGovernance
-    from flext_tests._utilities.handler import FlextTestsFlextUtilitiesHandler
-    from flext_tests._utilities.matchers import FlextTestsMatchersUtilities
-    from flext_tests._utilities.namespace import FlextTestsNamespaceUtilitiesMixin
-    from flext_tests._utilities.payload import (
-        FlextTestsFlextUtilitiesPayload,
-        FlextTestsPayloadUtilities,
-    )
-    from flext_tests._utilities.pytest_surface import FlextTestsPytestUtilitiesMixin
-    from flext_tests._utilities.result import FlextTestsResultUtilitiesMixin
-    from flext_tests._utilities.scratch_storage import (
-        FlextTestsScratchStorageUtilitiesMixin,
-    )
-    from flext_tests._utilities.settings import FlextTestsConfigHelpersUtilitiesMixin
-    from flext_tests._utilities.testcontext import FlextTestsTestContextUtilitiesMixin
-
+    from flext_tests._utilities.docker_state import FlextTestsUtilitiesDockerState
+    from flext_tests._utilities.enforcement import FlextTestsUtilitiesEnforcement
+    from flext_tests._utilities.environment import FlextTestsUtilitiesEnvironment
+    from flext_tests._utilities.files import FlextTestsUtilitiesFiles
+    from flext_tests._utilities.fixtures_dsl import FlextTestsUtilitiesFixturesDSL
+    from flext_tests._utilities.governance import FlextTestsUtilitiesFlextGovernance
+    from flext_tests._utilities.handler import FlextTestsUtilitiesFlextHandler
+    from flext_tests._utilities.matchers import FlextTestsUtilitiesMatchers
+    from flext_tests._utilities.namespace import FlextTestsUtilitiesNamespace
+    from flext_tests._utilities.payload import FlextTestsUtilitiesPayload
+    from flext_tests._utilities.pytest_surface import FlextTestsUtilitiesPytest
+    from flext_tests._utilities.result import FlextTestsUtilitiesResult
+    from flext_tests._utilities.scratch_storage import FlextTestsUtilitiesScratchStorage
+    from flext_tests._utilities.settings import FlextTestsUtilitiesConfigHelpers
+    from flext_tests._utilities.testcontext import FlextTestsUtilitiesTestContext
 
 __all__: tuple[str, ...] = (
-    "FlextTestsConfigHelpersUtilitiesMixin",
-    "FlextTestsContainerHelpersUtilitiesMixin",
-    "FlextTestsDockerClientUtilitiesMixin",
-    "FlextTestsDockerLifecycleUtilitiesMixin",
-    "FlextTestsDockerStateUtilitiesMixin",
-    "FlextTestsEnforcementUtilitiesMixin",
-    "FlextTestsEnvironmentUtilitiesMixin",
-    "FlextTestsFilesAssertionsMixin",
-    "FlextTestsFilesComparisonMixin",
-    "FlextTestsFilesContextsMixin",
-    "FlextTestsFilesCreationMixin",
-    "FlextTestsFilesInfoMixin",
-    "FlextTestsFilesLifecycleMixin",
-    "FlextTestsFilesReadingMixin",
-    "FlextTestsFilesUtilitiesMixin",
-    "FlextTestsFixturesDSLMixin",
-    "FlextTestsFlextUtilitiesGovernance",
-    "FlextTestsFlextUtilitiesHandler",
-    "FlextTestsFlextUtilitiesPayload",
-    "FlextTestsMatchersAssertionsMixin",
-    "FlextTestsMatchersContainmentMixin",
-    "FlextTestsMatchersImmutabilityMixin",
-    "FlextTestsMatchersResultMixin",
-    "FlextTestsMatchersScopeMixin",
-    "FlextTestsMatchersThatMixin",
-    "FlextTestsMatchersTypeGuardsMixin",
-    "FlextTestsMatchersUtilities",
-    "FlextTestsNamespaceUtilitiesMixin",
-    "FlextTestsPayloadUtilities",
-    "FlextTestsPytestUtilitiesMixin",
-    "FlextTestsResultUtilitiesMixin",
-    "FlextTestsScratchStorageUtilitiesMixin",
-    "FlextTestsTestContextUtilitiesMixin",
     "FlextTestsUtilitiesBase",
+    "FlextTestsUtilitiesConfigHelpers",
+    "FlextTestsUtilitiesContainerHelpers",
+    "FlextTestsUtilitiesDockerClient",
+    "FlextTestsUtilitiesDockerLifecycle",
+    "FlextTestsUtilitiesDockerState",
+    "FlextTestsUtilitiesEnforcement",
+    "FlextTestsUtilitiesEnvironment",
+    "FlextTestsUtilitiesFiles",
+    "FlextTestsUtilitiesFixturesDSL",
+    "FlextTestsUtilitiesFlextGovernance",
+    "FlextTestsUtilitiesFlextHandler",
+    "FlextTestsUtilitiesMatchers",
+    "FlextTestsUtilitiesNamespace",
+    "FlextTestsUtilitiesPayload",
+    "FlextTestsUtilitiesPytest",
+    "FlextTestsUtilitiesResult",
+    "FlextTestsUtilitiesScratchStorage",
+    "FlextTestsUtilitiesTestContext",
 )
 
 install_lazy_exports(
     __name__,
     globals(),
     MappingProxyType({
-        "FlextTestsConfigHelpersUtilitiesMixin": ".settings",
-        "FlextTestsContainerHelpersUtilitiesMixin": ".container",
-        "FlextTestsDockerClientUtilitiesMixin": ".docker_client",
-        "FlextTestsDockerLifecycleUtilitiesMixin": ".docker_lifecycle",
-        "FlextTestsDockerStateUtilitiesMixin": ".docker_state",
-        "FlextTestsEnforcementUtilitiesMixin": ".enforcement",
-        "FlextTestsEnvironmentUtilitiesMixin": ".environment",
-        "FlextTestsFilesAssertionsMixin": "._files._assertions",
-        "FlextTestsFilesComparisonMixin": "._files._comparison.comparison_part_02",
-        "FlextTestsFilesContextsMixin": "._files._contexts",
-        "FlextTestsFilesCreationMixin": "._files._creation",
-        "FlextTestsFilesInfoMixin": "._files._info",
-        "FlextTestsFilesLifecycleMixin": "._files._lifecycle",
-        "FlextTestsFilesReadingMixin": "._files._reading",
-        "FlextTestsFilesUtilitiesMixin": ".files",
-        "FlextTestsFixturesDSLMixin": ".fixtures_dsl",
-        "FlextTestsFlextUtilitiesGovernance": ".governance",
-        "FlextTestsFlextUtilitiesHandler": ".handler",
-        "FlextTestsFlextUtilitiesPayload": ".payload",
-        "FlextTestsMatchersAssertionsMixin": "._matchers._assertions",
-        "FlextTestsMatchersContainmentMixin": "._matchers._containment",
-        "FlextTestsMatchersImmutabilityMixin": "._matchers._immutability",
-        "FlextTestsMatchersResultMixin": "._matchers._result",
-        "FlextTestsMatchersScopeMixin": "._matchers._scope",
-        "FlextTestsMatchersThatMixin": "._matchers._that",
-        "FlextTestsMatchersTypeGuardsMixin": "._matchers._typeguards",
-        "FlextTestsMatchersUtilities": ".matchers",
-        "FlextTestsNamespaceUtilitiesMixin": ".namespace",
-        "FlextTestsPayloadUtilities": ".payload",
-        "FlextTestsPytestUtilitiesMixin": ".pytest_surface",
-        "FlextTestsResultUtilitiesMixin": ".result",
-        "FlextTestsScratchStorageUtilitiesMixin": ".scratch_storage",
-        "FlextTestsTestContextUtilitiesMixin": ".testcontext",
+        "FlextTestsUtilitiesConfigHelpers": ".settings",
+        "FlextTestsUtilitiesContainerHelpers": ".container",
+        "FlextTestsUtilitiesDockerClient": ".docker_client",
+        "FlextTestsUtilitiesDockerLifecycle": ".docker_lifecycle",
+        "FlextTestsUtilitiesDockerState": ".docker_state",
+        "FlextTestsUtilitiesEnforcement": ".enforcement",
+        "FlextTestsUtilitiesEnvironment": ".environment",
+        "FlextTestsUtilitiesFixturesDSL": ".fixtures_dsl",
+        "FlextTestsUtilitiesFlextGovernance": ".governance",
+        "FlextTestsUtilitiesFlextHandler": ".handler",
+        "FlextTestsUtilitiesMatchers": ".matchers",
+        "FlextTestsUtilitiesNamespace": ".namespace",
+        "FlextTestsUtilitiesPayload": ".payload",
+        "FlextTestsUtilitiesPytest": ".pytest_surface",
+        "FlextTestsUtilitiesResult": ".result",
+        "FlextTestsUtilitiesScratchStorage": ".scratch_storage",
+        "FlextTestsUtilitiesTestContext": ".testcontext",
         "FlextTestsUtilitiesBase": ".base",
+        "FlextTestsUtilitiesFiles": ".files",
     }),
     public_exports=__all__,
 )

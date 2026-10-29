@@ -6,19 +6,18 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Iterator
 from typing import TYPE_CHECKING, Protocol, Self, runtime_checkable
 
 from flext_core import p
 
-from flext_tests._typings.base import FlextTestsBaseTypesMixin
+from flext_tests._typings.base import FlextTestsTypesBase
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator
-
     from flext_tests import t
 
 
-class FlextTestsPayloadProtocolsMixin:
+class FlextTestsProtocolsPayload:
     """Consumer-owned native payload access; no serialization capability required."""
 
     @runtime_checkable
@@ -39,7 +38,7 @@ class FlextTestsPayloadProtocolsMixin:
     class OutputCapture(Protocol):
         """The public stream-reading capability provided by pytest capture."""
 
-        def readouterr(self) -> FlextTestsPayloadProtocolsMixin.CapturedText: ...
+        def readouterr(self) -> FlextTestsProtocolsPayload.CapturedText: ...
 
     @runtime_checkable
     class NativeSequence(Protocol):
@@ -54,8 +53,8 @@ class FlextTestsPayloadProtocolsMixin:
         ) -> Iterator[
             t.Tests.PayloadAtom
             | p.Model
-            | FlextTestsPayloadProtocolsMixin.NativeSequence
-            | FlextTestsPayloadProtocolsMixin.NativeMapping
+            | FlextTestsProtocolsPayload.NativeSequence
+            | FlextTestsProtocolsPayload.NativeMapping
             | None
         ]:
             """Iterate native values, not owned payload nodes."""
@@ -68,8 +67,8 @@ class FlextTestsPayloadProtocolsMixin:
         ) -> (
             t.Tests.PayloadAtom
             | p.Model
-            | FlextTestsPayloadProtocolsMixin.NativeSequence
-            | FlextTestsPayloadProtocolsMixin.NativeMapping
+            | FlextTestsProtocolsPayload.NativeSequence
+            | FlextTestsProtocolsPayload.NativeMapping
             | None
         ):
             """Read a native value by position."""
@@ -90,8 +89,8 @@ class FlextTestsPayloadProtocolsMixin:
                 str,
                 t.Tests.PayloadAtom
                 | p.Model
-                | FlextTestsPayloadProtocolsMixin.NativeSequence
-                | FlextTestsPayloadProtocolsMixin.NativeMapping
+                | FlextTestsProtocolsPayload.NativeSequence
+                | FlextTestsProtocolsPayload.NativeMapping
                 | None,
             ]
         ]:
@@ -105,8 +104,8 @@ class FlextTestsPayloadProtocolsMixin:
         ) -> (
             t.Tests.PayloadAtom
             | p.Model
-            | FlextTestsPayloadProtocolsMixin.NativeSequence
-            | FlextTestsPayloadProtocolsMixin.NativeMapping
+            | FlextTestsProtocolsPayload.NativeSequence
+            | FlextTestsProtocolsPayload.NativeMapping
             | None
         ):
             """Read a native value by key."""
@@ -137,12 +136,12 @@ class FlextTestsPayloadProtocolsMixin:
             ...
 
     type NativeMatchValue = (
-        FlextTestsBaseTypesMixin.PayloadAtom
+        FlextTestsTypesBase.PayloadAtom
         | p.Model
-        | FlextTestsPayloadProtocolsMixin.NativeSequence
-        | FlextTestsPayloadProtocolsMixin.NativeMapping
+        | FlextTestsProtocolsPayload.NativeSequence
+        | FlextTestsProtocolsPayload.NativeMapping
         | None
     )
 
 
-__all__: list[str] = ["FlextTestsPayloadProtocolsMixin"]
+__all__: list[str] = ["FlextTestsProtocolsPayload"]

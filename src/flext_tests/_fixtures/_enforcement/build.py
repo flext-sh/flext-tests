@@ -6,16 +6,17 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 from flext_tests import m, u
-from flext_tests._fixtures._enforcement import FlextTestsEnforcementValidators
-from flext_tests._fixtures._enforcement._collector import FlextTestsEnforcementCollector
+from flext_tests._fixtures._enforcement import (
+    FlextTestsEnforcementValidators,
+    FlextTestsFixturesEnforcementCollector,
+)
 
 if TYPE_CHECKING:
     import pytest
-
-    from flext_tests import t
 
 
 class FlextTestsEnforcementBuilder:
@@ -27,7 +28,7 @@ class FlextTestsEnforcementBuilder:
         session: pytest.Session,
         cfg: m.Tests.EnforcementDispatcherConfig,
         *,
-        collected_items: t.SequenceOf[pytest.Item],
+        collected_items: Sequence[pytest.Item],
     ) -> list[pytest.Item]:
         """Return one enforcement item per rule and offending project."""
         repository_root = cfg.repository_root
@@ -44,7 +45,7 @@ class FlextTestsEnforcementBuilder:
             *(
                 rule_id
                 for rule in rules
-                if isinstance(rule.source, m.EnforcementInfraRuleSource)
+                if isinstance(rule.source, m.Tests.EnforcementInfraRuleSource)
                 for rule_id in rule.source.rule_ids
             ),
             *(cfg.include - {rule.id for rule in rules}),
@@ -60,7 +61,7 @@ class FlextTestsEnforcementBuilder:
             else None,
             project_names=project_names,
         )
-        collector = FlextTestsEnforcementCollector.from_parent(
+        collector = FlextTestsFixturesEnforcementCollector.from_parent(
             parent=session,
             name="flext-enforcement",
         )

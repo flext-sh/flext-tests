@@ -16,6 +16,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping, MutableMapping
 from importlib import import_module
 from inspect import getmembers, isclass
 from typing import TYPE_CHECKING
@@ -23,8 +24,6 @@ from typing import TYPE_CHECKING
 from flext_tests import c
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, MutableMapping
-
     import pytest
 
 
@@ -90,9 +89,19 @@ class FlextTestsConftestPlugin:
                     f"found {len(owners)}"
                 )
                 raise ValueError(msg)
-            if config.pluginmanager.get_plugin(fixture_module) is owners[0]:
+            owner = owners[0]
+            for attr in owner.__dict__.values():
+                wrapped_getter = getattr(attr, "__dict__", None)
+                if wrapped_getter is None:
+                    continue
+                getter = wrapped_getter.get("_get_wrapped_function")
+                if getter is not None:
+                    wrapped = getter()
+                    if isinstance(wrapped, staticmethod):
+                        wrapped_getter["_fixture_function"] = wrapped.__func__
+            if config.pluginmanager.get_plugin(fixture_module) is owner:
                 continue
-            if config.pluginmanager.register(owners[0], fixture_module) is None:
+            if config.pluginmanager.register(owner, fixture_module) is None:
                 msg = f"required fixture plugin is blocked: {fixture_module}"
                 raise ValueError(msg)
         # Prerequisites skip before fixtures; real service failures stay failures.

@@ -43,7 +43,7 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
 
         def guarded(value: str | None) -> str:
             if value is None:
-                tm.reject(explain())
+                return tm.reject(explain())
             return value
 
         tm.that(guarded("valid"), eq="valid")

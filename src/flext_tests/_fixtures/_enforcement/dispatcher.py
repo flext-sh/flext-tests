@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING, ClassVar, cast
 
 import pytest
 
-from flext_tests import c, t
+from flext_tests._constants.validator import FlextTestsConstantsValidator
 
 if TYPE_CHECKING:
     import warnings
@@ -35,6 +35,7 @@ class FlextTestsEnforcementDispatcher:
     stash_config: ClassVar[pytest.StashKey[m.Tests.EnforcementDispatcherConfig]] = (
         pytest.StashKey()
     )
+    stash_budgeted: ClassVar[pytest.StashKey[bool]] = pytest.StashKey()
     session_config: ClassVar[pytest.Config | None] = None
 
     @staticmethod
@@ -48,7 +49,7 @@ class FlextTestsEnforcementDispatcher:
         for candidate in (start, *start.parents):
             if all(
                 (candidate / marker).exists()
-                for marker in c.Tests.ENFORCEMENT_WORKSPACE_MARKERS
+                for marker in FlextTestsConstantsValidator.ENFORCEMENT_WORKSPACE_MARKERS
             ):
                 return candidate
         return None
@@ -122,7 +123,7 @@ class FlextTestsEnforcementDispatcher:
         action = "error" if cfg.strict else "default"
         root = import_module("flext_tests")
         for rule in root.u.Tests.active_rules(cfg):
-            if isinstance(rule.source, root.m.EnforcementRuntimeWarningSource):
+            if isinstance(rule.source, root.m.Tests.EnforcementRuntimeWarningSource):
                 config.addinivalue_line(
                     "filterwarnings",
                     f"{action}::{rule.source.category}",
@@ -138,13 +139,16 @@ class FlextTestsEnforcementDispatcher:
 
         """
         raw_timeout = str(
-            config.getini(c.Tests.ENFORCEMENT_SLOW_TIMEOUT_INI_OPTION)
+            config.getini(
+                FlextTestsConstantsValidator.ENFORCEMENT_SLOW_TIMEOUT_INI_OPTION
+            )
         ).strip()
         if not raw_timeout:
             return None
         msg = (
             "FLEXT slow timeout policy: "
-            f"{c.Tests.ENFORCEMENT_SLOW_TIMEOUT_INI_OPTION} must be a positive "
+            f"{FlextTestsConstantsValidator.ENFORCEMENT_SLOW_TIMEOUT_INI_OPTION} must "
+            f"be a positive "
             "finite number"
         )
         try:
@@ -175,6 +179,8 @@ class FlextTestsEnforcementDispatcher:
         """
         slow_timeout = cls.slow_budget_seconds(config)
         for item in items if slow_timeout is not None else ():
+            if item.stash.get(cls.stash_budgeted, False):
+                continue
             if item.get_closest_marker("slow") is None:
                 continue
             if item.get_closest_marker("timeout") is not None:
@@ -183,6 +189,7 @@ class FlextTestsEnforcementDispatcher:
                     f"forbidden; {item.nodeid} must use the config-owned slow budget"
                 )
                 raise pytest.UsageError(msg)
+            item.stash[cls.stash_budgeted] = True
             if (
                 item.get_closest_marker("slow") is not None
                 and config.getoption("timeout") != 0
@@ -236,7 +243,7 @@ class FlextTestsEnforcementDispatcher:
             return
         cfg = cls.resolve_config(config, repository_root)
         active = import_module("flext_tests").u.Tests.active_rules(cfg)
-        kinds: t.MutableMappingKV[str, int] = {}
+        kinds: dict[str, int] = {}
         for rule in active:
             kinds[rule.source.kind] = kinds.get(rule.source.kind, 0) + 1
         terminalreporter.write_sep("-", "flext-enforce", yellow=True)

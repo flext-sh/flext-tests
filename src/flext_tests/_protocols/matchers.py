@@ -6,17 +6,43 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
+from flext_tests import t
+
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator
+    from collections.abc import Callable
 
-    from flext_tests import t
-    from flext_tests._protocols.payload import FlextTestsPayloadProtocolsMixin
+    from flext_tests._protocols.payload import FlextTestsProtocolsPayload
+    from flext_tests._typings.matchers import FlextTestsTypesMatchers
 
 
-class FlextTestsMatchersProtocolsMixin(Protocol):
+class FlextTestsProtocolsMatchers(Protocol):
     """Structural matcher capabilities without recursive type aliases."""
+
+    type MatcherOption = (
+        FlextTestsProtocolsPayload.NativeMatchValue
+        | FlextTestsProtocolsPayload.Payload
+        | t.RegexPattern
+        | type
+        | tuple[type, ...]
+        | Callable[[FlextTestsProtocolsPayload.NativeMatchValue], bool]
+        | Callable[
+            [FlextTestsProtocolsPayload.NativeMatchValue],
+            FlextTestsProtocolsPayload.NativeMatchValue,
+        ]
+        | Mapping[
+            str | int,
+            FlextTestsProtocolsPayload.NativeMatchValue
+            | FlextTestsProtocolsPayload.Payload
+            | Callable[[FlextTestsProtocolsPayload.NativeMatchValue], bool],
+        ]
+        | FlextTestsProtocolsMatchers.MatcherCriteriaMapping
+        | FlextTestsProtocolsMatchers.MatcherCriteriaSequence
+        | Sequence[str]
+        | FlextTestsTypesMatchers.LengthSpec
+    )
 
     @runtime_checkable
     class MatcherCriteriaMapping(Protocol):
@@ -28,7 +54,7 @@ class FlextTestsMatchersProtocolsMixin(Protocol):
 
         def items(
             self,
-        ) -> Iterable[tuple[str | int, t.Tests.MatcherOption]]:
+        ) -> Iterable[tuple[str | int, FlextTestsProtocolsMatchers.MatcherOption]]:
             """Iterate selectors and their unchanged native criteria."""
             ...
 
@@ -40,11 +66,13 @@ class FlextTestsMatchersProtocolsMixin(Protocol):
             """Return the number of positional criteria."""
             ...
 
-        def __iter__(self) -> Iterator[t.Tests.MatcherOption]:
+        def __iter__(self) -> Iterator[FlextTestsProtocolsMatchers.MatcherOption]:
             """Iterate the original criteria."""
             ...
 
-        def __getitem__(self, index: int, /) -> t.Tests.MatcherOption:
+        def __getitem__(
+            self, index: int, /
+        ) -> FlextTestsProtocolsMatchers.MatcherOption:
             """Read one positional criterion."""
             ...
 
@@ -54,7 +82,7 @@ class FlextTestsMatchersProtocolsMixin(Protocol):
 
         def __call__(
             self,
-            value: FlextTestsPayloadProtocolsMixin.NativeMatchValue,
+            value: FlextTestsProtocolsPayload.NativeMatchValue,
             /,
         ) -> bool: ...
 
@@ -63,7 +91,7 @@ class FlextTestsMatchersProtocolsMixin(Protocol):
         """Structural stand-in for pytest approximation objects in type positions."""
 
         @property
-        def expected(self) -> FlextTestsPayloadProtocolsMixin.NativeMatchValue: ...
+        def expected(self) -> FlextTestsProtocolsPayload.NativeMatchValue: ...
 
         @property
         def rel(self) -> float | None: ...
@@ -75,4 +103,4 @@ class FlextTestsMatchersProtocolsMixin(Protocol):
         def nan_ok(self) -> bool: ...
 
 
-__all__: list[str] = ["FlextTestsMatchersProtocolsMixin"]
+__all__: list[str] = ["FlextTestsProtocolsMatchers"]

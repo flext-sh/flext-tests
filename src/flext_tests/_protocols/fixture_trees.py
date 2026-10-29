@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Protocol, runtime_checkable
 
 
-class FlextTestsFixtureTreesProtocolsMixin:
+class FlextTestsProtocolsFixtureTrees:
     """Callable the ``fixture_tree`` fixture hands to a test."""
 
     @runtime_checkable
@@ -22,4 +22,4 @@ class FlextTestsFixtureTreesProtocolsMixin:
             ...
 
 
-__all__: list[str] = ["FlextTestsFixtureTreesProtocolsMixin"]
+__all__: list[str] = ["FlextTestsProtocolsFixtureTrees"]

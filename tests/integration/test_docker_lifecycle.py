@@ -51,7 +51,7 @@ class TestsFlextTestsDockerLifecycle:
         state_dir: Path,
         *,
         service: str = "probe",
-        inputs: t.VariadicTuple[Path] = (),
+        inputs: tuple[Path, ...] = (),
         startup_timeout: int = 20,
     ) -> FlextTestsDocker:
         compose_file = TestsFlextTestsDockerLifecycle._compose_file()

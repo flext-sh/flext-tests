@@ -29,8 +29,8 @@ class TestsFlextTestsEnforcementDispatcher:
     # Fixtures                                                           #
     # ------------------------------------------------------------------ #
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def workspace(tmp_path: Path) -> Path:
         """Create a directory carrying every FLEXT workspace marker.
 
@@ -44,6 +44,8 @@ class TestsFlextTestsEnforcementDispatcher:
             (root / marker).mkdir(parents=True, exist_ok=True)
         return root
 
+    project_root = Path(__file__).resolve().parents[2]
+
     @staticmethod
     def _cfg(
         *,
@@ -54,6 +56,7 @@ class TestsFlextTestsEnforcementDispatcher:
             strict=False,
             include=include,
             exclude=exclude,
+            repository_root=TestsFlextTestsEnforcementDispatcher.project_root,
         )
 
     # ------------------------------------------------------------------ #
@@ -79,11 +82,11 @@ class TestsFlextTestsEnforcementDispatcher:
 
     @classmethod
     def _runtime_rule_id(cls) -> str:
-        """Return the first enabled runtime-warning rule of the live catalog."""
+        """Return the first declarative engine rule of the live catalog."""
         return next(
             rule.id
             for rule in u.Tests.active_rules(cls._cfg())
-            if rule.source.kind == "runtime_warning"
+            if rule.source.kind == "flext_infra_rule"
         )
 
     @classmethod
@@ -196,10 +199,11 @@ class TestsFlextTestsEnforcementDispatcher:
         # No rule is suspended: an unfiltered session runs every catalog rule.
         """Test active rules without filters is the whole catalog."""
         active = u.Tests.active_rules(self._cfg())
+        catalog = u.Tests.build_canonical_catalog(self.project_root)
 
         tm.that(
             [r.id for r in active],
-            eq=[r.id for r in u.build_canonical_catalog().rules],
+            eq=[r.id for r in catalog.rules],
         )
 
     def test_include_narrows_to_the_listed_ids(self) -> None:

@@ -1,4 +1,4 @@
-"""File-comparison execution helpers (part 2) for FlextTestsFiles.
+"""Facade for FlextTestsUtilitiesFilesComparison.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -6,63 +6,33 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Annotated
 
 from flext_core import r
 
 from flext_tests import c, m, p, t, u
-from flext_tests._utilities import FlextTestsFlextUtilitiesPayload
-from flext_tests._utilities._files._comparison import comparison_part_01
+from flext_tests._utilities import FlextTestsUtilitiesPayload
+from flext_tests._utilities._files._comparison import (
+    FlextTestsUtilitiesFilesComparisonParsing,
+)
 
 
-class FlextTestsFilesComparisonMixin(
-    comparison_part_01.FlextTestsFilesComparisonMixin,
+class FlextTestsUtilitiesFilesComparison(
+    FlextTestsUtilitiesFilesComparisonParsing,
 ):
-    """File-comparison execution helpers — part 2 of the modular split.
+    """Compose the comparison domain through its native MRO.
 
-    Extends the parsing helpers from ``comparison_part_01`` with the
+    Extends the parsing helpers from ``parsing`` with the
     dispatch, mode comparison, and deep-compare methods.
     """
-
-    class CompareOptions(m.Value):
-        """Grouped comparison knobs for ``compare``."""
-
-        mode: Annotated[
-            c.Tests.CompareMode,
-            m.Field(description="Comparison mode."),
-        ] = c.Tests.CompareMode.CONTENT
-        ignore_ws: Annotated[
-            bool,
-            m.Field(description="Ignore whitespace in comparison."),
-        ] = False
-        ignore_case: Annotated[
-            bool,
-            m.Field(description="Case-insensitive comparison."),
-        ] = False
-        pattern: Annotated[
-            str | None,
-            m.Field(description="Pattern to check if both files contain."),
-        ] = None
-        deep: Annotated[
-            bool,
-            m.Field(description="Use deep comparison for nested structures."),
-        ] = True
-        keys: Annotated[
-            t.StrSequence | None,
-            m.Field(description="Only compare these keys."),
-        ] = None
-        exclude_keys: Annotated[
-            t.StrSequence | None,
-            m.Field(description="Exclude these keys from comparison."),
-        ] = None
 
     def compare(
         self,
         file1: Path,
         file2: Path,
         *,
-        options: FlextTestsFilesComparisonMixin.CompareOptions | None = None,
+        options: FlextTestsUtilitiesFilesComparison.CompareOptions | None = None,
     ) -> p.Result[bool]:
         """Compare two files under the configured comparison options.
 
@@ -78,7 +48,7 @@ class FlextTestsFilesComparisonMixin(
         compare_options = (
             options
             if options is not None
-            else FlextTestsFilesComparisonMixin.CompareOptions()
+            else FlextTestsUtilitiesFilesComparison.CompareOptions()
         )
         try:
             params = m.Tests.CompareParams.model_validate({
@@ -162,8 +132,8 @@ class FlextTestsFilesComparisonMixin(
 
     @staticmethod
     def _deep_compare_mappings(
-        dict1: t.MappingKV[str, t.Tests.TestobjectSerializable],
-        dict2: t.MappingKV[str, t.Tests.TestobjectSerializable],
+        dict1: Mapping[str, t.Tests.TestobjectSerializable],
+        dict2: Mapping[str, t.Tests.TestobjectSerializable],
         params: m.Tests.CompareParams,
     ) -> p.Result[bool]:
         """Deeply compare already-parsed structured mappings.
@@ -177,14 +147,14 @@ class FlextTestsFilesComparisonMixin(
             set(params.exclude_keys) if params.exclude_keys is not None else None
         )
         left_result = u.transform(
-            FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
+            FlextTestsUtilitiesPayload.to_config_map(
                 dict1,
             ),
             filter_keys=filter_keys_set,
             exclude_keys=exclude_keys_set,
         )
         right_result = u.transform(
-            FlextTestsFlextUtilitiesPayload.FlextTestsPayloadUtilities.to_config_map(
+            FlextTestsUtilitiesPayload.to_config_map(
                 dict2,
             ),
             filter_keys=filter_keys_set,
@@ -212,4 +182,4 @@ class FlextTestsFilesComparisonMixin(
         return r[bool].ok(lines1 == lines2)
 
 
-__all__: list[str] = ["FlextTestsFilesComparisonMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesFilesComparison"]

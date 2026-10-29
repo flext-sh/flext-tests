@@ -12,11 +12,12 @@ from __future__ import annotations
 import shutil
 import tempfile
 import warnings
+from collections.abc import Sequence
 from pathlib import Path
 from types import TracebackType
 from typing import Self
 
-from flext_tests import c, m, t
+from flext_tests import c, m
 
 
 def _created_paths_default() -> list[Path]:
@@ -29,7 +30,7 @@ def _created_paths_default() -> list[Path]:
     return []
 
 
-class FlextTestsFilesLifecycleMixin:
+class FlextTestsUtilitiesFilesLifecycle:
     """File-manager lifecycle: init, context manager, cleanup, base_dir."""
 
     base_dir: Path | None
@@ -65,12 +66,12 @@ class FlextTestsFilesLifecycleMixin:
         self.cleanup()
 
     @property
-    def created_dirs(self) -> t.SequenceOf[Path]:
+    def created_dirs(self) -> Sequence[Path]:
         """The list of created directories."""
         return self._created_dirs
 
     @property
-    def created_files(self) -> t.SequenceOf[Path]:
+    def created_files(self) -> Sequence[Path]:
         """The list of created files."""
         return self._created_files
 
@@ -120,4 +121,4 @@ class FlextTestsFilesLifecycleMixin:
         return temp_dir
 
 
-__all__: list[str] = ["FlextTestsFilesLifecycleMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesFilesLifecycle"]

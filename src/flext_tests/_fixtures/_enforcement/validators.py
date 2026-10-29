@@ -6,9 +6,10 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import MutableMapping
 from typing import TYPE_CHECKING
 
-from flext_tests import m, p, t
+from flext_tests import m, p
 from flext_tests._fixtures._enforcement import FlextTestsEnforcementItem
 
 if TYPE_CHECKING:
@@ -39,7 +40,7 @@ class FlextTestsEnforcementValidators:
         if not isinstance(report, p.Tests.EnforcementScanReport):
             msg = f"engine findings lack the scan-report contract: {type(report)!r}"
             raise TypeError(msg)
-        grouped: t.MutableMappingKV[
+        grouped: MutableMapping[
             tuple[str, str],
             list[p.Tests.EnforcementScanFinding],
         ] = {}

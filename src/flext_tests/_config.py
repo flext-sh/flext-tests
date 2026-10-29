@@ -14,21 +14,25 @@ from typing import Annotated
 
 from flext_cli import FlextCliConfig, m
 
-from flext_tests._models.tests_namespace import FlextTestsModelsTestsNamespace
+
+class FlextTestsConfigNamespace(m.BaseModel):
+    """Open, frozen namespace exposing every ``config/*.yaml`` domain."""
+
+    model_config = m.ConfigDict(extra="allow", frozen=True)
 
 
 class FlextTestsConfig(FlextCliConfig):
     """Tests config auto-loaded model-less from ``config/*.yaml``."""
 
     Tests: Annotated[
-        FlextTestsModelsTestsNamespace.ConfigNamespace,
+        FlextTestsConfigNamespace,
         m.Field(
             description="Open namespace exposing ``config/*.yaml`` under ``Tests``.",
         ),
-    ] = FlextTestsModelsTestsNamespace.ConfigNamespace()
+    ] = FlextTestsConfigNamespace()
 
 
 config: FlextTestsConfig = FlextTestsConfig.fetch_global()
 """Pre-instantiated frozen config singleton — ``from flext_tests import config``."""
 
-__all__: list[str] = ["FlextTestsConfig", "config"]
+__all__: list[str] = ["FlextTestsConfig", "FlextTestsConfigNamespace", "config"]

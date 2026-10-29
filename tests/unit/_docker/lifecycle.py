@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import stat
+from collections.abc import Mapping, MutableMapping, Sequence
 from pathlib import Path
 
 import pytest
@@ -66,7 +67,7 @@ class TestsFlextTestsDockerLifecycleMixin:
     )
     def test_stale_record_recreates_in_every_status_and_health(
         self,
-        stale: t.MappingKV[str, str | bool],
+        stale: Mapping[str, str | bool],
     ) -> None:
         """A dirty, unsealed, re-declared or foreign record always recreates."""
         state = self._sealed().model_copy(update=stale)
@@ -192,7 +193,7 @@ class TestsFlextTestsDockerLifecycleMixin:
         self,
         info_status: str | None,
         health: str | None,
-        stale: t.MappingKV[str, str | bool],
+        stale: Mapping[str, str | bool],
         code: str,
     ) -> None:
         """Each unusable combination fails with its own error code."""
@@ -239,12 +240,10 @@ class TestsFlextTestsDockerLifecycleMixin:
 
     @staticmethod
     def _inspect(
-        health: t.MappingKV[str, str] | None,
-        env: t.StrSequence | None,
+        health: Mapping[str, str] | None,
+        env: Sequence[str] | None,
     ) -> m.Tests.ContainerInspect:
-        state: t.MutableMappingKV[str, str | t.MappingKV[str, str]] = {
-            "Status": "running"
-        }
+        state: MutableMapping[str, str | Mapping[str, str]] = {"Status": "running"}
         if health is not None:
             state["Health"] = health
         return m.Tests.ContainerInspect.model_validate({

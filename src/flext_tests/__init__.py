@@ -44,9 +44,9 @@ if TYPE_CHECKING:
         __version__,
         __version_info__,
     )
-    from flext_tests._cli_docker import FlextTestsCliDocker
-    from flext_tests._config import FlextTestsConfig, config
-    from flext_tests._docker_surface import FlextTestsDockerSurfaceParts
+    from flext_tests._cli import FlextTestsCliDocker
+    from flext_tests._config import FlextTestsConfig, FlextTestsConfigNamespace, config
+    from flext_tests._docker import FlextTestsDockerSurface
     from flext_tests._settings import FlextTestsSettings, settings
     from flext_tests.api import FlextTests, api
     from flext_tests.base import FlextTestsServiceBase, s
@@ -59,9 +59,13 @@ if TYPE_CHECKING:
     from flext_tests.models import FlextTestsModels, m
     from flext_tests.protocols import FlextTestsProtocols, p
     from flext_tests.pytest_bootstrap import install_local_packages
-    from flext_tests.tmatchers import FlextTestsMatchersUtilities, tm
+    from flext_tests.tmatchers import FlextTestsUtilitiesMatchers, tm
     from flext_tests.typings import FlextTestsTypes, t
-    from flext_tests.utilities import FlextTestsFixturesDSLMixin, FlextTestsUtilities, u
+    from flext_tests.utilities import (
+        FlextTestsUtilities,
+        FlextTestsUtilitiesFixturesDSL,
+        u,
+    )
 
 
 __all__: tuple[str, ...] = (
@@ -70,19 +74,20 @@ __all__: tuple[str, ...] = (
     "FlextTestsCli",
     "FlextTestsCliDocker",
     "FlextTestsConfig",
+    "FlextTestsConfigNamespace",
     "FlextTestsConstants",
     "FlextTestsDocker",
-    "FlextTestsDockerSurfaceParts",
+    "FlextTestsDockerSurface",
     "FlextTestsDomains",
     "FlextTestsFiles",
-    "FlextTestsFixturesDSLMixin",
-    "FlextTestsMatchersUtilities",
     "FlextTestsModels",
     "FlextTestsProtocols",
     "FlextTestsServiceBase",
     "FlextTestsSettings",
     "FlextTestsTypes",
     "FlextTestsUtilities",
+    "FlextTestsUtilitiesFixturesDSL",
+    "FlextTestsUtilitiesMatchers",
     "FlextTestsVersion",
     "__author__",
     "__author_email__",
@@ -134,13 +139,14 @@ install_lazy_exports(
         "FlextTestsCli": ".cli",
         "FlextTestsCliDocker": "._cli_docker",
         "FlextTestsConfig": "._config",
+        "FlextTestsConfigNamespace": "._config",
         "FlextTestsConstants": ".constants",
         "FlextTestsDocker": ".docker",
-        "FlextTestsDockerSurfaceParts": "._docker_surface",
+        "FlextTestsDockerSurface": "._docker.surface",
         "FlextTestsDomains": ".domains",
         "FlextTestsFiles": ".files",
-        "FlextTestsFixturesDSLMixin": ".utilities",
-        "FlextTestsMatchersUtilities": ".tmatchers",
+        "FlextTestsUtilitiesFixturesDSL": ".utilities",
+        "FlextTestsUtilitiesMatchers": ".tmatchers",
         "FlextTestsModels": ".models",
         "FlextTestsProtocols": ".protocols",
         "FlextTestsServiceBase": ".base",

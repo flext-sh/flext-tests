@@ -11,7 +11,7 @@ from types import EllipsisType
 from flext_tests import c, p
 
 
-class FlextTestsResultUtilitiesMixin:
+class FlextTestsUtilitiesResult:
     """Result helpers for test assertions."""
 
     @staticmethod
@@ -69,4 +69,4 @@ class FlextTestsResultUtilitiesMixin:
         return value
 
 
-__all__: list[str] = ["FlextTestsResultUtilitiesMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesResult"]

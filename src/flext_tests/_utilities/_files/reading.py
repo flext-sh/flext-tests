@@ -8,17 +8,18 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Annotated, cast, overload
+from typing import Annotated, overload
 
 from flext_cli import u
 
 from flext_tests import c, m, p, r, t
-from flext_tests._utilities import FlextTestsPayloadUtilities
-from flext_tests._utilities._files import FlextTestsFilesCreationMixin
+from flext_tests._utilities import FlextTestsUtilitiesPayload
+from flext_tests._utilities._files import FlextTestsUtilitiesFilesCreation
 
 
-class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
+class FlextTestsUtilitiesFilesReading(FlextTestsUtilitiesFilesCreation):
     """Read-side of the test files utility."""
 
     class ReadOptions(m.Value):
@@ -75,7 +76,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         path: Path,
         *,
         model_cls: None = None,
-        options: FlextTestsFilesReadingMixin.ReadOptions | None = None,
+        options: FlextTestsUtilitiesFilesReading.ReadOptions | None = None,
     ) -> p.Result[t.Tests.ReadContent]: ...
 
     @overload
@@ -84,7 +85,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         path: Path,
         *,
         model_cls: type[TModelRead],
-        options: FlextTestsFilesReadingMixin.ReadOptions | None = None,
+        options: FlextTestsUtilitiesFilesReading.ReadOptions | None = None,
     ) -> p.Result[TModelRead]: ...
 
     def read[TModelRead: m.BaseModel](
@@ -92,7 +93,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         path: Path,
         *,
         model_cls: type[TModelRead] | None = None,
-        options: FlextTestsFilesReadingMixin.ReadOptions | None = None,
+        options: FlextTestsUtilitiesFilesReading.ReadOptions | None = None,
     ) -> p.Result[t.Tests.ReadContent] | p.Result[TModelRead]:
         """Read file with auto-detection or explicit format.
 
@@ -109,7 +110,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         """
         result: p.Result[t.Tests.ReadContent] | p.Result[TModelRead]
         try:
-            chosen = options or FlextTestsFilesReadingMixin.ReadOptions()
+            chosen = options or FlextTestsUtilitiesFilesReading.ReadOptions()
             params = m.Tests.ReadParams.model_validate({
                 **chosen.model_dump(),
                 "path": path,
@@ -184,21 +185,18 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
             case _ if actual_fmt == c.Tests.FILE_FORMAT_JSON:
                 text = path.read_text(encoding=params.enc)
                 adapter: u.type_adapter[
-                    t.MappingKV[str, t.Tests.TestobjectSerializable]
-                ] = u.type_adapter(
-                    cast(
-                        "type[t.MappingKV[str, t.Tests.TestobjectSerializable]]",
-                        t.MappingKV[str, t.Tests.TestobjectSerializable],
-                    ),
-                )
-                parsed_json: t.MappingKV[str, t.Tests.TestobjectSerializable] = (
+                    Mapping[str, t.Tests.TestobjectSerializable]
+                ] = u.type_adapter(Mapping[str, t.Tests.TestobjectSerializable])
+                parsed_json: Mapping[str, t.Tests.TestobjectSerializable] = (
                     adapter.validate_json(text.encode())
                 )
                 content = (
-                    FlextTestsPayloadUtilities.to_config_map(
+                    FlextTestsUtilitiesPayload.to_config_map(
                         parsed_json,
                     )
-                    if FlextTestsFilesCreationMixin.matches_native_mapping(parsed_json)
+                    if FlextTestsUtilitiesFilesCreation.matches_native_mapping(
+                        parsed_json
+                    )
                     else text
                 )
             case _ if actual_fmt == c.Tests.FILE_FORMAT_YAML:
@@ -206,7 +204,7 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
                 parsed_yaml = u.Cli.yaml_parse(text)
                 if parsed_yaml.failure:
                     raise ValueError(parsed_yaml.error)
-                content = FlextTestsPayloadUtilities.to_config_map(
+                content = FlextTestsUtilitiesPayload.to_config_map(
                     parsed_yaml.value,
                 )
             case _ if actual_fmt == c.Tests.FILE_FORMAT_CSV:
@@ -225,4 +223,4 @@ class FlextTestsFilesReadingMixin(FlextTestsFilesCreationMixin):
         return content
 
 
-__all__: list[str] = ["FlextTestsFilesReadingMixin"]
+__all__: list[str] = ["FlextTestsUtilitiesFilesReading"]

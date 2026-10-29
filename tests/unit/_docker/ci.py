@@ -6,13 +6,14 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from pathlib import Path
 
 import pytest
 from flext_infra import config as infra_config
 
 from flext_tests import FlextTestsDocker
-from tests import c, m, t, tm, u
+from tests import c, m, tm, u
 
 
 class TestsFlextTestsDockerCiMixin:
@@ -35,7 +36,7 @@ class TestsFlextTestsDockerCiMixin:
     ) -> None:
         """Only the configured Make CI value disables Docker, and it is typed."""
         ci = infra_config.Infra.codegen.make.ci
-        env: t.StrMapping = (
+        env: Mapping[str, str] = (
             {}
             if value_template is None
             else {ci.variable: value_template.format(token=ci.value)}

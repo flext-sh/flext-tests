@@ -7,16 +7,17 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import datetime as dt
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Annotated
 
 from flext_cli import m
 
 from flext_tests import c, p, t
-from flext_tests._models import FlextTestsFlextModelsBase
+from flext_tests._models import FlextTestsModelsFlextBase
 
 
-class FlextTestsFilesystemModelsMixin:
+class FlextTestsModelsFilesystem:
     """Filesystem model group (info, content, and operation parameters)."""
 
     class FileInfo(m.Value):
@@ -65,7 +66,7 @@ class FlextTestsFilesystemModelsMixin:
             m.Field(description="Hex-encoded SHA-256 digest."),
         ] = None
         content_meta: Annotated[
-            FlextTestsFilesystemModelsMixin.ContentMeta | None,
+            FlextTestsModelsFilesystem.ContentMeta | None,
             m.Field(description="Optional content metadata for parsed files."),
         ] = None
 
@@ -101,7 +102,7 @@ class FlextTestsFilesystemModelsMixin:
         """Parameters for file creation operations."""
 
         content: Annotated[
-            FlextTestsFlextModelsBase.FlextTestsBaseModelsMixin.Payload,
+            FlextTestsModelsFlextBase.Payload,
             m.Field(description="Owned native file content to create."),
         ]
         name: Annotated[
@@ -134,7 +135,7 @@ class FlextTestsFilesystemModelsMixin:
             c.Tests.DEFAULT_CSV_DELIMITER
         )
         headers: Annotated[
-            t.StrSequence | None,
+            Sequence[str] | None,
             m.Field(description="CSV headers."),
         ] = None
         readonly: Annotated[bool, m.Field(description="Create file as read-only.")] = (
@@ -246,11 +247,11 @@ class FlextTestsFilesystemModelsMixin:
             m.Field(description="Use deep comparison for nested structures."),
         ] = True
         keys: Annotated[
-            t.StrSequence | None,
+            Sequence[str] | None,
             m.Field(description="Only compare these keys."),
         ] = None
         exclude_keys: Annotated[
-            t.StrSequence | None,
+            Sequence[str] | None,
             m.Field(description="Exclude these keys from comparison."),
         ] = None
 
@@ -322,7 +323,7 @@ class FlextTestsFilesystemModelsMixin:
             m.Field(min_length=1, max_length=1, description="CSV delimiter."),
         ] = c.Tests.DEFAULT_CSV_DELIMITER
         headers: Annotated[
-            t.StrSequence | None,
+            Sequence[str] | None,
             m.Field(description="CSV column headers."),
         ] = None
         readonly: Annotated[bool, m.Field(description="Create file as read-only.")] = (
@@ -330,4 +331,4 @@ class FlextTestsFilesystemModelsMixin:
         )
 
 
-__all__: list[str] = ["FlextTestsFilesystemModelsMixin"]
+__all__: list[str] = ["FlextTestsModelsFilesystem"]

@@ -55,7 +55,7 @@ class TestsFlextTestsFilesFormatsMixin:
 
     @staticmethod
     def test_create_csv_auto_detect_from_list(tmp_path: Path) -> None:
-        """Test create() auto-detects CSV from t.SequenceOf[list] content."""
+        """Test create() auto-detects CSV from Sequence[list] content."""
         manager = tf(base_dir=tmp_path)
         content = [["a", "b"], [c.ParserBooleanToken.ONE, "2"]]
         path = manager.create(content, "data.csv")

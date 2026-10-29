@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from flext_tests import m
 
 
-class FlextTestsDockerProtocolsMixin:
+class FlextTestsProtocolsDocker:
     """Callables the lifecycle invokes around one container."""
 
     @runtime_checkable
@@ -43,4 +43,4 @@ class FlextTestsDockerProtocolsMixin:
             ...
 
 
-__all__: list[str] = ["FlextTestsDockerProtocolsMixin"]
+__all__: list[str] = ["FlextTestsProtocolsDocker"]

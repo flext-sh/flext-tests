@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from enum import Enum
 from types import MappingProxyType
 from typing import TYPE_CHECKING, ClassVar
@@ -25,7 +26,7 @@ class FlextTestsConstantsMatcher:
 
         OMITTED = "omitted"
 
-    PAYLOAD_COLLECTION_TYPES: ClassVar[t.MappingKV[str, type]] = MappingProxyType({
+    PAYLOAD_COLLECTION_TYPES: ClassVar[Mapping[str, type]] = MappingProxyType({
         c.Action.LIST: list,
         "tuple": tuple,
         "set": set,
@@ -33,7 +34,7 @@ class FlextTestsConstantsMatcher:
         "mapping": dict,
     })
 
-    MATCHER_SCALAR_CRITERIA: ClassVar[t.VariadicTuple[str]] = (
+    MATCHER_SCALAR_CRITERIA: ClassVar[tuple[str, ...]] = (
         "none",
         "empty",
         "gt",

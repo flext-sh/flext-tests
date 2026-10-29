@@ -13,16 +13,25 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_tests._utilities._files._comparison.comparison_part_02 import (
-        FlextTestsFilesComparisonMixin,
+    from flext_tests._utilities._files._comparison.parsing import (
+        FlextTestsUtilitiesFilesComparisonParsing,
+    )
+    from flext_tests._utilities._files.comparison import (
+        FlextTestsUtilitiesFilesComparison,
     )
 
 
-__all__: tuple[str, ...] = ("FlextTestsFilesComparisonMixin",)
+__all__: tuple[str, ...] = (
+    "FlextTestsUtilitiesFilesComparison",
+    "FlextTestsUtilitiesFilesComparisonParsing",
+)
 
 install_lazy_exports(
     __name__,
     globals(),
-    MappingProxyType({"FlextTestsFilesComparisonMixin": ".comparison_part_02"}),
+    MappingProxyType({
+        "FlextTestsUtilitiesFilesComparison": "..comparison",
+        "FlextTestsUtilitiesFilesComparisonParsing": ".parsing",
+    }),
     public_exports=__all__,
 )
