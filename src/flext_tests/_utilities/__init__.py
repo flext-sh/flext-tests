@@ -71,7 +71,6 @@ install_lazy_exports(
         "FlextTestsUtilitiesFixturesDSL": ".fixtures_dsl",
         "FlextTestsUtilitiesFlextGovernance": ".governance",
         "FlextTestsUtilitiesFlextHandler": ".handler",
-        "FlextTestsUtilitiesPayload": ".payload",
         "FlextTestsUtilitiesMatchers": ".matchers",
         "FlextTestsUtilitiesNamespace": ".namespace",
         "FlextTestsUtilitiesPayload": ".payload",

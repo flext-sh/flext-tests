@@ -47,14 +47,6 @@ class FlextTestsUtilitiesPayload:
     """Canonical namespace owner."""
 
     @staticmethod
-    def _stable_sort_key(value: p.Tests.Payload) -> tuple[str, str]:
-        """Return a total deterministic key for heterogeneous payload values."""
-        native = FlextTestsUtilitiesPayload.to_match_value(
-            value,
-        )
-        return type(native).__name__, str(native)
-
-    @staticmethod
     def _payload_model_leaf(
         value: p.AttributeProbe,
     ) -> flext_tests.m.Tests.Payload | None:
@@ -241,10 +233,16 @@ class FlextTestsUtilitiesPayload:
             for item in cast("Sequence[object]", value)
         )
         if isinstance(value, (set, frozenset)):
+
+            def deterministic_key(payload: p.Tests.Payload) -> tuple[str, str]:
+                """Return a total deterministic key for heterogeneous values."""
+                native = FlextTestsUtilitiesPayload.to_match_value(payload)
+                return type(native).__name__, str(native)
+
             children = tuple(
                 sorted(
                     children,
-                    key=FlextTestsUtilitiesPayload._stable_sort_key,
+                    key=deterministic_key,
                 ),
             )
         for kind, sequence_type in c.Tests.PAYLOAD_COLLECTION_TYPES.items():
@@ -269,252 +267,246 @@ class FlextTestsUtilitiesPayload:
         _payload_sequence_leaf,
     )
 
-    class FlextTestsUtilitiesPayload:
-        """Namespace class for shared payload conversion helpers in flext_tests."""
+    @classmethod
+    def to_payload(
+        cls,
+        value: p.AttributeProbe,
+    ) -> FlextTestsModelsFlextBase.Payload:
+        """Own supported native values without serializing their model leaves.
 
-        @staticmethod
-        def to_payload(
-            value: p.AttributeProbe,
-        ) -> FlextTestsModelsFlextBase.Payload:
-            """Own supported native values without serializing their model leaves.
+        Returns:
+            The resulting ``flext_tests.m.Tests.Payload``.
 
-            Returns:
-                The resulting ``flext_tests.m.Tests.Payload``.
+        Raises:
+            TypeError: If Unsupported native payload leaf.
 
-            Raises:
-                TypeError: If Unsupported native payload leaf.
+        """
+        for handler in cls._PAYLOAD_LEAF_HANDLERS:
+            payload = handler(value)
+            if payload is not None:
+                return payload
+        msg = f"Unsupported native payload leaf: {type(value).__name__}"
+        raise TypeError(msg)
 
-            """
-            for handler in FlextTestsUtilitiesPayload._PAYLOAD_LEAF_HANDLERS:
-                payload = handler(value)
-                if payload is not None:
-                    return payload
-            msg = f"Unsupported native payload leaf: {type(value).__name__}"
-            raise TypeError(msg)
+    @staticmethod
+    def to_match_value(value: p.Tests.Payload) -> p.Tests.NativeMatchValue:
+        """Project a native tree into the established list/mapping match semantics.
 
-        @staticmethod
-        def to_match_value(value: p.Tests.Payload) -> p.Tests.NativeMatchValue:
-            """Project a native tree into the established list/mapping match semantics.
+        Returns:
+            The resulting ``p.Tests.NativeMatchValue``.
 
-            Returns:
-                The resulting ``p.Tests.NativeMatchValue``.
-
-            """
-            project = FlextTestsUtilitiesPayload.to_match_value
-            if value.kind == "atom":
-                return value.atom
-            if value.kind == "mapping":
-                # Match values intentionally carry non-JSON sentinels (exceptions,
-                # models, paths); NativeMatchValue stays JsonValue-only because
-                # pyrefly cannot resolve a class-scoped self-referential alias.
-                pairs = value.entries.items()
-                return cast(
-                    "p.Tests.NativeMatchValue",
-                    {key: project(item) for key, item in pairs},
-                )
-            items = value.items
-            return cast("p.Tests.NativeMatchValue", [project(item) for item in items])
-
-        @staticmethod
-        def to_normalized_value(value: p.Tests.Payload) -> t.JsonValue:
-            """Project an owned tree at an explicit textual/metadata boundary.
-
-            Returns:
-                The resulting ``t.JsonValue``.
-
-            Raises:
-                TypeError: If Unsupported textual payload leaf.
-
-            """
-            to_n = FlextTestsUtilitiesPayload.to_normalized_value
-            if value.kind == "mapping":
-                return u.normalize_to_json_value({
-                    key: to_n(item) for key, item in value.entries.items()
-                })
-            if value.kind != "atom":
-                return u.normalize_to_json_value([to_n(item) for item in value.items])
-            atom = value.atom
-            if isinstance(atom, bytes):
-                return atom.decode()
-            if isinstance(atom, m.BaseModel | type | tzinfo):
-                return str(atom)
-            if atom is None or isinstance(
-                atom,
-                bool | datetime | Path | str | int | float,
-            ):
-                return u.normalize_to_json_value(atom)
-            msg = f"Unsupported textual payload leaf: {type(atom).__name__}"
-            raise TypeError(msg)
-
-        @staticmethod
-        def to_config_map(
-            value: (
-                m.BaseModel
-                | Mapping[str, t.Tests.TestobjectSerializable]
-                | Mapping[str, t.JsonPayload]
-                | t.JsonMapping
-            ),
-        ) -> m.ConfigMap:
-            """Convert a model or payload mapping to the canonical ConfigMap shape.
-
-            Returns:
-                The resulting ``m.ConfigMap``.
-
-            """
-            source = (
-                value.model_dump(mode="python")
-                if isinstance(value, m.BaseModel)
-                else value
+        """
+        project = FlextTestsUtilitiesPayload.to_match_value
+        if value.kind == "atom":
+            return value.atom
+        if value.kind == "mapping":
+            # Match values intentionally carry non-JSON sentinels (exceptions,
+            # models, paths); NativeMatchValue stays JsonValue-only because
+            # pyrefly cannot resolve a class-scoped self-referential alias.
+            pairs = value.entries.items()
+            return cast(
+                "p.Tests.NativeMatchValue",
+                {key: project(item) for key, item in pairs},
             )
-            return m.ConfigMap.model_validate({
-                key: (
-                    payload.atom
-                    if isinstance(
-                        (
-                            payload := FlextTestsUtilitiesPayload.to_payload(
-                                item,
-                            )
-                        ).atom,
-                        m.BaseModel,
-                    )
-                    else FlextTestsUtilitiesPayload.to_normalized_value(
-                        payload,
-                    )
-                )
-                for key, item in source.items()
+        items = value.items
+        return cast("p.Tests.NativeMatchValue", [project(item) for item in items])
+
+    @staticmethod
+    def to_normalized_value(value: p.Tests.Payload) -> t.JsonValue:
+        """Project an owned tree at an explicit textual/metadata boundary.
+
+        Returns:
+            The resulting ``t.JsonValue``.
+
+        Raises:
+            TypeError: If Unsupported textual payload leaf.
+
+        """
+        to_n = FlextTestsUtilitiesPayload.to_normalized_value
+        if value.kind == "mapping":
+            return u.normalize_to_json_value({
+                key: to_n(item) for key, item in value.entries.items()
             })
+        if value.kind != "atom":
+            return u.normalize_to_json_value([to_n(item) for item in value.items])
+        atom = value.atom
+        if isinstance(atom, bytes):
+            return atom.decode()
+        if isinstance(atom, m.BaseModel | type | tzinfo):
+            return str(atom)
+        if atom is None or isinstance(
+            atom,
+            bool | datetime | Path | str | int | float,
+        ):
+            return u.normalize_to_json_value(atom)
+        msg = f"Unsupported textual payload leaf: {type(atom).__name__}"
+        raise TypeError(msg)
 
-        @staticmethod
-        def path_node(
-            subject: p.Tests.Payload,
-            path: str,
-            *,
-            path_sep: str = ".",
-        ) -> p.Tests.Payload | None:
-            """Walk an owned payload by path; ``None`` marks an absent path.
+    @staticmethod
+    def to_config_map(
+        value: (
+            m.BaseModel
+            | Mapping[str, t.Tests.TestobjectSerializable]
+            | Mapping[str, t.JsonPayload]
+            | t.JsonMapping
+        ),
+    ) -> m.ConfigMap:
+        """Convert a model or payload mapping to the canonical ConfigMap shape.
 
-            Returns:
-                The resulting ``p.Tests.Payload | None``.
+        Returns:
+            The resulting ``m.ConfigMap``.
 
-            """
-            node = subject
-            for segment in path.split(path_sep):
-                if node.kind == "mapping":
-                    if segment not in node.entries:
-                        return None
-                    node = node.entries[segment]
-                elif node.kind != "atom":
-                    if not segment.lstrip("-").isdigit() or not (
-                        -len(node.items) <= int(segment) < len(node.items)
-                    ):
-                        return None
-                    node = node.items[int(segment)]
-                elif hasattr(node.atom, segment):
-                    node = FlextTestsUtilitiesPayload.to_payload(
-                        getattr(node.atom, segment),
-                    )
-                else:
+        """
+        source = (
+            value.model_dump(mode="python") if isinstance(value, m.BaseModel) else value
+        )
+        return m.ConfigMap.model_validate({
+            key: (
+                payload.atom
+                if isinstance(
+                    (
+                        payload := FlextTestsUtilitiesPayload.to_payload(
+                            item,
+                        )
+                    ).atom,
+                    m.BaseModel,
+                )
+                else FlextTestsUtilitiesPayload.to_normalized_value(
+                    payload,
+                )
+            )
+            for key, item in source.items()
+        })
+
+    @staticmethod
+    def path_node(
+        subject: p.Tests.Payload,
+        path: str,
+        *,
+        path_sep: str = ".",
+    ) -> p.Tests.Payload | None:
+        """Walk an owned payload by path; ``None`` marks an absent path.
+
+        Returns:
+            The resulting ``p.Tests.Payload | None``.
+
+        """
+        node = subject
+        for segment in path.split(path_sep):
+            if node.kind == "mapping":
+                if segment not in node.entries:
                     return None
-            return node
+                node = node.entries[segment]
+            elif node.kind != "atom":
+                if not segment.lstrip("-").isdigit() or not (
+                    -len(node.items) <= int(segment) < len(node.items)
+                ):
+                    return None
+                node = node.items[int(segment)]
+            elif hasattr(node.atom, segment):
+                node = FlextTestsUtilitiesPayload.to_payload(
+                    getattr(node.atom, segment),
+                )
+            else:
+                return None
+        return node
 
-        @staticmethod
-        def extract_path_value(subject: p.Tests.Payload, path: str) -> p.Tests.Payload:
-            """Read nested payload nodes without serializing model leaves.
+    @staticmethod
+    def extract_path_value(subject: p.Tests.Payload, path: str) -> p.Tests.Payload:
+        """Read nested payload nodes without serializing model leaves.
 
-            Returns:
-                The resulting ``p.Tests.Payload``.
+        Returns:
+            The resulting ``p.Tests.Payload``.
 
-            Raises:
-                AssertionError: If Path not found.
+        Raises:
+            AssertionError: If Path not found.
 
-            """
+        """
+        node = FlextTestsUtilitiesPayload.path_node(
+            subject,
+            path,
+        )
+        if node is None:
+            msg = f"Path not found: {path}"
+            raise AssertionError(msg)
+        return node
+
+    @staticmethod
+    def deep_match(
+        subject: p.Tests.Payload,
+        spec: FlextTestsModelsMatchers.DeepSpec,
+        *,
+        path_sep: str = ".",
+    ) -> FlextTestsModelsMatchers.DeepMatchResult:
+        """Match an owned payload tree against a path -> expectation spec.
+
+        Literal expectations compare native projections; predicates receive the
+        native value found at the path.
+
+        Returns:
+            The resulting ``m.Tests.DeepMatchResult``.
+
+        """
+        # ``DeepMatchResult`` is owned by ``flext_tests._models.matchers``, whose
+        # module top-level imports this module: resolving the model through the
+        # lazy ``flext_tests.m`` attribute here (never an import statement)
+        # keeps both import orders cycle-free.
+        result_model = flext_tests.m.Tests.DeepMatchResult
+        project = FlextTestsUtilitiesPayload.to_match_value
+        for path, expected in spec.items():
             node = FlextTestsUtilitiesPayload.path_node(
                 subject,
                 path,
+                path_sep=path_sep,
             )
             if node is None:
-                msg = f"Path not found: {path}"
-                raise AssertionError(msg)
-            return node
-
-        @staticmethod
-        def deep_match(
-            subject: p.Tests.Payload,
-            spec: FlextTestsModelsMatchers.DeepSpec,
-            *,
-            path_sep: str = ".",
-        ) -> FlextTestsModelsMatchers.DeepMatchResult:
-            """Match an owned payload tree against a path -> expectation spec.
-
-            Literal expectations compare native projections; predicates receive the
-            native value found at the path.
-
-            Returns:
-                The resulting ``m.Tests.DeepMatchResult``.
-
-            """
-            # ``DeepMatchResult`` is owned by ``flext_tests._models.matchers``, whose
-            # module top-level imports this module: resolving the model through the
-            # lazy ``flext_tests.m`` attribute here (never an import statement)
-            # keeps both import orders cycle-free.
-            result_model = flext_tests.m.Tests.DeepMatchResult
-            project = FlextTestsUtilitiesPayload.to_match_value
-            for path, expected in spec.items():
-                node = FlextTestsUtilitiesPayload.path_node(
-                    subject,
-                    path,
-                    path_sep=path_sep,
+                return result_model(
+                    path=path,
+                    expected=expected,
+                    actual=None,
+                    matched=False,
+                    reason=f"Path not found: {path}",
                 )
-                if node is None:
+            if isinstance(
+                expected,
+                FlextTestsModelsFlextBase.Payload,
+            ):
+                if project(node) != project(expected):
                     return result_model(
                         path=path,
                         expected=expected,
-                        actual=None,
-                        matched=False,
-                        reason=f"Path not found: {path}",
-                    )
-                if isinstance(
-                    expected,
-                    FlextTestsModelsFlextBase.Payload,
-                ):
-                    if project(node) != project(expected):
-                        return result_model(
-                            path=path,
-                            expected=expected,
-                            actual=cast(
-                                "FlextTestsModelsFlextBase.Payload",
-                                node,
-                            ),
-                            matched=False,
-                            reason="Value mismatch",
-                        )
-                elif not expected(project(node)):
-                    return result_model(
-                        path=path,
-                        expected="<predicate>",
                         actual=cast(
                             "FlextTestsModelsFlextBase.Payload",
                             node,
                         ),
                         matched=False,
-                        reason="Predicate failed",
+                        reason="Value mismatch",
                     )
-            return result_model(
-                path="",
-                expected=cast(
-                    "FlextTestsModelsFlextBase.Payload",
-                    subject,
-                ),
-                actual=cast(
-                    "FlextTestsModelsFlextBase.Payload",
-                    subject,
-                ),
-                matched=True,
-                reason="",
-            )
+            elif not expected(project(node)):
+                return result_model(
+                    path=path,
+                    expected="<predicate>",
+                    actual=cast(
+                        "FlextTestsModelsFlextBase.Payload",
+                        node,
+                    ),
+                    matched=False,
+                    reason="Predicate failed",
+                )
+        return result_model(
+            path="",
+            expected=cast(
+                "FlextTestsModelsFlextBase.Payload",
+                subject,
+            ),
+            actual=cast(
+                "FlextTestsModelsFlextBase.Payload",
+                subject,
+            ),
+            matched=True,
+            reason="",
+        )
 
-
-FlextTestsUtilitiesPayload = FlextTestsUtilitiesPayload.FlextTestsUtilitiesPayload
 
 __all__: list[str] = [
     "FlextTestsUtilitiesPayload",
