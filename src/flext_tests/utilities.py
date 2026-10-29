@@ -35,7 +35,13 @@ from flext_tests._utilities import (
 )
 
 
-class FlextTestsUtilities(flext_cli_u, FlextTestsUtilitiesFlextGovernance):
+class FlextTestsUtilities(
+    flext_cli_u,
+    FlextTestsUtilitiesFlextGovernance,
+    # Assertion matchers (that/...) published at the u root: test modules
+    # call `u.that(...)` / `tm.that(...)` directly (strict no-subnamespace).
+    FlextTestsUtilitiesMatchers,
+):
     """Test utilities for FLEXT ecosystem - extends u.
 
     Provides essential test helpers that complement u.

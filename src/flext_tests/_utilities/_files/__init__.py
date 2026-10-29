@@ -29,7 +29,6 @@ if TYPE_CHECKING:
     from flext_tests._utilities._files.size import FlextTestsUtilitiesFilesSize
 
 __all__: tuple[str, ...] = (
-    "FlextTestsUtilitiesFilesSize",
     "FlextTestsUtilitiesFilesAssertions",
     "FlextTestsUtilitiesFilesComparison",
     "FlextTestsUtilitiesFilesContexts",
@@ -37,6 +36,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsUtilitiesFilesInfo",
     "FlextTestsUtilitiesFilesLifecycle",
     "FlextTestsUtilitiesFilesReading",
+    "FlextTestsUtilitiesFilesSize",
 )
 
 install_lazy_exports(
