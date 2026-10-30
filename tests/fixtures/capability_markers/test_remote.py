@@ -1,7 +1,7 @@
 import pytest
 
 
-@pytest.mark.parametrize("marker", ("remote", "connectivity"))
+@pytest.mark.parametrize("marker", ["remote", "connectivity"])
 def test_external(marker: str, request: pytest.FixtureRequest) -> None:
     pytest.fail("test executed")
 

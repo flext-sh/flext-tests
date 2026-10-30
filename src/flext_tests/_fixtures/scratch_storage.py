@@ -41,9 +41,11 @@ class FlextTestsScratchStoragePlugin:
         def nodeid_of(item: pytest.Item) -> str:
             return item.nodeid
 
-        nodeid_name = "_nodeid"
-        if nodeid_name not in vars(pytest.Item):
-            setattr(pytest.Item, nodeid_name, property(nodeid_of))
+        # Only for pytest generations that expose no native ``_nodeid`` storage:
+        # pytest 9 stores it as a ``Node`` slot, and a class-level property here
+        # would shadow that slot in every subclass's MRO and break its writes.
+        if not hasattr(pytest.Item, "_nodeid"):
+            pytest.Item._nodeid = property(nodeid_of)
         scratch = FlextTestsScratchStoragePlugin._scratch_root(config)
         hypothesis_dir = scratch / "hypothesis"
         hypothesis_dir.mkdir(parents=True, exist_ok=True)
