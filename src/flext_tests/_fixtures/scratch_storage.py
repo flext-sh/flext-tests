@@ -37,15 +37,6 @@ class FlextTestsScratchStoragePlugin:
     @staticmethod
     def pytest_configure(config: pytest.Config) -> None:
         """Relocate hypothesis/benchmark storage under the scratch root."""
-
-        def nodeid_of(item: pytest.Item) -> str:
-            return item.nodeid
-
-        # Only for pytest generations that expose no native ``_nodeid`` storage:
-        # pytest 9 stores it as a ``Node`` slot, and a class-level property here
-        # would shadow that slot in every subclass's MRO and break its writes.
-        if not hasattr(pytest.Item, "_nodeid"):
-            pytest.Item._nodeid = property(nodeid_of)
         scratch = FlextTestsScratchStoragePlugin._scratch_root(config)
         hypothesis_dir = scratch / "hypothesis"
         hypothesis_dir.mkdir(parents=True, exist_ok=True)
