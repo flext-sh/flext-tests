@@ -36,7 +36,15 @@ class FlextTestsUtilitiesMatchersTypeguards:
         native: float | str | None = (
             value.decode(c.DEFAULT_ENCODING) if isinstance(value, bytes) else value
         )
-        if guard.empty is not None and (native in {None, ""}) is not guard.empty:
+        if (
+            guard.empty is not None
+            and (
+                native in {None, ""}
+                if isinstance(native, str) or native is None
+                else native == 0
+            )
+            is not guard.empty
+        ):
             return False
         if native is None:
             return guard.empty is True

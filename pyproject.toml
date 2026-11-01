@@ -405,12 +405,10 @@ exclude = [
   "**/incoming/**",
   "**/legado/**",
   "**/node_modules/**",
-  "**/protos/**",
   "**/reports/**",
   "**/site-packages/**",
   "**/site/**",
   "**/target/**",
-  "**/tests/fixtures/**",
   "**/venv/**",
 ]
 extraPaths = ["src", "."]
@@ -434,6 +432,8 @@ reportUnusedImport = "error"
 reportUnusedVariable = "error"
 typeCheckingMode = "strict"
 useLibraryCodeForTypes = true
+venv = ".venv"
+venvPath = ".."
 
 [[tool.pyright.executionEnvironments]]
 extraPaths = ["src", "."]
