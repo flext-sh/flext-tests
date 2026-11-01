@@ -156,7 +156,7 @@ class TestsFlextTestsDockerIntegration:
     @staticmethod
     def test_compose_preserves_absolute_file_unchanged(tmp_path: Path) -> None:
         """An absolute compose file is used verbatim by ``FlextTestsDocker.compose``."""
-        absolute = Path("/opt/stacks/custom.yml")
+        absolute = tmp_path / "stacks" / "custom.yml"
 
         target = tm.not_none(
             FlextTestsDocker.compose(
