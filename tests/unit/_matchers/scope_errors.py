@@ -57,7 +57,7 @@ class TestsFlextTestsMatchersScopeErrors:
     def test_check_returns_chain() -> None:
         """tm.check() chains assertions over the result it was given."""
         result = r[int].ok(42)
-        chain: m.Tests.Chain[int] = tm.check(result)
+        chain: p.Tests.Chain[int] = tm.check(result)
         tm.ok(chain.result is result)
 
     @staticmethod

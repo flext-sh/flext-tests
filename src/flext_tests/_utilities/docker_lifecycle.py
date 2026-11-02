@@ -23,8 +23,8 @@ class FlextTestsUtilitiesDockerLifecycle:
 
     @staticmethod
     def docker_action(
-        info: m.Tests.ContainerInfo | None,
-        state: m.Tests.ContainerState,
+        info: p.Tests.ContainerInfo | None,
+        state: p.Tests.ContainerState,
         *,
         fingerprint: str,
     ) -> c.Tests.ContainerAction:
@@ -66,31 +66,31 @@ class FlextTestsUtilitiesDockerLifecycle:
 
     @staticmethod
     def docker_verify(
-        info: m.Tests.ContainerInfo | None,
-        state: m.Tests.ContainerState,
+        info: p.Tests.ContainerInfo | None,
+        state: p.Tests.ContainerState,
         *,
         fingerprint: str,
-    ) -> p.Result[m.Tests.ContainerInfo]:
+    ) -> p.Result[p.Tests.ContainerInfo]:
         """Check without effects that the running container is the sealed one.
 
         Returns:
-            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+            The resulting ``p.Result[p.Tests.ContainerInfo]``.
 
         """
         codes = c.Tests.DockerErrorCode
         name = state.container_name
         if info is None:
-            return r[m.Tests.ContainerInfo].fail(
+            return r[p.Tests.ContainerInfo].fail(
                 c.Tests.ERR_DOCKER_NOT_PROVISIONED.format(name=name),
                 error_code=codes.NOT_PROVISIONED,
             )
         if state.dirty:
-            return r[m.Tests.ContainerInfo].fail(
+            return r[p.Tests.ContainerInfo].fail(
                 c.Tests.ERR_DOCKER_DIRTY.format(name=name),
                 error_code=codes.DIRTY,
             )
         if not state.sealed or state.container_id != info.container_id:
-            return r[m.Tests.ContainerInfo].fail(
+            return r[p.Tests.ContainerInfo].fail(
                 c.Tests.ERR_DOCKER_UNSEALED.format(
                     name=name,
                     container_id=info.container_id,
@@ -98,7 +98,7 @@ class FlextTestsUtilitiesDockerLifecycle:
                 error_code=codes.UNSEALED,
             )
         if state.fingerprint != fingerprint:
-            return r[m.Tests.ContainerInfo].fail(
+            return r[p.Tests.ContainerInfo].fail(
                 c.Tests.ERR_DOCKER_FINGERPRINT_MISMATCH.format(
                     name=name,
                     sealed=state.fingerprint,
@@ -110,7 +110,7 @@ class FlextTestsUtilitiesDockerLifecycle:
             c.Tests.ContainerHealth.HEALTHY,
             c.Tests.ContainerHealth.UNKNOWN,
         }:
-            return r[m.Tests.ContainerInfo].fail(
+            return r[p.Tests.ContainerInfo].fail(
                 c.Tests.ERR_DOCKER_UNHEALTHY.format(
                     name=name,
                     status=info.status,
@@ -118,7 +118,7 @@ class FlextTestsUtilitiesDockerLifecycle:
                 ),
                 error_code=codes.UNHEALTHY,
             )
-        return r[m.Tests.ContainerInfo].ok(info)
+        return r[p.Tests.ContainerInfo].ok(info)
 
     @staticmethod
     def docker_compose_project(compose_file: Path) -> str:
@@ -137,7 +137,7 @@ class FlextTestsUtilitiesDockerLifecycle:
         return compose_file.stem.replace(".", "-").replace("_", "-")
 
     @staticmethod
-    def docker_fingerprint(target: m.Tests.ContainerConfig) -> p.Result[str]:
+    def docker_fingerprint(target: p.Tests.ContainerConfig) -> p.Result[str]:
         """Hash the declared inputs of a target: project, service and file bytes.
 
         The process environment is never an input: two checkouts that declare
@@ -169,7 +169,7 @@ class FlextTestsUtilitiesDockerLifecycle:
 
     @staticmethod
     def resolve_host_port(
-        info: m.Tests.ContainerInfo,
+        info: p.Tests.ContainerInfo,
         container_port: int,
     ) -> p.Result[int]:
         """Return the host port Docker published for a container TCP port."""
@@ -190,8 +190,8 @@ class FlextTestsUtilitiesDockerLifecycle:
     @staticmethod
     def container_info(
         container_name: str,
-        inspect: m.Tests.ContainerInspect,
-    ) -> m.Tests.ContainerInfo:
+        inspect: p.Tests.ContainerInspect,
+    ) -> p.Tests.ContainerInfo:
         """Project ``docker inspect`` onto the lifecycle's container view.
 
         Returns:
@@ -220,7 +220,7 @@ class FlextTestsUtilitiesDockerLifecycle:
     @staticmethod
     def container_environment(
         container_name: str,
-        inspect: m.Tests.ContainerInspect,
+        inspect: p.Tests.ContainerInspect,
         keys: Sequence[str],
     ) -> p.Result[Mapping[str, t.SecretStr]]:
         """Read named variables from a container's creation environment.

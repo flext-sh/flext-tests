@@ -6,12 +6,9 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Protocol, runtime_checkable
+from typing import Protocol, runtime_checkable
 
 from flext_cli import p
-
-if TYPE_CHECKING:
-    from flext_tests import m
 
 
 class FlextTestsProtocolsDocker:
@@ -26,7 +23,7 @@ class FlextTestsProtocolsDocker:
         ensure recreates the container instead of reusing a partial one.
         """
 
-        def __call__(self, info: m.Tests.ContainerInfo) -> p.Result[bool]:
+        def __call__(self, info: p.Tests.ContainerInfo) -> p.Result[bool]:
             """Initialize the created container."""
             ...
 
@@ -38,7 +35,7 @@ class FlextTestsProtocolsDocker:
         ``startup_timeout`` passes; the last failure explains a timeout.
         """
 
-        def __call__(self, info: m.Tests.ContainerInfo) -> p.Result[bool]:
+        def __call__(self, info: p.Tests.ContainerInfo) -> p.Result[bool]:
             """Probe the container once."""
             ...
 

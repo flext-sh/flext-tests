@@ -32,7 +32,7 @@ class FlextTestsEnforcementDispatcher:
     """Resolve the session activation and run every enforcement hook body."""
 
     stash_root: ClassVar[pytest.StashKey[Path | None]] = pytest.StashKey()
-    stash_config: ClassVar[pytest.StashKey[m.Tests.EnforcementDispatcherConfig]] = (
+    stash_config: ClassVar[pytest.StashKey[p.Tests.EnforcementDispatcherConfig]] = (
         pytest.StashKey()
     )
     stash_budgeted: ClassVar[pytest.StashKey[bool]] = pytest.StashKey()
@@ -91,7 +91,7 @@ class FlextTestsEnforcementDispatcher:
         cls,
         config: pytest.Config,
         repository_root: Path,
-    ) -> m.Tests.EnforcementDispatcherConfig:
+    ) -> p.Tests.EnforcementDispatcherConfig:
         """Build and cache the configuration of an active enforcement session.
 
         Returns:

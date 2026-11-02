@@ -16,8 +16,6 @@ from flext_tests._protocols.enforcement import FlextTestsProtocolsEnforcement
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from flext_tests import m
-
 
 class FlextTestsEnforcementItem(
     FlextTestsProtocolsEnforcement.TypedNode,
@@ -30,7 +28,7 @@ class FlextTestsEnforcementItem(
         name: str,
         parent: pytest.Collector,
         *,
-        violation: m.Tests.EnforcementViolation,
+        violation: p.Tests.EnforcementViolation,
     ) -> None:
         # pytest.Item.__init__ is unannotated upstream, so bind the fully
         # typed Node base and initialize the documented public Item

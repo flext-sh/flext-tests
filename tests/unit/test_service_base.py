@@ -104,7 +104,7 @@ class TestsFlextTestsServiceBase:
         class _MissingSettingsService(FlextTestsServiceBase[str]):
             @classmethod
             @override
-            def runtime_bootstrap_options(cls) -> m.RuntimeBootstrapOptions:
+            def runtime_bootstrap_options(cls) -> p.RuntimeBootstrapOptions:
                 return m.RuntimeBootstrapOptions(settings_type=None)
 
         with pytest.raises(TypeError, match="_MissingSettingsService"):
@@ -117,7 +117,7 @@ class TestsFlextTestsServiceBase:
         class _WrongSettingsService(FlextTestsServiceBase[str]):
             @classmethod
             @override
-            def runtime_bootstrap_options(cls) -> m.RuntimeBootstrapOptions:
+            def runtime_bootstrap_options(cls) -> p.RuntimeBootstrapOptions:
                 return m.RuntimeBootstrapOptions(settings_type=FlextSettings)
 
         with pytest.raises(TypeError, match="_WrongSettingsService"):

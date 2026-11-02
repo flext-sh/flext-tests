@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from tests import c, m, t, tf, tm, u
+from tests import c, m, p, t, tf, tm, u
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -66,7 +66,7 @@ class TestsFlextTestsFilesRead:
     def test_read_yaml_file(tmp_path: Path) -> None:
         """Test read() returns dict content for .yaml files."""
         manager = tf(base_dir=tmp_path)
-        content: m.ConfigMap = m.ConfigMap(root={"name": "test", "enabled": True})
+        content: p.ConfigMap = m.ConfigMap(root={"name": "test", "enabled": True})
         path = manager.create(content, "settings.yaml")
         result = manager.read(path)
         _ = u.Tests.assert_success(result)

@@ -30,7 +30,7 @@ class FlextTestsUtilitiesNamespace:
         worker_id: str,
         testrun_uid: str,
         checkout_root: Path,
-    ) -> m.Tests.TestNamespace:
+    ) -> p.Tests.TestNamespace:
         """Derive one collision-free namespace for worker and run.
 
         The token is ``base36(epoch_milliseconds) + checkout_digest +

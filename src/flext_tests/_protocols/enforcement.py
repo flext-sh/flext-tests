@@ -57,9 +57,9 @@ class FlextTestsProtocolsEnforcement:
         def __call__(
             self,
             session: pytest.Session,
-            cfg: m.Tests.EnforcementDispatcherConfig,
-            rule: m.Tests.EnforcementRuleSpec,
-            context: m.Tests.EnforcementBuildContext,
+            cfg: p.Tests.EnforcementDispatcherConfig,
+            rule: p.Tests.EnforcementRuleSpec,
+            context: p.Tests.EnforcementBuildContext,
         ) -> list[pytest.Item]:
             """Build pytest items for one enforcement rule."""
             ...

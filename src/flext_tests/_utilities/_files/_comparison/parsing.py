@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Annotated
 
 from flext_core import r
 
-from flext_tests import c, m, t, u
+from flext_tests import c, m, p, t, u
 from flext_tests._utilities import FlextTestsUtilitiesPayload
 from flext_tests._utilities._files import FlextTestsUtilitiesFilesCreation
 
@@ -55,7 +55,7 @@ class FlextTestsUtilitiesFilesComparisonParsing:
         ] = None
 
     @staticmethod
-    def _read_both(params: m.Tests.CompareParams) -> tuple[str, str]:
+    def _read_both(params: p.Tests.CompareParams) -> tuple[str, str]:
         enc = c.Tests.DEFAULT_ENCODING
         return (
             params.file1.read_text(encoding=enc),

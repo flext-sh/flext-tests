@@ -150,13 +150,13 @@ class TestsFlextTestsEnforcementPlugin:
             test_plugin=(
                 "import pytest\n"
                 "from importlib.metadata import entry_points\n"
-                "from flext_tests import c, m, tm\n"
+                "from flext_tests import c, m, p, tm\n"
                 "\n"
                 "class TestsPluginConsumer:\n"
                 "    @staticmethod\n"
                 "    def test_registered(\n"
                 "        pytestconfig: pytest.Config,\n"
-                "        run_namespace: m.Tests.TestNamespace,\n"
+                "        run_namespace: p.Tests.TestNamespace,\n"
                 "    ) -> None:\n"
                 "        manager = pytestconfig.pluginmanager\n"
                 "        before = manager.list_name_plugin()\n"
@@ -229,7 +229,7 @@ class TestsFlextTestsEnforcementPlugin:
                 @staticmethod
                 @pytest.mark.parametrize('case', range(2))
                 def test_shared(case: int, session_runtime: p.Tests.SessionRuntime,
-                                run_namespace: m.Tests.TestNamespace,
+                                run_namespace: p.Tests.TestNamespace,
                                 temp_dir: Path) -> None:
                     root = FlextSettings.fetch_global()
                     tests_root = FlextTestsSettings.fetch_global()
@@ -257,7 +257,7 @@ class TestsFlextTestsEnforcementPlugin:
             class TestsSecondConsumer:
                 @staticmethod
                 def test_shared(session_runtime: p.Tests.SessionRuntime,
-                                run_namespace: m.Tests.TestNamespace,
+                                run_namespace: p.Tests.TestNamespace,
                                 reset_settings: None, clean_container: p.Container,
                                 settings: FlextTestsSettings,
                                 settings_factory) -> None:

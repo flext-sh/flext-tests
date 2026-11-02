@@ -14,7 +14,7 @@ from collections.abc import Generator, Mapping, Sequence
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
 
-from flext_tests import m, t
+from flext_tests import m, p, t
 from flext_tests._utilities import FlextTestsUtilitiesConfigHelpers
 
 
@@ -35,7 +35,7 @@ class FlextTestsUtilitiesMatchersScope:
         | Sequence[str]
         | t.Tests.CleanupSpec
         | t.Tests.EnvironmentSpec,
-    ) -> Generator[m.Tests.TestScope]:
+    ) -> Generator[p.Tests.TestScope]:
         """Enhanced isolated test execution scope.
 
         Provides isolated configuration, container, and context for tests.

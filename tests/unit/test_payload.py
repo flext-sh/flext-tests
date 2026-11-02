@@ -155,7 +155,7 @@ class FlextTestsPayloadIdentityParts:
         payload = m.Tests.Payload(
             kind="mapping",
             entries={
-                "nested": m.Tests.Payload(
+                "nested": p.Tests.Payload(
                     kind="tuple",
                     items=tuple(
                         m.Tests.Payload(kind="atom", atom=leaf) for leaf in leaves

@@ -14,8 +14,6 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import m
-
 
 class FlextTestsNamespaceFixtures:
     """One native plugin owner for worker-session and function namespaces."""
@@ -59,7 +57,7 @@ class FlextTestsNamespaceFixtures:
 
     @pytest.fixture(scope="session")
     @staticmethod
-    def run_namespace(request: pytest.FixtureRequest) -> m.Tests.TestNamespace:
+    def run_namespace(request: pytest.FixtureRequest) -> p.Tests.TestNamespace:
         """Session namespace: one token per pytest run per worker.
 
         Returns:
@@ -67,7 +65,7 @@ class FlextTestsNamespaceFixtures:
 
         """
         config = request.config
-        namespace: m.Tests.TestNamespace = import_module(
+        namespace: p.Tests.TestNamespace = import_module(
             "flext_tests"
         ).u.Tests.namespace(
             worker_id=FlextTestsNamespaceFixtures._worker_id(config),

@@ -72,7 +72,7 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
         ]
 
     @staticmethod
-    def _coerce_file_content(value: p.AttributeProbe) -> m.Tests.Payload:
+    def _coerce_file_content(value: p.AttributeProbe) -> p.Tests.Payload:
         """Own file input without dumping native models or swallowing failures.
 
         Returns:
@@ -88,7 +88,7 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
         content: ContentT | p.Result[ContentT],
         *,
         extract_result: bool,
-    ) -> m.Tests.Payload:
+    ) -> p.Tests.Payload:
         """Extract explicitly requested results before validating native content.
 
         Returns:
@@ -130,7 +130,7 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
         file_path: Path,
         actual_content: p.Tests.Payload,
         actual_fmt: str,
-        params: m.Tests.CreateParams,
+        params: p.Tests.CreateParams,
     ) -> None:
         """Write through existing format owners after native validation."""
         match actual_fmt:

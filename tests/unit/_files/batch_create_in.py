@@ -126,7 +126,7 @@ class TestsFlextTestsFilesBatchCreateIn:
     @staticmethod
     def test_create_in_json_indent(tmp_path: Path) -> None:
         """Test create_in() with custom JSON indentation."""
-        content: m.ConfigMap = m.ConfigMap(root={"key": "value", "nested": {"a": 1}})
+        content: p.ConfigMap = m.ConfigMap(root={"key": "value", "nested": {"a": 1}})
         path = FlextTestsFiles(base_dir=tmp_path).create(
             content,
             "settings.json",

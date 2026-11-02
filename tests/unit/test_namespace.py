@@ -13,7 +13,7 @@ from typing import Final
 
 import pytest
 
-from tests import c, m, tm, u
+from tests import c, m, p, tm, u
 
 NAMESPACE_SEED_COUNT: Final[int] = 100
 NAMESPACE_TOKENS_PER_SEED: Final[int] = 100
@@ -104,15 +104,15 @@ class TestsFlextTestsNamespace:
 
     @staticmethod
     def test_run_namespace_fixture_is_session_stable(
-        run_namespace: m.Tests.TestNamespace,
-        run_namespace_again: m.Tests.TestNamespace,
+        run_namespace: p.Tests.TestNamespace,
+        run_namespace_again: p.Tests.TestNamespace,
     ) -> None:
         """The session fixture returns the same namespace within a run."""
         tm.that(run_namespace.token, eq=run_namespace_again.token)
 
 
 @pytest.fixture
-def run_namespace_again(run_namespace: m.Tests.TestNamespace) -> m.Tests.TestNamespace:
+def run_namespace_again(run_namespace: p.Tests.TestNamespace) -> p.Tests.TestNamespace:
     """Second injection point proving session scope.
 
     Returns:

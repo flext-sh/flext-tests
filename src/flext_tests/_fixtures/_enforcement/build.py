@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from flext_tests import m, u
+from flext_tests import m, p, u
 from flext_tests._fixtures._enforcement import (
     FlextTestsEnforcementValidators,
     FlextTestsFixturesEnforcementCollector,
@@ -26,7 +26,7 @@ class FlextTestsEnforcementBuilder:
     def build_items(
         cls,
         session: pytest.Session,
-        cfg: m.Tests.EnforcementDispatcherConfig,
+        cfg: p.Tests.EnforcementDispatcherConfig,
         *,
         collected_items: Sequence[pytest.Item],
     ) -> list[pytest.Item]:

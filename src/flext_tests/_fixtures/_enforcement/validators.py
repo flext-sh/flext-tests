@@ -22,8 +22,8 @@ class FlextTestsEnforcementValidators:
     @staticmethod
     def build_infra_rule_items(
         collector: pytest.Collector,
-        cfg: m.Tests.EnforcementDispatcherConfig,
-        context: m.Tests.EnforcementBuildContext,
+        cfg: p.Tests.EnforcementDispatcherConfig,
+        context: p.Tests.EnforcementBuildContext,
     ) -> list[FlextTestsEnforcementItem]:
         """Build one item per engine rule id and collected project with findings.
 

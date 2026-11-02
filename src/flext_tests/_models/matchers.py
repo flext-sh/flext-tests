@@ -210,7 +210,7 @@ class FlextTestsModelsMatchers:
     class MatchRule[SubjectT = p.Tests.NativeMatchValue](PayloadParams):
         """One matcher rule parsed from a scalar, type, predicate, or mapping."""
 
-        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
+        model_config: ClassVar[p.ConfigDict] = m.ConfigDict(
             frozen=True,
             populate_by_name=True,
         )
@@ -376,7 +376,7 @@ class FlextTestsModelsMatchers:
     class FailParams(m.Value):
         """Matcher parameters for failure result assertions."""
 
-        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(populate_by_name=True)
+        model_config: ClassVar[p.ConfigDict] = m.ConfigDict(populate_by_name=True)
 
         msg: Annotated[str | None, m.Field(description="Custom error message.")] = None
         has: Annotated[
@@ -432,7 +432,7 @@ class FlextTestsModelsMatchers:
     class ThatParams(PayloadParams):
         """Generic matcher parameters for value assertions."""
 
-        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
+        model_config: ClassVar[p.ConfigDict] = m.ConfigDict(
             populate_by_name=True,
         )
 
@@ -651,7 +651,7 @@ class FlextTestsModelsMatchers:
     class ScopeParams(m.Value):
         """Parameters for temporary test scope configuration."""
 
-        model_config: ClassVar[m.ConfigDict] = m.ConfigDict(
+        model_config: ClassVar[p.ConfigDict] = m.ConfigDict(
             populate_by_name=True,
         )
 

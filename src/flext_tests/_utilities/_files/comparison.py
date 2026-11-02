@@ -77,7 +77,7 @@ class FlextTestsUtilitiesFilesComparison(
             result = r[bool].fail(c.Tests.ERROR_COMPARE.format(error=e))
         return result
 
-    def _compare_existing(self, params: m.Tests.CompareParams) -> p.Result[bool]:
+    def _compare_existing(self, params: p.Tests.CompareParams) -> p.Result[bool]:
         """Compare two existing files using the requested comparison mode.
 
         Returns:
@@ -102,7 +102,7 @@ class FlextTestsUtilitiesFilesComparison(
             case _:
                 return self._compare_content(params)
 
-    def _compare_content(self, params: m.Tests.CompareParams) -> p.Result[bool]:
+    def _compare_content(self, params: p.Tests.CompareParams) -> p.Result[bool]:
         """Compare file content with optional deep/structured comparison.
 
         Returns:
@@ -134,7 +134,7 @@ class FlextTestsUtilitiesFilesComparison(
     def _deep_compare_mappings(
         dict1: Mapping[str, t.Tests.TestobjectSerializable],
         dict2: Mapping[str, t.Tests.TestobjectSerializable],
-        params: m.Tests.CompareParams,
+        params: p.Tests.CompareParams,
     ) -> p.Result[bool]:
         """Deeply compare already-parsed structured mappings.
 
@@ -164,7 +164,7 @@ class FlextTestsUtilitiesFilesComparison(
             return r[bool].ok(value=False)
         return r[bool].ok(u.deep_eq(left_result.value, right_result.value))
 
-    def _compare_lines(self, params: m.Tests.CompareParams) -> p.Result[bool]:
+    def _compare_lines(self, params: p.Tests.CompareParams) -> p.Result[bool]:
         """Compare files line by line with optional normalization.
 
         Returns:

@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pytest
 
-from tests import c, m, tm, u
+from tests import c, m, p, tm, u
 
 
 class TestsFlextTestsEnforcementDispatcher:
@@ -51,7 +51,7 @@ class TestsFlextTestsEnforcementDispatcher:
         *,
         include: frozenset[str] = frozenset(),
         exclude: frozenset[str] = frozenset(),
-    ) -> m.Tests.EnforcementDispatcherConfig:
+    ) -> p.Tests.EnforcementDispatcherConfig:
         return m.Tests.EnforcementDispatcherConfig(
             strict=False,
             include=include,

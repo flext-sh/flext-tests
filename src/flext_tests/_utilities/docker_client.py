@@ -16,7 +16,7 @@ from docker.utils import kwargs_from_env
 from flext_cli import u
 from python_on_whales import DockerClient as ComposeDockerClient
 
-from flext_tests import c, m, p, r, t
+from flext_tests import c, p, r, t
 from flext_tests._utilities import FlextTestsUtilitiesDockerLifecycle
 
 
@@ -90,7 +90,7 @@ class FlextTestsUtilitiesDockerClient:
     def docker_inspect(
         client: t.Tests.DockerSdkClient,
         container_name: str,
-    ) -> p.Result[m.Tests.ContainerInspect]:
+    ) -> p.Result[p.Tests.ContainerInspect]:
         """Inspect one container; an absent one fails ``NOT_PROVISIONED``.
 
         Returns:
@@ -100,15 +100,15 @@ class FlextTestsUtilitiesDockerClient:
         try:
             container = client.containers.get(container_name)
         except NotFound as exc:
-            return r[m.Tests.ContainerInspect].fail(
+            return r[p.Tests.ContainerInspect].fail(
                 c.Tests.ERR_DOCKER_NOT_PROVISIONED.format(name=container_name),
                 error_code=c.Tests.DockerErrorCode.NOT_PROVISIONED,
                 exception=exc,
             )
         except (DockerException, OSError) as exc:
-            return r[m.Tests.ContainerInspect].fail_op("Inspect container", exc)
+            return r[p.Tests.ContainerInspect].fail_op("Inspect container", exc)
         return u.try_(
-            lambda: m.Tests.ContainerInspect.model_validate(container.attrs),
+            lambda: p.Tests.ContainerInspect.model_validate(container.attrs),
             catch=c.EXC_VALIDATION_VALUE,
             op_name=f"Parse docker inspect of {container_name}",
         )
@@ -134,7 +134,7 @@ class FlextTestsUtilitiesDockerClient:
 
     @staticmethod
     def docker_compose_up(
-        target: m.Tests.ContainerConfig,
+        target: p.Tests.ContainerConfig,
         env_files: tuple[Path, ...],
         *,
         recreate: bool,

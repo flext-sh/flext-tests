@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING
 from flext_tests import u
 
 if TYPE_CHECKING:
-    from flext_tests import m, p, t
+    from flext_tests import p, t
 
 
 class FlextTestsDockerSurface:
@@ -38,7 +38,7 @@ class FlextTestsDockerSurface:
         self,
         _container_name: str,
         /,
-    ) -> p.Result[m.Tests.ContainerInspect]:
+    ) -> p.Result[p.Tests.ContainerInspect]:
         raise NotImplementedError
 
 
@@ -67,11 +67,11 @@ class FlextTestsDockerSurface(_PartsBase):
     def fetch_container_info(
         self,
         container_name: str,
-    ) -> p.Result[m.Tests.ContainerInfo]:
+    ) -> p.Result[p.Tests.ContainerInfo]:
         """Inspect one container; an absent one fails NOT_PROVISIONED.
 
         Returns:
-            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+            The resulting ``p.Result[p.Tests.ContainerInfo]``.
 
         """
         return self._inspect(container_name).map(

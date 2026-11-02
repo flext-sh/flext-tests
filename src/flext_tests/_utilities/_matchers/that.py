@@ -29,7 +29,7 @@ class FlextTestsUtilitiesMatchersThat:
     def _validate_declared_types(
         cls,
         value: p.AttributeProbe,
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> None:
         """Validate declared types with the caller's explicit ownership.
 
@@ -60,7 +60,7 @@ class FlextTestsUtilitiesMatchersThat:
     @staticmethod
     def _validate_is_type(
         value: p.AttributeProbe,
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
         value_type_name: str,
     ) -> None:
         """Validate the actual runtime type without wrapper substitutions.
@@ -82,7 +82,7 @@ class FlextTestsUtilitiesMatchersThat:
     @staticmethod
     def _is_subject_only(
         value: p.AttributeProbe,
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> bool:
         """Recognize type/presence checks answered by the original subject.
 
@@ -115,7 +115,7 @@ class FlextTestsUtilitiesMatchersThat:
     def _validate_subject_only(
         cls,
         value: p.AttributeProbe,
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> bool:
         """Apply presence and attribute rules to the original subject.
 
@@ -144,7 +144,7 @@ class FlextTestsUtilitiesMatchersThat:
     def _result_subject[SubjectT](
         cls,
         subject: SubjectT,
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> SubjectT | p.Tests.Payload:
         """Return the value to validate after result-aware unwrapping.
 
@@ -182,7 +182,7 @@ class FlextTestsUtilitiesMatchersThat:
     @staticmethod
     def _ok_value[ValueT](
         result_obj: p.ResultView[ValueT],
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> ValueT | str:
         """Validate result ok/fail expectation and return success value.
 
@@ -206,7 +206,7 @@ class FlextTestsUtilitiesMatchersThat:
         return result_obj.value if result_obj.success else ""
 
     @staticmethod
-    def _has_scalar_validation(params: m.Tests.ThatParams) -> bool:
+    def _has_scalar_validation(params: p.Tests.ThatParams) -> bool:
         """Return whether scalar guard validation is requested."""
         return any(
             getattr(params, name) is not None
@@ -216,7 +216,7 @@ class FlextTestsUtilitiesMatchersThat:
     @staticmethod
     def _validate_common(
         subject_payload: p.Tests.Payload,
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
         *,
         effective_has: p.Tests.Payload | None,
     ) -> None:
@@ -237,7 +237,7 @@ class FlextTestsUtilitiesMatchersThat:
     @staticmethod
     def _validate_sequence_edges(
         seq_value: Sequence[p.Tests.Payload],
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> None:
         """Validate first/last sequence predicates.
 
@@ -282,7 +282,7 @@ class FlextTestsUtilitiesMatchersThat:
     def _validate_sequence(
         cls,
         subject_payload: p.Tests.Payload,
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> None:
         """Validate sequence-specific predicates."""
         if subject_payload.kind in {"atom", "mapping"}:
@@ -298,7 +298,7 @@ class FlextTestsUtilitiesMatchersThat:
     @staticmethod
     def _validate_all(
         seq_value: Sequence[p.Tests.Payload],
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> None:
         """Validate that all sequence items match a predicate/type.
 
@@ -357,7 +357,7 @@ class FlextTestsUtilitiesMatchersThat:
     @staticmethod
     def _validate_any(
         seq_value: Sequence[p.Tests.Payload],
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> None:
         """Validate that any sequence item matches a predicate/type.
 
@@ -397,7 +397,7 @@ class FlextTestsUtilitiesMatchersThat:
     def _validate_sequence_order(
         cls,
         seq_value: Sequence[p.Tests.Payload],
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> None:
         """Validate sorted/unique sequence predicates.
 
@@ -461,7 +461,7 @@ class FlextTestsUtilitiesMatchersThat:
     def _validate_mapping(
         cls,
         subject_payload: p.Tests.Payload,
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> None:
         """Validate mapping-specific predicates.
 
@@ -510,7 +510,7 @@ class FlextTestsUtilitiesMatchersThat:
     @staticmethod
     def _validate_kv(
         mapping_value: Mapping[str, p.Tests.Payload],
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> None:
         """Compare owned mapping values through native projections.
 
@@ -543,7 +543,7 @@ class FlextTestsUtilitiesMatchersThat:
     def _validate_attrs(
         cls,
         subject: p.AttributeProbe,
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> None:
         """Validate attrs/methods/attr_eq predicates.
 
@@ -586,7 +586,7 @@ class FlextTestsUtilitiesMatchersThat:
     @staticmethod
     def _validate_attr_eq(
         subject: p.AttributeProbe,
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> None:
         """Inspect original subjects while comparing owned expectations.
 
@@ -736,7 +736,7 @@ class FlextTestsUtilitiesMatchersThat:
         cls._validate_rule_sets(subject, subject_payload, params)
 
     @staticmethod
-    def _assert_truth(value: p.AttributeProbe, params: m.Tests.ThatParams) -> None:
+    def _assert_truth(value: p.AttributeProbe, params: p.Tests.ThatParams) -> None:
         """Compare native truth, raising the explicitly declared message only.
 
         Raises:
@@ -758,8 +758,8 @@ class FlextTestsUtilitiesMatchersThat:
 
     @staticmethod
     def _validate_deep(
-        subject_payload: m.Tests.Payload,
-        params: m.Tests.ThatParams,
+        subject_payload: p.Tests.Payload,
+        params: p.Tests.ThatParams,
     ) -> None:
         """Apply deep constraints to the canonical owned payload.
 
@@ -786,7 +786,7 @@ class FlextTestsUtilitiesMatchersThat:
     def _validate_rule_sets(
         subject: p.AttributeProbe,
         subject_payload: p.Tests.Payload,
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> None:
         """Validate path, item, attribute, and predicate rule sets.
 
@@ -849,7 +849,7 @@ class FlextTestsUtilitiesMatchersThat:
 
     @staticmethod
     def _rule_kwargs[SubjectT](
-        rule: m.Tests.MatchRule[SubjectT],
+        rule: p.Tests.MatchRule[SubjectT],
     ) -> Mapping[
         str,
         p.Tests.Payload
@@ -872,7 +872,7 @@ class FlextTestsUtilitiesMatchersThat:
     def _apply_rule[SubjectT](
         cls,
         subject: SubjectT,
-        rule: m.Tests.MatchRule[SubjectT],
+        rule: p.Tests.MatchRule[SubjectT],
         *,
         inherited_msg: str | None = None,
     ) -> None:
@@ -935,7 +935,7 @@ class FlextTestsUtilitiesMatchersThat:
     def apply_item_rules(
         cls,
         subject: p.Tests.Payload,
-        rules: Sequence[m.Tests.MatchRule] | Mapping[str | int, m.Tests.MatchRule],
+        rules: Sequence[p.Tests.MatchRule] | Mapping[str | int, m.Tests.MatchRule],
         *,
         inherited_msg: str | None = None,
     ) -> None:

@@ -145,7 +145,7 @@ extra_checks = true
 follow_imports = "normal"
 follow_untyped_imports = true
 local_partial_types = true
-mypy_path = ["src", "/home/marlonsc/rope-dc15"]
+mypy_path = ["src"]
 namespace_packages = true
 no_implicit_reexport = true
 plugins = ["pydantic.mypy"]
@@ -225,7 +225,7 @@ project-excludes = [
 ]
 project-includes = ["src/**/*.py*", "tests/**/*.py*"]
 python-version = "3.13"
-search-path = ["src", ".", "/home/marlonsc/rope-dc15"]
+search-path = ["src", "."]
 use-ignore-files = false
 
 [tool.pyrefly.errors]

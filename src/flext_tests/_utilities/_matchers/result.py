@@ -18,7 +18,7 @@ class FlextTestsUtilitiesMatchersResult:
     """Assertions over r[T] result values."""
 
     @classmethod
-    def check[TResult](cls, result: p.Result[TResult]) -> m.Tests.Chain[TResult]:
+    def check[TResult](cls, result: p.Result[TResult]) -> p.Tests.Chain[TResult]:
         """Start chained assertions on result.
 
         Returns:
@@ -92,7 +92,7 @@ class FlextTestsUtilitiesMatchersResult:
     def fail_code[TResult](
         cls,
         result: p.ResultView[TResult],
-        params: m.Tests.FailParams,
+        params: p.Tests.FailParams,
     ) -> None:
         """Validate error code constraints.
 
@@ -131,7 +131,7 @@ class FlextTestsUtilitiesMatchersResult:
     def fail_data[TResult](
         cls,
         result: p.ResultView[TResult],
-        params: m.Tests.FailParams,
+        params: p.Tests.FailParams,
     ) -> None:
         """Validate structured error data constraints.
 
