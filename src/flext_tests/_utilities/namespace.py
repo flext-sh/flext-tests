@@ -12,7 +12,7 @@ import threading
 import time
 from typing import TYPE_CHECKING, ClassVar
 
-from flext_tests import c, m
+from flext_tests import c, m, p
 
 if TYPE_CHECKING:
     from pathlib import Path

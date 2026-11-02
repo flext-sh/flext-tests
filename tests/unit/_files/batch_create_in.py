@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_tests import FlextTestsFiles
-from tests import c, m, r, t, tm, u
+from tests import c, m, p, r, t, tm, u
 
 
 class TestsFlextTestsFilesBatchCreateIn:

@@ -30,7 +30,7 @@ class FlextTestsUtilitiesFilesInfo(FlextTestsUtilitiesFilesAssertions):
         compute_hash: bool = False,
         detect_fmt: bool = True,
         parse_content: bool = False,
-        validate_model: type[p.BaseModel] | None = None,
+        validate_model: p.Tests.ModelReader[p.Model] | None = None,
     ) -> p.Result[p.Tests.FileInfo]:
         """Get comprehensive file information.
 
@@ -137,7 +137,7 @@ class FlextTestsUtilitiesFilesInfo(FlextTestsUtilitiesFilesAssertions):
         self,
         text: str,
         fmt: str,
-        validate_model: type[p.BaseModel] | None = None,
+        validate_model: p.Tests.ModelReader[p.Model] | None = None,
     ) -> p.Tests.ContentMeta:
         """Parse file content and extract metadata.
 

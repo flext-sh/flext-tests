@@ -12,7 +12,7 @@ from pathlib import Path
 
 from flext_cli import u
 
-from flext_tests import c, m
+from flext_tests import c, m, p
 from flext_tests._utilities._files import FlextTestsUtilitiesFilesContexts
 
 

@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from flext_tests import p
+
+
 from collections.abc import Iterable, Iterator
 from typing import TYPE_CHECKING, Protocol, Self, runtime_checkable
 

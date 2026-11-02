@@ -11,7 +11,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Annotated
 
-from flext_cli import m, p
+from flext_cli import m
 
 from flext_tests import c, p, t
 from flext_tests._models import FlextTestsModelsFlextBase
@@ -164,7 +164,7 @@ class FlextTestsModelsFilesystem:
 
         path: Annotated[Path, m.Field(description="Path to file to read.")]
         model_cls: Annotated[
-            type[p.BaseModel] | None,
+            t.InstanceOf[p.Tests.ModelReader[p.Model]] | None,
             m.Field(description="Optional Pydantic model class."),
         ] = None
         fmt: Annotated[
@@ -268,7 +268,7 @@ class FlextTestsModelsFilesystem:
             m.Field(description="Parse content and include metadata."),
         ] = False
         validate_model: Annotated[
-            type[p.BaseModel] | None,
+            t.InstanceOf[p.Tests.ModelReader[p.Model]] | None,
             m.Field(description="Pydantic model to validate content against."),
         ] = None
 
