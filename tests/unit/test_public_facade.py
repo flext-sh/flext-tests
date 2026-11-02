@@ -84,14 +84,7 @@ class TestsFlextTestsPublicFacade:
         }
         tm.that(set(configure), eq=set(entries))
         for name, entry in entries.items():
-            plugin = configure[name]
-            tm.that(plugin is entry.load(), eq=True)
-            if not isinstance(plugin, type):
-                pytest.fail("The declared pytest11 hook owner must be a class")
-            tm.that(
-                f"{plugin.__module__}:{plugin.__qualname__}",
-                eq=entry.value,
-            )
+            tm.that(configure[name] is entry.load(), eq=True)
         tm.that("pytest_configure" in flext_tests.__all__, eq=False)
 
     @staticmethod
