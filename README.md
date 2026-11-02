@@ -44,6 +44,10 @@ required validation.
 
 ## Operation Flow
 
+- Handler configuration is provided by `u.Tests.create_handler_config`. Its
+  declaration belongs directly to the composed handler utility owner: nesting
+  it inside a separate class prevents the public facade from exposing it and
+  breaks consumers such as the flext-core handler tests.
 - Public surface: see [`docs/index.md`](docs/index.md) and
   [`docs/api-reference/README.md`](docs/api-reference/README.md).
 - Generated module overview:
