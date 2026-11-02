@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
     import pytest
 
-    from flext_tests import m
+    from flext_tests import m, p
 
 
 class FlextTestsProtocolsEnforcement:

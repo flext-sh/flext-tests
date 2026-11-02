@@ -20,7 +20,7 @@ from flext_core import FlextSettings
 from flext_infra import FlextInfraConstants, config, u as infra_u
 
 from flext_tests import FlextTestsServiceBase
-from tests import c, m, s, tm, u
+from tests import c, m, p, s, tm, u
 
 
 class TestsFlextTestsServiceBase:

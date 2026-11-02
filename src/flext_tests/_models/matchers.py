@@ -12,7 +12,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated, ClassVar, Self, TypeAliasType, cast
 
-from flext_cli import m
+from flext_cli import m, p
 
 from flext_tests import c, p, t
 from flext_tests._models import FlextTestsModelsFlextBase

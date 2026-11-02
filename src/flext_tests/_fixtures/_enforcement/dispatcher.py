@@ -25,7 +25,7 @@ from flext_tests._constants.validator import FlextTestsConstantsValidator
 if TYPE_CHECKING:
     import warnings
 
-    from flext_tests import m
+    from flext_tests import m, p
 
 
 class FlextTestsEnforcementDispatcher:
