@@ -11,8 +11,12 @@ from __future__ import annotations
 
 from importlib import import_module
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
+
+if TYPE_CHECKING:
+    from flext_tests import p
 
 
 class FlextTestsNamespaceFixtures:

@@ -12,7 +12,7 @@ from collections.abc import MutableMapping
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 if TYPE_CHECKING:
-    from flext_tests.protocols import p
+    from flext_tests._protocols import FlextTestsProtocolsDocker
 
 
 class FlextTestsProtocolsSpec:
@@ -23,7 +23,9 @@ class FlextTestsProtocolsSpec:
         """Structural data contract projected from the owning model."""
 
         @property
-        def containers(self) -> MutableMapping[str, p.Tests.ContainerConfig]: ...
+        def containers(
+            self,
+        ) -> MutableMapping[str, FlextTestsProtocolsDocker.ContainerConfig]: ...
         @property
         def initializer_command(self) -> str | None: ...
 

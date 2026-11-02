@@ -20,16 +20,16 @@ class FlextTestsUtilitiesFlextHandler:
             handler_id: str,
             handler_name: str,
             options: p.Tests.HandlerConfigParams | None = None,
-        ) -> p.Handler:
+        ) -> p.HandlerConfig:
             """Create a handler configuration model using canonical model defaults.
 
             Returns:
-                The resulting ``m.Handler``.
+                The resulting ``m.HandlerConfig``.
 
             """
             params = options if options is not None else m.Tests.HandlerConfigParams()
             resolved_handler_type = params.handler_type or c.HandlerType.COMMAND
-            handler: p.Handler = m.Handler.model_validate({
+            handler: p.HandlerConfig = m.HandlerConfig.model_validate({
                 "handler_id": handler_id,
                 "handler_name": handler_name,
                 "handler_type": resolved_handler_type,

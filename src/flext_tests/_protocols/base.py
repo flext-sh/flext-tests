@@ -6,15 +6,15 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
+
+from flext_cli import t
 
 if TYPE_CHECKING:
-    from flext_tests import p
+    from flext_cli import p
 
-
-from typing import Protocol, runtime_checkable
-
-from flext_cli import p
+    from flext_tests._protocols import FlextTestsProtocolsPayload
+    from flext_tests._typings import FlextTestsTypesBase
 
 
 class FlextTestsProtocolsBase:
@@ -34,17 +34,17 @@ class FlextTestsProtocolsBase:
     class Payload(Protocol):
         """Structural data contract projected from the owning model."""
 
-        kind: t.Tests.PayloadKind
-        atom: t.Tests.PayloadAtom | t.Port[p.Model] | None
-        items: t.Tests.PayloadItems[p.Tests.Payload]
-        entries: t.Tests.PayloadEntries[p.Tests.Payload]
+        kind: FlextTestsTypesBase.PayloadKind
+        atom: FlextTestsTypesBase.PayloadAtom | t.Port[p.Model] | None
+        items: FlextTestsTypesBase.PayloadItems[FlextTestsProtocolsPayload.Payload]
+        entries: FlextTestsTypesBase.PayloadEntries[FlextTestsProtocolsPayload.Payload]
 
     @runtime_checkable
     class Entity(Protocol):
         """Structural data contract projected from the owning model."""
 
         name: str
-        value: p.Tests.Payload
+        value: FlextTestsProtocolsPayload.Payload
 
     @runtime_checkable
     class Value(Protocol):

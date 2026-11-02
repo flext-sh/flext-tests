@@ -9,9 +9,10 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Annotated
 
+from flext_cli import u
 from flext_core import r
 
-from flext_tests import c, m, p, t, u
+from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsUtilitiesPayload
 from flext_tests._utilities._files import FlextTestsUtilitiesFilesCreation
 

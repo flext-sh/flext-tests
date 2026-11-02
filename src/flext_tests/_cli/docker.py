@@ -16,7 +16,7 @@ from pathlib import Path
 
 from flext_cli import u
 
-from flext_tests import FlextTestsDocker, m
+from flext_tests import FlextTestsDocker, m, p
 
 
 class FlextTestsCliDocker:

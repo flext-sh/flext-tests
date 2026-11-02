@@ -33,10 +33,11 @@ from types import (
 )
 from typing import TYPE_CHECKING, ClassVar, TypeAliasType, cast
 
+from flext_cli import m
 from flext_core import u
 
 import flext_tests
-from flext_tests import c, m, p, t
+from flext_tests import c, p, t
 from flext_tests._models import FlextTestsModelsFlextBase
 
 if TYPE_CHECKING:

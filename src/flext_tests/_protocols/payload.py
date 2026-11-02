@@ -6,21 +6,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from flext_tests import p
-
-
 from collections.abc import Iterable, Iterator
-from typing import TYPE_CHECKING, Protocol, Self, runtime_checkable
+from typing import Protocol, Self, runtime_checkable
 
 from flext_core import p
 
-from flext_tests._typings.base import FlextTestsTypesBase
-
-if TYPE_CHECKING:
-    from flext_tests import t
+from flext_tests._typings import FlextTestsTypesBase
 
 
 class FlextTestsProtocolsPayload:
@@ -57,7 +48,7 @@ class FlextTestsProtocolsPayload:
         def __iter__(
             self,
         ) -> Iterator[
-            t.Tests.PayloadAtom
+            FlextTestsTypesBase.PayloadAtom
             | p.Model
             | FlextTestsProtocolsPayload.NativeSequence
             | FlextTestsProtocolsPayload.NativeMapping
@@ -71,7 +62,7 @@ class FlextTestsProtocolsPayload:
             index: int,
             /,
         ) -> (
-            t.Tests.PayloadAtom
+            FlextTestsTypesBase.PayloadAtom
             | p.Model
             | FlextTestsProtocolsPayload.NativeSequence
             | FlextTestsProtocolsPayload.NativeMapping
@@ -93,7 +84,7 @@ class FlextTestsProtocolsPayload:
         ) -> Iterable[
             tuple[
                 str,
-                t.Tests.PayloadAtom
+                FlextTestsTypesBase.PayloadAtom
                 | p.Model
                 | FlextTestsProtocolsPayload.NativeSequence
                 | FlextTestsProtocolsPayload.NativeMapping
@@ -108,7 +99,7 @@ class FlextTestsProtocolsPayload:
             key: str,
             /,
         ) -> (
-            t.Tests.PayloadAtom
+            FlextTestsTypesBase.PayloadAtom
             | p.Model
             | FlextTestsProtocolsPayload.NativeSequence
             | FlextTestsProtocolsPayload.NativeMapping
@@ -122,22 +113,22 @@ class FlextTestsProtocolsPayload:
         """Inspect validated values without dumping or reconstructing model leaves."""
 
         @property
-        def kind(self) -> t.Tests.PayloadKind:
+        def kind(self) -> FlextTestsTypesBase.PayloadKind:
             """Identify the native scalar or collection arm."""
             ...
 
         @property
-        def atom(self) -> t.Tests.PayloadAtom | p.Model | None:
+        def atom(self) -> FlextTestsTypesBase.PayloadAtom | p.Model | None:
             """Read the unchanged native leaf."""
             ...
 
         @property
-        def items(self) -> t.Tests.PayloadItems[Self]:
+        def items(self) -> FlextTestsTypesBase.PayloadItems[Self]:
             """Read ordered children of a collection arm."""
             ...
 
         @property
-        def entries(self) -> t.Tests.PayloadEntries[Self]:
+        def entries(self) -> FlextTestsTypesBase.PayloadEntries[Self]:
             """Read children of a mapping arm."""
             ...
 

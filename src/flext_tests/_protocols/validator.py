@@ -49,7 +49,8 @@ class FlextTestsProtocolsValidator:
         def source(
             self,
         ) -> (
-            p.Tests.EnforcementInfraRuleSource | p.Tests.EnforcementRuntimeWarningSource
+            FlextTestsProtocolsValidator.EnforcementInfraRuleSource
+            | FlextTestsProtocolsValidator.EnforcementRuntimeWarningSource
         ): ...
 
     @runtime_checkable
@@ -57,7 +58,9 @@ class FlextTestsProtocolsValidator:
         """Structural data contract projected from the owning model."""
 
         @property
-        def rules(self) -> tuple[p.Tests.EnforcementRuleSpec, ...]: ...
+        def rules(
+            self,
+        ) -> tuple[FlextTestsProtocolsValidator.EnforcementRuleSpec, ...]: ...
 
     @runtime_checkable
     class EnforcementBuildContext(Protocol):

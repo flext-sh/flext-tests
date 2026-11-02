@@ -16,6 +16,8 @@ from flext_tests._protocols.enforcement import FlextTestsProtocolsEnforcement
 if TYPE_CHECKING:
     from pathlib import Path
 
+    from flext_tests import p
+
 
 class FlextTestsEnforcementItem(
     FlextTestsProtocolsEnforcement.TypedNode,

@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Protocol, runtime_checkable
 from flext_tests import c, t
 
 if TYPE_CHECKING:
-    from flext_tests.protocols import p
+    from flext_cli import p
 
 
 class FlextTestsProtocolsNamespace:

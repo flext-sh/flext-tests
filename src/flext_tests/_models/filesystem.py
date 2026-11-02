@@ -115,15 +115,11 @@ class FlextTestsModelsFilesystem:
         fmt: Annotated[
             c.Tests.FileFormat,
             m.BeforeValidator(
-                lambda v: (
-                    type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
-                ),
+                lambda v: type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
             ),
-            m.Field(
-                default=c.Tests.FILE_FORMAT_AUTO,
-                description="File format override.",
-            ),
-        ]
+        ] = m.Field(
+            default=c.Tests.FILE_FORMAT_AUTO, description="File format override."
+        )
         enc: Annotated[t.NonEmptyStr, m.Field(description="File encoding.")] = (
             c.Tests.DEFAULT_ENCODING
         )
@@ -170,12 +166,9 @@ class FlextTestsModelsFilesystem:
         fmt: Annotated[
             c.Tests.FileFormat,
             m.BeforeValidator(
-                lambda v: (
-                    type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
-                ),
+                lambda v: type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
             ),
-            m.Field(default=c.Tests.FILE_FORMAT_AUTO, description="Format override."),
-        ]
+        ] = m.Field(default=c.Tests.FILE_FORMAT_AUTO, description="Format override.")
         enc: Annotated[t.NonEmptyStr, m.Field(description="File encoding.")] = (
             c.Tests.DEFAULT_ENCODING
         )

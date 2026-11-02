@@ -14,7 +14,13 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 if TYPE_CHECKING:
-    from flext_tests import c, p, t
+    from flext_cli import p, t
+
+    from flext_tests import c
+    from flext_tests._protocols import (
+        FlextTestsProtocolsBase,
+        FlextTestsProtocolsPayload,
+    )
 
 
 class FlextTestsProtocolsFilesystem:
@@ -55,7 +61,7 @@ class FlextTestsProtocolsFilesystem:
         @property
         def sha256(self) -> str | None: ...
         @property
-        def content_meta(self) -> p.Tests.ContentMeta | None: ...
+        def content_meta(self) -> FlextTestsProtocolsFilesystem.ContentMeta | None: ...
 
     @runtime_checkable
     class ContentMeta(Protocol):
@@ -79,7 +85,7 @@ class FlextTestsProtocolsFilesystem:
         """Structural data contract projected from the owning model."""
 
         @property
-        def content(self) -> p.Tests.Payload: ...
+        def content(self) -> FlextTestsProtocolsPayload.Payload: ...
         @property
         def name(self) -> t.NonEmptyStr: ...
         @property
@@ -106,7 +112,7 @@ class FlextTestsProtocolsFilesystem:
         @property
         def path(self) -> Path: ...
         @property
-        def model_cls(self) -> p.Tests.ModelReader[p.Model] | None: ...
+        def model_cls(self) -> FlextTestsProtocolsBase.ModelReader[p.Model] | None: ...
         @property
         def fmt(self) -> c.Tests.FileFormat: ...
         @property
@@ -156,7 +162,9 @@ class FlextTestsProtocolsFilesystem:
         @property
         def parse_content(self) -> bool: ...
         @property
-        def validate_model(self) -> p.Tests.ModelReader[p.Model] | None: ...
+        def validate_model(
+            self,
+        ) -> FlextTestsProtocolsBase.ModelReader[p.Model] | None: ...
 
     @runtime_checkable
     class AssertExistsParams(Protocol):
