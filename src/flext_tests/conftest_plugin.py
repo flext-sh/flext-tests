@@ -90,18 +90,11 @@ class FlextTestsConftestPlugin:
                 )
                 raise ValueError(msg)
             owner = owners[0]
-            for attr in owner.__dict__.values():
-                wrapped_getter = getattr(attr, "__dict__", None)
-                if wrapped_getter is None:
-                    continue
-                getter = wrapped_getter.get("_get_wrapped_function")
-                if getter is not None:
-                    wrapped = getter()
-                    if isinstance(wrapped, staticmethod):
-                        wrapped_getter["_fixture_function"] = wrapped.__func__
-            if config.pluginmanager.get_plugin(fixture_module) is owner:
+            # Pytest owns fixture descriptor binding. Rewriting its private
+            # function removes staticmethod semantics and binds a false `self`.
+            if isinstance(config.pluginmanager.get_plugin(fixture_module), owner):
                 continue
-            if config.pluginmanager.register(owner, fixture_module) is None:
+            if config.pluginmanager.register(owner(), fixture_module) is None:
                 msg = f"required fixture plugin is blocked: {fixture_module}"
                 raise ValueError(msg)
         # Prerequisites skip before fixtures; real service failures stay failures.
@@ -115,8 +108,8 @@ class FlextTestsConftestPlugin:
 
 # The optional static-enforcement adapter owns its own hooks and options;
 # shared timing belongs to this always-loaded plugin. The plugin class registers
-# each canonical fixture class during ``pytest_configure``. It must not expose
-# ``pytest_plugins``: pytest
+# each canonical fixture owner instance during ``pytest_configure``. It must not
+# expose ``pytest_plugins``: pytest
 # processes that declaration while loading the ``pytest11`` entry point,
 # before pytest-cov starts measuring the product package.
 

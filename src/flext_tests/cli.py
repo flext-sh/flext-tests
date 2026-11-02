@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from flext_cli.services.cli import FlextCliCli
 
-from flext_tests import FlextTestsCliDocker
+from flext_tests._cli import FlextTestsCliDocker
 
 
 class FlextTestsCli(FlextCliCli):

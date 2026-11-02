@@ -15,7 +15,8 @@ from typing import Annotated, Self, override
 
 from flext_infra import config as infra_config, settings as infra_settings
 
-from flext_tests import FlextTestsDockerSurface, c, m, p, r, s, t, u
+from flext_tests import c, m, p, r, s, t, u
+from flext_tests._docker import FlextTestsDockerSurface
 
 
 class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):

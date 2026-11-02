@@ -55,7 +55,7 @@ class FlextTestsUtilitiesFilesAssertions(FlextTestsUtilitiesFilesContexts):
         try:
             u.Cli.files_assert_exists(
                 path,
-                options=u.Cli.FileAssertionOptions(
+                options=m.Cli.FileAssertionOptions(
                     is_file=params.is_file,
                     is_dir=params.is_dir,
                     not_empty=params.not_empty,

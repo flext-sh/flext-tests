@@ -20,8 +20,9 @@ class FlextTestsUtilitiesConfigHelpers:
         env_vars: Mapping[str, ValueT] | None = None,
         vars_to_clear: Sequence[str] | None = None,
     ) -> Generator[None]:
-        """Apply and atomically restore a real process-environment scope."""
-        original_environment = os.environ.copy()
+        """Apply a process-environment scope and restore only its owned keys."""
+        owned = set(env_vars or ()) | set(vars_to_clear or ())
+        original_environment = {key: os.environ.get(key) for key in owned}
         try:
             for var in vars_to_clear or ():
                 os.environ.pop(var, None)
@@ -30,8 +31,11 @@ class FlextTestsUtilitiesConfigHelpers:
             })
             yield
         finally:
-            os.environ.clear()
-            os.environ.update(original_environment)
+            for key, value in original_environment.items():
+                if value is None:
+                    os.environ.pop(key, None)
+                else:
+                    os.environ[key] = value
 
 
 __all__: list[str] = ["FlextTestsUtilitiesConfigHelpers"]
