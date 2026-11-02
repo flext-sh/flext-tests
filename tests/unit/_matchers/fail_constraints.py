@@ -9,7 +9,7 @@ from __future__ import annotations
 from tests import m, p, r, tm
 
 
-class TestsFlextTestsMatchersFailConstraintsMixin:
+class TestsFlextTestsMatchersFailConstraints:
     """Matcher fail constraint tests."""
 
     @staticmethod

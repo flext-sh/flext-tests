@@ -14,7 +14,7 @@ from flext_tests import FlextTestsDocker
 from tests import c, m, tm, u
 
 
-class TestsFlextTestsDockerBuildersMixin:
+class TestsFlextTestsDockerBuilders:
     """Docker builder tests."""
 
     @staticmethod

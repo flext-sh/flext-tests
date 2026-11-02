@@ -36,12 +36,12 @@ install_lazy_exports(
     __name__,
     globals(),
     MappingProxyType({
+        "FlextTestsProtocolsBase": ".base",
         "FlextTestsProtocolsDocker": ".docker",
         "FlextTestsProtocolsEnforcement": ".enforcement",
         "FlextTestsProtocolsFixtureTrees": ".fixture_trees",
         "FlextTestsProtocolsMatchers": ".matchers",
         "FlextTestsProtocolsPayload": ".payload",
-        "FlextTestsProtocolsBase": ".base",
         "FlextTestsProtocolsValueFactory": ".valuefactory",
     }),
     public_exports=__all__,

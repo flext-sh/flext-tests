@@ -11,7 +11,7 @@ from pathlib import Path
 from tests import m, tf, tm, u
 
 
-class TestsFlextTestsFilesContentMetaMixin:
+class TestsFlextTestsFilesContentMeta:
     """File content metadata tests."""
 
     @staticmethod

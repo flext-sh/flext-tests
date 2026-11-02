@@ -13,7 +13,7 @@ import pytest
 from tests import c, m, p, r, tm
 
 
-class TestsFlextTestsMatchersScopeErrorsMixin:
+class TestsFlextTestsMatchersScopeErrors:
     """Matcher scope and error tests."""
 
     @staticmethod

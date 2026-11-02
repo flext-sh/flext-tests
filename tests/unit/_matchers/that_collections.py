@@ -15,7 +15,7 @@ from tests import c, m, r, tm
 from tests.unit._matchers.predicates import TestsFlextTestsMatchersPredicates
 
 
-class TestsFlextTestsTypesMatchersThatMixin:
+class TestsFlextTestsTypesMatchersThat:
     """Matcher collection, native value and None constraint tests."""
 
     @staticmethod
@@ -119,7 +119,7 @@ class TestsFlextTestsTypesMatchersThatMixin:
             tm.instance("text", int, msg="wrong kind")
 
 
-class TestsFlextTestsMatchersThatSequencesMixin(TestsFlextTestsTypesMatchersThatMixin):
+class TestsFlextTestsMatchersThatSequences(TestsFlextTestsTypesMatchersThat):
     """Collection criteria composed with type and optional-value checks."""
 
     @staticmethod
@@ -218,8 +218,8 @@ class TestsFlextTestsMatchersThatSequencesMixin(TestsFlextTestsTypesMatchersThat
         tm.that([1, 2, 3], unique=True)
 
 
-class TestsFlextTestsMatchersThatCollectionsMixin(
-    TestsFlextTestsMatchersThatSequencesMixin,
+class TestsFlextTestsMatchersThatCollections(
+    TestsFlextTestsMatchersThatSequences,
 ):
     """Mapping criteria composed with collection and type checks."""
 

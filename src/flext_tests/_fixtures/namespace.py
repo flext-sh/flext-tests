@@ -75,3 +75,6 @@ class FlextTestsNamespaceFixtures:
             checkout_root=Path(config.rootpath),
         )
         return namespace
+
+
+__all__: list[str] = ["FlextTestsNamespaceFixtures"]

@@ -41,7 +41,7 @@ class TestsFlextTestsRejectedAssignment:
     host = property(fset=reject)
 
 
-class TestsFlextTestsMatchersRejectsAssignmentMixin:
+class TestsFlextTestsMatchersRejectsAssignment:
     """Cover ``tm.rejects_assignment`` against real frozen and enum surfaces."""
 
     @staticmethod

@@ -16,22 +16,13 @@ if TYPE_CHECKING:
     from flext_tests._utilities._files._comparison.parsing import (
         FlextTestsUtilitiesFilesComparisonParsing,
     )
-    from flext_tests._utilities._files.comparison import (
-        FlextTestsUtilitiesFilesComparison,
-    )
 
 
-__all__: tuple[str, ...] = (
-    "FlextTestsUtilitiesFilesComparison",
-    "FlextTestsUtilitiesFilesComparisonParsing",
-)
+__all__: tuple[str, ...] = ("FlextTestsUtilitiesFilesComparisonParsing",)
 
 install_lazy_exports(
     __name__,
     globals(),
-    MappingProxyType({
-        "FlextTestsUtilitiesFilesComparison": "..comparison",
-        "FlextTestsUtilitiesFilesComparisonParsing": ".parsing",
-    }),
+    MappingProxyType({"FlextTestsUtilitiesFilesComparisonParsing": ".parsing"}),
     public_exports=__all__,
 )

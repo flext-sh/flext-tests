@@ -11,7 +11,7 @@ from pathlib import Path
 from tests import c, m, t, tf, tm, u
 
 
-class TestsFlextTestsFilesFormatsMixin:
+class TestsFlextTestsFilesFormats:
     """File format creation tests."""
 
     @staticmethod

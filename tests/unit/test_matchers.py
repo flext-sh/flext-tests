@@ -24,14 +24,14 @@ from tests.unit._matchers import (
 
 
 class TestsFlextTestsMatchers(
-    results.TestsFlextTestsMatchersResultsMixin,
-    validation.TestsFlextTestsMatchersValidationMixin,
-    ok_constraints.TestsFlextTestsMatchersOkConstraintsMixin,
-    fail_constraints.TestsFlextTestsMatchersFailConstraintsMixin,
-    that_collections.TestsFlextTestsMatchersThatCollectionsMixin,
-    that_attrs.TestsFlextTestsMatchersThatAttrsMixin,
-    scope_errors.TestsFlextTestsMatchersScopeErrorsMixin,
-    rejects_assignment.TestsFlextTestsMatchersRejectsAssignmentMixin,
-    data_driven.TestsFlextTestsMatchersDataDrivenMixin,
+    results.TestsFlextTestsMatchersResults,
+    validation.TestsFlextTestsMatchersValidation,
+    ok_constraints.TestsFlextTestsMatchersOkConstraints,
+    fail_constraints.TestsFlextTestsMatchersFailConstraints,
+    that_collections.TestsFlextTestsMatchersThatCollections,
+    that_attrs.TestsFlextTestsMatchersThatAttrs,
+    scope_errors.TestsFlextTestsMatchersScopeErrors,
+    rejects_assignment.TestsFlextTestsMatchersRejectsAssignment,
+    data_driven.TestsFlextTestsMatchersDataDriven,
 ):
     """Test suite for tm class."""

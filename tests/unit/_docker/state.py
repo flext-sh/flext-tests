@@ -14,7 +14,7 @@ from flext_tests import FlextTestsDocker
 from tests import c, m, tm, u
 
 
-class TestsFlextTestsDockerStateMixin:
+class TestsFlextTestsDockerState:
     """Host-scoped container state through the public facade and utilities."""
 
     @staticmethod

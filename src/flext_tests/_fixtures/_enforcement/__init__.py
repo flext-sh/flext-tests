@@ -1,5 +1,5 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""Internal package for enforcement.
+"""Flext Tests. Fixtures. Enforcement package.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -27,6 +27,7 @@ if TYPE_CHECKING:
     from flext_tests._fixtures._enforcement.validators import (
         FlextTestsEnforcementValidators,
     )
+
 
 __all__: tuple[str, ...] = (
     "FlextTestsEnforcementBuilder",

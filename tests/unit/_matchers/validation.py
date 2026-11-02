@@ -16,7 +16,7 @@ import pytest
 from tests import c, m, p, r, t, tm
 
 
-class TestsFlextTestsMatchersNativeTruthMixin:
+class TestsFlextTestsMatchersNativeTruth:
     """Native truth and assertion-message behavior tests."""
 
     @staticmethod
@@ -293,7 +293,7 @@ class TestsFlextTestsMatchersNativeTruthMixin:
             tm.that(1, assertion_message="unused")
 
 
-class TestsFlextTestsMatchersValidationMixin(TestsFlextTestsMatchersNativeTruthMixin):
+class TestsFlextTestsMatchersValidation(TestsFlextTestsMatchersNativeTruth):
     """Matcher criteria validation tests composed with native truth coverage."""
 
     @staticmethod

@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-class TestsFlextTestsFilesReadMixin:
+class TestsFlextTestsFilesRead:
     """File read tests."""
 
     @staticmethod

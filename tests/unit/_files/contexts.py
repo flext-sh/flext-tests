@@ -13,7 +13,7 @@ from flext_tests import FlextTestsFiles
 from tests import c, m, t, tm, u
 
 
-class TestsFlextTestsFilesContextsMixin:
+class TestsFlextTestsFilesContexts:
     """File context and alias tests."""
 
     @staticmethod

@@ -12,7 +12,7 @@ from flext_tests import FlextTestsFiles
 from tests import c, m, r, t, tm, u
 
 
-class TestsFlextTestsFilesBatchCreateInMixin:
+class TestsFlextTestsFilesBatchCreateIn:
     """File create_in tests."""
 
     @staticmethod

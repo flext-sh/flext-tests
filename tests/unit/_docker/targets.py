@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-class TestsFlextTestsDockerTargetsMixin:
+class TestsFlextTestsDockerTargets:
     """Docker target failure tests."""
 
     @staticmethod

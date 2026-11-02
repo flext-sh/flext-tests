@@ -1,5 +1,5 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""Internal package for matchers.
+"""Flext Tests. Utilities. Matchers package.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -30,6 +30,7 @@ if TYPE_CHECKING:
     from flext_tests._utilities._matchers.typeguards import (
         FlextTestsUtilitiesMatchersTypeguards,
     )
+
 
 __all__: tuple[str, ...] = (
     "FlextTestsUtilitiesMatchersAssertions",

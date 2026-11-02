@@ -14,7 +14,7 @@ import pytest
 from tests import c, m, p, r, t, tm
 
 
-class TestsFlextTestsMatchersBooleanResultsMixin:
+class TestsFlextTestsMatchersBooleanResults:
     """Boolean predicates and falsey result payload behavior."""
 
     @staticmethod
@@ -82,7 +82,7 @@ class TestsFlextTestsMatchersBooleanResultsMixin:
         tm.that(tm.ok(result, ne=True), eq=False)
 
 
-class TestsFlextTestsMatchersResultsMixin(TestsFlextTestsMatchersBooleanResultsMixin):
+class TestsFlextTestsMatchersResults(TestsFlextTestsMatchersBooleanResults):
     """Typed result and collection assertion tests."""
 
     @staticmethod

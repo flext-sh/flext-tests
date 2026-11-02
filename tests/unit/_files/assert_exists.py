@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-class TestsFlextTestsFilesAssertExistsMixin:
+class TestsFlextTestsFilesAssertExists:
     """File assert_exists tests."""
 
     @staticmethod

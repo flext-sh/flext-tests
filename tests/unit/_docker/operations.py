@@ -14,7 +14,7 @@ from flext_tests import FlextTestsDocker
 from tests import c, tm, u
 
 
-class TestsFlextTestsDockerOperationsMixin:
+class TestsFlextTestsDockerOperations:
     """Docker operation tests."""
 
     @staticmethod

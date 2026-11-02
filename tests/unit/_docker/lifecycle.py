@@ -16,7 +16,7 @@ from flext_tests import FlextTestsDocker
 from tests import c, m, t, tm, u
 
 
-class TestsFlextTestsDockerLifecycleMixin:
+class TestsFlextTestsDockerLifecycle:
     """Pure lifecycle rules: decision table, verification, projections."""
 
     @staticmethod
