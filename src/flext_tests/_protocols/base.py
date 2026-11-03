@@ -8,12 +8,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from flext_cli import t
+from flext_cli import FlextCliProtocols
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from flext_cli import p
 
-    from flext_tests._protocols import FlextTestsProtocolsPayload
     from flext_tests._typings import FlextTestsTypesBase
 
 
@@ -31,27 +32,70 @@ class FlextTestsProtocolsBase:
             ...
 
     @runtime_checkable
-    class Payload(Protocol):
+    class Payload(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
-        kind: FlextTestsTypesBase.PayloadKind
-        atom: FlextTestsTypesBase.PayloadAtom | t.Port[p.Model] | None
-        items: FlextTestsTypesBase.PayloadItems[FlextTestsProtocolsPayload.Payload]
-        entries: FlextTestsTypesBase.PayloadEntries[FlextTestsProtocolsPayload.Payload]
+        @property
+        def kind(self) -> FlextTestsTypesBase.PayloadKind:
+            """Native value arm."""
+            ...
+
+        @property
+        def atom(self) -> FlextTestsTypesBase.PayloadAtom | p.Model | None:
+            """Native scalar or model instance; never a JSON dump."""
+            ...
+
+        @property
+        def items(
+            self,
+        ) -> FlextTestsTypesBase.PayloadItems[FlextTestsProtocolsBase.Payload]:
+            """Ordered children; kind retains the source collection."""
+            ...
+
+        @property
+        def entries(
+            self,
+        ) -> FlextTestsTypesBase.PayloadEntries[FlextTestsProtocolsBase.Payload]:
+            """String-keyed payload children."""
+            ...
+
+        @classmethod
+        def atom_default(cls) -> FlextTestsProtocolsBase.Payload:
+            """Build the default atom payload used by entity value defaults."""
+            ...
 
     @runtime_checkable
-    class Entity(Protocol):
+    class Entity(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
-        name: str
-        value: FlextTestsProtocolsPayload.Payload
+        @property
+        def domain_events(self) -> Sequence[p.DomainEvent]:
+            """List of uncommitted domain events for event sourcing."""
+            ...
+
+        @property
+        def name(self) -> str:
+            """Entity display name."""
+            ...
+
+        @property
+        def value(self) -> FlextTestsProtocolsBase.Payload:
+            """Arbitrary serializable payload."""
+            ...
 
     @runtime_checkable
-    class Value(Protocol):
+    class Value(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
-        data: str
-        count: int
+        @property
+        def data(self) -> str:
+            """Payload data string."""
+            ...
+
+        @property
+        def count(self) -> int:
+            """Occurrence counter."""
+            ...
 
 
 __all__: list[str] = ["FlextTestsProtocolsBase"]

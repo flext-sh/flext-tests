@@ -33,6 +33,7 @@ class FlextTestsConstants(flext_cli_c):
     """
 
     class Tests(
+        flext_cli_c.Cli,
         FlextTestsConstantsBase,
         FlextTestsConstantsDataCases,
         FlextTestsConstantsDocker,
@@ -41,7 +42,6 @@ class FlextTestsConstants(flext_cli_c):
         FlextTestsConstantsNamespace,
         FlextTestsConstantsPytest,
         FlextTestsConstantsValidator,
-        flext_cli_c.Cli,
     ):
         """Test-specific constants namespace.
 

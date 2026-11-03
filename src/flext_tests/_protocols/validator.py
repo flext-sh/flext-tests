@@ -12,94 +12,153 @@ from collections.abc import MutableMapping, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal, Protocol, runtime_checkable
 
+from flext_cli import FlextCliProtocols
+
+from flext_tests import t
+
 if TYPE_CHECKING:
-    from flext_cli import p, t
+    from flext_cli import p
 
 
 class FlextTestsProtocolsValidator:
-    """Own the structural model contracts declared by this module."""
+    """Own the structural contracts declared by its model source."""
 
     @runtime_checkable
-    class EnforcementInfraRuleSource(Protocol):
+    class EnforcementInfraRuleSource(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
-        def kind(self) -> Literal["flext_infra_rule"]: ...
+        def kind(self) -> Literal["flext_infra_rule"]:
+            """Closed discriminator of the declarative rule source."""
+            ...
+
         @property
-        def rule_ids(self) -> Sequence[str]: ...
+        def rule_ids(self) -> Sequence[str]:
+            """Engine rule IDs this catalog entry selects."""
+            ...
 
     @runtime_checkable
-    class EnforcementRuntimeWarningSource(Protocol):
+    class EnforcementRuntimeWarningSource(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
-        def kind(self) -> Literal["runtime_warning"]: ...
+        def kind(self) -> Literal["runtime_warning"]:
+            """Closed discriminator of the runtime warning source."""
+            ...
+
         @property
-        def category(self) -> t.NonEmptyStr: ...
+        def category(self) -> t.NonEmptyStr:
+            """Dotted warning category the dispatcher filters."""
+            ...
 
     @runtime_checkable
-    class EnforcementRuleSpec(Protocol):
+    class EnforcementRuleSpec(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
-        def id(self) -> t.NonEmptyStr: ...
+        def id(self) -> t.NonEmptyStr:
+            """Canonical catalog rule ID."""
+            ...
+
         @property
-        def description(self) -> str: ...
+        def description(self) -> str:
+            """Human-readable catalog rule description."""
+            ...
+
         @property
         def source(
             self,
         ) -> (
             FlextTestsProtocolsValidator.EnforcementInfraRuleSource
             | FlextTestsProtocolsValidator.EnforcementRuntimeWarningSource
-        ): ...
+        ):
+            """Closed rule source behind this catalog entry."""
+            ...
 
     @runtime_checkable
-    class EnforcementCatalog(Protocol):
+    class EnforcementCatalog(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
-        def rules(
-            self,
-        ) -> tuple[FlextTestsProtocolsValidator.EnforcementRuleSpec, ...]: ...
+        def rules(self) -> tuple[FlextTestsProtocolsValidator.EnforcementRuleSpec, ...]:
+            """Canonical catalog rules in composed order."""
+            ...
 
     @runtime_checkable
-    class EnforcementBuildContext(Protocol):
+    class EnforcementBuildContext(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
-        def infra_findings(self) -> t.Port[p.Model] | None: ...
+        def infra_findings(self) -> p.Model | None:
+            """Structural member projected from the owning model.
+
+            flext-infra rule-engine findings keyed by rule id, absent when no engine
+            rule is selected.
+            """
+            ...
+
         @property
-        def project_names(self) -> frozenset[str]: ...
+        def project_names(self) -> frozenset[str]:
+            """FLEXT projects represented by collected items."""
+            ...
 
     @runtime_checkable
-    class EnforcementDispatcherConfig(Protocol):
+    class EnforcementDispatcherConfig(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
-        def strict(self) -> bool: ...
+        def strict(self) -> bool:
+            """Promote runtime warnings to failures when true."""
+            ...
+
         @property
-        def include(self) -> frozenset[str]: ...
+        def include(self) -> frozenset[str]:
+            """Optional allow-list of enforcement rule IDs."""
+            ...
+
         @property
-        def exclude(self) -> frozenset[str]: ...
+        def exclude(self) -> frozenset[str]:
+            """Optional block-list of enforcement rule IDs."""
+            ...
+
         @property
-        def repository_root(self) -> Path | None: ...
+        def repository_root(self) -> Path | None:
+            """Resolved FLEXT workspace root for the session."""
+            ...
+
         @property
-        def warning_counter(self) -> MutableMapping[str, int]: ...
+        def warning_counter(self) -> MutableMapping[str, int]:
+            """Captured runtime warning counts keyed by dotted category."""
+            ...
 
     @runtime_checkable
-    class EnforcementViolation(Protocol):
+    class EnforcementViolation(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
-        def rule_id(self) -> str: ...
+        def rule_id(self) -> str:
+            """Enforcement rule ID the findings belong to."""
+            ...
+
         @property
-        def severity(self) -> str: ...
+        def severity(self) -> str:
+            """Severity declared by the finding payload."""
+            ...
+
         @property
-        def description(self) -> str: ...
+        def description(self) -> str:
+            """Human-readable finding message of the first hit."""
+            ...
+
         @property
-        def project(self) -> str: ...
+        def project(self) -> str:
+            """FLEXT project the findings belong to."""
+            ...
+
         @property
-        def violations(self) -> tuple[str, ...]: ...
+        def violations(self) -> tuple[str, ...]:
+            """Formatted per-finding lines for the failure body."""
+            ...
 
 
 __all__: list[str] = [
