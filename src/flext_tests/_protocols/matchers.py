@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from flext_cli import t
+from flext_cli import FlextCliProtocols, t
 
 from flext_tests._protocols import FlextTestsProtocolsPayload
 from flext_tests._typings import FlextTestsTypesMatchers
@@ -17,9 +17,11 @@ from flext_tests._typings import FlextTestsTypesMatchers
 if TYPE_CHECKING:
     from collections.abc import Callable
     from pathlib import Path
-    from typing import TypeAliasType
+    from typing import Self, TypeAliasType
 
     from flext_cli import p
+
+    from flext_tests._protocols import FlextTestsProtocolsBase
 
 
 @runtime_checkable
@@ -28,7 +30,7 @@ class FlextTestsProtocolsMatchers(Protocol):
 
     type MatcherOption = (
         FlextTestsProtocolsPayload.NativeMatchValue
-        | FlextTestsProtocolsPayload.Payload
+        | FlextTestsProtocolsBase.Payload
         | t.RegexPattern
         | type
         | tuple[type, ...]
@@ -40,7 +42,7 @@ class FlextTestsProtocolsMatchers(Protocol):
         | Mapping[
             str | int,
             FlextTestsProtocolsPayload.NativeMatchValue
-            | FlextTestsProtocolsPayload.Payload
+            | FlextTestsProtocolsBase.Payload
             | Callable[[FlextTestsProtocolsPayload.NativeMatchValue], bool],
         ]
         | FlextTestsProtocolsMatchers.MatcherCriteriaMapping
@@ -108,172 +110,550 @@ class FlextTestsProtocolsMatchers(Protocol):
         def nan_ok(self) -> bool: ...
 
     @runtime_checkable
-    class PayloadParams(Protocol):
+    class PayloadParams(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
     @runtime_checkable
-    class MatchRule[SubjectT = FlextTestsProtocolsPayload.NativeMatchValue](Protocol):
+    class MatchRule[SubjectT = FlextTestsProtocolsPayload.NativeMatchValue](
+        FlextCliProtocols.Model, Protocol
+    ):
         """Structural data contract projected from the owning model."""
 
-        eq: (
-            FlextTestsProtocolsPayload.Payload
+        @property
+        def eq(
+            self,
+        ) -> (
+            FlextTestsProtocolsBase.Payload
             | t.Port[FlextTestsProtocolsMatchers.ApproxLike]
             | t.Port[TypeAliasType]
             | None
-        )
-        ne: (
-            FlextTestsProtocolsPayload.Payload
+        ):
+            """Expected equality value."""
+            ...
+
+        @property
+        def ne(
+            self,
+        ) -> (
+            FlextTestsProtocolsBase.Payload
             | t.Port[FlextTestsProtocolsMatchers.ApproxLike]
             | t.Port[TypeAliasType]
             | None
-        )
-        is_: type | tuple[type, ...] | None
-        has: FlextTestsProtocolsPayload.Payload | None
-        lacks: FlextTestsProtocolsPayload.Payload | None
-        none: bool | None
-        empty: bool | None
-        gt: FlextTestsTypesMatchers.ComparableScalar | None
-        gte: FlextTestsTypesMatchers.ComparableScalar | None
-        lt: FlextTestsTypesMatchers.ComparableScalar | None
-        lte: FlextTestsTypesMatchers.ComparableScalar | None
-        starts: str | None
-        ends: str | None
-        match: t.RegexPattern | None
-        len: FlextTestsTypesMatchers.LengthSpec | None
-        where: Callable[[SubjectT], bool] | None
-        msg: str | None
+        ):
+            """Expected inequality value."""
+            ...
+
+        @property
+        def is_(self) -> type | tuple[type, ...] | None:
+            """Expected runtime type."""
+            ...
+
+        @property
+        def has(self) -> FlextTestsProtocolsBase.Payload | None:
+            """Required contained value."""
+            ...
+
+        @property
+        def lacks(self) -> FlextTestsProtocolsBase.Payload | None:
+            """Forbidden contained value."""
+            ...
+
+        @property
+        def none(self) -> bool | None:
+            """Expected null state."""
+            ...
+
+        @property
+        def empty(self) -> bool | None:
+            """Expected empty state."""
+            ...
+
+        @property
+        def gt(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+            """Exclusive lower bound."""
+            ...
+
+        @property
+        def gte(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+            """Inclusive lower bound."""
+            ...
+
+        @property
+        def lt(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+            """Exclusive upper bound."""
+            ...
+
+        @property
+        def lte(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+            """Inclusive upper bound."""
+            ...
+
+        @property
+        def starts(self) -> str | None:
+            """Required string prefix."""
+            ...
+
+        @property
+        def ends(self) -> str | None:
+            """Required string suffix."""
+            ...
+
+        @property
+        def match(self) -> t.RegexPattern | None:
+            """Required regular expression."""
+            ...
+
+        @property
+        def len(self) -> FlextTestsTypesMatchers.LengthSpec | None:
+            """Required length."""
+            ...
+
+        @property
+        def where(self) -> Callable[[SubjectT], bool] | None:
+            """Predicate applied to the subject."""
+            ...
+
+        @property
+        def msg(self) -> str | None:
+            """Inherited assertion message."""
+            ...
+
+        @classmethod
+        def parse_type_tuple(cls, value: p.AttributeProbe) -> Self:
+            """Parse a tuple operand into its nominal type-membership rule."""
+            ...
+
+        @classmethod
+        def parse(cls, value: p.AttributeProbe) -> Self:
+            """Parse one public matcher rule into its nominal representation."""
+            ...
+
+        @classmethod
+        def parse_mapping(cls, value: p.AttributeProbe) -> Self:
+            """Parse a mapping operand into a validated or owned-equality rule."""
+            ...
+
+        @classmethod
+        def parse_rule_fields(
+            cls, value: (p.AttributeProbe)
+        ) -> p.AttributeProbe | Mapping[str, Self] | Sequence[Self] | None:
+            """Structural member projected from the owning model.
+
+            Parse paths, items, and attribute rule collections before validation.
+            """
+            ...
 
     @runtime_checkable
-    class FailParams(Protocol):
+    class FailParams(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
-        msg: str | None
-        has: FlextTestsTypesMatchers.ExclusionSpec | None
-        lacks: FlextTestsTypesMatchers.ExclusionSpec | None
-        starts: str | None
-        ends: str | None
-        match: t.RegexPattern | None
-        code: str | None
-        code_has: FlextTestsTypesMatchers.ErrorCodeSpec | None
-        data: Mapping[str, FlextTestsProtocolsPayload.Payload] | None
+        @property
+        def msg(self) -> str | None:
+            """Custom error message."""
+            ...
+
+        @property
+        def has(self) -> FlextTestsTypesMatchers.ExclusionSpec | None:
+            """Error contains substrings."""
+            ...
+
+        @property
+        def lacks(self) -> FlextTestsTypesMatchers.ExclusionSpec | None:
+            """Error does not contain substrings."""
+            ...
+
+        @property
+        def starts(self) -> str | None:
+            """Error starts with prefix."""
+            ...
+
+        @property
+        def ends(self) -> str | None:
+            """Error ends with suffix."""
+            ...
+
+        @property
+        def match(self) -> t.RegexPattern | None:
+            """Error matches compiled regex."""
+            ...
+
+        @property
+        def code(self) -> str | None:
+            """Error code equals."""
+            ...
+
+        @property
+        def code_has(self) -> FlextTestsTypesMatchers.ErrorCodeSpec | None:
+            """Error code contains substrings."""
+            ...
+
+        @property
+        def data(self) -> Mapping[str, FlextTestsProtocolsBase.Payload] | None:
+            """Error data contains key-value pairs."""
+            ...
 
     @runtime_checkable
-    class ThatParams(Protocol):
+    class ThatParams(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
-        msg: str | None
-        truth: bool | None
-        assertion_message: t.Port[p.AttributeProbe] | None
-        is_: type | tuple[type, ...] | None
-        not_: type | tuple[type, ...] | None
-        none: bool | None
-        empty: bool | None
-        gt: FlextTestsTypesMatchers.ComparableScalar | None
-        gte: FlextTestsTypesMatchers.ComparableScalar | None
-        lt: FlextTestsTypesMatchers.ComparableScalar | None
-        lte: FlextTestsTypesMatchers.ComparableScalar | None
-        len: FlextTestsTypesMatchers.LengthSpec | None
-        length_gt: int | None
-        length_gte: int | None
-        length_lt: int | None
-        length_lte: int | None
-        has: FlextTestsProtocolsPayload.Payload | None
-        lacks: FlextTestsProtocolsPayload.Payload | None
-        starts: str | None
-        ends: str | None
-        match: t.RegexPattern | None
-        first: FlextTestsProtocolsPayload.Payload | None
-        last: FlextTestsProtocolsPayload.Payload | None
-        all_: (
+        @property
+        def msg(self) -> str | None:
+            """Message."""
+            ...
+
+        @property
+        def truth(self) -> bool | None:
+            """Native truth value of the original subject."""
+            ...
+
+        @property
+        def assertion_message(self) -> p.AttributeProbe | None:
+            """Original assertion message, passed inside its failure branch."""
+            ...
+
+        @property
+        def is_(self) -> type | tuple[type, ...] | None:
+            """Type."""
+            ...
+
+        @property
+        def not_(self) -> type | tuple[type, ...] | None:
+            """Not type."""
+            ...
+
+        @property
+        def none(self) -> bool | None:
+            """None check."""
+            ...
+
+        @property
+        def empty(self) -> bool | None:
+            """Empty check."""
+            ...
+
+        @property
+        def gt(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+            """Greater than."""
+            ...
+
+        @property
+        def gte(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+            """Greater/equal."""
+            ...
+
+        @property
+        def lt(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+            """Less than."""
+            ...
+
+        @property
+        def lte(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+            """Less/equal."""
+            ...
+
+        @property
+        def len(self) -> FlextTestsTypesMatchers.LengthSpec | None:
+            """Length."""
+            ...
+
+        @property
+        def length_gt(self) -> int | None:
+            """Length >."""
+            ...
+
+        @property
+        def length_gte(self) -> int | None:
+            """Length >=."""
+            ...
+
+        @property
+        def length_lt(self) -> int | None:
+            """Length <."""
+            ...
+
+        @property
+        def length_lte(self) -> int | None:
+            """Length <=."""
+            ...
+
+        @property
+        def has(self) -> FlextTestsProtocolsBase.Payload | None:
+            """Contains."""
+            ...
+
+        @property
+        def lacks(self) -> FlextTestsProtocolsBase.Payload | None:
+            """Lacks."""
+            ...
+
+        @property
+        def starts(self) -> str | None:
+            """Prefix."""
+            ...
+
+        @property
+        def ends(self) -> str | None:
+            """Suffix."""
+            ...
+
+        @property
+        def match(self) -> t.RegexPattern | None:
+            """Regex."""
+            ...
+
+        @property
+        def first(self) -> FlextTestsProtocolsBase.Payload | None:
+            """First item."""
+            ...
+
+        @property
+        def last(self) -> FlextTestsProtocolsBase.Payload | None:
+            """Last item."""
+            ...
+
+        @property
+        def all_(
+            self,
+        ) -> (
             type | Callable[[FlextTestsProtocolsPayload.NativeMatchValue], bool] | None
-        )
-        any_: (
+        ):
+            """All."""
+            ...
+
+        @property
+        def any_(
+            self,
+        ) -> (
             type | Callable[[FlextTestsProtocolsPayload.NativeMatchValue], bool] | None
-        )
-        sorted: (
+        ):
+            """Any."""
+            ...
+
+        @property
+        def sorted(
+            self,
+        ) -> (
             bool
             | Callable[
                 [FlextTestsProtocolsPayload.NativeMatchValue],
                 FlextTestsProtocolsPayload.NativeMatchValue,
             ]
             | None
-        )
-        unique: bool | None
-        keys: FlextTestsTypesMatchers.KeySpec | None
-        lacks_keys: FlextTestsTypesMatchers.KeySpec | None
-        values: Sequence[FlextTestsProtocolsPayload.Payload] | None
-        kv: FlextTestsProtocolsPayload.Payload | None
-        attrs: FlextTestsTypesMatchers.AttributeSpec | None
-        methods: FlextTestsTypesMatchers.AttributeSpec | None
-        attr_eq: FlextTestsProtocolsPayload.Payload | None
-        ok: bool | None
-        error: str | Sequence[str] | None
-        deep: (
+        ):
+            """Sort key."""
+            ...
+
+        @property
+        def unique(self) -> bool | None:
+            """Unique."""
+            ...
+
+        @property
+        def keys(self) -> FlextTestsTypesMatchers.KeySpec | None:
+            """Keys."""
+            ...
+
+        @property
+        def lacks_keys(self) -> FlextTestsTypesMatchers.KeySpec | None:
+            """No keys."""
+            ...
+
+        @property
+        def values(self) -> Sequence[FlextTestsProtocolsBase.Payload] | None:
+            """Values."""
+            ...
+
+        @property
+        def kv(self) -> FlextTestsProtocolsBase.Payload | None:
+            """Key-values."""
+            ...
+
+        @property
+        def attrs(self) -> FlextTestsTypesMatchers.AttributeSpec | None:
+            """Attrs."""
+            ...
+
+        @property
+        def methods(self) -> FlextTestsTypesMatchers.AttributeSpec | None:
+            """Methods."""
+            ...
+
+        @property
+        def attr_eq(self) -> FlextTestsProtocolsBase.Payload | None:
+            """Attr equals."""
+            ...
+
+        @property
+        def ok(self) -> bool | None:
+            """Result ok."""
+            ...
+
+        @property
+        def error(self) -> str | Sequence[str] | None:
+            """Result error."""
+            ...
+
+        @property
+        def deep(
+            self,
+        ) -> (
             Mapping[
                 str,
-                FlextTestsProtocolsPayload.Payload
+                FlextTestsProtocolsBase.Payload
                 | Callable[[FlextTestsProtocolsPayload.NativeMatchValue], bool],
             ]
             | None
-        )
-        paths: Mapping[str, FlextTestsProtocolsMatchers.MatchRule] | None
-        items: (
+        ):
+            """Deep spec."""
+            ...
+
+        @property
+        def paths(self) -> Mapping[str, FlextTestsProtocolsMatchers.MatchRule] | None:
+            """Paths."""
+            ...
+
+        @property
+        def items(
+            self,
+        ) -> (
             Sequence[FlextTestsProtocolsMatchers.MatchRule]
             | Mapping[str | int, FlextTestsProtocolsMatchers.MatchRule]
             | None
-        )
-        attrs_match: (
+        ):
+            """Items."""
+            ...
+
+        @property
+        def attrs_match(
+            self,
+        ) -> (
             Mapping[str, FlextTestsProtocolsMatchers.MatchRule[p.AttributeProbe]] | None
-        )
-        where: Callable[[FlextTestsProtocolsPayload.NativeMatchValue], bool] | None
+        ):
+            """Attr rules."""
+            ...
+
+        @property
+        def where(
+            self,
+        ) -> Callable[[FlextTestsProtocolsPayload.NativeMatchValue], bool] | None:
+            """Predicate."""
+            ...
 
     @runtime_checkable
-    class ScopeParams(Protocol):
+    class ScopeParams(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
-        settings: (
-            Mapping[str, t.Port[FlextTestsProtocolsPayload.NativeMatchValue]] | None
-        )
-        container: (
-            Mapping[str, t.Port[FlextTestsProtocolsPayload.NativeMatchValue]] | None
-        )
-        context: (
-            Mapping[str, t.Port[FlextTestsProtocolsPayload.NativeMatchValue]] | None
-        )
-        cleanup: FlextTestsTypesMatchers.CleanupSpec | None
-        env: FlextTestsTypesMatchers.EnvironmentSpec | None
-        remove_env_keys: Sequence[str]
-        python_paths: Sequence[str]
-        cwd: Path | str | None
+        @property
+        def settings(
+            self,
+        ) -> Mapping[str, FlextTestsProtocolsPayload.NativeMatchValue] | None:
+            """Initial configuration values."""
+            ...
+
+        @property
+        def container(
+            self,
+        ) -> Mapping[str, FlextTestsProtocolsPayload.NativeMatchValue] | None:
+            """Initial container/service mappings."""
+            ...
+
+        @property
+        def context(
+            self,
+        ) -> Mapping[str, FlextTestsProtocolsPayload.NativeMatchValue] | None:
+            """Initial context values."""
+            ...
+
+        @property
+        def cleanup(self) -> FlextTestsTypesMatchers.CleanupSpec | None:
+            """Cleanup functions."""
+            ...
+
+        @property
+        def env(self) -> FlextTestsTypesMatchers.EnvironmentSpec | None:
+            """Temporary environment variables."""
+            ...
+
+        @property
+        def remove_env_keys(self) -> Sequence[str]:
+            """Environment variables absent inside the scope."""
+            ...
+
+        @property
+        def python_paths(self) -> Sequence[str]:
+            """Import roots prepended inside the scope."""
+            ...
+
+        @property
+        def cwd(self) -> Path | str | None:
+            """Temporary working directory."""
+            ...
 
     @runtime_checkable
-    class DeepMatchResult(Protocol):
+    class DeepMatchResult(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
-        path: str
-        expected: (
-            FlextTestsProtocolsPayload.Payload
+        @property
+        def path(self) -> str:
+            """Path where matching occurred."""
+            ...
+
+        @property
+        def expected(
+            self,
+        ) -> (
+            FlextTestsProtocolsBase.Payload
             | Callable[[FlextTestsProtocolsPayload.NativeMatchValue], bool]
             | str
             | None
-        )
-        actual: FlextTestsProtocolsPayload.Payload | None
-        matched: bool
-        reason: str
+        ):
+            """Expected value or predicate."""
+            ...
+
+        @property
+        def actual(self) -> FlextTestsProtocolsBase.Payload | None:
+            """Actual value found."""
+            ...
+
+        @property
+        def matched(self) -> bool:
+            """Whether match succeeded."""
+            ...
+
+        @property
+        def reason(self) -> str:
+            """Reason for match failure."""
+            ...
 
     @runtime_checkable
-    class Chain[TResult](Protocol):
+    class Chain[TResult](FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
-        result: t.Port[p.Result[TResult]]
+        @property
+        def result(self) -> p.Result[TResult]:
+            """Result being chained."""
+            ...
 
     @runtime_checkable
-    class TestScope(Protocol):
+    class TestScope(FlextCliProtocols.Model, Protocol):
         """Structural data contract projected from the owning model."""
 
-        settings: Mapping[str, t.Port[FlextTestsProtocolsPayload.NativeMatchValue]]
-        container: Mapping[str, t.Port[FlextTestsProtocolsPayload.NativeMatchValue]]
-        context: Mapping[str, t.Port[FlextTestsProtocolsPayload.NativeMatchValue]]
+        @property
+        def settings(self) -> Mapping[str, FlextTestsProtocolsPayload.NativeMatchValue]:
+            """Configuration dictionary."""
+            ...
+
+        @property
+        def container(
+            self,
+        ) -> Mapping[str, FlextTestsProtocolsPayload.NativeMatchValue]:
+            """Container/service mappings."""
+            ...
+
+        @property
+        def context(self) -> Mapping[str, FlextTestsProtocolsPayload.NativeMatchValue]:
+            """Context values."""
+            ...
 
 
 __all__: list[str] = ["FlextTestsProtocolsMatchers"]

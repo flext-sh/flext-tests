@@ -27,13 +27,13 @@ class FlextTestsModels(flext_cli_m):
     """Test models extending m with test-specific factory models."""
 
     class Tests(
+        FlextTestsModelsFlextBase,
         FlextTestsModelsDocker,
         FlextTestsModelsFilesystem,
         FlextTestsModelsMatchers,
         FlextTestsModelsNamespace,
         FlextTestsModelsSpec,
         FlextTestsModelsValidator,
-        FlextTestsModelsFlextBase,
     ):
         """Test-specific models namespace."""
 

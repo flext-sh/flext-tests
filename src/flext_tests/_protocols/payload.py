@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Iterable, Iterator
-from typing import Protocol, Self, runtime_checkable
+from typing import Protocol, runtime_checkable
 
 from flext_core import p
 
@@ -106,30 +106,6 @@ class FlextTestsProtocolsPayload:
             | None
         ):
             """Read a native value by key."""
-            ...
-
-    @runtime_checkable
-    class Payload(Protocol):
-        """Inspect validated values without dumping or reconstructing model leaves."""
-
-        @property
-        def kind(self) -> FlextTestsTypesBase.PayloadKind:
-            """Identify the native scalar or collection arm."""
-            ...
-
-        @property
-        def atom(self) -> FlextTestsTypesBase.PayloadAtom | p.Model | None:
-            """Read the unchanged native leaf."""
-            ...
-
-        @property
-        def items(self) -> FlextTestsTypesBase.PayloadItems[Self]:
-            """Read ordered children of a collection arm."""
-            ...
-
-        @property
-        def entries(self) -> FlextTestsTypesBase.PayloadEntries[Self]:
-            """Read children of a mapping arm."""
             ...
 
     type NativeMatchValue = (

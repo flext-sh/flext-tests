@@ -16,9 +16,13 @@ from flext_tests._protocols import (
     FlextTestsProtocolsBase,
     FlextTestsProtocolsDocker,
     FlextTestsProtocolsEnforcement,
+    FlextTestsProtocolsFilesystem,
     FlextTestsProtocolsFixtureTrees,
     FlextTestsProtocolsMatchers,
+    FlextTestsProtocolsNamespace,
     FlextTestsProtocolsPayload,
+    FlextTestsProtocolsSpec,
+    FlextTestsProtocolsValidator,
     FlextTestsProtocolsValueFactory,
 )
 
@@ -29,13 +33,17 @@ class FlextTestsProtocols(flext_cli_p):
     class Tests(
         # Owned payload and matcher capability contracts consumed by matchers.
         # NOTE (multi-agent): publish read-only cleanup contracts under p.Tests.
-        FlextTestsProtocolsDocker,
-        FlextTestsProtocolsValueFactory,
-        FlextTestsProtocolsPayload,
-        FlextTestsProtocolsMatchers,
-        FlextTestsProtocolsEnforcement,
-        FlextTestsProtocolsFixtureTrees,
         FlextTestsProtocolsBase,
+        FlextTestsProtocolsDocker,
+        FlextTestsProtocolsEnforcement,
+        FlextTestsProtocolsFilesystem,
+        FlextTestsProtocolsFixtureTrees,
+        FlextTestsProtocolsMatchers,
+        FlextTestsProtocolsNamespace,
+        FlextTestsProtocolsPayload,
+        FlextTestsProtocolsSpec,
+        FlextTestsProtocolsValidator,
+        FlextTestsProtocolsValueFactory,
     ):
         """Test-specific protocols namespace.
 
