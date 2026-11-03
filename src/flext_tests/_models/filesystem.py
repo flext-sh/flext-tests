@@ -160,7 +160,7 @@ class FlextTestsModelsFilesystem:
 
         path: Annotated[Path, m.Field(description="Path to file to read.")]
         model_cls: Annotated[
-            t.InstanceOf[p.Tests.ModelReader[p.Model]] | None,
+            t.InstanceOf[p.Tests.ModelReader[p.BaseModel]] | None,
             m.Field(description="Optional Pydantic model class."),
         ] = None
         fmt: Annotated[
@@ -261,7 +261,7 @@ class FlextTestsModelsFilesystem:
             m.Field(description="Parse content and include metadata."),
         ] = False
         validate_model: Annotated[
-            t.InstanceOf[p.Tests.ModelReader[p.Model]] | None,
+            t.InstanceOf[p.Tests.ModelReader[p.BaseModel]] | None,
             m.Field(description="Pydantic model to validate content against."),
         ] = None
 

@@ -57,7 +57,7 @@ class FlextTestsModelsFlextBase:
             m.Field(frozen=True, description="Native value arm."),
         ]
         atom: Annotated[
-            t.Tests.PayloadAtom | t.Port[p.Model] | None,
+            t.Tests.PayloadAtom | t.Port[p.BaseModel] | None,
             m.Field(
                 frozen=True,
                 description="Native scalar or model instance; never a JSON dump.",

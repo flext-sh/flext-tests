@@ -15,11 +15,10 @@ from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from flext_cli import FlextCliProtocols
 
-from flext_tests import c, t
-
 if TYPE_CHECKING:
     from flext_cli import p
 
+    from flext_tests import c, t
     from flext_tests._protocols import FlextTestsProtocolsBase
 
 
@@ -27,7 +26,7 @@ class FlextTestsProtocolsFilesystem:
     """Own the structural contracts declared by its model source."""
 
     @runtime_checkable
-    class FileInfo(FlextCliProtocols.Model, Protocol):
+    class FileInfo(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -111,7 +110,7 @@ class FlextTestsProtocolsFilesystem:
             ...
 
     @runtime_checkable
-    class ContentMeta(FlextCliProtocols.Model, Protocol):
+    class ContentMeta(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -145,7 +144,7 @@ class FlextTestsProtocolsFilesystem:
             ...
 
     @runtime_checkable
-    class CreateParams(FlextCliProtocols.Model, Protocol):
+    class CreateParams(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -199,7 +198,7 @@ class FlextTestsProtocolsFilesystem:
             ...
 
     @runtime_checkable
-    class ReadParams(FlextCliProtocols.Model, Protocol):
+    class ReadParams(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -208,7 +207,7 @@ class FlextTestsProtocolsFilesystem:
             ...
 
         @property
-        def model_cls(self) -> FlextTestsProtocolsBase.ModelReader[p.Model] | None:
+        def model_cls(self) -> FlextTestsProtocolsBase.ModelReader[p.BaseModel] | None:
             """Optional Pydantic model class."""
             ...
 
@@ -233,7 +232,7 @@ class FlextTestsProtocolsFilesystem:
             ...
 
     @runtime_checkable
-    class PathCoercingParams(FlextCliProtocols.Model, Protocol):
+    class PathCoercingParams(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
     @runtime_checkable
@@ -310,12 +309,14 @@ class FlextTestsProtocolsFilesystem:
             ...
 
         @property
-        def validate_model(self) -> FlextTestsProtocolsBase.ModelReader[p.Model] | None:
+        def validate_model(
+            self,
+        ) -> FlextTestsProtocolsBase.ModelReader[p.BaseModel] | None:
             """Pydantic model to validate content against."""
             ...
 
     @runtime_checkable
-    class AssertExistsParams(FlextCliProtocols.Model, Protocol):
+    class AssertExistsParams(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -344,7 +345,7 @@ class FlextTestsProtocolsFilesystem:
             ...
 
     @runtime_checkable
-    class CreateKwargsParams(FlextCliProtocols.Model, Protocol):
+    class CreateKwargsParams(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property

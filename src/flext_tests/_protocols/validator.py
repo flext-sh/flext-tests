@@ -14,17 +14,17 @@ from typing import TYPE_CHECKING, Literal, Protocol, runtime_checkable
 
 from flext_cli import FlextCliProtocols
 
-from flext_tests import t
-
 if TYPE_CHECKING:
     from flext_cli import p
+
+    from flext_tests import t
 
 
 class FlextTestsProtocolsValidator:
     """Own the structural contracts declared by its model source."""
 
     @runtime_checkable
-    class EnforcementInfraRuleSource(FlextCliProtocols.Model, Protocol):
+    class EnforcementInfraRuleSource(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -38,7 +38,7 @@ class FlextTestsProtocolsValidator:
             ...
 
     @runtime_checkable
-    class EnforcementRuntimeWarningSource(FlextCliProtocols.Model, Protocol):
+    class EnforcementRuntimeWarningSource(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -52,7 +52,7 @@ class FlextTestsProtocolsValidator:
             ...
 
     @runtime_checkable
-    class EnforcementRuleSpec(FlextCliProtocols.Model, Protocol):
+    class EnforcementRuleSpec(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -76,7 +76,7 @@ class FlextTestsProtocolsValidator:
             ...
 
     @runtime_checkable
-    class EnforcementCatalog(FlextCliProtocols.Model, Protocol):
+    class EnforcementCatalog(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -85,11 +85,11 @@ class FlextTestsProtocolsValidator:
             ...
 
     @runtime_checkable
-    class EnforcementBuildContext(FlextCliProtocols.Model, Protocol):
+    class EnforcementBuildContext(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
-        def infra_findings(self) -> p.Model | None:
+        def infra_findings(self) -> p.BaseModel | None:
             """Structural member projected from the owning model.
 
             flext-infra rule-engine findings keyed by rule id, absent when no engine
@@ -103,7 +103,7 @@ class FlextTestsProtocolsValidator:
             ...
 
     @runtime_checkable
-    class EnforcementDispatcherConfig(FlextCliProtocols.Model, Protocol):
+    class EnforcementDispatcherConfig(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -132,7 +132,7 @@ class FlextTestsProtocolsValidator:
             ...
 
     @runtime_checkable
-    class EnforcementViolation(FlextCliProtocols.Model, Protocol):
+    class EnforcementViolation(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property

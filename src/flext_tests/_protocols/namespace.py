@@ -12,17 +12,17 @@ from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from flext_cli import FlextCliProtocols
 
-from flext_tests import c, t
-
 if TYPE_CHECKING:
     from flext_cli import p
+
+    from flext_tests import c, t
 
 
 class FlextTestsProtocolsNamespace:
     """Own the structural contracts declared by its model source."""
 
     @runtime_checkable
-    class TestNamespace(FlextCliProtocols.Model, Protocol):
+    class TestNamespace(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -56,7 +56,7 @@ class FlextTestsProtocolsNamespace:
             ...
 
     @runtime_checkable
-    class HandlerConfigParams(FlextCliProtocols.Model, Protocol):
+    class HandlerConfigParams(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property

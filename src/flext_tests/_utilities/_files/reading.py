@@ -45,7 +45,7 @@ class FlextTestsUtilitiesFilesReading(FlextTestsUtilitiesFilesCreation):
     """Read test files with format detection and model loading."""
 
     @staticmethod
-    def _validate_model_content[TModelRead: p.Model](
+    def _validate_model_content[TModelRead: p.BaseModel](
         model_cls: p.Tests.ModelReader[TModelRead],
         content: t.Tests.FileContentPlain,
     ) -> p.Result[TModelRead]:
@@ -58,7 +58,7 @@ class FlextTestsUtilitiesFilesReading(FlextTestsUtilitiesFilesCreation):
             return r[TModelRead].fail(f"Failed to validate model: {ex}", exception=ex)
 
     @staticmethod
-    def _read_fail[TModelRead: p.Model](
+    def _read_fail[TModelRead: p.BaseModel](
         error: str,
         model_cls: p.Tests.ModelReader[TModelRead] | None,
     ) -> p.Result[t.Tests.ReadContent] | p.Result[TModelRead]:
@@ -82,7 +82,7 @@ class FlextTestsUtilitiesFilesReading(FlextTestsUtilitiesFilesCreation):
     ) -> p.Result[t.Tests.ReadContent]: ...
 
     @overload
-    def read[TModelRead: p.Model](
+    def read[TModelRead: p.BaseModel](
         self,
         path: Path,
         *,
@@ -90,7 +90,7 @@ class FlextTestsUtilitiesFilesReading(FlextTestsUtilitiesFilesCreation):
         options: FlextTestsUtilitiesFilesReading.ReadOptions | None = None,
     ) -> p.Result[TModelRead]: ...
 
-    def read[TModelRead: p.Model](
+    def read[TModelRead: p.BaseModel](
         self,
         path: Path,
         *,

@@ -21,7 +21,7 @@ class FlextTestsProtocolsSpec:
     """Own the structural contracts declared by its model source."""
 
     @runtime_checkable
-    class ContainerSpec(FlextCliProtocols.Model, Protocol):
+    class ContainerSpec(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property

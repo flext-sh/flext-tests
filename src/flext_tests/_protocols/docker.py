@@ -6,12 +6,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from flext_cli import FlextCliProtocols
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence
+    from collections.abc import Mapping
     from pathlib import Path
 
     from flext_cli import p
@@ -52,7 +53,7 @@ class FlextTestsProtocolsDocker:
             ...
 
     @runtime_checkable
-    class ContainerConfig(FlextCliProtocols.Model, Protocol):
+    class ContainerConfig(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -119,7 +120,7 @@ class FlextTestsProtocolsDocker:
             ...
 
     @runtime_checkable
-    class ContainerInfo(FlextCliProtocols.Model, Protocol):
+    class ContainerInfo(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -158,7 +159,7 @@ class FlextTestsProtocolsDocker:
             ...
 
     @runtime_checkable
-    class ContainerInspectHealth(FlextCliProtocols.Model, Protocol):
+    class ContainerInspectHealth(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -167,7 +168,7 @@ class FlextTestsProtocolsDocker:
             ...
 
     @runtime_checkable
-    class ContainerInspectState(FlextCliProtocols.Model, Protocol):
+    class ContainerInspectState(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -181,20 +182,20 @@ class FlextTestsProtocolsDocker:
             ...
 
     @runtime_checkable
-    class ContainerInspectConfig(FlextCliProtocols.Model, Protocol):
+    class ContainerInspectConfig(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         image: str
         env: Sequence[str] | None
 
     @runtime_checkable
-    class ContainerInspectBinding(FlextCliProtocols.Model, Protocol):
+    class ContainerInspectBinding(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         host_port: str
 
     @runtime_checkable
-    class ContainerInspectNetwork(FlextCliProtocols.Model, Protocol):
+    class ContainerInspectNetwork(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -210,7 +211,7 @@ class FlextTestsProtocolsDocker:
             ...
 
     @runtime_checkable
-    class ContainerInspect(FlextCliProtocols.Model, Protocol):
+    class ContainerInspect(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         id: str
@@ -232,7 +233,7 @@ class FlextTestsProtocolsDocker:
             ...
 
     @runtime_checkable
-    class ContainerState(FlextCliProtocols.Model, Protocol):
+    class ContainerState(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -261,7 +262,7 @@ class FlextTestsProtocolsDocker:
             ...
 
     @runtime_checkable
-    class User(FlextCliProtocols.Model, Protocol):
+    class User(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -290,7 +291,7 @@ class FlextTestsProtocolsDocker:
             ...
 
     @runtime_checkable
-    class Config(FlextCliProtocols.Model, Protocol):
+    class Config(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property

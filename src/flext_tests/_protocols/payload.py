@@ -18,7 +18,7 @@ class FlextTestsProtocolsPayload:
     """Consumer-owned native payload access; no serialization capability required."""
 
     @runtime_checkable
-    class PayloadModel(p.Model, Protocol):
+    class PayloadModel(p.BaseModel, Protocol):
         """Model leaf with the canonical model dump contract fixed at declaration."""
 
     @runtime_checkable
@@ -49,7 +49,7 @@ class FlextTestsProtocolsPayload:
             self,
         ) -> Iterator[
             FlextTestsTypesBase.PayloadAtom
-            | p.Model
+            | p.BaseModel
             | FlextTestsProtocolsPayload.NativeSequence
             | FlextTestsProtocolsPayload.NativeMapping
             | None
@@ -63,7 +63,7 @@ class FlextTestsProtocolsPayload:
             /,
         ) -> (
             FlextTestsTypesBase.PayloadAtom
-            | p.Model
+            | p.BaseModel
             | FlextTestsProtocolsPayload.NativeSequence
             | FlextTestsProtocolsPayload.NativeMapping
             | None
@@ -85,7 +85,7 @@ class FlextTestsProtocolsPayload:
             tuple[
                 str,
                 FlextTestsTypesBase.PayloadAtom
-                | p.Model
+                | p.BaseModel
                 | FlextTestsProtocolsPayload.NativeSequence
                 | FlextTestsProtocolsPayload.NativeMapping
                 | None,
@@ -100,7 +100,7 @@ class FlextTestsProtocolsPayload:
             /,
         ) -> (
             FlextTestsTypesBase.PayloadAtom
-            | p.Model
+            | p.BaseModel
             | FlextTestsProtocolsPayload.NativeSequence
             | FlextTestsProtocolsPayload.NativeMapping
             | None
@@ -110,7 +110,7 @@ class FlextTestsProtocolsPayload:
 
     type NativeMatchValue = (
         FlextTestsTypesBase.PayloadAtom
-        | p.Model
+        | p.BaseModel
         | FlextTestsProtocolsPayload.NativeSequence
         | FlextTestsProtocolsPayload.NativeMapping
         | None

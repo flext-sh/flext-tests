@@ -22,7 +22,7 @@ class FlextTestsProtocolsBase:
     """Base protocols for flext-tests."""
 
     @runtime_checkable
-    class ModelReader[ModelT: p.Model](Protocol):
+    class ModelReader[ModelT: p.BaseModel](Protocol):
         """Validate external content through a supplied model class capability."""
 
         __name__: str
@@ -32,7 +32,7 @@ class FlextTestsProtocolsBase:
             ...
 
     @runtime_checkable
-    class Payload(FlextCliProtocols.Model, Protocol):
+    class Payload(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -41,7 +41,7 @@ class FlextTestsProtocolsBase:
             ...
 
         @property
-        def atom(self) -> FlextTestsTypesBase.PayloadAtom | p.Model | None:
+        def atom(self) -> FlextTestsTypesBase.PayloadAtom | p.BaseModel | None:
             """Native scalar or model instance; never a JSON dump."""
             ...
 
@@ -60,7 +60,7 @@ class FlextTestsProtocolsBase:
             ...
 
     @runtime_checkable
-    class Entity(FlextCliProtocols.Model, Protocol):
+    class Entity(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -68,10 +68,7 @@ class FlextTestsProtocolsBase:
             """List of uncommitted domain events for event sourcing."""
             ...
 
-        @property
-        def name(self) -> str:
-            """Entity display name."""
-            ...
+        name: str
 
         @property
         def value(self) -> FlextTestsProtocolsBase.Payload:
@@ -79,7 +76,7 @@ class FlextTestsProtocolsBase:
             ...
 
     @runtime_checkable
-    class Value(FlextCliProtocols.Model, Protocol):
+    class Value(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property

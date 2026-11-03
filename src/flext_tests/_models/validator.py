@@ -79,7 +79,7 @@ class FlextTestsModelsValidator:
         model_config: ClassVar[t.ConfigDict] = m.ConfigDict(frozen=True)
 
         infra_findings: Annotated[
-            t.Port[p.Model] | None,
+            t.Port[p.BaseModel] | None,
             m.Field(
                 description="flext-infra rule-engine findings keyed by rule id, "
                 "absent when no engine rule is selected.",

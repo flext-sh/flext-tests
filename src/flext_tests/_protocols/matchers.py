@@ -110,7 +110,7 @@ class FlextTestsProtocolsMatchers(Protocol):
         def nan_ok(self) -> bool: ...
 
     @runtime_checkable
-    class PayloadParams(FlextCliProtocols.Model, Protocol):
+    class PayloadParams(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
     @runtime_checkable
@@ -219,7 +219,7 @@ class FlextTestsProtocolsMatchers(Protocol):
             ...
 
     @runtime_checkable
-    class FailParams(FlextCliProtocols.Model, Protocol):
+    class FailParams(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -515,7 +515,7 @@ class FlextTestsProtocolsMatchers(Protocol):
             ...
 
     @runtime_checkable
-    class ScopeParams(FlextCliProtocols.Model, Protocol):
+    class ScopeParams(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -565,7 +565,7 @@ class FlextTestsProtocolsMatchers(Protocol):
             ...
 
     @runtime_checkable
-    class DeepMatchResult(FlextCliProtocols.Model, Protocol):
+    class DeepMatchResult(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -601,7 +601,7 @@ class FlextTestsProtocolsMatchers(Protocol):
             ...
 
     @runtime_checkable
-    class Chain[TResult](FlextCliProtocols.Model, Protocol):
+    class Chain[TResult](FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -610,7 +610,7 @@ class FlextTestsProtocolsMatchers(Protocol):
             ...
 
     @runtime_checkable
-    class TestScope(FlextCliProtocols.Model, Protocol):
+    class TestScope(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
