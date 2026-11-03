@@ -13,7 +13,6 @@ from __future__ import annotations
 from flext_cli import u as flext_cli_u
 
 from flext_tests._utilities import (
-    FlextTestsUtilitiesBase,
     FlextTestsUtilitiesConfigHelpers,
     FlextTestsUtilitiesContainerHelpers,
     FlextTestsUtilitiesDockerClient,
@@ -23,6 +22,8 @@ from flext_tests._utilities import (
     FlextTestsUtilitiesEnvironment,
     FlextTestsUtilitiesFiles,
     FlextTestsUtilitiesFixturesDSL,
+    FlextTestsUtilitiesFlextGovernance,
+    FlextTestsUtilitiesFlextHandler,
     FlextTestsUtilitiesMatchers,
     FlextTestsUtilitiesNamespace,
     FlextTestsUtilitiesPayload,
@@ -31,8 +32,6 @@ from flext_tests._utilities import (
     FlextTestsUtilitiesScratchStorage,
     FlextTestsUtilitiesTestContext,
 )
-from flext_tests._utilities.governance import FlextTestsUtilitiesFlextGovernance
-from flext_tests._utilities.handler import FlextTestsUtilitiesFlextHandler
 
 
 class FlextTestsUtilities(
@@ -59,17 +58,16 @@ class FlextTestsUtilities(
         FlextTestsUtilitiesEnvironment,
         FlextTestsUtilitiesFiles,
         FlextTestsUtilitiesFixturesDSL,
+        FlextTestsUtilitiesFlextGovernance,
+        FlextTestsUtilitiesFlextHandler,
+        FlextTestsUtilitiesMatchers,
         FlextTestsUtilitiesNamespace,
         FlextTestsUtilitiesPayload,
+        FlextTestsUtilitiesPytest,
         FlextTestsUtilitiesResult,
         FlextTestsUtilitiesScratchStorage,
         FlextTestsUtilitiesConfigHelpers,
         FlextTestsUtilitiesTestContext,
-        FlextTestsUtilitiesBase,
-        FlextTestsUtilitiesPytest,
-        FlextTestsUtilitiesMatchers,
-        FlextTestsUtilitiesFlextHandler,
-        FlextTestsUtilitiesFlextGovernance,
     ):
         """Test utilities namespace."""
 
