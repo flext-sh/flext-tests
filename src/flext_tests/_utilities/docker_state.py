@@ -76,7 +76,7 @@ class FlextTestsUtilitiesDockerState:
             .files_read_text(state_file)
             .flat_map(
                 lambda text: u.try_(
-                    lambda: p.Tests.ContainerState.model_validate_json(text),
+                    lambda: m.Tests.ContainerState.model_validate_json(text),
                     catch=c.EXC_VALIDATION_VALUE,
                     op_name=f"Parse container state {state_file}",
                 ),

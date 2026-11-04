@@ -695,7 +695,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[p.Tests.ContainerInfo]):
         unsealed = u.Tests.update_container_state(
             self.state_dir,
             container_name,
-            lambda _: p.Tests.ContainerState(container_name=container_name),
+            lambda _: m.Tests.ContainerState(container_name=container_name),
         )
         if unsealed.failure:
             return r[p.Tests.ContainerInfo].from_failure(unsealed)
