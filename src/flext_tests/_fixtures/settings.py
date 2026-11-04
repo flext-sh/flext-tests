@@ -44,7 +44,7 @@ class FlextTestsSettingsFixtures:
 
         """
         directory = tmp_path_factory.mktemp(run_namespace.token)
-        runtime = FlextTestsUtilitiesTestContext.SessionRuntime(directory)
+        runtime = flext_tests.u.Tests.SessionRuntime(directory)
         try:
             yield runtime
         finally:
