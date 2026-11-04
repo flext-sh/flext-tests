@@ -16,14 +16,14 @@ from pathlib import Path
 
 from flext_cli import u
 
-from flext_tests import FlextTestsDocker, m
+from flext_tests import FlextTestsDocker, m, p
 
 
 class FlextTestsCliDocker:
     """Spec-driven docker provisioning CLI surface."""
 
     @staticmethod
-    def load_spec(path: Path) -> m.Tests.ContainerSpec:
+    def load_spec(path: Path) -> p.Tests.ContainerSpec:
         """Parse one YAML spec document into the typed model (exits on failure).
 
         Returns:
@@ -47,7 +47,7 @@ class FlextTestsCliDocker:
 
     @staticmethod
     def resolve_targets(
-        spec: m.Tests.ContainerSpec,
+        spec: p.Tests.ContainerSpec,
         target: str | None,
     ) -> list[str]:
         """Resolve the requested target names (all when omitted).

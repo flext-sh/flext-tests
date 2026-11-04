@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_tests import c, m
+from flext_tests import c, m, p
 
 
 class FlextTestsUtilitiesFlextHandler:
@@ -19,17 +19,17 @@ class FlextTestsUtilitiesFlextHandler:
         def create_handler_config(
             handler_id: str,
             handler_name: str,
-            options: m.Tests.HandlerConfigParams | None = None,
-        ) -> m.Handler:
+            options: p.Tests.HandlerConfigParams | None = None,
+        ) -> p.HandlerConfig:
             """Create a handler configuration model using canonical model defaults.
 
             Returns:
-                The resulting ``m.Handler``.
+                The resulting ``m.HandlerConfig``.
 
             """
             params = options if options is not None else m.Tests.HandlerConfigParams()
             resolved_handler_type = params.handler_type or c.HandlerType.COMMAND
-            handler: m.Handler = m.Handler.model_validate({
+            handler: p.HandlerConfig = m.HandlerConfig.model_validate({
                 "handler_id": handler_id,
                 "handler_name": handler_name,
                 "handler_type": resolved_handler_type,

@@ -1,5 +1,5 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""Internal package for utilities.
+"""Flext Tests. Utilities package.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from types import MappingProxyType
 from typing import TYPE_CHECKING
 
 from flext_core.lazy import install_lazy_exports
@@ -35,6 +34,7 @@ if TYPE_CHECKING:
     from flext_tests._utilities.settings import FlextTestsUtilitiesConfigHelpers
     from flext_tests._utilities.testcontext import FlextTestsUtilitiesTestContext
 
+
 __all__: tuple[str, ...] = (
     "FlextTestsUtilitiesBase",
     "FlextTestsUtilitiesConfigHelpers",
@@ -60,7 +60,8 @@ __all__: tuple[str, ...] = (
 install_lazy_exports(
     __name__,
     globals(),
-    MappingProxyType({
+    {
+        "FlextTestsUtilitiesBase": ".base",
         "FlextTestsUtilitiesConfigHelpers": ".settings",
         "FlextTestsUtilitiesContainerHelpers": ".container",
         "FlextTestsUtilitiesDockerClient": ".docker_client",
@@ -68,6 +69,7 @@ install_lazy_exports(
         "FlextTestsUtilitiesDockerState": ".docker_state",
         "FlextTestsUtilitiesEnforcement": ".enforcement",
         "FlextTestsUtilitiesEnvironment": ".environment",
+        "FlextTestsUtilitiesFiles": ".files",
         "FlextTestsUtilitiesFixturesDSL": ".fixtures_dsl",
         "FlextTestsUtilitiesFlextGovernance": ".governance",
         "FlextTestsUtilitiesFlextHandler": ".handler",
@@ -78,8 +80,6 @@ install_lazy_exports(
         "FlextTestsUtilitiesResult": ".result",
         "FlextTestsUtilitiesScratchStorage": ".scratch_storage",
         "FlextTestsUtilitiesTestContext": ".testcontext",
-        "FlextTestsUtilitiesBase": ".base",
-        "FlextTestsUtilitiesFiles": ".files",
-    }),
+    },
     public_exports=__all__,
 )

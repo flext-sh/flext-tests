@@ -13,7 +13,7 @@ from flext_tests import FlextTestsFiles
 from tests import m, tm
 
 
-class TestsFlextTestsFilesCreationMixin:
+class TestsFlextTestsFilesCreation:
     """File creation tests."""
 
     @staticmethod

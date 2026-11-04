@@ -26,16 +26,16 @@ from tests.unit._files import (
 
 
 class TestsFlextTestsFiles(
-    file_models.TestsFlextTestsModelsFilesMixin,
-    creation.TestsFlextTestsFilesCreationMixin,
-    info_cleanup.TestsFlextTestsFilesInfoCleanupMixin,
-    formats.TestsFlextTestsFilesFormatsMixin,
-    read.TestsFlextTestsFilesReadMixin,
-    compare.TestsFlextTestsFilesCompareMixin,
-    info_metadata.TestsFlextTestsFilesInfoMetadataMixin,
-    contexts.TestsFlextTestsFilesContextsMixin,
-    content_meta.TestsFlextTestsFilesContentMetaMixin,
-    assert_exists.TestsFlextTestsFilesAssertExistsMixin,
-    batch_create_in.TestsFlextTestsFilesBatchCreateInMixin,
+    file_models.TestsFlextTestsModelsFiles,
+    creation.TestsFlextTestsFilesCreation,
+    info_cleanup.TestsFlextTestsFilesInfoCleanup,
+    formats.TestsFlextTestsFilesFormats,
+    read.TestsFlextTestsFilesRead,
+    compare.TestsFlextTestsFilesCompare,
+    info_metadata.TestsFlextTestsFilesInfoMetadata,
+    contexts.TestsFlextTestsFilesContexts,
+    content_meta.TestsFlextTestsFilesContentMeta,
+    assert_exists.TestsFlextTestsFilesAssertExists,
+    batch_create_in.TestsFlextTestsFilesBatchCreateIn,
 ):
     """Test suite for FlextTestsFiles.FileInfo model."""

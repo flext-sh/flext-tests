@@ -79,7 +79,7 @@ class TestsFlextTestsDockerLifecycle:
 
         """
 
-        def append(info: m.Tests.ContainerInfo) -> p.Result[bool]:
+        def append(info: p.Tests.ContainerInfo) -> p.Result[bool]:
             with marker_file.open("a", encoding="utf-8") as handle:
                 _ = handle.write(f"{info.container_id}\n")
             return r[bool].ok(value=True)
@@ -91,7 +91,7 @@ class TestsFlextTestsDockerLifecycle:
         docker: FlextTestsDocker,
         name: str,
         health: c.Tests.ContainerHealth,
-    ) -> m.Tests.ContainerInfo:
+    ) -> p.Tests.ContainerInfo:
         """Poll Docker until the container reports ``health`` (bounded).
 
         Returns:

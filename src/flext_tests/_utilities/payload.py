@@ -33,7 +33,8 @@ from types import (
 )
 from typing import TYPE_CHECKING, ClassVar, TypeAliasType, cast
 
-from flext_core import m, u
+from flext_cli import m
+from flext_core import u
 
 import flext_tests
 from flext_tests import c, p, t
@@ -350,7 +351,7 @@ class FlextTestsUtilitiesPayload:
             | Mapping[str, t.JsonPayload]
             | t.JsonMapping
         ),
-    ) -> m.ConfigMap:
+    ) -> p.ConfigMap:
         """Convert a model or payload mapping to the canonical ConfigMap shape.
 
         Returns:

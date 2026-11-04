@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
     from pathlib import Path
 
-    from flext_tests import FlextTestsSettings, m, p
+    from flext_tests import FlextTestsSettings, p
 
 
 class FlextTestsSettingsFixtures:
@@ -32,7 +32,7 @@ class FlextTestsSettingsFixtures:
     @staticmethod
     def session_runtime(
         tmp_path_factory: pytest.TempPathFactory,
-        run_namespace: m.Tests.TestNamespace,
+        run_namespace: p.Tests.TestNamespace,
     ) -> Iterator[p.Tests.SessionRuntime]:
         """Provide one lazy isolated runtime per worker; close it at session end.
 

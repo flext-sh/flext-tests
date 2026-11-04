@@ -115,15 +115,11 @@ class FlextTestsModelsFilesystem:
         fmt: Annotated[
             c.Tests.FileFormat,
             m.BeforeValidator(
-                lambda v: (
-                    type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
-                ),
+                lambda v: type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
             ),
-            m.Field(
-                default=c.Tests.FILE_FORMAT_AUTO,
-                description="File format override.",
-            ),
-        ]
+        ] = m.Field(
+            default=c.Tests.FILE_FORMAT_AUTO, description="File format override."
+        )
         enc: Annotated[t.NonEmptyStr, m.Field(description="File encoding.")] = (
             c.Tests.DEFAULT_ENCODING
         )
@@ -164,18 +160,15 @@ class FlextTestsModelsFilesystem:
 
         path: Annotated[Path, m.Field(description="Path to file to read.")]
         model_cls: Annotated[
-            type[m.BaseModel] | None,
+            t.InstanceOf[p.Tests.ModelReader[p.BaseModel]] | None,
             m.Field(description="Optional Pydantic model class."),
         ] = None
         fmt: Annotated[
             c.Tests.FileFormat,
             m.BeforeValidator(
-                lambda v: (
-                    type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
-                ),
+                lambda v: type(c.Tests.FILE_FORMAT_AUTO)(v) if isinstance(v, str) else v
             ),
-            m.Field(default=c.Tests.FILE_FORMAT_AUTO, description="Format override."),
-        ]
+        ] = m.Field(default=c.Tests.FILE_FORMAT_AUTO, description="Format override.")
         enc: Annotated[t.NonEmptyStr, m.Field(description="File encoding.")] = (
             c.Tests.DEFAULT_ENCODING
         )
@@ -268,7 +261,7 @@ class FlextTestsModelsFilesystem:
             m.Field(description="Parse content and include metadata."),
         ] = False
         validate_model: Annotated[
-            type[m.BaseModel] | None,
+            t.InstanceOf[p.Tests.ModelReader[p.BaseModel]] | None,
             m.Field(description="Pydantic model to validate content against."),
         ] = None
 

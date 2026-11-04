@@ -1,0 +1,8 @@
+rules: []
+method_transfers:
+- id: tests-handler-config-public-owner
+  destination:
+  - flext_tests._utilities.handler
+  - FlextTestsUtilitiesFlextHandler
+  methods:
+  - [flext_tests._utilities.handler, FlextTestsUtilitiesFlextHandler.FlextTestsUtilitiesHandlerHelpers.create_handler_config]

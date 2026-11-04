@@ -15,11 +15,11 @@ from tests.unit._docker import builders, ci, lifecycle, operations, state, targe
 
 
 class TestsFlextTestsDocker(
-    state.TestsFlextTestsDockerStateMixin,
-    builders.TestsFlextTestsDockerBuildersMixin,
-    operations.TestsFlextTestsDockerOperationsMixin,
-    targets.TestsFlextTestsDockerTargetsMixin,
-    ci.TestsFlextTestsDockerCiMixin,
-    lifecycle.TestsFlextTestsDockerLifecycleMixin,
+    state.TestsFlextTestsDockerState,
+    builders.TestsFlextTestsDockerBuilders,
+    operations.TestsFlextTestsDockerOperations,
+    targets.TestsFlextTestsDockerTargets,
+    ci.TestsFlextTestsDockerCi,
+    lifecycle.TestsFlextTestsDockerLifecycle,
 ):
     """Behavioral contract of the Docker control facade (FlextTestsDocker)."""

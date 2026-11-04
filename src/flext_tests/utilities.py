@@ -13,7 +13,6 @@ from __future__ import annotations
 from flext_cli import u as flext_cli_u
 
 from flext_tests._utilities import (
-    FlextTestsUtilitiesBase,
     FlextTestsUtilitiesConfigHelpers,
     FlextTestsUtilitiesContainerHelpers,
     FlextTestsUtilitiesDockerClient,
@@ -49,6 +48,8 @@ class FlextTestsUtilities(
     """
 
     class Tests(
+        # Assertion matchers publish `that` and siblings into the Tests
+        # namespace (ldap family precedent: Tests.that(subject, ...)).
         FlextTestsUtilitiesContainerHelpers,
         FlextTestsUtilitiesDockerClient,
         FlextTestsUtilitiesDockerLifecycle,
@@ -57,19 +58,16 @@ class FlextTestsUtilities(
         FlextTestsUtilitiesEnvironment,
         FlextTestsUtilitiesFiles,
         FlextTestsUtilitiesFixturesDSL,
+        FlextTestsUtilitiesFlextGovernance,
+        FlextTestsUtilitiesFlextHandler,
+        FlextTestsUtilitiesMatchers,
         FlextTestsUtilitiesNamespace,
         FlextTestsUtilitiesPayload,
+        FlextTestsUtilitiesPytest,
         FlextTestsUtilitiesResult,
         FlextTestsUtilitiesScratchStorage,
         FlextTestsUtilitiesConfigHelpers,
         FlextTestsUtilitiesTestContext,
-        FlextTestsUtilitiesBase,
-        FlextTestsUtilitiesPytest,
-        # Assertion matchers publish `that` and siblings into the Tests
-        # namespace (ldap family precedent: Tests.that(subject, ...)).
-        FlextTestsUtilitiesMatchers,
-        FlextTestsUtilitiesFlextHandler.FlextTestsUtilitiesHandlerHelpers,
-        FlextTestsUtilitiesFlextGovernance.FlextTestsModuleGovernance,
     ):
         """Test utilities namespace."""
 

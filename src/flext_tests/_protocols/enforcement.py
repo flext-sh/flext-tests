@@ -10,14 +10,14 @@ from abc import ABC, abstractmethod
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, ClassVar, Protocol, Self, runtime_checkable
 
-from flext_cli import p
-
 if TYPE_CHECKING:
     from pathlib import Path
 
     import pytest
+    from flext_cli import p
 
     from flext_tests import m
+    from flext_tests._protocols import FlextTestsProtocolsValidator
 
 
 class FlextTestsProtocolsEnforcement:
@@ -57,9 +57,9 @@ class FlextTestsProtocolsEnforcement:
         def __call__(
             self,
             session: pytest.Session,
-            cfg: m.Tests.EnforcementDispatcherConfig,
-            rule: m.Tests.EnforcementRuleSpec,
-            context: m.Tests.EnforcementBuildContext,
+            cfg: FlextTestsProtocolsValidator.EnforcementDispatcherConfig,
+            rule: FlextTestsProtocolsValidator.EnforcementRuleSpec,
+            context: FlextTestsProtocolsValidator.EnforcementBuildContext,
         ) -> list[pytest.Item]:
             """Build pytest items for one enforcement rule."""
             ...

@@ -109,75 +109,61 @@ class FlextTestsModelsDocker:
     class ContainerInspectHealth(m.FlexibleModel):
         """``State.Health`` of ``docker inspect``."""
 
-        status: Annotated[
-            c.Tests.ContainerHealth,
-            m.Field(alias="Status", description="Healthcheck status."),
-        ]
+        status: c.Tests.ContainerHealth = m.Field(
+            alias="Status", description="Healthcheck status."
+        )
 
     class ContainerInspectState(m.FlexibleModel):
         """``State`` of ``docker inspect``."""
 
-        status: Annotated[
-            c.Tests.ContainerStatus,
-            m.Field(alias="Status", description="Container lifecycle status."),
-        ]
-        health: Annotated[
-            FlextTestsModelsDocker.ContainerInspectHealth | None,
-            m.Field(alias="Health", description="Present when a check is set."),
-        ] = None
+        status: c.Tests.ContainerStatus = m.Field(
+            alias="Status", description="Container lifecycle status."
+        )
+        health: FlextTestsModelsDocker.ContainerInspectHealth | None = m.Field(
+            None, alias="Health", description="Present when a check is set."
+        )
 
     class ContainerInspectConfig(m.FlexibleModel):
         """``Config`` of ``docker inspect``."""
 
-        image: Annotated[
-            str,
-            m.Field(alias="Image", description="Configured image reference."),
-        ] = ""
-        env: Annotated[
-            Sequence[str] | None,
-            m.Field(alias="Env", description="Environment as KEY=VALUE entries."),
-        ] = None
+        image: str = m.Field(
+            "", alias="Image", description="Configured image reference."
+        )
+        env: Sequence[str] | None = m.Field(
+            None, alias="Env", description="Environment as KEY=VALUE entries."
+        )
 
     class ContainerInspectBinding(m.FlexibleModel):
         """One host binding of a published container port."""
 
-        host_port: Annotated[
-            str,
-            m.Field(alias="HostPort", description="Published host port."),
-        ] = ""
+        host_port: str = m.Field(
+            "", alias="HostPort", description="Published host port."
+        )
 
     class ContainerInspectNetwork(m.FlexibleModel):
         """``NetworkSettings`` of ``docker inspect``."""
 
-        ports: Annotated[
+        ports: (
             Mapping[
-                str,
-                Sequence[FlextTestsModelsDocker.ContainerInspectBinding] | None,
+                str, Sequence[FlextTestsModelsDocker.ContainerInspectBinding] | None
             ]
-            | None,
-            m.Field(alias="Ports", description="Bindings per '<port>/<proto>'."),
-        ] = None
+            | None
+        ) = m.Field(None, alias="Ports", description="Bindings per '<port>/<proto>'.")
 
     class ContainerInspect(m.FlexibleModel):
         """The subset of ``docker inspect`` the lifecycle reads."""
 
-        id: Annotated[str, m.Field(alias="Id", description="Container id.")]
-        image_id: Annotated[
-            str,
-            m.Field(alias="Image", description="Resolved image id."),
-        ]
-        state: Annotated[
-            FlextTestsModelsDocker.ContainerInspectState,
-            m.Field(alias="State", description="Lifecycle state."),
-        ]
-        config: Annotated[
-            FlextTestsModelsDocker.ContainerInspectConfig,
-            m.Field(alias="Config", description="Creation configuration."),
-        ]
-        network_settings: Annotated[
-            FlextTestsModelsDocker.ContainerInspectNetwork,
-            m.Field(alias="NetworkSettings", description="Published ports."),
-        ]
+        id: str = m.Field(alias="Id", description="Container id.")
+        image_id: str = m.Field(alias="Image", description="Resolved image id.")
+        state: FlextTestsModelsDocker.ContainerInspectState = m.Field(
+            alias="State", description="Lifecycle state."
+        )
+        config: FlextTestsModelsDocker.ContainerInspectConfig = m.Field(
+            alias="Config", description="Creation configuration."
+        )
+        network_settings: FlextTestsModelsDocker.ContainerInspectNetwork = m.Field(
+            alias="NetworkSettings", description="Published ports."
+        )
 
     class ContainerState(m.Value):
         """Host-scoped lifecycle record of one shared test container.

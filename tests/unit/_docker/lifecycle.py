@@ -13,10 +13,10 @@ from pathlib import Path
 import pytest
 
 from flext_tests import FlextTestsDocker
-from tests import c, m, t, tm, u
+from tests import c, m, p, t, tm, u
 
 
-class TestsFlextTestsDockerLifecycleMixin:
+class TestsFlextTestsDockerLifecycle:
     """Pure lifecycle rules: decision table, verification, projections."""
 
     @staticmethod
@@ -24,7 +24,7 @@ class TestsFlextTestsDockerLifecycleMixin:
         status: c.Tests.ContainerStatus,
         health: c.Tests.ContainerHealth,
         container_id: str = "sealed-id",
-    ) -> m.Tests.ContainerInfo:
+    ) -> p.Tests.ContainerInfo:
         return m.Tests.ContainerInfo(
             name="lifecycle-rule",
             status=status,
@@ -35,7 +35,7 @@ class TestsFlextTestsDockerLifecycleMixin:
         )
 
     @staticmethod
-    def _sealed() -> m.Tests.ContainerState:
+    def _sealed() -> p.Tests.ContainerState:
         return m.Tests.ContainerState(
             container_name="lifecycle-rule",
             container_id="sealed-id",
@@ -242,7 +242,7 @@ class TestsFlextTestsDockerLifecycleMixin:
     def _inspect(
         health: Mapping[str, str] | None,
         env: Sequence[str] | None,
-    ) -> m.Tests.ContainerInspect:
+    ) -> p.Tests.ContainerInspect:
         state: MutableMapping[str, str | Mapping[str, str]] = {"Status": "running"}
         if health is not None:
             state["Health"] = health
@@ -309,7 +309,7 @@ class TestsFlextTestsDockerLifecycleMixin:
         compose_file: Path,
         *inputs: Path,
         service: str = "probe",
-    ) -> m.Tests.ContainerConfig:
+    ) -> p.Tests.ContainerConfig:
         return m.Tests.ContainerConfig(
             container_name="fingerprinted",
             compose_file=compose_file,

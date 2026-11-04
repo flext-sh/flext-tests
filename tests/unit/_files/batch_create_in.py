@@ -9,10 +9,10 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_tests import FlextTestsFiles
-from tests import c, m, r, t, tm, u
+from tests import c, m, p, r, t, tm, u
 
 
-class TestsFlextTestsFilesBatchCreateInMixin:
+class TestsFlextTestsFilesBatchCreateIn:
     """File create_in tests."""
 
     @staticmethod
@@ -126,7 +126,7 @@ class TestsFlextTestsFilesBatchCreateInMixin:
     @staticmethod
     def test_create_in_json_indent(tmp_path: Path) -> None:
         """Test create_in() with custom JSON indentation."""
-        content: m.ConfigMap = m.ConfigMap(root={"key": "value", "nested": {"a": 1}})
+        content: p.ConfigMap = m.ConfigMap(root={"key": "value", "nested": {"a": 1}})
         path = FlextTestsFiles(base_dir=tmp_path).create(
             content,
             "settings.json",

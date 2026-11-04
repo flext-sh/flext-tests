@@ -10,10 +10,10 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from flext_tests import FlextTestsFiles
-from tests import c, m, t, tm, u
+from tests import c, m, p, t, tm, u
 
 
-class TestsFlextTestsFilesContextsMixin:
+class TestsFlextTestsFilesContexts:
     """File context and alias tests."""
 
     @staticmethod
@@ -44,7 +44,7 @@ class TestsFlextTestsFilesContextsMixin:
         """Test files() handles mixed content types."""
         with FlextTestsFiles.files({
             "text": "plain text",
-            "json": m.ConfigMap(root={"key": "value"}),
+            "json": p.ConfigMap(root={"key": "value"}),
             "csv": [["a", "b"], [c.ParserBooleanToken.ONE, "2"]],
         }) as paths:
             tm.that(paths["text"].read_text(), eq="plain text")

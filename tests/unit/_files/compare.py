@@ -11,7 +11,7 @@ from pathlib import Path
 from tests import c, m, tf, tm, u
 
 
-class TestsFlextTestsFilesCompareMixin:
+class TestsFlextTestsFilesCompare:
     """File comparison tests."""
 
     @staticmethod

@@ -13,7 +13,7 @@ import pytest
 from tests import c, m, p, r, t, tm
 
 
-class TestsFlextTestsMatchersDataDrivenMixin:
+class TestsFlextTestsMatchersDataDriven:
     """Matcher data driven tests."""
 
     @staticmethod

@@ -27,7 +27,7 @@ class FlextTestsUtilitiesEnforcement:
     def build_canonical_catalog(
         cls,
         repository_root: Path,
-    ) -> m.Tests.EnforcementCatalog:
+    ) -> p.Tests.EnforcementCatalog:
         """Compose the catalog from the declarative flext-infra rule plan.
 
         The declarative rule catalog in flext-infra owns enforcement law; the
@@ -61,8 +61,8 @@ class FlextTestsUtilitiesEnforcement:
     @classmethod
     def active_rules(
         cls,
-        cfg: m.Tests.EnforcementDispatcherConfig,
-    ) -> tuple[m.Tests.EnforcementRuleSpec, ...]:
+        cfg: p.Tests.EnforcementDispatcherConfig,
+    ) -> tuple[p.Tests.EnforcementRuleSpec, ...]:
         """Return catalog rules after applying the include/exclude filters."""
         if cfg.repository_root is None:
             return ()

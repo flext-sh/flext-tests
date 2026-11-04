@@ -15,10 +15,11 @@ from typing import Annotated, Self, override
 
 from flext_infra import config as infra_config, settings as infra_settings
 
-from flext_tests import FlextTestsDockerSurface, c, m, p, r, s, t, u
+from flext_tests import c, m, p, r, s, t, u
+from flext_tests._docker import FlextTestsDockerSurface
 
 
-class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
+class FlextTestsDocker(FlextTestsDockerSurface, s[p.Tests.ContainerInfo]):
     """Manage the Docker containers FLEXT tests share.
 
     One container per name serves the whole host. Its record under
@@ -82,7 +83,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
     @staticmethod
     def shared_target_config(
         container_name: str,
-    ) -> m.Tests.ContainerConfig:
+    ) -> p.Tests.ContainerConfig:
         """Resolve one shared-container entry into the canonical target config.
 
         Its compose file resolves from the packaged shared assets, never from
@@ -243,16 +244,16 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         return r[str].ok("Compose up successful")
 
     @override
-    def _inspect(self, container_name: str) -> p.Result[m.Tests.ContainerInspect]:
+    def _inspect(self, container_name: str) -> p.Result[p.Tests.ContainerInspect]:
         """Inspect one container; an absent one fails NOT_PROVISIONED.
 
         Returns:
-            The resulting ``p.Result[m.Tests.ContainerInspect]``.
+            The resulting ``p.Result[p.Tests.ContainerInspect]``.
 
         """
         client = self.client
         if client.failure:
-            return r[m.Tests.ContainerInspect].from_failure(client)
+            return r[p.Tests.ContainerInspect].from_failure(client)
         return u.Tests.docker_inspect(client.value, container_name)
 
     @staticmethod
@@ -314,7 +315,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         cls,
         compose_file: str | Path,
         *,
-        target: m.Tests.ContainerConfig | None = None,
+        target: p.Tests.ContainerConfig | None = None,
         repository_root: Path | None = None,
         state_dir: Path | None = None,
     ) -> Self:
@@ -340,7 +341,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         cls,
         compose_file: str | Path,
         *,
-        target: m.Tests.ContainerConfig | None = None,
+        target: p.Tests.ContainerConfig | None = None,
         repository_root: Path | None = None,
         state_dir: Path | None = None,
     ) -> Self:
@@ -466,7 +467,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
 
     def fingerprint(
         self,
-        target: m.Tests.ContainerConfig | None = None,
+        target: p.Tests.ContainerConfig | None = None,
     ) -> p.Result[str]:
         """Fingerprint a target's declared inputs; the configured one by default.
 
@@ -507,32 +508,32 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
     def _observe(
         self,
         container_name: str,
-    ) -> p.Result[tuple[m.Tests.ContainerInfo | None, m.Tests.ContainerState]]:
+    ) -> p.Result[tuple[p.Tests.ContainerInfo | None, m.Tests.ContainerState]]:
         """Read the container (absent is None) and its host record.
 
         Returns:
-            The resulting ``p.Result[tuple[m.Tests.ContainerInfo | None,
+            The resulting ``p.Result[tuple[p.Tests.ContainerInfo | None,
                 m.Tests.ContainerState]]``.
 
         """
         state = u.Tests.read_container_state(self.state_dir, container_name)
         if state.failure:
             return r[
-                tuple[m.Tests.ContainerInfo | None, m.Tests.ContainerState]
+                tuple[p.Tests.ContainerInfo | None, m.Tests.ContainerState]
             ].from_failure(state)
         info = self.fetch_container_info(container_name)
         if info.success:
-            return r[tuple[m.Tests.ContainerInfo | None, m.Tests.ContainerState]].ok((
+            return r[tuple[p.Tests.ContainerInfo | None, m.Tests.ContainerState]].ok((
                 info.value,
                 state.value,
             ))
         if info.error_code == c.Tests.DockerErrorCode.NOT_PROVISIONED:
-            return r[tuple[m.Tests.ContainerInfo | None, m.Tests.ContainerState]].ok((
+            return r[tuple[p.Tests.ContainerInfo | None, m.Tests.ContainerState]].ok((
                 None,
                 state.value,
             ))
         return r[
-            tuple[m.Tests.ContainerInfo | None, m.Tests.ContainerState]
+            tuple[p.Tests.ContainerInfo | None, m.Tests.ContainerState]
         ].from_failure(info)
 
     @override
@@ -542,7 +543,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         initializer: p.Tests.ContainerInitializer | None = None,
         readiness_probe: p.Tests.ReadinessProbe | None = None,
         creation_environment: Mapping[str, t.SecretStr] | None = None,
-    ) -> p.Result[m.Tests.ContainerInfo]:
+    ) -> p.Result[p.Tests.ContainerInfo]:
         """Ensure the configured container exists, is sealed, healthy and ready.
 
         Decides under a shared lease and reuses a matching container there. To
@@ -553,17 +554,17 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         ``creation_environment`` reaches compose only while it creates.
 
         Returns:
-            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+            The resulting ``p.Result[p.Tests.ContainerInfo]``.
 
         """
         target = self.target_config
         error = self._target_error()
         if target is None or target.container_name is None or error is not None:
-            return r[m.Tests.ContainerInfo].fail(error)
+            return r[p.Tests.ContainerInfo].fail(error)
         environment = creation_environment or {}
         owned = sorted(set(environment).intersection(target.secret_keys))
         if owned:
-            return r[m.Tests.ContainerInfo].fail(
+            return r[p.Tests.ContainerInfo].fail(
                 c.Tests.ERR_DOCKER_GENERATED_KEYS.format(
                     name=target.container_name,
                     keys=", ".join(owned),
@@ -576,7 +577,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
             .flat_map(lambda _: u.Tests.docker_fingerprint(target))
         )
         if preflight.failure:
-            return r[m.Tests.ContainerInfo].from_failure(preflight)
+            return r[p.Tests.ContainerInfo].from_failure(preflight)
         fingerprint = preflight.value
         try:
             return self._ensure_leased(
@@ -586,7 +587,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
                 environment,
             )
         except TimeoutError as exc:
-            return r[m.Tests.ContainerInfo].fail(
+            return r[p.Tests.ContainerInfo].fail(
                 str(exc),
                 error_code=c.Tests.DockerErrorCode.LOCK_TIMEOUT,
                 exception=exc,
@@ -598,17 +599,17 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         initializer: p.Tests.ContainerInitializer | None,
         readiness_probe: p.Tests.ReadinessProbe | None,
         environment: Mapping[str, t.SecretStr],
-    ) -> p.Result[m.Tests.ContainerInfo]:
+    ) -> p.Result[p.Tests.ContainerInfo]:
         """Reuse under the shared lease, otherwise converge under the exclusive one.
 
         Returns:
-            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+            The resulting ``p.Result[p.Tests.ContainerInfo]``.
 
         """
         target = self.target_config
         error = self._target_error()
         if target is None or target.container_name is None or error is not None:
-            return r[m.Tests.ContainerInfo].fail(error)
+            return r[p.Tests.ContainerInfo].fail(error)
         container_name = target.container_name
         lease_file = u.Tests.docker_lease_lock_file(self.state_dir, container_name)
         with u.Tests.FileLock(
@@ -618,7 +619,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         ):
             observed = self._observe(container_name)
             if observed.failure:
-                return r[m.Tests.ContainerInfo].from_failure(observed)
+                return r[p.Tests.ContainerInfo].from_failure(observed)
             info, state = observed.value
             action = u.Tests.docker_action(info, state, fingerprint=fingerprint)
             if (
@@ -641,21 +642,21 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
 
     def _start_sealed(
         self,
-        target: m.Tests.ContainerConfig,
+        target: p.Tests.ContainerConfig,
         container_name: str,
-    ) -> p.Result[m.Tests.ContainerInfo]:
+    ) -> p.Result[p.Tests.ContainerInfo]:
         """Start a stopped sealed container with the secrets it was created with.
 
         Compose recreates a container whose declared values differ, so the
         start passes back exactly the values read from the container.
 
         Returns:
-            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+            The resulting ``p.Result[p.Tests.ContainerInfo]``.
 
         """
         kept = self.fetch_container_environment(container_name, target.secret_keys)
         if kept.failure:
-            return r[m.Tests.ContainerInfo].from_failure(kept)
+            return r[p.Tests.ContainerInfo].from_failure(kept)
         with u.Tests.creation_env_file(
             self.state_dir,
             container_name,
@@ -666,21 +667,21 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
 
     def _converge(
         self,
-        target: m.Tests.ContainerConfig,
+        target: p.Tests.ContainerConfig,
         container_name: str,
         fingerprint: str,
         initializer: p.Tests.ContainerInitializer | None,
         environment: Mapping[str, t.SecretStr],
-    ) -> p.Result[m.Tests.ContainerInfo]:
+    ) -> p.Result[p.Tests.ContainerInfo]:
         """Under the exclusive lease, decide again and apply the decision.
 
         Returns:
-            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+            The resulting ``p.Result[p.Tests.ContainerInfo]``.
 
         """
         observed = self._observe(container_name)
         if observed.failure:
-            return r[m.Tests.ContainerInfo].from_failure(observed)
+            return r[p.Tests.ContainerInfo].from_failure(observed)
         info, state = observed.value
         action = (
             c.Tests.ContainerAction.RECREATE
@@ -688,16 +689,16 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
             else u.Tests.docker_action(info, state, fingerprint=fingerprint)
         )
         if info is not None and action == c.Tests.ContainerAction.REUSE:
-            return r[m.Tests.ContainerInfo].ok(info)
+            return r[p.Tests.ContainerInfo].ok(info)
         if action == c.Tests.ContainerAction.START:
             return self._start_sealed(target, container_name)
         unsealed = u.Tests.update_container_state(
             self.state_dir,
             container_name,
-            lambda _: m.Tests.ContainerState(container_name=container_name),
+            lambda _: p.Tests.ContainerState(container_name=container_name),
         )
         if unsealed.failure:
-            return r[m.Tests.ContainerInfo].from_failure(unsealed)
+            return r[p.Tests.ContainerInfo].from_failure(unsealed)
         with u.Tests.creation_env_file(
             self.state_dir,
             container_name,
@@ -712,7 +713,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
                 recreate=action == c.Tests.ContainerAction.RECREATE,
             )
         if created.failure:
-            return r[m.Tests.ContainerInfo].from_failure(created)
+            return r[p.Tests.ContainerInfo].from_failure(created)
         return self._seal_created_container(container_name, fingerprint, initializer)
 
     def _seal_created_container(
@@ -720,11 +721,11 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         container_name: str,
         fingerprint: str,
         initializer: p.Tests.ContainerInitializer | None,
-    ) -> p.Result[m.Tests.ContainerInfo]:
+    ) -> p.Result[p.Tests.ContainerInfo]:
         """Fetch the created container, run its initializer once, and seal it.
 
         Returns:
-            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+            The resulting ``p.Result[p.Tests.ContainerInfo]``.
 
         """
         fetched = self.fetch_container_info(container_name)
@@ -733,7 +734,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         if initializer is not None:
             initialized = initializer(fetched.value)
             if initialized.failure:
-                return r[m.Tests.ContainerInfo].from_failure(initialized)
+                return r[p.Tests.ContainerInfo].from_failure(initialized)
         created_id = fetched.value.container_id
         sealed = u.Tests.update_container_state(
             self.state_dir,
@@ -748,19 +749,19 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
             ),
         )
         if sealed.failure:
-            return r[m.Tests.ContainerInfo].from_failure(sealed)
+            return r[p.Tests.ContainerInfo].from_failure(sealed)
         return fetched
 
     def _serve(
         self,
-        target: m.Tests.ContainerConfig,
-        info: m.Tests.ContainerInfo,
+        target: p.Tests.ContainerConfig,
+        info: p.Tests.ContainerInfo,
         readiness_probe: p.Tests.ReadinessProbe | None,
-    ) -> p.Result[m.Tests.ContainerInfo]:
+    ) -> p.Result[p.Tests.ContainerInfo]:
         """Wait, within startup_timeout, for health, the published port and probe.
 
         Returns:
-            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+            The resulting ``p.Result[p.Tests.ContainerInfo]``.
 
         """
         deadline = time.monotonic() + target.startup_timeout
@@ -772,7 +773,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
             c.Tests.ContainerHealth.HEALTHY,
             c.Tests.ContainerHealth.UNKNOWN,
         }:
-            return r[m.Tests.ContainerInfo].fail(
+            return r[p.Tests.ContainerInfo].fail(
                 c.Tests.ERR_DOCKER_UNHEALTHY.format(
                     name=current.name,
                     status=current.status,
@@ -783,7 +784,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         if target.port is not None:
             listening = self._await_port(target, current, deadline)
             if listening.failure:
-                return r[m.Tests.ContainerInfo].from_failure(listening)
+                return r[p.Tests.ContainerInfo].from_failure(listening)
         if readiness_probe is not None:
             probed = self._poll_readiness(
                 current,
@@ -792,13 +793,13 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
                 target.startup_timeout,
             )
             if probed.failure:
-                return r[m.Tests.ContainerInfo].from_failure(probed)
-        return r[m.Tests.ContainerInfo].ok(current)
+                return r[p.Tests.ContainerInfo].from_failure(probed)
+        return r[p.Tests.ContainerInfo].ok(current)
 
     def _await_port(
         self,
-        target: m.Tests.ContainerConfig,
-        info: m.Tests.ContainerInfo,
+        target: p.Tests.ContainerConfig,
+        info: p.Tests.ContainerInfo,
         deadline: float,
     ) -> p.Result[bool]:
         """Wait for the published host port of the target's container port.
@@ -829,20 +830,20 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
 
     def _await_health(
         self,
-        info: m.Tests.ContainerInfo,
+        info: p.Tests.ContainerInfo,
         deadline: float,
         timeout: int,
-    ) -> p.Result[m.Tests.ContainerInfo]:
+    ) -> p.Result[p.Tests.ContainerInfo]:
         """Poll a starting healthcheck until it settles or the deadline passes.
 
         Returns:
-            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+            The resulting ``p.Result[p.Tests.ContainerInfo]``.
 
         """
         current = info
         while current.health == c.Tests.ContainerHealth.STARTING:
             if time.monotonic() >= deadline:
-                return r[m.Tests.ContainerInfo].fail(
+                return r[p.Tests.ContainerInfo].fail(
                     c.Tests.ERR_DOCKER_READINESS_TIMEOUT.format(
                         name=current.name,
                         timeout=timeout,
@@ -855,11 +856,11 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
             if refreshed.failure:
                 return refreshed
             current = refreshed.value
-        return r[m.Tests.ContainerInfo].ok(current)
+        return r[p.Tests.ContainerInfo].ok(current)
 
     @staticmethod
     def _poll_readiness(
-        info: m.Tests.ContainerInfo,
+        info: p.Tests.ContainerInfo,
         readiness_probe: p.Tests.ReadinessProbe,
         deadline: float,
         timeout: int,
@@ -891,7 +892,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         *,
         readiness_probe: p.Tests.ReadinessProbe | None = None,
         required_environment: Sequence[str] = (),
-    ) -> p.Result[m.Tests.ContainerInfo]:
+    ) -> p.Result[p.Tests.ContainerInfo]:
         """Check, without changing anything, that the container is usable.
 
         Fails typed: NOT_PROVISIONED, DIRTY, UNSEALED, FINGERPRINT_MISMATCH,
@@ -899,19 +900,19 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
         ENVIRONMENT_MISSING, PORT_NOT_PUBLISHED or READINESS_TIMEOUT.
 
         Returns:
-            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+            The resulting ``p.Result[p.Tests.ContainerInfo]``.
 
         """
         target = self.target_config
         error = self._target_error()
         if target is None or target.container_name is None or error is not None:
-            return r[m.Tests.ContainerInfo].fail(error)
+            return r[p.Tests.ContainerInfo].fail(error)
         container_name = target.container_name
         preflight = self.lifecycle_enabled().flat_map(
             lambda _: u.Tests.docker_fingerprint(target),
         )
         if preflight.failure:
-            return r[m.Tests.ContainerInfo].from_failure(preflight)
+            return r[p.Tests.ContainerInfo].from_failure(preflight)
         fingerprint = preflight.value
         try:
             with u.Tests.FileLock(
@@ -927,7 +928,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
                     required_environment,
                 )
         except TimeoutError as exc:
-            return r[m.Tests.ContainerInfo].fail(
+            return r[p.Tests.ContainerInfo].fail(
                 str(exc),
                 error_code=c.Tests.DockerErrorCode.LOCK_TIMEOUT,
                 exception=exc,
@@ -935,21 +936,21 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
 
     def _verify_leased(
         self,
-        target: m.Tests.ContainerConfig,
+        target: p.Tests.ContainerConfig,
         container_name: str,
         fingerprint: str,
         readiness_probe: p.Tests.ReadinessProbe | None,
         required_environment: Sequence[str],
-    ) -> p.Result[m.Tests.ContainerInfo]:
+    ) -> p.Result[p.Tests.ContainerInfo]:
         """Verify under a held shared lease.
 
         Returns:
-            The resulting ``p.Result[m.Tests.ContainerInfo]``.
+            The resulting ``p.Result[p.Tests.ContainerInfo]``.
 
         """
         observed = self._observe(container_name)
         if observed.failure:
-            return r[m.Tests.ContainerInfo].from_failure(observed)
+            return r[p.Tests.ContainerInfo].from_failure(observed)
         info, state = observed.value
         if info is not None:
             deadline = time.monotonic() + target.startup_timeout
@@ -966,7 +967,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[m.Tests.ContainerInfo]):
                 required_environment,
             )
             if environment.failure:
-                return r[m.Tests.ContainerInfo].from_failure(environment)
+                return r[p.Tests.ContainerInfo].from_failure(environment)
         return self._serve(target, checked.value, readiness_probe)
 
 

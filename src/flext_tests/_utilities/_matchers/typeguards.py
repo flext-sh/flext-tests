@@ -25,7 +25,7 @@ class FlextTestsUtilitiesMatchersTypeguards:
     @staticmethod
     def _scalar_guard_matches(
         value: float | str | bytes | None,
-        guard: m.GuardCheckSpec,
+        guard: p.GuardCheckSpec,
     ) -> bool:
         """Check one scalar against the guard spec's declared criteria.
 
@@ -36,7 +36,15 @@ class FlextTestsUtilitiesMatchersTypeguards:
         native: float | str | None = (
             value.decode(c.DEFAULT_ENCODING) if isinstance(value, bytes) else value
         )
-        if guard.empty is not None and (native in {None, ""}) is not guard.empty:
+        if (
+            guard.empty is not None
+            and (
+                native in {None, ""}
+                if isinstance(native, str) or native is None
+                else native == 0
+            )
+            is not guard.empty
+        ):
             return False
         if native is None:
             return guard.empty is True
@@ -61,7 +69,7 @@ class FlextTestsUtilitiesMatchersTypeguards:
     def assert_scalar_match(
         cls,
         payload: p.Tests.Payload,
-        params: m.Tests.ThatParams,
+        params: p.Tests.ThatParams,
     ) -> None:
         """Apply the canonical finite scalar guard to the native projection.
 

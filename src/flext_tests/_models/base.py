@@ -57,26 +57,22 @@ class FlextTestsModelsFlextBase:
             m.Field(frozen=True, description="Native value arm."),
         ]
         atom: Annotated[
-            t.Tests.PayloadAtom | t.Port[p.Model] | None,
+            t.Tests.PayloadAtom | t.Port[p.BaseModel] | None,
             m.Field(
                 frozen=True,
                 description="Native scalar or model instance; never a JSON dump.",
             ),
         ] = None
-        items: Annotated[
-            t.Tests.PayloadItems[FlextTestsModelsFlextBase.Payload],
-            m.Field(
-                frozen=True,
-                description="Ordered children; kind retains the source collection.",
-            ),
-        ] = ()
-        entries: Annotated[
-            t.Tests.PayloadEntries[FlextTestsModelsFlextBase.Payload],
-            m.Field(
-                frozen=True,
-                description="String-keyed payload children.",
-            ),
-        ] = m.Field(default_factory=_payload_entries_default)
+        items: t.Tests.PayloadItems[FlextTestsModelsFlextBase.Payload] = m.Field(
+            default=(),
+            frozen=True,
+            description="Ordered children; kind retains the source collection.",
+        )
+        entries: t.Tests.PayloadEntries[FlextTestsModelsFlextBase.Payload] = m.Field(
+            default_factory=_payload_entries_default,
+            frozen=True,
+            description="String-keyed payload children.",
+        )
 
         @m.field_validator("entries", mode="after")
         @classmethod

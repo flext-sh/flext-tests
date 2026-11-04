@@ -45,20 +45,22 @@ class FlextTestsUtilitiesFilesReading(FlextTestsUtilitiesFilesCreation):
     """Read test files with format detection and model loading."""
 
     @staticmethod
-    def _validate_model_content[TModelRead: m.BaseModel](
-        model_cls: type[TModelRead],
+    def _validate_model_content[TModelRead: p.BaseModel](
+        model_cls: p.Tests.ModelReader[TModelRead],
         content: t.Tests.FileContentPlain,
     ) -> p.Result[TModelRead]:
         try:
-            model_instance: TModelRead = model_cls.model_validate(content)
+            model_instance: TModelRead = model_cls.model_validate(
+                content.root if isinstance(content, p.RootDict) else content,
+            )
             return r[TModelRead].ok(model_instance)
         except c.EXC_BASIC_TYPE as ex:
             return r[TModelRead].fail(f"Failed to validate model: {ex}", exception=ex)
 
     @staticmethod
-    def _read_fail[TModelRead: m.BaseModel](
+    def _read_fail[TModelRead: p.BaseModel](
         error: str,
-        model_cls: type[TModelRead] | None,
+        model_cls: p.Tests.ModelReader[TModelRead] | None,
     ) -> p.Result[t.Tests.ReadContent] | p.Result[TModelRead]:
         """Dispatch a single read-failure message to the correct result type.
 
@@ -80,19 +82,19 @@ class FlextTestsUtilitiesFilesReading(FlextTestsUtilitiesFilesCreation):
     ) -> p.Result[t.Tests.ReadContent]: ...
 
     @overload
-    def read[TModelRead: m.BaseModel](
+    def read[TModelRead: p.BaseModel](
         self,
         path: Path,
         *,
-        model_cls: type[TModelRead],
+        model_cls: p.Tests.ModelReader[TModelRead],
         options: FlextTestsUtilitiesFilesReading.ReadOptions | None = None,
     ) -> p.Result[TModelRead]: ...
 
-    def read[TModelRead: m.BaseModel](
+    def read[TModelRead: p.BaseModel](
         self,
         path: Path,
         *,
-        model_cls: type[TModelRead] | None = None,
+        model_cls: p.Tests.ModelReader[TModelRead] | None = None,
         options: FlextTestsUtilitiesFilesReading.ReadOptions | None = None,
     ) -> p.Result[t.Tests.ReadContent] | p.Result[TModelRead]:
         """Read file with auto-detection or explicit format.
@@ -166,7 +168,7 @@ class FlextTestsUtilitiesFilesReading(FlextTestsUtilitiesFilesCreation):
     def _read_content_by_format(
         path: Path,
         actual_fmt: str,
-        params: m.Tests.ReadParams,
+        params: p.Tests.ReadParams,
     ) -> t.Tests.ReadContent:
         """Read file content using format-specific parsing.
 

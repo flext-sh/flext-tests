@@ -16,7 +16,7 @@ from flext_tests import FlextTestsDocker
 from tests import c, m, tm, u
 
 
-class TestsFlextTestsDockerCiMixin:
+class TestsFlextTestsDockerCi:
     """The Make CI token disables every Docker effect with a typed failure."""
 
     @staticmethod

@@ -12,7 +12,7 @@ from pathlib import Path
 
 from flext_cli import u
 
-from flext_tests import c, m
+from flext_tests import c, m, p
 from flext_tests._utilities._files import FlextTestsUtilitiesFilesContexts
 
 
@@ -23,7 +23,7 @@ class FlextTestsUtilitiesFilesAssertions(FlextTestsUtilitiesFilesContexts):
     def assert_exists(
         path: Path,
         msg: str | None = None,
-        options: m.Tests.AssertExistsParams | None = None,
+        options: p.Tests.AssertExistsParams | None = None,
     ) -> Path:
         """Generalized file existence assertion - ALL file validations in ONE method.
 
@@ -55,7 +55,7 @@ class FlextTestsUtilitiesFilesAssertions(FlextTestsUtilitiesFilesContexts):
         try:
             u.Cli.files_assert_exists(
                 path,
-                options=u.Cli.FileAssertionOptions(
+                options=m.Cli.FileAssertionOptions(
                     is_file=params.is_file,
                     is_dir=params.is_dir,
                     not_empty=params.not_empty,

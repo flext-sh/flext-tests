@@ -1,5 +1,5 @@
 # AUTO-GENERATED FILE — Regenerate with: make gen
-"""Internal package for enforcement.
+"""Flext Tests. Fixtures. Enforcement package.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from types import MappingProxyType
 from typing import TYPE_CHECKING
 
 from flext_core.lazy import install_lazy_exports
@@ -28,6 +27,7 @@ if TYPE_CHECKING:
         FlextTestsEnforcementValidators,
     )
 
+
 __all__: tuple[str, ...] = (
     "FlextTestsEnforcementBuilder",
     "FlextTestsEnforcementDispatcher",
@@ -40,13 +40,13 @@ __all__: tuple[str, ...] = (
 install_lazy_exports(
     __name__,
     globals(),
-    MappingProxyType({
+    {
         "FlextTestsEnforcementBuilder": ".build",
         "FlextTestsEnforcementDispatcher": ".dispatcher",
         "FlextTestsEnforcementItem": ".items",
         "FlextTestsEnforcementValidators": ".validators",
         "FlextTestsFixturesEnforcementCollector": ".collector",
         "FlextTestsFixturesEnforcementError": ".error",
-    }),
+    },
     public_exports=__all__,
 )

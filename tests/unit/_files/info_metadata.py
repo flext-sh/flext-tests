@@ -12,7 +12,7 @@ from flext_tests import FlextTestsFiles
 from tests import m, tm, u
 
 
-class TestsFlextTestsFilesInfoMetadataMixin:
+class TestsFlextTestsFilesInfoMetadata:
     """File metadata tests."""
 
     @staticmethod

@@ -14,7 +14,7 @@ from tests import c, r, t, tm
 from tests.unit._matchers.predicates import TestsFlextTestsMatchersPredicates
 
 
-class TestsFlextTestsMatchersOkConstraintsBaseMixin:
+class TestsFlextTestsMatchersOkConstraintsBase:
     """Matcher ok constraint tests."""
 
     @staticmethod
@@ -115,8 +115,8 @@ class TestsFlextTestsMatchersOkConstraintsBaseMixin:
         tm.that(value, eq=42)
 
 
-class TestsFlextTestsMatchersOkConstraintsMixin(
-    TestsFlextTestsMatchersOkConstraintsBaseMixin,
+class TestsFlextTestsMatchersOkConstraints(
+    TestsFlextTestsMatchersOkConstraintsBase,
 ):
     """Composed ok() constraint matrix (public name and tests preserved)."""
 

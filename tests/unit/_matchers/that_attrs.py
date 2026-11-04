@@ -14,7 +14,7 @@ from tests import c, p, r, t, tm
 from tests.unit._matchers.predicates import TestsFlextTestsMatchersPredicates
 
 
-class TestsFlextTestsMatchersThatAttrsMixin:
+class TestsFlextTestsMatchersThatAttrs:
     """Matcher that attribute tests."""
 
     @staticmethod

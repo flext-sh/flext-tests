@@ -13,7 +13,7 @@ import pytest
 from tests import c, m, p, r, tm
 
 
-class TestsFlextTestsMatchersScopeErrorsMixin:
+class TestsFlextTestsMatchersScopeErrors:
     """Matcher scope and error tests."""
 
     @staticmethod
@@ -57,7 +57,7 @@ class TestsFlextTestsMatchersScopeErrorsMixin:
     def test_check_returns_chain() -> None:
         """tm.check() chains assertions over the result it was given."""
         result = r[int].ok(42)
-        chain: m.Tests.Chain[int] = tm.check(result)
+        chain: p.Tests.Chain[int] = tm.check(result)
         tm.ok(chain.result is result)
 
     @staticmethod
