@@ -11,11 +11,12 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from functools import partial
-from importlib import import_module
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
+
+from flext_tests import c, u
 
 if TYPE_CHECKING:
     from flext_tests import p
@@ -28,7 +29,7 @@ class FlextTestsFixtureTreesFixtures:
     def pytest_addoption(parser: pytest.Parser) -> None:
         """Declare the scenario-root key flext-infra projects into every project."""
         parser.addini(
-            import_module("flext_tests").c.Tests.FIXTURE_TREES_INI,
+            c.Tests.FIXTURE_TREES_INI,
             default="",
             help="Scenario fixture-tree root (projected from flext-infra).",
         )
@@ -43,7 +44,6 @@ class FlextTestsFixtureTreesFixtures:
             ``True`` for a scenario directory, ``None`` to defer otherwise.
 
         """
-        import_module("flext_tests")
         scenario = u.Tests.is_fixture_tree(
             collection_path,
             config.rootpath,
@@ -63,7 +63,6 @@ class FlextTestsFixtureTreesFixtures:
             The materializer bound to this run's scenario root.
 
         """
-        import_module("flext_tests")
         root = u.Tests.fixture_trees_root(
             request.config.rootpath,
             request.config.getini(c.Tests.FIXTURE_TREES_INI),

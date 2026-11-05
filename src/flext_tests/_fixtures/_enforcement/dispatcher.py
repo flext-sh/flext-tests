@@ -20,12 +20,13 @@ from typing import TYPE_CHECKING, ClassVar, cast
 
 import pytest
 
+from flext_tests import m, u
 from flext_tests._constants.validator import FlextTestsConstantsValidator
 
 if TYPE_CHECKING:
     import warnings
 
-    from flext_tests import m, p
+    from flext_tests import p
 
 
 class FlextTestsEnforcementDispatcher:
@@ -101,8 +102,7 @@ class FlextTestsEnforcementDispatcher:
         stashed = config.stash.get(cls.stash_config, None)
         if stashed is not None:
             return stashed
-        models = import_module("flext_tests").m
-        resolved = models.Tests.EnforcementDispatcherConfig(
+        resolved = m.Tests.EnforcementDispatcherConfig(
             strict=bool(config.getoption("--flext-enforce-strict")),
             include=cls.split_csv(str(config.getoption("--flext-enforce-rules") or "")),
             exclude=cls.split_csv(
@@ -121,9 +121,9 @@ class FlextTestsEnforcementDispatcher:
             return
         cfg = cls.resolve_config(config, repository_root)
         action = "error" if cfg.strict else "default"
-        root = import_module("flext_tests")
-        for rule in root.u.Tests.active_rules(cfg):
-            if isinstance(rule.source, root.m.Tests.EnforcementRuntimeWarningSource):
+
+        for rule in u.Tests.active_rules(cfg):
+            if isinstance(rule.source, m.Tests.EnforcementRuntimeWarningSource):
                 config.addinivalue_line(
                     "filterwarnings",
                     f"{action}::{rule.source.category}",
@@ -242,7 +242,7 @@ class FlextTestsEnforcementDispatcher:
         if repository_root is None:
             return
         cfg = cls.resolve_config(config, repository_root)
-        active = import_module("flext_tests").u.Tests.active_rules(cfg)
+        active = u.Tests.active_rules(cfg)
         kinds: dict[str, int] = {}
         for rule in active:
             kinds[rule.source.kind] = kinds.get(rule.source.kind, 0) + 1
