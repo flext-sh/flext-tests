@@ -422,8 +422,8 @@ class FlextTestsModelsMatchers:
             """
             return FlextTestsModelsMatchers.PayloadParams.own_mapping(value)
 
-    class ThatParams(PayloadParams):
-        """Generic matcher parameters for value assertions."""
+    class ThatShapeParams(PayloadParams):
+        """Truth, type, comparison and length criteria of ``ThatParams``."""
 
         model_config: ClassVar[t.ConfigDict] = m.ConfigDict(
             populate_by_name=True,
@@ -479,6 +479,10 @@ class FlextTestsModelsMatchers:
         length_gte: Annotated[int | None, m.Field(description="Length >=.")] = None
         length_lt: Annotated[int | None, m.Field(description="Length <.")] = None
         length_lte: Annotated[int | None, m.Field(description="Length <=.")] = None
+
+    class ThatContentParams(ThatShapeParams):
+        """Containment, string and key criteria of ``ThatParams``."""
+
         has: FlextTestsModelsFlextBase.Payload | None = m.Field(
             None,
             validation_alias=t.AliasChoices("has", "contains"),
@@ -522,6 +526,10 @@ class FlextTestsModelsMatchers:
             t.Tests.KeySpec | None,
             m.Field(description="No keys."),
         ] = None
+
+    class ThatParams(ThatContentParams):
+        """Generic matcher parameters for value assertions."""
+
         values: Annotated[
             Sequence[FlextTestsModelsFlextBase.Payload] | None,
             m.Field(description="Values."),

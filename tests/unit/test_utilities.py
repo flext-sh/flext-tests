@@ -118,7 +118,7 @@ class TestsFlextTestsUtilities:
         assertion_fn = (
             u.Tests.assert_success if assertion == "success" else u.Tests.assert_failure
         )
-        with u.Tests.raises(AssertionError, match=match):
+        with pytest.raises(AssertionError, match=match):
             _ = assertion_fn(result)
 
     @staticmethod
@@ -132,7 +132,7 @@ class TestsFlextTestsUtilities:
     def test_assert_failure_rejects_non_matching_error_substring() -> None:
         """A non-matching expected-error substring raises AssertionError."""
         result: p.Result[str] = r[str].fail("validation error occurred")
-        with u.Tests.raises(AssertionError, match="Expected error containing"):
+        with pytest.raises(AssertionError, match="Expected error containing"):
             _ = u.Tests.assert_failure(result, "not found")
 
     @staticmethod
@@ -146,5 +146,5 @@ class TestsFlextTestsUtilities:
     def test_assert_success_rejects_non_matching_expected_value() -> None:
         """A non-matching expected_value raises AssertionError."""
         result = r[str].ok("actual")
-        with u.Tests.raises(AssertionError, match="Expected success value"):
+        with pytest.raises(AssertionError, match="Expected success value"):
             _ = u.Tests.assert_success(result, expected_value="expected")

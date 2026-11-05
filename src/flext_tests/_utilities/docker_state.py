@@ -129,7 +129,7 @@ class FlextTestsUtilitiesDockerState:
     def update_container_state(
         state_dir: Path,
         container_name: str,
-        change: Callable[[p.Tests.ContainerState], m.Tests.ContainerState],
+        change: Callable[[p.Tests.ContainerState], p.Tests.ContainerState],
         *,
         timeout_seconds: float = c.Tests.DOCKER_STATE_LOCK_TIMEOUT_SECONDS,
     ) -> p.Result[p.Tests.ContainerState]:

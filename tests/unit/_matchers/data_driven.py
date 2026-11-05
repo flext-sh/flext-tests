@@ -10,7 +10,7 @@ from collections.abc import Mapping, Sequence
 
 import pytest
 
-from tests import c, m, p, r, t, tm, u
+from tests import c, m, p, r, t, tm
 
 
 class TestsFlextTestsMatchersDataDriven:
@@ -21,7 +21,7 @@ class TestsFlextTestsMatchersDataDriven:
     def test_matcher_parameters_resolve_before_public_use(value: str) -> None:
         """Resolve scalar and composed rules on the first public matcher call."""
         mismatched = value.upper()
-        with u.Tests.raises(AssertionError, match="mismatched scalar"):
+        with pytest.raises(AssertionError, match="mismatched scalar"):
             tm.that(value, eq=mismatched, msg="mismatched scalar")
         tm.that({"value": value}, paths={"value": {"eq": value}})
         tm.that([value], items=[{"eq": value}])
@@ -34,9 +34,9 @@ class TestsFlextTestsMatchersDataDriven:
             attrs_match={"value": {"eq": value}},
         )
         sequence_result = r[Sequence[str]].ok([value])
-        with u.Tests.raises(AssertionError):
+        with pytest.raises(AssertionError):
             tm.that({"value": value}, paths={"value": {"eq": mismatched}})
-        with u.Tests.raises(AssertionError):
+        with pytest.raises(AssertionError):
             tm.ok(sequence_result, items=[{"eq": mismatched}])
 
     @staticmethod
@@ -63,7 +63,7 @@ class TestsFlextTestsMatchersDataDriven:
         payload: t.JsonMapping = {"value": None}
 
         tm.that(payload, paths={"value": {"eq": None}})
-        with u.Tests.raises(AssertionError):
+        with pytest.raises(AssertionError):
             tm.that({"value": "present"}, paths={"value": {"eq": None}})
 
     @staticmethod
@@ -71,7 +71,7 @@ class TestsFlextTestsMatchersDataDriven:
         payload: t.JsonMapping = {"value": "allowed"}
 
         tm.that(payload, paths={"value": {"excludes": "blocked"}})
-        with u.Tests.raises(AssertionError):
+        with pytest.raises(AssertionError):
             tm.that({"value": "blocked"}, paths={"value": {"excludes": "blocked"}})
 
     @staticmethod
@@ -88,7 +88,7 @@ class TestsFlextTestsMatchersDataDriven:
 
     @staticmethod
     def test_item_rules_reject_string_rule_container() -> None:
-        with u.Tests.raises(m.ValidationError, match=r"for ThatParams\nitems") as error:
+        with pytest.raises(m.ValidationError, match=r"for ThatParams\nitems") as error:
             tm.that(["alpha"], items="alpha")
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"items"})
 

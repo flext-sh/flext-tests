@@ -12,8 +12,6 @@ from typing import TYPE_CHECKING
 from flext_core.lazy import install_lazy_exports
 
 if TYPE_CHECKING:
-    from flext_cli import s
-
     from flext_tests import (
         FlextTests,
         FlextTestsCase,
@@ -49,6 +47,7 @@ if TYPE_CHECKING:
         h,
         install_local_packages,
         r,
+        s,
         settings,
         td,
         tf,
@@ -163,7 +162,7 @@ install_lazy_exports(
         "m": ".models",
         "p": ".protocols",
         "r": "flext_tests",
-        "s": "flext_cli",
+        "s": "flext_tests",
         "settings": "flext_tests",
         "t": ".typings",
         "td": "flext_tests",

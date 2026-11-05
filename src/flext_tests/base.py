@@ -10,12 +10,15 @@ from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from typing import Self
 
-from flext_core import FlextContainer, s, u
+import flext_core
+from flext_core import FlextContainer
 
 from flext_tests import FlextTestsSettings, m, p
 
 
-class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
+class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](
+    flext_core.s[TDomainResult]
+):
     """Base service for test packages with the ``Tests`` settings namespace."""
 
     @classmethod
@@ -34,7 +37,7 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
         if not isinstance(settings_type, type):
             msg = f"{cls.__name__} must bootstrap a FlextTestsSettings class"
             raise TypeError(msg)
-        if not u.subclass_view(settings_type, FlextTestsSettings):
+        if not flext_core.u.subclass_view(settings_type, FlextTestsSettings):
             msg = (
                 f"{cls.__name__} must bootstrap a FlextTestsSettings subclass, "
                 f"got {settings_type.__name__}"
@@ -108,5 +111,7 @@ class FlextTestsServiceBase[TDomainResult: p.Base = p.Base](s[TDomainResult]):
         """
         return m.RuntimeBootstrapOptions(settings_type=FlextTestsSettings)
 
+
+s = FlextTestsServiceBase
 
 __all__: list[str] = ["FlextTestsServiceBase", "s"]

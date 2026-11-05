@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import ClassVar
 
 import pytest
-from flext_infra import m as infra_m, u as infra_u
+from flext_infra import p as infra_p, u as infra_u
 from flext_infra.codemod import FlextInfraModGateEngine
 
 from flext_tests import c, m, p, r
@@ -20,7 +20,7 @@ from flext_tests import c, m, p, r
 class FlextTestsUtilitiesEnforcement:
     """Catalog filtering, engine findings and collected-project discovery."""
 
-    _plan_cache: ClassVar[dict[str, infra_m.Infra.CodemodRulePlan]] = {}
+    _plan_cache: ClassVar[dict[str, infra_p.Infra.CodemodRulePlan]] = {}
     _catalog_cache: ClassVar[dict[str, m.Tests.EnforcementCatalog]] = {}
 
     @classmethod
@@ -81,7 +81,7 @@ class FlextTestsUtilitiesEnforcement:
         *,
         project_names: frozenset[str] | None = None,
         required_rule_ids: frozenset[str],
-    ) -> p.Result[infra_m.Infra.ModScanReport]:
+    ) -> p.Result[infra_p.Infra.ModScanReport]:
         """Scan each collected member with its own native snapshot and rule plan.
 
         Every id in ``required_rule_ids`` must be declared by the engine's rule
@@ -95,14 +95,14 @@ class FlextTestsUtilitiesEnforcement:
             if (repository_root / "pyproject.toml").exists():
                 project_names = frozenset({""})
             else:
-                return r[infra_m.Infra.ModScanReport].fail(
+                return r[infra_p.Infra.ModScanReport].fail(
                     "enforcement requires at least one collected project to scan",
                 )
         elif not project_names:
-            return r[infra_m.Infra.ModScanReport].fail(
+            return r[infra_p.Infra.ModScanReport].fail(
                 "enforcement requires at least one collected project to scan",
             )
-        reports: list[infra_m.Infra.ModScanReport] = []
+        reports: list[infra_p.Infra.ModScanReport] = []
         for project_name in sorted(project_names):
             project_root = (
                 repository_root / project_name if project_name else repository_root
@@ -114,7 +114,7 @@ class FlextTestsUtilitiesEnforcement:
                 with infra_u.Infra.codemod_workspace_snapshot(project_root) as snapshot:
                     planned = infra_u.Infra.codemod_rule_plan(snapshot)
                 if planned.failure:
-                    return r[infra_m.Infra.ModScanReport].from_failure(planned)
+                    return r[infra_p.Infra.ModScanReport].from_failure(planned)
                 plan = planned.value
                 cls._plan_cache[cache_key] = plan
             missing = sorted(
@@ -122,7 +122,7 @@ class FlextTestsUtilitiesEnforcement:
             )
             if missing:
                 display_name = project_name or project_root.name
-                return r[infra_m.Infra.ModScanReport].fail(
+                return r[infra_p.Infra.ModScanReport].fail(
                     "enforcement names flext-infra rules that config/rules does not "
                     f"declare for {display_name}: {', '.join(missing)}",
                 )
@@ -132,9 +132,9 @@ class FlextTestsUtilitiesEnforcement:
                 selection=plan,
             )
             if scanned.failure:
-                return r[infra_m.Infra.ModScanReport].from_failure(scanned)
+                return r[infra_p.Infra.ModScanReport].from_failure(scanned)
             reports.append(scanned.value)
-        return r[infra_m.Infra.ModScanReport].ok(
+        return r[infra_p.Infra.ModScanReport].ok(
             FlextInfraModGateEngine.recounted(
                 tuple(entry for report in reports for entry in report.entries),
                 native_artifacts=tuple(

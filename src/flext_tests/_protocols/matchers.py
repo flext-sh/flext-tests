@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from flext_cli import FlextCliProtocols, t
+from flext_cli import FlextCliProtocols
 
 from flext_tests._protocols import FlextTestsProtocolsPayload
 from flext_tests._typings import FlextTestsTypesMatchers
@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 
     from flext_cli import p
 
+    from flext_tests import t
     from flext_tests._protocols import FlextTestsProtocolsBase
 
 
@@ -269,7 +270,7 @@ class FlextTestsProtocolsMatchers(Protocol):
 
     @runtime_checkable
     class ThatShapeParams(PayloadParams, Protocol):
-        """Truth, type, comparison and length criteria of ``ThatParams``."""
+        """Structural data contract projected from the owning model."""
 
         @property
         def msg(self) -> str | None:
@@ -353,7 +354,7 @@ class FlextTestsProtocolsMatchers(Protocol):
 
     @runtime_checkable
     class ThatContentParams(ThatShapeParams, Protocol):
-        """Containment, string and key criteria of ``ThatParams``."""
+        """Structural data contract projected from the owning model."""
 
         @property
         def has(self) -> FlextTestsProtocolsBase.Payload | None:

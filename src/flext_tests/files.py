@@ -34,7 +34,7 @@ class FlextTestsFiles(
 ):
     """Manages test files for FLEXT ecosystem testing."""
 
-    FileInfo: ClassVar[type[p.Tests.FileInfo]] = m.Tests.FileInfo
+    FileInfo: ClassVar[type[m.Tests.FileInfo]] = m.Tests.FileInfo
     base_dir: Annotated[
         Path | None,
         m.BeforeValidator(

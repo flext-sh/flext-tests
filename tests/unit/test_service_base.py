@@ -107,7 +107,7 @@ class TestsFlextTestsServiceBase:
             def runtime_bootstrap_options(cls) -> p.RuntimeBootstrapOptions:
                 return m.RuntimeBootstrapOptions(settings_type=None)
 
-        with u.Tests.raises(TypeError, match="_MissingSettingsService"):
+        with pytest.raises(TypeError, match="_MissingSettingsService"):
             _MissingSettingsService.test_settings_type()
 
     @staticmethod
@@ -120,7 +120,7 @@ class TestsFlextTestsServiceBase:
             def runtime_bootstrap_options(cls) -> p.RuntimeBootstrapOptions:
                 return m.RuntimeBootstrapOptions(settings_type=FlextSettings)
 
-        with u.Tests.raises(TypeError, match="_WrongSettingsService"):
+        with pytest.raises(TypeError, match="_WrongSettingsService"):
             _WrongSettingsService.test_settings_type()
 
     @classmethod

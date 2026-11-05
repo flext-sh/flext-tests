@@ -203,16 +203,26 @@ if TYPE_CHECKING:
         return value
 
     def model_protocol_39(
+        value: (FlextTestsModels.Tests.ThatContentParams),
+    ) -> FlextTestsProtocols.Tests.ThatContentParams:
+        return value
+
+    def model_protocol_40(
         value: (FlextTestsModels.Tests.ThatParams),
     ) -> FlextTestsProtocols.Tests.ThatParams:
         return value
 
-    def model_protocol_40(
+    def model_protocol_41(
+        value: (FlextTestsModels.Tests.ThatShapeParams),
+    ) -> FlextTestsProtocols.Tests.ThatShapeParams:
+        return value
+
+    def model_protocol_42(
         value: (FlextTestsModels.Tests.User),
     ) -> FlextTestsProtocols.Tests.User:
         return value
 
-    def model_protocol_41(
+    def model_protocol_43(
         value: (FlextTestsModels.Tests.Value),
     ) -> FlextTestsProtocols.Tests.Value:
         return value

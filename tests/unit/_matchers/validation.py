@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from tests import c, m, p, r, t, tm, u
+from tests import c, m, p, r, t, tm
 
 
 class TestsFlextTestsMatchersNativeTruth:
@@ -51,7 +51,7 @@ class TestsFlextTestsMatchersNativeTruth:
         if verdict:
             compare()
         else:
-            with u.Tests.raises(AssertionError, match="native comparison failed"):
+            with pytest.raises(AssertionError, match="native comparison failed"):
                 compare()
         tm.that(events, eq=[criterion])
 
@@ -117,7 +117,7 @@ class TestsFlextTestsMatchersNativeTruth:
             else:
                 tm.that(subject, where=subject.__eq__)
 
-        with u.Tests.raises(RuntimeError) as raised:
+        with pytest.raises(RuntimeError) as raised:
             operation()
         tm.that(raised.value is failure, truth=True)
 
@@ -125,9 +125,9 @@ class TestsFlextTestsMatchersNativeTruth:
     def test_bare_boolean_assertion_is_not_a_noop() -> None:
         """A false comparison cannot silently pass after assert migration."""
         tm.that(value=True)
-        with u.Tests.raises(AssertionError):
+        with pytest.raises(AssertionError):
             tm.that(value=False)
-        with u.Tests.raises(AssertionError, match="comparison failed"):
+        with pytest.raises(AssertionError, match="comparison failed"):
             tm.that(value=False, msg="comparison failed")
         tm.that(value=False, eq=False)
         tm.that(value=False, truth=False)
@@ -158,7 +158,7 @@ class TestsFlextTestsMatchersNativeTruth:
         result = tm.that(subject, truth=truth)
         tm.that(result, none=True)
         tm.that(events, eq=["bool"])
-        with u.Tests.raises(AssertionError) as raised:
+        with pytest.raises(AssertionError) as raised:
             tm.that(subject, truth=not truth)
         tm.that(raised.value.args, eq=())
         tm.that(events, eq=["bool", "bool"])
@@ -180,7 +180,7 @@ class TestsFlextTestsMatchersNativeTruth:
                 message = "unexpected representation failure"
                 raise ValueError(message)
 
-        with u.Tests.raises(RuntimeError) as raised:
+        with pytest.raises(RuntimeError) as raised:
             tm.that(Subject(), truth=truth)
         tm.that(raised.value is failure, truth=True)
         tm.that(events, eq=["bool"])
@@ -218,7 +218,7 @@ class TestsFlextTestsMatchersNativeTruth:
             return str(value)
 
         tm.that(value=True, truth=True, assertion_message=message)
-        with u.Tests.raises(AssertionError) as raised:
+        with pytest.raises(AssertionError) as raised:
             tm.that(value=False, truth=True, assertion_message=message)
         tm.that(raised.value.args[0] is message, truth=True)
         tm.that(events, eq=[])
@@ -226,16 +226,16 @@ class TestsFlextTestsMatchersNativeTruth:
     @staticmethod
     def test_native_truth_distinguishes_omitted_and_explicit_messages() -> None:
         """Explicit empty/None messages retain their exact AssertionError args."""
-        with u.Tests.raises(AssertionError) as omitted:
+        with pytest.raises(AssertionError) as omitted:
             tm.that(value=False, truth=True)
         tm.that(omitted.value.args, eq=())
-        with u.Tests.raises(AssertionError) as empty:
+        with pytest.raises(AssertionError) as empty:
             tm.that(value=False, truth=True, msg="")
         tm.that(empty.value.args, eq=("",))
-        with u.Tests.raises(AssertionError) as explicit_none:
+        with pytest.raises(AssertionError) as explicit_none:
             tm.that(value=False, truth=True, assertion_message=None)
         tm.that(explicit_none.value.args, eq=(None,))
-        with u.Tests.raises(AssertionError) as explicit_empty:
+        with pytest.raises(AssertionError) as explicit_empty:
             tm.that(value=False, truth=True, msg="secondary", assertion_message="")
         tm.that(explicit_empty.value.args, eq=("",))
 
@@ -245,14 +245,14 @@ class TestsFlextTestsMatchersNativeTruth:
         tm.that(["value"], truth=True)
         empty: list[str] = []
         tm.that(empty, truth=False)
-        with u.Tests.raises(AssertionError):
+        with pytest.raises(AssertionError):
             tm.that(empty, truth=True)
         result = r[int].ok(1)
         tm.ok(result, eq=1)
         # Native equality between a Result and a raw scalar is False; the
         # callable form expresses that cross-type comparison without the
         # statically impossible operator usage pyright rejects.
-        with u.Tests.raises(AssertionError):
+        with pytest.raises(AssertionError):
             tm.that(eq(result, 1), truth=True)
 
     @staticmethod
@@ -270,7 +270,7 @@ class TestsFlextTestsMatchersNativeTruth:
         if not condition:
             tm.that(value=False, truth=True, assertion_message=failure_message())
         tm.fail(destination.exists())
-        with u.Tests.raises(AssertionError, match="native assertion message"):
+        with pytest.raises(AssertionError, match="native assertion message"):
             tm.that(value=False, truth=True, assertion_message=failure_message())
         tm.that(destination.read_text(encoding="utf-8"), eq="failure observed")
 
@@ -278,18 +278,18 @@ class TestsFlextTestsMatchersNativeTruth:
     def test_native_truth_preserves_message_exception_and_empty_message() -> None:
         """Message failures escape unchanged; an empty message remains empty."""
         denominator = len("")
-        with u.Tests.raises(ZeroDivisionError):
+        with pytest.raises(ZeroDivisionError):
             tm.that(value=False, truth=True, assertion_message=1 / denominator)
-        with u.Tests.raises(AssertionError) as raised:
+        with pytest.raises(AssertionError) as raised:
             tm.that(value=False, truth=True, assertion_message="")
         tm.that(raised.value.args, eq=("",))
 
     @staticmethod
     def test_native_truth_rejects_payload_criteria_before_evaluation() -> None:
         """Native truth never silently ignores payload-owned matcher constraints."""
-        with u.Tests.raises(ValueError, match="cannot be combined"):
+        with pytest.raises(ValueError, match="cannot be combined"):
             tm.that(1, truth=True, eq=1)
-        with u.Tests.raises(ValueError, match="requires the native truth"):
+        with pytest.raises(ValueError, match="requires the native truth"):
             tm.that(1, assertion_message="unused")
 
 
@@ -299,7 +299,7 @@ class TestsFlextTestsMatchersValidation(TestsFlextTestsMatchersNativeTruth):
     @staticmethod
     def test_native_matcher_rejects_undeclared_criteria() -> None:
         """A typed operand never opens the matcher to arbitrary option names."""
-        with u.Tests.raises(m.ValidationError):
+        with pytest.raises(m.ValidationError):
             tm.that(1, undeclared_criterion=True)
 
     @staticmethod
@@ -310,7 +310,7 @@ class TestsFlextTestsMatchersValidation(TestsFlextTestsMatchersNativeTruth):
     @staticmethod
     def test_assert_valid_email_fails() -> None:
         """Test tm.that() with invalid email."""
-        with u.Tests.raises(AssertionError, match="Assertion failed"):
+        with pytest.raises(AssertionError, match="Assertion failed"):
             tm.that("invalid-email", match=c.Tests.EMAIL_PATTERN_RE)
 
     @staticmethod
@@ -321,7 +321,7 @@ class TestsFlextTestsMatchersValidation(TestsFlextTestsMatchersNativeTruth):
         for email in valid_emails:
             tm.that(email, match=c.Tests.EMAIL_PATTERN_RE)
         for email in invalid_emails:
-            with u.Tests.raises(AssertionError):
+            with pytest.raises(AssertionError):
                 tm.that(email, match=c.Tests.EMAIL_PATTERN_RE)
 
     @staticmethod
@@ -335,23 +335,21 @@ class TestsFlextTestsMatchersValidation(TestsFlextTestsMatchersNativeTruth):
     def test_assert_settings_valid_missing_required_key() -> None:
         """Test tm.that() with missing required key."""
         settings = {"service_type": "api"}
-        with u.Tests.raises(AssertionError, match="Missing required keys"):
+        with pytest.raises(AssertionError, match="Missing required keys"):
             tm.that(settings, keys=["service_type", "environment", "timeout"])
 
     @staticmethod
     def test_assert_settings_valid_invalid_timeout() -> None:
         """Test tm.that() with invalid timeout type."""
         settings = {"service_type": "api", "environment": "test", "timeout": "invalid"}
-        with u.Tests.raises(AssertionError, match="Assertion failed"):
+        with pytest.raises(AssertionError, match="Assertion failed"):
             tm.that(settings["timeout"], is_=int, gt=0)
 
     @staticmethod
     def test_assert_settings_valid_zero_timeout() -> None:
         """Test tm.that() with zero timeout."""
         settings = {"service_type": "api", "environment": "test", "timeout": 0}
-        with u.Tests.raises(
-            AssertionError, match="Value 0 did not satisfy constraints"
-        ):
+        with pytest.raises(AssertionError, match="Value 0 did not satisfy constraints"):
             tm.that(settings["timeout"], is_=int, gt=0)
 
     @staticmethod
@@ -365,7 +363,7 @@ class TestsFlextTestsMatchersValidation(TestsFlextTestsMatchersNativeTruth):
     def test_ok_with_eq_parameter_fails() -> None:
         """Test tm.ok() with eq parameter fails when value doesn't match."""
         result = r[int].ok(42)
-        with u.Tests.raises(AssertionError):
+        with pytest.raises(AssertionError):
             tm.ok(result, eq=43)
 
     @staticmethod
@@ -412,5 +410,5 @@ class TestsFlextTestsMatchersValidation(TestsFlextTestsMatchersNativeTruth):
     @staticmethod
     def test_that_with_ne_sequence_parameter_fails() -> None:
         """Test tm.that() with structural sequence inequality failure."""
-        with u.Tests.raises(AssertionError, match="did not satisfy constraints"):
+        with pytest.raises(AssertionError, match="did not satisfy constraints"):
             tm.that(["a", "b"], ne=["a", "b"])

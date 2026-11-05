@@ -461,7 +461,7 @@ class TestsFlextTestsCapabilityCollection:
             f"TEST_ENDPOINT={endpoint}\n",
             encoding=c.DEFAULT_ENCODING,
         )
-        with u.Tests.raises(pytest.UsageError) as error:
+        with pytest.raises(pytest.UsageError) as error:
             u.Tests.external_environment_reason(
                 env_file=env_file,
                 url_var="TEST_ENDPOINT",

@@ -508,32 +508,32 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[p.Tests.ContainerInfo]):
     def _observe(
         self,
         container_name: str,
-    ) -> p.Result[tuple[p.Tests.ContainerInfo | None, m.Tests.ContainerState]]:
+    ) -> p.Result[tuple[p.Tests.ContainerInfo | None, p.Tests.ContainerState]]:
         """Read the container (absent is None) and its host record.
 
         Returns:
             The resulting ``p.Result[tuple[p.Tests.ContainerInfo | None,
-                m.Tests.ContainerState]]``.
+                p.Tests.ContainerState]]``.
 
         """
         state = u.Tests.read_container_state(self.state_dir, container_name)
         if state.failure:
             return r[
-                tuple[p.Tests.ContainerInfo | None, m.Tests.ContainerState]
+                tuple[p.Tests.ContainerInfo | None, p.Tests.ContainerState]
             ].from_failure(state)
         info = self.fetch_container_info(container_name)
         if info.success:
-            return r[tuple[p.Tests.ContainerInfo | None, m.Tests.ContainerState]].ok((
+            return r[tuple[p.Tests.ContainerInfo | None, p.Tests.ContainerState]].ok((
                 info.value,
                 state.value,
             ))
         if info.error_code == c.Tests.DockerErrorCode.NOT_PROVISIONED:
-            return r[tuple[p.Tests.ContainerInfo | None, m.Tests.ContainerState]].ok((
+            return r[tuple[p.Tests.ContainerInfo | None, p.Tests.ContainerState]].ok((
                 None,
                 state.value,
             ))
         return r[
-            tuple[p.Tests.ContainerInfo | None, m.Tests.ContainerState]
+            tuple[p.Tests.ContainerInfo | None, p.Tests.ContainerState]
         ].from_failure(info)
 
     @override
