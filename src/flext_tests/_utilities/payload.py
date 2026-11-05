@@ -37,7 +37,8 @@ from flext_cli import m
 from flext_core import u
 
 import flext_tests
-from flext_tests import FlextTestsModelsFlextBase, c, p, t
+from flext_tests import c, p, t
+from flext_tests._models import FlextTestsModelsFlextBase
 
 if TYPE_CHECKING:
     from flext_tests._models import FlextTestsModelsMatchers
