@@ -14,9 +14,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from flext_cli import u
-
-from flext_tests import FlextTestsDocker, m, p
+from flext_tests import FlextTestsDocker, m, p, u
 
 
 class FlextTestsCliDocker:

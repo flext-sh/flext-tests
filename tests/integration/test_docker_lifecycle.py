@@ -18,8 +18,6 @@ from multiprocessing.queues import Queue
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import pytest
-
 from flext_tests import FlextTestsDocker
 from tests import c, m, r, t, tm, u
 
@@ -28,7 +26,7 @@ if TYPE_CHECKING:
 
 from tests import p
 
-pytestmark = [pytest.mark.docker, pytest.mark.integration, pytest.mark.slow]
+pytestmark = [c.Tests.MARK.docker, c.Tests.MARK.integration, c.Tests.MARK.slow]
 
 
 class TestsFlextTestsDockerLifecycle:
@@ -106,7 +104,7 @@ class TestsFlextTestsDockerLifecycle:
                 return info
             time.sleep(c.Tests.DOCKER_HEALTH_POLL_SECONDS)
 
-    @pytest.fixture
+    @u.Tests.fixture
     def project(self, tmp_path: Path) -> Generator[str]:
         """Yield a fresh compose project whose containers and volumes are removed.
 

@@ -15,8 +15,7 @@ import pytest
 from dotenv import dotenv_values
 from flext_cli import u
 
-from flext_tests.constants import c
-from flext_tests.typings import t
+from flext_tests import c, t
 
 
 class FlextTestsUtilitiesEnvironment:

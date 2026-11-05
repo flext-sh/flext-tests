@@ -14,7 +14,7 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from flext_tests.utilities import u
+from flext_tests import u
 
 if TYPE_CHECKING:
     from flext_tests import p, t

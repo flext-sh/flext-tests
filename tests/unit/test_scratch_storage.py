@@ -8,18 +8,16 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
-from tests import c, tm, u
+from tests import c, t, tm, u
 
 
 class TestsFlextTestsScratchStorage:
     """Public contract of the scratch-storage relocation plugin."""
 
     @staticmethod
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_no_hypothesis_directory_inside_the_checkout(
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """A hypothesis test leaves .hypothesis/ out of the checkout."""
         pytester.makepyfile(
@@ -43,9 +41,9 @@ class TestsFlextTestsScratchStorage:
         tm.fail((pytester.path / ".hypothesis").exists())
 
     @staticmethod
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_benchmark_storage_outside_the_checkout(
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """A benchmark run stores under the scratch root, not the checkout."""
         pytester.makepyfile(
@@ -69,9 +67,9 @@ class TestsFlextTestsScratchStorage:
         tm.that(benchmarks, eq=[])
 
     @staticmethod
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_scratch_root_ini_override(
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
         tmp_path: Path,
     ) -> None:
         """The flext_scratch_root ini redirects the storage base."""
@@ -92,7 +90,7 @@ class TestsFlextTestsScratchStorage:
     @staticmethod
     def test_scratch_root_utility_keys_by_checkout(
         tmp_path: Path,
-        tmp_path_factory: pytest.TempPathFactory,
+        tmp_path_factory: t.Tests.TempPathFactory,
     ) -> None:
         """u.Tests.scratch_root keys per checkout and honors the override."""
         checkout_a = tmp_path_factory.mktemp("checkout-a")

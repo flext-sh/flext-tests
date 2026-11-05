@@ -14,8 +14,8 @@ from pathlib import Path
 import pytest
 from hypothesis.configuration import set_hypothesis_home_dir
 
+from flext_tests import c
 from flext_tests._utilities import FlextTestsUtilitiesScratchStorage
-from flext_tests.constants import c
 
 
 class FlextTestsScratchStoragePlugin:

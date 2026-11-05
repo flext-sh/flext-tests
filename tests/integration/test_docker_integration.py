@@ -18,8 +18,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from flext_tests import FlextTestsDocker
 from tests import c, m, tm, u
 
@@ -36,7 +34,7 @@ class TestsFlextTestsDockerIntegration:
     # ------------------------------------------------------------------
 
     @staticmethod
-    @pytest.mark.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))
+    @c.Tests.MARK.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))
     def test_shared_resolves_target_config_from_shared_catalog(
         container_name: str,
         tmp_path: Path,
@@ -57,7 +55,7 @@ class TestsFlextTestsDockerIntegration:
         tm.that(target.host, eq=settings["host"])
 
     @staticmethod
-    @pytest.mark.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))
+    @c.Tests.MARK.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))
     def test_shared_resolves_compose_file_from_packaged_assets(
         container_name: str,
         tmp_path: Path,
@@ -84,7 +82,7 @@ class TestsFlextTestsDockerIntegration:
         tm.that(resolved, eq=[expected, expected])
 
     @staticmethod
-    @pytest.mark.parametrize("marker", ["ldap", "oracle"])
+    @c.Tests.MARK.parametrize("marker", ["ldap", "oracle"])
     def test_shared_service_compose_file_ships_with_flext_tests(marker: str) -> None:
         """The LDAP and Oracle shared services resolve to a shipped compose file."""
         container_name = c.Tests.CONNECTIVITY_MARKER_CONTAINERS[marker]
@@ -98,7 +96,7 @@ class TestsFlextTestsDockerIntegration:
         tmp_path: Path,
     ) -> None:
         """An unknown shared name is a caller contract error, not a silent value."""
-        with pytest.raises(ValueError, match="Unknown shared container: not-a-name"):
+        with u.Tests.raises(ValueError, match="Unknown shared container: not-a-name"):
             FlextTestsDocker.shared(
                 "not-a-name",
                 repository_root=tmp_path / "flext-docker-contract",
@@ -167,7 +165,7 @@ class TestsFlextTestsDockerIntegration:
         tm.that(target.compose_file, eq=absolute)
 
     @staticmethod
-    @pytest.mark.parametrize(
+    @c.Tests.MARK.parametrize(
         c.ContextScope.OPERATION,
         ["execute", "up", "down", "ready"],
         ids=["execute", "up", "down", "ready"],

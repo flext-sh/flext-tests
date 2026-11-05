@@ -10,8 +10,6 @@ import re
 from datetime import UTC, datetime
 from pathlib import Path
 
-import pytest
-
 from flext_tests import FlextTestsFiles
 from tests import c, m, p, t, tm, u
 
@@ -63,7 +61,7 @@ class FlextTestsPayloadIdentityParts:
     def test_matcher_type_only_does_not_require_payload_conversion() -> None:
         """Test matcher type only does not require payload conversion."""
         tm.that(range(3), not_=str)
-        with pytest.raises(AssertionError, match="wrong native type"):
+        with u.Tests.raises(AssertionError, match="wrong native type"):
             tm.that(range(3), is_=str, msg="wrong native type")
 
     @staticmethod
@@ -94,11 +92,11 @@ class FlextTestsPayloadIdentityParts:
             items=(m.Tests.Payload(kind="atom", atom=1),),
         )
         tm.that(payload, is_=type(payload))
-        with pytest.raises(AssertionError):
+        with u.Tests.raises(AssertionError):
             tm.that(payload, is_=tuple)
 
     @staticmethod
-    @pytest.mark.parametrize(
+    @c.Tests.MARK.parametrize(
         "kind",
         ["atom", c.Action.LIST, "tuple", "set", "frozenset", "mapping"],
     )
@@ -114,7 +112,7 @@ class FlextTestsPayloadIdentityParts:
         )
         container = m.Tests.Payload(kind="mapping", entries={"child": payload})
         tm.that(container, attrs_match={"entries.child": type(payload)})
-        with pytest.raises(AssertionError):
+        with u.Tests.raises(AssertionError):
             tm.that({"payload": payload}, attrs_match={"payload": str})
 
     @staticmethod
@@ -122,7 +120,7 @@ class FlextTestsPayloadIdentityParts:
         """Test deep matcher distinguishes missing path from present none."""
         expected_none = m.Tests.Payload(kind="atom", atom=None)
         tm.that({"present": None}, deep={"present": expected_none})
-        with pytest.raises(AssertionError):
+        with u.Tests.raises(AssertionError):
             tm.that({"present": None}, deep={"missing": expected_none})
 
     @staticmethod
@@ -143,7 +141,7 @@ class FlextTestsPayloadIdentityParts:
         def reject(_value: p.Tests.NativeMatchValue) -> bool:
             raise error
 
-        with pytest.raises(ValueError, match=re.escape(str(error))) as caught:
+        with u.Tests.raises(ValueError, match=re.escape(str(error))) as caught:
             tm.that({"native": None}, where=reject)
 
         tm.ok(caught.value is error)
@@ -181,13 +179,13 @@ class FlextTestsPayloadIdentityParts:
     def test_rejects_atom_with_children() -> None:
         """Test rejects atom with children."""
         child = m.Tests.Payload(kind="atom", atom=1)
-        with pytest.raises(c.ValidationError, match="atom payload cannot"):
+        with u.Tests.raises(c.ValidationError, match="atom payload cannot"):
             m.Tests.Payload(kind="atom", items=(child,))
 
     @staticmethod
     def test_rejects_mapping_with_atom() -> None:
         """Test rejects mapping with atom."""
-        with pytest.raises(c.ValidationError, match="mapping payload cannot"):
+        with u.Tests.raises(c.ValidationError, match="mapping payload cannot"):
             m.Tests.Payload(kind="mapping", atom="discarded")
 
 
@@ -195,7 +193,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
     """Payload model contracts independent of JSON projection."""
 
     @staticmethod
-    @pytest.mark.parametrize("native", [[1, 2], {1, 2}])
+    @c.Tests.MARK.parametrize("native", [[1, 2], {1, 2}])
     def test_native_collection_roundtrip(
         native: list[int] | set[int],
         tmp_path: Path,
@@ -215,13 +213,13 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
     def test_rejects_collection_with_entries() -> None:
         """Test rejects collection with entries."""
         child = m.Tests.Payload(kind="atom", atom=1)
-        with pytest.raises(c.ValidationError, match="collection payload cannot"):
+        with u.Tests.raises(c.ValidationError, match="collection payload cannot"):
             m.Tests.Payload(kind=c.Action.LIST, entries={"discarded": child})
 
     @staticmethod
     def test_rejects_unknown_arm() -> None:
         """Test rejects unknown arm."""
-        with pytest.raises(c.ValidationError):
+        with u.Tests.raises(c.ValidationError):
             m.Tests.Payload.model_validate({"kind": "unknown"})
 
     @staticmethod
@@ -229,19 +227,19 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
         """Test none is an atom not a payload document."""
         payload = m.Tests.Payload(kind="atom", atom=None)
         tm.ok(payload.atom is None)
-        with pytest.raises(c.ValidationError):
+        with u.Tests.raises(c.ValidationError):
             m.Tests.Payload.model_validate(None)
 
     @staticmethod
     def test_rejects_unsupported_leaf() -> None:
         """Test rejects unsupported leaf."""
-        with pytest.raises(c.ValidationError):
+        with u.Tests.raises(c.ValidationError):
             m.Tests.Payload.model_validate({"kind": "atom", "atom": range(3)})
 
     @staticmethod
     def test_rejects_extra_fields() -> None:
         """Test rejects extra fields."""
-        with pytest.raises(c.ValidationError):
+        with u.Tests.raises(c.ValidationError):
             m.Tests.Payload.model_validate({"kind": "atom", "unexpected": 1})
 
     @staticmethod
@@ -291,7 +289,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
     @staticmethod
     def test_textual_projection_rejects_invalid_utf8(tmp_path: Path) -> None:
         """Test textual projection rejects invalid utf8."""
-        with pytest.raises(UnicodeDecodeError):
+        with u.Tests.raises(UnicodeDecodeError):
             FlextTestsFiles(base_dir=tmp_path).create(
                 {"binary": b"\xff"},
                 "native.json",
@@ -302,7 +300,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
     @staticmethod
     def test_native_ingress_rejects_string_key_collisions(tmp_path: Path) -> None:
         """Test native ingress rejects string key collisions."""
-        with pytest.raises(ValueError, match="mapping key collision"):
+        with u.Tests.raises(ValueError, match="mapping key collision"):
             FlextTestsFiles(base_dir=tmp_path).create(
                 {1: "numeric", c.ParserBooleanToken.ONE: "text"},
                 "collision.json",
@@ -314,7 +312,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
         tmp_path: Path,
     ) -> None:
         """Test native ingress rejects unsupported nested leaf."""
-        with pytest.raises(TypeError, match="Unsupported native payload leaf"):
+        with u.Tests.raises(TypeError, match="Unsupported native payload leaf"):
             FlextTestsFiles(base_dir=tmp_path).create(
                 {"nested": [range(3)]},
                 "unsupported.json",
@@ -338,7 +336,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
         )
         tm.that(detected, eq=c.Cli.FILE_FORMAT_JSON)
         tm.ok(model.atom is str)
-        with pytest.raises(c.PydanticSerializationError):
+        with u.Tests.raises(c.PydanticSerializationError):
             model.model_dump_json()
 
     @staticmethod

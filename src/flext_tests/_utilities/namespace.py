@@ -12,9 +12,7 @@ import threading
 import time
 from typing import TYPE_CHECKING, ClassVar
 
-from flext_tests.constants import c
-from flext_tests.models import m
-from flext_tests.protocols import p
+from flext_tests import c, m, p
 
 if TYPE_CHECKING:
     from pathlib import Path

@@ -11,8 +11,7 @@ from typing import Annotated, Self
 
 from flext_cli import m
 
-from flext_tests.protocols import p
-from flext_tests.typings import t
+from flext_tests import p, t
 
 
 def _entity_payload_default() -> FlextTestsModelsFlextBase.Payload:

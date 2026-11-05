@@ -18,7 +18,7 @@ from packaging.utils import canonicalize_name
 
 import flext_tests
 from flext_tests import FlextTestsCase, FlextTestsModels, FlextTestsUtilities
-from tests import c, d, e, h, m, r, tf, tk, tm, u, x
+from tests import c, d, e, h, m, r, t, tf, tk, tm, u, x
 
 
 class TestsFlextTestsPublicFacade:
@@ -41,7 +41,7 @@ class TestsFlextTestsPublicFacade:
 
     @staticmethod
     def test_selected_enforcement_plugin_uses_its_declared_identity(
-        pytestconfig: pytest.Config,
+        pytestconfig: t.Tests.Config,
     ) -> None:
         """Test selected enforcement plugin uses its declared identity."""
         plugin = config.Infra.tooling.tools.pytest.enforcement_plugin
@@ -59,7 +59,7 @@ class TestsFlextTestsPublicFacade:
 
     @staticmethod
     def test_plugin_configure_hooks_keep_their_registered_class_owners(
-        pytestconfig: pytest.Config,
+        pytestconfig: t.Tests.Config,
     ) -> None:
         """Declared pytest11 class hooks run without competing for root exports."""
         root = Path(__file__).resolve().parents[2]
@@ -104,7 +104,7 @@ class TestsFlextTestsPublicFacade:
             tm.ok(exported is getattr(flext_tests, name))
 
     @staticmethod
-    @pytest.mark.parametrize(
+    @c.Tests.MARK.parametrize(
         ("module_name", "distribution_name"),
         [
             ("docker", "docker"),

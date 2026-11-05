@@ -10,8 +10,6 @@ import stat
 from collections.abc import Mapping, MutableMapping, Sequence
 from pathlib import Path
 
-import pytest
-
 from flext_tests import FlextTestsDocker
 from tests import c, m, p, t, tm, u
 
@@ -56,13 +54,13 @@ class TestsFlextTestsDockerLifecycle:
                 eq=c.Tests.ContainerAction.CREATE,
             )
 
-    @pytest.mark.parametrize(
+    @c.Tests.MARK.parametrize(
         "stale",
         [
-            pytest.param({"dirty": True}, id="dirty"),
-            pytest.param({"sealed": False}, id="unsealed"),
-            pytest.param({"fingerprint": "other-inputs"}, id="fingerprint-mismatch"),
-            pytest.param({"container_id": "other-id"}, id="container-id-drift"),
+            u.Tests.param({"dirty": True}, id="dirty"),
+            u.Tests.param({"sealed": False}, id="unsealed"),
+            u.Tests.param({"fingerprint": "other-inputs"}, id="fingerprint-mismatch"),
+            u.Tests.param({"container_id": "other-id"}, id="container-id-drift"),
         ],
     )
     def test_stale_record_recreates_in_every_status_and_health(
@@ -158,35 +156,35 @@ class TestsFlextTestsDockerLifecycle:
             )
             tm.fail(result, has=keys[0])
 
-    @pytest.mark.parametrize(
+    @c.Tests.MARK.parametrize(
         ("info_status", "health", "stale", "code"),
         [
-            pytest.param(None, None, {}, "NOT_PROVISIONED", id="absent"),
-            pytest.param("running", "healthy", {"dirty": True}, "DIRTY", id="dirty"),
-            pytest.param(
+            u.Tests.param(None, None, {}, "NOT_PROVISIONED", id="absent"),
+            u.Tests.param("running", "healthy", {"dirty": True}, "DIRTY", id="dirty"),
+            u.Tests.param(
                 "running",
                 "healthy",
                 {"sealed": False},
                 "UNSEALED",
                 id="unsealed",
             ),
-            pytest.param(
+            u.Tests.param(
                 "running",
                 "healthy",
                 {"container_id": "other-id"},
                 "UNSEALED",
                 id="container-id-drift",
             ),
-            pytest.param(
+            u.Tests.param(
                 "running",
                 "healthy",
                 {"fingerprint": "other-inputs"},
                 "FINGERPRINT_MISMATCH",
                 id="fingerprint-mismatch",
             ),
-            pytest.param("running", "unhealthy", {}, "UNHEALTHY", id="unhealthy"),
-            pytest.param("running", "starting", {}, "UNHEALTHY", id="starting"),
-            pytest.param("exited", "healthy", {}, "UNHEALTHY", id="exited"),
+            u.Tests.param("running", "unhealthy", {}, "UNHEALTHY", id="unhealthy"),
+            u.Tests.param("running", "starting", {}, "UNHEALTHY", id="starting"),
+            u.Tests.param("exited", "healthy", {}, "UNHEALTHY", id="exited"),
         ],
     )
     def test_verification_reports_one_typed_code(
@@ -388,7 +386,7 @@ class TestsFlextTestsDockerLifecycle:
         _ = leftover.write_text("LEFT=over\n", encoding="utf-8")
         environment = {"FLEXT_TESTS_SECRET": t.SecretStr("value")}
         with (
-            pytest.raises(FileExistsError),
+            u.Tests.raises(FileExistsError),
             u.Tests.creation_env_file(tmp_path, "env-owner", environment),
         ):
             tm.ok(leftover.exists())
