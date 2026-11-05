@@ -281,11 +281,17 @@ class FlextTestsCapabilityPlugin:
 
     @pytest.hookimpl(tryfirst=True)
     def pytest_runtest_setup(self, item: pytest.Item) -> None:
-        """Skip before fixtures, after all consumer collection hooks added markers."""
+        """Skip before fixtures, after all consumer collection hooks added markers.
+
+        Only connectivity markers select this policy. A generic external gate such
+        as ``remote`` (network services) is not a local ``.env`` prerequisite: the
+        flext-infra runner deselects it as NOT EXECUTED where its scope lacks the
+        capability, and wherever it is selected the capability is required.
+        """
         markers = [
             marker
             for marker in item.iter_markers()
-            if marker.name in {*c.Tests.CONNECTIVITY_MARKERS, "remote", "connectivity"}
+            if marker.name in {*c.Tests.CONNECTIVITY_MARKERS, "connectivity"}
         ]
         for marker in markers:
             self._declaration(marker)

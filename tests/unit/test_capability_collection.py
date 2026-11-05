@@ -62,19 +62,27 @@ class TestsFlextTestsCapabilityCollection:
 
     @staticmethod
     @c.Tests.MARK.slow
-    def test_remote_markers_skip_without_local_env(
+    def test_connectivity_skips_without_local_env_remote_gate_runs(
         consumer: t.Tests.Pytester,
         fixture_tree: p.Tests.FixtureTree,
     ) -> None:
-        """Remote services need the developer's untracked .env; none is present."""
+        """Connectivity needs the untracked .env; a remote gate is not gated by it.
+
+        The generic ``remote`` external gate is deselected as NOT EXECUTED by the
+        flext-infra runner where its scope lacks the capability; once selected it
+        executes, so the plugin never skips it with the connectivity reason.
+        """
         tree = fixture_tree(
             "capability_markers", destination=consumer.path / "capability_markers"
         )
         result = TestsFlextTestsCapabilityCollection._run(
-            consumer, str(tree / "test_remote.py")
+            consumer, "-v", str(tree / "test_remote.py")
         )
-        result.assert_outcomes(passed=1, skipped=2)
-        result.stdout.fnmatch_lines(["*External tests require a local untracked .env*"])
+        result.assert_outcomes(passed=2, skipped=1)
+        result.stdout.fnmatch_lines([
+            "*test_remote_gate PASSED*",
+            "*External tests require a local untracked .env*",
+        ])
         tm.that(result.ret, eq=0)
 
     @staticmethod
