@@ -9,11 +9,12 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from importlib import import_module
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
+
+from flext_tests import u
 
 if TYPE_CHECKING:
     from flext_tests import p
@@ -48,15 +49,11 @@ class FlextTestsNamespaceFixtures:
             return str(worker_input.get("testrunuid", ""))
         stash_key = pytest.StashKey[str]()
         if stash_key not in config.stash:
-            config.stash[stash_key] = (
-                import_module("flext_tests")
-                .u.Tests.namespace(
-                    worker_id="master",
-                    testrun_uid=f"master-{id(config)}",
-                    checkout_root=Path(config.rootpath),
-                )
-                .token
-            )
+            config.stash[stash_key] = u.Tests.namespace(
+                worker_id="master",
+                testrun_uid=f"master-{id(config)}",
+                checkout_root=Path(config.rootpath),
+            ).token
         return config.stash[stash_key]
 
     @pytest.fixture(scope="session")
@@ -69,9 +66,7 @@ class FlextTestsNamespaceFixtures:
 
         """
         config = request.config
-        namespace: p.Tests.TestNamespace = import_module(
-            "flext_tests"
-        ).u.Tests.namespace(
+        namespace: p.Tests.TestNamespace = u.Tests.namespace(
             worker_id=FlextTestsNamespaceFixtures._worker_id(config),
             testrun_uid=FlextTestsNamespaceFixtures._run_token(config),
             checkout_root=Path(config.rootpath),
