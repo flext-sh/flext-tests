@@ -277,6 +277,25 @@ class TestsFlextTestsCapabilityCollection:
 
     @staticmethod
     @c.Tests.MARK.slow
+    def test_host_executables_gate_without_endpoint(
+        consumer: t.Tests.Pytester,
+    ) -> None:
+        """A present executable runs; an absent one is a recorded prerequisite skip."""
+        absent = consumer.path.name + "-absent-executable"
+        consumer.makepyfile(
+            "import pytest\n"
+            "@pytest.mark.connectivity(executables=('git',))\n"
+            "def test_present():\n    pass\n"
+            f"@pytest.mark.connectivity(executables=('git', {absent!r}))\n"
+            "def test_absent():\n    pytest.fail('ran without its executable')\n",
+        )
+        result = TestsFlextTestsCapabilityCollection._run(consumer)
+        result.assert_outcomes(passed=1, skipped=1)
+        result.stdout.fnmatch_lines([f"*Host executable is unavailable: {absent}*"])
+        tm.that(result.ret, eq=0)
+
+    @staticmethod
+    @c.Tests.MARK.slow
     def test_invalid_declarations_error_without_environment(
         consumer: t.Tests.Pytester,
     ) -> None:
@@ -315,6 +334,9 @@ class TestsFlextTestsCapabilityCollection:
             ),
             ("required_vars=('',)", "Connectivity required_vars must be names"),
             ("url_var=''", "Connectivity url_var must be a name"),
+            ("executables='git'", "Connectivity executables must be names"),
+            ("executables=(1,)", "Connectivity executables must be names"),
+            ("executables=('',)", "Connectivity executables must be names"),
             (
                 "url_vaar='TEST_ENDPOINT'",
                 "Connectivity declarations require supported keyword arguments",
