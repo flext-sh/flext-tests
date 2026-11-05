@@ -31,13 +31,16 @@ from types import (
     ModuleType,
     UnionType,
 )
-from typing import ClassVar, TypeAliasType, cast
+from typing import TYPE_CHECKING, ClassVar, TypeAliasType, cast
 
 from flext_cli import m
 from flext_core import u
 
-from flext_tests import c, p, t
-from flext_tests._models import FlextTestsModelsFlextBase, FlextTestsModelsMatchers
+import flext_tests
+from flext_tests import FlextTestsModelsFlextBase, c, p, t
+
+if TYPE_CHECKING:
+    from flext_tests._models import FlextTestsModelsMatchers
 
 
 class FlextTestsUtilitiesPayload:
@@ -446,7 +449,11 @@ class FlextTestsUtilitiesPayload:
             The resulting ``m.Tests.DeepMatchResult``.
 
         """
-        result_model = FlextTestsModelsMatchers.DeepMatchResult
+        # ``DeepMatchResult`` is owned by ``flext_tests._models.matchers``, whose
+        # module top-level imports this module: resolving the model through the
+        # lazy ``flext_tests.m`` attribute here (never an import statement)
+        # keeps both import orders cycle-free.
+        result_model = flext_tests.m.Tests.DeepMatchResult
         project = FlextTestsUtilitiesPayload.to_match_value
         for path, expected in spec.items():
             node = FlextTestsUtilitiesPayload.path_node(
