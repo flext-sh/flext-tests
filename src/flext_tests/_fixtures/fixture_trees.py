@@ -47,7 +47,7 @@ class FlextTestsFixtureTreesFixtures:
         scenario = u.Tests.is_fixture_tree(
             collection_path,
             config.rootpath,
-            config.getini(c.Tests.FIXTURE_TREES_INI),
+            config.getini(tests.c.Tests.FIXTURE_TREES_INI),
         )
         return True if scenario else None
 
@@ -65,9 +65,9 @@ class FlextTestsFixtureTreesFixtures:
         """
         root = u.Tests.fixture_trees_root(
             request.config.rootpath,
-            request.config.getini(c.Tests.FIXTURE_TREES_INI),
+            request.config.getini(tests.c.Tests.FIXTURE_TREES_INI),
         )
-        return partial(u.Tests.materialize, root, destination=tmp_path)
+        return partial(tests.u.Tests.materialize, root, destination=tmp_path)
 
 
 __all__: list[str] = ["FlextTestsFixtureTreesFixtures"]
