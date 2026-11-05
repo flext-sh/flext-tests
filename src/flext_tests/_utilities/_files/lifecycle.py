@@ -17,7 +17,8 @@ from pathlib import Path
 from types import TracebackType
 from typing import Self
 
-from flext_tests import c, m
+from flext_tests.constants import c
+from flext_tests.models import m
 
 
 def _created_paths_default() -> list[Path]:

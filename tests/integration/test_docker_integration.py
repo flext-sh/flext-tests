@@ -98,7 +98,7 @@ class TestsFlextTestsDockerIntegration:
         tmp_path: Path,
     ) -> None:
         """An unknown shared name is a caller contract error, not a silent value."""
-        with pytest.raises(ValueError, match="Unknown shared container: not-a-name"):
+        with u.Tests.raises(ValueError, match="Unknown shared container: not-a-name"):
             FlextTestsDocker.shared(
                 "not-a-name",
                 repository_root=tmp_path / "flext-docker-contract",

@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import pytest
+from flext_cli import u
 
 if TYPE_CHECKING:
     from flext_tests import p
@@ -46,7 +46,7 @@ class FlextTestsUtilitiesMatchersImmutability:
         propagate unchanged.
 
         """
-        with pytest.raises(expected, match=match):
+        with u.Tests.raises(expected, match=match):
             setattr(target, field, value)
 
 

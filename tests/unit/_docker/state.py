@@ -8,8 +8,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from flext_tests import FlextTestsDocker
 from tests import c, m, tm, u
 
@@ -101,7 +99,7 @@ class TestsFlextTestsDockerState:
         failure = u.Tests.read_container_state(docker_manager.state_dir, "corrupt")
         tm.fail(failure, has=str(record))
         tm.fail(docker_manager.mark_container_dirty("corrupt"), has=str(record))
-        with pytest.raises(m.ValidationError):
+        with u.Tests.raises(m.ValidationError):
             _ = docker_manager.dirty_containers
         tm.that(record.read_text(encoding="utf-8"), eq="{not json")
 

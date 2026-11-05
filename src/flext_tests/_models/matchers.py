@@ -14,9 +14,11 @@ from typing import Annotated, ClassVar, Self, TypeAliasType, cast
 
 from flext_cli import m
 
-from flext_tests import c, p, t
 from flext_tests._models import FlextTestsModelsFlextBase
 from flext_tests._utilities import FlextTestsUtilitiesPayload
+from flext_tests.constants import c
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 type MatchExpectedValue = (
     FlextTestsModelsFlextBase.Payload
@@ -30,7 +32,6 @@ type DeepExpected = (
     | str
     | None
 )
-
 
 type _OwnedEntries = Mapping[
     str,

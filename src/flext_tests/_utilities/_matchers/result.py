@@ -9,9 +9,12 @@ from __future__ import annotations
 from collections.abc import Callable, MutableMapping, Sequence
 from typing import TypeAliasType, overload
 
-from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsUtilitiesPayload, FlextTestsUtilitiesResult
 from flext_tests._utilities._matchers import FlextTestsUtilitiesMatchersThat
+from flext_tests.constants import c
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
 class FlextTestsUtilitiesMatchersResult:

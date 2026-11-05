@@ -7,17 +7,17 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 from flext_cli import u
 from flext_core import r
 
-from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsUtilitiesPayload
 from flext_tests._utilities._files import FlextTestsUtilitiesFilesCreation
-
-if TYPE_CHECKING:
-    from flext_core import p
+from flext_tests.constants import c
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
 class FlextTestsUtilitiesFilesComparisonParsing:

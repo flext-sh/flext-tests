@@ -44,7 +44,7 @@ class FlextTestsSettingsFixtures:
 
         """
         directory = tmp_path_factory.mktemp(run_namespace.token)
-        runtime = flext_tests.u.Tests.SessionRuntime(directory)
+        runtime = flext_u.Tests.SessionRuntime(directory)
         try:
             yield runtime
         finally:
@@ -183,20 +183,19 @@ class FlextTestsSettingsFixtures:
             None: While the DEBUG selection is active.
 
         """
-        tests = flext_tests
-        original_settings = tests.u.logging_settings()
-        original_options = tests.u.logging_options()
+        original_settings = u.logging_settings()
+        original_options = u.logging_options()
         try:
-            selected = tests.u.resolve_logging_settings(
-                log_level=tests.c.LogLevel.DEBUG, trace=logging_trace
+            selected = u.resolve_logging_settings(
+                log_level=c.LogLevel.DEBUG, trace=logging_trace
             )
-            tests.u.configure_structlog(
-                settings=tests.m.StructlogOptions(async_logging=False),
+            u.configure_structlog(
+                settings=m.StructlogOptions(async_logging=False),
                 runtime_settings=selected,
             )
             yield
         finally:
-            tests.u.configure_structlog(
+            u.configure_structlog(
                 settings=original_options, runtime_settings=original_settings
             )
 

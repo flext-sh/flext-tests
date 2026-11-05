@@ -12,8 +12,10 @@ from typing import Final
 
 import pytest
 
-from flext_tests import c, m, p
 from flext_tests._utilities import FlextTestsUtilitiesPayload
+from flext_tests.constants import c
+from flext_tests.models import m
+from flext_tests.protocols import p
 
 ApproxBase: Final[type] = type(pytest.approx(0))
 """Approximation sentinel base resolved through pytest's public ``approx`` API."""

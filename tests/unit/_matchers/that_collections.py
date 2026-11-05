@@ -9,9 +9,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from types import MappingProxyType
 
-import pytest
-
-from tests import c, m, r, tm
+from tests import c, m, r, tm, u
 from tests.unit._matchers.predicates import TestsFlextTestsMatchersPredicates
 
 
@@ -22,7 +20,7 @@ class TestsFlextTestsTypesMatchersThat:
     def test_that_with_eq_parameter() -> None:
         """eq= accepts a computed equal value and rejects a different one."""
         tm.that(sum((40, 2)), eq=42)
-        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+        with u.Tests.raises(AssertionError, match="did not satisfy constraints"):
             tm.that(sum((40, 2)), eq=43)
 
     @staticmethod
@@ -54,19 +52,19 @@ class TestsFlextTestsTypesMatchersThat:
     @staticmethod
     def test_that_none_false_rejects_none() -> None:
         """none=False narrowing is fail-closed for None values."""
-        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+        with u.Tests.raises(AssertionError, match="did not satisfy constraints"):
             tm.that(None, none=False)
 
     @staticmethod
     def test_that_is_type_rejects_none() -> None:
         """is_=type narrowing is fail-closed for None values."""
-        with pytest.raises(AssertionError, match=r"Expected type .* but got NoneType"):
+        with u.Tests.raises(AssertionError, match=r"Expected type .* but got NoneType"):
             tm.that(None, is_=dict)
 
     @staticmethod
     def test_that_eq_value_rejects_none() -> None:
         """eq=<value> narrowing is fail-closed for None values."""
-        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+        with u.Tests.raises(AssertionError, match="did not satisfy constraints"):
             tm.that(None, eq="x")
 
     @staticmethod
@@ -74,14 +72,14 @@ class TestsFlextTestsTypesMatchersThat:
         """eq=None asserts the value is None instead of passing silently."""
         absent: Mapping[str, str] = {}
         tm.that(absent.get("missing"), eq=None)
-        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+        with u.Tests.raises(AssertionError, match="did not satisfy constraints"):
             tm.that("x", eq=None)
 
     @staticmethod
     def test_that_ne_none_requires_value() -> None:
         """ne=None asserts the value is not None instead of passing silently."""
         tm.that("x", ne=None)
-        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+        with u.Tests.raises(AssertionError, match="did not satisfy constraints"):
             tm.that(None, ne=None)
 
     @staticmethod
@@ -103,7 +101,7 @@ class TestsFlextTestsTypesMatchersThat:
     @staticmethod
     def test_not_none_rejects_none_with_context() -> None:
         """not_none raises the caller-provided assertion context for None."""
-        with pytest.raises(AssertionError, match="missing channel"):
+        with u.Tests.raises(AssertionError, match="missing channel"):
             tm.not_none(None, msg="missing channel")
 
     @staticmethod
@@ -115,7 +113,7 @@ class TestsFlextTestsTypesMatchersThat:
     @staticmethod
     def test_instance_rejects_another_kind_with_context() -> None:
         """Instance raises the caller-provided assertion context on a kind mismatch."""
-        with pytest.raises(AssertionError, match="wrong kind"):
+        with u.Tests.raises(AssertionError, match="wrong kind"):
             tm.instance("text", int, msg="wrong kind")
 
 
@@ -143,7 +141,7 @@ class TestsFlextTestsMatchersThatSequences(TestsFlextTestsTypesMatchersThat):
         tm.ok(
             r[Mapping[str, str]].ok(subject), paths={"entry": {"eq": subject["entry"]}}
         )
-        with pytest.raises(AssertionError):
+        with u.Tests.raises(AssertionError):
             tm.that(subject, paths={"entry": {"ne": subject["entry"]}})
 
     @staticmethod

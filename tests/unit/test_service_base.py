@@ -4,7 +4,7 @@ Every test exercises the PUBLIC contract of ``s`` (``FlextTestsServiceBase``) an
 the pytest plugin's explicit runtime lifecycle: observable return values,
 raised exceptions, and their messages. No mocks, no patches, no private-module
 imports or private-attribute assertions. The port-bearing service and its
-adapter are real (``tests.u.Tests.EchoService`` / ``tests.u.Tests.MemoryEcho``),
+adapter are real (``u.Tests.EchoService`` / ``u.Tests.MemoryEcho``),
 never a stand-in.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
@@ -107,7 +107,7 @@ class TestsFlextTestsServiceBase:
             def runtime_bootstrap_options(cls) -> p.RuntimeBootstrapOptions:
                 return m.RuntimeBootstrapOptions(settings_type=None)
 
-        with pytest.raises(TypeError, match="_MissingSettingsService"):
+        with u.Tests.raises(TypeError, match="_MissingSettingsService"):
             _MissingSettingsService.test_settings_type()
 
     @staticmethod
@@ -120,7 +120,7 @@ class TestsFlextTestsServiceBase:
             def runtime_bootstrap_options(cls) -> p.RuntimeBootstrapOptions:
                 return m.RuntimeBootstrapOptions(settings_type=FlextSettings)
 
-        with pytest.raises(TypeError, match="_WrongSettingsService"):
+        with u.Tests.raises(TypeError, match="_WrongSettingsService"):
             _WrongSettingsService.test_settings_type()
 
     @classmethod

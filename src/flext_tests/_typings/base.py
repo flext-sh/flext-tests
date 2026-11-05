@@ -24,7 +24,7 @@ from typing import Literal
 
 from flext_cli import m, p, t
 
-from flext_tests import c
+from flext_tests.constants import c
 
 
 class FlextTestsTypesBase:

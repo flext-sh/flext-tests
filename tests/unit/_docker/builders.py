@@ -134,7 +134,7 @@ class TestsFlextTestsDockerBuilders:
         tmp_path: Path,
     ) -> None:
         """Unknown shared containers fail loud against the real constants SSOT."""
-        with pytest.raises(ValueError, match="Unknown shared container"):
+        with u.Tests.raises(ValueError, match="Unknown shared container"):
             FlextTestsDocker.shared(
                 "no-such-shared-container",
                 repository_root=tmp_path,

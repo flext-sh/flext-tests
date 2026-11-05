@@ -85,7 +85,7 @@ class TestsFlextTestsFileLock:
         runtime = u.Tests.SessionRuntime(tmp_path)
         errors: list[FileNotFoundError] = []
         for _ in range(2):
-            with pytest.raises(FileNotFoundError) as error, runtime.lease(unavailable):
+            with u.Tests.raises(FileNotFoundError) as error, runtime.lease(unavailable):
                 pytest.fail("A missing seed must not produce a runtime")
             errors.append(error.value)
         tm.that(len(attempts), eq=1)

@@ -52,15 +52,15 @@ class TestsFlextTestsNamespaceXdist:
         )
         previous = signal.signal(signal.SIGUSR1, cancel)
         try:
-            with pytest.raises(Cancelled) as raised:
+            with u.Tests.raises(Cancelled) as raised:
                 u.Tests.pytest_subprocess(pytester)
         finally:
             signal.signal(signal.SIGUSR1, previous)
         tm.ok(raised.value is cancellation)
         child_pid = int((pytester.path / "child.pid").read_text(encoding="utf-8"))
-        with pytest.raises(ProcessLookupError):
+        with u.Tests.raises(ProcessLookupError):
             os.kill(child_pid, 0)
-        with pytest.raises(ChildProcessError):
+        with u.Tests.raises(ChildProcessError):
             os.waitpid(child_pid, os.WNOHANG)
 
     @pytest.mark.slow

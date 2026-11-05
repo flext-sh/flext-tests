@@ -14,8 +14,10 @@ from collections.abc import Generator, Mapping, Sequence
 from contextlib import contextmanager, nullcontext
 from pathlib import Path
 
-from flext_tests import m, p, t
 from flext_tests._utilities import FlextTestsUtilitiesConfigHelpers
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.typings import t
 
 
 class FlextTestsUtilitiesMatchersScope:

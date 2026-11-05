@@ -219,7 +219,7 @@ class TestsFlextTestsEnforcementPlugin:
             from pathlib import Path
             import pytest
             from flext_core import FlextContainer, FlextSettings
-            from flext_tests import FlextTestsSettings, m, p, tm
+            from flext_tests import FlextTestsSettings, m, p, tm, u
 
             class TestsFirstConsumer:
                 previous = None

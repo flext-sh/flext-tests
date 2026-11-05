@@ -21,7 +21,7 @@ from importlib import import_module
 from inspect import getmembers, isclass
 from typing import TYPE_CHECKING
 
-from flext_tests import c
+from flext_tests.constants import c
 
 if TYPE_CHECKING:
     import pytest
@@ -112,7 +112,6 @@ class FlextTestsConftestPlugin:
 # expose ``pytest_plugins``: pytest
 # processes that declaration while loading the ``pytest11`` entry point,
 # before pytest-cov starts measuring the product package.
-
 
 # The pytest11 object target owns hooks, not the package's public facade.
 __all__: list[str] = []

@@ -11,7 +11,7 @@ from re import escape
 
 import pytest
 
-from tests import c, m, p, r, t, tm
+from tests import c, m, p, r, t, tm, u
 
 
 class TestsFlextTestsMatchersBooleanResults:
@@ -29,26 +29,26 @@ class TestsFlextTestsMatchersBooleanResults:
     @staticmethod
     def test_boolean_matchers_reject_opposite_states() -> None:
         """The migrated boolean assertions still detect actual failures."""
-        with pytest.raises(AssertionError):
+        with u.Tests.raises(AssertionError):
             tm.ok(result=False)
-        with pytest.raises(AssertionError):
+        with u.Tests.raises(AssertionError):
             tm.fail(result=True)
 
     @staticmethod
     def test_boolean_matchers_keep_custom_messages() -> None:
         """Predicate failures retain their caller's diagnostic message."""
-        with pytest.raises(AssertionError, match="positive predicate"):
+        with u.Tests.raises(AssertionError, match="positive predicate"):
             tm.ok(result=False, msg="positive predicate")
-        with pytest.raises(AssertionError, match="negative predicate"):
+        with u.Tests.raises(AssertionError, match="negative predicate"):
             tm.fail(result=True, msg="negative predicate")
 
     @staticmethod
     def test_boolean_matchers_reject_result_only_options() -> None:
         """Dynamic criteria cannot silently turn predicate checks into no-ops."""
         options: Mapping[str, str] = {"has": "error text"}
-        with pytest.raises(ValueError, match="accept only msg"):
+        with u.Tests.raises(ValueError, match="accept only msg"):
             tm.ok(result=True, **options)
-        with pytest.raises(ValueError, match="accept only msg"):
+        with u.Tests.raises(ValueError, match="accept only msg"):
             tm.fail(result=False, **options)
 
     @staticmethod
@@ -57,13 +57,13 @@ class TestsFlextTestsMatchersBooleanResults:
         """Result state, never payload truthiness, determines success."""
         result = r[t.JsonValue].ok(payload)
         tm.that(tm.ok(result) is payload, truth=True)
-        with pytest.raises(AssertionError, match="Expected failure but got success"):
+        with u.Tests.raises(AssertionError, match="Expected failure but got success"):
             tm.fail(result)
 
     @staticmethod
     def test_none_is_rejected_by_result_construction_not_the_matcher() -> None:
         """Boolean support does not weaken the result owner's payload contract."""
-        with pytest.raises(
+        with u.Tests.raises(
             ValueError, match=escape(c.ERR_RESULT_SUCCESS_PAYLOAD_CANNOT_BE_NONE)
         ):
             r[t.JsonValue].ok(None)
@@ -120,13 +120,13 @@ class TestsFlextTestsMatchersResults(TestsFlextTestsMatchersBooleanResults):
             r[range].ok(original), eq=original, where=has_same_start
         )
         tm.that(resolved is original, truth=True)
-        with pytest.raises(AssertionError):
+        with u.Tests.raises(AssertionError):
             tm.that(original, eq=range(3))
 
         def has_single_step(value: range) -> bool:
             return value.step == 1
 
-        with pytest.raises(AssertionError):
+        with u.Tests.raises(AssertionError):
             tm.that(original, where=has_single_step)
 
     @staticmethod
@@ -167,14 +167,14 @@ class TestsFlextTestsMatchersResults(TestsFlextTestsMatchersBooleanResults):
     def test_assert_result_success_fails() -> None:
         """Test tm.ok() with failed result."""
         result: p.Result[str] = r[str].fail("error")
-        with pytest.raises(AssertionError, match="Expected success but got failure"):
+        with u.Tests.raises(AssertionError, match="Expected success but got failure"):
             tm.ok(result)
 
     @staticmethod
     def test_assert_result_success_custom_message() -> None:
         """Test tm.ok() with custom error message."""
         result: p.Result[str] = r[str].fail("error")
-        with pytest.raises(AssertionError, match="Custom message"):
+        with u.Tests.raises(AssertionError, match="Custom message"):
             tm.ok(result, msg="Custom message")
 
     @staticmethod
@@ -188,7 +188,7 @@ class TestsFlextTestsMatchersResults(TestsFlextTestsMatchersBooleanResults):
     def test_assert_result_failure_fails() -> None:
         """Test tm.fail() with successful result."""
         result = r[str].ok("success")
-        with pytest.raises(AssertionError, match="Expected failure but got success"):
+        with u.Tests.raises(AssertionError, match="Expected failure but got success"):
             tm.fail(result)
 
     @staticmethod
@@ -202,7 +202,7 @@ class TestsFlextTestsMatchersResults(TestsFlextTestsMatchersBooleanResults):
     def test_assert_result_failure_expected_error_not_found() -> None:
         """Test tm.fail() when expected error substring not found."""
         result: p.Result[str] = r[str].fail("Database error")
-        with pytest.raises(AssertionError, match=r"Expected.*to contain 'connection'"):
+        with u.Tests.raises(AssertionError, match=r"Expected.*to contain 'connection'"):
             tm.fail(result, contains="connection")
 
     @staticmethod
@@ -217,7 +217,7 @@ class TestsFlextTestsMatchersResults(TestsFlextTestsMatchersBooleanResults):
         """Test tm.that() with missing key."""
         data = {"key1": "value1"}
         expected = {"key2": "value2"}
-        with pytest.raises(AssertionError, match="Key 'key2' not found in mapping"):
+        with u.Tests.raises(AssertionError, match="Key 'key2' not found in mapping"):
             tm.that(data, kv=expected)
 
     @staticmethod
@@ -225,7 +225,7 @@ class TestsFlextTestsMatchersResults(TestsFlextTestsMatchersBooleanResults):
         """Test tm.that() with wrong value."""
         data = {"key1": "value1"}
         expected = {"key1": "wrong_value"}
-        with pytest.raises(
+        with u.Tests.raises(
             AssertionError,
             match="expected 'wrong_value', got 'value1'",
         ):
@@ -241,5 +241,5 @@ class TestsFlextTestsMatchersResults(TestsFlextTestsMatchersBooleanResults):
     def test_assert_list_contains_missing_item() -> None:
         """Test tm.that() with item not in list."""
         items = ["item1", "item2"]
-        with pytest.raises(AssertionError, match=r"Expected.*to contain 'item3'"):
+        with u.Tests.raises(AssertionError, match=r"Expected.*to contain 'item3'"):
             tm.that(items, has="item3")

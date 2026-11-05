@@ -9,11 +9,13 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from flext_tests import m, p, u
 from flext_tests._fixtures._enforcement import (
     FlextTestsEnforcementValidators,
     FlextTestsFixturesEnforcementCollector,
 )
+from flext_tests.models import m
+from flext_tests.protocols import p
+from flext_tests.utilities import u
 
 if TYPE_CHECKING:
     import pytest

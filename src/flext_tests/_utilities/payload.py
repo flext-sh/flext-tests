@@ -31,17 +31,13 @@ from types import (
     ModuleType,
     UnionType,
 )
-from typing import TYPE_CHECKING, ClassVar, TypeAliasType, cast
+from typing import ClassVar, TypeAliasType, cast
 
 from flext_cli import m
 from flext_core import u
 
-import flext_tests
 from flext_tests import c, p, t
-from flext_tests._models import FlextTestsModelsFlextBase
-
-if TYPE_CHECKING:
-    from flext_tests._models import FlextTestsModelsMatchers
+from flext_tests._models import FlextTestsModelsFlextBase, FlextTestsModelsMatchers
 
 
 class FlextTestsUtilitiesPayload:
@@ -50,14 +46,14 @@ class FlextTestsUtilitiesPayload:
     @staticmethod
     def _payload_model_leaf(
         value: p.AttributeProbe,
-    ) -> flext_tests.m.Tests.Payload | None:
+    ) -> FlextTestsModelsFlextBase.Payload | None:
         """Own matcher model leaves (payload, root model, enum) recursively.
 
         Returns:
-            The resulting ``flext_tests.m.Tests.Payload | None``.
+            The resulting ``FlextTestsModelsFlextBase.Payload | None``.
 
         """
-        if isinstance(value, flext_tests.m.Tests.Payload):
+        if isinstance(value, FlextTestsModelsFlextBase.Payload):
             return value
         if isinstance(value, m.RootModel):
             return FlextTestsUtilitiesPayload.to_payload(
@@ -72,25 +68,25 @@ class FlextTestsUtilitiesPayload:
     @staticmethod
     def _payload_none_leaf(
         value: p.AttributeProbe,
-    ) -> flext_tests.m.Tests.Payload | None:
+    ) -> FlextTestsModelsFlextBase.Payload | None:
         """Own ``None`` as the canonical empty atom.
 
         Returns:
-            The resulting ``flext_tests.m.Tests.Payload | None``.
+            The resulting ``FlextTestsModelsFlextBase.Payload | None``.
 
         """
         if value is None:
-            return flext_tests.m.Tests.Payload(kind="atom", atom=None)
+            return FlextTestsModelsFlextBase.Payload(kind="atom", atom=None)
         return None
 
     @staticmethod
     def _payload_scalar_leaf(
         value: p.AttributeProbe,
-    ) -> flext_tests.m.Tests.Payload | None:
+    ) -> FlextTestsModelsFlextBase.Payload | None:
         """Own supported native scalars and model leaves as atoms.
 
         Returns:
-            The resulting ``flext_tests.m.Tests.Payload | None``.
+            The resulting ``FlextTestsModelsFlextBase.Payload | None``.
 
         """
         if isinstance(
@@ -109,50 +105,50 @@ class FlextTestsUtilitiesPayload:
                 p.Tests.PayloadModel,
             ),
         ):
-            return flext_tests.m.Tests.Payload(kind="atom", atom=value)
+            return FlextTestsModelsFlextBase.Payload(kind="atom", atom=value)
         return None
 
     @staticmethod
     def _payload_annotated_leaf(
         value: p.AttributeProbe,
-    ) -> flext_tests.m.Tests.Payload | None:
+    ) -> FlextTestsModelsFlextBase.Payload | None:
         """Own ``typing.Annotated`` constructs as their textual atom.
 
         Returns:
-            The resulting ``flext_tests.m.Tests.Payload | None``.
+            The resulting ``FlextTestsModelsFlextBase.Payload | None``.
 
         """
         if hasattr(value, "__metadata__") and hasattr(value, "__origin__"):
             # typing.Annotated[...] constructs are type-level atoms under
             # the same textual convention as the alias arm below.
-            return flext_tests.m.Tests.Payload(kind="atom", atom=str(value))
+            return FlextTestsModelsFlextBase.Payload(kind="atom", atom=str(value))
         return None
 
     @staticmethod
     def _payload_match_leaf(
         value: p.AttributeProbe,
-    ) -> flext_tests.m.Tests.Payload | None:
+    ) -> FlextTestsModelsFlextBase.Payload | None:
         """Own a regex match through its matched text.
 
         Returns:
-            The resulting ``flext_tests.m.Tests.Payload | None``.
+            The resulting ``FlextTestsModelsFlextBase.Payload | None``.
 
         """
         if isinstance(value, Match):
             # A regex match compares by its matched text — the pattern
             # contract (semver, id shape) is what an expectation asserts.
             matched = cast("Match[str]", value).group(0)
-            return flext_tests.m.Tests.Payload(kind="atom", atom=matched)
+            return FlextTestsModelsFlextBase.Payload(kind="atom", atom=matched)
         return None
 
     @staticmethod
     def _payload_runtime_leaf(
         value: p.AttributeProbe,
-    ) -> flext_tests.m.Tests.Payload | None:
+    ) -> FlextTestsModelsFlextBase.Payload | None:
         """Own typing constructs and runtime machinery as textual atoms.
 
         Returns:
-            The resulting ``flext_tests.m.Tests.Payload | None``.
+            The resulting ``FlextTestsModelsFlextBase.Payload | None``.
 
         """
         if isinstance(
@@ -172,17 +168,17 @@ class FlextTestsUtilitiesPayload:
             # code specs) are type-level atoms: the established textual
             # convention (mirrors the type() leaf above) keeps
             # alias-bearing expectations comparable as strings.
-            return flext_tests.m.Tests.Payload(kind="atom", atom=str(value))
+            return FlextTestsModelsFlextBase.Payload(kind="atom", atom=str(value))
         return None
 
     @staticmethod
     def _payload_view_leaf(
         value: p.AttributeProbe,
-    ) -> flext_tests.m.Tests.Payload | None:
+    ) -> FlextTestsModelsFlextBase.Payload | None:
         """Own dict and set views through their native iteration order.
 
         Returns:
-            The resulting ``flext_tests.m.Tests.Payload | None``.
+            The resulting ``FlextTestsModelsFlextBase.Payload | None``.
 
         """
         if isinstance(value, (KeysView, ValuesView)):
@@ -194,11 +190,11 @@ class FlextTestsUtilitiesPayload:
     @staticmethod
     def _payload_mapping_leaf(
         value: p.AttributeProbe,
-    ) -> flext_tests.m.Tests.Payload | None:
+    ) -> FlextTestsModelsFlextBase.Payload | None:
         """Own a native mapping with stringified, collision-checked keys.
 
         Returns:
-            The resulting ``flext_tests.m.Tests.Payload | None``.
+            The resulting ``FlextTestsModelsFlextBase.Payload | None``.
 
         Raises:
             ValueError: If Native payload mapping key collision.
@@ -206,7 +202,7 @@ class FlextTestsUtilitiesPayload:
         """
         if not isinstance(value, Mapping):
             return None
-        entries: MutableMapping[str, flext_tests.m.Tests.Payload] = {}
+        entries: MutableMapping[str, FlextTestsModelsFlextBase.Payload] = {}
         for key, item in cast("Mapping[object, object]", value).items():
             normalized_key = str(key)
             if normalized_key in entries:
@@ -215,16 +211,16 @@ class FlextTestsUtilitiesPayload:
             entries[normalized_key] = FlextTestsUtilitiesPayload.to_payload(
                 item,
             )
-        return flext_tests.m.Tests.Payload(kind="mapping", entries=entries)
+        return FlextTestsModelsFlextBase.Payload(kind="mapping", entries=entries)
 
     @staticmethod
     def _payload_sequence_leaf(
         value: p.AttributeProbe,
-    ) -> flext_tests.m.Tests.Payload | None:
+    ) -> FlextTestsModelsFlextBase.Payload | None:
         """Own a native sequence or set with deterministic set ordering.
 
         Returns:
-            The resulting ``flext_tests.m.Tests.Payload | None``.
+            The resulting ``FlextTestsModelsFlextBase.Payload | None``.
 
         """
         if not isinstance(value, (list, tuple, set, frozenset)):
@@ -248,14 +244,16 @@ class FlextTestsUtilitiesPayload:
             )
         for kind, sequence_type in c.Tests.PAYLOAD_COLLECTION_TYPES.items():
             if isinstance(value, sequence_type):
-                return flext_tests.m.Tests.Payload(
+                return FlextTestsModelsFlextBase.Payload(
                     kind=cast("t.Tests.PayloadKind", kind),
                     items=children,
                 )
         return None
 
     _PAYLOAD_LEAF_HANDLERS: ClassVar[
-        tuple[Callable[[p.AttributeProbe], flext_tests.m.Tests.Payload | None], ...]
+        tuple[
+            Callable[[p.AttributeProbe], FlextTestsModelsFlextBase.Payload | None], ...
+        ]
     ] = (
         _payload_model_leaf,
         _payload_none_leaf,
@@ -276,7 +274,7 @@ class FlextTestsUtilitiesPayload:
         """Own supported native values without serializing their model leaves.
 
         Returns:
-            The resulting ``flext_tests.m.Tests.Payload``.
+            The resulting ``FlextTestsModelsFlextBase.Payload``.
 
         Raises:
             TypeError: If Unsupported native payload leaf.
@@ -448,11 +446,7 @@ class FlextTestsUtilitiesPayload:
             The resulting ``m.Tests.DeepMatchResult``.
 
         """
-        # ``DeepMatchResult`` is owned by ``flext_tests._models.matchers``, whose
-        # module top-level imports this module: resolving the model through the
-        # lazy ``flext_tests.m`` attribute here (never an import statement)
-        # keeps both import orders cycle-free.
-        result_model = flext_tests.m.Tests.DeepMatchResult
+        result_model = FlextTestsModelsMatchers.DeepMatchResult
         project = FlextTestsUtilitiesPayload.to_match_value
         for path, expected in spec.items():
             node = FlextTestsUtilitiesPayload.path_node(

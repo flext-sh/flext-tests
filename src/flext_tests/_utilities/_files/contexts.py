@@ -13,11 +13,13 @@ from collections.abc import Generator, Mapping, MutableMapping
 from contextlib import contextmanager
 from pathlib import Path
 
-from flext_tests import c, m, t
 from flext_tests._utilities._files import (
     FlextTestsUtilitiesFilesCreation,
     FlextTestsUtilitiesFilesReading,
 )
+from flext_tests.constants import c
+from flext_tests.models import m
+from flext_tests.typings import t
 
 
 class FlextTestsUtilitiesFilesContexts(FlextTestsUtilitiesFilesReading):

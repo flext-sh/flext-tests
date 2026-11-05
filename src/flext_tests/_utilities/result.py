@@ -8,7 +8,8 @@ from __future__ import annotations
 
 from types import EllipsisType
 
-from flext_tests import c, p
+from flext_tests.constants import c
+from flext_tests.protocols import p
 
 
 class FlextTestsUtilitiesResult:

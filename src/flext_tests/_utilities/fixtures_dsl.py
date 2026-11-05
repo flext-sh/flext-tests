@@ -11,7 +11,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import ClassVar
 
-from flext_tests import c
+from flext_tests.constants import c
 
 
 class FlextTestsUtilitiesFixturesDSL:

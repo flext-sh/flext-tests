@@ -17,7 +17,9 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import c, p, u
+from flext_tests.constants import c
+from flext_tests.protocols import p
+from flext_tests.utilities import u
 
 
 def _find_project_root() -> Path:

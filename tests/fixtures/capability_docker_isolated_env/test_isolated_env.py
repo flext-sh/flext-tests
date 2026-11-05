@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from flext_tests import c, tm
+from flext_tests import c, tm, u
 
 
 @pytest.mark.docker

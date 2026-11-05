@@ -43,11 +43,11 @@ class FlextTestsFixtureTreesFixtures:
             ``True`` for a scenario directory, ``None`` to defer otherwise.
 
         """
-        tests = import_module("flext_tests")
-        scenario = tests.u.Tests.is_fixture_tree(
+        import_module("flext_tests")
+        scenario = u.Tests.is_fixture_tree(
             collection_path,
             config.rootpath,
-            config.getini(tests.c.Tests.FIXTURE_TREES_INI),
+            config.getini(c.Tests.FIXTURE_TREES_INI),
         )
         return True if scenario else None
 
@@ -63,12 +63,12 @@ class FlextTestsFixtureTreesFixtures:
             The materializer bound to this run's scenario root.
 
         """
-        tests = import_module("flext_tests")
-        root = tests.u.Tests.fixture_trees_root(
+        import_module("flext_tests")
+        root = u.Tests.fixture_trees_root(
             request.config.rootpath,
-            request.config.getini(tests.c.Tests.FIXTURE_TREES_INI),
+            request.config.getini(c.Tests.FIXTURE_TREES_INI),
         )
-        return partial(tests.u.Tests.materialize, root, destination=tmp_path)
+        return partial(u.Tests.materialize, root, destination=tmp_path)
 
 
 __all__: list[str] = ["FlextTestsFixtureTreesFixtures"]

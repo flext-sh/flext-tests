@@ -40,7 +40,7 @@ class TestsFlextTestsNamespace:
         # Synthetic concat: S105 lexical trigger on the arg names, not secrets.
         invalid_subject = "UPPER-not-validated-1"
         run_label = "run-id"
-        with pytest.raises(ValueError, match="token"):
+        with u.Tests.raises(ValueError, match="token"):
             m.Tests.TestNamespace(
                 token=invalid_subject,
                 run_token=run_label,
