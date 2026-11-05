@@ -268,8 +268,8 @@ class FlextTestsProtocolsMatchers(Protocol):
             ...
 
     @runtime_checkable
-    class ThatParams(PayloadParams, Protocol):
-        """Structural data contract projected from the owning model."""
+    class ThatShapeParams(PayloadParams, Protocol):
+        """Truth, type, comparison and length criteria of ``ThatParams``."""
 
         @property
         def msg(self) -> str | None:
@@ -350,6 +350,10 @@ class FlextTestsProtocolsMatchers(Protocol):
         def length_lte(self) -> int | None:
             """Length <=."""
             ...
+
+    @runtime_checkable
+    class ThatContentParams(ThatShapeParams, Protocol):
+        """Containment, string and key criteria of ``ThatParams``."""
 
         @property
         def has(self) -> FlextTestsProtocolsBase.Payload | None:
@@ -432,6 +436,10 @@ class FlextTestsProtocolsMatchers(Protocol):
         def lacks_keys(self) -> t.Tests.KeySpec | None:
             """No keys."""
             ...
+
+    @runtime_checkable
+    class ThatParams(ThatContentParams, Protocol):
+        """Structural data contract projected from the owning model."""
 
         @property
         def values(self) -> Sequence[FlextTestsProtocolsBase.Payload] | None:
