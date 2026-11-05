@@ -8,10 +8,9 @@ from __future__ import annotations
 
 import os
 
-import pytest
 from flext_infra import config
 
-from tests import c, tm, u
+from tests import c, t, tm, u
 
 
 class TestsFlextTestsSlowTimeoutPolicy:
@@ -21,7 +20,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
 
     @staticmethod
     def _make_ini(
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
         *,
         slow_timeout: str | None,
     ) -> None:
@@ -33,11 +32,11 @@ class TestsFlextTestsSlowTimeoutPolicy:
 
     @staticmethod
     def _run_pytest(
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
         *,
         include_timeout_plugin: bool = True,
         unbounded: bool = False,
-    ) -> pytest.RunResult:
+    ) -> t.Tests.RunResult:
         """Run only the two owner plugins in a subprocess-isolated session.
 
         Returns:
@@ -65,10 +64,10 @@ class TestsFlextTestsSlowTimeoutPolicy:
             else:
                 os.environ[variable] = previous
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_configured_budget_applies_only_to_explicit_slow_items(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """Only slow items receive a timer; regular items have no item budget."""
         self._make_ini(pytester, slow_timeout=str(self.slow_timeout_seconds))
@@ -92,10 +91,10 @@ class TestsFlextTestsSlowTimeoutPolicy:
 
         self._run_pytest(pytester).assert_outcomes(passed=2)
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_unbounded_run_disables_regular_and_slow_item_timers(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """The full-run override disables timers without changing owned budgets."""
         self._make_ini(pytester, slow_timeout=str(self.slow_timeout_seconds))
@@ -115,10 +114,10 @@ class TestsFlextTestsSlowTimeoutPolicy:
 
         self._run_pytest(pytester, unbounded=True).assert_outcomes(passed=2)
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_absent_slow_budget_requires_no_timeout_plugin(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """An unconfigured project needs no timer for slow or regular items."""
         self._make_ini(pytester, slow_timeout=None)
@@ -141,14 +140,14 @@ class TestsFlextTestsSlowTimeoutPolicy:
             passed=2
         )
 
-    @pytest.mark.slow
-    @pytest.mark.parametrize(
+    @c.Tests.MARK.slow
+    @c.Tests.MARK.parametrize(
         "invalid_timeout", [c.ParserBooleanToken.ZERO, "nan", "not-a-number"]
     )
-    @pytest.mark.parametrize("unbounded", [False, True])
+    @c.Tests.MARK.parametrize("unbounded", [False, True])
     def test_invalid_slow_budget_fails_closed(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
         invalid_timeout: str,
         *,
         unbounded: bool,
@@ -159,16 +158,16 @@ class TestsFlextTestsSlowTimeoutPolicy:
 
         result = self._run_pytest(pytester, unbounded=unbounded)
 
-        tm.that(result.ret, ne=pytest.ExitCode.OK)
+        tm.that(result.ret, ne=c.Tests.ExitCode.OK)
         result.stderr.fnmatch_lines([
             "*FLEXT slow timeout policy:*must be a positive finite number*",
         ])
 
-    @pytest.mark.slow
-    @pytest.mark.parametrize("unbounded", [False, True])
+    @c.Tests.MARK.slow
+    @c.Tests.MARK.parametrize("unbounded", [False, True])
     def test_explicit_slow_timeout_marker_fails_closed(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
         *,
         unbounded: bool,
     ) -> None:
@@ -186,15 +185,15 @@ class TestsFlextTestsSlowTimeoutPolicy:
 
         result = self._run_pytest(pytester, unbounded=unbounded)
 
-        tm.that(result.ret, ne=pytest.ExitCode.OK)
+        tm.that(result.ret, ne=c.Tests.ExitCode.OK)
         result.stderr.fnmatch_lines([
             "*FLEXT slow timeout policy:*explicit pytest.mark.timeout is forbidden*",
         ])
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_configured_policy_requires_pytest_timeout(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """Configured slow budgets fail if the timer owner is not loaded."""
         self._make_ini(pytester, slow_timeout=str(self.slow_timeout_seconds))
@@ -202,7 +201,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
 
         result = self._run_pytest(pytester, include_timeout_plugin=False)
 
-        tm.that(result.ret, ne=pytest.ExitCode.OK)
+        tm.that(result.ret, ne=c.Tests.ExitCode.OK)
         result.stderr.fnmatch_lines([
             "*FLEXT slow timeout policy requires the pytest-timeout plugin*",
         ])

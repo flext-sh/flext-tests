@@ -11,9 +11,8 @@ from __future__ import annotations
 from collections.abc import Sized
 from typing import Never
 
+from flext_tests import c, p
 from flext_tests._utilities import FlextTestsUtilitiesPayload
-from flext_tests.constants import c
-from flext_tests.protocols import p
 
 
 class FlextTestsUtilitiesMatchersAssertions:

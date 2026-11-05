@@ -8,8 +8,6 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 
-import pytest
-
 from tests import c, m, p, r, t, tm, u
 
 
@@ -17,7 +15,7 @@ class TestsFlextTestsMatchersDataDriven:
     """Matcher data driven tests."""
 
     @staticmethod
-    @pytest.mark.parametrize("value", ["first operand", "different operand"])
+    @c.Tests.MARK.parametrize("value", ["first operand", "different operand"])
     def test_matcher_parameters_resolve_before_public_use(value: str) -> None:
         """Resolve scalar and composed rules on the first public matcher call."""
         mismatched = value.upper()

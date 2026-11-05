@@ -11,8 +11,6 @@ from copy import deepcopy
 from operator import eq
 from pathlib import Path
 
-import pytest
-
 from tests import c, m, p, r, t, tm, u
 
 
@@ -20,8 +18,8 @@ class TestsFlextTestsMatchersNativeTruth:
     """Native truth and assertion-message behavior tests."""
 
     @staticmethod
-    @pytest.mark.parametrize("criterion", ["eq", "ne"])
-    @pytest.mark.parametrize("verdict", [True, False])
+    @c.Tests.MARK.parametrize("criterion", ["eq", "ne"])
+    @c.Tests.MARK.parametrize("verdict", [True, False])
     def test_value_criteria_use_the_requested_native_operator(
         criterion: str, *, verdict: bool
     ) -> None:
@@ -86,7 +84,7 @@ class TestsFlextTestsMatchersNativeTruth:
         tm.that(events, eq=["eq", "ne"])
 
     @staticmethod
-    @pytest.mark.parametrize("criterion", ["eq", "ne", "where"])
+    @c.Tests.MARK.parametrize("criterion", ["eq", "ne", "where"])
     def test_value_criteria_preserve_the_first_native_exception(
         criterion: str,
     ) -> None:
@@ -134,8 +132,8 @@ class TestsFlextTestsMatchersNativeTruth:
         tm.that(value=False, is_=bool)
 
     @staticmethod
-    @pytest.mark.parametrize("truth", [True, False])
-    @pytest.mark.parametrize("repr_raises", [True, False])
+    @c.Tests.MARK.parametrize("truth", [True, False])
+    @c.Tests.MARK.parametrize("repr_raises", [True, False])
     def test_native_truth_never_formats_the_subject(
         *, truth: bool, repr_raises: bool
     ) -> None:
@@ -164,7 +162,7 @@ class TestsFlextTestsMatchersNativeTruth:
         tm.that(events, eq=["bool", "bool"])
 
     @staticmethod
-    @pytest.mark.parametrize("truth", [True, False])
+    @c.Tests.MARK.parametrize("truth", [True, False])
     def test_native_truth_preserves_the_original_bool_exception(*, truth: bool) -> None:
         """A failing bool is the first exception, even when representation raises."""
         events: list[str] = []
@@ -405,7 +403,7 @@ class TestsFlextTestsMatchersValidation(TestsFlextTestsMatchersNativeTruth):
 
     @staticmethod
     def test_public_matcher_boundary_accepts_approximation() -> None:
-        expected = pytest.approx(1.5)
+        expected = u.Tests.approx(1.5)
         tm.that(1.5, eq=expected)
         tm.that(tm.ok(r[float].ok(1.5)), eq=expected)
 

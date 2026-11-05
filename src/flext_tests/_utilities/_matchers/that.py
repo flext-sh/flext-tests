@@ -11,16 +11,13 @@ from typing import ClassVar, TypeAliasType
 
 from flext_cli import u
 
+from flext_tests import c, m, p, t
 from flext_tests._utilities import FlextTestsUtilitiesPayload
 from flext_tests._utilities._matchers import (
     FlextTestsUtilitiesMatchersAssertions,
     FlextTestsUtilitiesMatchersContainment,
     FlextTestsUtilitiesMatchersTypeguards,
 )
-from flext_tests.constants import c
-from flext_tests.models import m
-from flext_tests.protocols import p
-from flext_tests.typings import t
 
 
 class FlextTestsUtilitiesMatchersThat:

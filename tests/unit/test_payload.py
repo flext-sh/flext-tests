@@ -10,8 +10,6 @@ import re
 from datetime import UTC, datetime
 from pathlib import Path
 
-import pytest
-
 from flext_tests import FlextTestsFiles
 from tests import c, m, p, t, tm, u
 
@@ -98,7 +96,7 @@ class FlextTestsPayloadIdentityParts:
             tm.that(payload, is_=tuple)
 
     @staticmethod
-    @pytest.mark.parametrize(
+    @c.Tests.MARK.parametrize(
         "kind",
         ["atom", c.Action.LIST, "tuple", "set", "frozenset", "mapping"],
     )
@@ -195,7 +193,7 @@ class TestsFlextTestsPayload(FlextTestsPayloadIdentityParts):
     """Payload model contracts independent of JSON projection."""
 
     @staticmethod
-    @pytest.mark.parametrize("native", [[1, 2], {1, 2}])
+    @c.Tests.MARK.parametrize("native", [[1, 2], {1, 2}])
     def test_native_collection_roundtrip(
         native: list[int] | set[int],
         tmp_path: Path,

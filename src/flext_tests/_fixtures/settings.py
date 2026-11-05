@@ -15,14 +15,13 @@ from typing import TYPE_CHECKING
 import pytest
 from flext_core import FlextContainer, FlextContext, FlextSettings
 
-import flext_tests
-from flext_tests import t
+from flext_tests import FlextTestsSettings, c, m, t, u
 
 if TYPE_CHECKING:
     from collections.abc import Callable
     from pathlib import Path
 
-    from flext_tests import FlextTestsSettings, p
+    from flext_tests import p
 
 
 class FlextTestsSettingsFixtures:
@@ -44,7 +43,7 @@ class FlextTestsSettingsFixtures:
 
         """
         directory = tmp_path_factory.mktemp(run_namespace.token)
-        runtime = flext_u.Tests.SessionRuntime(directory)
+        runtime = u.Tests.SessionRuntime(directory)
         try:
             yield runtime
         finally:
@@ -54,7 +53,7 @@ class FlextTestsSettingsFixtures:
     def _reset_runtime_state() -> None:
         """Reset root/test settings singletons and the DI container."""
         FlextSettings.reset_for_testing()
-        flext_tests.FlextTestsSettings.reset_for_testing()
+        FlextTestsSettings.reset_for_testing()
         FlextContainer.reset_for_testing()
 
     @staticmethod
@@ -102,7 +101,7 @@ class FlextTestsSettingsFixtures:
             FlextTestsSettings: The published singleton carrying the test defaults.
 
         """
-        settings_type = flext_tests.FlextTestsSettings
+        settings_type = FlextTestsSettings
         FlextSettings.reset_for_testing()
         settings_type.reset_for_testing()
         return settings_type.update_global(debug=True, trace=False)

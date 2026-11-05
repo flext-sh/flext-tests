@@ -11,9 +11,7 @@ import re
 from pathlib import Path
 from typing import Final
 
-import pytest
-
-from tests import c, m, p, tm, u
+from tests import c, m, p, t, tm, u
 
 NAMESPACE_SEED_COUNT: Final[int] = 100
 NAMESPACE_TOKENS_PER_SEED: Final[int] = 100
@@ -85,7 +83,7 @@ class TestsFlextTestsNamespace:
     @staticmethod
     def test_checkout_change_changes_the_token(
         tmp_path: Path,
-        tmp_path_factory: pytest.TempPathFactory,
+        tmp_path_factory: t.Tests.TempPathFactory,
     ) -> None:
         """Two checkouts derive different tokens and checkout digests."""
         other = tmp_path_factory.mktemp("other-checkout")
@@ -111,7 +109,7 @@ class TestsFlextTestsNamespace:
         tm.that(run_namespace.token, eq=run_namespace_again.token)
 
 
-@pytest.fixture
+@u.Tests.fixture
 def run_namespace_again(run_namespace: p.Tests.TestNamespace) -> p.Tests.TestNamespace:
     """Second injection point proving session scope.
 

@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from flext_cli import FlextCliProtocols
 
-from flext_tests.constants import c
+from flext_tests import c
 
 if TYPE_CHECKING:
     from collections.abc import Mapping

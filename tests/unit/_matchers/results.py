@@ -9,8 +9,6 @@ from __future__ import annotations
 from collections.abc import Mapping
 from re import escape
 
-import pytest
-
 from tests import c, m, p, r, t, tm, u
 
 
@@ -52,7 +50,7 @@ class TestsFlextTestsMatchersBooleanResults:
             tm.fail(result=False, **options)
 
     @staticmethod
-    @pytest.mark.parametrize("payload", [False, 0, "", [], {}])
+    @c.Tests.MARK.parametrize("payload", [False, 0, "", [], {}])
     def test_successful_falsey_payload_is_not_a_failure(payload: t.JsonValue) -> None:
         """Result state, never payload truthiness, determines success."""
         result = r[t.JsonValue].ok(payload)

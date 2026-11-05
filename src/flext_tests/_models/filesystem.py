@@ -13,10 +13,8 @@ from typing import Annotated
 
 from flext_cli import m
 
+from flext_tests import c, p, t
 from flext_tests._models import FlextTestsModelsFlextBase
-from flext_tests.constants import c
-from flext_tests.protocols import p
-from flext_tests.typings import t
 
 
 class FlextTestsModelsFilesystem:

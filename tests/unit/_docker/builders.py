@@ -8,8 +8,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from flext_tests import FlextTestsDocker
 from tests import c, m, tm, u
 
@@ -29,7 +27,7 @@ class TestsFlextTestsDockerBuilders:
         tm.that(resolved.model_dump(), eq=target.model_dump())
 
     @staticmethod
-    @pytest.mark.parametrize(
+    @c.Tests.MARK.parametrize(
         ("verb", "document", "target", "succeeds"),
         [
             ("ensure", "containers: {}\n", None, True),
@@ -65,7 +63,7 @@ class TestsFlextTestsDockerBuilders:
         tm.that(output.outcome.raw_return_code, eq=expected, msg=diagnostic)
 
     @staticmethod
-    @pytest.mark.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))
+    @c.Tests.MARK.parametrize("container_name", sorted(c.Tests.SHARED_CONTAINERS))
     def test_shared_builder_resolves_every_declared_container(
         container_name: str,
         tmp_path: Path,

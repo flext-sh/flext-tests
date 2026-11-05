@@ -14,7 +14,7 @@ from typing import Final, NoReturn
 
 import pytest
 
-from tests import tm, u
+from tests import c, t, tm, u
 
 pytest_plugins = ["pytester"]
 
@@ -25,9 +25,9 @@ class TestsFlextTestsNamespaceXdist:
     """xdist-parallel namespace acceptance (T3)."""
 
     @staticmethod
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_pytest_subprocess_reaps_on_base_exception(
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """An external cancellation reaps its exact child before propagating."""
 
@@ -63,9 +63,9 @@ class TestsFlextTestsNamespaceXdist:
         with u.Tests.raises(ChildProcessError):
             os.waitpid(child_pid, os.WNOHANG)
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     @staticmethod
-    def test_namespaces_unique_across_two_workers(pytester: pytest.Pytester) -> None:
+    def test_namespaces_unique_across_two_workers(pytester: t.Tests.Pytester) -> None:
         """Pytest -n 2 derives distinct tokens per worker (recorded to files)."""
         pytester.makeconftest(
             # NOTE: flext_tests.conftest_plugin auto-loads via the pytest11 entry

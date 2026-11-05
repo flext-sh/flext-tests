@@ -21,9 +21,7 @@ from typing import BinaryIO
 import pytest
 from flext_cli import u as flext_cli_u
 
-from flext_tests.constants import c
-from flext_tests.models import m
-from flext_tests.protocols import p
+from flext_tests import c, m, p
 
 if sys.platform == "win32":
     import msvcrt

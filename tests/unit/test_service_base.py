@@ -20,7 +20,7 @@ from flext_core import FlextSettings
 from flext_infra import FlextInfraConstants, config, u as infra_u
 
 from flext_tests import FlextTestsServiceBase
-from tests import c, m, p, s, tm, u
+from tests import c, m, p, s, t, tm, u
 
 
 class TestsFlextTestsServiceBase:
@@ -84,7 +84,7 @@ class TestsFlextTestsServiceBase:
     def test_isolated_test_runtime_without_build_still_needs_fetch_global() -> None:
         """Omitting ``build`` for a port-bearing service still fails validated."""
         with (
-            pytest.raises(m.ValidationError, match="port"),
+            u.Tests.raises(m.ValidationError, match="port"),
             u.Tests.EchoService.isolated_test_runtime(),
         ):
             pytest.fail("unreachable: fetch_global() must raise ValidationError")
@@ -126,12 +126,12 @@ class TestsFlextTestsServiceBase:
     @classmethod
     def _run_consumer(
         cls,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
         source: str,
         *,
         exports: str = "",
         conftest: str | None = None,
-    ) -> pytest.RunResult:
+    ) -> t.Tests.RunResult:
         """Exercise the public plugin in an isolated, real consumer process.
 
         Returns:
@@ -152,10 +152,10 @@ class TestsFlextTestsServiceBase:
             str(package_dir / "test_probe.py"),
         )
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_runtime_does_not_interpret_an_unrelated_service_export(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """A consumer's unrelated ``s`` is not treated as a dependency provider."""
         result = self._run_consumer(
@@ -169,10 +169,10 @@ class TestsFlextTestsServiceBase:
         )
         result.assert_outcomes(passed=1)
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_runtime_does_not_require_a_package_service_export(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """The public lifecycle fixture does not infer a consumer service."""
         result = self._run_consumer(
@@ -184,10 +184,10 @@ class TestsFlextTestsServiceBase:
         )
         result.assert_outcomes(passed=1)
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_runtime_uses_an_explicit_service_without_unrelated_facade_exports(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """Only the declared service participates in its explicit lifecycle."""
         result = self._run_consumer(
@@ -203,10 +203,10 @@ class TestsFlextTestsServiceBase:
         )
         result.assert_outcomes(passed=1)
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_runtime_preserves_explicit_dependencies_and_resets_after_failure(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """Real hooks clean state before and after both passing and failing items."""
         state_key = "runtime-isolation-probe"
