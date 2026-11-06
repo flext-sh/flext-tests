@@ -11,7 +11,7 @@ import re
 
 import pytest
 
-from tests import m, tm
+from tests import m, tm, u
 
 
 class TestsFlextTestsFrozen(m.BaseModel):
@@ -78,7 +78,7 @@ class TestsFlextTestsMatchersRejectsAssignment:
     @staticmethod
     def test_rejects_assignment_reports_a_mutable_target() -> None:
         """A target that accepts the assignment fails the test (pytest outcome)."""
-        with pytest.raises(pytest.fail.Exception):
+        with u.Tests.raises(pytest.fail.Exception):
             tm.rejects_assignment(
                 TestsFlextTestsMutable(host="h"),
                 "host",
@@ -91,7 +91,7 @@ class TestsFlextTestsMatchersRejectsAssignment:
         """An unexpected descriptor error escapes without normalization."""
         rejection = ValueError("assignment rejected")
 
-        with pytest.raises(ValueError, match=re.escape(str(rejection))) as caught:
+        with u.Tests.raises(ValueError, match=re.escape(str(rejection))) as caught:
             tm.rejects_assignment(
                 TestsFlextTestsRejectedAssignment(rejection),
                 "host",
@@ -106,7 +106,7 @@ class TestsFlextTestsMatchersRejectsAssignment:
         """A mismatched rejection message keeps the original as its context."""
         rejection = ValueError("assignment rejected")
 
-        with pytest.raises(AssertionError) as caught:
+        with u.Tests.raises(AssertionError) as caught:
             tm.rejects_assignment(
                 TestsFlextTestsRejectedAssignment(rejection),
                 "host",

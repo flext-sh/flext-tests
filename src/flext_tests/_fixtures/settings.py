@@ -15,14 +15,13 @@ from typing import TYPE_CHECKING
 import pytest
 from flext_core import FlextContainer, FlextContext, FlextSettings
 
-import flext_tests
-from flext_tests import t
+from flext_tests import FlextTestsSettings, c, m, t, u
 
 if TYPE_CHECKING:
     from collections.abc import Callable
     from pathlib import Path
 
-    from flext_tests import FlextTestsSettings, p
+    from flext_tests import p
 
 
 class FlextTestsSettingsFixtures:
@@ -44,7 +43,7 @@ class FlextTestsSettingsFixtures:
 
         """
         directory = tmp_path_factory.mktemp(run_namespace.token)
-        runtime = flext_tests.u.Tests.SessionRuntime(directory)
+        runtime = u.Tests.SessionRuntime(directory)
         try:
             yield runtime
         finally:
@@ -54,7 +53,7 @@ class FlextTestsSettingsFixtures:
     def _reset_runtime_state() -> None:
         """Reset root/test settings singletons and the DI container."""
         FlextSettings.reset_for_testing()
-        flext_tests.FlextTestsSettings.reset_for_testing()
+        FlextTestsSettings.reset_for_testing()
         FlextContainer.reset_for_testing()
 
     @staticmethod
@@ -102,7 +101,7 @@ class FlextTestsSettingsFixtures:
             FlextTestsSettings: The published singleton carrying the test defaults.
 
         """
-        settings_type = flext_tests.FlextTestsSettings
+        settings_type = FlextTestsSettings
         FlextSettings.reset_for_testing()
         settings_type.reset_for_testing()
         return settings_type.update_global(debug=True, trace=False)
@@ -183,20 +182,19 @@ class FlextTestsSettingsFixtures:
             None: While the DEBUG selection is active.
 
         """
-        tests = flext_tests
-        original_settings = tests.u.logging_settings()
-        original_options = tests.u.logging_options()
+        original_settings = u.logging_settings()
+        original_options = u.logging_options()
         try:
-            selected = tests.u.resolve_logging_settings(
-                log_level=tests.c.LogLevel.DEBUG, trace=logging_trace
+            selected = u.resolve_logging_settings(
+                log_level=c.LogLevel.DEBUG, trace=logging_trace
             )
-            tests.u.configure_structlog(
-                settings=tests.m.StructlogOptions(async_logging=False),
+            u.configure_structlog(
+                settings=m.StructlogOptions(async_logging=False),
                 runtime_settings=selected,
             )
             yield
         finally:
-            tests.u.configure_structlog(
+            u.configure_structlog(
                 settings=original_options, runtime_settings=original_settings
             )
 

@@ -9,7 +9,6 @@ from __future__ import annotations
 from collections.abc import Mapping
 from pathlib import Path
 
-import pytest
 from flext_infra import config as infra_config
 
 from flext_tests import FlextTestsDocker
@@ -20,13 +19,13 @@ class TestsFlextTestsDockerCi:
     """The Make CI token disables every Docker effect with a typed failure."""
 
     @staticmethod
-    @pytest.mark.parametrize(
+    @c.Tests.MARK.parametrize(
         ("value_template", "disabled"),
         [
-            pytest.param(None, False, id="unset"),
-            pytest.param("{token}", True, id="make-token"),
-            pytest.param(" {token} ", True, id="make-token-padded"),
-            pytest.param("{token}-other", False, id="other-value"),
+            u.Tests.param(None, False, id="unset"),
+            u.Tests.param("{token}", True, id="make-token"),
+            u.Tests.param(" {token} ", True, id="make-token-padded"),
+            u.Tests.param("{token}-other", False, id="other-value"),
         ],
     )
     def test_ci_token_gates_the_lifecycle(

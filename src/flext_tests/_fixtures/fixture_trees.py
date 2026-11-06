@@ -11,11 +11,12 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from functools import partial
-from importlib import import_module
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
+
+from flext_tests import c, u
 
 if TYPE_CHECKING:
     from flext_tests import p
@@ -28,7 +29,7 @@ class FlextTestsFixtureTreesFixtures:
     def pytest_addoption(parser: pytest.Parser) -> None:
         """Declare the scenario-root key flext-infra projects into every project."""
         parser.addini(
-            import_module("flext_tests").c.Tests.FIXTURE_TREES_INI,
+            c.Tests.FIXTURE_TREES_INI,
             default="",
             help="Scenario fixture-tree root (projected from flext-infra).",
         )
@@ -43,11 +44,10 @@ class FlextTestsFixtureTreesFixtures:
             ``True`` for a scenario directory, ``None`` to defer otherwise.
 
         """
-        tests = import_module("flext_tests")
-        scenario = tests.u.Tests.is_fixture_tree(
+        scenario = u.Tests.is_fixture_tree(
             collection_path,
             config.rootpath,
-            config.getini(tests.c.Tests.FIXTURE_TREES_INI),
+            config.getini(c.Tests.FIXTURE_TREES_INI),
         )
         return True if scenario else None
 
@@ -63,12 +63,11 @@ class FlextTestsFixtureTreesFixtures:
             The materializer bound to this run's scenario root.
 
         """
-        tests = import_module("flext_tests")
-        root = tests.u.Tests.fixture_trees_root(
+        root = u.Tests.fixture_trees_root(
             request.config.rootpath,
-            request.config.getini(tests.c.Tests.FIXTURE_TREES_INI),
+            request.config.getini(c.Tests.FIXTURE_TREES_INI),
         )
-        return partial(tests.u.Tests.materialize, root, destination=tmp_path)
+        return partial(u.Tests.materialize, root, destination=tmp_path)
 
 
 __all__: list[str] = ["FlextTestsFixtureTreesFixtures"]

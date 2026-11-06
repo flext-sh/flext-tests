@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import pytest
+from flext_tests._utilities import FlextTestsUtilitiesPytest
 
 if TYPE_CHECKING:
     from flext_tests import p
@@ -39,14 +39,14 @@ class FlextTestsUtilitiesMatchersImmutability:
             expected: Exception type(s) the rejection must raise.
             match: Optional regex the rejection message must contain.
 
-        The rejection is asserted by ``pytest.raises``: an accepted
+        The rejection is asserted by ``u.Tests.raises``: an accepted
         assignment fails the test, a reason that does not match
         ``match`` raises ``AssertionError`` whose ``__context__`` is the
         original rejection, and exceptions outside ``expected``
         propagate unchanged.
 
         """
-        with pytest.raises(expected, match=match):
+        with FlextTestsUtilitiesPytest.raises(expected, match=match):
             setattr(target, field, value)
 
 

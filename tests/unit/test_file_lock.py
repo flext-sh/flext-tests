@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from tests import tm, u
+from tests import c, tm, u
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -35,12 +35,12 @@ class TestsFlextTestsFileLock:
             tm.ok(lock_path.is_file())
 
     @staticmethod
-    @pytest.mark.parametrize(
+    @c.Tests.MARK.parametrize(
         ("held_shared", "wanted_shared"),
         [
-            pytest.param(True, False, id="shared-blocks-exclusive"),
-            pytest.param(False, True, id="exclusive-blocks-shared"),
-            pytest.param(False, False, id="exclusive-blocks-exclusive"),
+            u.Tests.param(True, False, id="shared-blocks-exclusive"),
+            u.Tests.param(False, True, id="exclusive-blocks-shared"),
+            u.Tests.param(False, False, id="exclusive-blocks-exclusive"),
         ],
     )
     def test_conflicting_holder_times_out_naming_path_and_mode(
@@ -56,7 +56,7 @@ class TestsFlextTestsFileLock:
         with (
             ExitStack() as stack,
             u.Tests.FileLock(lock_path, shared=held_shared),
-            pytest.raises(TimeoutError) as timed_out,
+            u.Tests.raises(TimeoutError) as timed_out,
         ):
             stack.enter_context(wanted)
         tm.that(time.monotonic() - started, gte=0.2)
@@ -85,7 +85,7 @@ class TestsFlextTestsFileLock:
         runtime = u.Tests.SessionRuntime(tmp_path)
         errors: list[FileNotFoundError] = []
         for _ in range(2):
-            with pytest.raises(FileNotFoundError) as error, runtime.lease(unavailable):
+            with u.Tests.raises(FileNotFoundError) as error, runtime.lease(unavailable):
                 pytest.fail("A missing seed must not produce a runtime")
             errors.append(error.value)
         tm.that(len(attempts), eq=1)
@@ -116,7 +116,7 @@ class TestsFlextTestsFileLock:
         errors: list[ValueError] = []
         for _ in range(2):
             with (
-                pytest.raises(
+                u.Tests.raises(
                     ValueError, match="original physical allocation"
                 ) as error,
                 runtime.lease(redirected),
@@ -144,7 +144,7 @@ class TestsFlextTestsFileLock:
         with (
             ExitStack() as stack,
             u.Tests.FileLock(lock_path),
-            pytest.raises(TimeoutError),
+            u.Tests.raises(TimeoutError),
         ):
             stack.enter_context(u.Tests.FileLock(lock_path, timeout_seconds=0.1))
         with u.Tests.FileLock(lock_path, timeout_seconds=0.2):

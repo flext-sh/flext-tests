@@ -8,9 +8,7 @@ from __future__ import annotations
 
 import os
 
-import pytest
-
-from tests import c, m, p, r, tm
+from tests import c, m, p, r, tm, u
 
 
 class TestsFlextTestsMatchersScopeErrors:
@@ -19,7 +17,7 @@ class TestsFlextTestsMatchersScopeErrors:
     @staticmethod
     def test_reject_preserves_an_argumentless_assertion() -> None:
         """An unconditional matcher failure keeps native assertion arguments."""
-        with pytest.raises(AssertionError) as failure:
+        with u.Tests.raises(AssertionError) as failure:
             tm.reject()
         tm.that(failure.value.args, eq=())
 
@@ -27,7 +25,7 @@ class TestsFlextTestsMatchersScopeErrors:
     def test_reject_preserves_the_message_object() -> None:
         """Messages stay native objects rather than eagerly formatted strings."""
         message = ["native", "message"]
-        with pytest.raises(AssertionError) as failure:
+        with u.Tests.raises(AssertionError) as failure:
             tm.reject(message)
         tm.that(len(failure.value.args), eq=1)
         tm.that(failure.value.args[0] is message, truth=True)
@@ -48,7 +46,7 @@ class TestsFlextTestsMatchersScopeErrors:
 
         tm.that(guarded("valid"), eq="valid")
         tm.that(events, eq=[])
-        with pytest.raises(AssertionError) as failure:
+        with u.Tests.raises(AssertionError) as failure:
             guarded(None)
         tm.that(events, eq=["message"])
         tm.that(failure.value.args[0] is events, truth=True)
@@ -95,7 +93,7 @@ class TestsFlextTestsMatchersScopeErrors:
     def test_ok_invalid_parameter_type() -> None:
         """tm.ok() rejects an invalid criterion, naming the offending field."""
         result = r[int].ok(42)
-        with pytest.raises(m.ValidationError, match=r"for ThatParams\nlen") as error:
+        with u.Tests.raises(m.ValidationError, match=r"for ThatParams\nlen") as error:
             tm.ok(result, len="invalid")
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"len"})
 
@@ -103,20 +101,20 @@ class TestsFlextTestsMatchersScopeErrors:
     def test_fail_invalid_parameter_type() -> None:
         """tm.fail() rejects an invalid criterion, naming the offending field."""
         result: p.Result[str] = r[str].fail("error")
-        with pytest.raises(m.ValidationError, match=r"for FailParams\ncode") as error:
+        with u.Tests.raises(m.ValidationError, match=r"for FailParams\ncode") as error:
             tm.fail(result, code=123)
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"code"})
 
     @staticmethod
     def test_that_invalid_parameter_type() -> None:
         """tm.that() rejects an invalid criterion, naming the offending field."""
-        with pytest.raises(m.ValidationError, match=r"for ThatParams\nlen") as error:
+        with u.Tests.raises(m.ValidationError, match=r"for ThatParams\nlen") as error:
             tm.that([1, 2, 3], len="invalid")
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"len"})
 
     @staticmethod
     def test_scope_invalid_parameter_type() -> None:
         """Invalid scope input preserves Pydantic's structured validation error."""
-        with pytest.raises(c.ValidationError) as error, tm.scope(env="invalid"):
+        with u.Tests.raises(c.ValidationError) as error, tm.scope(env="invalid"):
             pass
         tm.that({item["loc"][0] for item in error.value.errors()}, eq={"env"})

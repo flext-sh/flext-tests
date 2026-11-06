@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from flext_cli import FlextCliProtocols, t
+from flext_cli import FlextCliProtocols
 
 from flext_tests._protocols import FlextTestsProtocolsPayload
 from flext_tests._typings import FlextTestsTypesMatchers
@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 
     from flext_cli import p
 
+    from flext_tests import t
     from flext_tests._protocols import FlextTestsProtocolsBase
 
 
@@ -169,22 +170,22 @@ class FlextTestsProtocolsMatchers(Protocol):
             ...
 
         @property
-        def gt(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+        def gt(self) -> t.Tests.ComparableScalar | None:
             """Exclusive lower bound."""
             ...
 
         @property
-        def gte(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+        def gte(self) -> t.Tests.ComparableScalar | None:
             """Inclusive lower bound."""
             ...
 
         @property
-        def lt(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+        def lt(self) -> t.Tests.ComparableScalar | None:
             """Exclusive upper bound."""
             ...
 
         @property
-        def lte(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+        def lte(self) -> t.Tests.ComparableScalar | None:
             """Inclusive upper bound."""
             ...
 
@@ -204,7 +205,7 @@ class FlextTestsProtocolsMatchers(Protocol):
             ...
 
         @property
-        def len(self) -> FlextTestsTypesMatchers.LengthSpec | None:
+        def len(self) -> t.Tests.LengthSpec | None:
             """Required length."""
             ...
 
@@ -228,12 +229,12 @@ class FlextTestsProtocolsMatchers(Protocol):
             ...
 
         @property
-        def has(self) -> FlextTestsTypesMatchers.ExclusionSpec | None:
+        def has(self) -> t.Tests.ExclusionSpec | None:
             """Error contains substrings."""
             ...
 
         @property
-        def lacks(self) -> FlextTestsTypesMatchers.ExclusionSpec | None:
+        def lacks(self) -> t.Tests.ExclusionSpec | None:
             """Error does not contain substrings."""
             ...
 
@@ -258,7 +259,7 @@ class FlextTestsProtocolsMatchers(Protocol):
             ...
 
         @property
-        def code_has(self) -> FlextTestsTypesMatchers.ErrorCodeSpec | None:
+        def code_has(self) -> t.Tests.ErrorCodeSpec | None:
             """Error code contains substrings."""
             ...
 
@@ -268,7 +269,7 @@ class FlextTestsProtocolsMatchers(Protocol):
             ...
 
     @runtime_checkable
-    class ThatParams(PayloadParams, Protocol):
+    class ThatShapeParams(PayloadParams, Protocol):
         """Structural data contract projected from the owning model."""
 
         @property
@@ -307,27 +308,27 @@ class FlextTestsProtocolsMatchers(Protocol):
             ...
 
         @property
-        def gt(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+        def gt(self) -> t.Tests.ComparableScalar | None:
             """Greater than."""
             ...
 
         @property
-        def gte(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+        def gte(self) -> t.Tests.ComparableScalar | None:
             """Greater/equal."""
             ...
 
         @property
-        def lt(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+        def lt(self) -> t.Tests.ComparableScalar | None:
             """Less than."""
             ...
 
         @property
-        def lte(self) -> FlextTestsTypesMatchers.ComparableScalar | None:
+        def lte(self) -> t.Tests.ComparableScalar | None:
             """Less/equal."""
             ...
 
         @property
-        def len(self) -> FlextTestsTypesMatchers.LengthSpec | None:
+        def len(self) -> t.Tests.LengthSpec | None:
             """Length."""
             ...
 
@@ -350,6 +351,10 @@ class FlextTestsProtocolsMatchers(Protocol):
         def length_lte(self) -> int | None:
             """Length <=."""
             ...
+
+    @runtime_checkable
+    class ThatContentParams(ThatShapeParams, Protocol):
+        """Structural data contract projected from the owning model."""
 
         @property
         def has(self) -> FlextTestsProtocolsBase.Payload | None:
@@ -424,14 +429,18 @@ class FlextTestsProtocolsMatchers(Protocol):
             ...
 
         @property
-        def keys(self) -> FlextTestsTypesMatchers.KeySpec | None:
+        def keys(self) -> t.Tests.KeySpec | None:
             """Keys."""
             ...
 
         @property
-        def lacks_keys(self) -> FlextTestsTypesMatchers.KeySpec | None:
+        def lacks_keys(self) -> t.Tests.KeySpec | None:
             """No keys."""
             ...
+
+    @runtime_checkable
+    class ThatParams(ThatContentParams, Protocol):
+        """Structural data contract projected from the owning model."""
 
         @property
         def values(self) -> Sequence[FlextTestsProtocolsBase.Payload] | None:
@@ -444,12 +453,12 @@ class FlextTestsProtocolsMatchers(Protocol):
             ...
 
         @property
-        def attrs(self) -> FlextTestsTypesMatchers.AttributeSpec | None:
+        def attrs(self) -> t.Tests.AttributeSpec | None:
             """Attrs."""
             ...
 
         @property
-        def methods(self) -> FlextTestsTypesMatchers.AttributeSpec | None:
+        def methods(self) -> t.Tests.AttributeSpec | None:
             """Methods."""
             ...
 
@@ -540,12 +549,12 @@ class FlextTestsProtocolsMatchers(Protocol):
             ...
 
         @property
-        def cleanup(self) -> FlextTestsTypesMatchers.CleanupSpec | None:
+        def cleanup(self) -> t.Tests.CleanupSpec | None:
             """Cleanup functions."""
             ...
 
         @property
-        def env(self) -> FlextTestsTypesMatchers.EnvironmentSpec | None:
+        def env(self) -> t.Tests.EnvironmentSpec | None:
             """Temporary environment variables."""
             ...
 

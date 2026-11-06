@@ -16,15 +16,12 @@ from collections.abc import Generator, Sequence
 from contextlib import contextmanager
 from pathlib import Path
 from threading import get_ident
-from typing import TYPE_CHECKING, BinaryIO
+from typing import BinaryIO
 
-import flext_cli
 import pytest
+from flext_cli import u as flext_cli_u
 
-from flext_tests import c
-
-if TYPE_CHECKING:
-    from flext_tests import p
+from flext_tests import c, m, p
 
 if sys.platform == "win32":
     import msvcrt
@@ -64,7 +61,7 @@ class FlextTestsUtilitiesTestContext:
         stdout = pytester.path / "stdout"
         stderr = pytester.path / "stderr"
         started = time.monotonic()
-        outcome = flext_cli.u.Cli.run_to_file(
+        outcome = flext_cli_u.Cli.run_to_file(
             (
                 sys.executable,
                 "-mpytest",
@@ -74,7 +71,7 @@ class FlextTestsUtilitiesTestContext:
             ),
             stdout,
             cwd=pytester.path,
-            options=flext_cli.m.Cli.ProcessOptions(
+            options=m.Cli.ProcessOptions(
                 env={
                     "PYTHONPATH": os.pathsep.join(
                         filter(None, (str(pytester.path), os.environ.get("PYTHONPATH")))

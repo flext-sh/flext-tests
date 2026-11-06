@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
     from flext_cli import p
 
-    from flext_tests._typings import FlextTestsTypesBase
+    from flext_tests import t
 
 
 class FlextTestsProtocolsBase:
@@ -36,26 +36,22 @@ class FlextTestsProtocolsBase:
         """Structural data contract projected from the owning model."""
 
         @property
-        def kind(self) -> FlextTestsTypesBase.PayloadKind:
+        def kind(self) -> t.Tests.PayloadKind:
             """Native value arm."""
             ...
 
         @property
-        def atom(self) -> FlextTestsTypesBase.PayloadAtom | p.BaseModel | None:
+        def atom(self) -> t.Tests.PayloadAtom | p.BaseModel | None:
             """Native scalar or model instance; never a JSON dump."""
             ...
 
         @property
-        def items(
-            self,
-        ) -> FlextTestsTypesBase.PayloadItems[FlextTestsProtocolsBase.Payload]:
+        def items(self) -> t.Tests.PayloadItems[FlextTestsProtocolsBase.Payload]:
             """Ordered children; kind retains the source collection."""
             ...
 
         @property
-        def entries(
-            self,
-        ) -> FlextTestsTypesBase.PayloadEntries[FlextTestsProtocolsBase.Payload]:
+        def entries(self) -> t.Tests.PayloadEntries[FlextTestsProtocolsBase.Payload]:
             """String-keyed payload children."""
             ...
 

@@ -16,7 +16,7 @@ from docker.utils import kwargs_from_env
 from flext_cli import u
 from python_on_whales import DockerClient as ComposeDockerClient
 
-from flext_tests import c, p, r, t
+from flext_tests import c, m, p, r, t
 from flext_tests._utilities import FlextTestsUtilitiesDockerLifecycle
 
 
@@ -108,7 +108,7 @@ class FlextTestsUtilitiesDockerClient:
         except (DockerException, OSError) as exc:
             return r[p.Tests.ContainerInspect].fail_op("Inspect container", exc)
         return u.try_(
-            lambda: p.Tests.ContainerInspect.model_validate(container.attrs),
+            lambda: m.Tests.ContainerInspect.model_validate(container.attrs),
             catch=c.EXC_VALIDATION_VALUE,
             op_name=f"Parse docker inspect of {container_name}",
         )

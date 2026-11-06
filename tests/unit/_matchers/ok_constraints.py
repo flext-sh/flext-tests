@@ -8,9 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-import pytest
-
-from tests import c, r, t, tm
+from tests import c, r, t, tm, u
 from tests.unit._matchers.predicates import TestsFlextTestsMatchersPredicates
 
 
@@ -93,7 +91,7 @@ class TestsFlextTestsMatchersOkConstraintsBase:
         """Report a missing predicate path through the public matcher contract."""
         data: t.JsonMapping = {c.ContextScope.USER: {"email": "test@example.com"}}
         result = r[t.JsonMapping].ok(data)
-        with pytest.raises(AssertionError, match=r"Path not found: user.missing"):
+        with u.Tests.raises(AssertionError, match=r"Path not found: user.missing"):
             tm.ok(
                 result,
                 deep={"user.missing": TestsFlextTestsMatchersPredicates.is_string},
@@ -124,7 +122,7 @@ class TestsFlextTestsMatchersOkConstraints(
     def test_ok_with_where_parameter_fails() -> None:
         """Test tm.ok() with where parameter fails when predicate returns False."""
         result = r[int].ok(42)
-        with pytest.raises(AssertionError):
+        with u.Tests.raises(AssertionError):
             tm.ok(result, where=TestsFlextTestsMatchersPredicates.is_negative)
 
     @staticmethod

@@ -8,9 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-import pytest
-
-from tests import c, p, r, t, tm
+from tests import c, p, r, t, tm, u
 from tests.unit._matchers.predicates import TestsFlextTestsMatchersPredicates
 
 
@@ -94,7 +92,7 @@ class TestsFlextTestsMatchersThatAttrs:
         data: Mapping[str, t.Tests.TestobjectSerializable] = {
             c.ContextScope.USER: {"name": "John"},
         }
-        with pytest.raises(AssertionError, match="Value mismatch"):
+        with u.Tests.raises(AssertionError, match="Value mismatch"):
             tm.that(data, deep={"user.name": "Jane"})
 
     @staticmethod
@@ -106,7 +104,7 @@ class TestsFlextTestsMatchersThatAttrs:
     def test_that_where_predicate_receives_the_native_value() -> None:
         """A predicate sees the value itself, so a falsy subject fails ``bool``."""
         tm.that(value=True, where=bool)
-        with pytest.raises(AssertionError, match="Custom predicate failed"):
+        with u.Tests.raises(AssertionError, match="Custom predicate failed"):
             tm.that(value=False, where=bool)
 
     @staticmethod
@@ -121,7 +119,7 @@ class TestsFlextTestsMatchersThatAttrs:
         tm.that(conn, ne=None)
         tm.that(conn, none=False, is_=Connection)
         tm.ok(tm.ok(r[Connection].ok(conn), none=False) is conn)
-        with pytest.raises(AssertionError, match="did not satisfy constraints"):
+        with u.Tests.raises(AssertionError, match="did not satisfy constraints"):
             tm.that(conn, none=True)
 
     @staticmethod

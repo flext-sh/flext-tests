@@ -849,7 +849,7 @@ class FlextTestsUtilitiesMatchersThat:
 
     @staticmethod
     def _rule_kwargs[SubjectT](
-        rule: p.Tests.MatchRule[SubjectT],
+        rule: m.Tests.MatchRule[SubjectT],
     ) -> Mapping[
         str,
         p.Tests.Payload
@@ -872,7 +872,7 @@ class FlextTestsUtilitiesMatchersThat:
     def _apply_rule[SubjectT](
         cls,
         subject: SubjectT,
-        rule: p.Tests.MatchRule[SubjectT],
+        rule: m.Tests.MatchRule[SubjectT],
         *,
         inherited_msg: str | None = None,
     ) -> None:

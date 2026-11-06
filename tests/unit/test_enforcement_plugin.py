@@ -21,7 +21,7 @@ from pathlib import Path
 import pytest
 from flext_infra import config, u as infra_u
 
-from tests import c, tm, u
+from tests import c, t, tm, u
 
 
 class TestsFlextTestsEnforcementPlugin:
@@ -64,7 +64,7 @@ class TestsFlextTestsEnforcementPlugin:
 
     @staticmethod
     def test_flext_pytest11_entrypoint_load_defers_fixture_imports(
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """Cold entry-point discovery does not pre-import measured product code."""
         entries = TestsFlextTestsEnforcementPlugin._declared_pytest_entries()
@@ -93,7 +93,7 @@ class TestsFlextTestsEnforcementPlugin:
 
     @staticmethod
     def test_fixture_entrypoint_registers_the_class_object(
-        pytestconfig: pytest.Config,
+        pytestconfig: t.Tests.Config,
     ) -> None:
         """Installed metadata registers static hooks, not a module or factory."""
         for entry in TestsFlextTestsEnforcementPlugin._declared_pytest_entries():
@@ -135,10 +135,10 @@ class TestsFlextTestsEnforcementPlugin:
         )
 
     @staticmethod
-    @pytest.mark.slow
-    @pytest.mark.parametrize("autoload", [False, True])
+    @c.Tests.MARK.slow
+    @c.Tests.MARK.parametrize("autoload", [False, True])
     def test_fixture_entrypoint_supports_explicit_loading_and_autoload(
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
         *,
         autoload: bool,
     ) -> None:
@@ -197,13 +197,13 @@ class TestsFlextTestsEnforcementPlugin:
                 "--flext-enforce-rules=probe",
             )
         result.assert_outcomes(passed=1)
-        tm.that(result.ret, eq=pytest.ExitCode.OK)
+        tm.that(result.ret, eq=c.Tests.ExitCode.OK)
 
     @staticmethod
-    @pytest.mark.slow
-    @pytest.mark.parametrize("autoload", [False, True])
+    @c.Tests.MARK.slow
+    @c.Tests.MARK.parametrize("autoload", [False, True])
     def test_class_fixture_plugins_preserve_shared_lifecycle(
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
         *,
         autoload: bool,
     ) -> None:
@@ -219,7 +219,7 @@ class TestsFlextTestsEnforcementPlugin:
             from pathlib import Path
             import pytest
             from flext_core import FlextContainer, FlextSettings
-            from flext_tests import FlextTestsSettings, m, p, tm
+            from flext_tests import FlextTestsSettings, m, p, tm, u
 
             class TestsFirstConsumer:
                 previous = None
@@ -290,7 +290,7 @@ class TestsFlextTestsEnforcementPlugin:
                 "--no-flext-enforce",
             )
         result.assert_outcomes(passed=3, failed=1)
-        tm.that(result.ret, eq=pytest.ExitCode.TESTS_FAILED)
+        tm.that(result.ret, eq=c.Tests.ExitCode.TESTS_FAILED)
         records = sorted(pytester.path.glob("runtime-*"))
         tm.that(len(records), eq=4)
         directories = {record.read_text() for record in records}
@@ -299,9 +299,9 @@ class TestsFlextTestsEnforcementPlugin:
             tm.fail(Path(directory).exists())
 
     @staticmethod
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_inactive_session_collects_only_consumer_tests(
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """Shared fixtures register without activating enforcement in a sandbox."""
         pytester.makeini("[pytest]\n")
@@ -312,14 +312,14 @@ class TestsFlextTestsEnforcementPlugin:
             ),
         )
         result = u.Tests.pytest_subprocess(pytester, "--collect-only")
-        tm.that(result.ret, eq=pytest.ExitCode.OK)
+        tm.that(result.ret, eq=c.Tests.ExitCode.OK)
         result.stdout.fnmatch_lines(["*collected 1 item*", "*test_probe*"])
         result.stdout.no_fnmatch_line("*flext-enforce*")
 
     @staticmethod
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_inactive_enforcement_session_never_imports_flext_infra(
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """The enforcement plugin alone keeps an ungoverned session off flext-infra.
 
@@ -359,13 +359,13 @@ class TestsFlextTestsEnforcementPlugin:
                 "--collect-only",
                 "-q",
             )
-        tm.that(result.ret, eq=pytest.ExitCode.OK)
+        tm.that(result.ret, eq=c.Tests.ExitCode.OK)
         result.stdout.fnmatch_lines(["*test_probe*"])
 
     # ---- end-to-end pytest11 pipeline via pytester subprocess ----------------
 
     @staticmethod
-    def _write_violation_module(pytester: pytest.Pytester) -> None:
+    def _write_violation_module(pytester: t.Tests.Pytester) -> None:
         """Write a warning consumer with only its installed dispatcher selected."""
         pytester.makeini(
             "[pytest]\naddopts = --disable-plugin-autoload -p "
@@ -388,17 +388,17 @@ class TestsFlextTestsEnforcementPlugin:
         )
 
     @classmethod
-    def _make_workspace_sandbox(cls, pytester: pytest.Pytester) -> None:
+    def _make_workspace_sandbox(cls, pytester: t.Tests.Pytester) -> None:
         """Shape the sandbox as a FLEXT workspace root so auto-activation fires."""
         (pytester.path / "AGENTS.md").write_text("# sandbox workspace stub")
         (pytester.path / "flext-core").mkdir()
         (pytester.path / "flext-tests").mkdir()
         cls._write_violation_module(pytester)
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_dispatcher_records_warning_and_prints_summary(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """Non-strict run captures the warning and reports it in the summary."""
         self._make_workspace_sandbox(pytester)
@@ -413,10 +413,10 @@ class TestsFlextTestsEnforcementPlugin:
             "runtime warnings captured: 1",
         ])
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_strict_mode_promotes_warning_to_failure(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """--flext-enforce-strict promotes the configured warning to a failure."""
         self._make_workspace_sandbox(pytester)
@@ -431,10 +431,10 @@ class TestsFlextTestsEnforcementPlugin:
             "runtime warnings captured: 0",
         ])
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_dispatcher_inactive_outside_workspace(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """Without workspace markers the dispatcher stays silent and passive."""
         self._write_violation_module(pytester)
@@ -444,9 +444,9 @@ class TestsFlextTestsEnforcementPlugin:
         result.stdout.no_fnmatch_line("runtime warnings captured:*")
 
     @staticmethod
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_infra_rule_engine_boundary_runs_in_subprocess(
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """Engine findings come through the public Result boundary.
 

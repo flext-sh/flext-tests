@@ -10,10 +10,9 @@ from __future__ import annotations
 import socket
 from collections.abc import Generator
 
-import pytest
 from flext_infra import config
 
-from tests import c, p, tm, u
+from tests import c, p, t, tm, u
 
 pytest_plugins = ["pytester"]
 
@@ -21,9 +20,9 @@ pytest_plugins = ["pytester"]
 class TestsFlextTestsCapabilityCollection:
     """Exercise the installed plugin, without replacing any service or probe."""
 
-    @pytest.fixture
+    @u.Tests.fixture
     @staticmethod
-    def consumer(pytester: pytest.Pytester) -> Generator[pytest.Pytester]:
+    def consumer(pytester: t.Tests.Pytester) -> Generator[t.Tests.Pytester]:
         """Provide ``consumer``.
 
         Yields:
@@ -50,7 +49,7 @@ class TestsFlextTestsCapabilityCollection:
             yield pytester
 
     @staticmethod
-    def _run(consumer: pytest.Pytester, *paths: str) -> pytest.RunResult:
+    def _run(consumer: t.Tests.Pytester, *paths: str) -> t.Tests.RunResult:
         return u.Tests.pytest_subprocess(
             consumer,
             "-p",
@@ -62,26 +61,34 @@ class TestsFlextTestsCapabilityCollection:
         )
 
     @staticmethod
-    @pytest.mark.slow
-    def test_remote_markers_skip_without_local_env(
-        consumer: pytest.Pytester,
+    @c.Tests.MARK.slow
+    def test_connectivity_skips_without_local_env_remote_gate_runs(
+        consumer: t.Tests.Pytester,
         fixture_tree: p.Tests.FixtureTree,
     ) -> None:
-        """Remote services need the developer's untracked .env; none is present."""
+        """Connectivity needs the untracked .env; a remote gate is not gated by it.
+
+        The generic ``remote`` external gate is deselected as NOT EXECUTED by the
+        flext-infra runner where its scope lacks the capability; once selected it
+        executes, so the plugin never skips it with the connectivity reason.
+        """
         tree = fixture_tree(
             "capability_markers", destination=consumer.path / "capability_markers"
         )
         result = TestsFlextTestsCapabilityCollection._run(
-            consumer, str(tree / "test_remote.py")
+            consumer, "-v", str(tree / "test_remote.py")
         )
-        result.assert_outcomes(passed=1, skipped=2)
-        result.stdout.fnmatch_lines(["*External tests require a local untracked .env*"])
+        result.assert_outcomes(passed=2, skipped=1)
+        result.stdout.fnmatch_lines([
+            "*test_remote_gate PASSED*",
+            "*External tests require a local untracked .env*",
+        ])
         tm.that(result.ret, eq=0)
 
     @staticmethod
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_docker_markers_skip_only_when_docker_unreachable(
-        consumer: pytest.Pytester,
+        consumer: t.Tests.Pytester,
         fixture_tree: p.Tests.FixtureTree,
     ) -> None:
         """Docker-provisioned markers never ask for .env; an absent daemon skips."""
@@ -104,10 +111,10 @@ class TestsFlextTestsCapabilityCollection:
         tm.that(result.ret, eq=0)
 
     @staticmethod
-    @pytest.mark.slow
-    @pytest.mark.docker
+    @c.Tests.MARK.slow
+    @c.Tests.MARK.docker
     def test_docker_marker_runs_with_isolated_environment(
-        consumer: pytest.Pytester,
+        consumer: t.Tests.Pytester,
         fixture_tree: p.Tests.FixtureTree,
     ) -> None:
         """With Docker up, the test runs on a generated, isolated .env."""
@@ -120,9 +127,9 @@ class TestsFlextTestsCapabilityCollection:
         tm.that(result.ret, eq=0)
 
     @staticmethod
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_each_consumer_environment_is_scoped(
-        consumer: pytest.Pytester,
+        consumer: t.Tests.Pytester,
     ) -> None:
         """A/B/A consumers see their own file and restore the inherited environment."""
         consumer.makeconftest(
@@ -170,9 +177,9 @@ class TestsFlextTestsCapabilityCollection:
         tm.that(result.ret, eq=0)
 
     @staticmethod
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_changed_environment_is_revalidated(
-        consumer: pytest.Pytester,
+        consumer: t.Tests.Pytester,
     ) -> None:
         """Deleting, tracking, or replacing a ready file invalidates its readiness."""
         mutations = {
@@ -211,13 +218,13 @@ class TestsFlextTestsCapabilityCollection:
         tm.that(result.ret, eq=1)
 
     @staticmethod
-    @pytest.mark.slow
-    @pytest.mark.parametrize("service_marker", c.Tests.CONNECTIVITY_MARKER_CONTAINERS)
-    @pytest.mark.parametrize(
+    @c.Tests.MARK.slow
+    @c.Tests.MARK.parametrize("service_marker", c.Tests.CONNECTIVITY_MARKER_CONTAINERS)
+    @c.Tests.MARK.parametrize(
         "ordering", ["service-only", "service-first", "docker-first"]
     )
     def test_docker_backed_markers_skip_in_ci_before_effects(
-        consumer: pytest.Pytester,
+        consumer: t.Tests.Pytester,
         service_marker: str,
         ordering: str,
     ) -> None:
@@ -269,9 +276,9 @@ class TestsFlextTestsCapabilityCollection:
         tm.that(result.ret, eq=0)
 
     @staticmethod
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_invalid_declarations_error_without_environment(
-        consumer: pytest.Pytester,
+        consumer: t.Tests.Pytester,
     ) -> None:
         """Every malformed declaration errors before CI or environment skips."""
         declarations = (
@@ -338,10 +345,10 @@ class TestsFlextTestsCapabilityCollection:
         tm.that(result.ret, eq=1)
 
     @staticmethod
-    @pytest.mark.slow
-    @pytest.mark.parametrize("in_ci", [False, True])
+    @c.Tests.MARK.slow
+    @c.Tests.MARK.parametrize("in_ci", [False, True])
     def test_explicit_service_endpoints_are_not_docker_dependent(
-        consumer: pytest.Pytester,
+        consumer: t.Tests.Pytester,
         *,
         in_ci: bool,
     ) -> None:
@@ -383,10 +390,10 @@ class TestsFlextTestsCapabilityCollection:
             tm.that(result.ret, eq=1)
 
     @staticmethod
-    @pytest.mark.slow
-    @pytest.mark.parametrize("tracked", [False, True])
+    @c.Tests.MARK.slow
+    @c.Tests.MARK.parametrize("tracked", [False, True])
     def test_tracking_check_distinguishes_tracked_file_from_git_error(
-        consumer: pytest.Pytester,
+        consumer: t.Tests.Pytester,
         *,
         tracked: bool,
     ) -> None:
@@ -418,9 +425,9 @@ class TestsFlextTestsCapabilityCollection:
             tm.that(result.ret, eq=1)
 
     @staticmethod
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_unreachable_env_skips(
-        consumer: pytest.Pytester,
+        consumer: t.Tests.Pytester,
     ) -> None:
         """Test unreachable env skips."""
         with socket.socket() as listener:
@@ -439,7 +446,7 @@ class TestsFlextTestsCapabilityCollection:
         result.assert_outcomes(skipped=1)
 
     @staticmethod
-    @pytest.mark.parametrize(
+    @c.Tests.MARK.parametrize(
         "endpoint",
         [
             "http://user:secret@[invalid",
@@ -452,7 +459,7 @@ class TestsFlextTestsCapabilityCollection:
         ],
     )
     def test_invalid_endpoint_values_fail_without_exposing_credentials(
-        consumer: pytest.Pytester,
+        consumer: t.Tests.Pytester,
         endpoint: str,
     ) -> None:
         """Malformed configured URLs fail before transport and hide credentials."""
@@ -461,7 +468,7 @@ class TestsFlextTestsCapabilityCollection:
             f"TEST_ENDPOINT={endpoint}\n",
             encoding=c.DEFAULT_ENCODING,
         )
-        with pytest.raises(pytest.UsageError) as error:
+        with u.Tests.raises(c.Tests.UsageError) as error:
             u.Tests.external_environment_reason(
                 env_file=env_file,
                 url_var="TEST_ENDPOINT",
@@ -473,9 +480,9 @@ class TestsFlextTestsCapabilityCollection:
         tm.that(str(error.value), lacks="secret")
 
     @staticmethod
-    @pytest.mark.parametrize("scheme", ["http", "https", "ldap", "ldaps", "custom"])
+    @c.Tests.MARK.parametrize("scheme", ["http", "https", "ldap", "ldaps", "custom"])
     def test_explicit_endpoint_ports_use_the_real_transport(
-        consumer: pytest.Pytester,
+        consumer: t.Tests.Pytester,
         scheme: str,
     ) -> None:
         """An explicit transport port needs no scheme-specific default."""
@@ -497,9 +504,9 @@ class TestsFlextTestsCapabilityCollection:
             )
 
     @staticmethod
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_ready_endpoint_executes_and_real_failures_stay_failures(
-        consumer: pytest.Pytester,
+        consumer: t.Tests.Pytester,
     ) -> None:
         """Test ready endpoint executes and real failures stay failures."""
         with socket.socket() as listener:

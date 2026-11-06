@@ -13,9 +13,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import pytest
-
-from tests import p, r, tm, u
+from tests import c, p, r, tm, u
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -48,7 +46,7 @@ class TestsFlextTestsUtilities:
 
         body_failure = ValueError("body failed")
         with (
-            pytest.raises(ValueError, match=str(body_failure)),
+            u.Tests.raises(ValueError, match=str(body_failure)),
             u.Tests.FileLock(lock_path),
         ):
             raise body_failure
@@ -61,16 +59,16 @@ class TestsFlextTestsUtilities:
     # ------------------------------------------------------------------
 
     @staticmethod
-    @pytest.mark.parametrize(
+    @c.Tests.MARK.parametrize(
         ("result", "assertion", "expected"),
         [
-            pytest.param(
+            u.Tests.param(
                 r[str].ok("success"),
                 "success",
                 "success",
                 id="assert-success-returns-payload",
             ),
-            pytest.param(
+            u.Tests.param(
                 r[str].fail("error message"),
                 "failure",
                 "error message",
@@ -92,16 +90,16 @@ class TestsFlextTestsUtilities:
         tm.that(actual, eq=expected)
 
     @staticmethod
-    @pytest.mark.parametrize(
+    @c.Tests.MARK.parametrize(
         ("result", "assertion", "match"),
         [
-            pytest.param(
+            u.Tests.param(
                 r[str].fail("error"),
                 "success",
                 "Expected success but got failure",
                 id="assert-success-on-failure-raises",
             ),
-            pytest.param(
+            u.Tests.param(
                 r[str].ok("success"),
                 "failure",
                 "Expected failure but got success",
@@ -118,7 +116,7 @@ class TestsFlextTestsUtilities:
         assertion_fn = (
             u.Tests.assert_success if assertion == "success" else u.Tests.assert_failure
         )
-        with pytest.raises(AssertionError, match=match):
+        with u.Tests.raises(AssertionError, match=match):
             _ = assertion_fn(result)
 
     @staticmethod
@@ -132,7 +130,7 @@ class TestsFlextTestsUtilities:
     def test_assert_failure_rejects_non_matching_error_substring() -> None:
         """A non-matching expected-error substring raises AssertionError."""
         result: p.Result[str] = r[str].fail("validation error occurred")
-        with pytest.raises(AssertionError, match="Expected error containing"):
+        with u.Tests.raises(AssertionError, match="Expected error containing"):
             _ = u.Tests.assert_failure(result, "not found")
 
     @staticmethod
@@ -146,5 +144,5 @@ class TestsFlextTestsUtilities:
     def test_assert_success_rejects_non_matching_expected_value() -> None:
         """A non-matching expected_value raises AssertionError."""
         result = r[str].ok("actual")
-        with pytest.raises(AssertionError, match="Expected success value"):
+        with u.Tests.raises(AssertionError, match="Expected success value"):
             _ = u.Tests.assert_success(result, expected_value="expected")

@@ -8,10 +8,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import pytest
-
 from flext_tests import FlextTestsFiles
-from tests import m
+from tests import m, u
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -31,7 +29,7 @@ class TestsFlextTestsFilesAssertExists:
     def test_assert_exists_file_failure(tmp_path: Path) -> None:
         """Test assert_exists() fails for non-existing file."""
         path = tmp_path / "nonexistent.txt"
-        with pytest.raises(AssertionError):
+        with u.Tests.raises(AssertionError):
             _ = FlextTestsFiles.assert_exists(path)
 
     @staticmethod
@@ -76,7 +74,7 @@ class TestsFlextTestsFilesAssertExists:
         """Test assert_exists() fails for empty file with not_empty=True."""
         path = tmp_path / "empty.txt"
         _ = path.write_text("")
-        with pytest.raises(AssertionError):
+        with u.Tests.raises(AssertionError):
             _ = FlextTestsFiles.assert_exists(
                 path,
                 options=m.Tests.AssertExistsParams(not_empty=True),
@@ -119,7 +117,7 @@ class TestsFlextTestsFilesAssertExists:
     def test_assert_exists_custom_error_message(tmp_path: Path) -> None:
         """Test assert_exists() with custom error message."""
         path = tmp_path / "nonexistent.txt"
-        with pytest.raises(AssertionError, match="Custom error"):
+        with u.Tests.raises(AssertionError, match="Custom error"):
             _ = FlextTestsFiles.assert_exists(path, msg="Custom error: file not found")
 
     @staticmethod
@@ -163,7 +161,7 @@ class TestsFlextTestsFilesAssertExists:
         """Test assert_exists() fails for empty directory with not_empty=True."""
         subdir = tmp_path / "empty_dir"
         subdir.mkdir()
-        with pytest.raises(AssertionError):
+        with u.Tests.raises(AssertionError):
             _ = FlextTestsFiles.assert_exists(
                 subdir,
                 options=m.Tests.AssertExistsParams(not_empty=True),

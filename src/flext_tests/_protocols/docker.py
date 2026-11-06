@@ -11,13 +11,13 @@ from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 from flext_cli import FlextCliProtocols
 
+from flext_tests import c
+
 if TYPE_CHECKING:
     from collections.abc import Mapping
     from pathlib import Path
 
     from flext_cli import p
-
-    from flext_tests._constants import FlextTestsConstantsDocker
 
 
 class FlextTestsProtocolsDocker:
@@ -129,7 +129,7 @@ class FlextTestsProtocolsDocker:
             ...
 
         @property
-        def status(self) -> FlextTestsConstantsDocker.ContainerStatus:
+        def status(self) -> c.Tests.ContainerStatus:
             """Runtime lifecycle status."""
             ...
 
@@ -154,7 +154,7 @@ class FlextTestsProtocolsDocker:
             ...
 
         @property
-        def health(self) -> FlextTestsConstantsDocker.ContainerHealth:
+        def health(self) -> c.Tests.ContainerHealth:
             """Healthcheck state; UNKNOWN without a check."""
             ...
 
@@ -162,19 +162,13 @@ class FlextTestsProtocolsDocker:
     class ContainerInspectHealth(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
-        @property
-        def status(self) -> FlextTestsConstantsDocker.ContainerHealth:
-            """Healthcheck status."""
-            ...
+        status: c.Tests.ContainerHealth
 
     @runtime_checkable
     class ContainerInspectState(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
-        @property
-        def status(self) -> FlextTestsConstantsDocker.ContainerStatus:
-            """Container lifecycle status."""
-            ...
+        status: c.Tests.ContainerStatus
 
         @property
         def health(self) -> FlextTestsProtocolsDocker.ContainerInspectHealth | None:

@@ -113,6 +113,5 @@ class FlextTestsConftestPlugin:
 # processes that declaration while loading the ``pytest11`` entry point,
 # before pytest-cov starts measuring the product package.
 
-
 # The pytest11 object target owns hooks, not the package's public facade.
 __all__: list[str] = []

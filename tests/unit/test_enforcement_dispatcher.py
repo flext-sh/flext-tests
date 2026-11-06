@@ -14,9 +14,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
-from tests import c, m, p, tm, u
+from tests import c, m, p, t, tm, u
 
 
 class TestsFlextTestsEnforcementDispatcher:
@@ -29,7 +27,7 @@ class TestsFlextTestsEnforcementDispatcher:
     # Fixtures                                                           #
     # ------------------------------------------------------------------ #
 
-    @pytest.fixture
+    @u.Tests.fixture
     @staticmethod
     def workspace(tmp_path: Path) -> Path:
         """Create a directory carrying every FLEXT workspace marker.
@@ -92,11 +90,11 @@ class TestsFlextTestsEnforcementDispatcher:
     @classmethod
     def _collect(
         cls,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
         project: Path,
         *args: str,
         rules: str = "",
-    ) -> pytest.RunResult:
+    ) -> t.Tests.RunResult:
         """Collect ``project`` as its own rootdir with the enforcement options.
 
         Returns:
@@ -113,10 +111,10 @@ class TestsFlextTestsEnforcementDispatcher:
             str(project),
         )
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_forced_run_discovers_the_workspace_above_a_sub_project(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
         workspace: Path,
     ) -> None:
         """Test forced run discovers the workspace above a sub project."""
@@ -128,10 +126,10 @@ class TestsFlextTestsEnforcementDispatcher:
 
         result.stdout.fnmatch_lines(["*flext-enforce*", "catalog active: 1 rules*"])
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_sub_project_rootdir_stays_inactive_without_force(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
         workspace: Path,
     ) -> None:
         """Test sub project rootdir stays inactive without force."""
@@ -139,10 +137,10 @@ class TestsFlextTestsEnforcementDispatcher:
 
         result.stdout.no_fnmatch_line("*flext-enforce*")
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_forced_run_without_every_marker_stays_inactive(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
         tmp_path: Path,
     ) -> None:
         """Test forced run without every marker stays inactive."""
@@ -158,10 +156,10 @@ class TestsFlextTestsEnforcementDispatcher:
 
         result.stdout.no_fnmatch_line("*flext-enforce*")
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_no_flext_enforce_overrides_an_explicit_workspace_root(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
         workspace: Path,
     ) -> None:
         """Test no flext enforce overrides an explicit workspace root."""
@@ -174,10 +172,10 @@ class TestsFlextTestsEnforcementDispatcher:
 
         result.stdout.no_fnmatch_line("*flext-enforce*")
 
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_rule_list_strips_blank_and_padded_fields(
         self,
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
         workspace: Path,
     ) -> None:
         """Test rule list strips blank and padded fields."""
@@ -252,9 +250,9 @@ class TestsFlextTestsEnforcementDispatcher:
     # ------------------------------------------------------------------ #
 
     @staticmethod
-    @pytest.mark.slow
+    @c.Tests.MARK.slow
     def test_plugin_registers_flext_enforce_cli_options(
-        pytester: pytest.Pytester,
+        pytester: t.Tests.Pytester,
     ) -> None:
         """The installed pytest11 plugin publishes the enforcement options.
 

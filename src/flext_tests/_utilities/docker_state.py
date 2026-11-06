@@ -76,7 +76,7 @@ class FlextTestsUtilitiesDockerState:
             .files_read_text(state_file)
             .flat_map(
                 lambda text: u.try_(
-                    lambda: p.Tests.ContainerState.model_validate_json(text),
+                    lambda: m.Tests.ContainerState.model_validate_json(text),
                     catch=c.EXC_VALIDATION_VALUE,
                     op_name=f"Parse container state {state_file}",
                 ),
@@ -129,7 +129,7 @@ class FlextTestsUtilitiesDockerState:
     def update_container_state(
         state_dir: Path,
         container_name: str,
-        change: Callable[[p.Tests.ContainerState], m.Tests.ContainerState],
+        change: Callable[[p.Tests.ContainerState], p.Tests.ContainerState],
         *,
         timeout_seconds: float = c.Tests.DOCKER_STATE_LOCK_TIMEOUT_SECONDS,
     ) -> p.Result[p.Tests.ContainerState]:
