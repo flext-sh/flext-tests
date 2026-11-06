@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from flext_tests import FlextTestsFiles
-from tests import tm
+from tests import m, tm
 
 
 class TestsFlextTestsModelsFiles:
@@ -18,7 +18,7 @@ class TestsFlextTestsModelsFiles:
     @staticmethod
     def test_file_info_exists_false() -> None:
         """Test FlextTestsFiles.FileInfo with exists=False."""
-        info = FlextTestsFiles.FileInfo(exists=False)
+        info = m.Tests.FileInfo(exists=False)
         tm.ok(info.exists is False)
         tm.that(info.size, eq=0)
         tm.that(info.lines, eq=0)
@@ -29,7 +29,7 @@ class TestsFlextTestsModelsFiles:
     @staticmethod
     def test_file_info_exists_true() -> None:
         """Test FlextTestsFiles.FileInfo with exists=True."""
-        info = FlextTestsFiles.FileInfo(
+        info = m.Tests.FileInfo(
             exists=True,
             size=100,
             lines=5,
