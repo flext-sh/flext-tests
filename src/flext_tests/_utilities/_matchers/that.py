@@ -107,7 +107,7 @@ class FlextTestsUtilitiesMatchersThat:
             return False
         return all(
             getattr(params, name) is None
-            for name in type(params).model_fields
+            for name in m.Tests.ThatParams.model_fields
             if name not in subject_fields
         )
 
@@ -745,12 +745,13 @@ class FlextTestsUtilitiesMatchersThat:
         """
         if bool(value) is params.truth:
             return
+        fields_set = m.Tests.ThatParams.model_validate(params).model_fields_set
         raise AssertionError(
             *next(
                 (
                     (getattr(params, field),)
                     for field in ("assertion_message", "msg")
-                    if field in params.model_fields_set
+                    if field in fields_set
                 ),
                 (),
             )
@@ -767,11 +768,12 @@ class FlextTestsUtilitiesMatchersThat:
             AssertionError: If ``not match_result.matched``.
 
         """
-        if params.deep is None:
+        deep = m.Tests.ThatParams.model_validate(params).deep
+        if deep is None:
             return
         match_result = FlextTestsUtilitiesPayload.deep_match(
             subject_payload,
-            params.deep,
+            deep,
         )
         if not match_result.matched:
             raise AssertionError(
@@ -849,7 +851,7 @@ class FlextTestsUtilitiesMatchersThat:
 
     @staticmethod
     def _rule_kwargs[SubjectT](
-        rule: m.Tests.MatchRule[SubjectT],
+        rule: p.Tests.MatchRule[SubjectT],
     ) -> Mapping[
         str,
         p.Tests.Payload
@@ -860,7 +862,7 @@ class FlextTestsUtilitiesMatchersThat:
         | tuple[type, ...]
         | None,
     ]:
-        parsed = rule
+        parsed = m.Tests.MatchRule.model_validate(rule)
         return {
             key: getattr(parsed, key)
             for key in type(parsed).model_fields
@@ -872,11 +874,12 @@ class FlextTestsUtilitiesMatchersThat:
     def _apply_rule[SubjectT](
         cls,
         subject: SubjectT,
-        rule: m.Tests.MatchRule[SubjectT],
+        rule: p.Tests.MatchRule[SubjectT],
         *,
         inherited_msg: str | None = None,
     ) -> None:
-        kwargs = dict(cls._rule_kwargs(rule))
+        parsed = m.Tests.MatchRule.model_validate(rule)
+        kwargs = dict(cls._rule_kwargs(parsed))
         kwargs.pop("eq", None)
         kwargs.pop("ne", None)
         if inherited_msg is not None and "msg" not in kwargs:
@@ -897,10 +900,10 @@ class FlextTestsUtilitiesMatchersThat:
         cls.that(
             subject,
             eq=expected_eq
-            if "eq" in rule.model_fields_set
+            if "eq" in parsed.model_fields_set
             else c.Tests.MatcherMissing.OMITTED,
             ne=expected_ne
-            if "ne" in rule.model_fields_set
+            if "ne" in parsed.model_fields_set
             else c.Tests.MatcherMissing.OMITTED,
             where=rule.where,
             **kwargs,
@@ -910,7 +913,7 @@ class FlextTestsUtilitiesMatchersThat:
     def apply_path_rules(
         cls,
         subject: p.Tests.Payload,
-        rules: Mapping[str, m.Tests.MatchRule],
+        rules: Mapping[str, p.Tests.MatchRule],
         *,
         inherited_msg: str | None = None,
     ) -> None:
@@ -935,7 +938,7 @@ class FlextTestsUtilitiesMatchersThat:
     def apply_item_rules(
         cls,
         subject: p.Tests.Payload,
-        rules: Sequence[p.Tests.MatchRule] | Mapping[str | int, m.Tests.MatchRule],
+        rules: Sequence[p.Tests.MatchRule] | Mapping[str | int, p.Tests.MatchRule],
         *,
         inherited_msg: str | None = None,
     ) -> None:
@@ -989,7 +992,7 @@ class FlextTestsUtilitiesMatchersThat:
     def apply_attribute_rules(
         cls,
         subject: p.AttributeProbe,
-        rules: Mapping[str, m.Tests.MatchRule[p.AttributeProbe]],
+        rules: Mapping[str, p.Tests.MatchRule[p.AttributeProbe]],
         *,
         inherited_msg: str | None = None,
     ) -> None:
