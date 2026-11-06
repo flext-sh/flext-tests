@@ -353,7 +353,7 @@ class FlextTestsUtilitiesPayload:
             | Mapping[str, t.JsonPayload]
             | t.JsonMapping
         ),
-    ) -> m.ConfigMap:
+    ) -> p.ConfigMap:
         """Convert a model or payload mapping to the canonical ConfigMap shape.
 
         Returns:
