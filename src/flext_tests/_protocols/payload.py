@@ -111,6 +111,7 @@ class FlextTestsProtocolsPayload:
     type NativeMatchValue = (
         FlextTestsTypesBase.PayloadAtom
         | p.BaseModel
+        | p.AttributeProbe
         | FlextTestsProtocolsPayload.NativeSequence
         | FlextTestsProtocolsPayload.NativeMapping
         | None

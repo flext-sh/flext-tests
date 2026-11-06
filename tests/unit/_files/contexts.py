@@ -87,7 +87,7 @@ class TestsFlextTestsFilesContexts:
     @staticmethod
     def test_fileinfo_backward_compatibility() -> None:
         """Test FlextTestsFiles.FileInfo alias works for backward compatibility."""
-        info = FlextTestsFiles.FileInfo(exists=True)
+        info = m.Tests.FileInfo(exists=True)
         tm.ok(info.exists is True)
         info2 = m.Tests.FileInfo(exists=True)
         tm.ok(info2.exists is True)
