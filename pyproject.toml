@@ -22,9 +22,9 @@ classifiers = [
 ]
 dependencies = [
   "docker>=7.2.0",
-  "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@2fa49de0fe549adb9e637ce760fa74cde1109381",
-  "flext-core @ git+https://github.com/flext-sh/flext-core.git@a81c9648da1491d06280fbebaed074ca2fcd4b1a",
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@6289e135bb66f51ce0bfcaf809bbeed93419e506",
+  "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@0.12.0-dev",
+  "flext-core @ git+https://github.com/flext-sh/flext-core.git@0.12.0-dev",
+  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
   "hypothesis",
   "pytest>=9.1.1",
   "pytest-asyncio",
@@ -72,7 +72,7 @@ Repository = "https://github.com/flext-sh/flext-tests"
 [dependency-groups]
 dev = [
   "types-networkx",
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@6289e135bb66f51ce0bfcaf809bbeed93419e506",
+  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
   "mkdocstrings-python>=2.0.9",
   "actionlint-py>=1.7.12.24",
   "bandit>=1.9.4",
@@ -133,7 +133,7 @@ dev = [
   "yamlfix>=1.19.1",
 ]
 codegen = [
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@6289e135bb66f51ce0bfcaf809bbeed93419e506",
+  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
 ]
 
 [tool.flext.docs]
@@ -657,9 +657,9 @@ environments = ["sys_platform == 'linux'", "sys_platform == 'darwin'"]
 link-mode = "clone"
 override-dependencies = [
   "rope @ git+https://github.com/marlon-costa-dc/rope.git@64cbd65bc458c689880be41182c52715397b143a",
-  "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@2fa49de0fe549adb9e637ce760fa74cde1109381",
-  "flext-core @ git+https://github.com/flext-sh/flext-core.git@a81c9648da1491d06280fbebaed074ca2fcd4b1a",
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@6289e135bb66f51ce0bfcaf809bbeed93419e506",
+  "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@0.12.0-dev",
+  "flext-core @ git+https://github.com/flext-sh/flext-core.git@0.12.0-dev",
+  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
 ]
 
 [[tool.uv.exclude-dependencies]]
