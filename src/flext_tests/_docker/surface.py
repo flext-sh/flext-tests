@@ -10,6 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -20,36 +21,24 @@ if TYPE_CHECKING:
     from flext_tests import p, t
 
 
-class FlextTestsDockerSurface:
-    """The facade-own internals the surface verbs delegate to.
+class FlextTestsDockerSurface(ABC):
+    """Public Docker verbs and the operations their concrete owner supplies."""
 
-    Declared unconditionally: annotations resolve lazily (PEP 563), so the
-    TYPE_CHECKING-only ``m``/``p``/``t`` names never evaluate at runtime, and
-    the audit's base walker demands class declarations outside conditionals.
-    """
-
+    @abstractmethod
     def _compose_path(self, _compose_file: str, /) -> Path:
-        raise NotImplementedError
+        """Resolve the declared compose file."""
 
+    @abstractmethod
     def _compose_down(self, _compose_path: Path, _project: str, /) -> p.Result[str]:
-        raise NotImplementedError
+        """Remove the specified compose project."""
 
+    @abstractmethod
     def _inspect(
         self,
         _container_name: str,
         /,
     ) -> p.Result[p.Tests.ContainerInspect]:
-        raise NotImplementedError
-
-
-if TYPE_CHECKING:
-    _PartsBase = FlextTestsDockerSurface
-else:
-    _PartsBase = object
-
-
-class FlextTestsDockerSurface(_PartsBase):
-    """Public compose and container verbs of the Docker facade."""
+        """Read the container's inspect record."""
 
     def compose_down(self, compose_file: str) -> p.Result[str]:
         """Remove the project of one compose file with its volumes.
