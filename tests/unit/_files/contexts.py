@@ -78,19 +78,11 @@ class TestsFlextTestsFilesContexts:
 
     @staticmethod
     def test_fileinfo_import_from_models() -> None:
-        """Test FlextTestsFiles.FileInfo can be imported from models."""
+        """Test the FileInfo model constructs from its public fields."""
         info = m.Tests.FileInfo(exists=True, size=100, lines=5)
         tm.ok(info.exists is True)
         tm.that(info.size, eq=100)
         tm.that(info.lines, eq=5)
-
-    @staticmethod
-    def test_fileinfo_backward_compatibility() -> None:
-        """Test FlextTestsFiles.FileInfo alias works for backward compatibility."""
-        info = m.Tests.FileInfo(exists=True)
-        tm.ok(info.exists is True)
-        info2 = m.Tests.FileInfo(exists=True)
-        tm.ok(info2.exists is True)
 
     @staticmethod
     def test_fileinfo_all_fields() -> None:
