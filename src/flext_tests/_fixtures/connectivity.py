@@ -11,6 +11,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import shutil
 from collections.abc import Generator
 from contextlib import ExitStack
 from pathlib import Path
@@ -49,8 +50,8 @@ class FlextTestsCapabilityPlugin:
     def pytest_configure(config: pytest.Config) -> None:
         config.addinivalue_line(
             "markers",
-            "connectivity(required_vars=(), url_var=None, host=None, port=None): "
-            "external test environment",
+            "connectivity(required_vars=(), url_var=None, host=None, port=None, "
+            "executables=()): external test environment and host executables",
         )
 
     @staticmethod
@@ -60,6 +61,7 @@ class FlextTestsCapabilityPlugin:
             "url_var",
             "host",
             "port",
+            "executables",
         }:
             msg = "Connectivity declarations require supported keyword arguments"
             raise pytest.UsageError(msg)
@@ -103,9 +105,38 @@ class FlextTestsCapabilityPlugin:
 
         """
         required, url_var = self._declaration(marker)
+        executables = self._executables(marker)
+        missing = tuple(name for name in executables if shutil.which(name) is None)
+        if missing:
+            return f"Host executable is unavailable: {', '.join(missing)}"
+        if executables and marker.kwargs.keys() == {"executables"}:
+            return None
         # Resolve each member's own .env even during workspace-wide collection.
         root = self._environment_file(item).parent
         return self._resolve_marker_reason(marker, required, url_var, root)
+
+    @staticmethod
+    def _executables(marker: pytest.Mark) -> tuple[str, ...]:
+        """Validate the host executables one marker declares.
+
+        Returns:
+            The declared executable names, empty when none is declared.
+
+        Raises:
+            pytest.UsageError: If ``executables`` is not a sequence of names.
+
+        """
+        try:
+            names = u.type_adapter(
+                tuple[t.NonEmptyStr, ...] | list[t.NonEmptyStr]
+            ).validate_python(marker.kwargs.get("executables", ()), strict=True)
+        except m.ValidationError as exc:
+            msg = "Connectivity executables must be names"
+            raise pytest.UsageError(msg) from exc
+        if any(not name.strip() for name in names):
+            msg = "Connectivity executables must be names"
+            raise pytest.UsageError(msg)
+        return tuple(names)
 
     @staticmethod
     def _requires_docker(marker: pytest.Mark) -> bool:

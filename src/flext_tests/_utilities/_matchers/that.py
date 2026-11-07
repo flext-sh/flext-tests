@@ -107,7 +107,7 @@ class FlextTestsUtilitiesMatchersThat:
             return False
         return all(
             getattr(params, name) is None
-            for name in type(params).model_fields
+            for name in m.Tests.ThatParams.model_fields
             if name not in subject_fields
         )
 
@@ -745,12 +745,13 @@ class FlextTestsUtilitiesMatchersThat:
         """
         if bool(value) is params.truth:
             return
+        fields_set = m.Tests.ThatParams.model_validate(params).model_fields_set
         raise AssertionError(
             *next(
                 (
                     (getattr(params, field),)
                     for field in ("assertion_message", "msg")
-                    if field in params.model_fields_set
+                    if field in fields_set
                 ),
                 (),
             )
@@ -767,11 +768,12 @@ class FlextTestsUtilitiesMatchersThat:
             AssertionError: If ``not match_result.matched``.
 
         """
-        if params.deep is None:
+        deep = m.Tests.ThatParams.model_validate(params).deep
+        if deep is None:
             return
         match_result = FlextTestsUtilitiesPayload.deep_match(
             subject_payload,
-            params.deep,
+            deep,
         )
         if not match_result.matched:
             raise AssertionError(
@@ -911,7 +913,7 @@ class FlextTestsUtilitiesMatchersThat:
     def apply_path_rules(
         cls,
         subject: p.Tests.Payload,
-        rules: Mapping[str, m.Tests.MatchRule],
+        rules: Mapping[str, p.Tests.MatchRule],
         *,
         inherited_msg: str | None = None,
     ) -> None:
@@ -936,7 +938,7 @@ class FlextTestsUtilitiesMatchersThat:
     def apply_item_rules(
         cls,
         subject: p.Tests.Payload,
-        rules: Sequence[p.Tests.MatchRule] | Mapping[str | int, m.Tests.MatchRule],
+        rules: Sequence[p.Tests.MatchRule] | Mapping[str | int, p.Tests.MatchRule],
         *,
         inherited_msg: str | None = None,
     ) -> None:
@@ -990,7 +992,7 @@ class FlextTestsUtilitiesMatchersThat:
     def apply_attribute_rules(
         cls,
         subject: p.AttributeProbe,
-        rules: Mapping[str, m.Tests.MatchRule[p.AttributeProbe]],
+        rules: Mapping[str, p.Tests.MatchRule[p.AttributeProbe]],
         *,
         inherited_msg: str | None = None,
     ) -> None:

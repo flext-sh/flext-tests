@@ -17,7 +17,7 @@ class TestsFlextTestsModelsFiles:
 
     @staticmethod
     def test_file_info_exists_false() -> None:
-        """Test FlextTestsFiles.FileInfo with exists=False."""
+        """Test the FileInfo model with exists=False."""
         info = m.Tests.FileInfo(exists=False)
         tm.ok(info.exists is False)
         tm.that(info.size, eq=0)
@@ -28,7 +28,7 @@ class TestsFlextTestsModelsFiles:
 
     @staticmethod
     def test_file_info_exists_true() -> None:
-        """Test FlextTestsFiles.FileInfo with exists=True."""
+        """Test the FileInfo model with exists=True."""
         info = m.Tests.FileInfo(
             exists=True,
             size=100,
