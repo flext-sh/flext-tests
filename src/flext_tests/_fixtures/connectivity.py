@@ -324,8 +324,11 @@ class FlextTestsCapabilityPlugin:
             for marker in item.iter_markers()
             if marker.name in {*c.Tests.CONNECTIVITY_MARKERS, "connectivity"}
         ]
+        # Every declaration is validated, executables included, before any
+        # CI or environment skip can hide a malformed one.
         for marker in markers:
             self._declaration(marker)
+            self._executables(marker)
         if (
             any(self._requires_docker(marker) for marker in markers)
             and FlextTestsDocker.ci_disables_docker()
