@@ -47,6 +47,14 @@ class FlextTestsModelsDocker:
                 ),
             ),
         ] = None
+        force_recreate: Annotated[
+            bool,
+            m.Field(description="Whether execute should recreate the target stack."),
+        ] = False
+        fingerprint_inputs: Annotated[
+            tuple[Path, ...],
+            m.Field(description="Files hashed with the compose file into the seal."),
+        ] = ()
         startup_timeout: Annotated[
             int,
             m.Field(
