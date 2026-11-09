@@ -66,11 +66,7 @@ class FlextTestsModelsFilesystem:
             m.Field(description="Hex-encoded SHA-256 digest."),
         ] = None
         content_meta: Annotated[
-            Annotated[
-                p.Tests.ContentMeta,
-                t.schema_for_model(lambda: FlextTestsModelsFilesystem.ContentMeta),
-            ]
-            | None,
+            Annotated[FlextTestsModelsFilesystem.ContentMeta,] | None,
             m.Field(description="Optional content metadata for parsed files."),
         ] = None
 
