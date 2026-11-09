@@ -6,119 +6,18 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import hashlib
 import os
 import secrets
 from collections.abc import Generator, Mapping, Sequence
 from contextlib import contextmanager
 from pathlib import Path
 
-from flext_cli import u
-
 from flext_tests import c, m, p, r, t
+from flext_tests._utilities import FlextTestsUtilitiesConfigHelpers
 
 
 class FlextTestsUtilitiesDockerLifecycle:
     """Pure lifecycle rules over what Docker reports and what the host recorded."""
-
-    @staticmethod
-    def docker_action(
-        info: p.Tests.ContainerInfo | None,
-        state: p.Tests.ContainerState,
-        *,
-        fingerprint: str,
-    ) -> c.Tests.ContainerAction:
-        """Decide what an ensure does with a container and its host record.
-
-        A missing container is created. A dirty, unsealed or foreign container,
-        or one sealed for other declared inputs, is recreated. A stopped
-        container that matches its seal is started whatever its last health,
-        which Docker freezes at shutdown; compose then waits for it to become
-        healthy. A running one that matches is recreated when unhealthy and
-        otherwise reused, including while its healthcheck is still starting:
-        the ensure then waits for the check to settle.
-
-        Returns:
-            The resulting ``c.Tests.ContainerAction``.
-
-        """
-        if info is None:
-            return c.Tests.ContainerAction.CREATE
-        if (
-            state.dirty
-            or not state.sealed
-            or state.fingerprint != fingerprint
-            or state.container_id != info.container_id
-        ):
-            return c.Tests.ContainerAction.RECREATE
-        if info.status == c.Tests.ContainerStatus.RUNNING:
-            # Health is observed only while running; a stopped container keeps
-            # the result of the check that ran during its shutdown.
-            if info.health == c.Tests.ContainerHealth.UNHEALTHY:
-                return c.Tests.ContainerAction.RECREATE
-            return c.Tests.ContainerAction.REUSE
-        if info.status in {
-            c.Tests.ContainerStatus.EXITED,
-            c.Tests.ContainerStatus.CREATED,
-        }:
-            return c.Tests.ContainerAction.START
-        return c.Tests.ContainerAction.RECREATE
-
-    @staticmethod
-    def docker_verify(
-        info: p.Tests.ContainerInfo | None,
-        state: p.Tests.ContainerState,
-        *,
-        fingerprint: str,
-    ) -> p.Result[p.Tests.ContainerInfo]:
-        """Check without effects that the running container is the sealed one.
-
-        Returns:
-            The resulting ``p.Result[p.Tests.ContainerInfo]``.
-
-        """
-        codes = c.Tests.DockerErrorCode
-        name = state.container_name
-        if info is None:
-            return r[p.Tests.ContainerInfo].fail(
-                c.Tests.ERR_DOCKER_NOT_PROVISIONED.format(name=name),
-                error_code=codes.NOT_PROVISIONED,
-            )
-        if state.dirty:
-            return r[p.Tests.ContainerInfo].fail(
-                c.Tests.ERR_DOCKER_DIRTY.format(name=name),
-                error_code=codes.DIRTY,
-            )
-        if not state.sealed or state.container_id != info.container_id:
-            return r[p.Tests.ContainerInfo].fail(
-                c.Tests.ERR_DOCKER_UNSEALED.format(
-                    name=name,
-                    container_id=info.container_id,
-                ),
-                error_code=codes.UNSEALED,
-            )
-        if state.fingerprint != fingerprint:
-            return r[p.Tests.ContainerInfo].fail(
-                c.Tests.ERR_DOCKER_FINGERPRINT_MISMATCH.format(
-                    name=name,
-                    sealed=state.fingerprint,
-                    current=fingerprint,
-                ),
-                error_code=codes.FINGERPRINT_MISMATCH,
-            )
-        if info.status != c.Tests.ContainerStatus.RUNNING or info.health not in {
-            c.Tests.ContainerHealth.HEALTHY,
-            c.Tests.ContainerHealth.UNKNOWN,
-        }:
-            return r[p.Tests.ContainerInfo].fail(
-                c.Tests.ERR_DOCKER_UNHEALTHY.format(
-                    name=name,
-                    status=info.status,
-                    health=info.health,
-                ),
-                error_code=codes.UNHEALTHY,
-            )
-        return r[p.Tests.ContainerInfo].ok(info)
 
     @staticmethod
     def docker_compose_project(compose_file: Path) -> str:
@@ -135,37 +34,6 @@ class FlextTestsUtilitiesDockerLifecycle:
 
         """
         return compose_file.stem.replace(".", "-").replace("_", "-")
-
-    @staticmethod
-    def docker_fingerprint(target: p.Tests.ContainerConfig) -> p.Result[str]:
-        """Hash the declared inputs of a target: project, service and file bytes.
-
-        The process environment is never an input: two checkouts that declare
-        the same files compute the same fingerprint.
-
-        Returns:
-            The resulting ``p.Result[str]``.
-
-        """
-        compose_file = target.compose_file
-        if compose_file is None:
-            return r[str].fail(c.Tests.ERR_DOCKER_TARGET_NOT_INSPECTABLE)
-        digest = hashlib.sha256()
-        project = target.project_name or (
-            FlextTestsUtilitiesDockerLifecycle.docker_compose_project(compose_file)
-        )
-        for part in (project, target.service):
-            digest.update(part.encode())
-            digest.update(c.Tests.DOCKER_FINGERPRINT_SEPARATOR)
-        for input_file in (compose_file, *target.fingerprint_inputs):
-            read = u.Cli.files_read_binary(input_file)
-            if read.failure:
-                return r[str].from_failure(read)
-            digest.update(
-                len(read.value).to_bytes(c.Tests.DOCKER_FINGERPRINT_SIZE_BYTES),
-            )
-            digest.update(read.value)
-        return r[str].ok(digest.hexdigest())
 
     @staticmethod
     def resolve_host_port(
@@ -320,7 +188,10 @@ class FlextTestsUtilitiesDockerLifecycle:
             _ = handle.write("".join(f"{line}\n" for line in lines))
         failure: BaseException | None = None
         try:
-            yield (env_file,)
+            with FlextTestsUtilitiesConfigHelpers.env_vars_context({
+                key: secret.get_secret_value() for key, secret in environment.items()
+            }):
+                yield (env_file,)
         except BaseException as exc:
             failure = exc
             raise

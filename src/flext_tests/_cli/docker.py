@@ -65,7 +65,7 @@ class FlextTestsCliDocker:
 
     @staticmethod
     def run_ensure(path: Path, target: str | None) -> int:
-        """Ensure every requested container is up, healthy, and sealed.
+        """Prepare each explicitly requested service without replacing existing data.
 
         Returns:
             The resulting ``int``.
@@ -84,7 +84,7 @@ class FlextTestsCliDocker:
 
     @staticmethod
     def run_verify(path: Path, target: str | None) -> int:
-        """Read-only verification: up, healthy, sealed against the fingerprint.
+        """Read-only verification of the native declaration and service readiness.
 
         Returns:
             The resulting ``int``.

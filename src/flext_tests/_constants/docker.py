@@ -20,10 +20,6 @@ class FlextTestsConstantsDocker:
     # The Make CI token (variable and value) is owned by flext-infra
     # ``config.Infra.codegen.make.ci``; the lifecycle reads it from there and
     # never treats GitHub's CI=true as the token.
-    ERR_DOCKER_DISABLED_BY_CI: ClassVar[str] = (
-        "Docker lifecycle disabled under {variable}={value}: "
-        "container tests are not executed in CI"
-    )
     DOCKER_TEST_ENVIRONMENT_DIR: ClassVar[str] = "docker-test-environment"
     DOCKER_TEST_ENVIRONMENT_FIXTURE: ClassVar[str] = "docker_test_environment"
     DOCKER_HOST_VARIABLE: ClassVar[str] = "DOCKER_HOST"
@@ -33,10 +29,6 @@ class FlextTestsConstantsDocker:
     DOCKER_CI_VALUE_INI: ClassVar[str] = "flext_make_ci_value"
     """Generated pytest ini keys projecting flext-infra's Make CI token."""
     DOCKER_CONNECTIVITY_MARKER: ClassVar[str] = "docker"
-    DOCKER_CI_SKIP_REASON: ClassVar[str] = (
-        "Docker lifecycle disabled under the Make CI token: "
-        "container tests are not executed in CI"
-    )
     DOCKER_UNREACHABLE_DESELECT_REASON: ClassVar[str] = (
         "Docker daemon unreachable; start it to run Docker integration tests"
     )
@@ -50,19 +42,13 @@ class FlextTestsConstantsDocker:
     # ``<name>.state.lock``. The session lease owns ``<name>.lease.lock`` so
     # marking a container dirty never waits on the sessions that use it.
     DOCKER_STATE_DIR_PARTS: ClassVar[tuple[str, ...]] = (".flext", "docker")
-    DOCKER_STATE_FILE_SUFFIX: ClassVar[str] = ".json"
-    DOCKER_STATE_LOCK_SUFFIX: ClassVar[str] = ".state.lock"
     DOCKER_LEASE_LOCK_SUFFIX: ClassVar[str] = ".lease.lock"
-    DOCKER_STATE_LOCK_TIMEOUT_SECONDS: ClassVar[float] = 30.0
     # Scratch root for relocated caches (hypothesis, benchmarks): never
     # inside the checkout; keyed per checkout identity under this root.
     SCRATCH_DIR_PARTS: ClassVar[tuple[str, ...]] = (".flext", "scratch")
     SCRATCH_ROOT_INI: ClassVar[str] = "flext_scratch_root"
     # Docker's own container-name grammar; the name is also the state file stem.
     DOCKER_CONTAINER_NAME_PATTERN: ClassVar[str] = r"^[a-zA-Z0-9][a-zA-Z0-9_.-]+$"
-    ERR_DOCKER_STATE_NAME_MISMATCH: ClassVar[str] = (
-        "Container state {path} records {recorded!r}, expected {expected!r}"
-    )
 
     # A mutation waits at most this long for other sessions' leases, then fails
     # LOCK_TIMEOUT; a target may declare its own bound.
@@ -82,8 +68,6 @@ class FlextTestsConstantsDocker:
     # Entropy of each generated container secret (``secrets.token_urlsafe``),
     # whose URL-safe alphabet never contains a forbidden mark.
     DOCKER_SECRET_BYTES: ClassVar[int] = 24
-    DOCKER_FINGERPRINT_SEPARATOR: ClassVar[bytes] = b"\0"
-    DOCKER_FINGERPRINT_SIZE_BYTES: ClassVar[int] = 8
     ERR_DOCKER_NOT_PROVISIONED: ClassVar[str] = "Container {name} does not exist"
     DOCKER_COMPOSE_ERRORS: ClassVar[tuple[type[Exception], ...]] = (
         ComposeDockerException,
@@ -92,15 +76,6 @@ class FlextTestsConstantsDocker:
     """Failures a compose command reports: the CLI's own error and a missing binary."""
     ERR_DOCKER_UNHEALTHY: ClassVar[str] = (
         "Container {name} is {status} with health {health}"
-    )
-    ERR_DOCKER_DIRTY: ClassVar[str] = (
-        "Container {name} is marked dirty; the next ensure recreates it"
-    )
-    ERR_DOCKER_UNSEALED: ClassVar[str] = (
-        "Container {name} ({container_id}) is not the one the lifecycle sealed"
-    )
-    ERR_DOCKER_FINGERPRINT_MISMATCH: ClassVar[str] = (
-        "Container {name} was sealed for {sealed}; the declared inputs give {current}"
     )
     ERR_DOCKER_PORT_NOT_PUBLISHED: ClassVar[str] = (
         "Container {name} publishes no host port for {port}/tcp"
@@ -194,13 +169,9 @@ class FlextTestsConstantsDocker:
     class DockerErrorCode(StrEnum):
         """Typed failure codes of the Docker test lifecycle."""
 
-        DISABLED_BY_CI = "DISABLED_BY_CI"
         LOCK_TIMEOUT = "LOCK_TIMEOUT"
         NOT_PROVISIONED = "NOT_PROVISIONED"
         UNHEALTHY = "UNHEALTHY"
-        DIRTY = "DIRTY"
-        UNSEALED = "UNSEALED"
-        FINGERPRINT_MISMATCH = "FINGERPRINT_MISMATCH"
         PORT_NOT_PUBLISHED = "PORT_NOT_PUBLISHED"
         READINESS_TIMEOUT = "READINESS_TIMEOUT"
         ENVIRONMENT_MISSING = "ENVIRONMENT_MISSING"
@@ -213,15 +184,6 @@ class FlextTestsConstantsDocker:
         UNHEALTHY = "unhealthy"
         STARTING = "starting"
         UNKNOWN = "none"
-
-    @unique
-    class ContainerAction(StrEnum):
-        """What an ensure does with a container and its host record."""
-
-        CREATE = "create"
-        START = "start"
-        RECREATE = "recreate"
-        REUSE = "reuse"
 
     @unique
     class ContainerStatus(StrEnum):

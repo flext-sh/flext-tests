@@ -49,10 +49,10 @@ class TestsFlextTestsDockerLifecycle:
         state_dir: Path,
         *,
         service: str = "probe",
-        inputs: tuple[Path, ...] = (),
+        compose_file: Path | None = None,
         startup_timeout: int = 20,
     ) -> FlextTestsDocker:
-        compose_file = TestsFlextTestsDockerLifecycle._compose_file()
+        compose_file = compose_file or TestsFlextTestsDockerLifecycle._compose_file()
         return FlextTestsDocker.compose(
             compose_file,
             target=m.Tests.ContainerConfig(
@@ -60,7 +60,6 @@ class TestsFlextTestsDockerLifecycle:
                 service=service,
                 project_name=project,
                 port=80 if service == "probe" else None,
-                fingerprint_inputs=inputs,
                 startup_timeout=startup_timeout,
                 lock_timeout_seconds=float(startup_timeout),
             ),
@@ -116,7 +115,7 @@ class TestsFlextTestsDockerLifecycle:
         yield name
         tm.ok(self._docker(name, tmp_path / "teardown").down())
 
-    def test_reuse_keeps_the_sealed_container(
+    def test_reuse_preserves_container_data(
         self,
         project: str,
         tmp_path: Path,
@@ -126,47 +125,63 @@ class TestsFlextTestsDockerLifecycle:
         docker = self._docker(project, state_dir)
         created = tmp_path / "created.txt"
         first = tm.ok(docker.execute(initializer=self._marker(created)))
+        client = tm.ok(docker.client)
+        _ = client.containers.get(first.name).exec_run(["touch", "/sentinel"])
         second = tm.ok(docker.execute(initializer=self._marker(created)))
+        tm.that(
+            client.containers
+            .get(first.name)
+            .exec_run(["test", "-e", "/sentinel"])
+            .exit_code,
+            eq=0,
+        )
         tm.that(second.container_id, eq=first.container_id)
         tm.that(created.read_text(encoding="utf-8").splitlines(), len=1)
-        record = tm.ok(u.Tests.read_container_state(state_dir, first.name))
-        tm.ok(record.sealed)
-        tm.that(record.container_id, eq=first.container_id)
-        tm.that(record.fingerprint, eq=tm.ok(docker.fingerprint()))
         tm.that(tm.ok(docker.verify()).container_id, eq=first.container_id)
         tm.that(tm.ok(u.Tests.resolve_host_port(first, 80)), gt=0)
 
-    def test_unhealthy_container_is_recreated(
+    def test_unhealthy_container_fails_without_recreation(
         self,
         project: str,
         tmp_path: Path,
     ) -> None:
-        """A failing healthcheck makes verify fail and ensure recreate."""
+        """A failing healthcheck remains a real failure and preserves existing data."""
         docker = self._docker(project, tmp_path / "state")
         first = tm.ok(docker.execute())
         client = tm.ok(docker.client)
         _ = client.containers.get(first.name).exec_run(["touch", "/unhealthy"])
         _ = self._await_health(docker, first.name, c.Tests.ContainerHealth.UNHEALTHY)
         tm.fail(docker.verify(), code=c.Tests.DockerErrorCode.UNHEALTHY)
-        second = tm.ok(docker.execute())
-        tm.that(second.container_id, ne=first.container_id)
-        tm.that(second.health, eq=c.Tests.ContainerHealth.HEALTHY)
+        tm.fail(docker.execute(), code=c.Tests.DockerErrorCode.UNHEALTHY)
+        tm.that(
+            tm.ok(docker.fetch_container_info(first.name)).container_id,
+            eq=first.container_id,
+        )
 
-    def test_changed_fingerprint_input_recreates(
+    def test_changed_image_is_reported_without_recreation(
         self,
         project: str,
         tmp_path: Path,
     ) -> None:
-        """Changing a declared input invalidates the seal."""
-        declared = tmp_path / "declared-input.txt"
-        _ = declared.write_text("first\n", encoding="utf-8")
-        docker = self._docker(project, tmp_path / "state", inputs=(declared,))
+        """Native declaration drift fails without replacing the data holder."""
+        source = tmp_path / "lifecycle.compose.yml"
+        source.write_text(
+            self._compose_file().read_text(encoding="utf-8"), encoding="utf-8"
+        )
+        docker = self._docker(project, tmp_path / "state", compose_file=source)
         first = tm.ok(docker.execute())
-        _ = declared.write_text("second\n", encoding="utf-8")
-        tm.fail(docker.verify(), code=c.Tests.DockerErrorCode.FINGERPRINT_MISMATCH)
-        second = tm.ok(docker.execute())
-        tm.that(second.container_id, ne=first.container_id)
-        tm.ok(docker.verify())
+        source.write_text(
+            source.read_text(encoding="utf-8").replace(
+                "nginx:latest", "nginx:changed-declaration"
+            ),
+            encoding="utf-8",
+        )
+        tm.fail(docker.verify(), has="image")
+        tm.fail(docker.execute(), has="image")
+        tm.that(
+            tm.ok(docker.fetch_container_info(first.name)).container_id,
+            eq=first.container_id,
+        )
 
     def test_creation_environment_reads_back_as_secret(
         self,
@@ -204,11 +219,7 @@ class TestsFlextTestsDockerLifecycle:
             code=c.Tests.DockerErrorCode.NOT_PROVISIONED,
         )
         created = tm.ok(docker.execute())
-        tm.ok(docker.mark_container_dirty(name))
-        record = u.Tests.docker_state_file(state_dir, name)
-        recorded = record.read_bytes()
-        tm.fail(docker.verify(), code=c.Tests.DockerErrorCode.DIRTY)
-        tm.that(record.read_bytes(), eq=recorded)
+        tm.that(tm.ok(docker.verify()).container_id, eq=created.container_id)
         tm.that(
             tm.ok(docker.fetch_container_info(name)).container_id,
             eq=created.container_id,
@@ -271,7 +282,5 @@ class TestsFlextTestsDockerLifecycle:
         started = time.monotonic()
         tm.fail(docker.execute())
         tm.that(time.monotonic() - started, lt=20)
-        record = tm.ok(
-            u.Tests.read_container_state(state_dir, f"{project}-never-healthy-1"),
-        )
-        tm.fail(record.sealed)
+        observed = docker.fetch_container_info(f"{project}-never-healthy-1")
+        tm.that(observed.success, eq=True)

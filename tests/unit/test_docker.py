@@ -11,15 +11,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from tests.unit._docker import builders, ci, lifecycle, operations, state, targets
+from tests.unit._docker import builders, lifecycle, operations, targets
 
 
 class TestsFlextTestsDocker(
-    state.TestsFlextTestsDockerState,
     builders.TestsFlextTestsDockerBuilders,
     operations.TestsFlextTestsDockerOperations,
     targets.TestsFlextTestsDockerTargets,
-    ci.TestsFlextTestsDockerCi,
     lifecycle.TestsFlextTestsDockerLifecycle,
 ):
     """Behavioral contract of the Docker control facade (FlextTestsDocker)."""

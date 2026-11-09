@@ -15,6 +15,7 @@ from docker.errors import DockerException, NotFound
 from docker.utils import kwargs_from_env
 from flext_cli import u
 from python_on_whales import DockerClient as ComposeDockerClient
+from python_on_whales.components.compose.models import ComposeConfigService
 
 from flext_tests import c, m, p, r, t
 from flext_tests._utilities import FlextTestsUtilitiesDockerLifecycle
@@ -22,6 +23,47 @@ from flext_tests._utilities import FlextTestsUtilitiesDockerLifecycle
 
 class FlextTestsUtilitiesDockerClient:
     """One endpoint, chosen before connecting; failures keep their cause."""
+
+    @staticmethod
+    def docker_declaration_matches(
+        service: ComposeConfigService,
+        info: p.Tests.ContainerInfo,
+        inspect: p.Tests.ContainerInspect,
+    ) -> p.Result[bool]:
+        """Validate native declared runtime facts without resetting data.
+
+        Returns:
+            Success or the names of mismatched facts, never private values.
+
+        """
+        drift: list[str] = []
+        if service.container_name and service.container_name != info.name:
+            drift.append("container name")
+        if service.image and service.image != info.image:
+            drift.append("image")
+        actual = dict(
+            entry.split("=", 1) for entry in inspect.config.env or () if "=" in entry
+        )
+        if isinstance(service.environment, dict):
+            drift.extend(
+                f"environment key {key}"
+                for key, value in service.environment.items()
+                if value is not None and actual.get(key) != str(value)
+            )
+        drift.extend(
+            f"published port {port.target}"
+            for port in service.ports or ()
+            if port.target is not None
+            and port.published is not None
+            and port.published > 0
+            and info.ports.get(f"{port.target}/{port.protocol or 'tcp'}")
+            != str(port.published)
+        )
+        if drift:
+            return r[bool].fail(
+                f"Container {info.name} differs from Compose: {', '.join(drift)}"
+            )
+        return r[bool].ok(value=True)
 
     @staticmethod
     def docker_endpoint() -> str:
@@ -136,8 +178,6 @@ class FlextTestsUtilitiesDockerClient:
     def docker_compose_up(
         target: p.Tests.ContainerConfig,
         env_files: tuple[Path, ...],
-        *,
-        recreate: bool,
     ) -> p.Result[bool]:
         """Run compose up with --wait bounded by the target's startup timeout.
 
@@ -157,13 +197,11 @@ class FlextTestsUtilitiesDockerClient:
             env_files,
         )
         try:
-            if recreate:
-                client.compose.down(remove_orphans=True, volumes=True)
             client.compose.up(
                 services=[target.service] if target.service else None,
                 detach=True,
-                remove_orphans=True,
-                recreate=recreate,
+                recreate=False,
+                dependencies=False,
                 wait=True,
                 wait_timeout=target.startup_timeout,
                 quiet=True,

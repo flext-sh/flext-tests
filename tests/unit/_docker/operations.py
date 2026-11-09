@@ -8,8 +8,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_infra import config as infra_config
-
 from flext_tests import FlextTestsDocker
 from tests import c, tm, u
 
@@ -42,31 +40,6 @@ class TestsFlextTestsDockerOperations:
         result = docker_manager.wait_for_port_ready(c.LOOPBACK_IP, 59999, max_wait=1)
         _ = u.Tests.assert_failure(result)
         tm.that(result.error or "", has="not ready")
-
-    @staticmethod
-    def test_cleanup_dirty_containers_empty(
-        docker_manager: FlextTestsDocker,
-    ) -> None:
-        """A host without dirty records recreates nothing."""
-        ci_variable = infra_config.Infra.codegen.make.ci.variable
-        with u.Tests.env_vars_context(vars_to_clear=(ci_variable,)):
-            result = docker_manager.cleanup_dirty_containers()
-        _ = u.Tests.assert_success(result)
-        tm.that(result.value, empty=True)
-
-    @staticmethod
-    def test_cleanup_dirty_containers_keeps_foreign_records(
-        docker_manager: FlextTestsDocker,
-    ) -> None:
-        """A dirty record of an undeclared container is left to its own owner."""
-        foreign = "foreign-owner-test"
-        _ = u.Tests.assert_success(docker_manager.mark_container_dirty(foreign))
-        ci_variable = infra_config.Infra.codegen.make.ci.variable
-        with u.Tests.env_vars_context(vars_to_clear=(ci_variable,)):
-            result = docker_manager.cleanup_dirty_containers()
-        _ = u.Tests.assert_success(result)
-        tm.that(result.value, empty=True)
-        tm.that(docker_manager.dirty_containers, has=foreign)
 
     @staticmethod
     def test_default_state_dir_is_host_scoped() -> None:
