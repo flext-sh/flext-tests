@@ -62,16 +62,11 @@ class TestsFlextTestsCapabilityCollection:
 
     @staticmethod
     @c.Tests.MARK.slow
-    def test_connectivity_skips_without_local_env_remote_gate_runs(
+    def test_undeclared_connectivity_skips_and_remote_gate_runs(
         consumer: t.Tests.Pytester,
         fixture_tree: p.Tests.FixtureTree,
     ) -> None:
-        """Connectivity needs the untracked .env; a remote gate is not gated by it.
-
-        The generic ``remote`` external gate is deselected as NOT EXECUTED by the
-        flext-infra runner where its scope lacks the capability; once selected it
-        executes, so the plugin never skips it with the connectivity reason.
-        """
+        """An endpoint is required; file presence is unrelated to selection."""
         tree = fixture_tree(
             "capability_markers", destination=consumer.path / "capability_markers"
         )
@@ -81,15 +76,18 @@ class TestsFlextTestsCapabilityCollection:
         result.assert_outcomes(passed=2, skipped=1)
         result.stdout.fnmatch_lines([
             "*test_remote_gate PASSED*",
-            "*External tests require a local untracked .env*",
+            "*External test endpoint is not declared*",
         ])
         tm.that(result.ret, eq=0)
 
     @staticmethod
     @c.Tests.MARK.slow
+    @c.Tests.MARK.parametrize("in_ci", [False, True])
     def test_docker_markers_skip_only_when_docker_unreachable(
         consumer: t.Tests.Pytester,
         fixture_tree: p.Tests.FixtureTree,
+        *,
+        in_ci: bool,
     ) -> None:
         """Docker-provisioned markers never ask for .env; an absent daemon skips."""
         tree = fixture_tree(
@@ -99,7 +97,12 @@ class TestsFlextTestsCapabilityCollection:
             closed_endpoint.bind(("127.0.0.1", 0))
             port = closed_endpoint.getsockname()[1]
             with u.Tests.env_vars_context(
-                {c.Tests.DOCKER_HOST_VARIABLE: f"tcp://127.0.0.1:{port}"},
+                {
+                    c.Tests.DOCKER_HOST_VARIABLE: f"tcp://127.0.0.1:{port}",
+                    config.Infra.codegen.make.ci.variable: (
+                        config.Infra.codegen.make.ci.value if in_ci else "local"
+                    ),
+                },
                 vars_to_clear=("DOCKER_TLS_VERIFY", "DOCKER_CERT_PATH"),
             ):
                 result = TestsFlextTestsCapabilityCollection._run(
@@ -128,152 +131,72 @@ class TestsFlextTestsCapabilityCollection:
 
     @staticmethod
     @c.Tests.MARK.slow
-    def test_each_consumer_environment_is_scoped(
+    def test_process_inputs_reach_fixtures_without_an_environment_file(
         consumer: t.Tests.Pytester,
     ) -> None:
-        """A/B/A consumers see their own file and restore the inherited environment."""
+        """Selected inputs reach service fixtures without any local file."""
         consumer.makeconftest(
             "import os\nimport pytest\n"
-            "@pytest.hookimpl(trylast=True)\n"
-            "def pytest_collection_modifyitems(items):\n"
-            "    items.sort(key=lambda item: item.name)\n"
             "@pytest.fixture\n"
             "def service():\n    return os.environ['TEST_LABEL']\n",
         )
+        consumer.makepyfile(
+            "import pytest\n"
+            "@pytest.mark.connectivity(required_vars=('TEST_LABEL',), "
+            "url_var='TEST_ENDPOINT')\n"
+            "def test_external(service):\n"
+            "    assert service == 'selected-process-input'\n",
+        )
         with socket.socket() as listener:
             listener.bind(("127.0.0.1", 0))
             listener.listen(32)
             port = listener.getsockname()[1]
-            for label, indices in (("A", (1, 3)), ("B", (2,))):
-                member = consumer.path / label
-                member.mkdir()
-                (member / c.PYPROJECT_FILENAME).write_text(
-                    "[tool.pytest.ini_options]\n", encoding="utf-8"
-                )
-                (member / ".env").write_text(
-                    f"TEST_LABEL={label}\nTEST_ENDPOINT=http://127.0.0.1:{port}\n",
-                    encoding="utf-8",
-                )
-                (member / f"test_consumer_{label}.py").write_text(
-                    "import pytest\n"
-                    "pytestmark = pytest.mark.connectivity(url_var='TEST_ENDPOINT')\n"
-                    + "".join(
-                        f"def test_{index}(service):\n"
-                        f"    if service != '{label}':\n"
-                        "        pytest.fail('wrong consumer environment')\n"
-                        for index in indices
-                    ),
-                    encoding="utf-8",
-                )
-            consumer.makepyfile(
-                "import os\nimport pytest\n"
-                "def test_4_restored():\n"
-                "    if 'TEST_LABEL' in os.environ:\n"
-                "        pytest.fail('consumer environment leaked')\n",
-            )
-            with u.Tests.env_vars_context(vars_to_clear=("TEST_LABEL",)):
+            with u.Tests.env_vars_context({
+                "TEST_LABEL": "selected-process-input",
+                "TEST_ENDPOINT": f"http://127.0.0.1:{port}",
+            }):
                 result = TestsFlextTestsCapabilityCollection._run(consumer)
-        result.assert_outcomes(passed=4)
+        result.assert_outcomes(passed=1)
         tm.that(result.ret, eq=0)
+        tm.that((consumer.path / ".env").exists(), eq=False)
 
     @staticmethod
     @c.Tests.MARK.slow
-    def test_changed_environment_is_revalidated(
+    def test_changed_process_inputs_are_revalidated(
         consumer: t.Tests.Pytester,
     ) -> None:
-        """Deleting, tracking, or replacing a ready file invalidates its readiness."""
+        """Changed inputs retain readiness and declaration failures per case."""
         mutations = {
-            "delete": "env.unlink()",
-            "track": "u.Cli.run_checked(['git', 'add', '--', '.env'], "
-            "cwd=env.parent).unwrap()",
-            c.MergeStrategy.REPLACE: (
-                "env.write_text('TEST_ENDPOINT=not-a-url\\n', encoding='utf-8')"
-            ),
+            "missing": "os.environ.pop('TEST_REQUIRED_MISSING')",
+            "closed": "os.environ['TEST_ENDPOINT_CLOSED'] = {closed!r}",
+            "invalid": "os.environ['TEST_ENDPOINT_INVALID'] = 'not-a-url'",
         }
-        with socket.socket() as listener:
+        with socket.socket() as listener, socket.socket() as closed:
             listener.bind(("127.0.0.1", 0))
             listener.listen(32)
+            closed.bind(("127.0.0.1", 0))
             port = listener.getsockname()[1]
+            closed_url = f"http://127.0.0.1:{closed.getsockname()[1]}"
+            environment = {}
             for mutation, body in mutations.items():
-                member = consumer.path / mutation
-                member.mkdir()
-                (member / c.PYPROJECT_FILENAME).write_text(
-                    "[tool.pytest.ini_options]\n", encoding="utf-8"
-                )
-                (member / ".env").write_text(
-                    f"TEST_ENDPOINT=http://127.0.0.1:{port}\n", encoding="utf-8"
-                )
-                (member / f"test_{mutation}.py").write_text(
-                    "from pathlib import Path\nimport pytest\n"
-                    "from flext_tests import u\n"
-                    "pytestmark = pytest.mark.connectivity(url_var='TEST_ENDPOINT')\n"
-                    "def test_1_change_ready_environment():\n"
-                    "    env = Path(__file__).with_name('.env')\n"
-                    f"    {body}\n"
-                    "def test_2_recheck(service):\n    pass\n",
-                    encoding="utf-8",
-                )
-            result = TestsFlextTestsCapabilityCollection._run(consumer)
+                suffix = mutation.upper()
+                environment[f"TEST_ENDPOINT_{suffix}"] = f"http://127.0.0.1:{port}"
+                environment[f"TEST_REQUIRED_{suffix}"] = "selected"
+                consumer.makepyfile(**{
+                    f"test_{mutation}": (
+                        "import os\nimport pytest\n"
+                        f"pytestmark = pytest.mark.connectivity(required_vars="
+                        f"('TEST_REQUIRED_{suffix}',), "
+                        f"url_var='TEST_ENDPOINT_{suffix}')\n"
+                        "def test_1_change_inputs():\n"
+                        f"    {body.format(closed=closed_url)}\n"
+                        "def test_2_recheck(service):\n    pass\n"
+                    ),
+                })
+            with u.Tests.env_vars_context(environment):
+                result = TestsFlextTestsCapabilityCollection._run(consumer)
         result.assert_outcomes(passed=len(mutations), skipped=2, errors=1)
         tm.that(result.ret, eq=1)
-
-    @staticmethod
-    @c.Tests.MARK.slow
-    @c.Tests.MARK.parametrize("service_marker", c.Tests.CONNECTIVITY_MARKER_CONTAINERS)
-    @c.Tests.MARK.parametrize(
-        "ordering", ["service-only", "service-first", "docker-first"]
-    )
-    def test_docker_backed_markers_skip_in_ci_before_effects(
-        consumer: t.Tests.Pytester,
-        service_marker: str,
-        ordering: str,
-    ) -> None:
-        """Test docker backed markers skip in ci before effects."""
-        ci = config.Infra.codegen.make.ci
-        markers = [service_marker]
-        if ordering == "service-first":
-            markers.append("docker")
-        elif ordering == "docker-first":
-            markers.insert(0, "docker")
-        (consumer.path / ".env").write_text(
-            "FLEXT_TEST_ENV_EFFECT=loaded\n",
-            encoding="utf-8",
-        )
-        consumer.makepyfile(
-            "import os\nimport pytest\n"
-            + "".join(f"@pytest.mark.{marker}\n" for marker in markers)
-            + "def test_external(service):\n    pass\n"
-            "def test_environment_not_loaded():\n"
-            "    if 'FLEXT_TEST_ENV_EFFECT' in os.environ:\n"
-            "        pytest.fail('environment loaded before CI skip')\n",
-        )
-        with socket.socket() as docker_endpoint:
-            docker_endpoint.bind(("127.0.0.1", 0))
-            port = docker_endpoint.getsockname()[1]
-            consumer.makeconftest(
-                "import sys\nimport pytest\n"
-                "def audit(event, args):\n"
-                "    if event == 'socket.connect' "
-                f"and args[1] == ('127.0.0.1', {port}):\n"
-                "        raise RuntimeError('Docker probe attempted before CI skip')\n"
-                "sys.addaudithook(audit)\n"
-                "@pytest.fixture\n"
-                "def service():\n    pytest.fail('service fixture executed')\n",
-            )
-            with u.Tests.env_vars_context(
-                {ci.variable: ci.value, "DOCKER_HOST": f"tcp://127.0.0.1:{port}"},
-                vars_to_clear=(
-                    "FLEXT_TEST_ENV_EFFECT",
-                    "DOCKER_TLS_VERIFY",
-                    "DOCKER_CERT_PATH",
-                ),
-            ):
-                result = TestsFlextTestsCapabilityCollection._run(consumer)
-        result.assert_outcomes(passed=1, skipped=1)
-        result.stdout.fnmatch_lines([
-            "*Docker-dependent connectivity tests are disabled in CI*",
-        ])
-        tm.that(result.ret, eq=0)
 
     @staticmethod
     @c.Tests.MARK.slow
@@ -380,11 +303,7 @@ class TestsFlextTestsCapabilityCollection:
             listener.bind(("127.0.0.1", 0))
             listener.listen(32)
             port = listener.getsockname()[1]
-            (consumer.path / ".env").write_text(
-                f"TEST_HTTP_ENDPOINT=http://127.0.0.1:{port}\n"
-                f"TEST_LDAP_ENDPOINT=ldap://127.0.0.1:{port}\n",
-                encoding="utf-8",
-            )
+
             declarations = (
                 f"host='127.0.0.1', port={port}",
                 "url_var='TEST_HTTP_ENDPOINT'",
@@ -406,44 +325,13 @@ class TestsFlextTestsCapabilityCollection:
             )
             case_count = len(c.Tests.CONNECTIVITY_MARKER_CONTAINERS) * len(declarations)
             ci_value = ci.value if in_ci else f"{ci.value}-other"
-            with u.Tests.env_vars_context({ci.variable: ci_value}):
+            with u.Tests.env_vars_context({
+                ci.variable: ci_value,
+                "TEST_HTTP_ENDPOINT": f"http://127.0.0.1:{port}",
+                "TEST_LDAP_ENDPOINT": f"ldap://127.0.0.1:{port}",
+            }):
                 result = TestsFlextTestsCapabilityCollection._run(consumer)
             result.assert_outcomes(passed=case_count + 1, failed=case_count + 1)
-            tm.that(result.ret, eq=1)
-
-    @staticmethod
-    @c.Tests.MARK.slow
-    @c.Tests.MARK.parametrize("tracked", [False, True])
-    def test_tracking_check_distinguishes_tracked_file_from_git_error(
-        consumer: t.Tests.Pytester,
-        *,
-        tracked: bool,
-    ) -> None:
-        """A tracked .env skips, but a real Git repository error remains an error."""
-        (consumer.path / ".env").write_text(
-            "TEST_ENVIRONMENT=declared\n", encoding="utf-8"
-        )
-        if tracked:
-            u.Cli.run_checked(["git", "add", "--", ".env"], cwd=consumer.path).unwrap()
-        else:
-            (consumer.path / c.GIT_DIR_NAME / "HEAD").unlink()
-        consumer.makepyfile(
-            "import pytest\n"
-            "@pytest.mark.connectivity(host='127.0.0.1', port=1)\n"
-            "def test_external(service):\n    pass\n",
-        )
-        result = TestsFlextTestsCapabilityCollection._run(consumer)
-        if tracked:
-            result.assert_outcomes(skipped=1)
-            result.stdout.fnmatch_lines([
-                "*External tests require a local untracked .env*"
-            ])
-            tm.that(result.ret, eq=0)
-        else:
-            result.assert_outcomes(errors=1)
-            result.stdout.fnmatch_lines([
-                "*RuntimeError: Git test-environment tracking check failed (exit 128)*"
-            ])
             tm.that(result.ret, eq=1)
 
     @staticmethod
@@ -456,15 +344,15 @@ class TestsFlextTestsCapabilityCollection:
             listener.bind(("127.0.0.1", 0))
             port = listener.getsockname()[1]
             # A bound socket that does not listen gives a real refused connection.
-            (consumer.path / ".env").write_text(
-                f"TEST_ENDPOINT=http://127.0.0.1:{port}\n",
-                encoding="utf-8",
-            )
+
             consumer.makepyfile(
                 "import pytest\n@pytest.mark.connectivity(url_var='TEST_ENDPOINT')\n"
                 "def test_external(service):\n    pass\n",
             )
-            result = TestsFlextTestsCapabilityCollection._run(consumer)
+            with u.Tests.env_vars_context({
+                "TEST_ENDPOINT": f"http://127.0.0.1:{port}",
+            }):
+                result = TestsFlextTestsCapabilityCollection._run(consumer)
         result.assert_outcomes(skipped=1)
 
     @staticmethod
@@ -481,20 +369,14 @@ class TestsFlextTestsCapabilityCollection:
         ],
     )
     def test_invalid_endpoint_values_fail_without_exposing_credentials(
-        consumer: t.Tests.Pytester,
         endpoint: str,
     ) -> None:
         """Malformed configured URLs fail before transport and hide credentials."""
-        env_file = consumer.path / ".env"
-        env_file.write_text(
-            f"TEST_ENDPOINT={endpoint}\n",
-            encoding=c.DEFAULT_ENCODING,
-        )
-        with u.Tests.raises(c.Tests.UsageError) as error:
-            u.Tests.external_environment_reason(
-                env_file=env_file,
-                url_var="TEST_ENDPOINT",
-            )
+        with (
+            u.Tests.env_vars_context({"TEST_ENDPOINT": endpoint}),
+            u.Tests.raises(c.Tests.UsageError) as error,
+        ):
+            u.Tests.external_environment_reason(url_var="TEST_ENDPOINT")
         tm.that(
             str(error.value),
             eq="External test endpoint is invalid or lacks a transport port",
@@ -504,7 +386,6 @@ class TestsFlextTestsCapabilityCollection:
     @staticmethod
     @c.Tests.MARK.parametrize("scheme", ["http", "https", "ldap", "ldaps", "custom"])
     def test_explicit_endpoint_ports_use_the_real_transport(
-        consumer: t.Tests.Pytester,
         scheme: str,
     ) -> None:
         """An explicit transport port needs no scheme-specific default."""
@@ -512,18 +393,13 @@ class TestsFlextTestsCapabilityCollection:
             listener.bind(("127.0.0.1", 0))
             listener.listen()
             port = listener.getsockname()[1]
-            env_file = consumer.path / ".env"
-            env_file.write_text(
-                f"TEST_ENDPOINT={scheme}://127.0.0.1:{port}\n",
-                encoding=c.DEFAULT_ENCODING,
-            )
-            tm.that(
-                u.Tests.external_environment_reason(
-                    env_file=env_file,
-                    url_var="TEST_ENDPOINT",
-                ),
-                eq=None,
-            )
+            with u.Tests.env_vars_context({
+                "TEST_ENDPOINT": f"{scheme}://127.0.0.1:{port}",
+            }):
+                tm.that(
+                    u.Tests.external_environment_reason(url_var="TEST_ENDPOINT"),
+                    eq=None,
+                )
 
     @staticmethod
     @c.Tests.MARK.slow
@@ -535,10 +411,7 @@ class TestsFlextTestsCapabilityCollection:
             listener.bind(("127.0.0.1", 0))
             listener.listen()
             port = listener.getsockname()[1]
-            (consumer.path / ".env").write_text(
-                f"TEST_ENDPOINT=http://127.0.0.1:{port}\n",
-                encoding="utf-8",
-            )
+
             consumer.makepyfile(
                 "import pytest\n"
                 "pytestmark = pytest.mark.connectivity(url_var='TEST_ENDPOINT')\n"
@@ -547,6 +420,9 @@ class TestsFlextTestsCapabilityCollection:
                 "failed')\n"
                 "def test_fixture_failure(service):\n    pass\n",
             )
-            result = TestsFlextTestsCapabilityCollection._run(consumer)
+            with u.Tests.env_vars_context({
+                "TEST_ENDPOINT": f"http://127.0.0.1:{port}",
+            }):
+                result = TestsFlextTestsCapabilityCollection._run(consumer)
             result.assert_outcomes(passed=1, failed=1, errors=1)
             tm.that(result.ret, eq=1)

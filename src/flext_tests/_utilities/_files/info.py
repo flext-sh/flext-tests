@@ -88,7 +88,7 @@ class FlextTestsUtilitiesFilesInfo(FlextTestsUtilitiesFilesAssertions):
         permissions = stat.st_mode
         is_readonly = not permissions & 128
         sha256 = u.Cli.sha256_file(params.path) if params.compute_hash else None
-        content_meta: p.Tests.ContentMeta | None = None
+        content_meta: m.Tests.ContentMeta | None = None
         if params.parse_content or params.validate_model:
             content_meta = self._parse_content_metadata(
                 text=text,
@@ -138,7 +138,7 @@ class FlextTestsUtilitiesFilesInfo(FlextTestsUtilitiesFilesAssertions):
         text: str,
         fmt: str,
         validate_model: p.Tests.ModelReader[p.BaseModel] | None = None,
-    ) -> p.Tests.ContentMeta:
+    ) -> m.Tests.ContentMeta:
         """Parse file content and extract metadata.
 
         Uses Pydantic model_validate for validation and format-specific parsing

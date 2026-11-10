@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import shutil
 from collections.abc import Generator
-from contextlib import ExitStack
 from pathlib import Path
 
 import pytest
@@ -25,8 +24,7 @@ class FlextTestsCapabilityPlugin:
     """Shared marker-driven applicability owner for every consumer conftest."""
 
     def __init__(self) -> None:
-        """Per-session probe cache: one probe per marker per pytest process."""
-        self._environment_stack_key = pytest.StashKey[ExitStack]()
+        """Own prerequisite accounting for this pytest session."""
         self._prerequisite_skip_key = pytest.StashKey[
             tuple[BaseException, pytest.Mark, str]
         ]()
@@ -55,7 +53,9 @@ class FlextTestsCapabilityPlugin:
         )
 
     @staticmethod
-    def _declaration(marker: pytest.Mark) -> tuple[tuple[str, ...], str | None]:
+    def _declaration(
+        marker: pytest.Mark,
+    ) -> tuple[tuple[str, ...], str | None, tuple[str, ...]]:
         if marker.args or marker.kwargs.keys() - {
             "required_vars",
             "url_var",
@@ -95,25 +95,26 @@ class FlextTestsCapabilityPlugin:
             if isinstance(host, str) and not host.strip():
                 msg = "Connectivity host and port must be a string and an integer"
                 raise pytest.UsageError(msg)
-        return tuple(names), url_var
+        return tuple(names), url_var, FlextTestsCapabilityPlugin._executables(marker)
 
-    def _reason(self, item: pytest.Item, marker: pytest.Mark) -> str | None:
+    def _reason(
+        self,
+        marker: pytest.Mark,
+        declaration: tuple[tuple[str, ...], str | None, tuple[str, ...]],
+    ) -> str | None:
         """Resolve the unmet prerequisite for one connectivity marker.
 
         Returns:
             The skip reason, or ``None`` when the environment is ready.
 
         """
-        required, url_var = self._declaration(marker)
-        executables = self._executables(marker)
+        required, url_var, executables = declaration
         missing = tuple(name for name in executables if shutil.which(name) is None)
         if missing:
             return f"Host executable is unavailable: {', '.join(missing)}"
         if executables and marker.kwargs.keys() == {"executables"}:
             return None
-        # Resolve each member's own .env even during workspace-wide collection.
-        root = self._environment_file(item).parent
-        return self._resolve_marker_reason(marker, required, url_var, root)
+        return self._resolve_marker_reason(marker, required, url_var)
 
     @staticmethod
     def _executables(marker: pytest.Mark) -> tuple[str, ...]:
@@ -154,7 +155,6 @@ class FlextTestsCapabilityPlugin:
         marker: pytest.Mark,
         required: tuple[str, ...],
         url_var: str | None,
-        root: Path,
     ) -> str | None:
         if FlextTestsCapabilityPlugin._requires_docker(marker):
             # Docker-provisioned: the suite builds its own isolated environment
@@ -163,12 +163,7 @@ class FlextTestsCapabilityPlugin:
             if reason is not None or marker.name == c.Tests.DOCKER_CONNECTIVITY_MARKER:
                 return reason
             return FlextTestsCapabilityPlugin._provisioned_reason(marker)
-        reason = u.Tests.external_environment_reason(env_file=root / ".env")
-        if reason is not None:
-            return reason
-        return FlextTestsCapabilityPlugin._container_reason(
-            marker, required, url_var, root
-        )
+        return FlextTestsCapabilityPlugin._container_reason(marker, required, url_var)
 
     @staticmethod
     def _docker_reason() -> str | None:
@@ -194,10 +189,10 @@ class FlextTestsCapabilityPlugin:
         if declared.port is None:
             msg = f"Connectivity container declares no port: {container}"
             raise ValueError(msg)
-        info = FlextTestsDocker().fetch_container_info(container)
-        if info.failure:
-            return "External test service is unavailable"
-        port = u.Tests.resolve_host_port(info.value, declared.port)
+        # A selected capability invokes its provisioning owner explicitly.
+        # That owner creates an absent service and preserves existing data.
+        info = FlextTestsDocker.shared(container).execute().unwrap()
+        port = u.Tests.resolve_host_port(info, declared.port)
         if port.failure:
             return "External test service port is unavailable"
         return u.Tests.endpoint_reason((declared.host, port.value))
@@ -207,7 +202,6 @@ class FlextTestsCapabilityPlugin:
         marker: pytest.Mark,
         required: tuple[str, ...],
         url_var: str | None,
-        root: Path,
     ) -> str | None:
         endpoint: tuple[str, int] | None = None
         host = marker.kwargs.get("host")
@@ -218,39 +212,28 @@ class FlextTestsCapabilityPlugin:
             return "External test endpoint is not declared"
         return u.Tests.external_environment_reason(
             required,
-            root / ".env",
             endpoint=endpoint,
             url_var=url_var,
         )
-
-    @staticmethod
-    def _environment_file(item: pytest.Item) -> Path:
-        root = item.path.parent
-        while root != root.parent and not (root / c.PYPROJECT_FILENAME).is_file():
-            root = root.parent
-        return root / ".env"
 
     @pytest.hookimpl(wrapper=True)
     def pytest_runtest_protocol(
         self,
         item: pytest.Item,
     ) -> Generator[None, None, bool | None]:
-        """Scope configuration to this consumer, including its service fixtures.
+        """Keep prerequisite accounting scoped to the selected test.
 
         Returns:
             The wrapped protocol outcome, or ``None`` when no markers apply.
 
         """
-        with ExitStack() as stack:
-            item.stash[self._environment_stack_key] = stack
-            try:
-                return (yield)
-            finally:
-                del item.stash[self._environment_stack_key]
-                if self._prerequisite_skip_key in item.stash:
-                    del item.stash[self._prerequisite_skip_key]
-                if self._prerequisite_report_key in item.stash:
-                    del item.stash[self._prerequisite_report_key]
+        try:
+            return (yield)
+        finally:
+            if self._prerequisite_skip_key in item.stash:
+                del item.stash[self._prerequisite_skip_key]
+            if self._prerequisite_report_key in item.stash:
+                del item.stash[self._prerequisite_report_key]
 
     def _skip_prerequisite(
         self, item: pytest.Item, marker: pytest.Mark, reason: str
@@ -314,35 +297,20 @@ class FlextTestsCapabilityPlugin:
     def pytest_runtest_setup(self, item: pytest.Item) -> None:
         """Skip before fixtures, after all consumer collection hooks added markers.
 
-        Only connectivity markers select this policy. A generic external gate such
-        as ``remote`` (network services) is not a local ``.env`` prerequisite: the
-        flext-infra runner deselects it as NOT EXECUTED where its scope lacks the
-        capability, and wherever it is selected the capability is required.
+        Only connectivity markers select this policy. The flext-infra runner
+        owns generic external-gate applicability, including ``remote``;
+        selected services still require their declared inputs and transport.
         """
         markers = [
             marker
             for marker in item.iter_markers()
             if marker.name in {*c.Tests.CONNECTIVITY_MARKERS, "connectivity"}
         ]
-        for marker in markers:
-            self._declaration(marker)
-        if (
-            any(self._requires_docker(marker) for marker in markers)
-            and FlextTestsDocker.ci_disables_docker()
-        ):
-            reason = "Docker-dependent connectivity tests are disabled in CI"
-            marker = next(marker for marker in markers if self._requires_docker(marker))
-            self._skip_prerequisite(item, marker, reason)
-        for marker in markers:
-            reason = self._reason(item, marker)
+        declarations = [(marker, self._declaration(marker)) for marker in markers]
+        for marker, declaration in declarations:
+            reason = self._reason(marker, declaration)
             if reason is not None:
                 self._skip_prerequisite(item, marker, reason)
-        if any(not self._requires_docker(marker) for marker in markers):
-            item.stash[self._environment_stack_key].enter_context(
-                u.Tests.env_vars_context(
-                    u.Tests.external_environment_values(self._environment_file(item))
-                )
-            )
 
     @pytest.hookimpl(trylast=True)
     def pytest_collection_modifyitems(self, items: list[pytest.Item]) -> None:

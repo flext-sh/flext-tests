@@ -42,6 +42,11 @@ Read [`/flext/AGENTS.md`](https://github.com/flext-sh/flext/blob/0.12.0-dev/AGEN
 and this project's `AGENTS.md` for the current authority chain, execution boundaries and
 required validation.
 
+Connectivity markers select required services explicitly. Their declared inputs
+come from the process environment; no local `.env` file or Git tracking state is
+an opt-in. Transport readiness is checked before service fixtures, while
+connection, authentication and application errors remain test failures.
+
 ## Operation Flow
 
 - Public surface: see [`docs/index.md`](docs/index.md) and

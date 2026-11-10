@@ -21,7 +21,10 @@ class FlextTestsModelsDocker:
 
         container_name: Annotated[
             str | None,
-            m.Field(description="Optional managed container name for inspection."),
+            m.Field(
+                pattern=c.Tests.DOCKER_CONTAINER_NAME_PATTERN,
+                description="Optional managed container name for inspection.",
+            ),
         ] = None
         compose_file: Annotated[
             Path | None,
@@ -44,6 +47,14 @@ class FlextTestsModelsDocker:
                 ),
             ),
         ] = None
+        force_recreate: Annotated[
+            bool,
+            m.Field(description="Whether execute should recreate the target stack."),
+        ] = False
+        fingerprint_inputs: Annotated[
+            tuple[Path, ...],
+            m.Field(description="Files hashed with the compose file into the seal."),
+        ] = ()
         startup_timeout: Annotated[
             int,
             m.Field(
@@ -51,18 +62,10 @@ class FlextTestsModelsDocker:
                 description="Bound for compose --wait and for readiness polling.",
             ),
         ] = 30
-        force_recreate: Annotated[
-            bool,
-            m.Field(description="Whether execute should recreate the target stack."),
-        ] = False
         project_name: Annotated[
             str | None,
             m.Field(description="Compose project; the compose file stem when absent."),
         ] = None
-        fingerprint_inputs: Annotated[
-            tuple[Path, ...],
-            m.Field(description="Files hashed with the compose file into the seal."),
-        ] = ()
         secret_keys: Annotated[
             tuple[str, ...],
             m.Field(
@@ -164,37 +167,6 @@ class FlextTestsModelsDocker:
         network_settings: FlextTestsModelsDocker.ContainerInspectNetwork = m.Field(
             alias="NetworkSettings", description="Published ports."
         )
-
-    class ContainerState(m.Value):
-        """Host-scoped lifecycle record of one shared test container.
-
-        A name without a record is unprovisioned: no id, no fingerprint, clean
-        and unsealed. Every checkout of the host reads the same record.
-        """
-
-        container_name: Annotated[
-            str,
-            m.Field(
-                pattern=c.Tests.DOCKER_CONTAINER_NAME_PATTERN,
-                description="Docker container name; also the record file stem.",
-            ),
-        ]
-        container_id: Annotated[
-            str,
-            m.Field(description="Container id the lifecycle sealed; empty if none."),
-        ] = ""
-        fingerprint: Annotated[
-            str,
-            m.Field(description="Declared-input fingerprint sealed with the id."),
-        ] = ""
-        dirty: Annotated[
-            bool,
-            m.Field(description="A session reported the container unusable."),
-        ] = False
-        sealed: Annotated[
-            bool,
-            m.Field(description="Creation and initialization completed for the id."),
-        ] = False
 
     class User(m.Value):
         """Test user model - immutable value object."""
