@@ -23,6 +23,8 @@ class FlextTestsModelsNamespace:
         namespace.
         """
 
+        __test__: bool = False
+
         token: Annotated[
             str,
             m.Field(

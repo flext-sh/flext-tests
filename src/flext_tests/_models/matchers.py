@@ -719,6 +719,8 @@ class FlextTestsModelsMatchers:
     class TestScope(m.Value):
         """Scope container for test configuration and runtime state."""
 
+        __test__: bool = False
+
         settings: Annotated[
             Mapping[
                 str,
