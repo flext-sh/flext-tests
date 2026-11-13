@@ -25,8 +25,7 @@ if TYPE_CHECKING:
     from flext_tests._protocols import FlextTestsProtocolsBase
 
 
-@runtime_checkable
-class FlextTestsProtocolsMatchers(Protocol):
+class FlextTestsProtocolsMatchers:
     """Structural matcher capabilities without recursive type aliases."""
 
     type MatcherOption = (
