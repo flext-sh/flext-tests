@@ -127,6 +127,15 @@ class FlextTestsProtocolsValidator:
             ...
 
         @property
+        def catalog_root(self) -> Path | None:
+            """Structural member projected from the owning model.
+
+            Repository pytest collects; flext-infra plans one repository at a time,
+            so the rule catalog is planned here.
+            """
+            ...
+
+        @property
         def warning_counter(self) -> MutableMapping[str, int]:
             """Captured runtime warning counts keyed by dotted category."""
             ...

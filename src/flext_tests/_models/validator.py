@@ -109,6 +109,15 @@ class FlextTestsModelsValidator:
             Path | None,
             m.Field(description="Resolved FLEXT workspace root for the session."),
         ] = None
+        catalog_root: Annotated[
+            Path | None,
+            m.Field(
+                description=(
+                    "Repository pytest collects; flext-infra plans one "
+                    "repository at a time, so the rule catalog is planned here."
+                ),
+            ),
+        ] = None
         warning_counter: Annotated[
             MutableMapping[str, int],
             m.Field(

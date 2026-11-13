@@ -109,6 +109,7 @@ class FlextTestsEnforcementDispatcher:
                 str(config.getoption("--flext-enforce-exclude-rules") or ""),
             ),
             repository_root=repository_root,
+            catalog_root=Path(config.rootpath).resolve(),
         )
         config.stash[cls.stash_config] = resolved
         return resolved
