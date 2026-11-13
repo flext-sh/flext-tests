@@ -32,18 +32,21 @@ class FlextTestsSettingsFixtures:
     def session_runtime(
         tmp_path_factory: pytest.TempPathFactory,
         run_namespace: p.Tests.TestNamespace,
+        scratch_root: Path,
     ) -> Iterator[p.Tests.SessionRuntime]:
         """Provide one lazy isolated runtime per worker; close it at session end.
 
         Pure tests never provision tools. Consumers lease one shared locked seed;
         teardown validates allocation identity before removing its owned area.
+        The runtime also carries the persistent scratch root shared by every
+        worker and run, for content-keyed artifacts that outlive the session.
 
         Yields:
             p.Tests.SessionRuntime: One lazy isolated worker runtime.
 
         """
         directory = tmp_path_factory.mktemp(run_namespace.token)
-        runtime = u.Tests.SessionRuntime(directory)
+        runtime = u.Tests.SessionRuntime(directory, storage=scratch_root)
         try:
             yield runtime
         finally:

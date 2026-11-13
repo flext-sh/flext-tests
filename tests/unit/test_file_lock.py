@@ -82,7 +82,7 @@ class TestsFlextTestsFileLock:
             attempts.append(parent)
             return (parent / "missing-seed").resolve(strict=True)
 
-        runtime = u.Tests.SessionRuntime(tmp_path)
+        runtime = u.Tests.SessionRuntime(tmp_path, storage=tmp_path)
         errors: list[FileNotFoundError] = []
         for _ in range(2):
             with u.Tests.raises(FileNotFoundError) as error, runtime.lease(unavailable):
@@ -112,7 +112,7 @@ class TestsFlextTestsFileLock:
             parent.symlink_to(foreign, target_is_directory=True)
             return parent / checkout.name
 
-        runtime = u.Tests.SessionRuntime(allocation)
+        runtime = u.Tests.SessionRuntime(allocation, storage=tmp_path)
         errors: list[ValueError] = []
         for _ in range(2):
             with (

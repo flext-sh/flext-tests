@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from tests import c, t, tm, u
+from tests import c, p, t, tm, u
 
 
 class TestsFlextTestsScratchStorage:
@@ -104,3 +104,20 @@ class TestsFlextTestsScratchStorage:
         )
         tm.that(root_a, ne=root_b)
         tm.that(root_override, eq=override / root_a.name)
+
+    @staticmethod
+    def test_session_runtime_storage_is_the_controller_scratch_root(
+        request: t.Tests.FixtureRequest,
+        session_runtime: p.Tests.SessionRuntime,
+    ) -> None:
+        """Every worker's session runtime carries the controller's scratch root."""
+        config = request.config
+        expected = u.Tests.scratch_root(
+            checkout_root=Path(config.rootpath),
+            override=config.getini(c.Tests.SCRATCH_ROOT_INI) or None,
+        )
+        tm.that(session_runtime.storage, eq=expected)
+        tm.that(
+            session_runtime.directory.is_relative_to(session_runtime.storage),
+            eq=False,
+        )

@@ -47,6 +47,9 @@ class FlextTestsConstantsDocker:
     # inside the checkout; keyed per checkout identity under this root.
     SCRATCH_DIR_PARTS: ClassVar[tuple[str, ...]] = (".flext", "scratch")
     SCRATCH_ROOT_INI: ClassVar[str] = "flext_scratch_root"
+    # The xdist controller resolves the scratch root before any worker
+    # isolates its environment and hands it to each worker under this key.
+    SCRATCH_ROOT_WORKERINPUT_KEY: ClassVar[str] = "flext_scratch_root"
     # Docker's own container-name grammar; the name is also the state file stem.
     DOCKER_CONTAINER_NAME_PATTERN: ClassVar[str] = r"^[a-zA-Z0-9][a-zA-Z0-9_.-]+$"
 
