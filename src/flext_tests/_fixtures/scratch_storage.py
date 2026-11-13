@@ -1,7 +1,8 @@
 """Scratch-storage class plugin for flext_tests (T6).
 
-Storage law: caches never live inside the checkout. Hypothesis and benchmark
-storage use the checkout-keyed host scratch root.
+Storage law: tool data lives once at each tool's default location and is
+reused. Hypothesis and pytest-benchmark keep their own defaults; the shared
+scratch root holds only content-keyed fixture storage.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -12,7 +13,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from hypothesis.configuration import set_hypothesis_home_dir
 
 from flext_tests import c, t
 from flext_tests._utilities import FlextTestsUtilitiesScratchStorage
@@ -26,18 +26,17 @@ class FlextTestsScratchStoragePlugin:
         """Resolve storage once, before any session isolates its environment.
 
         The xdist controller resolves through the pure owner; each worker
-        adopts the controller's root, so every worker and every run of the
-        checkout share one persistent storage area.
+        adopts the controller's root, so every worker, run and checkout share
+        one persistent storage area.
 
         Returns:
-            Path: The resolved scratch root for this checkout.
+            Path: The resolved shared scratch root.
 
         """
         worker_input = getattr(config, "workerinput", None)
         if worker_input is not None:
             return Path(worker_input[c.Tests.SCRATCH_ROOT_WORKERINPUT_KEY])
         return FlextTestsUtilitiesScratchStorage.scratch_root(
-            checkout_root=Path(config.rootpath),
             override=config.getini(c.Tests.SCRATCH_ROOT_INI) or None,
         )
 
@@ -61,23 +60,12 @@ class FlextTestsScratchStoragePlugin:
         return FlextTestsScratchStoragePlugin._scratch_root(request.config)
 
     @staticmethod
-    def pytest_configure(config: pytest.Config) -> None:
-        """Relocate hypothesis/benchmark storage under the scratch root."""
-        scratch = FlextTestsScratchStoragePlugin._scratch_root(config)
-        hypothesis_dir = scratch / "hypothesis"
-        hypothesis_dir.mkdir(parents=True, exist_ok=True)
-        set_hypothesis_home_dir(hypothesis_dir)
-        benchmark_dir = scratch / "benchmarks"
-        benchmark_dir.mkdir(parents=True, exist_ok=True)
-        config.option.benchmark_storage = str(benchmark_dir)
-
-    @staticmethod
     def pytest_addoption(parser: pytest.Parser) -> None:
         """Declare the scratch-root override (defaults to ~/.flext/scratch)."""
         parser.addini(
             c.Tests.SCRATCH_ROOT_INI,
             default="",
-            help="Override the scratch root for hypothesis/benchmark storage.",
+            help="Override the shared scratch root of content-keyed fixture storage.",
         )
 
 
