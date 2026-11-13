@@ -1,5 +1,9 @@
 # Docker test lifecycle
 
+<!-- TOC START -->
+
+<!-- TOC END -->
+
 A Docker marker selects the daemon capability. A service marker such as `ldap`
 selects its packaged service through `tk.shared(name)`. Collection does not create
 services. Before a selected service test enters its fixtures, the capability owner
