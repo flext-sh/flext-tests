@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-from flext_cli import u as flext_cli_u
+from flext_cli import FlextCliUtilities
 
 from flext_tests._utilities import (
     FlextTestsUtilitiesConfigHelpers,
@@ -35,7 +35,7 @@ from flext_tests._utilities import (
 
 
 class FlextTestsUtilities(
-    flext_cli_u,
+    FlextCliUtilities,
     FlextTestsUtilitiesFlextGovernance,
     # Assertion matchers (that/...) published at the u root: test modules
     # call `u.that(...)` / `tm.that(...)` directly (strict no-subnamespace).

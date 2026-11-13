@@ -86,23 +86,23 @@ class FlextTestsProtocolsDocker:
             ...
 
         @property
-        def startup_timeout(self) -> int:
-            """Bound for compose --wait and for readiness polling."""
-            ...
-
-        @property
         def force_recreate(self) -> bool:
             """Whether execute should recreate the target stack."""
             ...
 
         @property
-        def project_name(self) -> str | None:
-            """Compose project; the compose file stem when absent."""
+        def fingerprint_inputs(self) -> tuple[Path, ...]:
+            """Files hashed with the compose file into the seal."""
             ...
 
         @property
-        def fingerprint_inputs(self) -> tuple[Path, ...]:
-            """Files hashed with the compose file into the seal."""
+        def startup_timeout(self) -> int:
+            """Bound for compose --wait and for readiness polling."""
+            ...
+
+        @property
+        def project_name(self) -> str | None:
+            """Compose project; the compose file stem when absent."""
             ...
 
         @property
