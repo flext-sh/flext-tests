@@ -64,9 +64,9 @@ class FlextTestsUtilitiesEnforcement:
         cfg: p.Tests.EnforcementDispatcherConfig,
     ) -> tuple[p.Tests.EnforcementRuleSpec, ...]:
         """Return catalog rules after applying the include/exclude filters."""
-        if cfg.repository_root is None:
+        if cfg.repository_root is None or cfg.catalog_root is None:
             return ()
-        catalog = cls.build_canonical_catalog(cfg.repository_root)
+        catalog = cls.build_canonical_catalog(cfg.catalog_root)
         return tuple(
             rule
             for rule in catalog.rules

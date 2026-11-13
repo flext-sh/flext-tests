@@ -55,6 +55,7 @@ class TestsFlextTestsEnforcementDispatcher:
             include=include,
             exclude=exclude,
             repository_root=TestsFlextTestsEnforcementDispatcher.project_root,
+            catalog_root=TestsFlextTestsEnforcementDispatcher.project_root,
         )
 
     # ------------------------------------------------------------------ #
@@ -124,6 +125,31 @@ class TestsFlextTestsEnforcementDispatcher:
             "--flext-enforce",
         )
 
+        result.stdout.fnmatch_lines(["*flext-enforce*", "catalog active: 1 rules*"])
+
+    @c.Tests.MARK.slow
+    def test_forced_sub_project_plans_its_own_catalog(
+        self,
+        pytester: t.Tests.Pytester,
+        workspace: Path,
+    ) -> None:
+        """A sub-project under a workspace plans the catalog of its own repository.
+
+        The sandbox workspace holds a sibling file no repository can name as a
+        module; planning the workspace root would fail on it, planning the
+        collected sub-project does not.
+        """
+        (workspace / "flext-tests" / "unnamed-dir").mkdir(parents=True)
+        (workspace / "flext-tests" / "unnamed-dir" / "probe.py").write_text(
+            "VALUE = 1\n", encoding="utf-8"
+        )
+        result = self._collect(
+            pytester,
+            self._sandbox_project(workspace),
+            "--flext-enforce",
+        )
+
+        result.stdout.no_fnmatch_line("*INTERNALERROR*")
         result.stdout.fnmatch_lines(["*flext-enforce*", "catalog active: 1 rules*"])
 
     @c.Tests.MARK.slow
