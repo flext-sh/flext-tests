@@ -29,6 +29,9 @@ class FlextTestsProtocolsValueFactory:
         """One lazy physical runtime per pytest session and worker."""
 
         directory: Path
+        """Session-owned allocation removed when the session ends."""
+        storage: Path
+        """Persistent storage shared by every worker and run of the checkout."""
 
         def lease(
             self,

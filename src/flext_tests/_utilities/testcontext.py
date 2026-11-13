@@ -98,8 +98,9 @@ class FlextTestsUtilitiesTestContext:
         without resolving or reinstalling dependencies between cases.
         """
 
-        def __init__(self, directory: Path) -> None:
+        def __init__(self, directory: Path, *, storage: Path) -> None:
             self.directory = directory.resolve(strict=True)
+            self.storage = storage
             self._allocation = self.directory.stat()
             self._root: Path | None = None
             self._provision: p.Tests.RuntimeProvision | None = None
