@@ -12,6 +12,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 from tests import c, m, p, t, tm, u
@@ -64,14 +65,26 @@ class TestsFlextTestsEnforcementDispatcher:
 
     @staticmethod
     def _sandbox_project(workspace: Path) -> Path:
-        """Create a sub-project with one passing test under ``workspace``.
+        """Create a real sub-project repository with one passing test.
+
+        flext-infra plans one repository: a Git checkout whose
+        ``pyproject.toml`` declares ``[project]``, whose package is its own
+        (it never shadows an installed FLEXT package) and whose runtime
+        environment is provisioned — here, this session's environment.
 
         Returns:
             The resulting ``Path``.
 
         """
-        project = workspace / "flext-core"
-        project.mkdir(parents=True, exist_ok=True)
+        project = workspace / "flext-probe"
+        package = project / "src" / "flext_probe"
+        package.mkdir(parents=True, exist_ok=True)
+        (package / "__init__.py").write_text("", encoding="utf-8")
+        (project / "pyproject.toml").write_text(
+            '[project]\nname = "flext-probe"\nversion = "0"\n', encoding="utf-8"
+        )
+        u.Cli.run_checked([*c.Cli.GIT_INIT_COMMAND, str(project)]).unwrap()
+        (project / ".venv").symlink_to(Path(sys.prefix), target_is_directory=True)
         (project / "pytest.ini").write_text("[pytest]\n", encoding="utf-8")
         (project / "test_probe.py").write_text(
             "def test_probe() -> None:\n    assert True\n",
@@ -232,9 +245,10 @@ class TestsFlextTestsEnforcementDispatcher:
 
     def test_include_narrows_to_the_listed_ids(self) -> None:
         """Test include narrows to the listed ids."""
-        active = u.Tests.active_rules(self._cfg(include=frozenset({"ENFORCE-001"})))
+        rule_id = self._runtime_rule_id()
+        active = u.Tests.active_rules(self._cfg(include=frozenset({rule_id})))
 
-        tm.that({r.id for r in active}, eq={"ENFORCE-001"})
+        tm.that({r.id for r in active}, eq={rule_id})
 
     def test_include_of_unknown_id_yields_no_rules(self) -> None:
         """Test include of unknown id yields no rules."""
@@ -246,20 +260,18 @@ class TestsFlextTestsEnforcementDispatcher:
 
     def test_exclude_removes_the_listed_id(self) -> None:
         """Test exclude removes the listed id."""
+        rule_id = self._runtime_rule_id()
         ids = {
-            r.id
-            for r in u.Tests.active_rules(self._cfg(exclude=frozenset({"ENFORCE-001"})))
+            r.id for r in u.Tests.active_rules(self._cfg(exclude=frozenset({rule_id})))
         }
 
-        tm.that(ids, lacks="ENFORCE-001")
+        tm.that(ids, lacks=rule_id)
 
     def test_exclude_takes_precedence_over_include(self) -> None:
         """Test exclude takes precedence over include."""
+        rule_id = self._runtime_rule_id()
         active = u.Tests.active_rules(
-            self._cfg(
-                include=frozenset({"ENFORCE-001"}),
-                exclude=frozenset({"ENFORCE-001"}),
-            ),
+            self._cfg(include=frozenset({rule_id}), exclude=frozenset({rule_id})),
         )
 
         tm.that(active, eq=())
