@@ -26,8 +26,6 @@ class FlextTestsProtocolsBase:
     class ModelReader[ModelT: p.BaseModel](Protocol):
         """Validate external content through a supplied model class capability."""
 
-        __name__: str
-
         def model_validate(self, obj: p.AttributeProbe, /) -> ModelT:
             """Return the validated instance or raise the model owner's error."""
             ...

@@ -155,7 +155,9 @@ class FlextTestsUtilitiesFilesInfo(FlextTestsUtilitiesFilesAssertions):
         """
         key_count = item_count = row_count = column_count = None
         model_valid: bool | None = None
-        model_name = validate_model.__name__ if validate_model else None
+        model_name = (
+            validate_model.__name__ if isinstance(validate_model, type) else None
+        )
         parsed_mapping: Mapping[str, t.Tests.TestobjectSerializable] | None = None
         match fmt:
             case "json" | "yaml" if text.strip():
