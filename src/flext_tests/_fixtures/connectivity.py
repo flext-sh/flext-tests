@@ -99,6 +99,7 @@ class FlextTestsCapabilityPlugin:
 
     def _reason(
         self,
+        root: Path,
         marker: pytest.Mark,
         declaration: tuple[tuple[str, ...], str | None, tuple[str, ...]],
     ) -> str | None:
@@ -114,7 +115,7 @@ class FlextTestsCapabilityPlugin:
             return f"Host executable is unavailable: {', '.join(missing)}"
         if executables and marker.kwargs.keys() == {"executables"}:
             return None
-        return self._resolve_marker_reason(marker, required, url_var)
+        return self._resolve_marker_reason(root, marker, required, url_var)
 
     @staticmethod
     def _executables(marker: pytest.Mark) -> tuple[str, ...]:
@@ -152,6 +153,7 @@ class FlextTestsCapabilityPlugin:
 
     @staticmethod
     def _resolve_marker_reason(
+        root: Path,
         marker: pytest.Mark,
         required: tuple[str, ...],
         url_var: str | None,
@@ -159,15 +161,32 @@ class FlextTestsCapabilityPlugin:
         if FlextTestsCapabilityPlugin._requires_docker(marker):
             # Docker-provisioned: the suite builds its own isolated environment
             # (docker_test_environment); only the daemon and container matter.
-            reason = FlextTestsCapabilityPlugin._docker_reason()
+            reason = FlextTestsCapabilityPlugin._docker_reason(root)
             if reason is not None or marker.name == c.Tests.DOCKER_CONNECTIVITY_MARKER:
                 return reason
             return FlextTestsCapabilityPlugin._provisioned_reason(marker)
         return FlextTestsCapabilityPlugin._container_reason(marker, required, url_var)
 
     @staticmethod
-    def _docker_reason() -> str | None:
-        client = FlextTestsDocker().client
+    def _docker_reason(root: Path) -> str | None:
+        """Require the untracked ``.env`` to name the daemon, then probe it.
+
+        Returns:
+            The unmet prerequisite, or ``None`` when the named daemon answers.
+
+        """
+        env_file = root / c.Tests.DOCKER_LOCAL_ENV_FILE
+        configured = (
+            u.Tests.external_environment_values(env_file).get(
+                c.Tests.DOCKER_HOST_VARIABLE
+            )
+            if env_file.is_file()
+            else None
+        )
+        if not configured:
+            return c.Tests.DOCKER_NOT_CONFIGURED_REASON
+        with u.Tests.env_vars_context({c.Tests.DOCKER_HOST_VARIABLE: configured}):
+            client = FlextTestsDocker().client
         if client.failure:
             return f"Docker test environment is unreachable: {client.error}"
         client.value.close()
@@ -308,7 +327,7 @@ class FlextTestsCapabilityPlugin:
         ]
         declarations = [(marker, self._declaration(marker)) for marker in markers]
         for marker, declaration in declarations:
-            reason = self._reason(marker, declaration)
+            reason = self._reason(item.config.rootpath, marker, declaration)
             if reason is not None:
                 self._skip_prerequisite(item, marker, reason)
 

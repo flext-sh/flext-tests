@@ -24,6 +24,12 @@ class FlextTestsConstantsDocker:
     DOCKER_TEST_ENVIRONMENT_FIXTURE: ClassVar[str] = "docker_test_environment"
     DOCKER_HOST_VARIABLE: ClassVar[str] = "DOCKER_HOST"
     DOCKER_SYSTEM_HOST: ClassVar[str] = "unix:///var/run/docker.sock"
+    DOCKER_LOCAL_ENV_FILE: ClassVar[str] = ".env"
+    """Untracked test-environment file that must name ``DOCKER_HOST``."""
+    DOCKER_NOT_CONFIGURED_REASON: ClassVar[str] = (
+        "Docker test environment is not configured: the untracked .env "
+        "does not name DOCKER_HOST"
+    )
     """Docker's own endpoint variable and system socket (external protocol)."""
     DOCKER_CI_VARIABLE_INI: ClassVar[str] = "flext_make_ci_variable"
     DOCKER_CI_VALUE_INI: ClassVar[str] = "flext_make_ci_value"
