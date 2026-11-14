@@ -720,6 +720,15 @@ class FlextTestsUtilitiesMatchersThat:
         cls._validate_attrs(value, params)
         if cls._validate_subject_only(value, params):
             return
+        if isinstance(value, Mapping) and params.model_fields_set <= {
+            "msg",
+            "has",
+            "lacks",
+        }:
+            FlextTestsUtilitiesMatchersContainment.check_has_lacks(
+                value, params.has, params.lacks, params.msg
+            )
+            return
         subject = cls._result_subject(value, params)
         subject_payload = FlextTestsUtilitiesPayload.to_payload(
             subject,
