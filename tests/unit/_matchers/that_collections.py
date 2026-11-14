@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from collections.abc import Mapping
-from types import MappingProxyType
+from types import MappingProxyType, SimpleNamespace
 
 from tests import c, m, r, tm, u
 from tests.unit._matchers.predicates import TestsFlextTestsMatchersPredicates
@@ -22,6 +22,16 @@ class TestsFlextTestsTypesMatchersThat:
         tm.that(sum((40, 2)), eq=42)
         with u.Tests.raises(AssertionError, match="did not satisfy constraints"):
             tm.that(sum((40, 2)), eq=43)
+
+    @staticmethod
+    def test_that_mapping_containment_reads_keys_only() -> None:
+        """has/lacks on a mapping check its keys without projecting its values."""
+        cells = {"Sheet!D8": SimpleNamespace(rule="block"), "Sheet!D15": object()}
+        tm.that(cells, has="Sheet!D15", lacks="Sheet!D99")
+        with u.Tests.raises(AssertionError):
+            tm.that(cells, has="Sheet!D99")
+        with u.Tests.raises(AssertionError):
+            tm.that(cells, lacks="Sheet!D8")
 
     @staticmethod
     def test_that_with_ne_parameter() -> None:

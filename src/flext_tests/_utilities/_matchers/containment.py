@@ -6,6 +6,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping
+
 from flext_tests import c, p
 from flext_tests._utilities import FlextTestsUtilitiesPayload
 from flext_tests._utilities._matchers import FlextTestsUtilitiesMatchersAssertions
@@ -24,10 +26,14 @@ class FlextTestsUtilitiesMatchersContainment:
         as_str: bool = False,
     ) -> None:
         """Validate containment without converting native values to text."""
-        target = FlextTestsUtilitiesPayload.to_match_value(
-            FlextTestsUtilitiesPayload.to_payload(
-                value,
-            ),
+        # A mapping answers membership by its keys alone, so its values stay
+        # native and never need a payload projection.
+        target = (
+            value
+            if isinstance(value, Mapping) and not as_str
+            else FlextTestsUtilitiesPayload.to_match_value(
+                FlextTestsUtilitiesPayload.to_payload(value),
+            )
         )
         for expectation, required in ((has, True), (lacks, False)):
             if expectation is None:
