@@ -25,6 +25,16 @@ class FlextTestsConstantsValidator:
     """ast-grep JSON finding key carrying the rule message."""
     ENFORCEMENT_SLOW_TIMEOUT_INI_OPTION: ClassVar[str] = "flext_slow_timeout_seconds"
     """Ini option carrying the config-owned timeout for slow pytest items."""
+    ENFORCEMENT_SLOW_REPORT_TITLE: ClassVar[str] = "flext slow tests"
+    """Title of the end-of-session section criticizing slow pytest items."""
+    ENFORCEMENT_SLOW_NEAR_LIMIT_RATIO: ClassVar[float] = 0.8
+    """Share of the slow budget from which a slow item is reported as near it."""
+    ENFORCEMENT_SLOW_MARKER: ClassVar[str] = "slow"
+    """Marker name declaring one pytest item explicitly slow."""
+    ENFORCEMENT_TIMEOUT_OPTION: ClassVar[str] = "timeout"
+    """pytest-timeout option carrying the ordinary per-item limit in seconds."""
+    ENFORCEMENT_CALL_PHASE: ClassVar[str] = "call"
+    """Report phase whose native duration the slow report measures."""
     ENFORCEMENT_DISPATCHER_MODULE: ClassVar[str] = (
         "flext_tests._fixtures._enforcement.dispatcher"
     )
