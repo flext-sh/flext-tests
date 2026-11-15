@@ -175,19 +175,10 @@ class FlextTestsCapabilityPlugin:
             The unmet prerequisite, or ``None`` when the named daemon answers.
 
         """
-        env_file = root / c.Tests.DOCKER_LOCAL_ENV_FILE
-        configured = (
-            u.Tests.external_environment_values(env_file).get(
-                c.Tests.DOCKER_HOST_VARIABLE
-            )
-            if env_file.is_file()
-            else None
-        )
-        if not configured:
-            return c.Tests.DOCKER_NOT_CONFIGURED_REASON
-        with u.Tests.env_vars_context({c.Tests.DOCKER_HOST_VARIABLE: configured}):
-            client = FlextTestsDocker().client
+        client = FlextTestsDocker(repository_root=root).client
         if client.failure:
+            if client.error == c.Tests.DOCKER_NOT_CONFIGURED_REASON:
+                return c.Tests.DOCKER_NOT_CONFIGURED_REASON
             return f"Docker test environment is unreachable: {client.error}"
         client.value.close()
         return None
@@ -358,8 +349,9 @@ class FlextTestsCapabilityPlugin:
         """
         factory: pytest.TempPathFactory = request.getfixturevalue("tmp_path_factory")
         env_file = u.Tests.docker_environment_file(
-            factory.mktemp(c.Tests.DOCKER_TEST_ENVIRONMENT_DIR)
-        )
+            factory.mktemp(c.Tests.DOCKER_TEST_ENVIRONMENT_DIR),
+            request.config.rootpath,
+        ).unwrap()
         with u.Tests.env_vars_context(u.Tests.external_environment_values(env_file)):
             yield env_file
 

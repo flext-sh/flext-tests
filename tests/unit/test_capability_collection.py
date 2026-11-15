@@ -141,11 +141,12 @@ class TestsFlextTestsCapabilityCollection:
     def test_docker_marker_runs_with_isolated_environment(
         consumer: t.Tests.Pytester,
         fixture_tree: p.Tests.FixtureTree,
+        pytestconfig: t.Tests.Config,
     ) -> None:
         """With Docker configured and up, the test runs on an isolated .env."""
+        endpoint = tm.ok(u.Tests.docker_endpoint(pytestconfig.rootpath))
         _ = (consumer.path / c.Tests.DOCKER_LOCAL_ENV_FILE).write_text(
-            f"{c.Tests.DOCKER_HOST_VARIABLE}{c.Tests.DOCKER_ENV_SEPARATOR}"
-            f"{u.Tests.docker_endpoint()}\n",
+            f"{c.Tests.DOCKER_HOST_VARIABLE}{c.Tests.DOCKER_ENV_SEPARATOR}{endpoint}\n",
             encoding="utf-8",
         )
         tree = fixture_tree(
