@@ -17,6 +17,8 @@ class TestsFlextTestsSlowTimeoutPolicy:
     """Exercise the installed enforcement adapter through nested pytest runs."""
 
     slow_timeout_seconds = 0.75
+    report_slow_timeout_seconds = 3.0
+    report_ordinary_timeout_seconds = 2.0
 
     @staticmethod
     def _make_ini(
@@ -36,6 +38,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
         *,
         include_timeout_plugin: bool = True,
         unbounded: bool = False,
+        ordinary_timeout: float | None = None,
     ) -> t.Tests.RunResult:
         """Run only the two owner plugins in a subprocess-isolated session.
 
@@ -57,6 +60,11 @@ class TestsFlextTestsSlowTimeoutPolicy:
                 pytester,
                 *plugins,
                 *(("--timeout=0",) if unbounded else ()),
+                *(
+                    (f"--timeout={ordinary_timeout}",)
+                    if ordinary_timeout is not None
+                    else ()
+                ),
             )
         finally:
             if previous is None:
@@ -89,7 +97,13 @@ class TestsFlextTestsSlowTimeoutPolicy:
             "    tm.that(request.node.get_closest_marker('timeout'), none=True)\n",
         )
 
-        self._run_pytest(pytester).assert_outcomes(passed=2)
+        result = self._run_pytest(pytester)
+
+        result.assert_outcomes(passed=2)
+        result.stdout.fnmatch_lines([
+            "*flext slow tests*",
+            "no test near the ordinary or slow limit",
+        ])
 
     @c.Tests.MARK.slow
     def test_unbounded_run_disables_regular_and_slow_item_timers(
@@ -205,3 +219,50 @@ class TestsFlextTestsSlowTimeoutPolicy:
         result.stderr.fnmatch_lines([
             "*FLEXT slow timeout policy requires the pytest-timeout plugin*",
         ])
+
+    @c.Tests.MARK.slow
+    def test_report_lists_passed_items_near_their_limit_by_share(
+        self,
+        pytester: t.Tests.Pytester,
+    ) -> None:
+        """Near-limit regular and slow items are listed; fast and far ones are not."""
+        self._make_ini(pytester, slow_timeout=str(self.report_slow_timeout_seconds))
+        pytester.makepyfile(
+            "import time\n"
+            "\n"
+            "import pytest\n"
+            "\n"
+            "\n"
+            "def test_regular_near_limit() -> None:\n"
+            "    time.sleep(1.7)\n"
+            "\n"
+            "\n"
+            "@pytest.mark.slow\n"
+            "def test_slow_near_limit() -> None:\n"
+            "    time.sleep(2.5)\n"
+            "\n"
+            "\n"
+            "@pytest.mark.slow\n"
+            "def test_slow_far_from_limit() -> None:\n"
+            "    time.sleep(0.1)\n"
+            "\n"
+            "\n"
+            "def test_fast() -> None:\n"
+            "    pass\n",
+        )
+
+        result = self._run_pytest(
+            pytester, ordinary_timeout=self.report_ordinary_timeout_seconds
+        )
+
+        result.assert_outcomes(passed=4)
+        result.stdout.fnmatch_lines([
+            "*flext slow tests*",
+            "1 near the ordinary limit; 1 near the slow limit",
+        ])
+        result.stdout.fnmatch_lines_random([
+            "*% of the 3.00s slow limit (*s): *::test_slow_near_limit",
+            "*% of the 2.00s ordinary limit (*s): *::test_regular_near_limit",
+        ])
+        result.stdout.no_fnmatch_line("*limit (*::test_fast")
+        result.stdout.no_fnmatch_line("*limit (*::test_slow_far_from_limit")
