@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from flext_tests._protocols.enforcement import FlextTestsProtocolsEnforcement
     from flext_tests._protocols.filesystem import FlextTestsProtocolsFilesystem
     from flext_tests._protocols.fixture_trees import FlextTestsProtocolsFixtureTrees
+    from flext_tests._protocols.http import FlextTestsProtocolsHttp
     from flext_tests._protocols.matchers import FlextTestsProtocolsMatchers
     from flext_tests._protocols.namespace import FlextTestsProtocolsNamespace
     from flext_tests._protocols.payload import FlextTestsProtocolsPayload
@@ -31,6 +32,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsProtocolsEnforcement",
     "FlextTestsProtocolsFilesystem",
     "FlextTestsProtocolsFixtureTrees",
+    "FlextTestsProtocolsHttp",
     "FlextTestsProtocolsMatchers",
     "FlextTestsProtocolsNamespace",
     "FlextTestsProtocolsPayload",
@@ -48,6 +50,7 @@ install_lazy_exports(
         "FlextTestsProtocolsEnforcement": ".enforcement",
         "FlextTestsProtocolsFilesystem": ".filesystem",
         "FlextTestsProtocolsFixtureTrees": ".fixture_trees",
+        "FlextTestsProtocolsHttp": ".http",
         "FlextTestsProtocolsMatchers": ".matchers",
         "FlextTestsProtocolsNamespace": ".namespace",
         "FlextTestsProtocolsPayload": ".payload",
@@ -100,6 +103,7 @@ install_lazy_exports(
             "CreateKwargsParams",
         ),
         "FlextTestsProtocolsFixtureTrees": ("FixtureTree",),
+        "FlextTestsProtocolsHttp": ("HttpResponse",),
         "FlextTestsProtocolsMatchers": (
             "MatcherOption",
             "MatcherCriteriaMapping",
