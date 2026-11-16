@@ -1,7 +1,7 @@
 """Lifecycle helpers for FlextTestsFiles.
 
-Covers initialization, context-manager entry/exit, cleanup tracking, and
-base-directory resolution.
+Covers cleanup tracking and base-directory resolution. The tracked state and
+the context-manager protocol live on the composing ``FlextTestsFiles`` model.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -14,56 +14,23 @@ import tempfile
 import warnings
 from collections.abc import Sequence
 from pathlib import Path
-from types import TracebackType
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
-from flext_tests import c, m
-
-
-def _created_paths_default() -> list[Path]:
-    """Create the typed empty created-paths registry.
-
-    Returns:
-        The resulting ``list[Path]``.
-
-    """
-    return []
+from flext_tests import c
 
 
 class FlextTestsUtilitiesFilesLifecycle:
-    """File-manager lifecycle: init, context manager, cleanup, base_dir."""
+    """File-manager lifecycle: cleanup and base_dir resolution."""
 
-    base_dir: Path | None
-    _created_files: list[Path] = m.PrivateAttr(default_factory=_created_paths_default)
-    _created_dirs: list[Path] = m.PrivateAttr(default_factory=_created_paths_default)
+    if TYPE_CHECKING:
+        base_dir: Path | None
+        _created_files: list[Path]
+        _created_dirs: list[Path]
 
     @classmethod
     def _create_file_manager(cls, _base_dir: Path | None, /) -> Self:
         """Construct the concrete validated file manager."""
         raise NotImplementedError
-
-    def _initialize_file_lifecycle(self) -> None:
-        """Initialize file-manager lifecycle state."""
-        self._created_files = list[Path]()
-        self._created_dirs = list[Path]()
-
-    def __enter__(self) -> Self:
-        """Context manager entry.
-
-        Returns:
-            The resulting ``Self``.
-
-        """
-        return self
-
-    def __exit__(
-        self,
-        _exc_type: type[BaseException] | None,
-        _exc_val: BaseException | None,
-        _exc_tb: TracebackType | None,
-    ) -> None:
-        """Context manager exit with cleanup."""
-        self.cleanup()
 
     @property
     def created_dirs(self) -> Sequence[Path]:
