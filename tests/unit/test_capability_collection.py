@@ -83,26 +83,49 @@ class TestsFlextTestsCapabilityCollection:
     @staticmethod
     @c.Tests.MARK.slow
     @c.Tests.MARK.parametrize("in_ci", [False, True])
-    def test_docker_markers_skip_only_when_docker_unreachable(
+    def test_docker_markers_skip_without_configured_env(
         consumer: t.Tests.Pytester,
         fixture_tree: p.Tests.FixtureTree,
         *,
         in_ci: bool,
     ) -> None:
-        """Docker-provisioned markers never ask for .env; an absent daemon skips."""
+        """Without an untracked .env naming DOCKER_HOST, Docker markers skip."""
+        tree = fixture_tree(
+            "capability_markers", destination=consumer.path / "capability_markers"
+        )
+        with u.Tests.env_vars_context(
+            {
+                config.Infra.codegen.make.ci.variable: (
+                    config.Infra.codegen.make.ci.value if in_ci else "local"
+                ),
+            },
+        ):
+            result = TestsFlextTestsCapabilityCollection._run(
+                consumer, str(tree / "test_docker_markers.py")
+            )
+        result.assert_outcomes(skipped=len(c.Tests.CONNECTIVITY_MARKERS))
+        result.stdout.fnmatch_lines([f"*{c.Tests.DOCKER_NOT_CONFIGURED_REASON}*"])
+        tm.that(result.ret, eq=0)
+
+    @staticmethod
+    @c.Tests.MARK.slow
+    def test_docker_markers_skip_when_configured_daemon_unreachable(
+        consumer: t.Tests.Pytester,
+        fixture_tree: p.Tests.FixtureTree,
+    ) -> None:
+        """A .env naming an unreachable daemon skips as an unmet prerequisite."""
         tree = fixture_tree(
             "capability_markers", destination=consumer.path / "capability_markers"
         )
         with socket.socket() as closed_endpoint:
             closed_endpoint.bind(("127.0.0.1", 0))
             port = closed_endpoint.getsockname()[1]
+            _ = (consumer.path / c.Tests.DOCKER_LOCAL_ENV_FILE).write_text(
+                f"{c.Tests.DOCKER_HOST_VARIABLE}"
+                f"{c.Tests.DOCKER_ENV_SEPARATOR}tcp://127.0.0.1:{port}\n",
+                encoding="utf-8",
+            )
             with u.Tests.env_vars_context(
-                {
-                    c.Tests.DOCKER_HOST_VARIABLE: f"tcp://127.0.0.1:{port}",
-                    config.Infra.codegen.make.ci.variable: (
-                        config.Infra.codegen.make.ci.value if in_ci else "local"
-                    ),
-                },
                 vars_to_clear=("DOCKER_TLS_VERIFY", "DOCKER_CERT_PATH"),
             ):
                 result = TestsFlextTestsCapabilityCollection._run(
@@ -110,7 +133,6 @@ class TestsFlextTestsCapabilityCollection:
                 )
         result.assert_outcomes(skipped=len(c.Tests.CONNECTIVITY_MARKERS))
         result.stdout.fnmatch_lines(["*Docker test environment is unreachable*"])
-        result.stdout.no_fnmatch_line("*untracked .env*")
         tm.that(result.ret, eq=0)
 
     @staticmethod
@@ -119,8 +141,14 @@ class TestsFlextTestsCapabilityCollection:
     def test_docker_marker_runs_with_isolated_environment(
         consumer: t.Tests.Pytester,
         fixture_tree: p.Tests.FixtureTree,
+        pytestconfig: t.Tests.Config,
     ) -> None:
-        """With Docker up, the test runs on a generated, isolated .env."""
+        """With Docker configured and up, the test runs on an isolated .env."""
+        endpoint = tm.ok(u.Tests.docker_endpoint(pytestconfig.rootpath))
+        _ = (consumer.path / c.Tests.DOCKER_LOCAL_ENV_FILE).write_text(
+            f"{c.Tests.DOCKER_HOST_VARIABLE}{c.Tests.DOCKER_ENV_SEPARATOR}{endpoint}\n",
+            encoding="utf-8",
+        )
         tree = fixture_tree(
             "capability_docker_isolated_env",
             destination=consumer.path / "capability_docker_isolated_env",

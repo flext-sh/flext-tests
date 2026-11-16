@@ -50,7 +50,7 @@ class FlextTestsUtilitiesFilesContexts(FlextTestsUtilitiesFilesReading):
 
         """
         manager = cls._create_file_manager(directory)
-        with manager:
+        try:
             paths: MutableMapping[str, Path] = {}
             default_ext = ext or c.Tests.DEFAULT_EXTENSION
             for name, data_raw in content.items():
@@ -85,6 +85,8 @@ class FlextTestsUtilitiesFilesContexts(FlextTestsUtilitiesFilesReading):
                 )
                 paths[name] = path
             yield paths
+        finally:
+            manager.cleanup()
 
     @staticmethod
     @contextmanager

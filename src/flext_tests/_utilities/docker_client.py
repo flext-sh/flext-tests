@@ -6,13 +6,13 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 from docker import DockerClient
 from docker.constants import DEFAULT_DOCKER_API_VERSION
 from docker.errors import DockerException, NotFound
 from docker.utils import kwargs_from_env
+from dotenv import dotenv_values
 from flext_cli import u
 from python_on_whales import DockerClient as ComposeDockerClient
 from python_on_whales.components.compose.models import ComposeConfigService
@@ -66,56 +66,67 @@ class FlextTestsUtilitiesDockerClient:
         return r[bool].ok(value=True)
 
     @staticmethod
-    def docker_endpoint() -> str:
-        """Resolve the daemon endpoint before any connection.
+    def docker_endpoint(root: Path) -> p.Result[str]:
+        """Resolve the daemon the untracked test-environment file names.
 
-        ``DOCKER_HOST`` when configured, otherwise this user's rootless socket
-        when present, otherwise the system socket.
+        The project's untracked ``.env`` is the single endpoint owner: the
+        applicability probe, every SDK client and the generated isolated
+        environment read the ``DOCKER_HOST`` it declares, never the process
+        environment or a discovered socket.
 
         Returns:
-            The endpoint URL every Docker client of the test run uses.
+            The configured endpoint URL, or the unmet-prerequisite failure.
 
         """
-        configured = kwargs_from_env().get("base_url")
-        if configured is not None:
-            return configured
-        rootless = Path(f"/run/user/{os.getuid()}/docker.sock")
-        if rootless.exists():
-            return f"unix://{rootless}"
-        return c.Tests.DOCKER_SYSTEM_HOST
+        env_file = root / c.Tests.DOCKER_LOCAL_ENV_FILE
+        configured = (
+            dotenv_values(env_file, interpolate=False).get(c.Tests.DOCKER_HOST_VARIABLE)
+            if env_file.is_file()
+            else None
+        )
+        if not configured:
+            return r[str].fail(c.Tests.DOCKER_NOT_CONFIGURED_REASON)
+        return r[str].ok(configured)
 
     @staticmethod
-    def docker_environment_file(directory: Path) -> Path:
+    def docker_environment_file(directory: Path, root: Path) -> p.Result[Path]:
         """Write the isolated test environment of Docker-provisioned tests.
 
         The file is generated per test, never the developer's untracked
-        ``.env``: it declares the resolved daemon endpoint so every client
+        ``.env``: it declares the configured daemon endpoint so every client
         the test starts talks to the same Docker.
 
         Returns:
-            The written ``.env`` path inside ``directory``.
+            The written ``.env`` path inside ``directory``, or the
+            unmet-prerequisite failure.
 
         """
-        env_file = directory / ".env"
-        endpoint = FlextTestsUtilitiesDockerClient.docker_endpoint()
+        env_file = directory / c.Tests.DOCKER_LOCAL_ENV_FILE
+        endpoint = FlextTestsUtilitiesDockerClient.docker_endpoint(root)
+        if endpoint.failure:
+            return r[Path].from_failure(endpoint)
         _ = env_file.write_text(
-            f"{c.Tests.DOCKER_HOST_VARIABLE}{c.Tests.DOCKER_ENV_SEPARATOR}{endpoint}\n",
+            f"{c.Tests.DOCKER_HOST_VARIABLE}{c.Tests.DOCKER_ENV_SEPARATOR}"
+            f"{endpoint.value}\n",
             encoding="utf-8",
         )
         env_file.chmod(c.Tests.DOCKER_ENV_FILE_MODE)
-        return env_file
+        return r[Path].ok(env_file)
 
     @staticmethod
-    def docker_sdk_client() -> p.Result[t.Tests.DockerSdkClient]:
-        """Connect to the resolved endpoint and prove the daemon answers a ping.
+    def docker_sdk_client(root: Path) -> p.Result[t.Tests.DockerSdkClient]:
+        """Connect to the configured endpoint and prove the daemon answers a ping.
 
         Returns:
             The connected client, or a failure carrying the daemon error.
 
         """
+        endpoint = FlextTestsUtilitiesDockerClient.docker_endpoint(root)
+        if endpoint.failure:
+            return r[t.Tests.DockerSdkClient].from_failure(endpoint)
         try:
             client = DockerClient(
-                base_url=FlextTestsUtilitiesDockerClient.docker_endpoint(),
+                base_url=endpoint.value,
                 tls=kwargs_from_env().get("tls", False),
                 version=DEFAULT_DOCKER_API_VERSION,
             )

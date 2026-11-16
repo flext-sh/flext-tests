@@ -17,14 +17,12 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Annotated, ClassVar, Self, override
+from types import TracebackType
+from typing import Annotated, ClassVar, Self, override
 
 from flext_tests import m, p, r, s
-from flext_tests._utilities._files import FlextTestsUtilitiesFilesComparison
-
-if TYPE_CHECKING:
-    from flext_tests import t
 from flext_tests._utilities import FlextTestsUtilitiesFiles
+from flext_tests._utilities._files import FlextTestsUtilitiesFilesComparison
 
 
 class FlextTestsFiles(
@@ -42,11 +40,26 @@ class FlextTestsFiles(
         ),
     ] = m.Field(default=None, description="Base directory used for file operations.")
 
-    @override
-    def model_post_init(self, __context: t.JsonValue | None, /) -> None:
-        """Initialize private file-manager lifecycle state."""
-        super().model_post_init(__context)
-        self._initialize_file_lifecycle()
+    _created_files: list[Path] = m.PrivateAttr(default_factory=list[Path])
+    _created_dirs: list[Path] = m.PrivateAttr(default_factory=list[Path])
+
+    def __enter__(self) -> Self:
+        """Context manager entry.
+
+        Returns:
+            The resulting ``Self``.
+
+        """
+        return self
+
+    def __exit__(
+        self,
+        _exc_type: type[BaseException] | None,
+        _exc_val: BaseException | None,
+        _exc_tb: TracebackType | None,
+    ) -> None:
+        """Context manager exit with cleanup."""
+        self.cleanup()
 
     @classmethod
     @override
