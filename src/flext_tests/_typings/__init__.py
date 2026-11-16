@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_core.lazy import install_lazy_exports
+from flext_core.lazy import defer_lazy_bases, install_lazy_exports
 
 if TYPE_CHECKING:
     from flext_tests._typings.base import FlextTestsTypesBase
@@ -38,4 +38,51 @@ install_lazy_exports(
         "FlextTestsTypesPytest": ".pytest_surface",
     },
     public_exports=__all__,
+    deferred_members={
+        "FlextTestsTypesBase": (
+            "PayloadKind",
+            "PayloadAtom",
+            "PayloadItems",
+            "PayloadEntries",
+            "TestobjectAtom",
+            "TestobjectCollection",
+            "TestobjectNode",
+            "TestobjectSerializable",
+            "TestobjectHashable",
+            "NormalizationInput",
+            "TestResultValue",
+            "Testobject",
+        ),
+        "FlextTestsTypesDocker": (
+            "DockerSdkClient",
+            "DockerContainer",
+            "ComposeClient",
+        ),
+        "FlextTestsTypesFiles": (
+            "ReadContent",
+            "FileContentStructured",
+            "FileContentPlain",
+            "ParsedPair",
+        ),
+        "FlextTestsTypesMatchers": (
+            "LengthSpec",
+            "ComparableScalar",
+            "ItemSelector",
+            "PathSpec",
+            "ExclusionSpec",
+            "KeySpec",
+            "AttributeSpec",
+            "ErrorCodeSpec",
+            "CleanupSpec",
+            "EnvironmentSpec",
+        ),
+        "FlextTestsTypesPytest": (),
+    },
+)
+
+defer_lazy_bases(
+    __name__,
+    {
+        "FlextTestsTypesPytest": (("flext_infra", "FlextInfraTypes.Infra.Pytest"),),
+    },
 )
