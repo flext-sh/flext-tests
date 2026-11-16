@@ -31,6 +31,12 @@ class FlextTestsConstantsValidator:
     """Share of the slow budget from which a slow item is reported as near it."""
     ENFORCEMENT_SLOW_MARKER: ClassVar[str] = "slow"
     """Marker name declaring one pytest item explicitly slow."""
+    ENFORCEMENT_HEAVY_TIER_MARKERS: ClassVar[Sequence[str]] = (
+        "integration",
+        "e2e",
+        "performance",
+    )
+    """Declared heavy tiers that run the ordinary selection on the slow budget."""
     ENFORCEMENT_TIMEOUT_OPTION: ClassVar[str] = "timeout"
     """pytest-timeout option carrying the ordinary per-item limit in seconds."""
     ENFORCEMENT_CALL_PHASE: ClassVar[str] = "call"
