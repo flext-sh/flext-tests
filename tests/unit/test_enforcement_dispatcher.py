@@ -33,6 +33,10 @@ class TestsFlextTestsEnforcementDispatcher:
     def workspace(tmp_path: Path) -> Path:
         """Create a directory carrying every FLEXT workspace marker.
 
+        A real FLEXT workspace also carries its runtime manifest and lock; the
+        sandbox links the repository-owned pair so tool resolution reads the
+        same committed declaration instead of copying or inventing one.
+
         Returns:
             The resulting ``Path``.
 
@@ -41,6 +45,10 @@ class TestsFlextTestsEnforcementDispatcher:
         root.mkdir()
         for marker in c.Tests.ENFORCEMENT_WORKSPACE_MARKERS:
             (root / marker).mkdir(parents=True, exist_ok=True)
+        for runtime_file in (".mise.toml", "mise.lock"):
+            (root / runtime_file).symlink_to(
+                TestsFlextTestsEnforcementDispatcher.project_root / runtime_file
+            )
         return root
 
     project_root = Path(__file__).resolve().parents[2]

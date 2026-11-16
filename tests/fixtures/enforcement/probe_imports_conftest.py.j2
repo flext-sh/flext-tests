@@ -1,0 +1,9 @@
+import sys
+
+
+def pytest_sessionfinish(session):
+    loaded = sorted(
+        name for name in sys.modules if name.split('.')[0] == 'flext_infra'
+    )
+    if loaded:
+        raise RuntimeError(f'flext_infra imported: {loaded}')

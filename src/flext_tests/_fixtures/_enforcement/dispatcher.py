@@ -20,7 +20,9 @@ from typing import TYPE_CHECKING, ClassVar
 
 import pytest
 
-from flext_tests import m, u
+# The letter facades are imported only by the methods of a governed session:
+# an ungoverned pytest process must not compose the utilities facade, which
+# would load flext_infra (see the module docstring).
 from flext_tests._constants.validator import FlextTestsConstantsValidator
 
 if TYPE_CHECKING:
@@ -103,10 +105,12 @@ class FlextTestsEnforcementDispatcher:
             The resulting ``m.Tests.EnforcementDispatcherConfig``.
 
         """
+        models = import_module("flext_tests").m
+
         stashed = config.stash.get(cls.stash_config, None)
         if stashed is not None:
             return stashed
-        resolved = m.Tests.EnforcementDispatcherConfig(
+        resolved = models.Tests.EnforcementDispatcherConfig(
             strict=bool(config.getoption("--flext-enforce-strict")),
             include=cls.split_csv(str(config.getoption("--flext-enforce-rules") or "")),
             exclude=cls.split_csv(
@@ -124,11 +128,13 @@ class FlextTestsEnforcementDispatcher:
         repository_root = cls.active_root(config)
         if repository_root is None:
             return
+        facade = import_module("flext_tests")
+
         cfg = cls.resolve_config(config, repository_root)
         action = "error" if cfg.strict else "default"
 
-        for rule in u.Tests.active_rules(cfg):
-            if isinstance(rule.source, m.Tests.EnforcementRuntimeWarningSource):
+        for rule in facade.u.Tests.active_rules(cfg):
+            if isinstance(rule.source, facade.m.Tests.EnforcementRuntimeWarningSource):
                 config.addinivalue_line(
                     "filterwarnings",
                     f"{action}::{rule.source.category}",
@@ -336,8 +342,10 @@ class FlextTestsEnforcementDispatcher:
         repository_root = cls.active_root(config)
         if repository_root is None:
             return
+        utilities = import_module("flext_tests").u
+
         cfg = cls.resolve_config(config, repository_root)
-        active = u.Tests.active_rules(cfg)
+        active = utilities.Tests.active_rules(cfg)
         kinds: dict[str, int] = {}
         for rule in active:
             kinds[rule.source.kind] = kinds.get(rule.source.kind, 0) + 1

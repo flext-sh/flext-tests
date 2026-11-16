@@ -1,0 +1,11 @@
+import warnings
+
+from flext_core import e
+
+
+def test_emits_runtime_enforcement_warning() -> None:
+    warnings.warn(
+        "synthetic MRO violation",
+        e.{{ values.category }},
+        stacklevel=2,
+    )

@@ -55,7 +55,7 @@ class FlextTestsUtilities(
         FlextTestsUtilitiesDockerState,
         FlextTestsUtilitiesEnforcement,
         FlextTestsUtilitiesEnvironment,
-            FlextTestsUtilitiesFixturesDSL,
+        FlextTestsUtilitiesFixturesDSL,
         FlextTestsUtilitiesFlextGovernance,
         FlextTestsUtilitiesFlextHandler,
         FlextTestsUtilitiesMatchers,
