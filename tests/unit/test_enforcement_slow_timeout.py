@@ -112,13 +112,14 @@ class TestsFlextTestsSlowTimeoutPolicy:
         self,
         pytester: t.Tests.Pytester,
     ) -> None:
-        """A declared heavy tier receives the slow budget; a unit item does not."""
+        """A heavy tier or capability receives the slow budget; a unit item does not."""
         self._make_ini(
             pytester,
             slow_timeout=str(self.slow_timeout_seconds),
             markers=(
                 "slow: explicitly slow contract",
                 "integration: heavy tier contract",
+                "docker: heavy capability contract",
                 "unit: ordinary contract",
             ),
         )
@@ -136,6 +137,14 @@ class TestsFlextTestsSlowTimeoutPolicy:
             f"        tm.that(marker.args, eq=({self.slow_timeout_seconds},))\n"
             "\n"
             "\n"
+            "@pytest.mark.docker\n"
+            "def test_docker_budget(request: pytest.FixtureRequest) -> None:\n"
+            "    marker = request.node.get_closest_marker('timeout')\n"
+            "    tm.ok(marker is not None)\n"
+            "    if marker is not None:\n"
+            f"        tm.that(marker.args, eq=({self.slow_timeout_seconds},))\n"
+            "\n"
+            "\n"
             "@pytest.mark.unit\n"
             "def test_unit_budget(request: pytest.FixtureRequest) -> None:\n"
             "    tm.that(request.node.get_closest_marker('timeout'), none=True)\n",
@@ -143,7 +152,7 @@ class TestsFlextTestsSlowTimeoutPolicy:
 
         result = self._run_pytest(pytester)
 
-        result.assert_outcomes(passed=2)
+        result.assert_outcomes(passed=3)
 
     @c.Tests.MARK.slow
     def test_unbounded_run_disables_regular_and_slow_item_timers(

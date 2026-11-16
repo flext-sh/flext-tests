@@ -35,8 +35,16 @@ class FlextTestsConstantsValidator:
         "integration",
         "e2e",
         "performance",
+        "docker",
+        "oracle",
+        "ldap",
     )
-    """Declared heavy tiers that run the ordinary selection on the slow budget."""
+    """Declared heavy tiers and capability markers that run on the slow budget.
+
+    Capability-heavy items provision shared services during setup, so the unit
+    budget would expire before the service is usable; they share the
+    config-owned slow budget instead of carrying a per-file marker.
+    """
     ENFORCEMENT_TIMEOUT_OPTION: ClassVar[str] = "timeout"
     """pytest-timeout option carrying the ordinary per-item limit in seconds."""
     ENFORCEMENT_CALL_PHASE: ClassVar[str] = "call"
