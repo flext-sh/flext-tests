@@ -15,21 +15,29 @@ from tests import m, tm, u
 
 
 class TestsFlextTestsFrozen(m.BaseModel):
+    __test__ = False
+
     model_config = m.ConfigDict(frozen=True)
 
     host: str
 
 
 class TestsFlextTestsMutable(m.BaseModel):
+    __test__ = False
+
     host: str
 
 
 class TestsFlextTestsPluginType(enum.StrEnum):
+    __test__ = False
+
     EXTRACTORS = "extractors"
 
 
 class TestsFlextTestsRejectedAssignment:
     """Write-only descriptor target with an identifiable rejection cause."""
+
+    __test__ = False
 
     def __init__(self, rejection: ValueError) -> None:
         self.rejection = rejection

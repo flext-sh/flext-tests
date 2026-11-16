@@ -9,7 +9,6 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 from tests import c, r, t, tm, u
-from tests.unit._matchers.predicates import TestsFlextTestsMatchersPredicates
 
 
 class TestsFlextTestsMatchersOkConstraintsBase:
@@ -19,7 +18,7 @@ class TestsFlextTestsMatchersOkConstraintsBase:
     def test_ok_with_is_parameter() -> None:
         """Test tm.ok() with is_ parameter."""
         result = r[str].ok("test")
-        value = tm.ok(result, where=TestsFlextTestsMatchersPredicates.is_string)
+        value = tm.ok(result, where=lambda value: isinstance(value, str))
         tm.that(value, eq="test")
 
     @staticmethod
@@ -28,7 +27,7 @@ class TestsFlextTestsMatchersOkConstraintsBase:
         result = r[str].ok("test")
         value = tm.ok(
             result,
-            where=TestsFlextTestsMatchersPredicates.is_string_or_bytes,
+            where=lambda value: isinstance(value, str | bytes),
         )
         tm.that(value, eq="test")
 
@@ -82,7 +81,7 @@ class TestsFlextTestsMatchersOkConstraintsBase:
         result = r[t.JsonMapping].ok(data)
         value = tm.ok(
             result,
-            deep={"user.email": TestsFlextTestsMatchersPredicates.is_string},
+            deep={"user.email": lambda value: isinstance(value, str)},
         )
         tm.that(value, eq=data)
 
@@ -94,7 +93,7 @@ class TestsFlextTestsMatchersOkConstraintsBase:
         with u.Tests.raises(AssertionError, match=r"Path not found: user.missing"):
             tm.ok(
                 result,
-                deep={"user.missing": TestsFlextTestsMatchersPredicates.is_string},
+                deep={"user.missing": lambda value: isinstance(value, str)},
             )
 
     @staticmethod
@@ -109,7 +108,7 @@ class TestsFlextTestsMatchersOkConstraintsBase:
     def test_ok_with_where_parameter() -> None:
         """Test tm.ok() with where parameter."""
         result = r[int].ok(42)
-        value = tm.ok(result, where=TestsFlextTestsMatchersPredicates.is_positive)
+        value = tm.ok(result, where=lambda value: isinstance(value, int) and value > 0)
         tm.that(value, eq=42)
 
 
@@ -123,7 +122,7 @@ class TestsFlextTestsMatchersOkConstraints(
         """Test tm.ok() with where parameter fails when predicate returns False."""
         result = r[int].ok(42)
         with u.Tests.raises(AssertionError):
-            tm.ok(result, where=TestsFlextTestsMatchersPredicates.is_negative)
+            tm.ok(result, where=lambda value: isinstance(value, int) and value < 0)
 
     @staticmethod
     def test_ok_with_starts_parameter() -> None:

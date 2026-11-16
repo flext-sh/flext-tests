@@ -8,9 +8,11 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from types import MappingProxyType, SimpleNamespace
+from typing import Final
 
 from tests import c, m, r, tm, u
-from tests.unit._matchers.predicates import TestsFlextTestsMatchersPredicates
+
+_GREATER_THAN_TWO_THRESHOLD: Final[int] = 2
 
 
 class TestsFlextTestsTypesMatchersThat:
@@ -203,7 +205,7 @@ class TestsFlextTestsMatchersThatSequences(TestsFlextTestsTypesMatchersThat):
     @staticmethod
     def test_that_with_all_predicate_parameter() -> None:
         """Test tm.that() with all_ predicate parameter."""
-        tm.that([1, 2, 3], all_=TestsFlextTestsMatchersPredicates.greater_than_zero)
+        tm.that([1, 2, 3], all_=lambda value: isinstance(value, int) and value > 0)
 
     @staticmethod
     def test_that_with_any_type_parameter() -> None:
@@ -213,7 +215,12 @@ class TestsFlextTestsMatchersThatSequences(TestsFlextTestsTypesMatchersThat):
     @staticmethod
     def test_that_with_any_predicate_parameter() -> None:
         """Test tm.that() with any_ predicate parameter."""
-        tm.that([1, 2, 3], any_=TestsFlextTestsMatchersPredicates.greater_than_two)
+        tm.that(
+            [1, 2, 3],
+            any_=lambda value: (
+                isinstance(value, int) and value > _GREATER_THAN_TWO_THRESHOLD
+            ),
+        )
 
     @staticmethod
     def test_that_with_sorted_parameter() -> None:

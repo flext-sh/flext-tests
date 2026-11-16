@@ -8,8 +8,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from flext_tests import FlextTestsDocker
-from tests import c, m, tm, u
+from tests import FlextTestsDocker, c, m, tm, u
 
 
 class TestsFlextTestsDockerBuilders:
