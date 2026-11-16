@@ -26,6 +26,7 @@ class TestsFlextTestsDockerBuilders:
         tm.that(resolved.model_dump(), eq=target.model_dump())
 
     @staticmethod
+    @c.Tests.MARK.slow
     @c.Tests.MARK.parametrize(
         ("verb", "document", "target", "succeeds"),
         [
