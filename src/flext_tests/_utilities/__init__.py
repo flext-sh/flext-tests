@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from flext_tests._utilities.fixtures_dsl import FlextTestsUtilitiesFixturesDSL
     from flext_tests._utilities.governance import FlextTestsUtilitiesFlextGovernance
     from flext_tests._utilities.handler import FlextTestsUtilitiesFlextHandler
+    from flext_tests._utilities.http import FlextTestsUtilitiesHttp
     from flext_tests._utilities.matchers import FlextTestsUtilitiesMatchers
     from flext_tests._utilities.namespace import FlextTestsUtilitiesNamespace
     from flext_tests._utilities.payload import FlextTestsUtilitiesPayload
@@ -48,6 +49,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsUtilitiesFixturesDSL",
     "FlextTestsUtilitiesFlextGovernance",
     "FlextTestsUtilitiesFlextHandler",
+    "FlextTestsUtilitiesHttp",
     "FlextTestsUtilitiesMatchers",
     "FlextTestsUtilitiesNamespace",
     "FlextTestsUtilitiesPayload",
@@ -73,6 +75,7 @@ install_lazy_exports(
         "FlextTestsUtilitiesFixturesDSL": ".fixtures_dsl",
         "FlextTestsUtilitiesFlextGovernance": ".governance",
         "FlextTestsUtilitiesFlextHandler": ".handler",
+        "FlextTestsUtilitiesHttp": ".http",
         "FlextTestsUtilitiesMatchers": ".matchers",
         "FlextTestsUtilitiesNamespace": ".namespace",
         "FlextTestsUtilitiesPayload": ".payload",
@@ -147,6 +150,7 @@ install_lazy_exports(
             "FlextTestsModuleGovernance",
         ),
         "FlextTestsUtilitiesFlextHandler": ("FlextTestsUtilitiesHandlerHelpers",),
+        "FlextTestsUtilitiesHttp": ("http_get",),
         "FlextTestsUtilitiesMatchers": (),
         "FlextTestsUtilitiesNamespace": (
             "_issue_lock",
