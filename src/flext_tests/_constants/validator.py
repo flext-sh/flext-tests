@@ -19,6 +19,14 @@ class FlextTestsConstantsValidator:
         "flext-tests",
     )
     ENFORCEMENT_PROJECT_PREFIX: ClassVar[str] = "flext-"
+    ENFORCEMENT_PROJECT_MANIFEST: ClassVar[str] = "pyproject.toml"
+    """Manifest that declares a standalone internal project."""
+    ENFORCEMENT_PROJECT_DEPENDENCY: ClassVar[str] = "flext-core"
+    """Distribution whose declared dependency marks an internal project."""
+    ENFORCEMENT_PROJECT_KIND: ClassVar[str] = "internal_flext"
+    """Explicit project kind accepted in ``tool.flext.kind``."""
+    ENFORCEMENT_MANIFEST_ENCODING: ClassVar[str] = "utf-8"
+    """Manifest encoding (stdlib TOML requires text)."""
     ENFORCEMENT_FINDING_SEVERITY_KEY: ClassVar[str] = "severity"
     """ast-grep JSON finding key carrying the rule severity."""
     ENFORCEMENT_FINDING_MESSAGE_KEY: ClassVar[str] = "message"
