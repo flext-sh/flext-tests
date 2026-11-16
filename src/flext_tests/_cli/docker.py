@@ -14,7 +14,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from flext_tests import FlextTestsDocker, m, p, u
+from flext_tests import FlextTestsDocker, m, p, t, u
 
 
 class FlextTestsCliDocker:
@@ -28,8 +28,8 @@ class FlextTestsCliDocker:
             The resulting ``ContainerSpec``.
 
         Raises:
-            SystemExit: If ``read.failure``; or if ``parsed.failure``; or if a
-                ``Exception`` is caught.
+            SystemExit: If ``read.failure``; or if ``parsed.failure``; or if
+                ``model_validate`` rejects the document.
 
         """
         read = u.Cli.files_read_text(path)
@@ -40,7 +40,7 @@ class FlextTestsCliDocker:
             raise SystemExit(1)
         try:
             return m.Tests.ContainerSpec.model_validate(parsed.value)
-        except Exception as exc:
+        except t.ValidationError as exc:
             raise SystemExit(1) from exc
 
     @staticmethod
