@@ -9,8 +9,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from pathlib import Path
 
-from flext_tests import FlextTestsFiles
-from tests import c, m, t, tm, u
+from tests import FlextTestsFiles, c, m, t, tm, u
 
 
 class TestsFlextTestsFilesContexts:

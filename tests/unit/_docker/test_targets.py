@@ -8,8 +8,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from flext_tests import FlextTestsDocker
-from tests import c, m, tm, u
+from tests import FlextTestsDocker, c, m, tm, u
 
 if TYPE_CHECKING:
     from pathlib import Path

@@ -9,8 +9,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 
-from flext_tests import FlextTestsFiles
-from tests import m, tm
+from tests import FlextTestsFiles, m, tm
 
 
 class TestsFlextTestsFilesCreation:

@@ -113,6 +113,14 @@ class FlextTestsEnforcementPlugin:
         dispatcher.record_warning(warning_message)
 
     @staticmethod
+    def pytest_runtest_logreport(report: pytest.TestReport) -> None:
+        """Record native call durations for the slow-test report."""
+        dispatcher = import_module(
+            _DISPATCHER_MODULE,
+        ).FlextTestsEnforcementDispatcher
+        dispatcher.record_duration(report)
+
+    @staticmethod
     def pytest_sessionstart(session: pytest.Session) -> None:
         """Expose the session config for warning-capture plumbing."""
         dispatcher = import_module(
