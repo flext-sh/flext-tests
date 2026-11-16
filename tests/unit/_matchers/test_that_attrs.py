@@ -9,7 +9,6 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 from tests import c, p, r, t, tm, u
-from tests.unit._matchers.predicates import TestsFlextTestsMatchersPredicates
 
 
 class TestsFlextTestsMatchersThatAttrs:
@@ -98,7 +97,7 @@ class TestsFlextTestsMatchersThatAttrs:
     @staticmethod
     def test_that_with_where_parameter() -> None:
         """Test tm.that() with where parameter."""
-        tm.that(42, where=TestsFlextTestsMatchersPredicates.is_positive)
+        tm.that(42, where=lambda value: isinstance(value, int) and value > 0)
 
     @staticmethod
     def test_that_where_predicate_receives_the_native_value() -> None:
