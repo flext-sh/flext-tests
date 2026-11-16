@@ -25,9 +25,11 @@ class TestsFlextTestsSlowTimeoutPolicy:
         pytester: t.Tests.Pytester,
         *,
         slow_timeout: str | None,
+        markers: tuple[str, ...] = ("slow: explicitly slow contract",),
     ) -> None:
         """Write one isolated policy using arbitrary non-production budgets."""
-        lines = ["[pytest]", "markers = slow: explicitly slow contract"]
+        lines = ["[pytest]", "markers ="]
+        lines.extend(f"    {marker}" for marker in markers)
         if slow_timeout is not None:
             lines.append(f"flext_slow_timeout_seconds = {slow_timeout}")
         pytester.makeini("\n".join(lines))
@@ -104,6 +106,44 @@ class TestsFlextTestsSlowTimeoutPolicy:
             "*flext slow tests*",
             "no test near the ordinary or slow limit",
         ])
+
+    @c.Tests.MARK.slow
+    def test_heavy_tier_items_share_the_slow_budget(
+        self,
+        pytester: t.Tests.Pytester,
+    ) -> None:
+        """A declared heavy tier receives the slow budget; a unit item does not."""
+        self._make_ini(
+            pytester,
+            slow_timeout=str(self.slow_timeout_seconds),
+            markers=(
+                "slow: explicitly slow contract",
+                "integration: heavy tier contract",
+                "unit: ordinary contract",
+            ),
+        )
+        pytester.makepyfile(
+            "import pytest\n"
+            "\n"
+            "from flext_tests import tm\n"
+            "\n"
+            "\n"
+            "@pytest.mark.integration\n"
+            "def test_integration_budget(request: pytest.FixtureRequest) -> None:\n"
+            "    marker = request.node.get_closest_marker('timeout')\n"
+            "    tm.ok(marker is not None)\n"
+            "    if marker is not None:\n"
+            f"        tm.that(marker.args, eq=({self.slow_timeout_seconds},))\n"
+            "\n"
+            "\n"
+            "@pytest.mark.unit\n"
+            "def test_unit_budget(request: pytest.FixtureRequest) -> None:\n"
+            "    tm.that(request.node.get_closest_marker('timeout'), none=True)\n",
+        )
+
+        result = self._run_pytest(pytester)
+
+        result.assert_outcomes(passed=2)
 
     @c.Tests.MARK.slow
     def test_unbounded_run_disables_regular_and_slow_item_timers(

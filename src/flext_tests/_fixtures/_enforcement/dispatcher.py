@@ -170,6 +170,19 @@ class FlextTestsEnforcementDispatcher:
             raise pytest.UsageError(msg)
         return slow_timeout
 
+    @staticmethod
+    def budget_markers() -> tuple[str, ...]:
+        """Return every marker whose items run on the config-owned slow budget.
+
+        Returns:
+            The slow marker followed by the declared heavy-tier markers.
+
+        """
+        return (
+            FlextTestsConstantsValidator.ENFORCEMENT_SLOW_MARKER,
+            *FlextTestsConstantsValidator.ENFORCEMENT_HEAVY_TIER_MARKERS,
+        )
+
     @classmethod
     def apply_slow_budget(
         cls,
@@ -185,10 +198,11 @@ class FlextTestsEnforcementDispatcher:
         config.stash[cls.stash_slow_limit] = None
         slow_timeout = cls.slow_budget_seconds(config)
         config.stash[cls.stash_slow_limit] = slow_timeout
+        markers = cls.budget_markers()
         for item in items if slow_timeout is not None else ():
             if item.stash.get(cls.stash_budgeted, False):
                 continue
-            if item.get_closest_marker("slow") is None:
+            if not any(item.get_closest_marker(marker) for marker in markers):
                 continue
             if item.get_closest_marker("timeout") is not None:
                 msg = (
@@ -197,10 +211,7 @@ class FlextTestsEnforcementDispatcher:
                 )
                 raise pytest.UsageError(msg)
             item.stash[cls.stash_budgeted] = True
-            if (
-                item.get_closest_marker("slow") is not None
-                and config.getoption("timeout") != 0
-            ):
+            if config.getoption("timeout") != 0:
                 item.add_marker(pytest.mark.timeout(slow_timeout), append=False)
 
     @classmethod
@@ -253,7 +264,7 @@ class FlextTestsEnforcementDispatcher:
             return
         config.stash.setdefault(cls.stash_durations, {})[report.nodeid] = (
             report.duration,
-            FlextTestsConstantsValidator.ENFORCEMENT_SLOW_MARKER in report.keywords,
+            any(marker in report.keywords for marker in cls.budget_markers()),
         )
 
     @classmethod
