@@ -2,8 +2,9 @@
 
 Every test binds its own compose project (a random token), keeps the host
 records under ``tmp_path`` and removes its project on teardown. The ``docker``
-marker keeps these tests out of ``make test`` and CI; ``make test-full`` runs
-them on a Docker host.
+marker runs them only when the untracked ``.env`` names ``DOCKER_HOST`` and that
+daemon answers; otherwise the shared applicability owner skips them as an unmet
+prerequisite, and CI deselects them.
 
 Copyright (c) 2025 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT

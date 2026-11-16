@@ -88,7 +88,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[p.Tests.ContainerInfo]):
 
         """
         if self.docker_client is None:
-            connected = u.Tests.docker_sdk_client()
+            connected = u.Tests.docker_sdk_client(self.repository_root)
             if connected.failure:
                 return connected
             self.docker_client = connected.value
