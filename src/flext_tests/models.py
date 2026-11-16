@@ -10,6 +10,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, TypeAlias
+
 from flext_cli import FlextCliModels
 
 from flext_tests._models import (
@@ -36,6 +38,10 @@ class FlextTestsModels(FlextCliModels):
         FlextTestsModelsValidator,
     ):
         """Test-specific models namespace."""
+
+        if TYPE_CHECKING:
+            MatchRule: TypeAlias = FlextTestsModelsMatchers.MatchRule
+            Chain: TypeAlias = FlextTestsModelsMatchers.Chain
 
 
 m = FlextTestsModels
