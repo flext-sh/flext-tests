@@ -14,6 +14,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping
+
 from flext_tests import FlextTestsModels
 
 
@@ -26,6 +28,14 @@ class TestsFlextTestsModels(FlextTestsModels):
 
     class Tests(FlextTestsModels.Tests):
         """flext-tests test models namespace."""
+
+        class TemplateContext(FlextTestsModels.Value):
+            """Scalar values substituted into one scenario template."""
+
+            values: Mapping[str, str] = FlextTestsModels.Field(
+                default_factory=dict,
+                description="Template variable names and their exact rendered text.",
+            )
 
 
 m = TestsFlextTestsModels

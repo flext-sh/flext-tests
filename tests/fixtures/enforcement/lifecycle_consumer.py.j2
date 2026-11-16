@@ -1,0 +1,67 @@
+from pathlib import Path
+
+import pytest
+from flext_core import FlextContainer, FlextSettings
+
+from flext_tests import FlextTestsSettings, m, p, tm, u
+
+
+class TestsFirstConsumer:
+    previous = None
+    runtime = None
+    namespace = None
+
+    @staticmethod
+    @pytest.mark.parametrize('case', range(2))
+    def test_shared(
+        case: int,
+        session_runtime: p.Tests.SessionRuntime,
+        run_namespace: p.Tests.TestNamespace,
+        temp_dir: Path,
+    ) -> None:
+        root = FlextSettings.fetch_global()
+        tests_root = FlextTestsSettings.fetch_global()
+        container = FlextContainer()
+        if TestsFirstConsumer.previous is not None:
+            before_root, before_tests, before_container, trace = (
+                TestsFirstConsumer.previous
+            )
+            tm.ok(root is before_root)
+            tm.ok(tests_root is before_tests)
+            tm.fail(container is before_container)
+            tm.that(tests_root.trace, eq=trace)
+            tm.ok(session_runtime is TestsFirstConsumer.runtime)
+            tm.ok(run_namespace is TestsFirstConsumer.namespace)
+        TestsFirstConsumer.previous = (root, tests_root, container, tests_root.trace)
+        FlextTestsSettings.update_global(trace=not tests_root.trace)
+        TestsFirstConsumer.runtime = session_runtime
+        TestsFirstConsumer.namespace = run_namespace
+        tm.ok(temp_dir.is_dir())
+        tm.ok(session_runtime.directory.is_dir())
+        Path(f'runtime-{case}').write_text(str(session_runtime.directory))
+
+
+class TestsSecondConsumer:
+    @staticmethod
+    def test_shared(
+        session_runtime: p.Tests.SessionRuntime,
+        run_namespace: p.Tests.TestNamespace,
+        reset_settings: None,
+        clean_container: p.Container,
+        settings: FlextTestsSettings,
+        settings_factory,
+    ) -> None:
+        tm.ok(session_runtime is TestsFirstConsumer.runtime)
+        tm.ok(run_namespace is TestsFirstConsumer.namespace)
+        tm.ok(clean_container is not None)
+        tm.ok(isinstance(settings, FlextTestsSettings))
+        created = settings_factory(FlextTestsSettings)
+        tm.ok(created is FlextTestsSettings.fetch_global())
+        Path('runtime-second').write_text(str(session_runtime.directory))
+
+    @staticmethod
+    def test_failure_still_closes(
+        session_runtime: p.Tests.SessionRuntime,
+    ) -> None:
+        Path('runtime-failure').write_text(str(session_runtime.directory))
+        raise RuntimeError('intentional consumer failure')

@@ -1,0 +1,30 @@
+import pytest
+from importlib.metadata import entry_points
+
+from flext_tests import c, m, p, tm
+
+
+class TestsPluginConsumer:
+    @staticmethod
+    def test_registered(
+        pytestconfig: pytest.Config,
+        run_namespace: p.Tests.TestNamespace,
+    ) -> None:
+        manager = pytestconfig.pluginmanager
+        before = manager.list_name_plugin()
+        for name, target in {{ values.selected }}:
+            entry = next(iter(entry_points(group='pytest11', name=name)))
+            tm.that(entry.value, eq=target)
+            plugin = manager.get_plugin(name)
+            tm.ok(plugin is entry.load())
+            plugin.pytest_configure(pytestconfig)
+        tm.that(manager.list_name_plugin(), eq=before)
+        for module in c.Tests.FIXTURE_PLUGIN_MODULES:
+            owner = manager.get_plugin(module)
+            tm.ok(owner is not None)
+            tm.that(type(owner).__module__, eq=module)
+        tm.that(manager.hasplugin(c.Tests.CAPABILITY_PLUGIN_MODULE), eq=True)
+        tm.ok(bool(run_namespace.token))
+        tm.ok(pytestconfig.getoption('no_flext_enforce'))
+        tm.that(pytestconfig.getoption('flext_enforce_strict'), eq=True)
+        tm.that(pytestconfig.getoption('flext_enforce_rules'), eq='probe')
