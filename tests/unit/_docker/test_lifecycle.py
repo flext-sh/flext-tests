@@ -10,8 +10,7 @@ import stat
 from collections.abc import Mapping, MutableMapping, Sequence
 from pathlib import Path
 
-from flext_tests import FlextTestsDocker
-from tests import c, m, p, t, tm, u
+from tests import FlextTestsDocker, c, m, p, t, tm, u
 
 
 class TestsFlextTestsDockerLifecycle:

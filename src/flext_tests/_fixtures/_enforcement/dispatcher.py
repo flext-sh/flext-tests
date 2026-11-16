@@ -37,6 +37,10 @@ class FlextTestsEnforcementDispatcher:
         pytest.StashKey()
     )
     stash_budgeted: ClassVar[pytest.StashKey[bool]] = pytest.StashKey()
+    stash_slow_limit: ClassVar[pytest.StashKey[float | None]] = pytest.StashKey()
+    stash_durations: ClassVar[pytest.StashKey[dict[str, tuple[float, bool]]]] = (
+        pytest.StashKey()
+    )
     session_config: ClassVar[pytest.Config | None] = None
 
     @staticmethod
@@ -178,7 +182,9 @@ class FlextTestsEnforcementDispatcher:
             UsageError: If FLEXT slow timeout policy.
 
         """
+        config.stash[cls.stash_slow_limit] = None
         slow_timeout = cls.slow_budget_seconds(config)
+        config.stash[cls.stash_slow_limit] = slow_timeout
         for item in items if slow_timeout is not None else ():
             if item.stash.get(cls.stash_budgeted, False):
                 continue
@@ -233,12 +239,89 @@ class FlextTestsEnforcementDispatcher:
         cfg.warning_counter[dotted] = cfg.warning_counter.get(dotted, 0) + 1
 
     @classmethod
+    def record_duration(cls, report: pytest.TestReport) -> None:
+        """Keep the native call-phase duration of one passed item and its slow mark.
+
+        A timed-out item is already a failure, so only passed calls are kept.
+        """
+        config = cls.session_config
+        if (
+            config is None
+            or report.when != FlextTestsConstantsValidator.ENFORCEMENT_CALL_PHASE
+            or not report.passed
+        ):
+            return
+        config.stash.setdefault(cls.stash_durations, {})[report.nodeid] = (
+            report.duration,
+            FlextTestsConstantsValidator.ENFORCEMENT_SLOW_MARKER in report.keywords,
+        )
+
+    @classmethod
+    def slow_report(
+        cls,
+        terminalreporter: pytest.TerminalReporter,
+        config: pytest.Config,
+    ) -> None:
+        """Print every passed item near its ordinary or slow limit."""
+        ratio = FlextTestsConstantsValidator.ENFORCEMENT_SLOW_NEAR_LIMIT_RATIO
+        ordinary = float(
+            config.getoption(
+                FlextTestsConstantsValidator.ENFORCEMENT_TIMEOUT_OPTION, None
+            )
+            or 0
+        )
+        # An xdist controller never collects, so it resolves the budget here.
+        slow = (
+            config.stash[cls.stash_slow_limit]
+            if cls.stash_slow_limit in config.stash
+            else cls.slow_budget_seconds(config)
+        ) or 0.0
+        durations: dict[str, tuple[float, bool]] = (
+            config.stash.get(cls.stash_durations, None) or {}
+        )
+        near: list[tuple[float, bool, str]] = []
+        for nodeid, (duration, marked) in durations.items():
+            limit = slow if marked else ordinary
+            if limit > 0 and duration >= limit * ratio:
+                kind = "slow" if marked else "ordinary"
+                share = duration / limit
+                line = f"  {share:.0%} of the {limit:.2f}s {kind} limit "
+                near.append((share, marked, f"{line}({duration:.2f}s): {nodeid}"))
+        terminalreporter.write_sep(
+            "-", FlextTestsConstantsValidator.ENFORCEMENT_SLOW_REPORT_TITLE, yellow=True
+        )
+        if not near:
+            terminalreporter.write_line("no test near the ordinary or slow limit")
+            return
+        slow_count = sum(marked for _, marked, _ in near)
+        ordinary_count = (
+            f"{len(near) - slow_count} near the ordinary limit"
+            if ordinary > 0
+            else "ordinary limit not set, unmarked tests skipped"
+        )
+        terminalreporter.write_line(
+            f"{ordinary_count}; {slow_count} near the slow limit",
+        )
+        for _, _, line in sorted(near, reverse=True):
+            terminalreporter.write_line(line)
+
+    @classmethod
     def terminal_summary(
         cls,
         terminalreporter: pytest.TerminalReporter,
         config: pytest.Config,
     ) -> None:
-        """Print the per-kind breakdown at the end of the session."""
+        """Print the per-kind breakdown and the slow-test report."""
+        cls.enforcement_summary(terminalreporter, config)
+        cls.slow_report(terminalreporter, config)
+
+    @classmethod
+    def enforcement_summary(
+        cls,
+        terminalreporter: pytest.TerminalReporter,
+        config: pytest.Config,
+    ) -> None:
+        """Print the per-kind breakdown when static enforcement is active."""
         repository_root = cls.active_root(config)
         if repository_root is None:
             return
