@@ -12,6 +12,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import sys
+from collections.abc import Callable
 from pathlib import Path
 
 from flext_tests import FlextTestsDocker, m, p, t, u
@@ -64,11 +65,18 @@ class FlextTestsCliDocker:
         return [target]
 
     @staticmethod
-    def run_ensure(path: Path, target: str | None) -> int:
-        """Prepare each explicitly requested service without replacing existing data.
+    def _run_targets(
+        path: Path,
+        target: str | None,
+        operation: Callable[
+            [FlextTestsDocker],
+            p.Result[p.Tests.ContainerInfo],
+        ],
+    ) -> int:
+        """Apply one lifecycle operation to every resolved target.
 
         Returns:
-            The resulting ``int``.
+            ``0`` when every operation succeeded, ``1`` otherwise.
 
         """
         spec = FlextTestsCliDocker.load_spec(path)
@@ -76,11 +84,19 @@ class FlextTestsCliDocker:
         for name in FlextTestsCliDocker.resolve_targets(spec, target):
             config = spec.containers[name].model_copy(update={"container_name": name})
             manager = FlextTestsDocker(target_config=config, repository_root=Path.cwd())
-            ensured = manager.execute()
-            if ensured.failure:
+            if operation(manager).failure:
                 exit_code = 1
-                continue
         return exit_code
+
+    @staticmethod
+    def run_ensure(path: Path, target: str | None) -> int:
+        """Prepare each explicitly requested service without replacing existing data.
+
+        Returns:
+            The resulting ``int``.
+
+        """
+        return FlextTestsCliDocker._run_targets(path, target, FlextTestsDocker.execute)
 
     @staticmethod
     def run_verify(path: Path, target: str | None) -> int:
@@ -90,16 +106,7 @@ class FlextTestsCliDocker:
             The resulting ``int``.
 
         """
-        spec = FlextTestsCliDocker.load_spec(path)
-        exit_code = 0
-        for name in FlextTestsCliDocker.resolve_targets(spec, target):
-            config = spec.containers[name].model_copy(update={"container_name": name})
-            manager = FlextTestsDocker(target_config=config, repository_root=Path.cwd())
-            verified = manager.verify()
-            if verified.failure:
-                exit_code = 1
-                continue
-        return exit_code
+        return FlextTestsCliDocker._run_targets(path, target, FlextTestsDocker.verify)
 
     @staticmethod
     def run_down(path: Path, target: str | None) -> int:
