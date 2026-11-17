@@ -13,6 +13,7 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import sys
+from collections.abc import Sequence
 from pathlib import Path
 
 from tests import c, m, p, t, tm, u
@@ -33,6 +34,10 @@ class TestsFlextTestsEnforcementDispatcher:
     def workspace(tmp_path: Path) -> Path:
         """Create a directory carrying every FLEXT workspace marker.
 
+        A real FLEXT workspace also carries its runtime manifest and lock; the
+        sandbox links the repository-owned pair so tool resolution reads the
+        same committed declaration instead of copying or inventing one.
+
         Returns:
             The resulting ``Path``.
 
@@ -41,6 +46,10 @@ class TestsFlextTestsEnforcementDispatcher:
         root.mkdir()
         for marker in c.Tests.ENFORCEMENT_WORKSPACE_MARKERS:
             (root / marker).mkdir(parents=True, exist_ok=True)
+        for runtime_file in (".mise.toml", "mise.lock"):
+            (root / runtime_file).symlink_to(
+                TestsFlextTestsEnforcementDispatcher.project_root / runtime_file
+            )
         return root
 
     project_root = Path(__file__).resolve().parents[2]
@@ -64,7 +73,11 @@ class TestsFlextTestsEnforcementDispatcher:
     # ------------------------------------------------------------------ #
 
     @staticmethod
-    def _sandbox_project(workspace: Path) -> Path:
+    def _sandbox_project(
+        workspace: Path,
+        *,
+        dependencies: Sequence[str] = (),
+    ) -> Path:
         """Create a real sub-project repository with one passing test.
 
         flext-infra plans one repository: a Git checkout whose
@@ -80,8 +93,11 @@ class TestsFlextTestsEnforcementDispatcher:
         package = project / "src" / "flext_probe"
         package.mkdir(parents=True, exist_ok=True)
         (package / "__init__.py").write_text("", encoding="utf-8")
+        declared = "".join(f'  "{item}",\n' for item in dependencies)
         (project / "pyproject.toml").write_text(
-            '[project]\nname = "flext-probe"\nversion = "0"\n', encoding="utf-8"
+            '[project]\nname = "flext-probe"\nversion = "0"\n'
+            f"dependencies = [\n{declared}]\n",
+            encoding="utf-8",
         )
         u.Cli.run_checked([*c.Cli.GIT_INIT_COMMAND, str(project)]).unwrap()
         (project / ".venv").symlink_to(Path(sys.prefix), target_is_directory=True)
@@ -192,6 +208,37 @@ class TestsFlextTestsEnforcementDispatcher:
             self._sandbox_project(partial),
             "--flext-enforce",
         )
+
+        result.stdout.no_fnmatch_line("*flext-enforce*")
+
+    @c.Tests.MARK.slow
+    def test_standalone_consumer_with_the_core_dependency_activates(
+        self,
+        pytester: t.Tests.Pytester,
+        tmp_path: Path,
+    ) -> None:
+        """A standalone internal project declares flext-core and activates."""
+        project = self._sandbox_project(
+            tmp_path,
+            dependencies=(
+                "flext-core @ git+https://github.com/flext-sh/flext-core.git@0.12.0-dev",
+            ),
+        )
+
+        result = self._collect(pytester, project)
+
+        result.stdout.fnmatch_lines(["*flext-enforce*", "catalog active: 1 rules*"])
+
+    @c.Tests.MARK.slow
+    def test_standalone_project_without_the_core_dependency_is_passive(
+        self,
+        pytester: t.Tests.Pytester,
+        tmp_path: Path,
+    ) -> None:
+        """A standalone project without the manifest marker stays passive."""
+        project = self._sandbox_project(tmp_path)
+
+        result = self._collect(pytester, project)
 
         result.stdout.no_fnmatch_line("*flext-enforce*")
 

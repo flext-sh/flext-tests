@@ -1,4 +1,4 @@
-"""Host file lock shared by every test process of one machine.
+"""Test execution contexts shared by every test process of one machine.
 
 Copyright (c) 2026 FLEXT Team. All rights reserved.
 SPDX-License-Identifier: MIT
@@ -6,22 +6,25 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import io
 import os
 import shutil
+import signal
 import sys
 import tempfile
 import time
 import types
-from collections.abc import Generator, Sequence
-from contextlib import contextmanager
+from collections.abc import Callable, Generator, Mapping, Sequence
+from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from pathlib import Path
-from threading import get_ident
+from threading import current_thread, get_ident, main_thread
 from typing import BinaryIO
 
 import pytest
 from flext_cli import u as flext_cli_u
 
 from flext_tests import c, m, p
+from flext_tests._utilities import FlextTestsUtilitiesConfigHelpers
 
 if sys.platform == "win32":
     import msvcrt
@@ -86,6 +89,77 @@ class FlextTestsUtilitiesTestContext:
             stderr.read_text(encoding="utf-8").splitlines(),
             time.monotonic() - started,
         )
+
+    @staticmethod
+    def cli_in_process(
+        entrypoint: Callable[[Sequence[str]], int],
+        argv: Sequence[str],
+        *,
+        env: Mapping[str, str] | None = None,
+    ) -> p.Cli.CommandOutput:
+        """Run a CLI entry point in-process and capture its process-equivalent result.
+
+        The call owns the environment scope, the standard streams and the
+        termination handlers the CLI installs, restoring each afterwards. An
+        entry point that raises :class:`SystemExit` returns its declared code;
+        any other failure propagates unchanged.
+
+        Args:
+            entrypoint: The CLI entry point receiving the argument vector.
+            argv: The arguments, without the interpreter or program name.
+            env: Environment variables owned only for this call.
+
+        Returns:
+            The captured output and the normalized exit code.
+
+        """
+        stdout, stderr = io.StringIO(), io.StringIO()
+        on_main_thread = current_thread() is main_thread()
+        previous_handlers = (
+            {
+                number: signal.getsignal(number)
+                for number in (signal.SIGTERM, signal.SIGINT)
+            }
+            if on_main_thread
+            else {}
+        )
+        started = time.monotonic()
+        code = 0
+        try:
+            with (
+                FlextTestsUtilitiesConfigHelpers.env_vars_context(env),
+                redirect_stdout(stdout),
+                redirect_stderr(stderr),
+            ):
+                try:
+                    code = entrypoint(list(argv))
+                except SystemExit as stopped:
+                    code = FlextTestsUtilitiesTestContext._exit_code(stopped)
+        finally:
+            for number, handler in previous_handlers.items():
+                signal.signal(number, handler)
+        return m.Cli.CommandOutput(
+            outcome=m.Cli.ProcessOutcome(
+                raw_return_code=code,
+                timed_out=False,
+                forwarded_signal=None,
+            ),
+            duration=time.monotonic() - started,
+            stdout=stdout.getvalue(),
+            stderr=stderr.getvalue(),
+        )
+
+    @staticmethod
+    def _exit_code(stopped: SystemExit) -> int:
+        """Normalize the native ``SystemExit`` payload to a process code.
+
+        Returns:
+            The declared integer code, ``0`` for ``None`` and ``1`` otherwise.
+
+        """
+        if stopped.code is None:
+            return 0
+        return stopped.code if isinstance(stopped.code, int) else 1
 
     class SessionRuntime:
         """Single-flight, lazy consumer runtime in one random worker-session area.

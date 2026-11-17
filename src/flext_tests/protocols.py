@@ -10,6 +10,8 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, TypeAlias
+
 from flext_cli import FlextCliProtocols
 
 from flext_tests._protocols import (
@@ -18,6 +20,7 @@ from flext_tests._protocols import (
     FlextTestsProtocolsEnforcement,
     FlextTestsProtocolsFilesystem,
     FlextTestsProtocolsFixtureTrees,
+    FlextTestsProtocolsHttp,
     FlextTestsProtocolsMatchers,
     FlextTestsProtocolsNamespace,
     FlextTestsProtocolsPayload,
@@ -38,6 +41,7 @@ class FlextTestsProtocols(FlextCliProtocols):
         FlextTestsProtocolsEnforcement,
         FlextTestsProtocolsFilesystem,
         FlextTestsProtocolsFixtureTrees,
+        FlextTestsProtocolsHttp,
         FlextTestsProtocolsMatchers,
         FlextTestsProtocolsNamespace,
         FlextTestsProtocolsPayload,
@@ -50,6 +54,14 @@ class FlextTestsProtocols(FlextCliProtocols):
         All test protocols belong under this nested namespace to mirror
         models and constants. Access via p.Tests.*
         """
+
+        if TYPE_CHECKING:
+            ModelReader: TypeAlias = FlextTestsProtocolsBase.ModelReader
+            NodeFactory: TypeAlias = FlextTestsProtocolsEnforcement.NodeFactory
+            MatchRule: TypeAlias = FlextTestsProtocolsMatchers.MatchRule
+            Chain: TypeAlias = FlextTestsProtocolsMatchers.Chain
+            EntityFactory: TypeAlias = FlextTestsProtocolsValueFactory.EntityFactory
+            ValueFactory: TypeAlias = FlextTestsProtocolsValueFactory.ValueFactory
 
 
 p = FlextTestsProtocols

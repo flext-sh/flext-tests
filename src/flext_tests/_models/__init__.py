@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from flext_tests._models.base import FlextTestsModelsFlextBase
     from flext_tests._models.docker import FlextTestsModelsDocker
     from flext_tests._models.filesystem import FlextTestsModelsFilesystem
+    from flext_tests._models.http import FlextTestsModelsHttp
     from flext_tests._models.matchers import FlextTestsModelsMatchers
     from flext_tests._models.namespace import FlextTestsModelsNamespace
     from flext_tests._models.spec import FlextTestsModelsSpec
@@ -25,6 +26,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsModelsDocker",
     "FlextTestsModelsFilesystem",
     "FlextTestsModelsFlextBase",
+    "FlextTestsModelsHttp",
     "FlextTestsModelsMatchers",
     "FlextTestsModelsNamespace",
     "FlextTestsModelsSpec",
@@ -38,10 +40,69 @@ install_lazy_exports(
         "FlextTestsModelsDocker": ".docker",
         "FlextTestsModelsFilesystem": ".filesystem",
         "FlextTestsModelsFlextBase": ".base",
+        "FlextTestsModelsHttp": ".http",
         "FlextTestsModelsMatchers": ".matchers",
         "FlextTestsModelsNamespace": ".namespace",
         "FlextTestsModelsSpec": ".spec",
         "FlextTestsModelsValidator": ".validator",
     },
     public_exports=__all__,
+    deferred_members={
+        "FlextTestsModelsDocker": (
+            "ContainerConfig",
+            "ContainerInfo",
+            "ContainerInspectHealth",
+            "ContainerInspectState",
+            "ContainerInspectConfig",
+            "ContainerInspectBinding",
+            "ContainerInspectNetwork",
+            "ContainerInspect",
+            "User",
+            "Config",
+        ),
+        "FlextTestsModelsFilesystem": (
+            "FileInfo",
+            "ContentMeta",
+            "CreateParams",
+            "ReadParams",
+            "PathCoercingParams",
+            "CompareParams",
+            "InfoParams",
+            "AssertExistsParams",
+            "CreateKwargsParams",
+        ),
+        "FlextTestsModelsFlextBase": (
+            "Payload",
+            "Entity",
+            "Value",
+        ),
+        "FlextTestsModelsHttp": ("HttpResponse",),
+        "FlextTestsModelsMatchers": (
+            "DeepSpec",
+            "PayloadParams",
+            "MatchRule",
+            "FailParams",
+            "ThatShapeParams",
+            "ThatContentParams",
+            "ThatParams",
+            "ScopeParams",
+            "DeepMatchResult",
+            "Chain",
+            "TestScope",
+        ),
+        "FlextTestsModelsNamespace": (
+            "TestNamespace",
+            "HandlerConfigParams",
+        ),
+        "FlextTestsModelsSpec": ("ContainerSpec",),
+        "FlextTestsModelsValidator": (
+            "EnforcementInfraRuleSource",
+            "EnforcementRuntimeWarningSource",
+            "EnforcementRuleSpec",
+            "EnforcementCatalog",
+            "EnforcementBuildContext",
+            "EnforcementDispatcherConfig",
+            "EnforcementViolation",
+        ),
+    },
 )

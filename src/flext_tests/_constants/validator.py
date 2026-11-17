@@ -19,6 +19,14 @@ class FlextTestsConstantsValidator:
         "flext-tests",
     )
     ENFORCEMENT_PROJECT_PREFIX: ClassVar[str] = "flext-"
+    ENFORCEMENT_PROJECT_MANIFEST: ClassVar[str] = "pyproject.toml"
+    """Manifest that declares a standalone internal project."""
+    ENFORCEMENT_PROJECT_DEPENDENCY: ClassVar[str] = "flext-core"
+    """Distribution whose declared dependency marks an internal project."""
+    ENFORCEMENT_PROJECT_KIND: ClassVar[str] = "internal_flext"
+    """Explicit project kind accepted in ``tool.flext.kind``."""
+    ENFORCEMENT_MANIFEST_ENCODING: ClassVar[str] = "utf-8"
+    """Manifest encoding (stdlib TOML requires text)."""
     ENFORCEMENT_FINDING_SEVERITY_KEY: ClassVar[str] = "severity"
     """ast-grep JSON finding key carrying the rule severity."""
     ENFORCEMENT_FINDING_MESSAGE_KEY: ClassVar[str] = "message"
@@ -31,6 +39,20 @@ class FlextTestsConstantsValidator:
     """Share of the slow budget from which a slow item is reported as near it."""
     ENFORCEMENT_SLOW_MARKER: ClassVar[str] = "slow"
     """Marker name declaring one pytest item explicitly slow."""
+    ENFORCEMENT_HEAVY_TIER_MARKERS: ClassVar[Sequence[str]] = (
+        "integration",
+        "e2e",
+        "performance",
+        "docker",
+        "oracle",
+        "ldap",
+    )
+    """Declared heavy tiers and capability markers that run on the slow budget.
+
+    Capability-heavy items provision shared services during setup, so the unit
+    budget would expire before the service is usable; they share the
+    config-owned slow budget instead of carrying a per-file marker.
+    """
     ENFORCEMENT_TIMEOUT_OPTION: ClassVar[str] = "timeout"
     """pytest-timeout option carrying the ordinary per-item limit in seconds."""
     ENFORCEMENT_CALL_PHASE: ClassVar[str] = "call"

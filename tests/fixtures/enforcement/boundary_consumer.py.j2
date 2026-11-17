@@ -1,0 +1,41 @@
+from pathlib import Path
+
+import sys
+
+from flext_tests import c, tm, u
+
+
+class TestsPublicInfraRuleBoundary:
+    def test_engine_boundary(self, tmp_path: Path) -> None:
+        project = tmp_path / 'flext-contract-probe'
+        package = project / 'src' / 'flext_contract_probe'
+        package.mkdir(parents=True)
+        (package / '__init__.py').write_text(
+            '"""Probe."""\n\nfrom __future__ import annotations\n',
+            encoding='utf-8',
+        )
+        (project / 'pyproject.toml').write_text(
+            '[project]\n'
+            'name = "flext-contract-probe"\n'
+            'version = "0.1.0"\n'
+            'dependencies = []\n',
+            encoding='utf-8',
+        )
+        u.Cli.run_checked(
+            [*c.Cli.GIT_INIT_COMMAND, str(project)]
+        ).unwrap()
+        (project / '.venv').symlink_to(
+            Path(sys.prefix), target_is_directory=True
+        )
+        for runtime_file in ('.mise.toml', 'mise.lock'):
+            (project / runtime_file).symlink_to(
+                Path('{{ values.repository_root }}') / runtime_file
+            )
+        missing = u.Tests.infra_rule_findings(
+            project, required_rule_ids=frozenset({'no-such-rule'})
+        )
+        tm.fail(missing, has='no-such-rule')
+        scanned = u.Tests.infra_rule_findings(
+            project, required_rule_ids=frozenset()
+        )
+        tm.ok(scanned)

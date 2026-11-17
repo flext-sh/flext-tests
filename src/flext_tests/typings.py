@@ -16,6 +16,7 @@ from flext_tests._typings import (
     FlextTestsTypesBase,
     FlextTestsTypesDocker,
     FlextTestsTypesFiles,
+    FlextTestsTypesHttp,
     FlextTestsTypesMatchers,
     FlextTestsTypesPytest,
 )
@@ -32,6 +33,7 @@ class FlextTestsTypes(FlextCliTypes):
         FlextTestsTypesBase,
         FlextTestsTypesDocker,
         FlextTestsTypesFiles,
+        FlextTestsTypesHttp,
         FlextTestsTypesMatchers,
         FlextTestsTypesPytest,
     ):

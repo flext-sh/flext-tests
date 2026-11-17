@@ -13,6 +13,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from importlib import import_module
 from importlib.metadata import EntryPoint, distribution
 from inspect import getattr_static
@@ -21,15 +22,46 @@ from pathlib import Path
 import pytest
 from flext_infra import config, u as infra_u
 
-from tests import c, t, tm, u
+from tests import c, e, m, t, tm, u
 
 
 class TestsFlextTestsEnforcementPlugin:
     """Public contract of the enforcement dispatcher facade."""
 
+    FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "enforcement"
+
     # Subprocess cases are reserved for contracts whose behavior is entry-point
     # discovery itself; ordinary dispatcher behavior stays in-process or loads
     # only its explicit owner plugins.
+
+    @classmethod
+    def _render(
+        cls,
+        destination: Path,
+        template: str,
+        values: Mapping[str, str] | None = None,
+    ) -> Path:
+        """Render one scenario template from the fleet fixture root.
+
+        Returns:
+            The written destination path.
+
+        """
+        rendered = u.Cli.template_render(
+            cls.FIXTURES / template,
+            m.Tests.TemplateContext(values=dict(values or {})),
+        ).unwrap()
+        destination.write_text(rendered, encoding="utf-8")
+        return destination
+
+    @classmethod
+    def _write_pytest_ini(cls, pytester: t.Tests.Pytester, addopts: str = "") -> None:
+        """Render the sandbox pytest configuration, with optional addopts."""
+        cls._render(
+            pytester.path / "pytest.ini",
+            "pytest_ini.j2",
+            {"addopts": addopts},
+        )
 
     @staticmethod
     def _declared_pytest_entries() -> tuple[EntryPoint, ...]:
@@ -127,8 +159,8 @@ class TestsFlextTestsEnforcementPlugin:
             )
         for module in c.Tests.FIXTURE_PLUGIN_MODULES:
             registered = pytestconfig.pluginmanager.get_plugin(module)
-            tm.ok(isinstance(registered, type))
-            tm.that(registered.__module__, eq=module)
+            tm.ok(registered is not None)
+            tm.that(type(registered).__module__, eq=module)
         tm.that(
             pytestconfig.pluginmanager.hasplugin(c.Tests.CAPABILITY_PLUGIN_MODULE),
             eq=True,
@@ -145,43 +177,11 @@ class TestsFlextTestsEnforcementPlugin:
         """Named loading preserves pre-parse options, fixtures and registry identity."""
         entries = TestsFlextTestsEnforcementPlugin._declared_pytest_entries()
         selected = tuple((entry.name, entry.value) for entry in entries)
-        pytester.makeini("[pytest]\n")
-        pytester.makepyfile(
-            test_plugin=(
-                "import pytest\n"
-                "from importlib.metadata import entry_points\n"
-                "from flext_tests import c, m, p, tm\n"
-                "\n"
-                "class TestsPluginConsumer:\n"
-                "    @staticmethod\n"
-                "    def test_registered(\n"
-                "        pytestconfig: pytest.Config,\n"
-                "        run_namespace: p.Tests.TestNamespace,\n"
-                "    ) -> None:\n"
-                "        manager = pytestconfig.pluginmanager\n"
-                "        before = manager.list_name_plugin()\n"
-                f"        for name, target in {selected!r}:\n"
-                "            entry = next(\n"
-                "                iter(entry_points(group='pytest11', name=name)))\n"
-                "            tm.that(entry.value, eq=target)\n"
-                "            plugin = manager.get_plugin(name)\n"
-                "            tm.ok(plugin is entry.load())\n"
-                "            plugin.pytest_configure(pytestconfig)\n"
-                "        tm.that(manager.list_name_plugin(), eq=before)\n"
-                "        for module in c.Tests.FIXTURE_PLUGIN_MODULES:\n"
-                "            owner = manager.get_plugin(module)\n"
-                "            tm.ok(isinstance(owner, type))\n"
-                "            tm.that(owner.__module__, eq=module)\n"
-                "        tm.that(manager.hasplugin(\n"
-                "            c.Tests.CAPABILITY_PLUGIN_MODULE), eq=True)\n"
-                "        tm.ok(bool(run_namespace.token))\n"
-                "        tm.ok(pytestconfig.getoption('no_flext_enforce'))\n"
-                "        tm.that(\n"
-                "            pytestconfig.getoption('flext_enforce_strict'), eq=True)\n"
-                "        tm.that(\n"
-                "            pytestconfig.getoption(\n"
-                "                'flext_enforce_rules'), eq='probe')\n"
-            ),
+        TestsFlextTestsEnforcementPlugin._write_pytest_ini(pytester)
+        TestsFlextTestsEnforcementPlugin._render(
+            pytester.path / "test_plugin.py",
+            "plugin_consumer.py.j2",
+            {"selected": repr(selected)},
         )
         with u.Tests.env_vars_context(
             {}
@@ -213,68 +213,10 @@ class TestsFlextTestsEnforcementPlugin:
         place per item; the DI container is rebuilt per item.
         """
         entries = TestsFlextTestsEnforcementPlugin._declared_pytest_entries()
-        pytester.makeini("[pytest]\n")
-        pytester.makepyfile(
-            test_lifecycle="""
-            from pathlib import Path
-            import pytest
-            from flext_core import FlextContainer, FlextSettings
-            from flext_tests import FlextTestsSettings, m, p, tm, u
-
-            class TestsFirstConsumer:
-                previous = None
-                runtime = None
-                namespace = None
-
-                @staticmethod
-                @pytest.mark.parametrize('case', range(2))
-                def test_shared(case: int, session_runtime: p.Tests.SessionRuntime,
-                                run_namespace: p.Tests.TestNamespace,
-                                temp_dir: Path) -> None:
-                    root = FlextSettings.fetch_global()
-                    tests_root = FlextTestsSettings.fetch_global()
-                    container = FlextContainer()
-                    if TestsFirstConsumer.previous is not None:
-                        before_root, before_tests, before_container, trace = (
-                            TestsFirstConsumer.previous
-                        )
-                        tm.ok(root is before_root)
-                        tm.ok(tests_root is before_tests)
-                        tm.fail(container is before_container)
-                        tm.that(tests_root.trace, eq=trace)
-                        tm.ok(session_runtime is TestsFirstConsumer.runtime)
-                        tm.ok(run_namespace is TestsFirstConsumer.namespace)
-                    TestsFirstConsumer.previous = (
-                        root, tests_root, container, tests_root.trace
-                    )
-                    FlextTestsSettings.update_global(trace=not tests_root.trace)
-                    TestsFirstConsumer.runtime = session_runtime
-                    TestsFirstConsumer.namespace = run_namespace
-                    tm.ok(temp_dir.is_dir())
-                    tm.ok(session_runtime.directory.is_dir())
-                    Path(f'runtime-{case}').write_text(str(session_runtime.directory))
-
-            class TestsSecondConsumer:
-                @staticmethod
-                def test_shared(session_runtime: p.Tests.SessionRuntime,
-                                run_namespace: p.Tests.TestNamespace,
-                                reset_settings: None, clean_container: p.Container,
-                                settings: FlextTestsSettings,
-                                settings_factory) -> None:
-                    tm.ok(session_runtime is TestsFirstConsumer.runtime)
-                    tm.ok(run_namespace is TestsFirstConsumer.namespace)
-                    tm.ok(clean_container is not None)
-                    tm.ok(isinstance(settings, FlextTestsSettings))
-                    created = settings_factory(FlextTestsSettings)
-                    tm.ok(created is FlextTestsSettings.fetch_global())
-                    Path('runtime-second').write_text(str(session_runtime.directory))
-
-                @staticmethod
-                def test_failure_still_closes(
-                    session_runtime: p.Tests.SessionRuntime) -> None:
-                    Path('runtime-failure').write_text(str(session_runtime.directory))
-                    raise RuntimeError('intentional consumer failure')
-            """,
+        TestsFlextTestsEnforcementPlugin._write_pytest_ini(pytester)
+        TestsFlextTestsEnforcementPlugin._render(
+            pytester.path / "test_lifecycle.py",
+            "lifecycle_consumer.py.j2",
         )
         with u.Tests.env_vars_context(
             {}
@@ -304,12 +246,10 @@ class TestsFlextTestsEnforcementPlugin:
         pytester: t.Tests.Pytester,
     ) -> None:
         """Shared fixtures register without activating enforcement in a sandbox."""
-        pytester.makeini("[pytest]\n")
-        pytester.makepyfile(
-            test_probe=(
-                "def test_probe() -> None:\n"
-                "    raise RuntimeError('collection must not execute tests')\n"
-            ),
+        TestsFlextTestsEnforcementPlugin._write_pytest_ini(pytester)
+        TestsFlextTestsEnforcementPlugin._render(
+            pytester.path / "test_probe.py",
+            "probe_collection.py.j2",
         )
         result = u.Tests.pytest_subprocess(pytester, "--collect-only")
         tm.that(result.ret, eq=c.Tests.ExitCode.OK)
@@ -328,18 +268,10 @@ class TestsFlextTestsEnforcementPlugin:
         reached through its CLI and its own pytest plugin, so an ungoverned
         enforcement session imports no ``flext_infra`` module at all.
         """
-        pytester.makeini("[pytest]\n")
-        pytester.makeconftest(
-            "import sys\n"
-            "\n"
-            "\n"
-            "def pytest_sessionfinish(session):\n"
-            "    loaded = sorted(\n"
-            "        name for name in sys.modules\n"
-            "        if name.split('.')[0] == 'flext_infra'\n"
-            "    )\n"
-            "    if loaded:\n"
-            "        raise RuntimeError(f'flext_infra imported: {loaded}')\n",
+        TestsFlextTestsEnforcementPlugin._write_pytest_ini(pytester)
+        TestsFlextTestsEnforcementPlugin._render(
+            pytester.path / "conftest.py",
+            "probe_imports_conftest.py.j2",
         )
         pytester.makepyfile(test_probe="def test_probe() -> None:\n    assert True\n")
         entries = TestsFlextTestsEnforcementPlugin._declared_pytest_entries()
@@ -364,72 +296,19 @@ class TestsFlextTestsEnforcementPlugin:
 
     # ---- end-to-end pytest11 pipeline via pytester subprocess ----------------
 
-    @staticmethod
-    def _write_violation_module(pytester: t.Tests.Pytester) -> None:
-        """Write a warning consumer with only its installed dispatcher selected."""
-        pytester.makeini(
-            "[pytest]\naddopts = --disable-plugin-autoload -p "
-            f"{config.Infra.tooling.tools.pytest.enforcement_plugin}\n"
-        )
-        pytester.makepyfile(
-            test_violation=(
-                "import warnings\n"
-                "\n"
-                "from flext_core import e\n"
-                "\n"
-                "\n"
-                "def test_emits_runtime_enforcement_warning() -> None:\n"
-                "    warnings.warn(\n"
-                '        "synthetic MRO violation",\n'
-                "        e.MroViolation,\n"
-                "        stacklevel=2,\n"
-                "    )\n"
-            ),
-        )
-
     @classmethod
-    def _make_workspace_sandbox(cls, pytester: t.Tests.Pytester) -> None:
-        """Shape the sandbox as a FLEXT workspace root so auto-activation fires."""
-        (pytester.path / "AGENTS.md").write_text("# sandbox workspace stub")
-        (pytester.path / "flext-core").mkdir()
-        (pytester.path / "flext-tests").mkdir()
-        cls._write_violation_module(pytester)
-
-    @c.Tests.MARK.slow
-    def test_dispatcher_records_warning_and_prints_summary(
-        self,
-        pytester: t.Tests.Pytester,
-    ) -> None:
-        """Non-strict run captures the warning and reports it in the summary."""
-        self._make_workspace_sandbox(pytester)
-        result = u.Tests.pytest_subprocess(
-            pytester, "--flext-enforce-rules=ENFORCE-022"
-        )
-        result.assert_outcomes(passed=1, warnings=1)
-        result.stdout.fnmatch_lines([
-            "*flext-enforce*",
-            "catalog active: 1 rules across 1 source kinds",
-            "  runtime_warning: 1",
-            "runtime warnings captured: 1",
-        ])
-
-    @c.Tests.MARK.slow
-    def test_strict_mode_promotes_warning_to_failure(
-        self,
-        pytester: t.Tests.Pytester,
-    ) -> None:
-        """--flext-enforce-strict promotes the configured warning to a failure."""
-        self._make_workspace_sandbox(pytester)
-        result = u.Tests.pytest_subprocess(
+    def _write_violation_module(cls, pytester: t.Tests.Pytester) -> None:
+        """Write a warning consumer with only its installed dispatcher selected."""
+        cls._write_pytest_ini(
             pytester,
-            "--flext-enforce-rules=ENFORCE-022",
-            "--flext-enforce-strict",
+            "--disable-plugin-autoload -p "
+            f"{config.Infra.tooling.tools.pytest.enforcement_plugin}",
         )
-        result.assert_outcomes(failed=1)
-        result.stdout.fnmatch_lines([
-            "*FlextMroViolationError: synthetic MRO violation*",
-            "runtime warnings captured: 0",
-        ])
+        cls._render(
+            pytester.path / "test_violation.py",
+            "warning_consumer.py.j2",
+            {"category": e.MroViolationError.__name__},
+        )
 
     @c.Tests.MARK.slow
     def test_dispatcher_inactive_outside_workspace(
@@ -452,40 +331,15 @@ class TestsFlextTestsEnforcementPlugin:
 
         A rule the engine does not declare is a failure, never an empty scan.
         """
-        pytester.makeini("[pytest]\n")
-        pytester.makepyfile(
-            test_public_boundary=(
-                "from pathlib import Path\n"
-                "\n"
-                "from flext_tests import tm, u\n"
-                "\n"
-                "\n"
-                "class TestsPublicInfraRuleBoundary:\n"
-                "    def test_engine_boundary(self, tmp_path: Path) -> None:\n"
-                "        project = tmp_path / 'flext-contract-probe'\n"
-                "        package = project / 'src' / 'flext_contract_probe'\n"
-                "        package.mkdir(parents=True)\n"
-                "        (package / '__init__.py').write_text(\n"
-                '            \'"""Probe."""\\n\\n'
-                "from __future__ import annotations\\n',\n"
-                "            encoding='utf-8',\n"
-                "        )\n"
-                "        (project / 'pyproject.toml').write_text(\n"
-                "            '[project]\\n'\n"
-                "            'name = \\\"flext-contract-probe\\\"\\n'\n"
-                "            'version = \\\"0.1.0\\\"\\n'\n"
-                "            'dependencies = []\\n',\n"
-                "            encoding='utf-8',\n"
-                "        )\n"
-                "        missing = u.Tests.infra_rule_findings(\n"
-                "            project, required_rule_ids=frozenset({'no-such-rule'})\n"
-                "        )\n"
-                "        tm.fail(missing, has='no-such-rule')\n"
-                "        scanned = u.Tests.infra_rule_findings(\n"
-                "            project, required_rule_ids=frozenset()\n"
-                "        )\n"
-                "        tm.ok(scanned)\n"
-            ),
+        TestsFlextTestsEnforcementPlugin._write_pytest_ini(pytester)
+        TestsFlextTestsEnforcementPlugin._render(
+            pytester.path / "test_public_boundary.py",
+            "boundary_consumer.py.j2",
+            {
+                "repository_root": str(
+                    Path(__file__).resolve().parents[2],
+                ),
+            },
         )
         runtime_root = tm.ok(
             infra_u.Infra.runtime_owner_root(Path(__file__).resolve().parents[2])

@@ -1,8 +1,9 @@
 """Enforcement dispatcher behind the ``flext_tests_enforcement`` pytest plugin.
 
-Activation resolves from the pytest options, the rootdir and the workspace
-markers alone. The module itself stays import-light: the enforcement catalog,
-its models and the builder load through the deferred ``import_module`` form
+Activation resolves from the pytest options, the rootdir, the workspace
+markers and, outside a workspace, the project manifest. The module itself stays
+import-light: the enforcement catalog, its models and the builder load through
+the deferred ``import_module`` form
 only once a governed session reaches them, so every pytest process that
 enforcement does not govern (a nested runner project, a sandbox, a worker
 outside the workspace) starts without importing the full facade tree.
@@ -14,13 +15,17 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import math
+import re
+import tomllib
 from importlib import import_module
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar
 
 import pytest
 
-from flext_tests import m, u
+# The letter facades are imported only by the methods of a governed session:
+# an ungoverned pytest process must not compose the utilities facade, which
+# would load flext_infra (see the module docstring).
 from flext_tests._constants.validator import FlextTestsConstantsValidator
 
 if TYPE_CHECKING:
@@ -59,6 +64,49 @@ class FlextTestsEnforcementDispatcher:
                 return candidate
         return None
 
+    @classmethod
+    def declares_internal_flext(cls, root: Path) -> bool:
+        """Return whether ``root`` is a standalone internal FLEXT project.
+
+        Activation is derived from the project manifest — the declared FLEXT
+        core dependency or an explicit internal kind — never from directory
+        names or a project-name prefix.
+
+        Returns:
+            ``True`` when the manifest declares the internal project contract.
+
+        """
+        constants = FlextTestsConstantsValidator
+        manifest = root / constants.ENFORCEMENT_PROJECT_MANIFEST
+        if not manifest.is_file():
+            return False
+        document = tomllib.loads(
+            manifest.read_text(encoding=constants.ENFORCEMENT_MANIFEST_ENCODING)
+        )
+        project = document.get("project", {})
+        dependencies = (
+            project.get("dependencies", ()) if isinstance(project, dict) else ()
+        )
+        marker = constants.ENFORCEMENT_PROJECT_DEPENDENCY
+        pattern = rf"{re.escape(marker)}(?![A-Za-z0-9_-])"
+        if isinstance(dependencies, list) and any(
+            isinstance(item, str) and re.match(pattern, item.strip())
+            for item in dependencies
+        ):
+            return True
+        tool = document.get("tool", {})
+        if not isinstance(tool, dict):
+            return False
+        flext = tool.get("flext", {})
+        if (
+            isinstance(flext, dict)
+            and flext.get("kind") == constants.ENFORCEMENT_PROJECT_KIND
+        ):
+            return True
+        uv = tool.get("uv", {})
+        sources = uv.get("sources", {}) if isinstance(uv, dict) else {}
+        return isinstance(sources, dict) and marker in sources
+
     @staticmethod
     def split_csv(raw: str | None) -> frozenset[str]:
         """Split a comma-separated option value into a normalized frozen set.
@@ -87,7 +135,12 @@ class FlextTestsEnforcementDispatcher:
             repository_root = cls.discover_repository_root(rootpath)
         else:
             discovered = cls.discover_repository_root(rootpath)
-            repository_root = discovered if discovered == rootpath else None
+            if discovered is not None:
+                repository_root = discovered if discovered == rootpath else None
+            elif cls.declares_internal_flext(rootpath):
+                repository_root = rootpath
+            else:
+                repository_root = None
         config.stash[cls.stash_root] = repository_root
         return repository_root
 
@@ -103,10 +156,12 @@ class FlextTestsEnforcementDispatcher:
             The resulting ``m.Tests.EnforcementDispatcherConfig``.
 
         """
+        models = import_module("flext_tests").m
+
         stashed = config.stash.get(cls.stash_config, None)
         if stashed is not None:
             return stashed
-        resolved = m.Tests.EnforcementDispatcherConfig(
+        resolved = models.Tests.EnforcementDispatcherConfig(
             strict=bool(config.getoption("--flext-enforce-strict")),
             include=cls.split_csv(str(config.getoption("--flext-enforce-rules") or "")),
             exclude=cls.split_csv(
@@ -124,11 +179,13 @@ class FlextTestsEnforcementDispatcher:
         repository_root = cls.active_root(config)
         if repository_root is None:
             return
+        facade = import_module("flext_tests")
+
         cfg = cls.resolve_config(config, repository_root)
         action = "error" if cfg.strict else "default"
 
-        for rule in u.Tests.active_rules(cfg):
-            if isinstance(rule.source, m.Tests.EnforcementRuntimeWarningSource):
+        for rule in facade.u.Tests.active_rules(cfg):
+            if isinstance(rule.source, facade.m.Tests.EnforcementRuntimeWarningSource):
                 config.addinivalue_line(
                     "filterwarnings",
                     f"{action}::{rule.source.category}",
@@ -170,6 +227,19 @@ class FlextTestsEnforcementDispatcher:
             raise pytest.UsageError(msg)
         return slow_timeout
 
+    @staticmethod
+    def budget_markers() -> tuple[str, ...]:
+        """Return every marker whose items run on the config-owned slow budget.
+
+        Returns:
+            The slow marker followed by the declared heavy-tier markers.
+
+        """
+        return (
+            FlextTestsConstantsValidator.ENFORCEMENT_SLOW_MARKER,
+            *FlextTestsConstantsValidator.ENFORCEMENT_HEAVY_TIER_MARKERS,
+        )
+
     @classmethod
     def apply_slow_budget(
         cls,
@@ -185,10 +255,11 @@ class FlextTestsEnforcementDispatcher:
         config.stash[cls.stash_slow_limit] = None
         slow_timeout = cls.slow_budget_seconds(config)
         config.stash[cls.stash_slow_limit] = slow_timeout
+        markers = cls.budget_markers()
         for item in items if slow_timeout is not None else ():
             if item.stash.get(cls.stash_budgeted, False):
                 continue
-            if item.get_closest_marker("slow") is None:
+            if not any(item.get_closest_marker(marker) for marker in markers):
                 continue
             if item.get_closest_marker("timeout") is not None:
                 msg = (
@@ -197,10 +268,7 @@ class FlextTestsEnforcementDispatcher:
                 )
                 raise pytest.UsageError(msg)
             item.stash[cls.stash_budgeted] = True
-            if (
-                item.get_closest_marker("slow") is not None
-                and config.getoption("timeout") != 0
-            ):
+            if config.getoption("timeout") != 0:
                 item.add_marker(pytest.mark.timeout(slow_timeout), append=False)
 
     @classmethod
@@ -253,7 +321,7 @@ class FlextTestsEnforcementDispatcher:
             return
         config.stash.setdefault(cls.stash_durations, {})[report.nodeid] = (
             report.duration,
-            FlextTestsConstantsValidator.ENFORCEMENT_SLOW_MARKER in report.keywords,
+            any(marker in report.keywords for marker in cls.budget_markers()),
         )
 
     @classmethod
@@ -325,8 +393,10 @@ class FlextTestsEnforcementDispatcher:
         repository_root = cls.active_root(config)
         if repository_root is None:
             return
+        utilities = import_module("flext_tests").u
+
         cfg = cls.resolve_config(config, repository_root)
-        active = u.Tests.active_rules(cfg)
+        active = utilities.Tests.active_rules(cfg)
         kinds: dict[str, int] = {}
         for rule in active:
             kinds[rule.source.kind] = kinds.get(rule.source.kind, 0) + 1
