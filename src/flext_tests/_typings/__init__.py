@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from flext_tests._typings.base import FlextTestsTypesBase
     from flext_tests._typings.docker import FlextTestsTypesDocker
     from flext_tests._typings.files import FlextTestsTypesFiles
+    from flext_tests._typings.http import FlextTestsTypesHttp
     from flext_tests._typings.matchers import FlextTestsTypesMatchers
     from flext_tests._typings.pytest_surface import FlextTestsTypesPytest
 
@@ -23,6 +24,7 @@ __all__: tuple[str, ...] = (
     "FlextTestsTypesBase",
     "FlextTestsTypesDocker",
     "FlextTestsTypesFiles",
+    "FlextTestsTypesHttp",
     "FlextTestsTypesMatchers",
     "FlextTestsTypesPytest",
 )
@@ -34,6 +36,7 @@ install_lazy_exports(
         "FlextTestsTypesBase": ".base",
         "FlextTestsTypesDocker": ".docker",
         "FlextTestsTypesFiles": ".files",
+        "FlextTestsTypesHttp": ".http",
         "FlextTestsTypesMatchers": ".matchers",
         "FlextTestsTypesPytest": ".pytest_surface",
     },
@@ -63,6 +66,12 @@ install_lazy_exports(
             "FileContentStructured",
             "FileContentPlain",
             "ParsedPair",
+        ),
+        "FlextTestsTypesHttp": (
+            "AsgiApp",
+            "AsgiScope",
+            "AsgiReceive",
+            "AsgiSend",
         ),
         "FlextTestsTypesMatchers": (
             "LengthSpec",

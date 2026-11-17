@@ -162,7 +162,7 @@ class FlextTestsUtilitiesFilesInfo(FlextTestsUtilitiesFilesAssertions):
         match fmt:
             case "json" | "yaml" if text.strip():
                 parse_result = (
-                    u.Cli.json_parse(text) if fmt == "json" else u.Cli.yaml_parse(text)
+                    u.Cli.json_loads(text) if fmt == "json" else u.Cli.yaml_parse(text)
                 )
                 parsed_value = parse_result.value if parse_result.success else None
                 match parsed_value:

@@ -1,8 +1,9 @@
 """Enforcement dispatcher behind the ``flext_tests_enforcement`` pytest plugin.
 
-Activation resolves from the pytest options, the rootdir and the workspace
-markers alone. The module itself stays import-light: the enforcement catalog,
-its models and the builder load through the deferred ``import_module`` form
+Activation resolves from the pytest options, the rootdir, the workspace
+markers and, outside a workspace, the project manifest. The module itself stays
+import-light: the enforcement catalog, its models and the builder load through
+the deferred ``import_module`` form
 only once a governed session reaches them, so every pytest process that
 enforcement does not govern (a nested runner project, a sandbox, a worker
 outside the workspace) starts without importing the full facade tree.
@@ -14,6 +15,8 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import math
+import re
+import tomllib
 from importlib import import_module
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar
@@ -61,6 +64,49 @@ class FlextTestsEnforcementDispatcher:
                 return candidate
         return None
 
+    @classmethod
+    def declares_internal_flext(cls, root: Path) -> bool:
+        """Return whether ``root`` is a standalone internal FLEXT project.
+
+        Activation is derived from the project manifest — the declared FLEXT
+        core dependency or an explicit internal kind — never from directory
+        names or a project-name prefix.
+
+        Returns:
+            ``True`` when the manifest declares the internal project contract.
+
+        """
+        constants = FlextTestsConstantsValidator
+        manifest = root / constants.ENFORCEMENT_PROJECT_MANIFEST
+        if not manifest.is_file():
+            return False
+        document = tomllib.loads(
+            manifest.read_text(encoding=constants.ENFORCEMENT_MANIFEST_ENCODING)
+        )
+        project = document.get("project", {})
+        dependencies = (
+            project.get("dependencies", ()) if isinstance(project, dict) else ()
+        )
+        marker = constants.ENFORCEMENT_PROJECT_DEPENDENCY
+        pattern = rf"{re.escape(marker)}(?![A-Za-z0-9_-])"
+        if isinstance(dependencies, list) and any(
+            isinstance(item, str) and re.match(pattern, item.strip())
+            for item in dependencies
+        ):
+            return True
+        tool = document.get("tool", {})
+        if not isinstance(tool, dict):
+            return False
+        flext = tool.get("flext", {})
+        if (
+            isinstance(flext, dict)
+            and flext.get("kind") == constants.ENFORCEMENT_PROJECT_KIND
+        ):
+            return True
+        uv = tool.get("uv", {})
+        sources = uv.get("sources", {}) if isinstance(uv, dict) else {}
+        return isinstance(sources, dict) and marker in sources
+
     @staticmethod
     def split_csv(raw: str | None) -> frozenset[str]:
         """Split a comma-separated option value into a normalized frozen set.
@@ -89,7 +135,12 @@ class FlextTestsEnforcementDispatcher:
             repository_root = cls.discover_repository_root(rootpath)
         else:
             discovered = cls.discover_repository_root(rootpath)
-            repository_root = discovered if discovered == rootpath else None
+            if discovered is not None:
+                repository_root = discovered if discovered == rootpath else None
+            elif cls.declares_internal_flext(rootpath):
+                repository_root = rootpath
+            else:
+                repository_root = None
         config.stash[cls.stash_root] = repository_root
         return repository_root
 

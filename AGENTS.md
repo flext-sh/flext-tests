@@ -35,11 +35,13 @@ src/flext_tests/
 
 ## Code Map
 
-| Symbol                                    | Kind    | Location             | Role                                       |
-| ----------------------------------------- | ------- | -------------------- | ------------------------------------------ |
-| `tm`                                      | facade  | `tmatchers.py`       | matchers — `tm.ok` / `tm.that` / `tm.fail` |
-| `FlextTestsServiceBase`, `FlextTestsCase` | classes | `base.py`            | test service anchors                       |
-| pytest plugin                             | module  | `conftest_plugin.py` | pytest11 entry (fixtures/enforcement)      |
+| Symbol                                    | Kind     | Location                          | Role                                                             |
+| ----------------------------------------- | -------- | --------------------------------- | ---------------------------------------------------------------- |
+| `tm`                                      | facade   | `tmatchers.py`                    | matchers — `tm.ok` / `tm.that` / `tm.fail`                       |
+| `FlextTestsServiceBase`, `FlextTestsCase` | classes  | `base.py`                         | test service anchors                                             |
+| pytest plugin                             | module   | `conftest_plugin.py`              | pytest11 entry (fixtures/enforcement)                            |
+| `u.Tests.cli_in_process`                  | method   | `_utilities/testcontext.py`       | in-process CLI runner with streams, env scope and signal restore |
+| scenario templates                        | fixtures | `tests/fixtures/enforcement/*.j2` | sandbox sources rendered with `u.Cli.template_render`            |
 
 `api.py` is the thin `FlextTests` MRO facade over `FlextTestsServiceBase`; the package
 is test tooling, not a runtime dependency.
