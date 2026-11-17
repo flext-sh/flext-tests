@@ -269,8 +269,8 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[p.Tests.ContainerInfo]):
             state_dir=state_dir,
         )
 
-    def up(self) -> p.Result[str]:
-        """Start the configured compose target using the DSL state.
+    def _compose(self, *, up: bool) -> p.Result[str]:
+        """Run the configured compose target in the requested direction.
 
         Returns:
             The resulting ``p.Result[str]``.
@@ -281,11 +281,25 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[p.Tests.ContainerInfo]):
             return r[str].fail(c.Tests.ERR_DOCKER_TARGET_MISSING)
         if target.compose_file is None:
             return r[str].fail("Docker target has no compose file configured.")
-        return self._compose_up(
-            target.compose_file,
-            target.project_name or u.Tests.docker_compose_project(target.compose_file),
-            target.service or None,
+        project = target.project_name or u.Tests.docker_compose_project(
+            target.compose_file
         )
+        if up:
+            return self._compose_up(
+                target.compose_file,
+                project,
+                target.service or None,
+            )
+        return self._compose_down(target.compose_file, project)
+
+    def up(self) -> p.Result[str]:
+        """Start the configured compose target using the DSL state.
+
+        Returns:
+            The resulting ``p.Result[str]``.
+
+        """
+        return self._compose(up=True)
 
     def down(self) -> p.Result[str]:
         """Stop the configured compose target using the DSL state.
@@ -294,15 +308,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[p.Tests.ContainerInfo]):
             The resulting ``p.Result[str]``.
 
         """
-        target = self.target_config
-        if target is None:
-            return r[str].fail(c.Tests.ERR_DOCKER_TARGET_MISSING)
-        if target.compose_file is None:
-            return r[str].fail("Docker target has no compose file configured.")
-        return self._compose_down(
-            target.compose_file,
-            target.project_name or u.Tests.docker_compose_project(target.compose_file),
-        )
+        return self._compose(up=False)
 
     def ready(
         self,
@@ -347,6 +353,24 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[p.Tests.ContainerInfo]):
             return "Docker target has no selected Compose service"
         return None
 
+    def _validated_container(
+        self,
+    ) -> p.Result[tuple[p.Tests.ContainerConfig, str]]:
+        """Return the configured target and its name when it can be inspected.
+
+        Returns:
+            The validated target and name, or the declared failure.
+
+        """
+        target = self.target_config
+        error = self._target_error()
+        if target is None or target.container_name is None or error is not None:
+            return r[tuple[p.Tests.ContainerConfig, str]].fail(error)
+        return r[tuple[p.Tests.ContainerConfig, str]].ok((
+            target,
+            target.container_name,
+        ))
+
     @contextmanager
     def lease(self) -> Generator[None]:
         """Hold the shared session lease of the configured container.
@@ -390,10 +414,10 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[p.Tests.ContainerInfo]):
             The resulting ``p.Result[p.Tests.ContainerInfo]``.
 
         """
-        target = self.target_config
-        error = self._target_error()
-        if target is None or target.container_name is None or error is not None:
-            return r[p.Tests.ContainerInfo].fail(error)
+        validated = self._validated_container()
+        if validated.failure:
+            return r[p.Tests.ContainerInfo].fail(validated.error)
+        target, container_name = validated.value
         environment = creation_environment or {}
         owned = sorted(set(environment).intersection(target.secret_keys))
         if owned:
@@ -408,7 +432,7 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[p.Tests.ContainerInfo]):
             return r[p.Tests.ContainerInfo].from_failure(validated)
         try:
             with u.Tests.FileLock(
-                u.Tests.docker_lease_lock_file(self.state_dir, target.container_name),
+                u.Tests.docker_lease_lock_file(self.state_dir, container_name),
                 timeout_seconds=target.lock_timeout_seconds,
             ):
                 return self._ensure_present(target, initializer, environment).flat_map(
@@ -689,13 +713,13 @@ class FlextTestsDocker(FlextTestsDockerSurface, s[p.Tests.ContainerInfo]):
             The resulting ``p.Result[p.Tests.ContainerInfo]``.
 
         """
-        target = self.target_config
-        error = self._target_error()
-        if target is None or target.container_name is None or error is not None:
-            return r[p.Tests.ContainerInfo].fail(error)
+        validated = self._validated_container()
+        if validated.failure:
+            return r[p.Tests.ContainerInfo].fail(validated.error)
+        target, container_name = validated.value
         try:
             with self.lease():
-                return self.fetch_container_info(target.container_name).flat_map(
+                return self.fetch_container_info(container_name).flat_map(
                     lambda info: (
                         self
                         ._check_declaration(target, info)
