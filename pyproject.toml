@@ -21,24 +21,24 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-    "docker>=7.2.0",
-    "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@0.12.0-dev",
-    "flext-core @ git+https://github.com/flext-sh/flext-core.git@0.12.0-dev",
-    "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
-    "httpx2",
-    "hypothesis",
-    "pytest>=9.1.1",
-    "pytest-asyncio",
-    "pytest-benchmark",
-    "pytest-cov",
-    "pytest-markdown-docs",
-    "pytest-randomly>=4.1.0",
-    "pytest-reportlog",
-    "pytest-testmon>=2.2.0",
-    "pytest-timeout>=2.4.0",
-    "pytest-xdist",
-    "python-dotenv>=1.2.4",
-    "python-on-whales>=0.81.0",
+  "docker>=7.2.0",
+  "flext-cli",
+  "flext-core",
+  "flext-infra",
+  "httpx2",
+  "hypothesis",
+  "pytest>=9.1.1",
+  "pytest-asyncio",
+  "pytest-benchmark",
+  "pytest-cov",
+  "pytest-markdown-docs",
+  "pytest-randomly>=4.1.0",
+  "pytest-reportlog",
+  "pytest-testmon>=2.2.0",
+  "pytest-timeout>=2.4.0",
+  "pytest-xdist",
+  "python-dotenv>=1.2.4",
+  "python-on-whales>=0.81.0",
 ]
 description = "FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem"
 keywords = ["builders", "factories", "flext", "test-infrastructure", "testing"]
@@ -74,7 +74,7 @@ Repository = "https://github.com/flext-sh/flext-tests"
 dev = [
   "properdocs>=1.6.7",
   "types-networkx",
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
+  "flext-infra",                                      # flext: derived member environment
   "mkdocstrings-python>=2.0.9",
   "actionlint-py>=1.7.12.24",
   "bandit>=1.9.4",
@@ -132,7 +132,7 @@ dev = [
   "yamlfix>=1.19.1",
 ]
 codegen = [
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
+  "flext-infra", # flext: derived member environment
 ]
 
 [tool.flext.docs]
@@ -702,9 +702,6 @@ exclude-newer = "P10D"
 link-mode = "clone"
 override-dependencies = [
   "rope @ git+https://github.com/marlon-costa-dc/rope.git@3a0cb69024fb5f17ba32064bf6c294d016c7d9d8",
-  "flext-cli @ git+https://github.com/flext-sh/flext-cli.git@0.12.0-dev",
-  "flext-core @ git+https://github.com/flext-sh/flext-core.git@0.12.0-dev",
-  "flext-infra @ git+https://github.com/flext-sh/flext-infra.git@0.12.0-dev",
 ]
 [[tool.uv.cache-keys]]
 file = "pyproject.toml"
@@ -718,26 +715,10 @@ file = "setup.cfg"
 [[tool.uv.cache-keys]]
 file = "src/**"
 
-[[tool.uv.exclude-dependencies]]
-dependencies = ["flext-tests"]
-
-[tool.uv.exclude-dependencies.package]
-name = "flext-cli"
-
-[[tool.uv.exclude-dependencies]]
-dependencies = ["flext-tests"]
-
-[tool.uv.exclude-dependencies.package]
-name = "flext-core"
-
-[[tool.uv.exclude-dependencies]]
-dependencies = ["flext-tests"]
-
-[tool.uv.exclude-dependencies.package]
-name = "flext-infra"
-
 [tool.uv.exclude-newer-package]
 soupsieve = false
+
+[tool.uv.sources]
 
 [tool.bandit]
 severity = "MEDIUM"
