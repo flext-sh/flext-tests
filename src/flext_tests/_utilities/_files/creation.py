@@ -152,10 +152,15 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
                     u.Cli.json_write(
                         file_path,
                         json_payload,
-                        m.Cli.JsonWriteOptions(indent=params.indent),
-                    )
+                        m.Cli.JsonWriteOptions(
+                            indent=params.indent,
+                            durability=c.Cli.WriteDurability.SCRATCH,
+                        ),
+                    ).unwrap()
                 else:
-                    u.Cli.yaml_dump(file_path, json_payload, indent=params.indent)
+                    u.Cli.yaml_dump(
+                        file_path, json_payload, indent=params.indent
+                    ).unwrap()
             case c.Tests.FILE_FORMAT_CSV:
                 u.Cli.files_write_csv(
                     file_path,
@@ -163,7 +168,7 @@ class FlextTestsUtilitiesFilesCreation(FlextTestsUtilitiesFilesLifecycle):
                         actual_content=actual_content,
                         headers=params.headers,
                     ),
-                )
+                ).unwrap()
             case _:
                 file_path.write_text(
                     str(
