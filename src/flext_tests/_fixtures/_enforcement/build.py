@@ -34,11 +34,15 @@ class FlextTestsEnforcementBuilder:
         repository_root = cfg.repository_root
         if repository_root is None:
             return []
-        rules = u.Tests.active_rules(cfg)
         project_names = u.Tests.collected_project_names(
             items=collected_items,
             repository_root=repository_root,
         )
+        # Only a collected member project is scanned, so only then is the
+        # rule catalog read; building it otherwise feeds nothing.
+        if not project_names:
+            return []
+        rules = u.Tests.active_rules(cfg)
         # Catalog rows naming engine rules, plus included ids the catalog does
         # not own (engine rule ids), must all be declared by the engine.
         required_rule_ids = frozenset({
@@ -57,7 +61,7 @@ class FlextTestsEnforcementBuilder:
                 project_names=project_names,
                 required_rule_ids=required_rule_ids,
             ).unwrap()
-            if project_names and engine_selected
+            if engine_selected
             else None,
             project_names=project_names,
         )
