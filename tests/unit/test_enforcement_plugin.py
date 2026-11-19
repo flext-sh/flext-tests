@@ -1,7 +1,7 @@
 """Behavioral coverage for the enforcement dispatcher public contract.
 
-The end-to-end pytest11 pipeline (entry-point load -> ``pytest_configure``
-filterwarnings -> ``pytest_warning_recorded`` -> ``pytest_terminal_summary``)
+The end-to-end pytest11 pipeline (entry-point load ->
+``pytest_warning_recorded`` -> ``pytest_terminal_summary``)
 is driven inside a ``pytester`` subprocess sandbox and asserted on observable
 outcomes plus the terminal summary the plugin promises to print. Subprocess
 runs keep the real workspace untouched. Discovery contracts retain installed
@@ -133,8 +133,9 @@ class TestsFlextTestsEnforcementPlugin:
             tm.ok(isinstance(plugin, type))
             tm.ok(callable(plugin))
             tm.that(f"{plugin.__module__}:{plugin.__qualname__}", eq=entry.value)
+            hook_name = "pytest_collection_modifyitems"
             tm.that(
-                isinstance(getattr_static(plugin, "pytest_configure"), staticmethod),
+                isinstance(getattr_static(plugin, hook_name), staticmethod),
                 eq=True,
             )
             tm.that(
@@ -150,12 +151,12 @@ class TestsFlextTestsEnforcementPlugin:
             )
             implementations = [
                 hook
-                for hook in pytestconfig.hook.pytest_configure.get_hookimpls()
+                for hook in getattr(pytestconfig.hook, hook_name).get_hookimpls()
                 if hook.plugin is plugin
             ]
             tm.that(
                 [hook.function for hook in implementations],
-                eq=[plugin.pytest_configure],
+                eq=[plugin.pytest_collection_modifyitems],
             )
         for module in c.Tests.FIXTURE_PLUGIN_MODULES:
             registered = pytestconfig.pluginmanager.get_plugin(module)

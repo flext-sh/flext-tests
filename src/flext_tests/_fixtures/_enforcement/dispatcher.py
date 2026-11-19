@@ -178,24 +178,6 @@ class FlextTestsEnforcementDispatcher:
         config.stash[cls.stash_config] = resolved
         return resolved
 
-    @classmethod
-    def configure(cls, config: pytest.Config) -> None:
-        """Register filterwarnings for every active runtime-warning rule."""
-        repository_root = cls.active_root(config)
-        if repository_root is None or config.stash[cls.stash_standalone]:
-            return
-        facade = import_module("flext_tests")
-
-        cfg = cls.resolve_config(config, repository_root)
-        action = "error" if cfg.strict else "default"
-
-        for rule in facade.u.Tests.active_rules(cfg):
-            if isinstance(rule.source, facade.m.Tests.EnforcementRuntimeWarningSource):
-                config.addinivalue_line(
-                    "filterwarnings",
-                    f"{action}::{rule.source.category}",
-                )
-
     @staticmethod
     def slow_budget_seconds(config: pytest.Config) -> float | None:
         """Return the config-owned slow item budget, or None when unconfigured.

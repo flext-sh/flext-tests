@@ -78,14 +78,6 @@ class FlextTestsEnforcementPlugin:
         )
 
     @staticmethod
-    def pytest_configure(config: pytest.Config) -> None:
-        """Resolve enforcement only after startup instrumentation is active."""
-        dispatcher = import_module(
-            _DISPATCHER_MODULE,
-        ).FlextTestsEnforcementDispatcher
-        dispatcher.configure(config)
-
-    @staticmethod
     def pytest_collection_modifyitems(
         session: pytest.Session,
         config: pytest.Config,

@@ -17,7 +17,8 @@ class TestsPluginConsumer:
             tm.that(entry.value, eq=target)
             plugin = manager.get_plugin(name)
             tm.ok(plugin is entry.load())
-            plugin.pytest_configure(pytestconfig)
+            if 'pytest_configure' in vars(plugin):
+                plugin.pytest_configure(pytestconfig)
         tm.that(manager.list_name_plugin(), eq=before)
         for module in c.Tests.FIXTURE_PLUGIN_MODULES:
             owner = manager.get_plugin(module)
