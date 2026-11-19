@@ -217,7 +217,11 @@ class TestsFlextTestsEnforcementDispatcher:
         pytester: t.Tests.Pytester,
         tmp_path: Path,
     ) -> None:
-        """A standalone internal project declares flext-core and activates."""
+        """A standalone internal project declares flext-core and activates.
+
+        It owns no workspace member to scan, so the session never builds the
+        rule catalog and reports no catalog line.
+        """
         project = self._sandbox_project(
             tmp_path,
             dependencies=(
@@ -227,7 +231,8 @@ class TestsFlextTestsEnforcementDispatcher:
 
         result = self._collect(pytester, project)
 
-        result.stdout.fnmatch_lines(["*flext-enforce*", "catalog active: 1 rules*"])
+        result.stdout.fnmatch_lines(["*flext-enforce*", "runtime warnings captured*"])
+        result.stdout.no_fnmatch_line("catalog active:*")
 
     @c.Tests.MARK.slow
     def test_standalone_project_without_the_core_dependency_is_passive(
