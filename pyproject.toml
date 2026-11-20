@@ -39,6 +39,7 @@ dependencies = [
   "pytest-xdist",
   "python-dotenv>=1.2.4",
   "python-on-whales>=0.81.0",
+  "starlette",
 ]
 description = "FLEXT Test Infrastructure - Shared test utilities, builders, factories, and validation for the FLEXT ecosystem"
 keywords = ["builders", "factories", "flext", "test-infrastructure", "testing"]
