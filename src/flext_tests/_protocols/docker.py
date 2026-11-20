@@ -227,35 +227,6 @@ class FlextTestsProtocolsDocker:
             ...
 
     @runtime_checkable
-    class ContainerState(FlextCliProtocols.BaseModel, Protocol):
-        """Structural data contract projected from the owning model."""
-
-        @property
-        def container_name(self) -> str:
-            """Docker container name; also the record file stem."""
-            ...
-
-        @property
-        def container_id(self) -> str:
-            """Container id the lifecycle sealed; empty if none."""
-            ...
-
-        @property
-        def fingerprint(self) -> str:
-            """Declared-input fingerprint sealed with the id."""
-            ...
-
-        @property
-        def dirty(self) -> bool:
-            """A session reported the container unusable."""
-            ...
-
-        @property
-        def sealed(self) -> bool:
-            """Creation and initialization completed for the id."""
-            ...
-
-    @runtime_checkable
     class User(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
