@@ -325,6 +325,7 @@ class TestsFlextTestsEnforcementPlugin:
         result.stdout.no_fnmatch_line("runtime warnings captured:*")
 
     @staticmethod
+    @c.Tests.MARK.slow
     def test_infra_rule_engine_boundary_returns_results(tmp_path: Path) -> None:
         """Engine findings come through the public Result boundary.
 
