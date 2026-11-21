@@ -1,7 +1,7 @@
 """Behavioral coverage for the enforcement dispatcher public contract.
 
-The end-to-end pytest11 pipeline (entry-point load -> ``pytest_configure``
-filterwarnings -> ``pytest_warning_recorded`` -> ``pytest_terminal_summary``)
+The end-to-end pytest11 pipeline (entry-point load ->
+``pytest_warning_recorded`` -> ``pytest_terminal_summary``)
 is driven inside a ``pytester`` subprocess sandbox and asserted on observable
 outcomes plus the terminal summary the plugin promises to print. Subprocess
 runs keep the real workspace untouched. Discovery contracts retain installed
@@ -13,6 +13,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
+import sys
 from collections.abc import Mapping
 from importlib import import_module
 from importlib.metadata import EntryPoint, distribution
@@ -20,7 +21,7 @@ from inspect import getattr_static
 from pathlib import Path
 
 import pytest
-from flext_infra import config, u as infra_u
+from flext_infra import config
 
 from tests import c, e, m, t, tm, u
 
@@ -133,8 +134,9 @@ class TestsFlextTestsEnforcementPlugin:
             tm.ok(isinstance(plugin, type))
             tm.ok(callable(plugin))
             tm.that(f"{plugin.__module__}:{plugin.__qualname__}", eq=entry.value)
+            hook_name = "pytest_collection_modifyitems"
             tm.that(
-                isinstance(getattr_static(plugin, "pytest_configure"), staticmethod),
+                isinstance(getattr_static(plugin, hook_name), staticmethod),
                 eq=True,
             )
             tm.that(
@@ -150,12 +152,12 @@ class TestsFlextTestsEnforcementPlugin:
             )
             implementations = [
                 hook
-                for hook in pytestconfig.hook.pytest_configure.get_hookimpls()
+                for hook in getattr(pytestconfig.hook, hook_name).get_hookimpls()
                 if hook.plugin is plugin
             ]
             tm.that(
                 [hook.function for hook in implementations],
-                eq=[plugin.pytest_configure],
+                eq=[plugin.pytest_collection_modifyitems],
             )
         for module in c.Tests.FIXTURE_PLUGIN_MODULES:
             registered = pytestconfig.pluginmanager.get_plugin(module)
@@ -324,26 +326,27 @@ class TestsFlextTestsEnforcementPlugin:
 
     @staticmethod
     @c.Tests.MARK.slow
-    def test_infra_rule_engine_boundary_runs_in_subprocess(
-        pytester: t.Tests.Pytester,
-    ) -> None:
+    def test_infra_rule_engine_boundary_returns_results(tmp_path: Path) -> None:
         """Engine findings come through the public Result boundary.
 
         A rule the engine does not declare is a failure, never an empty scan.
         """
-        TestsFlextTestsEnforcementPlugin._write_pytest_ini(pytester)
-        TestsFlextTestsEnforcementPlugin._render(
-            pytester.path / "test_public_boundary.py",
-            "boundary_consumer.py.j2",
-            {
-                "repository_root": str(
-                    Path(__file__).resolve().parents[2],
-                ),
-            },
+        project = tmp_path / "flext-contract-probe"
+        package = project / "src" / "flext_contract_probe"
+        package.mkdir(parents=True)
+        (package / "__init__.py").write_text(
+            '"""Probe."""\n\nfrom __future__ import annotations\n',
+            encoding="utf-8",
         )
-        runtime_root = tm.ok(
-            infra_u.Infra.runtime_owner_root(Path(__file__).resolve().parents[2])
+        (project / "pyproject.toml").write_text(
+            '[project]\nname = "flext-contract-probe"\nversion = "0.1.0"\n'
+            "dependencies = []\n",
+            encoding="utf-8",
         )
-        with u.Tests.env_vars_context({"RUNTIME_ROOT": runtime_root}):
-            result = u.Tests.pytest_subprocess(pytester, "--disable-plugin-autoload")
-        result.assert_outcomes(passed=1)
+        u.Cli.run_checked([*c.Cli.GIT_INIT_COMMAND, str(project)]).unwrap()
+        (project / ".venv").symlink_to(Path(sys.prefix), target_is_directory=True)
+        missing = u.Tests.infra_rule_findings(
+            project, required_rule_ids=frozenset({"no-such-rule"})
+        )
+        tm.fail(missing, has="no-such-rule")
+        tm.ok(u.Tests.infra_rule_findings(project, required_rule_ids=frozenset()))

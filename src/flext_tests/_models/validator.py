@@ -36,18 +36,6 @@ class FlextTestsModelsValidator:
             m.Field(description="Engine rule IDs this catalog entry selects."),
         ] = ()
 
-    class EnforcementRuntimeWarningSource(m.Value):
-        """Runtime warning category promoted or counted by the dispatcher."""
-
-        kind: Annotated[
-            Literal["runtime_warning"],
-            m.Field(description="Closed discriminator of the runtime warning source."),
-        ] = "runtime_warning"
-        category: Annotated[
-            t.NonEmptyStr,
-            m.Field(description="Dotted warning category the dispatcher filters."),
-        ]
-
     class EnforcementRuleSpec(m.Value):
         """One catalog entry: a stable ID and its closed rule source."""
 
@@ -60,8 +48,7 @@ class FlextTestsModelsValidator:
             m.Field(description="Human-readable catalog rule description."),
         ] = ""
         source: Annotated[
-            FlextTestsModelsValidator.EnforcementInfraRuleSource
-            | FlextTestsModelsValidator.EnforcementRuntimeWarningSource,
+            FlextTestsModelsValidator.EnforcementInfraRuleSource,
             m.Field(description="Closed rule source behind this catalog entry."),
         ]
 

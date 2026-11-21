@@ -16,6 +16,8 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
+from flext_infra import u as infra_u
+
 from tests import c, m, p, t, tm, u
 
 
@@ -34,10 +36,6 @@ class TestsFlextTestsEnforcementDispatcher:
     def workspace(tmp_path: Path) -> Path:
         """Create a directory carrying every FLEXT workspace marker.
 
-        A real FLEXT workspace also carries its runtime manifest and lock; the
-        sandbox links the repository-owned pair so tool resolution reads the
-        same committed declaration instead of copying or inventing one.
-
         Returns:
             The resulting ``Path``.
 
@@ -46,10 +44,6 @@ class TestsFlextTestsEnforcementDispatcher:
         root.mkdir()
         for marker in c.Tests.ENFORCEMENT_WORKSPACE_MARKERS:
             (root / marker).mkdir(parents=True, exist_ok=True)
-        for runtime_file in (".mise.toml", "mise.lock"):
-            (root / runtime_file).symlink_to(
-                TestsFlextTestsEnforcementDispatcher.project_root / runtime_file
-            )
         return root
 
     project_root = Path(__file__).resolve().parents[2]
@@ -131,15 +125,19 @@ class TestsFlextTestsEnforcementDispatcher:
             The resulting ``pytest.RunResult``.
 
         """
-        return u.Tests.pytest_subprocess(
-            pytester,
-            "--collect-only",
-            "-q",
-            f"--rootdir={project}",
-            f"--flext-enforce-rules={rules or cls._runtime_rule_id()}",
-            *args,
-            str(project),
-        )
+        # The subprocess declares its runtime owner as make does, so tool
+        # resolution reads this checkout's runtime, never the sandbox's.
+        runtime_root = tm.ok(infra_u.Infra.runtime_owner_root(cls.project_root))
+        with u.Tests.env_vars_context({"RUNTIME_ROOT": runtime_root}):
+            return u.Tests.pytest_subprocess(
+                pytester,
+                "--collect-only",
+                "-q",
+                f"--rootdir={project}",
+                f"--flext-enforce-rules={rules or cls._runtime_rule_id()}",
+                *args,
+                str(project),
+            )
 
     @c.Tests.MARK.slow
     def test_forced_run_discovers_the_workspace_above_a_sub_project(
@@ -217,7 +215,11 @@ class TestsFlextTestsEnforcementDispatcher:
         pytester: t.Tests.Pytester,
         tmp_path: Path,
     ) -> None:
-        """A standalone internal project declares flext-core and activates."""
+        """A standalone internal project declares flext-core and activates.
+
+        It owns no workspace member to scan, so the session never builds the
+        rule catalog and reports no catalog line.
+        """
         project = self._sandbox_project(
             tmp_path,
             dependencies=(
@@ -227,7 +229,8 @@ class TestsFlextTestsEnforcementDispatcher:
 
         result = self._collect(pytester, project)
 
-        result.stdout.fnmatch_lines(["*flext-enforce*", "catalog active: 1 rules*"])
+        result.stdout.fnmatch_lines(["*flext-enforce*", "runtime warnings captured*"])
+        result.stdout.no_fnmatch_line("catalog active:*")
 
     @c.Tests.MARK.slow
     def test_standalone_project_without_the_core_dependency_is_passive(

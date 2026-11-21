@@ -38,20 +38,6 @@ class FlextTestsProtocolsValidator:
             ...
 
     @runtime_checkable
-    class EnforcementRuntimeWarningSource(FlextCliProtocols.BaseModel, Protocol):
-        """Structural data contract projected from the owning model."""
-
-        @property
-        def kind(self) -> Literal["runtime_warning"]:
-            """Closed discriminator of the runtime warning source."""
-            ...
-
-        @property
-        def category(self) -> t.NonEmptyStr:
-            """Dotted warning category the dispatcher filters."""
-            ...
-
-    @runtime_checkable
     class EnforcementRuleSpec(FlextCliProtocols.BaseModel, Protocol):
         """Structural data contract projected from the owning model."""
 
@@ -66,12 +52,7 @@ class FlextTestsProtocolsValidator:
             ...
 
         @property
-        def source(
-            self,
-        ) -> (
-            FlextTestsProtocolsValidator.EnforcementInfraRuleSource
-            | FlextTestsProtocolsValidator.EnforcementRuntimeWarningSource
-        ):
+        def source(self) -> FlextTestsProtocolsValidator.EnforcementInfraRuleSource:
             """Closed rule source behind this catalog entry."""
             ...
 

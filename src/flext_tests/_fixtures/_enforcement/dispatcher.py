@@ -38,6 +38,9 @@ class FlextTestsEnforcementDispatcher:
     """Resolve the session activation and run every enforcement hook body."""
 
     stash_root: ClassVar[pytest.StashKey[Path | None]] = pytest.StashKey()
+    # A standalone project owns no workspace member to scan, so its session
+    # consumes the rule catalog only when it collects a member project.
+    stash_standalone: ClassVar[pytest.StashKey[bool]] = pytest.StashKey()
     stash_config: ClassVar[pytest.StashKey[p.Tests.EnforcementDispatcherConfig]] = (
         pytest.StashKey()
     )
@@ -127,6 +130,7 @@ class FlextTestsEnforcementDispatcher:
         override_root = str(config.getoption("--flext-enforce-workspace-root") or "")
         rootpath = Path(config.rootpath).resolve()
         repository_root: Path | None
+        config.stash[cls.stash_standalone] = False
         if config.getoption("--no-flext-enforce"):
             repository_root = None
         elif override_root:
@@ -139,6 +143,7 @@ class FlextTestsEnforcementDispatcher:
                 repository_root = discovered if discovered == rootpath else None
             elif cls.declares_internal_flext(rootpath):
                 repository_root = rootpath
+                config.stash[cls.stash_standalone] = True
             else:
                 repository_root = None
         config.stash[cls.stash_root] = repository_root
@@ -172,24 +177,6 @@ class FlextTestsEnforcementDispatcher:
         )
         config.stash[cls.stash_config] = resolved
         return resolved
-
-    @classmethod
-    def configure(cls, config: pytest.Config) -> None:
-        """Register filterwarnings for every active runtime-warning rule."""
-        repository_root = cls.active_root(config)
-        if repository_root is None:
-            return
-        facade = import_module("flext_tests")
-
-        cfg = cls.resolve_config(config, repository_root)
-        action = "error" if cfg.strict else "default"
-
-        for rule in facade.u.Tests.active_rules(cfg):
-            if isinstance(rule.source, facade.m.Tests.EnforcementRuntimeWarningSource):
-                config.addinivalue_line(
-                    "filterwarnings",
-                    f"{action}::{rule.source.category}",
-                )
 
     @staticmethod
     def slow_budget_seconds(config: pytest.Config) -> float | None:
@@ -393,19 +380,18 @@ class FlextTestsEnforcementDispatcher:
         repository_root = cls.active_root(config)
         if repository_root is None:
             return
-        utilities = import_module("flext_tests").u
-
         cfg = cls.resolve_config(config, repository_root)
-        active = utilities.Tests.active_rules(cfg)
-        kinds: dict[str, int] = {}
-        for rule in active:
-            kinds[rule.source.kind] = kinds.get(rule.source.kind, 0) + 1
         terminalreporter.write_sep("-", "flext-enforce", yellow=True)
-        terminalreporter.write_line(
-            f"catalog active: {len(active)} rules across {len(kinds)} source kinds",
-        )
-        for kind in sorted(kinds):
-            terminalreporter.write_line(f"  {kind}: {kinds[kind]}")
+        if not config.stash[cls.stash_standalone]:
+            active = import_module("flext_tests").u.Tests.active_rules(cfg)
+            kinds: dict[str, int] = {}
+            for rule in active:
+                kinds[rule.source.kind] = kinds.get(rule.source.kind, 0) + 1
+            terminalreporter.write_line(
+                f"catalog active: {len(active)} rules across {len(kinds)} source kinds",
+            )
+            for kind in sorted(kinds):
+                terminalreporter.write_line(f"  {kind}: {kinds[kind]}")
         terminalreporter.write_line(
             f"runtime warnings captured: {sum(cfg.warning_counter.values())}",
         )
