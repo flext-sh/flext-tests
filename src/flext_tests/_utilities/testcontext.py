@@ -100,7 +100,9 @@ class FlextTestsUtilitiesTestContext:
         """Run a CLI entry point in-process and capture its process-equivalent result.
 
         The call owns the environment scope, the standard streams and the
-        termination handlers the CLI installs, restoring each afterwards. An
+        termination handlers the CLI installs, restoring each afterwards. The
+        captured output renders unstyled (``TERM=dumb``, which a caller ``env``
+        entry still overrides), so text assertions hold in styled CI. An
         entry point that raises :class:`SystemExit` returns its declared code;
         any other failure propagates unchanged.
 
@@ -127,7 +129,10 @@ class FlextTestsUtilitiesTestContext:
         code = 0
         try:
             with (
-                FlextTestsUtilitiesConfigHelpers.env_vars_context(env),
+                FlextTestsUtilitiesConfigHelpers.env_vars_context({
+                    "TERM": "dumb",
+                    **(env or {}),
+                }),
                 redirect_stdout(stdout),
                 redirect_stderr(stderr),
             ):
