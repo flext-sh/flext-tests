@@ -50,6 +50,17 @@ class TestsFlextTestsInProcess:
         tm.ok(PROBE_ENV not in os.environ)
 
     @staticmethod
+    def test_captured_output_renders_unstyled_by_default() -> None:
+        """The call scope declares a dumb terminal; a caller entry overrides it."""
+        plain = u.Tests.cli_in_process(TestsFlextTestsInProcess._reads_terminal, [])
+        styled = u.Tests.cli_in_process(
+            TestsFlextTestsInProcess._reads_terminal, [], env={"TERM": "xterm"}
+        )
+
+        tm.that(plain.stdout, eq="dumb\n")
+        tm.that(styled.stdout, eq="xterm\n")
+
+    @staticmethod
     def test_termination_handlers_are_restored() -> None:
         """Handlers the entry point installs do not outlive the call."""
         previous = signal.getsignal(signal.SIGTERM)
@@ -85,6 +96,11 @@ class TestsFlextTestsInProcess:
     def _stops_cleanly(argv: Sequence[str]) -> int:
         del argv
         raise SystemExit
+
+    @staticmethod
+    def _reads_terminal(_argv: Sequence[str]) -> int:
+        sys.stdout.write(f"{os.environ.get('TERM', '')}\n")
+        return 0
 
     @staticmethod
     def _reads_environment(argv: Sequence[str]) -> int:
