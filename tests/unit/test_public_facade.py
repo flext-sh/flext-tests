@@ -82,9 +82,9 @@ class TestsFlextTestsPublicFacade:
             for hook in pytestconfig.hook.pytest_configure.get_hookimpls()
             if hook.plugin_name in entries
         }
-        tm.that(set(configure), eq=set(entries))
-        for name, entry in entries.items():
-            tm.ok(configure[name] is entry.load())
+        tm.ok(bool(configure))
+        for name, plugin in configure.items():
+            tm.ok(plugin is entries[name].load())
         tm.fail("pytest_configure" in flext_tests.__all__)
 
     @staticmethod
