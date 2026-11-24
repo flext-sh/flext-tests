@@ -37,10 +37,6 @@ from flext_tests._utilities import (
 
 class FlextTestsUtilities(
     FlextCliUtilities,
-    FlextTestsUtilitiesFlextGovernance,
-    # Assertion matchers (that/...) published at the u root: test modules
-    # call `u.that(...)` / `tm.that(...)` directly (strict no-subnamespace).
-    FlextTestsUtilitiesMatchers,
 ):
     """Test utilities for FLEXT ecosystem - extends u.
 

@@ -80,22 +80,31 @@ jobs:
     env:
       CI: Y
       GITHUB_TOKEN: ${{ github.token }}
+    defaults:
+      run:
+        working-directory: flext-tests
     steps:
-      - name: Checkout
+      - name: Checkout workspace flext-sh/flext
         uses: actions/checkout@v7
         with:
+          repository: flext-sh/flext
+          ref: 0.12.0-dev
           submodules: recursive
-
           persist-credentials: false
-
           fetch-depth: 0
-          ref: ${{ inputs.ref || github.sha }}
+      - name: Pin flext-tests at the tested commit
+        working-directory: .
+        run: |
+          set -eu
+          git -C "flext-tests" fetch --no-tags origin "${{ inputs.ref || github.sha }}"
+          git -C "flext-tests" checkout --detach FETCH_HEAD
       # Why: GitHub runners expose umask 002, so git checkout materializes
       # group-writable modes (0664) for tracked files. Canonical Mise
       # artifacts demand exact modes (0o644) and the conform gate fails loud
       # on any drift, so checkout content is normalized to canonical modes
       # once, before any gate runs.
       - name: Normalize checkout modes
+        working-directory: .
         run: chmod -R go-w .
 
       # The runner's own temporary directory, emptied at every job boundary,
@@ -144,11 +153,11 @@ jobs:
       # officially and installs the toolchain and dependencies from their locks,
       # publishes that environment through GITHUB_PATH, and prepares the
       # project runtime. CI never runs `make upg`: it never re-resolves.
-      # CI approval, one visible step per ci workflow row (setup -> check).
+      # CI approval, one visible step per ci workflow row (setup -> check -> tests).
       - name: make setup (blocking)
         id: approval-setup
         run: CI=Y make setup
-      # CI approval, one visible step per ci workflow row (setup -> check).
+      # CI approval, one visible step per ci workflow row (setup -> check -> tests).
       - name: make check CHECK_PHASE=primary (blocking)
         id: approval-check-primary
         # Every approval verb reports once setup provisioned the environment,
@@ -156,6 +165,14 @@ jobs:
         # (workflow requires) admits the step only after that verb is green.
         if: ${{ !cancelled() && steps.approval-setup.outcome == 'success' }}
         run: CI=Y make check CHECK_PHASE=primary
+      # CI approval, one visible step per ci workflow row (setup -> check -> tests).
+      - name: make tests (blocking)
+        id: approval-tests-primary
+        # Every approval verb reports once setup provisioned the environment,
+        # so one red verdict never hides the others; a declared requirement
+        # (workflow requires) admits the step only after that verb is green.
+        if: ${{ !cancelled() && steps.approval-setup.outcome == 'success' && steps.approval-check-primary.outcome == 'success' }}
+        run: CI=Y make tests
       - name: Complete check qualification
         id: qualification-check
         if: ${{ !cancelled() && inputs.full_check == true && steps.approval-setup.outcome == 'success' }}
@@ -164,26 +181,26 @@ jobs:
       # row failed first (a failed tests row skips every later check row);
       # uploading after a setup failure would only add a second, misleading error.
       - name: Upload execution reports
-        if: ${{ !cancelled() && (steps.approval-check-primary.outcome == 'success' || steps.approval-check-primary.outcome == 'failure') }}
+        if: ${{ !cancelled() && (steps.approval-check-primary.outcome == 'success' || steps.approval-check-primary.outcome == 'failure' || steps.approval-tests-primary.outcome == 'success' || steps.approval-tests-primary.outcome == 'failure') }}
         uses: actions/upload-artifact@v7
         with:
           name: flext-ci-reports-${{ github.run_id }}
           # Structured reports only — omit raw pytest/tool logs that may carry
           # connection strings or env-derived secrets from integration fixtures.
           path: |
-            .reports/**/audit-summary.json
-            .reports/**/audit-report.md
-            .reports/**/validate-summary.json
-            .reports/**/validate-report.md
-            .reports/check/**/*.sarif
-            .reports/check/**/*.md
-            .reports/gates/**/original-receipt.json
-            .reports/gates/**/check/**/*.sarif
-            .reports/gates/**/check/**/*.md
-            .reports/codegen-plan.json
-            .reports/codegen-publication.json
-            .reports/codegen-publication/**/*.json
-            .reports/setup-operations/*.json
+            flext-tests/.reports/**/audit-summary.json
+            flext-tests/.reports/**/audit-report.md
+            flext-tests/.reports/**/validate-summary.json
+            flext-tests/.reports/**/validate-report.md
+            flext-tests/.reports/check/**/*.sarif
+            flext-tests/.reports/check/**/*.md
+            flext-tests/.reports/gates/**/original-receipt.json
+            flext-tests/.reports/gates/**/check/**/*.sarif
+            flext-tests/.reports/gates/**/check/**/*.md
+            flext-tests/.reports/codegen-plan.json
+            flext-tests/.reports/codegen-publication.json
+            flext-tests/.reports/codegen-publication/**/*.json
+            flext-tests/.reports/setup-operations/*.json
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 7
@@ -192,11 +209,11 @@ jobs:
       # rows capture receipts, so the upload runs exactly when one of them
       # failed (tests included), never after a setup failure that left none.
       - name: Upload gate receipts on failure
-        if: ${{ failure() && (steps.approval-check-primary.outcome == 'failure' || steps.qualification-check.outcome == 'failure') }}
+        if: ${{ failure() && (steps.approval-check-primary.outcome == 'failure' || steps.approval-tests-primary.outcome == 'failure' || steps.qualification-check.outcome == 'failure') }}
         uses: actions/upload-artifact@v7
         with:
           name: flext-gate-receipts-${{ github.job }}-${{ github.run_id }}
-          path: .reports/gates/**
+          path: flext-tests/.reports/gates/**
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 7
