@@ -1,0 +1,217 @@
+{
+  "eligible": [],
+  "selected": [],
+  "deselected": [],
+  "diagnostics": {
+    "failed_count": 0,
+    "error_count": 0,
+    "warning_count": 0,
+    "skipped_count": 0,
+    "connectivity_skip_cases": [],
+    "collection_failed_count": 0,
+    "collection_skipped_count": 0,
+    "collection_failed_cases": [],
+    "collection_skip_cases": [],
+    "reported_node_ids": [
+      "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_class_fixture_plugins_preserve_shared_lifecycle[False]",
+      "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_class_fixture_plugins_preserve_shared_lifecycle[True]",
+      "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_dispatcher_inactive_outside_workspace",
+      "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_registers_the_class_object",
+      "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_supports_explicit_loading_and_autoload[False]",
+      "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_supports_explicit_loading_and_autoload[True]",
+      "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_flext_pytest11_entrypoint_load_defers_fixture_imports",
+      "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_flext_pytest11_entrypoints_have_one_package_owner",
+      "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_inactive_enforcement_session_never_imports_flext_infra",
+      "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_inactive_session_collects_only_consumer_tests",
+      "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_infra_rule_engine_boundary_returns_results"
+    ],
+    "phase_outcomes": [
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_class_fixture_plugins_preserve_shared_lifecycle[False]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_class_fixture_plugins_preserve_shared_lifecycle[False]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_class_fixture_plugins_preserve_shared_lifecycle[False]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_class_fixture_plugins_preserve_shared_lifecycle[True]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_class_fixture_plugins_preserve_shared_lifecycle[True]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_class_fixture_plugins_preserve_shared_lifecycle[True]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_dispatcher_inactive_outside_workspace",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_dispatcher_inactive_outside_workspace",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_dispatcher_inactive_outside_workspace",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_registers_the_class_object",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_registers_the_class_object",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_registers_the_class_object",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_supports_explicit_loading_and_autoload[False]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_supports_explicit_loading_and_autoload[False]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_supports_explicit_loading_and_autoload[False]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_supports_explicit_loading_and_autoload[True]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_supports_explicit_loading_and_autoload[True]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_supports_explicit_loading_and_autoload[True]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_flext_pytest11_entrypoint_load_defers_fixture_imports",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_flext_pytest11_entrypoint_load_defers_fixture_imports",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_flext_pytest11_entrypoint_load_defers_fixture_imports",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_flext_pytest11_entrypoints_have_one_package_owner",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_flext_pytest11_entrypoints_have_one_package_owner",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_flext_pytest11_entrypoints_have_one_package_owner",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_inactive_enforcement_session_never_imports_flext_infra",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_inactive_enforcement_session_never_imports_flext_infra",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_inactive_enforcement_session_never_imports_flext_infra",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_inactive_session_collects_only_consumer_tests",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_inactive_session_collects_only_consumer_tests",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_inactive_session_collects_only_consumer_tests",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_infra_rule_engine_boundary_returns_results",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_infra_rule_engine_boundary_returns_results",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_infra_rule_engine_boundary_returns_results",
+        "phase": "teardown",
+        "outcome": "passed"
+      }
+    ],
+    "markdown_attempts": [],
+    "markdown_items": [],
+    "failed_cases": [],
+    "error_traces": [],
+    "warning_lines": [],
+    "skip_cases": [],
+    "slow_entries": [
+      "3.223000s | tests.unit.test_enforcement_plugin.TestsFlextTestsEnforcementPlugin::test_infra_rule_engine_boundary_returns_results",
+      "1.426000s | tests.unit.test_enforcement_plugin.TestsFlextTestsEnforcementPlugin::test_class_fixture_plugins_preserve_shared_lifecycle[True]",
+      "1.418000s | tests.unit.test_enforcement_plugin.TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_supports_explicit_loading_and_autoload[True]",
+      "1.028000s | tests.unit.test_enforcement_plugin.TestsFlextTestsEnforcementPlugin::test_inactive_session_collects_only_consumer_tests",
+      "0.801000s | tests.unit.test_enforcement_plugin.TestsFlextTestsEnforcementPlugin::test_class_fixture_plugins_preserve_shared_lifecycle[False]",
+      "0.786000s | tests.unit.test_enforcement_plugin.TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_supports_explicit_loading_and_autoload[False]",
+      "0.435000s | tests.unit.test_enforcement_plugin.TestsFlextTestsEnforcementPlugin::test_dispatcher_inactive_outside_workspace",
+      "0.223000s | tests.unit.test_enforcement_plugin.TestsFlextTestsEnforcementPlugin::test_inactive_enforcement_session_never_imports_flext_infra",
+      "0.214000s | tests.unit.test_enforcement_plugin.TestsFlextTestsEnforcementPlugin::test_flext_pytest11_entrypoint_load_defers_fixture_imports",
+      "0.087000s | tests.unit.test_enforcement_plugin.TestsFlextTestsEnforcementPlugin::test_flext_pytest11_entrypoints_have_one_package_owner",
+      "0.011000s | tests.unit.test_enforcement_plugin.TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_registers_the_class_object"
+    ]
+  },
+  "cache_hit": false,
+  "violations": []
+}

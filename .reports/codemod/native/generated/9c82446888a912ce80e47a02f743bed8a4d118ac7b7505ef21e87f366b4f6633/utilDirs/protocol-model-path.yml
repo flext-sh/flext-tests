@@ -1,0 +1,1 @@
+{"id":"protocol-model-path","language":"Python","rule":{"regex":"^(?:p|m)\\.(?:ArbitraryTypesModel|BaseModel|Cli\\.Cli|ConfigMap|Dict|DomainEvent|Entity|FlexibleModel|GuardCheckSpec|HandlerConfig|Infra\\.Infra|Infra\\.Result|Metadata|ProjectMetadata|ProjectToolFlext|RootModel|RuntimeBootstrapOptions|SettingsConfigDict|StructlogOptions|Tests\\.Entity|Tests\\.Value|Value)$"}}

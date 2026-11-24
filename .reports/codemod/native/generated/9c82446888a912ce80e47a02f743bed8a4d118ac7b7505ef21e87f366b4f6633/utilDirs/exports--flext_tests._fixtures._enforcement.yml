@@ -1,0 +1,1 @@
+{"id":"exports--flext_tests._fixtures._enforcement","language":"Python","rule":{"regex":"^(?:FlextTestsEnforcementBuilder|FlextTestsEnforcementDispatcher|FlextTestsEnforcementItem|FlextTestsEnforcementValidators|FlextTestsFixturesEnforcementCollector|FlextTestsFixturesEnforcementError)$"}}

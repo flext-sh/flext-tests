@@ -1,0 +1,84 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/Schemata/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "flext-infra-check",
+          "informationUri": "https://github.com/flext-sh/flext-infra",
+          "rules": []
+        }
+      },
+      "results": []
+    }
+  ],
+  "properties": {
+    "phase": "complete",
+    "requested_gates": [
+      "lint",
+      "format"
+    ],
+    "pending_gates": [],
+    "targets": [
+      {
+        "name": "flext-0knzy-owner",
+        "path": "/home/marlonsc/worktrees/flext-tests/flext-0knzy-owner",
+        "applicable_gates": [
+          "lint",
+          "format"
+        ],
+        "source_identity": null
+      }
+    ],
+    "results": [
+      {
+        "project": "flext-0knzy-owner",
+        "gates": {
+          "lint": {
+            "result": {
+              "project": "flext-0knzy-owner",
+              "gate": "lint",
+              "passed": true,
+              "errors": [],
+              "duration": 0.237
+            },
+            "issues": [],
+            "raw_receipt": "/home/marlonsc/worktrees/flext-tests/flext-0knzy-owner/.reports/check/06f9143e-d0fa-4816-8cca-e69cfc6ca62f/flext-0knzy-owner/lint.raw.log",
+            "outcome": "clean",
+            "process": {
+              "raw_return_code": 0,
+              "timed_out": false,
+              "forwarded_signal": null
+            },
+            "components": {},
+            "requested_components": []
+          },
+          "format": {
+            "result": {
+              "project": "flext-0knzy-owner",
+              "gate": "format",
+              "passed": true,
+              "errors": [],
+              "duration": 0.727
+            },
+            "issues": [],
+            "raw_receipt": "/home/marlonsc/worktrees/flext-tests/flext-0knzy-owner/.reports/check/06f9143e-d0fa-4816-8cca-e69cfc6ca62f/flext-0knzy-owner/format.raw.log",
+            "outcome": "clean",
+            "process": {
+              "raw_return_code": 0,
+              "timed_out": false,
+              "forwarded_signal": null
+            },
+            "components": {},
+            "requested_components": []
+          }
+        }
+      }
+    ],
+    "selected_files": [
+      "/home/marlonsc/worktrees/flext-tests/flext-0knzy-owner/tests/unit/test_public_facade.py"
+    ],
+    "global_targets": null
+  }
+}

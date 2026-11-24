@@ -1,0 +1,86 @@
+INFO: mod: producer start name=codemod_file_scopes project=flext-0knzy-owner
+INFO: mod: import graph start
+INFO: mod: import graph modules=0 file=conftest.py
+INFO: mod: import graph finish modules=180
+INFO: mod: producer stop name=codemod_file_scopes completed=True duration=0.81s
+INFO: mod: producer start name=codemod_layout_scopes project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_layout_scopes completed=True duration=5.18s
+INFO: mod: producer start name=codemod_declaration_scopes project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_declaration_scopes completed=True duration=2.22s
+INFO: mod: producer start name=codemod_implementation_scopes project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_implementation_scopes completed=True duration=0.98s
+INFO: mod: producer start name=codemod_import_header_rules project=flext-0knzy-owner
+INFO: mod: runtime distributions start requirements=19
+INFO: mod: runtime distributions finish distributions=159
+INFO: mod: runtime dependency closure start
+INFO: mod: runtime dependency closure finish distributions=87
+INFO: mod: runtime import package metadata finish packages=173
+INFO: mod: runtime imports package=1/173 module=backrefs selected=0
+INFO: mod: runtime imports finish modules=95
+INFO: mod: producer stop name=codemod_import_header_rules completed=True duration=1.28s
+INFO: mod: producer start name=codemod_module_member_rules project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_module_member_rules completed=True duration=0.04s
+INFO: mod: producer start name=codemod_type_set_rules project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_type_set_rules completed=True duration=0.01s
+INFO: mod: producer start name=codemod_compat_rules project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_compat_rules completed=True duration=0.02s
+INFO: mod: producer start name=codemod_layer_zero_rules project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_layer_zero_rules completed=True duration=0.25s
+INFO: mod: producer start name=codemod_external_import_rules project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_external_import_rules completed=True duration=0.11s
+INFO: mod: producer start name=codemod_library_type_rules project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_library_type_rules completed=True duration=0.08s
+INFO: mod: producer start name=codemod_ambient_environ_rules project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_ambient_environ_rules completed=True duration=0.08s
+INFO: mod: producer start name=codemod_facade_member_rules project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_facade_member_rules completed=True duration=2.34s
+INFO: mod: producer start name=codemod_facade_component_rules project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_facade_component_rules completed=True duration=0.04s
+INFO: mod: producer start name=codemod_library_member_name_rules project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_library_member_name_rules completed=True duration=0.06s
+INFO: mod: producer start name=codemod_facade_member_ownership_rules project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_facade_member_ownership_rules completed=True duration=0.05s
+INFO: mod: producer start name=codemod_partitioned_rules project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_partitioned_rules completed=True duration=0.12s
+INFO: mod: producer start name=codemod_reverse_import_rules project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_reverse_import_rules completed=True duration=1.34s
+INFO: mod: producer start name=codemod_own_package_utilities project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_own_package_utilities completed=True duration=0.01s
+INFO: mod: producer start name=codemod_stdlib_module_utilities project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_stdlib_module_utilities completed=True duration=0.00s
+INFO: mod: producer start name=codemod_runtime_package_utilities project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_runtime_package_utilities completed=True duration=0.02s
+INFO: mod: producer start name=codemod_generated_module_utilities project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_generated_module_utilities completed=True duration=0.00s
+INFO: mod: producer start name=codemod_package_export_utilities project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_package_export_utilities completed=True duration=0.04s
+INFO: mod: producer start name=codemod_facade_family_package_utilities project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_facade_family_package_utilities completed=True duration=0.00s
+INFO: mod: producer start name=codemod_facade_package_utilities project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_facade_package_utilities completed=True duration=0.00s
+INFO: mod: producer start name=codemod_alias_utilities project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_alias_utilities completed=True duration=0.01s
+INFO: mod: producer start name=codemod_imported_export_utilities project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_imported_export_utilities completed=True duration=0.02s
+INFO: mod: producer start name=codemod_compose_module_utilities project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_compose_module_utilities completed=True duration=0.03s
+INFO: mod: producer start name=codemod_requested_utilities project=flext-0knzy-owner
+INFO: mod: producer stop name=codemod_requested_utilities completed=True duration=2.27s
+tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_flext_pytest11_entrypoints_have_one_package_owner
+tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_registers_the_class_object
+tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_flext_pytest11_entrypoint_load_defers_fixture_imports
+tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_dispatcher_inactive_outside_workspace
+tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_inactive_enforcement_session_never_imports_flext_infra
+tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_supports_explicit_loading_and_autoload[False]
+tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_class_fixture_plugins_preserve_shared_lifecycle[False]
+tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_inactive_session_collects_only_consumer_tests
+tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_fixture_entrypoint_supports_explicit_loading_and_autoload[True]
+tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_class_fixture_plugins_preserve_shared_lifecycle[True]
+tests/unit/test_enforcement_plugin.py::TestsFlextTestsEnforcementPlugin::test_infra_rule_engine_boundary_returns_results
+
+- generated report log file: /home/marlonsc/worktrees/flext-tests/flext-0knzy-owner/.reports/tests/20261120T041933.649431Z-2648766/testmon-selection.events.jsonl -
+---------------------------------------------------- flext-enforce -----------------------------------------------------
+runtime warnings captured: 0
+--------------------------------------------------- flext slow tests ---------------------------------------------------
+no test near the ordinary or slow limit
+11/594 tests collected (583 deselected) in 19.66s
