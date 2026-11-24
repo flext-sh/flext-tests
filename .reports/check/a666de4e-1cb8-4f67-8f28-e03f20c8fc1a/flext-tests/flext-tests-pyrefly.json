@@ -1,0 +1,28 @@
+{
+  "errors": [
+    {
+      "line": 113,
+      "column": 26,
+      "stop_line": 113,
+      "stop_column": 38,
+      "path": "src/flext_tests/_utilities/_files/info.py",
+      "code": -2,
+      "name": "bad-argument-type",
+      "description": "Argument `flext_tests._protocols.filesystem.FlextTestsProtocolsFilesystem.ContentMeta | None` is not assignable to parameter `content_meta` with type `flext_tests._models.filesystem.FlextTestsModelsFilesystem.ContentMeta | None` in function `flext_tests._models.filesystem.FileInfo.__init__`",
+      "concise_description": "Argument `flext_tests._protocols.filesystem.FlextTestsProtocolsFilesystem.ContentMeta | None` is not assignable to parameter `content_meta` with type `flext_tests._models.filesystem.FlextTestsModelsFilesystem.ContentMeta | None` in function `flext_tests._models.filesystem.FileInfo.__init__`",
+      "severity": "error"
+    },
+    {
+      "line": 42,
+      "column": 13,
+      "stop_line": 42,
+      "stop_column": 33,
+      "path": "tests/unit/test_service_base.py",
+      "code": -2,
+      "name": "bad-argument-type",
+      "description": "Argument `flext_infra._models.deps_tool_config.FlextInfraModelsDepsToolConfig.ToolConfigDocument` is not assignable to parameter `document` with type `flext_infra._protocols.deps_tool_config.FlextInfraProtocolsDepsToolConfig.ToolConfigDocument` in function `flext_infra._utilities.native_tooling.FlextInfraUtilitiesNativeTooling.native_tool_setting`\n  `FlextInfraModelsDepsToolConfig.ToolConfigDocument.tools` has type `FlextInfraModelsDepsToolConfig.ToolConfigTools`, which is not assignable to `() -> FlextInfraProtocolsDepsToolConfig.ToolConfigTools`, the property getter for `ToolConfigDocument.tools`",
+      "concise_description": "Argument `flext_infra._models.deps_tool_config.FlextInfraModelsDepsToolConfig.ToolConfigDocument` is not assignable to parameter `document` with type `flext_infra._protocols.deps_tool_config.FlextInfraProtocolsDepsToolConfig.ToolConfigDocument` in function `flext_infra._utilities.native_tooling.FlextInfraUtilitiesNativeTooling.native_tool_setting`",
+      "severity": "error"
+    }
+  ]
+}

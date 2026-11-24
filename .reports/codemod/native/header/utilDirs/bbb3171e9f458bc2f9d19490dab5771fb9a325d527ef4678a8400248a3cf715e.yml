@@ -1,0 +1,1 @@
+{"id":"exports--flext_tests._models","language":"Python","rule":{"regex":"^(?:FlextTestsModelsDocker|FlextTestsModelsFilesystem|FlextTestsModelsFlextBase|FlextTestsModelsHttp|FlextTestsModelsMatchers|FlextTestsModelsNamespace|FlextTestsModelsSpec|FlextTestsModelsValidator)$"}}

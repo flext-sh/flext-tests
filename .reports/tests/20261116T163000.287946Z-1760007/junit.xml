@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="21.067" timestamp="2026-11-16T13:30:02.761566-03:00" hostname="tungs"><testcase classname="tests.unit.test_enforcement_dispatcher.TestsFlextTestsEnforcementDispatcher" name="test_rule_list_strips_blank_and_padded_fields" time="20.007"><failure message="Failed: Timeout (&gt;20.0s) from pytest-timeout.">/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/pathlib/_local.py:231: in __str__
+    return self._str
+           ^^^^^^^^^
+E   AttributeError: 'pathlib._local.PurePosixPath' object has no attribute '_str'
+
+During handling of the above exception, another exception occurred:
+/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_dispatcher.py:229: in test_rule_list_strips_blank_and_padded_fields
+    rule = self._runtime_rule_id()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_dispatcher.py:108: in _runtime_rule_id
+    for rule in u.Tests.active_rules(cls._cfg())
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/enforcement.py:69: in active_rules
+    catalog = cls.build_canonical_catalog(cfg.catalog_root)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/enforcement.py:44: in build_canonical_catalog
+    planned = infra_u.Infra.codemod_rule_plan(snapshot)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:676: in codemod_rule_plan
+    provider = cls.codemod_generated_provider(
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:792: in codemod_generated_provider
+    rendered = cls.codemod_native_generated(
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:339: in codemod_native_generated
+    rules = cls.codemod_native_rules(
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:990: in codemod_native_rules
+    return cls._rendered_rules(
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:1035: in _rendered_rules
+    rendered = cls.codemod_native_render(snapshot, project, entry, computed)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:940: in codemod_native_render
+    renderer(snapshot, project, facts[entry.facts]), strict=True
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/project_facts.py:1284: in codemod_partitioned_rules
+    FlextInfraUtilitiesCodemodScopes.codemod_partitioned_documents(
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/scopes.py:135: in codemod_partitioned_documents
+    for key, native in cls._partition_documents(
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/scopes.py:403: in _partition_documents
+    admitted = list[t.JsonValue](cls._admitted(members, files, ignores))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/scopes.py:531: in _admitted
+    if (files is None or any(PurePosixPath(path).full_match(g) for g in files))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/scopes.py:531: in &lt;genexpr&gt;
+    if (files is None or any(PurePosixPath(path).full_match(g) for g in files))
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/pathlib/_abc.py:399: in full_match
+    return match(self._pattern_str) is not None
+                 ^^^^^^^^^^^^^^^^^
+/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/pathlib/_local.py:454: in _pattern_str
+    path_str = str(self)
+               ^^^^^^^^^
+/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/pathlib/_local.py:233: in __str__
+    self._str = self._format_parsed_parts(self.drive, self.root,
+                                          ^^^^^^^^^^
+/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/pathlib/_local.py:289: in drive
+    @property
+E   Failed: Timeout (&gt;20.0s) from pytest-timeout.</failure></testcase></testsuite></testsuites>

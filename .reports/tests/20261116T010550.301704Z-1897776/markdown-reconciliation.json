@@ -1,0 +1,1226 @@
+{
+  "eligible": [],
+  "selected": [],
+  "deselected": [],
+  "diagnostics": {
+    "failed_count": 1,
+    "error_count": 0,
+    "warning_count": 0,
+    "skipped_count": 0,
+    "connectivity_skip_cases": [],
+    "collection_failed_count": 0,
+    "collection_skipped_count": 0,
+    "collection_failed_cases": [],
+    "collection_skip_cases": [],
+    "reported_node_ids": [
+      "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_compose_preserves_absolute_file_unchanged",
+      "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_compose_resolves_relative_file_against_repository_root",
+      "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_execute_reports_failure_for_stack_without_inspection_container",
+      "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_rejects_unknown_container_with_value_error",
+      "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_compose_file_from_packaged_assets[flext-openldap-test]",
+      "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_compose_file_from_packaged_assets[flext-oracle-db-test]",
+      "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_target_config_from_shared_catalog[flext-openldap-test]",
+      "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_target_config_from_shared_catalog[flext-oracle-db-test]",
+      "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_service_compose_file_ships_with_flext_tests[ldap]",
+      "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_service_compose_file_ships_with_flext_tests[oracle]",
+      "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_sibling_compose_files_use_distinct_projects",
+      "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[down]",
+      "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[execute]",
+      "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[ready]",
+      "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[up]",
+      "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_changed_image_is_reported_without_recreation",
+      "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_concurrent_ensures_create_once",
+      "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_creation_environment_reads_back_as_secret",
+      "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_never_healthy_service_fails_within_startup_timeout",
+      "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_reuse_preserves_container_data",
+      "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_unhealthy_container_fails_without_recreation",
+      "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_verify_never_mutates",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_changed_process_inputs_are_revalidated",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_marker_runs_with_isolated_environment",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_markers_skip_only_when_docker_unreachable[False]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_markers_skip_only_when_docker_unreachable[True]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[custom]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[http]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[https]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[ldap]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[ldaps]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_service_endpoints_are_not_docker_dependent[False]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_service_endpoints_are_not_docker_dependent[True]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_host_executables_gate_without_endpoint",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_declarations_error_without_environment",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[//user:secret@localhost:80]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@[invalid]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:0]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:65536]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:invalid]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[unknown://user:secret@localhost]",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_process_inputs_reach_fixtures_without_an_environment_file",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_ready_endpoint_executes_and_real_failures_stay_failures",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_undeclared_connectivity_skips_and_remote_gate_runs",
+      "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_unreachable_env_skips",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_builders_bind_the_given_state_dir",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_caller_cannot_supply_a_generated_secret",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_compose_down_returns_flext_result",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_container_environment_returns_secrets_and_names_missing_keys",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_container_spec_roundtrip_retains_typed_targets",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_creation_env_file_is_private_and_removed",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_creation_env_file_never_overwrites_a_leftover",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_custom_repository_root",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_default_repository_root",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_default_state_dir_is_host_scoped",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_down_requires_target_config",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_execute_rejects_stack_only_target",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_execute_requires_target_config",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_fetch_container_info_not_found",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_generated_secrets_cover_declared_keys_and_are_writable",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_host_port_is_read_from_published_bindings",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_inspect_projects_onto_container_info",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_inspect_without_healthcheck_is_unknown_health",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_ready_requires_target_config",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_ready_uses_target_config_port",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_spec_cli_validates_and_resolves_targets_without_docker[ensure-containers: {}\\n-None-True]",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_unrepresentable_creation_value_is_rejected",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_up_requires_target_config",
+      "tests/unit/test_docker.py::TestsFlextTestsDocker::test_wait_for_port_ready_immediate"
+    ],
+    "phase_outcomes": [
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_compose_preserves_absolute_file_unchanged",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_compose_preserves_absolute_file_unchanged",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_compose_preserves_absolute_file_unchanged",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_compose_resolves_relative_file_against_repository_root",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_compose_resolves_relative_file_against_repository_root",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_compose_resolves_relative_file_against_repository_root",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_execute_reports_failure_for_stack_without_inspection_container",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_execute_reports_failure_for_stack_without_inspection_container",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_execute_reports_failure_for_stack_without_inspection_container",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_rejects_unknown_container_with_value_error",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_rejects_unknown_container_with_value_error",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_rejects_unknown_container_with_value_error",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_compose_file_from_packaged_assets[flext-openldap-test]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_compose_file_from_packaged_assets[flext-openldap-test]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_compose_file_from_packaged_assets[flext-openldap-test]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_compose_file_from_packaged_assets[flext-oracle-db-test]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_compose_file_from_packaged_assets[flext-oracle-db-test]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_compose_file_from_packaged_assets[flext-oracle-db-test]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_target_config_from_shared_catalog[flext-openldap-test]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_target_config_from_shared_catalog[flext-openldap-test]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_target_config_from_shared_catalog[flext-openldap-test]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_target_config_from_shared_catalog[flext-oracle-db-test]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_target_config_from_shared_catalog[flext-oracle-db-test]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_target_config_from_shared_catalog[flext-oracle-db-test]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_service_compose_file_ships_with_flext_tests[ldap]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_service_compose_file_ships_with_flext_tests[ldap]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_service_compose_file_ships_with_flext_tests[ldap]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_service_compose_file_ships_with_flext_tests[oracle]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_service_compose_file_ships_with_flext_tests[oracle]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_service_compose_file_ships_with_flext_tests[oracle]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_sibling_compose_files_use_distinct_projects",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_sibling_compose_files_use_distinct_projects",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_sibling_compose_files_use_distinct_projects",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[down]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[down]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[down]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[execute]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[execute]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[execute]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[ready]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[ready]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[ready]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[up]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[up]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[up]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_changed_image_is_reported_without_recreation",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_changed_image_is_reported_without_recreation",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_changed_image_is_reported_without_recreation",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_concurrent_ensures_create_once",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_concurrent_ensures_create_once",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_concurrent_ensures_create_once",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_creation_environment_reads_back_as_secret",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_creation_environment_reads_back_as_secret",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_creation_environment_reads_back_as_secret",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_never_healthy_service_fails_within_startup_timeout",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_never_healthy_service_fails_within_startup_timeout",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_never_healthy_service_fails_within_startup_timeout",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_reuse_preserves_container_data",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_reuse_preserves_container_data",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_reuse_preserves_container_data",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_unhealthy_container_fails_without_recreation",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_unhealthy_container_fails_without_recreation",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_unhealthy_container_fails_without_recreation",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_verify_never_mutates",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_verify_never_mutates",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_verify_never_mutates",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_changed_process_inputs_are_revalidated",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_changed_process_inputs_are_revalidated",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_changed_process_inputs_are_revalidated",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_marker_runs_with_isolated_environment",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_marker_runs_with_isolated_environment",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_marker_runs_with_isolated_environment",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_markers_skip_only_when_docker_unreachable[False]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_markers_skip_only_when_docker_unreachable[False]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_markers_skip_only_when_docker_unreachable[False]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_markers_skip_only_when_docker_unreachable[True]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_markers_skip_only_when_docker_unreachable[True]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_markers_skip_only_when_docker_unreachable[True]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[custom]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[custom]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[custom]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[http]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[http]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[http]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[https]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[https]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[https]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[ldap]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[ldap]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[ldap]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[ldaps]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[ldaps]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[ldaps]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_service_endpoints_are_not_docker_dependent[False]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_service_endpoints_are_not_docker_dependent[False]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_service_endpoints_are_not_docker_dependent[False]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_service_endpoints_are_not_docker_dependent[True]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_service_endpoints_are_not_docker_dependent[True]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_service_endpoints_are_not_docker_dependent[True]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_host_executables_gate_without_endpoint",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_host_executables_gate_without_endpoint",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_host_executables_gate_without_endpoint",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_declarations_error_without_environment",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_declarations_error_without_environment",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_declarations_error_without_environment",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[//user:secret@localhost:80]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[//user:secret@localhost:80]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[//user:secret@localhost:80]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@[invalid]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@[invalid]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@[invalid]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:0]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:0]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:0]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:65536]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:65536]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:65536]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:invalid]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:invalid]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:invalid]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[unknown://user:secret@localhost]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[unknown://user:secret@localhost]",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[unknown://user:secret@localhost]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_process_inputs_reach_fixtures_without_an_environment_file",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_process_inputs_reach_fixtures_without_an_environment_file",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_process_inputs_reach_fixtures_without_an_environment_file",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_ready_endpoint_executes_and_real_failures_stay_failures",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_ready_endpoint_executes_and_real_failures_stay_failures",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_ready_endpoint_executes_and_real_failures_stay_failures",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_undeclared_connectivity_skips_and_remote_gate_runs",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_undeclared_connectivity_skips_and_remote_gate_runs",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_undeclared_connectivity_skips_and_remote_gate_runs",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_unreachable_env_skips",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_unreachable_env_skips",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_unreachable_env_skips",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_builders_bind_the_given_state_dir",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_builders_bind_the_given_state_dir",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_builders_bind_the_given_state_dir",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_caller_cannot_supply_a_generated_secret",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_caller_cannot_supply_a_generated_secret",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_caller_cannot_supply_a_generated_secret",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_compose_down_returns_flext_result",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_compose_down_returns_flext_result",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_compose_down_returns_flext_result",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_container_environment_returns_secrets_and_names_missing_keys",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_container_environment_returns_secrets_and_names_missing_keys",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_container_environment_returns_secrets_and_names_missing_keys",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_container_spec_roundtrip_retains_typed_targets",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_container_spec_roundtrip_retains_typed_targets",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_container_spec_roundtrip_retains_typed_targets",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_creation_env_file_is_private_and_removed",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_creation_env_file_is_private_and_removed",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_creation_env_file_is_private_and_removed",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_creation_env_file_never_overwrites_a_leftover",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_creation_env_file_never_overwrites_a_leftover",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_creation_env_file_never_overwrites_a_leftover",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_custom_repository_root",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_custom_repository_root",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_custom_repository_root",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_default_repository_root",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_default_repository_root",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_default_repository_root",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_default_state_dir_is_host_scoped",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_default_state_dir_is_host_scoped",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_default_state_dir_is_host_scoped",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_down_requires_target_config",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_down_requires_target_config",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_down_requires_target_config",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_execute_rejects_stack_only_target",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_execute_rejects_stack_only_target",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_execute_rejects_stack_only_target",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_execute_requires_target_config",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_execute_requires_target_config",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_execute_requires_target_config",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_fetch_container_info_not_found",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_fetch_container_info_not_found",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_fetch_container_info_not_found",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_generated_secrets_cover_declared_keys_and_are_writable",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_generated_secrets_cover_declared_keys_and_are_writable",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_generated_secrets_cover_declared_keys_and_are_writable",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_host_port_is_read_from_published_bindings",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_host_port_is_read_from_published_bindings",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_host_port_is_read_from_published_bindings",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_inspect_projects_onto_container_info",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_inspect_projects_onto_container_info",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_inspect_projects_onto_container_info",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_inspect_without_healthcheck_is_unknown_health",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_inspect_without_healthcheck_is_unknown_health",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_inspect_without_healthcheck_is_unknown_health",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_ready_requires_target_config",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_ready_requires_target_config",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_ready_requires_target_config",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_ready_uses_target_config_port",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_ready_uses_target_config_port",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_ready_uses_target_config_port",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_spec_cli_validates_and_resolves_targets_without_docker[ensure-containers: {}\\n-None-True]",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_spec_cli_validates_and_resolves_targets_without_docker[ensure-containers: {}\\n-None-True]",
+        "phase": "call",
+        "outcome": "failed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_spec_cli_validates_and_resolves_targets_without_docker[ensure-containers: {}\\n-None-True]",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_unrepresentable_creation_value_is_rejected",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_unrepresentable_creation_value_is_rejected",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_unrepresentable_creation_value_is_rejected",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_up_requires_target_config",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_up_requires_target_config",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_up_requires_target_config",
+        "phase": "teardown",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_wait_for_port_ready_immediate",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_wait_for_port_ready_immediate",
+        "phase": "call",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_docker.py::TestsFlextTestsDocker::test_wait_for_port_ready_immediate",
+        "phase": "teardown",
+        "outcome": "passed"
+      }
+    ],
+    "markdown_attempts": [],
+    "markdown_items": [],
+    "failed_cases": [
+      "tests.unit.test_docker.TestsFlextTestsDocker::test_spec_cli_validates_and_resolves_targets_without_docker[ensure-containers: {}\\n-None-True]"
+    ],
+    "error_traces": [
+      "=== FAILURE: tests.unit.test_docker.TestsFlextTestsDocker::test_spec_cli_validates_and_resolves_targets_without_docker[ensure-containers: {}\\n-None-True] ===\nFailed: Timeout (>2.0s) from pytest-timeout.\ntests/unit/_docker/builders.py:55: in test_spec_cli_validates_and_resolves_targets_without_docker\n    output = tm.ok(u.Cli.run_raw(arguments, cwd=tmp_path))\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n../flext-cli/src/flext_cli/_utilities/runtime.py:201: in run_raw\n    return cls._execute_streamed_process(\n../flext-cli/src/flext_cli/_utilities/_runtime/process_execution.py:66: in _execute_streamed_process\n    cls._execute_lifecycle(request, state, timing)\n../flext-cli/src/flext_cli/_utilities/_runtime/process_execution.py:173: in _execute_lifecycle\n    state.timed_out, state.final_deadline = cls._monitor_process(\n../flext-cli/src/flext_cli/_utilities/_runtime/process_monitor.py:49: in _monitor_process\n    cls._wait_next_boundary(state, phase, now)\n../flext-cli/src/flext_cli/_utilities/_runtime/process_monitor.py:113: in _wait_next_boundary\n    state.wake.wait(\n../../.local/share/mise/installs/python/3.13.17/lib/python3.13/threading.py:660: in wait\n    signaled = self._cond.wait(timeout)\n               ^^^^^^^^^^^^^^^^^^^^^^^^\n../../.local/share/mise/installs/python/3.13.17/lib/python3.13/threading.py:359: in wait\n    waiter.acquire()\nE   Failed: Timeout (>2.0s) from pytest-timeout."
+    ],
+    "warning_lines": [],
+    "skip_cases": [],
+    "slow_entries": [
+      "12.799000s | tests.integration.test_docker_lifecycle.TestsFlextTestsDockerLifecycle::test_reuse_preserves_container_data",
+      "12.009000s | tests.integration.test_docker_lifecycle.TestsFlextTestsDockerLifecycle::test_concurrent_ensures_create_once",
+      "9.000000s | tests.integration.test_docker_lifecycle.TestsFlextTestsDockerLifecycle::test_changed_image_is_reported_without_recreation",
+      "8.091000s | tests.integration.test_docker_lifecycle.TestsFlextTestsDockerLifecycle::test_creation_environment_reads_back_as_secret",
+      "7.871000s | tests.integration.test_docker_lifecycle.TestsFlextTestsDockerLifecycle::test_never_healthy_service_fails_within_startup_timeout",
+      "7.820000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_docker_marker_runs_with_isolated_environment",
+      "7.463000s | tests.integration.test_docker_lifecycle.TestsFlextTestsDockerLifecycle::test_verify_never_mutates",
+      "7.330000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_process_inputs_reach_fixtures_without_an_environment_file",
+      "6.996000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_unreachable_env_skips",
+      "6.609000s | tests.integration.test_docker_lifecycle.TestsFlextTestsDockerLifecycle::test_unhealthy_container_fails_without_recreation",
+      "6.308000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_docker_markers_skip_only_when_docker_unreachable[True]",
+      "5.997000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_host_executables_gate_without_endpoint",
+      "5.695000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_changed_process_inputs_are_revalidated",
+      "5.348000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_docker_markers_skip_only_when_docker_unreachable[False]",
+      "5.286000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_undeclared_connectivity_skips_and_remote_gate_runs",
+      "4.448000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_invalid_declarations_error_without_environment",
+      "3.674000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_ready_endpoint_executes_and_real_failures_stay_failures",
+      "3.625000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_explicit_service_endpoints_are_not_docker_dependent[True]",
+      "3.193000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_explicit_service_endpoints_are_not_docker_dependent[False]",
+      "2.027000s | tests.unit.test_docker.TestsFlextTestsDocker::test_spec_cli_validates_and_resolves_targets_without_docker[ensure-containers: {}\\n-None-True]",
+      "1.013000s | tests.unit.test_docker.TestsFlextTestsDocker::test_wait_for_port_ready_immediate",
+      "1.011000s | tests.unit.test_docker.TestsFlextTestsDocker::test_ready_uses_target_config_port",
+      "0.204000s | tests.unit.test_docker.TestsFlextTestsDocker::test_compose_down_returns_flext_result",
+      "0.123000s | tests.unit.test_docker.TestsFlextTestsDocker::test_fetch_container_info_not_found",
+      "0.083000s | tests.integration.test_docker_integration.TestsFlextTestsDockerIntegration::test_shared_resolves_target_config_from_shared_catalog[flext-openldap-test]",
+      "0.035000s | tests.integration.test_docker_integration.TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[execute]",
+      "0.022000s | tests.integration.test_docker_integration.TestsFlextTestsDockerIntegration::test_shared_resolves_compose_file_from_packaged_assets[flext-openldap-test]",
+      "0.022000s | tests.integration.test_docker_integration.TestsFlextTestsDockerIntegration::test_shared_rejects_unknown_container_with_value_error",
+      "0.021000s | tests.integration.test_docker_integration.TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[ready]",
+      "0.020000s | tests.integration.test_docker_integration.TestsFlextTestsDockerIntegration::test_shared_service_compose_file_ships_with_flext_tests[ldap]",
+      "0.019000s | tests.integration.test_docker_integration.TestsFlextTestsDockerIntegration::test_shared_resolves_target_config_from_shared_catalog[flext-oracle-db-test]",
+      "0.017000s | tests.integration.test_docker_integration.TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[up]",
+      "0.017000s | tests.integration.test_docker_integration.TestsFlextTestsDockerIntegration::test_sibling_compose_files_use_distinct_projects",
+      "0.017000s | tests.integration.test_docker_integration.TestsFlextTestsDockerIntegration::test_compose_resolves_relative_file_against_repository_root",
+      "0.016000s | tests.integration.test_docker_integration.TestsFlextTestsDockerIntegration::test_compose_preserves_absolute_file_unchanged",
+      "0.015000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@[invalid]",
+      "0.014000s | tests.integration.test_docker_integration.TestsFlextTestsDockerIntegration::test_shared_service_compose_file_ships_with_flext_tests[oracle]",
+      "0.014000s | tests.integration.test_docker_integration.TestsFlextTestsDockerIntegration::test_shared_resolves_compose_file_from_packaged_assets[flext-oracle-db-test]",
+      "0.013000s | tests.unit.test_docker.TestsFlextTestsDocker::test_container_environment_returns_secrets_and_names_missing_keys",
+      "0.012000s | tests.unit.test_docker.TestsFlextTestsDocker::test_inspect_without_healthcheck_is_unknown_health",
+      "0.012000s | tests.integration.test_docker_integration.TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[down]",
+      "0.011000s | tests.unit.test_docker.TestsFlextTestsDocker::test_default_state_dir_is_host_scoped",
+      "0.011000s | tests.unit.test_docker.TestsFlextTestsDocker::test_creation_env_file_is_private_and_removed",
+      "0.011000s | tests.unit.test_docker.TestsFlextTestsDocker::test_builders_bind_the_given_state_dir",
+      "0.010000s | tests.unit.test_docker.TestsFlextTestsDocker::test_custom_repository_root",
+      "0.010000s | tests.unit.test_docker.TestsFlextTestsDocker::test_container_spec_roundtrip_retains_typed_targets",
+      "0.010000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:invalid]",
+      "0.010000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@]",
+      "0.009000s | tests.unit.test_docker.TestsFlextTestsDocker::test_inspect_projects_onto_container_info",
+      "0.009000s | tests.unit.test_docker.TestsFlextTestsDocker::test_creation_env_file_never_overwrites_a_leftover",
+      "0.009000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[unknown://user:secret@localhost]",
+      "0.009000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:65536]",
+      "0.009000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:0]",
+      "0.009000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[//user:secret@localhost:80]",
+      "0.009000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[ldap]",
+      "0.009000s | tests.integration.test_docker_integration.TestsFlextTestsDockerIntegration::test_execute_reports_failure_for_stack_without_inspection_container",
+      "0.008000s | tests.unit.test_docker.TestsFlextTestsDocker::test_up_requires_target_config",
+      "0.008000s | tests.unit.test_docker.TestsFlextTestsDocker::test_unrepresentable_creation_value_is_rejected",
+      "0.008000s | tests.unit.test_docker.TestsFlextTestsDocker::test_ready_requires_target_config",
+      "0.008000s | tests.unit.test_docker.TestsFlextTestsDocker::test_generated_secrets_cover_declared_keys_and_are_writable",
+      "0.008000s | tests.unit.test_docker.TestsFlextTestsDocker::test_execute_requires_target_config",
+      "0.008000s | tests.unit.test_docker.TestsFlextTestsDocker::test_down_requires_target_config",
+      "0.008000s | tests.unit.test_docker.TestsFlextTestsDocker::test_default_repository_root",
+      "0.008000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[ldaps]",
+      "0.008000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[https]",
+      "0.008000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[http]",
+      "0.007000s | tests.unit.test_docker.TestsFlextTestsDocker::test_host_port_is_read_from_published_bindings",
+      "0.007000s | tests.unit.test_docker.TestsFlextTestsDocker::test_execute_rejects_stack_only_target",
+      "0.007000s | tests.unit.test_docker.TestsFlextTestsDocker::test_caller_cannot_supply_a_generated_secret",
+      "0.007000s | tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[custom]"
+    ]
+  },
+  "cache_hit": false,
+  "violations": [
+    "selected node IDs differ from executed node IDs"
+  ]
+}

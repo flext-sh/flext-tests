@@ -1,0 +1,490 @@
+
+{
+  "$schema": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "qlty",
+          "informationUri": "https://github.com/qltysh/qlty",
+          "semanticVersion": "0.662.0",
+          "version": "0.662.0 linux-x64 (f48face 2026-10-23)",
+          "releaseDateUtc": "2026-10-23",
+          "rules": [
+            {
+              "id": "qlty:function-parameters"
+            },
+            {
+              "id": "qlty:boolean-logic"
+            },
+            {
+              "id": "qlty:return-statements"
+            },
+            {
+              "id": "qlty:file-complexity"
+            },
+            {
+              "id": "qlty:similar-code"
+            }
+          ]
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "columnKind": "utf16CodeUnits",
+      "results": [
+        {
+          "ruleId": "qlty:function-parameters",
+          "level": "warning",
+          "message": {
+            "text": "Function with many parameters (count = 6): _docker"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/integration/test_docker_lifecycle.py"
+                },
+                "region": {
+                  "startLine": 47,
+                  "startColumn": 16,
+                  "endLine": 54,
+                  "endColumn": 6,
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "taxa": [
+            {
+              "id": "structure"
+            }
+          ],
+          "properties": {
+            "actual": 6.0,
+            "threshold": 6.0
+          }
+        },
+        {
+          "ruleId": "qlty:boolean-logic",
+          "level": "warning",
+          "message": {
+            "text": "Complex binary expression"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/flext_tests/_fixtures/connectivity.py"
+                },
+                "region": {
+                  "startLine": 292,
+                  "startColumn": 17,
+                  "endLine": 297,
+                  "endColumn": 49,
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "taxa": [
+            {
+              "id": "structure"
+            }
+          ],
+          "properties": {
+            "threshold": 4.0,
+            "actual": 8.0
+          }
+        },
+        {
+          "ruleId": "qlty:function-parameters",
+          "level": "warning",
+          "message": {
+            "text": "Function with many parameters (count = 6): test_spec_cli_validates_and_resolves_targets_without_docker"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/unit/_docker/builders.py"
+                },
+                "region": {
+                  "startLine": 41,
+                  "startColumn": 68,
+                  "endLine": 48,
+                  "endColumn": 6,
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "taxa": [
+            {
+              "id": "structure"
+            }
+          ],
+          "properties": {
+            "actual": 6.0,
+            "threshold": 6.0
+          }
+        },
+        {
+          "ruleId": "qlty:function-parameters",
+          "level": "warning",
+          "message": {
+            "text": "Function with many parameters (count = 6): compose"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/flext_tests/docker.py"
+                },
+                "region": {
+                  "startLine": 314,
+                  "startColumn": 16,
+                  "endLine": 321,
+                  "endColumn": 6,
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "taxa": [
+            {
+              "id": "structure"
+            }
+          ],
+          "properties": {
+            "threshold": 6.0,
+            "actual": 6.0
+          }
+        },
+        {
+          "ruleId": "qlty:function-parameters",
+          "level": "warning",
+          "message": {
+            "text": "Function with many parameters (count = 6): stack"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/flext_tests/docker.py"
+                },
+                "region": {
+                  "startLine": 340,
+                  "startColumn": 14,
+                  "endLine": 347,
+                  "endColumn": 6,
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "taxa": [
+            {
+              "id": "structure"
+            }
+          ],
+          "properties": {
+            "actual": 6.0,
+            "threshold": 6.0
+          }
+        },
+        {
+          "ruleId": "qlty:return-statements",
+          "level": "warning",
+          "message": {
+            "text": "Function with many returns (count = 6): _converge"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/flext_tests/docker.py"
+                },
+                "region": {
+                  "startLine": 668,
+                  "startColumn": 5,
+                  "endLine": 717,
+                  "endColumn": 86,
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "taxa": [
+            {
+              "id": "structure"
+            }
+          ],
+          "properties": {
+            "threshold": 6.0,
+            "actual": 6.0
+          }
+        },
+        {
+          "ruleId": "qlty:file-complexity",
+          "level": "warning",
+          "message": {
+            "text": "High total complexity (count = 103)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/flext_tests/docker.py"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 978,
+                  "endColumn": 1,
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "file.path": "src/flext_tests/docker.py"
+          },
+          "taxa": [
+            {
+              "id": "structure"
+            }
+          ],
+          "properties": {
+            "actual": 103.0,
+            "threshold": 50.0
+          }
+        },
+        {
+          "ruleId": "qlty:function-parameters",
+          "level": "warning",
+          "message": {
+            "text": "Function with many parameters (count = 6): _run_consumer"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/unit/test_service_base.py"
+                },
+                "region": {
+                  "startLine": 127,
+                  "startColumn": 22,
+                  "endLine": 134,
+                  "endColumn": 6,
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "taxa": [
+            {
+              "id": "structure"
+            }
+          ],
+          "properties": {
+            "actual": 6.0,
+            "threshold": 6.0
+          }
+        },
+        {
+          "ruleId": "qlty:similar-code",
+          "level": "warning",
+          "message": {
+            "text": "Found 17 lines of similar code in 2 locations (mass = 88)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/unit/test_utilities.py"
+                },
+                "region": {
+                  "startLine": 62,
+                  "endLine": 78,
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/unit/test_utilities.py"
+                },
+                "region": {
+                  "startLine": 93,
+                  "endLine": 109
+                }
+              }
+            }
+          ],
+          "taxa": [
+            {
+              "id": "duplication"
+            }
+          ],
+          "properties": {
+            "actual": 17.0,
+            "identical": false,
+            "node_kind": "decorator",
+            "threshold": 15.0,
+            "mass": 88.0,
+            "structural_hash": "0b37eee14215936a6d1ab998fa709705"
+          }
+        },
+        {
+          "ruleId": "qlty:similar-code",
+          "level": "warning",
+          "message": {
+            "text": "Found 17 lines of similar code in 2 locations (mass = 88)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/unit/test_utilities.py"
+                },
+                "region": {
+                  "startLine": 93,
+                  "endLine": 109,
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/unit/test_utilities.py"
+                },
+                "region": {
+                  "startLine": 62,
+                  "endLine": 78
+                }
+              }
+            }
+          ],
+          "taxa": [
+            {
+              "id": "duplication"
+            }
+          ],
+          "properties": {
+            "node_kind": "decorator",
+            "mass": 88.0,
+            "threshold": 15.0,
+            "structural_hash": "0b37eee14215936a6d1ab998fa709705",
+            "actual": 17.0,
+            "identical": false
+          }
+        },
+        {
+          "ruleId": "qlty:similar-code",
+          "level": "warning",
+          "message": {
+            "text": "Found 18 lines of similar code in 2 locations (mass = 104)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/flext_tests/_cli/docker.py"
+                },
+                "region": {
+                  "startLine": 66,
+                  "endLine": 83,
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/flext_tests/_cli/docker.py"
+                },
+                "region": {
+                  "startLine": 85,
+                  "endLine": 102
+                }
+              }
+            }
+          ],
+          "taxa": [
+            {
+              "id": "duplication"
+            }
+          ],
+          "properties": {
+            "identical": false,
+            "structural_hash": "f56822827421c5c1c149cb3428007cc3",
+            "mass": 104.0,
+            "threshold": 15.0,
+            "actual": 18.0,
+            "node_kind": "decorated_definition"
+          }
+        },
+        {
+          "ruleId": "qlty:similar-code",
+          "level": "warning",
+          "message": {
+            "text": "Found 18 lines of similar code in 2 locations (mass = 104)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/flext_tests/_cli/docker.py"
+                },
+                "region": {
+                  "startLine": 85,
+                  "endLine": 102,
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/flext_tests/_cli/docker.py"
+                },
+                "region": {
+                  "startLine": 66,
+                  "endLine": 83
+                }
+              }
+            }
+          ],
+          "taxa": [
+            {
+              "id": "duplication"
+            }
+          ],
+          "properties": {
+            "identical": false,
+            "node_kind": "decorated_definition",
+            "mass": 104.0,
+            "structural_hash": "f56822827421c5c1c149cb3428007cc3",
+            "threshold": 15.0,
+            "actual": 18.0
+          }
+        }
+      ]
+    }
+  ]
+}

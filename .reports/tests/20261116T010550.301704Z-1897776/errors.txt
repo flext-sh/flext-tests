@@ -1,0 +1,21 @@
+=== FAILURE: tests.unit.test_docker.TestsFlextTestsDocker::test_spec_cli_validates_and_resolves_targets_without_docker[ensure-containers: {}\n-None-True] ===
+Failed: Timeout (>2.0s) from pytest-timeout.
+tests/unit/_docker/builders.py:55: in test_spec_cli_validates_and_resolves_targets_without_docker
+    output = tm.ok(u.Cli.run_raw(arguments, cwd=tmp_path))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../flext-cli/src/flext_cli/_utilities/runtime.py:201: in run_raw
+    return cls._execute_streamed_process(
+../flext-cli/src/flext_cli/_utilities/_runtime/process_execution.py:66: in _execute_streamed_process
+    cls._execute_lifecycle(request, state, timing)
+../flext-cli/src/flext_cli/_utilities/_runtime/process_execution.py:173: in _execute_lifecycle
+    state.timed_out, state.final_deadline = cls._monitor_process(
+../flext-cli/src/flext_cli/_utilities/_runtime/process_monitor.py:49: in _monitor_process
+    cls._wait_next_boundary(state, phase, now)
+../flext-cli/src/flext_cli/_utilities/_runtime/process_monitor.py:113: in _wait_next_boundary
+    state.wake.wait(
+../../.local/share/mise/installs/python/3.13.17/lib/python3.13/threading.py:660: in wait
+    signaled = self._cond.wait(timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/mise/installs/python/3.13.17/lib/python3.13/threading.py:359: in wait
+    waiter.acquire()
+E   Failed: Timeout (>2.0s) from pytest-timeout.

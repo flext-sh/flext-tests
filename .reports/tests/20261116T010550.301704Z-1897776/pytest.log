@@ -1,0 +1,183 @@
+================================================= test session starts ==================================================
+platform linux -- Python 3.13.17, pytest-9.2.0, pluggy-1.7.0 -- /home/marlonsc/flext/.venv/bin/python
+cachedir: .pytest_cache
+benchmark: 5.3.1 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+Using --randomly-seed=1352155919
+testmon: selection deactivated, environment: toolchain-24179a752a3c-75e84b4e-5834a665
+hypothesis profile 'default'
+rootdir: /home/marlonsc/flext/flext-tests
+configfile: pyproject.toml
+plugins: flext-tests-0.12.0, asyncio-1.4.1.post1, benchmark-5.3.1, cov-7.1.0, markdown-docs-0.9.2, randomly-5.0.0, reportlog-1.0.0, testmon-2.3.0, singer-sdk-0.54.9, timeout-2.4.0, xdist-3.8.0, hypothesis-6.170.14, anyio-4.16.0, platformdirs-4.14.5, flext-infra-0.12.1
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+timeout: 2.0s
+timeout method: signal
+timeout func_only: True
+collecting ... collected 490 items
+run-last-failure: rerun previous 15 failures first
+
+tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_target_config_from_shared_catalog[flext-openldap-test] PASSED [  0%]
+tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_target_config_from_shared_catalog[flext-oracle-db-test] PASSED [  0%]
+tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_compose_file_from_packaged_assets[flext-openldap-test] PASSED [  0%]
+tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_resolves_compose_file_from_packaged_assets[flext-oracle-db-test] PASSED [  0%]
+tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_service_compose_file_ships_with_flext_tests[ldap] PASSED [  1%]
+tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_service_compose_file_ships_with_flext_tests[oracle] PASSED [  1%]
+tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_shared_rejects_unknown_container_with_value_error PASSED [  1%]
+tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_compose_resolves_relative_file_against_repository_root PASSED [  1%]
+tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_sibling_compose_files_use_distinct_projects PASSED [  1%]
+tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_compose_preserves_absolute_file_unchanged PASSED [  2%]
+tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[execute] PASSED [  2%]
+tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[up] PASSED [  2%]
+tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[down] PASSED [  2%]
+tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_unconfigured_target_fails_with_guidance[ready] PASSED [  2%]
+tests/integration/test_docker_integration.py::TestsFlextTestsDockerIntegration::test_execute_reports_failure_for_stack_without_inspection_container PASSED [  3%]
+tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_reuse_preserves_container_data PASSED [  3%]
+tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_unhealthy_container_fails_without_recreation PASSED [  3%]
+tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_changed_image_is_reported_without_recreation PASSED [  3%]
+tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_creation_environment_reads_back_as_secret PASSED [  3%]
+tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_verify_never_mutates PASSED     [  4%]
+tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_concurrent_ensures_create_once PASSED [  4%]
+tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_never_healthy_service_fails_within_startup_timeout PASSED [  4%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_undeclared_connectivity_skips_and_remote_gate_runs PASSED [  4%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_markers_skip_only_when_docker_unreachable[False] PASSED [  4%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_markers_skip_only_when_docker_unreachable[True] PASSED [  5%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_marker_runs_with_isolated_environment PASSED [  5%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_process_inputs_reach_fixtures_without_an_environment_file PASSED [  5%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_changed_process_inputs_are_revalidated PASSED [  5%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_host_executables_gate_without_endpoint PASSED [  5%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_declarations_error_without_environment PASSED [  6%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_service_endpoints_are_not_docker_dependent[False] PASSED [  6%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_service_endpoints_are_not_docker_dependent[True] PASSED [  6%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_unreachable_env_skips PASSED [  6%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@[invalid] PASSED [  6%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:invalid] PASSED [  7%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:65536] PASSED [  7%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@localhost:0] PASSED [  7%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[http://user:secret@] PASSED [  7%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[//user:secret@localhost:80] PASSED [  7%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_endpoint_values_fail_without_exposing_credentials[unknown://user:secret@localhost] PASSED [  8%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[http] PASSED [  8%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[https] PASSED [  8%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[ldap] PASSED [  8%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[ldaps] PASSED [  8%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_endpoint_ports_use_the_real_transport[custom] PASSED [  9%]
+tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_ready_endpoint_executes_and_real_failures_stay_failures PASSED [  9%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_generated_secrets_cover_declared_keys_and_are_writable PASSED [  9%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_caller_cannot_supply_a_generated_secret PASSED            [  9%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_host_port_is_read_from_published_bindings PASSED          [ 10%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_inspect_projects_onto_container_info PASSED               [ 10%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_inspect_without_healthcheck_is_unknown_health PASSED      [ 10%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_container_environment_returns_secrets_and_names_missing_keys PASSED [ 10%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_creation_env_file_is_private_and_removed PASSED           [ 10%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_creation_env_file_never_overwrites_a_leftover PASSED      [ 11%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_unrepresentable_creation_value_is_rejected PASSED         [ 11%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_execute_requires_target_config PASSED                     [ 11%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_execute_rejects_stack_only_target PASSED                  [ 11%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_up_requires_target_config PASSED                          [ 11%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_down_requires_target_config PASSED                        [ 12%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_ready_requires_target_config PASSED                       [ 12%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_ready_uses_target_config_port PASSED                      [ 12%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_compose_down_returns_flext_result PASSED                  [ 12%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_fetch_container_info_not_found PASSED                     [ 12%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_wait_for_port_ready_immediate PASSED                      [ 13%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_default_state_dir_is_host_scoped PASSED                   [ 13%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_builders_bind_the_given_state_dir PASSED                  [ 13%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_default_repository_root PASSED                            [ 13%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_custom_repository_root PASSED                             [ 13%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_container_spec_roundtrip_retains_typed_targets PASSED     [ 14%]
+tests/unit/test_docker.py::TestsFlextTestsDocker::test_spec_cli_validates_and_resolves_targets_without_docker[ensure-containers: {}\n-None-True] FAILED                                                                                                           [ 14%]
+
+======================================================= FAILURES =======================================================
+_ TestsFlextTestsDocker.test_spec_cli_validates_and_resolves_targets_without_docker[ensure-containers: {}\n-None-True] _
+tests/unit/_docker/builders.py:55: in test_spec_cli_validates_and_resolves_targets_without_docker
+    output = tm.ok(u.Cli.run_raw(arguments, cwd=tmp_path))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../flext-cli/src/flext_cli/_utilities/runtime.py:201: in run_raw
+    return cls._execute_streamed_process(
+../flext-cli/src/flext_cli/_utilities/_runtime/process_execution.py:66: in _execute_streamed_process
+    cls._execute_lifecycle(request, state, timing)
+../flext-cli/src/flext_cli/_utilities/_runtime/process_execution.py:173: in _execute_lifecycle
+    state.timed_out, state.final_deadline = cls._monitor_process(
+../flext-cli/src/flext_cli/_utilities/_runtime/process_monitor.py:49: in _monitor_process
+    cls._wait_next_boundary(state, phase, now)
+../flext-cli/src/flext_cli/_utilities/_runtime/process_monitor.py:113: in _wait_next_boundary
+    state.wake.wait(
+../../.local/share/mise/installs/python/3.13.17/lib/python3.13/threading.py:660: in wait
+    signaled = self._cond.wait(timeout)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+../../.local/share/mise/installs/python/3.13.17/lib/python3.13/threading.py:359: in wait
+    waiter.acquire()
+E   Failed: Timeout (>2.0s) from pytest-timeout.
+------------------------------------------------- Captured stdout call -------------------------------------------------
++++++++++++++++++++++++++++++++++++++++++++++++++++++++ Timeout ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Stack of flext-cli-process-stderr (140141796513472) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  File "/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/threading.py", line 1015, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/threading.py", line 1044, in _bootstrap_inner
+    self.run()
+  File "/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/threading.py", line 995, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/marlonsc/flext/flext-cli/src/flext_cli/_utilities/_runtime/process_stream.py", line 72, in _pump_process_output
+    chunk = cls._read_process_chunk(source, state.failures)
+  File "/home/marlonsc/flext/flext-cli/src/flext_cli/_utilities/_runtime/process_stream.py", line 99, in _read_process_chunk
+    chunk = source.read(cls._STREAM_CHUNK_BYTES)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Stack of flext-cli-process-stdout (140141804906176) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  File "/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/threading.py", line 1015, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/threading.py", line 1044, in _bootstrap_inner
+    self.run()
+  File "/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/threading.py", line 995, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/marlonsc/flext/flext-cli/src/flext_cli/_utilities/_runtime/process_stream.py", line 72, in _pump_process_output
+    chunk = cls._read_process_chunk(source, state.failures)
+  File "/home/marlonsc/flext/flext-cli/src/flext_cli/_utilities/_runtime/process_stream.py", line 99, in _read_process_chunk
+    chunk = source.read(cls._STREAM_CHUNK_BYTES)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Stack of flext-cli-process-waiter (140141813298880) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  File "/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/threading.py", line 1015, in _bootstrap
+    self._bootstrap_inner()
+  File "/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/threading.py", line 1044, in _bootstrap_inner
+    self.run()
+  File "/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/threading.py", line 995, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/marlonsc/flext/flext-cli/src/flext_cli/_utilities/_runtime/process_wait.py", line 21, in _wait_for_root_process
+    state.return_codes.append(process.wait())
+  File "/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/subprocess.py", line 1281, in wait
+    return self._wait(timeout=timeout)
+  File "/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/subprocess.py", line 2086, in _wait
+    (pid, sts) = self._try_wait(0)
+  File "/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/subprocess.py", line 2044, in _try_wait
+    (pid, sts) = os.waitpid(self.pid, wait_flags)
++++++++++++++++++++++++++++++++++++++++++++++++++++++++ Timeout ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+---- generated xml file: /home/marlonsc/flext/flext-tests/.reports/tests/20261116T010550.301704Z-1897776/junit.xml -----
+- generated report log file: /home/marlonsc/flext/flext-tests/.reports/tests/20261116T010550.301704Z-1897776/events.jsonl -
+--------------------------------------------------- flext slow tests ---------------------------------------------------
+no test near the ordinary or slow limit
+================================================= slowest 25 durations =================================================
+7.75s call     tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_marker_runs_with_isolated_environment
+7.30s call     tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_process_inputs_reach_fixtures_without_an_environment_file
+6.97s call     tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_unreachable_env_skips
+6.74s call     tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_reuse_preserves_container_data
+6.63s call     tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_concurrent_ensures_create_once
+6.27s call     tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_markers_skip_only_when_docker_unreachable[True]
+5.98s teardown tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_reuse_preserves_container_data
+5.95s call     tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_host_executables_gate_without_endpoint
+5.67s call     tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_changed_process_inputs_are_revalidated
+5.39s call     tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_unhealthy_container_fails_without_recreation
+5.36s teardown tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_concurrent_ensures_create_once
+5.34s teardown tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_changed_image_is_reported_without_recreation
+5.32s call     tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_docker_markers_skip_only_when_docker_unreachable[False]
+4.97s call     tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_undeclared_connectivity_skips_and_remote_gate_runs
+4.71s call     tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_creation_environment_reads_back_as_secret
+4.51s call     tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_never_healthy_service_fails_within_startup_timeout
+4.43s call     tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_invalid_declarations_error_without_environment
+3.91s call     tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_verify_never_mutates
+3.66s call     tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_ready_endpoint_executes_and_real_failures_stay_failures
+3.64s call     tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_changed_image_is_reported_without_recreation
+3.61s call     tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_service_endpoints_are_not_docker_dependent[True]
+3.54s teardown tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_verify_never_mutates
+3.36s teardown tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_creation_environment_reads_back_as_secret
+3.32s teardown tests/integration/test_docker_lifecycle.py::TestsFlextTestsDockerLifecycle::test_never_healthy_service_fails_within_startup_timeout
+3.18s call     tests/unit/test_capability_collection.py::TestsFlextTestsCapabilityCollection::test_explicit_service_endpoints_are_not_docker_dependent[False]
+=============================================== short test summary info ================================================
+FAILED tests/unit/test_docker.py::TestsFlextTestsDocker::test_spec_cli_validates_and_resolves_targets_without_docker[ensure-containers: {}\n-None-True]
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+======================================= 1 failed, 69 passed in 137.05s (0:02:17) =======================================

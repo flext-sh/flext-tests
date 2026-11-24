@@ -1,0 +1,1 @@
+{"id":"exports--flext_tests._utilities._files","language":"Python","rule":{"regex":"^(?:FlextTestsUtilitiesFilesAssertions|FlextTestsUtilitiesFilesComparison|FlextTestsUtilitiesFilesContexts|FlextTestsUtilitiesFilesCreation|FlextTestsUtilitiesFilesInfo|FlextTestsUtilitiesFilesLifecycle|FlextTestsUtilitiesFilesReading|FlextTestsUtilitiesFilesSize)$"}}

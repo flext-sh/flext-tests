@@ -1,0 +1,78 @@
+{
+    "version": "1.1.414",
+    "time": "1794194222129",
+    "generalDiagnostics": [
+        {
+            "file": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/connectivity.py",
+            "severity": "error",
+            "message": "Condition will always evaluate to False since the types \"KeysView[str]\" and \"set[str]\" have no overlap",
+            "range": {
+                "start": {
+                    "line": 111,
+                    "character": 27
+                },
+                "end": {
+                    "line": 111,
+                    "character": 66
+                }
+            },
+            "rule": "reportUnnecessaryComparison"
+        },
+        {
+            "file": "/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/_matchers/assertions.py",
+            "severity": "error",
+            "message": "Cases within match statement do not exhaustively handle all values\n  Unhandled type: \"tuple[int, ...]\"\n  If exhaustive handling is not intended, add \"case _: pass\"",
+            "range": {
+                "start": {
+                    "line": 64,
+                    "character": 18
+                },
+                "end": {
+                    "line": 64,
+                    "character": 29
+                }
+            },
+            "rule": "reportMatchNotExhaustive"
+        },
+        {
+            "file": "/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/_matchers/assertions.py",
+            "severity": "error",
+            "message": "Cases within match statement do not exhaustively handle all values\n  Unhandled type: \"tuple[int, ...]\"\n  If exhaustive handling is not intended, add \"case _: pass\"",
+            "range": {
+                "start": {
+                    "line": 73,
+                    "character": 14
+                },
+                "end": {
+                    "line": 73,
+                    "character": 25
+                }
+            },
+            "rule": "reportMatchNotExhaustive"
+        },
+        {
+            "file": "/home/marlonsc/flext/flext-tests/src/flext_tests/fixtures.py",
+            "severity": "error",
+            "message": "Base classes for class \"FlextTestsFlextTestsFixtures\" define method \"pytest_runtest_setup\" in incompatible way\n  Base method is declared as a staticmethod but override is not\n  Positional parameter count mismatch; base method has 1, but override has 2",
+            "range": {
+                "start": {
+                    "line": 18,
+                    "character": 6
+                },
+                "end": {
+                    "line": 18,
+                    "character": 34
+                }
+            },
+            "rule": "reportIncompatibleMethodOverride"
+        }
+    ],
+    "summary": {
+        "filesAnalyzed": 174,
+        "errorCount": 4,
+        "warningCount": 0,
+        "informationCount": 0,
+        "timeInSec": 8.895
+    }
+}
+

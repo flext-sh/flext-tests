@@ -1,0 +1,21 @@
+cwd=/home/marlonsc/flext/flext-tests report=/home/marlonsc/flext/flext-tests/.reports/check/a666de4e-1cb8-4f67-8f28-e03f20c8fc1a/flext-tests/flext-tests-deps-5acc60a42d9e409ab6bd07d24fb30f8a/deptry.json
+return-code=1
+stdout:
+
+stderr:
+Scanning 115 files...
+
+/home/marlonsc/flext/flext-tests/pyproject.toml: DEP002 'pytest-asyncio' defined as a dependency but not used in the codebase
+/home/marlonsc/flext/flext-tests/pyproject.toml: DEP002 'pytest-benchmark' defined as a dependency but not used in the codebase
+/home/marlonsc/flext/flext-tests/pyproject.toml: DEP002 'pytest-cov' defined as a dependency but not used in the codebase
+/home/marlonsc/flext/flext-tests/pyproject.toml: DEP002 'pytest-markdown-docs' defined as a dependency but not used in the codebase
+/home/marlonsc/flext/flext-tests/pyproject.toml: DEP002 'pytest-randomly' defined as a dependency but not used in the codebase
+/home/marlonsc/flext/flext-tests/pyproject.toml: DEP002 'pytest-reportlog' defined as a dependency but not used in the codebase
+/home/marlonsc/flext/flext-tests/pyproject.toml: DEP002 'pytest-testmon' defined as a dependency but not used in the codebase
+/home/marlonsc/flext/flext-tests/pyproject.toml: DEP002 'pytest-timeout' defined as a dependency but not used in the codebase
+/home/marlonsc/flext/flext-tests/pyproject.toml: DEP002 'pytest-xdist' defined as a dependency but not used in the codebase
+Found 9 dependency issues.
+
+For more information, see the documentation: https://deptry.com/
+
+report-sha256=5ab07559efad9bcafc85e76165a28056f9d30406d24fe14f4518ef3a4a55406d
