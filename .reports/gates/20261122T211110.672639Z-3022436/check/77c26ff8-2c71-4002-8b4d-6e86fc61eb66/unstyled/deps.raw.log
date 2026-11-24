@@ -1,0 +1,25 @@
+cwd=/home/marlonsc/worktrees/flext-tests/unstyled report=/home/marlonsc/worktrees/flext-tests/unstyled/.reports/gates/20261122T211110.672639Z-3022436/check/77c26ff8-2c71-4002-8b4d-6e86fc61eb66/unstyled/unstyled-deps-953c96bd334d4cb6866caba8034c9426/deptry.json
+return-code=1
+stdout:
+
+stderr:
+Scanning 118 files...
+
+/home/marlonsc/worktrees/flext-tests/unstyled/pyproject.toml: DEP002 'httpx2' defined as a dependency but not used in the codebase
+/home/marlonsc/worktrees/flext-tests/unstyled/pyproject.toml: DEP002 'hypothesis' defined as a dependency but not used in the codebase
+/home/marlonsc/worktrees/flext-tests/unstyled/pyproject.toml: DEP002 'pytest-asyncio' defined as a dependency but not used in the codebase
+/home/marlonsc/worktrees/flext-tests/unstyled/pyproject.toml: DEP002 'pytest-benchmark' defined as a dependency but not used in the codebase
+/home/marlonsc/worktrees/flext-tests/unstyled/pyproject.toml: DEP002 'pytest-cov' defined as a dependency but not used in the codebase
+/home/marlonsc/worktrees/flext-tests/unstyled/pyproject.toml: DEP002 'pytest-markdown-docs' defined as a dependency but not used in the codebase
+/home/marlonsc/worktrees/flext-tests/unstyled/pyproject.toml: DEP002 'pytest-randomly' defined as a dependency but not used in the codebase
+/home/marlonsc/worktrees/flext-tests/unstyled/pyproject.toml: DEP002 'pytest-reportlog' defined as a dependency but not used in the codebase
+/home/marlonsc/worktrees/flext-tests/unstyled/pyproject.toml: DEP002 'pytest-testmon' defined as a dependency but not used in the codebase
+/home/marlonsc/worktrees/flext-tests/unstyled/pyproject.toml: DEP002 'pytest-timeout' defined as a dependency but not used in the codebase
+/home/marlonsc/worktrees/flext-tests/unstyled/pyproject.toml: DEP002 'pytest-xdist' defined as a dependency but not used in the codebase
+/home/marlonsc/worktrees/flext-tests/unstyled/pyproject.toml: DEP002 'starlette' defined as a dependency but not used in the codebase
+Found 12 dependency issues.
+
+For more information, see the documentation: https://deptry.com/
+
+retained-by-declared-usage=11
+report-sha256=4a7effe5f8742cda8cd590c82a9a144a5bf28642df7bfe8aa9e0b2e975e63eab

@@ -1,0 +1,77 @@
+INFO: mod: producer start name=codemod_file_scopes project=unstyled
+INFO: mod: import graph start
+INFO: mod: import graph modules=0 file=src/flext_tests/__init__.py
+INFO: mod: import graph finish modules=179
+INFO: mod: producer stop name=codemod_file_scopes completed=True duration=1.69s
+INFO: mod: producer start name=codemod_layout_scopes project=unstyled
+INFO: mod: producer stop name=codemod_layout_scopes completed=True duration=8.39s
+INFO: mod: producer start name=codemod_declaration_scopes project=unstyled
+INFO: mod: producer stop name=codemod_declaration_scopes completed=True duration=4.26s
+INFO: mod: producer start name=codemod_implementation_scopes project=unstyled
+INFO: mod: producer stop name=codemod_implementation_scopes completed=True duration=0.82s
+INFO: mod: producer start name=codemod_import_header_rules project=unstyled
+INFO: mod: runtime distributions start requirements=18
+INFO: mod: runtime distributions finish distributions=159
+INFO: mod: runtime dependency closure start
+INFO: mod: runtime dependency closure finish distributions=86
+INFO: mod: runtime import package metadata finish packages=173
+INFO: mod: runtime imports package=1/173 module=c787785866c7b801238d__mypyc selected=0
+INFO: mod: runtime imports finish modules=94
+INFO: mod: producer stop name=codemod_import_header_rules completed=True duration=2.02s
+INFO: mod: producer start name=codemod_module_member_rules project=unstyled
+INFO: mod: producer stop name=codemod_module_member_rules completed=True duration=0.05s
+INFO: mod: producer start name=codemod_type_set_rules project=unstyled
+INFO: mod: producer stop name=codemod_type_set_rules completed=True duration=0.01s
+INFO: mod: producer start name=codemod_compat_rules project=unstyled
+INFO: mod: producer stop name=codemod_compat_rules completed=True duration=0.03s
+INFO: mod: producer start name=codemod_layer_zero_rules project=unstyled
+INFO: mod: producer stop name=codemod_layer_zero_rules completed=True duration=0.31s
+INFO: mod: producer start name=codemod_external_import_rules project=unstyled
+INFO: mod: producer stop name=codemod_external_import_rules completed=True duration=0.14s
+INFO: mod: producer start name=codemod_library_type_rules project=unstyled
+INFO: mod: producer stop name=codemod_library_type_rules completed=True duration=0.13s
+INFO: mod: producer start name=codemod_ambient_environ_rules project=unstyled
+INFO: mod: producer stop name=codemod_ambient_environ_rules completed=True duration=0.15s
+INFO: mod: producer start name=codemod_facade_member_rules project=unstyled
+INFO: mod: producer stop name=codemod_facade_member_rules completed=True duration=3.22s
+INFO: mod: producer start name=codemod_facade_component_rules project=unstyled
+INFO: mod: producer stop name=codemod_facade_component_rules completed=True duration=0.07s
+INFO: mod: producer start name=codemod_library_member_name_rules project=unstyled
+INFO: mod: producer stop name=codemod_library_member_name_rules completed=True duration=0.08s
+INFO: mod: producer start name=codemod_composition_root_collision_rules project=unstyled
+INFO: mod: producer stop name=codemod_composition_root_collision_rules completed=True duration=0.93s
+INFO: mod: producer start name=codemod_facade_member_ownership_rules project=unstyled
+INFO: mod: producer stop name=codemod_facade_member_ownership_rules completed=True duration=0.12s
+INFO: mod: producer start name=codemod_partitioned_rules project=unstyled
+INFO: mod: producer stop name=codemod_partitioned_rules completed=True duration=0.29s
+INFO: mod: producer start name=codemod_reverse_import_rules project=unstyled
+INFO: mod: producer stop name=codemod_reverse_import_rules completed=True duration=2.87s
+INFO: mod: producer start name=codemod_own_package_utilities project=unstyled
+INFO: mod: producer stop name=codemod_own_package_utilities completed=True duration=0.01s
+INFO: mod: producer start name=codemod_stdlib_module_utilities project=unstyled
+INFO: mod: producer stop name=codemod_stdlib_module_utilities completed=True duration=0.00s
+INFO: mod: producer start name=codemod_runtime_package_utilities project=unstyled
+INFO: mod: producer stop name=codemod_runtime_package_utilities completed=True duration=0.02s
+INFO: mod: producer start name=codemod_generated_module_utilities project=unstyled
+INFO: mod: producer stop name=codemod_generated_module_utilities completed=True duration=0.00s
+INFO: mod: producer start name=codemod_package_export_utilities project=unstyled
+INFO: mod: producer stop name=codemod_package_export_utilities completed=True duration=0.05s
+INFO: mod: producer start name=codemod_facade_family_package_utilities project=unstyled
+INFO: mod: producer stop name=codemod_facade_family_package_utilities completed=True duration=0.00s
+INFO: mod: producer start name=codemod_facade_package_utilities project=unstyled
+INFO: mod: producer stop name=codemod_facade_package_utilities completed=True duration=0.00s
+INFO: mod: producer start name=codemod_alias_utilities project=unstyled
+INFO: mod: producer stop name=codemod_alias_utilities completed=True duration=0.02s
+INFO: mod: producer start name=codemod_imported_export_utilities project=unstyled
+INFO: mod: producer stop name=codemod_imported_export_utilities completed=True duration=0.03s
+INFO: mod: producer start name=codemod_compose_module_utilities project=unstyled
+INFO: mod: producer stop name=codemod_compose_module_utilities completed=True duration=0.03s
+INFO: mod: producer start name=codemod_requested_utilities project=unstyled
+INFO: mod: producer stop name=codemod_requested_utilities completed=True duration=3.36s
+
+- generated report log file: /home/marlonsc/worktrees/flext-tests/unstyled/.reports/tests/20261122T212926.916544Z-3538390/testmon-selection.events.jsonl -
+---------------------------------------------------- flext-enforce -----------------------------------------------------
+runtime warnings captured: 0
+--------------------------------------------------- flext slow tests ---------------------------------------------------
+no test near the ordinary or slow limit
+no tests collected (595 deselected) in 39.41s

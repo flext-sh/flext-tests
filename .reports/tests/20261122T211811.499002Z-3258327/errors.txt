@@ -1,0 +1,7 @@
+=== FAILURE: tests.unit.test_public_facade.TestsFlextTestsPublicFacade::test_plugin_configure_hooks_keep_their_registered_class_owners ===
+AssertionError: Value {'flext_tests'} did not satisfy constraints
+tests/unit/test_public_facade.py:85: in test_plugin_configure_hooks_keep_their_registered_class_owners
+    tm.that(set(configure), eq=set(entries))
+src/flext_tests/_utilities/_matchers/that.py:706: in that
+    raise AssertionError(
+E   AssertionError: Value {'flext_tests'} did not satisfy constraints

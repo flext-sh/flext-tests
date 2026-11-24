@@ -1,0 +1,19 @@
+{
+  "summary": {
+    "scope": "flext-tests",
+    "changed_files": 2,
+    "apply": true
+  },
+  "changes": [
+    [
+      "docs/guides/using-flext-cli.md",
+      "0",
+      "0"
+    ],
+    [
+      "docs/guides/using-flext-tests.md",
+      "0",
+      "0"
+    ]
+  ]
+}

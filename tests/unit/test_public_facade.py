@@ -77,14 +77,22 @@ class TestsFlextTestsPublicFacade:
             if entry.group == "pytest11"
         }
         tm.that({name: entry.value for name, entry in entries.items()}, eq=declared)
+        registered = {
+            name: pytestconfig.pluginmanager.get_plugin(name) for name in entries
+        }
+        owners = {name: entry.load() for name, entry in entries.items()}
+        tm.that(registered, eq=owners)
         configure = {
             hook.plugin_name: hook.plugin
             for hook in pytestconfig.hook.pytest_configure.get_hookimpls()
             if hook.plugin_name in entries
         }
-        tm.that(set(configure), eq=set(entries))
-        for name, entry in entries.items():
-            tm.ok(configure[name] is entry.load())
+        configure_owners = {
+            name: owner
+            for name, owner in owners.items()
+            if callable(getattr(owner, "pytest_configure", None))
+        }
+        tm.that(configure, eq=configure_owners)
         tm.fail("pytest_configure" in flext_tests.__all__)
 
     @staticmethod

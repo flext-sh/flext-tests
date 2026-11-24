@@ -1,0 +1,792 @@
+{
+  "failed_count": 1,
+  "error_count": 0,
+  "warning_count": 0,
+  "skipped_count": 0,
+  "connectivity_skip_cases": [],
+  "collection_failed_count": 0,
+  "collection_skipped_count": 0,
+  "collection_failed_cases": [],
+  "collection_skip_cases": [],
+  "reported_node_ids": [
+    "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_checkout_change_changes_the_token",
+    "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_model_rejects_wrong_shape",
+    "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_run_namespace_fixture_is_session_stable",
+    "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_ten_thousand_tokens_stay_unique",
+    "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_token_matches_the_declared_pattern",
+    "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_worker_change_changes_the_token",
+    "tests/unit/test_namespace_xdist.py::TestsFlextTestsNamespaceXdist::test_namespaces_unique_across_two_workers",
+    "tests/unit/test_namespace_xdist.py::TestsFlextTestsNamespaceXdist::test_pytest_subprocess_reaps_on_base_exception",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_arm_cannot_change_after_validation",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[atom]",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[frozenset]",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[list]",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[mapping]",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[set]",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[tuple]",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_binary_file_roundtrip_preserves_non_utf8_bytes",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_deep_matcher_distinguishes_missing_path_from_present_none",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_deep_matcher_preserves_native_nested_leaves",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_empty_arms_remain_distinct",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_format_detection_does_not_serialize_a_native_model",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_mapping_owns_its_children",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_preserves_exception_atom_identity",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_preserves_native_model_identity",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_propagates_callback_exception_identity",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_type_only_does_not_require_payload_conversion",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_model_file_export_uses_selected_wire_format",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_atoms_preserve_identity",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_collection_roundtrip[native0]",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_collection_roundtrip[native1]",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_ingress_rejects_string_key_collisions",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_ingress_rejects_unsupported_nested_leaf",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_nested_rich_values_survive_owned_tree_validation",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_none_is_an_atom_not_a_payload_document",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_owned_tree_validation_preserves_nested_model_identity",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_atom_with_children",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_collection_with_entries",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_extra_fields",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_mapping_with_atom",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_unknown_arm",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_unsupported_leaf",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_textual_projection_rejects_invalid_utf8",
+    "tests/unit/test_payload.py::TestsFlextTestsPayload::test_type_matcher_inspects_original_payload_subject",
+    "tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_models_and_utilities_import_together",
+    "tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_plugin_configure_hooks_keep_their_registered_class_owners",
+    "tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_selected_enforcement_plugin_uses_its_declared_identity"
+  ],
+  "phase_outcomes": [
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_checkout_change_changes_the_token",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_checkout_change_changes_the_token",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_checkout_change_changes_the_token",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_model_rejects_wrong_shape",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_model_rejects_wrong_shape",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_model_rejects_wrong_shape",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_run_namespace_fixture_is_session_stable",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_run_namespace_fixture_is_session_stable",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_run_namespace_fixture_is_session_stable",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_ten_thousand_tokens_stay_unique",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_ten_thousand_tokens_stay_unique",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_ten_thousand_tokens_stay_unique",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_token_matches_the_declared_pattern",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_token_matches_the_declared_pattern",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_token_matches_the_declared_pattern",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_worker_change_changes_the_token",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_worker_change_changes_the_token",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_worker_change_changes_the_token",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace_xdist.py::TestsFlextTestsNamespaceXdist::test_namespaces_unique_across_two_workers",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace_xdist.py::TestsFlextTestsNamespaceXdist::test_namespaces_unique_across_two_workers",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace_xdist.py::TestsFlextTestsNamespaceXdist::test_namespaces_unique_across_two_workers",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace_xdist.py::TestsFlextTestsNamespaceXdist::test_pytest_subprocess_reaps_on_base_exception",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace_xdist.py::TestsFlextTestsNamespaceXdist::test_pytest_subprocess_reaps_on_base_exception",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_namespace_xdist.py::TestsFlextTestsNamespaceXdist::test_pytest_subprocess_reaps_on_base_exception",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_arm_cannot_change_after_validation",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_arm_cannot_change_after_validation",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_arm_cannot_change_after_validation",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[atom]",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[atom]",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[atom]",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[frozenset]",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[frozenset]",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[frozenset]",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[list]",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[list]",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[list]",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[mapping]",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[mapping]",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[mapping]",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[set]",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[set]",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[set]",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[tuple]",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[tuple]",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[tuple]",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_binary_file_roundtrip_preserves_non_utf8_bytes",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_binary_file_roundtrip_preserves_non_utf8_bytes",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_binary_file_roundtrip_preserves_non_utf8_bytes",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_deep_matcher_distinguishes_missing_path_from_present_none",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_deep_matcher_distinguishes_missing_path_from_present_none",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_deep_matcher_distinguishes_missing_path_from_present_none",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_deep_matcher_preserves_native_nested_leaves",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_deep_matcher_preserves_native_nested_leaves",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_deep_matcher_preserves_native_nested_leaves",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_empty_arms_remain_distinct",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_empty_arms_remain_distinct",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_empty_arms_remain_distinct",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_format_detection_does_not_serialize_a_native_model",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_format_detection_does_not_serialize_a_native_model",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_format_detection_does_not_serialize_a_native_model",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_mapping_owns_its_children",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_mapping_owns_its_children",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_mapping_owns_its_children",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_preserves_exception_atom_identity",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_preserves_exception_atom_identity",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_preserves_exception_atom_identity",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_preserves_native_model_identity",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_preserves_native_model_identity",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_preserves_native_model_identity",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_propagates_callback_exception_identity",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_propagates_callback_exception_identity",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_propagates_callback_exception_identity",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_type_only_does_not_require_payload_conversion",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_type_only_does_not_require_payload_conversion",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_type_only_does_not_require_payload_conversion",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_model_file_export_uses_selected_wire_format",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_model_file_export_uses_selected_wire_format",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_model_file_export_uses_selected_wire_format",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_atoms_preserve_identity",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_atoms_preserve_identity",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_atoms_preserve_identity",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_collection_roundtrip[native0]",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_collection_roundtrip[native0]",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_collection_roundtrip[native0]",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_collection_roundtrip[native1]",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_collection_roundtrip[native1]",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_collection_roundtrip[native1]",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_ingress_rejects_string_key_collisions",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_ingress_rejects_string_key_collisions",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_ingress_rejects_string_key_collisions",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_ingress_rejects_unsupported_nested_leaf",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_ingress_rejects_unsupported_nested_leaf",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_ingress_rejects_unsupported_nested_leaf",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_nested_rich_values_survive_owned_tree_validation",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_nested_rich_values_survive_owned_tree_validation",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_nested_rich_values_survive_owned_tree_validation",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_none_is_an_atom_not_a_payload_document",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_none_is_an_atom_not_a_payload_document",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_none_is_an_atom_not_a_payload_document",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_owned_tree_validation_preserves_nested_model_identity",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_owned_tree_validation_preserves_nested_model_identity",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_owned_tree_validation_preserves_nested_model_identity",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_atom_with_children",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_atom_with_children",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_atom_with_children",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_collection_with_entries",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_collection_with_entries",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_collection_with_entries",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_extra_fields",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_extra_fields",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_extra_fields",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_mapping_with_atom",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_mapping_with_atom",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_mapping_with_atom",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_unknown_arm",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_unknown_arm",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_unknown_arm",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_unsupported_leaf",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_unsupported_leaf",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_unsupported_leaf",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_textual_projection_rejects_invalid_utf8",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_textual_projection_rejects_invalid_utf8",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_textual_projection_rejects_invalid_utf8",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_type_matcher_inspects_original_payload_subject",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_type_matcher_inspects_original_payload_subject",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_payload.py::TestsFlextTestsPayload::test_type_matcher_inspects_original_payload_subject",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_models_and_utilities_import_together",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_models_and_utilities_import_together",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_models_and_utilities_import_together",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_plugin_configure_hooks_keep_their_registered_class_owners",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_plugin_configure_hooks_keep_their_registered_class_owners",
+      "phase": "call",
+      "outcome": "failed"
+    },
+    {
+      "node_id": "tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_plugin_configure_hooks_keep_their_registered_class_owners",
+      "phase": "teardown",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_selected_enforcement_plugin_uses_its_declared_identity",
+      "phase": "setup",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_selected_enforcement_plugin_uses_its_declared_identity",
+      "phase": "call",
+      "outcome": "passed"
+    },
+    {
+      "node_id": "tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_selected_enforcement_plugin_uses_its_declared_identity",
+      "phase": "teardown",
+      "outcome": "passed"
+    }
+  ],
+  "markdown_attempts": [],
+  "markdown_items": [],
+  "failed_cases": [
+    "tests.unit.test_public_facade.TestsFlextTestsPublicFacade::test_plugin_configure_hooks_keep_their_registered_class_owners"
+  ],
+  "error_traces": [
+    "=== FAILURE: tests.unit.test_public_facade.TestsFlextTestsPublicFacade::test_plugin_configure_hooks_keep_their_registered_class_owners ===\nKeyError: 'flext_tests.enforcement_plugin'\ntests/unit/test_public_facade.py:101: in test_plugin_configure_hooks_keep_their_registered_class_owners\n    tm.ok(configure[name] is entry.load())\n          ^^^^^^^^^^^^^^^\nE   KeyError: 'flext_tests.enforcement_plugin'"
+  ],
+  "warning_lines": [],
+  "skip_cases": [],
+  "slow_entries": [
+    "5.469000s | tests.unit.test_namespace_xdist.TestsFlextTestsNamespaceXdist::test_namespaces_unique_across_two_workers",
+    "1.427000s | tests.unit.test_namespace_xdist.TestsFlextTestsNamespaceXdist::test_pytest_subprocess_reaps_on_base_exception",
+    "0.686000s | tests.unit.test_namespace.TestsFlextTestsNamespace::test_ten_thousand_tokens_stay_unique",
+    "0.052000s | tests.unit.test_namespace.TestsFlextTestsNamespace::test_token_matches_the_declared_pattern",
+    "0.041000s | tests.unit.test_payload.TestsFlextTestsPayload::test_native_collection_roundtrip[native0]",
+    "0.038000s | tests.unit.test_public_facade.TestsFlextTestsPublicFacade::test_selected_enforcement_plugin_uses_its_declared_identity",
+    "0.018000s | tests.unit.test_payload.TestsFlextTestsPayload::test_deep_matcher_preserves_native_nested_leaves",
+    "0.017000s | tests.unit.test_payload.TestsFlextTestsPayload::test_model_file_export_uses_selected_wire_format",
+    "0.014000s | tests.unit.test_public_facade.TestsFlextTestsPublicFacade::test_plugin_configure_hooks_keep_their_registered_class_owners",
+    "0.011000s | tests.unit.test_payload.TestsFlextTestsPayload::test_matcher_type_only_does_not_require_payload_conversion",
+    "0.010000s | tests.unit.test_payload.TestsFlextTestsPayload::test_native_atoms_preserve_identity",
+    "0.010000s | tests.unit.test_payload.TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[atom]",
+    "0.009000s | tests.unit.test_payload.TestsFlextTestsPayload::test_rejects_mapping_with_atom",
+    "0.009000s | tests.unit.test_payload.TestsFlextTestsPayload::test_format_detection_does_not_serialize_a_native_model",
+    "0.008000s | tests.unit.test_payload.TestsFlextTestsPayload::test_native_ingress_rejects_unsupported_nested_leaf",
+    "0.008000s | tests.unit.test_payload.TestsFlextTestsPayload::test_native_collection_roundtrip[native1]",
+    "0.008000s | tests.unit.test_payload.TestsFlextTestsPayload::test_matcher_preserves_native_model_identity",
+    "0.008000s | tests.unit.test_payload.TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[list]",
+    "0.007000s | tests.unit.test_payload.TestsFlextTestsPayload::test_native_ingress_rejects_string_key_collisions",
+    "0.007000s | tests.unit.test_payload.TestsFlextTestsPayload::test_mapping_owns_its_children",
+    "0.007000s | tests.unit.test_payload.TestsFlextTestsPayload::test_empty_arms_remain_distinct",
+    "0.007000s | tests.unit.test_payload.TestsFlextTestsPayload::test_deep_matcher_distinguishes_missing_path_from_present_none",
+    "0.007000s | tests.unit.test_payload.TestsFlextTestsPayload::test_binary_file_roundtrip_preserves_non_utf8_bytes",
+    "0.007000s | tests.unit.test_payload.TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[mapping]",
+    "0.007000s | tests.unit.test_payload.TestsFlextTestsPayload::test_arm_cannot_change_after_validation",
+    "0.007000s | tests.unit.test_namespace.TestsFlextTestsNamespace::test_model_rejects_wrong_shape",
+    "0.006000s | tests.unit.test_public_facade.TestsFlextTestsPublicFacade::test_models_and_utilities_import_together",
+    "0.006000s | tests.unit.test_payload.TestsFlextTestsPayload::test_type_matcher_inspects_original_payload_subject",
+    "0.006000s | tests.unit.test_payload.TestsFlextTestsPayload::test_textual_projection_rejects_invalid_utf8",
+    "0.006000s | tests.unit.test_payload.TestsFlextTestsPayload::test_rejects_unsupported_leaf",
+    "0.006000s | tests.unit.test_payload.TestsFlextTestsPayload::test_rejects_atom_with_children",
+    "0.006000s | tests.unit.test_payload.TestsFlextTestsPayload::test_owned_tree_validation_preserves_nested_model_identity",
+    "0.006000s | tests.unit.test_payload.TestsFlextTestsPayload::test_nested_rich_values_survive_owned_tree_validation",
+    "0.006000s | tests.unit.test_payload.TestsFlextTestsPayload::test_matcher_propagates_callback_exception_identity",
+    "0.006000s | tests.unit.test_payload.TestsFlextTestsPayload::test_matcher_preserves_exception_atom_identity",
+    "0.006000s | tests.unit.test_payload.TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[tuple]",
+    "0.006000s | tests.unit.test_payload.TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[set]",
+    "0.006000s | tests.unit.test_payload.TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[frozenset]",
+    "0.006000s | tests.unit.test_namespace.TestsFlextTestsNamespace::test_worker_change_changes_the_token",
+    "0.006000s | tests.unit.test_namespace.TestsFlextTestsNamespace::test_run_namespace_fixture_is_session_stable",
+    "0.006000s | tests.unit.test_namespace.TestsFlextTestsNamespace::test_checkout_change_changes_the_token",
+    "0.005000s | tests.unit.test_payload.TestsFlextTestsPayload::test_rejects_unknown_arm",
+    "0.005000s | tests.unit.test_payload.TestsFlextTestsPayload::test_rejects_extra_fields",
+    "0.005000s | tests.unit.test_payload.TestsFlextTestsPayload::test_rejects_collection_with_entries",
+    "0.005000s | tests.unit.test_payload.TestsFlextTestsPayload::test_none_is_an_atom_not_a_payload_document"
+  ]
+}

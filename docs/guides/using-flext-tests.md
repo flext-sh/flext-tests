@@ -95,6 +95,7 @@ above are not declared with `autouse=True`.
 from __future__ import annotations
 
 from flext_core import FlextSettings
+
 from flext_tests import FlextTestsSettings, tm
 
 
@@ -111,6 +112,7 @@ When a fixture is not enough:
 
 ```python
 from flext_core import FlextContainer, FlextSettings
+
 from flext_tests import FlextTestsSettings
 
 FlextSettings.reset_for_testing()
@@ -262,6 +264,7 @@ mutation, including assertion failure:
 
 ```python
 from flext_core import FlextSettings
+
 from flext_tests import tm
 
 

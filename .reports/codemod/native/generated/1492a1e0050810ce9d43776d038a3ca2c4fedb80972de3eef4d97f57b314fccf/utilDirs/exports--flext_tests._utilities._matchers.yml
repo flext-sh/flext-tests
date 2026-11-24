@@ -1,0 +1,1 @@
+{"id":"exports--flext_tests._utilities._matchers","language":"Python","rule":{"regex":"^(?:FlextTestsUtilitiesMatchersAssertions|FlextTestsUtilitiesMatchersContainment|FlextTestsUtilitiesMatchersImmutability|FlextTestsUtilitiesMatchersResult|FlextTestsUtilitiesMatchersScope|FlextTestsUtilitiesMatchersThat|FlextTestsUtilitiesMatchersTypeguards)$"}}

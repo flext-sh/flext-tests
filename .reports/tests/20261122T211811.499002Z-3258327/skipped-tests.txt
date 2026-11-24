@@ -1,0 +1,1 @@
+tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_docker_marker_runs_with_isolated_environment | Docker test environment is not configured: the untracked .env does not name DOCKER_HOST

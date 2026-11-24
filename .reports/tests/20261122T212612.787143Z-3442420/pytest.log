@@ -1,0 +1,128 @@
+================================================= test session starts ==================================================
+platform linux -- Python 3.13.18, pytest-9.2.0, pluggy-1.7.0 -- /home/marlonsc/worktrees/flext-tests/unstyled/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+Using --randomly-seed=2852092459
+testmon: selection deactivated, environment: toolchain-abdb98c90423-594f072b-5834a665
+benchmark: 5.3.1 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+rootdir: /home/marlonsc/worktrees/flext-tests/unstyled
+configfile: pyproject.toml
+plugins: flext-tests-0.12.0, hypothesis-6.170.15, anyio-4.16.0, markdown-docs-0.9.2, randomly-5.1.0, reportlog-1.0.0, testmon-2.3.0, timeout-2.4.0, xdist-3.8.0, platformdirs-4.14.5, benchmark-5.3.1, cov-7.1.0, asyncio-1.5.0, flext-infra-0.12.3
+timeout: 2.0s
+timeout method: signal
+timeout func_only: True
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collecting ... collected 95 items
+run-last-failure: rerun previous 1 failure first
+
+tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_token_matches_the_declared_pattern PASSED           [  1%]
+tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_model_rejects_wrong_shape PASSED                    [  2%]
+tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_ten_thousand_tokens_stay_unique PASSED              [  3%]
+tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_worker_change_changes_the_token PASSED              [  4%]
+tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_checkout_change_changes_the_token PASSED            [  5%]
+tests/unit/test_namespace.py::TestsFlextTestsNamespace::test_run_namespace_fixture_is_session_stable PASSED      [  6%]
+tests/unit/test_namespace_xdist.py::TestsFlextTestsNamespaceXdist::test_pytest_subprocess_reaps_on_base_exception PASSED [  7%]
+tests/unit/test_namespace_xdist.py::TestsFlextTestsNamespaceXdist::test_namespaces_unique_across_two_workers PASSED [  8%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_atoms_preserve_identity PASSED                   [  9%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_owned_tree_validation_preserves_nested_model_identity PASSED [ 10%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_preserves_native_model_identity PASSED          [ 11%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_type_only_does_not_require_payload_conversion PASSED [ 12%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_deep_matcher_preserves_native_nested_leaves PASSED      [ 13%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_type_matcher_inspects_original_payload_subject PASSED   [ 14%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[atom] PASSED [ 15%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[list] PASSED [ 16%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[tuple] PASSED [ 17%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[set] PASSED [ 18%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[frozenset] PASSED [ 20%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_attribute_rules_inspect_original_payload_subject[mapping] PASSED [ 21%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_deep_matcher_distinguishes_missing_path_from_present_none PASSED [ 22%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_preserves_exception_atom_identity PASSED        [ 23%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_matcher_propagates_callback_exception_identity PASSED   [ 24%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_nested_rich_values_survive_owned_tree_validation PASSED [ 25%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_empty_arms_remain_distinct PASSED                       [ 26%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_atom_with_children PASSED                       [ 27%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_mapping_with_atom PASSED                        [ 28%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_collection_roundtrip[native0] PASSED             [ 29%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_collection_roundtrip[native1] PASSED             [ 30%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_collection_with_entries PASSED                  [ 31%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_unknown_arm PASSED                              [ 32%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_none_is_an_atom_not_a_payload_document PASSED           [ 33%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_unsupported_leaf PASSED                         [ 34%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_rejects_extra_fields PASSED                             [ 35%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_arm_cannot_change_after_validation PASSED               [ 36%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_mapping_owns_its_children PASSED                        [ 37%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_binary_file_roundtrip_preserves_non_utf8_bytes PASSED   [ 38%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_textual_projection_rejects_invalid_utf8 PASSED          [ 40%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_ingress_rejects_string_key_collisions PASSED     [ 41%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_native_ingress_rejects_unsupported_nested_leaf PASSED   [ 42%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_format_detection_does_not_serialize_a_native_model PASSED [ 43%]
+tests/unit/test_payload.py::TestsFlextTestsPayload::test_model_file_export_uses_selected_wire_format PASSED      [ 44%]
+tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_models_and_utilities_import_together PASSED  [ 45%]
+tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_selected_enforcement_plugin_uses_its_declared_identity PASSED [ 46%]
+tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_plugin_configure_hooks_keep_their_registered_class_owners PASSED [ 47%]
+tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_consumer_facade_imports_without_container_lifecycle PASSED [ 48%]
+tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_facade_runtime_imports_are_direct_unconditional_dependencies[docker-docker] PASSED [ 49%]
+tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_facade_runtime_imports_are_direct_unconditional_dependencies[python_on_whales-python-on-whales] PASSED [ 50%]
+tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_facade_runtime_imports_are_direct_unconditional_dependencies[flext_cli-flext-cli] PASSED [ 51%]
+tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_facade_runtime_imports_are_direct_unconditional_dependencies[flext_core-flext-core] PASSED [ 52%]
+tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_facade_runtime_imports_are_direct_unconditional_dependencies[flext_infra-flext-infra] PASSED [ 53%]
+tests/unit/test_public_facade.py::TestsFlextTestsPublicFacade::test_facade_runtime_imports_are_direct_unconditional_dependencies[pytest-pytest] PASSED [ 54%]
+tests/unit/test_scratch_storage.py::TestsFlextTestsScratchStorage::test_scratch_root_ini_override PASSED         [ 55%]
+tests/unit/test_scratch_storage.py::TestsFlextTestsScratchStorage::test_scratch_root_utility_is_shared_and_honors_the_override PASSED [ 56%]
+tests/unit/test_scratch_storage.py::TestsFlextTestsScratchStorage::test_session_runtime_storage_is_the_controller_scratch_root PASSED [ 57%]
+tests/unit/test_service_base.py::TestsFlextTestsServiceBase::test_public_service_alias_preserves_generic_test_runtime PASSED [ 58%]
+tests/unit/test_service_base.py::TestsFlextTestsServiceBase::test_isolated_test_runtime_builds_port_service_with_real_adapter PASSED [ 60%]
+tests/unit/test_service_base.py::TestsFlextTestsServiceBase::test_isolated_test_runtime_without_build_still_needs_fetch_global PASSED [ 61%]
+tests/unit/test_service_base.py::TestsFlextTestsServiceBase::test_isolated_test_runtime_without_build_resolves_a_port_free_service PASSED [ 62%]
+tests/unit/test_service_base.py::TestsFlextTestsServiceBase::test_settings_type_without_declaration_raises_with_service_name PASSED [ 63%]
+tests/unit/test_service_base.py::TestsFlextTestsServiceBase::test_settings_type_raises_type_error_naming_the_class PASSED [ 64%]
+tests/unit/test_service_base.py::TestsFlextTestsServiceBase::test_runtime_does_not_interpret_an_unrelated_service_export PASSED [ 65%]
+tests/unit/test_service_base.py::TestsFlextTestsServiceBase::test_runtime_does_not_require_a_package_service_export PASSED [ 66%]
+tests/unit/test_service_base.py::TestsFlextTestsServiceBase::test_runtime_uses_an_explicit_service_without_unrelated_facade_exports PASSED [ 67%]
+tests/unit/test_service_base.py::TestsFlextTestsServiceBase::test_runtime_preserves_explicit_dependencies_and_resets_after_failure PASSED [ 68%]
+tests/unit/test_utilities.py::TestsFlextTestsUtilities::test_file_lock_preserves_shared_inode_between_holders PASSED [ 69%]
+tests/unit/test_utilities.py::TestsFlextTestsUtilities::test_file_lock_releases_after_body_failure PASSED        [ 70%]
+tests/unit/test_utilities.py::TestsFlextTestsUtilities::test_assertion_helper_returns_unwrapped_payload[assert-success-returns-payload] PASSED [ 71%]
+tests/unit/test_utilities.py::TestsFlextTestsUtilities::test_assertion_helper_returns_unwrapped_payload[assert-failure-returns-error] PASSED [ 72%]
+tests/unit/test_utilities.py::TestsFlextTestsUtilities::test_assertion_helper_raises_on_mismatched_outcome[assert-success-on-failure-raises] PASSED [ 73%]
+tests/unit/test_utilities.py::TestsFlextTestsUtilities::test_assertion_helper_raises_on_mismatched_outcome[assert-failure-on-success-raises] PASSED [ 74%]
+tests/unit/test_utilities.py::TestsFlextTestsUtilities::test_assert_failure_accepts_matching_error_substring PASSED [ 75%]
+tests/unit/test_utilities.py::TestsFlextTestsUtilities::test_assert_failure_rejects_non_matching_error_substring PASSED [ 76%]
+tests/unit/test_utilities.py::TestsFlextTestsUtilities::test_assert_success_returns_value_when_expected_value_matches PASSED [ 77%]
+tests/unit/test_utilities.py::TestsFlextTestsUtilities::test_assert_success_rejects_non_matching_expected_value PASSED [ 78%]
+tests/unit/test_inprocess.py::TestsFlextTestsInProcess::test_environment_scope_is_owned_and_restored PASSED      [ 80%]
+tests/unit/test_inprocess.py::TestsFlextTestsInProcess::test_captured_output_renders_unstyled_by_default PASSED  [ 81%]
+tests/unit/test_inprocess.py::TestsFlextTestsInProcess::test_termination_handlers_are_restored PASSED            [ 82%]
+tests/unit/test_inprocess.py::TestsFlextTestsInProcess::test_entrypoint_failure_propagates_and_restores_environment PASSED [ 83%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_assert_result_success_passes PASSED   [ 84%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_ok_preserves_generic_result_payload PASSED [ 85%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_native_matchers_preserve_range_type_and_identity PASSED [ 86%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_structural_checks_preserve_original_collection PASSED [ 87%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_ok_preserves_arbitrary_result_payload PASSED [ 88%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_assert_result_success_fails PASSED    [ 89%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_assert_result_success_custom_message PASSED [ 90%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_assert_result_failure_passes PASSED   [ 91%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_assert_result_failure_fails PASSED    [ 92%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_assert_result_failure_with_expected_error PASSED [ 93%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_assert_result_failure_expected_error_not_found PASSED [ 94%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_assert_dict_contains_passes PASSED    [ 95%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_assert_dict_contains_missing_key PASSED [ 96%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_assert_dict_contains_wrong_value PASSED [ 97%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_assert_list_contains_passes PASSED    [ 98%]
+tests/unit/_matchers/test_results.py::TestsFlextTestsMatchersResults::test_assert_list_contains_missing_item PASSED [100%]
+
+- generated xml file: /home/marlonsc/worktrees/flext-tests/unstyled/.reports/tests/20261122T212612.787143Z-3442420/junit.xml -
+- generated report log file: /home/marlonsc/worktrees/flext-tests/unstyled/.reports/tests/20261122T212612.787143Z-3442420/events.jsonl -
+---------------------------------------------------- flext-enforce -----------------------------------------------------
+runtime warnings captured: 0
+--------------------------------------------------- flext slow tests ---------------------------------------------------
+no test near the ordinary or slow limit
+================================================= slowest 25 durations =================================================
+3.67s call     tests/unit/test_namespace_xdist.py::TestsFlextTestsNamespaceXdist::test_namespaces_unique_across_two_workers
+2.40s call     tests/unit/test_service_base.py::TestsFlextTestsServiceBase::test_runtime_uses_an_explicit_service_without_unrelated_facade_exports
+2.34s call     tests/unit/test_service_base.py::TestsFlextTestsServiceBase::test_runtime_does_not_require_a_package_service_export
+2.04s call     tests/unit/test_service_base.py::TestsFlextTestsServiceBase::test_runtime_does_not_interpret_an_unrelated_service_export
+2.03s call     tests/unit/test_service_base.py::TestsFlextTestsServiceBase::test_runtime_preserves_explicit_dependencies_and_resets_after_failure
+
+(20 durations < 2s hidden.)
+================================================= 95 passed in 18.44s ==================================================

@@ -1,0 +1,99 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/Schemata/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "flext-infra-check",
+          "informationUri": "https://github.com/flext-sh/flext-infra",
+          "rules": []
+        }
+      },
+      "results": []
+    }
+  ],
+  "properties": {
+    "phase": "complete",
+    "requested_gates": [
+      "format",
+      "markdown-format",
+      "markdown-code"
+    ],
+    "pending_gates": [],
+    "targets": [
+      {
+        "name": "unstyled",
+        "path": "/home/marlonsc/worktrees/flext-tests/unstyled",
+        "applicable_gates": [
+          "format",
+          "markdown-format",
+          "markdown-code"
+        ],
+        "source_identity": null
+      }
+    ],
+    "results": [
+      {
+        "project": "unstyled",
+        "gates": {
+          "format": {
+            "result": {
+              "project": "unstyled",
+              "gate": "format",
+              "passed": true,
+              "errors": [],
+              "duration": 0.146
+            },
+            "issues": [],
+            "raw_receipt": "/home/marlonsc/worktrees/flext-tests/unstyled/.reports/check/d8902f2a-617d-45d6-bb26-e62c3dc92f01/unstyled/format.raw.log",
+            "outcome": "clean",
+            "process": {
+              "raw_return_code": 0,
+              "timed_out": false,
+              "forwarded_signal": null
+            },
+            "components": {},
+            "requested_components": []
+          },
+          "markdown-format": {
+            "result": {
+              "project": "unstyled",
+              "gate": "markdown-format",
+              "passed": true,
+              "errors": [],
+              "duration": 0.635
+            },
+            "issues": [],
+            "raw_receipt": "/home/marlonsc/worktrees/flext-tests/unstyled/.reports/check/d8902f2a-617d-45d6-bb26-e62c3dc92f01/unstyled/markdown-format.raw.log",
+            "outcome": "clean",
+            "process": {
+              "raw_return_code": 0,
+              "timed_out": false,
+              "forwarded_signal": null
+            },
+            "components": {},
+            "requested_components": []
+          },
+          "markdown-code": {
+            "result": {
+              "project": "unstyled",
+              "gate": "markdown-code",
+              "passed": true,
+              "errors": [],
+              "duration": 0.897
+            },
+            "issues": [],
+            "raw_receipt": "/home/marlonsc/worktrees/flext-tests/unstyled/.reports/check/d8902f2a-617d-45d6-bb26-e62c3dc92f01/unstyled/markdown-code.raw.log",
+            "outcome": "clean",
+            "process": null,
+            "components": {},
+            "requested_components": []
+          }
+        }
+      }
+    ],
+    "selected_files": [],
+    "global_targets": null
+  }
+}

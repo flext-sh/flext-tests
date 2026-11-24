@@ -1,0 +1,5 @@
+INFO: environment python=/home/marlonsc/worktrees/flext-tests/unstyled/.venv/bin/python prefix=/home/marlonsc/worktrees/flext-tests/unstyled/.venv metadata_paths=(PosixPath('/home/marlonsc/worktrees/flext-tests/unstyled/.venv/lib/python3.13/site-packages'),)
+INFO: environment distribution=flext-tests installed_version=0.12.0 installed_location=/home/marlonsc/worktrees/flext-tests/unstyled/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/worktrees/flext-tests/unstyled
+INFO: environment distribution=flext-tests import_source=/home/marlonsc/worktrees/flext-tests/unstyled/src/flext_tests
+INFO: environment distribution=flext-tests loaded_import_binding=unobserved resolver_only=True
+✅ workspace editable provenance verified

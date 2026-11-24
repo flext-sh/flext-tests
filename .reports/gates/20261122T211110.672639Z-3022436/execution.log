@@ -1,0 +1,176 @@
+INFO: check: registry initialization start
+INFO: check: registry initialization complete
+INFO: check: selection start phase=complete
+INFO: check: selection complete projects=1 gates=20
+INFO: check: preparation start identity=True
+INFO: check: preparation complete projects=1
+INFO: check: prerequisite planning start projects=1
+INFO: check: prerequisite planning complete gates=2
+INFO: check: prerequisite wave start gate=lint jobs=1
+INFO: gate_executed project=unstyled gate=lint passed=True elapsed=0.25
+2026-11-22T21:11:14.801060Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=267.55 failed=0 skipped=0 total_stages=1
+INFO: check: prerequisite wave complete gate=lint
+    [OK] lint           0 errors  (0.25s)
+INFO: check: prerequisite wave start gate=pyrefly jobs=1
+INFO: gate_executed project=unstyled gate=pyrefly passed=True elapsed=3.671
+2026-11-22T21:11:18.498765Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=3671.3 failed=0 skipped=0 total_stages=1
+INFO: check: prerequisite wave complete gate=pyrefly
+    [OK] pyrefly        0 errors  (3.67s)
+[1/1] unstyled check ...
+INFO: rope: opening workspace at /home/marlonsc/worktrees/flext-tests/unstyled
+INFO: gate_executed project=unstyled gate=loc-cap passed=True elapsed=3.36
+2026-11-22T21:11:22.831285Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=3360.73 failed=0 skipped=0 total_stages=1
+INFO: gate_executed project=unstyled gate=markdown-format passed=True elapsed=3.375
+2026-11-22T21:11:22.844214Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=3375.62 failed=0 skipped=0 total_stages=1
+INFO: gate_executed project=unstyled gate=markdown passed=True elapsed=3.381
+2026-11-22T21:11:22.849327Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=3381.35 failed=0 skipped=0 total_stages=1
+INFO: gate_executed project=unstyled gate=format passed=True elapsed=3.472
+2026-11-22T21:11:22.938991Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=3472.26 failed=0 skipped=0 total_stages=1
+INFO: gate_executed project=unstyled gate=index-declarations passed=True elapsed=0.388
+2026-11-22T21:11:23.238856Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=388.4 failed=0 skipped=0 total_stages=1
+INFO: rope: workspace ready in 5.35s
+INFO: fresh-import: running 4 probes with 3 workers
+INFO: fresh-import: probe 0 start flext_tests: console_scripts/flext-tests=flext_tests.cli:main
+INFO: fresh-import: probe 1 start flext_tests: pytest11/flext_tests=flext_tests.conftest_plugin:FlextTestsConftestPlugin
+INFO: fresh-import: probe 2 start flext_tests: pytest11/flext_tests.enforcement_plugin=flext_tests.enforcement_plugin:FlextTestsEnforcementPlugin
+INFO: gate_executed project=unstyled gate=markdown-code passed=True elapsed=5.864
+2026-11-22T21:11:25.333619Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=5864.34 failed=0 skipped=0 total_stages=1
+INFO: gate_executed project=unstyled gate=layout passed=True elapsed=2.205
+2026-11-22T21:11:25.446405Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=2205.51 failed=0 skipped=0 total_stages=1
+INFO: fresh-import: probe 2 end success=True
+INFO: fresh-import: probe 3 start flext_tests
+INFO: gate_executed project=unstyled gate=direnv passed=True elapsed=1.227
+2026-11-22T21:11:26.563944Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=1228.59 failed=0 skipped=0 total_stages=1
+INFO: fresh-import: probe 1 end success=True
+INFO: gate_executed project=unstyled gate=security passed=True elapsed=8.489
+2026-11-22T21:11:27.956928Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=8489.49 failed=0 skipped=0 total_stages=1
+INFO: mod: producer start name=codemod_file_scopes project=unstyled
+INFO: fresh-import: probe 0 end success=True
+INFO: environment python=/home/marlonsc/worktrees/flext-tests/unstyled/.venv/bin/python prefix=/home/marlonsc/worktrees/flext-tests/unstyled/.venv metadata_paths=(PosixPath('/home/marlonsc/worktrees/flext-tests/unstyled/.venv/lib/python3.13/site-packages'),)
+INFO: gate_executed project=unstyled gate=runtime-integrity passed=True elapsed=11.827
+2026-11-22T21:11:31.293946Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=11827.35 failed=0 skipped=0 total_stages=1
+INFO: fresh-import: probe 3 end success=True
+INFO: gate_executed project=unstyled gate=fresh-import passed=True elapsed=9.036
+2026-11-22T21:11:31.868893Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=9036.48 failed=0 skipped=0 total_stages=1
+INFO: gate_executed project=unstyled gate=enforcement-catalog passed=True elapsed=12.45
+2026-11-22T21:11:31.922092Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=12450.59 failed=0 skipped=0 total_stages=1
+INFO: mod: import graph start
+INFO: mod: import graph modules=0 file=src/flext_tests/__init__.py
+INFO: mod: import graph finish modules=179
+INFO: mod: producer stop name=codemod_file_scopes completed=True duration=6.05s
+INFO: mod: producer start name=codemod_layout_scopes project=unstyled
+INFO: gate_executed project=unstyled gate=conflict-markers passed=True elapsed=16.331
+2026-11-22T21:11:36.568235Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=17097.83 failed=0 skipped=0 total_stages=1
+INFO: gate_executed project=unstyled gate=deps passed=False elapsed=28.278
+2026-11-22T21:11:51.242830Z [error    ] stage_failed                   [flext_cli.api.FlextCli] error='deps failed for unstyled with 1 findings' stage_id=deps
+2026-11-22T21:11:51.243467Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=28398.46 failed=1 skipped=0 total_stages=1
+INFO: mod: producer stop name=codemod_layout_scopes completed=True duration=18.29s
+INFO: mod: producer start name=codemod_declaration_scopes project=unstyled
+INFO: gate_executed project=unstyled gate=pydantic-census passed=True elapsed=39.408
+2026-11-22T21:11:58.880981Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=39409.14 failed=0 skipped=0 total_stages=1
+INFO: mod: producer stop name=codemod_declaration_scopes completed=True duration=6.49s
+INFO: mod: producer start name=codemod_implementation_scopes project=unstyled
+INFO: mod: producer stop name=codemod_implementation_scopes completed=True duration=0.25s
+INFO: mod: producer start name=codemod_import_header_rules project=unstyled
+INFO: mod: runtime distributions start requirements=19
+INFO: mod: runtime distributions finish distributions=159
+INFO: mod: runtime dependency closure start
+INFO: mod: runtime dependency closure finish distributions=87
+INFO: mod: runtime import package metadata finish packages=173
+INFO: mod: runtime imports package=1/173 module=c787785866c7b801238d__mypyc selected=0
+INFO: mod: runtime imports finish modules=95
+INFO: mod: producer stop name=codemod_import_header_rules completed=True duration=4.02s
+INFO: mod: producer start name=codemod_module_member_rules project=unstyled
+INFO: mod: producer stop name=codemod_module_member_rules completed=True duration=0.05s
+INFO: mod: producer start name=codemod_type_set_rules project=unstyled
+INFO: mod: producer stop name=codemod_type_set_rules completed=True duration=0.20s
+INFO: mod: producer start name=codemod_compat_rules project=unstyled
+INFO: mod: producer stop name=codemod_compat_rules completed=True duration=0.07s
+INFO: mod: producer start name=codemod_layer_zero_rules project=unstyled
+INFO: mod: producer stop name=codemod_layer_zero_rules completed=True duration=0.22s
+INFO: mod: producer start name=codemod_external_import_rules project=unstyled
+INFO: mod: producer stop name=codemod_external_import_rules completed=True duration=0.13s
+INFO: mod: producer start name=codemod_library_type_rules project=unstyled
+INFO: mod: producer stop name=codemod_library_type_rules completed=True duration=0.10s
+INFO: mod: producer start name=codemod_ambient_environ_rules project=unstyled
+INFO: mod: producer stop name=codemod_ambient_environ_rules completed=True duration=0.11s
+INFO: mod: producer start name=codemod_facade_member_rules project=unstyled
+INFO: mod: producer stop name=codemod_facade_member_rules completed=True duration=2.86s
+INFO: mod: producer start name=codemod_facade_component_rules project=unstyled
+INFO: mod: producer stop name=codemod_facade_component_rules completed=True duration=0.05s
+INFO: mod: producer start name=codemod_library_member_name_rules project=unstyled
+INFO: mod: producer stop name=codemod_library_member_name_rules completed=True duration=0.05s
+INFO: mod: producer start name=codemod_composition_root_collision_rules project=unstyled
+INFO: mod: producer stop name=codemod_composition_root_collision_rules completed=True duration=0.66s
+INFO: mod: producer start name=codemod_facade_member_ownership_rules project=unstyled
+INFO: mod: producer stop name=codemod_facade_member_ownership_rules completed=True duration=0.06s
+INFO: mod: producer start name=codemod_partitioned_rules project=unstyled
+INFO: mod: producer stop name=codemod_partitioned_rules completed=True duration=0.15s
+INFO: mod: producer start name=codemod_reverse_import_rules project=unstyled
+INFO: mod: producer stop name=codemod_reverse_import_rules completed=True duration=0.55s
+INFO: mod: producer start name=codemod_own_package_utilities project=unstyled
+INFO: mod: producer stop name=codemod_own_package_utilities completed=True duration=0.01s
+INFO: mod: producer start name=codemod_stdlib_module_utilities project=unstyled
+INFO: mod: producer stop name=codemod_stdlib_module_utilities completed=True duration=0.00s
+INFO: mod: producer start name=codemod_runtime_package_utilities project=unstyled
+INFO: mod: producer stop name=codemod_runtime_package_utilities completed=True duration=0.02s
+INFO: mod: producer start name=codemod_generated_module_utilities project=unstyled
+INFO: mod: producer stop name=codemod_generated_module_utilities completed=True duration=0.00s
+INFO: mod: producer start name=codemod_package_export_utilities project=unstyled
+INFO: mod: producer stop name=codemod_package_export_utilities completed=True duration=0.05s
+INFO: mod: producer start name=codemod_facade_family_package_utilities project=unstyled
+INFO: mod: producer stop name=codemod_facade_family_package_utilities completed=True duration=0.00s
+INFO: mod: producer start name=codemod_facade_package_utilities project=unstyled
+INFO: mod: producer stop name=codemod_facade_package_utilities completed=True duration=0.00s
+INFO: mod: producer start name=codemod_alias_utilities project=unstyled
+INFO: mod: producer stop name=codemod_alias_utilities completed=True duration=0.01s
+INFO: mod: producer start name=codemod_imported_export_utilities project=unstyled
+INFO: mod: producer stop name=codemod_imported_export_utilities completed=True duration=0.03s
+INFO: mod: producer start name=codemod_compose_module_utilities project=unstyled
+INFO: mod: producer stop name=codemod_compose_module_utilities completed=True duration=0.03s
+INFO: mod: producer start name=codemod_requested_utilities project=unstyled
+INFO: mod: producer stop name=codemod_requested_utilities completed=True duration=5.18s
+mod: ast-grep project=unstyled provider=flext-infra,generated rules=539
+mod: ast-grep cache hit=0 miss=174
+mod: start ast-grep scan args=71
+mod: finish ast-grep exit=1 duration=1.24s stdout_file=/home/marlonsc/tmp/mod-native-w493jj0l/0-scanned
+mod: start ast-grep scan args=71
+mod: finish ast-grep exit=1 duration=1.75s stdout_file=/home/marlonsc/tmp/mod-native-w493jj0l/64-scanned
+mod: start ast-grep scan args=53
+mod: finish ast-grep exit=1 duration=1.85s stdout_file=/home/marlonsc/tmp/mod-native-w493jj0l/128-scanned
+mod: native findings=557
+INFO: mod: import graph start
+INFO: mod: import graph modules=0 file=src/flext_tests/__init__.py
+INFO: mod: import graph finish modules=179
+INFO: gate_executed project=unstyled gate=codemod passed=False elapsed=62.485
+2026-11-22T21:12:28.916457Z [error    ] stage_failed                   [flext_cli.api.FlextCli] error='codemod failed for unstyled with 557 findings' stage_id=codemod
+2026-11-22T21:12:28.917171Z [info     ] pipeline_complete              [flext_cli.api.FlextCli] duration_ms=65976.88 failed=1 skipped=0 total_stages=1
+    [OK] runtime-integrity     0 errors  (11.83s)
+    [OK] format         0 errors  (3.47s)
+    [OK] security       0 errors  (8.49s)
+    [OK] markdown       0 errors  (3.38s)
+    [OK] markdown-format     0 errors  (3.38s)
+    [OK] markdown-code     0 errors  (5.86s)
+    [OK] conflict-markers     0 errors  (16.33s)
+    [OK] loc-cap        0 errors  (3.36s)
+    [OK] enforcement-catalog     0 errors  (12.45s)
+    [OK] pydantic-census     0 errors  (39.41s)
+    [OK] fresh-import     0 errors  (9.04s)
+    [FAIL] deps           1 errors  (28.28s)
+INFO: deps: findings; Native output receipt: /home/marlonsc/worktrees/flext-tests/unstyled/.reports/gates/20261122T211110.672639Z-3022436/check/77c26ff8-2c71-4002-8b4d-6e86fc61eb66/unstyled/deps.raw.log
+    [OK] index-declarations     0 errors  (0.39s)
+    [FAIL] codemod      557 errors  (62.48s)
+INFO: codemod: findings; Native output receipt: /home/marlonsc/worktrees/flext-tests/unstyled/.reports/gates/20261122T211110.672639Z-3022436/check/77c26ff8-2c71-4002-8b4d-6e86fc61eb66/unstyled/codemod.raw.log
+    [OK] layout         0 errors  (2.21s)
+    [OK] direnv         0 errors  (1.23s)
+  [FAIL] check    unstyled                 70.04s
+
+-- check summary --
+Total: 1  Success: 0  Failed: 1  Skipped: 0  (74.04s)
+INFO: Execution INCOMPLETE: 1/1 projects reached; see the requested gate inventory in the reports
+INFO: NOT EXECUTED: duplication, smells
+INFO: Reports: /home/marlonsc/worktrees/flext-tests/unstyled/.reports/gates/20261122T211110.672639Z-3022436/check/77c26ff8-2c71-4002-8b4d-6e86fc61eb66/check-report.md
+INFO:          /home/marlonsc/worktrees/flext-tests/unstyled/.reports/gates/20261122T211110.672639Z-3022436/check/77c26ff8-2c71-4002-8b4d-6e86fc61eb66/check-report.sarif
+INFO: Findings by project (see reports for detail):
+INFO: unstyled                          558  (deps=1, codemod=557)
+❌ quality check target accounting is incomplete

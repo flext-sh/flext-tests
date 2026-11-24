@@ -1,0 +1,6 @@
+=== FAILURE: tests.unit.test_public_facade.TestsFlextTestsPublicFacade::test_plugin_configure_hooks_keep_their_registered_class_owners ===
+KeyError: 'flext_tests.enforcement_plugin'
+tests/unit/test_public_facade.py:101: in test_plugin_configure_hooks_keep_their_registered_class_owners
+    tm.ok(configure[name] is entry.load())
+          ^^^^^^^^^^^^^^^
+E   KeyError: 'flext_tests.enforcement_plugin'

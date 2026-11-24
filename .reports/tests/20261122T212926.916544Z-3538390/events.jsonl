@@ -1,0 +1,24 @@
+{"pytest_version": "9.2.0", "$report_type": "SessionStart"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/__init__.py", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/constants.py", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/integration/__init__.py", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/integration", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/models.py", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/protocols.py", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/typings.py", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/unit/__init__.py", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/unit/_docker/__init__.py", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/unit/_docker", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/unit/_files/__init__.py", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/unit/_files/test_models.py", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/unit/_files/test_models.py", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/unit/_files", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/unit/_matchers/__init__.py", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/unit/_matchers", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/unit/test_mypy_matcher_repro.py", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/unit/test_mypy_matcher_repro.py::TestsFlextTestsMypyMatcherRepro", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/unit/test_mypy_matcher_repro.py", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests/unit", "$report_type": "CollectReport"}
+{"outcome": "passed", "longrepr": null, "result": null, "sections": [], "nodeid": "tests", "$report_type": "CollectReport"}
+{"exitstatus": 5, "$report_type": "SessionFinish"}

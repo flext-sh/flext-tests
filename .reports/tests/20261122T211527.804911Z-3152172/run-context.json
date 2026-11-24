@@ -1,0 +1,8 @@
+{
+  "execution_mode": "global-incremental",
+  "isolated_fixture": false,
+  "testmon_db": "/home/marlonsc/worktrees/flext-tests/unstyled/.testmondata",
+  "deadline_monotonic": 328645.477325425,
+  "report_directory": "/home/marlonsc/worktrees/flext-tests/unstyled/.reports/tests/20261122T211527.804911Z-3152172",
+  "profile_sha256": null
+}
