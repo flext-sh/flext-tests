@@ -1,0 +1,1 @@
+{"id":"exports--flext_tests._fixtures","language":"Python","rule":{"regex":"^(?:FlextTestsCapabilityPlugin|FlextTestsFixtureTreesFixtures|FlextTestsFixturesEnforcement|FlextTestsNamespaceFixtures|FlextTestsScratchStoragePlugin|FlextTestsSettingsFixtures|project_metadata|project_tool_flext)$"}}

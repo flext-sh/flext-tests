@@ -1,0 +1,134 @@
+================================================= test session starts ==================================================
+platform linux -- Python 3.13.17, pytest-9.2.0, pluggy-1.7.0 -- /home/marlonsc/flext/.venv/bin/python
+cachedir: .pytest_cache
+benchmark: 5.3.1 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+Using --randomly-seed=2107376290
+hypothesis profile 'default'
+rootdir: /home/marlonsc/flext/flext-tests
+configfile: pyproject.toml
+plugins: flext-tests-0.12.0, asyncio-1.4.1.post1, benchmark-5.3.1, cov-7.1.0, markdown-docs-0.9.2, randomly-5.0.0, reportlog-1.0.0, singer-sdk-0.54.9, timeout-2.4.0, xdist-3.8.0, hypothesis-6.170.14, anyio-4.16.0, platformdirs-4.14.5, flext-infra-0.12.1
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+timeout: 2.0s
+timeout method: signal
+timeout func_only: True
+collecting ... collected 590 items
+run-last-failure: rerun previous 10 failures first
+
+tests/unit/test_enforcement_dispatcher.py::TestsFlextTestsEnforcementDispatcher::test_rule_list_strips_blank_and_padded_fields FAILED [  0%]
+
+======================================================= FAILURES =======================================================
+__________________ TestsFlextTestsEnforcementDispatcher.test_rule_list_strips_blank_and_padded_fields __________________
+/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/pathlib/_local.py:231: in __str__
+    return self._str
+           ^^^^^^^^^
+E   AttributeError: 'pathlib._local.PurePosixPath' object has no attribute '_str'
+
+During handling of the above exception, another exception occurred:
+/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_dispatcher.py:229: in test_rule_list_strips_blank_and_padded_fields
+    rule = self._runtime_rule_id()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_dispatcher.py:108: in _runtime_rule_id
+    for rule in u.Tests.active_rules(cls._cfg())
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/enforcement.py:69: in active_rules
+    catalog = cls.build_canonical_catalog(cfg.catalog_root)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/enforcement.py:44: in build_canonical_catalog
+    planned = infra_u.Infra.codemod_rule_plan(snapshot)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:676: in codemod_rule_plan
+    provider = cls.codemod_generated_provider(
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:792: in codemod_generated_provider
+    rendered = cls.codemod_native_generated(
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:339: in codemod_native_generated
+    rules = cls.codemod_native_rules(
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:990: in codemod_native_rules
+    return cls._rendered_rules(
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:1035: in _rendered_rules
+    rendered = cls.codemod_native_render(snapshot, project, entry, computed)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:940: in codemod_native_render
+    renderer(snapshot, project, facts[entry.facts]), strict=True
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/project_facts.py:1284: in codemod_partitioned_rules
+    FlextInfraUtilitiesCodemodScopes.codemod_partitioned_documents(
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/scopes.py:135: in codemod_partitioned_documents
+    for key, native in cls._partition_documents(
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/scopes.py:403: in _partition_documents
+    admitted = list[t.JsonValue](cls._admitted(members, files, ignores))
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/scopes.py:531: in _admitted
+    if (files is None or any(PurePosixPath(path).full_match(g) for g in files))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/scopes.py:531: in <genexpr>
+    if (files is None or any(PurePosixPath(path).full_match(g) for g in files))
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/pathlib/_abc.py:399: in full_match
+    return match(self._pattern_str) is not None
+                 ^^^^^^^^^^^^^^^^^
+/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/pathlib/_local.py:454: in _pattern_str
+    path_str = str(self)
+               ^^^^^^^^^
+/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/pathlib/_local.py:233: in __str__
+    self._str = self._format_parsed_parts(self.drive, self.root,
+                                          ^^^^^^^^^^
+/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/pathlib/_local.py:289: in drive
+    @property
+E   Failed: Timeout (>20.0s) from pytest-timeout.
+------------------------------------------------- Captured stdout call -------------------------------------------------
+INFO: mod: producer start name=codemod_file_scopes project=flext-tests
+INFO: mod: import graph start
+INFO: mod: import graph modules=0 file=conftest.py
+INFO: mod: import graph finish modules=171
+INFO: mod: producer stop name=codemod_file_scopes completed=True duration=1.07s
+INFO: mod: producer start name=codemod_layout_scopes project=flext-tests
+INFO: mod: producer stop name=codemod_layout_scopes completed=True duration=6.69s
+INFO: mod: producer start name=codemod_declaration_scopes project=flext-tests
+INFO: mod: producer stop name=codemod_declaration_scopes completed=True duration=1.82s
+INFO: mod: producer start name=codemod_implementation_scopes project=flext-tests
+INFO: mod: producer stop name=codemod_implementation_scopes completed=True duration=0.35s
+INFO: mod: producer start name=codemod_import_header_rules project=flext-tests
+INFO: mod: runtime distributions start requirements=17
+INFO: mod: runtime distributions finish distributions=281
+INFO: mod: runtime dependency closure start
+INFO: mod: runtime dependency closure finish distributions=81
+INFO: mod: runtime import package metadata finish packages=271
+INFO: mod: runtime imports package=1/271 module=toml-stubs selected=0
+INFO: mod: runtime imports finish modules=86
+INFO: mod: producer stop name=codemod_import_header_rules completed=True duration=2.31s
+INFO: mod: producer start name=codemod_module_member_rules project=flext-tests
+INFO: mod: producer stop name=codemod_module_member_rules completed=True duration=0.04s
+INFO: mod: producer start name=codemod_type_set_rules project=flext-tests
+INFO: mod: producer stop name=codemod_type_set_rules completed=True duration=0.01s
+INFO: mod: producer start name=codemod_compat_rules project=flext-tests
+INFO: mod: producer stop name=codemod_compat_rules completed=True duration=0.02s
+INFO: mod: producer start name=codemod_layer_zero_rules project=flext-tests
+INFO: mod: producer stop name=codemod_layer_zero_rules completed=True duration=0.32s
+INFO: mod: producer start name=codemod_external_import_rules project=flext-tests
+INFO: mod: producer stop name=codemod_external_import_rules completed=True duration=0.26s
+INFO: mod: producer start name=codemod_library_type_rules project=flext-tests
+INFO: mod: producer stop name=codemod_library_type_rules completed=True duration=0.14s
+INFO: mod: producer start name=codemod_ambient_environ_rules project=flext-tests
+INFO: mod: producer stop name=codemod_ambient_environ_rules completed=True duration=0.15s
+INFO: mod: producer start name=codemod_facade_member_rules project=flext-tests
+INFO: mod: producer stop name=codemod_facade_member_rules completed=True duration=4.34s
+INFO: mod: producer start name=codemod_facade_component_rules project=flext-tests
+INFO: mod: producer stop name=codemod_facade_component_rules completed=True duration=0.04s
+INFO: mod: producer start name=codemod_library_member_name_rules project=flext-tests
+INFO: mod: producer stop name=codemod_library_member_name_rules completed=True duration=0.07s
+INFO: mod: producer start name=codemod_facade_member_ownership_rules project=flext-tests
+INFO: mod: producer stop name=codemod_facade_member_ownership_rules completed=True duration=0.05s
+INFO: mod: producer start name=codemod_partitioned_rules project=flext-tests
+INFO: mod: producer stop name=codemod_partitioned_rules completed=False duration=0.16s
+---- generated xml file: /home/marlonsc/flext/flext-tests/.reports/tests/20261116T163000.287946Z-1760007/junit.xml -----
+- generated report log file: /home/marlonsc/flext/flext-tests/.reports/tests/20261116T163000.287946Z-1760007/events.jsonl -
+--------------------------------------------------- flext slow tests ---------------------------------------------------
+no test near the ordinary or slow limit
+================================================= slowest 25 durations =================================================
+20.00s call     tests/unit/test_enforcement_dispatcher.py::TestsFlextTestsEnforcementDispatcher::test_rule_list_strips_blank_and_padded_fields
+
+(2 durations < 2s hidden.)
+=============================================== short test summary info ================================================
+FAILED tests/unit/test_enforcement_dispatcher.py::TestsFlextTestsEnforcementDispatcher::test_rule_list_strips_blank_and_padded_fields
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+================================================== 1 failed in 21.06s ==================================================

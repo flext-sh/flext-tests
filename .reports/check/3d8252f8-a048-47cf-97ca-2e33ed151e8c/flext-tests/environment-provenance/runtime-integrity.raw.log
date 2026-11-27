@@ -1,0 +1,95 @@
+INFO: environment python=/home/marlonsc/flext/.venv/bin/python prefix=/home/marlonsc/flext/.venv metadata_paths=(PosixPath('/home/marlonsc/flext/.venv/lib/python3.13/site-packages'),)
+INFO: environment distribution=flext installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=11 expected_source=/home/marlonsc/flext
+INFO: environment distribution=flext import_source=/home/marlonsc/flext/src/flext
+INFO: environment distribution=flext loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-api installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-api
+INFO: environment distribution=flext-api import_source=/home/marlonsc/flext/flext-api/src/flext_api
+INFO: environment distribution=flext-api loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-auth installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-auth
+INFO: environment distribution=flext-auth import_source=/home/marlonsc/flext/flext-auth/src/flext_auth
+INFO: environment distribution=flext-auth loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-cli installed_version=0.12.1 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-cli
+INFO: environment distribution=flext-cli import_source=/home/marlonsc/flext/flext-cli/src/flext_cli
+INFO: environment distribution=flext-core installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-core
+INFO: environment distribution=flext-core import_source=/home/marlonsc/flext/flext-core/src/flext_core
+INFO: environment distribution=flext-db-oracle installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-db-oracle
+INFO: environment distribution=flext-db-oracle import_source=/home/marlonsc/flext/flext-db-oracle/src/flext_db_oracle
+INFO: environment distribution=flext-db-oracle loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-dbt-ldap installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-dbt-ldap
+INFO: environment distribution=flext-dbt-ldap import_source=/home/marlonsc/flext/flext-dbt-ldap/src/flext_dbt_ldap
+INFO: environment distribution=flext-dbt-ldap loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-dbt-ldif installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-dbt-ldif
+INFO: environment distribution=flext-dbt-ldif import_source=/home/marlonsc/flext/flext-dbt-ldif/src/flext_dbt_ldif
+INFO: environment distribution=flext-dbt-ldif loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-dbt-oracle installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-dbt-oracle
+INFO: environment distribution=flext-dbt-oracle import_source=/home/marlonsc/flext/flext-dbt-oracle/src/flext_dbt_oracle
+INFO: environment distribution=flext-dbt-oracle loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-dbt-oracle-wms installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-dbt-oracle-wms
+INFO: environment distribution=flext-dbt-oracle-wms import_source=/home/marlonsc/flext/flext-dbt-oracle-wms/src/flext_dbt_oracle_wms
+INFO: environment distribution=flext-dbt-oracle-wms loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-grpc installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-grpc
+INFO: environment distribution=flext-grpc import_source=/home/marlonsc/flext/flext-grpc/src/flext_grpc
+INFO: environment distribution=flext-grpc loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-infra installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=14 expected_source=/home/marlonsc/flext/flext-infra
+INFO: environment distribution=flext-infra import_source=/home/marlonsc/flext/flext-infra/src/flext_infra
+INFO: environment distribution=flext-ldap installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-ldap
+INFO: environment distribution=flext-ldap import_source=/home/marlonsc/flext/flext-ldap/src/flext_ldap
+INFO: environment distribution=flext-ldap loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-ldif installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-ldif
+INFO: environment distribution=flext-ldif import_source=/home/marlonsc/flext/flext-ldif/src/flext_ldif
+INFO: environment distribution=flext-ldif loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-meltano installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-meltano
+INFO: environment distribution=flext-meltano import_source=/home/marlonsc/flext/flext-meltano/src/flext_meltano
+INFO: environment distribution=flext-meltano loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-observability installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-observability
+INFO: environment distribution=flext-observability import_source=/home/marlonsc/flext/flext-observability/src/flext_observability
+INFO: environment distribution=flext-observability loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-oracle-oic installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=14 expected_source=/home/marlonsc/flext/flext-oracle-oic
+INFO: environment distribution=flext-oracle-oic import_source=/home/marlonsc/flext/flext-oracle-oic/src/flext_oracle_oic
+INFO: environment distribution=flext-oracle-oic loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-oracle-wms installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-oracle-wms
+INFO: environment distribution=flext-oracle-wms import_source=/home/marlonsc/flext/flext-oracle-wms/src/flext_oracle_wms
+INFO: environment distribution=flext-oracle-wms loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-plugin installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-plugin
+INFO: environment distribution=flext-plugin import_source=/home/marlonsc/flext/flext-plugin/src/flext_plugin
+INFO: environment distribution=flext-plugin loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-quality installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-quality
+INFO: environment distribution=flext-quality import_source=/home/marlonsc/flext/flext-quality/src/flext_quality
+INFO: environment distribution=flext-quality loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-tap-ldap installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=14 expected_source=/home/marlonsc/flext/flext-tap-ldap
+INFO: environment distribution=flext-tap-ldap import_source=/home/marlonsc/flext/flext-tap-ldap/src/flext_tap_ldap
+INFO: environment distribution=flext-tap-ldap loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-tap-ldif installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=14 expected_source=/home/marlonsc/flext/flext-tap-ldif
+INFO: environment distribution=flext-tap-ldif import_source=/home/marlonsc/flext/flext-tap-ldif/src/flext_tap_ldif
+INFO: environment distribution=flext-tap-ldif loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-tap-oracle installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=14 expected_source=/home/marlonsc/flext/flext-tap-oracle
+INFO: environment distribution=flext-tap-oracle import_source=/home/marlonsc/flext/flext-tap-oracle/src/flext_tap_oracle
+INFO: environment distribution=flext-tap-oracle loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-tap-oracle-oic installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=14 expected_source=/home/marlonsc/flext/flext-tap-oracle-oic
+INFO: environment distribution=flext-tap-oracle-oic import_source=/home/marlonsc/flext/flext-tap-oracle-oic/src/flext_tap_oracle_oic
+INFO: environment distribution=flext-tap-oracle-oic loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-tap-oracle-wms installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=14 expected_source=/home/marlonsc/flext/flext-tap-oracle-wms
+INFO: environment distribution=flext-tap-oracle-wms import_source=/home/marlonsc/flext/flext-tap-oracle-wms/src/flext_tap_oracle_wms
+INFO: environment distribution=flext-tap-oracle-wms loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-target-ldap installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-target-ldap
+INFO: environment distribution=flext-target-ldap import_source=/home/marlonsc/flext/flext-target-ldap/src/flext_target_ldap
+INFO: environment distribution=flext-target-ldap loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-target-ldif installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=14 expected_source=/home/marlonsc/flext/flext-target-ldif
+INFO: environment distribution=flext-target-ldif import_source=/home/marlonsc/flext/flext-target-ldif/src/flext_target_ldif
+INFO: environment distribution=flext-target-ldif loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-target-oracle installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=14 expected_source=/home/marlonsc/flext/flext-target-oracle
+INFO: environment distribution=flext-target-oracle import_source=/home/marlonsc/flext/flext-target-oracle/src/flext_target_oracle
+INFO: environment distribution=flext-target-oracle loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-target-oracle-oic installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=14 expected_source=/home/marlonsc/flext/flext-target-oracle-oic
+INFO: environment distribution=flext-target-oracle-oic import_source=/home/marlonsc/flext/flext-target-oracle-oic/src/flext_target_oracle_oic
+INFO: environment distribution=flext-target-oracle-oic loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-target-oracle-wms installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=14 expected_source=/home/marlonsc/flext/flext-target-oracle-wms
+INFO: environment distribution=flext-target-oracle-wms import_source=/home/marlonsc/flext/flext-target-oracle-wms/src/flext_target_oracle_wms
+INFO: environment distribution=flext-target-oracle-wms loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-tests installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-tests
+INFO: environment distribution=flext-tests import_source=/home/marlonsc/flext/flext-tests/src/flext_tests
+INFO: environment distribution=flext-tests loaded_import_binding=unobserved resolver_only=True
+INFO: environment distribution=flext-web installed_version=0.12.0 installed_location=/home/marlonsc/flext/.venv/lib/python3.13/site-packages record_files=13 expected_source=/home/marlonsc/flext/flext-web
+INFO: environment distribution=flext-web import_source=/home/marlonsc/flext/flext-web/src/flext_web
+INFO: environment distribution=flext-web loaded_import_binding=unobserved resolver_only=True
+✅ workspace editable provenance verified

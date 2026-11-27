@@ -1,0 +1,110 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/Schemata/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "flext-infra-check",
+          "informationUri": "https://github.com/flext-sh/flext-infra",
+          "rules": []
+        }
+      },
+      "results": []
+    }
+  ],
+  "properties": {
+    "phase": "complete",
+    "requested_gates": [
+      "markdown",
+      "markdown-format"
+    ],
+    "pending_gates": [],
+    "targets": [
+      {
+        "name": "flext-tests",
+        "path": "/home/marlonsc/flext/flext-tests",
+        "applicable_gates": [
+          "markdown",
+          "markdown-format"
+        ],
+        "source_identity": {
+          "repo_root": "/home/marlonsc/flext/flext-tests",
+          "primary_root": "/home/marlonsc/flext/flext-tests",
+          "head_oid": "c450f41d9ed8dc48ce03e088a233886e6dab843e",
+          "porcelain": "A  .github/ci-template/ci.yml\nA  .github/scripts/check-beads-policy.sh\nA  .github/scripts/check-cqrs-compliance.sh\nM  .github/workflows/ci-matrix.yml\nM  .github/workflows/ci.yml\nM  .github/workflows/docs.yml\nM  .vscode/settings.json\nM  Makefile\nM  docs/guides/codemod-rules.md\nM  docs/guides/configuration.md\nM  docs/guides/make-commands.md\nM  docs/guides/onboarding.md\nM  docs/guides/testing.md\nM  docs/guides/troubleshooting.md\nM  docs/guides/using-flext-cli.md\nM  docs/guides/using-flext-tests.md\nM  docs/guides/using-pydantic.md\nM  mise.lock\nM  pyproject.toml",
+          "dirty": true,
+          "git_dir": "/home/marlonsc/flext/.git/modules/flext-tests",
+          "common_dir": "/home/marlonsc/flext/.git/modules/flext-tests",
+          "branch": "refactor/use-json-loads",
+          "origin_remote": "https://github.com/flext-sh/flext-tests.git",
+          "upstream_remote": null,
+          "superproject_root": "/home/marlonsc/flext",
+          "requested_path": "/home/marlonsc/flext/flext-tests",
+          "is_worktree": false,
+          "is_submodule": true,
+          "is_attached_submodule": true,
+          "has_submodules": false,
+          "is_inside_work_tree": true
+        }
+      }
+    ],
+    "results": [
+      {
+        "project": "flext-tests",
+        "gates": {
+          "markdown": {
+            "result": {
+              "project": "flext-tests",
+              "gate": "markdown",
+              "passed": true,
+              "errors": [],
+              "duration": 0.811
+            },
+            "issues": [],
+            "raw_receipt": "/home/marlonsc/flext/flext-tests/.reports/check/f9417072-fe47-4f32-8787-9b62d2ab62ea/flext-tests/markdown.raw.log",
+            "outcome": "clean",
+            "process": {
+              "raw_return_code": 0,
+              "timed_out": false,
+              "forwarded_signal": null
+            },
+            "components": {},
+            "requested_components": []
+          },
+          "markdown-format": {
+            "result": {
+              "project": "flext-tests",
+              "gate": "markdown-format",
+              "passed": true,
+              "errors": [],
+              "duration": 0.815
+            },
+            "issues": [],
+            "raw_receipt": "/home/marlonsc/flext/flext-tests/.reports/check/f9417072-fe47-4f32-8787-9b62d2ab62ea/flext-tests/markdown-format.raw.log",
+            "outcome": "clean",
+            "process": {
+              "raw_return_code": 0,
+              "timed_out": false,
+              "forwarded_signal": null
+            },
+            "components": {},
+            "requested_components": []
+          }
+        }
+      }
+    ],
+    "selected_files": [],
+    "global_targets": [
+      {
+        "name": "flext-tests",
+        "path": "/home/marlonsc/flext/flext-tests",
+        "applicable_gates": [
+          "markdown",
+          "markdown-format"
+        ],
+        "source_identity": null
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "summary": {
+    "scope": "flext-tests",
+    "issues": 0,
+    "checks": [
+      "python-codeblocks"
+    ],
+    "report_dir": "/home/marlonsc/flext/flext-tests/.reports/kilo-prof-codeblocks"
+  },
+  "issues": []
+}

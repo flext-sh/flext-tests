@@ -1,0 +1,1512 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "runs": [
+    {
+      "artifacts": [
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/__init__.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/tests/__init__.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/_models/filesystem.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/_files/_comparison/parsing.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/_protocols/filesystem.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_plugin.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/batch_create_in.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/formats.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_metadata.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/dispatcher.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_slow_timeout.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/docker_client.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/tests/integration/test_docker_lifecycle.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_docker/builders.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_docker/targets.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/content_meta.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/read.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/contexts.py"
+          }
+        },
+        {
+          "location": {
+            "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/file_models.py"
+          }
+        }
+      ],
+      "results": [
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 0,
+                  "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/__init__.py"
+                },
+                "region": {
+                  "endColumn": 5,
+                  "endLine": 71,
+                  "startColumn": 1,
+                  "startLine": 51
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (74 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/__init__.py:65](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "36cb93c3c057a907"
+          },
+          "properties": {
+            "clone_hash": "36cb93c3c057a907",
+            "token_count": 74
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/__init__.py:65"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 1,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/__init__.py"
+                },
+                "region": {
+                  "endColumn": 5,
+                  "endLine": 85,
+                  "startColumn": 1,
+                  "startLine": 65
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/duplicate-code"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 0,
+                  "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/__init__.py"
+                },
+                "region": {
+                  "endColumn": 23,
+                  "endLine": 104,
+                  "startColumn": 24,
+                  "startLine": 70
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (99 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/__init__.py:89](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "be6539776c35d600"
+          },
+          "properties": {
+            "clone_hash": "be6539776c35d600",
+            "token_count": 99
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/__init__.py:89"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 1,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/__init__.py"
+                },
+                "region": {
+                  "endColumn": 23,
+                  "endLine": 123,
+                  "startColumn": 31,
+                  "startLine": 89
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/duplicate-code"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 2,
+                  "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/_models/filesystem.py"
+                },
+                "region": {
+                  "endColumn": 31,
+                  "endLine": 193,
+                  "startColumn": 49,
+                  "startLine": 181
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (81 tokens), duplicated at [/home/marlonsc/flext/flext-tests/src/flext_tests/_models/filesystem.py:204](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "ae4b291ad19acfb1"
+          },
+          "properties": {
+            "clone_hash": "ae4b291ad19acfb1",
+            "token_count": 81
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/src/flext_tests/_models/filesystem.py:204"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 2,
+                  "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/_models/filesystem.py"
+                },
+                "region": {
+                  "endColumn": 31,
+                  "endLine": 216,
+                  "startColumn": 9,
+                  "startLine": 204
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/duplicate-code"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 2,
+                  "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/_models/filesystem.py"
+                },
+                "region": {
+                  "endColumn": 5,
+                  "endLine": 251,
+                  "startColumn": 1,
+                  "startLine": 226
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (169 tokens), duplicated at [/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/_files/_comparison/parsing.py:30](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "92445046784b8917"
+          },
+          "properties": {
+            "clone_hash": "92445046784b8917",
+            "token_count": 169
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/_files/_comparison/parsing.py:30"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 3,
+                  "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/_files/_comparison/parsing.py"
+                },
+                "region": {
+                  "endColumn": 5,
+                  "endLine": 55,
+                  "startColumn": 1,
+                  "startLine": 30
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/duplicate-code"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 4,
+                  "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/_protocols/filesystem.py"
+                },
+                "region": {
+                  "endColumn": 15,
+                  "endLine": 177,
+                  "startColumn": 34,
+                  "startLine": 162
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (79 tokens), duplicated at [/home/marlonsc/flext/flext-tests/src/flext_tests/_protocols/filesystem.py:353](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "03f431e045f3dc49"
+          },
+          "properties": {
+            "clone_hash": "03f431e045f3dc49",
+            "token_count": 79
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/src/flext_tests/_protocols/filesystem.py:353"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 4,
+                  "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/_protocols/filesystem.py"
+                },
+                "region": {
+                  "endColumn": 15,
+                  "endLine": 368,
+                  "startColumn": 45,
+                  "startLine": 353
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/duplicate-code"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 5,
+                  "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py"
+                },
+                "region": {
+                  "endColumn": 9,
+                  "endLine": 564,
+                  "startColumn": 71,
+                  "startLine": 554
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (91 tokens), duplicated at [/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py:900](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "5d4bf953ee39dccf"
+          },
+          "properties": {
+            "clone_hash": "5d4bf953ee39dccf",
+            "token_count": 91
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/src/flext_tests/docker.py:900"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 5,
+                  "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py"
+                },
+                "region": {
+                  "endColumn": 9,
+                  "endLine": 910,
+                  "startColumn": 69,
+                  "startLine": 900
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/duplicate-code"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 6,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_plugin.py"
+                },
+                "region": {
+                  "endColumn": 17,
+                  "endLine": 195,
+                  "startColumn": 1,
+                  "startLine": 185
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (89 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_plugin.py:278](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "ca2aa77f84bd5916"
+          },
+          "properties": {
+            "clone_hash": "ca2aa77f84bd5916",
+            "token_count": 89
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_plugin.py:278"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 6,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_plugin.py"
+                },
+                "region": {
+                  "endColumn": 17,
+                  "endLine": 288,
+                  "startColumn": 1,
+                  "startLine": 278
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/duplicate-code"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 7,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/batch_create_in.py"
+                },
+                "region": {
+                  "endColumn": 34,
+                  "endLine": 151,
+                  "startColumn": 5,
+                  "startLine": 140
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (143 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/_files/formats.py:67](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "688090b0283a40b6"
+          },
+          "properties": {
+            "clone_hash": "688090b0283a40b6",
+            "nodes": [
+              197,
+              204
+            ],
+            "similarity": 0.815,
+            "similarity_method": "ast",
+            "token_count": 143
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/_files/formats.py:67"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 8,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/formats.py"
+                },
+                "region": {
+                  "endColumn": 34,
+                  "endLine": 79,
+                  "startColumn": 5,
+                  "startLine": 67
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/similar-function"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 9,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py"
+                },
+                "region": {
+                  "endColumn": 36,
+                  "endLine": 49,
+                  "startColumn": 5,
+                  "startLine": 38
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (119 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py:52](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "2027a61946779d3b"
+          },
+          "properties": {
+            "clone_hash": "2027a61946779d3b",
+            "nodes": [
+              163,
+              163
+            ],
+            "similarity": 1.0,
+            "similarity_method": "ast",
+            "token_count": 119
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py:52"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 9,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py"
+                },
+                "region": {
+                  "endColumn": 37,
+                  "endLine": 63,
+                  "startColumn": 5,
+                  "startLine": 52
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/similar-function"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 9,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py"
+                },
+                "region": {
+                  "endColumn": 36,
+                  "endLine": 49,
+                  "startColumn": 5,
+                  "startLine": 38
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (119 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py:66](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "1116e4b815c0378a"
+          },
+          "properties": {
+            "clone_hash": "1116e4b815c0378a",
+            "nodes": [
+              163,
+              163
+            ],
+            "similarity": 1.0,
+            "similarity_method": "ast",
+            "token_count": 119
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py:66"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 9,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py"
+                },
+                "region": {
+                  "endColumn": 36,
+                  "endLine": 77,
+                  "startColumn": 5,
+                  "startLine": 66
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/similar-function"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 9,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py"
+                },
+                "region": {
+                  "endColumn": 36,
+                  "endLine": 49,
+                  "startColumn": 5,
+                  "startLine": 38
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (119 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py:80](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "67a844dc06660447"
+          },
+          "properties": {
+            "clone_hash": "67a844dc06660447",
+            "nodes": [
+              163,
+              163
+            ],
+            "similarity": 1.0,
+            "similarity_method": "ast",
+            "token_count": 119
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py:80"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 9,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py"
+                },
+                "region": {
+                  "endColumn": 36,
+                  "endLine": 91,
+                  "startColumn": 5,
+                  "startLine": 80
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/similar-function"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 9,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py"
+                },
+                "region": {
+                  "endColumn": 36,
+                  "endLine": 49,
+                  "startColumn": 5,
+                  "startLine": 38
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (119 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py:94](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "3bbba53e54629674"
+          },
+          "properties": {
+            "clone_hash": "3bbba53e54629674",
+            "nodes": [
+              163,
+              163
+            ],
+            "similarity": 1.0,
+            "similarity_method": "ast",
+            "token_count": 119
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py:94"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 9,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py"
+                },
+                "region": {
+                  "endColumn": 37,
+                  "endLine": 105,
+                  "startColumn": 5,
+                  "startLine": 94
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/similar-function"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 9,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py"
+                },
+                "region": {
+                  "endColumn": 36,
+                  "endLine": 119,
+                  "startColumn": 5,
+                  "startLine": 108
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (113 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py:122](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "b08961756264bfbe"
+          },
+          "properties": {
+            "clone_hash": "b08961756264bfbe",
+            "nodes": [
+              154,
+              154
+            ],
+            "similarity": 1.0,
+            "similarity_method": "ast",
+            "token_count": 113
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py:122"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 9,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py"
+                },
+                "region": {
+                  "endColumn": 36,
+                  "endLine": 133,
+                  "startColumn": 5,
+                  "startLine": 122
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/similar-function"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 9,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py"
+                },
+                "region": {
+                  "endColumn": 36,
+                  "endLine": 119,
+                  "startColumn": 5,
+                  "startLine": 108
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (113 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py:136](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "1f40ab39f5bbd0c7"
+          },
+          "properties": {
+            "clone_hash": "1f40ab39f5bbd0c7",
+            "nodes": [
+              154,
+              154
+            ],
+            "similarity": 1.0,
+            "similarity_method": "ast",
+            "token_count": 113
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py:136"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 9,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py"
+                },
+                "region": {
+                  "endColumn": 36,
+                  "endLine": 147,
+                  "startColumn": 5,
+                  "startLine": 136
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/similar-function"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 9,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py"
+                },
+                "region": {
+                  "endColumn": 36,
+                  "endLine": 119,
+                  "startColumn": 5,
+                  "startLine": 108
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (113 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py:150](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "99f93ffb35578a71"
+          },
+          "properties": {
+            "clone_hash": "99f93ffb35578a71",
+            "nodes": [
+              154,
+              154
+            ],
+            "similarity": 1.0,
+            "similarity_method": "ast",
+            "token_count": 113
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py:150"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 9,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py"
+                },
+                "region": {
+                  "endColumn": 37,
+                  "endLine": 161,
+                  "startColumn": 5,
+                  "startLine": 150
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/similar-function"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 10,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py"
+                },
+                "region": {
+                  "endColumn": 50,
+                  "endLine": 45,
+                  "startColumn": 5,
+                  "startLine": 31
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (144 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py:48](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "1628d185b1d9c812"
+          },
+          "properties": {
+            "clone_hash": "1628d185b1d9c812",
+            "nodes": [
+              254,
+              205
+            ],
+            "similarity": 0.841,
+            "similarity_method": "ast",
+            "token_count": 144
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py:48"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 10,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py"
+                },
+                "region": {
+                  "endColumn": 45,
+                  "endLine": 59,
+                  "startColumn": 5,
+                  "startLine": 48
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/similar-function"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 10,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py"
+                },
+                "region": {
+                  "endColumn": 45,
+                  "endLine": 59,
+                  "startColumn": 5,
+                  "startLine": 48
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (144 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/_files/info_metadata.py:19](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "6770ce77168bbc72"
+          },
+          "properties": {
+            "clone_hash": "6770ce77168bbc72",
+            "nodes": [
+              205,
+              205
+            ],
+            "similarity": 0.892,
+            "similarity_method": "ast",
+            "token_count": 144
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/_files/info_metadata.py:19"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 11,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_metadata.py"
+                },
+                "region": {
+                  "endColumn": 45,
+                  "endLine": 30,
+                  "startColumn": 5,
+                  "startLine": 19
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/similar-function"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 12,
+                  "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/dispatcher.py"
+                },
+                "region": {
+                  "endColumn": 81,
+                  "endLine": 197,
+                  "startColumn": 5,
+                  "startLine": 169
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (99 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_slow_timeout.py:68](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "c1630516a3d3f9f5"
+          },
+          "properties": {
+            "clone_hash": "c1630516a3d3f9f5",
+            "similarity": 0.841,
+            "token_count": 99
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_slow_timeout.py:68"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 13,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_slow_timeout.py"
+                },
+                "region": {
+                  "endColumn": 61,
+                  "endLine": 92,
+                  "startColumn": 5,
+                  "startLine": 68
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/semantic-code"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 14,
+                  "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/docker_client.py"
+                },
+                "region": {
+                  "endColumn": 38,
+                  "endLine": 173,
+                  "startColumn": 5,
+                  "startLine": 136
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (246 tokens), duplicated at [/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py:209](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "c1b0d2f8ea4e689c"
+          },
+          "properties": {
+            "clone_hash": "c1b0d2f8ea4e689c",
+            "similarity": 0.858,
+            "token_count": 246
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/src/flext_tests/docker.py:209"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 5,
+                  "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py"
+                },
+                "region": {
+                  "endColumn": 50,
+                  "endLine": 244,
+                  "startColumn": 5,
+                  "startLine": 209
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/semantic-code"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 5,
+                  "uri": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py"
+                },
+                "region": {
+                  "endColumn": 52,
+                  "endLine": 859,
+                  "startColumn": 5,
+                  "startLine": 831
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (151 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/integration/test_docker_lifecycle.py:88](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "2ea954da747039fb"
+          },
+          "properties": {
+            "clone_hash": "2ea954da747039fb",
+            "similarity": 0.863,
+            "token_count": 151
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/integration/test_docker_lifecycle.py:88"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 15,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/integration/test_docker_lifecycle.py"
+                },
+                "region": {
+                  "endColumn": 59,
+                  "endLine": 105,
+                  "startColumn": 5,
+                  "startLine": 88
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/semantic-code"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 16,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_docker/builders.py"
+                },
+                "region": {
+                  "endColumn": 38,
+                  "endLine": 116,
+                  "startColumn": 5,
+                  "startLine": 101
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (109 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/_docker/targets.py:68](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "2c49bfcec78c7ae0"
+          },
+          "properties": {
+            "clone_hash": "2c49bfcec78c7ae0",
+            "similarity": 0.839,
+            "token_count": 109
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/_docker/targets.py:68"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 17,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_docker/targets.py"
+                },
+                "region": {
+                  "endColumn": 53,
+                  "endLine": 81,
+                  "startColumn": 5,
+                  "startLine": 68
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/semantic-code"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 7,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/batch_create_in.py"
+                },
+                "region": {
+                  "endColumn": 34,
+                  "endLine": 137,
+                  "startColumn": 5,
+                  "startLine": 127
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (110 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/_files/formats.py:106](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "9798e1ced13a9edf"
+          },
+          "properties": {
+            "clone_hash": "9798e1ced13a9edf",
+            "similarity": 0.927,
+            "token_count": 110
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/_files/formats.py:106"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 8,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/formats.py"
+                },
+                "region": {
+                  "endColumn": 34,
+                  "endLine": 117,
+                  "startColumn": 5,
+                  "startLine": 106
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/semantic-code"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 18,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/content_meta.py"
+                },
+                "region": {
+                  "endColumn": 49,
+                  "endLine": 72,
+                  "startColumn": 5,
+                  "startLine": 61
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (140 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/_files/read.py:80](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "820e1dda1ca2350d"
+          },
+          "properties": {
+            "clone_hash": "820e1dda1ca2350d",
+            "similarity": 0.838,
+            "token_count": 140
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/_files/read.py:80"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 19,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/read.py"
+                },
+                "region": {
+                  "endColumn": 33,
+                  "endLine": 92,
+                  "startColumn": 5,
+                  "startLine": 80
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/semantic-code"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 20,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/contexts.py"
+                },
+                "region": {
+                  "endColumn": 41,
+                  "endLine": 113,
+                  "startColumn": 5,
+                  "startLine": 88
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (140 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/_files/file_models.py:30](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "639b05430cb260e2"
+          },
+          "properties": {
+            "clone_hash": "639b05430cb260e2",
+            "similarity": 0.842,
+            "token_count": 140
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/_files/file_models.py:30"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 21,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/file_models.py"
+                },
+                "region": {
+                  "endColumn": 50,
+                  "endLine": 45,
+                  "startColumn": 5,
+                  "startLine": 30
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/semantic-code"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 10,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py"
+                },
+                "region": {
+                  "endColumn": 50,
+                  "endLine": 45,
+                  "startColumn": 5,
+                  "startLine": 31
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Duplicated code block (144 tokens), duplicated at [/home/marlonsc/flext/flext-tests/tests/unit/_files/info_metadata.py:19](0)"
+          },
+          "partialFingerprints": {
+            "jscpdCloneHash/v1": "81c21114bc81be9d"
+          },
+          "properties": {
+            "clone_hash": "81c21114bc81be9d",
+            "similarity": 0.957,
+            "token_count": 144
+          },
+          "relatedLocations": [
+            {
+              "id": 0,
+              "message": {
+                "text": "Duplicated at /home/marlonsc/flext/flext-tests/tests/unit/_files/info_metadata.py:19"
+              },
+              "physicalLocation": {
+                "artifactLocation": {
+                  "index": 11,
+                  "uri": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_metadata.py"
+                },
+                "region": {
+                  "endColumn": 45,
+                  "endLine": 30,
+                  "startColumn": 5,
+                  "startLine": 19
+                }
+              }
+            }
+          ],
+          "ruleId": "jscpd/semantic-code"
+        }
+      ],
+      "tool": {
+        "driver": {
+          "informationUri": "https://github.com/kucherenko/jscpd/",
+          "name": "jscpd",
+          "rules": [
+            {
+              "defaultConfiguration": {
+                "enabled": true,
+                "level": "warning"
+              },
+              "fullDescription": {
+                "text": "Duplicate sections of code increase the risk of development errors, especially if fixes are made to one code block but not the other. Duplicates that share the same abstractions should be refactored into reusable helper methods as an application of the Don't Repeat Yourself principle."
+              },
+              "helpUri": "https://github.com/kucherenko/jscpd/",
+              "id": "jscpd/duplicate-code",
+              "name": "jscpd/duplicate-code",
+              "properties": {
+                "problem.severity": "warning",
+                "tags": [
+                  "quality"
+                ]
+              },
+              "shortDescription": {
+                "text": "Duplicated code detected"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "enabled": true,
+                "level": "warning"
+              },
+              "fullDescription": {
+                "text": "Functions and methods whose normalized syntax trees share at least --similarity of their subtrees (Type-3 clones found by structure rather than by a token run). The names of the functions and methods they call and their operators count; local names, field names and literals do not, as long as each name stands for one name on the other side. The similarity property holds the Jaccard index of the two trees' subtree fingerprints, and the nodes property the size of each tree."
+              },
+              "helpUri": "https://github.com/kucherenko/jscpd/",
+              "id": "jscpd/similar-function",
+              "name": "jscpd/similar-function",
+              "properties": {
+                "problem.severity": "warning",
+                "tags": [
+                  "quality"
+                ]
+              },
+              "shortDescription": {
+                "text": "Functions with a similar structure detected"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "enabled": true,
+                "level": "warning"
+              },
+              "fullDescription": {
+                "text": "Functions that appear to do the same thing written differently, possibly in different languages (Type-4 clones, --semantic, experimental). Found by comparing embeddings of the functions' code: each function is the other's closest match and their cosine similarity, held in the similarity property, reaches the configured threshold. Review before refactoring; an embedding model can pair functions that are related without being duplicates."
+              },
+              "helpUri": "https://github.com/kucherenko/jscpd/",
+              "id": "jscpd/semantic-code",
+              "name": "jscpd/semantic-code",
+              "properties": {
+                "problem.severity": "warning",
+                "tags": [
+                  "quality"
+                ]
+              },
+              "shortDescription": {
+                "text": "Semantically similar code detected"
+              }
+            }
+          ],
+          "version": "5.4.2"
+        }
+      }
+    }
+  ],
+  "version": "2.1.0"
+}

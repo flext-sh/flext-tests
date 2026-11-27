@@ -1,0 +1,6 @@
+[0mdirenv: loading ~/flext/flext-tests/.envrc
+[31mdirenv: workspace interpreter is not provisioned: /home/marlonsc/flext/flext-tests/.venv/bin/python; run make setup[0m
+[31mdirenv: error exit status 1[0m
+[0mdirenv: loading ~/flext/flext-tests/.envrc
+[31mdirenv: workspace interpreter is not provisioned: /home/marlonsc/flext/flext-tests/.venv/bin/python; run make setup[0m
+[31mdirenv: error exit status 1[0m

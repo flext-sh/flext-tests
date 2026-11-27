@@ -1,0 +1,3643 @@
+{
+  "policy": "structural-evidence-v1-raw-hard",
+  "raw_sha256": "f74ea116aadd6a0a2c1e8d8883394c7079e5061d899ccef4c2c5fdfbf14c8e26",
+  "report": {
+    "duplicates": [
+      {
+        "first_file": {
+          "end": 71,
+          "end_location": {
+            "column": 4,
+            "line": 71,
+            "position": 2219
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/__init__.py",
+          "nodes": null,
+          "start": 51,
+          "start_location": {
+            "column": 0,
+            "line": 51,
+            "position": 1679
+          }
+        },
+        "format_name": "python",
+        "fragment": "__all__: tuple[str, ...] = (\n    \"FlextTests\",\n    \"FlextTestsCase\",\n    \"FlextTestsCli\",\n    \"FlextTestsConfig\",\n    \"FlextTestsConfigNamespace\",\n    \"FlextTestsConstants\",\n    \"FlextTestsDocker\",\n    \"FlextTestsDomains\",\n    \"FlextTestsFiles\",\n    \"FlextTestsFlextTestsFixtures\",\n    \"FlextTestsModels\",\n    \"FlextTestsProtocols\",\n    \"FlextTestsServiceBase\",\n    \"FlextTestsSettings\",\n    \"FlextTestsTypes\",\n    \"FlextTestsUtilities\",\n    \"FlextTestsUtilitiesFixturesDSL\",\n    \"FlextTestsUtilitiesMatchers\",\n    \"FlextTestsVersion\",\n    \"__author__\",",
+        "is_new": false,
+        "kind": "exact",
+        "lines": 21,
+        "second_file": {
+          "end": 85,
+          "end_location": {
+            "column": 4,
+            "line": 85,
+            "position": 2074
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/__init__.py",
+          "nodes": null,
+          "start": 65,
+          "start_location": {
+            "column": 0,
+            "line": 65,
+            "position": 1534
+          }
+        },
+        "tokens": 74,
+        "similarity": null,
+        "method": null
+      },
+      {
+        "first_file": {
+          "end": 104,
+          "end_location": {
+            "column": 22,
+            "line": 104,
+            "position": 2666
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/__init__.py",
+          "nodes": null,
+          "start": 70,
+          "start_location": {
+            "column": 23,
+            "line": 70,
+            "position": 2213
+          }
+        },
+        "format_name": "python",
+        "fragment": "\"FlextTestsVersion\",\n    \"__author__\",\n    \"__author_email__\",\n    \"__description__\",\n    \"__license__\",\n    \"__title__\",\n    \"__url__\",\n    \"__version__\",\n    \"__version_info__\",\n    \"api\",\n    \"c\",\n    \"config\",\n    \"d\",\n    \"e\",\n    \"h\",\n    \"install_local_packages\",\n    \"m\",\n    \"p\",\n    \"r\",\n    \"s\",\n    \"settings\",\n    \"t\",\n    \"td\",\n    \"tf\",\n    \"tk\",\n    \"tm\",\n    \"u\",\n    \"x\",\n)\n\ninstall_lazy_exports(\n    __name__,\n    globals(),\n    {\n        \"FlextTests\": \".api\",",
+        "is_new": false,
+        "kind": "exact",
+        "lines": 35,
+        "second_file": {
+          "end": 123,
+          "end_location": {
+            "column": 22,
+            "line": 123,
+            "position": 2674
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/__init__.py",
+          "nodes": null,
+          "start": 89,
+          "start_location": {
+            "column": 30,
+            "line": 89,
+            "position": 2221
+          }
+        },
+        "tokens": 99,
+        "similarity": null,
+        "method": null
+      },
+      {
+        "first_file": {
+          "end": 193,
+          "end_location": {
+            "column": 30,
+            "line": 193,
+            "position": 6854
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_models/filesystem.py",
+          "nodes": null,
+          "start": 181,
+          "start_location": {
+            "column": 48,
+            "line": 181,
+            "position": 6498
+          }
+        },
+        "format_name": "python",
+        "fragment": "@m.field_validator(\"path\", mode=\"before\")\n        @classmethod\n        def convert_path(cls, value: Path | str) -> Path:\n            \"\"\"Coerce a string path operand to ``Path`` before validation.\n\n            Args:\n                value: The declared path operand as ``Path`` or string.\n\n            Returns:\n                The resulting ``Path``.\n\n            \"\"\"\n            return Path(value) if isinstance(value, str) else value",
+        "is_new": false,
+        "kind": "exact",
+        "lines": 13,
+        "second_file": {
+          "end": 216,
+          "end_location": {
+            "column": 30,
+            "line": 216,
+            "position": 7521
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_models/filesystem.py",
+          "nodes": null,
+          "start": 204,
+          "start_location": {
+            "column": 8,
+            "line": 204,
+            "position": 7165
+          }
+        },
+        "tokens": 81,
+        "similarity": null,
+        "method": null
+      },
+      {
+        "first_file": {
+          "end": 251,
+          "end_location": {
+            "column": 4,
+            "line": 251,
+            "position": 8763
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_models/filesystem.py",
+          "nodes": null,
+          "start": 226,
+          "start_location": {
+            "column": 0,
+            "line": 226,
+            "position": 7913
+          }
+        },
+        "format_name": "python",
+        "fragment": "ignore_ws: Annotated[\n            bool,\n            m.Field(description=\"Ignore whitespace in comparison.\"),\n        ] = False\n        ignore_case: Annotated[\n            bool,\n            m.Field(description=\"Case-insensitive comparison.\"),\n        ] = False\n        pattern: Annotated[\n            str | None,\n            m.Field(description=\"Pattern to check if both files contain.\"),\n        ] = None\n        deep: Annotated[\n            bool,\n            m.Field(description=\"Use deep comparison for nested structures.\"),\n        ] = True\n        keys: Annotated[\n            Sequence[str] | None,\n            m.Field(description=\"Only compare these keys.\"),\n        ] = None\n        exclude_keys: Annotated[\n            Sequence[str] | None,\n            m.Field(description=\"Exclude these keys from comparison.\"),\n        ] = None\n\n    class InfoParams(PathCoercingParams):",
+        "is_new": false,
+        "kind": "exact",
+        "lines": 26,
+        "second_file": {
+          "end": 55,
+          "end_location": {
+            "column": 4,
+            "line": 55,
+            "position": 1700
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/_files/_comparison/parsing.py",
+          "nodes": null,
+          "start": 30,
+          "start_location": {
+            "column": 0,
+            "line": 30,
+            "position": 850
+          }
+        },
+        "tokens": 169,
+        "similarity": null,
+        "method": null
+      },
+      {
+        "first_file": {
+          "end": 177,
+          "end_location": {
+            "column": 14,
+            "line": 177,
+            "position": 4624
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_protocols/filesystem.py",
+          "nodes": null,
+          "start": 162,
+          "start_location": {
+            "column": 33,
+            "line": 162,
+            "position": 4298
+          }
+        },
+        "format_name": "python",
+        "fragment": "\"\"\"Target directory.\"\"\"\n            ...\n\n        @property\n        def fmt(self) -> c.Tests.FileFormat:\n            \"\"\"File format override.\"\"\"\n            ...\n\n        @property\n        def enc(self) -> t.NonEmptyStr:\n            \"\"\"File encoding.\"\"\"\n            ...\n\n        @property\n        def indent(self) -> t.NonNegativeInt:\n            \"\"\"JSON/YAML indentation.\"\"\"",
+        "is_new": false,
+        "kind": "exact",
+        "lines": 16,
+        "second_file": {
+          "end": 368,
+          "end_location": {
+            "column": 14,
+            "line": 368,
+            "position": 9618
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_protocols/filesystem.py",
+          "nodes": null,
+          "start": 353,
+          "start_location": {
+            "column": 44,
+            "line": 353,
+            "position": 9292
+          }
+        },
+        "tokens": 79,
+        "similarity": null,
+        "method": null
+      },
+      {
+        "first_file": {
+          "end": 564,
+          "end_location": {
+            "column": 8,
+            "line": 564,
+            "position": 19609
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py",
+          "nodes": null,
+          "start": 554,
+          "start_location": {
+            "column": 70,
+            "line": 554,
+            "position": 19295
+          }
+        },
+        "format_name": "python",
+        "fragment": "``creation_environment`` reaches compose only while it creates.\n\n        Returns:\n            The resulting ``p.Result[p.Tests.ContainerInfo]``.\n\n        \"\"\"\n        target = self.target_config\n        error = self._target_error()\n        if target is None or target.container_name is None or error is not None:\n            return r[p.Tests.ContainerInfo].fail(error)\n        environment = creation_environment or {}",
+        "is_new": false,
+        "kind": "exact",
+        "lines": 11,
+        "second_file": {
+          "end": 910,
+          "end_location": {
+            "column": 8,
+            "line": 910,
+            "position": 32541
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py",
+          "nodes": null,
+          "start": 900,
+          "start_location": {
+            "column": 68,
+            "line": 900,
+            "position": 32227
+          }
+        },
+        "tokens": 91,
+        "similarity": null,
+        "method": null
+      },
+      {
+        "first_file": {
+          "end": 195,
+          "end_location": {
+            "column": 16,
+            "line": 195,
+            "position": 8493
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_plugin.py",
+          "nodes": null,
+          "start": 185,
+          "start_location": {
+            "column": 0,
+            "line": 185,
+            "position": 8060
+          }
+        },
+        "format_name": "python",
+        "fragment": ")\n        with u.Tests.env_vars_context(\n            {}\n            if autoload\n            else {\"PYTEST_DISABLE_PLUGIN_AUTOLOAD\": c.ParserBooleanToken.ONE},\n            vars_to_clear=(\"PYTEST_ADDOPTS\", \"PYTEST_DISABLE_PLUGIN_AUTOLOAD\"),\n        ):\n            result = u.Tests.pytest_subprocess(\n                pytester,\n                *(argument for entry in entries for argument in (\"-p\", entry.name)),\n                \"--no-flext-enforce\",",
+        "is_new": false,
+        "kind": "exact",
+        "lines": 11,
+        "second_file": {
+          "end": 288,
+          "end_location": {
+            "column": 16,
+            "line": 288,
+            "position": 13002
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_plugin.py",
+          "nodes": null,
+          "start": 278,
+          "start_location": {
+            "column": 0,
+            "line": 278,
+            "position": 12569
+          }
+        },
+        "tokens": 89,
+        "similarity": null,
+        "method": null
+      },
+      {
+        "first_file": {
+          "end": 151,
+          "end_location": {
+            "column": 33,
+            "line": 151,
+            "position": 5743
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/batch_create_in.py",
+          "nodes": 197,
+          "start": 140,
+          "start_location": {
+            "column": 4,
+            "line": 140,
+            "position": 5213
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_create_in_csv_with_headers(tmp_path: Path) -> None:\n        \"\"\"Test create_in() CSV with explicit headers.\"\"\"\n        content = [[c.ParserBooleanToken.ONE, \"2\"], [\"3\", \"4\"]]\n        path = FlextTestsFiles(base_dir=tmp_path).create(\n            content,\n            \"data.csv\",\n            options=FlextTestsFiles.CreateOptions(headers=[\"col1\", \"col2\"]),\n        )\n        tm.ok(path.exists())\n        lines = path.read_text().strip().split(\"\\n\")\n        tm.that(lines[0], eq=\"col1,col2\")\n        tm.that(len(lines), eq=3)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 79,
+          "end_location": {
+            "column": 33,
+            "line": 79,
+            "position": 3008
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/formats.py",
+          "nodes": 204,
+          "start": 67,
+          "start_location": {
+            "column": 4,
+            "line": 67,
+            "position": 2484
+          }
+        },
+        "tokens": 143,
+        "similarity": 0.815,
+        "method": "ast"
+      },
+      {
+        "first_file": {
+          "end": 49,
+          "end_location": {
+            "column": 35,
+            "line": 49,
+            "position": 1648
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 38,
+          "start_location": {
+            "column": 4,
+            "line": 38,
+            "position": 1177
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_compare_size_mode(tmp_path: Path) -> None:\n        \"\"\"Test compare() in size mode.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        path1 = manager.create(\"12345\", \"file1.txt\")\n        path2 = manager.create(\"abcde\", \"file2.txt\")\n        result = manager.compare(\n            path1,\n            path2,\n            options=tf.CompareOptions(mode=c.Tests.CompareMode.SIZE),\n        )\n        _ = u.Tests.assert_success(result)\n        tm.ok(result.value is True)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 63,
+          "end_location": {
+            "column": 36,
+            "line": 63,
+            "position": 2189
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 52,
+          "start_location": {
+            "column": 4,
+            "line": 52,
+            "position": 1672
+          }
+        },
+        "tokens": 119,
+        "similarity": 1.0,
+        "method": "ast"
+      },
+      {
+        "first_file": {
+          "end": 49,
+          "end_location": {
+            "column": 35,
+            "line": 49,
+            "position": 1648
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 38,
+          "start_location": {
+            "column": 4,
+            "line": 38,
+            "position": 1177
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_compare_size_mode(tmp_path: Path) -> None:\n        \"\"\"Test compare() in size mode.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        path1 = manager.create(\"12345\", \"file1.txt\")\n        path2 = manager.create(\"abcde\", \"file2.txt\")\n        result = manager.compare(\n            path1,\n            path2,\n            options=tf.CompareOptions(mode=c.Tests.CompareMode.SIZE),\n        )\n        _ = u.Tests.assert_success(result)\n        tm.ok(result.value is True)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 77,
+          "end_location": {
+            "column": 35,
+            "line": 77,
+            "position": 2692
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 66,
+          "start_location": {
+            "column": 4,
+            "line": 66,
+            "position": 2213
+          }
+        },
+        "tokens": 119,
+        "similarity": 1.0,
+        "method": "ast"
+      },
+      {
+        "first_file": {
+          "end": 49,
+          "end_location": {
+            "column": 35,
+            "line": 49,
+            "position": 1648
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 38,
+          "start_location": {
+            "column": 4,
+            "line": 38,
+            "position": 1177
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_compare_size_mode(tmp_path: Path) -> None:\n        \"\"\"Test compare() in size mode.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        path1 = manager.create(\"12345\", \"file1.txt\")\n        path2 = manager.create(\"abcde\", \"file2.txt\")\n        result = manager.compare(\n            path1,\n            path2,\n            options=tf.CompareOptions(mode=c.Tests.CompareMode.SIZE),\n        )\n        _ = u.Tests.assert_success(result)\n        tm.ok(result.value is True)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 91,
+          "end_location": {
+            "column": 35,
+            "line": 91,
+            "position": 3247
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 80,
+          "start_location": {
+            "column": 4,
+            "line": 80,
+            "position": 2716
+          }
+        },
+        "tokens": 119,
+        "similarity": 1.0,
+        "method": "ast"
+      },
+      {
+        "first_file": {
+          "end": 49,
+          "end_location": {
+            "column": 35,
+            "line": 49,
+            "position": 1648
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 38,
+          "start_location": {
+            "column": 4,
+            "line": 38,
+            "position": 1177
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_compare_size_mode(tmp_path: Path) -> None:\n        \"\"\"Test compare() in size mode.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        path1 = manager.create(\"12345\", \"file1.txt\")\n        path2 = manager.create(\"abcde\", \"file2.txt\")\n        result = manager.compare(\n            path1,\n            path2,\n            options=tf.CompareOptions(mode=c.Tests.CompareMode.SIZE),\n        )\n        _ = u.Tests.assert_success(result)\n        tm.ok(result.value is True)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 105,
+          "end_location": {
+            "column": 36,
+            "line": 105,
+            "position": 3808
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 94,
+          "start_location": {
+            "column": 4,
+            "line": 94,
+            "position": 3271
+          }
+        },
+        "tokens": 119,
+        "similarity": 1.0,
+        "method": "ast"
+      },
+      {
+        "first_file": {
+          "end": 119,
+          "end_location": {
+            "column": 35,
+            "line": 119,
+            "position": 4316
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 154,
+          "start": 108,
+          "start_location": {
+            "column": 4,
+            "line": 108,
+            "position": 3832
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_compare_ignore_whitespace(tmp_path: Path) -> None:\n        \"\"\"Test compare() ignoring whitespace.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        path1 = manager.create(\"hello world\", \"file1.txt\")\n        path2 = manager.create(\"hello  world\", \"file2.txt\")\n        result = manager.compare(\n            path1,\n            path2,\n            options=tf.CompareOptions(ignore_ws=True),\n        )\n        _ = u.Tests.assert_success(result)\n        tm.ok(result.value is True)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 133,
+          "end_location": {
+            "column": 35,
+            "line": 133,
+            "position": 4813
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 154,
+          "start": 122,
+          "start_location": {
+            "column": 4,
+            "line": 122,
+            "position": 4340
+          }
+        },
+        "tokens": 113,
+        "similarity": 1.0,
+        "method": "ast"
+      },
+      {
+        "first_file": {
+          "end": 119,
+          "end_location": {
+            "column": 35,
+            "line": 119,
+            "position": 4316
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 154,
+          "start": 108,
+          "start_location": {
+            "column": 4,
+            "line": 108,
+            "position": 3832
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_compare_ignore_whitespace(tmp_path: Path) -> None:\n        \"\"\"Test compare() ignoring whitespace.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        path1 = manager.create(\"hello world\", \"file1.txt\")\n        path2 = manager.create(\"hello  world\", \"file2.txt\")\n        result = manager.compare(\n            path1,\n            path2,\n            options=tf.CompareOptions(ignore_ws=True),\n        )\n        _ = u.Tests.assert_success(result)\n        tm.ok(result.value is True)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 147,
+          "end_location": {
+            "column": 35,
+            "line": 147,
+            "position": 5340
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 154,
+          "start": 136,
+          "start_location": {
+            "column": 4,
+            "line": 136,
+            "position": 4837
+          }
+        },
+        "tokens": 113,
+        "similarity": 1.0,
+        "method": "ast"
+      },
+      {
+        "first_file": {
+          "end": 119,
+          "end_location": {
+            "column": 35,
+            "line": 119,
+            "position": 4316
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 154,
+          "start": 108,
+          "start_location": {
+            "column": 4,
+            "line": 108,
+            "position": 3832
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_compare_ignore_whitespace(tmp_path: Path) -> None:\n        \"\"\"Test compare() ignoring whitespace.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        path1 = manager.create(\"hello world\", \"file1.txt\")\n        path2 = manager.create(\"hello  world\", \"file2.txt\")\n        result = manager.compare(\n            path1,\n            path2,\n            options=tf.CompareOptions(ignore_ws=True),\n        )\n        _ = u.Tests.assert_success(result)\n        tm.ok(result.value is True)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 161,
+          "end_location": {
+            "column": 36,
+            "line": 161,
+            "position": 5891
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 154,
+          "start": 150,
+          "start_location": {
+            "column": 4,
+            "line": 150,
+            "position": 5364
+          }
+        },
+        "tokens": 113,
+        "similarity": 1.0,
+        "method": "ast"
+      },
+      {
+        "first_file": {
+          "end": 45,
+          "end_location": {
+            "column": 49,
+            "line": 45,
+            "position": 1551
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py",
+          "nodes": 254,
+          "start": 31,
+          "start_location": {
+            "column": 4,
+            "line": 31,
+            "position": 860
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_get_file_info_exists(tmp_path: Path) -> None:\n        \"\"\"Test getting file info for existing file.\"\"\"\n        manager = FlextTestsFiles(base_dir=tmp_path)\n        content = \"line1\\nline2\\nline3\"\n        file_path = manager.create(content, \"test.txt\")\n        result = manager.info(file_path)\n        _ = u.Tests.assert_success(result)\n        file_info = result.value\n        tm.that(file_info, is_=FlextTestsFiles.FileInfo)\n        tm.ok(file_info.exists is True)\n        tm.that(file_info.size, gt=0)\n        tm.that(file_info.lines, eq=3)\n        tm.that(file_info.encoding, eq=\"utf-8\")\n        tm.ok(file_info.is_empty is False)\n        tm.that(file_info.first_line, eq=\"line1\")",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 15,
+        "second_file": {
+          "end": 59,
+          "end_location": {
+            "column": 44,
+            "line": 59,
+            "position": 2130
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py",
+          "nodes": 205,
+          "start": 48,
+          "start_location": {
+            "column": 4,
+            "line": 48,
+            "position": 1575
+          }
+        },
+        "tokens": 144,
+        "similarity": 0.841,
+        "method": "ast"
+      },
+      {
+        "first_file": {
+          "end": 59,
+          "end_location": {
+            "column": 44,
+            "line": 59,
+            "position": 2130
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py",
+          "nodes": 205,
+          "start": 48,
+          "start_location": {
+            "column": 4,
+            "line": 48,
+            "position": 1575
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_get_file_info_empty_file(tmp_path: Path) -> None:\n        \"\"\"Test getting file info for empty file.\"\"\"\n        manager = FlextTestsFiles(base_dir=tmp_path)\n        file_path = manager.create(\"\", \"empty.txt\")\n        result = manager.info(file_path)\n        _ = u.Tests.assert_success(result)\n        file_info = result.value\n        tm.that(file_info, is_=FlextTestsFiles.FileInfo)\n        tm.ok(file_info.exists is True)\n        tm.that(file_info.size, eq=0)\n        tm.ok(file_info.is_empty is True)\n        tm.that(file_info.first_line, eq=\"\")",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 30,
+          "end_location": {
+            "column": 44,
+            "line": 30,
+            "position": 890
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_metadata.py",
+          "nodes": 205,
+          "start": 19,
+          "start_location": {
+            "column": 4,
+            "line": 19,
+            "position": 350
+          }
+        },
+        "tokens": 144,
+        "similarity": 0.892,
+        "method": "ast"
+      },
+      {
+        "first_file": {
+          "end": 197,
+          "end_location": {
+            "column": 80,
+            "line": 197,
+            "position": 7289
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+          "nodes": null,
+          "start": 169,
+          "start_location": {
+            "column": 4,
+            "line": 169,
+            "position": 6137
+          }
+        },
+        "format_name": "python",
+        "fragment": "def apply_slow_budget(\n        cls,\n        config: pytest.Config,\n        items: list[pytest.Item],\n    ) -> None:\n        \"\"\"Apply the shared slow budget independently of static enforcement.\n\n        Raises:\n            UsageError: If FLEXT slow timeout policy.\n\n        \"\"\"\n        slow_timeout = cls.slow_budget_seconds(config)\n        for item in items if slow_timeout is not None else ():\n            if item.stash.get(cls.stash_budgeted, False):\n                continue\n            if item.get_closest_marker(\"slow\") is None:\n                continue\n            if item.get_closest_marker(\"timeout\") is not None:\n                msg = (\n                    \"FLEXT slow timeout policy: explicit pytest.mark.timeout is \"\n                    f\"forbidden; {item.nodeid} must use the config-owned slow budget\"\n                )\n                raise pytest.UsageError(msg)\n            item.stash[cls.stash_budgeted] = True\n            if (\n                item.get_closest_marker(\"slow\") is not None\n                and config.getoption(\"timeout\") != 0\n            ):\n                item.add_marker(pytest.mark.timeout(slow_timeout), append=False)",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 29,
+        "second_file": {
+          "end": 92,
+          "end_location": {
+            "column": 60,
+            "line": 92,
+            "position": 3035
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_slow_timeout.py",
+          "nodes": null,
+          "start": 68,
+          "start_location": {
+            "column": 4,
+            "line": 68,
+            "position": 1969
+          }
+        },
+        "tokens": 99,
+        "similarity": 0.841,
+        "method": null
+      },
+      {
+        "first_file": {
+          "end": 173,
+          "end_location": {
+            "column": 37,
+            "line": 173,
+            "position": 5965
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/docker_client.py",
+          "nodes": null,
+          "start": 136,
+          "start_location": {
+            "column": 4,
+            "line": 136,
+            "position": 4637
+          }
+        },
+        "format_name": "python",
+        "fragment": "def docker_compose_up(\n        target: p.Tests.ContainerConfig,\n        env_files: tuple[Path, ...],\n        *,\n        recreate: bool,\n    ) -> p.Result[bool]:\n        \"\"\"Run compose up with --wait bounded by the target's startup timeout.\n\n        Returns:\n            The resulting ``p.Result[bool]``.\n\n        \"\"\"\n        compose_file = target.compose_file\n        if compose_file is None:\n            return r[bool].fail(c.Tests.ERR_DOCKER_TARGET_NOT_INSPECTABLE)\n        client = FlextTestsUtilitiesDockerClient.docker_compose_client(\n            compose_file,\n            target.project_name\n            or FlextTestsUtilitiesDockerLifecycle.docker_compose_project(\n                compose_file,\n            ),\n            env_files,\n        )\n        try:\n            if recreate:\n                client.compose.down(remove_orphans=True, volumes=True)\n            client.compose.up(\n                services=[target.service] if target.service else None,\n                detach=True,\n                remove_orphans=True,\n                recreate=recreate,\n                wait=True,\n                wait_timeout=target.startup_timeout,\n                quiet=True,\n            )\n        except c.Tests.DOCKER_COMPOSE_ERRORS as exc:\n            return r[bool].fail_op(\"Compose up\", exc)\n        return r[bool].ok(value=True)",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 38,
+        "second_file": {
+          "end": 244,
+          "end_location": {
+            "column": 49,
+            "line": 244,
+            "position": 8385
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py",
+          "nodes": null,
+          "start": 209,
+          "start_location": {
+            "column": 4,
+            "line": 209,
+            "position": 7061
+          }
+        },
+        "tokens": 246,
+        "similarity": 0.858,
+        "method": null
+      },
+      {
+        "first_file": {
+          "end": 859,
+          "end_location": {
+            "column": 51,
+            "line": 859,
+            "position": 30703
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py",
+          "nodes": null,
+          "start": 831,
+          "start_location": {
+            "column": 4,
+            "line": 831,
+            "position": 29578
+          }
+        },
+        "format_name": "python",
+        "fragment": "def _await_health(\n        self,\n        info: p.Tests.ContainerInfo,\n        deadline: float,\n        timeout: int,\n    ) -> p.Result[p.Tests.ContainerInfo]:\n        \"\"\"Poll a starting healthcheck until it settles or the deadline passes.\n\n        Returns:\n            The resulting ``p.Result[p.Tests.ContainerInfo]``.\n\n        \"\"\"\n        current = info\n        while current.health == c.Tests.ContainerHealth.STARTING:\n            if time.monotonic() >= deadline:\n                return r[p.Tests.ContainerInfo].fail(\n                    c.Tests.ERR_DOCKER_READINESS_TIMEOUT.format(\n                        name=current.name,\n                        timeout=timeout,\n                        detail=\"healthcheck still starting\",\n                    ),\n                    error_code=c.Tests.DockerErrorCode.READINESS_TIMEOUT,\n                )\n            time.sleep(c.Tests.DOCKER_HEALTH_POLL_SECONDS)\n            refreshed = self.fetch_container_info(current.name)\n            if refreshed.failure:\n                return refreshed\n            current = refreshed.value\n        return r[p.Tests.ContainerInfo].ok(current)",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 29,
+        "second_file": {
+          "end": 105,
+          "end_location": {
+            "column": 58,
+            "line": 105,
+            "position": 3238
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/integration/test_docker_lifecycle.py",
+          "nodes": null,
+          "start": 88,
+          "start_location": {
+            "column": 4,
+            "line": 88,
+            "position": 2611
+          }
+        },
+        "tokens": 151,
+        "similarity": 0.863,
+        "method": null
+      },
+      {
+        "first_file": {
+          "end": 116,
+          "end_location": {
+            "column": 37,
+            "line": 116,
+            "position": 4807
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_docker/builders.py",
+          "nodes": null,
+          "start": 101,
+          "start_location": {
+            "column": 4,
+            "line": 101,
+            "position": 4088
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_stack_builder_resolves_target_config(tmp_path: Path) -> None:\n        \"\"\"Test stack() builds a resolved explicit compose-stack target.\"\"\"\n        manager = FlextTestsDocker.stack(\n            \"docker-compose.stack.yml\",\n            target=m.Tests.ContainerConfig(\n                container_name=\"stack-main\",\n                service=\"stack-main\",\n                port=3389,\n            ),\n            repository_root=tmp_path,\n        )\n        target = tm.not_none(manager.target_config)\n        tm.that(target.container_name, eq=\"stack-main\")\n        tm.that(target.compose_file, eq=tmp_path / \"docker-compose.stack.yml\")\n        tm.that(target.service, eq=\"stack-main\")\n        tm.that(target.port, eq=3389)",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 16,
+        "second_file": {
+          "end": 81,
+          "end_location": {
+            "column": 52,
+            "line": 81,
+            "position": 2861
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_docker/targets.py",
+          "nodes": null,
+          "start": 68,
+          "start_location": {
+            "column": 4,
+            "line": 68,
+            "position": 2292
+          }
+        },
+        "tokens": 109,
+        "similarity": 0.839,
+        "method": null
+      },
+      {
+        "first_file": {
+          "end": 137,
+          "end_location": {
+            "column": 33,
+            "line": 137,
+            "position": 5189
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/batch_create_in.py",
+          "nodes": null,
+          "start": 127,
+          "start_location": {
+            "column": 4,
+            "line": 127,
+            "position": 4713
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_create_in_json_indent(tmp_path: Path) -> None:\n        \"\"\"Test create_in() with custom JSON indentation.\"\"\"\n        content: p.ConfigMap = m.ConfigMap(root={\"key\": \"value\", \"nested\": {\"a\": 1}})\n        path = FlextTestsFiles(base_dir=tmp_path).create(\n            content,\n            \"settings.json\",\n            options=FlextTestsFiles.CreateOptions(indent=4),\n        )\n        tm.ok(path.exists())\n        text = path.read_text()\n        tm.that(text, has=\"    \")",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 11,
+        "second_file": {
+          "end": 117,
+          "end_location": {
+            "column": 33,
+            "line": 117,
+            "position": 4307
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/formats.py",
+          "nodes": null,
+          "start": 106,
+          "start_location": {
+            "column": 4,
+            "line": 106,
+            "position": 3863
+          }
+        },
+        "tokens": 110,
+        "similarity": 0.927,
+        "method": null
+      },
+      {
+        "first_file": {
+          "end": 72,
+          "end_location": {
+            "column": 48,
+            "line": 72,
+            "position": 2678
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/content_meta.py",
+          "nodes": null,
+          "start": 61,
+          "start_location": {
+            "column": 4,
+            "line": 61,
+            "position": 2087
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_info_parse_content_csv(tmp_path: Path) -> None:\n        \"\"\"Test info() with parse_content=True for CSV.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        csv_content = \"name,age,city\\nAlice,30,NYC\\nBob,25,LA\\n\"\n        path = tmp_path / \"data.csv\"\n        _ = path.write_text(csv_content)\n        result = manager.info(path, parse_content=True, detect_fmt=True)\n        _ = u.Tests.assert_success(result)\n        info = result.value\n        content_meta = tm.not_none(info.content_meta)\n        tm.that(content_meta.row_count, eq=3)\n        tm.that(content_meta.column_count, eq=3)",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 12,
+        "second_file": {
+          "end": 92,
+          "end_location": {
+            "column": 32,
+            "line": 92,
+            "position": 3509
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/read.py",
+          "nodes": null,
+          "start": 80,
+          "start_location": {
+            "column": 4,
+            "line": 80,
+            "position": 2984
+          }
+        },
+        "tokens": 140,
+        "similarity": 0.838,
+        "method": null
+      },
+      {
+        "first_file": {
+          "end": 113,
+          "end_location": {
+            "column": 40,
+            "line": 113,
+            "position": 4305
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/contexts.py",
+          "nodes": null,
+          "start": 88,
+          "start_location": {
+            "column": 4,
+            "line": 88,
+            "position": 3435
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_fileinfo_all_fields() -> None:\n        \"\"\"Test FlextTestsFiles.FileInfo with all fields populated.\"\"\"\n        now = datetime.now(tz=UTC)\n        info = m.Tests.FileInfo(\n            exists=True,\n            path=Path(\"/test/file.txt\"),\n            size=1024,\n            size_human=\"1.0 KB\",\n            lines=50,\n            encoding=\"utf-8\",\n            is_empty=False,\n            first_line=\"#!/usr/bin/env python\",\n            fmt=\"text\",\n            valid=True,\n            created=now,\n            modified=now,\n            permissions=420,\n            is_readonly=False,\n            sha256=\"abc123\" * 10 + \"abcd\",\n        )\n        tm.ok(info.exists is True)\n        tm.that(info.size, eq=1024)\n        tm.that(info.size_human, eq=\"1.0 KB\")\n        tm.that(info.lines, eq=50)\n        tm.that(info.fmt, eq=\"text\")\n        tm.that(info.sha256, none=False)",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 26,
+        "second_file": {
+          "end": 45,
+          "end_location": {
+            "column": 49,
+            "line": 45,
+            "position": 1266
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/file_models.py",
+          "nodes": null,
+          "start": 30,
+          "start_location": {
+            "column": 4,
+            "line": 30,
+            "position": 728
+          }
+        },
+        "tokens": 140,
+        "similarity": 0.842,
+        "method": null
+      },
+      {
+        "first_file": {
+          "end": 45,
+          "end_location": {
+            "column": 49,
+            "line": 45,
+            "position": 1551
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py",
+          "nodes": null,
+          "start": 31,
+          "start_location": {
+            "column": 4,
+            "line": 31,
+            "position": 860
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_get_file_info_exists(tmp_path: Path) -> None:\n        \"\"\"Test getting file info for existing file.\"\"\"\n        manager = FlextTestsFiles(base_dir=tmp_path)\n        content = \"line1\\nline2\\nline3\"\n        file_path = manager.create(content, \"test.txt\")\n        result = manager.info(file_path)\n        _ = u.Tests.assert_success(result)\n        file_info = result.value\n        tm.that(file_info, is_=FlextTestsFiles.FileInfo)\n        tm.ok(file_info.exists is True)\n        tm.that(file_info.size, gt=0)\n        tm.that(file_info.lines, eq=3)\n        tm.that(file_info.encoding, eq=\"utf-8\")\n        tm.ok(file_info.is_empty is False)\n        tm.that(file_info.first_line, eq=\"line1\")",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 15,
+        "second_file": {
+          "end": 30,
+          "end_location": {
+            "column": 44,
+            "line": 30,
+            "position": 890
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_metadata.py",
+          "nodes": null,
+          "start": 19,
+          "start_location": {
+            "column": 4,
+            "line": 19,
+            "position": 350
+          }
+        },
+        "tokens": 144,
+        "similarity": 0.957,
+        "method": null
+      }
+    ],
+    "statistics": {
+      "detection_date": "2026-11-09T03:16:12.086Z",
+      "formats": {
+        "python": {
+          "clones": 25,
+          "duplicated_lines": 432,
+          "duplicated_tokens": 3067,
+          "lines": 23647,
+          "new_clones": 0,
+          "new_duplicated_lines": 0,
+          "percentage": 1.826870216095065,
+          "percentage_tokens": 1.8221353501387247,
+          "sources": 166,
+          "tokens": 168319
+        },
+        "yaml": {
+          "clones": 0,
+          "duplicated_lines": 0,
+          "duplicated_tokens": 0,
+          "lines": 165,
+          "new_clones": 0,
+          "new_duplicated_lines": 0,
+          "percentage": 0.0,
+          "percentage_tokens": 0.0,
+          "sources": 3,
+          "tokens": 726
+        }
+      },
+      "total": {
+        "clones": 25,
+        "duplicated_lines": 432,
+        "duplicated_tokens": 3067,
+        "lines": 23812,
+        "new_clones": 0,
+        "new_duplicated_lines": 0,
+        "percentage": 1.8142113220225096,
+        "percentage_tokens": 1.8143097991659025,
+        "sources": 169,
+        "tokens": 169045
+      }
+    }
+  },
+  "candidates": [
+    {
+      "disposition": "below_existing_behavior_floor",
+      "reason": "Below selected body floor; raw-hard preserved",
+      "index": 0,
+      "canonical_index": 0,
+      "candidate": {
+        "first_file": {
+          "end": 71,
+          "end_location": {
+            "column": 4,
+            "line": 71,
+            "position": 2219
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/__init__.py",
+          "nodes": null,
+          "start": 51,
+          "start_location": {
+            "column": 0,
+            "line": 51,
+            "position": 1679
+          }
+        },
+        "format_name": "python",
+        "fragment": "__all__: tuple[str, ...] = (\n    \"FlextTests\",\n    \"FlextTestsCase\",\n    \"FlextTestsCli\",\n    \"FlextTestsConfig\",\n    \"FlextTestsConfigNamespace\",\n    \"FlextTestsConstants\",\n    \"FlextTestsDocker\",\n    \"FlextTestsDomains\",\n    \"FlextTestsFiles\",\n    \"FlextTestsFlextTestsFixtures\",\n    \"FlextTestsModels\",\n    \"FlextTestsProtocols\",\n    \"FlextTestsServiceBase\",\n    \"FlextTestsSettings\",\n    \"FlextTestsTypes\",\n    \"FlextTestsUtilities\",\n    \"FlextTestsUtilitiesFixturesDSL\",\n    \"FlextTestsUtilitiesMatchers\",\n    \"FlextTestsVersion\",\n    \"__author__\",",
+        "is_new": false,
+        "kind": "exact",
+        "lines": 21,
+        "second_file": {
+          "end": 85,
+          "end_location": {
+            "column": 4,
+            "line": 85,
+            "position": 2074
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/__init__.py",
+          "nodes": null,
+          "start": 65,
+          "start_location": {
+            "column": 0,
+            "line": 65,
+            "position": 1534
+          }
+        },
+        "tokens": 74,
+        "similarity": null,
+        "method": null
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/src/flext_tests/__init__.py",
+          "sha256": "cfa3a313722966acc4d0dd210fe44dbfac1922348477d67dda7a23bc24ee9136",
+          "lines": 21,
+          "tokens": 49,
+          "runs": [
+            [
+              51,
+              71,
+              49
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/__init__.py",
+          "sha256": "e871132fe6cb074d63e13b5e242c1c17918f35ee780ee6b8c88a40a6d662dd57",
+          "lines": 21,
+          "tokens": 49,
+          "runs": [
+            [
+              65,
+              85,
+              49
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "below_existing_behavior_floor",
+      "reason": "Below selected body floor; raw-hard preserved",
+      "index": 1,
+      "canonical_index": 1,
+      "candidate": {
+        "first_file": {
+          "end": 104,
+          "end_location": {
+            "column": 22,
+            "line": 104,
+            "position": 2666
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/__init__.py",
+          "nodes": null,
+          "start": 70,
+          "start_location": {
+            "column": 23,
+            "line": 70,
+            "position": 2213
+          }
+        },
+        "format_name": "python",
+        "fragment": "\"FlextTestsVersion\",\n    \"__author__\",\n    \"__author_email__\",\n    \"__description__\",\n    \"__license__\",\n    \"__title__\",\n    \"__url__\",\n    \"__version__\",\n    \"__version_info__\",\n    \"api\",\n    \"c\",\n    \"config\",\n    \"d\",\n    \"e\",\n    \"h\",\n    \"install_local_packages\",\n    \"m\",\n    \"p\",\n    \"r\",\n    \"s\",\n    \"settings\",\n    \"t\",\n    \"td\",\n    \"tf\",\n    \"tk\",\n    \"tm\",\n    \"u\",\n    \"x\",\n)\n\ninstall_lazy_exports(\n    __name__,\n    globals(),\n    {\n        \"FlextTests\": \".api\",",
+        "is_new": false,
+        "kind": "exact",
+        "lines": 35,
+        "second_file": {
+          "end": 123,
+          "end_location": {
+            "column": 22,
+            "line": 123,
+            "position": 2674
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/__init__.py",
+          "nodes": null,
+          "start": 89,
+          "start_location": {
+            "column": 30,
+            "line": 89,
+            "position": 2221
+          }
+        },
+        "tokens": 99,
+        "similarity": null,
+        "method": null
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/src/flext_tests/__init__.py",
+          "sha256": "cfa3a313722966acc4d0dd210fe44dbfac1922348477d67dda7a23bc24ee9136",
+          "lines": 34,
+          "tokens": 68,
+          "runs": [
+            [
+              70,
+              98,
+              56
+            ],
+            [
+              100,
+              104,
+              12
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/__init__.py",
+          "sha256": "e871132fe6cb074d63e13b5e242c1c17918f35ee780ee6b8c88a40a6d662dd57",
+          "lines": 34,
+          "tokens": 68,
+          "runs": [
+            [
+              89,
+              117,
+              56
+            ],
+            [
+              119,
+              123,
+              12
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "below_existing_behavior_floor",
+      "reason": "Below selected body floor; raw-hard preserved",
+      "index": 2,
+      "canonical_index": 2,
+      "candidate": {
+        "first_file": {
+          "end": 193,
+          "end_location": {
+            "column": 30,
+            "line": 193,
+            "position": 6854
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_models/filesystem.py",
+          "nodes": null,
+          "start": 181,
+          "start_location": {
+            "column": 48,
+            "line": 181,
+            "position": 6498
+          }
+        },
+        "format_name": "python",
+        "fragment": "@m.field_validator(\"path\", mode=\"before\")\n        @classmethod\n        def convert_path(cls, value: Path | str) -> Path:\n            \"\"\"Coerce a string path operand to ``Path`` before validation.\n\n            Args:\n                value: The declared path operand as ``Path`` or string.\n\n            Returns:\n                The resulting ``Path``.\n\n            \"\"\"\n            return Path(value) if isinstance(value, str) else value",
+        "is_new": false,
+        "kind": "exact",
+        "lines": 13,
+        "second_file": {
+          "end": 216,
+          "end_location": {
+            "column": 30,
+            "line": 216,
+            "position": 7521
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_models/filesystem.py",
+          "nodes": null,
+          "start": 204,
+          "start_location": {
+            "column": 8,
+            "line": 204,
+            "position": 7165
+          }
+        },
+        "tokens": 81,
+        "similarity": null,
+        "method": null
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/src/flext_tests/_models/filesystem.py",
+          "sha256": "0f8f7f07a4a8753737e20431ead176ff74c833cf49280d049a1300ecf1109a85",
+          "lines": 4,
+          "tokens": 12,
+          "runs": [
+            [
+              181,
+              183,
+              7
+            ],
+            [
+              193,
+              193,
+              5
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/src/flext_tests/_models/filesystem.py",
+          "sha256": "0f8f7f07a4a8753737e20431ead176ff74c833cf49280d049a1300ecf1109a85",
+          "lines": 4,
+          "tokens": 12,
+          "runs": [
+            [
+              204,
+              206,
+              7
+            ],
+            [
+              216,
+              216,
+              5
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 3,
+      "canonical_index": 3,
+      "candidate": {
+        "first_file": {
+          "end": 251,
+          "end_location": {
+            "column": 4,
+            "line": 251,
+            "position": 8763
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_models/filesystem.py",
+          "nodes": null,
+          "start": 226,
+          "start_location": {
+            "column": 0,
+            "line": 226,
+            "position": 7913
+          }
+        },
+        "format_name": "python",
+        "fragment": "ignore_ws: Annotated[\n            bool,\n            m.Field(description=\"Ignore whitespace in comparison.\"),\n        ] = False\n        ignore_case: Annotated[\n            bool,\n            m.Field(description=\"Case-insensitive comparison.\"),\n        ] = False\n        pattern: Annotated[\n            str | None,\n            m.Field(description=\"Pattern to check if both files contain.\"),\n        ] = None\n        deep: Annotated[\n            bool,\n            m.Field(description=\"Use deep comparison for nested structures.\"),\n        ] = True\n        keys: Annotated[\n            Sequence[str] | None,\n            m.Field(description=\"Only compare these keys.\"),\n        ] = None\n        exclude_keys: Annotated[\n            Sequence[str] | None,\n            m.Field(description=\"Exclude these keys from comparison.\"),\n        ] = None\n\n    class InfoParams(PathCoercingParams):",
+        "is_new": false,
+        "kind": "exact",
+        "lines": 26,
+        "second_file": {
+          "end": 55,
+          "end_location": {
+            "column": 4,
+            "line": 55,
+            "position": 1700
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/_files/_comparison/parsing.py",
+          "nodes": null,
+          "start": 30,
+          "start_location": {
+            "column": 0,
+            "line": 30,
+            "position": 850
+          }
+        },
+        "tokens": 169,
+        "similarity": null,
+        "method": null
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/src/flext_tests/_models/filesystem.py",
+          "sha256": "0f8f7f07a4a8753737e20431ead176ff74c833cf49280d049a1300ecf1109a85",
+          "lines": 25,
+          "tokens": 121,
+          "runs": [
+            [
+              226,
+              249,
+              120
+            ],
+            [
+              251,
+              251,
+              1
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/_files/_comparison/parsing.py",
+          "sha256": "3ae22ecaf9ae8829c2ee4e476e61e584cde6c7113ad66b455ee86b3348e93c0e",
+          "lines": 25,
+          "tokens": 121,
+          "runs": [
+            [
+              30,
+              53,
+              120
+            ],
+            [
+              55,
+              55,
+              1
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "below_existing_behavior_floor",
+      "reason": "Below selected body floor; raw-hard preserved",
+      "index": 4,
+      "canonical_index": 4,
+      "candidate": {
+        "first_file": {
+          "end": 177,
+          "end_location": {
+            "column": 14,
+            "line": 177,
+            "position": 4624
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_protocols/filesystem.py",
+          "nodes": null,
+          "start": 162,
+          "start_location": {
+            "column": 33,
+            "line": 162,
+            "position": 4298
+          }
+        },
+        "format_name": "python",
+        "fragment": "\"\"\"Target directory.\"\"\"\n            ...\n\n        @property\n        def fmt(self) -> c.Tests.FileFormat:\n            \"\"\"File format override.\"\"\"\n            ...\n\n        @property\n        def enc(self) -> t.NonEmptyStr:\n            \"\"\"File encoding.\"\"\"\n            ...\n\n        @property\n        def indent(self) -> t.NonNegativeInt:\n            \"\"\"JSON/YAML indentation.\"\"\"",
+        "is_new": false,
+        "kind": "exact",
+        "lines": 16,
+        "second_file": {
+          "end": 368,
+          "end_location": {
+            "column": 14,
+            "line": 368,
+            "position": 9618
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_protocols/filesystem.py",
+          "nodes": null,
+          "start": 353,
+          "start_location": {
+            "column": 44,
+            "line": 353,
+            "position": 9292
+          }
+        },
+        "tokens": 79,
+        "similarity": null,
+        "method": null
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/src/flext_tests/_protocols/filesystem.py",
+          "sha256": "1e22197c474b5a10605cdde38638da1d2af6616847f06658855013c32c8a5686",
+          "lines": 9,
+          "tokens": 20,
+          "runs": [
+            [
+              163,
+              163,
+              1
+            ],
+            [
+              165,
+              166,
+              7
+            ],
+            [
+              168,
+              168,
+              1
+            ],
+            [
+              170,
+              171,
+              5
+            ],
+            [
+              173,
+              173,
+              1
+            ],
+            [
+              175,
+              176,
+              5
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/src/flext_tests/_protocols/filesystem.py",
+          "sha256": "1e22197c474b5a10605cdde38638da1d2af6616847f06658855013c32c8a5686",
+          "lines": 9,
+          "tokens": 20,
+          "runs": [
+            [
+              354,
+              354,
+              1
+            ],
+            [
+              356,
+              357,
+              7
+            ],
+            [
+              359,
+              359,
+              1
+            ],
+            [
+              361,
+              362,
+              5
+            ],
+            [
+              364,
+              364,
+              1
+            ],
+            [
+              366,
+              367,
+              5
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "below_existing_behavior_floor",
+      "reason": "Below selected body floor; raw-hard preserved",
+      "index": 5,
+      "canonical_index": 5,
+      "candidate": {
+        "first_file": {
+          "end": 564,
+          "end_location": {
+            "column": 8,
+            "line": 564,
+            "position": 19609
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py",
+          "nodes": null,
+          "start": 554,
+          "start_location": {
+            "column": 70,
+            "line": 554,
+            "position": 19295
+          }
+        },
+        "format_name": "python",
+        "fragment": "``creation_environment`` reaches compose only while it creates.\n\n        Returns:\n            The resulting ``p.Result[p.Tests.ContainerInfo]``.\n\n        \"\"\"\n        target = self.target_config\n        error = self._target_error()\n        if target is None or target.container_name is None or error is not None:\n            return r[p.Tests.ContainerInfo].fail(error)\n        environment = creation_environment or {}",
+        "is_new": false,
+        "kind": "exact",
+        "lines": 11,
+        "second_file": {
+          "end": 910,
+          "end_location": {
+            "column": 8,
+            "line": 910,
+            "position": 32541
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py",
+          "nodes": null,
+          "start": 900,
+          "start_location": {
+            "column": 68,
+            "line": 900,
+            "position": 32227
+          }
+        },
+        "tokens": 91,
+        "similarity": null,
+        "method": null
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py",
+          "sha256": "368c56c9adac44ba0357c6fc590e2747aede4522d9814a79de02c3016e1f65a2",
+          "lines": 5,
+          "tokens": 43,
+          "runs": [
+            [
+              560,
+              564,
+              43
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py",
+          "sha256": "368c56c9adac44ba0357c6fc590e2747aede4522d9814a79de02c3016e1f65a2",
+          "lines": 5,
+          "tokens": 43,
+          "runs": [
+            [
+              906,
+              910,
+              43
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 6,
+      "canonical_index": 6,
+      "candidate": {
+        "first_file": {
+          "end": 195,
+          "end_location": {
+            "column": 16,
+            "line": 195,
+            "position": 8493
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_plugin.py",
+          "nodes": null,
+          "start": 185,
+          "start_location": {
+            "column": 0,
+            "line": 185,
+            "position": 8060
+          }
+        },
+        "format_name": "python",
+        "fragment": ")\n        with u.Tests.env_vars_context(\n            {}\n            if autoload\n            else {\"PYTEST_DISABLE_PLUGIN_AUTOLOAD\": c.ParserBooleanToken.ONE},\n            vars_to_clear=(\"PYTEST_ADDOPTS\", \"PYTEST_DISABLE_PLUGIN_AUTOLOAD\"),\n        ):\n            result = u.Tests.pytest_subprocess(\n                pytester,\n                *(argument for entry in entries for argument in (\"-p\", entry.name)),\n                \"--no-flext-enforce\",",
+        "is_new": false,
+        "kind": "exact",
+        "lines": 11,
+        "second_file": {
+          "end": 288,
+          "end_location": {
+            "column": 16,
+            "line": 288,
+            "position": 13002
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_plugin.py",
+          "nodes": null,
+          "start": 278,
+          "start_location": {
+            "column": 0,
+            "line": 278,
+            "position": 12569
+          }
+        },
+        "tokens": 89,
+        "similarity": null,
+        "method": null
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_plugin.py",
+          "sha256": "db1106ca3bf109f47098e9c0d8337426297eb2f14e3b6d171e69baaaec579597",
+          "lines": 11,
+          "tokens": 63,
+          "runs": [
+            [
+              185,
+              195,
+              63
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_plugin.py",
+          "sha256": "db1106ca3bf109f47098e9c0d8337426297eb2f14e3b6d171e69baaaec579597",
+          "lines": 11,
+          "tokens": 63,
+          "runs": [
+            [
+              278,
+              288,
+              63
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 7,
+      "canonical_index": 7,
+      "candidate": {
+        "first_file": {
+          "end": 151,
+          "end_location": {
+            "column": 33,
+            "line": 151,
+            "position": 5743
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/batch_create_in.py",
+          "nodes": 197,
+          "start": 140,
+          "start_location": {
+            "column": 4,
+            "line": 140,
+            "position": 5213
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_create_in_csv_with_headers(tmp_path: Path) -> None:\n        \"\"\"Test create_in() CSV with explicit headers.\"\"\"\n        content = [[c.ParserBooleanToken.ONE, \"2\"], [\"3\", \"4\"]]\n        path = FlextTestsFiles(base_dir=tmp_path).create(\n            content,\n            \"data.csv\",\n            options=FlextTestsFiles.CreateOptions(headers=[\"col1\", \"col2\"]),\n        )\n        tm.ok(path.exists())\n        lines = path.read_text().strip().split(\"\\n\")\n        tm.that(lines[0], eq=\"col1,col2\")\n        tm.that(len(lines), eq=3)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 79,
+          "end_location": {
+            "column": 33,
+            "line": 79,
+            "position": 3008
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/formats.py",
+          "nodes": 204,
+          "start": 67,
+          "start_location": {
+            "column": 4,
+            "line": 67,
+            "position": 2484
+          }
+        },
+        "tokens": 143,
+        "similarity": 0.815,
+        "method": "ast"
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/batch_create_in.py",
+          "sha256": "05110cb878b7789cfb999d31b007c09ffefcd8b43f1b5703ddccbe3fd4f92d21",
+          "lines": 11,
+          "tokens": 104,
+          "runs": [
+            [
+              140,
+              140,
+              2
+            ],
+            [
+              142,
+              151,
+              102
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/formats.py",
+          "sha256": "8ad751e4ba38a21f72a56b4b2057b3077a5a2fa48517d6583bc0616182c3593c",
+          "lines": 12,
+          "tokens": 107,
+          "runs": [
+            [
+              67,
+              67,
+              2
+            ],
+            [
+              69,
+              79,
+              105
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 8,
+      "canonical_index": 8,
+      "candidate": {
+        "first_file": {
+          "end": 49,
+          "end_location": {
+            "column": 35,
+            "line": 49,
+            "position": 1648
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 38,
+          "start_location": {
+            "column": 4,
+            "line": 38,
+            "position": 1177
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_compare_size_mode(tmp_path: Path) -> None:\n        \"\"\"Test compare() in size mode.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        path1 = manager.create(\"12345\", \"file1.txt\")\n        path2 = manager.create(\"abcde\", \"file2.txt\")\n        result = manager.compare(\n            path1,\n            path2,\n            options=tf.CompareOptions(mode=c.Tests.CompareMode.SIZE),\n        )\n        _ = u.Tests.assert_success(result)\n        tm.ok(result.value is True)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 63,
+          "end_location": {
+            "column": 36,
+            "line": 63,
+            "position": 2189
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 52,
+          "start_location": {
+            "column": 4,
+            "line": 52,
+            "position": 1672
+          }
+        },
+        "tokens": 119,
+        "similarity": 1.0,
+        "method": "ast"
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "sha256": "f2cb86a8f2e5a3756c437fbb0a02544a31264f641a6eb45bc6018e7db9544a57",
+          "lines": 11,
+          "tokens": 78,
+          "runs": [
+            [
+              38,
+              38,
+              2
+            ],
+            [
+              40,
+              49,
+              76
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "sha256": "f2cb86a8f2e5a3756c437fbb0a02544a31264f641a6eb45bc6018e7db9544a57",
+          "lines": 11,
+          "tokens": 78,
+          "runs": [
+            [
+              52,
+              52,
+              2
+            ],
+            [
+              54,
+              63,
+              76
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 9,
+      "canonical_index": 9,
+      "candidate": {
+        "first_file": {
+          "end": 49,
+          "end_location": {
+            "column": 35,
+            "line": 49,
+            "position": 1648
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 38,
+          "start_location": {
+            "column": 4,
+            "line": 38,
+            "position": 1177
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_compare_size_mode(tmp_path: Path) -> None:\n        \"\"\"Test compare() in size mode.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        path1 = manager.create(\"12345\", \"file1.txt\")\n        path2 = manager.create(\"abcde\", \"file2.txt\")\n        result = manager.compare(\n            path1,\n            path2,\n            options=tf.CompareOptions(mode=c.Tests.CompareMode.SIZE),\n        )\n        _ = u.Tests.assert_success(result)\n        tm.ok(result.value is True)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 77,
+          "end_location": {
+            "column": 35,
+            "line": 77,
+            "position": 2692
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 66,
+          "start_location": {
+            "column": 4,
+            "line": 66,
+            "position": 2213
+          }
+        },
+        "tokens": 119,
+        "similarity": 1.0,
+        "method": "ast"
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "sha256": "f2cb86a8f2e5a3756c437fbb0a02544a31264f641a6eb45bc6018e7db9544a57",
+          "lines": 11,
+          "tokens": 78,
+          "runs": [
+            [
+              38,
+              38,
+              2
+            ],
+            [
+              40,
+              49,
+              76
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "sha256": "f2cb86a8f2e5a3756c437fbb0a02544a31264f641a6eb45bc6018e7db9544a57",
+          "lines": 11,
+          "tokens": 78,
+          "runs": [
+            [
+              66,
+              66,
+              2
+            ],
+            [
+              68,
+              77,
+              76
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 10,
+      "canonical_index": 10,
+      "candidate": {
+        "first_file": {
+          "end": 49,
+          "end_location": {
+            "column": 35,
+            "line": 49,
+            "position": 1648
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 38,
+          "start_location": {
+            "column": 4,
+            "line": 38,
+            "position": 1177
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_compare_size_mode(tmp_path: Path) -> None:\n        \"\"\"Test compare() in size mode.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        path1 = manager.create(\"12345\", \"file1.txt\")\n        path2 = manager.create(\"abcde\", \"file2.txt\")\n        result = manager.compare(\n            path1,\n            path2,\n            options=tf.CompareOptions(mode=c.Tests.CompareMode.SIZE),\n        )\n        _ = u.Tests.assert_success(result)\n        tm.ok(result.value is True)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 91,
+          "end_location": {
+            "column": 35,
+            "line": 91,
+            "position": 3247
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 80,
+          "start_location": {
+            "column": 4,
+            "line": 80,
+            "position": 2716
+          }
+        },
+        "tokens": 119,
+        "similarity": 1.0,
+        "method": "ast"
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "sha256": "f2cb86a8f2e5a3756c437fbb0a02544a31264f641a6eb45bc6018e7db9544a57",
+          "lines": 11,
+          "tokens": 78,
+          "runs": [
+            [
+              38,
+              38,
+              2
+            ],
+            [
+              40,
+              49,
+              76
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "sha256": "f2cb86a8f2e5a3756c437fbb0a02544a31264f641a6eb45bc6018e7db9544a57",
+          "lines": 11,
+          "tokens": 78,
+          "runs": [
+            [
+              80,
+              80,
+              2
+            ],
+            [
+              82,
+              91,
+              76
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 11,
+      "canonical_index": 11,
+      "candidate": {
+        "first_file": {
+          "end": 49,
+          "end_location": {
+            "column": 35,
+            "line": 49,
+            "position": 1648
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 38,
+          "start_location": {
+            "column": 4,
+            "line": 38,
+            "position": 1177
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_compare_size_mode(tmp_path: Path) -> None:\n        \"\"\"Test compare() in size mode.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        path1 = manager.create(\"12345\", \"file1.txt\")\n        path2 = manager.create(\"abcde\", \"file2.txt\")\n        result = manager.compare(\n            path1,\n            path2,\n            options=tf.CompareOptions(mode=c.Tests.CompareMode.SIZE),\n        )\n        _ = u.Tests.assert_success(result)\n        tm.ok(result.value is True)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 105,
+          "end_location": {
+            "column": 36,
+            "line": 105,
+            "position": 3808
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 163,
+          "start": 94,
+          "start_location": {
+            "column": 4,
+            "line": 94,
+            "position": 3271
+          }
+        },
+        "tokens": 119,
+        "similarity": 1.0,
+        "method": "ast"
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "sha256": "f2cb86a8f2e5a3756c437fbb0a02544a31264f641a6eb45bc6018e7db9544a57",
+          "lines": 11,
+          "tokens": 78,
+          "runs": [
+            [
+              38,
+              38,
+              2
+            ],
+            [
+              40,
+              49,
+              76
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "sha256": "f2cb86a8f2e5a3756c437fbb0a02544a31264f641a6eb45bc6018e7db9544a57",
+          "lines": 11,
+          "tokens": 78,
+          "runs": [
+            [
+              94,
+              94,
+              2
+            ],
+            [
+              96,
+              105,
+              76
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 12,
+      "canonical_index": 12,
+      "candidate": {
+        "first_file": {
+          "end": 119,
+          "end_location": {
+            "column": 35,
+            "line": 119,
+            "position": 4316
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 154,
+          "start": 108,
+          "start_location": {
+            "column": 4,
+            "line": 108,
+            "position": 3832
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_compare_ignore_whitespace(tmp_path: Path) -> None:\n        \"\"\"Test compare() ignoring whitespace.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        path1 = manager.create(\"hello world\", \"file1.txt\")\n        path2 = manager.create(\"hello  world\", \"file2.txt\")\n        result = manager.compare(\n            path1,\n            path2,\n            options=tf.CompareOptions(ignore_ws=True),\n        )\n        _ = u.Tests.assert_success(result)\n        tm.ok(result.value is True)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 133,
+          "end_location": {
+            "column": 35,
+            "line": 133,
+            "position": 4813
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 154,
+          "start": 122,
+          "start_location": {
+            "column": 4,
+            "line": 122,
+            "position": 4340
+          }
+        },
+        "tokens": 113,
+        "similarity": 1.0,
+        "method": "ast"
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "sha256": "f2cb86a8f2e5a3756c437fbb0a02544a31264f641a6eb45bc6018e7db9544a57",
+          "lines": 11,
+          "tokens": 72,
+          "runs": [
+            [
+              108,
+              108,
+              2
+            ],
+            [
+              110,
+              119,
+              70
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "sha256": "f2cb86a8f2e5a3756c437fbb0a02544a31264f641a6eb45bc6018e7db9544a57",
+          "lines": 11,
+          "tokens": 72,
+          "runs": [
+            [
+              122,
+              122,
+              2
+            ],
+            [
+              124,
+              133,
+              70
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 13,
+      "canonical_index": 13,
+      "candidate": {
+        "first_file": {
+          "end": 119,
+          "end_location": {
+            "column": 35,
+            "line": 119,
+            "position": 4316
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 154,
+          "start": 108,
+          "start_location": {
+            "column": 4,
+            "line": 108,
+            "position": 3832
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_compare_ignore_whitespace(tmp_path: Path) -> None:\n        \"\"\"Test compare() ignoring whitespace.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        path1 = manager.create(\"hello world\", \"file1.txt\")\n        path2 = manager.create(\"hello  world\", \"file2.txt\")\n        result = manager.compare(\n            path1,\n            path2,\n            options=tf.CompareOptions(ignore_ws=True),\n        )\n        _ = u.Tests.assert_success(result)\n        tm.ok(result.value is True)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 147,
+          "end_location": {
+            "column": 35,
+            "line": 147,
+            "position": 5340
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 154,
+          "start": 136,
+          "start_location": {
+            "column": 4,
+            "line": 136,
+            "position": 4837
+          }
+        },
+        "tokens": 113,
+        "similarity": 1.0,
+        "method": "ast"
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "sha256": "f2cb86a8f2e5a3756c437fbb0a02544a31264f641a6eb45bc6018e7db9544a57",
+          "lines": 11,
+          "tokens": 72,
+          "runs": [
+            [
+              108,
+              108,
+              2
+            ],
+            [
+              110,
+              119,
+              70
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "sha256": "f2cb86a8f2e5a3756c437fbb0a02544a31264f641a6eb45bc6018e7db9544a57",
+          "lines": 11,
+          "tokens": 72,
+          "runs": [
+            [
+              136,
+              136,
+              2
+            ],
+            [
+              138,
+              147,
+              70
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 14,
+      "canonical_index": 14,
+      "candidate": {
+        "first_file": {
+          "end": 119,
+          "end_location": {
+            "column": 35,
+            "line": 119,
+            "position": 4316
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 154,
+          "start": 108,
+          "start_location": {
+            "column": 4,
+            "line": 108,
+            "position": 3832
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_compare_ignore_whitespace(tmp_path: Path) -> None:\n        \"\"\"Test compare() ignoring whitespace.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        path1 = manager.create(\"hello world\", \"file1.txt\")\n        path2 = manager.create(\"hello  world\", \"file2.txt\")\n        result = manager.compare(\n            path1,\n            path2,\n            options=tf.CompareOptions(ignore_ws=True),\n        )\n        _ = u.Tests.assert_success(result)\n        tm.ok(result.value is True)",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 161,
+          "end_location": {
+            "column": 36,
+            "line": 161,
+            "position": 5891
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "nodes": 154,
+          "start": 150,
+          "start_location": {
+            "column": 4,
+            "line": 150,
+            "position": 5364
+          }
+        },
+        "tokens": 113,
+        "similarity": 1.0,
+        "method": "ast"
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "sha256": "f2cb86a8f2e5a3756c437fbb0a02544a31264f641a6eb45bc6018e7db9544a57",
+          "lines": 11,
+          "tokens": 72,
+          "runs": [
+            [
+              108,
+              108,
+              2
+            ],
+            [
+              110,
+              119,
+              70
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/compare.py",
+          "sha256": "f2cb86a8f2e5a3756c437fbb0a02544a31264f641a6eb45bc6018e7db9544a57",
+          "lines": 11,
+          "tokens": 72,
+          "runs": [
+            [
+              150,
+              150,
+              2
+            ],
+            [
+              152,
+              161,
+              70
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 15,
+      "canonical_index": 15,
+      "candidate": {
+        "first_file": {
+          "end": 45,
+          "end_location": {
+            "column": 49,
+            "line": 45,
+            "position": 1551
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py",
+          "nodes": 254,
+          "start": 31,
+          "start_location": {
+            "column": 4,
+            "line": 31,
+            "position": 860
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_get_file_info_exists(tmp_path: Path) -> None:\n        \"\"\"Test getting file info for existing file.\"\"\"\n        manager = FlextTestsFiles(base_dir=tmp_path)\n        content = \"line1\\nline2\\nline3\"\n        file_path = manager.create(content, \"test.txt\")\n        result = manager.info(file_path)\n        _ = u.Tests.assert_success(result)\n        file_info = result.value\n        tm.that(file_info, is_=FlextTestsFiles.FileInfo)\n        tm.ok(file_info.exists is True)\n        tm.that(file_info.size, gt=0)\n        tm.that(file_info.lines, eq=3)\n        tm.that(file_info.encoding, eq=\"utf-8\")\n        tm.ok(file_info.is_empty is False)\n        tm.that(file_info.first_line, eq=\"line1\")",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 15,
+        "second_file": {
+          "end": 59,
+          "end_location": {
+            "column": 44,
+            "line": 59,
+            "position": 2130
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py",
+          "nodes": 205,
+          "start": 48,
+          "start_location": {
+            "column": 4,
+            "line": 48,
+            "position": 1575
+          }
+        },
+        "tokens": 144,
+        "similarity": 0.841,
+        "method": "ast"
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py",
+          "sha256": "8f41f623445fff0fa5e36c959813348c47ad97f88747e9f86cfa1981ba98b474",
+          "lines": 14,
+          "tokens": 126,
+          "runs": [
+            [
+              31,
+              31,
+              2
+            ],
+            [
+              33,
+              45,
+              124
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py",
+          "sha256": "8f41f623445fff0fa5e36c959813348c47ad97f88747e9f86cfa1981ba98b474",
+          "lines": 11,
+          "tokens": 99,
+          "runs": [
+            [
+              48,
+              48,
+              2
+            ],
+            [
+              50,
+              59,
+              97
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 16,
+      "canonical_index": 16,
+      "candidate": {
+        "first_file": {
+          "end": 59,
+          "end_location": {
+            "column": 44,
+            "line": 59,
+            "position": 2130
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py",
+          "nodes": 205,
+          "start": 48,
+          "start_location": {
+            "column": 4,
+            "line": 48,
+            "position": 1575
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_get_file_info_empty_file(tmp_path: Path) -> None:\n        \"\"\"Test getting file info for empty file.\"\"\"\n        manager = FlextTestsFiles(base_dir=tmp_path)\n        file_path = manager.create(\"\", \"empty.txt\")\n        result = manager.info(file_path)\n        _ = u.Tests.assert_success(result)\n        file_info = result.value\n        tm.that(file_info, is_=FlextTestsFiles.FileInfo)\n        tm.ok(file_info.exists is True)\n        tm.that(file_info.size, eq=0)\n        tm.ok(file_info.is_empty is True)\n        tm.that(file_info.first_line, eq=\"\")",
+        "is_new": false,
+        "kind": "similar",
+        "lines": 12,
+        "second_file": {
+          "end": 30,
+          "end_location": {
+            "column": 44,
+            "line": 30,
+            "position": 890
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_metadata.py",
+          "nodes": 205,
+          "start": 19,
+          "start_location": {
+            "column": 4,
+            "line": 19,
+            "position": 350
+          }
+        },
+        "tokens": 144,
+        "similarity": 0.892,
+        "method": "ast"
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py",
+          "sha256": "8f41f623445fff0fa5e36c959813348c47ad97f88747e9f86cfa1981ba98b474",
+          "lines": 11,
+          "tokens": 99,
+          "runs": [
+            [
+              48,
+              48,
+              2
+            ],
+            [
+              50,
+              59,
+              97
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_metadata.py",
+          "sha256": "9d500067858e695664f78edaa108fffbf6a97624bdfb2f33a9f062f2c187f005",
+          "lines": 11,
+          "tokens": 99,
+          "runs": [
+            [
+              19,
+              19,
+              2
+            ],
+            [
+              21,
+              30,
+              97
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "below_existing_behavior_floor",
+      "reason": "Below selected body floor; raw-hard preserved",
+      "index": 17,
+      "canonical_index": 17,
+      "candidate": {
+        "first_file": {
+          "end": 197,
+          "end_location": {
+            "column": 80,
+            "line": 197,
+            "position": 7289
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+          "nodes": null,
+          "start": 169,
+          "start_location": {
+            "column": 4,
+            "line": 169,
+            "position": 6137
+          }
+        },
+        "format_name": "python",
+        "fragment": "def apply_slow_budget(\n        cls,\n        config: pytest.Config,\n        items: list[pytest.Item],\n    ) -> None:\n        \"\"\"Apply the shared slow budget independently of static enforcement.\n\n        Raises:\n            UsageError: If FLEXT slow timeout policy.\n\n        \"\"\"\n        slow_timeout = cls.slow_budget_seconds(config)\n        for item in items if slow_timeout is not None else ():\n            if item.stash.get(cls.stash_budgeted, False):\n                continue\n            if item.get_closest_marker(\"slow\") is None:\n                continue\n            if item.get_closest_marker(\"timeout\") is not None:\n                msg = (\n                    \"FLEXT slow timeout policy: explicit pytest.mark.timeout is \"\n                    f\"forbidden; {item.nodeid} must use the config-owned slow budget\"\n                )\n                raise pytest.UsageError(msg)\n            item.stash[cls.stash_budgeted] = True\n            if (\n                item.get_closest_marker(\"slow\") is not None\n                and config.getoption(\"timeout\") != 0\n            ):\n                item.add_marker(pytest.mark.timeout(slow_timeout), append=False)",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 29,
+        "second_file": {
+          "end": 92,
+          "end_location": {
+            "column": 60,
+            "line": 92,
+            "position": 3035
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_slow_timeout.py",
+          "nodes": null,
+          "start": 68,
+          "start_location": {
+            "column": 4,
+            "line": 68,
+            "position": 1969
+          }
+        },
+        "tokens": 99,
+        "similarity": 0.841,
+        "method": null
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+          "sha256": "f03b4c77e8ae5d31ae3b9751028dadf6c0c213f17845aacc7223feb5913ec5fb",
+          "lines": 21,
+          "tokens": 138,
+          "runs": [
+            [
+              171,
+              173,
+              10
+            ],
+            [
+              180,
+              197,
+              128
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_slow_timeout.py",
+          "sha256": "9aac9eac8c33b08d7ba39b1c7b4d60af3d91019d567e7a9a9509ea73e462be47",
+          "lines": 21,
+          "tokens": 63,
+          "runs": [
+            [
+              70,
+              71,
+              6
+            ],
+            [
+              73,
+              90,
+              44
+            ],
+            [
+              92,
+              92,
+              13
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 18,
+      "canonical_index": 18,
+      "candidate": {
+        "first_file": {
+          "end": 173,
+          "end_location": {
+            "column": 37,
+            "line": 173,
+            "position": 5965
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/docker_client.py",
+          "nodes": null,
+          "start": 136,
+          "start_location": {
+            "column": 4,
+            "line": 136,
+            "position": 4637
+          }
+        },
+        "format_name": "python",
+        "fragment": "def docker_compose_up(\n        target: p.Tests.ContainerConfig,\n        env_files: tuple[Path, ...],\n        *,\n        recreate: bool,\n    ) -> p.Result[bool]:\n        \"\"\"Run compose up with --wait bounded by the target's startup timeout.\n\n        Returns:\n            The resulting ``p.Result[bool]``.\n\n        \"\"\"\n        compose_file = target.compose_file\n        if compose_file is None:\n            return r[bool].fail(c.Tests.ERR_DOCKER_TARGET_NOT_INSPECTABLE)\n        client = FlextTestsUtilitiesDockerClient.docker_compose_client(\n            compose_file,\n            target.project_name\n            or FlextTestsUtilitiesDockerLifecycle.docker_compose_project(\n                compose_file,\n            ),\n            env_files,\n        )\n        try:\n            if recreate:\n                client.compose.down(remove_orphans=True, volumes=True)\n            client.compose.up(\n                services=[target.service] if target.service else None,\n                detach=True,\n                remove_orphans=True,\n                recreate=recreate,\n                wait=True,\n                wait_timeout=target.startup_timeout,\n                quiet=True,\n            )\n        except c.Tests.DOCKER_COMPOSE_ERRORS as exc:\n            return r[bool].fail_op(\"Compose up\", exc)\n        return r[bool].ok(value=True)",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 38,
+        "second_file": {
+          "end": 244,
+          "end_location": {
+            "column": 49,
+            "line": 244,
+            "position": 8385
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py",
+          "nodes": null,
+          "start": 209,
+          "start_location": {
+            "column": 4,
+            "line": 209,
+            "position": 7061
+          }
+        },
+        "tokens": 246,
+        "similarity": 0.858,
+        "method": null
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/docker_client.py",
+          "sha256": "7a2b76b4e0258915fba8f1f4bc3932e2dfa11818f2e55a7062156d6049cf43f3",
+          "lines": 30,
+          "tokens": 164,
+          "runs": [
+            [
+              137,
+              138,
+              11
+            ],
+            [
+              140,
+              141,
+              7
+            ],
+            [
+              148,
+              173,
+              146
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py",
+          "sha256": "368c56c9adac44ba0357c6fc590e2747aede4522d9814a79de02c3016e1f65a2",
+          "lines": 23,
+          "tokens": 137,
+          "runs": [
+            [
+              211,
+              213,
+              5
+            ],
+            [
+              215,
+              216,
+              7
+            ],
+            [
+              223,
+              229,
+              53
+            ],
+            [
+              234,
+              244,
+              72
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "below_existing_behavior_floor",
+      "reason": "Below selected body floor; raw-hard preserved",
+      "index": 19,
+      "canonical_index": 19,
+      "candidate": {
+        "first_file": {
+          "end": 859,
+          "end_location": {
+            "column": 51,
+            "line": 859,
+            "position": 30703
+          },
+          "name": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py",
+          "nodes": null,
+          "start": 831,
+          "start_location": {
+            "column": 4,
+            "line": 831,
+            "position": 29578
+          }
+        },
+        "format_name": "python",
+        "fragment": "def _await_health(\n        self,\n        info: p.Tests.ContainerInfo,\n        deadline: float,\n        timeout: int,\n    ) -> p.Result[p.Tests.ContainerInfo]:\n        \"\"\"Poll a starting healthcheck until it settles or the deadline passes.\n\n        Returns:\n            The resulting ``p.Result[p.Tests.ContainerInfo]``.\n\n        \"\"\"\n        current = info\n        while current.health == c.Tests.ContainerHealth.STARTING:\n            if time.monotonic() >= deadline:\n                return r[p.Tests.ContainerInfo].fail(\n                    c.Tests.ERR_DOCKER_READINESS_TIMEOUT.format(\n                        name=current.name,\n                        timeout=timeout,\n                        detail=\"healthcheck still starting\",\n                    ),\n                    error_code=c.Tests.DockerErrorCode.READINESS_TIMEOUT,\n                )\n            time.sleep(c.Tests.DOCKER_HEALTH_POLL_SECONDS)\n            refreshed = self.fetch_container_info(current.name)\n            if refreshed.failure:\n                return refreshed\n            current = refreshed.value\n        return r[p.Tests.ContainerInfo].ok(current)",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 29,
+        "second_file": {
+          "end": 105,
+          "end_location": {
+            "column": 58,
+            "line": 105,
+            "position": 3238
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/integration/test_docker_lifecycle.py",
+          "nodes": null,
+          "start": 88,
+          "start_location": {
+            "column": 4,
+            "line": 88,
+            "position": 2611
+          }
+        },
+        "tokens": 151,
+        "similarity": 0.863,
+        "method": null
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/src/flext_tests/docker.py",
+          "sha256": "368c56c9adac44ba0357c6fc590e2747aede4522d9814a79de02c3016e1f65a2",
+          "lines": 21,
+          "tokens": 135,
+          "runs": [
+            [
+              833,
+              836,
+              17
+            ],
+            [
+              843,
+              859,
+              118
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/integration/test_docker_lifecycle.py",
+          "sha256": "b3f745dcce1dfe9594d9dd3373cc7fb0fac91ecc6d219d14b567fbdc81499c1c",
+          "lines": 11,
+          "tokens": 76,
+          "runs": [
+            [
+              89,
+              92,
+              12
+            ],
+            [
+              99,
+              105,
+              64
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 20,
+      "canonical_index": 20,
+      "candidate": {
+        "first_file": {
+          "end": 116,
+          "end_location": {
+            "column": 37,
+            "line": 116,
+            "position": 4807
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_docker/builders.py",
+          "nodes": null,
+          "start": 101,
+          "start_location": {
+            "column": 4,
+            "line": 101,
+            "position": 4088
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_stack_builder_resolves_target_config(tmp_path: Path) -> None:\n        \"\"\"Test stack() builds a resolved explicit compose-stack target.\"\"\"\n        manager = FlextTestsDocker.stack(\n            \"docker-compose.stack.yml\",\n            target=m.Tests.ContainerConfig(\n                container_name=\"stack-main\",\n                service=\"stack-main\",\n                port=3389,\n            ),\n            repository_root=tmp_path,\n        )\n        target = tm.not_none(manager.target_config)\n        tm.that(target.container_name, eq=\"stack-main\")\n        tm.that(target.compose_file, eq=tmp_path / \"docker-compose.stack.yml\")\n        tm.that(target.service, eq=\"stack-main\")\n        tm.that(target.port, eq=3389)",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 16,
+        "second_file": {
+          "end": 81,
+          "end_location": {
+            "column": 52,
+            "line": 81,
+            "position": 2861
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_docker/targets.py",
+          "nodes": null,
+          "start": 68,
+          "start_location": {
+            "column": 4,
+            "line": 68,
+            "position": 2292
+          }
+        },
+        "tokens": 109,
+        "similarity": 0.839,
+        "method": null
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_docker/builders.py",
+          "sha256": "c7519a7b6723ded503583ca43d1c180df2d4aac176281009a37b5f97ec41f03e",
+          "lines": 15,
+          "tokens": 97,
+          "runs": [
+            [
+              101,
+              101,
+              2
+            ],
+            [
+              103,
+              116,
+              95
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_docker/targets.py",
+          "sha256": "133fd326c98e6094e36b314230044e93f6e7a3ab93c2c902e76b89970ace4b53",
+          "lines": 13,
+          "tokens": 71,
+          "runs": [
+            [
+              68,
+              68,
+              2
+            ],
+            [
+              70,
+              81,
+              69
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "below_existing_behavior_floor",
+      "reason": "Below selected body floor; raw-hard preserved",
+      "index": 21,
+      "canonical_index": 21,
+      "candidate": {
+        "first_file": {
+          "end": 137,
+          "end_location": {
+            "column": 33,
+            "line": 137,
+            "position": 5189
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/batch_create_in.py",
+          "nodes": null,
+          "start": 127,
+          "start_location": {
+            "column": 4,
+            "line": 127,
+            "position": 4713
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_create_in_json_indent(tmp_path: Path) -> None:\n        \"\"\"Test create_in() with custom JSON indentation.\"\"\"\n        content: p.ConfigMap = m.ConfigMap(root={\"key\": \"value\", \"nested\": {\"a\": 1}})\n        path = FlextTestsFiles(base_dir=tmp_path).create(\n            content,\n            \"settings.json\",\n            options=FlextTestsFiles.CreateOptions(indent=4),\n        )\n        tm.ok(path.exists())\n        text = path.read_text()\n        tm.that(text, has=\"    \")",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 11,
+        "second_file": {
+          "end": 117,
+          "end_location": {
+            "column": 33,
+            "line": 117,
+            "position": 4307
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/formats.py",
+          "nodes": null,
+          "start": 106,
+          "start_location": {
+            "column": 4,
+            "line": 106,
+            "position": 3863
+          }
+        },
+        "tokens": 110,
+        "similarity": 0.927,
+        "method": null
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/batch_create_in.py",
+          "sha256": "05110cb878b7789cfb999d31b007c09ffefcd8b43f1b5703ddccbe3fd4f92d21",
+          "lines": 10,
+          "tokens": 82,
+          "runs": [
+            [
+              127,
+              127,
+              2
+            ],
+            [
+              129,
+              137,
+              80
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/formats.py",
+          "sha256": "8ad751e4ba38a21f72a56b4b2057b3077a5a2fa48517d6583bc0616182c3593c",
+          "lines": 11,
+          "tokens": 73,
+          "runs": [
+            [
+              106,
+              106,
+              2
+            ],
+            [
+              108,
+              117,
+              71
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 22,
+      "canonical_index": 22,
+      "candidate": {
+        "first_file": {
+          "end": 72,
+          "end_location": {
+            "column": 48,
+            "line": 72,
+            "position": 2678
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/content_meta.py",
+          "nodes": null,
+          "start": 61,
+          "start_location": {
+            "column": 4,
+            "line": 61,
+            "position": 2087
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_info_parse_content_csv(tmp_path: Path) -> None:\n        \"\"\"Test info() with parse_content=True for CSV.\"\"\"\n        manager = tf(base_dir=tmp_path)\n        csv_content = \"name,age,city\\nAlice,30,NYC\\nBob,25,LA\\n\"\n        path = tmp_path / \"data.csv\"\n        _ = path.write_text(csv_content)\n        result = manager.info(path, parse_content=True, detect_fmt=True)\n        _ = u.Tests.assert_success(result)\n        info = result.value\n        content_meta = tm.not_none(info.content_meta)\n        tm.that(content_meta.row_count, eq=3)\n        tm.that(content_meta.column_count, eq=3)",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 12,
+        "second_file": {
+          "end": 92,
+          "end_location": {
+            "column": 32,
+            "line": 92,
+            "position": 3509
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/read.py",
+          "nodes": null,
+          "start": 80,
+          "start_location": {
+            "column": 4,
+            "line": 80,
+            "position": 2984
+          }
+        },
+        "tokens": 140,
+        "similarity": 0.838,
+        "method": null
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/content_meta.py",
+          "sha256": "25180dd2e6df862ee2bbc5d45c9a7e2df18f37be85ac8968c0eb0912509ef0db",
+          "lines": 11,
+          "tokens": 91,
+          "runs": [
+            [
+              61,
+              61,
+              2
+            ],
+            [
+              63,
+              72,
+              89
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/read.py",
+          "sha256": "96b2c9808e7f0f76076a95c0413989ddfc10e427ad36ed8172ea743eb8994736",
+          "lines": 12,
+          "tokens": 97,
+          "runs": [
+            [
+              80,
+              80,
+              2
+            ],
+            [
+              82,
+              92,
+              95
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 23,
+      "canonical_index": 23,
+      "candidate": {
+        "first_file": {
+          "end": 113,
+          "end_location": {
+            "column": 40,
+            "line": 113,
+            "position": 4305
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/contexts.py",
+          "nodes": null,
+          "start": 88,
+          "start_location": {
+            "column": 4,
+            "line": 88,
+            "position": 3435
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_fileinfo_all_fields() -> None:\n        \"\"\"Test FlextTestsFiles.FileInfo with all fields populated.\"\"\"\n        now = datetime.now(tz=UTC)\n        info = m.Tests.FileInfo(\n            exists=True,\n            path=Path(\"/test/file.txt\"),\n            size=1024,\n            size_human=\"1.0 KB\",\n            lines=50,\n            encoding=\"utf-8\",\n            is_empty=False,\n            first_line=\"#!/usr/bin/env python\",\n            fmt=\"text\",\n            valid=True,\n            created=now,\n            modified=now,\n            permissions=420,\n            is_readonly=False,\n            sha256=\"abc123\" * 10 + \"abcd\",\n        )\n        tm.ok(info.exists is True)\n        tm.that(info.size, eq=1024)\n        tm.that(info.size_human, eq=\"1.0 KB\")\n        tm.that(info.lines, eq=50)\n        tm.that(info.fmt, eq=\"text\")\n        tm.that(info.sha256, none=False)",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 26,
+        "second_file": {
+          "end": 45,
+          "end_location": {
+            "column": 49,
+            "line": 45,
+            "position": 1266
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/file_models.py",
+          "nodes": null,
+          "start": 30,
+          "start_location": {
+            "column": 4,
+            "line": 30,
+            "position": 728
+          }
+        },
+        "tokens": 140,
+        "similarity": 0.842,
+        "method": null
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/contexts.py",
+          "sha256": "7a55e296b6e764bc69a52f3ecf473d8c2913ac8bfe47b77a7971aac7d317cf8d",
+          "lines": 25,
+          "tokens": 157,
+          "runs": [
+            [
+              88,
+              88,
+              1
+            ],
+            [
+              90,
+              113,
+              156
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/file_models.py",
+          "sha256": "1fd2b6b5911a5bbb2e6b8140133874155ce8cc44b688ed4b86cae9eee7f458f5",
+          "lines": 15,
+          "tokens": 102,
+          "runs": [
+            [
+              30,
+              30,
+              1
+            ],
+            [
+              32,
+              45,
+              101
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    },
+    {
+      "disposition": "behavioral_candidate",
+      "reason": "Bodies reach both floors; semantics need review",
+      "index": 24,
+      "canonical_index": 24,
+      "candidate": {
+        "first_file": {
+          "end": 45,
+          "end_location": {
+            "column": 49,
+            "line": 45,
+            "position": 1551
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py",
+          "nodes": null,
+          "start": 31,
+          "start_location": {
+            "column": 4,
+            "line": 31,
+            "position": 860
+          }
+        },
+        "format_name": "python",
+        "fragment": "def test_get_file_info_exists(tmp_path: Path) -> None:\n        \"\"\"Test getting file info for existing file.\"\"\"\n        manager = FlextTestsFiles(base_dir=tmp_path)\n        content = \"line1\\nline2\\nline3\"\n        file_path = manager.create(content, \"test.txt\")\n        result = manager.info(file_path)\n        _ = u.Tests.assert_success(result)\n        file_info = result.value\n        tm.that(file_info, is_=FlextTestsFiles.FileInfo)\n        tm.ok(file_info.exists is True)\n        tm.that(file_info.size, gt=0)\n        tm.that(file_info.lines, eq=3)\n        tm.that(file_info.encoding, eq=\"utf-8\")\n        tm.ok(file_info.is_empty is False)\n        tm.that(file_info.first_line, eq=\"line1\")",
+        "is_new": false,
+        "kind": "semantic",
+        "lines": 15,
+        "second_file": {
+          "end": 30,
+          "end_location": {
+            "column": 44,
+            "line": 30,
+            "position": 890
+          },
+          "name": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_metadata.py",
+          "nodes": null,
+          "start": 19,
+          "start_location": {
+            "column": 4,
+            "line": 19,
+            "position": 350
+          }
+        },
+        "tokens": 144,
+        "similarity": 0.957,
+        "method": null
+      },
+      "owned": true,
+      "self_span": false,
+      "measures": [
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_cleanup.py",
+          "sha256": "8f41f623445fff0fa5e36c959813348c47ad97f88747e9f86cfa1981ba98b474",
+          "lines": 14,
+          "tokens": 126,
+          "runs": [
+            [
+              31,
+              31,
+              2
+            ],
+            [
+              33,
+              45,
+              124
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        },
+        {
+          "source": "/home/marlonsc/flext/flext-tests/tests/unit/_files/info_metadata.py",
+          "sha256": "9d500067858e695664f78edaa108fffbf6a97624bdfb2f33a9f062f2c187f005",
+          "lines": 11,
+          "tokens": 99,
+          "runs": [
+            [
+              19,
+              19,
+              2
+            ],
+            [
+              21,
+              30,
+              97
+            ]
+          ],
+          "removed": [
+            "docstring",
+            "import_syntax",
+            "signature_syntax"
+          ],
+          "uncertainty": ""
+        }
+      ]
+    }
+  ],
+  "min_lines": 10,
+  "min_tokens": 62,
+  "duration_seconds": 0.34151969803497195,
+  "source_count": 22,
+  "counts": {
+    "raw": 25,
+    "owned": 25,
+    "mirror": 0,
+    "self_span": 0,
+    "raw_hard": 25,
+    "below_existing_behavior_floor": 8,
+    "behavioral_candidate": 17
+  },
+  "execution": "return_code=1; timed_out=False; signal=None",
+  "source_provenance": "Current source bytes, fragment-bound on the first side only; scanner has no per-source fingerprints. Not proof of historical source identity or semantic equivalence; raw-hard preserved.",
+  "budget_status": "NOT VERIFIED: evidence-only; no acceptance promotion; memory/token usage not measured"
+}

@@ -1,0 +1,110 @@
+[
+    {
+        "error": {
+            "code": "DEP002",
+            "message": "'pytest-asyncio' defined as a dependency but not used in the codebase"
+        },
+        "module": "pytest-asyncio",
+        "location": {
+            "file": "/home/marlonsc/flext/flext-tests/pyproject.toml",
+            "line": null,
+            "column": null
+        }
+    },
+    {
+        "error": {
+            "code": "DEP002",
+            "message": "'pytest-benchmark' defined as a dependency but not used in the codebase"
+        },
+        "module": "pytest-benchmark",
+        "location": {
+            "file": "/home/marlonsc/flext/flext-tests/pyproject.toml",
+            "line": null,
+            "column": null
+        }
+    },
+    {
+        "error": {
+            "code": "DEP002",
+            "message": "'pytest-cov' defined as a dependency but not used in the codebase"
+        },
+        "module": "pytest-cov",
+        "location": {
+            "file": "/home/marlonsc/flext/flext-tests/pyproject.toml",
+            "line": null,
+            "column": null
+        }
+    },
+    {
+        "error": {
+            "code": "DEP002",
+            "message": "'pytest-markdown-docs' defined as a dependency but not used in the codebase"
+        },
+        "module": "pytest-markdown-docs",
+        "location": {
+            "file": "/home/marlonsc/flext/flext-tests/pyproject.toml",
+            "line": null,
+            "column": null
+        }
+    },
+    {
+        "error": {
+            "code": "DEP002",
+            "message": "'pytest-randomly' defined as a dependency but not used in the codebase"
+        },
+        "module": "pytest-randomly",
+        "location": {
+            "file": "/home/marlonsc/flext/flext-tests/pyproject.toml",
+            "line": null,
+            "column": null
+        }
+    },
+    {
+        "error": {
+            "code": "DEP002",
+            "message": "'pytest-reportlog' defined as a dependency but not used in the codebase"
+        },
+        "module": "pytest-reportlog",
+        "location": {
+            "file": "/home/marlonsc/flext/flext-tests/pyproject.toml",
+            "line": null,
+            "column": null
+        }
+    },
+    {
+        "error": {
+            "code": "DEP002",
+            "message": "'pytest-testmon' defined as a dependency but not used in the codebase"
+        },
+        "module": "pytest-testmon",
+        "location": {
+            "file": "/home/marlonsc/flext/flext-tests/pyproject.toml",
+            "line": null,
+            "column": null
+        }
+    },
+    {
+        "error": {
+            "code": "DEP002",
+            "message": "'pytest-timeout' defined as a dependency but not used in the codebase"
+        },
+        "module": "pytest-timeout",
+        "location": {
+            "file": "/home/marlonsc/flext/flext-tests/pyproject.toml",
+            "line": null,
+            "column": null
+        }
+    },
+    {
+        "error": {
+            "code": "DEP002",
+            "message": "'pytest-xdist' defined as a dependency but not used in the codebase"
+        },
+        "module": "pytest-xdist",
+        "location": {
+            "file": "/home/marlonsc/flext/flext-tests/pyproject.toml",
+            "line": null,
+            "column": null
+        }
+    }
+]

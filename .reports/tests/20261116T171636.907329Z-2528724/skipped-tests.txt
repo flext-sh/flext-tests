@@ -1,0 +1,8 @@
+tests.integration.test_docker_lifecycle.TestsFlextTestsDockerLifecycle::test_changed_image_is_reported_without_recreation | Docker test environment is not configured: the untracked .env does not name DOCKER_HOST
+tests.integration.test_docker_lifecycle.TestsFlextTestsDockerLifecycle::test_verify_never_mutates | Docker test environment is not configured: the untracked .env does not name DOCKER_HOST
+tests.integration.test_docker_lifecycle.TestsFlextTestsDockerLifecycle::test_never_healthy_service_fails_within_startup_timeout | Docker test environment is not configured: the untracked .env does not name DOCKER_HOST
+tests.integration.test_docker_lifecycle.TestsFlextTestsDockerLifecycle::test_unhealthy_container_fails_without_recreation | Docker test environment is not configured: the untracked .env does not name DOCKER_HOST
+tests.integration.test_docker_lifecycle.TestsFlextTestsDockerLifecycle::test_reuse_preserves_container_data | Docker test environment is not configured: the untracked .env does not name DOCKER_HOST
+tests.integration.test_docker_lifecycle.TestsFlextTestsDockerLifecycle::test_creation_environment_reads_back_as_secret | Docker test environment is not configured: the untracked .env does not name DOCKER_HOST
+tests.integration.test_docker_lifecycle.TestsFlextTestsDockerLifecycle::test_concurrent_ensures_create_once | Docker test environment is not configured: the untracked .env does not name DOCKER_HOST
+tests.unit.test_capability_collection.TestsFlextTestsCapabilityCollection::test_docker_marker_runs_with_isolated_environment | Docker test environment is not configured: the untracked .env does not name DOCKER_HOST

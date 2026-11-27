@@ -1,0 +1,53 @@
+{
+  "eligible": [],
+  "selected": [],
+  "deselected": [],
+  "diagnostics": {
+    "failed_count": 1,
+    "error_count": 0,
+    "warning_count": 0,
+    "skipped_count": 0,
+    "connectivity_skip_cases": [],
+    "collection_failed_count": 0,
+    "collection_skipped_count": 0,
+    "collection_failed_cases": [],
+    "collection_skip_cases": [],
+    "reported_node_ids": [
+      "tests/unit/test_enforcement_dispatcher.py::TestsFlextTestsEnforcementDispatcher::test_rule_list_strips_blank_and_padded_fields"
+    ],
+    "phase_outcomes": [
+      {
+        "node_id": "tests/unit/test_enforcement_dispatcher.py::TestsFlextTestsEnforcementDispatcher::test_rule_list_strips_blank_and_padded_fields",
+        "phase": "setup",
+        "outcome": "passed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_dispatcher.py::TestsFlextTestsEnforcementDispatcher::test_rule_list_strips_blank_and_padded_fields",
+        "phase": "call",
+        "outcome": "failed"
+      },
+      {
+        "node_id": "tests/unit/test_enforcement_dispatcher.py::TestsFlextTestsEnforcementDispatcher::test_rule_list_strips_blank_and_padded_fields",
+        "phase": "teardown",
+        "outcome": "passed"
+      }
+    ],
+    "markdown_attempts": [],
+    "markdown_items": [],
+    "failed_cases": [
+      "tests.unit.test_enforcement_dispatcher.TestsFlextTestsEnforcementDispatcher::test_rule_list_strips_blank_and_padded_fields"
+    ],
+    "error_traces": [
+      "=== FAILURE: tests.unit.test_enforcement_dispatcher.TestsFlextTestsEnforcementDispatcher::test_rule_list_strips_blank_and_padded_fields ===\nFailed: Timeout (>20.0s) from pytest-timeout.\n/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/pathlib/_local.py:231: in __str__\n    return self._str\n           ^^^^^^^^^\nE   AttributeError: 'pathlib._local.PurePosixPath' object has no attribute '_str'\n\nDuring handling of the above exception, another exception occurred:\n/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_dispatcher.py:229: in test_rule_list_strips_blank_and_padded_fields\n    rule = self._runtime_rule_id()\n           ^^^^^^^^^^^^^^^^^^^^^^^\n/home/marlonsc/flext/flext-tests/tests/unit/test_enforcement_dispatcher.py:108: in _runtime_rule_id\n    for rule in u.Tests.active_rules(cls._cfg())\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/enforcement.py:69: in active_rules\n    catalog = cls.build_canonical_catalog(cfg.catalog_root)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/marlonsc/flext/flext-tests/src/flext_tests/_utilities/enforcement.py:44: in build_canonical_catalog\n    planned = infra_u.Infra.codemod_rule_plan(snapshot)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:676: in codemod_rule_plan\n    provider = cls.codemod_generated_provider(\n/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:792: in codemod_generated_provider\n    rendered = cls.codemod_native_generated(\n/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:339: in codemod_native_generated\n    rules = cls.codemod_native_rules(\n/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:990: in codemod_native_rules\n    return cls._rendered_rules(\n/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:1035: in _rendered_rules\n    rendered = cls.codemod_native_render(snapshot, project, entry, computed)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/native_utilities.py:940: in codemod_native_render\n    renderer(snapshot, project, facts[entry.facts]), strict=True\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/project_facts.py:1284: in codemod_partitioned_rules\n    FlextInfraUtilitiesCodemodScopes.codemod_partitioned_documents(\n/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/scopes.py:135: in codemod_partitioned_documents\n    for key, native in cls._partition_documents(\n/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/scopes.py:403: in _partition_documents\n    admitted = list[t.JsonValue](cls._admitted(members, files, ignores))\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/scopes.py:531: in _admitted\n    if (files is None or any(PurePosixPath(path).full_match(g) for g in files))\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/marlonsc/flext/flext-infra/src/flext_infra/_utilities/_codemod/scopes.py:531: in <genexpr>\n    if (files is None or any(PurePosixPath(path).full_match(g) for g in files))\n                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/pathlib/_abc.py:399: in full_match\n    return match(self._pattern_str) is not None\n                 ^^^^^^^^^^^^^^^^^\n/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/pathlib/_local.py:454: in _pattern_str\n    path_str = str(self)\n               ^^^^^^^^^\n/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/pathlib/_local.py:233: in __str__\n    self._str = self._format_parsed_parts(self.drive, self.root,\n                                          ^^^^^^^^^^\n/home/marlonsc/.local/share/mise/installs/python/3.13.17/lib/python3.13/pathlib/_local.py:289: in drive\n    @property\nE   Failed: Timeout (>20.0s) from pytest-timeout."
+    ],
+    "warning_lines": [],
+    "skip_cases": [],
+    "slow_entries": [
+      "20.007000s | tests.unit.test_enforcement_dispatcher.TestsFlextTestsEnforcementDispatcher::test_rule_list_strips_blank_and_padded_fields"
+    ]
+  },
+  "cache_hit": false,
+  "violations": [
+    "selected node IDs differ from executed node IDs"
+  ]
+}

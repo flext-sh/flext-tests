@@ -1,0 +1,628 @@
+{
+  "entries": [
+    {
+      "rule_file": "/home/marlonsc/flext/flext-infra/src/flext_infra/config/rules/ast-grep/rules/rewire-deep-import-to-package.yml",
+      "rule_id": "rewire-deep-import-to-package",
+      "repository": "flext-tests",
+      "catalog_digest": "96f8c7f86cdf3eb9cf81859240cd5e78c996ce86938d13ad6dafc40a3d72dd6e",
+      "message": "Every name imported from `flext_tests._protocols.enforcement` is published by its parent package `flext_tests._protocols`: import from the package, not from the module path below it.",
+      "module_absence": false,
+      "file": "src/flext_tests/_fixtures/_enforcement/collector.py",
+      "source_owner": "authored",
+      "range": {
+        "byteOffset": {
+          "start": 328,
+          "end": 362
+        },
+        "start": {
+          "line": 14,
+          "column": 5
+        },
+        "end": {
+          "line": 14,
+          "column": 39
+        }
+      },
+      "text": "flext_tests._protocols.enforcement",
+      "replacement": "flext_tests._protocols",
+      "actionable": true,
+      "classification": "actionable",
+      "replacement_offsets": {
+        "start": 328,
+        "end": 362
+      },
+      "severity": "error",
+      "origin": "ast-grep",
+      "native_record": {
+        "offset": 0,
+        "length": 967,
+        "sha256": "65ae7f90d25edc616b129f506549921a3b5925c1b0475c2d0c482a91e6c954d6"
+      },
+      "source_path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/collector.py",
+      "native_artifact": 0
+    },
+    {
+      "rule_file": "/home/marlonsc/flext/flext-tests/.reports/codemod/native/generated/0d21a031bee495782ac7ef7721a9bc8d6503a56c144ed81d0f0bb5e160a5a740/ruleDirs/import-header--name-module-load.yml",
+      "rule_id": "import-header--name-module-load",
+      "repository": "flext-tests",
+      "catalog_digest": "21e08b35afbeb7a6e1ed5a503834809dee6748d9c26ce7f9facad3644a1901d0",
+      "message": "`FlextTestsEnforcementBuilder` read through the dynamically loaded `flext_tests._fixtures._enforcement.build` object: import it by name.",
+      "module_absence": false,
+      "file": "src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+      "source_owner": "authored",
+      "range": {
+        "byteOffset": {
+          "start": 10688,
+          "end": 10797
+        },
+        "start": {
+          "line": 284,
+          "column": 18
+        },
+        "end": {
+          "line": 286,
+          "column": 38
+        }
+      },
+      "text": "import_module(\n            \"flext_tests._fixtures._enforcement.build\",\n        ).FlextTestsEnforcementBuilder",
+      "replacement": "FlextTestsEnforcementBuilder",
+      "actionable": true,
+      "classification": "actionable",
+      "replacement_offsets": {
+        "start": 10688,
+        "end": 10797
+      },
+      "severity": "hint",
+      "origin": "ast-grep",
+      "native_record": {
+        "offset": 968,
+        "length": 2242,
+        "sha256": "6d09d3f445505809d65813f38cea52e6ef3071535a4c1f2d7b187d2a492366bf"
+      },
+      "source_path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+      "native_artifact": 0
+    },
+    {
+      "rule_file": "/home/marlonsc/flext/flext-infra/src/flext_infra/config/rules/ast-grep/rules/rewire-deep-import-to-package.yml",
+      "rule_id": "rewire-deep-import-to-package",
+      "repository": "flext-tests",
+      "catalog_digest": "96f8c7f86cdf3eb9cf81859240cd5e78c996ce86938d13ad6dafc40a3d72dd6e",
+      "message": "Every name imported from `flext_tests._constants.validator` is published by its parent package `flext_tests._constants`: import from the package, not from the module path below it.",
+      "module_absence": false,
+      "file": "src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+      "source_owner": "authored",
+      "range": {
+        "byteOffset": {
+          "start": 1055,
+          "end": 1087
+        },
+        "start": {
+          "line": 28,
+          "column": 5
+        },
+        "end": {
+          "line": 28,
+          "column": 37
+        }
+      },
+      "text": "flext_tests._constants.validator",
+      "replacement": "flext_tests._constants",
+      "actionable": true,
+      "classification": "actionable",
+      "replacement_offsets": {
+        "start": 1055,
+        "end": 1087
+      },
+      "severity": "error",
+      "origin": "ast-grep",
+      "native_record": {
+        "offset": 3211,
+        "length": 964,
+        "sha256": "d3d455f7857ba462a9af3c2a042f4a6d3f94b5d8c0ef8a534b44643d1ff5e1cb"
+      },
+      "source_path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+      "native_artifact": 0
+    },
+    {
+      "rule_file": "/home/marlonsc/flext/flext-tests/.reports/codemod/native/generated/0d21a031bee495782ac7ef7721a9bc8d6503a56c144ed81d0f0bb5e160a5a740/ruleDirs/import-header--letter-module-object.yml",
+      "rule_id": "import-header--letter-module-object",
+      "repository": "flext-tests",
+      "catalog_digest": "7f1e63450a038f1537b67301f61608713ee024b8d218e49ad87adc29db8f1826",
+      "message": "Letter `m` read through the package module object `flext_tests`: bind the letter by name.",
+      "module_absence": false,
+      "file": "src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+      "source_owner": "authored",
+      "range": {
+        "byteOffset": {
+          "start": 5908,
+          "end": 5938
+        },
+        "start": {
+          "line": 158,
+          "column": 17
+        },
+        "end": {
+          "line": 158,
+          "column": 47
+        }
+      },
+      "text": "import_module(\"flext_tests\").m",
+      "replacement": "m",
+      "actionable": true,
+      "classification": "actionable",
+      "replacement_offsets": {
+        "start": 5908,
+        "end": 5938
+      },
+      "severity": "hint",
+      "origin": "ast-grep",
+      "native_record": {
+        "offset": 4176,
+        "length": 1766,
+        "sha256": "f1171556b419d599ae7093a4011a4a6bfe06c5ef7e330ee26c75c63fe8c1d0a4"
+      },
+      "source_path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+      "native_artifact": 0
+    },
+    {
+      "rule_file": "/home/marlonsc/flext/flext-tests/.reports/codemod/native/generated/0d21a031bee495782ac7ef7721a9bc8d6503a56c144ed81d0f0bb5e160a5a740/ruleDirs/import-header--letter-module-object.yml",
+      "rule_id": "import-header--letter-module-object",
+      "repository": "flext-tests",
+      "catalog_digest": "7f1e63450a038f1537b67301f61608713ee024b8d218e49ad87adc29db8f1826",
+      "message": "Letter `u` read through the package module object `flext_tests`: bind the letter by name.",
+      "module_absence": false,
+      "file": "src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+      "source_owner": "authored",
+      "range": {
+        "byteOffset": {
+          "start": 7027,
+          "end": 7035
+        },
+        "start": {
+          "line": 186,
+          "column": 20
+        },
+        "end": {
+          "line": 186,
+          "column": 28
+        }
+      },
+      "text": "facade.u",
+      "replacement": "u",
+      "actionable": true,
+      "classification": "actionable",
+      "replacement_offsets": {
+        "start": 7027,
+        "end": 7035
+      },
+      "severity": "hint",
+      "origin": "ast-grep",
+      "native_record": {
+        "offset": 5943,
+        "length": 3151,
+        "sha256": "22d45c7ae388811c0d0013738ca8ff3473c3671ed093bfdfeb5346e7b3a64340"
+      },
+      "source_path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+      "native_artifact": 0
+    },
+    {
+      "rule_file": "/home/marlonsc/flext/flext-tests/.reports/codemod/native/generated/0d21a031bee495782ac7ef7721a9bc8d6503a56c144ed81d0f0bb5e160a5a740/ruleDirs/import-header--letter-module-object.yml",
+      "rule_id": "import-header--letter-module-object",
+      "repository": "flext-tests",
+      "catalog_digest": "7f1e63450a038f1537b67301f61608713ee024b8d218e49ad87adc29db8f1826",
+      "message": "Letter `m` read through the package module object `flext_tests`: bind the letter by name.",
+      "module_absence": false,
+      "file": "src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+      "source_owner": "authored",
+      "range": {
+        "byteOffset": {
+          "start": 7100,
+          "end": 7108
+        },
+        "start": {
+          "line": 187,
+          "column": 39
+        },
+        "end": {
+          "line": 187,
+          "column": 47
+        }
+      },
+      "text": "facade.m",
+      "replacement": "m",
+      "actionable": true,
+      "classification": "actionable",
+      "replacement_offsets": {
+        "start": 7100,
+        "end": 7108
+      },
+      "severity": "hint",
+      "origin": "ast-grep",
+      "native_record": {
+        "offset": 9095,
+        "length": 3185,
+        "sha256": "2c5acc0a1bf37859437a97608bd177ce7473ee8315392ff0e184d77c35be1ddc"
+      },
+      "source_path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+      "native_artifact": 0
+    },
+    {
+      "rule_file": "/home/marlonsc/flext/flext-tests/.reports/codemod/native/generated/0d21a031bee495782ac7ef7721a9bc8d6503a56c144ed81d0f0bb5e160a5a740/ruleDirs/import-header--letter-module-object.yml",
+      "rule_id": "import-header--letter-module-object",
+      "repository": "flext-tests",
+      "catalog_digest": "7f1e63450a038f1537b67301f61608713ee024b8d218e49ad87adc29db8f1826",
+      "message": "Letter `u` read through the package module object `flext_tests`: bind the letter by name.",
+      "module_absence": false,
+      "file": "src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+      "source_owner": "authored",
+      "range": {
+        "byteOffset": {
+          "start": 15023,
+          "end": 15053
+        },
+        "start": {
+          "line": 395,
+          "column": 20
+        },
+        "end": {
+          "line": 395,
+          "column": 50
+        }
+      },
+      "text": "import_module(\"flext_tests\").u",
+      "replacement": "u",
+      "actionable": true,
+      "classification": "actionable",
+      "replacement_offsets": {
+        "start": 15023,
+        "end": 15053
+      },
+      "severity": "hint",
+      "origin": "ast-grep",
+      "native_record": {
+        "offset": 12281,
+        "length": 1789,
+        "sha256": "2358148001130c10eb5ec75b7265f752d68eaa02fcbb7a037391fafc56c74b40"
+      },
+      "source_path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+      "native_artifact": 0
+    },
+    {
+      "rule_file": "/home/marlonsc/flext/flext-infra/src/flext_infra/config/rules/ast-grep/rules/rewire-deep-import-to-package.yml",
+      "rule_id": "rewire-deep-import-to-package",
+      "repository": "flext-tests",
+      "catalog_digest": "96f8c7f86cdf3eb9cf81859240cd5e78c996ce86938d13ad6dafc40a3d72dd6e",
+      "message": "Every name imported from `flext_tests._protocols.enforcement` is published by its parent package `flext_tests._protocols`: import from the package, not from the module path below it.",
+      "module_absence": false,
+      "file": "src/flext_tests/_fixtures/_enforcement/items.py",
+      "source_owner": "authored",
+      "range": {
+        "byteOffset": {
+          "start": 323,
+          "end": 357
+        },
+        "start": {
+          "line": 13,
+          "column": 5
+        },
+        "end": {
+          "line": 13,
+          "column": 39
+        }
+      },
+      "text": "flext_tests._protocols.enforcement",
+      "replacement": "flext_tests._protocols",
+      "actionable": true,
+      "classification": "actionable",
+      "replacement_offsets": {
+        "start": 323,
+        "end": 357
+      },
+      "severity": "error",
+      "origin": "ast-grep",
+      "native_record": {
+        "offset": 14071,
+        "length": 963,
+        "sha256": "933e0edd50ed2a93681b076e6fb308d6bc6e4a5e889bdb45375f98dd1aebd5af"
+      },
+      "source_path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/items.py",
+      "native_artifact": 0
+    },
+    {
+      "rule_file": "/home/marlonsc/flext/flext-infra/src/flext_infra/config/rules/ast-grep/rules/rewire-deep-import-to-package.yml",
+      "rule_id": "rewire-deep-import-to-package",
+      "repository": "flext-tests",
+      "catalog_digest": "96f8c7f86cdf3eb9cf81859240cd5e78c996ce86938d13ad6dafc40a3d72dd6e",
+      "message": "Every name imported from `flext_tests._models.docker` is published by its parent package `flext_tests._models`: import from the package, not from the module path below it.",
+      "module_absence": false,
+      "file": "src/flext_tests/_models/spec.py",
+      "source_owner": "authored",
+      "range": {
+        "byteOffset": {
+          "start": 268,
+          "end": 294
+        },
+        "start": {
+          "line": 13,
+          "column": 5
+        },
+        "end": {
+          "line": 13,
+          "column": 31
+        }
+      },
+      "text": "flext_tests._models.docker",
+      "replacement": "flext_tests._models",
+      "actionable": true,
+      "classification": "actionable",
+      "replacement_offsets": {
+        "start": 268,
+        "end": 294
+      },
+      "severity": "error",
+      "origin": "ast-grep",
+      "native_record": {
+        "offset": 15035,
+        "length": 898,
+        "sha256": "ad8e4afb693338527be890beddc225fd20124d02915096fe77bf23af876abf06"
+      },
+      "source_path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_models/spec.py",
+      "native_artifact": 0
+    },
+    {
+      "rule_file": "/home/marlonsc/flext/flext-infra/src/flext_infra/config/rules/ast-grep/rules/rewire-deep-import-to-package.yml",
+      "rule_id": "rewire-deep-import-to-package",
+      "repository": "flext-tests",
+      "catalog_digest": "96f8c7f86cdf3eb9cf81859240cd5e78c996ce86938d13ad6dafc40a3d72dd6e",
+      "message": "Every name imported from `flext_tests._typings.base` is published by its parent package `flext_tests._typings`: import from the package, not from the module path below it.",
+      "module_absence": false,
+      "file": "src/flext_tests/_protocols/valuefactory.py",
+      "source_owner": "authored",
+      "range": {
+        "byteOffset": {
+          "start": 334,
+          "end": 359
+        },
+        "start": {
+          "line": 14,
+          "column": 9
+        },
+        "end": {
+          "line": 14,
+          "column": 34
+        }
+      },
+      "text": "flext_tests._typings.base",
+      "replacement": "flext_tests._typings",
+      "actionable": true,
+      "classification": "actionable",
+      "replacement_offsets": {
+        "start": 334,
+        "end": 359
+      },
+      "severity": "error",
+      "origin": "ast-grep",
+      "native_record": {
+        "offset": 15934,
+        "length": 909,
+        "sha256": "09e782ebc1476d587e3d5e9fea0a98b46599a58085ee2aa834d45077fb024cbe"
+      },
+      "source_path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_protocols/valuefactory.py",
+      "native_artifact": 0
+    },
+    {
+      "rule_file": "/home/marlonsc/flext/flext-infra/src/flext_infra/config/rules/ast-grep/rules/rewire-deep-import-to-package.yml",
+      "rule_id": "rewire-deep-import-to-package",
+      "repository": "flext-tests",
+      "catalog_digest": "96f8c7f86cdf3eb9cf81859240cd5e78c996ce86938d13ad6dafc40a3d72dd6e",
+      "message": "Every name imported from `flext_tests._typings.base` is published by its parent package `flext_tests._typings`: import from the package, not from the module path below it.",
+      "module_absence": false,
+      "file": "src/flext_tests/_typings/files.py",
+      "source_owner": "authored",
+      "range": {
+        "byteOffset": {
+          "start": 238,
+          "end": 263
+        },
+        "start": {
+          "line": 12,
+          "column": 5
+        },
+        "end": {
+          "line": 12,
+          "column": 30
+        }
+      },
+      "text": "flext_tests._typings.base",
+      "replacement": "flext_tests._typings",
+      "actionable": true,
+      "classification": "actionable",
+      "replacement_offsets": {
+        "start": 238,
+        "end": 263
+      },
+      "severity": "error",
+      "origin": "ast-grep",
+      "native_record": {
+        "offset": 16844,
+        "length": 896,
+        "sha256": "27928330451e0ebd81db3a81e38b4d538ba59185857cc25a6431c90f7a0947da"
+      },
+      "source_path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_typings/files.py",
+      "native_artifact": 0
+    }
+  ],
+  "schema_version": 5,
+  "inputs": {
+    "states": [
+      {
+        "path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/collector.py",
+        "parent_device": 68,
+        "parent_inode": 654344574,
+        "mode": 420,
+        "device": 68,
+        "inode": 1056444428,
+        "link_count": 1,
+        "file_attributes": null,
+        "reparse_tag": null,
+        "content": "IiIiQ29sbGVjdG9yIGZvciBlbmZvcmNlbWVudCBpdGVtcy4KCkNvcHlyaWdodCAoYykgMjAyNiBGTEVYVCBUZWFtLiBBbGwgcmlnaHRzIHJlc2VydmVkLgpTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogTUlUCiIiIgoKZnJvbSBfX2Z1dHVyZV9fIGltcG9ydCBhbm5vdGF0aW9ucwoKZnJvbSBjb2xsZWN0aW9ucy5hYmMgaW1wb3J0IEl0ZXJhYmxlLCBTZXF1ZW5jZQpmcm9tIHR5cGluZyBpbXBvcnQgb3ZlcnJpZGUKCmltcG9ydCBweXRlc3QKCmZyb20gZmxleHRfdGVzdHMuX2ZpeHR1cmVzLl9lbmZvcmNlbWVudCBpbXBvcnQgRmxleHRUZXN0c0VuZm9yY2VtZW50SXRlbQpmcm9tIGZsZXh0X3Rlc3RzLl9wcm90b2NvbHMuZW5mb3JjZW1lbnQgaW1wb3J0IEZsZXh0VGVzdHNQcm90b2NvbHNFbmZvcmNlbWVudAoKCmNsYXNzIEZsZXh0VGVzdHNGaXh0dXJlc0VuZm9yY2VtZW50Q29sbGVjdG9yKAogICAgRmxleHRUZXN0c1Byb3RvY29sc0VuZm9yY2VtZW50LlR5cGVkTm9kZSwKICAgIHB5dGVzdC5Db2xsZWN0b3IsCik6CiAgICAiIiJTeW50aGV0aWMgY29sbGVjdG9yIG93bmluZyBzZXNzaW9uIGBgRmxleHRUZXN0c0VuZm9yY2VtZW50SXRlbWBgIGl0ZW1zLiIiIgoKICAgIGRlZiBfX2luaXRfXygKICAgICAgICBzZWxmLAogICAgICAgIG5hbWU6IHN0ciwKICAgICAgICBwYXJlbnQ6IHB5dGVzdC5TZXNzaW9uLAogICAgICAgICosCiAgICAgICAgaXRlbXM6IFNlcXVlbmNlW0ZsZXh0VGVzdHNFbmZvcmNlbWVudEl0ZW1dID0gKCksCiAgICApIC0-IE5vbmU6CiAgICAgICAgc3VwZXIoKS5fX2luaXRfXyhuYW1lLCBwYXJlbnQpCiAgICAgICAgc2VsZi5faXRlbXM6IGxpc3RbRmxleHRUZXN0c0VuZm9yY2VtZW50SXRlbV0gPSBsaXN0KGl0ZW1zKQoKICAgIGRlZiBhZGQoc2VsZiwgaXRlbTogRmxleHRUZXN0c0VuZm9yY2VtZW50SXRlbSkgLT4gTm9uZToKICAgICAgICBzZWxmLl9pdGVtcy5hcHBlbmQoaXRlbSkKCiAgICBAb3ZlcnJpZGUKICAgIGRlZiBjb2xsZWN0KHNlbGYpIC0-IEl0ZXJhYmxlW3B5dGVzdC5JdGVtXToKICAgICAgICByZXR1cm4gbGlzdChzZWxmLl9pdGVtcykKCgpfX2FsbF9fOiBsaXN0W3N0cl0gPSBbIkZsZXh0VGVzdHNGaXh0dXJlc0VuZm9yY2VtZW50Q29sbGVjdG9yIl0K"
+      },
+      {
+        "path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+        "parent_device": 68,
+        "parent_inode": 654344574,
+        "mode": 420,
+        "device": 68,
+        "inode": 1319211041,
+        "link_count": 1,
+        "file_attributes": null,
+        "reparse_tag": null,
+        "content": "IiIiRW5mb3JjZW1lbnQgZGlzcGF0Y2hlciBiZWhpbmQgdGhlIGBgZmxleHRfdGVzdHNfZW5mb3JjZW1lbnRgYCBweXRlc3QgcGx1Z2luLgoKQWN0aXZhdGlvbiByZXNvbHZlcyBmcm9tIHRoZSBweXRlc3Qgb3B0aW9ucywgdGhlIHJvb3RkaXIsIHRoZSB3b3Jrc3BhY2UKbWFya2VycyBhbmQsIG91dHNpZGUgYSB3b3Jrc3BhY2UsIHRoZSBwcm9qZWN0IG1hbmlmZXN0LiBUaGUgbW9kdWxlIGl0c2VsZiBzdGF5cwppbXBvcnQtbGlnaHQ6IHRoZSBlbmZvcmNlbWVudCBjYXRhbG9nLCBpdHMgbW9kZWxzIGFuZCB0aGUgYnVpbGRlciBsb2FkIHRocm91Z2gKdGhlIGRlZmVycmVkIGBgaW1wb3J0X21vZHVsZWBgIGZvcm0Kb25seSBvbmNlIGEgZ292ZXJuZWQgc2Vzc2lvbiByZWFjaGVzIHRoZW0sIHNvIGV2ZXJ5IHB5dGVzdCBwcm9jZXNzIHRoYXQKZW5mb3JjZW1lbnQgZG9lcyBub3QgZ292ZXJuIChhIG5lc3RlZCBydW5uZXIgcHJvamVjdCwgYSBzYW5kYm94LCBhIHdvcmtlcgpvdXRzaWRlIHRoZSB3b3Jrc3BhY2UpIHN0YXJ0cyB3aXRob3V0IGltcG9ydGluZyB0aGUgZnVsbCBmYWNhZGUgdHJlZS4KCkNvcHlyaWdodCAoYykgMjAyNiBGTEVYVCBUZWFtLiBBbGwgcmlnaHRzIHJlc2VydmVkLgpTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogTUlUCiIiIgoKZnJvbSBfX2Z1dHVyZV9fIGltcG9ydCBhbm5vdGF0aW9ucwoKaW1wb3J0IG1hdGgKaW1wb3J0IHJlCmltcG9ydCB0b21sbGliCmZyb20gaW1wb3J0bGliIGltcG9ydCBpbXBvcnRfbW9kdWxlCmZyb20gcGF0aGxpYiBpbXBvcnQgUGF0aApmcm9tIHR5cGluZyBpbXBvcnQgVFlQRV9DSEVDS0lORywgQ2xhc3NWYXIKCmltcG9ydCBweXRlc3QKCiMgVGhlIGxldHRlciBmYWNhZGVzIGFyZSBpbXBvcnRlZCBvbmx5IGJ5IHRoZSBtZXRob2RzIG9mIGEgZ292ZXJuZWQgc2Vzc2lvbjoKIyBhbiB1bmdvdmVybmVkIHB5dGVzdCBwcm9jZXNzIG11c3Qgbm90IGNvbXBvc2UgdGhlIHV0aWxpdGllcyBmYWNhZGUsIHdoaWNoCiMgd291bGQgbG9hZCBmbGV4dF9pbmZyYSAoc2VlIHRoZSBtb2R1bGUgZG9jc3RyaW5nKS4KZnJvbSBmbGV4dF90ZXN0cy5fY29uc3RhbnRzLnZhbGlkYXRvciBpbXBvcnQgRmxleHRUZXN0c0NvbnN0YW50c1ZhbGlkYXRvcgoKaWYgVFlQRV9DSEVDS0lORzoKICAgIGltcG9ydCB3YXJuaW5ncwoKICAgIGZyb20gZmxleHRfdGVzdHMgaW1wb3J0IHAKCgpjbGFzcyBGbGV4dFRlc3RzRW5mb3JjZW1lbnREaXNwYXRjaGVyOgogICAgIiIiUmVzb2x2ZSB0aGUgc2Vzc2lvbiBhY3RpdmF0aW9uIGFuZCBydW4gZXZlcnkgZW5mb3JjZW1lbnQgaG9vayBib2R5LiIiIgoKICAgIHN0YXNoX3Jvb3Q6IENsYXNzVmFyW3B5dGVzdC5TdGFzaEtleVtQYXRoIHwgTm9uZV1dID0gcHl0ZXN0LlN0YXNoS2V5KCkKICAgIHN0YXNoX2NvbmZpZzogQ2xhc3NWYXJbcHl0ZXN0LlN0YXNoS2V5W3AuVGVzdHMuRW5mb3JjZW1lbnREaXNwYXRjaGVyQ29uZmlnXV0gPSAoCiAgICAgICAgcHl0ZXN0LlN0YXNoS2V5KCkKICAgICkKICAgIHN0YXNoX2J1ZGdldGVkOiBDbGFzc1ZhcltweXRlc3QuU3Rhc2hLZXlbYm9vbF1dID0gcHl0ZXN0LlN0YXNoS2V5KCkKICAgIHN0YXNoX3Nsb3dfbGltaXQ6IENsYXNzVmFyW3B5dGVzdC5TdGFzaEtleVtmbG9hdCB8IE5vbmVdXSA9IHB5dGVzdC5TdGFzaEtleSgpCiAgICBzdGFzaF9kdXJhdGlvbnM6IENsYXNzVmFyW3B5dGVzdC5TdGFzaEtleVtkaWN0W3N0ciwgdHVwbGVbZmxvYXQsIGJvb2xdXV1dID0gKAogICAgICAgIHB5dGVzdC5TdGFzaEtleSgpCiAgICApCiAgICBzZXNzaW9uX2NvbmZpZzogQ2xhc3NWYXJbcHl0ZXN0LkNvbmZpZyB8IE5vbmVdID0gTm9uZQoKICAgIEBzdGF0aWNtZXRob2QKICAgIGRlZiBkaXNjb3Zlcl9yZXBvc2l0b3J5X3Jvb3Qoc3RhcnQ6IFBhdGgpIC0-IFBhdGggfCBOb25lOgogICAgICAgICIiIldhbGsgdXB3YXJkIGZyb20gYGBzdGFydGBgIHRvIGZpbmQgdGhlIEZMRVhUIHdvcmtzcGFjZSByb290LgoKICAgICAgICBSZXR1cm5zOgogICAgICAgICAgICBUaGUgcmVzdWx0aW5nIGBgUGF0aCB8IE5vbmVgYC4KCiAgICAgICAgIiIiCiAgICAgICAgZm9yIGNhbmRpZGF0ZSBpbiAoc3RhcnQsICpzdGFydC5wYXJlbnRzKToKICAgICAgICAgICAgaWYgYWxsKAogICAgICAgICAgICAgICAgKGNhbmRpZGF0ZSAvIG1hcmtlcikuZXhpc3RzKCkKICAgICAgICAgICAgICAgIGZvciBtYXJrZXIgaW4gRmxleHRUZXN0c0NvbnN0YW50c1ZhbGlkYXRvci5FTkZPUkNFTUVOVF9XT1JLU1BBQ0VfTUFSS0VSUwogICAgICAgICAgICApOgogICAgICAgICAgICAgICAgcmV0dXJuIGNhbmRpZGF0ZQogICAgICAgIHJldHVybiBOb25lCgogICAgQGNsYXNzbWV0aG9kCiAgICBkZWYgZGVjbGFyZXNfaW50ZXJuYWxfZmxleHQoY2xzLCByb290OiBQYXRoKSAtPiBib29sOgogICAgICAgICIiIlJldHVybiB3aGV0aGVyIGBgcm9vdGBgIGlzIGEgc3RhbmRhbG9uZSBpbnRlcm5hbCBGTEVYVCBwcm9qZWN0LgoKICAgICAgICBBY3RpdmF0aW9uIGlzIGRlcml2ZWQgZnJvbSB0aGUgcHJvamVjdCBtYW5pZmVzdCDigJQgdGhlIGRlY2xhcmVkIEZMRVhUCiAgICAgICAgY29yZSBkZXBlbmRlbmN5IG9yIGFuIGV4cGxpY2l0IGludGVybmFsIGtpbmQg4oCUIG5ldmVyIGZyb20gZGlyZWN0b3J5CiAgICAgICAgbmFtZXMgb3IgYSBwcm9qZWN0LW5hbWUgcHJlZml4LgoKICAgICAgICBSZXR1cm5zOgogICAgICAgICAgICBgYFRydWVgYCB3aGVuIHRoZSBtYW5pZmVzdCBkZWNsYXJlcyB0aGUgaW50ZXJuYWwgcHJvamVjdCBjb250cmFjdC4KCiAgICAgICAgIiIiCiAgICAgICAgY29uc3RhbnRzID0gRmxleHRUZXN0c0NvbnN0YW50c1ZhbGlkYXRvcgogICAgICAgIG1hbmlmZXN0ID0gcm9vdCAvIGNvbnN0YW50cy5FTkZPUkNFTUVOVF9QUk9KRUNUX01BTklGRVNUCiAgICAgICAgaWYgbm90IG1hbmlmZXN0LmlzX2ZpbGUoKToKICAgICAgICAgICAgcmV0dXJuIEZhbHNlCiAgICAgICAgZG9jdW1lbnQgPSB0b21sbGliLmxvYWRzKAogICAgICAgICAgICBtYW5pZmVzdC5yZWFkX3RleHQoZW5jb2Rpbmc9Y29uc3RhbnRzLkVORk9SQ0VNRU5UX01BTklGRVNUX0VOQ09ESU5HKQogICAgICAgICkKICAgICAgICBwcm9qZWN0ID0gZG9jdW1lbnQuZ2V0KCJwcm9qZWN0Iiwge30pCiAgICAgICAgZGVwZW5kZW5jaWVzID0gKAogICAgICAgICAgICBwcm9qZWN0LmdldCgiZGVwZW5kZW5jaWVzIiwgKCkpIGlmIGlzaW5zdGFuY2UocHJvamVjdCwgZGljdCkgZWxzZSAoKQogICAgICAgICkKICAgICAgICBtYXJrZXIgPSBjb25zdGFudHMuRU5GT1JDRU1FTlRfUFJPSkVDVF9ERVBFTkRFTkNZCiAgICAgICAgcGF0dGVybiA9IHJmIntyZS5lc2NhcGUobWFya2VyKX0oPyFbQS1aYS16MC05Xy1dKSIKICAgICAgICBpZiBpc2luc3RhbmNlKGRlcGVuZGVuY2llcywgbGlzdCkgYW5kIGFueSgKICAgICAgICAgICAgaXNpbnN0YW5jZShpdGVtLCBzdHIpIGFuZCByZS5tYXRjaChwYXR0ZXJuLCBpdGVtLnN0cmlwKCkpCiAgICAgICAgICAgIGZvciBpdGVtIGluIGRlcGVuZGVuY2llcwogICAgICAgICk6CiAgICAgICAgICAgIHJldHVybiBUcnVlCiAgICAgICAgdG9vbCA9IGRvY3VtZW50LmdldCgidG9vbCIsIHt9KQogICAgICAgIGlmIG5vdCBpc2luc3RhbmNlKHRvb2wsIGRpY3QpOgogICAgICAgICAgICByZXR1cm4gRmFsc2UKICAgICAgICBmbGV4dCA9IHRvb2wuZ2V0KCJmbGV4dCIsIHt9KQogICAgICAgIGlmICgKICAgICAgICAgICAgaXNpbnN0YW5jZShmbGV4dCwgZGljdCkKICAgICAgICAgICAgYW5kIGZsZXh0LmdldCgia2luZCIpID09IGNvbnN0YW50cy5FTkZPUkNFTUVOVF9QUk9KRUNUX0tJTkQKICAgICAgICApOgogICAgICAgICAgICByZXR1cm4gVHJ1ZQogICAgICAgIHV2ID0gdG9vbC5nZXQoInV2Iiwge30pCiAgICAgICAgc291cmNlcyA9IHV2LmdldCgic291cmNlcyIsIHt9KSBpZiBpc2luc3RhbmNlKHV2LCBkaWN0KSBlbHNlIHt9CiAgICAgICAgcmV0dXJuIGlzaW5zdGFuY2Uoc291cmNlcywgZGljdCkgYW5kIG1hcmtlciBpbiBzb3VyY2VzCgogICAgQHN0YXRpY21ldGhvZAogICAgZGVmIHNwbGl0X2NzdihyYXc6IHN0ciB8IE5vbmUpIC0-IGZyb3plbnNldFtzdHJdOgogICAgICAgICIiIlNwbGl0IGEgY29tbWEtc2VwYXJhdGVkIG9wdGlvbiB2YWx1ZSBpbnRvIGEgbm9ybWFsaXplZCBmcm96ZW4gc2V0LgoKICAgICAgICBSZXR1cm5zOgogICAgICAgICAgICBUaGUgcmVzdWx0aW5nIGBgZnJvemVuc2V0W3N0cl1gYC4KCiAgICAgICAgIiIiCiAgICAgICAgaWYgbm90IHJhdzoKICAgICAgICAgICAgcmV0dXJuIGZyb3plbnNldCgpCiAgICAgICAgcmV0dXJuIGZyb3plbnNldChwYXJ0LnN0cmlwKCkgZm9yIHBhcnQgaW4gcmF3LnNwbGl0KCIsIikgaWYgcGFydC5zdHJpcCgpKQoKICAgIEBjbGFzc21ldGhvZAogICAgZGVmIGFjdGl2ZV9yb290KGNscywgY29uZmlnOiBweXRlc3QuQ29uZmlnKSAtPiBQYXRoIHwgTm9uZToKICAgICAgICAiIiJSZXR1cm4gdGhlIGdvdmVybmVkIHdvcmtzcGFjZSByb290LCBvciBOb25lIHdoZW4gZW5mb3JjZW1lbnQgaXMgb2ZmLiIiIgogICAgICAgIGlmIGNscy5zdGFzaF9yb290IGluIGNvbmZpZy5zdGFzaDoKICAgICAgICAgICAgcmV0dXJuIGNvbmZpZy5zdGFzaFtjbHMuc3Rhc2hfcm9vdF0KICAgICAgICBvdmVycmlkZV9yb290ID0gc3RyKGNvbmZpZy5nZXRvcHRpb24oIi0tZmxleHQtZW5mb3JjZS13b3Jrc3BhY2Utcm9vdCIpIG9yICIiKQogICAgICAgIHJvb3RwYXRoID0gUGF0aChjb25maWcucm9vdHBhdGgpLnJlc29sdmUoKQogICAgICAgIHJlcG9zaXRvcnlfcm9vdDogUGF0aCB8IE5vbmUKICAgICAgICBpZiBjb25maWcuZ2V0b3B0aW9uKCItLW5vLWZsZXh0LWVuZm9yY2UiKToKICAgICAgICAgICAgcmVwb3NpdG9yeV9yb290ID0gTm9uZQogICAgICAgIGVsaWYgb3ZlcnJpZGVfcm9vdDoKICAgICAgICAgICAgcmVwb3NpdG9yeV9yb290ID0gUGF0aChvdmVycmlkZV9yb290KS5yZXNvbHZlKCkKICAgICAgICBlbGlmIGNvbmZpZy5nZXRvcHRpb24oIi0tZmxleHQtZW5mb3JjZSIpOgogICAgICAgICAgICByZXBvc2l0b3J5X3Jvb3QgPSBjbHMuZGlzY292ZXJfcmVwb3NpdG9yeV9yb290KHJvb3RwYXRoKQogICAgICAgIGVsc2U6CiAgICAgICAgICAgIGRpc2NvdmVyZWQgPSBjbHMuZGlzY292ZXJfcmVwb3NpdG9yeV9yb290KHJvb3RwYXRoKQogICAgICAgICAgICBpZiBkaXNjb3ZlcmVkIGlzIG5vdCBOb25lOgogICAgICAgICAgICAgICAgcmVwb3NpdG9yeV9yb290ID0gZGlzY292ZXJlZCBpZiBkaXNjb3ZlcmVkID09IHJvb3RwYXRoIGVsc2UgTm9uZQogICAgICAgICAgICBlbGlmIGNscy5kZWNsYXJlc19pbnRlcm5hbF9mbGV4dChyb290cGF0aCk6CiAgICAgICAgICAgICAgICByZXBvc2l0b3J5X3Jvb3QgPSByb290cGF0aAogICAgICAgICAgICBlbHNlOgogICAgICAgICAgICAgICAgcmVwb3NpdG9yeV9yb290ID0gTm9uZQogICAgICAgIGNvbmZpZy5zdGFzaFtjbHMuc3Rhc2hfcm9vdF0gPSByZXBvc2l0b3J5X3Jvb3QKICAgICAgICByZXR1cm4gcmVwb3NpdG9yeV9yb290CgogICAgQGNsYXNzbWV0aG9kCiAgICBkZWYgcmVzb2x2ZV9jb25maWcoCiAgICAgICAgY2xzLAogICAgICAgIGNvbmZpZzogcHl0ZXN0LkNvbmZpZywKICAgICAgICByZXBvc2l0b3J5X3Jvb3Q6IFBhdGgsCiAgICApIC0-IHAuVGVzdHMuRW5mb3JjZW1lbnREaXNwYXRjaGVyQ29uZmlnOgogICAgICAgICIiIkJ1aWxkIGFuZCBjYWNoZSB0aGUgY29uZmlndXJhdGlvbiBvZiBhbiBhY3RpdmUgZW5mb3JjZW1lbnQgc2Vzc2lvbi4KCiAgICAgICAgUmV0dXJuczoKICAgICAgICAgICAgVGhlIHJlc3VsdGluZyBgYG0uVGVzdHMuRW5mb3JjZW1lbnREaXNwYXRjaGVyQ29uZmlnYGAuCgogICAgICAgICIiIgogICAgICAgIG1vZGVscyA9IGltcG9ydF9tb2R1bGUoImZsZXh0X3Rlc3RzIikubQoKICAgICAgICBzdGFzaGVkID0gY29uZmlnLnN0YXNoLmdldChjbHMuc3Rhc2hfY29uZmlnLCBOb25lKQogICAgICAgIGlmIHN0YXNoZWQgaXMgbm90IE5vbmU6CiAgICAgICAgICAgIHJldHVybiBzdGFzaGVkCiAgICAgICAgcmVzb2x2ZWQgPSBtb2RlbHMuVGVzdHMuRW5mb3JjZW1lbnREaXNwYXRjaGVyQ29uZmlnKAogICAgICAgICAgICBzdHJpY3Q9Ym9vbChjb25maWcuZ2V0b3B0aW9uKCItLWZsZXh0LWVuZm9yY2Utc3RyaWN0IikpLAogICAgICAgICAgICBpbmNsdWRlPWNscy5zcGxpdF9jc3Yoc3RyKGNvbmZpZy5nZXRvcHRpb24oIi0tZmxleHQtZW5mb3JjZS1ydWxlcyIpIG9yICIiKSksCiAgICAgICAgICAgIGV4Y2x1ZGU9Y2xzLnNwbGl0X2NzdigKICAgICAgICAgICAgICAgIHN0cihjb25maWcuZ2V0b3B0aW9uKCItLWZsZXh0LWVuZm9yY2UtZXhjbHVkZS1ydWxlcyIpIG9yICIiKSwKICAgICAgICAgICAgKSwKICAgICAgICAgICAgcmVwb3NpdG9yeV9yb290PXJlcG9zaXRvcnlfcm9vdCwKICAgICAgICAgICAgY2F0YWxvZ19yb290PVBhdGgoY29uZmlnLnJvb3RwYXRoKS5yZXNvbHZlKCksCiAgICAgICAgKQogICAgICAgIGNvbmZpZy5zdGFzaFtjbHMuc3Rhc2hfY29uZmlnXSA9IHJlc29sdmVkCiAgICAgICAgcmV0dXJuIHJlc29sdmVkCgogICAgQGNsYXNzbWV0aG9kCiAgICBkZWYgY29uZmlndXJlKGNscywgY29uZmlnOiBweXRlc3QuQ29uZmlnKSAtPiBOb25lOgogICAgICAgICIiIlJlZ2lzdGVyIGZpbHRlcndhcm5pbmdzIGZvciBldmVyeSBhY3RpdmUgcnVudGltZS13YXJuaW5nIHJ1bGUuIiIiCiAgICAgICAgcmVwb3NpdG9yeV9yb290ID0gY2xzLmFjdGl2ZV9yb290KGNvbmZpZykKICAgICAgICBpZiByZXBvc2l0b3J5X3Jvb3QgaXMgTm9uZToKICAgICAgICAgICAgcmV0dXJuCiAgICAgICAgZmFjYWRlID0gaW1wb3J0X21vZHVsZSgiZmxleHRfdGVzdHMiKQoKICAgICAgICBjZmcgPSBjbHMucmVzb2x2ZV9jb25maWcoY29uZmlnLCByZXBvc2l0b3J5X3Jvb3QpCiAgICAgICAgYWN0aW9uID0gImVycm9yIiBpZiBjZmcuc3RyaWN0IGVsc2UgImRlZmF1bHQiCgogICAgICAgIGZvciBydWxlIGluIGZhY2FkZS51LlRlc3RzLmFjdGl2ZV9ydWxlcyhjZmcpOgogICAgICAgICAgICBpZiBpc2luc3RhbmNlKHJ1bGUuc291cmNlLCBmYWNhZGUubS5UZXN0cy5FbmZvcmNlbWVudFJ1bnRpbWVXYXJuaW5nU291cmNlKToKICAgICAgICAgICAgICAgIGNvbmZpZy5hZGRpbml2YWx1ZV9saW5lKAogICAgICAgICAgICAgICAgICAgICJmaWx0ZXJ3YXJuaW5ncyIsCiAgICAgICAgICAgICAgICAgICAgZiJ7YWN0aW9ufTo6e3J1bGUuc291cmNlLmNhdGVnb3J5fSIsCiAgICAgICAgICAgICAgICApCgogICAgQHN0YXRpY21ldGhvZAogICAgZGVmIHNsb3dfYnVkZ2V0X3NlY29uZHMoY29uZmlnOiBweXRlc3QuQ29uZmlnKSAtPiBmbG9hdCB8IE5vbmU6CiAgICAgICAgIiIiUmV0dXJuIHRoZSBjb25maWctb3duZWQgc2xvdyBpdGVtIGJ1ZGdldCwgb3IgTm9uZSB3aGVuIHVuY29uZmlndXJlZC4KCiAgICAgICAgUmFpc2VzOgogICAgICAgICAgICBVc2FnZUVycm9yOiBJZiBGTEVYVCBzbG93IHRpbWVvdXQgcG9saWN5OyBvciBpZiBGTEVYVCBzbG93IHRpbWVvdXQgcG9saWN5CiAgICAgICAgICAgICAgICByZXF1aXJlcyB0aGUgcHl0ZXN0LXRpbWVvdXQgcGx1Z2luLgoKICAgICAgICAiIiIKICAgICAgICByYXdfdGltZW91dCA9IHN0cigKICAgICAgICAgICAgY29uZmlnLmdldGluaSgKICAgICAgICAgICAgICAgIEZsZXh0VGVzdHNDb25zdGFudHNWYWxpZGF0b3IuRU5GT1JDRU1FTlRfU0xPV19USU1FT1VUX0lOSV9PUFRJT04KICAgICAgICAgICAgKQogICAgICAgICkuc3RyaXAoKQogICAgICAgIGlmIG5vdCByYXdfdGltZW91dDoKICAgICAgICAgICAgcmV0dXJuIE5vbmUKICAgICAgICBtc2cgPSAoCiAgICAgICAgICAgICJGTEVYVCBzbG93IHRpbWVvdXQgcG9saWN5OiAiCiAgICAgICAgICAgIGYie0ZsZXh0VGVzdHNDb25zdGFudHNWYWxpZGF0b3IuRU5GT1JDRU1FTlRfU0xPV19USU1FT1VUX0lOSV9PUFRJT059IG11c3QgIgogICAgICAgICAgICBmImJlIGEgcG9zaXRpdmUgIgogICAgICAgICAgICAiZmluaXRlIG51bWJlciIKICAgICAgICApCiAgICAgICAgdHJ5OgogICAgICAgICAgICBzbG93X3RpbWVvdXQgPSBmbG9hdChyYXdfdGltZW91dCkKICAgICAgICBleGNlcHQgVmFsdWVFcnJvciBhcyBlcnI6CiAgICAgICAgICAgIHJhaXNlIHB5dGVzdC5Vc2FnZUVycm9yKG1zZykgZnJvbSBlcnIKICAgICAgICBpZiBub3QgbWF0aC5pc2Zpbml0ZShzbG93X3RpbWVvdXQpIG9yIHNsb3dfdGltZW91dCA8PSAwOgogICAgICAgICAgICByYWlzZSBweXRlc3QuVXNhZ2VFcnJvcihtc2cpCiAgICAgICAgaWYgbm90IGFueSgKICAgICAgICAgICAgY29uZmlnLnBsdWdpbm1hbmFnZXIuaGFzcGx1Z2luKHBsdWdpbl9uYW1lKQogICAgICAgICAgICBmb3IgcGx1Z2luX25hbWUgaW4gKCJ0aW1lb3V0IiwgInB5dGVzdF90aW1lb3V0IikKICAgICAgICApOgogICAgICAgICAgICBtc2cgPSAiRkxFWFQgc2xvdyB0aW1lb3V0IHBvbGljeSByZXF1aXJlcyB0aGUgcHl0ZXN0LXRpbWVvdXQgcGx1Z2luIgogICAgICAgICAgICByYWlzZSBweXRlc3QuVXNhZ2VFcnJvcihtc2cpCiAgICAgICAgcmV0dXJuIHNsb3dfdGltZW91dAoKICAgIEBzdGF0aWNtZXRob2QKICAgIGRlZiBidWRnZXRfbWFya2VycygpIC0-IHR1cGxlW3N0ciwgLi4uXToKICAgICAgICAiIiJSZXR1cm4gZXZlcnkgbWFya2VyIHdob3NlIGl0ZW1zIHJ1biBvbiB0aGUgY29uZmlnLW93bmVkIHNsb3cgYnVkZ2V0LgoKICAgICAgICBSZXR1cm5zOgogICAgICAgICAgICBUaGUgc2xvdyBtYXJrZXIgZm9sbG93ZWQgYnkgdGhlIGRlY2xhcmVkIGhlYXZ5LXRpZXIgbWFya2Vycy4KCiAgICAgICAgIiIiCiAgICAgICAgcmV0dXJuICgKICAgICAgICAgICAgRmxleHRUZXN0c0NvbnN0YW50c1ZhbGlkYXRvci5FTkZPUkNFTUVOVF9TTE9XX01BUktFUiwKICAgICAgICAgICAgKkZsZXh0VGVzdHNDb25zdGFudHNWYWxpZGF0b3IuRU5GT1JDRU1FTlRfSEVBVllfVElFUl9NQVJLRVJTLAogICAgICAgICkKCiAgICBAY2xhc3NtZXRob2QKICAgIGRlZiBhcHBseV9zbG93X2J1ZGdldCgKICAgICAgICBjbHMsCiAgICAgICAgY29uZmlnOiBweXRlc3QuQ29uZmlnLAogICAgICAgIGl0ZW1zOiBsaXN0W3B5dGVzdC5JdGVtXSwKICAgICkgLT4gTm9uZToKICAgICAgICAiIiJBcHBseSB0aGUgc2hhcmVkIHNsb3cgYnVkZ2V0IGluZGVwZW5kZW50bHkgb2Ygc3RhdGljIGVuZm9yY2VtZW50LgoKICAgICAgICBSYWlzZXM6CiAgICAgICAgICAgIFVzYWdlRXJyb3I6IElmIEZMRVhUIHNsb3cgdGltZW91dCBwb2xpY3kuCgogICAgICAgICIiIgogICAgICAgIGNvbmZpZy5zdGFzaFtjbHMuc3Rhc2hfc2xvd19saW1pdF0gPSBOb25lCiAgICAgICAgc2xvd190aW1lb3V0ID0gY2xzLnNsb3dfYnVkZ2V0X3NlY29uZHMoY29uZmlnKQogICAgICAgIGNvbmZpZy5zdGFzaFtjbHMuc3Rhc2hfc2xvd19saW1pdF0gPSBzbG93X3RpbWVvdXQKICAgICAgICBtYXJrZXJzID0gY2xzLmJ1ZGdldF9tYXJrZXJzKCkKICAgICAgICBmb3IgaXRlbSBpbiBpdGVtcyBpZiBzbG93X3RpbWVvdXQgaXMgbm90IE5vbmUgZWxzZSAoKToKICAgICAgICAgICAgaWYgaXRlbS5zdGFzaC5nZXQoY2xzLnN0YXNoX2J1ZGdldGVkLCBGYWxzZSk6CiAgICAgICAgICAgICAgICBjb250aW51ZQogICAgICAgICAgICBpZiBub3QgYW55KGl0ZW0uZ2V0X2Nsb3Nlc3RfbWFya2VyKG1hcmtlcikgZm9yIG1hcmtlciBpbiBtYXJrZXJzKToKICAgICAgICAgICAgICAgIGNvbnRpbnVlCiAgICAgICAgICAgIGlmIGl0ZW0uZ2V0X2Nsb3Nlc3RfbWFya2VyKCJ0aW1lb3V0IikgaXMgbm90IE5vbmU6CiAgICAgICAgICAgICAgICBtc2cgPSAoCiAgICAgICAgICAgICAgICAgICAgIkZMRVhUIHNsb3cgdGltZW91dCBwb2xpY3k6IGV4cGxpY2l0IHB5dGVzdC5tYXJrLnRpbWVvdXQgaXMgIgogICAgICAgICAgICAgICAgICAgIGYiZm9yYmlkZGVuOyB7aXRlbS5ub2RlaWR9IG11c3QgdXNlIHRoZSBjb25maWctb3duZWQgc2xvdyBidWRnZXQiCiAgICAgICAgICAgICAgICApCiAgICAgICAgICAgICAgICByYWlzZSBweXRlc3QuVXNhZ2VFcnJvcihtc2cpCiAgICAgICAgICAgIGl0ZW0uc3Rhc2hbY2xzLnN0YXNoX2J1ZGdldGVkXSA9IFRydWUKICAgICAgICAgICAgaWYgY29uZmlnLmdldG9wdGlvbigidGltZW91dCIpICE9IDA6CiAgICAgICAgICAgICAgICBpdGVtLmFkZF9tYXJrZXIocHl0ZXN0Lm1hcmsudGltZW91dChzbG93X3RpbWVvdXQpLCBhcHBlbmQ9RmFsc2UpCgogICAgQGNsYXNzbWV0aG9kCiAgICBkZWYgY29sbGVjdGlvbl9tb2RpZnlpdGVtcygKICAgICAgICBjbHMsCiAgICAgICAgc2Vzc2lvbjogcHl0ZXN0LlNlc3Npb24sCiAgICAgICAgY29uZmlnOiBweXRlc3QuQ29uZmlnLAogICAgICAgIGl0ZW1zOiBsaXN0W3B5dGVzdC5JdGVtXSwKICAgICkgLT4gTm9uZToKICAgICAgICAiIiJBcHBlbmQgZGlzcGF0Y2hlciBpdGVtcyB3aGVuIHN0YXRpYyBlbmZvcmNlbWVudCBpcyBhY3RpdmUuIiIiCiAgICAgICAgcmVwb3NpdG9yeV9yb290ID0gY2xzLmFjdGl2ZV9yb290KGNvbmZpZykKICAgICAgICBpZiByZXBvc2l0b3J5X3Jvb3QgaXMgTm9uZSBvciBoYXNhdHRyKGNvbmZpZywgIndvcmtlcmlucHV0Iik6CiAgICAgICAgICAgIHJldHVybgogICAgICAgIGJ1aWxkZXIgPSBpbXBvcnRfbW9kdWxlKAogICAgICAgICAgICAiZmxleHRfdGVzdHMuX2ZpeHR1cmVzLl9lbmZvcmNlbWVudC5idWlsZCIsCiAgICAgICAgKS5GbGV4dFRlc3RzRW5mb3JjZW1lbnRCdWlsZGVyCiAgICAgICAgaXRlbXMuZXh0ZW5kKAogICAgICAgICAgICBidWlsZGVyLmJ1aWxkX2l0ZW1zKAogICAgICAgICAgICAgICAgc2Vzc2lvbiwKICAgICAgICAgICAgICAgIGNscy5yZXNvbHZlX2NvbmZpZyhjb25maWcsIHJlcG9zaXRvcnlfcm9vdCksCiAgICAgICAgICAgICAgICBjb2xsZWN0ZWRfaXRlbXM9aXRlbXMsCiAgICAgICAgICAgICksCiAgICAgICAgKQoKICAgIEBjbGFzc21ldGhvZAogICAgZGVmIHJlY29yZF93YXJuaW5nKGNscywgd2FybmluZ19tZXNzYWdlOiB3YXJuaW5ncy5XYXJuaW5nTWVzc2FnZSkgLT4gTm9uZToKICAgICAgICAiIiJDb3VudCBvbmUgY2FwdHVyZWQgcnVudGltZSB3YXJuaW5nIGJ5IGl0cyBkb3R0ZWQgY2F0ZWdvcnkuIiIiCiAgICAgICAgaWYgY2xzLnNlc3Npb25fY29uZmlnIGlzIE5vbmU6CiAgICAgICAgICAgIHJldHVybgogICAgICAgIHJlcG9zaXRvcnlfcm9vdCA9IGNscy5hY3RpdmVfcm9vdChjbHMuc2Vzc2lvbl9jb25maWcpCiAgICAgICAgaWYgcmVwb3NpdG9yeV9yb290IGlzIE5vbmU6CiAgICAgICAgICAgIHJldHVybgogICAgICAgIGNhdGVnb3J5ID0gd2FybmluZ19tZXNzYWdlLmNhdGVnb3J5CiAgICAgICAgY2ZnID0gY2xzLnJlc29sdmVfY29uZmlnKGNscy5zZXNzaW9uX2NvbmZpZywgcmVwb3NpdG9yeV9yb290KQogICAgICAgIGRvdHRlZCA9IGYie2NhdGVnb3J5Ll9fbW9kdWxlX199LntjYXRlZ29yeS5fX3F1YWxuYW1lX199IgogICAgICAgIGNmZy53YXJuaW5nX2NvdW50ZXJbZG90dGVkXSA9IGNmZy53YXJuaW5nX2NvdW50ZXIuZ2V0KGRvdHRlZCwgMCkgKyAxCgogICAgQGNsYXNzbWV0aG9kCiAgICBkZWYgcmVjb3JkX2R1cmF0aW9uKGNscywgcmVwb3J0OiBweXRlc3QuVGVzdFJlcG9ydCkgLT4gTm9uZToKICAgICAgICAiIiJLZWVwIHRoZSBuYXRpdmUgY2FsbC1waGFzZSBkdXJhdGlvbiBvZiBvbmUgcGFzc2VkIGl0ZW0gYW5kIGl0cyBzbG93IG1hcmsuCgogICAgICAgIEEgdGltZWQtb3V0IGl0ZW0gaXMgYWxyZWFkeSBhIGZhaWx1cmUsIHNvIG9ubHkgcGFzc2VkIGNhbGxzIGFyZSBrZXB0LgogICAgICAgICIiIgogICAgICAgIGNvbmZpZyA9IGNscy5zZXNzaW9uX2NvbmZpZwogICAgICAgIGlmICgKICAgICAgICAgICAgY29uZmlnIGlzIE5vbmUKICAgICAgICAgICAgb3IgcmVwb3J0LndoZW4gIT0gRmxleHRUZXN0c0NvbnN0YW50c1ZhbGlkYXRvci5FTkZPUkNFTUVOVF9DQUxMX1BIQVNFCiAgICAgICAgICAgIG9yIG5vdCByZXBvcnQucGFzc2VkCiAgICAgICAgKToKICAgICAgICAgICAgcmV0dXJuCiAgICAgICAgY29uZmlnLnN0YXNoLnNldGRlZmF1bHQoY2xzLnN0YXNoX2R1cmF0aW9ucywge30pW3JlcG9ydC5ub2RlaWRdID0gKAogICAgICAgICAgICByZXBvcnQuZHVyYXRpb24sCiAgICAgICAgICAgIGFueShtYXJrZXIgaW4gcmVwb3J0LmtleXdvcmRzIGZvciBtYXJrZXIgaW4gY2xzLmJ1ZGdldF9tYXJrZXJzKCkpLAogICAgICAgICkKCiAgICBAY2xhc3NtZXRob2QKICAgIGRlZiBzbG93X3JlcG9ydCgKICAgICAgICBjbHMsCiAgICAgICAgdGVybWluYWxyZXBvcnRlcjogcHl0ZXN0LlRlcm1pbmFsUmVwb3J0ZXIsCiAgICAgICAgY29uZmlnOiBweXRlc3QuQ29uZmlnLAogICAgKSAtPiBOb25lOgogICAgICAgICIiIlByaW50IGV2ZXJ5IHBhc3NlZCBpdGVtIG5lYXIgaXRzIG9yZGluYXJ5IG9yIHNsb3cgbGltaXQuIiIiCiAgICAgICAgcmF0aW8gPSBGbGV4dFRlc3RzQ29uc3RhbnRzVmFsaWRhdG9yLkVORk9SQ0VNRU5UX1NMT1dfTkVBUl9MSU1JVF9SQVRJTwogICAgICAgIG9yZGluYXJ5ID0gZmxvYXQoCiAgICAgICAgICAgIGNvbmZpZy5nZXRvcHRpb24oCiAgICAgICAgICAgICAgICBGbGV4dFRlc3RzQ29uc3RhbnRzVmFsaWRhdG9yLkVORk9SQ0VNRU5UX1RJTUVPVVRfT1BUSU9OLCBOb25lCiAgICAgICAgICAgICkKICAgICAgICAgICAgb3IgMAogICAgICAgICkKICAgICAgICAjIEFuIHhkaXN0IGNvbnRyb2xsZXIgbmV2ZXIgY29sbGVjdHMsIHNvIGl0IHJlc29sdmVzIHRoZSBidWRnZXQgaGVyZS4KICAgICAgICBzbG93ID0gKAogICAgICAgICAgICBjb25maWcuc3Rhc2hbY2xzLnN0YXNoX3Nsb3dfbGltaXRdCiAgICAgICAgICAgIGlmIGNscy5zdGFzaF9zbG93X2xpbWl0IGluIGNvbmZpZy5zdGFzaAogICAgICAgICAgICBlbHNlIGNscy5zbG93X2J1ZGdldF9zZWNvbmRzKGNvbmZpZykKICAgICAgICApIG9yIDAuMAogICAgICAgIGR1cmF0aW9uczogZGljdFtzdHIsIHR1cGxlW2Zsb2F0LCBib29sXV0gPSAoCiAgICAgICAgICAgIGNvbmZpZy5zdGFzaC5nZXQoY2xzLnN0YXNoX2R1cmF0aW9ucywgTm9uZSkgb3Ige30KICAgICAgICApCiAgICAgICAgbmVhcjogbGlzdFt0dXBsZVtmbG9hdCwgYm9vbCwgc3RyXV0gPSBbXQogICAgICAgIGZvciBub2RlaWQsIChkdXJhdGlvbiwgbWFya2VkKSBpbiBkdXJhdGlvbnMuaXRlbXMoKToKICAgICAgICAgICAgbGltaXQgPSBzbG93IGlmIG1hcmtlZCBlbHNlIG9yZGluYXJ5CiAgICAgICAgICAgIGlmIGxpbWl0ID4gMCBhbmQgZHVyYXRpb24gPj0gbGltaXQgKiByYXRpbzoKICAgICAgICAgICAgICAgIGtpbmQgPSAic2xvdyIgaWYgbWFya2VkIGVsc2UgIm9yZGluYXJ5IgogICAgICAgICAgICAgICAgc2hhcmUgPSBkdXJhdGlvbiAvIGxpbWl0CiAgICAgICAgICAgICAgICBsaW5lID0gZiIgIHtzaGFyZTouMCV9IG9mIHRoZSB7bGltaXQ6LjJmfXMge2tpbmR9IGxpbWl0ICIKICAgICAgICAgICAgICAgIG5lYXIuYXBwZW5kKChzaGFyZSwgbWFya2VkLCBmIntsaW5lfSh7ZHVyYXRpb246LjJmfXMpOiB7bm9kZWlkfSIpKQogICAgICAgIHRlcm1pbmFscmVwb3J0ZXIud3JpdGVfc2VwKAogICAgICAgICAgICAiLSIsIEZsZXh0VGVzdHNDb25zdGFudHNWYWxpZGF0b3IuRU5GT1JDRU1FTlRfU0xPV19SRVBPUlRfVElUTEUsIHllbGxvdz1UcnVlCiAgICAgICAgKQogICAgICAgIGlmIG5vdCBuZWFyOgogICAgICAgICAgICB0ZXJtaW5hbHJlcG9ydGVyLndyaXRlX2xpbmUoIm5vIHRlc3QgbmVhciB0aGUgb3JkaW5hcnkgb3Igc2xvdyBsaW1pdCIpCiAgICAgICAgICAgIHJldHVybgogICAgICAgIHNsb3dfY291bnQgPSBzdW0obWFya2VkIGZvciBfLCBtYXJrZWQsIF8gaW4gbmVhcikKICAgICAgICBvcmRpbmFyeV9jb3VudCA9ICgKICAgICAgICAgICAgZiJ7bGVuKG5lYXIpIC0gc2xvd19jb3VudH0gbmVhciB0aGUgb3JkaW5hcnkgbGltaXQiCiAgICAgICAgICAgIGlmIG9yZGluYXJ5ID4gMAogICAgICAgICAgICBlbHNlICJvcmRpbmFyeSBsaW1pdCBub3Qgc2V0LCB1bm1hcmtlZCB0ZXN0cyBza2lwcGVkIgogICAgICAgICkKICAgICAgICB0ZXJtaW5hbHJlcG9ydGVyLndyaXRlX2xpbmUoCiAgICAgICAgICAgIGYie29yZGluYXJ5X2NvdW50fTsge3Nsb3dfY291bnR9IG5lYXIgdGhlIHNsb3cgbGltaXQiLAogICAgICAgICkKICAgICAgICBmb3IgXywgXywgbGluZSBpbiBzb3J0ZWQobmVhciwgcmV2ZXJzZT1UcnVlKToKICAgICAgICAgICAgdGVybWluYWxyZXBvcnRlci53cml0ZV9saW5lKGxpbmUpCgogICAgQGNsYXNzbWV0aG9kCiAgICBkZWYgdGVybWluYWxfc3VtbWFyeSgKICAgICAgICBjbHMsCiAgICAgICAgdGVybWluYWxyZXBvcnRlcjogcHl0ZXN0LlRlcm1pbmFsUmVwb3J0ZXIsCiAgICAgICAgY29uZmlnOiBweXRlc3QuQ29uZmlnLAogICAgKSAtPiBOb25lOgogICAgICAgICIiIlByaW50IHRoZSBwZXIta2luZCBicmVha2Rvd24gYW5kIHRoZSBzbG93LXRlc3QgcmVwb3J0LiIiIgogICAgICAgIGNscy5lbmZvcmNlbWVudF9zdW1tYXJ5KHRlcm1pbmFscmVwb3J0ZXIsIGNvbmZpZykKICAgICAgICBjbHMuc2xvd19yZXBvcnQodGVybWluYWxyZXBvcnRlciwgY29uZmlnKQoKICAgIEBjbGFzc21ldGhvZAogICAgZGVmIGVuZm9yY2VtZW50X3N1bW1hcnkoCiAgICAgICAgY2xzLAogICAgICAgIHRlcm1pbmFscmVwb3J0ZXI6IHB5dGVzdC5UZXJtaW5hbFJlcG9ydGVyLAogICAgICAgIGNvbmZpZzogcHl0ZXN0LkNvbmZpZywKICAgICkgLT4gTm9uZToKICAgICAgICAiIiJQcmludCB0aGUgcGVyLWtpbmQgYnJlYWtkb3duIHdoZW4gc3RhdGljIGVuZm9yY2VtZW50IGlzIGFjdGl2ZS4iIiIKICAgICAgICByZXBvc2l0b3J5X3Jvb3QgPSBjbHMuYWN0aXZlX3Jvb3QoY29uZmlnKQogICAgICAgIGlmIHJlcG9zaXRvcnlfcm9vdCBpcyBOb25lOgogICAgICAgICAgICByZXR1cm4KICAgICAgICB1dGlsaXRpZXMgPSBpbXBvcnRfbW9kdWxlKCJmbGV4dF90ZXN0cyIpLnUKCiAgICAgICAgY2ZnID0gY2xzLnJlc29sdmVfY29uZmlnKGNvbmZpZywgcmVwb3NpdG9yeV9yb290KQogICAgICAgIGFjdGl2ZSA9IHV0aWxpdGllcy5UZXN0cy5hY3RpdmVfcnVsZXMoY2ZnKQogICAgICAgIGtpbmRzOiBkaWN0W3N0ciwgaW50XSA9IHt9CiAgICAgICAgZm9yIHJ1bGUgaW4gYWN0aXZlOgogICAgICAgICAgICBraW5kc1tydWxlLnNvdXJjZS5raW5kXSA9IGtpbmRzLmdldChydWxlLnNvdXJjZS5raW5kLCAwKSArIDEKICAgICAgICB0ZXJtaW5hbHJlcG9ydGVyLndyaXRlX3NlcCgiLSIsICJmbGV4dC1lbmZvcmNlIiwgeWVsbG93PVRydWUpCiAgICAgICAgdGVybWluYWxyZXBvcnRlci53cml0ZV9saW5lKAogICAgICAgICAgICBmImNhdGFsb2cgYWN0aXZlOiB7bGVuKGFjdGl2ZSl9IHJ1bGVzIGFjcm9zcyB7bGVuKGtpbmRzKX0gc291cmNlIGtpbmRzIiwKICAgICAgICApCiAgICAgICAgZm9yIGtpbmQgaW4gc29ydGVkKGtpbmRzKToKICAgICAgICAgICAgdGVybWluYWxyZXBvcnRlci53cml0ZV9saW5lKGYiICB7a2luZH06IHtraW5kc1traW5kXX0iKQogICAgICAgIHRlcm1pbmFscmVwb3J0ZXIud3JpdGVfbGluZSgKICAgICAgICAgICAgZiJydW50aW1lIHdhcm5pbmdzIGNhcHR1cmVkOiB7c3VtKGNmZy53YXJuaW5nX2NvdW50ZXIudmFsdWVzKCkpfSIsCiAgICAgICAgKQoKCl9fYWxsX186IGxpc3Rbc3RyXSA9IFsiRmxleHRUZXN0c0VuZm9yY2VtZW50RGlzcGF0Y2hlciJdCg=="
+      },
+      {
+        "path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_fixtures/_enforcement/items.py",
+        "parent_device": 68,
+        "parent_inode": 654344574,
+        "mode": 420,
+        "device": 68,
+        "inode": 1056444431,
+        "link_count": 1,
+        "file_attributes": null,
+        "reparse_tag": null,
+        "content": "IiIiUHl0ZXN0IGNvbGxlY3Rpb24gaXRlbSBmb3IgZW5mb3JjZW1lbnQgdmlvbGF0aW9ucy4KCkNvcHlyaWdodCAoYykgMjAyNiBGTEVYVCBUZWFtLiBBbGwgcmlnaHRzIHJlc2VydmVkLgpTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogTUlUCiIiIgoKZnJvbSBfX2Z1dHVyZV9fIGltcG9ydCBhbm5vdGF0aW9ucwoKZnJvbSB0eXBpbmcgaW1wb3J0IFRZUEVfQ0hFQ0tJTkcsIG92ZXJyaWRlCgppbXBvcnQgcHl0ZXN0Cgpmcm9tIGZsZXh0X3Rlc3RzLl9maXh0dXJlcy5fZW5mb3JjZW1lbnQgaW1wb3J0IEZsZXh0VGVzdHNGaXh0dXJlc0VuZm9yY2VtZW50RXJyb3IKZnJvbSBmbGV4dF90ZXN0cy5fcHJvdG9jb2xzLmVuZm9yY2VtZW50IGltcG9ydCBGbGV4dFRlc3RzUHJvdG9jb2xzRW5mb3JjZW1lbnQKCmlmIFRZUEVfQ0hFQ0tJTkc6CiAgICBmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGgKCiAgICBmcm9tIGZsZXh0X3Rlc3RzIGltcG9ydCBwCgoKY2xhc3MgRmxleHRUZXN0c0VuZm9yY2VtZW50SXRlbSgKICAgIEZsZXh0VGVzdHNQcm90b2NvbHNFbmZvcmNlbWVudC5UeXBlZE5vZGUsCiAgICBweXRlc3QuSXRlbSwKKToKICAgICIiIlB5dGVzdCBpdGVtIHJlcHJlc2VudGluZyBvbmUgYGAocnVsZV9pZCwgcHJvamVjdClgYCB2aW9sYXRpb24gZ3JvdXAuIiIiCgogICAgZGVmIF9faW5pdF9fKAogICAgICAgIHNlbGYsCiAgICAgICAgbmFtZTogc3RyLAogICAgICAgIHBhcmVudDogcHl0ZXN0LkNvbGxlY3RvciwKICAgICAgICAqLAogICAgICAgIHZpb2xhdGlvbjogcC5UZXN0cy5FbmZvcmNlbWVudFZpb2xhdGlvbiwKICAgICkgLT4gTm9uZToKICAgICAgICAjIHB5dGVzdC5JdGVtLl9faW5pdF9fIGlzIHVuYW5ub3RhdGVkIHVwc3RyZWFtLCBzbyBiaW5kIHRoZSBmdWxseQogICAgICAgICMgdHlwZWQgTm9kZSBiYXNlIGFuZCBpbml0aWFsaXplIHRoZSBkb2N1bWVudGVkIHB1YmxpYyBJdGVtCiAgICAgICAgIyBhdHRyaWJ1dGVzIHRoaXMgaXRlbSdzIGZhaWx1cmUgcmVwb3J0aW5nIGNvbnN1bWVzLgogICAgICAgIHN1cGVyKHB5dGVzdC5JdGVtLCBzZWxmKS5fX2luaXRfXyhuYW1lLCBwYXJlbnQpCiAgICAgICAgc2VsZi5fcmVwb3J0X3NlY3Rpb25zOiBsaXN0W3R1cGxlW3N0ciwgc3RyLCBzdHJdXSA9IFtdCiAgICAgICAgc2VsZi51c2VyX3Byb3BlcnRpZXMgPSBbXQogICAgICAgIHNlbGYuX3J1bGVfaWQgPSB2aW9sYXRpb24ucnVsZV9pZAogICAgICAgIHNlbGYuX3NldmVyaXR5ID0gdmlvbGF0aW9uLnNldmVyaXR5CiAgICAgICAgc2VsZi5fZGVzY3JpcHRpb24gPSB2aW9sYXRpb24uZGVzY3JpcHRpb24KICAgICAgICBzZWxmLl9wcm9qZWN0ID0gdmlvbGF0aW9uLnByb2plY3QKICAgICAgICBzZWxmLl92aW9sYXRpb25zID0gdHVwbGUodmlvbGF0aW9uLnZpb2xhdGlvbnMpCgogICAgQG92ZXJyaWRlCiAgICBkZWYgcnVudGVzdChzZWxmKSAtPiBOb25lOgogICAgICAgIGhlYWRlciA9ICgKICAgICAgICAgICAgZiJ7c2VsZi5fcnVsZV9pZH0gKHtzZWxmLl9zZXZlcml0eX0pIGluIHtzZWxmLl9wcm9qZWN0fTogIgogICAgICAgICAgICBmIntsZW4oc2VsZi5fdmlvbGF0aW9ucyl9IHZpb2xhdGlvbihzKSIKICAgICAgICApCiAgICAgICAgcmFpc2UgRmxleHRUZXN0c0ZpeHR1cmVzRW5mb3JjZW1lbnRFcnJvcigKICAgICAgICAgICAgIlxuIi5qb2luKFtoZWFkZXIsICooZiIgIC0ge2xpbmV9IiBmb3IgbGluZSBpbiBzZWxmLl92aW9sYXRpb25zKV0pLAogICAgICAgICkKCiAgICBAb3ZlcnJpZGUKICAgIGRlZiByZXByX2ZhaWx1cmUoCiAgICAgICAgc2VsZiwKICAgICAgICBleGNpbmZvOiBweXRlc3QuRXhjZXB0aW9uSW5mb1tCYXNlRXhjZXB0aW9uXSwKICAgICAgICBzdHlsZTogc3RyIHwgTm9uZSA9IE5vbmUsCiAgICApIC0-IHN0cjoKICAgICAgICBfID0gc3R5bGUKICAgICAgICByZXR1cm4gc3RyKGV4Y2luZm8udmFsdWUpCgogICAgQG92ZXJyaWRlCiAgICBkZWYgcmVwb3J0aW5mbyhzZWxmKSAtPiB0dXBsZVtQYXRoIHwgc3RyLCBpbnQgfCBOb25lLCBzdHJdOgogICAgICAgIHJldHVybiAoCiAgICAgICAgICAgIGYiZmxleHQtZW5mb3JjZTo6e3NlbGYuX3J1bGVfaWR9IiwKICAgICAgICAgICAgTm9uZSwKICAgICAgICAgICAgZiJ7c2VsZi5fcnVsZV9pZH0gW3tzZWxmLl9wcm9qZWN0fV0ge3NlbGYuX2Rlc2NyaXB0aW9ufSIsCiAgICAgICAgKQoKCl9fYWxsX186IGxpc3Rbc3RyXSA9IFsiRmxleHRUZXN0c0VuZm9yY2VtZW50SXRlbSJdCg=="
+      },
+      {
+        "path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_models/spec.py",
+        "parent_device": 68,
+        "parent_inode": 654344589,
+        "mode": 420,
+        "device": 68,
+        "inode": 1056444446,
+        "link_count": 1,
+        "file_attributes": null,
+        "reparse_tag": null,
+        "content": "IiIiQ29udGFpbmVyLXNwZWMgbW9kZWxzIGZvciBmbGV4dF90ZXN0cy4KCkNvcHlyaWdodCAoYykgMjAyNSBGTEVYVCBUZWFtLiBBbGwgcmlnaHRzIHJlc2VydmVkLgpTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogTUlUCiIiIgoKZnJvbSBfX2Z1dHVyZV9fIGltcG9ydCBhbm5vdGF0aW9ucwoKZnJvbSBjb2xsZWN0aW9ucy5hYmMgaW1wb3J0IE11dGFibGVNYXBwaW5nCmZyb20gdHlwaW5nIGltcG9ydCBBbm5vdGF0ZWQKCmZyb20gZmxleHRfY2xpIGltcG9ydCBtCgpmcm9tIGZsZXh0X3Rlc3RzLl9tb2RlbHMuZG9ja2VyIGltcG9ydCBGbGV4dFRlc3RzTW9kZWxzRG9ja2VyCgoKY2xhc3MgRmxleHRUZXN0c01vZGVsc1NwZWM6CiAgICBjbGFzcyBDb250YWluZXJTcGVjKG0uVmFsdWUpOgogICAgICAgICIiIkRlY2xhcmF0aXZlIHNwZWMgb2YgdGhlIGNvbnRhaW5lcnMgb25lIHN1aXRlIG5lZWRzLgoKICAgICAgICBPbmUgWUFNTCBkb2N1bWVudCBmZWVkcyBib3RoIHRoZSBwcmUtdGVzdCBDTEkgKGBmbGV4dC10ZXN0cyBkb2NrZXIKICAgICAgICBlbnN1cmV8dmVyaWZ5fGRvd24gLS1zcGVjIC4uLmApIGFuZCB0aGUgaW4tc2Vzc2lvbiBwbHVnaW4g4oCUIGEgc2luZ2xlCiAgICAgICAgU1NPVCBzbyBwcm92aXNpb25pbmcgb3V0c2lkZSB0aGUgcHl0ZXN0IGRlYWRsaW5lIGFuZCB0aGUgaW4tc2Vzc2lvbgogICAgICAgIGNhcGFiaWxpdHkgbmV2ZXIgZGl2ZXJnZS4KICAgICAgICAiIiIKCiAgICAgICAgY29udGFpbmVyczogQW5ub3RhdGVkWwogICAgICAgICAgICBNdXRhYmxlTWFwcGluZ1tzdHIsIEZsZXh0VGVzdHNNb2RlbHNEb2NrZXIuQ29udGFpbmVyQ29uZmlnXSwKICAgICAgICAgICAgbS5GaWVsZCgKICAgICAgICAgICAgICAgIGRlc2NyaXB0aW9uPSgKICAgICAgICAgICAgICAgICAgICAiVGFyZ2V0IG5hbWUg4oaSIGNvbnRhaW5lciBjb25maWc7IHRoZSB0YXJnZXQgbmFtZSBpcyB3aGF0ICIKICAgICAgICAgICAgICAgICAgICAiQ0xJIC0tdGFyZ2V0IGFuZCB0aGUgaW4tc2Vzc2lvbiBwbHVnaW4gcmVzb2x2ZS4iCiAgICAgICAgICAgICAgICApLAogICAgICAgICAgICApLAogICAgICAgIF0KICAgICAgICBpbml0aWFsaXplcl9jb21tYW5kOiBBbm5vdGF0ZWRbCiAgICAgICAgICAgIHN0ciB8IE5vbmUsCiAgICAgICAgICAgIG0uRmllbGQoCiAgICAgICAgICAgICAgICBkZXNjcmlwdGlvbj0oCiAgICAgICAgICAgICAgICAgICAgIk9wdGlvbmFsIHNoZWxsIGNvbW1hbmQgcnVuIG9uY2UgYWZ0ZXIgZW5zdXJlLCByZWNlaXZpbmcgIgogICAgICAgICAgICAgICAgICAgICJ0aGUgY29udGFpbmVyIGVudmlyb25tZW50IHJlYWRiYWNrIGFzIGVudiB2YXJzLiIKICAgICAgICAgICAgICAgICksCiAgICAgICAgICAgICksCiAgICAgICAgXSA9IE5vbmUKCgpfX2FsbF9fOiBsaXN0W3N0cl0gPSBbIkZsZXh0VGVzdHNNb2RlbHNTcGVjIl0K"
+      },
+      {
+        "path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_protocols/valuefactory.py",
+        "parent_device": 68,
+        "parent_inode": 654344600,
+        "mode": 420,
+        "device": 68,
+        "inode": 1188426608,
+        "link_count": 1,
+        "file_attributes": null,
+        "reparse_tag": null,
+        "content": "IiIiUHJvdG9jb2xzIGV4dHJhY3Rpb24gZm9yIGZsZXh0X3Rlc3RzLgoKQ29weXJpZ2h0IChjKSAyMDI1IEZMRVhUIFRlYW0uIEFsbCByaWdodHMgcmVzZXJ2ZWQuClNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBNSVQKIiIiCgpmcm9tIF9fZnV0dXJlX18gaW1wb3J0IGFubm90YXRpb25zCgpmcm9tIHR5cGluZyBpbXBvcnQgVFlQRV9DSEVDS0lORywgUHJvdG9jb2wsIHJ1bnRpbWVfY2hlY2thYmxlCgppZiBUWVBFX0NIRUNLSU5HOgogICAgZnJvbSBjb250ZXh0bGliIGltcG9ydCBBYnN0cmFjdENvbnRleHRNYW5hZ2VyCiAgICBmcm9tIHBhdGhsaWIgaW1wb3J0IFBhdGgKCiAgICBmcm9tIGZsZXh0X3Rlc3RzLl90eXBpbmdzLmJhc2UgaW1wb3J0IEZsZXh0VGVzdHNUeXBlc0Jhc2UKCgpjbGFzcyBGbGV4dFRlc3RzUHJvdG9jb2xzVmFsdWVGYWN0b3J5OgogICAgQHJ1bnRpbWVfY2hlY2thYmxlCiAgICBjbGFzcyBSdW50aW1lUHJvdmlzaW9uKFByb3RvY29sKToKICAgICAgICAiIiJQcm92aXNpb24gb25lIGxvY2tlZCBjb25zdW1lciB0aHJvdWdoIGl0cyBjYW5vbmljYWwgTWFrZSBsaWZlY3ljbGUuIiIiCgogICAgICAgIGRlZiBfX2NhbGxfXyhzZWxmLCBwYXJlbnQ6IFBhdGgpIC0-IFBhdGg6CiAgICAgICAgICAgICIiIlJldHVybiB0aGUgcGh5c2ljYWwgY2hlY2tvdXQgcHJvdmlzaW9uZWQgaW5zaWRlIGBgcGFyZW50YGAuIiIiCiAgICAgICAgICAgIC4uLgoKICAgIEBydW50aW1lX2NoZWNrYWJsZQogICAgY2xhc3MgU2Vzc2lvblJ1bnRpbWUoUHJvdG9jb2wpOgogICAgICAgICIiIk9uZSBsYXp5IHBoeXNpY2FsIHJ1bnRpbWUgcGVyIHB5dGVzdCBzZXNzaW9uIGFuZCB3b3JrZXIuIiIiCgogICAgICAgIGRpcmVjdG9yeTogUGF0aAogICAgICAgICIiIlNlc3Npb24tb3duZWQgYWxsb2NhdGlvbiByZW1vdmVkIHdoZW4gdGhlIHNlc3Npb24gZW5kcy4iIiIKICAgICAgICBzdG9yYWdlOiBQYXRoCiAgICAgICAgIiIiUGVyc2lzdGVudCBzdG9yYWdlIHNoYXJlZCBieSBldmVyeSB3b3JrZXIgYW5kIHJ1biBvZiB0aGUgY2hlY2tvdXQuIiIiCgogICAgICAgIGRlZiBsZWFzZSgKICAgICAgICAgICAgc2VsZiwKICAgICAgICAgICAgcHJvdmlzaW9uOiBGbGV4dFRlc3RzUHJvdG9jb2xzVmFsdWVGYWN0b3J5LlJ1bnRpbWVQcm92aXNpb24sCiAgICAgICAgICAgICosCiAgICAgICAgICAgIG11dGFibGVfZW52aXJvbm1lbnQ6IGJvb2wgPSBGYWxzZSwKICAgICAgICApIC0-IEFic3RyYWN0Q29udGV4dE1hbmFnZXJbUGF0aF06CiAgICAgICAgICAgICIiIkxlYXNlIHRoZSBzdGFibGUgc291cmNlIHJvb3Q7IHJlc3RvcmUgY2FzZSBjaGFuZ2VzIG9uIGV4aXQuIiIiCiAgICAgICAgICAgIC4uLgoKICAgIEBydW50aW1lX2NoZWNrYWJsZQogICAgY2xhc3MgRW50aXR5RmFjdG9yeVtURW50aXR5XShQcm90b2NvbCk6CiAgICAgICAgIiIiRmFjdG9yeSBwcm90b2NvbCB0aGF0IGJ1aWxkcyBlbnRpdHkgaW5zdGFuY2VzIGZvciB0ZXN0IGhlbHBlcnMuCgogICAgICAgIE1ldGhvZHM6CiAgICAgICAgICAgIF9fY2FsbF9fOiBidWlsZCBhIHR5cGVkIGVudGl0eSBnaXZlbiBuYW1lIGFuZCB2YWx1ZS4KCiAgICAgICAgIiIiCgogICAgICAgIGRlZiBfX2NhbGxfXygKICAgICAgICAgICAgc2VsZiwKICAgICAgICAgICAgKiwKICAgICAgICAgICAgbmFtZTogc3RyLAogICAgICAgICAgICB2YWx1ZTogRmxleHRUZXN0c1R5cGVzQmFzZS5UZXN0b2JqZWN0LAogICAgICAgICkgLT4gVEVudGl0eToKICAgICAgICAgICAgIiIiQnVpbGQgYSB0eXBlZCBlbnRpdHkgaW5zdGFuY2UuIiIiCiAgICAgICAgICAgIC4uLgoKICAgIEBydW50aW1lX2NoZWNrYWJsZQogICAgY2xhc3MgVmFsdWVGYWN0b3J5W1RWYWx1ZV0oUHJvdG9jb2wpOgogICAgICAgICIiIkZhY3RvcnkgcHJvdG9jb2wgdGhhdCBidWlsZHMgdmFsdWUgb2JqZWN0cyBmb3IgdGVzdCBoZWxwZXJzLgoKICAgICAgICBNZXRob2RzOgogICAgICAgICAgICBfX2NhbGxfXzogYnVpbGQgYSB0eXBlZCB2YWx1ZSBpbnN0YW5jZSBnaXZlbiBkYXRhIGFuZCBjb3VudC4KCiAgICAgICAgIiIiCgogICAgICAgIGRlZiBfX2NhbGxfXyhzZWxmLCAqLCBkYXRhOiBzdHIsIGNvdW50OiBpbnQpIC0-IFRWYWx1ZToKICAgICAgICAgICAgIiIiQnVpbGQgYSB0eXBlZCB2YWx1ZSBpbnN0YW5jZS4iIiIKICAgICAgICAgICAgLi4uCgoKX19hbGxfXzogbGlzdFtzdHJdID0gWyJGbGV4dFRlc3RzUHJvdG9jb2xzVmFsdWVGYWN0b3J5Il0K"
+      },
+      {
+        "path": "/home/marlonsc/flext/flext-tests/src/flext_tests/_typings/files.py",
+        "parent_device": 68,
+        "parent_inode": 654344609,
+        "mode": 420,
+        "device": 68,
+        "inode": 1056444465,
+        "link_count": 1,
+        "file_attributes": null,
+        "reparse_tag": null,
+        "content": "IiIiVHlwZXMgZXh0cmFjdGlvbiBmb3IgZmxleHRfdGVzdHMuCgpDb3B5cmlnaHQgKGMpIDIwMjUgRkxFWFQgVGVhbS4gQWxsIHJpZ2h0cyByZXNlcnZlZC4KU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IE1JVAoiIiIKCmZyb20gX19mdXR1cmVfXyBpbXBvcnQgYW5ub3RhdGlvbnMKCmZyb20gY29sbGVjdGlvbnMuYWJjIGltcG9ydCBNYXBwaW5nLCBTZXF1ZW5jZQoKZnJvbSBmbGV4dF9jb3JlIGltcG9ydCBwCgpmcm9tIGZsZXh0X3Rlc3RzLl90eXBpbmdzLmJhc2UgaW1wb3J0IEZsZXh0VGVzdHNUeXBlc0Jhc2UKCgpjbGFzcyBGbGV4dFRlc3RzVHlwZXNGaWxlczoKICAgIHR5cGUgUmVhZENvbnRlbnQgPSBzdHIgfCBieXRlcyB8IHAuQ29uZmlnTWFwIHwgU2VxdWVuY2VbU2VxdWVuY2Vbc3RyXV0KICAgIHR5cGUgRmlsZUNvbnRlbnRTdHJ1Y3R1cmVkID0gKAogICAgICAgIE1hcHBpbmdbc3RyLCBGbGV4dFRlc3RzVHlwZXNCYXNlLlRlc3RvYmplY3RTZXJpYWxpemFibGVdIHwgcC5CYXNlTW9kZWwKICAgICkKICAgIHR5cGUgRmlsZUNvbnRlbnRQbGFpbiA9IFJlYWRDb250ZW50IHwgRmlsZUNvbnRlbnRTdHJ1Y3R1cmVkCgogICAgdHlwZSBQYXJzZWRQYWlyID0gdHVwbGVbCiAgICAgICAgTWFwcGluZ1tzdHIsIEZsZXh0VGVzdHNUeXBlc0Jhc2UuVGVzdG9iamVjdFNlcmlhbGl6YWJsZV0sCiAgICAgICAgTWFwcGluZ1tzdHIsIEZsZXh0VGVzdHNUeXBlc0Jhc2UuVGVzdG9iamVjdFNlcmlhbGl6YWJsZV0sCiAgICBdCgoKX19hbGxfXzogbGlzdFtzdHJdID0gWyJGbGV4dFRlc3RzVHlwZXNGaWxlcyJdCg=="
+      }
+    ]
+  },
+  "native_artifacts": [
+    {
+      "path": "/home/marlonsc/flext/flext-tests/.reports/refactor/native/b2b89cd136aa0c55b07271c31514abda6dc234a1465f36b32f3d3c289333e617",
+      "parent_device": 68,
+      "parent_inode": 1426380674,
+      "mode": 384,
+      "device": 68,
+      "inode": 1426380969,
+      "link_count": 1,
+      "file_attributes": null,
+      "reparse_tag": null,
+      "size": 17741,
+      "sha256": "b2b89cd136aa0c55b07271c31514abda6dc234a1465f36b32f3d3c289333e617",
+      "version_key": [
+        68,
+        1426380969,
+        33152,
+        1,
+        1000,
+        1000,
+        17741,
+        1795225180392099678,
+        1795225180401502323,
+        0,
+        0
+      ]
+    }
+  ],
+  "command": "scan",
+  "root": "/home/marlonsc/flext/flext-tests",
+  "scope": [
+    "src/flext_tests/_fixtures/_enforcement/collector.py",
+    "src/flext_tests/_fixtures/_enforcement/dispatcher.py",
+    "src/flext_tests/_fixtures/_enforcement/items.py",
+    "src/flext_tests/_models/spec.py",
+    "src/flext_tests/_protocols/valuefactory.py",
+    "src/flext_tests/_typings/files.py"
+  ],
+  "totals_by_class": {
+    "actionable": 11,
+    "detection_only": 0,
+    "non_actionable_with_fix": 0,
+    "deferred_source_drift": 0
+  },
+  "totals_by_repository": {
+    "flext-tests": 11
+  },
+  "totals_by_rule": {
+    "import-header--dead-letter-alias": 0,
+    "import-header--dead-module-load--flext_tests": 0,
+    "import-header--duplicate-origin--flext_tests--comma": 0,
+    "import-header--duplicate-origin--flext_tests--guard": 0,
+    "import-header--duplicate-origin--flext_tests--last": 0,
+    "import-header--duplicate-origin--flext_tests--statement": 0,
+    "import-header--flext_tests": 0,
+    "import-header--flext_tests--b8f5296eb18f": 0,
+    "import-header--flext_tests._cli": 0,
+    "import-header--flext_tests._constants": 0,
+    "import-header--flext_tests._docker": 0,
+    "import-header--flext_tests._fixtures": 0,
+    "import-header--flext_tests._fixtures._enforcement": 0,
+    "import-header--flext_tests._models": 0,
+    "import-header--flext_tests._protocols": 0,
+    "import-header--flext_tests._typings": 0,
+    "import-header--flext_tests._utilities": 0,
+    "import-header--flext_tests._utilities--98382f245ab4": 0,
+    "import-header--flext_tests._utilities._files": 0,
+    "import-header--flext_tests._utilities._files._comparison": 0,
+    "import-header--flext_tests._utilities._matchers": 0,
+    "import-header--foreign-origin--flext_tests--comma": 0,
+    "import-header--foreign-origin--flext_tests--guard": 0,
+    "import-header--foreign-origin--flext_tests--last": 0,
+    "import-header--foreign-origin--flext_tests--statement": 0,
+    "import-header--letter-alias--flext_cli": 0,
+    "import-header--letter-alias--flext_core": 0,
+    "import-header--letter-alias--flext_infra": 0,
+    "import-header--letter-alias--flext_tests": 0,
+    "import-header--letter-local-alias": 0,
+    "import-header--letter-module-alias--flext_cli": 0,
+    "import-header--letter-module-alias--flext_core": 0,
+    "import-header--letter-module-alias--flext_infra": 0,
+    "import-header--letter-module-alias--flext_tests": 0,
+    "import-header--letter-module-object": 4,
+    "import-header--module-path--comma": 0,
+    "import-header--module-path--guard": 0,
+    "import-header--module-path--last": 0,
+    "import-header--module-path--statement": 0,
+    "import-header--name-module-load": 1,
+    "import-header--name-module-object--flext_tests": 0,
+    "import-header--own-root--flext_tests": 0,
+    "import-header--typing-duplicate--comma": 0,
+    "import-header--typing-duplicate--guard": 0,
+    "import-header--typing-duplicate--last": 0,
+    "import-header--typing-duplicate--statement": 0,
+    "rewire-deep-import-to-package": 6
+  }
+}

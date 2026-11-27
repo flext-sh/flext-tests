@@ -1,0 +1,11 @@
+0 policy findings; 1 native failures
+flext-infra,generated: exit=8, timed_out=False, signal=None
+Error: Cannot parse rule /home/marlonsc/.cache/flext-infra/check-codemod-qrynd1c3/0/ruleDirs/rules.yml
+Help: The file is not a valid ast-grep rule. Please refer to doc and fix the error.
+See also: https://ast-grep.github.io/guide/rule-config.html
+
+✖ Caused by
+╰▻ Fail to parse yaml as Rule.
+╰▻ `rule` is not configured correctly.
+╰▻ Rule must have one positive matcher.
+
